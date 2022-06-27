@@ -61,7 +61,8 @@
     {
       "files": ["**/_*.{ts,tsx}", "src/{emails,pages}/**/*.{ts,tsx}", "*.config.{js,ts}"],
       "rules": {
-        "filenames/match-exported": "off"
+        "filenames/match-exported": "off",
+        "import/no-extraneous-dependencies": "off"
       }
     },
     {
