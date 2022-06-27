@@ -1,8 +1,8 @@
 /* eslint-disable filenames/match-exported */
-import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
+import type { NextPage } from "next"
+import Head from "next/head"
+import Image from "next/image"
+import styles from "../styles/Home.module.css"
 
 const Home: NextPage = () => {
   return (
@@ -32,15 +32,10 @@ const Home: NextPage = () => {
 
           <a href="https://nextjs.org/learn" className={styles.card}>
             <h2>{"Learn →"}</h2>
-            <p>
-              {"Learn about Next.js in an interactive course with quizzes!"}
-            </p>
+            <p>{"Learn about Next.js in an interactive course with quizzes!"}</p>
           </a>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
+          <a href="https://github.com/vercel/next.js/tree/canary/examples" className={styles.card}>
             <h1>{"Examples →"}</h1>
             <p>{"Discover and deploy boilerplate example Next.js projects."}</p>
           </a>
@@ -50,11 +45,7 @@ const Home: NextPage = () => {
             className={styles.card}
           >
             <h2>{"Deploy →"}</h2>
-            <p>
-              {
-                "Instantly deploy your Next.js site to a public URL with Vercel."
-              }
-            </p>
+            <p>{"Instantly deploy your Next.js site to a public URL with Vercel."}</p>
           </a>
         </div>
       </main>
@@ -72,7 +63,7 @@ const Home: NextPage = () => {
         </a>
       </footer>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
