@@ -1,0 +1,6 @@
+paths-ignore:
+  - cypress
+  - test
+  - testFixtures
+  - src/lib/config.ts
+  - src/pages/login/reset-password.tsx
