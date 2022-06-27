@@ -30,9 +30,5 @@
   ],
   "exclude": [
     "node_modules"
-  ],
-  "rootDir": [
-    "./src",
-    "./testFixtures"
   ]
 }
