@@ -5,6 +5,6 @@ describe("Home", () => {
     // When
     cy.visit("/")
     // Then
-    cy.get(".title").should("have.text", "Welcome to Bichard UI")
+    cy.get("h1").should("have.text", "Welcome to Bichard UI")
   })
 })
