@@ -73,7 +73,6 @@ jobs:
       docker_layer_caching: true
     resource_class: large
     working_directory: ~
-    parallelism: 4
     steps:
       - checkout
       - run:
@@ -95,9 +94,9 @@ jobs:
       - run:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
-      # - run:
-      #     name: Run UI tests
-      #     command: npm run test:ui
+      - run:
+          name: Run UI tests
+          command: npm run test:ui
       - store_artifacts:
           path: ./cypress/videos
       - store_artifacts:
