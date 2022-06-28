@@ -20,7 +20,7 @@ jobs:
   build:
     docker:
       - image: cimg/node:16.12.0
-      - resource_class: medium
+    resource_class: medium
     working_directory: ~
     steps:
       - checkout
@@ -42,7 +42,7 @@ jobs:
   unit_test:
     docker:
       - image: cimg/node:16.12.0
-      - resource_class: medium
+    resource_class: medium
     working_directory: ~
     steps:
       - checkout
@@ -56,7 +56,7 @@ jobs:
   integration_test:
     docker:
       - image: cimg/node:16.12.0
-      - resource_class: medium
+    resource_class: medium
     working_directory: ~
     steps:
       - checkout
@@ -72,7 +72,7 @@ jobs:
   ui_test:
     docker:
       - image: cimg/node:16.12.0
-      - resource_class: medium
+    resource_class: medium
     working_directory: ~
     steps:
       - checkout
