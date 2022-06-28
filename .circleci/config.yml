@@ -90,6 +90,7 @@ jobs:
       - run:
           name: Run next application
           command: npm run start
+          background: true
       - run:
           name: Wait for Cypress installation to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
