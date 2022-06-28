@@ -53,7 +53,7 @@ jobs:
 
   integration_test:
     machine:
-      image: ubuntu-2004:202104-01
+      image: cimg/node:16.3.0
       docker_layer_caching: true
     working_directory: ~
     steps:
@@ -69,7 +69,7 @@ jobs:
 
   ui_test:
     machine:
-      image: ubuntu-2004:202104-01
+      image: cimg/node:16.3.0
       docker_layer_caching: true
     resource_class: large
     working_directory: ~
