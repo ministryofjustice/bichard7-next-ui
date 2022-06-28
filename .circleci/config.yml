@@ -1,0 +1,119 @@
+version: 2.1
+
+commands:
+  npm_install:
+    description: Check out the repo and install the node dependencies
+    steps:
+      - run:
+          name: Hash package lock
+          command: ./.circleci/scripts/hash-package-lock.sh
+      - restore_cache:
+          name: Load node_modules from the cache if they haven't changed
+          keys:
+            - v1-npm-deps-{{ checksum "package-lock.json.md5" }}
+            - v1-npm-deps-
+      - run:
+          name: Install node dependencies
+          command: npm i
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:16.3.0
+    working_directory: ~
+    steps:
+      - checkout
+      - npm_install
+      - save_cache:
+          name: Save node_modules cache
+          key: v1-npm-deps-{{ checksum "package-lock.json.md5" }}
+          paths: node_modules
+      - run:
+          name: Check the code for linting errors
+          command: npm run lint
+      - run:
+          name: Build the UI application
+          command: npm run build
+      - persist_to_workspace:
+          root: .
+          paths: .next
+
+  unit_test:
+    docker:
+      - image: cimg/node:16.3.0
+    working_directory: ~
+    steps:
+      - checkout
+      - npm_install
+      - attach_workspace:
+          at: .
+      - run:
+          name: Run unit tests
+          command: npm run test:unit
+
+  integration_test:
+    machine:
+      image: ubuntu-2004:202104-01
+      docker_layer_caching: true
+    working_directory: ~
+    steps:
+      - checkout
+      - npm_install
+      - attach_workspace:
+          at: .
+      # - clone_bichard_repo
+      # - run_postgres_database
+      - run:
+          name: Run integration tests
+          command: npm run test:integration
+
+  ui_test:
+    machine:
+      image: ubuntu-2004:202104-01
+      docker_layer_caching: true
+    resource_class: large
+    working_directory: ~
+    parallelism: 4
+    steps:
+      - checkout
+      - run:
+          name: Install Cypress in the background
+          command: ./.circleci/scripts/install-cypress.sh 2>&1
+          background: true
+      - npm_install
+      # - run:
+      #     name: Install GOV.UK Assets
+      #     command: npm run install:assets
+      - attach_workspace:
+          at: .
+      # - clone_bichard_repo
+      # - run_postgres_database
+      - run:
+          name: Wait for Cypress installation to finish
+          command: until [ -f cypressInstalled ]; do sleep 1; done
+          no_output_timeout: 5m
+      - run:
+          name: Retrying installing Cypress
+          command: ./.circleci/scripts/install-cypress.sh
+      # - run:
+      #     name: Run UI tests
+      #     command: npm run test:ui
+      - store_artifacts:
+          path: ./cypress/videos
+      - store_artifacts:
+          path: ./cypress/screenshots
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - build
+      - unit_test:
+          requires:
+            - build
+      - integration_test:
+          requires:
+            - build
+      - ui_test:
+          requires:
+            - build
