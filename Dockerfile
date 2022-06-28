@@ -8,14 +8,12 @@ LABEL maintainer="CJSE"
 
 WORKDIR /src/next-ui
 
-COPY ./package*.json ./
-COPY ./scripts/ ./scripts/
+COPY . ./
 
 RUN npm ci
 
-COPY . ./
-
 ENV NEXT_TELEMETRY_DISABLED=1
+
 RUN npm run build
 
 # Run next-ui app
@@ -30,10 +28,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
 WORKDIR /app
-COPY ./package*.json ./
 
-RUN npm install
-
+COPY --from=app_builder /src/next-ui/node_modules ./node_modules
+COPY --from=app_builder /src/next-ui/package*.json ./
 COPY --from=app_builder /src/next-ui/next.config.js ./
 COPY --from=app_builder /src/next-ui/public ./public
 COPY --from=app_builder --chown=nextjs:nodejs /src/next-ui/.next ./.next
