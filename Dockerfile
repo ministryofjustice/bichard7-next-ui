@@ -11,7 +11,7 @@ WORKDIR /src/next-ui
 COPY ./package*.json ./
 COPY ./scripts/ ./scripts/
 
-RUN npm install
+RUN npm ci
 
 COPY . ./
 
@@ -32,7 +32,7 @@ ENV NODE_ENV=production
 WORKDIR /app
 COPY ./package*.json ./
 
-RUN npm install --production
+RUN npm install
 
 COPY --from=app_builder /src/next-ui/next.config.js ./
 COPY --from=app_builder /src/next-ui/public ./public
