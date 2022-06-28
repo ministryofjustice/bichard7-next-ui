@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p 4080",
     "lint": "next lint",
-    "lint:fix": "eslint . --fix",
+    "lint:fix": "next lint . --fix",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:run:file": "cypress run --spec",
