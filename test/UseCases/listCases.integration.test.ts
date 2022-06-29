@@ -22,6 +22,6 @@ describe("listCases", () => {
     // insert cases into db
     const cases = await listCases(connection, 100)
 
-    expect(cases).toHaveLength(36)
+    expect(cases).toHaveLength(100)
   })
 })
