@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "next": "12.1.6",
+    "pg-promise": "^10.11.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
