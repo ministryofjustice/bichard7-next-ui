@@ -71,9 +71,9 @@ jobs:
           command: npm run test:unit
 
   integration_test:
-    docker:
-      - image: cimg/node:16.12.0
-    resource_class: medium
+    machine:
+      image: ubuntu-2004:202104-01
+      docker_layer_caching: true
     working_directory: ~
     steps:
       - checkout
