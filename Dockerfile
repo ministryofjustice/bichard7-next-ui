@@ -1,12 +1,12 @@
 ARG BUILD_IMAGE="nginx-nodejs-supervisord"
 
-# Build next-ui app
+# Build UI app
 
 FROM ${BUILD_IMAGE} as app_builder
 
 LABEL maintainer="CJSE"
 
-WORKDIR /src/next-ui
+WORKDIR /src/ui
 
 COPY . ./
 
@@ -16,7 +16,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build
 
-# Run next-ui app
+# Run UI app
 
 FROM ${BUILD_IMAGE} as runner
 
