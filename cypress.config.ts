@@ -2,6 +2,6 @@ import { defineConfig } from "cypress"
 
 export default defineConfig({
   e2e: {
-    baseUrl: "http://localhost:4080/ui"
+    baseUrl: "http://localhost:4080/bichard"
   }
 })

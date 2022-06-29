@@ -29,11 +29,11 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-COPY --from=app_builder /src/next-ui/node_modules ./node_modules
-COPY --from=app_builder /src/next-ui/package*.json ./
-COPY --from=app_builder /src/next-ui/next.config.js ./
-COPY --from=app_builder /src/next-ui/public ./public
-COPY --from=app_builder --chown=nextjs:nodejs /src/next-ui/.next ./.next
+COPY --from=app_builder /src/ui/node_modules ./node_modules
+COPY --from=app_builder /src/ui/package*.json ./
+COPY --from=app_builder /src/ui/next.config.js ./
+COPY --from=app_builder /src/ui/public ./public
+COPY --from=app_builder --chown=nextjs:nodejs /src/ui/.next ./.next
 
 COPY docker/conf/nginx.conf /etc/nginx/nginx.conf
 COPY docker/conf/supervisord.conf /etc/supervisord.conf

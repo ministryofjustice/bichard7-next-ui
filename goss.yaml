@@ -112,7 +112,7 @@ process:
   supervisord:
     running: true
 http:
-  https://localhost/ui:
+  https://localhost/bichard:
     request-headers:
       - "X-Origin: http://localhost:4080"
     status: 200
