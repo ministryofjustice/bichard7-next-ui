@@ -5,7 +5,7 @@ const deleteFromTable = async (tableName, whereColumn, whereValue) => {
   const connection = getTestConnection()
   const isWhereClause = whereColumn && whereValue
 
-  const deleteQuery = `DELETE FROM br7own.?; DELETE FROM $\{table\} ${
+  const deleteQuery = `DELETE FROM br7own.error_list; DELETE FROM $\{table\} ${
     isWhereClause ? `WHERE ${whereColumn} = $\{value\}` : ""
   }`
 

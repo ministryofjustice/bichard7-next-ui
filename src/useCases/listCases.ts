@@ -1,13 +1,15 @@
 import Database from "types/Database"
+import ErrorListItem from "types/ErrorListItem"
 import PromiseResult from "types/PromiseResult"
 
-const listCases = async (connection: Database, limit: number): PromiseResult<any[]> => {
+const listCases = async (connection: Database, limit: number): PromiseResult<ErrorListItem[]> => {
   let cases
 
   const query = `
     SELECT
       *
-    FROM databasechangelog
+    FROM br7own.error_list
+    ORDER BY error_id
     LIMIT $\{limit\}
   `
 
