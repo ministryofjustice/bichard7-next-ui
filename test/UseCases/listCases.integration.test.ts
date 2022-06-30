@@ -32,7 +32,7 @@ describe("listCases", () => {
 
     await insertIntoErrorListTable(existingCases)
 
-    const cases = await listCases(connection, 100)
+    const cases = await listCases(connection, ["036"], 100)
 
     expect(isError(cases)).toBe(false)
 
@@ -43,4 +43,6 @@ describe("listCases", () => {
     expect(cases[0].message_id).toBe("xxxx0")
     expect(cases[99].message_id).toBe("xxx99")
   })
+
+  // TODO add tests for different force visibility codes to cover all cases
 })
