@@ -11,6 +11,7 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:run:file": "cypress run --spec",
+    "test": "npm run test:unit && npm run test:integration && npm run test:ui",
     "test:unit": "jest --testPathIgnorePatterns=\"integration\" \"e2e\" --runInBand",
     "test:unit:update": "npm run test:unit -- -u",
     "test:integration": "jest --testPathPattern=\"integration\" --runInBand",
