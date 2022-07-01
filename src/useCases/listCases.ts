@@ -28,11 +28,11 @@ const listCases = (connection: Database, forces: string[], limit: number): Promi
   SELECT
     *
   FROM br7own.error_list
-  WHERE ${conditions.join(" AND ")}
+  WHERE ${conditions.join(" OR ")}
   ORDER BY error_id
   LIMIT $\{limit\}
-`
-  console.log(query)
+  `
+
   return connection.manyOrNone<ErrorListItem>(query, { limit }).catch((error) => error as Error)
 }
 
