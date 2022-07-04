@@ -1,6 +1,6 @@
 import getTestConnection from "../getTestConnection"
 
-const insertIntoErrorListTable = async (data) => {
+const insertCourtCases = <T>(data: T[]): Promise<null[]> => {
   const connection = getTestConnection()
 
   const insertQuery = `
@@ -87,4 +87,4 @@ const insertIntoErrorListTable = async (data) => {
   return Promise.all(queries)
 }
 
-export default insertIntoErrorListTable
+export default insertCourtCases

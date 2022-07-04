@@ -1,7 +1,7 @@
 import getTestConnection from "../getTestConnection"
 import { getTableName } from "./helpers"
 
-const deleteFromTable = async (tableName, whereColumn, whereValue) => {
+const deleteFromTable = async (tableName: string, whereColumn?: string, whereValue?: string) => {
   const connection = getTestConnection()
   const isWhereClause = whereColumn && whereValue
 
