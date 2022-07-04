@@ -10,32 +10,34 @@ const AppDataSource = new DataSource({
   username: "bichard",
   password: "password",
   database: "bichard",
-  synchronize: true,
+  synchronize: false,
   logging: true,
   entities: [CourtCase],
   subscribers: [],
-  migrations: []
+  migrations: [],
+  schema: "br7own"
 })
 
 const listCourtCases = async (connection: Database, forces: string[], limit: number): PromiseResult<CourtCase[]> => {
   console.log(connection)
   await AppDataSource.initialize()
   const CourtCaseRepository = AppDataSource.getRepository(CourtCase)
-  const query = CourtCaseRepository.createQueryBuilder().orderBy({ errorId: "ASC" }).limit(limit)
+  const query = CourtCaseRepository.createQueryBuilder().orderBy({ error_id: "ASC" }).limit(limit)
 
   forces.forEach((f) => {
-    const trimmedForce = f.substring(1)
-    if (trimmedForce.length === 1) {
-      query.orWhere({ orgForPoliceFilter: Like(":trimedForce__%") }, { trimmedForce })
+    const force = f.substring(1)
+    // TODO ensure this isn't vulnerable to SQL injection e.g. using "%" for force,
+    // perhaps by using named parameters?
+    if (force.length === 1) {
+      query.orWhere({ orgForPoliceFilter: Like(`${force}__%`) })
     } else {
-      query.orWhere({ orgForPoliceFilter: Like(":trimedForce%") }, { trimmedForce })
+      query.orWhere({ orgForPoliceFilter: Like(`${force}%`) })
     }
 
-    if (trimmedForce.length > 3) {
-      const subCodes = [...new Array(trimmedForce.length + 1)]
-        .map((_, i) => i > 3 && trimmedForce.substring(0, i))
-        .filter((x) => x)
-        .map((x) => `'${x}'`)
+    if (force.length > 3) {
+      const subCodes = Array.from([...force].keys())
+        .splice(4)
+        .map((i) => force.substring(0, i))
       query.orWhere({ orgForPoliceFilter: In(subCodes) })
     }
   })
