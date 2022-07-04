@@ -22,7 +22,9 @@ const listCourtCases = async (connection: Database, forces: string[], limit: num
   console.log(connection)
   await AppDataSource.initialize()
   const CourtCaseRepository = AppDataSource.getRepository(CourtCase)
-  const query = CourtCaseRepository.createQueryBuilder().orderBy({ error_id: "ASC" }).limit(limit)
+  /* eslint-disable @typescript-eslint/no-non-null-assertion */
+  const errorIdColumnName = CourtCaseRepository.metadata.columns.find((c) => c.propertyName === "errorId")!.databaseName
+  const query = CourtCaseRepository.createQueryBuilder().orderBy(errorIdColumnName, "ASC").limit(limit)
 
   forces.forEach((f) => {
     const force = f.substring(1)
