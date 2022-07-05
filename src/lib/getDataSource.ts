@@ -1,5 +1,5 @@
 import CourtCase from "../entities/CourtCase"
-import { DataSource } from "typeorm"
+import { DataSource, DataSourceOptions } from "typeorm"
 import DatabaseConfig from "./DatabaseConfig"
 
 const databaseConfig: DatabaseConfig = {
@@ -13,7 +13,7 @@ const databaseConfig: DatabaseConfig = {
 }
 
 const getDataSource = async (): Promise<DataSource> => {
-  const appDataSource = new DataSource({
+  const config: DataSourceOptions = {
     type: "postgres",
     applicationName: "ui-connection",
     host: databaseConfig.host,
@@ -21,7 +21,7 @@ const getDataSource = async (): Promise<DataSource> => {
     username: databaseConfig.user,
     password: databaseConfig.password,
     database: databaseConfig.database,
-    synchronize: false,
+    synchronize: false, // It must be always false, otherwise it changes the database structure.
     logging: false,
     entities: [CourtCase],
     subscribers: [],
@@ -31,7 +31,13 @@ const getDataSource = async (): Promise<DataSource> => {
     extra: {
       max: 1
     }
-  })
+  }
+
+  if (config.synchronize) {
+    throw Error("Synchronize must be false.")
+  }
+
+  const appDataSource = new DataSource(config)
 
   if (!appDataSource.isInitialized) {
     await appDataSource.initialize()
