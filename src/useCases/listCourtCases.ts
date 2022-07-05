@@ -1,5 +1,5 @@
 import CourtCase from "../entities/CourtCase"
-import { DataSource, In, Like } from "typeorm"
+import { DataSource, In } from "typeorm"
 import Database from "types/Database"
 import PromiseResult from "types/PromiseResult"
 
@@ -24,16 +24,14 @@ const listCourtCases = async (connection: Database, forces: string[], limit: num
   const CourtCaseRepository = AppDataSource.getRepository(CourtCase)
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   const errorIdColumnName = CourtCaseRepository.metadata.columns.find((c) => c.propertyName === "errorId")!.databaseName
-  const query = CourtCaseRepository.createQueryBuilder().orderBy(errorIdColumnName, "ASC").limit(limit)
+  const query = CourtCaseRepository.createQueryBuilder("courtCase").orderBy(errorIdColumnName, "ASC").limit(limit)
 
   forces.forEach((f) => {
     const force = f.substring(1)
-    // TODO ensure this isn't vulnerable to SQL injection e.g. using "%" for force,
-    // perhaps by using named parameters?
     if (force.length === 1) {
-      query.orWhere({ orgForPoliceFilter: Like(`${force}__%`) })
+      query.orWhere("courtCase.orgForPoliceFilter like :force || '__%'", { force })
     } else {
-      query.orWhere({ orgForPoliceFilter: Like(`${force}%`) })
+      query.orWhere("courtCase.orgForPoliceFilter like :force || '%'", { force })
     }
 
     if (force.length > 3) {
