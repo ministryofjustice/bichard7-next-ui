@@ -118,7 +118,7 @@ jobs:
           command: ./.circleci/scripts/install-cypress.sh
       - run:
           name: Run UI tests
-          command: npm run test:ui
+          command: npm run cypress:run
       - store_artifacts:
           path: ./cypress/videos
       - store_artifacts:
