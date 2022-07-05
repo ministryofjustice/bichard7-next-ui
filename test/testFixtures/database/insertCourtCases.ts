@@ -1,7 +1,7 @@
-import getTestConnection from "../getTestConnection"
+import getDataSource from "../../../src/lib/getDataSource"
 
 const insertCourtCases = async <T>(data: T[]): Promise<null[]> => {
-  const connection = await getTestConnection()
+  const dataSource = await getDataSource()
 
   const insertQuery = `
     INSERT INTO
@@ -82,9 +82,7 @@ const insertCourtCases = async <T>(data: T[]): Promise<null[]> => {
   )
   `
 
-  return Promise.all(data.map((datum) => {
-    return connection.manager.query(insertQuery, Object.values(datum))
-  }))
+  return Promise.all(data.map((datum) => dataSource.manager.query(insertQuery, Object.values(datum))))
 }
 
 export default insertCourtCases

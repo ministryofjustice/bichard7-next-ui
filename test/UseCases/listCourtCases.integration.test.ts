@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import "reflect-metadata"
 import { expect } from "@jest/globals"
-import getTestConnection from "../testFixtures/getTestConnection"
 import listCourtCases from "../../src/useCases/listCourtCases"
 import deleteFromTable from "../testFixtures/database/deleteFromTable"
 import CourtCaseCase from "../testFixtures/database/data/error_list.json"
@@ -9,6 +8,7 @@ import insertCourtCases from "../testFixtures/database/insertCourtCases"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/entities/CourtCase"
 import { DataSource } from "typeorm"
+import getDataSource from "../../src/lib/getDataSource"
 
 const insertRecords = (orgsCodes: string[]) => {
   const existingCourtCases = orgsCodes.map((code, i) => {
@@ -27,15 +27,15 @@ describe("listCourtCases", () => {
   let connection: DataSource
 
   beforeAll(async () => {
-    connection = await getTestConnection()
+    connection = await getDataSource()
   })
 
   beforeEach(async () => {
     await deleteFromTable(CourtCase)
   })
 
-  afterAll(() => {
-    connection.destroy()
+  afterAll(async () => {
+    await connection.destroy()
   })
 
   it("shouldn't return more cases than the specified limit", async () => {

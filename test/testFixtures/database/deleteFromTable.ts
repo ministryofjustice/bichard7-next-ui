@@ -1,8 +1,8 @@
+import getDataSource from "../../../src/lib/getDataSource"
 import { EntityTarget, ObjectLiteral } from "typeorm"
-import getTestConnection from "../getTestConnection"
 
-const deleteFromTable = async(entity: EntityTarget<ObjectLiteral>) => {
-  const connection = await getTestConnection()
+const deleteFromTable = async (entity: EntityTarget<ObjectLiteral>) => {
+  const connection = await getDataSource()
 
   return connection.getRepository(entity).createQueryBuilder().delete().execute()
 }
