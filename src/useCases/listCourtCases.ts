@@ -1,27 +1,9 @@
 import CourtCase from "../entities/CourtCase"
 import { DataSource, In } from "typeorm"
-import Database from "types/Database"
 import PromiseResult from "types/PromiseResult"
 
-const AppDataSource = new DataSource({
-  type: "postgres",
-  host: "localhost",
-  port: 5432,
-  username: "bichard",
-  password: "password",
-  database: "bichard",
-  synchronize: false,
-  logging: true,
-  entities: [CourtCase],
-  subscribers: [],
-  migrations: [],
-  schema: "br7own"
-})
-
-const listCourtCases = async (connection: Database, forces: string[], limit: number): PromiseResult<CourtCase[]> => {
-  console.log(connection)
-  await AppDataSource.initialize()
-  const CourtCaseRepository = AppDataSource.getRepository(CourtCase)
+const listCourtCases = async (connection: DataSource, forces: string[], limit: number): PromiseResult<CourtCase[]> => {
+  const CourtCaseRepository = connection.getRepository(CourtCase)
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   const errorIdColumnName = CourtCaseRepository.metadata.columns.find((c) => c.propertyName === "errorId")!.databaseName
   const query = CourtCaseRepository.createQueryBuilder("courtCase").orderBy(errorIdColumnName, "ASC").limit(limit)
@@ -43,7 +25,6 @@ const listCourtCases = async (connection: Database, forces: string[], limit: num
   })
 
   const result = await query.getMany().catch((error: Error) => error)
-  await AppDataSource.destroy()
   return result
 }
 

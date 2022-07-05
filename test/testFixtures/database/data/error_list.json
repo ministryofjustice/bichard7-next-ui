@@ -34,7 +34,5 @@
   "court_reference": "42CY0300108",
   "error_insert_ts": "2022-06-30 09:44:03.99",
   "trigger_insert_ts": "2022-06-30 09:44:11.193",
-  "pnc_update_enabled": "Y",
-  "defendant_name_upper": "ALLOCATION TRIGGER",
-  "court_name_upper": "MAGISTRATES' COURTS ESSEX BASILDON"
+  "pnc_update_enabled": "Y"
 }

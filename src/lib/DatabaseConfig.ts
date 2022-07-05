@@ -5,4 +5,5 @@ export default interface DatabaseConfig {
   database: string
   port: number
   ssl: boolean
+  schema: string
 }
