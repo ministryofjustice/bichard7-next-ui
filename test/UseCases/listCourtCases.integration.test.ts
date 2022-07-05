@@ -213,7 +213,7 @@ describe("listCourtCases", () => {
     expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4])
   })
 
-  it.only("should show cases for all forces visible to a user", async () => {
+  it("should show cases for all forces visible to a user", async () => {
     await insertRecords([
       "36",
       "36F",
@@ -228,6 +228,7 @@ describe("listCourtCases", () => {
       "12GHA",
       "12GHAB",
       "12GH",
+      "13GH",
       "13GHA",
       "13GHA1",
       "13GHB",
@@ -238,7 +239,7 @@ describe("listCourtCases", () => {
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
-    expect(cases).toHaveLength(6)
+    expect(cases).toHaveLength(8)
 
     expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual([
       "36FP  ",
@@ -250,6 +251,6 @@ describe("listCourtCases", () => {
       "13GHB ",
       "13GHBA"
     ])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4])
+    expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4, 13, 14, 15, 16, 17])
   })
 })
