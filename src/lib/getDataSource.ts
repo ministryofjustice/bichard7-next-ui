@@ -1,6 +1,7 @@
 import CourtCase from "../entities/CourtCase"
 import { DataSource, DataSourceOptions } from "typeorm"
 import DatabaseConfig from "./DatabaseConfig"
+import User from "entities/User"
 
 const databaseConfig: DatabaseConfig = {
   host: process.env.DB_HOST ?? process.env.DB_AUTH_HOST ?? "localhost",
@@ -23,7 +24,7 @@ const getDataSource = async (): Promise<DataSource> => {
     database: databaseConfig.database,
     synchronize: false, // It must be always false, otherwise it changes the database structure.
     logging: false,
-    entities: [CourtCase],
+    entities: [CourtCase, User],
     subscribers: [],
     migrations: [],
     schema: databaseConfig.schema,

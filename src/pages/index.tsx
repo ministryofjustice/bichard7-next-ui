@@ -1,9 +1,29 @@
 /* eslint-disable filenames/match-exported */
-import type { NextPage } from "next"
+import { withAuthentication, withMultipleServerSideProps } from "middleware"
+import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
+import { ParsedUrlQuery } from "querystring"
+import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import styles from "../styles/Home.module.css"
 
-const Home: NextPage = () => {
+export const getServerSideProps = withMultipleServerSideProps(
+  withAuthentication,
+  (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
+    const { currentUser } = context as AuthenticationServerSidePropsContext
+    console.log(context.query)
+    return Promise.resolve({
+      props: {
+        username: currentUser?.username
+      }
+    })
+  }
+)
+
+interface Props {
+  username?: string
+}
+
+const Home: NextPage = ({ username }: Props) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -13,7 +33,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>{"Welcome to Bichard UI"}</h1>
+        <h1 className={styles.title}>{`Welcome to ${username}`}</h1>
       </main>
     </div>
   )
