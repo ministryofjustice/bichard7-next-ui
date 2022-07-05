@@ -212,4 +212,44 @@ describe("listCourtCases", () => {
     expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual(["36FP  ", "36FPA ", "36FPA1"])
     expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4])
   })
+
+  it.only("should show cases for all forces visible to a user", async () => {
+    await insertRecords([
+      "36",
+      "36F",
+      "36FP",
+      "36FPA",
+      "36FPA1",
+      "36FPA2",
+      "36FQ",
+      "12LK",
+      "12G",
+      "12GHB",
+      "12GHA",
+      "12GHAB",
+      "12GH",
+      "13GHA",
+      "13GHA1",
+      "13GHB",
+      "13GHBA"
+    ])
+
+    const result = await listCourtCases(connection, ["036FPA1", "013GH"], 100)
+    expect(isError(result)).toBe(false)
+    const cases = result as CourtCase[]
+
+    expect(cases).toHaveLength(6)
+
+    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual([
+      "36FP  ",
+      "36FPA ",
+      "36FPA1",
+      "13GH  ",
+      "13GHA ",
+      "13GHA1",
+      "13GHB ",
+      "13GHBA"
+    ])
+    expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4])
+  })
 })
