@@ -16,6 +16,23 @@ commands:
           name: Install node dependencies
           command: npm i
 
+  clone_bichard_repo:
+    description: Check out the bichard7-next repo
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - cd:21:43:ca:b8:83:a7:96:34:ab:96:d7:97:80:fa:25
+      - run:
+          name: Clone Bichard7 Next
+          command: git clone --depth 1 git@github.com:ministryofjustice/bichard7-next.git ~/bichard7-next
+
+  run_postgres_database:
+    description: Spin up the postgres database
+    steps:
+      - run:
+          name: Spin up PostgreSQL database
+          working_directory: ~/bichard7-next
+          command: make run-pg
 jobs:
   build:
     docker:
@@ -54,17 +71,17 @@ jobs:
           command: npm run test:unit
 
   integration_test:
-    docker:
-      - image: cimg/node:16.12.0
-    resource_class: medium
+    machine:
+      image: ubuntu-2004:202104-01
+      docker_layer_caching: true
     working_directory: ~
     steps:
       - checkout
       - npm_install
       - attach_workspace:
           at: .
-      # - clone_bichard_repo
-      # - run_postgres_database
+      - clone_bichard_repo
+      - run_postgres_database
       - run:
           name: Run integration tests
           command: npm run test:integration
@@ -101,7 +118,7 @@ jobs:
           command: ./.circleci/scripts/install-cypress.sh
       - run:
           name: Run UI tests
-          command: npm run test:ui
+          command: npm run cypress:run
       - store_artifacts:
           path: ./cypress/videos
       - store_artifacts:
