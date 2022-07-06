@@ -1,7 +1,7 @@
 import { expect } from "@jest/globals"
+import { DataSource } from "typeorm"
 import CourtCase from "../../src/entities/CourtCase"
 import getDataSource from "../../src/lib/getDataSource"
-import { DataSource } from "typeorm"
 import { isError } from "../../src/types/Result"
 import getCourtCase from "../../src/useCases/getCourtCase"
 import CourtCaseCase from "../testFixtures/database/data/error_list.json"
@@ -58,5 +58,18 @@ describe("listCourtCases", () => {
 
     const actualCourtCase = result as CourtCase
     expect({ ...actualCourtCase }).toStrictEqual(expectedCourtCase)
+  })
+
+  it("should return null if the court case doesn't exist", async () => {
+    const result = await getCourtCase(dataSource, 0, ["036FPA1"])
+
+    expect(result).toBeNull()
+  })
+
+  it.skip("should return null when record exists and is not visible to the specified forces", async () => {
+    await insertRecords(["36FPA3"])
+    const result = await getCourtCase(dataSource, 0, ["036FPA1"])
+
+    expect(result).toBeNull()
   })
 })
