@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "install:assets": "./scripts/copy-govuk-frontend-assets.sh",
     "dev": "next dev -p 4080",
     "build": "next build",
     "start": "next start -p 4080",
@@ -22,6 +23,7 @@
   "dependencies": {
     "@types/styled-components": "^5.1.25",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
+    "govuk-frontend": "^4.2.0",
     "govuk-react": "^0.10.1",
     "next": "12.1.6",
     "pg": "^8.7.1",

@@ -99,6 +99,9 @@ jobs:
           command: ./.circleci/scripts/install-cypress.sh 2>&1
           background: true
       - npm_install
+      - run:
+          name: Install GOV.UK Assets
+          command: npm run install:assets
       - attach_workspace:
           at: .
       - clone_bichard_repo

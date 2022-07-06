@@ -1,8 +1,9 @@
 import CourtCase from "entities/CourtCase"
-import { Table } from "govuk-react"
+import { Footer, Main, Table } from "govuk-react"
 import getDataSource from "lib/getDataSource"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
+import { addBasePath } from "next/dist/shared/lib/router/router"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
@@ -51,17 +52,31 @@ const Home: NextPage = ({ username, courtCases }: Props) => {
       </Table.Row>
     )
   })
+
   return (
-    <div>
+    <>
       <Head>
         <title>{"Case List | Bichard7"}</title>
         <meta name="description" content="Case List | Bichard7" />
       </Head>
 
-      <Table caption={`${courtCases?.length} court cases for ${username}`} head={tableHead}>
-        {tableBody}
-      </Table>
-    </div>
+      <Main>
+        <Table caption={`${courtCases?.length} court cases for ${username}`} head={tableHead}>
+          {tableBody}
+        </Table>
+        <Footer
+          copyright={{
+            image: {
+              height: 102,
+              src: addBasePath("/images/govuk-crest.png"),
+              width: 125
+            },
+            link: "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",
+            text: "Crown copyright"
+          }}
+        ></Footer>
+      </Main>
+    </>
   )
 }
 
