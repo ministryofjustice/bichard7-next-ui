@@ -253,4 +253,33 @@ describe("listCourtCases", () => {
     ])
     expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4, 13, 14, 15, 16, 17])
   })
+
+  it("should show no cases to a user with no visible forces", async () => {
+    await insertRecords([
+      "36",
+      "36F",
+      "36FP",
+      "36FPA",
+      "36FPA1",
+      "36FPA2",
+      "36FQ",
+      "12LK",
+      "12G",
+      "12GHB",
+      "12GHA",
+      "12GHAB",
+      "12GH",
+      "13GH",
+      "13GHA",
+      "13GHA1",
+      "13GHB",
+      "13GHBA"
+    ])
+
+    const result = await listCourtCases(connection, [], 100)
+    expect(isError(result)).toBe(false)
+    const cases = result as CourtCase[]
+
+    expect(cases).toHaveLength(0)
+  })
 })
