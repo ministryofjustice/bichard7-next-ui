@@ -3,7 +3,7 @@ import { GetServerSidePropsContext } from "next"
 import { ParsedUrlQuery } from "querystring"
 
 type AuthenticationServerSidePropsContext = GetServerSidePropsContext<ParsedUrlQuery> & {
-  currentUser?: Partial<User>
+  currentUser: User
 }
 
 export default AuthenticationServerSidePropsContext

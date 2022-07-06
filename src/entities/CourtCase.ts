@@ -1,7 +1,8 @@
 import { Column, Entity, PrimaryColumn } from "typeorm"
+import BaseEntity from "./BaseEntity"
 
 @Entity({ name: "error_list" })
-export default class CourtCase {
+export default class CourtCase extends BaseEntity {
   @PrimaryColumn({ name: "message_id" })
   messageId!: string
 

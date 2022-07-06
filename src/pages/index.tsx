@@ -1,9 +1,10 @@
+import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
-import { Footer, Main, Table } from "govuk-react"
+import User from "entities/User"
+import { Table } from "govuk-react"
 import getDataSource from "lib/getDataSource"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
-import { addBasePath } from "next/dist/shared/lib/router/router"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
@@ -11,8 +12,8 @@ import { isError } from "types/Result"
 import listCourtCases from "useCases/listCourtCases"
 
 interface Props {
-  username?: string
-  courtCases?: CourtCase[]
+  user: User
+  courtCases: CourtCase[]
 }
 
 export const getServerSideProps = withMultipleServerSideProps(
@@ -20,20 +21,20 @@ export const getServerSideProps = withMultipleServerSideProps(
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser } = context as AuthenticationServerSidePropsContext
 
-    const visibleForces = currentUser?.visibleForces?.split(/[, ]/) || []
+    const visibleForces = currentUser.visibleForces?.split(/[, ]/) || []
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, visibleForces, 100)
 
     return {
       props: {
-        username: currentUser?.username,
-        courtCases: isError(courtCases) ? [] : JSON.parse(JSON.stringify(courtCases))
+        user: currentUser.serialize(),
+        courtCases: isError(courtCases) ? [] : courtCases.map((c) => c.serialize())
       }
     }
   }
 )
 
-const Home: NextPage = ({ username, courtCases }: Props) => {
+const Home: NextPage = ({ user, courtCases }: Props) => {
   const tableHead = (
     <Table.Row>
       <Table.CellHeader>{"Court Date"}</Table.CellHeader>
@@ -60,22 +61,11 @@ const Home: NextPage = ({ username, courtCases }: Props) => {
         <meta name="description" content="Case List | Bichard7" />
       </Head>
 
-      <Main>
-        <Table caption={`${courtCases?.length} court cases for ${username}`} head={tableHead}>
+      <Layout user={user}>
+        <Table caption={`${courtCases?.length} court cases for ${user.username}`} head={tableHead}>
           {tableBody}
         </Table>
-        <Footer
-          copyright={{
-            image: {
-              height: 102,
-              src: addBasePath("/images/govuk-crest.png"),
-              width: 125
-            },
-            link: "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",
-            text: "Crown copyright"
-          }}
-        ></Footer>
-      </Main>
+      </Layout>
     </>
   )
 }
