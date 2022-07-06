@@ -8,7 +8,11 @@ import { ParsedUrlQuery } from "querystring"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import listCourtCases from "useCases/listCourtCases"
-import styles from "../styles/Home.module.css"
+
+interface Props {
+  username?: string
+  courtCases?: CourtCase[]
+}
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -28,22 +32,17 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-interface Props {
-  username?: string
-  courtCases?: CourtCase[]
-}
-
 const Home: NextPage = ({ username, courtCases }: Props) => {
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>{"Case List | Bichard7"}</title>
         <meta name="description" content="Case List | Bichard7" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>{`Welcome to ${username}`}</h1>
+      <main>
+        <h1>{`Cases for ${username}`}</h1>
         {courtCases && <CourtCaseList courtCases={courtCases}></CourtCaseList>}
       </main>
     </div>
