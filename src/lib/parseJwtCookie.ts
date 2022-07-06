@@ -6,8 +6,10 @@ const parseJwt = (jwtPayload: string): AuthJwt => {
   return JSON.parse(base64Decode.toString())
 }
 
-const parseJwtCookie = (request: { cookies: NextApiRequestCookies }): AuthJwt => {
-  return parseJwt(request.cookies[".AUTH"].split(".")[1])
+const parseJwtCookie = (request: { cookies: NextApiRequestCookies }): AuthJwt | null => {
+  const payload = request.cookies[".AUTH"]?.split(".")?.[1]
+
+  return payload ? parseJwt(payload) : null
 }
 
 export default parseJwtCookie

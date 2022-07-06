@@ -4,23 +4,25 @@ import parseJwtCookie from "lib/parseJwtCookie"
 import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next"
 import { ParsedUrlQuery } from "querystring"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import PromiseResult from "types/PromiseResult"
-import { isError } from "types/Result"
+import { isError, Result } from "types/Result"
 
 export default <Props>(getServerSidePropsFunction: GetServerSideProps<Props>): GetServerSideProps<Props> => {
   const result: GetServerSideProps<Props> = async (
     context: GetServerSidePropsContext<ParsedUrlQuery>
   ): Promise<GetServerSidePropsResult<Props>> => {
     const { req, res } = context
-    const { username } = parseJwtCookie(req)
-    const dataSource = await getDataSource()
+    const authJwt = parseJwtCookie(req)
+    let currentUser: Result<User | null> = null
 
-    const currentUser = (await dataSource
-      .getRepository(User)
-      .findOneBy({ username })
-      .catch((error) => error)) as PromiseResult<User | null>
+    if (authJwt) {
+      const dataSource = await getDataSource()
+      currentUser = await dataSource
+        .getRepository(User)
+        .findOneBy({ username: authJwt.username })
+        .catch((error) => error)
+    }
 
-    if (isError(currentUser) || !currentUser) {
+    if (!currentUser || isError(currentUser)) {
       res.statusCode = 401
       res.statusMessage = "Unauthorized"
       res.end()
