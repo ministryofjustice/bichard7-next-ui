@@ -21,9 +21,8 @@ export const getServerSideProps = withMultipleServerSideProps(
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser } = context as AuthenticationServerSidePropsContext
 
-    const visibleForces = currentUser.visibleForces?.split(/[, ]/) || []
     const dataSource = await getDataSource()
-    const courtCases = await listCourtCases(dataSource, visibleForces, 100)
+    const courtCases = await listCourtCases(dataSource, currentUser.visibleForces, 100)
 
     return {
       props: {
