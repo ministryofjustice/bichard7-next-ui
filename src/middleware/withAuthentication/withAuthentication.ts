@@ -1,4 +1,4 @@
-import User from "entities/User"
+import User from "../../entities/User"
 import getDataSource from "lib/getDataSource"
 import parseJwtCookie from "lib/parseJwtCookie"
 import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next"

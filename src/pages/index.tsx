@@ -1,5 +1,5 @@
-import CourtCaseList from "components/CourtCaseList"
 import CourtCase from "entities/CourtCase"
+import { Table } from "govuk-react"
 import getDataSource from "lib/getDataSource"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -33,18 +33,34 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 const Home: NextPage = ({ username, courtCases }: Props) => {
+  const tableHead = (
+    <Table.Row>
+      <Table.CellHeader>{"Court Date"}</Table.CellHeader>
+      <Table.CellHeader>{"PTIURN"}</Table.CellHeader>
+      <Table.CellHeader>{"Defendant Name"}</Table.CellHeader>
+      <Table.CellHeader>{"Court Name"}</Table.CellHeader>
+    </Table.Row>
+  )
+  const tableBody = courtCases?.map((courtCase, idx) => {
+    return (
+      <Table.Row key={idx}>
+        <Table.Cell>{courtCase.courtDate}</Table.Cell>
+        <Table.Cell>{courtCase.ptiurn}</Table.Cell>
+        <Table.Cell>{courtCase.defendantName}</Table.Cell>
+        <Table.Cell>{courtCase.courtName}</Table.Cell>
+      </Table.Row>
+    )
+  })
   return (
     <div>
       <Head>
         <title>{"Case List | Bichard7"}</title>
         <meta name="description" content="Case List | Bichard7" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        <h1>{`Cases for ${username}`}</h1>
-        {courtCases && <CourtCaseList courtCases={courtCases}></CourtCaseList>}
-      </main>
+      <Table caption={`${courtCases?.length} court cases for ${username}`} head={tableHead}>
+        {tableBody}
+      </Table>
     </div>
   )
 }
