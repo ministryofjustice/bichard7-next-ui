@@ -33,7 +33,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const Home: NextPage = ({ user, courtCases }: Props) => {
+const Home: NextPage<Props> = ({ user, courtCases }: Props) => {
   const tableHead = (
     <Table.Row>
       <Table.CellHeader>{"Court Date"}</Table.CellHeader>
