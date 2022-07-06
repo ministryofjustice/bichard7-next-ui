@@ -1,4 +1,5 @@
 /* eslint-disable filenames/match-exported */
+import CourtCaseList from "components/CourtCaseList"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
@@ -10,7 +11,6 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser } = context as AuthenticationServerSidePropsContext
-    console.log(context.query)
     return Promise.resolve({
       props: {
         username: currentUser?.username,
@@ -36,12 +36,7 @@ const Home: NextPage = ({ username, visibleForces }: Props) => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>{`Welcome to ${username}`}</h1>
-        <p>{"Your visible forces are:"}</p>
-        <div>
-          {(visibleForces || []).map((force, idx) => {
-            return <p key={idx}>{force}</p>
-          })}
-        </div>
+        <CourtCaseList courtCases={[]}></CourtCaseList>
       </main>
     </div>
   )
