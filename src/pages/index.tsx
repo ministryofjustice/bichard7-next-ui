@@ -1,31 +1,39 @@
-/* eslint-disable filenames/match-exported */
 import CourtCaseList from "components/CourtCaseList"
+import CourtCase from "entities/CourtCase"
+import getDataSource from "lib/getDataSource"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { isError } from "types/Result"
+import listCourtCases from "useCases/listCourtCases"
 import styles from "../styles/Home.module.css"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
-  (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
+  async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser } = context as AuthenticationServerSidePropsContext
-    return Promise.resolve({
+
+    const visibleForces = currentUser?.visibleForces?.split(/[, ]/) || []
+    const dataSource = await getDataSource()
+    const courtCases = await listCourtCases(dataSource, visibleForces, 100)
+
+    return {
       props: {
         username: currentUser?.username,
-        visibleForces: currentUser?.visibleForces?.split(/[, ]/)
+        courtCases: isError(courtCases) ? [] : JSON.parse(JSON.stringify(courtCases))
       }
-    })
+    }
   }
 )
 
 interface Props {
   username?: string
-  visibleForces?: string[]
+  courtCases?: CourtCase[]
 }
 
-const Home: NextPage = ({ username, visibleForces }: Props) => {
+const Home: NextPage = ({ username, courtCases }: Props) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -36,7 +44,7 @@ const Home: NextPage = ({ username, visibleForces }: Props) => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>{`Welcome to ${username}`}</h1>
-        <CourtCaseList courtCases={[]}></CourtCaseList>
+        {courtCases && <CourtCaseList courtCases={courtCases}></CourtCaseList>}
       </main>
     </div>
   )

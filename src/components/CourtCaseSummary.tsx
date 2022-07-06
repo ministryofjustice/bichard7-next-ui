@@ -8,7 +8,7 @@ const CourtCaseSummary = ({ courtCase }: Props) => {
   return (
     <div>
       <p>
-        {"PTIURN:"} {courtCase.ptiurn}
+        {"error ID:"} {courtCase.errorId}
       </p>
     </div>
   )
