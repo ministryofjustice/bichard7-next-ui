@@ -1,10 +1,7 @@
-/// <reference types="cypress" />
-
 describe("Home", () => {
-  it("should display Welcome title", () => {
-    // When
+  it("should display 0 cases and the user's username when no cases are added", () => {
+    cy.setAuthCookie("Bichard01")
     cy.visit("/")
-    // Then
-    cy.get("h1").should("have.text", "Welcome to Bichard UI")
+    cy.get("caption").should("have.text", "0 court cases for Bichard01")
   })
 })
