@@ -1,19 +1,19 @@
 import { Column, Entity, PrimaryColumn } from "typeorm"
-import BaseEntity from "./BaseEntity"
+import dateTransformer from "./transformers/dateTransformer"
 
 @Entity({ name: "error_list" })
-export default class CourtCase extends BaseEntity {
-  @PrimaryColumn({ name: "message_id" })
-  messageId!: string
-
-  @Column({ name: "error_id" })
+export default class CourtCase {
+  @PrimaryColumn({ name: "error_id" })
   errorId!: number
+
+  @Column({ name: "message_id" })
+  messageId!: string
 
   @Column({ name: "court_name" })
   courtName!: string
 
-  @Column({ name: "court_date" })
-  courtDate!: string
+  @Column({ name: "court_date", type: "date", nullable: true, transformer: dateTransformer })
+  courtDate?: Date
 
   @Column({ name: "ptiurn" })
   ptiurn!: string
