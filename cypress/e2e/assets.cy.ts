@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 describe("GOV.UK Assets", () => {
   it("should provide copyright logo", () => {
     cy.setAuthCookie("Bichard01")
@@ -17,7 +19,7 @@ describe("GOV.UK Assets", () => {
         // cy.request automatically uses Cypress' defined baseUrl, which
         // includes /users already - so we need to strip it out here to get it
         // to work
-        const iconUrl = iconHref.replace("/bichard/", "/")
+        const iconUrl = (iconHref as unknown as string).replace("/bichard", "")
         cy.request({
           url: iconUrl,
           failOnStatusCode: false
@@ -28,3 +30,5 @@ describe("GOV.UK Assets", () => {
       })
   })
 })
+
+export {}

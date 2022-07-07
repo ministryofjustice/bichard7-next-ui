@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig",
   "compilerOptions": {
-    "types": ["cypress"]
+    "types": ["node", "cypress"]
   },
   "include": ["**/*.*"]
 }

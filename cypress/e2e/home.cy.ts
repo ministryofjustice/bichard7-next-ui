@@ -5,3 +5,5 @@ describe("Home", () => {
     cy.get("caption").should("have.text", "0 court cases for Bichard01")
   })
 })
+
+export {}
