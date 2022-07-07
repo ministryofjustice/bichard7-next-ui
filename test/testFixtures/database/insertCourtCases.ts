@@ -92,7 +92,8 @@ const insertCourtCasesWithOrgCodes = (orgsCodes: string[]) => {
       ...CourtCaseCase,
       org_for_police_filter: code.padEnd(6, " "),
       error_id: i,
-      message_id: String(i).padStart(5, "x")
+      message_id: String(i).padStart(5, "x"),
+      ptiurn: "Case" + String(i).padStart(5, "0")
     }
   })
 
