@@ -11,7 +11,7 @@ describe("Home", () => {
     const users: TestUser[] = Array.from(Array(5)).map((_value, idx) => {
       return {
         username: `Bichard0${idx}`,
-        visibleForces: [`00${idx}`],
+        visibleForces: [`0${idx}`],
         forenames: "Bichard Test User",
         surname: `0${idx}`,
         email: `bichard0${idx}@example.com`
@@ -64,7 +64,7 @@ describe("Home", () => {
       cy.task("insertUsers", [
         {
           username: "Bichard01",
-          visibleForces: ["0011111"],
+          visibleForces: ["011111"],
           forenames: "Bichard Test User",
           surname: "01",
           email: "bichard01@example.com"

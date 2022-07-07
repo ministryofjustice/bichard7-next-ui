@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from "typeorm"
 import BaseEntity from "./BaseEntity"
-import delimeterStringTransfomer from "./transformers/delimeterStringTransfomer"
+import delimitedPrefixedString from "./transformers/delimitedPrefixedString"
 
 @Entity({ name: "users" })
 export default class User extends BaseEntity {
@@ -16,6 +16,6 @@ export default class User extends BaseEntity {
   @Column()
   surname?: string
 
-  @Column({ name: "visible_forces", transformer: delimeterStringTransfomer(","), type: "varchar" })
+  @Column({ name: "visible_forces", transformer: delimitedPrefixedString(",", "0"), type: "varchar" })
   visibleForces!: string[]
 }
