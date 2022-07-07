@@ -41,7 +41,7 @@ describe("listCourtCases", () => {
 
   it("should return court case details when record exists and is visible to the specified forces", async () => {
     const courtCase = (await insertRecords(["36FPA1"]))[0]
-    const expectedCourtCase: CourtCase = {
+    const expectedCourtCase = {
       errorId: courtCase.error_id,
       messageId: courtCase.message_id,
       courtDate: new Date("2008-09-25T00:00:00.000Z"),
@@ -51,7 +51,7 @@ describe("listCourtCases", () => {
       orgForPoliceFilter: courtCase.org_for_police_filter,
       ptiurn: courtCase.ptiurn,
       triggerReason: courtCase.trigger_reason
-    }
+    } as CourtCase
 
     const result = await getCourtCase(dataSource, 0, ["036FPA1"])
     expect(isError(result)).toBe(false)
@@ -66,7 +66,7 @@ describe("listCourtCases", () => {
     expect(result).toBeNull()
   })
 
-  it.skip("should return null when record exists and is not visible to the specified forces", async () => {
+  it("should return null when record exists and is not visible to the specified forces", async () => {
     await insertRecords(["36FPA3"])
     const result = await getCourtCase(dataSource, 0, ["036FPA1"])
 

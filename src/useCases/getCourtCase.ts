@@ -1,20 +1,17 @@
 import CourtCase from "../entities/CourtCase"
 import { DataSource } from "typeorm"
 import PromiseResult from "../types/PromiseResult"
-import { Result } from "../types/Result"
+import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
-const getCourtCase = async (
+const getCourtCase = (
   dataSource: DataSource,
   courtCaseId: number,
   forces: string[]
 ): PromiseResult<CourtCase | null> => {
   const courtCaseRepository = dataSource.getRepository(CourtCase)
-  const courtCase = (await courtCaseRepository
-    .findOneBy({ errorId: courtCaseId })
-    .catch((error) => error)) as Result<CourtCase | null>
+  const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces).andWhere({ errorId: courtCaseId })
 
-  console.log(forces)
-  return courtCase
+  return query.getOne().catch((error) => error)
 }
 
 export default getCourtCase

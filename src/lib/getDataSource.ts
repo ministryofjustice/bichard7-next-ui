@@ -23,12 +23,12 @@ const getDataSource = async (): Promise<DataSource> => {
     password: databaseConfig.password,
     database: databaseConfig.database,
     synchronize: false, // It must be always false, otherwise it changes the database structure.
-    logging: false,
     entities: [CourtCase, User],
     subscribers: [],
     migrations: [],
     schema: databaseConfig.schema,
     ssl: databaseConfig.ssl ? { rejectUnauthorized: false } : false,
+    logging: false,
     extra: {
       max: 1
     }
