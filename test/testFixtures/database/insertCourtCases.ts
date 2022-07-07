@@ -1,4 +1,5 @@
 import getDataSource from "../../../src/lib/getDataSource"
+import CourtCaseCase from "./data/error_list.json"
 
 const insertCourtCases = async <T>(data: T[]): Promise<null[]> => {
   const dataSource = await getDataSource()
@@ -85,4 +86,18 @@ const insertCourtCases = async <T>(data: T[]): Promise<null[]> => {
   return Promise.all(data.map((datum) => dataSource.manager.query(insertQuery, Object.values(datum))))
 }
 
-export default insertCourtCases
+const insertCourtCasesWithOrgCodes = (orgsCodes: string[]) => {
+  const existingCourtCases = orgsCodes.map((code, i) => {
+    return {
+      ...CourtCaseCase,
+      org_for_police_filter: code.padEnd(6, " "),
+      error_id: i,
+      message_id: String(i).padStart(5, "x"),
+      ptiurn: "Case" + String(i).padStart(5, "0")
+    }
+  })
+
+  return insertCourtCases(existingCourtCases)
+}
+
+export { insertCourtCases, insertCourtCasesWithOrgCodes }

@@ -72,11 +72,14 @@
       }
     },
     {
-      "files": ["cypress/**/*.js"],
+      "files": ["cypress/**/*.ts"],
       "extends": ["plugin:cypress/recommended"],
       "rules": {
         "no-console": "off",
-        "no-unused-expressions": "off"
+        "no-unused-expressions": "off",
+        "@typescript-eslint/naming-convention": "off",
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-non-null-assertion": "off"
       }
     }
   ]
