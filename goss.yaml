@@ -114,9 +114,3 @@ process:
     running: true
   supervisord:
     running: true
-http:
-  https://localhost/bichard:
-    request-headers:
-      - "X-Origin: http://localhost:4080"
-    status: 200
-    allow-insecure: true
