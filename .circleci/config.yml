@@ -87,8 +87,9 @@ jobs:
           command: npm run test:integration
 
   ui_test:
-    docker:
-      - image: cimg/node:16.12.0
+    machine:
+      image: ubuntu-2004:202104-01
+      docker_layer_caching: true
     resource_class: medium
     working_directory: ~
     steps:
@@ -98,13 +99,13 @@ jobs:
           command: ./.circleci/scripts/install-cypress.sh 2>&1
           background: true
       - npm_install
-      # - run:
-      #     name: Install GOV.UK Assets
-      #     command: npm run install:assets
+      - run:
+          name: Install GOV.UK Assets
+          command: npm run install:assets
       - attach_workspace:
           at: .
-      # - clone_bichard_repo
-      # - run_postgres_database
+      - clone_bichard_repo
+      - run_postgres_database
       - run:
           name: Run next application
           command: npm run start

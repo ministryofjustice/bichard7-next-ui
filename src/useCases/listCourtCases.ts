@@ -11,6 +11,11 @@ const listCourtCases = async (connection: DataSource, forces: string[], limit: n
     .orderBy(getColumnName(courtCaseRepository, "errorId"), "ASC")
     .limit(limit)
 
+  if (forces.length < 1) {
+    query.where(":numForces > 0", { numForces: forces.length })
+    return query.getMany().catch((error: Error) => error)
+  }
+
   forces.forEach((f, i) => {
     const force = f.substring(1)
     const args: KeyValuePair<string, string> = {}
