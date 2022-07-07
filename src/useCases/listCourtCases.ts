@@ -4,8 +4,8 @@ import PromiseResult from "../types/PromiseResult"
 import KeyValuePair from "../types/KeyValuePair"
 import getColumnName from "../lib/getColumnName"
 
-const listCourtCases = async (connection: DataSource, forces: string[], limit: number): PromiseResult<CourtCase[]> => {
-  const courtCaseRepository = connection.getRepository(CourtCase)
+const listCourtCases = async (dataSource: DataSource, forces: string[], limit: number): PromiseResult<CourtCase[]> => {
+  const courtCaseRepository = dataSource.getRepository(CourtCase)
   const query = courtCaseRepository
     .createQueryBuilder("courtCase")
     .orderBy(getColumnName(courtCaseRepository, "errorId"), "ASC")
