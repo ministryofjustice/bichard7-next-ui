@@ -9,7 +9,7 @@ interface Props {
 }
 
 const Layout = ({ children, user }: Props) => {
-  const header = <TopNav>{[user.forenames, user.surname].join(" ")}</TopNav>
+  const header = <TopNav serviceTitle={"Bichard7"}>{[user.forenames, user.surname].join(" ")}</TopNav>
   return (
     <>
       <Page header={header}>{children}</Page>
