@@ -4,6 +4,7 @@ import { defineConfig } from "cypress"
 import CourtCase from "entities/CourtCase"
 import deleteFromTable from "./test/testFixtures/database/deleteFromTable"
 import { insertCourtCasesWithOrgCodes } from "./test/testFixtures/database/insertCourtCases"
+import { deleteUsers, insertUsers, TestUser } from "./test/testFixtures/database/manageUsers"
 
 export default defineConfig({
   e2e: {
@@ -16,6 +17,14 @@ export default defineConfig({
 
         clearCourtCases() {
           return deleteFromTable(CourtCase)
+        },
+
+        insertUsers(users: TestUser[]) {
+          return insertUsers(users)
+        },
+
+        clearUsers() {
+          return deleteUsers()
         }
       })
     }

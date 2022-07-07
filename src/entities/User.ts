@@ -8,6 +8,9 @@ export default class User extends BaseEntity {
   username!: string
 
   @Column()
+  email!: string
+
+  @Column()
   forenames?: string
 
   @Column()
