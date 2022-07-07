@@ -53,10 +53,16 @@ describe("listCourtCases", () => {
       triggerReason: courtCase.trigger_reason
     } as CourtCase
 
-    const result = await getCourtCase(dataSource, 0, ["036FPA1"])
+    let result = await getCourtCase(dataSource, 0, ["036FPA1"])
     expect(isError(result)).toBe(false)
 
-    const actualCourtCase = result as CourtCase
+    let actualCourtCase = result as CourtCase
+    expect({ ...actualCourtCase }).toStrictEqual(expectedCourtCase)
+
+    result = await getCourtCase(dataSource, 0, ["036"])
+    expect(isError(result)).toBe(false)
+
+    actualCourtCase = result as CourtCase
     expect({ ...actualCourtCase }).toStrictEqual(expectedCourtCase)
   })
 
@@ -69,6 +75,13 @@ describe("listCourtCases", () => {
   it("should return null when record exists and is not visible to the specified forces", async () => {
     await insertRecords(["36FPA3"])
     const result = await getCourtCase(dataSource, 0, ["036FPA1"])
+
+    expect(result).toBeNull()
+  })
+
+  it("should return null when record exists and there is no visible forces", async () => {
+    await insertRecords(["36FPA3"])
+    const result = await getCourtCase(dataSource, 0, [])
 
     expect(result).toBeNull()
   })
