@@ -45,7 +45,7 @@ const Home: NextPage<Props> = ({ user, courtCases }: Props) => {
   const tableBody = courtCases?.map((courtCase, idx) => {
     return (
       <Table.Row key={idx}>
-        <Table.Cell>{courtCase.courtDate}</Table.Cell>
+        <Table.Cell>{courtCase.courtDate?.toString()}</Table.Cell>
         <Table.Cell>{courtCase.ptiurn}</Table.Cell>
         <Table.Cell>{courtCase.defendantName}</Table.Cell>
         <Table.Cell>{courtCase.courtName}</Table.Cell>

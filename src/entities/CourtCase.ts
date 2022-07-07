@@ -1,8 +1,9 @@
 import { Column, Entity, PrimaryColumn } from "typeorm"
+import BaseEntity from "./BaseEntity"
 import dateTransformer from "./transformers/dateTransformer"
 
 @Entity({ name: "error_list" })
-export default class CourtCase {
+export default class CourtCase extends BaseEntity {
   @PrimaryColumn({ name: "error_id" })
   errorId!: number
 

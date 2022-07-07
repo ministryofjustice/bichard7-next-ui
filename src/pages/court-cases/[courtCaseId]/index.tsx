@@ -1,43 +1,51 @@
+import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
+import User from "entities/User"
 import getDataSource from "lib/getDataSource"
+import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
+import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import getCourtCase from "useCases/getCourtCase"
-import styles from "../styles/Home.module.css"
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext<ParsedUrlQuery>
-): Promise<GetServerSidePropsResult<Props>> => {
-  const { query } = context
-  const { courtCaseId } = query as { courtCaseId: string }
-  const dataSource = await getDataSource()
-  const courtCase = await getCourtCase(dataSource, parseInt(courtCaseId, 10), ["36FPA"])
+export const getServerSideProps = withMultipleServerSideProps(
+  withAuthentication,
+  async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
+    const { currentUser, query } = context as AuthenticationServerSidePropsContext
+    const { courtCaseId } = query as { courtCaseId: string }
+    const dataSource = await getDataSource()
+    const courtCase = await getCourtCase(dataSource, parseInt(courtCaseId, 10), ["36FPA"])
 
-  return {
-    props: {
-      courtCase: isError(courtCase) || !courtCase ? undefined : JSON.parse(JSON.stringify(courtCase))
+    return {
+      props: {
+        user: currentUser.serialize(),
+        courtCase: isError(courtCase) ? undefined : courtCase?.serialize()
+      }
     }
   }
-}
+)
 
 interface Props {
+  user: User
   courtCase?: CourtCase
 }
 
-const Home: NextPage = ({ courtCase }: Props) => {
+const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
   return (
-    <div className={styles.container}>
+    <>
       <Head>
         <title>{"Case List | Bichard7"}</title>
         <meta name="description" content="Case List | Bichard7" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>{JSON.stringify(courtCase)}</main>
-    </div>
+      <Layout user={user}>
+        <h1>{JSON.stringify(courtCase)}</h1>
+      </Layout>
+    </>
   )
 }
 
-export default Home
+export default CourtCaseDetails
