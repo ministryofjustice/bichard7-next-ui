@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 describe("GOV.UK Assets", () => {
   it("should provide copyright logo", () => {
     cy.setAuthCookie("Bichard01")

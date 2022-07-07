@@ -2,7 +2,6 @@ import User from "entities/User"
 import getDataSource from "lib/getDataSource"
 
 type TestUser = {
-  id: number
   username: string
   visibleForces: string[]
   forenames: string
