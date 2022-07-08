@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, Relation } from "typeorm"
 import BaseEntity from "./BaseEntity"
 // eslint-disable-next-line import/no-cycle
 import CourtCase from "./CourtCase"
@@ -16,5 +16,5 @@ export default class Trigger extends BaseEntity {
 
   @ManyToOne(() => CourtCase)
   @JoinColumn({ name: "error_id" })
-  courtCase!: CourtCase
+  courtCase!: Relation<CourtCase>
 }

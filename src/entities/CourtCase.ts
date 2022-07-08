@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm"
+import { Column, Entity, OneToMany, PrimaryColumn, Relation } from "typeorm"
 import BaseEntity from "./BaseEntity"
 import Note from "./Note"
 import dateTransformer from "./transformers/dateTransformer"
@@ -35,8 +35,8 @@ export default class CourtCase extends BaseEntity {
   orgForPoliceFilter!: string
 
   @OneToMany(() => Trigger, (trigger) => trigger.courtCase)
-  triggers!: Trigger[]
+  triggers!: Relation<Trigger>[]
 
   @OneToMany(() => Note, (note) => note.courtCase)
-  notes!: Trigger[]
+  notes!: Relation<Trigger>[]
 }
