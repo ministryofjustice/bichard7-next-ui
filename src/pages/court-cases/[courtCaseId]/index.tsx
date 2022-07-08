@@ -1,3 +1,4 @@
+import DateTime from "components/DateTime"
 import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
 import User from "entities/User"
@@ -90,7 +91,9 @@ const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
           {courtCase?.notes &&
             courtCase.notes.map((note, index) => (
               <Table.Row key={index}>
-                <Table.Cell>{note.createdAt.toString()}</Table.Cell>
+                <Table.Cell>
+                  <DateTime date={note.createdAt} />
+                </Table.Cell>
                 <Table.Cell>{note.noteText}</Table.Cell>
               </Table.Row>
             ))}
