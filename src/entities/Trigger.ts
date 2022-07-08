@@ -16,6 +16,12 @@ export default class Trigger extends BaseEntity {
   @Column({ name: "error_id" })
   errorId!: number
 
+  @Column()
+  status!: number
+
+  @Column({ name: "create_ts", type: "timestamp", transformer: dateTransformer })
+  createdAt!: Date
+
   @Column({ name: "resolved_by" })
   resolvedBy?: string
 

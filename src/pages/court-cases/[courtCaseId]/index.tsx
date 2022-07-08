@@ -34,7 +34,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     return {
       props: {
         user: currentUser.serialize(),
-        courtCase: isError(courtCase) || !courtCase ? null : courtCase.serialize()
+        courtCase: courtCase.serialize()
       }
     }
   }
@@ -42,7 +42,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
 interface Props {
   user: User
-  courtCase?: CourtCase
+  courtCase: CourtCase
 }
 
 const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
@@ -58,27 +58,27 @@ const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
         <Table head={<h2>{"Case Details"}</h2>}>
           <Table.Row>
             <Table.CellHeader>{"PTIURN"}</Table.CellHeader>
-            <Table.Cell>{courtCase?.ptiurn}</Table.Cell>
+            <Table.Cell>{courtCase.ptiurn}</Table.Cell>
           </Table.Row>
           <Table.Row>
             <Table.CellHeader>{"Court name"}</Table.CellHeader>
-            <Table.Cell>{courtCase?.courtName}</Table.Cell>
+            <Table.Cell>{courtCase.courtName}</Table.Cell>
           </Table.Row>
           <Table.Row>
             <Table.CellHeader>{"Court date"}</Table.CellHeader>
-            <Table.Cell>{courtCase?.courtDate?.toString()}</Table.Cell>
+            <Table.Cell>{courtCase.courtDate?.toString()}</Table.Cell>
           </Table.Row>
           <Table.Row>
             <Table.CellHeader>{"Defendant name"}</Table.CellHeader>
-            <Table.Cell>{courtCase?.defendantName}</Table.Cell>
+            <Table.Cell>{courtCase.defendantName}</Table.Cell>
           </Table.Row>
           <Table.Row>
             <Table.CellHeader>{"Exception reason"}</Table.CellHeader>
-            <Table.Cell>{courtCase?.errorReason}</Table.Cell>
+            <Table.Cell>{courtCase.errorReason}</Table.Cell>
           </Table.Row>
           <Table.Row>
             <Table.CellHeader>{"Trigger reason"}</Table.CellHeader>
-            <Table.Cell>{courtCase?.triggerReason}</Table.Cell>
+            <Table.Cell>{courtCase.triggerReason}</Table.Cell>
           </Table.Row>
         </Table>
         <Table head={<h2>{"Triggers"}</h2>}>
