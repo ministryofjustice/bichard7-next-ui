@@ -6,6 +6,7 @@ describe("Home", () => {
       cy.task("clearCourtCases")
       cy.task("clearUsers")
       cy.clearCookies()
+      cy.viewport(1280, 720)
     })
 
     const users: TestUser[] = Array.from(Array(5)).map((_value, idx) => {
