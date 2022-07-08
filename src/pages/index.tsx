@@ -25,10 +25,14 @@ export const getServerSideProps = withMultipleServerSideProps(
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, currentUser.visibleForces, 100)
 
+    if (isError(courtCases)) {
+      throw courtCases
+    }
+
     return {
       props: {
         user: currentUser.serialize(),
-        courtCases: isError(courtCases) ? [] : courtCases.map((c) => c.serialize())
+        courtCases: courtCases
       }
     }
   }
