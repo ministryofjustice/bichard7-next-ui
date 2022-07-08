@@ -1,6 +1,7 @@
 import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
 import User from "entities/User"
+import { Table } from "govuk-react"
 import getDataSource from "lib/getDataSource"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -16,12 +17,12 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
     const dataSource = await getDataSource()
-    const courtCase = await getCourtCase(dataSource, parseInt(courtCaseId, 10), ["36FPA"])
+    const courtCase = await getCourtCase(dataSource, parseInt(courtCaseId, 10), currentUser.visibleForces)
 
     return {
       props: {
         user: currentUser.serialize(),
-        courtCase: isError(courtCase) ? undefined : courtCase?.serialize()
+        courtCase: isError(courtCase) || !courtCase ? null : courtCase.serialize()
       }
     }
   }
@@ -42,7 +43,15 @@ const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
       </Head>
 
       <Layout user={user}>
-        <h1>{JSON.stringify(courtCase)}</h1>
+        <Table>
+          {courtCase?.triggers &&
+            courtCase.triggers.map((trigger, index) => (
+              <Table.Row key={index}>
+                <Table.Cell>{trigger.triggerId}</Table.Cell>
+                <Table.Cell>{trigger.triggerCode}</Table.Cell>
+              </Table.Row>
+            ))}
+        </Table>
       </Layout>
     </>
   )
