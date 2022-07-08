@@ -6,7 +6,7 @@ import { isError } from "../../src/types/Result"
 import getCourtCase from "../../src/useCases/getCourtCase"
 import CourtCaseCase from "../testFixtures/database/data/error_list.json"
 import deleteFromTable from "../testFixtures/database/deleteFromTable"
-import insertCourtCases from "../testFixtures/database/insertCourtCases"
+import { insertCourtCases } from "../testFixtures/database/insertCourtCases"
 
 const insertRecords = async (orgsCodes: string[]) => {
   const existingCourtCases = orgsCodes.map((code, i) => {
