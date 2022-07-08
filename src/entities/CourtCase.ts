@@ -1,8 +1,9 @@
-import { Column, Entity, OneToMany, PrimaryColumn, Relation } from "typeorm"
+/* eslint-disable import/no-cycle */
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm"
+import type { Relation } from "typeorm"
 import BaseEntity from "./BaseEntity"
-import Note from "./Note"
 import dateTransformer from "./transformers/dateTransformer"
-// eslint-disable-next-line import/no-cycle
+import Note from "./Note"
 import Trigger from "./Trigger"
 
 @Entity({ name: "error_list" })
@@ -38,5 +39,5 @@ export default class CourtCase extends BaseEntity {
   triggers!: Relation<Trigger>[]
 
   @OneToMany(() => Note, (note) => note.courtCase)
-  notes!: Relation<Trigger>[]
+  notes!: Relation<Note>[]
 }
