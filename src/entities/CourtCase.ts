@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm"
 import BaseEntity from "./BaseEntity"
+import Note from "./Note"
 import dateTransformer from "./transformers/dateTransformer"
 // eslint-disable-next-line import/no-cycle
 import Trigger from "./Trigger"
@@ -35,4 +36,7 @@ export default class CourtCase extends BaseEntity {
 
   @OneToMany(() => Trigger, (trigger) => trigger.courtCase)
   triggers!: Trigger[]
+
+  @OneToMany(() => Note, (note) => note.courtCase)
+  notes!: Trigger[]
 }

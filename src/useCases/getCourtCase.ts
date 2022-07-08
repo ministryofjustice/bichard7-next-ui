@@ -12,6 +12,7 @@ const getCourtCase = (
   const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces)
     .andWhere({ errorId: courtCaseId })
     .leftJoinAndSelect("courtCase.triggers", "trigger")
+    .leftJoinAndSelect("courtCase.notes", "note")
 
   return query.getOne().catch((error) => error)
 }

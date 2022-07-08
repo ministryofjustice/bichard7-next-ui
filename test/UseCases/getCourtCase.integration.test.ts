@@ -51,7 +51,8 @@ describe("listCourtCases", () => {
       orgForPoliceFilter: courtCase.org_for_police_filter,
       ptiurn: courtCase.ptiurn,
       triggerReason: courtCase.trigger_reason,
-      triggers: []
+      triggers: [],
+      notes: []
     } as unknown as CourtCase
 
     let result = await getCourtCase(dataSource, 0, ["036FPA1"])
