@@ -20,6 +20,17 @@ export const getServerSideProps = withMultipleServerSideProps(
     const dataSource = await getDataSource()
     const courtCase = await getCourtCase(dataSource, parseInt(courtCaseId, 10), currentUser.visibleForces)
 
+    if (!courtCase) {
+      return {
+        notFound: true
+      }
+    }
+
+    if (isError(courtCase)) {
+      console.error(courtCase)
+      throw courtCase
+    }
+
     return {
       props: {
         user: currentUser.serialize(),
