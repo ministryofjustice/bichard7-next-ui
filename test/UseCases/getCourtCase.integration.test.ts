@@ -55,14 +55,13 @@ describe("listCourtCases", () => {
       notes: []
     } as unknown as CourtCase
 
-    let result = await getCourtCase(dataSource, 0, ["036FPA1"])
-    console.log(result)
+    let result = await getCourtCase(dataSource, 0, ["36FPA1"])
     expect(isError(result)).toBe(false)
 
     let actualCourtCase = result as CourtCase
     expect({ ...actualCourtCase }).toStrictEqual(expectedCourtCase)
 
-    result = await getCourtCase(dataSource, 0, ["036"])
+    result = await getCourtCase(dataSource, 0, ["36"])
     expect(isError(result)).toBe(false)
 
     actualCourtCase = result as CourtCase
@@ -70,14 +69,14 @@ describe("listCourtCases", () => {
   })
 
   it("should return null if the court case doesn't exist", async () => {
-    const result = await getCourtCase(dataSource, 0, ["036FPA1"])
+    const result = await getCourtCase(dataSource, 0, ["36FPA1"])
 
     expect(result).toBeNull()
   })
 
   it("should return null when record exists and is not visible to the specified forces", async () => {
     await insertRecords(["36FPA3"])
-    const result = await getCourtCase(dataSource, 0, ["036FPA1"])
+    const result = await getCourtCase(dataSource, 0, ["36FPA1"])
 
     expect(result).toBeNull()
   })

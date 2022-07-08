@@ -15,8 +15,7 @@ const courtCasesByVisibleForcesQuery = (
         return query
       }
 
-      forces.forEach((f, i) => {
-        const force = f.substring(1)
+      forces.forEach((force, i) => {
         const args: KeyValuePair<string, string> = {}
         args[`force${i}`] = force
         // use different named parameters for each force

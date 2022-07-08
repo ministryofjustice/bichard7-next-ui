@@ -9,6 +9,8 @@ import CourtCase from "../../src/entities/CourtCase"
 import { DataSource } from "typeorm"
 import getDataSource from "../../src/lib/getDataSource"
 
+jest.setTimeout(100000)
+
 describe("listCourtCases", () => {
   let dataSource: DataSource
 
