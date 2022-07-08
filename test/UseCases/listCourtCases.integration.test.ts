@@ -3,31 +3,17 @@ import "reflect-metadata"
 import { expect } from "@jest/globals"
 import listCourtCases from "../../src/useCases/listCourtCases"
 import deleteFromTable from "../testFixtures/database/deleteFromTable"
-import CourtCaseCase from "../testFixtures/database/data/error_list.json"
-import insertCourtCases from "../testFixtures/database/insertCourtCases"
+import { insertCourtCasesWithOrgCodes } from "../testFixtures/database/insertCourtCases"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/entities/CourtCase"
 import { DataSource } from "typeorm"
 import getDataSource from "../../src/lib/getDataSource"
 
-const insertRecords = (orgsCodes: string[]) => {
-  const existingCourtCases = orgsCodes.map((code, i) => {
-    return {
-      ...CourtCaseCase,
-      org_for_police_filter: code.padEnd(6, " "),
-      error_id: i,
-      message_id: String(i).padStart(5, "x")
-    }
-  })
-
-  return insertCourtCases(existingCourtCases)
-}
-
 describe("listCourtCases", () => {
-  let connection: DataSource
+  let dataSource: DataSource
 
   beforeAll(async () => {
-    connection = await getDataSource()
+    dataSource = await getDataSource()
   })
 
   beforeEach(async () => {
@@ -35,13 +21,13 @@ describe("listCourtCases", () => {
   })
 
   afterAll(async () => {
-    await connection.destroy()
+    await dataSource.destroy()
   })
 
   it("shouldn't return more cases than the specified limit", async () => {
-    await insertRecords(Array.from(Array(100)).map(() => "36FPA1"))
+    await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
 
-    const result = await listCourtCases(connection, ["036FPA1"], 10)
+    const result = await listCourtCases(dataSource, ["36FPA1"], 10)
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -54,7 +40,7 @@ describe("listCourtCases", () => {
   })
 
   it("should return a list of cases when the force code length is 1", async () => {
-    await insertRecords([
+    await insertCourtCasesWithOrgCodes([
       "3",
       "36",
       "36F",
@@ -71,7 +57,7 @@ describe("listCourtCases", () => {
       "12GHAC"
     ])
 
-    const result = await listCourtCases(connection, ["03"], 100)
+    const result = await listCourtCases(dataSource, ["3"], 100)
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -90,7 +76,7 @@ describe("listCourtCases", () => {
   })
 
   it("should return a list of cases when the force code length is 2", async () => {
-    await insertRecords([
+    await insertCourtCasesWithOrgCodes([
       "36",
       "36F",
       "36FP",
@@ -105,7 +91,7 @@ describe("listCourtCases", () => {
       "12GHAC"
     ])
 
-    const result = await listCourtCases(connection, ["036"], 100)
+    const result = await listCourtCases(dataSource, ["36"], 100)
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -122,7 +108,7 @@ describe("listCourtCases", () => {
   })
 
   it("should return a list of cases when the force code length is 3", async () => {
-    await insertRecords([
+    await insertCourtCasesWithOrgCodes([
       "36",
       "36F",
       "36FP",
@@ -137,7 +123,7 @@ describe("listCourtCases", () => {
       "12GHAC"
     ])
 
-    const result = await listCourtCases(connection, ["036F"], 100)
+    const result = await listCourtCases(dataSource, ["36F"], 100)
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -147,7 +133,7 @@ describe("listCourtCases", () => {
   })
 
   it("should return a list of cases when the force code length is 4", async () => {
-    await insertRecords([
+    await insertCourtCasesWithOrgCodes([
       "36",
       "36F",
       "36FP",
@@ -162,7 +148,7 @@ describe("listCourtCases", () => {
       "12GHAC"
     ])
 
-    const result = await listCourtCases(connection, ["036FP"], 100)
+    const result = await listCourtCases(dataSource, ["36FP"], 100)
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -172,9 +158,9 @@ describe("listCourtCases", () => {
   })
 
   it("a user with a visible force of length 5 can see cases for the 4-long prefix, and the exact match, and 6-long suffixes of the visible force", async () => {
-    await insertRecords(["12GH", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC", "13BR", "14AT"])
+    await insertCourtCasesWithOrgCodes(["12GH", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC", "13BR", "14AT"])
 
-    const result = await listCourtCases(connection, ["012GHA"], 100)
+    const result = await listCourtCases(dataSource, ["12GHA"], 100)
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -187,7 +173,7 @@ describe("listCourtCases", () => {
   })
 
   it("shouldn't return non-visible cases when the force code length is 6", async () => {
-    await insertRecords([
+    await insertCourtCasesWithOrgCodes([
       "36",
       "36F",
       "36FP",
@@ -203,7 +189,7 @@ describe("listCourtCases", () => {
       "12GHAC"
     ])
 
-    const result = await listCourtCases(connection, ["036FPA1"], 100)
+    const result = await listCourtCases(dataSource, ["36FPA1"], 100)
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -214,7 +200,7 @@ describe("listCourtCases", () => {
   })
 
   it("should show cases for all forces visible to a user", async () => {
-    await insertRecords([
+    await insertCourtCasesWithOrgCodes([
       "36",
       "36F",
       "36FP",
@@ -235,7 +221,7 @@ describe("listCourtCases", () => {
       "13GHBA"
     ])
 
-    const result = await listCourtCases(connection, ["036FPA1", "013GH"], 100)
+    const result = await listCourtCases(dataSource, ["36FPA1", "13GH"], 100)
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -255,7 +241,7 @@ describe("listCourtCases", () => {
   })
 
   it("should show no cases to a user with no visible forces", async () => {
-    await insertRecords([
+    await insertCourtCasesWithOrgCodes([
       "36",
       "36F",
       "36FP",
@@ -276,7 +262,7 @@ describe("listCourtCases", () => {
       "13GHBA"
     ])
 
-    const result = await listCourtCases(connection, [], 100)
+    const result = await listCourtCases(dataSource, [], 100)
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 

@@ -1,7 +1,0 @@
-describe("Home", () => {
-  it("should display 0 cases and the user's username when no cases are added", () => {
-    cy.setAuthCookie("Bichard01")
-    cy.visit("/")
-    cy.get("caption").should("have.text", "0 court cases for Bichard01")
-  })
-})
