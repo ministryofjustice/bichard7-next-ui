@@ -1,3 +1,4 @@
+import DateTime from "components/DateTime"
 import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
 import User from "entities/User"
@@ -45,7 +46,7 @@ const Home: NextPage<Props> = ({ user, courtCases }: Props) => {
   const tableBody = courtCases?.map((courtCase, idx) => {
     return (
       <Table.Row key={idx}>
-        <Table.Cell>{courtCase.courtDate?.toString()}</Table.Cell>
+        <Table.Cell>{courtCase.courtDate && <DateTime date={courtCase.courtDate} />}</Table.Cell>
         <Table.Cell>{courtCase.ptiurn}</Table.Cell>
         <Table.Cell>{courtCase.defendantName}</Table.Cell>
         <Table.Cell>{courtCase.courtName}</Table.Cell>
