@@ -32,7 +32,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     return {
       props: {
         user: currentUser.serialize(),
-        courtCases: courtCases
+        courtCases: courtCases.map((courtCase) => courtCase.serialize())
       }
     }
   }
@@ -47,7 +47,7 @@ const Home: NextPage<Props> = ({ user, courtCases }: Props) => {
       <Table.CellHeader>{"Court Name"}</Table.CellHeader>
     </Table.Row>
   )
-  const tableBody = courtCases?.map((courtCase, idx) => {
+  const tableBody = courtCases.map((courtCase, idx) => {
     return (
       <Table.Row key={idx}>
         <Table.Cell>{courtCase.courtDate && <DateTime date={courtCase.courtDate} />}</Table.Cell>
