@@ -3,6 +3,7 @@ import type { Relation } from "typeorm"
 import BaseEntity from "./BaseEntity"
 // eslint-disable-next-line import/no-cycle
 import CourtCase from "./CourtCase"
+import dateTransformer from "./transformers/dateTransformer"
 
 @Entity({ name: "error_list_triggers" })
 export default class Trigger extends BaseEntity {
@@ -18,7 +19,7 @@ export default class Trigger extends BaseEntity {
   @Column({ name: "resolved_by" })
   resolvedBy?: string
 
-  @Column({ name: "resolved_ts" })
+  @Column({ name: "resolved_ts", type: "timestamp", transformer: dateTransformer })
   resolvedAt?: Date
 
   @ManyToOne(() => CourtCase)
