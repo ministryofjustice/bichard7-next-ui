@@ -43,12 +43,21 @@ const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
       </Head>
 
       <Layout user={user}>
-        <Table>
+        <Table head={<h2>{"Triggers"}</h2>}>
           {courtCase?.triggers &&
             courtCase.triggers.map((trigger, index) => (
               <Table.Row key={index}>
                 <Table.Cell>{trigger.triggerId}</Table.Cell>
                 <Table.Cell>{trigger.triggerCode}</Table.Cell>
+              </Table.Row>
+            ))}
+        </Table>
+        <Table head={<h2>{"Notes"}</h2>}>
+          {courtCase?.notes &&
+            courtCase.notes.map((note, index) => (
+              <Table.Row key={index}>
+                <Table.Cell>{note.createdAt.toString()}</Table.Cell>
+                <Table.Cell>{note.noteText}</Table.Cell>
               </Table.Row>
             ))}
         </Table>
