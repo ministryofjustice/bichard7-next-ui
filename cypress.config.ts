@@ -4,7 +4,7 @@ import { defineConfig } from "cypress"
 import CourtCase from "entities/CourtCase"
 import deleteFromTable from "./test/testFixtures/database/deleteFromTable"
 import { insertCourtCasesWithOrgCodes } from "./test/testFixtures/database/insertCourtCases"
-import { insertTriggers, TestTrigger } from "./test/testFixtures/database/manageTriggers"
+import { insertTriggers } from "./test/testFixtures/database/manageTriggers"
 import { deleteUsers, insertUsers, TestUser } from "./test/testFixtures/database/manageUsers"
 
 export default defineConfig({
