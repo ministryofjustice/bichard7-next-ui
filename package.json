@@ -16,6 +16,7 @@
     "test:unit": "jest --testPathIgnorePatterns=\"integration\" \"e2e\" --runInBand",
     "test:unit:update": "npm run test:unit -- -u",
     "test:integration": "jest --testPathPattern=\"integration\" --runInBand",
+    "test:file": "jest --runInBand --testPathPattern",
     "test:ui": "concurrently --kill-others --success first \"npm run start\" \"npm run cypress:run\"",
     "install:hooks": "./scripts/install-git-hooks.sh",
     "update-deps": "ncu -u && npm install"
