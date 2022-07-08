@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryColumn } from "typeorm"
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm"
 import BaseEntity from "./BaseEntity"
 import dateTransformer from "./transformers/dateTransformer"
+// eslint-disable-next-line import/no-cycle
 import Trigger from "./Trigger"
 
 @Entity({ name: "error_list" })
@@ -32,7 +33,6 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "org_for_police_filter" })
   orgForPoliceFilter!: string
 
-  @OneToMany(() => Trigger, (trigger) => trigger.errorId)
-  @JoinColumn({ referencedColumnName: "error_id" })
+  @OneToMany(() => Trigger, (trigger) => trigger.courtCase)
   triggers!: Trigger[]
 }

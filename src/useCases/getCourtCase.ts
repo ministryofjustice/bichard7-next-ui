@@ -9,9 +9,9 @@ const getCourtCase = (
   forces: string[]
 ): PromiseResult<CourtCase | null> => {
   const courtCaseRepository = dataSource.getRepository(CourtCase)
-  const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces).andWhere({ errorId: courtCaseId })
-
-  // query.innerJoinAndSelect("courtCase.triggers", "trigger")
+  const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces)
+    .andWhere({ errorId: courtCaseId })
+    .leftJoinAndSelect("courtCase.triggers", "trigger")
 
   return query.getOne().catch((error) => error)
 }

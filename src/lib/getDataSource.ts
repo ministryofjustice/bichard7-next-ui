@@ -29,7 +29,7 @@ const getDataSource = async (): Promise<DataSource> => {
     migrations: [],
     schema: databaseConfig.schema,
     ssl: databaseConfig.ssl ? { rejectUnauthorized: false } : false,
-    logging: true,
+    logging: false,
     extra: {
       max: 1
     }

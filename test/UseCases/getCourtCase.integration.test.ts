@@ -50,10 +50,12 @@ describe("listCourtCases", () => {
       errorReason: courtCase.error_reason,
       orgForPoliceFilter: courtCase.org_for_police_filter,
       ptiurn: courtCase.ptiurn,
-      triggerReason: courtCase.trigger_reason
-    } as CourtCase
+      triggerReason: courtCase.trigger_reason,
+      triggers: []
+    } as unknown as CourtCase
 
     let result = await getCourtCase(dataSource, 0, ["036FPA1"])
+    console.log(result)
     expect(isError(result)).toBe(false)
 
     let actualCourtCase = result as CourtCase
