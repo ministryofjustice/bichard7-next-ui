@@ -15,6 +15,12 @@ export default class Trigger extends BaseEntity {
   @Column({ name: "error_id" })
   errorId!: number
 
+  @Column({ name: "resolved_by" })
+  resolvedBy?: string
+
+  @Column({ name: "resolved_ts" })
+  resolvedAt?: Date
+
   @ManyToOne(() => CourtCase)
   @JoinColumn({ name: "error_id" })
   courtCase!: Relation<CourtCase>

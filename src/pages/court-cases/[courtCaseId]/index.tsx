@@ -43,12 +43,46 @@ const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
       </Head>
 
       <Layout user={user}>
+        <Table head={<h2>{"Case Details"}</h2>}>
+          <Table.Row>
+            <Table.CellHeader>{"PTIURN"}</Table.CellHeader>
+            <Table.Cell>{courtCase?.ptiurn}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.CellHeader>{"Court name"}</Table.CellHeader>
+            <Table.Cell>{courtCase?.courtName}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.CellHeader>{"Court date"}</Table.CellHeader>
+            <Table.Cell>{courtCase?.courtDate?.toString()}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.CellHeader>{"Defendant name"}</Table.CellHeader>
+            <Table.Cell>{courtCase?.defendantName}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.CellHeader>{"Exception reason"}</Table.CellHeader>
+            <Table.Cell>{courtCase?.errorReason}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.CellHeader>{"Trigger reason"}</Table.CellHeader>
+            <Table.Cell>{courtCase?.triggerReason}</Table.Cell>
+          </Table.Row>
+        </Table>
         <Table head={<h2>{"Triggers"}</h2>}>
+          <Table.Row>
+            <Table.CellHeader>{"ID"}</Table.CellHeader>
+            <Table.CellHeader>{"Code"}</Table.CellHeader>
+            <Table.CellHeader>{"Resolved by"}</Table.CellHeader>
+            <Table.CellHeader>{"Resolved at"}</Table.CellHeader>
+          </Table.Row>
           {courtCase?.triggers &&
             courtCase.triggers.map((trigger, index) => (
               <Table.Row key={index}>
                 <Table.Cell>{trigger.triggerId}</Table.Cell>
                 <Table.Cell>{trigger.triggerCode}</Table.Cell>
+                <Table.Cell>{trigger.resolvedBy}</Table.Cell>
+                <Table.Cell>{trigger.resolvedAt?.toString()}</Table.Cell>
               </Table.Row>
             ))}
         </Table>
