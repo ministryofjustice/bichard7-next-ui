@@ -7,7 +7,8 @@ import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQ
 const listCourtCases = async (connection: DataSource, forces: string[], limit: number): PromiseResult<CourtCase[]> => {
   const courtCaseRepository = connection.getRepository(CourtCase)
   const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces)
-    .orderBy(getColumnName(courtCaseRepository, "errorId"), "ASC")
+    .leftJoinAndSelect("courtCase.triggers", "trigger")
+    .orderBy(`courtCase.${getColumnName(courtCaseRepository, "errorId")}`, "ASC")
     .limit(limit)
 
   const result = await query.getMany().catch((error: Error) => error)

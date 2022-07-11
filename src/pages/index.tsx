@@ -45,6 +45,8 @@ const Home: NextPage<Props> = ({ user, courtCases }: Props) => {
       <Table.CellHeader>{"PTIURN"}</Table.CellHeader>
       <Table.CellHeader>{"Defendant Name"}</Table.CellHeader>
       <Table.CellHeader>{"Court Name"}</Table.CellHeader>
+      <Table.CellHeader>{"Triggers"}</Table.CellHeader>
+      <Table.CellHeader>{"Exceptions"}</Table.CellHeader>
     </Table.Row>
   )
   const tableBody = courtCases.map((courtCase, idx) => {
@@ -54,6 +56,8 @@ const Home: NextPage<Props> = ({ user, courtCases }: Props) => {
         <Table.Cell>{courtCase.ptiurn}</Table.Cell>
         <Table.Cell>{courtCase.defendantName}</Table.Cell>
         <Table.Cell>{courtCase.courtName}</Table.Cell>
+        <Table.Cell>{courtCase.triggers?.map((trigger) => trigger.triggerCode).join(", ")}</Table.Cell>
+        <Table.Cell>{courtCase.errorReason}</Table.Cell>
       </Table.Row>
     )
   })
