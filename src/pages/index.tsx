@@ -1,4 +1,4 @@
-import CourtCaseList from "components/CourtCaseList"
+import CourtCaseList from "stories/CourtCaseList"
 import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
 import User from "entities/User"

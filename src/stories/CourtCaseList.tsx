@@ -1,6 +1,6 @@
 import CourtCase from "entities/CourtCase"
 import { Paragraph, Table } from "govuk-react"
-import DateTime from "./DateTime"
+import DateTime from "../components/DateTime"
 
 interface Props {
   courtCases: CourtCase[]
