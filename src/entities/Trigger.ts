@@ -28,6 +28,9 @@ export default class Trigger extends BaseEntity {
   @Column({ name: "resolved_ts", type: "timestamp", transformer: dateTransformer })
   resolvedAt?: Date
 
+  @Column({ name: "trigger_item_identity" })
+  triggerItemIdentity?: number
+
   @ManyToOne(() => CourtCase)
   @JoinColumn({ name: "error_id" })
   courtCase!: Relation<CourtCase>
