@@ -3,7 +3,7 @@ import If from "components/If"
 import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
 import User from "entities/User"
-import { Heading, Label, Paragraph, Table } from "govuk-react"
+import { Heading, Paragraph, Table } from "govuk-react"
 import getDataSource from "lib/getDataSource"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -56,7 +56,9 @@ const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
       </Head>
 
       <Layout user={user}>
-        <Heading size="LARGE">{"Case Details"}</Heading>
+        <Heading as="h2" size="LARGE">
+          {"Case Details"}
+        </Heading>
         <Table>
           <Table.Row>
             <Table.CellHeader>{"PTIURN"}</Table.CellHeader>
@@ -68,7 +70,9 @@ const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
           </Table.Row>
           <Table.Row>
             <Table.CellHeader>{"Court date"}</Table.CellHeader>
-            <Table.Cell>{courtCase.courtDate?.toString()}</Table.Cell>
+            <Table.Cell>
+              <DateTime date={courtCase.courtDate} />
+            </Table.Cell>
           </Table.Row>
           <Table.Row>
             <Table.CellHeader>{"Defendant name"}</Table.CellHeader>
@@ -83,7 +87,9 @@ const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
             <Table.Cell>{courtCase.triggerReason}</Table.Cell>
           </Table.Row>
         </Table>
-        <Heading size="MEDIUM">{"Triggers"}</Heading>
+        <Heading as="h3" size="MEDIUM">
+          {"Triggers"}
+        </Heading>
         <If condition={(courtCase?.triggers?.length ?? 0) > 0}>
           <Table>
             <Table.Row>
@@ -97,7 +103,9 @@ const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
                 <Table.Cell>{trigger.triggerCode}</Table.Cell>
                 <Table.Cell>{trigger.triggerItemIdentity}</Table.Cell>
                 <Table.Cell>{trigger.resolvedBy}</Table.Cell>
-                <Table.Cell>{trigger.resolvedAt?.toString()}</Table.Cell>
+                <Table.Cell>
+                  <DateTime date={trigger.createdAt} />
+                </Table.Cell>
               </Table.Row>
             ))}
           </Table>
@@ -105,7 +113,9 @@ const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
         <If condition={(courtCase?.triggers?.length ?? 0) === 0}>
           <Paragraph>{"Case has no triggers."}</Paragraph>
         </If>
-        <Heading size="MEDIUM">{"Notes"}</Heading>
+        <Heading as="h3" size="MEDIUM">
+          {"Notes"}
+        </Heading>
         <If condition={(courtCase?.notes?.length ?? 0) > 0}>
           <Table>
             {courtCase.notes.map((note, index) => (
