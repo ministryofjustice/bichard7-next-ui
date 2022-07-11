@@ -125,3 +125,4 @@ public/images/govuk-mask-icon.svg
 public/images/govuk-opengraph-image.png
 
 .storybook
+storybook-static
