@@ -1,8 +1,7 @@
-import DateTime from "components/DateTime"
+import CourtCaseList from "components/CourtCaseList"
 import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
 import User from "entities/User"
-import { Table } from "govuk-react"
 import getDataSource from "lib/getDataSource"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -39,29 +38,6 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 const Home: NextPage<Props> = ({ user, courtCases }: Props) => {
-  const tableHead = (
-    <Table.Row>
-      <Table.CellHeader>{"Court Date"}</Table.CellHeader>
-      <Table.CellHeader>{"PTIURN"}</Table.CellHeader>
-      <Table.CellHeader>{"Defendant Name"}</Table.CellHeader>
-      <Table.CellHeader>{"Court Name"}</Table.CellHeader>
-      <Table.CellHeader>{"Triggers"}</Table.CellHeader>
-      <Table.CellHeader>{"Exceptions"}</Table.CellHeader>
-    </Table.Row>
-  )
-  const tableBody = courtCases.map((courtCase, idx) => {
-    return (
-      <Table.Row key={idx}>
-        <Table.Cell>{courtCase.courtDate && <DateTime date={courtCase.courtDate} />}</Table.Cell>
-        <Table.Cell>{courtCase.ptiurn}</Table.Cell>
-        <Table.Cell>{courtCase.defendantName}</Table.Cell>
-        <Table.Cell>{courtCase.courtName}</Table.Cell>
-        <Table.Cell>{courtCase.triggers?.map((trigger) => trigger.triggerCode).join(", ")}</Table.Cell>
-        <Table.Cell>{courtCase.errorReason}</Table.Cell>
-      </Table.Row>
-    )
-  })
-
   return (
     <>
       <Head>
@@ -70,9 +46,7 @@ const Home: NextPage<Props> = ({ user, courtCases }: Props) => {
       </Head>
 
       <Layout user={user}>
-        <Table caption={`${courtCases?.length} court cases for ${user.username}`} head={tableHead}>
-          {tableBody}
-        </Table>
+        <CourtCaseList courtCases={courtCases} />
       </Layout>
     </>
   )
