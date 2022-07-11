@@ -1,4 +1,5 @@
 import { format } from "date-fns"
+import { utcToZonedTime } from "date-fns-tz"
 
 interface Props {
   date?: Date | string
@@ -11,11 +12,12 @@ const DateTime = ({ date, prefix }: Props) => {
   }
 
   const dateObject = new Date(date)
+  const zonedDate = utcToZonedTime(dateObject, "Europe/London")
 
   return (
     <>
       {prefix}
-      <time aria-label="time">{format(dateObject, "dd/MM/yyyy HH:mm:ss")}</time>
+      <time aria-label="time">{format(zonedDate, "dd/MM/yyyy HH:mm:ss")}</time>
     </>
   )
 }

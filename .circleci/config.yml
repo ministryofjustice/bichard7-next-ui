@@ -107,9 +107,6 @@ jobs:
       - clone_bichard_repo
       - run_postgres_database
       - run:
-          name: Echo Date
-          command: date
-      - run:
           name: Run next application
           command: npm run start
           background: true
