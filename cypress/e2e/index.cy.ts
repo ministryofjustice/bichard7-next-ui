@@ -5,7 +5,8 @@ describe("Home", () => {
     beforeEach(() => {
       cy.task("clearCourtCases")
       cy.task("clearUsers")
-      cy.clearCookies()
+      cy.setAuthCookie("Bichard01")
+      cy.viewport(1280, 720)
     })
 
     const users: TestUser[] = Array.from(Array(5)).map((_value, idx) => {
@@ -20,7 +21,6 @@ describe("Home", () => {
 
     it("should display 0 cases and the user's username when no cases are added", () => {
       cy.task("insertUsers", users)
-      cy.setAuthCookie("Bichard01")
 
       cy.visit("/")
       cy.get("caption").should("have.text", "0 court cases for Bichard01")
@@ -29,7 +29,6 @@ describe("Home", () => {
     it("should display a case for the user's org", () => {
       cy.task("insertUsers", users)
       cy.task("insertCourtCasesWithOrgCodes", ["01"])
-      cy.setAuthCookie("Bichard01")
 
       cy.visit("/")
       cy.get("caption").should("have.text", "1 court cases for Bichard01")
@@ -49,7 +48,6 @@ describe("Home", () => {
     it("should display cases for sub-forces", () => {
       cy.task("insertUsers", users)
       cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "012A", "013A1"])
-      cy.setAuthCookie("Bichard01")
 
       cy.visit("/")
       cy.get("caption").should("have.text", "4 court cases for Bichard01")
@@ -57,7 +55,7 @@ describe("Home", () => {
         .not(":first")
         .each((row, index) => {
           cy.wrap(row).get("td:nth-child(2)").contains(`Case0000${index}`)
-      })
+        })
     })
 
     it("should display cases for parent forces up to the second-level force", () => {
@@ -71,7 +69,6 @@ describe("Home", () => {
         }
       ])
       cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "0111", "01111", "011111"])
-      cy.setAuthCookie("Bichard01")
 
       cy.visit("/")
       cy.get("caption").should("have.text", "3 court cases for Bichard01")

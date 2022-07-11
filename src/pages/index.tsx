@@ -1,3 +1,4 @@
+import DateTime from "components/DateTime"
 import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
 import User from "entities/User"
@@ -24,10 +25,14 @@ export const getServerSideProps = withMultipleServerSideProps(
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, currentUser.visibleForces, 100)
 
+    if (isError(courtCases)) {
+      throw courtCases
+    }
+
     return {
       props: {
         user: currentUser.serialize(),
-        courtCases: isError(courtCases) ? [] : courtCases.map((c) => c.serialize())
+        courtCases: courtCases.map((courtCase) => courtCase.serialize())
       }
     }
   }
@@ -40,15 +45,19 @@ const Home: NextPage<Props> = ({ user, courtCases }: Props) => {
       <Table.CellHeader>{"PTIURN"}</Table.CellHeader>
       <Table.CellHeader>{"Defendant Name"}</Table.CellHeader>
       <Table.CellHeader>{"Court Name"}</Table.CellHeader>
+      <Table.CellHeader>{"Triggers"}</Table.CellHeader>
+      <Table.CellHeader>{"Exceptions"}</Table.CellHeader>
     </Table.Row>
   )
-  const tableBody = courtCases?.map((courtCase, idx) => {
+  const tableBody = courtCases.map((courtCase, idx) => {
     return (
       <Table.Row key={idx}>
-        <Table.Cell>{courtCase.courtDate}</Table.Cell>
+        <Table.Cell>{courtCase.courtDate && <DateTime date={courtCase.courtDate} />}</Table.Cell>
         <Table.Cell>{courtCase.ptiurn}</Table.Cell>
         <Table.Cell>{courtCase.defendantName}</Table.Cell>
         <Table.Cell>{courtCase.courtName}</Table.Cell>
+        <Table.Cell>{courtCase.triggers?.map((trigger) => trigger.triggerCode).join(", ")}</Table.Cell>
+        <Table.Cell>{courtCase.errorReason}</Table.Cell>
       </Table.Row>
     )
   })

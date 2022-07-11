@@ -2,6 +2,8 @@ import CourtCase from "../entities/CourtCase"
 import { DataSource, DataSourceOptions } from "typeorm"
 import DatabaseConfig from "./DatabaseConfig"
 import User from "../entities/User"
+import Trigger from "../entities/Trigger"
+import Note from "../entities/Note"
 
 const databaseConfig: DatabaseConfig = {
   host: process.env.DB_HOST ?? process.env.DB_AUTH_HOST ?? "localhost",
@@ -23,12 +25,12 @@ const getDataSource = async (): Promise<DataSource> => {
     password: databaseConfig.password,
     database: databaseConfig.database,
     synchronize: false, // It must be always false, otherwise it changes the database structure.
-    logging: false,
-    entities: [CourtCase, User],
+    entities: [CourtCase, User, Trigger, Note],
     subscribers: [],
     migrations: [],
     schema: databaseConfig.schema,
     ssl: databaseConfig.ssl ? { rejectUnauthorized: false } : false,
+    logging: false,
     extra: {
       max: 1
     }
