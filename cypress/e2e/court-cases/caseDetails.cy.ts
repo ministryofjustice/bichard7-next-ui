@@ -29,14 +29,24 @@ describe("Home", () => {
           triggerId: 0,
           triggerCode: "TRPR0001",
           status: 0,
-          createdAt: new Date()
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
         }
       ]
-      cy.task("insertTriggers", { caseId: 0, triggers: triggers})
+      cy.task("insertTriggers", { caseId: 0, triggers })
       cy.visit("/court-cases/0")
 
-      // TODO test that case details are being displayed correctly here e.g.
-      // cy.get("h1").should("have.text", "Example text")
+      cy.get("H2").should("have.text", "Case Details")
+      cy.get("tr").contains("Case00000")
+      cy.get("tr").contains("Magistrates' Courts Essex Basildon")
+      cy.get("tr").should("contain", "26/09/2008 01:00:00")
+      cy.get("tr").contains("Allocation Trigger")
+      cy.get("tr").contains("HO100206")
+      cy.get("tr").contains("TRPR0006")
+      cy.get("H3").contains("Triggers")
+      cy.get("H3").contains("Notes")
+      cy.get("tr").contains("TRPR0001")
+      cy.get("tr").should("contain", "09/07/2022 11:22:34")
+      cy.get("p").contains("Case has no notes.")
     })
 
     it("should return 404 for a case that this user can not see", () => {
