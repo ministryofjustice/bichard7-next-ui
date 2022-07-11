@@ -29,16 +29,5 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
   return true
 }
 
-// const deleteUsers = async (): Promise<boolean> => {
-//   const dataSource = await getDataSource()
-
-//   await dataSource.manager.query(`DELETE FROM br7own.users_groups`)
-//   await dataSource.manager.query(`DELETE FROM br7own.users`)
-
-//   await dataSource.destroy()
-
-//   return true
-// }
-
 export type { TestTrigger }
 export { insertTriggers }
