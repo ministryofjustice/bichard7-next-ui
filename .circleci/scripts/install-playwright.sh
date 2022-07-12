@@ -8,3 +8,5 @@ sudo apt-get install libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 li
 
 # Install Playwright
 npx playwright install
+
+touch playwrightInstalled

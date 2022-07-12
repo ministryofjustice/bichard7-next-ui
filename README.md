@@ -47,13 +47,13 @@ To run code-based (non-visual, no components get rendered) unit tests, run
 If you're already running storybook (`npm run storybook`) locally, run
 
 ```bash
-    npm run test-storybook
+    npm run test:ui:unit:dev
 ```
 
-Otherwise run
+Otherwise run (requires `npx playwright install` to be run first sometimes)
 
 ```bash
-    npm run test:ui:unit
+    npm run test:ui:unit:ci
 ```
 
 ### Integration/E2e Testing
