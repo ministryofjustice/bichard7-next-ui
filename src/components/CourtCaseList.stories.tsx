@@ -28,7 +28,7 @@ export const EmptyList: ComponentStory<typeof CourtCaseList> = () => <CourtCaseL
 
 EmptyList.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
-  await expect(canvas.getByText("There are no NOPE court cases to show")).toBeInTheDocument()
+  await expect(canvas.getByText("There are no court cases to show")).toBeInTheDocument()
 }
 
 export const OneRecord: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={[courtCase]} />

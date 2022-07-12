@@ -112,6 +112,9 @@ jobs:
       - attach_workspace:
           at: .
       - run:
+          name: Install browser
+          command: npx playwright install
+      - run:
           name: Run visual unit tests
           command: npm run test:ui:unit
 
