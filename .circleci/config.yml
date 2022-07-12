@@ -14,7 +14,7 @@ commands:
             - v1-npm-deps-
       - run:
           name: Install node dependencies
-          command: npm i
+          command: npm ci
 
   clone_bichard_repo:
     description: Check out the bichard7-next repo
