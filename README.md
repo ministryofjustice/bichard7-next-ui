@@ -36,3 +36,47 @@ Once the dependencies follow the login instruction from the `bichard7-next` repo
 
 To run the tests, ensure that you have a local postgres instance running (run `make run-pg` from the `bichard7-next` repo),
 then run `npm run test`
+
+## Testing
+
+### Unit Testing
+
+#### Code-based
+
+To run code-based (non-visual, no components get rendered) unit tests, run
+
+```bash
+    npm run test:unit
+```
+
+#### Visual
+
+If you're already running storybook (`npm run storybook`) locally, run
+
+```bash
+    npm run test-storybook
+```
+
+Otherwise run
+
+```bash
+    npm run test:ui:unit
+```
+
+### Integration/E2e Testing
+
+#### Integration
+
+Code-based integration tests to be run alongside the bichard7-next `postgres` instance
+
+```bash
+    npm run test:integration
+```
+
+#### E2E
+
+Browser-based E2E cypress tests to be run alongside the bichard7-next `postgres` instance
+
+```bash
+    npm run test:ui:e2e
+```
