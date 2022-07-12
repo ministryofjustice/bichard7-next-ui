@@ -57,7 +57,13 @@ If you're already running storybook (`npm run storybook`) locally, run
     npm run test:ui:unit:dev
 ```
 
-Otherwise run (requires `npx playwright install` to be run first sometimes)
+or simply
+
+```bash
+    npm run test-storybook
+```
+
+For CI or otherwise, run (requires `npx playwright install` to be run first sometimes)
 
 ```bash
     npm run test:ui:unit:ci
