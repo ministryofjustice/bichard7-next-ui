@@ -12,16 +12,18 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:run:file": "cypress run --spec",
-    "test": "npm run test:unit && npm run test:integration && npm run test:ui",
+    "test": "npm run test:unit && npm run test:integration && npm run test:ui:unit && npm run test:ui:e2e",
     "test:unit": "jest --testPathIgnorePatterns=\"integration\" \"e2e\" --runInBand",
     "test:unit:update": "npm run test:unit -- -u",
     "test:integration": "jest --testPathPattern=\"integration\" --runInBand",
     "test:file": "jest --runInBand --testPathPattern",
-    "test:ui": "concurrently --kill-others --success first \"npm run start\" \"npm run cypress:run\"",
+    "test:ui:unit": "concurrently -k -s first -n \"STORYBOOK,TEST\" -c \"magenta,blue\" \"npm run build-storybook --quiet && http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && npm run test-storybook\"",
+    "test:ui:e2e": "concurrently --kill-others --success first \"npm run start\" \"npm run cypress:run\"",
     "install:hooks": "./scripts/install-git-hooks.sh",
     "update-deps": "ncu -u && npm install",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "test-storybook": "test-storybook"
   },
   "dependencies": {
     "@types/styled-components": "^5.1.25",
@@ -50,6 +52,7 @@
     "@storybook/jest": "^0.0.10",
     "@storybook/manager-webpack5": "^6.5.9",
     "@storybook/react": "^6.5.9",
+    "@storybook/test-runner": "^0.4.0",
     "@storybook/testing-library": "^0.0.13",
     "@types/jest": "^28.1.3",
     "@types/jsonwebtoken": "^8.5.8",
@@ -72,8 +75,9 @@
     "eslint-plugin-jsx-a11y": "^6.6.0",
     "eslint-plugin-prettier": "^4.1.0",
     "eslint-plugin-storybook": "^0.6.0",
+    "http-server": "^14.1.1",
     "husky": "^8.0.1",
-    "jest": "^28.1.1",
+    "jest": "^27.5.1",
     "jsonwebtoken": "^8.5.1",
     "lint-staged": "^13.0.3",
     "npm-check-updates": "^15.0.1",
@@ -81,7 +85,8 @@
     "sass": "^1.53.0",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.8.1",
-    "typescript": "4.7.4"
+    "typescript": "4.7.4",
+    "wait-on": "^6.0.1"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": "eslint --cache --fix --max-warnings 0"
