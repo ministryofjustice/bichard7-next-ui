@@ -123,6 +123,9 @@ jobs:
       - run:
           name: Run visual unit tests
           command: npm run test:ui:unit:ci
+      - run:
+          name: Run Chromatic
+          command: npx chromatic
 
   ui_e2e_test:
     machine:
