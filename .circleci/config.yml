@@ -201,4 +201,4 @@ workflows:
           filters:
             branches:
               only:
-                - main
+                - BICAWS-2152-table-component

@@ -18,7 +18,7 @@ const courtCase = {
   messageId: "cf60600b-52a0-4bc7-b117-3acfb851a7f5",
   notes: [],
   orgForPoliceFilter: "36FP  ",
-  ptiurn: "42CY0300108",
+  ptiurn: "42CY0300109",
   triggerReason: "TRPR0006",
   triggers: [{ triggerCode: "TRPR0001" } as unknown as Trigger],
   courtDate: new Date("2008-09-26")
