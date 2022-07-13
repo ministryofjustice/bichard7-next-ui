@@ -136,7 +136,7 @@ jobs:
           at: .
       - run:
           name: Run Chromatic
-          command: npx chromatic
+          command: npx chromatic --exit-zero-on-changes
 
   ui_e2e_test:
     machine:
@@ -201,4 +201,4 @@ workflows:
           filters:
             branches:
               only:
-                - BICAWS-2152-table-component
+                - main
