@@ -123,6 +123,17 @@ jobs:
       - run:
           name: Run visual unit tests
           command: npm run test:ui:unit:ci
+
+  publish_chromatic:
+    docker:
+      - image: cimg/node:16.12.0
+    resource_class: medium
+    working_directory: ~
+    steps:
+      - checkout
+      - npm_install
+      - attach_workspace:
+          at: .
       - run:
           name: Run Chromatic
           command: npx chromatic
@@ -184,3 +195,10 @@ workflows:
       - ui_e2e_test:
           requires:
             - build
+  publish_chromatic:
+    jobs:
+      - publish_chromatic:
+          filters:
+            branches:
+              only:
+                - main
