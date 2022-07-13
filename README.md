@@ -7,23 +7,30 @@ First, install the requirements:
 ```shell
 npm i --dev
 npm run install:assets
+npm run build
 ```
 
 Then, run the development server:
 
 ```shell
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:4080/bichard](http://localhost:4080/bichard) with your browser to see the Bichard7 UI. Database and a valid auth token is required to be able to browse the service locally.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Running the database, user-service and nginx-auth-proxy
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+To spin up a local instance of the database, user-service and auth proxy, you can use the following make targets in the [main bichard repo](https://github.com/ministryofjustice/bichard7-next):
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```shell
+$ cd /path/to/bichard7-next
+$ make run-pg && make run-user-service && make run-nginx-auth-proxy
+```
+Once the dependencies follow the login instruction from the `bichard7-next` repo:
+1. Navigate to the User Service at [https://localhost:4443/users/](https://localhost:4443/users/) and sign in:
+   > User: <your-madetech-email>, Pass: password
+   **N.B.** You can use the `./scripts/get_2fa_email_link.sh` to quickly grab the one-time email verification link from the user-service container logs.
+1. After signing in, you should see the User Service home page. An `.AUTH` cookie is generated for localhost, so now you can access Bichard7 UI on [http://localhost:4080/bichard](http://localhost:4080/bichard)
 
 ## Development
 
