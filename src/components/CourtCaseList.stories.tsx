@@ -36,3 +36,17 @@ export const OneRecord: ComponentStory<typeof CourtCaseList> = () => <CourtCaseL
 export const ManyRecords: ComponentStory<typeof CourtCaseList> = () => (
   <CourtCaseList courtCases={new Array(100).fill(courtCase)} />
 )
+ManyRecords.parameters = {
+  design: [
+    {
+      name: "Table component",
+      type: "figma",
+      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=1%3A1170"
+    },
+    {
+      name: "Entire file",
+      type: "figma",
+      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=0%3A1"
+    }
+  ]
+}
