@@ -76,7 +76,7 @@ describe("Home", () => {
         })
     })
 
-    it("should display cases in descending order", () => {
+    it("can display cases ordered by court name", () => {
       cy.task("insertUsers", [
         {
           username: "Bichard01",
@@ -89,10 +89,23 @@ describe("Home", () => {
       cy.task("insertCourtCasesWithCourtNames", ["BBBB", "AAAA", "DDDD", "CCCC"])
 
       cy.visit("/")
+
+      cy.get("[id^=court-name]").click()
+
       cy.get("tr")
         .not(":first")
         .each((row) => {
-          cy.wrap(row).get("td:nth-child(4)").contains("DDDD")
+          cy.wrap(row).get("td:nth-child(4)").first().contains("AAAA")
+          cy.wrap(row).get("td:nth-child(4)").last().contains("DDDD")
+        })
+
+      cy.get("[id^=court-name]").click()
+
+      cy.get("tr")
+        .not(":first")
+        .each((row) => {
+          cy.wrap(row).get("td:nth-child(4)").first().contains("DDDD")
+          cy.wrap(row).get("td:nth-child(4)").last().contains("AAAA")
         })
     })
   })

@@ -1,8 +1,8 @@
-type QueryParams = {
+export type QueryOrder = "ASC" | "DESC" | undefined
+
+export type QueryParams = {
   orderBy?: string
-  order?: "ASC" | "DESC" | undefined
+  order?: QueryOrder
   limit: number
   forces: string[]
 }
-
-export default QueryParams
