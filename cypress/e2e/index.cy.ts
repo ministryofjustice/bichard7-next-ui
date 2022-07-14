@@ -75,6 +75,26 @@ describe("Home", () => {
             .contains(`Case0000${index + 2}`)
         })
     })
+
+    it("should display cases in descending order", () => {
+      cy.task("insertUsers", [
+        {
+          username: "Bichard01",
+          visibleForces: ["011111"],
+          forenames: "Bichard Test User",
+          surname: "01",
+          email: "bichard01@example.com"
+        }
+      ])
+      cy.task("insertCourtCasesWithCourtNames", ["BBBB", "AAAA", "DDDD", "CCCC"])
+
+      cy.visit("/")
+      cy.get("tr")
+        .not(":first")
+        .each((row) => {
+          cy.wrap(row).get("td:nth-child(4)").contains("DDDD")
+        })
+    })
   })
 })
 
