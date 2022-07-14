@@ -100,4 +100,39 @@ const insertCourtCasesWithOrgCodes = (orgsCodes: string[]) => {
   return insertCourtCases(existingCourtCases)
 }
 
-export { insertCourtCases, insertCourtCasesWithOrgCodes }
+const insertCourtCasesWithCourtNames = (courtNames: string[], orgCode: string) => {
+  const existingCourtCases = courtNames.map((name, i) => {
+    return {
+      ...CourtCaseCase,
+      org_for_police_filter: orgCode,
+      error_id: i,
+      message_id: String(i).padStart(5, "x"),
+      ptiurn: "Case" + String(i).padStart(5, "0"),
+      court_name: name
+    }
+  })
+
+  return insertCourtCases(existingCourtCases)
+}
+
+const insertCourtCasesWithCourtDates = (courtDates: string[], orgCode: string) => {
+  const existingCourtCases = courtDates.map((date, i) => {
+    return {
+      ...CourtCaseCase,
+      org_for_police_filter: orgCode,
+      error_id: i,
+      message_id: String(i).padStart(5, "x"),
+      ptiurn: "Case" + String(i).padStart(5, "0"),
+      court_date: date
+    }
+  })
+
+  return insertCourtCases(existingCourtCases)
+}
+
+export {
+  insertCourtCases,
+  insertCourtCasesWithOrgCodes,
+  insertCourtCasesWithCourtNames,
+  insertCourtCasesWithCourtDates
+}

@@ -4,11 +4,16 @@ import PromiseResult from "../types/PromiseResult"
 import getColumnName from "../lib/getColumnName"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
-const listCourtCases = async (connection: DataSource, forces: string[], limit: number): PromiseResult<CourtCase[]> => {
+const listCourtCases = async (
+  connection: DataSource,
+  forces: string[],
+  limit: number,
+  orderBy = "errorId"
+): PromiseResult<CourtCase[]> => {
   const courtCaseRepository = connection.getRepository(CourtCase)
   const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces)
     .leftJoinAndSelect("courtCase.triggers", "trigger")
-    .orderBy(`courtCase.${getColumnName(courtCaseRepository, "errorId")}`, "ASC")
+    .orderBy(`courtCase.${getColumnName(courtCaseRepository, orderBy)}`, "ASC")
     .limit(limit)
 
   const result = await query.getMany().catch((error: Error) => error)

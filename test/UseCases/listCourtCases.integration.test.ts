@@ -3,7 +3,11 @@ import "reflect-metadata"
 import { expect } from "@jest/globals"
 import listCourtCases from "../../src/useCases/listCourtCases"
 import deleteFromTable from "../testFixtures/database/deleteFromTable"
-import { insertCourtCasesWithOrgCodes } from "../testFixtures/database/insertCourtCases"
+import {
+  insertCourtCasesWithCourtDates,
+  insertCourtCasesWithCourtNames,
+  insertCourtCasesWithOrgCodes
+} from "../testFixtures/database/insertCourtCases"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/entities/CourtCase"
 import { DataSource } from "typeorm"
@@ -269,5 +273,37 @@ describe("listCourtCases", () => {
     const cases = result as CourtCase[]
 
     expect(cases).toHaveLength(0)
+  })
+
+  it("should order by ASC using court name", async () => {
+    const orgCode = "36FPA1"
+    await insertCourtCasesWithCourtNames(["BBBB", "CCCC", "AAAA"], orgCode)
+
+    const result = await listCourtCases(dataSource, [orgCode], 100, "courtName")
+    expect(isError(result)).toBe(false)
+    const cases = result as CourtCase[]
+
+    expect(cases).toHaveLength(3)
+    expect(cases[0].courtName).toStrictEqual("AAAA")
+    expect(cases[1].courtName).toStrictEqual("BBBB")
+    expect(cases[2].courtName).toStrictEqual("CCCC")
+  })
+
+  it.only("should order by ASC using court date", async () => {
+    const orgCode = "36FPA1"
+    const firstDate = "2001-09-26"
+    const secondDate = "2008-01-26"
+    const thirdDate = "2013-10-16"
+
+    await insertCourtCasesWithCourtDates([secondDate, firstDate, thirdDate], orgCode)
+
+    const result = await listCourtCases(dataSource, [orgCode], 100, "courtDate")
+    expect(isError(result)).toBe(false)
+    const cases = result as CourtCase[]
+
+    expect(cases).toHaveLength(3)
+    expect(cases[0].courtDate).toStrictEqual(new Date(firstDate))
+    expect(cases[1].courtDate).toStrictEqual(new Date(secondDate))
+    expect(cases[2].courtDate).toStrictEqual(new Date(thirdDate))
   })
 })
