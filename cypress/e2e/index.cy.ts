@@ -23,7 +23,6 @@ describe("Home", () => {
       cy.task("insertUsers", users)
 
       cy.visit("/")
-      cy.get("caption").should("have.text", "0 court cases for Bichard01")
     })
 
     it("should display a case for the user's org", () => {
@@ -31,7 +30,6 @@ describe("Home", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["01"])
 
       cy.visit("/")
-      cy.get("caption").should("have.text", "1 court cases for Bichard01")
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
     })
 
@@ -41,7 +39,6 @@ describe("Home", () => {
       cy.setAuthCookie("Bichard02")
 
       cy.visit("/")
-      cy.get("caption").should("have.text", "1 court cases for Bichard02")
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
     })
 
@@ -50,7 +47,6 @@ describe("Home", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "012A", "013A1"])
 
       cy.visit("/")
-      cy.get("caption").should("have.text", "4 court cases for Bichard01")
       cy.get("tr")
         .not(":first")
         .each((row, index) => {
@@ -71,7 +67,6 @@ describe("Home", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "0111", "01111", "011111"])
 
       cy.visit("/")
-      cy.get("caption").should("have.text", "3 court cases for Bichard01")
       cy.get("tr")
         .not(":first")
         .each((row, index) => {

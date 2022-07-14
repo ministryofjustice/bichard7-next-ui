@@ -72,6 +72,13 @@
       }
     },
     {
+      "files": ["**/*.stories.*"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off",
+        "import/prefer-default-export": "off"
+      }
+    },
+    {
       "files": ["cypress/**/*.ts"],
       "extends": ["plugin:cypress/recommended"],
       "rules": {

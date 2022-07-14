@@ -33,6 +33,18 @@ commands:
           name: Spin up PostgreSQL database
           working_directory: ~/bichard7-next
           command: make run-pg
+
+  use_nvm_version:
+    description: Install nvm and use configured node version
+    steps:
+      - run:
+          label: Use nvm for a specific node version...
+          command: |
+            set +e
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install
+            nvm use
 jobs:
   build:
     docker:
@@ -67,7 +79,7 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Run unit tests
+          name: Run code-based unit tests
           command: npm run test:unit
 
   integration_test:
@@ -77,6 +89,7 @@ jobs:
     working_directory: ~
     steps:
       - checkout
+      - use_nvm_version
       - npm_install
       - attach_workspace:
           at: .
@@ -87,6 +100,45 @@ jobs:
           command: npm run test:integration
 
   ui_test:
+    docker:
+      - image: cimg/node:16.12.0
+    resource_class: medium
+    working_directory: ~
+    steps:
+      - checkout
+      - npm_install
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install Playwright in the background
+          command: ./.circleci/scripts/install-playwright.sh
+          background: true
+      - run:
+          name: Build Storybook
+          command: npm run build-storybook
+      - run:
+          name: Wait for Playwright installation to finish
+          command: until [ -f playwrightInstalled ]; do sleep 1; done
+          no_output_timeout: 5m
+      - run:
+          name: Run visual unit tests
+          command: npm run test:ui:unit:ci
+
+  publish_chromatic:
+    docker:
+      - image: cimg/node:16.12.0
+    resource_class: medium
+    working_directory: ~
+    steps:
+      - checkout
+      - npm_install
+      - attach_workspace:
+          at: .
+      - run:
+          name: Run Chromatic
+          command: npx chromatic --exit-zero-on-changes
+
+  ui_e2e_test:
     machine:
       image: ubuntu-2004:2022.04.1
       docker_layer_caching: true
@@ -98,6 +150,7 @@ jobs:
           name: Install Cypress in the background
           command: ./.circleci/scripts/install-cypress.sh 2>&1
           background: true
+      - use_nvm_version
       - npm_install
       - run:
           name: Install GOV.UK Assets
@@ -139,3 +192,13 @@ workflows:
       - ui_test:
           requires:
             - build
+      - ui_e2e_test:
+          requires:
+            - build
+  publish_chromatic:
+    jobs:
+      - publish_chromatic:
+          filters:
+            branches:
+              only:
+                - main
