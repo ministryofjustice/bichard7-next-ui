@@ -70,6 +70,7 @@ If you need to do any local storybook componets to chromatic (from your local br
 ```
 By logging into chromatic using the shared MoJ github account, under bichard-next-ui click on `Manage` tab and select `Configure` to find the project token
 
+This is a link to our [chromatic](https://www.chromatic.com/builds?appId=62ce99495ed8d3db63b60dab) dashboard
 ### Integration/E2e Testing
 
 #### Integration
