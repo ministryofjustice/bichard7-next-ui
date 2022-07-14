@@ -33,7 +33,7 @@ describe("listCourtCases", () => {
   it("shouldn't return more cases than the specified limit", async () => {
     await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
 
-    const result = await listCourtCases(dataSource, ["36FPA1"], 10)
+    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], limit: 10 })
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -63,7 +63,7 @@ describe("listCourtCases", () => {
       "12GHAC"
     ])
 
-    const result = await listCourtCases(dataSource, ["3"], 100)
+    const result = await listCourtCases(dataSource, { forces: ["3"], limit: 100 })
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -97,7 +97,7 @@ describe("listCourtCases", () => {
       "12GHAC"
     ])
 
-    const result = await listCourtCases(dataSource, ["36"], 100)
+    const result = await listCourtCases(dataSource, { forces: ["36"], limit: 10 })
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -129,7 +129,7 @@ describe("listCourtCases", () => {
       "12GHAC"
     ])
 
-    const result = await listCourtCases(dataSource, ["36F"], 100)
+    const result = await listCourtCases(dataSource, { forces: ["36F"], limit: 10 })
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -154,7 +154,7 @@ describe("listCourtCases", () => {
       "12GHAC"
     ])
 
-    const result = await listCourtCases(dataSource, ["36FP"], 100)
+    const result = await listCourtCases(dataSource, { forces: ["36FP"], limit: 10 })
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -166,7 +166,7 @@ describe("listCourtCases", () => {
   it("a user with a visible force of length 5 can see cases for the 4-long prefix, and the exact match, and 6-long suffixes of the visible force", async () => {
     await insertCourtCasesWithOrgCodes(["12GH", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC", "13BR", "14AT"])
 
-    const result = await listCourtCases(dataSource, ["12GHA"], 100)
+    const result = await listCourtCases(dataSource, { forces: ["12GHA"], limit: 10 })
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -195,7 +195,7 @@ describe("listCourtCases", () => {
       "12GHAC"
     ])
 
-    const result = await listCourtCases(dataSource, ["36FPA1"], 100)
+    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], limit: 10 })
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -227,7 +227,7 @@ describe("listCourtCases", () => {
       "13GHBA"
     ])
 
-    const result = await listCourtCases(dataSource, ["36FPA1", "13GH"], 100)
+    const result = await listCourtCases(dataSource, { forces: ["36FPA1", "13GH"], limit: 100 })
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -268,28 +268,42 @@ describe("listCourtCases", () => {
       "13GHBA"
     ])
 
-    const result = await listCourtCases(dataSource, [], 100)
+    const result = await listCourtCases(dataSource, { forces: [], limit: 100 })
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
     expect(cases).toHaveLength(0)
   })
 
-  it("should order by ASC using court name", async () => {
+  it("should order by court name", async () => {
     const orgCode = "36FPA1"
     await insertCourtCasesWithCourtNames(["BBBB", "CCCC", "AAAA"], orgCode)
 
-    const result = await listCourtCases(dataSource, [orgCode], 100, "courtName")
-    expect(isError(result)).toBe(false)
-    const cases = result as CourtCase[]
+    const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], limit: 100, orderBy: "courtName" })
+    expect(isError(resultAsc)).toBe(false)
+    const casesAsc = resultAsc as CourtCase[]
 
-    expect(cases).toHaveLength(3)
-    expect(cases[0].courtName).toStrictEqual("AAAA")
-    expect(cases[1].courtName).toStrictEqual("BBBB")
-    expect(cases[2].courtName).toStrictEqual("CCCC")
+    expect(casesAsc).toHaveLength(3)
+    expect(casesAsc[0].courtName).toStrictEqual("AAAA")
+    expect(casesAsc[1].courtName).toStrictEqual("BBBB")
+    expect(casesAsc[2].courtName).toStrictEqual("CCCC")
+
+    const resultDesc = await listCourtCases(dataSource, {
+      forces: [orgCode],
+      limit: 100,
+      orderBy: "courtName",
+      order: "DESC"
+    })
+    expect(isError(resultDesc)).toBe(false)
+    const casesDesc = resultDesc as CourtCase[]
+
+    expect(casesDesc).toHaveLength(3)
+    expect(casesDesc[0].courtName).toStrictEqual("CCCC")
+    expect(casesDesc[1].courtName).toStrictEqual("BBBB")
+    expect(casesDesc[2].courtName).toStrictEqual("AAAA")
   })
 
-  it.only("should order by ASC using court date", async () => {
+  it("should order by court date", async () => {
     const orgCode = "36FPA1"
     const firstDate = "2001-09-26"
     const secondDate = "2008-01-26"
@@ -297,7 +311,7 @@ describe("listCourtCases", () => {
 
     await insertCourtCasesWithCourtDates([secondDate, firstDate, thirdDate], orgCode)
 
-    const result = await listCourtCases(dataSource, [orgCode], 100, "courtDate")
+    const result = await listCourtCases(dataSource, { forces: [orgCode], limit: 100, orderBy: "courtDate" })
     expect(isError(result)).toBe(false)
     const cases = result as CourtCase[]
 
@@ -305,5 +319,19 @@ describe("listCourtCases", () => {
     expect(cases[0].courtDate).toStrictEqual(new Date(firstDate))
     expect(cases[1].courtDate).toStrictEqual(new Date(secondDate))
     expect(cases[2].courtDate).toStrictEqual(new Date(thirdDate))
+
+    const resultDesc = await listCourtCases(dataSource, {
+      forces: [orgCode],
+      limit: 100,
+      orderBy: "courtDate",
+      order: "DESC"
+    })
+    expect(isError(resultDesc)).toBe(false)
+    const casesDesc = resultDesc as CourtCase[]
+
+    expect(casesDesc).toHaveLength(3)
+    expect(casesDesc[0].courtDate).toStrictEqual(new Date(thirdDate))
+    expect(casesDesc[1].courtDate).toStrictEqual(new Date(secondDate))
+    expect(casesDesc[2].courtDate).toStrictEqual(new Date(firstDate))
   })
 })
