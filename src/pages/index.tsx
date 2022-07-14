@@ -22,7 +22,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { currentUser } = context as AuthenticationServerSidePropsContext
 
     const dataSource = await getDataSource()
-    const courtCases = await listCourtCases(dataSource, currentUser.visibleForces, 100)
+    const courtCases = await listCourtCases(dataSource, { forces: currentUser.visibleForces, limit: 100 })
 
     if (isError(courtCases)) {
       throw courtCases
