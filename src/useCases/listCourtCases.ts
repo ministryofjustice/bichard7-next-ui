@@ -3,7 +3,7 @@ import { DataSource } from "typeorm"
 import PromiseResult from "../types/PromiseResult"
 import getColumnName from "../lib/getColumnName"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
-import QueryParams from "types/QueryParams"
+import { QueryParams } from "types/QueryParams"
 
 const listCourtCases = async (connection: DataSource, queryParams: QueryParams): PromiseResult<CourtCase[]> => {
   const courtCaseRepository = connection.getRepository(CourtCase)
