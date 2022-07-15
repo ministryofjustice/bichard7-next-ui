@@ -1,10 +1,11 @@
 import CourtCase from "entities/CourtCase"
 import { Paragraph, Table, Link } from "govuk-react"
+import { QueryOrder } from "types/QueryParams"
 import DateTime from "../components/DateTime"
 
 interface Props {
   courtCases: CourtCase[]
-  order?: "ASC" | "DESC" | undefined
+  order?: QueryOrder
 }
 
 const orderByParams = (orderBy: string, order: string) => `/bichard/?orderBy=${orderBy}&order=${order}`
