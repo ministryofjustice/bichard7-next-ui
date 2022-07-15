@@ -19,8 +19,8 @@ export default defineConfig({
           return insertCourtCasesWithOrgCodes(orgCodes)
         },
 
-        insertCourtCasesWithCourtNames(courtNames: string[]) {
-          return insertCourtCasesWithCourtNames(courtNames, "011111")
+        insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {
+          return insertCourtCasesWithCourtNames(params.courtNames, params.force)
         },
 
         clearCourtCases() {
