@@ -108,7 +108,9 @@ const insertCourtCasesWithCourtNames = (courtNames: string[], orgCode: string) =
       error_id: i,
       message_id: String(i).padStart(5, "x"),
       ptiurn: "Case" + String(i).padStart(5, "0"),
-      court_name: name
+      court_name: name,
+      defendant_name: CourtCaseCase.defendant_name + i,
+      court_date: new Date("2" + String(i).padStart(3, "0") + "-01-01")
     }
   })
 
