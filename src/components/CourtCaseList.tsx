@@ -7,19 +7,37 @@ interface Props {
   order?: "ASC" | "DESC" | undefined
 }
 
+const orderByParams = (orderBy: string, order: string) => `/bichard/?orderBy=${orderBy}&order=${order}`
+
 const CourtCaseList: React.FC<Props> = ({ courtCases, order = "ASC" }: Props) => {
   const tableHead = (
     <Table.Row>
-      <Table.CellHeader>{"Court Date"}</Table.CellHeader>
-      <Table.CellHeader>{"PTIURN"}</Table.CellHeader>
-      <Table.CellHeader>{"Defendant Name"}</Table.CellHeader>
       <Table.CellHeader>
-        <Link href={`/bichard/?orderBy=courtName&order=${order}`} id="court-name">
+        <Link href={orderByParams("courtDate", order)} id="court-date">
+          {"Court Date"}
+        </Link>
+      </Table.CellHeader>
+      <Table.CellHeader>
+        <Link href={orderByParams("ptiurn", order)} id="ptiurn">
+          {"PTIURN"}
+        </Link>
+      </Table.CellHeader>
+      <Table.CellHeader>
+        <Link href={orderByParams("defendantName", order)} id="defendant-name">
+          {"Defendant Name"}
+        </Link>
+      </Table.CellHeader>
+      <Table.CellHeader>
+        <Link href={orderByParams("courtName", order)} id="court-name">
           {"Court Name"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>{"Triggers"}</Table.CellHeader>
-      <Table.CellHeader>{"Exceptions"}</Table.CellHeader>
+      <Table.CellHeader>
+        <Link href={orderByParams("errorReason", order)} id="exceptions">
+          {"Exceptions"}
+        </Link>
+      </Table.CellHeader>
     </Table.Row>
   )
   const tableBody = courtCases.map((courtCase, idx) => {
