@@ -86,7 +86,7 @@ describe("Home", () => {
           email: "bichard01@example.com"
         }
       ])
-      cy.task("insertCourtCasesWithCourtNames", ["BBBB", "AAAA", "DDDD", "CCCC"])
+      cy.task("insertCourtCasesWithCourtNames", { courtNames: ["BBBB", "AAAA", "DDDD", "CCCC"], force: "011111" })
 
       cy.visit("/")
 
