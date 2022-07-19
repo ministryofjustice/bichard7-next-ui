@@ -113,7 +113,7 @@ describe("Home", () => {
     it("Should filter cases by whether they have triggers and exceptions", () => {
       cy.task("insertUsers", users)
 
-      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      cy.task("insertCourtCasesWithOrgCodes", ["01", "01", "01", "01"])
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -123,9 +123,19 @@ describe("Home", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("addException", { caseId: 0, exceptionCode: "HO100206" })
+
+      cy.task("insertTriggers", { caseId: 1, triggers })
+
+      cy.task("addException", { caseId: 2, exceptionCode: "HO100207" })
 
       cy.visit("/")
+
+      // Default: no filter, all cases shown
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
     })
   })
 })

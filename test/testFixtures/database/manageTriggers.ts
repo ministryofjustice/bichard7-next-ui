@@ -32,6 +32,7 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
       triggerCount: () => "trigger_count + 1",
       triggerReason: triggers.map((t) => t.triggerCode).join(", ")
     })
+    .where("errorId = :id", { id: caseId })
     .execute()
 
   await dataSource.destroy()
