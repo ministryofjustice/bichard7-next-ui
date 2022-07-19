@@ -36,16 +36,42 @@ describe("Home", () => {
       cy.visit("/court-cases/0")
 
       cy.get("H2").should("have.text", "Case Details")
-      cy.get("tr").contains("Case00000")
-      cy.get("tr").contains("Magistrates' Courts Essex Basildon")
-      cy.get("tr").contains("26/09/2008 01:00:00")
-      cy.get("tr").contains("Allocation Trigger")
-      cy.get("tr").contains("HO100206")
-      cy.get("tr").contains("TRPR0006")
+
+      // Case details table
+      cy.get("th")
+        .contains("PTIURN")
+        .then(($cell) => {
+          expect($cell.parent().find("td").text()).to.equal("Case00000")
+        })
+      cy.get("th")
+        .contains("Court name")
+        .then(($cell) => {
+          expect($cell.parent().find("td").text()).to.equal("Magistrates' Courts Essex Basildon")
+        })
+      cy.get("th")
+        .contains("Court date")
+        .then(($cell) => {
+          expect($cell.parent().find("td").text()).to.equal("26/09/2008 01:00:00")
+        })
+      cy.get("th")
+        .contains("Defendant name")
+        .then(($cell) => {
+          expect($cell.parent().find("td").text()).to.equal("Allocation Trigger")
+        })
+      cy.get("th")
+        .contains("Trigger reason")
+        .then(($cell) => {
+          expect($cell.parent().find("td").text()).to.equal("TRPR0001")
+        })
+
+      // Triggers table
       cy.get("H3").contains("Triggers")
+      cy.get("table").eq(1).find("tr").should("have.length", 2)
+      cy.get("table").eq(1).find("tr").eq(1).find("td").first().should("have.text", "TRPR0001")
+      cy.get("table").eq(1).find("tr").eq(1).find("td").last().should("have.text", "09/07/2022 11:22:34")
+
+      // Notes
       cy.get("H3").contains("Notes")
-      cy.get("tr").contains("TRPR0001")
-      cy.get("tr").contains("09/07/2022 11:22:34")
       cy.get("p").contains("Case has no notes.")
     })
 
