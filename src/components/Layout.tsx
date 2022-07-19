@@ -12,18 +12,22 @@ const Layout = ({ children, user }: Props) => {
   const header = <TopNav serviceTitle={"Bichard7"}>{[user.forenames, user.surname].join(" ")}</TopNav>
   return (
     <>
-      <Page header={header}>{children}</Page>
-      <Footer
-        copyright={{
-          image: {
-            height: 102,
-            src: addBasePath("/images/govuk-crest.png"),
-            width: 125
-          },
-          link: "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",
-          text: "Crown copyright"
-        }}
-      />
+      <div className="govuk-width-container">
+        <Page header={header}>
+          <main className="govuk-main-wrapper">{children}</main>
+        </Page>
+        <Footer
+          copyright={{
+            image: {
+              height: 102,
+              src: addBasePath("/images/govuk-crest.png"),
+              width: 125
+            },
+            link: "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",
+            text: "Crown copyright"
+          }}
+        />
+      </div>
     </>
   )
 }

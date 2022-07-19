@@ -109,7 +109,7 @@ describe("Home", () => {
         })
     })
 
-    it("can display cases ordered by defendant name", () => {
+    it.only("can display cases filtered by defendant name", () => {
       cy.task("insertUsers", [
         {
           username: "Bichard01",
@@ -126,21 +126,14 @@ describe("Home", () => {
 
       cy.visit("/")
 
-      cy.get("[id^=court-name]").click()
+      cy.get("[id^=search-defendant-name]").type("Bruce Wayne")
+
+      cy.get("#search_button_homepage").click()
 
       cy.get("tr")
         .not(":first")
         .each((row) => {
-          cy.wrap(row).get("td:nth-child(4)").first().contains("AAAA")
-          cy.wrap(row).get("td:nth-child(4)").last().contains("DDDD")
-        })
-
-      cy.get("[id^=court-name]")
-        .cy.get("tr")
-        .not(":first")
-        .each((row) => {
-          cy.wrap(row).get("td:nth-child(4)").first().contains("DDDD")
-          cy.wrap(row).get("td:nth-child(4)").last().contains("AAAA")
+          cy.wrap(row).get("td:nth-child(3)").first().contains("Bruce Wayne")
         })
     })
   })
