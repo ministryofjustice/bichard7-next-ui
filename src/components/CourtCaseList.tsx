@@ -10,7 +10,7 @@ interface Props {
 
 const orderByParams = (orderBy: string, order: string) => `/bichard/?orderBy=${orderBy}&order=${order}`
 
-const CourtCaseList: React.FC<Props> = ({ courtCases, order = "ASC" }: Props) => {
+const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) => {
   const tableHead = (
     <Table.Row>
       <Table.CellHeader>

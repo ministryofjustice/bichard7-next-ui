@@ -11,14 +11,20 @@ const listCourtCases = async (connection: DataSource, queryParams: CaseListQuery
     .leftJoinAndSelect("courtCase.triggers", "trigger")
     .orderBy(
       `courtCase.${getColumnName(courtCaseRepository, queryParams.orderBy ?? "errorId")}`,
-      queryParams.order ?? "ASC"
+      queryParams.order === "desc" ? "DESC" : "ASC"
     )
     .limit(queryParams.limit)
 
   if (queryParams.defendantName) {
-    query.where("courtCase.defendantName ilike '%' || :name || '%'", {
+    query.andWhere("courtCase.defendantName ilike '%' || :name || '%'", {
       name: queryParams.defendantName
     })
+  }
+
+  if (queryParams.filter === "triggers") {
+    query.andWhere("courtCase.triggerCount > 0")
+  } else if (queryParams.filter === "exceptions") {
+    query.andWhere("courtCase.errorCount > 0")
   }
 
   const result = await query.getMany().catch((error: Error) => error)

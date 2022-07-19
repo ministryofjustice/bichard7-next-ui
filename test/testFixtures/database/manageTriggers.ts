@@ -1,5 +1,6 @@
-import Trigger from "entities/Trigger"
-import getDataSource from "lib/getDataSource"
+import CourtCase from "../../../src/entities/CourtCase"
+import Trigger from "../../../src/entities/Trigger"
+import getDataSource from "../../../src/lib/getDataSource"
 
 type TestTrigger = {
   triggerId: number
@@ -22,6 +23,16 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
         return { ...t, errorId: caseId }
       })
     )
+    .execute()
+
+  await dataSource
+    .createQueryBuilder()
+    .update(CourtCase)
+    .set({
+      triggerCount: () => "trigger_count + 1",
+      triggerReason: triggers.map((t) => t.triggerCode).join(", ")
+    })
+    .where("errorId = :id", { id: caseId })
     .execute()
 
   await dataSource.destroy()
