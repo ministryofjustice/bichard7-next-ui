@@ -9,4 +9,7 @@ export type CaseListQueryParams = {
   limit: number
   defendantName?: string
   forces: string[]
+  pageNum?: string
+  maxPageItems: string
 }
+

@@ -6,7 +6,8 @@ import deleteFromTable from "./test/testFixtures/database/deleteFromTable"
 import {
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithDefendantNames,
-  insertCourtCasesWithOrgCodes
+  insertCourtCasesWithOrgCodes,
+  insertMultipleDummyCourtCases
 } from "./test/testFixtures/database/insertCourtCases"
 import { insertTriggers } from "./test/testFixtures/database/manageTriggers"
 import insertException from "./test/testFixtures/database/manageExceptions"
@@ -19,6 +20,10 @@ export default defineConfig({
       on("task", {
         insertCourtCasesWithOrgCodes(orgCodes: string[]) {
           return insertCourtCasesWithOrgCodes(orgCodes)
+        },
+
+        insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
+          return insertMultipleDummyCourtCases(params.numToInsert, params.force)
         },
 
         insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {

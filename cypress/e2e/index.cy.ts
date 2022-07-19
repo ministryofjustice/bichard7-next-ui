@@ -26,6 +26,13 @@ describe("Home", () => {
       cy.visit("/")
     })
 
+    it.only("should display multiple cases when multiple cases are added", () => {
+      cy.task("insertUsers", users)
+      cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" } )
+
+      cy.visit("/")
+    })
+
     it("should display a case for the user's org", () => {
       cy.task("insertUsers", users)
       cy.task("insertCourtCasesWithOrgCodes", ["01"])

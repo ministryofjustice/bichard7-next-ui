@@ -22,7 +22,7 @@ describe("Home", () => {
       cy.viewport(1280, 720)
     })
 
-    it("should load case details for the case that this user can see", () => {
+    it.only("should load case details for the case that this user can see", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["01"])
       const triggers: TestTrigger[] = [
         {
