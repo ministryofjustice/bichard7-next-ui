@@ -11,6 +11,8 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import listCourtCases from "useCases/listCourtCases"
 import { Filter, QueryOrder } from "types/CaseListQueryParams"
+import { Button, GridCol, GridRow, Link, Select } from "govuk-react"
+import { useState } from "react"
 
 interface Props {
   user: User
@@ -19,13 +21,48 @@ interface Props {
   filter?: Filter
 }
 
+const queryParamToFilterState = (value: string) =>
+  (value === "TRIGGERS" || value === "EXCEPTIONS" ? value : undefined) as Filter
+
+const FilterCases = (props: { initialSelection: Filter }) => {
+  const [currentSelection, setCurrentSelection] = useState(props.initialSelection)
+
+  return (
+    <GridRow>
+      <GridCol>
+        <Select
+          label={"Filter cases"}
+          input={{
+            value: currentSelection,
+            onChange: (e) => setCurrentSelection(queryParamToFilterState(e.target.value))
+          }}
+        >
+          <option value={""} selected={!currentSelection}>
+            {"Show all cases"}
+          </option>
+          <option value={"TRIGGERS"} selected={currentSelection === "TRIGGERS"}>
+            {"Show only cases with triggers"}
+          </option>
+          <option value={"EXCEPTIONS"} selected={currentSelection === "EXCEPTIONS"}>
+            {"Show only cases with exceptions"}
+          </option>
+        </Select>
+      </GridCol>
+      <GridCol>
+        <Link href={`/bichard?filter=${currentSelection}`}>
+          <Button>{"Filter"}</Button>
+        </Link>
+      </GridCol>
+    </GridRow>
+  )
+}
+
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { orderBy, order, filter } = query as { orderBy: string; order: string; filter: string }
-
-    const caseFilter: Filter = filter === "triggers" ? "TRIGGERS" : filter === "exceptions" ? "EXCEPTIONS" : undefined
+    const caseFilter = queryParamToFilterState(filter)
 
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
@@ -48,7 +85,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       order: oppositeOrder
     }
 
-    if (caseFilter !== undefined) {
+    if (caseFilter) {
       props.filter = caseFilter
     }
 
@@ -56,7 +93,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const Home: NextPage<Props> = ({ user, courtCases, order }: Props) => {
+const Home: NextPage<Props> = ({ user, courtCases, order, filter }: Props) => {
   return (
     <>
       <Head>
@@ -65,6 +102,7 @@ const Home: NextPage<Props> = ({ user, courtCases, order }: Props) => {
       </Head>
 
       <Layout user={user}>
+        <FilterCases initialSelection={filter} />
         <CourtCaseList courtCases={courtCases} order={order} />
       </Layout>
     </>
