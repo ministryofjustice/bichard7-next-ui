@@ -15,6 +15,10 @@ const listCourtCases = async (connection: DataSource, queryParams: QueryParams):
     )
     .limit(queryParams.limit)
 
+  if (queryParams.defendantName) {
+    query.where("courtCase.defendantName like :name", { name: `%${queryParams.defendantName}%` })
+  }
+
   const result = await query.getMany().catch((error: Error) => error)
   return result
 }

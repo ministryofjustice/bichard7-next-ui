@@ -132,9 +132,26 @@ const insertCourtCasesWithCourtDates = (courtDates: string[], orgCode: string) =
   return insertCourtCases(existingCourtCases)
 }
 
+const insertCourtCasesWithDefendantNames = (defendantNames: string[], orgCode: string) => {
+  const existingCourtCases = defendantNames.map((name, i) => {
+    return {
+      ...CourtCaseCase,
+      org_for_police_filter: orgCode,
+      error_id: i,
+      message_id: String(i).padStart(5, "x"),
+      ptiurn: "Case" + String(i).padStart(5, "0"),
+      defendant_name: name,
+      court_date: new Date("2" + String(i).padStart(3, "0") + "-01-01")
+    }
+  })
+
+  return insertCourtCases(existingCourtCases)
+}
+
 export {
   insertCourtCases,
   insertCourtCasesWithOrgCodes,
   insertCourtCasesWithCourtNames,
-  insertCourtCasesWithCourtDates
+  insertCourtCasesWithCourtDates,
+  insertCourtCasesWithDefendantNames
 }
