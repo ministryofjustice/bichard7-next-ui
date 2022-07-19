@@ -1,11 +1,11 @@
-import CourtCase from "../entities/CourtCase"
 import { DataSource } from "typeorm"
-import PromiseResult from "../types/PromiseResult"
+import { CaseListQueryParams } from "types/CaseListQueryParams"
+import CourtCase from "../entities/CourtCase"
 import getColumnName from "../lib/getColumnName"
+import PromiseResult from "../types/PromiseResult"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
-import { QueryParams } from "types/QueryParams"
 
-const listCourtCases = async (connection: DataSource, queryParams: QueryParams): PromiseResult<CourtCase[]> => {
+const listCourtCases = async (connection: DataSource, queryParams: CaseListQueryParams): PromiseResult<CourtCase[]> => {
   const courtCaseRepository = connection.getRepository(CourtCase)
   let query = courtCasesByVisibleForcesQuery(courtCaseRepository, queryParams.forces)
     .leftJoinAndSelect("courtCase.triggers", "trigger")
@@ -14,6 +14,12 @@ const listCourtCases = async (connection: DataSource, queryParams: QueryParams):
       queryParams.order ?? "ASC"
     )
     .limit(queryParams.limit)
+
+  if (queryParams.defendantName) {
+    query.andWhere("courtCase.defendantName ilike '%' || :name || '%'", {
+      name: queryParams.defendantName
+    })
+  }
 
   if (queryParams.filter === "TRIGGERS") {
     query = query.andWhere("courtCase.triggerCount > 0")

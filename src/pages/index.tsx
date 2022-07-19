@@ -10,7 +10,7 @@ import { ParsedUrlQuery } from "querystring"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import listCourtCases from "useCases/listCourtCases"
-import type { Filter, QueryOrder } from "types/QueryParams"
+import { Filter, QueryOrder } from "types/CaseListQueryParams"
 
 interface Props {
   user: User

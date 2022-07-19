@@ -6,7 +6,8 @@ import deleteFromTable from "../testFixtures/database/deleteFromTable"
 import {
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithCourtNames,
-  insertCourtCasesWithOrgCodes
+  insertCourtCasesWithOrgCodes,
+  insertCourtCasesWithDefendantNames
 } from "../testFixtures/database/insertCourtCases"
 import insertException from "../testFixtures/database/manageExceptions"
 import { isError } from "../../src/types/Result"
@@ -337,44 +338,79 @@ describe("listCourtCases", () => {
     expect(casesDesc[2].courtDate).toStrictEqual(new Date(firstDate))
   })
 
-  it("Should filter by whether a case has triggers", async () => {
-    await insertCourtCasesWithOrgCodes(["01", "01"])
+  describe("filter by defendant name", () => {
+    it("should list cases when there is a case insensitive match", async () => {
+      const orgCode = "36FPA1"
+      const defendantToInclude = "Bruce Wayne"
+      const defendantToIncludeWithPartialMatch = "Bruce W. Ayne"
+      const defendantToNotInclude = "Barbara Gordon"
 
-    const trigger: TestTrigger = {
-      triggerId: 0,
-      triggerCode: "TRPR0001",
-      status: 0,
-      createdAt: new Date("2022-07-09T10:22:34.000Z")
-    }
-    await insertTriggers(0, [trigger])
+      await insertCourtCasesWithDefendantNames(
+        [defendantToInclude, defendantToNotInclude, defendantToIncludeWithPartialMatch],
+        orgCode
+      )
 
-    const result = await listCourtCases(dataSource, {
-      forces: ["01"],
-      limit: 100,
-      filter: "TRIGGERS"
+      let result = await listCourtCases(dataSource, { forces: [orgCode], limit: 100, defendantName: "Bruce Wayne" })
+      expect(isError(result)).toBe(false)
+      let cases = result as CourtCase[]
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
+
+      result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        limit: 100,
+        defendantName: "bruce w"
+      })
+      expect(isError(result)).toBe(false)
+      cases = result as CourtCase[]
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
+      expect(cases[1].defendantName).toStrictEqual(defendantToIncludeWithPartialMatch)
     })
-
-    expect(isError(result)).toBeFalsy()
-    const courtCases = result as CourtCase[]
-
-    expect(courtCases).toHaveLength(1)
-    expect(courtCases[0].errorId).toBe(0)
   })
 
-  it("Should filter by whether a case has excecptions", async () => {
-    await insertCourtCasesWithOrgCodes(["01", "01"])
-    await insertException(0, "HO100300")
+  describe("Filter cases having triggers/exceptions", () => {
+    it("Should filter by whether a case has triggers", async () => {
+      await insertCourtCasesWithOrgCodes(["01", "01"])
 
-    const result = await listCourtCases(dataSource, {
-      forces: ["01"],
-      limit: 100,
-      filter: "EXCEPTIONS"
+      const trigger: TestTrigger = {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status: 0,
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+      await insertTriggers(0, [trigger])
+
+      const result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        limit: 100,
+        filter: "TRIGGERS"
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const courtCases = result as CourtCase[]
+
+      expect(courtCases).toHaveLength(1)
+      expect(courtCases[0].errorId).toBe(0)
     })
 
-    expect(isError(result)).toBeFalsy()
-    const courtCases = result as CourtCase[]
+    it("Should filter by whether a case has excecptions", async () => {
+      await insertCourtCasesWithOrgCodes(["01", "01"])
+      await insertException(0, "HO100300")
 
-    expect(courtCases).toHaveLength(1)
-    expect(courtCases[0].errorId).toBe(0)
+      const result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        limit: 100,
+        filter: "EXCEPTIONS"
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const courtCases = result as CourtCase[]
+
+      expect(courtCases).toHaveLength(1)
+      expect(courtCases[0].errorId).toBe(0)
+    })
   })
 })
