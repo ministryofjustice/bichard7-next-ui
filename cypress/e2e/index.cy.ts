@@ -1,3 +1,4 @@
+import { TestTrigger } from "../../test/testFixtures/database/manageTriggers"
 import type { TestUser } from "../../test/testFixtures/database/manageUsers"
 
 describe("Home", () => {
@@ -107,6 +108,24 @@ describe("Home", () => {
           cy.wrap(row).get("td:nth-child(4)").first().contains("DDDD")
           cy.wrap(row).get("td:nth-child(4)").last().contains("AAAA")
         })
+    })
+
+    it("Should filter cases by whether they have triggers and exceptions", () => {
+      cy.task("insertUsers", users)
+
+      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: 0,
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+
+      cy.visit("/")
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
     })
   })
 })

@@ -1,3 +1,4 @@
+import CourtCase from "entities/CourtCase"
 import Trigger from "entities/Trigger"
 import getDataSource from "lib/getDataSource"
 
@@ -22,6 +23,14 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
         return { ...t, errorId: caseId }
       })
     )
+    .execute()
+
+  await dataSource
+    .createQueryBuilder()
+    .update(CourtCase)
+    .set({
+      triggerCount: () => "trigger_count + 1"
+    })
     .execute()
 
   await dataSource.destroy()
