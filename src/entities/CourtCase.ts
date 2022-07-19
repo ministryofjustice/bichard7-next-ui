@@ -38,6 +38,12 @@ export default class CourtCase extends BaseEntity {
   @OneToMany(() => Trigger, (trigger) => trigger.courtCase)
   triggers!: Relation<Trigger>[]
 
+  @Column({ name: "trigger_count" })
+  triggerCount!: number
+
+  @Column({ name: "error_count" })
+  errorCount!: number
+
   @OneToMany(() => Note, (note) => note.courtCase)
   notes!: Relation<Note>[]
 }
