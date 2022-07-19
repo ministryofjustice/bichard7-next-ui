@@ -11,50 +11,13 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import listCourtCases from "useCases/listCourtCases"
 import { Filter, QueryOrder } from "types/CaseListQueryParams"
-import { Button, GridCol, GridRow, Link, Select } from "govuk-react"
-import { useState } from "react"
+import { CourtCaseFilter, queryParamToFilterState } from "components/CourtCaseFilter"
 
 interface Props {
   user: User
   courtCases: CourtCase[]
   order: QueryOrder
   filter?: Filter
-}
-
-const queryParamToFilterState = (value: string) =>
-  (value === "TRIGGERS" || value === "EXCEPTIONS" ? value : undefined) as Filter
-
-const FilterCases = (props: { initialSelection: Filter }) => {
-  const [currentSelection, setCurrentSelection] = useState(props.initialSelection)
-
-  return (
-    <GridRow>
-      <GridCol>
-        <Select
-          label={"Filter cases"}
-          input={{
-            value: currentSelection,
-            onChange: (e) => setCurrentSelection(queryParamToFilterState(e.target.value))
-          }}
-        >
-          <option value={""} selected={!currentSelection}>
-            {"Show all cases"}
-          </option>
-          <option value={"TRIGGERS"} selected={currentSelection === "TRIGGERS"}>
-            {"Show only cases with triggers"}
-          </option>
-          <option value={"EXCEPTIONS"} selected={currentSelection === "EXCEPTIONS"}>
-            {"Show only cases with exceptions"}
-          </option>
-        </Select>
-      </GridCol>
-      <GridCol>
-        <Link href={`/bichard?filter=${currentSelection}`}>
-          <Button>{"Filter"}</Button>
-        </Link>
-      </GridCol>
-    </GridRow>
-  )
 }
 
 export const getServerSideProps = withMultipleServerSideProps(
@@ -77,7 +40,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw courtCases
     }
 
-    const oppositeOrder: QueryOrder = order === "ASC" ? "DESC" : "ASC"
+    const oppositeOrder: QueryOrder = order === "asc" ? "desc" : "asc"
 
     const props: Props = {
       user: currentUser.serialize(),
@@ -102,7 +65,7 @@ const Home: NextPage<Props> = ({ user, courtCases, order, filter }: Props) => {
       </Head>
 
       <Layout user={user}>
-        <FilterCases initialSelection={filter} />
+        <CourtCaseFilter initialSelection={filter} />
         <CourtCaseList courtCases={courtCases} order={order} />
       </Layout>
     </>

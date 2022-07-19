@@ -11,7 +11,7 @@ const listCourtCases = async (connection: DataSource, queryParams: CaseListQuery
     .leftJoinAndSelect("courtCase.triggers", "trigger")
     .orderBy(
       `courtCase.${getColumnName(courtCaseRepository, queryParams.orderBy ?? "errorId")}`,
-      queryParams.order ?? "ASC"
+      queryParams.order === "desc" ? "DESC" : "ASC"
     )
     .limit(queryParams.limit)
 
@@ -21,9 +21,9 @@ const listCourtCases = async (connection: DataSource, queryParams: CaseListQuery
     })
   }
 
-  if (queryParams.filter === "TRIGGERS") {
+  if (queryParams.filter === "triggers") {
     query.andWhere("courtCase.triggerCount > 0")
-  } else if (queryParams.filter === "EXCEPTIONS") {
+  } else if (queryParams.filter === "exceptions") {
     query.andWhere("courtCase.errorCount > 0")
   }
 

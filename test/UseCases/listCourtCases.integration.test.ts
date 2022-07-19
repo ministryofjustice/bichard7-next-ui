@@ -295,7 +295,7 @@ describe("listCourtCases", () => {
       forces: [orgCode],
       limit: 100,
       orderBy: "courtName",
-      order: "DESC"
+      order: "desc"
     })
     expect(isError(resultDesc)).toBe(false)
     const casesDesc = resultDesc as CourtCase[]
@@ -327,7 +327,7 @@ describe("listCourtCases", () => {
       forces: [orgCode],
       limit: 100,
       orderBy: "courtDate",
-      order: "DESC"
+      order: "desc"
     })
     expect(isError(resultDesc)).toBe(false)
     const casesDesc = resultDesc as CourtCase[]
@@ -386,7 +386,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         limit: 100,
-        filter: "TRIGGERS"
+        filter: "triggers"
       })
 
       expect(isError(result)).toBeFalsy()
@@ -403,7 +403,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         limit: 100,
-        filter: "EXCEPTIONS"
+        filter: "exceptions"
       })
 
       expect(isError(result)).toBeFalsy()
