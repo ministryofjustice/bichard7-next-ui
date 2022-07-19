@@ -7,7 +7,7 @@ import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQ
 
 const listCourtCases = async (connection: DataSource, queryParams: CaseListQueryParams): PromiseResult<CourtCase[]> => {
   const courtCaseRepository = connection.getRepository(CourtCase)
-  let query = courtCasesByVisibleForcesQuery(courtCaseRepository, queryParams.forces)
+  const query = courtCasesByVisibleForcesQuery(courtCaseRepository, queryParams.forces)
     .leftJoinAndSelect("courtCase.triggers", "trigger")
     .orderBy(
       `courtCase.${getColumnName(courtCaseRepository, queryParams.orderBy ?? "errorId")}`,
@@ -22,9 +22,9 @@ const listCourtCases = async (connection: DataSource, queryParams: CaseListQuery
   }
 
   if (queryParams.filter === "TRIGGERS") {
-    query = query.andWhere("courtCase.triggerCount > 0")
+    query.andWhere("courtCase.triggerCount > 0")
   } else if (queryParams.filter === "EXCEPTIONS") {
-    query = query.andWhere("courtCase.errorCount > 0")
+    query.andWhere("courtCase.errorCount > 0")
   }
 
   const result = await query.getMany().catch((error: Error) => error)
