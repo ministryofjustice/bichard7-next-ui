@@ -8,10 +8,12 @@ import {
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithOrgCodes
 } from "../testFixtures/database/insertCourtCases"
+import insertException from "../testFixtures/database/manageExceptions"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/entities/CourtCase"
 import { DataSource } from "typeorm"
 import getDataSource from "../../src/lib/getDataSource"
+import { insertTriggers, TestTrigger } from "../testFixtures/database/manageTriggers"
 
 jest.setTimeout(100000)
 
@@ -333,5 +335,46 @@ describe("listCourtCases", () => {
     expect(casesDesc[0].courtDate).toStrictEqual(new Date(thirdDate))
     expect(casesDesc[1].courtDate).toStrictEqual(new Date(secondDate))
     expect(casesDesc[2].courtDate).toStrictEqual(new Date(firstDate))
+  })
+
+  it("Should filter by whether a case has triggers", async () => {
+    await insertCourtCasesWithOrgCodes(["01", "01"])
+
+    const trigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0001",
+      status: 0,
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
+    await insertTriggers(0, [trigger])
+
+    const result = await listCourtCases(dataSource, {
+      forces: ["01"],
+      limit: 100,
+      filter: "TRIGGERS"
+    })
+
+    expect(isError(result)).toBeFalsy()
+    const courtCases = result as CourtCase[]
+
+    expect(courtCases).toHaveLength(1)
+    expect(courtCases[0].errorId).toBe(0)
+  })
+
+  it("Should filter by whether a case has excecptions", async () => {
+    await insertCourtCasesWithOrgCodes(["01", "01"])
+    await insertException(0, "HO100300")
+
+    const result = await listCourtCases(dataSource, {
+      forces: ["01"],
+      limit: 100,
+      filter: "EXCEPTIONS"
+    })
+
+    expect(isError(result)).toBeFalsy()
+    const courtCases = result as CourtCase[]
+
+    expect(courtCases).toHaveLength(1)
+    expect(courtCases[0].errorId).toBe(0)
   })
 })

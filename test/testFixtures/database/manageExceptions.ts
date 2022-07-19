@@ -1,5 +1,5 @@
-import CourtCase from "entities/CourtCase"
-import getDataSource from "lib/getDataSource"
+import CourtCase from "../../../src/entities/CourtCase"
+import getDataSource from "../../../src/lib/getDataSource"
 
 export default async (caseId: number, exceptionCode: string): Promise<boolean> => {
   const dataSource = await getDataSource()

@@ -8,7 +8,7 @@ import {
   insertCourtCasesWithOrgCodes
 } from "./test/testFixtures/database/insertCourtCases"
 import { insertTriggers } from "./test/testFixtures/database/manageTriggers"
-import addException from "./test/testFixtures/database/addException"
+import insertException from "./test/testFixtures/database/manageExceptions"
 import { deleteUsers, insertUsers, TestUser } from "./test/testFixtures/database/manageUsers"
 
 export default defineConfig({
@@ -40,8 +40,8 @@ export default defineConfig({
           return insertTriggers(args.caseId, args.triggers)
         },
 
-        addException(params: { caseId: number; exceptionCode: string }) {
-          return addException(params.caseId, params.exceptionCode)
+        insertException(params: { caseId: number; exceptionCode: string }) {
+          return insertException(params.caseId, params.exceptionCode)
         }
       })
     }

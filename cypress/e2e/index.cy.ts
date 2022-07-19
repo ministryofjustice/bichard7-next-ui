@@ -123,11 +123,11 @@ describe("Home", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
-      cy.task("addException", { caseId: 0, exceptionCode: "HO100206" })
+      cy.task("insertException", { caseId: 0, exceptionCode: "HO100206" })
 
       cy.task("insertTriggers", { caseId: 1, triggers })
 
-      cy.task("addException", { caseId: 2, exceptionCode: "HO100207" })
+      cy.task("insertException", { caseId: 2, exceptionCode: "HO100207" })
 
       cy.visit("/")
 
