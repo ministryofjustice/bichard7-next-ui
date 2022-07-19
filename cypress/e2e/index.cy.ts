@@ -136,6 +136,29 @@ describe("Home", () => {
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
+
+      // Filtering by having triggers
+      cy.get("#case-filter-select").select("triggers")
+      cy.get("#case-filter-button").click()
+
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
+
+      // Filtering by having exceptions
+      cy.get("#case-filter-select").select("exceptions")
+      cy.get("#case-filter-button").click()
+
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
+
+      // Clearing filters
+      cy.get("#case-filter-select").select(0)
+      cy.get("#case-filter-button").click()
+
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
     })
   })
 })

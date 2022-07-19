@@ -15,7 +15,8 @@ const CourtCaseFilter = (props: { initialSelection: Filter }) => {
           label={"Filter cases"}
           input={{
             value: currentSelection,
-            onChange: (e) => setCurrentSelection(queryParamToFilterState(e.target.value))
+            onChange: (e) => setCurrentSelection(queryParamToFilterState(e.target.value)),
+            id: "case-filter-select"
           }}
         >
           <option value={""} selected={!currentSelection}>
@@ -31,7 +32,7 @@ const CourtCaseFilter = (props: { initialSelection: Filter }) => {
       </GridCol>
       <GridCol>
         <Link href={`/bichard?filter=${currentSelection}`}>
-          <Button>{"Filter"}</Button>
+          <Button id={"case-filter-button"}>{"Filter"}</Button>
         </Link>
       </GridCol>
     </GridRow>
