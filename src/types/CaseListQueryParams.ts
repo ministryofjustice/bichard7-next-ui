@@ -1,6 +1,6 @@
 export type QueryOrder = "ASC" | "DESC" | undefined
 
-export type QueryParams = {
+export type CaseListQueryParams = {
   orderBy?: string
   order?: QueryOrder
   limit: number

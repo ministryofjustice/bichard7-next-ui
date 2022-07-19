@@ -1,6 +1,6 @@
 import CourtCase from "entities/CourtCase"
 import { Paragraph, Table, Link } from "govuk-react"
-import { QueryOrder } from "types/QueryParams"
+import { QueryOrder } from "types/CaseListQueryParams"
 import DateTime from "../components/DateTime"
 
 interface Props {
