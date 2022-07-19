@@ -337,7 +337,7 @@ describe("listCourtCases", () => {
   })
 
   describe("filter by defendant name", () => {
-    it("should list cases when there is a match", async () => {
+    it("should list cases when there is a case insensitive match", async () => {
       const orgCode = "36FPA1"
       const defendantToInclude = "Bruce Wayne"
       const defendantToIncludeWithPartialMatch = "Bruce W. Ayne"
@@ -348,24 +348,24 @@ describe("listCourtCases", () => {
         orgCode
       )
 
-      const result = await listCourtCases(dataSource, { forces: [orgCode], limit: 100, defendantName: "Bruce Wayne" })
+      let result = await listCourtCases(dataSource, { forces: [orgCode], limit: 100, defendantName: "Bruce Wayne" })
       expect(isError(result)).toBe(false)
-      const cases = result as CourtCase[]
+      let cases = result as CourtCase[]
 
       expect(cases).toHaveLength(1)
       expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
 
-      const resultDesc = await listCourtCases(dataSource, {
+      result = await listCourtCases(dataSource, {
         forces: [orgCode],
         limit: 100,
-        defendantName: "Bruce W"
+        defendantName: "bruce w"
       })
-      expect(isError(resultDesc)).toBe(false)
-      const casesDesc = resultDesc as CourtCase[]
+      expect(isError(result)).toBe(false)
+      cases = result as CourtCase[]
 
-      expect(casesDesc).toHaveLength(2)
-      expect(casesDesc[0].defendantName).toStrictEqual(defendantToInclude)
-      expect(casesDesc[1].defendantName).toStrictEqual(defendantToIncludeWithPartialMatch)
+      expect(cases).toHaveLength(2)
+      expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
+      expect(cases[1].defendantName).toStrictEqual(defendantToIncludeWithPartialMatch)
     })
   })
 })

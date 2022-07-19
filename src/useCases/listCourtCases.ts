@@ -1,9 +1,9 @@
-import CourtCase from "../entities/CourtCase"
 import { DataSource } from "typeorm"
-import PromiseResult from "../types/PromiseResult"
-import getColumnName from "../lib/getColumnName"
-import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 import { QueryParams } from "types/QueryParams"
+import CourtCase from "../entities/CourtCase"
+import getColumnName from "../lib/getColumnName"
+import PromiseResult from "../types/PromiseResult"
+import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
 const listCourtCases = async (connection: DataSource, queryParams: QueryParams): PromiseResult<CourtCase[]> => {
   const courtCaseRepository = connection.getRepository(CourtCase)
@@ -16,7 +16,9 @@ const listCourtCases = async (connection: DataSource, queryParams: QueryParams):
     .limit(queryParams.limit)
 
   if (queryParams.defendantName) {
-    query.where("courtCase.defendantName like :name", { name: `%${queryParams.defendantName}%` })
+    query.where("lower(courtCase.defendantName) like '%' || :name || '%'", {
+      name: queryParams.defendantName.toLowerCase()
+    })
   }
 
   const result = await query.getMany().catch((error: Error) => error)
