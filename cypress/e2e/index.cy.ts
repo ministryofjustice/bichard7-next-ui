@@ -108,6 +108,41 @@ describe("Home", () => {
           cy.wrap(row).get("td:nth-child(4)").last().contains("AAAA")
         })
     })
+
+    it("can display cases ordered by defendant name", () => {
+      cy.task("insertUsers", [
+        {
+          username: "Bichard01",
+          visibleForces: ["011111"],
+          forenames: "Bichard Test User",
+          surname: "01",
+          email: "bichard01@example.com"
+        }
+      ])
+      cy.task("insertCourtCasesWithDefendantNames", {
+        defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"],
+        force: "011111"
+      })
+
+      cy.visit("/")
+
+      cy.get("[id^=court-name]").click()
+
+      cy.get("tr")
+        .not(":first")
+        .each((row) => {
+          cy.wrap(row).get("td:nth-child(4)").first().contains("AAAA")
+          cy.wrap(row).get("td:nth-child(4)").last().contains("DDDD")
+        })
+
+      cy.get("[id^=court-name]")
+        .cy.get("tr")
+        .not(":first")
+        .each((row) => {
+          cy.wrap(row).get("td:nth-child(4)").first().contains("DDDD")
+          cy.wrap(row).get("td:nth-child(4)").last().contains("AAAA")
+        })
+    })
   })
 })
 
