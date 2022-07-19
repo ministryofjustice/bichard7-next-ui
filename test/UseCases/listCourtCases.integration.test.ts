@@ -6,7 +6,8 @@ import deleteFromTable from "../testFixtures/database/deleteFromTable"
 import {
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithCourtNames,
-  insertCourtCasesWithOrgCodes
+  insertCourtCasesWithOrgCodes,
+  insertCourtCasesWithDefendantNames
 } from "../testFixtures/database/insertCourtCases"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/entities/CourtCase"
@@ -333,5 +334,38 @@ describe("listCourtCases", () => {
     expect(casesDesc[0].courtDate).toStrictEqual(new Date(thirdDate))
     expect(casesDesc[1].courtDate).toStrictEqual(new Date(secondDate))
     expect(casesDesc[2].courtDate).toStrictEqual(new Date(firstDate))
+  })
+
+  describe("filter by defendant name", () => {
+    it("should list cases when there is a case insensitive match", async () => {
+      const orgCode = "36FPA1"
+      const defendantToInclude = "Bruce Wayne"
+      const defendantToIncludeWithPartialMatch = "Bruce W. Ayne"
+      const defendantToNotInclude = "Barbara Gordon"
+
+      await insertCourtCasesWithDefendantNames(
+        [defendantToInclude, defendantToNotInclude, defendantToIncludeWithPartialMatch],
+        orgCode
+      )
+
+      let result = await listCourtCases(dataSource, { forces: [orgCode], limit: 100, defendantName: "Bruce Wayne" })
+      expect(isError(result)).toBe(false)
+      let cases = result as CourtCase[]
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
+
+      result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        limit: 100,
+        defendantName: "bruce w"
+      })
+      expect(isError(result)).toBe(false)
+      cases = result as CourtCase[]
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
+      expect(cases[1].defendantName).toStrictEqual(defendantToIncludeWithPartialMatch)
+    })
   })
 })
