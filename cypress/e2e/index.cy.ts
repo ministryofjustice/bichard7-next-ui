@@ -128,7 +128,7 @@ describe("Home", () => {
 
       cy.get("[id^=search-defendant-name]").type("Bruce Wayne")
 
-      cy.get("#search_button_homepage").click()
+      cy.get("[id^=search_button_homepage]").click()
 
       cy.get("tr")
         .not(":first")

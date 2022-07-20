@@ -1,4 +1,3 @@
-import CourtCaseList from "../components/CourtCaseList"
 import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
 import User from "entities/User"
@@ -8,10 +7,10 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { QueryOrder } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import listCourtCases from "useCases/listCourtCases"
-import { QueryOrder } from "types/CaseListQueryParams"
-import { InputField, Link } from "govuk-react"
+import CourtCaseList from "../components/CourtCaseList"
 
 interface Props {
   user: User
@@ -55,26 +54,19 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const SearchForDefendant = () => {
-  return (
-    <div>
-      <div className="govuk-grid-row">
-        <div className="govuk-grid-column-one-third" id="search-defendant-name">
-          <InputField
-            input={{
-              name: "group0"
-            }}
-          >
-            {"Defendant Name"}
-          </InputField>
-        </div>
-        <Link href={`/bichard/?defendantName=Bruce`} id="search_button_homepage" className="Button">
-          {"Court Date"}
-        </Link>
+const SearchForDefendant = (props: { url: string }) => (
+  <div>
+    <div className="govuk-grid-row">
+      <div className="govuk-grid-column-one-third">
+        <form action={props.url} method="get">
+          <label htmlFor="defendant">{"Defendant name"}</label>
+          <input type="text" id="search-defendant-name" name="defendant" />
+          <input type="submit" id="search_button_homepage" />
+        </form>
       </div>
     </div>
-  )
-}
+  </div>
+)
 
 const Home: NextPage<Props> = ({ user, courtCases, order }: Props) => {
   return (
@@ -85,7 +77,7 @@ const Home: NextPage<Props> = ({ user, courtCases, order }: Props) => {
       </Head>
 
       <Layout user={user}>
-        <SearchForDefendant />
+        <SearchForDefendant url="" />
         <CourtCaseList courtCases={courtCases} order={order} />
       </Layout>
     </>
