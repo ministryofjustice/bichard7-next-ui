@@ -129,12 +129,8 @@ describe("Home", () => {
       cy.get("[id^=search-defendant-name]").type("Bruce Wayne")
 
       cy.get("[id^=search_button_homepage]").click()
-
-      cy.get("tr")
-        .not(":first")
-        .each((row) => {
-          cy.wrap(row).get("td:nth-child(3)").first().contains("Bruce Wayne")
-        })
+      cy.get("tr").eq(1).get("td:nth-child(3)").first().contains("Bruce Wayne")
+      cy.get("tr").should("have.length", 2)
     })
   })
 })

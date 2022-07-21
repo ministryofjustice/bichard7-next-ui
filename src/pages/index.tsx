@@ -23,7 +23,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, defendantName } = query as { orderBy: string; defendantName: string }
+    const { orderBy, defendant } = query as { orderBy: string; defendant: string }
     let { order } = query as { order: string }
 
     const dataSource = await getDataSource()
@@ -32,7 +32,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       limit: 100,
       orderBy: orderBy,
       order: order as QueryOrder,
-      defendantName: defendantName
+      defendantName: defendant
     })
 
     if (isError(courtCases)) {
