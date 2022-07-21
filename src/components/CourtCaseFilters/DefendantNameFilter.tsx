@@ -9,20 +9,12 @@ interface Props {
 }
 
 const DefendantNameFilter = (props: Props) => (
-  <form method={"get"}>
-    <GridRow>
-      <GridCol setWidth={"two-thirds"}>
-        <SearchBox>
-          <SearchBox.Input
-            placeholder="Search defendants by name"
-            name={"defendant"}
-            defaultValue={props.defendantName}
-          />
-          <SearchBox.Button />
-        </SearchBox>
-      </GridCol>
-    </GridRow>
-  </form>
+  <>
+    <SearchBox>
+      <SearchBox.Input placeholder="Search defendants by name" name={"defendant"} defaultValue={props.defendantName} />
+      <SearchBox.Button />
+    </SearchBox>
+  </>
 )
 
 export default DefendantNameFilter

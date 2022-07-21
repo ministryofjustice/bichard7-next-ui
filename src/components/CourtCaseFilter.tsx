@@ -1,3 +1,4 @@
+import { GridCol, GridRow } from "govuk-react"
 import { Filter } from "types/CaseListQueryParams"
 import DefendantNameFilter from "./CourtCaseFilters/DefendantNameFilter"
 import { ResultFilter } from "./CourtCaseFilters/ResultFilter"
@@ -9,10 +10,17 @@ interface Props {
 
 const CourtCaseFilter = (props: Props) => {
   return (
-    <div>
-      <DefendantNameFilter defendantName={props.defendantName} />
-      <ResultFilter initialSelection={props.resultFilter} />
-    </div>
+    <form method={"get"}>
+      <GridRow>
+        <GridCol setWidth={"one-half"} style={{ display: "flex" }}>
+          <DefendantNameFilter defendantName={props.defendantName} />
+        </GridCol>
+        <GridCol setWidth={"one-half"} style={{ display: "flex" }}>
+          <ResultFilter initialSelection={props.resultFilter} />
+        </GridCol>
+      </GridRow>
+      <GridRow></GridRow>
+    </form>
   )
 }
 
