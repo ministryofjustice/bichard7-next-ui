@@ -1,30 +1,27 @@
-import { Button, Select } from "govuk-react"
+import { GridCol, GridRow } from "govuk-react"
 import { Filter } from "types/CaseListQueryParams"
+import DefendantNameFilter from "./CourtCaseFilters/DefendantNameFilter"
+import { ResultFilter } from "./CourtCaseFilters/ResultFilter"
 
-const queryParamToFilterState = (value: string) =>
-  (value === "triggers" || value === "exceptions" ? value : undefined) as Filter
+interface Props {
+  defendantName?: string
+  resultFilter: Filter
+}
 
-const CourtCaseFilter = (props: { initialSelection: Filter }) => {
+const CourtCaseFilter = (props: Props) => {
   return (
     <form method={"get"}>
-      <Select
-        label={"Filter cases"}
-        input={{
-          id: "case-filter-select",
-          name: "filter",
-          defaultValue: props.initialSelection,
-          className: "form-control"
-        }}
-      >
-        <option value={""}>{"Show all cases"}</option>
-        <option value={"triggers"}>{"Show only cases with triggers"}</option>
-        <option value={"exceptions"}>{"Show only cases with exceptions"}</option>
-      </Select>
-      <Button type={"submit"} id={"case-filter-button"}>
-        {"Filter"}
-      </Button>
+      <GridRow>
+        <GridCol setWidth={"one-half"} style={{ display: "flex" }}>
+          <DefendantNameFilter defendantName={props.defendantName} />
+        </GridCol>
+        <GridCol setWidth={"one-half"} style={{ display: "flex" }}>
+          <ResultFilter initialSelection={props.resultFilter} />
+        </GridCol>
+      </GridRow>
+      <GridRow></GridRow>
     </form>
   )
 }
 
-export { CourtCaseFilter, queryParamToFilterState }
+export default CourtCaseFilter

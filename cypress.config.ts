@@ -5,6 +5,7 @@ import CourtCase from "entities/CourtCase"
 import deleteFromTable from "./test/testFixtures/database/deleteFromTable"
 import {
   insertCourtCasesWithCourtNames,
+  insertCourtCasesWithDefendantNames,
   insertCourtCasesWithOrgCodes
 } from "./test/testFixtures/database/insertCourtCases"
 import { insertTriggers } from "./test/testFixtures/database/manageTriggers"
@@ -22,6 +23,10 @@ export default defineConfig({
 
         insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {
           return insertCourtCasesWithCourtNames(params.courtNames, params.force)
+        },
+
+        insertCourtCasesWithDefendantNames(params: { defendantNames: string[]; force: string }) {
+          return insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
         },
 
         clearCourtCases() {

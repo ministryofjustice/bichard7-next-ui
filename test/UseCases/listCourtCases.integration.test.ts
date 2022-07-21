@@ -340,7 +340,7 @@ describe("listCourtCases", () => {
 
   describe("filter by defendant name", () => {
     it("should list cases when there is a case insensitive match", async () => {
-      const orgCode = "36FPA1"
+      const orgCode = "01FPA1"
       const defendantToInclude = "Bruce Wayne"
       const defendantToIncludeWithPartialMatch = "Bruce W. Ayne"
       const defendantToNotInclude = "Barbara Gordon"
@@ -386,7 +386,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         limit: 100,
-        filter: "triggers"
+        resultFilter: "triggers"
       })
 
       expect(isError(result)).toBeFalsy()
@@ -403,7 +403,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         limit: 100,
-        filter: "exceptions"
+        resultFilter: "exceptions"
       })
 
       expect(isError(result)).toBeFalsy()

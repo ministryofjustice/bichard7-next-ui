@@ -1,31 +1,43 @@
-import CourtCaseList from "../components/CourtCaseList"
 import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
+import { queryParamToFilterState } from "components/CourtCaseFilters/ResultFilter"
+import CourtCaseList from "components/CourtCaseList"
+import CourtCaseFilter from "components/CourtCaseFilter"
+import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { Filter, QueryOrder } from "types/CaseListQueryParams"
+import { isError } from "types/Result"
 import User from "entities/User"
 import getDataSource from "lib/getDataSource"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
-import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { isError } from "types/Result"
 import listCourtCases from "useCases/listCourtCases"
-import { Filter, QueryOrder } from "types/CaseListQueryParams"
-import { CourtCaseFilter, queryParamToFilterState } from "components/CourtCaseFilter"
 
 interface Props {
   user: User
   courtCases: CourtCase[]
   order: QueryOrder
-  filter?: Filter
+  resultFilter?: Filter
+  defendantNameFilter?: string
 }
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, order, filter } = query as { orderBy: string; order: string; filter: string }
-    const caseFilter = queryParamToFilterState(filter)
+    const {
+      orderBy,
+      order,
+      resultFilter: resultFilterParam,
+      defendant
+    } = query as {
+      orderBy: string
+      order: string
+      resultFilter: string
+      defendant: string
+    }
+    const resultFilter = queryParamToFilterState(resultFilterParam)
 
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
@@ -33,7 +45,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       limit: 100,
       orderBy: orderBy,
       order: order as QueryOrder,
-      filter: caseFilter
+      defendantName: defendant,
+      resultFilter: resultFilter
     })
 
     if (isError(courtCases)) {
@@ -48,15 +61,19 @@ export const getServerSideProps = withMultipleServerSideProps(
       order: oppositeOrder
     }
 
-    if (caseFilter) {
-      props.filter = caseFilter
+    if (resultFilter) {
+      props.resultFilter = resultFilter
+    }
+
+    if (defendant) {
+      props.defendantNameFilter = defendant
     }
 
     return { props }
   }
 )
 
-const Home: NextPage<Props> = ({ user, courtCases, order, filter }: Props) => {
+const Home: NextPage<Props> = ({ user, courtCases, order, resultFilter, defendantNameFilter }: Props) => {
   return (
     <>
       <Head>
@@ -65,7 +82,7 @@ const Home: NextPage<Props> = ({ user, courtCases, order, filter }: Props) => {
       </Head>
 
       <Layout user={user}>
-        <CourtCaseFilter initialSelection={filter} />
+        <CourtCaseFilter resultFilter={resultFilter} defendantName={defendantNameFilter} />
         <CourtCaseList courtCases={courtCases} order={order} />
       </Layout>
     </>

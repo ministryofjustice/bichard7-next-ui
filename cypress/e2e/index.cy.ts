@@ -110,6 +110,30 @@ describe("Home", () => {
         })
     })
 
+    it("can display cases filtered by defendant name", () => {
+      cy.task("insertUsers", [
+        {
+          username: "Bichard01",
+          visibleForces: ["011111"],
+          forenames: "Bichard Test User",
+          surname: "01",
+          email: "bichard01@example.com"
+        }
+      ])
+      cy.task("insertCourtCasesWithDefendantNames", {
+        defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"],
+        force: "011111"
+      })
+
+      cy.visit("/")
+
+      cy.get("input[type=search]").type("Bruce Wayne")
+
+      cy.get("button[title=Search]").click()
+      cy.get("tr").eq(1).get("td:nth-child(3)").first().contains("Bruce Wayne")
+      cy.get("tr").should("have.length", 2)
+    })
+
     it("Should filter cases by whether they have triggers and exceptions", () => {
       cy.task("insertUsers", users)
 
@@ -138,22 +162,22 @@ describe("Home", () => {
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
 
       // Filtering by having triggers
-      cy.get("#case-filter-select").select("triggers")
-      cy.get("#case-filter-button").click()
+      cy.get("#result-filter-select").select("triggers")
+      cy.get("#result-filter-button").click()
 
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
 
       // Filtering by having exceptions
-      cy.get("#case-filter-select").select("exceptions")
-      cy.get("#case-filter-button").click()
+      cy.get("#result-filter-select").select("exceptions")
+      cy.get("#result-filter-button").click()
 
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
 
       // Clearing filters
-      cy.get("#case-filter-select").select(0)
-      cy.get("#case-filter-button").click()
+      cy.get("#result-filter-select").select(0)
+      cy.get("#result-filter-button").click()
 
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
