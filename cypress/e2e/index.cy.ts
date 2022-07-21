@@ -1,3 +1,4 @@
+import { TestTrigger } from "../../test/testFixtures/database/manageTriggers"
 import type { TestUser } from "../../test/testFixtures/database/manageUsers"
 
 describe("Home", () => {
@@ -109,7 +110,7 @@ describe("Home", () => {
         })
     })
 
-    it.only("can display cases filtered by defendant name", () => {
+    it("can display cases filtered by defendant name", () => {
       cy.task("insertUsers", [
         {
           username: "Bichard01",
@@ -131,6 +132,57 @@ describe("Home", () => {
       cy.get("button[title=Search]").click()
       cy.get("tr").eq(1).get("td:nth-child(3)").first().contains("Bruce Wayne")
       cy.get("tr").should("have.length", 2)
+    })
+
+    it("Should filter cases by whether they have triggers and exceptions", () => {
+      cy.task("insertUsers", users)
+
+      cy.task("insertCourtCasesWithOrgCodes", ["01", "01", "01", "01"])
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: 0,
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("insertException", { caseId: 0, exceptionCode: "HO100206" })
+
+      cy.task("insertTriggers", { caseId: 1, triggers })
+
+      cy.task("insertException", { caseId: 2, exceptionCode: "HO100207" })
+
+      cy.visit("/")
+
+      // Default: no filter, all cases shown
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
+
+      // Filtering by having triggers
+      cy.get("#case-filter-select").select("triggers")
+      cy.get("#case-filter-button").click()
+
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
+
+      // Filtering by having exceptions
+      cy.get("#case-filter-select").select("exceptions")
+      cy.get("#case-filter-button").click()
+
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
+
+      // Clearing filters
+      cy.get("#case-filter-select").select(0)
+      cy.get("#case-filter-button").click()
+
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
+      cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
     })
   })
 })

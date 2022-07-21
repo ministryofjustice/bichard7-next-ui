@@ -52,7 +52,9 @@ describe("listCourtCases", () => {
       ptiurn: courtCase.ptiurn,
       triggerReason: courtCase.trigger_reason,
       triggers: [],
-      notes: []
+      notes: [],
+      errorCount: 0,
+      triggerCount: 0
     } as unknown as CourtCase
 
     let result = await getCourtCase(dataSource, 0, ["36FPA1"])
