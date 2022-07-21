@@ -1,8 +1,8 @@
-import DefendantNameFilter from "components/DefendantNameFilter"
 import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
-import { CourtCaseFilter, queryParamToFilterState } from "components/CourtCaseFilter"
+import { queryParamToFilterState } from "components/CourtCaseFilters/ResultFilter"
 import CourtCaseList from "components/CourtCaseList"
+import CourtCaseFilter from "components/CourtCaseFilter"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { Filter, QueryOrder } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
@@ -18,20 +18,26 @@ interface Props {
   user: User
   courtCases: CourtCase[]
   order: QueryOrder
-  filter?: Filter
+  resultFilter?: Filter
+  defendantNameFilter?: string
 }
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, order, filter, defendant } = query as {
+    const {
+      orderBy,
+      order,
+      resultFilter: resultFilterParam,
+      defendant
+    } = query as {
       orderBy: string
       order: string
-      filter: string
+      resultFilter: string
       defendant: string
     }
-    const caseFilter = queryParamToFilterState(filter)
+    const resultFilter = queryParamToFilterState(resultFilterParam)
 
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
@@ -40,7 +46,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       orderBy: orderBy,
       order: order as QueryOrder,
       defendantName: defendant,
-      filter: caseFilter
+      resultFilter: resultFilter
     })
 
     if (isError(courtCases)) {
@@ -55,15 +61,19 @@ export const getServerSideProps = withMultipleServerSideProps(
       order: oppositeOrder
     }
 
-    if (caseFilter) {
-      props.filter = caseFilter
+    if (resultFilter) {
+      props.resultFilter = resultFilter
+    }
+
+    if (defendant) {
+      props.defendantNameFilter = defendant
     }
 
     return { props }
   }
 )
 
-const Home: NextPage<Props> = ({ user, courtCases, order, filter }: Props) => {
+const Home: NextPage<Props> = ({ user, courtCases, order, resultFilter, defendantNameFilter }: Props) => {
   return (
     <>
       <Head>
@@ -72,8 +82,7 @@ const Home: NextPage<Props> = ({ user, courtCases, order, filter }: Props) => {
       </Head>
 
       <Layout user={user}>
-        <DefendantNameFilter />
-        <CourtCaseFilter initialSelection={filter} />
+        <CourtCaseFilter resultFilter={resultFilter} defendantName={defendantNameFilter} />
         <CourtCaseList courtCases={courtCases} order={order} />
       </Layout>
     </>

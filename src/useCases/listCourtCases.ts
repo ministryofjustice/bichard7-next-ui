@@ -21,9 +21,9 @@ const listCourtCases = async (connection: DataSource, queryParams: CaseListQuery
     })
   }
 
-  if (queryParams.filter === "triggers") {
+  if (queryParams.resultFilter === "triggers") {
     query.andWhere("courtCase.triggerCount > 0")
-  } else if (queryParams.filter === "exceptions") {
+  } else if (queryParams.resultFilter === "exceptions") {
     query.andWhere("courtCase.errorCount > 0")
   }
 

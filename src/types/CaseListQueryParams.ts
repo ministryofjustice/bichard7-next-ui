@@ -5,7 +5,7 @@ export type Filter = "triggers" | "exceptions" | undefined
 export type CaseListQueryParams = {
   orderBy?: string
   order?: QueryOrder
-  filter?: Filter
+  resultFilter?: Filter
   limit: number
   defendantName?: string
   forces: string[]
