@@ -126,9 +126,9 @@ describe("Home", () => {
 
       cy.visit("/")
 
-      cy.get("[id^=search-defendant-name]").type("Bruce Wayne")
+      cy.get("input[type=search]").type("Bruce Wayne")
 
-      cy.get("[id^=search_button_homepage]").click()
+      cy.get("button[title=Search]").click()
       cy.get("tr").eq(1).get("td:nth-child(3)").first().contains("Bruce Wayne")
       cy.get("tr").should("have.length", 2)
     })
