@@ -1,3 +1,7 @@
+// @ts-nocheck
+// Typescript type checking breaks when using SearchBox.Input and SearchBox.Button,
+// for now we disable type checking for this file as it is a proof of concept
+
 import { GridCol, GridRow, SearchBox } from "govuk-react"
 
 const DefendantNameFilter = () => (
