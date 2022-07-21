@@ -10,7 +10,7 @@ interface Props {
 const CourtCaseFilter = (props: Props) => {
   return (
     <div>
-      <DefendantNameFilter />
+      <DefendantNameFilter defendantName={props.defendantName} />
       <ResultFilter initialSelection={props.resultFilter} />
     </div>
   )

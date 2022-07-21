@@ -4,12 +4,20 @@
 
 import { GridCol, GridRow, SearchBox } from "govuk-react"
 
-const DefendantNameFilter = () => (
+interface Props {
+  defendantName?: string
+}
+
+const DefendantNameFilter = (props: Props) => (
   <form method={"get"}>
     <GridRow>
       <GridCol setWidth={"two-thirds"}>
         <SearchBox>
-          <SearchBox.Input placeholder="Search defendants by name" name={"defendant"} />
+          <SearchBox.Input
+            placeholder="Search defendants by name"
+            name={"defendant"}
+            defaultValue={props.defendantName}
+          />
           <SearchBox.Button />
         </SearchBox>
       </GridCol>
