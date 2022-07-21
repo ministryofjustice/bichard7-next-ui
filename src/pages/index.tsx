@@ -1,3 +1,4 @@
+import DefendantNameFilter from "components/DefendantNameFilter"
 import Layout from "components/Layout"
 import CourtCase from "entities/CourtCase"
 import User from "entities/User"
@@ -54,20 +55,6 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const SearchForDefendant = (props: { url: string }) => (
-  <div>
-    <div className="govuk-grid-row">
-      <div className="govuk-grid-column-one-third">
-        <form action={props.url} method="get">
-          <label htmlFor="defendant">{"Defendant name"}</label>
-          <input type="text" id="search-defendant-name" name="defendant" />
-          <input type="submit" id="search_button_homepage" />
-        </form>
-      </div>
-    </div>
-  </div>
-)
-
 const Home: NextPage<Props> = ({ user, courtCases, order }: Props) => {
   return (
     <>
@@ -77,7 +64,7 @@ const Home: NextPage<Props> = ({ user, courtCases, order }: Props) => {
       </Head>
 
       <Layout user={user}>
-        <SearchForDefendant url="" />
+        <DefendantNameFilter url="" />
         <CourtCaseList courtCases={courtCases} order={order} />
       </Layout>
     </>
