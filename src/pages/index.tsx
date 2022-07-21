@@ -64,7 +64,7 @@ const Home: NextPage<Props> = ({ user, courtCases, order }: Props) => {
       </Head>
 
       <Layout user={user}>
-        <DefendantNameFilter url="" />
+        <DefendantNameFilter />
         <CourtCaseList courtCases={courtCases} order={order} />
       </Layout>
     </>

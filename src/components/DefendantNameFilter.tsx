@@ -1,15 +1,16 @@
-const DefendantNameFilter = (props: { url: string }) => (
-  <div>
-    <div className="govuk-grid-row">
-      <div className="govuk-grid-column-one-third">
-        <form action={props.url} method="get">
-          <label htmlFor="defendant">{"Defendant name"}</label>
-          <input type="text" id="search-defendant-name" name="defendant" />
-          <input type="submit" id="search_button_homepage" />
-        </form>
-      </div>
-    </div>
-  </div>
+import { GridCol, GridRow, SearchBox } from "govuk-react"
+
+const DefendantNameFilter = () => (
+  <form method={"get"}>
+    <GridRow>
+      <GridCol setWidth={"two-thirds"}>
+        <SearchBox>
+          <SearchBox.Input placeholder="Search defendants by name" name={"defendant"} />
+          <SearchBox.Button />
+        </SearchBox>
+      </GridCol>
+    </GridRow>
+  </form>
 )
 
 export default DefendantNameFilter
