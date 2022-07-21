@@ -84,6 +84,10 @@ fi
       install_trivy
       pull_trivy_db
 
+      pwd
+
+      ls trivy
+
       ## Run goss tests
       GOSS_SLEEP=15 dgoss run -e DB_HOST=172.17.0.1 "ui:latest"
       ## Run Trivy scan
