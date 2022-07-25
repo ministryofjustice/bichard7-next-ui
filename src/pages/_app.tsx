@@ -1,3 +1,4 @@
+import "date-time-format-timezone"
 import type { AppProps } from "next/app"
 
 function MyApp({ Component, pageProps }: AppProps) {
