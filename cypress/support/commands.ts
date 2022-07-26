@@ -16,6 +16,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       setAuthCookie(username: string): Chainable<Element>
+      findByText(text: string): Chainable<Element>
     }
   }
 }

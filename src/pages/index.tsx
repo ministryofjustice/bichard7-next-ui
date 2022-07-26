@@ -27,70 +27,75 @@ interface Props {
 }
 
 const validateQueryParams = (param: string | string[] | undefined): param is string => typeof param === "string"
+const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, pageNum, resultFilter: resultFilterParam,
-      defendant, maxPageItems, order } = query
+    const { orderBy, pageNum, resultFilter: resultFilterParam, defendant, maxPageItems, order } = query
     const resultFilter = queryParamToFilterState(resultFilterParam as string)
 
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
     const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
-    const validatedOrder: QueryOrder = order === "asc" ? "desc" : "asc"
+    const validatedDefendantName = validateQueryParams(defendant) ? defendant : undefined
+    const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
 
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
       forces: currentUser.visibleForces,
-      defendantName: defendant,
+      ...(validatedDefendantName && { defendantName: validatedDefendantName }),
       resultFilter: resultFilter,
       maxPageItems: validatedMaxPageItems,
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
-      order: validatedOrder 
+      order: validatedOrder
     })
+
+    const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
 
     if (isError(courtCases)) {
       throw courtCases
     }
 
-    const totalPages = (Math.ceil(courtCases.totalCases / parseInt(validatedMaxPageItems, 10)) ?? 1)
+    const totalPages = Math.ceil(courtCases.totalCases / parseInt(validatedMaxPageItems, 10)) ?? 1
 
-    const props: Props = {
-      user: currentUser.serialize(),
-      courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
-      order: validatedOrder,
-      totalPages: totalPages === 0 ? 1 : totalPages,
-      pageNum: parseInt(validatedPageNum, 10) || 1
+    return {
+      props: {
+        user: currentUser.serialize(),
+        courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
+        order: oppositeOrder,
+        totalPages: totalPages === 0 ? 1 : totalPages,
+        pageNum: parseInt(validatedPageNum, 10) || 1,
+        ...(resultFilter && { resultFilter }),
+        ...(validatedDefendantName && { defendantNameFilter: validatedDefendantName })
+      }
     }
-
-    if (resultFilter) {
-      props.resultFilter = resultFilter
-    }
-
-    if (defendant) {
-      props.defendantNameFilter = defendant as string
-    }
-
-    return { props }
   }
 )
 
-const Home: NextPage<Props> = ({ user, courtCases, order, totalPages, pageNum, resultFilter, defendantNameFilter }: Props) => 
+const Home: NextPage<Props> = ({
+  user,
+  courtCases,
+  order,
+  totalPages,
+  pageNum,
+  resultFilter,
+  defendantNameFilter
+}: Props) => (
   <>
-      <Head>
-        <title>{"Case List | Bichard7"}</title>
-        <meta name="description" content="Case List | Bichard7" />
-      </Head>
+    <Head>
+      <title>{"Case List | Bichard7"}</title>
+      <meta name="description" content="Case List | Bichard7" />
+    </Head>
 
-      <Layout user={user}>
-        <CourtCaseFilter resultFilter={resultFilter} defendantName={defendantNameFilter} />
-        <CourtCaseList courtCases={courtCases} order={order} />
-        <Pagination totalPages={totalPages} pageNum={pageNum} />
-      </Layout>
-    </>
-
+    <Layout user={user}>
+      <CourtCaseFilter resultFilter={resultFilter} defendantName={defendantNameFilter} />
+      <CourtCaseList courtCases={courtCases} order={order} />
+      <Pagination totalPages={totalPages} pageNum={pageNum} />
+    </Layout>
+  </>
+)
 
 export default Home

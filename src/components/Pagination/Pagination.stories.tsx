@@ -8,7 +8,15 @@ export default {
   component: Pagination
 } as ComponentMeta<typeof Pagination>
 
-export const PageOneOfTen: ComponentStory<typeof Pagination> = () => <Pagination totalPages={10} pageNum={1}/>
+export const PageOneOfTen: ComponentStory<typeof Pagination> = () => <Pagination totalPages={10} pageNum={1} />
+
+PageOneOfTen.story = {
+  parameters: {
+    nextRouter: {
+      basePath: "/bichard"
+    }
+  }
+}
 
 PageOneOfTen.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
@@ -17,7 +25,15 @@ PageOneOfTen.play = async ({ canvasElement }) => {
   await expect(canvas.getByText("2 of 10")).toBeInTheDocument()
 }
 
-export const PageFiveOfTen: ComponentStory<typeof Pagination> = () => <Pagination totalPages={10} pageNum={5}/>
+export const PageFiveOfTen: ComponentStory<typeof Pagination> = () => <Pagination totalPages={10} pageNum={5} />
+
+PageFiveOfTen.story = {
+  parameters: {
+    nextRouter: {
+      basePath: "/bichard"
+    }
+  }
+}
 
 PageFiveOfTen.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
@@ -27,7 +43,15 @@ PageFiveOfTen.play = async ({ canvasElement }) => {
   await expect(canvas.getByText("6 of 10")).toBeInTheDocument()
 }
 
-export const PageTenOfTen: ComponentStory<typeof Pagination> = () => <Pagination totalPages={10} pageNum={10}/>
+export const PageTenOfTen: ComponentStory<typeof Pagination> = () => <Pagination totalPages={10} pageNum={10} />
+
+PageTenOfTen.story = {
+  parameters: {
+    nextRouter: {
+      basePath: "/bichard"
+    }
+  }
+}
 
 PageTenOfTen.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)

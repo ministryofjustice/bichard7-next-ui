@@ -7,19 +7,18 @@ import PromiseResult from "types/PromiseResult"
 import getColumnName from "lib/getColumnName"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
-const listCourtCases = async (connection: DataSource, { pageNum, maxPageItems, forces, orderBy, order, defendantName, resultFilter }: CaseListQueryParams): PromiseResult<ListCourtCaseResult> => {
+const listCourtCases = async (
+  connection: DataSource,
+  { pageNum, maxPageItems, forces, orderBy, order, defendantName, resultFilter }: CaseListQueryParams
+): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
-  const maxPageItemsValidated = (maxPageItems ? parseInt(maxPageItems, 10) : 25)
+  const maxPageItemsValidated = maxPageItems ? parseInt(maxPageItems, 10) : 25
   const courtCaseRepository = connection.getRepository(CourtCase)
   const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces)
     .leftJoinAndSelect("courtCase.triggers", "trigger")
-    .orderBy(
-      `courtCase.${getColumnName(courtCaseRepository, orderBy ?? "errorId")}`,
-      order === "desc" ? "DESC" : "ASC"
-    )
-    .offset(pageNumValidated*maxPageItemsValidated)
+    .orderBy(`courtCase.${getColumnName(courtCaseRepository, orderBy ?? "errorId")}`, order === "desc" ? "DESC" : "ASC")
+    .offset(pageNumValidated * maxPageItemsValidated)
     .limit(maxPageItemsValidated)
-
 
   if (defendantName) {
     query.andWhere("courtCase.defendantName ilike '%' || :name || '%'", {

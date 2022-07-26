@@ -1,8 +1,8 @@
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router"
 import CourtCase from "entities/CourtCase"
 import { Paragraph, Table, Link } from "govuk-react"
-import { QueryOrder } from "types/CaseListQueryParams"
 import DateTime from "components/DateTime"
+import type { QueryOrder } from "types/CaseListQueryParams"
 
 interface Props {
   courtCases: CourtCase[]
@@ -10,35 +10,35 @@ interface Props {
 }
 
 const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) => {
-  const { basePath, query } = useRouter();
+  const { basePath, query } = useRouter()
 
-  const orderByParams = (orderBy: string, order: string) => `${basePath}/?${new URLSearchParams({...query, orderBy, order})}`
+  const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
 
   const tableHead = (
     <Table.Row>
       <Table.CellHeader>
-        <Link href={orderByParams("courtDate", order)} id="court-date">
+        <Link href={orderByParams("courtDate")} id="court-date">
           {"Court Date"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("ptiurn", order)} id="ptiurn">
+        <Link href={orderByParams("ptiurn")} id="ptiurn">
           {"PTIURN"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("defendantName", order)} id="defendant-name">
+        <Link href={orderByParams("defendantName")} id="defendant-name">
           {"Defendant Name"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("courtName", order)} id="court-name">
+        <Link href={orderByParams("courtName")} id="court-name">
           {"Court Name"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>{"Triggers"}</Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("errorReason", order)} id="exceptions">
+        <Link href={orderByParams("errorReason")} id="exceptions">
           {"Exceptions"}
         </Link>
       </Table.CellHeader>

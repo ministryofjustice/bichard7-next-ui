@@ -38,7 +38,7 @@ describe("listCourtCases", () => {
   it("should return all the cases if they number less than or equal to the specified maxPageItems", async () => {
     await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: 100 })
+    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "100" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -54,7 +54,7 @@ describe("listCourtCases", () => {
   it("shouldn't return more cases than the specified maxPageItems", async () => {
     await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: 10 })
+    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -70,7 +70,7 @@ describe("listCourtCases", () => {
   it("should return the next page of items", async () => {
     await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: 10, pageNum: 2 })
+    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10", pageNum: "2" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -86,7 +86,7 @@ describe("listCourtCases", () => {
   it("should return the last page of items correctly", async () => {
     await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: 10, pageNum: 10 })
+    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10", pageNum: "10" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -102,7 +102,7 @@ describe("listCourtCases", () => {
   it("shouldn't return any cases if the page number is greater than the total pages", async () => {
     await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: 10, pageNum: 11 })
+    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10", pageNum: "11" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -129,7 +129,7 @@ describe("listCourtCases", () => {
     ]
     await insertCourtCasesWithOrgCodes(orgCodesForceCodeLen1)
 
-    const result = await listCourtCases(dataSource, { forces: ["3"], maxPageItems: 100 })
+    const result = await listCourtCases(dataSource, { forces: ["3"], maxPageItems: "100" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -151,7 +151,7 @@ describe("listCourtCases", () => {
   it("should return a list of cases when the force code length is 2", async () => {
     await insertCourtCasesWithOrgCodes(orgCodes)
 
-    const result = await listCourtCases(dataSource, { forces: ["36"], maxPageItems: 10 })
+    const result = await listCourtCases(dataSource, { forces: ["36"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -171,7 +171,7 @@ describe("listCourtCases", () => {
   it("should return a list of cases when the force code length is 3", async () => {
     await insertCourtCasesWithOrgCodes(orgCodes)
 
-    const result = await listCourtCases(dataSource, { forces: ["36F"], maxPageItems: 10 })
+    const result = await listCourtCases(dataSource, { forces: ["36F"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -184,7 +184,7 @@ describe("listCourtCases", () => {
   it("should return a list of cases when the force code length is 4", async () => {
     await insertCourtCasesWithOrgCodes(orgCodes)
 
-    const result = await listCourtCases(dataSource, { forces: ["36FP"], maxPageItems: 10 })
+    const result = await listCourtCases(dataSource, { forces: ["36FP"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -198,7 +198,7 @@ describe("listCourtCases", () => {
     const orgCodesForVisibleForceLen5 = ["12GH", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC", "13BR", "14AT"]
     await insertCourtCasesWithOrgCodes(orgCodesForVisibleForceLen5)
 
-    const result = await listCourtCases(dataSource, { forces: ["12GHA"], maxPageItems: 10 })
+    const result = await listCourtCases(dataSource, { forces: ["12GHA"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -229,7 +229,7 @@ describe("listCourtCases", () => {
     ]
     await insertCourtCasesWithOrgCodes(orgCodesForNonVisibleCases)
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: 10 })
+    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -264,7 +264,7 @@ describe("listCourtCases", () => {
 
     await insertCourtCasesWithOrgCodes(orgCodesForAllVisibleForces)
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1", "13GH"], maxPageItems: 100 })
+    const result = await listCourtCases(dataSource, { forces: ["36FPA1", "13GH"], maxPageItems: "100" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -307,7 +307,7 @@ describe("listCourtCases", () => {
     ]
     await insertCourtCasesWithOrgCodes(orgCodesForNoVisibleCases)
 
-    const result = await listCourtCases(dataSource, { forces: [], maxPageItems: 100 })
+    const result = await listCourtCases(dataSource, { forces: [], maxPageItems: "100" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -319,7 +319,7 @@ describe("listCourtCases", () => {
     const orgCode = "36FPA1"
     await insertCourtCasesWithCourtNames(["BBBB", "CCCC", "AAAA"], orgCode)
 
-    const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: 100, orderBy: "courtName" })
+    const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "courtName" })
     expect(isError(resultAsc)).toBe(false)
     const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
 
@@ -331,7 +331,7 @@ describe("listCourtCases", () => {
 
     const resultDesc = await listCourtCases(dataSource, {
       forces: [orgCode],
-      maxPageItems: 100,
+      maxPageItems: "100",
       orderBy: "courtName",
       order: "desc"
     })
@@ -353,7 +353,7 @@ describe("listCourtCases", () => {
 
     await insertCourtCasesWithCourtDates([secondDate, firstDate, thirdDate], orgCode)
 
-    const result = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: 100, orderBy: "courtDate" })
+    const result = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "courtDate" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -365,7 +365,7 @@ describe("listCourtCases", () => {
 
     const resultDesc = await listCourtCases(dataSource, {
       forces: [orgCode],
-      maxPageItems: 100,
+      maxPageItems: "100",
       orderBy: "courtDate",
       order: "desc"
     })
@@ -391,7 +391,11 @@ describe("listCourtCases", () => {
         orgCode
       )
 
-      let result = await listCourtCases(dataSource, { forces: [orgCode], limit: 100, defendantName: "Bruce Wayne" })
+      let result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        defendantName: "Bruce Wayne"
+      })
       expect(isError(result)).toBe(false)
       let { result: cases } = result as ListCourtCaseResult
 
@@ -400,7 +404,7 @@ describe("listCourtCases", () => {
 
       result = await listCourtCases(dataSource, {
         forces: [orgCode],
-        limit: 100,
+        maxPageItems: "100",
         defendantName: "bruce w"
       })
       expect(isError(result)).toBe(false)
@@ -426,12 +430,12 @@ describe("listCourtCases", () => {
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
-        limit: 100,
+        maxPageItems: "100",
         resultFilter: "triggers"
       })
 
       expect(isError(result)).toBeFalsy()
-      let { result: cases } = result as ListCourtCaseResult
+      const { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(1)
       expect(cases[0].errorId).toBe(0)
@@ -443,19 +447,15 @@ describe("listCourtCases", () => {
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
-        limit: 100,
+        maxPageItems: "100",
         resultFilter: "exceptions"
       })
 
       expect(isError(result)).toBeFalsy()
-      let { result: cases } = result as ListCourtCaseResult
+      const { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(1)
       expect(cases[0].errorId).toBe(0)
     })
   })
-
-  it("should return a subset of the total results when there are more cases than the limit", () => {})
-
-  it("should return a all of the results when there are less cases than the limit", () => {})
 })
