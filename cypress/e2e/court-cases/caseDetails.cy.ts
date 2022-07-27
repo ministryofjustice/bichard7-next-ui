@@ -64,6 +64,13 @@ describe("Home", () => {
           expect($cell.parent().find("td").text()).to.equal("TRPR0001")
         })
 
+      // Data from AHO XML
+      cy.get("th")
+        .contains("Hearing OU")
+        .then(($cell) => {
+          expect($cell.parent().find("td").text()).to.equal("B41ME00")
+        })
+
       // Triggers table
       cy.get("H3").contains("Triggers")
       cy.get("table").eq(1).find("tr").should("have.length", 2)
