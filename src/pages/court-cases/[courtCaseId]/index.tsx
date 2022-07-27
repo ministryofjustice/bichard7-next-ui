@@ -86,6 +86,10 @@ const CourtCaseDetails: NextPage<Props> = ({ courtCase, user }: Props) => {
             <Table.CellHeader>{"Trigger reason"}</Table.CellHeader>
             <Table.Cell>{courtCase.triggerReason}</Table.Cell>
           </Table.Row>
+          <Table.Row>
+            <Table.CellHeader>{"Hearing OU"}</Table.CellHeader>
+            <Table.Cell>{"Implement me!"}</Table.Cell>
+          </Table.Row>
         </Table>
         <Heading as="h3" size="MEDIUM">
           {"Triggers"}
