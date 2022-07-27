@@ -6,7 +6,8 @@ export type CaseListQueryParams = {
   orderBy?: string
   order?: QueryOrder
   resultFilter?: Filter
-  limit: number
   defendantName?: string
   forces: string[]
+  pageNum?: string
+  maxPageItems: string
 }

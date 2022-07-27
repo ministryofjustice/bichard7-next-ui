@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eux
 
 readonly DOCKER_REFERENCE="nginx-nodejs-supervisord"
 
@@ -86,6 +86,7 @@ fi
 
       ## Run goss tests
       GOSS_SLEEP=15 dgoss run -e DB_HOST=172.17.0.1 "ui:latest"
+
       ## Run Trivy scan
       TRIVY_CACHE_DIR=trivy trivy image \
         --exit-code 1 \
