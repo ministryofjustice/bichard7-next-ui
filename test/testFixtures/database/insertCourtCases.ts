@@ -1,5 +1,6 @@
 import getDataSource from "../../../src/lib/getDataSource"
 import CourtCaseCase from "./data/error_list.json"
+import CourtCaseAho from "./data/error_list_aho.json"
 
 const insertCourtCases = async <T>(data: T[]): Promise<null[]> => {
   const dataSource = await getDataSource()
@@ -90,6 +91,7 @@ const insertCourtCasesWithOrgCodes = (orgsCodes: string[]) => {
   const existingCourtCases = orgsCodes.map((code, i) => {
     return {
       ...CourtCaseCase,
+      annotated_msg: CourtCaseAho.annotated_msg,
       org_for_police_filter: code.padEnd(6, " "),
       error_id: i,
       message_id: String(i).padStart(5, "x"),
@@ -104,6 +106,7 @@ const insertCourtCasesWithCourtNames = (courtNames: string[], orgCode: string) =
   const existingCourtCases = courtNames.map((name, i) => {
     return {
       ...CourtCaseCase,
+      annotated_msg: CourtCaseAho.annotated_msg,
       org_for_police_filter: orgCode,
       error_id: i,
       message_id: String(i).padStart(5, "x"),
@@ -121,6 +124,7 @@ const insertCourtCasesWithCourtDates = (courtDates: string[], orgCode: string) =
   const existingCourtCases = courtDates.map((date, i) => {
     return {
       ...CourtCaseCase,
+      annotated_msg: CourtCaseAho.annotated_msg,
       org_for_police_filter: orgCode,
       error_id: i,
       message_id: String(i).padStart(5, "x"),
@@ -136,6 +140,7 @@ const insertCourtCasesWithDefendantNames = (defendantNames: string[], orgCode: s
   const existingCourtCases = defendantNames.map((name, i) => {
     return {
       ...CourtCaseCase,
+      annotated_msg: CourtCaseAho.annotated_msg,
       org_for_police_filter: orgCode,
       error_id: i,
       message_id: String(i).padStart(5, "x"),

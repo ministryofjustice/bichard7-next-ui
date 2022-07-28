@@ -5,6 +5,7 @@ import getDataSource from "../../src/lib/getDataSource"
 import { isError } from "../../src/types/Result"
 import getCourtCase from "../../src/useCases/getCourtCase"
 import CourtCaseCase from "../testFixtures/database/data/error_list.json"
+import CourtCaseAho from "../testFixtures/database/data/error_list_aho.json"
 import deleteFromTable from "../testFixtures/database/deleteFromTable"
 import { insertCourtCases } from "../testFixtures/database/insertCourtCases"
 
@@ -12,6 +13,7 @@ const insertRecords = async (orgsCodes: string[]) => {
   const existingCourtCases = orgsCodes.map((code, i) => {
     return {
       ...CourtCaseCase,
+      annotated_msg: CourtCaseAho.annotated_msg,
       court_date: "2008-09-25",
       org_for_police_filter: code.padEnd(6, " "),
       error_id: i,
@@ -24,7 +26,7 @@ const insertRecords = async (orgsCodes: string[]) => {
   return existingCourtCases
 }
 
-describe("listCourtCases", () => {
+describe("getCourtCases", () => {
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -54,7 +56,8 @@ describe("listCourtCases", () => {
       triggers: [],
       notes: [],
       errorCount: 0,
-      triggerCount: 0
+      triggerCount: 0,
+      ahoXml: CourtCaseAho.annotated_msg
     } as unknown as CourtCase
 
     let result = await getCourtCase(dataSource, 0, ["36FPA1"])
