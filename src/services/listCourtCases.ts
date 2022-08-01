@@ -1,10 +1,10 @@
 import { DataSource } from "typeorm"
 import { CaseListQueryParams } from "types/CaseListQueryParams"
-import CourtCase from "services/entities/CourtCase"
-import { isError } from "types/Result"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
-import getColumnName from "services/getColumnName"
+import { isError } from "types/Result"
+import CourtCase from "./entities/CourtCase"
+import getColumnName from "./getColumnName"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
 const listCourtCases = async (

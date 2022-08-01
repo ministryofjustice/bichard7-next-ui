@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -21,23 +17,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "baseUrl": "./src",
-    "paths": {
-      "components/*": ["components/*"],
-      "lib/*": ["lib/*"],
-      "entities/*": ["entities/*"],
-      "types/*": ["types/*"]
-     },
     "incremental": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "types": ["node", "jest", "@testing-library/jest-dom", "cypress", "@testing-library/cypress"]
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }
