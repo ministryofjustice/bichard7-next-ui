@@ -66,7 +66,7 @@ describe("Home", () => {
 
       // Data from AHO XML
       cy.get("th")
-        .contains("Hearing OU")
+        .contains("Organisation Unit Code")
         .then(($cell) => {
           expect($cell.parent().find("td").text()).to.equal("B41ME00")
         })

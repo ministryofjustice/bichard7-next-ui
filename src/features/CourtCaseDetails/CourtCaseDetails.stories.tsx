@@ -1,9 +1,12 @@
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
+import { expect } from "@storybook/jest"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
+import { within } from "@storybook/testing-library"
+import { format } from "date-fns"
 import CourtCase from "entities/CourtCase"
 import Trigger from "entities/Trigger"
-import CourtCaseDetails from "./CourtCaseDetails"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
 import CourtCaseAho from "../../../test/testFixtures/database/data/error_list_aho.json"
+import CourtCaseDetails from "./CourtCaseDetails"
 
 export default {
   title: "Features/CourtCase/Details",
@@ -21,11 +24,23 @@ const courtCase = {
   ptiurn: "42CY0300107",
   triggerReason: "TRPR0006",
   triggers: [{ triggerCode: "TRPR0001" } as unknown as Trigger],
-  courtDate: new Date("2008-09-26")
+  courtDate: new Date("2008-09-26"),
+  hearingOutcome: parseAhoXml(CourtCaseAho.annotated_msg)
 } as unknown as CourtCase
 
 export const Details: ComponentStory<typeof CourtCaseDetails> = () => <CourtCaseDetails courtCase={courtCase} />
 
-export const DetailsWithAho: ComponentStory<typeof CourtCaseDetails> = () => (
-  <CourtCaseDetails courtCase={{ ...courtCase, ahoXml: parseAhoXml(CourtCaseAho.annotated_msg) } as CourtCase} />
-)
+Details.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+  await expect(canvas.getByText(courtCase.ptiurn)).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  await expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy HH:mm:ss"))).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.defendantName)).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.triggerReason)).toBeInTheDocument()
+  await expect(
+    canvas.getByText(
+      courtCase.hearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode
+    )
+  ).toBeInTheDocument()
+}

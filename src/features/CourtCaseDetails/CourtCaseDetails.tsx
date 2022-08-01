@@ -43,6 +43,15 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase }) => (
         <Table.CellHeader>{"Hearing OU"}</Table.CellHeader>
         <Table.Cell>{"Implement me!"}</Table.Cell>
       </Table.Row>
+      <Table.Row>
+        <Table.CellHeader>{"Organisation Unit Code"}</Table.CellHeader>
+        <Table.Cell>
+          {
+            courtCase.hearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation
+              .OrganisationUnitCode
+          }
+        </Table.Cell>
+      </Table.Row>
     </Table>
     <Heading as="h3" size="MEDIUM">
       {"Triggers"}
@@ -67,13 +76,13 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase }) => (
         ))}
       </Table>
     </If>
-    <If condition={(courtCase?.triggers?.length ?? 0) === 0} children={undefined}>
+    <If condition={(courtCase?.triggers?.length ?? 0) === 0}>
       <Paragraph>{"Case has no triggers."}</Paragraph>
     </If>
     <Heading as="h3" size="MEDIUM">
       {"Notes"}
     </Heading>
-    <If condition={(courtCase?.notes?.length ?? 0) > 0} children={undefined}>
+    <If condition={(courtCase?.notes?.length ?? 0) > 0}>
       <Table>
         {courtCase.notes.map((note, index) => (
           <Table.Row key={index}>
@@ -85,7 +94,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase }) => (
         ))}
       </Table>
     </If>
-    <If condition={(courtCase?.notes?.length ?? 0) === 0} children={undefined}>
+    <If condition={(courtCase?.notes?.length ?? 0) === 0}>
       <Paragraph>{"Case has no notes."}</Paragraph>
     </If>
   </>

@@ -3,8 +3,8 @@ import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/p
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/entities/CourtCase"
 import getDataSource from "../../src/lib/getDataSource"
-import { isError } from "../../src/types/Result"
 import getCourtCase from "../../src/services/getCourtCase"
+import { isError } from "../../src/types/Result"
 import CourtCaseCase from "../testFixtures/database/data/error_list.json"
 import CourtCaseAho from "../testFixtures/database/data/error_list_aho.json"
 import deleteFromTable from "../testFixtures/database/deleteFromTable"
@@ -58,7 +58,7 @@ describe("getCourtCases", () => {
       notes: [],
       errorCount: 0,
       triggerCount: 0,
-      ahoXml: parseAhoXml(CourtCaseAho.annotated_msg)
+      hearingOutcome: parseAhoXml(CourtCaseAho.annotated_msg)
     } as unknown as CourtCase
 
     let result = await getCourtCase(dataSource, 0, ["36FPA1"])
