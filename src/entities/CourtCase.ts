@@ -46,7 +46,7 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "error_count" })
   errorCount!: number
 
-  @Column({ name: "annotated_msg", transformer: ahoTransformer })
+  @Column({ name: "annotated_msg", type: "varchar", transformer: ahoTransformer })
   ahoXml!: AnnotatedHearingOutcome
 
   @OneToMany(() => Note, (note) => note.courtCase)
