@@ -1,4 +1,4 @@
-import getDataSource from "../../../src/lib/getDataSource"
+import getDataSource from "../../../src/services/getDataSource"
 import CourtCaseCase from "./data/error_list.json"
 import CourtCaseAho from "./data/error_list_aho.json"
 

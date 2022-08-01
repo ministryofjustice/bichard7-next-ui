@@ -1,6 +1,6 @@
 import DateTime from "components/DateTime"
 import If from "components/If"
-import CourtCase from "entities/CourtCase"
+import CourtCase from "services/entities/CourtCase"
 import { Heading, Paragraph, Table } from "govuk-react"
 
 interface Props {

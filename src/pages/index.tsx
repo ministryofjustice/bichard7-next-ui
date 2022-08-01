@@ -6,15 +6,15 @@ import { isError } from "types/Result"
 import CourtCaseList from "features/CourtCaseList/CourtCaseList"
 import Layout from "components/Layout"
 import Pagination from "components/Pagination/Pagination"
-import User from "entities/User"
-import getDataSource from "lib/getDataSource"
+import User from "services/entities/User"
+import getDataSource from "services/getDataSource"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import listCourtCases from "services/listCourtCases"
 
-import type CourtCase from "entities/CourtCase"
+import type CourtCase from "services/entities/CourtCase"
 
 interface Props {
   user: User

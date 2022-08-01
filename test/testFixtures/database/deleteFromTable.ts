@@ -1,4 +1,4 @@
-import getDataSource from "../../../src/lib/getDataSource"
+import getDataSource from "../../../src/services/getDataSource"
 import { EntityTarget, ObjectLiteral } from "typeorm"
 
 const deleteFromTable = async (entity: EntityTarget<ObjectLiteral>) => {

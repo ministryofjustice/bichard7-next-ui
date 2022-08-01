@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import CourtCase from "entities/CourtCase"
-import type Trigger from "entities/Trigger"
+import CourtCase from "services/entities/CourtCase"
+import type Trigger from "services/entities/Trigger"
 import CourtCaseList from "./CourtCaseList"
 import { within } from "@storybook/testing-library"
 import { expect } from "@storybook/jest"

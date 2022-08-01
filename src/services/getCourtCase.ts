@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm"
-import CourtCase from "../entities/CourtCase"
+import CourtCase from "./entities/CourtCase"
 import PromiseResult from "../types/PromiseResult"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 

@@ -1,4 +1,4 @@
-import type CourtCase from "../entities/CourtCase"
+import type CourtCase from "../services/entities/CourtCase"
 
 export type ListCourtCaseResult = {
   result: CourtCase[]

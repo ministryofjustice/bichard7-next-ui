@@ -1,7 +1,7 @@
 import { Page, Footer, TopNav } from "govuk-react"
 import { addBasePath } from "next/dist/shared/lib/router/router"
 import { ReactNode } from "react"
-import User from "../entities/User"
+import User from "../services/entities/User"
 
 interface Props {
   children: ReactNode

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router"
-import CourtCase from "entities/CourtCase"
+import CourtCase from "services/entities/CourtCase"
 import { Paragraph, Table, Link } from "govuk-react"
 import DateTime from "components/DateTime"
 import type { QueryOrder } from "types/CaseListQueryParams"

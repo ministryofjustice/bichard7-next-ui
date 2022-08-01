@@ -1,5 +1,5 @@
-import User from "entities/User"
-import getDataSource from "lib/getDataSource"
+import User from "services/entities/User"
+import getDataSource from "services/getDataSource"
 
 type TestUser = {
   username: string

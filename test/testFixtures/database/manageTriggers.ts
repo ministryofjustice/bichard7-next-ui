@@ -1,6 +1,6 @@
-import CourtCase from "../../../src/entities/CourtCase"
-import Trigger from "../../../src/entities/Trigger"
-import getDataSource from "../../../src/lib/getDataSource"
+import CourtCase from "../../../src/services/entities/CourtCase"
+import Trigger from "../../../src/services/entities/Trigger"
+import getDataSource from "../../../src/services/getDataSource"
 
 type TestTrigger = {
   triggerId: number
