@@ -5,9 +5,8 @@ import BaseEntity from "./BaseEntity"
 import dateTransformer from "./transformers/dateTransformer"
 import Note from "./Note"
 import Trigger from "./Trigger"
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/src/types/AnnotatedHearingOutcome"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/src/parse/parseAhoXml/parseAhoXml"
-import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/src/serialise/ahoXml/generate"
+import ahoTransformer from "./transformers/ahoTransformer"
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 
 @Entity({ name: "error_list" })
 export default class CourtCase extends BaseEntity {
@@ -47,13 +46,7 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "error_count" })
   errorCount!: number
 
-  @Column({
-    name: "annotated_msg",
-    transformer: {
-      to: (value) => convertAhoToXml(value),
-      from: (value) => parseAhoXml(value)
-    }
-  })
+  @Column({ name: "annotated_msg", transformer: ahoTransformer })
   ahoXml!: AnnotatedHearingOutcome
 
   @OneToMany(() => Note, (note) => note.courtCase)
