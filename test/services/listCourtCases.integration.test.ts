@@ -2,7 +2,7 @@
 import "reflect-metadata"
 import { expect } from "@jest/globals"
 import { DataSource } from "typeorm"
-import listCourtCases from "../../src/useCases/listCourtCases"
+import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import deleteFromTable from "../testFixtures/database/deleteFromTable"
 import {

@@ -6,7 +6,7 @@ import { within } from "@storybook/testing-library"
 import { expect } from "@storybook/jest"
 
 export default {
-  title: "CourtCase/List",
+  title: "Features/CourtCase/List",
   component: CourtCaseList
 } as ComponentMeta<typeof CourtCaseList>
 

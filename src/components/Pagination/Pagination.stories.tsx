@@ -4,7 +4,7 @@ import { within } from "@storybook/testing-library"
 import { expect } from "@storybook/jest"
 
 export default {
-  title: "Pagination",
+  title: "Components/Pagination",
   component: Pagination
 } as ComponentMeta<typeof Pagination>
 
