@@ -21,9 +21,16 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "baseUrl": "./src",
+    "paths": {
+      "components/*": ["components/*"],
+      "lib/*": ["lib/*"],
+      "entities/*": ["entities/*"],
+      "types/*": ["types/*"]
+     },
     "incremental": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "types": ["node", "jest", "@testing-library/jest-dom", "cypress", "@testing-library/cypress"]
   },
   "include": [
     "next-env.d.ts",

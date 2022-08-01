@@ -26,6 +26,54 @@ describe("Home", () => {
       cy.visit("/")
     })
 
+    it("should not show pagination buttons when there are 0 cases", () => {
+      cy.task("insertUsers", users)
+
+      cy.visit("/")
+
+      cy.findByText("Previous page").should("not.exist")
+      cy.findByText("Next page").should("not.exist")
+    })
+
+    it("should display multiple cases when multiple cases are added", () => {
+      cy.task("insertUsers", users)
+      cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
+
+      cy.visit("/")
+      cy.findByText(`Case00000`).should("exist")
+      cy.findByText(`Case00001`).should("exist")
+      cy.findByText(`Case00002`).should("exist")
+      cy.findByText(`Case00003`).should("exist")
+      cy.findByText(`Case00004`).should("exist")
+    })
+
+    it("should paginate buttons when multiple cases are added", () => {
+      cy.task("insertUsers", users)
+      cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
+
+      cy.visit("/")
+      cy.findByText("Previous page").should("not.exist")
+      cy.findByText("Next page").should("exist")
+      // paginate next page until the last page
+      ;[...Array(8).keys()].forEach(() => {
+        cy.findByText("Next page").click()
+        cy.findByText("Previous page").should("exist")
+        cy.findByText("Next page").should("exist")
+      })
+      cy.findByText("Next page").click()
+      cy.findByText("Previous page").should("exist")
+      cy.findByText("Next page").should("not.exist")
+      // paginate previous page until the first page
+      ;[...Array(8).keys()].forEach(() => {
+        cy.findByText("Previous page").click()
+        cy.findByText("Previous page").should("exist")
+        cy.findByText("Next page").should("exist")
+      })
+      cy.findByText("Previous page").click()
+      cy.findByText("Previous page").should("not.exist")
+      cy.findByText("Next page").should("exist")
+    })
+
     it("should display a case for the user's org", () => {
       cy.task("insertUsers", users)
       cy.task("insertCourtCasesWithOrgCodes", ["01"])
@@ -91,7 +139,7 @@ describe("Home", () => {
 
       cy.visit("/")
 
-      cy.get("[id^=court-name]").click()
+      cy.findByText("Court Name").click()
 
       cy.get("tr")
         .not(":first")
@@ -100,7 +148,7 @@ describe("Home", () => {
           cy.wrap(row).get("td:nth-child(4)").last().contains("DDDD")
         })
 
-      cy.get("[id^=court-name]").click()
+      cy.findByText("Court Name").click()
 
       cy.get("tr")
         .not(":first")

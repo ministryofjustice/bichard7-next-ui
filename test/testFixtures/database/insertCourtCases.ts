@@ -153,10 +153,25 @@ const insertCourtCasesWithDefendantNames = (defendantNames: string[], orgCode: s
   return insertCourtCases(existingCourtCases)
 }
 
+const insertMultipleDummyCourtCases = (numToInsert: number, orgCode: string) => {
+  const existingCourtCases = [...Array(numToInsert).fill(CourtCaseCase)].map((elem, i: number) => {
+    return {
+      ...elem,
+      org_for_police_filter: orgCode,
+      message_id: String(i).padStart(5, "x"),
+      error_id: i,
+      ptiurn: "Case" + String(i).padStart(5, "0")
+    }
+  })
+
+  return insertCourtCases(existingCourtCases)
+}
+
 export {
   insertCourtCases,
   insertCourtCasesWithOrgCodes,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithCourtDates,
-  insertCourtCasesWithDefendantNames
+  insertCourtCasesWithDefendantNames,
+  insertMultipleDummyCourtCases
 }
