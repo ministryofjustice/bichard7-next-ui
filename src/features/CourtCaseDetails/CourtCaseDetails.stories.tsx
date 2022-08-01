@@ -35,7 +35,7 @@ Details.play = async ({ canvasElement }) => {
   await expect(canvas.getByText(courtCase.ptiurn)).toBeInTheDocument()
   await expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  await expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy HH:mm:ss"))).toBeInTheDocument()
+  await expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy"))).toBeInTheDocument()
   await expect(canvas.getByText(courtCase.defendantName)).toBeInTheDocument()
   await expect(canvas.getByText(courtCase.triggerReason)).toBeInTheDocument()
   await expect(

@@ -51,7 +51,7 @@ describe("Home", () => {
       cy.get("th")
         .contains("Court date")
         .then(($cell) => {
-          expect($cell.parent().find("td").text()).to.equal("26/09/2008 01:00:00")
+          expect($cell.parent().find("td").text()).to.equal("26/09/2008")
         })
       cy.get("th")
         .contains("Defendant name")

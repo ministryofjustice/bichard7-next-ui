@@ -24,7 +24,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase }) => (
       <Table.Row>
         <Table.CellHeader>{"Court date"}</Table.CellHeader>
         <Table.Cell>
-          <DateTime date={courtCase.courtDate} />
+          <DateTime date={courtCase.courtDate} dateFormat="dd/MM/yyyy" />
         </Table.Cell>
       </Table.Row>
       <Table.Row>
