@@ -1,4 +1,5 @@
 import { expect } from "@jest/globals"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/entities/CourtCase"
 import getDataSource from "../../src/lib/getDataSource"
@@ -57,7 +58,7 @@ describe("getCourtCases", () => {
       notes: [],
       errorCount: 0,
       triggerCount: 0,
-      ahoXml: CourtCaseAho.annotated_msg
+      ahoXml: parseAhoXml(CourtCaseAho.annotated_msg)
     } as unknown as CourtCase
 
     let result = await getCourtCase(dataSource, 0, ["36FPA1"])
