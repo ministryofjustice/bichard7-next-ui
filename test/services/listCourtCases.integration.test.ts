@@ -2,7 +2,7 @@
 import "reflect-metadata"
 import { expect } from "@jest/globals"
 import { DataSource } from "typeorm"
-import listCourtCases from "../../src/useCases/listCourtCases"
+import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import deleteFromTable from "../testFixtures/database/deleteFromTable"
 import {
@@ -13,8 +13,8 @@ import {
 } from "../testFixtures/database/insertCourtCases"
 import insertException from "../testFixtures/database/manageExceptions"
 import { isError } from "../../src/types/Result"
-import CourtCase from "../../src/entities/CourtCase"
-import getDataSource from "../../src/lib/getDataSource"
+import CourtCase from "../../src/services/entities/CourtCase"
+import getDataSource from "../../src/services/getDataSource"
 import { insertTriggers, TestTrigger } from "../testFixtures/database/manageTriggers"
 
 jest.setTimeout(100000)

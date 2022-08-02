@@ -1,3 +1,5 @@
+# bichard7-next-ui
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -26,18 +28,31 @@ To spin up a local instance of the database, user-service and auth proxy, you ca
 $ cd /path/to/bichard7-next
 $ make run-pg && make run-user-service && make run-nginx-auth-proxy
 ```
+
 Once the dependencies follow the login instruction from the `bichard7-next` repo:
+
 1. Navigate to the User Service at [https://localhost:4443/users/](https://localhost:4443/users/) and sign in:
    > User: <your-madetech-email>, Pass: password
-   **N.B.** You can use the `./scripts/get_2fa_email_link.sh` to quickly grab the one-time email verification link from the user-service container logs.
+   > **N.B.** You can use the `./scripts/get_2fa_email_link.sh` to quickly grab the one-time email verification link from the user-service container logs.
 1. After signing in, you should see the User Service home page. An `.AUTH` cookie is generated for localhost, so now you can access Bichard7 UI on [http://localhost:4080/bichard](http://localhost:4080/bichard)
 
 ## Development
 
-To run the tests, ensure that you have a local postgres instance running (run `make run-pg` from the `bichard7-next` repo),
-then run `npm run test`
+### Layout
+
+| Directory  | Purpose                                                                       |
+| ---------- | ----------------------------------------------------------------------------- |
+| components | Generic reusable components which can be used anywhere within our application |
+| features   | Non-generic components which relate to one or more pages                      |
+| pages      | Each top-level next.js page which can be visited                              |
+| types      | Shared types for typescripting                                                |
+| middleware | Code run by our next.js while rendering our pages                             |
+| services   | Data access and transformations                                               |
 
 ## Testing
+
+To run the tests, ensure that you have a local postgres instance running (run `make run-pg` from the `bichard7-next` repo),
+then run `npm run test`
 
 ### Unit Testing
 
@@ -51,7 +66,7 @@ To run code-based (non-visual, no components get rendered) unit tests, run
 
 #### Visual
 
-We are using [Storybook](https://storybook.js.org/) to develop our  UI components in isolation. 
+We are using [Storybook](https://storybook.js.org/) to develop our UI components in isolation.
 
 If you're already running storybook (`npm run storybook`) locally, run in a seperate terminal
 
@@ -70,11 +85,14 @@ For CI or otherwise, run (requires `npx playwright install` to be run first some
 ```bash
     npm run test:ui:unit:ci
 ```
+
 We are using [chromatic](https://www.chromatic.com/) to help document visual changes when we merge changes to main branch
 If you need to do any local storybook componets to chromatic (from your local branch) run
+
 ```bash
     npx chromatic --project-token <your-project-toke>
 ```
+
 By logging into chromatic using the shared MoJ github account, under bichard-next-ui click on `Manage` tab and select `Configure` to find the project token
 
 This is a link to our [chromatic](https://www.chromatic.com/builds?appId=62ce99495ed8d3db63b60dab) dashboard

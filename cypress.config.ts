@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { defineConfig } from "cypress"
-import CourtCase from "entities/CourtCase"
+import CourtCase from "services/entities/CourtCase"
 import deleteFromTable from "./test/testFixtures/database/deleteFromTable"
 import {
   insertCourtCasesWithCourtNames,

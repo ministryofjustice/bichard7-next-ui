@@ -51,7 +51,7 @@ describe("Home", () => {
       cy.get("th")
         .contains("Court date")
         .then(($cell) => {
-          expect($cell.parent().find("td").text()).to.equal("26/09/2008 01:00:00")
+          expect($cell.parent().find("td").text()).to.equal("26/09/2008")
         })
       cy.get("th")
         .contains("Defendant name")
@@ -62,6 +62,13 @@ describe("Home", () => {
         .contains("Trigger reason")
         .then(($cell) => {
           expect($cell.parent().find("td").text()).to.equal("TRPR0001")
+        })
+
+      // Data from AHO XML
+      cy.get("th")
+        .contains("Organisation Unit Code")
+        .then(($cell) => {
+          expect($cell.parent().find("td").text()).to.equal("B41ME00")
         })
 
       // Triggers table

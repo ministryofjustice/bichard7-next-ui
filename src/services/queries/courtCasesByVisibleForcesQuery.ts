@@ -1,4 +1,4 @@
-import CourtCase from "../../entities/CourtCase"
+import CourtCase from "../entities/CourtCase"
 import { Brackets, In, Repository, SelectQueryBuilder } from "typeorm"
 import KeyValuePair from "../../types/KeyValuePair"
 

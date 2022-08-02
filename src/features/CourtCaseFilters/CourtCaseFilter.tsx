@@ -1,7 +1,7 @@
 import { GridCol, GridRow } from "govuk-react"
 import { Filter } from "types/CaseListQueryParams"
-import DefendantNameFilter from "./CourtCaseFilters/DefendantNameFilter"
-import { ResultFilter } from "./CourtCaseFilters/ResultFilter"
+import DefendantNameFilter from "./DefendantNameFilter"
+import { ResultFilter } from "./ResultFilter"
 
 interface Props {
   defendantName?: string

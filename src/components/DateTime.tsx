@@ -4,9 +4,10 @@ import { utcToZonedTime } from "date-fns-tz"
 interface Props {
   date?: Date | string
   prefix?: string
+  dateFormat?: string
 }
 
-const DateTime = ({ date, prefix }: Props) => {
+const DateTime = ({ date, prefix, dateFormat = "dd/MM/yyyy HH:mm:ss" }: Props) => {
   if (!date) {
     return <></>
   }
@@ -17,7 +18,7 @@ const DateTime = ({ date, prefix }: Props) => {
   return (
     <>
       {prefix}
-      <time aria-label="time">{format(zonedDate, "dd/MM/yyyy HH:mm:ss")}</time>
+      <time aria-label="time">{format(zonedDate, dateFormat)}</time>
     </>
   )
 }

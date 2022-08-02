@@ -5,6 +5,8 @@ import BaseEntity from "./BaseEntity"
 import dateTransformer from "./transformers/dateTransformer"
 import Note from "./Note"
 import Trigger from "./Trigger"
+import ahoTransformer from "./transformers/ahoTransformer"
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 
 @Entity({ name: "error_list" })
 export default class CourtCase extends BaseEntity {
@@ -43,6 +45,9 @@ export default class CourtCase extends BaseEntity {
 
   @Column({ name: "error_count" })
   errorCount!: number
+
+  @Column({ name: "annotated_msg", type: "varchar", transformer: ahoTransformer })
+  hearingOutcome!: AnnotatedHearingOutcome
 
   @OneToMany(() => Note, (note) => note.courtCase)
   notes!: Relation<Note>[]

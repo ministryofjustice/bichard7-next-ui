@@ -1,4 +1,4 @@
-import type User from "entities/User"
+import type User from "services/entities/User"
 import { GetServerSidePropsContext } from "next"
 import { ParsedUrlQuery } from "querystring"
 
