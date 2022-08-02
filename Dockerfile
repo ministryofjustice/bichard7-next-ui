@@ -10,7 +10,7 @@ WORKDIR /src/ui
 
 COPY . ./
 
-RUN npm ci && \
+RUN npm ci --production && \
     npm run install:assets
 
 ENV NEXT_TELEMETRY_DISABLED=1
