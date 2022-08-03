@@ -58,7 +58,9 @@ describe("getCourtCases", () => {
       notes: [],
       errorCount: 0,
       triggerCount: 0,
-      hearingOutcome: parseAhoXml(CourtCaseAho.annotated_msg)
+      hearingOutcome: parseAhoXml(CourtCaseAho.annotated_msg),
+      errorLockedById: null,
+      triggerLockedById: null
     } as unknown as CourtCase
 
     let result = await getCourtCase(dataSource, 0, ["36FPA1"])
