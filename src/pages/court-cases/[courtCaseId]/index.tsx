@@ -10,6 +10,7 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import getCourtCase from "services/getCourtCase"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
+import lockCourtCase from "services/lockCourtCase"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -17,6 +18,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
     const dataSource = await getDataSource()
+    await lockCourtCase(dataSource, parseInt(courtCaseId, 10), currentUser.username)
     const courtCase = await getCourtCase(dataSource, parseInt(courtCaseId, 10), currentUser.visibleForces)
 
     if (!courtCase) {
