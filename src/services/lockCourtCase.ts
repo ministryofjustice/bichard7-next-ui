@@ -1,4 +1,4 @@
-import { DataSource } from "typeorm"
+import { DataSource, IsNull } from "typeorm"
 import PromiseResult from "../types/PromiseResult"
 import CourtCase from "./entities/CourtCase"
 
@@ -6,30 +6,43 @@ const lockCourtCase = async (
   dataSource: DataSource,
   errorId: number,
   userName: string
-): Promise<PromiseResult<boolean>> => {
-  const courtCaseRepository = dataSource.getRepository(CourtCase)
-  const existingCourtCase = await courtCaseRepository.findOneBy({
-    errorId: errorId
-  })
+): Promise<PromiseResult<Error | void>> => {
+  const queryRunner = dataSource.createQueryRunner()
+  await queryRunner.startTransaction()
 
-  const query = courtCaseRepository.createQueryBuilder("courtCase").update(CourtCase)
+  let result
 
-  if (!existingCourtCase?.triggerLockedById && !existingCourtCase?.errorLockedById) {
-    query.set({ errorLockedById: userName, triggerLockedById: userName })
-  } else if (!existingCourtCase?.errorLockedById) {
-    query.set({ errorLockedById: userName })
-  } else if (!existingCourtCase?.triggerLockedById) {
-    query.set({ triggerLockedById: userName })
-  }
-
-  if (!existingCourtCase?.triggerLockedById || !existingCourtCase?.errorLockedById) {
-    return query
+  try {
+    const courtCaseRepository = dataSource.getRepository(CourtCase)
+    courtCaseRepository
+      .createQueryBuilder("courtCase")
+      .update(CourtCase)
+      .set({ triggerLockedById: userName })
       .where("errorId = :errorId", { errorId: errorId })
+      .andWhere({
+        triggerLockedById: IsNull()
+      })
       .execute()
-      .catch((error) => error)
+
+    courtCaseRepository
+      .createQueryBuilder("courtCase")
+      .update(CourtCase)
+      .set({ errorLockedById: userName })
+      .where("errorId = :errorId", { errorId: errorId })
+      .andWhere({
+        errorLockedById: IsNull()
+      })
+      .execute()
+
+    await queryRunner.commitTransaction()
+  } catch (err) {
+    result = err
+    await queryRunner.rollbackTransaction()
+  } finally {
+    result = await queryRunner.release()
   }
 
-  return false
+  return result
 }
 
 export default lockCourtCase
