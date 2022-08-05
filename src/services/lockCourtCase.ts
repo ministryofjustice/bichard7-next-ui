@@ -1,48 +1,31 @@
-import { DataSource, IsNull } from "typeorm"
+import { DataSource } from "typeorm"
 import PromiseResult from "../types/PromiseResult"
 import CourtCase from "./entities/CourtCase"
 
 const lockCourtCase = async (
   dataSource: DataSource,
-  errorId: number,
+  courtCase: CourtCase,
   userName: string
-): Promise<PromiseResult<Error | void>> => {
-  const queryRunner = dataSource.createQueryRunner()
-  await queryRunner.startTransaction()
+): Promise<PromiseResult<boolean>> => {
+  const courtCaseRepository = await dataSource.getRepository(CourtCase)
 
-  let result
-
-  try {
-    const courtCaseRepository = dataSource.getRepository(CourtCase)
-    courtCaseRepository
-      .createQueryBuilder("courtCase")
-      .update(CourtCase)
-      .set({ triggerLockedById: userName })
-      .where("errorId = :errorId", { errorId: errorId })
-      .andWhere({
-        triggerLockedById: IsNull()
-      })
-      .execute()
-
-    courtCaseRepository
-      .createQueryBuilder("courtCase")
-      .update(CourtCase)
-      .set({ errorLockedById: userName })
-      .where("errorId = :errorId", { errorId: errorId })
-      .andWhere({
-        errorLockedById: IsNull()
-      })
-      .execute()
-
-    await queryRunner.commitTransaction()
-  } catch (err) {
-    result = err
-    await queryRunner.rollbackTransaction()
-  } finally {
-    result = await queryRunner.release()
+  const query = courtCaseRepository.createQueryBuilder("courtCase").update(CourtCase)
+  if (!courtCase?.triggerLockedById && !courtCase?.errorLockedById) {
+    query.set({ errorLockedById: userName, triggerLockedById: userName })
+  } else if (!courtCase?.errorLockedById) {
+    query.set({ errorLockedById: userName })
+  } else if (!courtCase?.triggerLockedById) {
+    query.set({ triggerLockedById: userName })
   }
 
-  return result
+  if (!courtCase?.triggerLockedById || !courtCase?.errorLockedById) {
+    return query
+      .where("errorId = :errorId", { errorId: courtCase.errorId })
+      .execute()
+      .catch((error) => error)
+  }
+
+  return Promise.resolve(false)
 }
 
 export default lockCourtCase

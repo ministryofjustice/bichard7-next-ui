@@ -1,8 +1,8 @@
 import { expect } from "@jest/globals"
-import lockCourtCase from "../../src/services/lockCourtCase"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
+import lockCourtCase from "../../src/services/lockCourtCase"
 import { isError } from "../../src/types/Result"
 import CourtCaseCase from "../testFixtures/database/data/error_list.json"
 import CourtCaseAho from "../testFixtures/database/data/error_list_aho.json"
@@ -24,8 +24,6 @@ const insertRecords = async (errorLockedById: string | null = null, triggerLocke
   ]
 
   await insertCourtCases(existingCourtCases)
-
-  return existingCourtCases
 }
 
 describe("lock court case", () => {
@@ -45,8 +43,12 @@ describe("lock court case", () => {
 
   it("should lock a unlocked court case when viewed", async () => {
     await insertRecords()
+    const existingCourtCase = (await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: 0 } })) as CourtCase
+
     const userName = "Bichard01"
-    const result = await lockCourtCase(dataSource, 0, userName)
+    const result = await lockCourtCase(dataSource, existingCourtCase, userName)
     expect(isError(result)).toBe(false)
 
     const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
@@ -58,8 +60,11 @@ describe("lock court case", () => {
   it("should not lock a court case when its already locked", async () => {
     const anotherUser = "anotherUserName"
     await insertRecords(anotherUser, anotherUser)
-    const userName = "Bichard01"
-    const result = await lockCourtCase(dataSource, 0, userName)
+    const existingCourtCase = (await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: 0 } })) as CourtCase
+
+    const result = await lockCourtCase(dataSource, existingCourtCase, "Bichard01")
     expect(isError(result)).toBe(false)
 
     const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
@@ -71,8 +76,12 @@ describe("lock court case", () => {
   it("should allow locking triggers when errors are locked", async () => {
     const errorLockedById = "anotherUserName"
     await insertRecords(errorLockedById)
+    const existingCourtCase = (await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: 0 } })) as CourtCase
+
     const userName = "Bichard01"
-    const result = await lockCourtCase(dataSource, 0, userName)
+    const result = await lockCourtCase(dataSource, existingCourtCase, userName)
     expect(isError(result)).toBe(false)
 
     const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
@@ -84,8 +93,11 @@ describe("lock court case", () => {
   it("should allow locking triggers when errors are locked", async () => {
     const triggerLockedById = "anotherUserName"
     await insertRecords(null, triggerLockedById)
+    const existingCourtCase = (await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: 0 } })) as CourtCase
     const userName = "Bichard01"
-    const result = await lockCourtCase(dataSource, 0, userName)
+    const result = await lockCourtCase(dataSource, existingCourtCase, userName)
     expect(isError(result)).toBe(false)
 
     const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
