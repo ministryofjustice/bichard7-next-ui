@@ -1,16 +1,16 @@
 import Layout from "components/Layout"
-import CourtCase from "services/entities/CourtCase"
-import User from "services/entities/User"
-import getDataSource from "services/getDataSource"
+import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
+import CourtCase from "services/entities/CourtCase"
+import User from "services/entities/User"
+import getCourtCase from "services/getCourtCase"
+import getDataSource from "services/getDataSource"
+import lockCourtCase from "services/lockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
-import getCourtCase from "services/getCourtCase"
-import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
-import lockCourtCase from "services/lockCourtCase"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -18,7 +18,6 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
     const dataSource = await getDataSource()
-    await lockCourtCase(dataSource, parseInt(courtCaseId, 10), currentUser.username)
     const courtCase = await getCourtCase(dataSource, parseInt(courtCaseId, 10), currentUser.visibleForces)
 
     if (!courtCase) {
@@ -31,6 +30,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       console.error(courtCase)
       throw courtCase
     }
+
+    await lockCourtCase(dataSource, courtCase, currentUser.username)
 
     return {
       props: {
