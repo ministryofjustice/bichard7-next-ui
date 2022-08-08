@@ -21,38 +21,46 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { courtCaseId } = query as { courtCaseId: string }
     const dataSource = await getDataSource()
 
-    const lockedCourtCase = await dataSource.transaction(async (transactionalEntityManager) => {
-      const courtCase = await getCourtCase(
+    const courtCase = await dataSource.transaction("SERIALIZABLE", async (transactionalEntityManager) => {
+      const fetchedCourtCase = await getCourtCase(
         transactionalEntityManager,
         parseInt(courtCaseId, 10),
         currentUser.visibleForces
       )
 
-      if (!courtCase) {
+      if (!fetchedCourtCase) {
         return new Error(NotFoundError)
       }
 
-      if (isError(courtCase)) {
-        console.error(courtCase)
-        throw courtCase
+      if (isError(fetchedCourtCase)) {
+        console.error(fetchedCourtCase)
+        throw fetchedCourtCase
       }
 
-      return lockCourtCase(transactionalEntityManager, courtCase, currentUser.username)
+      // If we fail to lock the record because someone else has already locked it since the original fetch,
+      // fetch the newer data and return that
+      return lockCourtCase(transactionalEntityManager, fetchedCourtCase, currentUser.username).then(
+        (lockedCourtCase) => lockedCourtCase,
+        (error) => {
+          console.error(error)
+          return getCourtCase(transactionalEntityManager, parseInt(courtCaseId, 10), currentUser.visibleForces)
+        }
+      )
     })
 
-    if (isError(lockedCourtCase) && lockedCourtCase.message === NotFoundError) {
+    if ((isError(courtCase) && courtCase.message === NotFoundError) || courtCase === null) {
       return {
         notFound: true
       }
-    } else if (isError(lockedCourtCase)) {
-      console.error(lockedCourtCase)
-      throw lockedCourtCase
+    } else if (isError(courtCase)) {
+      console.error(courtCase)
+      throw courtCase
     }
 
     return {
       props: {
         user: currentUser.serialize(),
-        courtCase: lockedCourtCase.serialize()
+        courtCase: courtCase.serialize()
       }
     }
   }

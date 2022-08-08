@@ -17,11 +17,7 @@ const lockCourtCase = async (
     courtCase.errorLockedById = userName
   }
 
-  if (!courtCase?.triggerLockedById || !courtCase?.errorLockedById) {
-    return courtCaseRepository.save(courtCase)
-  }
-
-  return Promise.resolve(courtCase)
+  return courtCaseRepository.save(courtCase)
 }
 
 export default lockCourtCase
