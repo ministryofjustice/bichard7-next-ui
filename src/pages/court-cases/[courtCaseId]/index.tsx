@@ -12,28 +12,39 @@ import lockCourtCase from "services/lockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 
+const NotFoundError = "Court case not found"
+
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
     const dataSource = await getDataSource()
-    const courtCase = await getCourtCase(dataSource, parseInt(courtCaseId, 10), currentUser.visibleForces)
 
-    if (!courtCase) {
+    const lockedCourtCase = await dataSource.transaction(async (transactionalEntityManager) => {
+      const courtCase = await getCourtCase(
+        transactionalEntityManager,
+        parseInt(courtCaseId, 10),
+        currentUser.visibleForces
+      )
+
+      if (!courtCase) {
+        return new Error(NotFoundError)
+      }
+
+      if (isError(courtCase)) {
+        console.error(courtCase)
+        throw courtCase
+      }
+
+      return lockCourtCase(transactionalEntityManager, courtCase, currentUser.username)
+    })
+
+    if (isError(lockedCourtCase) && lockedCourtCase.message === NotFoundError) {
       return {
         notFound: true
       }
-    }
-
-    if (isError(courtCase)) {
-      console.error(courtCase)
-      throw courtCase
-    }
-
-    const lockedCourtCase = await lockCourtCase(dataSource, courtCase, currentUser.username)
-
-    if (isError(lockedCourtCase)) {
+    } else if (isError(lockedCourtCase)) {
       console.error(lockedCourtCase)
       throw lockedCourtCase
     }

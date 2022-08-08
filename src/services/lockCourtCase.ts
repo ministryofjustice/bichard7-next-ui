@@ -1,9 +1,9 @@
-import { DataSource } from "typeorm"
+import { DataSource, EntityManager } from "typeorm"
 import PromiseResult from "../types/PromiseResult"
 import CourtCase from "./entities/CourtCase"
 
 const lockCourtCase = async (
-  dataSource: DataSource,
+  dataSource: DataSource | EntityManager,
   courtCase: CourtCase,
   userName: string
 ): PromiseResult<CourtCase> => {
