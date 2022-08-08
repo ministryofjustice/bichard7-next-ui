@@ -31,12 +31,17 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw courtCase
     }
 
-    await lockCourtCase(dataSource, courtCase, currentUser.username)
+    const lockedCourtCase = await lockCourtCase(dataSource, courtCase, currentUser.username)
+
+    if (isError(lockedCourtCase)) {
+      console.error(lockedCourtCase)
+      throw lockedCourtCase
+    }
 
     return {
       props: {
         user: currentUser.serialize(),
-        courtCase: courtCase.serialize()
+        courtCase: lockedCourtCase.serialize()
       }
     }
   }
