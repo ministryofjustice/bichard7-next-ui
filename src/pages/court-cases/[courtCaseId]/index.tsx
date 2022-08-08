@@ -43,10 +43,11 @@ export const getServerSideProps = withMultipleServerSideProps(
         (lockedCourtCase) => lockedCourtCase,
         (error) => {
           console.error(error)
+          // TODO this doesn't really work, it just returns an error for courtCase instead of the updated court case
           return getCourtCase(transactionalEntityManager, parseInt(courtCaseId, 10), currentUser.visibleForces)
         }
       )
-    })
+    }
 
     if ((isError(courtCase) && courtCase.message === NotFoundError) || courtCase === null) {
       return {
