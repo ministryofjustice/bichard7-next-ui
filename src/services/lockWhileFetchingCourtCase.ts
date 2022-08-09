@@ -6,7 +6,7 @@ import User from "./entities/User"
 import getCourtCase from "./getCourtCase"
 import lockCourtCase from "./lockCourtCase"
 
-type LockWhileFetchingCourtCaseResult = { courtCase?: CourtCase; notFound: boolean }
+type LockWhileFetchingCourtCaseResult = { courtCase?: CourtCase; notFound: boolean; lockAcquireFailed: boolean }
 
 const lockWhileFetchingCourtCase = async (
   currentUser: User,
@@ -25,7 +25,8 @@ const lockWhileFetchingCourtCase = async (
       if (!fetchedCourtCase) {
         return {
           courtCase: undefined,
-          notFound: true
+          notFound: true,
+          lockAcquireFailed: false
         }
       }
 
@@ -34,20 +35,29 @@ const lockWhileFetchingCourtCase = async (
         return fetchedCourtCase
       }
 
-      const lockedCourtCaseResult = await lockCourtCase(
-        transactionalEntityManager,
-        fetchedCourtCase,
-        currentUser.username
-      )
+      try {
+        const lockedCourtCaseResult = await lockCourtCase(
+          transactionalEntityManager,
+          fetchedCourtCase,
+          currentUser.username
+        )
 
-      if (isError(lockedCourtCaseResult)) {
-        console.error(lockedCourtCaseResult)
-        return lockedCourtCaseResult
-      }
+        if (isError(lockedCourtCaseResult)) {
+          console.error(lockedCourtCaseResult)
+          return lockedCourtCaseResult
+        }
 
-      return {
-        courtCase: lockedCourtCaseResult,
-        notFound: false
+        return {
+          courtCase: lockedCourtCaseResult,
+          notFound: false,
+          lockAcquireFailed: false
+        }
+      } catch (error) {
+        console.error("Failed to lock court case")
+        return {
+          notFound: false,
+          lockAcquireFailed: true
+        }
       }
     }
   )

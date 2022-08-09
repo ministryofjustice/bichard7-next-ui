@@ -1,7 +1,10 @@
 import CourtCase from "../../src/services/entities/CourtCase"
 import User from "../../src/services/entities/User"
 import getDataSource from "../../src/services/getDataSource"
-import { lockWhileFetchingCourtCase } from "../../src/services/lockWhileFetchingCourtCase"
+import {
+  lockWhileFetchingCourtCase,
+  LockWhileFetchingCourtCaseResult
+} from "../../src/services/lockWhileFetchingCourtCase"
 import { DataSource } from "typeorm"
 import { isError } from "../../src/types/Result"
 import CourtCaseCase from "../testFixtures/database/data/error_list.json"
@@ -44,11 +47,6 @@ describe("Court case details page", () => {
 
   beforeEach(async () => {
     jest.clearAllMocks()
-    jest.mock("../../src/services/getCourtCase", () => {
-      return {
-        default: jest.fn(() => unlockedCourtCase)
-      }
-    })
     await deleteFromTable(CourtCase)
   })
 
@@ -58,6 +56,12 @@ describe("Court case details page", () => {
 
   it("should not override the lock when the record is locked by another user", async () => {
     await insertRecords()
+    jest.mock("../../src/services/getCourtCase", () => {
+      return {
+        default: jest.fn(() => unlockedCourtCase)
+      }
+    })
+
     await lockWhileFetchingCourtCase(
       { username: "bichard01", visibleForces: ["36"] } as unknown as User,
       unlockedCourtCase.error_id.toString(),
@@ -76,5 +80,47 @@ describe("Court case details page", () => {
 
     expect(updatedCourtCase.errorLockedById).toBe("bichard01")
     expect(updatedCourtCase.triggerLockedById).toBe("bichard01")
+  })
+
+  it("should show the case as being locked to only one user when multiple users attempt to lock the case", async () => {
+    await insertRecords()
+    // Return the unlocked case the first two times, with a 1 second delay before returning, then behave as normal.
+    // This is to simulate a race condition where two users both retrieve the case, receive the unlocked case and try to lock it concurrently.
+    jest.mock("../../src/services/getCourtCase", () => {
+      return {
+        default: jest
+          .fn()
+          .mockImplementationOnce(() => new Promise((resolve) => setTimeout(() => resolve(unlockedCourtCase), 1_000)))
+          .mockImplementationOnce(() => new Promise((resolve) => setTimeout(() => resolve(unlockedCourtCase), 1_000)))
+          .mockRestore()
+      }
+    })
+
+    const resultsReceived = await Promise.all([
+      lockWhileFetchingCourtCase(
+        { username: "bichard01", visibleForces: ["36"] } as unknown as User,
+        unlockedCourtCase.error_id.toString(),
+        dataSource
+      ),
+      lockWhileFetchingCourtCase(
+        { username: "bichard02", visibleForces: ["36"] } as unknown as User,
+        unlockedCourtCase.error_id.toString(),
+        dataSource
+      )
+    ])
+
+    expect(resultsReceived).toHaveLength(2)
+    resultsReceived.forEach((courtCaseResult) => {
+      expect(isError(courtCaseResult)).toBeFalsy()
+      expect(courtCaseResult).not.toBeNull()
+      expect((courtCaseResult as unknown as LockWhileFetchingCourtCaseResult).courtCase).toBeDefined()
+    })
+
+    const results = resultsReceived.map((result) => result as unknown as LockWhileFetchingCourtCaseResult)
+
+    expect(results[0].courtCase?.errorLockedById).toBeDefined()
+    expect(results[0].courtCase?.errorLockedById).toEqual(results[1].courtCase?.errorLockedById)
+    expect(results[0].courtCase?.triggerLockedById).toBeDefined()
+    expect(results[0].courtCase?.triggerLockedById).toEqual(results[1].courtCase?.triggerLockedById)
   })
 })

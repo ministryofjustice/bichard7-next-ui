@@ -18,7 +18,8 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { courtCaseId } = query as { courtCaseId: string }
     const dataSource = await getDataSource()
 
-    const courtCaseResult = await lockWhileFetchingCourtCase(currentUser, courtCaseId, dataSource)
+    // TODO this function may not actually acquire the lock, rename me
+    let courtCaseResult = await lockWhileFetchingCourtCase(currentUser, courtCaseId, dataSource)
 
     if (isError(courtCaseResult)) {
       throw courtCaseResult
@@ -30,14 +31,25 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    if (!courtCaseResult.courtCase) {
-      throw new Error("Failed to lock court case")
+    if (courtCaseResult.lockAcquireFailed) {
+      courtCaseResult = await lockWhileFetchingCourtCase(currentUser, courtCaseId, dataSource)
+
+      if (isError(courtCaseResult)) {
+        throw courtCaseResult
+      }
+
+      if (courtCaseResult.notFound || !courtCaseResult.courtCase) {
+        return {
+          notFound: true
+        }
+      }
     }
 
     return {
       props: {
         user: currentUser.serialize(),
-        courtCase: courtCaseResult.courtCase.serialize()
+        // TODO add handling for courtCase being undefined
+        courtCase: courtCaseResult.courtCase!.serialize()
       }
     }
   }
