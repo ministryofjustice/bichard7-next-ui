@@ -1,5 +1,6 @@
 import Layout from "components/Layout"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
+import CourtCaseLock from "features/CourtCaseLock/CourtCaseLock"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
@@ -49,6 +50,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user }: Props) => {
 
       <Layout user={user}>
         <CourtCaseDetails courtCase={courtCase} />
+        <CourtCaseLock courtCase={courtCase} />
       </Layout>
     </>
   )

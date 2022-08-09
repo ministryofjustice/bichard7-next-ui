@@ -97,12 +97,6 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase }) => (
     <If condition={(courtCase?.notes?.length ?? 0) === 0}>
       <Paragraph>{"Case has no notes."}</Paragraph>
     </If>
-    <If condition={!!courtCase?.triggerLockedById}>
-      <Paragraph>{`Trigger locked by: ${courtCase.triggerLockedById}`}</Paragraph>
-    </If>
-    <If condition={!!courtCase?.errorLockedById}>
-      <Paragraph>{`Error locked by: ${courtCase.errorLockedById}`}</Paragraph>
-    </If>
   </>
 )
 
