@@ -47,7 +47,7 @@ export const getServerSideProps = withMultipleServerSideProps(
           return getCourtCase(transactionalEntityManager, parseInt(courtCaseId, 10), currentUser.visibleForces)
         }
       )
-    }
+    })
 
     if ((isError(courtCase) && courtCase.message === NotFoundError) || courtCase === null) {
       return {
