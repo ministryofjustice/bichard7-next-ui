@@ -120,6 +120,7 @@ describe("Home", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["01"])
 
       cy.visit("/court-cases/0")
+      cy.findByText("Case locked by another user").should("not.exist")
       cy.findByText("Trigger locked by: Bichard01").should("exist")
       cy.findByText("Error locked by: Bichard01").should("exist")
     })
@@ -142,6 +143,7 @@ describe("Home", () => {
       cy.task("insertCourtCases", { courtCases: existingCourtCases })
 
       cy.visit("/court-cases/0")
+      cy.findByText("Case locked by another user").should("exist")
       cy.findByText("Trigger locked by: Another name").should("exist")
       cy.findByText("Error locked by: Another name").should("exist")
     })

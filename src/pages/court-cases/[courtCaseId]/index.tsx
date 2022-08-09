@@ -40,6 +40,10 @@ interface Props {
 }
 
 const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user }: Props) => {
+  const lockedByAnotherUser =
+    (!!courtCase.errorLockedById && courtCase.errorLockedById !== user.username) ||
+    (!!courtCase.triggerLockedById && courtCase.triggerLockedById !== user.username)
+
   return (
     <>
       <Head>
@@ -49,8 +53,8 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user }: Props) => {
       </Head>
 
       <Layout user={user}>
+        <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
         <CourtCaseDetails courtCase={courtCase} />
-        <CourtCaseLock courtCase={courtCase} />
       </Layout>
     </>
   )
