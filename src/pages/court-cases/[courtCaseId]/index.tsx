@@ -7,9 +7,8 @@ import { ParsedUrlQuery } from "querystring"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
-import { lockWhileFetchingCourtCase } from "services/lockWhileFetchingCourtCase"
+import { fetchAndTryLockCourtCase } from "services/fetchAndTryLockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { isError } from "types/Result"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -17,39 +16,18 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
     const dataSource = await getDataSource()
+    const courtCaseResult = await fetchAndTryLockCourtCase(currentUser, courtCaseId, dataSource)
 
-    // TODO this function may not actually acquire the lock, rename me
-    let courtCaseResult = await lockWhileFetchingCourtCase(currentUser, courtCaseId, dataSource)
-
-    if (isError(courtCaseResult)) {
-      throw courtCaseResult
-    }
-
-    if (courtCaseResult.notFound) {
+    if (courtCaseResult.notFound || !courtCaseResult.courtCase) {
       return {
         notFound: true
-      }
-    }
-
-    if (courtCaseResult.lockAcquireFailed) {
-      courtCaseResult = await lockWhileFetchingCourtCase(currentUser, courtCaseId, dataSource)
-
-      if (isError(courtCaseResult)) {
-        throw courtCaseResult
-      }
-
-      if (courtCaseResult.notFound || !courtCaseResult.courtCase) {
-        return {
-          notFound: true
-        }
       }
     }
 
     return {
       props: {
         user: currentUser.serialize(),
-        // TODO add handling for courtCase being undefined
-        courtCase: courtCaseResult.courtCase!.serialize()
+        courtCase: courtCaseResult.courtCase.serialize()
       }
     }
   }

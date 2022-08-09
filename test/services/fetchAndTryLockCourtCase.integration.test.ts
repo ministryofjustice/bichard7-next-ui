@@ -1,10 +1,7 @@
 import CourtCase from "../../src/services/entities/CourtCase"
 import User from "../../src/services/entities/User"
 import getDataSource from "../../src/services/getDataSource"
-import {
-  lockWhileFetchingCourtCase,
-  LockWhileFetchingCourtCaseResult
-} from "../../src/services/lockWhileFetchingCourtCase"
+import { fetchAndTryLockCourtCase, fetchAndTryLockCourtCaseResult } from "../../src/services/fetchAndTryLockCourtCase"
 import { DataSource } from "typeorm"
 import { isError } from "../../src/types/Result"
 import CourtCaseCase from "../testFixtures/database/data/error_list.json"
@@ -62,12 +59,12 @@ describe("Court case details page", () => {
       }
     })
 
-    await lockWhileFetchingCourtCase(
+    await fetchAndTryLockCourtCase(
       { username: "bichard01", visibleForces: ["36"] } as unknown as User,
       unlockedCourtCase.error_id.toString(),
       dataSource
     )
-    await lockWhileFetchingCourtCase(
+    await fetchAndTryLockCourtCase(
       { username: "bichard02", visibleForces: ["36"] } as unknown as User,
       unlockedCourtCase.error_id.toString(),
       dataSource
@@ -97,12 +94,12 @@ describe("Court case details page", () => {
     })
 
     const resultsReceived = await Promise.all([
-      lockWhileFetchingCourtCase(
+      fetchAndTryLockCourtCase(
         { username: "bichard01", visibleForces: ["36"] } as unknown as User,
         unlockedCourtCase.error_id.toString(),
         dataSource
       ),
-      lockWhileFetchingCourtCase(
+      fetchAndTryLockCourtCase(
         { username: "bichard02", visibleForces: ["36"] } as unknown as User,
         unlockedCourtCase.error_id.toString(),
         dataSource
@@ -113,10 +110,10 @@ describe("Court case details page", () => {
     resultsReceived.forEach((courtCaseResult) => {
       expect(isError(courtCaseResult)).toBeFalsy()
       expect(courtCaseResult).not.toBeNull()
-      expect((courtCaseResult as unknown as LockWhileFetchingCourtCaseResult).courtCase).toBeDefined()
+      expect((courtCaseResult as unknown as fetchAndTryLockCourtCaseResult).courtCase).toBeDefined()
     })
 
-    const results = resultsReceived.map((result) => result as unknown as LockWhileFetchingCourtCaseResult)
+    const results = resultsReceived.map((result) => result as unknown as fetchAndTryLockCourtCaseResult)
 
     expect(results[0].courtCase?.errorLockedById).toBeDefined()
     expect(results[0].courtCase?.errorLockedById).toEqual(results[1].courtCase?.errorLockedById)
