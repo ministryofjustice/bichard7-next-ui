@@ -34,6 +34,14 @@ commands:
           working_directory: ~/bichard7-next
           command: make run-pg
 
+  fetch_docker_images:
+    description: Fetch all of the required docker images from ECR
+    steps:
+      - run:
+          name: Fetch the nginx nodejs supervisord image
+          working_directory: ~/bichard7-next
+          command: bash scripts/fetch_nginx_nodejs_supervisord_docker.sh
+
   use_nvm_version:
     description: Install nvm and use configured node version
     steps:
@@ -74,6 +82,11 @@ jobs:
           version: 20.10.14
           docker_layer_caching: true
       - checkout
+      - clone_bichard_repo
+      - run:
+          name: Fetch the nginx nodejs supervisord image
+          working_directory: ~/bichard7-next
+          command: bash scripts/fetch_nginx_nodejs_supervisord_docker.sh
       - run:
           name: Build the UI application
           command: make build
