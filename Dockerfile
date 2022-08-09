@@ -8,10 +8,18 @@ LABEL maintainer="CJSE"
 
 WORKDIR /src/ui
 
-COPY . ./
+# Currently needed for core postinstall script
+RUN yum install jq -y
 
-RUN npm ci --production && \
+# Copy in package info so we don't have to re-install packages for every code change
+COPY package.json .
+COPY package-lock.json .
+COPY ./scripts/copy-govuk-frontend-assets.sh scripts/copy-govuk-frontend-assets.sh
+
+RUN npm ci && \
     npm run install:assets
+
+COPY . ./
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
