@@ -181,8 +181,8 @@ jobs:
       - clone_bichard_repo
       - run_postgres_database
       - run:
-          name: Run next application
-          command: npm run start
+          name: Run built next container
+          command: docker run -p 4080:4080 ui
           background: true
       - run:
           name: Wait for Cypress installation to finish
@@ -204,16 +204,10 @@ workflows:
   build-and-test:
     jobs:
       - lint
+      - unit_test
+      - integration_test
+      - ui_test
       - build
-      - unit_test:
-          requires:
-            - build
-      - integration_test:
-          requires:
-            - build
-      - ui_test:
-          requires:
-            - build
       - ui_e2e_test:
           requires:
             - build
