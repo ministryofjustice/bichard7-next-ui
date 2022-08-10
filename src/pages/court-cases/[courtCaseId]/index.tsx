@@ -1,15 +1,15 @@
 import Layout from "components/Layout"
-import CourtCase from "services/entities/CourtCase"
-import User from "services/entities/User"
-import getDataSource from "services/getDataSource"
+import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
+import CourtCaseLock from "features/CourtCaseLock/CourtCaseLock"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
+import CourtCase from "services/entities/CourtCase"
+import User from "services/entities/User"
+import getDataSource from "services/getDataSource"
+import { fetchAndTryLockCourtCase } from "services/fetchAndTryLockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { isError } from "types/Result"
-import getCourtCase from "services/getCourtCase"
-import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -17,23 +17,23 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
     const dataSource = await getDataSource()
-    const courtCase = await getCourtCase(dataSource, parseInt(courtCaseId, 10), currentUser.visibleForces)
+    const { courtCase, error } = await fetchAndTryLockCourtCase(currentUser, +courtCaseId, dataSource)
 
-    if (!courtCase) {
+    if (!courtCase || error) {
       return {
         notFound: true
       }
     }
 
-    if (isError(courtCase)) {
-      console.error(courtCase)
-      throw courtCase
-    }
+    const lockedByAnotherUser =
+      (!!courtCase.errorLockedById && courtCase.errorLockedById !== currentUser.username) ||
+      (!!courtCase.triggerLockedById && courtCase.triggerLockedById !== currentUser.username)
 
     return {
       props: {
         user: currentUser.serialize(),
-        courtCase: courtCase.serialize()
+        courtCase: courtCase.serialize(),
+        lockedByAnotherUser
       }
     }
   }
@@ -42,22 +42,22 @@ export const getServerSideProps = withMultipleServerSideProps(
 interface Props {
   user: User
   courtCase: CourtCase
+  lockedByAnotherUser: boolean
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user }: Props) => {
-  return (
-    <>
-      <Head>
-        <title>{"Case Details | Bichard7"}</title>
-        <meta name="description" content="Case Details | Bichard7" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser }: Props) => (
+  <>
+    <Head>
+      <title>{"Case Details | Bichard7"}</title>
+      <meta name="description" content="Case Details | Bichard7" />
+      <link rel="icon" href="/favicon.ico" />
+    </Head>
 
-      <Layout user={user}>
-        <CourtCaseDetails courtCase={courtCase} />
-      </Layout>
-    </>
-  )
-}
+    <Layout user={user}>
+      <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
+      <CourtCaseDetails courtCase={courtCase} />
+    </Layout>
+  </>
+)
 
 export default CourtCaseDetailsPage

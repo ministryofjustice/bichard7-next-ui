@@ -9,7 +9,6 @@ First, install the requirements:
 ```shell
 npm i --dev
 npm run install:assets
-npm run build
 ```
 
 Then, run the development server:

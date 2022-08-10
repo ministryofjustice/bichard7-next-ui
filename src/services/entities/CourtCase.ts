@@ -49,6 +49,12 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "annotated_msg", type: "varchar", transformer: ahoTransformer })
   hearingOutcome!: AnnotatedHearingOutcome
 
+  @Column({ name: "error_locked_by_id" })
+  errorLockedById?: string
+
+  @Column({ name: "trigger_locked_by_id" })
+  triggerLockedById?: string
+
   @OneToMany(() => Note, (note) => note.courtCase)
   notes!: Relation<Note>[]
 }

@@ -1,5 +1,7 @@
 import type { TestUser } from "../../../test/testFixtures/database/manageUsers"
 import type { TestTrigger } from "../../../test/testFixtures/database/manageTriggers"
+import CourtCaseCase from "../../../test/testFixtures/database/data/error_list.json"
+import CourtCaseAho from "../../../test/testFixtures/database/data/error_list_aho.json"
 
 describe("Home", () => {
   context("720p resolution", () => {
@@ -112,6 +114,38 @@ describe("Home", () => {
       }).then((response) => {
         expect(response.status).to.eq(401)
       })
+    })
+
+    it("should lock a case when a user views a case details page", () => {
+      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+
+      cy.visit("/court-cases/0")
+      cy.findByText("Case locked by another user").should("not.exist")
+      cy.findByText("Trigger locked by: Bichard01").should("exist")
+      cy.findByText("Error locked by: Bichard01").should("exist")
+    })
+
+    it("should not lock a court case when its already locked", () => {
+      const existingUserLock = "Another name"
+      const existingCourtCases = [
+        {
+          ...CourtCaseCase,
+          annotated_msg: CourtCaseAho.annotated_msg,
+          court_date: "2008-09-25",
+          org_for_police_filter: "01",
+          error_id: "0",
+          message_id: String(0).padStart(5, "x"),
+          error_locked_by_id: existingUserLock,
+          trigger_locked_by_id: existingUserLock
+        }
+      ]
+
+      cy.task("insertCourtCases", { courtCases: existingCourtCases })
+
+      cy.visit("/court-cases/0")
+      cy.findByText("Case locked by another user").should("exist")
+      cy.findByText("Trigger locked by: Another name").should("exist")
+      cy.findByText("Error locked by: Another name").should("exist")
     })
   })
 })

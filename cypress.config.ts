@@ -4,6 +4,7 @@ import { defineConfig } from "cypress"
 import CourtCase from "services/entities/CourtCase"
 import deleteFromTable from "./test/testFixtures/database/deleteFromTable"
 import {
+  insertCourtCases,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithDefendantNames,
   insertCourtCasesWithOrgCodes,
@@ -32,6 +33,10 @@ export default defineConfig({
 
         insertCourtCasesWithDefendantNames(params: { defendantNames: string[]; force: string }) {
           return insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
+        },
+
+        insertCourtCases(params: { courtCases: CourtCase[] }) {
+          return insertCourtCases(params.courtCases)
         },
 
         clearCourtCases() {
