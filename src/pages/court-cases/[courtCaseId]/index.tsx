@@ -17,7 +17,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
     const dataSource = await getDataSource()
-    const courtCaseResult = await fetchAndTryLockCourtCase(currentUser, courtCaseId, dataSource)
+    const courtCaseResult = await fetchAndTryLockCourtCase(currentUser, +courtCaseId, dataSource)
 
     if (courtCaseResult.notFound || !courtCaseResult.courtCase) {
       return {

@@ -3,83 +3,114 @@ import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import getCourtCase from "./getCourtCase"
-import lockCourtCase from "./lockCourtCase"
+import tryToLockCourtCase from "./lockCourtCase"
 
 type fetchAndTryLockCourtCaseResult = { courtCase?: CourtCase; notFound?: boolean; lockAcquireFailed?: boolean }
 
-const fetchAndTryLockCourtCase = async (
+const fetchAndTryLockCourtCase2 = async (
   currentUser: User,
-  courtCaseId: string,
+  courtCaseId: number,
   dataSource: DataSource
 ): Promise<fetchAndTryLockCourtCaseResult> => {
-  const transactionResult: fetchAndTryLockCourtCaseResult = await dataSource.transaction(
-    "SERIALIZABLE",
-    async (transactionalEntityManager) => {
-      const fetchedCourtCase = await getCourtCase(
-        transactionalEntityManager,
-        parseInt(courtCaseId, 10),
-        currentUser.visibleForces
-      )
-
-      if (!fetchedCourtCase) {
-        return {
-          notFound: true
-        }
-      }
-
-      if (isError(fetchedCourtCase)) {
-        console.error(fetchedCourtCase.message)
-        throw fetchedCourtCase
-      }
-
-      try {
-        const lockedCourtCaseResult = await lockCourtCase(
-          transactionalEntityManager,
-          fetchedCourtCase,
-          currentUser.username
-        )
-
-        if (isError(lockedCourtCaseResult)) {
-          console.error(lockedCourtCaseResult)
-
-          return {
-            lockAcquireFailed: true
-          }
-        }
-
-        return {
-          courtCase: lockedCourtCaseResult
-        }
-      } catch (error) {
-        console.error("Failed to lock court case")
-        return {
-          notFound: true
-        }
-      }
-    }
-  )
-
-  if (transactionResult.lockAcquireFailed) {
-    const courtCaseResult = await getCourtCase(dataSource, parseInt(courtCaseId, 10), currentUser.visibleForces)
-
-    if (isError(courtCaseResult)) {
-      console.error(courtCaseResult.message)
-      throw courtCaseResult
-    }
-
-    if (!courtCaseResult) {
-      return {
-        notFound: true
-      }
-    }
-
+  const ok = await tryToLockCourtCase(dataSource, courtCaseId, currentUser.username)
+  if (!ok) {
     return {
-      courtCase: courtCaseResult
+      lockAcquireFailed: true
     }
   }
 
-  return transactionResult
+  const courtCase = await getCourtCase(dataSource, courtCaseId, currentUser.visibleForces)
+  if (!courtCase) {
+    return {
+      notFound: true
+    }
+  }
+  if (isError(courtCase)) {
+    console.error(courtCase.message)
+    throw courtCase
+  }
+
+  // If the current user doesn't hold the locks
+  if (courtCase.errorLockedById !== currentUser.username || courtCase.triggerLockedById !== currentUser.username) {
+    return {
+      lockAcquireFailed: true
+    }
+  }
 }
 
+// const fetchAndTryLockCourtCase = async (
+//   currentUser: User,
+//   courtCaseId: string,
+//   dataSource: DataSource
+// ): Promise<fetchAndTryLockCourtCaseResult> => {
+//   const transactionResult: fetchAndTryLockCourtCaseResult = await dataSource.transaction(
+//     "SERIALIZABLE",
+//     async (transactionalEntityManager) => {
+//       const fetchedCourtCase = await getCourtCase(
+//         transactionalEntityManager,
+//         parseInt(courtCaseId, 10),
+//         currentUser.visibleForces
+//       )
+
+//       if (!fetchedCourtCase) {
+//         return {
+//           notFound: true
+//         }
+//       }
+
+//       if (isError(fetchedCourtCase)) {
+//         console.error(fetchedCourtCase.message)
+//         throw fetchedCourtCase
+//       }
+
+//       try {
+//         const lockedCourtCaseResult = await lockCourtCase(
+//           transactionalEntityManager,
+//           fetchedCourtCase,
+//           currentUser.username
+//         )
+
+//         if (isError(lockedCourtCaseResult)) {
+//           console.error(lockedCourtCaseResult)
+
+//           return {
+//             lockAcquireFailed: true
+//           }
+//         }
+
+//         return {
+//           courtCase: lockedCourtCaseResult
+//         }
+//       } catch (error) {
+//         console.error("Failed to lock court case")
+//         return {
+//           notFound: true
+//         }
+//       }
+//     }
+//   )
+
+//   if (transactionResult.lockAcquireFailed) {
+//     const courtCaseResult = await getCourtCase(dataSource, parseInt(courtCaseId, 10), currentUser.visibleForces)
+
+//     if (isError(courtCaseResult)) {
+//       console.error(courtCaseResult.message)
+//       throw courtCaseResult
+//     }
+
+//     if (!courtCaseResult) {
+//       return {
+//         notFound: true
+//       }
+//     }
+
+//     return {
+//       courtCase: courtCaseResult
+//     }
+//   }
+
+//   return transactionResult
+// }
+
 export type { fetchAndTryLockCourtCaseResult }
-export { fetchAndTryLockCourtCase }
+export { fetchAndTryLockCourtCase2 }
