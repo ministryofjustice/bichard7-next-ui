@@ -63,12 +63,12 @@ describe("Court case details page", () => {
 
     await fetchAndTryLockCourtCase(
       { username: "bichard01", visibleForces: ["36"] } as unknown as User,
-      unlockedCourtCase.error_id.toString(),
+      unlockedCourtCase.error_id,
       dataSource
     )
     await fetchAndTryLockCourtCase(
       { username: "bichard02", visibleForces: ["36"] } as unknown as User,
-      unlockedCourtCase.error_id.toString(),
+      unlockedCourtCase.error_id,
       dataSource
     )
 
@@ -77,48 +77,6 @@ describe("Court case details page", () => {
     insertedCourtCase.triggerLockedById = "bichard01"
 
     expect(isError(updatedCourtCase)).toBeFalsy()
-    expect(updatedCourtCase).toBe(insertedCourtCase)
+    expect(updatedCourtCase).toStrictEqual(insertedCourtCase)
   })
-
-  // it("should show the case as being locked to only one user when multiple users attempt to lock the case", async () => {
-  //   await insertRecords()
-  //   // Return the unlocked case the first two times, with a 1 second delay before returning, then behave as normal.
-  //   // This is to simulate a race condition where two users both retrieve the case, receive the unlocked case and try to lock it concurrently.
-  //   jest.mock("../../src/services/getCourtCase", () => {
-  //     return {
-  //       default: jest
-  //         .fn()
-  //         .mockImplementationOnce(() => new Promise((resolve) => setTimeout(() => resolve(unlockedCourtCase), 1_000)))
-  //         .mockImplementationOnce(() => new Promise((resolve) => setTimeout(() => resolve(unlockedCourtCase), 1_000)))
-  //         .mockRestore()
-  //     }
-  //   })
-
-  //   const resultsReceived = await Promise.all([
-  //     fetchAndTryLockCourtCase(
-  //       { username: "bichard01", visibleForces: ["36"] } as unknown as User,
-  //       unlockedCourtCase.error_id.toString(),
-  //       dataSource
-  //     ),
-  //     fetchAndTryLockCourtCase(
-  //       { username: "bichard02", visibleForces: ["36"] } as unknown as User,
-  //       unlockedCourtCase.error_id.toString(),
-  //       dataSource
-  //     )
-  //   ])
-
-  //   expect(resultsReceived).toHaveLength(2)
-  //   resultsReceived.forEach((courtCaseResult) => {
-  //     expect(isError(courtCaseResult)).toBeFalsy()
-  //     expect(courtCaseResult).not.toBeNull()
-  //     expect((courtCaseResult as unknown as fetchAndTryLockCourtCaseResult).courtCase).toBeDefined()
-  //   })
-
-  //   const results = resultsReceived.map((result) => result as unknown as fetchAndTryLockCourtCaseResult)
-
-  //   expect(results[0].courtCase?.errorLockedById).toBeDefined()
-  //   expect(results[0].courtCase?.errorLockedById).toEqual(results[1].courtCase?.errorLockedById)
-  //   expect(results[0].courtCase?.triggerLockedById).toBeDefined()
-  //   expect(results[0].courtCase?.triggerLockedById).toEqual(results[1].courtCase?.triggerLockedById)
-  // })
 })

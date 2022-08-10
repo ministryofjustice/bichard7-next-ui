@@ -23,22 +23,4 @@ const tryToLockCourtCase = async (dataSource: DataSource, courtCaseId: number, u
   return true
 }
 
-// const lockCourtCase = async (
-//   dataSource: DataSource | EntityManager,
-//   courtCase: CourtCase,
-//   userName: string
-// ): PromiseResult<CourtCase> => {
-//   const courtCaseRepository = await dataSource.getRepository(CourtCase)
-
-//   if (!courtCase?.triggerLockedById) {
-//     courtCase.triggerLockedById = userName
-//   }
-
-//   if (!courtCase?.errorLockedById) {
-//     courtCase.errorLockedById = userName
-//   }
-
-//   const query = courtCaseRepository.save(courtCase)
-// }
-
 export default tryToLockCourtCase

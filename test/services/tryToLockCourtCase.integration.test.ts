@@ -2,7 +2,7 @@ import { expect } from "@jest/globals"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import lockCourtCase from "../../src/services/lockCourtCase"
+import tryToLockCourtCase from "../../src/services/tryToLockCourtCase"
 import { isError } from "../../src/types/Result"
 import CourtCaseCase from "../testFixtures/database/data/error_list.json"
 import CourtCaseAho from "../testFixtures/database/data/error_list_aho.json"
@@ -48,7 +48,7 @@ describe("lock court case", () => {
       .findOne({ where: { errorId: 0 } })) as CourtCase
 
     const userName = "Bichard01"
-    const result = await lockCourtCase(dataSource, existingCourtCase, userName)
+    const result = await tryToLockCourtCase(dataSource, existingCourtCase.errorId, userName)
     expect(isError(result)).toBe(false)
 
     const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
@@ -64,7 +64,7 @@ describe("lock court case", () => {
       .getRepository(CourtCase)
       .findOne({ where: { errorId: 0 } })) as CourtCase
 
-    const result = await lockCourtCase(dataSource, existingCourtCase, "Bichard01")
+    const result = await tryToLockCourtCase(dataSource, existingCourtCase.errorId, "Bichard01")
     expect(isError(result)).toBe(false)
 
     const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
@@ -73,36 +73,38 @@ describe("lock court case", () => {
     expect(actualCourtCase.triggerLockedById).toStrictEqual(anotherUser)
   })
 
-  it("should allow locking triggers when errors are locked", async () => {
-    const errorLockedById = "anotherUserName"
-    await insertRecords(errorLockedById)
-    const existingCourtCase = (await dataSource
-      .getRepository(CourtCase)
-      .findOne({ where: { errorId: 0 } })) as CourtCase
+  // These tests are out of scope until separate case and trigger locking is implemented
+  //
+  // it("should allow locking triggers when errors are locked", async () => {
+  //   const errorLockedById = "anotherUserName"
+  //   await insertRecords(errorLockedById)
+  //   const existingCourtCase = (await dataSource
+  //     .getRepository(CourtCase)
+  //     .findOne({ where: { errorId: 0 } })) as CourtCase
 
-    const userName = "Bichard01"
-    const result = await lockCourtCase(dataSource, existingCourtCase, userName)
-    expect(isError(result)).toBe(false)
+  //   const userName = "Bichard01"
+  //   const result = await tryToLockCourtCase(dataSource, existingCourtCase.errorId, userName)
+  //   expect(isError(result)).toBe(false)
 
-    const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
-    const actualCourtCase = record as CourtCase
-    expect(actualCourtCase.errorLockedById).toStrictEqual(errorLockedById)
-    expect(actualCourtCase.triggerLockedById).toStrictEqual(userName)
-  })
+  //   const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
+  //   const actualCourtCase = record as CourtCase
+  //   expect(actualCourtCase.errorLockedById).toStrictEqual(errorLockedById)
+  //   expect(actualCourtCase.triggerLockedById).toStrictEqual(userName)
+  // })
 
-  it("should allow locking triggers when errors are locked", async () => {
-    const triggerLockedById = "anotherUserName"
-    await insertRecords(null, triggerLockedById)
-    const existingCourtCase = (await dataSource
-      .getRepository(CourtCase)
-      .findOne({ where: { errorId: 0 } })) as CourtCase
-    const userName = "Bichard01"
-    const result = await lockCourtCase(dataSource, existingCourtCase, userName)
-    expect(isError(result)).toBe(false)
+  // it("should allow locking triggers when errors are locked", async () => {
+  //   const triggerLockedById = "anotherUserName"
+  //   await insertRecords(null, triggerLockedById)
+  //   const existingCourtCase = (await dataSource
+  //     .getRepository(CourtCase)
+  //     .findOne({ where: { errorId: 0 } })) as CourtCase
+  //   const userName = "Bichard01"
+  //   const result = await tryToLockCourtCase(dataSource, existingCourtCase.errorId, userName)
+  //   expect(isError(result)).toBe(false)
 
-    const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
-    const actualCourtCase = record as CourtCase
-    expect(actualCourtCase.errorLockedById).toStrictEqual(userName)
-    expect(actualCourtCase.triggerLockedById).toStrictEqual(triggerLockedById)
-  })
+  //   const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
+  //   const actualCourtCase = record as CourtCase
+  //   expect(actualCourtCase.errorLockedById).toStrictEqual(userName)
+  //   expect(actualCourtCase.triggerLockedById).toStrictEqual(triggerLockedById)
+  // })
 })

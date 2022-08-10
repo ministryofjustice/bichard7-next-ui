@@ -3,11 +3,11 @@ import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import getCourtCase from "./getCourtCase"
-import tryToLockCourtCase from "./lockCourtCase"
+import tryToLockCourtCase from "./tryToLockCourtCase"
 
 type fetchAndTryLockCourtCaseResult = { courtCase?: CourtCase; notFound?: boolean; lockAcquireFailed?: boolean }
 
-const fetchAndTryLockCourtCase2 = async (
+const fetchAndTryLockCourtCase = async (
   currentUser: User,
   courtCaseId: number,
   dataSource: DataSource
@@ -33,7 +33,12 @@ const fetchAndTryLockCourtCase2 = async (
   // If the current user doesn't hold the locks
   if (courtCase.errorLockedById !== currentUser.username || courtCase.triggerLockedById !== currentUser.username) {
     return {
+      courtCase,
       lockAcquireFailed: true
+    }
+  } else {
+    return {
+      courtCase
     }
   }
 }
@@ -113,4 +118,4 @@ const fetchAndTryLockCourtCase2 = async (
 // }
 
 export type { fetchAndTryLockCourtCaseResult }
-export { fetchAndTryLockCourtCase2 }
+export { fetchAndTryLockCourtCase }
