@@ -5,7 +5,7 @@ import User from "./entities/User"
 import getCourtCase from "./getCourtCase"
 import tryToLockCourtCase from "./tryToLockCourtCase"
 
-type fetchAndTryLockCourtCaseResult = { courtCase?: CourtCase; notFound?: boolean; error?: boolean }
+type fetchAndTryLockCourtCaseResult = { courtCase?: CourtCase; error?: boolean }
 
 const fetchAndTryLockCourtCase = async (
   currentUser: User,
@@ -22,7 +22,7 @@ const fetchAndTryLockCourtCase = async (
   const courtCase = await getCourtCase(dataSource, courtCaseId, currentUser.visibleForces)
   if (!courtCase) {
     return {
-      notFound: true
+      error: true
     }
   }
   if (isError(courtCase)) {

@@ -20,10 +20,8 @@ export const Lock: ComponentStory<typeof CourtCaseLock> = () => (
 
 Lock.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
-  /* eslint-disable @typescript-eslint/no-non-null-assertion */
-  await expect(canvas.getByText("Error locked by: " + courtCase.errorLockedById!)).toBeInTheDocument()
-  await expect(canvas.getByText("Trigger locked by: " + courtCase.triggerLockedById!)).toBeInTheDocument()
-  /* eslint-enable @typescript-eslint/no-non-null-assertion */
+  await expect(canvas.getByText("Error locked by: " + courtCase.errorLockedById ?? "")).toBeInTheDocument()
+  await expect(canvas.getByText("Trigger locked by: " + courtCase.triggerLockedById ?? "")).toBeInTheDocument()
 }
 
 export const LockedByAnotherUser: ComponentStory<typeof CourtCaseLock> = () => (
@@ -33,8 +31,6 @@ export const LockedByAnotherUser: ComponentStory<typeof CourtCaseLock> = () => (
 LockedByAnotherUser.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText("Case locked by another user")).toBeInTheDocument()
-  /* eslint-disable @typescript-eslint/no-non-null-assertion */
-  await expect(canvas.getByText("Error locked by: " + courtCase.errorLockedById!)).toBeInTheDocument()
-  await expect(canvas.getByText("Trigger locked by: " + courtCase.triggerLockedById!)).toBeInTheDocument()
-  /* eslint-enable @typescript-eslint/no-non-null-assertion */
+  await expect(canvas.getByText("Error locked by: " + courtCase.errorLockedById ?? "")).toBeInTheDocument()
+  await expect(canvas.getByText("Trigger locked by: " + courtCase.triggerLockedById ?? "")).toBeInTheDocument()
 }

@@ -10,7 +10,6 @@ import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import { fetchAndTryLockCourtCase } from "services/fetchAndTryLockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { Paragraph } from "govuk-react"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -18,25 +17,23 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
     const dataSource = await getDataSource()
-    const { courtCase, notFound, error } = await fetchAndTryLockCourtCase(currentUser, +courtCaseId, dataSource)
+    const { courtCase, error } = await fetchAndTryLockCourtCase(currentUser, +courtCaseId, dataSource)
 
-    if (notFound || !courtCase) {
+    if (!courtCase || error) {
       return {
         notFound: true
       }
     }
 
-    if (error) {
-      props: {
-        lockingError: ""
-      }
-    }
+    const lockedByAnotherUser =
+      (!!courtCase.errorLockedById && courtCase.errorLockedById !== currentUser.username) ||
+      (!!courtCase.triggerLockedById && courtCase.triggerLockedById !== currentUser.username)
 
     return {
       props: {
-        lockingError: "",
         user: currentUser.serialize(),
-        courtCase: courtCase.serialize()
+        courtCase: courtCase.serialize(),
+        lockedByAnotherUser
       }
     }
   }
@@ -45,29 +42,22 @@ export const getServerSideProps = withMultipleServerSideProps(
 interface Props {
   user: User
   courtCase: CourtCase
-  errorMessage: string
+  lockedByAnotherUser: boolean
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockingError }: Props) => {
-  const lockedByAnotherUser =
-    (!!courtCase.errorLockedById && courtCase.errorLockedById !== user.username) ||
-    (!!courtCase.triggerLockedById && courtCase.triggerLockedById !== user.username)
+const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser }: Props) => (
+  <>
+    <Head>
+      <title>{"Case Details | Bichard7"}</title>
+      <meta name="description" content="Case Details | Bichard7" />
+      <link rel="icon" href="/favicon.ico" />
+    </Head>
 
-  return (
-    <>
-      <Head>
-        <title>{"Case Details | Bichard7"}</title>
-        <meta name="description" content="Case Details | Bichard7" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <Layout user={user}>
-        <Paragraph>{lockingError}</Paragraph>
-        <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
-        <CourtCaseDetails courtCase={courtCase} />
-      </Layout>
-    </>
-  )
-}
+    <Layout user={user}>
+      <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
+      <CourtCaseDetails courtCase={courtCase} />
+    </Layout>
+  </>
+)
 
 export default CourtCaseDetailsPage
