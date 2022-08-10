@@ -51,7 +51,61 @@ describe("Court case details page", () => {
     await dataSource.destroy()
   })
 
-  it("should not override the lock when the record is locked by another user", async () => {
+  it("should lock an unlocked case when fetched", async () => {
+    await insertRecords()
+    jest.mock("../../src/services/getCourtCase", () => {
+      return {
+        default: jest.fn(() => unlockedCourtCase)
+      }
+    })
+
+    const insertedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCase.error_id, ["36"])
+
+    await fetchAndTryLockCourtCase(
+      { username: "bichard01", visibleForces: ["36"] } as unknown as User,
+      unlockedCourtCase.error_id,
+      dataSource
+    )
+
+    const updatedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCase.error_id, ["36"])
+    insertedCourtCase.errorLockedById = "bichard01"
+    insertedCourtCase.triggerLockedById = "bichard01"
+
+    expect(isError(updatedCourtCase)).toBeFalsy()
+    expect(updatedCourtCase).toStrictEqual(insertedCourtCase)
+  })
+
+  it("shouldn't override the lock when the record is locked by current user", async () => {
+    await insertRecords()
+    jest.mock("../../src/services/getCourtCase", () => {
+      return {
+        default: jest.fn(() => unlockedCourtCase)
+      }
+    })
+
+    const insertedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCase.error_id, ["36"])
+
+    await fetchAndTryLockCourtCase(
+      { username: "bichard01", visibleForces: ["36"] } as unknown as User,
+      unlockedCourtCase.error_id,
+      dataSource
+    )
+
+    await fetchAndTryLockCourtCase(
+      { username: "bichard01", visibleForces: ["36"] } as unknown as User,
+      unlockedCourtCase.error_id,
+      dataSource
+    )
+
+    const updatedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCase.error_id, ["36"])
+    insertedCourtCase.errorLockedById = "bichard01"
+    insertedCourtCase.triggerLockedById = "bichard01"
+
+    expect(isError(updatedCourtCase)).toBeFalsy()
+    expect(updatedCourtCase).toStrictEqual(insertedCourtCase)
+  })
+
+  it("shouldn't override the lock when the record is locked by another user", async () => {
     await insertRecords()
     jest.mock("../../src/services/getCourtCase", () => {
       return {
