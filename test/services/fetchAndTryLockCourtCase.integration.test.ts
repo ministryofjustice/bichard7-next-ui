@@ -12,7 +12,7 @@ import { expect } from "@jest/globals"
 
 const getCourtCase = jest.requireActual("../../src/services/getCourtCase").default
 
-const unlockedCourtCase = {
+const unlockedCourtCaseDbObject = {
   ...CourtCaseCase,
   annotated_msg: CourtCaseAho.annotated_msg,
   court_date: "2008-09-25",
@@ -24,15 +24,15 @@ const unlockedCourtCase = {
 }
 
 const insertRecords = async (errorLockedById: string | null = null, triggerLockedById: string | null = null) => {
-  const existingCourtCases = [
+  const existingCourtCasesDbObject = [
     {
-      ...unlockedCourtCase,
+      ...unlockedCourtCaseDbObject,
       error_locked_by_id: errorLockedById,
       trigger_locked_by_id: triggerLockedById
     }
   ]
 
-  await insertCourtCases(existingCourtCases)
+  await insertCourtCases(existingCourtCasesDbObject)
 }
 
 describe("Court case details page", () => {
@@ -55,82 +55,82 @@ describe("Court case details page", () => {
     await insertRecords()
     jest.mock("../../src/services/getCourtCase", () => {
       return {
-        default: jest.fn(() => unlockedCourtCase)
+        default: jest.fn(() => unlockedCourtCaseDbObject)
       }
     })
 
-    const insertedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCase.error_id, ["36"])
+    const expectedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCaseDbObject.error_id, ["36"])
+    expectedCourtCase.errorLockedById = "bichard01"
+    expectedCourtCase.triggerLockedById = "bichard01"
 
     await fetchAndTryLockCourtCase(
       { username: "bichard01", visibleForces: ["36"] } as unknown as User,
-      unlockedCourtCase.error_id,
+      unlockedCourtCaseDbObject.error_id,
       dataSource
     )
 
-    const updatedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCase.error_id, ["36"])
-    insertedCourtCase.errorLockedById = "bichard01"
-    insertedCourtCase.triggerLockedById = "bichard01"
+    const actualCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCaseDbObject.error_id, ["36"])
 
-    expect(isError(updatedCourtCase)).toBeFalsy()
-    expect(updatedCourtCase).toStrictEqual(insertedCourtCase)
+    expect(isError(actualCourtCase)).toBeFalsy()
+    expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
   it("shouldn't override the lock when the record is locked by current user", async () => {
     await insertRecords()
     jest.mock("../../src/services/getCourtCase", () => {
       return {
-        default: jest.fn(() => unlockedCourtCase)
+        default: jest.fn(() => unlockedCourtCaseDbObject)
       }
     })
 
-    const insertedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCase.error_id, ["36"])
+    const expectedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCaseDbObject.error_id, ["36"])
+    expectedCourtCase.errorLockedById = "bichard01"
+    expectedCourtCase.triggerLockedById = "bichard01"
 
     await fetchAndTryLockCourtCase(
       { username: "bichard01", visibleForces: ["36"] } as unknown as User,
-      unlockedCourtCase.error_id,
+      unlockedCourtCaseDbObject.error_id,
       dataSource
     )
 
     await fetchAndTryLockCourtCase(
       { username: "bichard01", visibleForces: ["36"] } as unknown as User,
-      unlockedCourtCase.error_id,
+      unlockedCourtCaseDbObject.error_id,
       dataSource
     )
 
-    const updatedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCase.error_id, ["36"])
-    insertedCourtCase.errorLockedById = "bichard01"
-    insertedCourtCase.triggerLockedById = "bichard01"
+    const actualCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCaseDbObject.error_id, ["36"])
 
-    expect(isError(updatedCourtCase)).toBeFalsy()
-    expect(updatedCourtCase).toStrictEqual(insertedCourtCase)
+    expect(isError(actualCourtCase)).toBeFalsy()
+    expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
   it("shouldn't override the lock when the record is locked by another user", async () => {
     await insertRecords()
     jest.mock("../../src/services/getCourtCase", () => {
       return {
-        default: jest.fn(() => unlockedCourtCase)
+        default: jest.fn(() => unlockedCourtCaseDbObject)
       }
     })
 
-    const insertedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCase.error_id, ["36"])
+    const expectedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCaseDbObject.error_id, ["36"])
+    expectedCourtCase.errorLockedById = "bichard01"
+    expectedCourtCase.triggerLockedById = "bichard01"
 
     await fetchAndTryLockCourtCase(
       { username: "bichard01", visibleForces: ["36"] } as unknown as User,
-      unlockedCourtCase.error_id,
+      unlockedCourtCaseDbObject.error_id,
       dataSource
     )
     await fetchAndTryLockCourtCase(
       { username: "bichard02", visibleForces: ["36"] } as unknown as User,
-      unlockedCourtCase.error_id,
+      unlockedCourtCaseDbObject.error_id,
       dataSource
     )
 
-    const updatedCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCase.error_id, ["36"])
-    insertedCourtCase.errorLockedById = "bichard01"
-    insertedCourtCase.triggerLockedById = "bichard01"
+    const actualCourtCase: CourtCase = await getCourtCase(dataSource, unlockedCourtCaseDbObject.error_id, ["36"])
 
-    expect(isError(updatedCourtCase)).toBeFalsy()
-    expect(updatedCourtCase).toStrictEqual(insertedCourtCase)
+    expect(isError(actualCourtCase)).toBeFalsy()
+    expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 })
