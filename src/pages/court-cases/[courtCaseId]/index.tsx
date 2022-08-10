@@ -10,6 +10,7 @@ import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import { fetchAndTryLockCourtCase } from "services/fetchAndTryLockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { Paragraph } from "govuk-react"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -17,18 +18,25 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
     const dataSource = await getDataSource()
-    const courtCaseResult = await fetchAndTryLockCourtCase(currentUser, +courtCaseId, dataSource)
+    const { courtCase, notFound, error } = await fetchAndTryLockCourtCase(currentUser, +courtCaseId, dataSource)
 
-    if (courtCaseResult.notFound || !courtCaseResult.courtCase) {
+    if (notFound || !courtCase) {
       return {
         notFound: true
       }
     }
 
+    if (error) {
+      props: {
+        lockingError: ""
+      }
+    }
+
     return {
       props: {
+        lockingError: "",
         user: currentUser.serialize(),
-        courtCase: courtCaseResult.courtCase.serialize()
+        courtCase: courtCase.serialize()
       }
     }
   }
@@ -37,9 +45,10 @@ export const getServerSideProps = withMultipleServerSideProps(
 interface Props {
   user: User
   courtCase: CourtCase
+  errorMessage: string
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user }: Props) => {
+const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockingError }: Props) => {
   const lockedByAnotherUser =
     (!!courtCase.errorLockedById && courtCase.errorLockedById !== user.username) ||
     (!!courtCase.triggerLockedById && courtCase.triggerLockedById !== user.username)
@@ -53,6 +62,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user }: Props) => {
       </Head>
 
       <Layout user={user}>
+        <Paragraph>{lockingError}</Paragraph>
         <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
         <CourtCaseDetails courtCase={courtCase} />
       </Layout>
