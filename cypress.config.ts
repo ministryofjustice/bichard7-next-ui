@@ -19,24 +19,24 @@ export default defineConfig({
     baseUrl: "http://localhost:4080/bichard",
     setupNodeEvents(on, _config) {
       on("task", {
-        insertCourtCasesWithOrgCodes(orgCodes: string[]) {
-          return insertCourtCasesWithOrgCodes(orgCodes)
+        async insertCourtCasesWithOrgCodes(orgCodes: string[]) {
+          return await insertCourtCasesWithOrgCodes(orgCodes)
         },
 
-        insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
-          return insertMultipleDummyCourtCases(params.numToInsert, params.force)
+        async insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
+          return await insertMultipleDummyCourtCases(params.numToInsert, params.force)
         },
 
-        insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {
-          return insertCourtCasesWithCourtNames(params.courtNames, params.force)
+        async insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {
+          return await insertCourtCasesWithCourtNames(params.courtNames, params.force)
         },
 
-        insertCourtCasesWithDefendantNames(params: { defendantNames: string[]; force: string }) {
-          return insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
+        async insertCourtCasesWithDefendantNames(params: { defendantNames: string[]; force: string }) {
+          return await insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
         },
 
-        insertCourtCases(params: { courtCases: CourtCase[] }) {
-          return insertCourtCases(params.courtCases)
+        async insertCourtCases(params: { courtCases: CourtCase[] }) {
+          return await insertCourtCases(params.courtCases)
         },
 
         clearCourtCases() {

@@ -347,9 +347,9 @@ describe("listCourtCases", () => {
 
   it("should order by court date", async () => {
     const orgCode = "36FPA1"
-    const firstDate = "2001-09-26"
-    const secondDate = "2008-01-26"
-    const thirdDate = "2013-10-16"
+    const firstDate = new Date("2001-09-26")
+    const secondDate = new Date("2008-01-26")
+    const thirdDate = new Date("2013-10-16")
 
     await insertCourtCasesWithCourtDates([secondDate, firstDate, thirdDate], orgCode)
 
@@ -373,9 +373,9 @@ describe("listCourtCases", () => {
     const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
 
     expect(casesDesc).toHaveLength(3)
-    expect(casesDesc[0].courtDate).toStrictEqual(new Date(thirdDate))
-    expect(casesDesc[1].courtDate).toStrictEqual(new Date(secondDate))
-    expect(casesDesc[2].courtDate).toStrictEqual(new Date(firstDate))
+    expect(casesDesc[0].courtDate).toStrictEqual(thirdDate)
+    expect(casesDesc[1].courtDate).toStrictEqual(secondDate)
+    expect(casesDesc[2].courtDate).toStrictEqual(firstDate)
     expect(totalCasesDesc).toEqual(3)
   })
 

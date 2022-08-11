@@ -98,9 +98,6 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "error_resolved_ts", type: "timestamptz", nullable: true })
   errorResolvedTimestamp?: Date
 
-  @Column({ name: "msg_received_ts", type: "timestamptz", nullable: true })
-  triggerResolvedTimestamp?: Date
-
   @Column({ name: "defendant_name", nullable: true })
   defendantName?: string
 
