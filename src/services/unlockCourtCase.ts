@@ -10,7 +10,7 @@ const unlockCourtCase = async (dataSource: DataSource, courtCase: CourtCase): Pr
   try {
     await courtCaseRepository.update(courtCase.errorId, courtCase)
   } catch (error) {
-    return false
+    return error as Error
   }
 
   return true

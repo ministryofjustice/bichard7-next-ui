@@ -1,5 +1,5 @@
 import { expect } from "@jest/globals"
-import { DataSource } from "typeorm"
+import { DataSource, Repository } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import unlockCourtCase from "../../src/services/unlockCourtCase"
@@ -17,13 +17,7 @@ describe("lock court case", () => {
 
   beforeEach(async () => {
     await deleteFromTable(CourtCase)
-  })
 
-  afterAll(async () => {
-    await dataSource.destroy()
-  })
-
-  it("should unlock a locked court case", async () => {
     const lockedByName = "some user"
     await insertCourtCases([
       {
@@ -33,17 +27,40 @@ describe("lock court case", () => {
         trigger_locked_by_id: lockedByName
       }
     ])
+  })
 
-    const existingCourtCase = (await dataSource
-      .getRepository(CourtCase)
-      .findOne({ where: { errorId: 0 } })) as CourtCase
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
 
-    const result = await unlockCourtCase(dataSource, existingCourtCase)
+  afterAll(async () => {
+    await dataSource.destroy()
+  })
+
+  it("should unlock a locked court case", async () => {
+    const lockedCourtCase = (await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })) as CourtCase
+
+    const result = await unlockCourtCase(dataSource, lockedCourtCase)
     expect(isError(result)).toBe(false)
 
     const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
     const actualCourtCase = record as CourtCase
     expect(actualCourtCase.errorLockedById).toBeNull()
     expect(actualCourtCase.triggerLockedById).toBeNull()
+  })
+
+  it("should return the error when failed to unlock court case", async () => {
+    jest
+      .spyOn(Repository<CourtCase>.prototype, "update")
+      .mockRejectedValue(Error("Failed to update record with some error"))
+
+    const lockedCourtCase = (await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })) as CourtCase
+
+    const result = await unlockCourtCase(dataSource, lockedCourtCase)
+    expect(isError(result)).toBe(true)
+
+    const receivedError = result as Error
+
+    expect(receivedError.message).toEqual("Failed to update record with some error")
   })
 })
