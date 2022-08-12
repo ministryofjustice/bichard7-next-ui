@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import CourtCase from "../../src/services/entities/CourtCase"
 import { InsertResult } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
@@ -19,14 +21,13 @@ const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<In
 
 const insertCourtCasesWithOrgCodes = async (orgsCodes: string[]) => {
   const existingCourtCases = await Promise.all(
-    orgsCodes.map(
-      async (code, i) =>
-        await getDummyCourtCase({
-          orgForPoliceFilter: code.padEnd(6, " "),
-          errorId: i,
-          messageId: String(i).padStart(5, "x"),
-          ptiurn: "Case" + String(i).padStart(5, "0")
-        })
+    orgsCodes.map((code, i) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: code.padEnd(6, " "),
+        errorId: i,
+        messageId: String(i).padStart(5, "x"),
+        ptiurn: "Case" + String(i).padStart(5, "0")
+      })
     )
   )
 
@@ -35,17 +36,16 @@ const insertCourtCasesWithOrgCodes = async (orgsCodes: string[]) => {
 
 const insertCourtCasesWithCourtNames = async (courtNames: string[], orgCode: string) => {
   const existingCourtCases = await Promise.all(
-    courtNames.map(
-      async (name, i) =>
-        await getDummyCourtCase({
-          orgForPoliceFilter: orgCode,
-          errorId: i,
-          messageId: String(i).padStart(5, "x"),
-          ptiurn: "Case" + String(i).padStart(5, "0"),
-          courtName: name,
-          defendantName: DummyCourtCase.defendantName! + i,
-          courtDate: new Date("2" + String(i).padStart(3, "0") + "-01-01")
-        })
+    courtNames.map((name, i) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        errorId: i,
+        messageId: String(i).padStart(5, "x"),
+        ptiurn: "Case" + String(i).padStart(5, "0"),
+        courtName: name,
+        defendantName: DummyCourtCase.defendantName! + i,
+        courtDate: new Date("2" + String(i).padStart(3, "0") + "-01-01")
+      })
     )
   )
 
@@ -54,15 +54,14 @@ const insertCourtCasesWithCourtNames = async (courtNames: string[], orgCode: str
 
 const insertCourtCasesWithCourtDates = async (courtDates: Date[], orgCode: string) => {
   const existingCourtCases = await Promise.all(
-    courtDates.map(
-      async (date, i) =>
-        await getDummyCourtCase({
-          orgForPoliceFilter: orgCode,
-          errorId: i,
-          messageId: String(i).padStart(5, "x"),
-          ptiurn: "Case" + String(i).padStart(5, "0"),
-          courtDate: date
-        })
+    courtDates.map((date, i) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        errorId: i,
+        messageId: String(i).padStart(5, "x"),
+        ptiurn: "Case" + String(i).padStart(5, "0"),
+        courtDate: date
+      })
     )
   )
 
@@ -71,16 +70,15 @@ const insertCourtCasesWithCourtDates = async (courtDates: Date[], orgCode: strin
 
 const insertCourtCasesWithDefendantNames = async (defendantNames: string[], orgCode: string) => {
   const existingCourtCases = await Promise.all(
-    defendantNames.map(
-      async (name, i) =>
-        await getDummyCourtCase({
-          orgForPoliceFilter: orgCode,
-          errorId: i,
-          messageId: String(i).padStart(5, "x"),
-          ptiurn: "Case" + String(i).padStart(5, "0"),
-          defendantName: name,
-          courtDate: new Date("2" + String(i).padStart(3, "0") + "-01-01")
-        })
+    defendantNames.map((name, i) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        errorId: i,
+        messageId: String(i).padStart(5, "x"),
+        ptiurn: "Case" + String(i).padStart(5, "0"),
+        defendantName: name,
+        courtDate: new Date("2" + String(i).padStart(3, "0") + "-01-01")
+      })
     )
   )
 
@@ -89,7 +87,7 @@ const insertCourtCasesWithDefendantNames = async (defendantNames: string[], orgC
 
 const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: string) => {
   const existingCourtCases = await Promise.all(
-    new Array(numToInsert).fill(undefined).map(async (_, i) =>
+    new Array(numToInsert).fill(undefined).map((_, i) =>
       getDummyCourtCase({
         orgForPoliceFilter: orgCode,
         messageId: String(i).padStart(5, "x"),
@@ -102,13 +100,25 @@ const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: strin
   return insertCourtCases(existingCourtCases)
 }
 
-const insertDummyCourtCaseWithLock = async (errorLockedById: string, triggerLockedById: string) => {
-  const existingCourtCase = await getDummyCourtCase({
-    errorLockedById,
-    triggerLockedById
-  })
+const insertDummyCourtCaseWithLock = async (
+  errorLockedById: string,
+  triggerLockedById: string,
+  orgsCodes: string[]
+) => {
+  const existingCourtCases = await Promise.all(
+    orgsCodes.map((code, i) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: code.padEnd(6, " "),
+        errorId: i,
+        messageId: String(i).padStart(5, "x"),
+        ptiurn: "Case" + String(i).padStart(5, "0"),
+        errorLockedById: errorLockedById,
+        triggerLockedById: triggerLockedById
+      })
+    )
+  )
 
-  return insertCourtCases(existingCourtCase)
+  return insertCourtCases(existingCourtCases)
 }
 
 export {

@@ -118,22 +118,49 @@ describe("Home", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["01"])
 
       cy.visit("/court-cases/0")
+
+      cy.findByText("Lock Court Case").click()
       cy.findByText("Case locked by another user").should("not.exist")
       cy.findByText("Trigger locked by: Bichard01").should("exist")
       cy.findByText("Error locked by: Bichard01").should("exist")
     })
 
-    it("should not lock a court case when its already locked", async () => {
+    it("should not lock a court case when its already locked", () => {
       const existingUserLock = "Another name"
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedById: existingUserLock,
-        triggerLockedById: existingUserLock
+        triggerLockedById: existingUserLock,
+        orgCodes: ["01"]
       })
 
       cy.visit("/court-cases/0")
       cy.findByText("Case locked by another user").should("exist")
       cy.findByText("Trigger locked by: Another name").should("exist")
       cy.findByText("Error locked by: Another name").should("exist")
+    })
+
+    it("should unlock and lock a court case when its already locked", () => {
+      const existingUserLock = "Another name"
+      cy.task("insertDummyCourtCaseWithLock", {
+        errorLockedById: existingUserLock,
+        triggerLockedById: existingUserLock,
+        orgCodes: ["01"]
+      })
+
+      cy.visit("/court-cases/0")
+      cy.findByText("Case locked by another user").should("exist")
+      cy.findByText("Trigger locked by: Another name").should("exist")
+      cy.findByText("Error locked by: Another name").should("exist")
+
+      cy.findByText("Unlock Court Case").click()
+      cy.findByText("Case locked by another user").should("not.exist")
+      cy.findByText("Trigger locked by: Another name").should("not.exist")
+      cy.findByText("Error locked by: Another name").should("not.exist")
+
+      cy.findByText("Lock Court Case").click()
+      cy.findByText("Case locked by another user").should("not.exist")
+      cy.findByText("Trigger locked by: Bichard01").should("exist")
+      cy.findByText("Error locked by: Bichard01").should("exist")
     })
   })
 })

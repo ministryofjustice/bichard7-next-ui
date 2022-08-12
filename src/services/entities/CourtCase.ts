@@ -32,12 +32,6 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "trigger_count" })
   triggerCount!: number
 
-  @Column({ name: "error_locked_by_id", type: "varchar", nullable: true })
-  errorLockedById!: string | null
-
-  @Column({ name: "trigger_locked_by_id", type: "varchar", nullable: true })
-  triggerLockedById!: string | null
-
   @Column({ name: "is_urgent", type: "int2" })
   urgency!: number
 
@@ -121,6 +115,12 @@ export default class CourtCase extends BaseEntity {
 
   @OneToMany(() => Trigger, (trigger) => trigger.courtCase)
   triggers!: Relation<Trigger>[]
+
+  @Column({ name: "error_locked_by_id", type: "varchar", nullable: true })
+  errorLockedById?: string | null
+
+  @Column({ name: "trigger_locked_by_id", type: "varchar", nullable: true })
+  triggerLockedById?: string | null
 
   @OneToMany(() => Note, (note) => note.courtCase)
   notes!: Relation<Note>[]
