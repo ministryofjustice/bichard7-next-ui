@@ -20,33 +20,37 @@ export default defineConfig({
     baseUrl: "http://localhost:4080/bichard",
     setupNodeEvents(on, _config) {
       on("task", {
-        async insertCourtCasesWithOrgCodes(orgCodes: string[]) {
-          return await insertCourtCasesWithOrgCodes(orgCodes)
+        insertCourtCasesWithOrgCodes(orgCodes: string[]) {
+          return insertCourtCasesWithOrgCodes(orgCodes)
         },
 
-        async insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
-          return await insertMultipleDummyCourtCases(params.numToInsert, params.force)
+        insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
+          return insertMultipleDummyCourtCases(params.numToInsert, params.force)
         },
 
-        async insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {
-          return await insertCourtCasesWithCourtNames(params.courtNames, params.force)
+        insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {
+          return insertCourtCasesWithCourtNames(params.courtNames, params.force)
         },
 
-        async insertCourtCasesWithDefendantNames(params: { defendantNames: string[]; force: string }) {
-          return await insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
+        insertCourtCasesWithDefendantNames(params: { defendantNames: string[]; force: string }) {
+          return insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
         },
 
-        async insertDummyCourtCaseWithLock(params: {errorLockedById: string; triggerLockedById: string; orgCodes: string[] }) {
-          return await insertDummyCourtCaseWithLock(params.errorLockedById, params.triggerLockedById, params.orgCodes)
+        insertDummyCourtCaseWithLock(params: {
+          errorLockedById: string
+          triggerLockedById: string
+          orgCodes: string[]
+        }) {
+          return insertDummyCourtCaseWithLock(params.errorLockedById, params.triggerLockedById, params.orgCodes)
         },
 
-        async insertCourtCases(params: { courtCases: CourtCase[] }) {
-          return await insertCourtCases(params.courtCases)
+        insertCourtCases(params: { courtCases: CourtCase[] }) {
+          return insertCourtCases(params.courtCases)
         },
 
         clearCourtCases() {
           return deleteFromTable(CourtCase)
-        },        
+        },
 
         insertUsers(users: TestUser[]) {
           return insertUsers(users)
