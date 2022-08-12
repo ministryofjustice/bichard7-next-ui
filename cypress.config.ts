@@ -36,8 +36,8 @@ export default defineConfig({
           return await insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
         },
 
-        async insertDummyCourtCaseWithLock(params: { errorLockedById: string; triggerLockedById: string }) {
-          return await insertDummyCourtCaseWithLock(params.errorLockedById, params.triggerLockedById)
+        async insertDummyCourtCaseWithLock(params: {errorLockedById: string; triggerLockedById: string; orgCodes: string[] }) {
+          return await insertDummyCourtCaseWithLock(params.errorLockedById, params.triggerLockedById, params.orgCodes)
         },
 
         async insertCourtCases(params: { courtCases: CourtCase[] }) {
@@ -46,7 +46,7 @@ export default defineConfig({
 
         clearCourtCases() {
           return deleteFromTable(CourtCase)
-        },
+        },        
 
         insertUsers(users: TestUser[]) {
           return insertUsers(users)

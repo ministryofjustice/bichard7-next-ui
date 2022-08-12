@@ -125,11 +125,12 @@ describe("Home", () => {
       cy.findByText("Error locked by: Bichard01").should("exist")
     })
 
-    it("should not lock a court case when its locked by another handler", () => {
+    it("should not lock a court case when its already locked", () => {
       const existingUserLock = "Another name"
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedById: existingUserLock,
-        triggerLockedById: existingUserLock
+        triggerLockedById: existingUserLock,
+        orgCodes: ["01"]
       })
 
       cy.visit("/court-cases/0")
@@ -142,7 +143,8 @@ describe("Home", () => {
       const existingUserLock = "Another name"
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedById: existingUserLock,
-        triggerLockedById: existingUserLock
+        triggerLockedById: existingUserLock,
+        orgCodes: ["01"]
       })
 
       cy.visit("/court-cases/0")

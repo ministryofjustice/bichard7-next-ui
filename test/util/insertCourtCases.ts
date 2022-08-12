@@ -102,13 +102,22 @@ const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: strin
   return insertCourtCases(existingCourtCases)
 }
 
-const insertDummyCourtCaseWithLock = async (errorLockedById: string, triggerLockedById: string) => {
-  const existingCourtCase = await getDummyCourtCase({
-    errorLockedById,
-    triggerLockedById
-  })
+const insertDummyCourtCaseWithLock = async (errorLockedById: string, triggerLockedById: string, orgsCodes: string[]) => {
+  const existingCourtCases = await Promise.all(
+    orgsCodes.map(
+      async (code, i) =>
+        await getDummyCourtCase({
+          orgForPoliceFilter: code.padEnd(6, " "),
+          errorId: i,
+          messageId: String(i).padStart(5, "x"),
+          ptiurn: "Case" + String(i).padStart(5, "0"),
+          errorLockedById: errorLockedById,
+          triggerLockedById: triggerLockedById
+        })
+    )
+  )
 
-  return insertCourtCases(existingCourtCase)
+  return insertCourtCases(existingCourtCases)
 }
 
 export {

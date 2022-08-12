@@ -4,9 +4,8 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import unlockCourtCase from "../../src/services/unlockCourtCase"
 import { isError } from "../../src/types/Result"
-import CourtCaseCase from "../testFixtures/database/data/error_list.json"
-import deleteFromTable from "../testFixtures/database/deleteFromTable"
-import { insertCourtCases } from "../testFixtures/database/insertCourtCases"
+import deleteFromTable from "../util/deleteFromTable"
+import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
 
 describe("lock court case", () => {
   let dataSource: DataSource
@@ -17,16 +16,6 @@ describe("lock court case", () => {
 
   beforeEach(async () => {
     await deleteFromTable(CourtCase)
-
-    const lockedByName = "some user"
-    await insertCourtCases([
-      {
-        ...CourtCaseCase,
-        error_id: 0,
-        error_locked_by_id: lockedByName,
-        trigger_locked_by_id: lockedByName
-      }
-    ])
   })
 
   afterEach(() => {
@@ -38,12 +27,17 @@ describe("lock court case", () => {
   })
 
   it("should unlock a locked court case", async () => {
-    const lockedCourtCase = (await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })) as CourtCase
+    const lockedByName = "some user"
+    const lockedCourtCase = await getDummyCourtCase({
+      errorLockedById: lockedByName,
+      triggerLockedById: lockedByName
+    })
+    await insertCourtCases(lockedCourtCase)
 
     const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId)
     expect(isError(result)).toBe(false)
 
-    const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
+    const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
     const actualCourtCase = record as CourtCase
     expect(actualCourtCase.errorLockedById).toBeNull()
     expect(actualCourtCase.triggerLockedById).toBeNull()
@@ -54,7 +48,11 @@ describe("lock court case", () => {
       .spyOn(UpdateQueryBuilder<CourtCase>.prototype, "execute")
       .mockRejectedValue(Error("Failed to update record with some error"))
 
-    const lockedCourtCase = (await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })) as CourtCase
+    const lockedCourtCase = await getDummyCourtCase({
+      errorLockedById: "dummy",
+      triggerLockedById: "dummy"
+    })
+    await insertCourtCases(lockedCourtCase)
 
     const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId)
     expect(isError(result)).toBe(true)
