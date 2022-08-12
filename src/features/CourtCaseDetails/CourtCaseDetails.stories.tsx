@@ -65,5 +65,5 @@ DetailsLockedByAnotherUser.play = async ({ canvasElement }) => {
       courtCase.hearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode
     )
   ).toBeInTheDocument()
-  await expect(canvas.getByText("Add Note")).not.toBeInTheDocument()
+  await expect(canvas.queryByText("Add Note")).toBeNull()
 }
