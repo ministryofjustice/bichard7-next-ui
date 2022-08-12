@@ -1,13 +1,15 @@
 import DateTime from "components/DateTime"
 import If from "components/If"
+import LinkButton from "components/LinkButton"
 import { Heading, Paragraph, Table } from "govuk-react"
 import CourtCase from "services/entities/CourtCase"
 
 interface Props {
   courtCase: CourtCase
+  lockedByAnotherUser: boolean
 }
 
-const CourtCaseDetails: React.FC<Props> = ({ courtCase }) => (
+const CourtCaseDetails: React.FC<Props> = ({ courtCase, lockedByAnotherUser }) => (
   <>
     <Heading as="h2" size="LARGE">
       {"Case Details"}
@@ -96,6 +98,9 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase }) => (
     </If>
     <If condition={(courtCase?.notes?.length ?? 0) === 0}>
       <Paragraph>{"Case has no notes."}</Paragraph>
+    </If>
+    <If condition={!lockedByAnotherUser}>
+      <LinkButton href="notes/add">{"Add Note"}</LinkButton>
     </If>
   </>
 )

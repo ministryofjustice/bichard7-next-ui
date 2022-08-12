@@ -51,7 +51,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
 
     <Layout user={user}>
       <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
-      <CourtCaseDetails courtCase={courtCase} />
+      <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
     </Layout>
   </>
 )

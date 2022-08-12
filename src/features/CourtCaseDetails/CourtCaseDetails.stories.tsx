@@ -28,9 +28,11 @@ const courtCase = {
   hearingOutcome: parseAhoXml(CourtCaseAho.annotated_msg)
 } as unknown as CourtCase
 
-export const Details: ComponentStory<typeof CourtCaseDetails> = () => <CourtCaseDetails courtCase={courtCase} />
+export const DetailsNotLockedByAnotherUser: ComponentStory<typeof CourtCaseDetails> = () => (
+  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={false} />
+)
 
-Details.play = async ({ canvasElement }) => {
+DetailsNotLockedByAnotherUser.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText(courtCase.ptiurn)).toBeInTheDocument()
   await expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
@@ -43,4 +45,25 @@ Details.play = async ({ canvasElement }) => {
       courtCase.hearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode
     )
   ).toBeInTheDocument()
+  await expect(canvas.getByText("Add Note")).toBeInTheDocument()
+}
+
+export const DetailsLockedByAnotherUser: ComponentStory<typeof CourtCaseDetails> = () => (
+  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={true} />
+)
+
+DetailsLockedByAnotherUser.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+  await expect(canvas.getByText(courtCase.ptiurn)).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  await expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy"))).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.defendantName)).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.triggerReason)).toBeInTheDocument()
+  await expect(
+    canvas.getByText(
+      courtCase.hearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode
+    )
+  ).toBeInTheDocument()
+  await expect(canvas.getByText("Add Note")).not.toBeInTheDocument()
 }
