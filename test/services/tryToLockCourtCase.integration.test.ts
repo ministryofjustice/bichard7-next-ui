@@ -5,7 +5,7 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import tryToLockCourtCase from "../../src/services/tryToLockCourtCase"
 import { isError } from "../../src/types/Result"
-import deleteFromTable from "../testFixtures/database/deleteFromTable"
+import deleteFromTable from "../util/deleteFromTable"
 import { getDummyCourtCase, insertCourtCases } from "../testFixtures/database/insertCourtCases"
 
 describe("lock court case", () => {

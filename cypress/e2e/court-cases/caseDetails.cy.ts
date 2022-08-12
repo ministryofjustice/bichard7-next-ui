@@ -1,6 +1,6 @@
-import type { TestUser } from "../../../test/testFixtures/database/manageUsers"
-import type { TestTrigger } from "../../../test/testFixtures/database/manageTriggers"
-import { getDummyCourtCase } from "../../../test/testFixtures/database/insertCourtCases"
+import type { TestUser } from "../../../test/util/manageUsers"
+import type { TestTrigger } from "../../../test/util/manageTriggers"
+import { getDummyCourtCase } from "../../../test/util/insertCourtCases"
 
 describe("Home", () => {
   context("720p resolution", () => {

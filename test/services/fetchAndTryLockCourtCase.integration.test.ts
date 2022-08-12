@@ -4,7 +4,7 @@ import getDataSource from "../../src/services/getDataSource"
 import { fetchAndTryLockCourtCase } from "../../src/services/fetchAndTryLockCourtCase"
 import { DataSource } from "typeorm"
 import { isError } from "../../src/types/Result"
-import deleteFromTable from "../testFixtures/database/deleteFromTable"
+import deleteFromTable from "../util/deleteFromTable"
 import { getDummyCourtCase, insertCourtCases } from "../testFixtures/database/insertCourtCases"
 import { expect } from "@jest/globals"
 

@@ -2,17 +2,17 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { defineConfig } from "cypress"
 import CourtCase from "services/entities/CourtCase"
-import deleteFromTable from "./test/testFixtures/database/deleteFromTable"
+import deleteFromTable from "./test/util/deleteFromTable"
 import {
   insertCourtCases,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithDefendantNames,
   insertCourtCasesWithOrgCodes,
   insertMultipleDummyCourtCases
-} from "./test/testFixtures/database/insertCourtCases"
-import { insertTriggers } from "./test/testFixtures/database/manageTriggers"
-import insertException from "./test/testFixtures/database/manageExceptions"
-import { deleteUsers, insertUsers, TestUser } from "./test/testFixtures/database/manageUsers"
+} from "./test/util/insertCourtCases"
+import { insertTriggers } from "./test/util/manageTriggers"
+import insertException from "./test/util/manageExceptions"
+import { deleteUsers, insertUsers, TestUser } from "./test/util/manageUsers"
 
 export default defineConfig({
   e2e: {

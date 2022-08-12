@@ -1,7 +1,7 @@
-import CourtCase from "../../../src/services/entities/CourtCase"
+import CourtCase from "../../src/services/entities/CourtCase"
 import { InsertResult } from "typeorm"
-import getDataSource from "../../../src/services/getDataSource"
-import DummyAho from "./data/error_list_aho.json"
+import getDataSource from "../../src/services/getDataSource"
+import DummyAho from "./error_list_aho.json"
 import DummyCourtCase from "./DummyCourtCase"
 
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> => {
