@@ -5,7 +5,6 @@ import BaseEntity from "./BaseEntity"
 import dateTransformer from "./transformers/dateTransformer"
 import Note from "./Note"
 import Trigger from "./Trigger"
-import booleanTransformer from "./transformers/booleanTransformer"
 
 @Entity({ name: "error_list" })
 export default class CourtCase extends BaseEntity {
@@ -69,8 +68,8 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "error_count" })
   errorCount!: number
 
-  @Column({ name: "user_updated_flag", type: "int2", nullable: true, transformer: booleanTransformer })
-  userUpdatedFlag!: boolean | null
+  @Column({ name: "user_updated_flag", type: "int2", nullable: true })
+  userUpdatedFlag!: number | null
 
   @Column({ name: "court_date", type: "date", nullable: true, transformer: dateTransformer })
   courtDate!: Date | null
@@ -119,24 +118,6 @@ export default class CourtCase extends BaseEntity {
 
   @Column({ name: "pnc_update_enabled", type: "varchar", nullable: true })
   pncUpdateEnabled!: string | null
-
-  // @Generated()
-  // @Column({
-  //   name: "defendant_name_upper",
-  //   nullable: true,
-  //   generatedType: "STORED",
-  //   asExpression: `defendantName.toUpperCase()`
-  // })
-  // defendantNameUpper!: string
-
-  // @Generated()
-  // @Column({
-  //   name: "court_name_upper",
-  //   nullable: true,
-  //   generatedType: "STORED",
-  //   asExpression: `courtName.toUpperCase()`
-  // })
-  // courtNameUpper!: string
 
   @OneToMany(() => Trigger, (trigger) => trigger.courtCase)
   triggers!: Relation<Trigger>[]

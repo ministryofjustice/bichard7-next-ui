@@ -1,7 +1,6 @@
 import type { TestUser } from "../../../test/testFixtures/database/manageUsers"
 import type { TestTrigger } from "../../../test/testFixtures/database/manageTriggers"
-import CourtCaseCase from "../../../test/testFixtures/database/data/error_list.json"
-import CourtCaseAho from "../../../test/testFixtures/database/data/error_list_aho.json"
+import { getDummyCourtCase } from "../../../test/testFixtures/database/insertCourtCases"
 
 describe("Home", () => {
   context("720p resolution", () => {
@@ -125,19 +124,13 @@ describe("Home", () => {
       cy.findByText("Error locked by: Bichard01").should("exist")
     })
 
-    it("should not lock a court case when its already locked", () => {
+    it("should not lock a court case when its already locked", async () => {
       const existingUserLock = "Another name"
       const existingCourtCases = [
-        {
-          ...CourtCaseCase,
-          annotated_msg: CourtCaseAho.hearingOutcome,
-          court_date: "2008-09-25",
-          org_for_police_filter: "01",
-          error_id: "0",
-          message_id: String(0).padStart(5, "x"),
-          error_locked_by_id: existingUserLock,
-          trigger_locked_by_id: existingUserLock
-        }
+        await getDummyCourtCase({
+          errorLockedById: existingUserLock,
+          triggerLockedById: existingUserLock
+        })
       ]
 
       cy.task("insertCourtCases", { courtCases: existingCourtCases })
