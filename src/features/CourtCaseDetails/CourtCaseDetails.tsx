@@ -62,12 +62,14 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho }) => (
           <Table.CellHeader>{"Item ID"}</Table.CellHeader>
           <Table.CellHeader>{"Resolved by"}</Table.CellHeader>
           <Table.CellHeader>{"Resolved at"}</Table.CellHeader>
+          <Table.CellHeader>{"Created at"}</Table.CellHeader>
         </Table.Row>
         {courtCase.triggers.map((trigger, index) => (
           <Table.Row key={index}>
             <Table.Cell>{trigger.triggerCode}</Table.Cell>
             <Table.Cell>{trigger.triggerItemIdentity}</Table.Cell>
             <Table.Cell>{trigger.resolvedBy}</Table.Cell>
+            <Table.Cell>{trigger.resolvedAt !== undefined && <DateTime date={trigger.resolvedAt} />}</Table.Cell>
             <Table.Cell>
               <DateTime date={trigger.createdAt} />
             </Table.Cell>
