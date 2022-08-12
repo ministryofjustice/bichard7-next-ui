@@ -15,6 +15,7 @@ const databaseConfig: DatabaseConfig = {
   schema: "br7own"
 }
 
+let appDataSource: DataSource
 const getDataSource = async (): Promise<DataSource> => {
   const config: DataSourceOptions = {
     type: "postgres",
@@ -40,10 +41,8 @@ const getDataSource = async (): Promise<DataSource> => {
     throw Error("Synchronize must be false.")
   }
 
-  const appDataSource = new DataSource(config)
-
-  if (!appDataSource.isInitialized) {
-    await appDataSource.initialize()
+  if (!appDataSource || !appDataSource.isInitialized) {
+    appDataSource = await new DataSource(config).initialize()
   }
 
   return appDataSource

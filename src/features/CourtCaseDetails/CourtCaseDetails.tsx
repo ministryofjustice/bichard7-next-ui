@@ -1,3 +1,4 @@
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import DateTime from "components/DateTime"
 import If from "components/If"
 import { Heading, Paragraph, Table } from "govuk-react"
@@ -5,9 +6,10 @@ import CourtCase from "services/entities/CourtCase"
 
 interface Props {
   courtCase: CourtCase
+  aho: AnnotatedHearingOutcome
 }
 
-const CourtCaseDetails: React.FC<Props> = ({ courtCase }) => (
+const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho }) => (
   <>
     <Heading as="h2" size="LARGE">
       {"Case Details"}
@@ -46,10 +48,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase }) => (
       <Table.Row>
         <Table.CellHeader>{"Organisation Unit Code"}</Table.CellHeader>
         <Table.Cell>
-          {
-            courtCase.hearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation
-              .OrganisationUnitCode
-          }
+          {aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode}
         </Table.Cell>
       </Table.Row>
     </Table>
