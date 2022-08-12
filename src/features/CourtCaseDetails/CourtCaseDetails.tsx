@@ -1,3 +1,4 @@
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import DateTime from "components/DateTime"
 import If from "components/If"
 import LinkButton from "components/LinkButton"
@@ -6,10 +7,11 @@ import CourtCase from "services/entities/CourtCase"
 
 interface Props {
   courtCase: CourtCase
+  aho: AnnotatedHearingOutcome
   lockedByAnotherUser: boolean
 }
 
-const CourtCaseDetails: React.FC<Props> = ({ courtCase, lockedByAnotherUser }) => (
+const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser }) => (
   <>
     <Heading as="h2" size="LARGE">
       {"Case Details"}
@@ -48,10 +50,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, lockedByAnotherUser }) =
       <Table.Row>
         <Table.CellHeader>{"Organisation Unit Code"}</Table.CellHeader>
         <Table.Cell>
-          {
-            courtCase.hearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation
-              .OrganisationUnitCode
-          }
+          {aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode}
         </Table.Cell>
       </Table.Row>
     </Table>

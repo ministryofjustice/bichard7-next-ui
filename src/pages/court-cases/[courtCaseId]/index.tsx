@@ -10,6 +10,9 @@ import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import { fetchAndTryLockCourtCase } from "services/fetchAndTryLockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
+import { isError } from "types/Result"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -25,10 +28,16 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
+    const aho = parseAhoXml(courtCase.hearingOutcome)
+    if (isError(aho)) {
+      console.error(`Failed to parse aho: ${aho}`)
+    }
+
     return {
       props: {
         user: currentUser.serialize(),
         courtCase: courtCase.serialize(),
+        aho: JSON.parse(JSON.stringify(aho)),
         lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
       }
     }
@@ -38,10 +47,11 @@ export const getServerSideProps = withMultipleServerSideProps(
 interface Props {
   user: User
   courtCase: CourtCase
+  aho: AnnotatedHearingOutcome
   lockedByAnotherUser: boolean
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser }: Props) => (
+const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, aho, user, lockedByAnotherUser }: Props) => (
   <>
     <Head>
       <title>{"Case Details | Bichard7"}</title>
@@ -51,7 +61,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
 
     <Layout user={user}>
       <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
-      <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
+      <CourtCaseDetails courtCase={courtCase} aho={aho} lockedByAnotherUser={lockedByAnotherUser} />
     </Layout>
   </>
 )

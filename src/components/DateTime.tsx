@@ -2,7 +2,7 @@ import { format } from "date-fns"
 import { utcToZonedTime } from "date-fns-tz"
 
 interface Props {
-  date?: Date | string
+  date?: Date | string | null
   prefix?: string
   dateFormat?: string
 }
