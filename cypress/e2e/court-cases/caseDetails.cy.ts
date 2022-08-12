@@ -127,7 +127,8 @@ describe("Home", () => {
       const existingUserLock = "Another name"
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedById: existingUserLock,
-        triggerLockedById: existingUserLock
+        triggerLockedById: existingUserLock,
+        force: "01"
       })
 
       cy.visit("/court-cases/0")
