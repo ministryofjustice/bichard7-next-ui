@@ -1,15 +1,14 @@
 import { expect } from "@jest/globals"
 import { differenceInMinutes } from "date-fns"
-import "reflect-metadata"
-import markTriggerComplete from "../../src/services/markTriggerComplete"
 import { DataSource } from "typeorm"
 import { isError } from "types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
 import getDataSource from "../../src/services/getDataSource"
-import deleteFromTable from "../testFixtures/database/deleteFromTable"
-import { insertCourtCasesWithOrgCodes } from "../testFixtures/database/insertCourtCases"
-import { insertTriggers, TestTrigger } from "../testFixtures/database/manageTriggers"
+import markTriggerComplete from "../../src/services/markTriggerComplete"
+import deleteFromTable from "../util/deleteFromTable"
+import { insertCourtCasesWithOrgCodes } from "../util/insertCourtCases"
+import { insertTriggers, TestTrigger } from "../util/manageTriggers"
 
 jest.setTimeout(100000)
 
