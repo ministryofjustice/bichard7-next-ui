@@ -10,12 +10,12 @@ import {
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithOrgCodes,
   insertCourtCasesWithDefendantNames
-} from "../testFixtures/database/insertCourtCases"
-import insertException from "../testFixtures/database/manageExceptions"
+} from "../util/insertCourtCases"
+import insertException from "../util/manageExceptions"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import { insertTriggers, TestTrigger } from "../testFixtures/database/manageTriggers"
+import { insertTriggers, TestTrigger } from "../util/manageTriggers"
 
 jest.setTimeout(100000)
 const orgCodes = ["36", "36F", "36FP", "36FPA", "36FPA1", "36FQ", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC"]

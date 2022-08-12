@@ -5,7 +5,7 @@ import { fetchAndTryLockCourtCase } from "../../src/services/fetchAndTryLockCour
 import { DataSource } from "typeorm"
 import { isError } from "../../src/types/Result"
 import deleteFromTable from "../util/deleteFromTable"
-import { getDummyCourtCase, insertCourtCases } from "../testFixtures/database/insertCourtCases"
+import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
 import { expect } from "@jest/globals"
 
 const getCourtCase = jest.requireActual("../../src/services/getCourtCase").default

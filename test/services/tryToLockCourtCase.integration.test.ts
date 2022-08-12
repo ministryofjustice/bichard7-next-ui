@@ -6,7 +6,7 @@ import getDataSource from "../../src/services/getDataSource"
 import tryToLockCourtCase from "../../src/services/tryToLockCourtCase"
 import { isError } from "../../src/types/Result"
 import deleteFromTable from "../util/deleteFromTable"
-import { getDummyCourtCase, insertCourtCases } from "../testFixtures/database/insertCourtCases"
+import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
 
 describe("lock court case", () => {
   let dataSource: DataSource

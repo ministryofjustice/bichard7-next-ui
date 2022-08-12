@@ -5,7 +5,7 @@ import getDataSource from "../../src/services/getDataSource"
 import getCourtCase from "../../src/services/getCourtCase"
 import { isError } from "../../src/types/Result"
 import deleteFromTable from "../util/deleteFromTable"
-import { getDummyCourtCase, insertCourtCases } from "../testFixtures/database/insertCourtCases"
+import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
 
 describe("getCourtCases", () => {
   let dataSource: DataSource
