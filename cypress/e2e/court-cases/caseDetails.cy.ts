@@ -130,7 +130,7 @@ describe("Home", () => {
       const existingCourtCases = [
         {
           ...CourtCaseCase,
-          annotated_msg: CourtCaseAho.annotated_msg,
+          annotated_msg: CourtCaseAho.hearingOutcome,
           court_date: "2008-09-25",
           org_for_police_filter: "01",
           error_id: "0",

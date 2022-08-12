@@ -3,7 +3,16 @@ import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/p
 import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/build/src/serialise/ahoXml/generate"
 
 const ahoTransformer: ValueTransformer = {
-  to: (value) => (value !== undefined ? convertAhoToXml(value) : undefined),
+  to: (value) => {
+    if (value === undefined) {
+      return undefined
+    }
+
+    if (typeof value === "string") {
+      return value
+    }
+    return convertAhoToXml(value)
+  },
   from: (value) => parseAhoXml(value)
 }
 

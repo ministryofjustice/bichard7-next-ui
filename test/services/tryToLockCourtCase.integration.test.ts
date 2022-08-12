@@ -19,14 +19,16 @@ describe("lock court case", () => {
   })
 
   afterAll(async () => {
-    await dataSource.destroy()
+    if (dataSource) {
+      await dataSource.destroy()
+    }
   })
 
   it("should lock a unlocked court case when viewed", async () => {
     const userName = "Bichard01"
     const inputCourtCase = await getDummyCourtCase({
-      errorLockedById: undefined,
-      triggerLockedById: undefined
+      errorLockedById: null,
+      triggerLockedById: null
     })
     await insertCourtCases(inputCourtCase)
 

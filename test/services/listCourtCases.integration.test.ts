@@ -32,7 +32,9 @@ describe("listCourtCases", () => {
   })
 
   afterAll(async () => {
-    await dataSource.destroy()
+    if (dataSource) {
+      await dataSource.destroy()
+    }
   })
 
   it("should return all the cases if they number less than or equal to the specified maxPageItems", async () => {

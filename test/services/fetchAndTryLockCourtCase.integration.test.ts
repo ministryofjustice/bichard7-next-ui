@@ -10,7 +10,7 @@ import { expect } from "@jest/globals"
 
 const getCourtCase = jest.requireActual("../../src/services/getCourtCase").default
 
-describe("Court case details page", async () => {
+describe("Court case details page", () => {
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -23,13 +23,15 @@ describe("Court case details page", async () => {
   })
 
   afterAll(async () => {
-    await dataSource.destroy()
+    if (dataSource) {
+      await dataSource.destroy()
+    }
   })
 
   it("should lock an unlocked case when fetched", async () => {
     const inputCourtCase = await getDummyCourtCase({
-      errorLockedById: undefined,
-      triggerLockedById: undefined
+      errorLockedById: null,
+      triggerLockedById: null
     })
     await insertCourtCases(inputCourtCase)
 

@@ -19,7 +19,9 @@ describe("getCourtCases", () => {
   })
 
   afterAll(async () => {
-    await dataSource.destroy()
+    if (dataSource) {
+      await dataSource.destroy()
+    }
   })
 
   it("should return court case details when record exists and is visible to the specified forces", async () => {
@@ -33,13 +35,13 @@ describe("getCourtCases", () => {
     expect(isError(result)).toBe(false)
 
     let actualCourtCase = result as CourtCase
-    expect({ ...actualCourtCase }).toStrictEqual(inputCourtCase)
+    expect(actualCourtCase).toStrictEqual(inputCourtCase)
 
     result = await getCourtCase(dataSource, 0, [orgCode.substring(0, 2)])
     expect(isError(result)).toBe(false)
 
     actualCourtCase = result as CourtCase
-    expect({ ...actualCourtCase }).toStrictEqual(inputCourtCase)
+    expect(actualCourtCase).toStrictEqual(inputCourtCase)
   })
 
   it("should return null if the court case doesn't exist", async () => {
