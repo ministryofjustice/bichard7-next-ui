@@ -16,6 +16,7 @@ import unlockCourtCase from "services/unlockCourtCase"
 import getCourtCase from "services/getCourtCase"
 import { isError } from "types/Result"
 import { isPost } from "utils/http"
+import { UpdateResult } from "typeorm"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -24,17 +25,27 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { courtCaseId, lock } = query as { courtCaseId: string; lock: string }
     const dataSource = await getDataSource()
 
+    let lockResult: UpdateResult | Error | undefined
+
     if (isPost(req)) {
       if (!!lock && lock === "true") {
-        await tryToLockCourtCase(dataSource, +courtCaseId, currentUser.username)
+        lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser.username)
       } else if (!!lock && lock === "false") {
-        await unlockCourtCase(dataSource, +courtCaseId)
+        lockResult = await unlockCourtCase(dataSource, +courtCaseId)
       }
+    }
+
+    if (isError(lockResult)) {
+      throw lockResult
     }
 
     const courtCase = await getCourtCase(dataSource, +courtCaseId, currentUser.visibleForces)
 
-    if (!courtCase || isError(courtCase)) {
+    if (isError(courtCase)) {
+      throw courtCase
+    }
+
+    if (!courtCase) {
       return {
         notFound: true
       }
