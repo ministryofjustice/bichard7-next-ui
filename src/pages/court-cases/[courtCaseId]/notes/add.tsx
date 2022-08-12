@@ -34,8 +34,11 @@ export const getServerSideProps = withMultipleServerSideProps(
     if (isPost(req)) {
       const { noteText } = (await parseFormData(req)) as { noteText: string }
       const addNoteResult = await addNote(dataSource, courtCase.errorId, currentUser.username, noteText)
+
       if (addNoteResult.isSuccessful) {
         return redirectTo(`/court-cases/${courtCaseId}`)
+      } else {
+        throw Error(addNoteResult.ValidationException ?? "Unexpected error")
       }
     }
 
