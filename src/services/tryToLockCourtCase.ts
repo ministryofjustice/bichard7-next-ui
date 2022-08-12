@@ -1,11 +1,15 @@
-import { DataSource } from "typeorm"
+import { DataSource, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 
-const tryToLockCourtCase = async (dataSource: DataSource, courtCaseId: number, userName: string): Promise<boolean> => {
+const tryToLockCourtCase = async (
+  dataSource: DataSource,
+  courtCaseId: number,
+  userName: string
+): Promise<UpdateResult | Error> => {
   const courtCaseRepository = await dataSource.getRepository(CourtCase)
 
   try {
-    await courtCaseRepository
+    return await courtCaseRepository
       .createQueryBuilder()
       .update(CourtCase)
       .set({
@@ -18,9 +22,8 @@ const tryToLockCourtCase = async (dataSource: DataSource, courtCaseId: number, u
       .execute()
   } catch (err) {
     console.error(err)
-    return false
+    return err as Error
   }
-  return true
 }
 
 export default tryToLockCourtCase
