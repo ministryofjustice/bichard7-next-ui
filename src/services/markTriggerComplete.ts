@@ -18,6 +18,8 @@ const markTriggerComplete = async (
         resolvedBy: resolver
       })
       .where("trigger_id = :triggerId", { triggerId: trigger.triggerId })
+      .andWhere("resolved_ts IS NULL")
+      .andWhere("resolved_by IS NULL")
       .execute()
 
     return result.affected !== undefined && result.affected > 0

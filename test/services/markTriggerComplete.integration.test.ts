@@ -63,5 +63,43 @@ describe("listCourtCases", () => {
       expect(updatedTrigger.resolvedBy).toBeDefined()
       expect(updatedTrigger.resolvedBy).toStrictEqual(resolverUsername)
     })
+
+    it("Shouldn't overwrite an already resolved trigger when attempting to resolve again", async () => {
+      const resolverUsername = "triggerResolver01"
+      const reResolverUsername = "triggerResolver02"
+
+      await insertCourtCasesWithOrgCodes(["36"])
+      const trigger: TestTrigger = {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status: 0,
+        createdAt: new Date("2022-07-12T10:22:34.000Z")
+      }
+      await insertTriggers(0, [trigger])
+      let retrievedTrigger = await dataSource
+        .getRepository(Trigger)
+        .findOne({ where: { triggerId: trigger.triggerId } })
+      expect(retrievedTrigger).not.toBeNull()
+      const insertedTrigger = retrievedTrigger as Trigger
+
+      // Resolve trigger
+      const initialResolveResult = await markTriggerComplete(dataSource, insertedTrigger, resolverUsername)
+      expect(isError(initialResolveResult)).toBeFalsy()
+      expect(initialResolveResult as boolean).toBeTruthy()
+
+      // Try to resolve again as a different user
+      const result = await markTriggerComplete(dataSource, insertedTrigger, reResolverUsername)
+
+      expect(isError(result)).toBeFalsy()
+      expect(result as boolean).toBeFalsy()
+
+      retrievedTrigger = await dataSource.getRepository(Trigger).findOne({ where: { triggerId: trigger.triggerId } })
+      expect(retrievedTrigger).not.toBeNull()
+      const updatedTrigger = retrievedTrigger as Trigger
+
+      expect(updatedTrigger.resolvedAt).toBeDefined()
+      expect(updatedTrigger.resolvedBy).toBeDefined()
+      expect(updatedTrigger.resolvedBy).toStrictEqual(resolverUsername)
+    })
   })
 })
