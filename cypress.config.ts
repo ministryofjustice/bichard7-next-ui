@@ -8,7 +8,8 @@ import {
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithDefendantNames,
   insertCourtCasesWithOrgCodes,
-  insertMultipleDummyCourtCases
+  insertMultipleDummyCourtCases,
+  insertDummyCourtCaseWithLock
 } from "./test/util/insertCourtCases"
 import { insertTriggers } from "./test/util/manageTriggers"
 import insertException from "./test/util/manageExceptions"
@@ -33,6 +34,10 @@ export default defineConfig({
 
         async insertCourtCasesWithDefendantNames(params: { defendantNames: string[]; force: string }) {
           return await insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
+        },
+
+        async insertDummyCourtCaseWithLock(params: { errorLockedById: string; triggerLockedById: string }) {
+          return await insertDummyCourtCaseWithLock(params.errorLockedById, params.triggerLockedById)
         },
 
         async insertCourtCases(params: { courtCases: CourtCase[] }) {

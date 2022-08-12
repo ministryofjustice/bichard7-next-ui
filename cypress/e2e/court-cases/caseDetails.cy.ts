@@ -1,6 +1,5 @@
 import type { TestUser } from "../../../test/util/manageUsers"
 import type { TestTrigger } from "../../../test/util/manageTriggers"
-import { getDummyCourtCase } from "../../../test/util/insertCourtCases"
 
 describe("Home", () => {
   context("720p resolution", () => {
@@ -126,14 +125,10 @@ describe("Home", () => {
 
     it("should not lock a court case when its already locked", async () => {
       const existingUserLock = "Another name"
-      const existingCourtCases = [
-        await getDummyCourtCase({
-          errorLockedById: existingUserLock,
-          triggerLockedById: existingUserLock
-        })
-      ]
-
-      cy.task("insertCourtCases", { courtCases: existingCourtCases })
+      cy.task("insertDummyCourtCaseWithLock", {
+        errorLockedById: existingUserLock,
+        triggerLockedById: existingUserLock
+      })
 
       cy.visit("/court-cases/0")
       cy.findByText("Case locked by another user").should("exist")

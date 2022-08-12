@@ -87,18 +87,28 @@ const insertCourtCasesWithDefendantNames = async (defendantNames: string[], orgC
   return insertCourtCases(existingCourtCases)
 }
 
-const insertMultipleDummyCourtCases = (numToInsert: number, orgCode: string) => {
-  const existingCourtCases = [...Array(numToInsert).fill(DummyCourtCase)].map((elem, i: number) => {
-    return {
-      ...elem,
-      org_for_police_filter: orgCode,
-      message_id: String(i).padStart(5, "x"),
-      error_id: i,
-      ptiurn: "Case" + String(i).padStart(5, "0")
-    }
-  })
+const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: string) => {
+  const existingCourtCases = await Promise.all(
+    new Array(numToInsert).fill(undefined).map(async (_, i) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        messageId: String(i).padStart(5, "x"),
+        errorId: i,
+        ptiurn: "Case" + String(i).padStart(5, "0")
+      })
+    )
+  )
 
   return insertCourtCases(existingCourtCases)
+}
+
+const insertDummyCourtCaseWithLock = async (errorLockedById: string, triggerLockedById: string) => {
+  const existingCourtCase = await getDummyCourtCase({
+    errorLockedById,
+    triggerLockedById
+  })
+
+  return insertCourtCases(existingCourtCase)
 }
 
 export {
@@ -108,5 +118,6 @@ export {
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithDefendantNames,
-  insertMultipleDummyCourtCases
+  insertMultipleDummyCourtCases,
+  insertDummyCourtCaseWithLock
 }
