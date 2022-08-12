@@ -15,18 +15,21 @@ import tryToLockCourtCase from "services/tryToLockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
 import getCourtCase from "services/getCourtCase"
 import { isError } from "types/Result"
+import { isPost } from "utils/http"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query } = context as AuthenticationServerSidePropsContext
+    const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
     const { courtCaseId, lock } = query as { courtCaseId: string; lock: string }
     const dataSource = await getDataSource()
 
-    if (!!lock && lock === "true") {
-      await tryToLockCourtCase(dataSource, +courtCaseId, currentUser.username)
-    } else if (!!lock && lock === "false") {
-      await unlockCourtCase(dataSource, +courtCaseId)
+    if (isPost(req)) {
+      if (!!lock && lock === "true") {
+        await tryToLockCourtCase(dataSource, +courtCaseId, currentUser.username)
+      } else if (!!lock && lock === "false") {
+        await unlockCourtCase(dataSource, +courtCaseId)
+      }
     }
 
     const courtCase = await getCourtCase(dataSource, +courtCaseId, currentUser.visibleForces)
