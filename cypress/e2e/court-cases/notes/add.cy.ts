@@ -1,5 +1,5 @@
-import type { TestUser } from "../../../../test/testFixtures/database/manageUsers"
-import type { TestTrigger } from "../../../../test/testFixtures/database/manageTriggers"
+import type { TestUser } from "../../../../test/util/manageUsers"
+import type { TestTrigger } from "../../../../test/util/manageTriggers"
 
 describe("Home", () => {
   context("720p resolution", () => {

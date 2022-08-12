@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { expect } from "@storybook/jest"
@@ -31,13 +32,13 @@ const courtCase = {
 const aho = parseAhoXml(CourtCaseAho.hearingOutcomeXml) as AnnotatedHearingOutcome
 
 export const DetailsNotLockedByAnotherUser: ComponentStory<typeof CourtCaseDetails> = () => (
-  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={false} />
+  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={false} aho={aho} />
 )
 
 DetailsNotLockedByAnotherUser.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
-  await expect(canvas.getByText(courtCase.ptiurn!)).toBeInTheDocument()
-  await expect(canvas.getByText(courtCase.courtName!)).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.ptiurn)).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   await expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy"))).toBeInTheDocument()
   await expect(canvas.getByText(courtCase.defendantName!)).toBeInTheDocument()
@@ -49,7 +50,7 @@ DetailsNotLockedByAnotherUser.play = async ({ canvasElement }) => {
 }
 
 export const DetailsLockedByAnotherUser: ComponentStory<typeof CourtCaseDetails> = () => (
-  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={true} />
+  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={true} aho={aho} />
 )
 
 DetailsLockedByAnotherUser.play = async ({ canvasElement }) => {
@@ -58,12 +59,10 @@ DetailsLockedByAnotherUser.play = async ({ canvasElement }) => {
   await expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   await expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy"))).toBeInTheDocument()
-  await expect(canvas.getByText(courtCase.defendantName)).toBeInTheDocument()
-  await expect(canvas.getByText(courtCase.triggerReason)).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.defendantName!)).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.triggerReason!)).toBeInTheDocument()
   await expect(
-    canvas.getByText(
-      courtCase.hearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode
-    )
+    canvas.getByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
   ).toBeInTheDocument()
   await expect(canvas.queryByText("Add Note")).toBeNull()
 }

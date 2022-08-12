@@ -123,7 +123,7 @@ describe("Home", () => {
       cy.findByText("Error locked by: Bichard01").should("exist")
     })
 
-    it("should not lock a court case when its already locked", async () => {
+    it("should not lock a court case when its already locked", () => {
       const existingUserLock = "Another name"
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedById: existingUserLock,

@@ -29,14 +29,14 @@ describe("Court case details page", () => {
   })
 
   it("should lock an unlocked case when fetched", async () => {
-    const inputCourtCase = await getDummyCourtCase({
+    const inputCourtCase = getDummyCourtCase(dataSource, {
       errorLockedById: null,
       triggerLockedById: null
     })
     await insertCourtCases(inputCourtCase)
 
     const userName = "bichard01"
-    const expectedCourtCase = await getDummyCourtCase({
+    const expectedCourtCase = getDummyCourtCase(dataSource, {
       errorLockedById: userName,
       triggerLockedById: userName
     })
@@ -55,7 +55,7 @@ describe("Court case details page", () => {
 
   it("shouldn't override the lock when the record is locked by current user", async () => {
     const userName = "bichard01"
-    const inputCourtCase = await getDummyCourtCase({
+    const inputCourtCase = getDummyCourtCase(dataSource, {
       errorLockedById: userName,
       triggerLockedById: userName
     })
@@ -75,7 +75,7 @@ describe("Court case details page", () => {
 
   it("shouldn't override the lock when the record is locked by another user", async () => {
     const userName = "bichard01"
-    const inputCourtCase = await getDummyCourtCase({
+    const inputCourtCase = getDummyCourtCase(dataSource, {
       errorLockedById: userName,
       triggerLockedById: userName
     })

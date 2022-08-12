@@ -4,26 +4,23 @@ import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import addNote from "../../src/services/addNote"
-import CourtCaseCase from "../testFixtures/database/data/error_list.json"
-import CourtCaseAho from "../testFixtures/database/data/error_list_aho.json"
-import deleteFromTable from "../testFixtures/database/deleteFromTable"
-import { insertCourtCases } from "../testFixtures/database/insertCourtCases"
+import deleteFromTable from "../util/deleteFromTable"
+import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
 import Note from "../../src/services/entities/Note"
 
 const note = "Dummy note"
 
 const insertRecords = async (errorLockedById: string | null = null, triggerLockedById: string | null = null) => {
+  const dataSource = await getDataSource()
   const existingCourtCasesDbObject = [
-    {
-      ...CourtCaseCase,
-      annotated_msg: CourtCaseAho.annotated_msg,
-      court_date: "2008-09-25",
-      org_for_police_filter: "36FPA1".padEnd(6, " "),
-      error_id: 0,
-      message_id: String(0).padStart(5, "x"),
-      error_locked_by_id: errorLockedById,
-      trigger_locked_by_id: triggerLockedById
-    }
+    getDummyCourtCase(dataSource, {
+      courtDate: new Date("2008-09-25"),
+      orgForPoliceFilter: "36FPA1".padEnd(6, " "),
+      errorId: 0,
+      messageId: String(0).padStart(5, "x"),
+      errorLockedById: errorLockedById,
+      triggerLockedById: triggerLockedById
+    })
   ]
 
   await insertCourtCases(existingCourtCasesDbObject)
