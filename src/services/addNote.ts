@@ -26,10 +26,7 @@ const addNote = async (
     }
   }
 
-  if (
-    (courtCase.errorLockedById && courtCase.errorLockedById !== userId) ||
-    (courtCase.triggerLockedById && courtCase.triggerLockedById !== userId)
-  ) {
+  if (courtCase.isLockedByAnotherUser(userId)) {
     return {
       isSuccessful: false,
       ValidationException: "Case is locked by another user"

@@ -52,13 +52,13 @@ describe("addNote", () => {
     await insertRecords()
     const date = new Date()
     MockDate.set(date)
-    const result = await addNote(dataSource, 0, "User ID", note)
+    const result = await addNote(dataSource, 0, "username", note)
 
     expect(result).toStrictEqual({ isSuccessful: true })
     const record = await dataSource.getRepository(Note).findOne({ where: { errorId: 0 } })
     const actualCourtCase = record as Note
     expect(actualCourtCase.noteText).toBe(note)
-    expect(actualCourtCase.userId).toBe("User ID")
+    expect(actualCourtCase.userId).toBe("username")
     expect(actualCourtCase.createdAt).toEqual(date)
   })
 
@@ -66,7 +66,7 @@ describe("addNote", () => {
     await insertRecords("OtherUser")
     const date = new Date()
     MockDate.set(date)
-    const result = await addNote(dataSource, 0, "User ID", note)
+    const result = await addNote(dataSource, 0, "username", note)
 
     expect(result).toStrictEqual({
       isSuccessful: false,
@@ -80,7 +80,7 @@ describe("addNote", () => {
     await insertRecords(null, "OtherUser")
     const date = new Date()
     MockDate.set(date)
-    const result = await addNote(dataSource, 0, "User ID", note)
+    const result = await addNote(dataSource, 0, "username", note)
 
     expect(result).toStrictEqual({
       isSuccessful: false,
@@ -91,7 +91,7 @@ describe("addNote", () => {
   })
 
   it("should not add note when case does not exist", async () => {
-    const result = await addNote(dataSource, 0, "User ID", note)
+    const result = await addNote(dataSource, 0, "username", note)
 
     expect(result).toStrictEqual({
       isSuccessful: false,
@@ -106,7 +106,7 @@ describe("addNote", () => {
     const date = new Date()
     MockDate.set(date)
 
-    const result = await addNote(dataSource, 0, "User ID", "A".repeat(2503))
+    const result = await addNote(dataSource, 0, "username", "A".repeat(2503))
     expect(result).toStrictEqual({ isSuccessful: true })
 
     const actualNotes = await dataSource.getRepository(Note).find()
@@ -114,21 +114,21 @@ describe("addNote", () => {
     expect({ ...actualNotes[0], noteId: 0 }).toStrictEqual({
       errorId: 0,
       createdAt: date,
-      userId: "User ID",
+      userId: "username",
       noteId: 0,
       noteText: "A".repeat(1000)
     })
     expect({ ...actualNotes[1], noteId: 0 }).toStrictEqual({
       errorId: 0,
       createdAt: date,
-      userId: "User ID",
+      userId: "username",
       noteId: 0,
       noteText: "A".repeat(1000)
     })
     expect({ ...actualNotes[2], noteId: 0 }).toStrictEqual({
       errorId: 0,
       createdAt: date,
-      userId: "User ID",
+      userId: "username",
       noteId: 0,
       noteText: "A".repeat(503)
     })

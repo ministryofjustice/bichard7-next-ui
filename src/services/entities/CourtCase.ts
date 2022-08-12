@@ -57,4 +57,11 @@ export default class CourtCase extends BaseEntity {
 
   @OneToMany(() => Note, (note) => note.courtCase)
   notes!: Relation<Note>[]
+
+  isLockedByAnotherUser(username: string) {
+    return (
+      (!!this.errorLockedById && this.errorLockedById !== username) ||
+      (!!this.triggerLockedById && this.triggerLockedById !== username)
+    )
+  }
 }

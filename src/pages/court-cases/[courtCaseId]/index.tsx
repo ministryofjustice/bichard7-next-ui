@@ -25,15 +25,11 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const lockedByAnotherUser =
-      (!!courtCase.errorLockedById && courtCase.errorLockedById !== currentUser.username) ||
-      (!!courtCase.triggerLockedById && courtCase.triggerLockedById !== currentUser.username)
-
     return {
       props: {
         user: currentUser.serialize(),
         courtCase: courtCase.serialize(),
-        lockedByAnotherUser
+        lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
       }
     }
   }
