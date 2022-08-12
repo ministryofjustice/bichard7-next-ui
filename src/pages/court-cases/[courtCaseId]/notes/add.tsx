@@ -6,7 +6,6 @@ import { ParsedUrlQuery } from "querystring"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
-import { fetchAndTryLockCourtCase } from "services/fetchAndTryLockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { BackLink } from "govuk-react"
 import { useRouter } from "next/router"
@@ -15,6 +14,8 @@ import { isPost } from "utils/http"
 import addNote from "services/addNote"
 import redirectTo from "utils/redirectTo"
 import AddNoteForm from "features/AddNoteForm/AddNoteForm"
+import getCourtCase from "services/getCourtCase"
+import { isError } from "types/Result"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -23,12 +24,17 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { courtCaseId } = query as { courtCaseId: string }
 
     const dataSource = await getDataSource()
-    const { courtCase, error } = await fetchAndTryLockCourtCase(currentUser, +courtCaseId, dataSource)
+    const courtCase = await getCourtCase(dataSource, +courtCaseId, currentUser.visibleForces)
 
-    if (!courtCase || error) {
+    if (!courtCase) {
       return {
         notFound: true
       }
+    }
+
+    if (isError(courtCase)) {
+      console.error(courtCase)
+      throw courtCase
     }
 
     if (isPost(req)) {
