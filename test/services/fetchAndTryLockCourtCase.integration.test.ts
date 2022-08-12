@@ -35,12 +35,6 @@ describe("Court case details page", () => {
     })
     await insertCourtCases(inputCourtCase)
 
-    jest.mock("../../src/services/getCourtCase", () => {
-      return {
-        default: jest.fn(() => inputCourtCase)
-      }
-    })
-
     const userName = "bichard01"
     const expectedCourtCase = await getDummyCourtCase({
       errorLockedById: userName,
@@ -66,12 +60,6 @@ describe("Court case details page", () => {
       triggerLockedById: userName
     })
     await insertCourtCases(inputCourtCase)
-
-    jest.mock("../../src/services/getCourtCase", () => {
-      return {
-        default: jest.fn(() => inputCourtCase)
-      }
-    })
 
     await fetchAndTryLockCourtCase(
       { username: "bichard01", visibleForces: ["36"] } as unknown as User,

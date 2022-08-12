@@ -35,8 +35,6 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
     .where("errorId = :id", { id: caseId })
     .execute()
 
-  await dataSource.destroy()
-
   return true
 }
 

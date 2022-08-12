@@ -23,7 +23,6 @@ const DummyCourtCase: Partial<CourtCase> = {
   urgency: 1,
   asn: "0836FP0100000377244A",
   courtCode: "B42AZ01",
-  hearingOutcome: DummyAho.hearingOutcomeXml,
   updatedHearingOutcome: null,
   errorReport: "",
   createdTimestamp: new Date("2022-06-30 09:44:03.93"),

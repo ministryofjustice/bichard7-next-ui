@@ -14,7 +14,5 @@ export default async (caseId: number, exceptionCode: string): Promise<boolean> =
     .where("errorId = :id", { id: caseId })
     .execute()
 
-  await dataSource.destroy()
-
   return true
 }

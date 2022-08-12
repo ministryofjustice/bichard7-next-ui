@@ -1,4 +1,5 @@
 import { expect } from "@jest/globals"
+import getCourtCase from "../../src/services/getCourtCase"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
@@ -32,11 +33,7 @@ describe("lock court case", () => {
     })
     await insertCourtCases(inputCourtCase)
 
-    const existingCourtCase = (await dataSource
-      .getRepository(CourtCase)
-      .findOne({ where: { errorId: 0 } })) as CourtCase
-
-    const result = await tryToLockCourtCase(dataSource, existingCourtCase.errorId, userName)
+    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, userName)
     expect(isError(result)).toBe(false)
     expect(result).toBeTruthy()
 
@@ -45,7 +42,7 @@ describe("lock court case", () => {
       triggerLockedById: userName
     })
 
-    const actualCourtCase = (await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })) as CourtCase
+    const actualCourtCase = await getCourtCase(dataSource, inputCourtCase.errorId, ["36"])
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
@@ -59,15 +56,11 @@ describe("lock court case", () => {
     })
     await insertCourtCases(inputCourtCase)
 
-    const existingCourtCase = (await dataSource
-      .getRepository(CourtCase)
-      .findOne({ where: { errorId: 0 } })) as CourtCase
-
-    const result = await tryToLockCourtCase(dataSource, existingCourtCase.errorId, userName)
+    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, userName)
     expect(isError(result)).toBe(false)
-    expect(result).toBeFalsy()
+    expect(result).toBeTruthy()
 
-    const actualCourtCase = (await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })) as CourtCase
+    const actualCourtCase = await getCourtCase(dataSource, inputCourtCase.errorId, ["36"])
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
   })
 })

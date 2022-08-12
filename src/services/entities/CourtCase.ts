@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { Column, Entity, Generated, OneToMany, PrimaryColumn } from "typeorm"
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm"
 import type { Relation } from "typeorm"
 import BaseEntity from "./BaseEntity"
 import dateTransformer from "./transformers/dateTransformer"
@@ -120,23 +120,23 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "pnc_update_enabled", type: "varchar", nullable: true })
   pncUpdateEnabled!: string | null
 
-  @Generated()
-  @Column({
-    name: "defendant_name_upper",
-    nullable: true,
-    generatedType: "STORED",
-    asExpression: `defendantName.toUpperCase()`
-  })
-  defendantNameUpper!: string
+  // @Generated()
+  // @Column({
+  //   name: "defendant_name_upper",
+  //   nullable: true,
+  //   generatedType: "STORED",
+  //   asExpression: `defendantName.toUpperCase()`
+  // })
+  // defendantNameUpper!: string
 
-  @Generated()
-  @Column({
-    name: "court_name_upper",
-    nullable: true,
-    generatedType: "STORED",
-    asExpression: `courtName.toUpperCase()`
-  })
-  courtNameUpper!: string
+  // @Generated()
+  // @Column({
+  //   name: "court_name_upper",
+  //   nullable: true,
+  //   generatedType: "STORED",
+  //   asExpression: `courtName.toUpperCase()`
+  // })
+  // courtNameUpper!: string
 
   @OneToMany(() => Trigger, (trigger) => trigger.courtCase)
   triggers!: Relation<Trigger>[]

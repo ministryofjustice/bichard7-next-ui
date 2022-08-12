@@ -37,7 +37,7 @@ describe("getCourtCases", () => {
     let actualCourtCase = result as CourtCase
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
 
-    result = await getCourtCase(dataSource, 0, [orgCode.substring(0, 2)])
+    result = await getCourtCase(dataSource, inputCourtCase.errorId, [orgCode.substring(0, 2)])
     expect(isError(result)).toBe(false)
 
     actualCourtCase = result as CourtCase
