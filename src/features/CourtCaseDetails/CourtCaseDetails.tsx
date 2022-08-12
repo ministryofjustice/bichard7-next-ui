@@ -1,6 +1,7 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import DateTime from "components/DateTime"
 import If from "components/If"
+import ResolveTrigger from "components/ResolveTrigger/ResolveTrigger"
 import { Heading, Paragraph, Table } from "govuk-react"
 import CourtCase from "services/entities/CourtCase"
 
@@ -63,6 +64,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho }) => (
           <Table.CellHeader>{"Resolved by"}</Table.CellHeader>
           <Table.CellHeader>{"Resolved at"}</Table.CellHeader>
           <Table.CellHeader>{"Created at"}</Table.CellHeader>
+          <Table.CellHeader>{"Mark as resolved"}</Table.CellHeader>
         </Table.Row>
         {courtCase.triggers.map((trigger, index) => (
           <Table.Row key={index}>
@@ -72,6 +74,9 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho }) => (
             <Table.Cell>{trigger.resolvedAt !== undefined && <DateTime date={trigger.resolvedAt} />}</Table.Cell>
             <Table.Cell>
               <DateTime date={trigger.createdAt} />
+            </Table.Cell>
+            <Table.Cell>
+              <ResolveTrigger trigger={trigger}></ResolveTrigger>
             </Table.Cell>
           </Table.Row>
         ))}
