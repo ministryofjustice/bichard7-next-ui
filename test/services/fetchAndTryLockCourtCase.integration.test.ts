@@ -42,9 +42,10 @@ describe("Court case details page", () => {
     })
 
     await fetchAndTryLockCourtCase(
-      { username: userName, visibleForces: ["36"] } as User,
+
+      { username: "bichard01", visibleForces: ["36"] } as unknown as User,
       inputCourtCase.errorId,
-      dataSource
+      dataSource,
     )
 
     const actualCourtCase: CourtCase = await getCourtCase(dataSource, inputCourtCase.errorId, ["36"])

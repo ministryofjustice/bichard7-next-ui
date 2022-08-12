@@ -4,16 +4,24 @@ import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import getCourtCase from "./getCourtCase"
 import tryToLockCourtCase from "./tryToLockCourtCase"
+import unlockCourtCase from "./unlockCourtCase"
 
 type fetchAndTryLockCourtCaseResult = { courtCase?: CourtCase; error?: boolean }
 
 const fetchAndTryLockCourtCase = async (
   currentUser: User,
   courtCaseId: number,
-  dataSource: DataSource
+  dataSource: DataSource,
+  lock: boolean
 ): Promise<fetchAndTryLockCourtCaseResult> => {
-  const ok = await tryToLockCourtCase(dataSource, courtCaseId, currentUser.username)
-  if (!ok) {
+  let lockResult: boolean | Error
+  if (lock) {
+    lockResult = await tryToLockCourtCase(dataSource, courtCaseId, currentUser.username)
+  } else {
+    lockResult = await unlockCourtCase(dataSource, courtCaseId)
+  }
+
+  if (!lockResult || isError(lockResult)) {
     return {
       error: true
     }

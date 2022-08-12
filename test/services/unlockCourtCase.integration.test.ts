@@ -1,5 +1,5 @@
 import { expect } from "@jest/globals"
-import { DataSource, Repository } from "typeorm"
+import { DataSource, UpdateQueryBuilder } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import unlockCourtCase from "../../src/services/unlockCourtCase"
@@ -40,7 +40,7 @@ describe("lock court case", () => {
   it("should unlock a locked court case", async () => {
     const lockedCourtCase = (await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })) as CourtCase
 
-    const result = await unlockCourtCase(dataSource, lockedCourtCase)
+    const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId)
     expect(isError(result)).toBe(false)
 
     const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
@@ -51,12 +51,12 @@ describe("lock court case", () => {
 
   it("should return the error when failed to unlock court case", async () => {
     jest
-      .spyOn(Repository<CourtCase>.prototype, "update")
+      .spyOn(UpdateQueryBuilder<CourtCase>.prototype, "execute")
       .mockRejectedValue(Error("Failed to update record with some error"))
 
     const lockedCourtCase = (await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })) as CourtCase
 
-    const result = await unlockCourtCase(dataSource, lockedCourtCase)
+    const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId)
     expect(isError(result)).toBe(true)
 
     const receivedError = result as Error
