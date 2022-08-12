@@ -2,41 +2,46 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { defineConfig } from "cypress"
 import CourtCase from "services/entities/CourtCase"
-import deleteFromTable from "./test/testFixtures/database/deleteFromTable"
+import deleteFromTable from "./test/util/deleteFromTable"
 import {
   insertCourtCases,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithDefendantNames,
   insertCourtCasesWithOrgCodes,
-  insertMultipleDummyCourtCases
-} from "./test/testFixtures/database/insertCourtCases"
-import { insertTriggers } from "./test/testFixtures/database/manageTriggers"
-import insertException from "./test/testFixtures/database/manageExceptions"
-import { deleteUsers, insertUsers, TestUser } from "./test/testFixtures/database/manageUsers"
+  insertMultipleDummyCourtCases,
+  insertDummyCourtCaseWithLock
+} from "./test/util/insertCourtCases"
+import { insertTriggers } from "./test/util/manageTriggers"
+import insertException from "./test/util/manageExceptions"
+import { deleteUsers, insertUsers, TestUser } from "./test/util/manageUsers"
 
 export default defineConfig({
   e2e: {
     baseUrl: "http://localhost:4080/bichard",
     setupNodeEvents(on, _config) {
       on("task", {
-        insertCourtCasesWithOrgCodes(orgCodes: string[]) {
-          return insertCourtCasesWithOrgCodes(orgCodes)
+        async insertCourtCasesWithOrgCodes(orgCodes: string[]) {
+          return await insertCourtCasesWithOrgCodes(orgCodes)
         },
 
-        insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
-          return insertMultipleDummyCourtCases(params.numToInsert, params.force)
+        async insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
+          return await insertMultipleDummyCourtCases(params.numToInsert, params.force)
         },
 
-        insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {
-          return insertCourtCasesWithCourtNames(params.courtNames, params.force)
+        async insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {
+          return await insertCourtCasesWithCourtNames(params.courtNames, params.force)
         },
 
-        insertCourtCasesWithDefendantNames(params: { defendantNames: string[]; force: string }) {
-          return insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
+        async insertCourtCasesWithDefendantNames(params: { defendantNames: string[]; force: string }) {
+          return await insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
         },
 
-        insertCourtCases(params: { courtCases: CourtCase[] }) {
-          return insertCourtCases(params.courtCases)
+        async insertDummyCourtCaseWithLock(params: { errorLockedById: string; triggerLockedById: string }) {
+          return await insertDummyCourtCaseWithLock(params.errorLockedById, params.triggerLockedById)
+        },
+
+        async insertCourtCases(params: { courtCases: CourtCase[] }) {
+          return await insertCourtCases(params.courtCases)
         },
 
         clearCourtCases() {

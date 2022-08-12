@@ -1,5 +1,5 @@
-import CourtCase from "../../../src/services/entities/CourtCase"
-import getDataSource from "../../../src/services/getDataSource"
+import CourtCase from "../../src/services/entities/CourtCase"
+import getDataSource from "../../src/services/getDataSource"
 
 export default async (caseId: number, exceptionCode: string): Promise<boolean> => {
   const dataSource = await getDataSource()
@@ -13,8 +13,6 @@ export default async (caseId: number, exceptionCode: string): Promise<boolean> =
     })
     .where("errorId = :id", { id: caseId })
     .execute()
-
-  await dataSource.destroy()
 
   return true
 }
