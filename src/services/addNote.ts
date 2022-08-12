@@ -10,7 +10,7 @@ const notesRegex = new RegExp(`(.{1,${MaxNoteLength}})`, "g")
 const addNote = async (
   dataSource: DataSource,
   courtCaseId: number,
-  userId: string,
+  username: string,
   noteText: string
 ): ServiceResultPromise => {
   if (!noteText) {
@@ -26,7 +26,7 @@ const addNote = async (
     }
   }
 
-  if (courtCase.isLockedByAnotherUser(userId)) {
+  if (courtCase.isLockedByAnotherUser(username)) {
     return {
       isSuccessful: false,
       ValidationException: "Case is locked by another user"
@@ -43,7 +43,7 @@ const addNote = async (
         createdAt: new Date(),
         noteText: text,
         errorId: courtCaseId,
-        userId
+        userId: username
       })) ?? []
     )
     .execute()
