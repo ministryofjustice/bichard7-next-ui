@@ -28,7 +28,7 @@ describe("lock court case", () => {
 
   it("should unlock a locked court case", async () => {
     const lockedByName = "some user"
-    const lockedCourtCase = await getDummyCourtCase({
+    const lockedCourtCase = await getDummyCourtCase(dataSource, {
       errorLockedById: lockedByName,
       triggerLockedById: lockedByName
     })
@@ -48,7 +48,7 @@ describe("lock court case", () => {
       .spyOn(UpdateQueryBuilder<CourtCase>.prototype, "execute")
       .mockRejectedValue(Error("Failed to update record with some error"))
 
-    const lockedCourtCase = await getDummyCourtCase({
+    const lockedCourtCase = await getDummyCourtCase(dataSource, {
       errorLockedById: "dummy",
       triggerLockedById: "dummy"
     })
