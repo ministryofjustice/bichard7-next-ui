@@ -3,9 +3,10 @@ import { Button, FormGroup, Heading, TextArea } from "govuk-react"
 
 interface Props {
   lockedByAnotherUser: boolean
+  error?: string
 }
 
-const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser }: Props) => (
+const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, error }: Props) => (
   <>
     <Heading as="h3" size="MEDIUM">
       {"Add Note"}
@@ -17,6 +18,10 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser }: Props) => (
           <TextArea
             input={{
               name: "noteText"
+            }}
+            meta={{
+              error,
+              touched: !!error
             }}
           >
             {"Note text"}
