@@ -45,7 +45,7 @@ describe("listCourtCases", () => {
       expect(retrievedTrigger).not.toBeNull()
       const insertedTrigger = retrievedTrigger as Trigger
 
-      const result = await markTriggerComplete(dataSource, insertedTrigger, resolverUsername)
+      const result = await markTriggerComplete(dataSource, insertedTrigger, 0, resolverUsername)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeTruthy()
@@ -82,12 +82,12 @@ describe("listCourtCases", () => {
       const insertedTrigger = retrievedTrigger as Trigger
 
       // Resolve trigger
-      const initialResolveResult = await markTriggerComplete(dataSource, insertedTrigger, resolverUsername)
+      const initialResolveResult = await markTriggerComplete(dataSource, insertedTrigger, 0, resolverUsername)
       expect(isError(initialResolveResult)).toBeFalsy()
       expect(initialResolveResult as boolean).toBeTruthy()
 
       // Try to resolve again as a different user
-      const result = await markTriggerComplete(dataSource, insertedTrigger, reResolverUsername)
+      const result = await markTriggerComplete(dataSource, insertedTrigger, 0, reResolverUsername)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeFalsy()

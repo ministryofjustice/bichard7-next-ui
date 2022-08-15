@@ -17,12 +17,13 @@ import getCourtCase from "services/getCourtCase"
 import { isError } from "types/Result"
 import { isPost } from "utils/http"
 import { UpdateResult } from "typeorm"
+import markTriggerComplete from "services/markTriggerComplete"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { courtCaseId, lock } = query as { courtCaseId: string; lock: string }
+    const { courtCaseId, lock, resolveTrigger } = query as { courtCaseId: string; lock: string; resolveTrigger: string }
     const dataSource = await getDataSource()
 
     let lockResult: UpdateResult | Error | undefined
@@ -39,7 +40,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw lockResult
     }
 
-    const courtCase = await getCourtCase(dataSource, +courtCaseId, currentUser.visibleForces)
+    let courtCase = await getCourtCase(dataSource, +courtCaseId, currentUser.visibleForces)
 
     if (isError(courtCase)) {
       throw courtCase
@@ -48,6 +49,31 @@ export const getServerSideProps = withMultipleServerSideProps(
     if (!courtCase) {
       return {
         notFound: true
+      }
+    }
+
+    if (!!resolveTrigger) {
+      const triggerToResolve = courtCase.triggers.find((trigger) => trigger.triggerId === +resolveTrigger)
+
+      if (triggerToResolve !== undefined) {
+        const updateTriggerResult = await markTriggerComplete(
+          dataSource,
+          triggerToResolve,
+          +courtCaseId,
+          currentUser.username
+        )
+        if (!isError(updateTriggerResult)) {
+          const refetchCourtCaseResult = await getCourtCase(dataSource, +courtCaseId, currentUser.visibleForces)
+          if (isError(refetchCourtCaseResult)) {
+            throw refetchCourtCaseResult
+          }
+          if (!refetchCourtCaseResult) {
+            return {
+              notFound: true
+            }
+          }
+          courtCase = refetchCourtCaseResult
+        }
       }
     }
 

@@ -8,6 +8,7 @@ import Trigger from "./entities/Trigger"
 const markTriggerComplete = async (
   dataSource: DataSource,
   trigger: Trigger,
+  courtCaseId: number,
   resolver: string
 ): PromiseResult<boolean> => {
   try {
@@ -15,7 +16,7 @@ const markTriggerComplete = async (
       const lockHolderResult = await entityManager
         .getRepository(CourtCase)
         .createQueryBuilder()
-        .where({ errorId: trigger.courtCase.errorId })
+        .where({ errorId: courtCaseId })
         .getOne()
 
       if (lockHolderResult === null) {
