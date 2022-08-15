@@ -10,8 +10,8 @@ export default {
 } as ComponentMeta<typeof CourtCaseLock>
 
 const courtCase = {
-  errorLockedById: "User",
-  triggerLockedById: "User"
+  errorLockedByUsername: "User",
+  triggerLockedByUsername: "User"
 } as unknown as CourtCase
 
 export const Lock: ComponentStory<typeof CourtCaseLock> = () => (

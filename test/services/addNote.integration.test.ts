@@ -10,15 +10,18 @@ import Note from "../../src/services/entities/Note"
 
 const note = "Dummy note"
 
-const insertRecords = async (errorLockedById: string | null = null, triggerLockedById: string | null = null) => {
+const insertRecords = async (
+  errorLockedByUsername: string | null = null,
+  triggerLockedByUsername: string | null = null
+) => {
   const existingCourtCasesDbObject = [
     await getDummyCourtCase({
       courtDate: new Date("2008-09-25"),
       orgForPoliceFilter: "36FPA1".padEnd(6, " "),
       errorId: 0,
       messageId: String(0).padStart(5, "x"),
-      errorLockedByUsername: errorLockedById,
-      triggerLockedByUsername: triggerLockedById
+      errorLockedByUsername: errorLockedByUsername,
+      triggerLockedByUsername: triggerLockedByUsername
     })
   ]
 

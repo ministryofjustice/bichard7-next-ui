@@ -105,8 +105,8 @@ const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: strin
 }
 
 const insertDummyCourtCaseWithLock = async (
-  errorLockedById: string,
-  triggerLockedById: string,
+  errorLockedByUsername: string,
+  triggerLockedByUsername: string,
   orgsCodes: string[]
 ) => {
   const existingCourtCases: CourtCase[] = []
@@ -117,8 +117,8 @@ const insertDummyCourtCaseWithLock = async (
         errorId: index,
         messageId: String(index).padStart(5, "x"),
         ptiurn: "Case" + String(index).padStart(5, "0"),
-        errorLockedByUsername: errorLockedById,
-        triggerLockedByUsername: triggerLockedById
+        errorLockedByUsername: errorLockedByUsername,
+        triggerLockedByUsername: triggerLockedByUsername
       })
     )
   }
