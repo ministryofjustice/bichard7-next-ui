@@ -37,8 +37,23 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw courtCase
     }
 
+    const props = {
+      user: currentUser.serialize(),
+      courtCase: courtCase.serialize(),
+      lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
+    }
+
     if (isPost(req)) {
       const { noteText } = (await parseFormData(req)) as { noteText: string }
+      if (!noteText) {
+        return {
+          props: {
+            ...props,
+            noteTextError: "Required"
+          }
+        }
+      }
+
       const addNoteResult = await addNote(dataSource, courtCase.errorId, currentUser.username, noteText)
 
       if (addNoteResult.isSuccessful) {
@@ -48,13 +63,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    return {
-      props: {
-        user: currentUser.serialize(),
-        courtCase: courtCase.serialize(),
-        lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
-      }
-    }
+    return { props }
   }
 )
 
@@ -62,9 +71,10 @@ interface Props {
   user: User
   courtCase: CourtCase
   lockedByAnotherUser: boolean
+  noteTextError?: string
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser }: Props) => {
+const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser, noteTextError }: Props) => {
   const { basePath } = useRouter()
 
   return (
@@ -79,7 +89,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
         <BackLink href={`${basePath}/court-cases/${courtCase.errorId}`} onClick={function noRefCheck() {}}>
           {"Case Details"}
         </BackLink>
-        <AddNoteForm lockedByAnotherUser={lockedByAnotherUser} />
+        <AddNoteForm lockedByAnotherUser={lockedByAnotherUser} error={noteTextError} />
       </Layout>
     </>
   )
