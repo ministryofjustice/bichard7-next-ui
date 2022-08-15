@@ -36,6 +36,7 @@ describe("Home", () => {
       cy.visit("/court-cases/0")
       cy.get("button").contains("Add Note").click()
       cy.get("H3").should("have.text", "Add Note")
+      cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
 
       cy.get("textarea").type("Dummy note")
       cy.get("button").contains("Add").click()
@@ -60,6 +61,7 @@ describe("Home", () => {
       cy.visit("/court-cases/0")
       cy.get("button").contains("Add Note").click()
       cy.get("H3").should("have.text", "Add Note")
+      cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
 
       cy.get("textarea").type("A ".repeat(500) + "B ".repeat(500) + "C ".repeat(100), { delay: 0 })
       cy.get("button").contains("Add").click()
@@ -88,12 +90,36 @@ describe("Home", () => {
       cy.visit("/court-cases/0")
       cy.get("button").contains("Add Note").click()
       cy.get("H3").should("have.text", "Add Note")
+      cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
 
       cy.get("button").contains("Add").click()
 
       cy.url().should("match", /.*\/court-cases\/0\/notes\/add\?#/)
       cy.get("H3").should("have.text", "Add Note")
       cy.get("SPAN").eq(3).should("have.text", "Required")
+    })
+
+    it("should be able to add a note when case is visible to the user and not locked by another user", () => {
+      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: 0,
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.visit("/court-cases/0")
+      cy.get("button").contains("Add Note").click()
+      cy.get("H3").should("have.text", "Add Note")
+
+      cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0").click()
+
+      cy.url().should("match", /.*\/court-cases\/0/)
+      cy.get("H2").should("have.text", "Case Details")
+      cy.get("table").should("have.length", 2)
+      cy.findByText("Case has no notes.").should("exist")
     })
 
     it("should return 404 for a case that this user can not see", () => {
