@@ -13,7 +13,7 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
 import tryToLockCourtCase from "services/tryToLockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
-import getCourtCase from "services/getCourtCase"
+import getCourtCaseByVisibleForce from "services/getCourtCaseByVisibleForce"
 import { isError } from "types/Result"
 import { isPost } from "utils/http"
 import { UpdateResult } from "typeorm"
@@ -62,7 +62,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const courtCase = await getCourtCase(dataSource, +courtCaseId, currentUser.visibleForces)
+    const courtCase = await getCourtCaseByVisibleForce(dataSource, +courtCaseId, currentUser.visibleForces)
 
     if (isError(courtCase)) {
       throw courtCase
