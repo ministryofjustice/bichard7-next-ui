@@ -152,27 +152,28 @@ jobs:
       - checkout
       - clone_bichard_repo
       - run:
-          name: Install Cypress in the background
-          command: ./.circleci/scripts/install-cypress.sh 2>&1
-          background: true
-      - run:
           name: Fetch the nginx nodejs supervisord image
           working_directory: ~/bichard7-next
           command: bash scripts/fetch_nginx_nodejs_supervisord_docker.sh
       - run:
-          name: Build the UI application
-          command: make build
-      - run_postgres_database
+          name: Build the UI application in the background
+          command: ./.circleci/scripts/build-ui.sh
+          background: true
       - run:
-          name: Run built next container
-          command: docker run -p 4080:4080 ui
-      - run:
-          name: Wait for Cypress installation to finish
-          command: until [ -f cypressInstalled ]; do sleep 1; done
-          no_output_timeout: 5m
+          name: Install Cypress
+          command: ./.circleci/scripts/install-cypress.sh 2>&1
       - run:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
+      - run_postgres_database
+      - run:
+          name: Wait for UI build to finish
+          command: until [ -f uiBuilt ]; do sleep 1; done
+          no_output_timeout: 5m
+      - run:
+          name: Run built next container
+          command: docker run -p 4080:4080 ui
+          background: true
       - run:
           name: Run UI tests
           command: npm run cypress:run
