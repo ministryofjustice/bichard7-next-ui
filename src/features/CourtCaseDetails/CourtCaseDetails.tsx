@@ -76,7 +76,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho }) => (
               <DateTime date={trigger.createdAt} />
             </Table.Cell>
             <Table.Cell>
-              <ResolveTrigger trigger={trigger}></ResolveTrigger>
+              <ResolveTrigger trigger={trigger} courtCase={courtCase}></ResolveTrigger>
             </Table.Cell>
           </Table.Row>
         ))}

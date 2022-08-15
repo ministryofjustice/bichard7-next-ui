@@ -40,7 +40,24 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw lockResult
     }
 
-    let courtCase = await getCourtCase(dataSource, +courtCaseId, currentUser.visibleForces)
+    if (isPost(req) && !!resolveTrigger) {
+      const updateTriggerResult = await markTriggerComplete(
+        dataSource,
+        +resolveTrigger,
+        +courtCaseId,
+        currentUser.username
+      )
+
+      if (isError(updateTriggerResult)) {
+        throw updateTriggerResult
+      }
+
+      if (!updateTriggerResult) {
+        throw new Error("Failed to mark trigger complete")
+      }
+    }
+
+    const courtCase = await getCourtCase(dataSource, +courtCaseId, currentUser.visibleForces)
 
     if (isError(courtCase)) {
       throw courtCase
@@ -49,31 +66,6 @@ export const getServerSideProps = withMultipleServerSideProps(
     if (!courtCase) {
       return {
         notFound: true
-      }
-    }
-
-    if (!!resolveTrigger) {
-      const triggerToResolve = courtCase.triggers.find((trigger) => trigger.triggerId === +resolveTrigger)
-
-      if (triggerToResolve !== undefined) {
-        const updateTriggerResult = await markTriggerComplete(
-          dataSource,
-          triggerToResolve,
-          +courtCaseId,
-          currentUser.username
-        )
-        if (!isError(updateTriggerResult)) {
-          const refetchCourtCaseResult = await getCourtCase(dataSource, +courtCaseId, currentUser.visibleForces)
-          if (isError(refetchCourtCaseResult)) {
-            throw refetchCourtCaseResult
-          }
-          if (!refetchCourtCaseResult) {
-            return {
-              notFound: true
-            }
-          }
-          courtCase = refetchCourtCaseResult
-        }
       }
     }
 

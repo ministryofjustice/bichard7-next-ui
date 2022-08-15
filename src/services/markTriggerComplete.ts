@@ -7,7 +7,7 @@ import Trigger from "./entities/Trigger"
 // Returns back whether the trigger was successfully unlocked
 const markTriggerComplete = async (
   dataSource: DataSource,
-  trigger: Trigger,
+  triggerId: number,
   courtCaseId: number,
   resolver: string
 ): PromiseResult<boolean> => {
@@ -37,7 +37,7 @@ const markTriggerComplete = async (
           resolvedAt: new Date(),
           resolvedBy: resolver
         })
-        .where("trigger_id = :triggerId", { triggerId: trigger.triggerId })
+        .where("trigger_id = :triggerId", { triggerId })
         .andWhere("resolved_ts IS NULL")
         .andWhere("resolved_by IS NULL")
         .execute()
@@ -47,7 +47,7 @@ const markTriggerComplete = async (
   } catch (err) {
     return isError(err)
       ? err
-      : new Error(`Unspecified database error when marking trigger ${trigger.triggerId} as completed by ${resolver}`)
+      : new Error(`Unspecified database error when marking trigger ${triggerId} as completed by ${resolver}`)
   }
 }
 

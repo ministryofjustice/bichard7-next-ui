@@ -40,18 +40,15 @@ describe("listCourtCases", () => {
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
       await insertTriggers(0, [trigger])
-      let retrievedTrigger = await dataSource
-        .getRepository(Trigger)
-        .findOne({ where: { triggerId: trigger.triggerId }, relations: { courtCase: true } })
-      expect(retrievedTrigger).not.toBeNull()
-      const insertedTrigger = retrievedTrigger as Trigger
 
-      const result = await markTriggerComplete(dataSource, insertedTrigger, 0, resolverUsername)
+      const result = await markTriggerComplete(dataSource, 0, 0, resolverUsername)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeTruthy()
 
-      retrievedTrigger = await dataSource.getRepository(Trigger).findOne({ where: { triggerId: trigger.triggerId } })
+      const retrievedTrigger = await dataSource
+        .getRepository(Trigger)
+        .findOne({ where: { triggerId: trigger.triggerId } })
       expect(retrievedTrigger).not.toBeNull()
       const updatedTrigger = retrievedTrigger as Trigger
 
@@ -76,24 +73,21 @@ describe("listCourtCases", () => {
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
       await insertTriggers(0, [trigger])
-      let retrievedTrigger = await dataSource
-        .getRepository(Trigger)
-        .findOne({ where: { triggerId: trigger.triggerId }, relations: { courtCase: true } })
-      expect(retrievedTrigger).not.toBeNull()
-      const insertedTrigger = retrievedTrigger as Trigger
 
       // Resolve trigger
-      const initialResolveResult = await markTriggerComplete(dataSource, insertedTrigger, 0, resolverUsername)
+      const initialResolveResult = await markTriggerComplete(dataSource, 0, 0, resolverUsername)
       expect(isError(initialResolveResult)).toBeFalsy()
       expect(initialResolveResult as boolean).toBeTruthy()
 
       // Try to resolve again as a different user
-      const result = await markTriggerComplete(dataSource, insertedTrigger, 0, reResolverUsername)
+      const result = await markTriggerComplete(dataSource, 0, 0, reResolverUsername)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeFalsy()
 
-      retrievedTrigger = await dataSource.getRepository(Trigger).findOne({ where: { triggerId: trigger.triggerId } })
+      const retrievedTrigger = await dataSource
+        .getRepository(Trigger)
+        .findOne({ where: { triggerId: trigger.triggerId } })
       expect(retrievedTrigger).not.toBeNull()
       const updatedTrigger = retrievedTrigger as Trigger
 
@@ -128,12 +122,7 @@ describe("listCourtCases", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      let triggerResolveResult = await markTriggerComplete(
-        dataSource,
-        insertedTriggers[0],
-        courtCaseId,
-        resolverUsername
-      )
+      let triggerResolveResult = await markTriggerComplete(dataSource, 0, courtCaseId, resolverUsername)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
@@ -145,7 +134,7 @@ describe("listCourtCases", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      triggerResolveResult = await markTriggerComplete(dataSource, insertedTriggers[1], courtCaseId, resolverUsername)
+      triggerResolveResult = await markTriggerComplete(dataSource, 1, courtCaseId, resolverUsername)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
@@ -157,7 +146,7 @@ describe("listCourtCases", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      triggerResolveResult = await markTriggerComplete(dataSource, insertedTriggers[2], courtCaseId, resolverUsername)
+      triggerResolveResult = await markTriggerComplete(dataSource, 2, courtCaseId, resolverUsername)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 

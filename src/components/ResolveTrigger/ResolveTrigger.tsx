@@ -1,20 +1,27 @@
-import { Button, Link } from "govuk-react"
+import { Button } from "govuk-react"
 import { useRouter } from "next/router"
+import CourtCase from "services/entities/CourtCase"
 import Trigger from "services/entities/Trigger"
 
 interface Props {
   trigger: Trigger
+  courtCase: CourtCase
 }
 
-const ResolveTrigger: React.FC<Props> = ({ trigger }: Props) => {
+const ResolveTrigger: React.FC<Props> = ({ trigger, courtCase }: Props) => {
   const canResolve = trigger.resolvedAt === undefined && trigger.resolvedBy === undefined
 
-  const { basePath, asPath } = useRouter()
+  const { basePath, query } = useRouter()
+  const resolveTriggerUrl = (courtCaseId: number, triggerId: number) =>
+    `${basePath}/court-cases/${courtCaseId}?${new URLSearchParams({ ...query, resolveTrigger: triggerId.toString() })}`
 
   return (
-    <Link href={`${basePath}${asPath}?resolveTrigger=${trigger.triggerId}`}>
-      <Button disabled={!canResolve}>{"Resolve trigger"}</Button>
-    </Link>
+    <form method="post" action={resolveTriggerUrl(courtCase.errorId, trigger.triggerId)}>
+      <input type="text" hidden={true} name="resolveTrigger" value={trigger.triggerId} readOnly={true} />
+      <Button type="submit" disabled={!canResolve}>
+        {"Resolve trigger"}
+      </Button>
+    </form>
   )
 }
 
