@@ -4,6 +4,7 @@ import { DataSource } from "typeorm"
 import { isError } from "types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
+import getCourtCase from "../../src/services/getCourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import markTriggerComplete from "../../src/services/markTriggerComplete"
 import deleteFromTable from "../util/deleteFromTable"
@@ -99,6 +100,74 @@ describe("listCourtCases", () => {
       expect(updatedTrigger.resolvedAt).toBeDefined()
       expect(updatedTrigger.resolvedBy).toBeDefined()
       expect(updatedTrigger.resolvedBy).toStrictEqual(resolverUsername)
+    })
+
+    it("Should set the case trigger columns only when the last trigger is resolved", async () => {
+      const resolverUsername = "triggerResolver01"
+      const courtCaseId = 0
+
+      await insertDummyCourtCaseWithLock(resolverUsername, resolverUsername, ["36"])
+      const triggers: TestTrigger[] = [0, 1, 2].map((triggerId) => {
+        return {
+          triggerId,
+          triggerCode: "TRPR0001",
+          status: 0,
+          createdAt: new Date("2022-07-15T10:22:34.000Z")
+        }
+      })
+      await insertTriggers(courtCaseId, triggers)
+
+      const insertedTriggers = await dataSource.getRepository(Trigger).find({ relations: { courtCase: true } })
+      expect(insertedTriggers).toHaveLength(3)
+      let retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, ["36"])
+      expect(retrievedCourtCase).not.toBeNull()
+      let insertedCourtCase = retrievedCourtCase as CourtCase
+
+      expect(insertedCourtCase.triggerStatus).toBeDefined()
+      expect(insertedCourtCase.triggerStatus).toStrictEqual("Unresolved")
+      expect(insertedCourtCase.triggerResolvedBy).toBeNull()
+      expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
+
+      let triggerResolveResult = await markTriggerComplete(
+        dataSource,
+        insertedTriggers[0],
+        courtCaseId,
+        resolverUsername
+      )
+      expect(isError(triggerResolveResult)).toBeFalsy()
+      expect(triggerResolveResult as boolean).toBeTruthy()
+
+      retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, ["36"])
+      expect(retrievedCourtCase).not.toBeNull()
+      insertedCourtCase = retrievedCourtCase as CourtCase
+      expect(insertedCourtCase.triggerStatus).toBeDefined()
+      expect(insertedCourtCase.triggerStatus).toStrictEqual("Unresolved")
+      expect(insertedCourtCase.triggerResolvedBy).toBeNull()
+      expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
+
+      triggerResolveResult = await markTriggerComplete(dataSource, insertedTriggers[1], courtCaseId, resolverUsername)
+      expect(isError(triggerResolveResult)).toBeFalsy()
+      expect(triggerResolveResult as boolean).toBeTruthy()
+
+      retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, ["36"])
+      expect(retrievedCourtCase).not.toBeNull()
+      insertedCourtCase = retrievedCourtCase as CourtCase
+      expect(insertedCourtCase.triggerStatus).toBeDefined()
+      expect(insertedCourtCase.triggerStatus).toStrictEqual("Unresolved")
+      expect(insertedCourtCase.triggerResolvedBy).toBeNull()
+      expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
+
+      triggerResolveResult = await markTriggerComplete(dataSource, insertedTriggers[2], courtCaseId, resolverUsername)
+      expect(isError(triggerResolveResult)).toBeFalsy()
+      expect(triggerResolveResult as boolean).toBeTruthy()
+
+      retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, ["36"])
+      expect(retrievedCourtCase).not.toBeNull()
+      insertedCourtCase = retrievedCourtCase as CourtCase
+      expect(insertedCourtCase.triggerStatus).toBeDefined()
+      expect(insertedCourtCase.triggerStatus).toStrictEqual("Resolved")
+      expect(insertedCourtCase.triggerResolvedBy).toStrictEqual(resolverUsername)
+      expect(insertedCourtCase.triggerResolvedTimestamp).not.toBeNull()
     })
   })
 })
