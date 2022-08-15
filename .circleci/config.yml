@@ -162,14 +162,26 @@ jobs:
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
+          background: true
+      - use_nvm_version
+      - npm_install
       - run:
-          name: Retrying installing Cypress
-          command: ./.circleci/scripts/install-cypress.sh
+          name: Install GOV.UK Assets
+          command: npm run install:assets
+      - attach_workspace:
+          at: .
       - run_postgres_database
       - run:
           name: Wait for UI build to finish
           command: until [ -f uiBuilt ]; do sleep 1; done
           no_output_timeout: 5m
+      - run:
+          name: Wait for cypress install to finish
+          command: until [ -f cypressInstalled ]; do sleep 1; done
+          no_output_timeout: 5m
+      - run:
+          name: Retrying installing Cypress
+          command: ./.circleci/scripts/install-cypress.sh
       - run:
           name: Run built next container
           command: docker run -p 4080:4080 ui
