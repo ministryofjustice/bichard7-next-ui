@@ -2,16 +2,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { defineConfig } from "cypress"
 import CourtCase from "services/entities/CourtCase"
-import deleteFromTable from "./test/testFixtures/database/deleteFromTable"
+import deleteFromTable from "./test/util/deleteFromTable"
 import {
+  insertCourtCases,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithDefendantNames,
   insertCourtCasesWithOrgCodes,
-  insertMultipleDummyCourtCases
-} from "./test/testFixtures/database/insertCourtCases"
-import { insertTriggers } from "./test/testFixtures/database/manageTriggers"
-import insertException from "./test/testFixtures/database/manageExceptions"
-import { deleteUsers, insertUsers, TestUser } from "./test/testFixtures/database/manageUsers"
+  insertMultipleDummyCourtCases,
+  insertDummyCourtCaseWithLock
+} from "./test/util/insertCourtCases"
+import { insertTriggers } from "./test/util/manageTriggers"
+import insertException from "./test/util/manageExceptions"
+import { deleteUsers, insertUsers, TestUser } from "./test/util/manageUsers"
 
 export default defineConfig({
   e2e: {
@@ -32,6 +34,18 @@ export default defineConfig({
 
         insertCourtCasesWithDefendantNames(params: { defendantNames: string[]; force: string }) {
           return insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
+        },
+
+        insertDummyCourtCaseWithLock(params: {
+          errorLockedById: string
+          triggerLockedById: string
+          orgCodes: string[]
+        }) {
+          return insertDummyCourtCaseWithLock(params.errorLockedById, params.triggerLockedById, params.orgCodes)
+        },
+
+        insertCourtCases(params: { courtCases: CourtCase[] }) {
+          return insertCourtCases(params.courtCases)
         },
 
         clearCourtCases() {

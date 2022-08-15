@@ -1,5 +1,5 @@
-import type { TestUser } from "../../../test/testFixtures/database/manageUsers"
-import type { TestTrigger } from "../../../test/testFixtures/database/manageTriggers"
+import type { TestUser } from "../../../test/util/manageUsers"
+import type { TestTrigger } from "../../../test/util/manageTriggers"
 
 describe("Home", () => {
   context("720p resolution", () => {
@@ -112,6 +112,55 @@ describe("Home", () => {
       }).then((response) => {
         expect(response.status).to.eq(401)
       })
+    })
+
+    it("should lock a case when a user views a case details page", () => {
+      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+
+      cy.visit("/court-cases/0")
+
+      cy.findByText("Lock Court Case").click()
+      cy.findByText("Case locked by another user").should("not.exist")
+      cy.findByText("Trigger locked by: Bichard01").should("exist")
+      cy.findByText("Error locked by: Bichard01").should("exist")
+    })
+
+    it("should not lock a court case when its already locked", () => {
+      const existingUserLock = "Another name"
+      cy.task("insertDummyCourtCaseWithLock", {
+        errorLockedById: existingUserLock,
+        triggerLockedById: existingUserLock,
+        orgCodes: ["01"]
+      })
+
+      cy.visit("/court-cases/0")
+      cy.findByText("Case locked by another user").should("exist")
+      cy.findByText("Trigger locked by: Another name").should("exist")
+      cy.findByText("Error locked by: Another name").should("exist")
+    })
+
+    it("should unlock and lock a court case when its already locked", () => {
+      const existingUserLock = "Another name"
+      cy.task("insertDummyCourtCaseWithLock", {
+        errorLockedById: existingUserLock,
+        triggerLockedById: existingUserLock,
+        orgCodes: ["01"]
+      })
+
+      cy.visit("/court-cases/0")
+      cy.findByText("Case locked by another user").should("exist")
+      cy.findByText("Trigger locked by: Another name").should("exist")
+      cy.findByText("Error locked by: Another name").should("exist")
+
+      cy.findByText("Unlock Court Case").click()
+      cy.findByText("Case locked by another user").should("not.exist")
+      cy.findByText("Trigger locked by: Another name").should("not.exist")
+      cy.findByText("Error locked by: Another name").should("not.exist")
+
+      cy.findByText("Lock Court Case").click()
+      cy.findByText("Case locked by another user").should("not.exist")
+      cy.findByText("Trigger locked by: Bichard01").should("exist")
+      cy.findByText("Error locked by: Bichard01").should("exist")
     })
   })
 })
