@@ -7,7 +7,7 @@ import Trigger from "../../src/services/entities/Trigger"
 import getDataSource from "../../src/services/getDataSource"
 import markTriggerComplete from "../../src/services/markTriggerComplete"
 import deleteFromTable from "../util/deleteFromTable"
-import { insertCourtCasesWithOrgCodes } from "../util/insertCourtCases"
+import { insertDummyCourtCaseWithLock } from "../util/insertCourtCases"
 import { insertTriggers, TestTrigger } from "../util/manageTriggers"
 
 jest.setTimeout(100000)
@@ -31,7 +31,7 @@ describe("listCourtCases", () => {
     it("Should set the resolvedAt and resolvedBy columns when marking as complete", async () => {
       const resolverUsername = "triggerResolver01"
 
-      await insertCourtCasesWithOrgCodes(["36"])
+      await insertDummyCourtCaseWithLock(resolverUsername, resolverUsername, "36")
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
@@ -67,7 +67,7 @@ describe("listCourtCases", () => {
       const resolverUsername = "triggerResolver01"
       const reResolverUsername = "triggerResolver02"
 
-      await insertCourtCasesWithOrgCodes(["36"])
+      await insertDummyCourtCaseWithLock(resolverUsername, resolverUsername, "36")
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
