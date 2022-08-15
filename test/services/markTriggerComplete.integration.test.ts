@@ -41,7 +41,7 @@ describe("listCourtCases", () => {
       await insertTriggers(0, [trigger])
       let retrievedTrigger = await dataSource
         .getRepository(Trigger)
-        .findOne({ where: { triggerId: trigger.triggerId } })
+        .findOne({ where: { triggerId: trigger.triggerId }, relations: { courtCase: true } })
       expect(retrievedTrigger).not.toBeNull()
       const insertedTrigger = retrievedTrigger as Trigger
 
@@ -77,7 +77,7 @@ describe("listCourtCases", () => {
       await insertTriggers(0, [trigger])
       let retrievedTrigger = await dataSource
         .getRepository(Trigger)
-        .findOne({ where: { triggerId: trigger.triggerId } })
+        .findOne({ where: { triggerId: trigger.triggerId }, relations: { courtCase: true } })
       expect(retrievedTrigger).not.toBeNull()
       const insertedTrigger = retrievedTrigger as Trigger
 
