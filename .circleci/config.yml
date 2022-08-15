@@ -184,7 +184,7 @@ jobs:
           no_output_timeout: 15m
       - run:
           name: Run built next container
-          command: docker run -p 4080:4080 -p 5432:5432 ui
+          command: docker run -p 4080:4080 --network=bichard7-next_default ui
           background: true
       - run:
           name: Run UI tests
