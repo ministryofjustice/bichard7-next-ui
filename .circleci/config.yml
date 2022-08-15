@@ -172,16 +172,16 @@ jobs:
           at: .
       - run_postgres_database
       - run:
-          name: Wait for UI build to finish
-          command: until [ -f uiBuilt ]; do sleep 1; done
-          no_output_timeout: 15m
-      - run:
           name: Wait for cypress install to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
           no_output_timeout: 5m
       - run:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
+      - run:
+          name: Wait for UI build to finish
+          command: until [ -f uiBuilt ]; do sleep 1; done
+          no_output_timeout: 15m
       - run:
           name: Run built next container
           command: docker run -p 4080:4080 ui
