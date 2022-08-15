@@ -1,6 +1,7 @@
 import { expect } from "@storybook/jest"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
+import CourtCase from "services/entities/CourtCase"
 import Trigger from "services/entities/Trigger"
 import ResolveTrigger from "./ResolveTrigger"
 
@@ -9,13 +10,18 @@ export default {
   component: ResolveTrigger
 } as ComponentMeta<typeof ResolveTrigger>
 
+const courtCaseEntity = {
+  errorId: 0
+} as CourtCase
+
 const unresolvedTriggerEntity = {
   triggerId: 0,
   resolvedAt: undefined,
   resolvedBy: undefined
 } as Trigger
+
 export const UnresolvedTrigger: ComponentStory<typeof ResolveTrigger> = () => (
-  <ResolveTrigger trigger={unresolvedTriggerEntity} />
+  <ResolveTrigger trigger={unresolvedTriggerEntity} courtCase={courtCaseEntity} />
 )
 UnresolvedTrigger.story = {
   parameters: {
@@ -38,7 +44,7 @@ const resolvedTriggerEntity = {
   resolvedBy: "triggerResolver01"
 } as Trigger
 export const ResolvedTrigger: ComponentStory<typeof ResolveTrigger> = () => (
-  <ResolveTrigger trigger={resolvedTriggerEntity} />
+  <ResolveTrigger trigger={resolvedTriggerEntity} courtCase={courtCaseEntity} />
 )
 ResolvedTrigger.story = {
   parameters: {
