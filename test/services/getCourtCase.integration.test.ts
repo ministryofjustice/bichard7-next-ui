@@ -26,7 +26,7 @@ describe("getCourtCases", () => {
 
   it("should return court case details when record exists and is visible to the specified forces", async () => {
     const orgCode = "36FPA1"
-    const inputCourtCase = getDummyCourtCase(dataSource, {
+    const inputCourtCase = await getDummyCourtCase({
       orgForPoliceFilter: orgCode.padEnd(6, " ")
     })
     await insertCourtCases(inputCourtCase)
@@ -53,7 +53,7 @@ describe("getCourtCases", () => {
   it("should return null when record exists and is not visible to the specified forces", async () => {
     const orgCode = "36FPA1"
     const differentOrgCode = "36FPA3"
-    const inputCourtCase = getDummyCourtCase(dataSource, {
+    const inputCourtCase = await getDummyCourtCase({
       orgForPoliceFilter: orgCode.padEnd(6, " ")
     })
     await insertCourtCases(inputCourtCase)
@@ -64,7 +64,7 @@ describe("getCourtCases", () => {
 
   it("should return null when record exists and there is no visible forces", async () => {
     const orgCode = "36FPA1"
-    const inputCourtCase = getDummyCourtCase(dataSource, {
+    const inputCourtCase = await getDummyCourtCase({
       orgForPoliceFilter: orgCode.padEnd(6, " ")
     })
     await insertCourtCases(inputCourtCase)

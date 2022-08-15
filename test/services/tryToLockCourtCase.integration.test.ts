@@ -27,7 +27,7 @@ describe("lock court case", () => {
 
   it("should lock a unlocked court case when viewed", async () => {
     const userName = "Bichard01"
-    const inputCourtCase = getDummyCourtCase(dataSource, {
+    const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null
     })
@@ -37,7 +37,7 @@ describe("lock court case", () => {
     expect(isError(result)).toBe(false)
     expect(result).toBeTruthy()
 
-    const expectedCourtCase = getDummyCourtCase(dataSource, {
+    const expectedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: userName,
       triggerLockedByUsername: userName
     })
@@ -50,7 +50,7 @@ describe("lock court case", () => {
     const userName = "Bichard01"
     const anotherUser = "anotherUserName"
 
-    const inputCourtCase = getDummyCourtCase(dataSource, {
+    const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: anotherUser,
       triggerLockedByUsername: anotherUser
     })

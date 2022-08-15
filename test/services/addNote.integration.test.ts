@@ -11,9 +11,8 @@ import Note from "../../src/services/entities/Note"
 const note = "Dummy note"
 
 const insertRecords = async (errorLockedById: string | null = null, triggerLockedById: string | null = null) => {
-  const dataSource = await getDataSource()
   const existingCourtCasesDbObject = [
-    getDummyCourtCase(dataSource, {
+    await getDummyCourtCase({
       courtDate: new Date("2008-09-25"),
       orgForPoliceFilter: "36FPA1".padEnd(6, " "),
       errorId: 0,

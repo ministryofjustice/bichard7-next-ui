@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import CourtCase from "../../src/services/entities/CourtCase"
-import { DataSource, InsertResult } from "typeorm"
+import { InsertResult } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
 import DummyAho from "./error_list_aho.json"
 import DummyCourtCase from "./DummyCourtCase"
 
-const getDummyCourtCase = (dataSource: DataSource, overrides?: Partial<CourtCase>): CourtCase =>
-  dataSource.getRepository(CourtCase).create({
+const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
+  (await getDataSource()).getRepository(CourtCase).create({
     ...DummyCourtCase,
     hearingOutcome: DummyAho.hearingOutcomeXml,
     ...overrides
@@ -19,77 +19,87 @@ const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<In
 }
 
 const insertCourtCasesWithOrgCodes = async (orgsCodes: string[]) => {
-  const dataSource = await getDataSource()
-  const existingCourtCases = orgsCodes.map((code, i) =>
-    getDummyCourtCase(dataSource, {
-      orgForPoliceFilter: code.padEnd(6, " "),
-      errorId: i,
-      messageId: String(i).padStart(5, "x"),
-      ptiurn: "Case" + String(i).padStart(5, "0")
-    })
-  )
+  const existingCourtCases: CourtCase[] = []
+  for (let index = 0; index < orgsCodes.length; index++) {
+    existingCourtCases.push(
+      await getDummyCourtCase({
+        orgForPoliceFilter: orgsCodes[index].padEnd(6, " "),
+        errorId: index,
+        messageId: String(index).padStart(5, "x"),
+        ptiurn: "Case" + String(index).padStart(5, "0")
+      })
+    )
+  }
 
   return insertCourtCases(existingCourtCases)
 }
 
 const insertCourtCasesWithCourtNames = async (courtNames: string[], orgCode: string) => {
-  const dataSource = await getDataSource()
-  const existingCourtCases = courtNames.map((name, i) =>
-    getDummyCourtCase(dataSource, {
-      orgForPoliceFilter: orgCode,
-      errorId: i,
-      messageId: String(i).padStart(5, "x"),
-      ptiurn: "Case" + String(i).padStart(5, "0"),
-      courtName: name,
-      defendantName: DummyCourtCase.defendantName! + i,
-      courtDate: new Date("2" + String(i).padStart(3, "0") + "-01-01")
-    })
-  )
+  const existingCourtCases: CourtCase[] = []
+  for (let index = 0; index < courtNames.length; index++) {
+    existingCourtCases.push(
+      await getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        errorId: index,
+        messageId: String(index).padStart(5, "x"),
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        courtName: courtNames[index],
+        defendantName: DummyCourtCase.defendantName! + String(index),
+        courtDate: new Date("2" + String(index).padStart(3, "0") + "-01-01")
+      })
+    )
+  }
 
   return insertCourtCases(existingCourtCases)
 }
 
 const insertCourtCasesWithCourtDates = async (courtDates: Date[], orgCode: string) => {
-  const dataSource = await getDataSource()
-  const existingCourtCases = courtDates.map((date, i) =>
-    getDummyCourtCase(dataSource, {
-      orgForPoliceFilter: orgCode,
-      errorId: i,
-      messageId: String(i).padStart(5, "x"),
-      ptiurn: "Case" + String(i).padStart(5, "0"),
-      courtDate: date
-    })
-  )
+  const existingCourtCases: CourtCase[] = []
+  for (let index = 0; index < courtDates.length; index++) {
+    existingCourtCases.push(
+      await getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        errorId: index,
+        messageId: String(index).padStart(5, "x"),
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        courtDate: courtDates[index]
+      })
+    )
+  }
 
   return insertCourtCases(existingCourtCases)
 }
 
 const insertCourtCasesWithDefendantNames = async (defendantNames: string[], orgCode: string) => {
-  const dataSource = await getDataSource()
-  const existingCourtCases = defendantNames.map((name, i) =>
-    getDummyCourtCase(dataSource, {
-      orgForPoliceFilter: orgCode,
-      errorId: i,
-      messageId: String(i).padStart(5, "x"),
-      ptiurn: "Case" + String(i).padStart(5, "0"),
-      defendantName: name,
-      courtDate: new Date("2" + String(i).padStart(3, "0") + "-01-01")
-    })
-  )
+  const existingCourtCases: CourtCase[] = []
+  for (let index = 0; index < defendantNames.length; index++) {
+    existingCourtCases.push(
+      await getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        errorId: index,
+        messageId: String(index).padStart(5, "x"),
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        defendantName: defendantNames[index],
+        courtDate: new Date("2" + String(index).padStart(3, "0") + "-01-01")
+      })
+    )
+  }
 
   return insertCourtCases(existingCourtCases)
 }
 
 const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: string) => {
-  const dataSource = await getDataSource()
-  const existingCourtCases = Object.keys(new Array(numToInsert).fill(undefined)).map((i) =>
-    getDummyCourtCase(dataSource, {
-      orgForPoliceFilter: orgCode,
-      messageId: i.padStart(5, "x"),
-      errorId: +i,
-      ptiurn: "Case" + i.padStart(5, "0")
-    })
-  )
+  const existingCourtCases: CourtCase[] = []
+  for (let index = 0; index < numToInsert; index++) {
+    existingCourtCases.push(
+      await getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        messageId: String(index).padStart(5, "x"),
+        errorId: index,
+        ptiurn: "Case" + String(index).padStart(5, "0")
+      })
+    )
+  }
 
   return insertCourtCases(existingCourtCases)
 }
@@ -99,17 +109,19 @@ const insertDummyCourtCaseWithLock = async (
   triggerLockedById: string,
   orgsCodes: string[]
 ) => {
-  const dataSource = await getDataSource()
-  const existingCourtCases = orgsCodes.map((code, i) =>
-    getDummyCourtCase(dataSource, {
-      orgForPoliceFilter: code.padEnd(6, " "),
-      errorId: i,
-      messageId: String(i).padStart(5, "x"),
-      ptiurn: "Case" + String(i).padStart(5, "0"),
-      errorLockedByUsername: errorLockedById,
-      triggerLockedByUsername: triggerLockedById
-    })
-  )
+  const existingCourtCases: CourtCase[] = []
+  for (let index = 0; index < orgsCodes.length; index++) {
+    existingCourtCases.push(
+      await getDummyCourtCase({
+        orgForPoliceFilter: orgsCodes[index].padEnd(6, " "),
+        errorId: index,
+        messageId: String(index).padStart(5, "x"),
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        errorLockedByUsername: errorLockedById,
+        triggerLockedByUsername: triggerLockedById
+      })
+    )
+  }
 
   return insertCourtCases(existingCourtCases)
 }
