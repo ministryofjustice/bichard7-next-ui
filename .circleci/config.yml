@@ -72,23 +72,6 @@ jobs:
           name: Check the code for linting errors
           command: npm run lint
 
-  build:
-    machine:
-      image: ubuntu-2004:2022.04.1
-      docker_layer_caching: true
-    resource_class: medium
-    working_directory: ~
-    steps:
-      - checkout
-      - clone_bichard_repo
-      - run:
-          name: Fetch the nginx nodejs supervisord image
-          working_directory: ~/bichard7-next
-          command: bash scripts/fetch_nginx_nodejs_supervisord_docker.sh
-      - run:
-          name: Build the UI application
-          command: make build
-
   unit_test:
     docker:
       - image: cimg/node:16.12.0
@@ -159,7 +142,7 @@ jobs:
           name: Run Chromatic
           command: npx chromatic --exit-zero-on-changes
 
-  ui_e2e_test:
+  build_and_e2e_test:
     machine:
       image: ubuntu-2004:2022.04.1
       docker_layer_caching: true
@@ -167,23 +150,22 @@ jobs:
     working_directory: ~
     steps:
       - checkout
+      - clone_bichard_repo
       - run:
           name: Install Cypress in the background
           command: ./.circleci/scripts/install-cypress.sh 2>&1
           background: true
-      - use_nvm_version
-      - npm_install
       - run:
-          name: Install GOV.UK Assets
-          command: npm run install:assets
-      - attach_workspace:
-          at: .
-      - clone_bichard_repo
+          name: Fetch the nginx nodejs supervisord image
+          working_directory: ~/bichard7-next
+          command: bash scripts/fetch_nginx_nodejs_supervisord_docker.sh
+      - run:
+          name: Build the UI application
+          command: make build
       - run_postgres_database
       - run:
           name: Run built next container
           command: docker run -p 4080:4080 ui
-          background: true
       - run:
           name: Wait for Cypress installation to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
@@ -207,10 +189,7 @@ workflows:
       - unit_test
       - integration_test
       - ui_test
-      - build
-      - ui_e2e_test:
-          requires:
-            - build
+      - build_and_e2e_test
   publish_chromatic:
     jobs:
       - publish_chromatic:
