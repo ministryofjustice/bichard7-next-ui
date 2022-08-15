@@ -4,7 +4,7 @@ import CourtCase from "../../../src/services/entities/CourtCase"
 describe("CourtCase", () => {
   it("should be locked by another user when error is locked by another user", () => {
     const courtCase = new CourtCase()
-    courtCase.errorLockedById = "Another username"
+    courtCase.errorLockedByUsername = "Another username"
     const result = courtCase.isLockedByAnotherUser("username")
 
     expect(result).toBe(true)
@@ -12,7 +12,7 @@ describe("CourtCase", () => {
 
   it("should be locked by another user when trigger is locked by another user", () => {
     const courtCase = new CourtCase()
-    courtCase.triggerLockedById = "Another username"
+    courtCase.triggerLockedByUsername = "Another username"
     const result = courtCase.isLockedByAnotherUser("username")
 
     expect(result).toBe(true)
@@ -20,7 +20,7 @@ describe("CourtCase", () => {
 
   it("should not be locked by another user when error is locked by the user", () => {
     const courtCase = new CourtCase()
-    courtCase.errorLockedById = "username"
+    courtCase.errorLockedByUsername = "username"
     const result = courtCase.isLockedByAnotherUser("username")
 
     expect(result).toBe(false)
@@ -28,7 +28,7 @@ describe("CourtCase", () => {
 
   it("should not be locked by another user when trigger is locked by the user", () => {
     const courtCase = new CourtCase()
-    courtCase.triggerLockedById = "username"
+    courtCase.triggerLockedByUsername = "username"
     const result = courtCase.isLockedByAnotherUser("username")
 
     expect(result).toBe(false)

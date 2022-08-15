@@ -13,7 +13,7 @@ const CourtCaseLock: React.FC<Props> = ({ courtCase, lockedByAnotherUser }) => {
   const getLockCourtCasePath = (courtCaseId: string, lock: string) =>
     `${basePath}/court-cases/${courtCaseId}?${new URLSearchParams({ ...query, lock })}`
 
-  const isLocked = !!courtCase.errorLockedById || !!courtCase.triggerLockedById
+  const isLocked = !!courtCase.errorLockedByUsername || !!courtCase.triggerLockedByUsername
   const lockCourtCasePath = getLockCourtCasePath(String(courtCase.errorId), String(!isLocked))
   const lockButtonTitle = isLocked ? "Unlock Court Case" : "Lock Court Case"
 
@@ -23,8 +23,8 @@ const CourtCaseLock: React.FC<Props> = ({ courtCase, lockedByAnotherUser }) => {
         <ErrorSummary heading="Case locked by another user" />
       </If>
       <If condition={isLocked}>
-        <Paragraph>{`Trigger locked by: ${courtCase.triggerLockedById}`}</Paragraph>
-        <Paragraph>{`Error locked by: ${courtCase.errorLockedById}`}</Paragraph>
+        <Paragraph>{`Trigger locked by: ${courtCase.triggerLockedByUsername}`}</Paragraph>
+        <Paragraph>{`Error locked by: ${courtCase.errorLockedByUsername}`}</Paragraph>
       </If>
       <form method="POST" action={lockCourtCasePath}>
         <Button buttonColour="#1d70b8">{lockButtonTitle}</Button>

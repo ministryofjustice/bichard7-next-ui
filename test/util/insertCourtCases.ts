@@ -106,8 +106,8 @@ const insertDummyCourtCaseWithLock = async (
       errorId: i,
       messageId: String(i).padStart(5, "x"),
       ptiurn: "Case" + String(i).padStart(5, "0"),
-      errorLockedById: errorLockedById,
-      triggerLockedById: triggerLockedById
+      errorLockedByUsername: errorLockedById,
+      triggerLockedByUsername: triggerLockedById
     })
   )
 

@@ -18,8 +18,8 @@ const insertRecords = async (errorLockedById: string | null = null, triggerLocke
       orgForPoliceFilter: "36FPA1".padEnd(6, " "),
       errorId: 0,
       messageId: String(0).padStart(5, "x"),
-      errorLockedById: errorLockedById,
-      triggerLockedById: triggerLockedById
+      errorLockedByUsername: errorLockedById,
+      triggerLockedByUsername: triggerLockedById
     })
   ]
 
