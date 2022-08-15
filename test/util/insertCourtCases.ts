@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import CourtCase from "../../src/services/entities/CourtCase"
 import { InsertResult } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
@@ -98,15 +100,25 @@ const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: strin
   return insertCourtCases(existingCourtCases)
 }
 
-const insertDummyCourtCaseWithLock = async (errorLockedById: string, triggerLockedById: string, orgCode: string) => {
-  const existingCourtCase = await getDummyCourtCase({
-    errorLockedById,
-    triggerLockedById,
-    errorId: 0,
-    orgForPoliceFilter: orgCode
-  })
+const insertDummyCourtCaseWithLock = async (
+  errorLockedById: string,
+  triggerLockedById: string,
+  orgsCodes: string[]
+) => {
+  const existingCourtCases = await Promise.all(
+    orgsCodes.map((code, i) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: code.padEnd(6, " "),
+        errorId: i,
+        messageId: String(i).padStart(5, "x"),
+        ptiurn: "Case" + String(i).padStart(5, "0"),
+        errorLockedById: errorLockedById,
+        triggerLockedById: triggerLockedById
+      })
+    )
+  )
 
-  return insertCourtCases(existingCourtCase)
+  return insertCourtCases(existingCourtCases)
 }
 
 export {
