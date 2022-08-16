@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { expect } from "@storybook/jest"
@@ -24,7 +25,7 @@ const courtCase = {
   orgForPoliceFilter: "36FP  ",
   ptiurn: "42CY0300107",
   triggerReason: "TRPR0006",
-  triggers: [{ triggerCode: "TRPR0001" } as unknown as Trigger],
+  triggers: [{ triggerCode: "TRPR0001", triggerId: 0 } as unknown as Trigger],
   courtDate: new Date("2008-09-26")
 } as unknown as CourtCase
 
@@ -38,7 +39,6 @@ Details.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText(courtCase.ptiurn!)).toBeInTheDocument()
   await expect(canvas.getByText(courtCase.courtName!)).toBeInTheDocument()
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   await expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy"))).toBeInTheDocument()
   await expect(canvas.getByText(courtCase.defendantName!)).toBeInTheDocument()
   await expect(canvas.getByText(courtCase.triggerReason!)).toBeInTheDocument()
