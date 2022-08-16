@@ -6,14 +6,14 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
 import getCourtCase from "../../src/services/getCourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import markTriggerComplete from "../../src/services/markTriggerComplete"
+import resolveTrigger from "../../src/services/resolveTrigger"
 import deleteFromTable from "../util/deleteFromTable"
 import { insertCourtCasesWithOrgCodes, insertDummyCourtCaseWithLock } from "../util/insertCourtCases"
 import { insertTriggers, TestTrigger } from "../util/manageTriggers"
 
 jest.setTimeout(100000)
 
-describe("listCourtCases", () => {
+describe("resolveTrigger", () => {
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -28,8 +28,8 @@ describe("listCourtCases", () => {
     await dataSource.destroy()
   })
 
-  describe("Mark trigger as complete", () => {
-    it("Should set the relevant columns when marking as complete", async () => {
+  describe("Mark trigger as resolved", () => {
+    it("Should set the relevant columns when resolving a trigger", async () => {
       const resolverUsername = "triggerResolver01"
       const visibleForces = ["36"]
 
@@ -49,7 +49,7 @@ describe("listCourtCases", () => {
       expect(beforeCourtCase.triggerResolvedBy).toBeNull()
       expect(beforeCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      const result = await markTriggerComplete(dataSource, 0, 0, resolverUsername, visibleForces)
+      const result = await resolveTrigger(dataSource, 0, 0, resolverUsername, visibleForces)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeTruthy()
@@ -98,12 +98,12 @@ describe("listCourtCases", () => {
       await insertTriggers(0, [trigger])
 
       // Resolve trigger
-      const initialResolveResult = await markTriggerComplete(dataSource, 0, 0, resolverUsername, visibleForces)
+      const initialResolveResult = await resolveTrigger(dataSource, 0, 0, resolverUsername, visibleForces)
       expect(isError(initialResolveResult)).toBeFalsy()
       expect(initialResolveResult as boolean).toBeTruthy()
 
       // Try to resolve again as a different user
-      const result = await markTriggerComplete(dataSource, 0, 0, reResolverUsername, visibleForces)
+      const result = await resolveTrigger(dataSource, 0, 0, reResolverUsername, visibleForces)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeFalsy()
@@ -134,7 +134,7 @@ describe("listCourtCases", () => {
       await insertTriggers(0, [trigger])
 
       // Attempt to resolve trigger whilst not holding the lock
-      const resolveResult = await markTriggerComplete(dataSource, 0, 0, resolverUsername, visibleForces)
+      const resolveResult = await resolveTrigger(dataSource, 0, 0, resolverUsername, visibleForces)
       expect(isError(resolveResult)).toBeFalsy()
       expect(resolveResult as boolean).toBeFalsy()
 
@@ -162,7 +162,7 @@ describe("listCourtCases", () => {
       await insertTriggers(0, [trigger])
 
       // Attempt to resolve trigger whilst not holding the lock
-      const resolveResult = await markTriggerComplete(dataSource, 0, 0, resolverUsername, visibleForces)
+      const resolveResult = await resolveTrigger(dataSource, 0, 0, resolverUsername, visibleForces)
       expect(isError(resolveResult)).toBeFalsy()
       expect(resolveResult as boolean).toBeFalsy()
 
@@ -203,7 +203,7 @@ describe("listCourtCases", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      let triggerResolveResult = await markTriggerComplete(dataSource, 0, courtCaseId, resolverUsername, visibleForces)
+      let triggerResolveResult = await resolveTrigger(dataSource, 0, courtCaseId, resolverUsername, visibleForces)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
@@ -215,7 +215,7 @@ describe("listCourtCases", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      triggerResolveResult = await markTriggerComplete(dataSource, 1, courtCaseId, resolverUsername, visibleForces)
+      triggerResolveResult = await resolveTrigger(dataSource, 1, courtCaseId, resolverUsername, visibleForces)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
@@ -227,7 +227,7 @@ describe("listCourtCases", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      triggerResolveResult = await markTriggerComplete(dataSource, 2, courtCaseId, resolverUsername, visibleForces)
+      triggerResolveResult = await resolveTrigger(dataSource, 2, courtCaseId, resolverUsername, visibleForces)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 

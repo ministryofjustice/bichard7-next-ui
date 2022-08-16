@@ -17,13 +17,17 @@ import getCourtCase from "services/getCourtCase"
 import { isError } from "types/Result"
 import { isPost } from "utils/http"
 import { UpdateResult } from "typeorm"
-import markTriggerComplete from "services/markTriggerComplete"
+import resolveTrigger from "services/resolveTrigger"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { courtCaseId, lock, resolveTrigger } = query as { courtCaseId: string; lock: string; resolveTrigger: string }
+    const {
+      courtCaseId,
+      lock,
+      resolveTrigger: triggerToResolve
+    } = query as { courtCaseId: string; lock: string; resolveTrigger: string }
     const dataSource = await getDataSource()
 
     let lockResult: UpdateResult | Error | undefined
@@ -40,10 +44,10 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw lockResult
     }
 
-    if (isPost(req) && !!resolveTrigger) {
-      const updateTriggerResult = await markTriggerComplete(
+    if (isPost(req) && !!triggerToResolve) {
+      const updateTriggerResult = await resolveTrigger(
         dataSource,
-        +resolveTrigger,
+        +triggerToResolve,
         +courtCaseId,
         currentUser.username,
         currentUser.visibleForces
@@ -54,7 +58,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
 
       if (!updateTriggerResult) {
-        throw new Error("Failed to mark trigger complete")
+        throw new Error("Failed to resolve trigger")
       }
     }
 

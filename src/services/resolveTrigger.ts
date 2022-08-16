@@ -6,7 +6,7 @@ import Trigger from "./entities/Trigger"
 import getCourtCase from "./getCourtCase"
 
 // Returns back whether the trigger was successfully unlocked
-const markTriggerComplete = async (
+const resolveTrigger = async (
   dataSource: DataSource,
   triggerId: number,
   courtCaseId: number,
@@ -72,8 +72,8 @@ const markTriggerComplete = async (
   } catch (err) {
     return isError(err)
       ? err
-      : new Error(`Unspecified database error when marking trigger ${triggerId} as completed by ${resolver}`)
+      : new Error(`Unspecified database error when marking trigger ${triggerId} as resolved by ${resolver}`)
   }
 }
 
-export default markTriggerComplete
+export default resolveTrigger
