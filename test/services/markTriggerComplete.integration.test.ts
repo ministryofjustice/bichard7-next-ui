@@ -37,7 +37,7 @@ describe("listCourtCases", () => {
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
-        status: 0,
+        status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
       await insertTriggers(0, [trigger])
@@ -68,6 +68,7 @@ describe("listCourtCases", () => {
 
       expect(updatedTrigger.resolvedBy).toBeDefined()
       expect(updatedTrigger.resolvedBy).toStrictEqual(resolverUsername)
+      expect(updatedTrigger.status).toStrictEqual("Resolved")
 
       const afterCourtCaseResult = await getCourtCase(dataSource, 0, visibleForces)
       expect(isError(afterCourtCaseResult)).toBeFalsy()
@@ -91,7 +92,7 @@ describe("listCourtCases", () => {
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
-        status: 0,
+        status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
       await insertTriggers(0, [trigger])
@@ -127,7 +128,7 @@ describe("listCourtCases", () => {
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
-        status: 0,
+        status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
       await insertTriggers(0, [trigger])
@@ -155,7 +156,7 @@ describe("listCourtCases", () => {
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
-        status: 0,
+        status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
       await insertTriggers(0, [trigger])
@@ -185,7 +186,7 @@ describe("listCourtCases", () => {
         return {
           triggerId,
           triggerCode: "TRPR0001",
-          status: 0,
+          status: "Unresolved",
           createdAt: new Date("2022-07-15T10:22:34.000Z")
         }
       })

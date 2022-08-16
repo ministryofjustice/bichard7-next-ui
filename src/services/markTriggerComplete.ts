@@ -41,7 +41,8 @@ const markTriggerComplete = async (
         .update(Trigger)
         .set({
           resolvedAt: new Date(),
-          resolvedBy: resolver
+          resolvedBy: resolver,
+          status: "Resolved"
         })
         .where("trigger_id = :triggerId", { triggerId })
         .andWhere("resolved_ts IS NULL")
