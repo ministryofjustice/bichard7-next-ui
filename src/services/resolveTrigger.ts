@@ -1,4 +1,4 @@
-import { DataSource } from "typeorm"
+import { DataSource, IsNull } from "typeorm"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
@@ -33,18 +33,18 @@ const resolveTrigger = async (
         (trigger) => !trigger.resolvedAt && !trigger.resolvedBy && trigger.triggerId !== triggerId
       ).length
 
-      const updateTriggerResult = await entityManager
-        .createQueryBuilder()
-        .update(Trigger)
-        .set({
+      const updateTriggerResult = await entityManager.getRepository(Trigger).update(
+        {
+          triggerId,
+          resolvedAt: IsNull(),
+          resolvedBy: IsNull()
+        },
+        {
           resolvedAt: new Date(),
           resolvedBy: resolver,
           status: "Resolved"
-        })
-        .where("trigger_id = :triggerId", { triggerId })
-        .andWhere("resolved_ts IS NULL")
-        .andWhere("resolved_by IS NULL")
-        .execute()
+        }
+      )
 
       const updateTriggerSuccess = updateTriggerResult.affected !== undefined && updateTriggerResult.affected > 0
       if (!updateTriggerSuccess) {
@@ -52,14 +52,14 @@ const resolveTrigger = async (
       }
 
       if (remainingUnresolvedTriggers === 0) {
-        const updateCaseResult = await entityManager
-          .createQueryBuilder()
-          .update(CourtCase)
-          .set({ triggerResolvedBy: resolver, triggerResolvedTimestamp: new Date(), triggerStatus: "Resolved" })
-          .where("error_id = :courtCaseId", { courtCaseId })
-          .andWhere("trigger_resolved_by IS NULL")
-          .andWhere("trigger_resolved_ts IS NULL")
-          .execute()
+        const updateCaseResult = await entityManager.getRepository(CourtCase).update(
+          {
+            errorId: courtCaseId,
+            triggerResolvedBy: IsNull(),
+            triggerResolvedTimestamp: IsNull()
+          },
+          { triggerResolvedBy: resolver, triggerResolvedTimestamp: new Date(), triggerStatus: "Resolved" }
+        )
 
         return updateCaseResult.affected !== undefined && updateCaseResult.affected > 0
       } else {
