@@ -4,7 +4,6 @@ import BaseEntity from "./BaseEntity"
 // eslint-disable-next-line import/no-cycle
 import CourtCase from "./CourtCase"
 import dateTransformer from "./transformers/dateTransformer"
-import optionalNullColumn from "./transformers/optionalNullColumn"
 import type { ResolutionStatus } from "types/ResolutionStatus"
 import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
 
@@ -25,11 +24,11 @@ export default class Trigger extends BaseEntity {
   @Column({ name: "create_ts", type: "timestamp", transformer: dateTransformer })
   createdAt!: Date
 
-  @Column({ name: "resolved_by", transformer: optionalNullColumn })
-  resolvedBy?: string
+  @Column({ name: "resolved_by", type: "varchar" })
+  resolvedBy!: string | null
 
   @Column({ name: "resolved_ts", type: "timestamp", transformer: dateTransformer })
-  resolvedAt?: Date
+  resolvedAt!: Date | null
 
   @Column({ name: "trigger_item_identity" })
   triggerItemIdentity?: number

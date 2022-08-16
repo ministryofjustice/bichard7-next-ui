@@ -9,7 +9,7 @@ interface Props {
 }
 
 const ResolveTrigger: React.FC<Props> = ({ trigger, courtCase }: Props) => {
-  const canResolve = trigger.resolvedAt === undefined && trigger.resolvedBy === undefined
+  const canResolve = !trigger.resolvedAt && !trigger.resolvedBy
 
   const { basePath, query } = useRouter()
   const resolveTriggerUrl = (courtCaseId: number, triggerId: number) =>

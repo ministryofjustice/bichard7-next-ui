@@ -73,7 +73,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
             <Table.Cell>{trigger.triggerCode}</Table.Cell>
             <Table.Cell>{trigger.triggerItemIdentity}</Table.Cell>
             <Table.Cell>{trigger.resolvedBy}</Table.Cell>
-            <Table.Cell>{trigger.resolvedAt !== undefined && <DateTime date={trigger.resolvedAt} />}</Table.Cell>
+            <Table.Cell>{!!trigger.resolvedAt && <DateTime date={trigger.resolvedAt} />}</Table.Cell>
             <Table.Cell>
               <DateTime date={trigger.createdAt} />
             </Table.Cell>

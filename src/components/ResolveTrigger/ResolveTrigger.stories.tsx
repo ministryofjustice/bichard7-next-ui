@@ -16,8 +16,8 @@ const courtCaseEntity = {
 
 const unresolvedTriggerEntity = {
   triggerId: 0,
-  resolvedAt: undefined,
-  resolvedBy: undefined
+  resolvedAt: null,
+  resolvedBy: null
 } as Trigger
 
 export const UnresolvedTrigger: ComponentStory<typeof ResolveTrigger> = () => (

@@ -60,13 +60,13 @@ describe("resolveTrigger", () => {
       expect(retrievedTrigger).not.toBeNull()
       const updatedTrigger = retrievedTrigger as Trigger
 
-      expect(updatedTrigger.resolvedAt).toBeDefined()
+      expect(updatedTrigger.resolvedAt).not.toBeNull()
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const minsSinceResolved = differenceInMinutes(new Date(), updatedTrigger.resolvedAt!)
       expect(minsSinceResolved).toBeGreaterThanOrEqual(0)
       expect(minsSinceResolved).toBeLessThanOrEqual(5)
 
-      expect(updatedTrigger.resolvedBy).toBeDefined()
+      expect(updatedTrigger.resolvedBy).not.toBeNull()
       expect(updatedTrigger.resolvedBy).toStrictEqual(resolverUsername)
       expect(updatedTrigger.status).toStrictEqual("Resolved")
 
@@ -114,8 +114,8 @@ describe("resolveTrigger", () => {
       expect(retrievedTrigger).not.toBeNull()
       const updatedTrigger = retrievedTrigger as Trigger
 
-      expect(updatedTrigger.resolvedAt).toBeDefined()
-      expect(updatedTrigger.resolvedBy).toBeDefined()
+      expect(updatedTrigger.resolvedAt).not.toBeNull()
+      expect(updatedTrigger.resolvedBy).not.toBeNull()
       expect(updatedTrigger.resolvedBy).toStrictEqual(resolverUsername)
     })
 
@@ -144,8 +144,8 @@ describe("resolveTrigger", () => {
       expect(retrievedTrigger).not.toBeNull()
       const updatedTrigger = retrievedTrigger as Trigger
 
-      expect(updatedTrigger.resolvedAt).toBeUndefined()
-      expect(updatedTrigger.resolvedBy).toBeUndefined()
+      expect(updatedTrigger.resolvedAt).toBeNull()
+      expect(updatedTrigger.resolvedBy).toBeNull()
     })
 
     it("Shouldn't resolve a trigger which is not locked", async () => {
@@ -172,8 +172,8 @@ describe("resolveTrigger", () => {
       expect(retrievedTrigger).not.toBeNull()
       const updatedTrigger = retrievedTrigger as Trigger
 
-      expect(updatedTrigger.resolvedAt).toBeUndefined()
-      expect(updatedTrigger.resolvedBy).toBeUndefined()
+      expect(updatedTrigger.resolvedAt).toBeNull()
+      expect(updatedTrigger.resolvedBy).toBeNull()
     })
 
     it("Should only set the case trigger columns only when the last trigger is resolved", async () => {
@@ -198,7 +198,7 @@ describe("resolveTrigger", () => {
       expect(retrievedCourtCase).not.toBeNull()
       let insertedCourtCase = retrievedCourtCase as CourtCase
 
-      expect(insertedCourtCase.triggerStatus).toBeDefined()
+      expect(insertedCourtCase.triggerStatus).not.toBeNull()
       expect(insertedCourtCase.triggerStatus).toStrictEqual("Unresolved")
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
@@ -210,7 +210,7 @@ describe("resolveTrigger", () => {
       retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, ["36"])
       expect(retrievedCourtCase).not.toBeNull()
       insertedCourtCase = retrievedCourtCase as CourtCase
-      expect(insertedCourtCase.triggerStatus).toBeDefined()
+      expect(insertedCourtCase.triggerStatus).not.toBeNull()
       expect(insertedCourtCase.triggerStatus).toStrictEqual("Unresolved")
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
@@ -222,7 +222,7 @@ describe("resolveTrigger", () => {
       retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, ["36"])
       expect(retrievedCourtCase).not.toBeNull()
       insertedCourtCase = retrievedCourtCase as CourtCase
-      expect(insertedCourtCase.triggerStatus).toBeDefined()
+      expect(insertedCourtCase.triggerStatus).not.toBeNull()
       expect(insertedCourtCase.triggerStatus).toStrictEqual("Unresolved")
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
@@ -234,7 +234,7 @@ describe("resolveTrigger", () => {
       retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, ["36"])
       expect(retrievedCourtCase).not.toBeNull()
       insertedCourtCase = retrievedCourtCase as CourtCase
-      expect(insertedCourtCase.triggerStatus).toBeDefined()
+      expect(insertedCourtCase.triggerStatus).not.toBeNull()
       expect(insertedCourtCase.triggerStatus).toStrictEqual("Resolved")
       expect(insertedCourtCase.triggerResolvedBy).toStrictEqual(resolverUsername)
       expect(insertedCourtCase.triggerResolvedTimestamp).not.toBeNull()
