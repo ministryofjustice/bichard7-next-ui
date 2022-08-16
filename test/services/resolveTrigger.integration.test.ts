@@ -176,7 +176,7 @@ describe("resolveTrigger", () => {
       expect(updatedTrigger.resolvedBy).toBeUndefined()
     })
 
-    it("Should set the case trigger columns only when the last trigger is resolved", async () => {
+    it("Should only set the case trigger columns only when the last trigger is resolved", async () => {
       const resolverUsername = "triggerResolver01"
       const courtCaseId = 0
       const visibleForces = ["36"]

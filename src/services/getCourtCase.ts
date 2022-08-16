@@ -13,6 +13,7 @@ const getCourtCase = (
     .andWhere({ errorId: courtCaseId })
     .leftJoinAndSelect("courtCase.triggers", "trigger")
     .leftJoinAndSelect("courtCase.notes", "note")
+    .addOrderBy("note.createdAt", "ASC")
 
   return query.getOne().catch((error) => error)
 }

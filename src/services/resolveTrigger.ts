@@ -15,24 +15,21 @@ const resolveTrigger = async (
 ): PromiseResult<boolean> => {
   try {
     return await dataSource.transaction("SERIALIZABLE", async (entityManager) => {
-      const lockHolderResult = await getCourtCase(entityManager, courtCaseId, visibleForces)
+      const courtCase = await getCourtCase(entityManager, courtCaseId, visibleForces)
 
-      if (isError(lockHolderResult)) {
-        throw lockHolderResult
+      if (isError(courtCase)) {
+        throw courtCase
       }
 
-      if (lockHolderResult === null) {
+      if (courtCase === null) {
         return false
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const lockHolder = lockHolderResult!.triggerLockedById
-
-      if (lockHolder !== resolver) {
+      if (courtCase.isLockedByAnotherUser(resolver)) {
         return false
       }
 
-      const remainingUnresolvedTriggers = lockHolderResult.triggers.filter(
+      const remainingUnresolvedTriggers = courtCase.triggers.filter(
         (trigger) => !trigger.resolvedAt && !trigger.resolvedBy && trigger.triggerId !== triggerId
       ).length
 

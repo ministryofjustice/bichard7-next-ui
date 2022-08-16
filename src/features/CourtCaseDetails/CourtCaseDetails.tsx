@@ -2,15 +2,17 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import DateTime from "components/DateTime"
 import If from "components/If"
 import ResolveTrigger from "components/ResolveTrigger/ResolveTrigger"
+import LinkButton from "components/LinkButton"
 import { Heading, Paragraph, Table } from "govuk-react"
 import CourtCase from "services/entities/CourtCase"
 
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
+  lockedByAnotherUser: boolean
 }
 
-const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho }) => (
+const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser }) => (
   <>
     <Heading as="h2" size="LARGE">
       {"Case Details"}
@@ -102,6 +104,9 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho }) => (
     </If>
     <If condition={(courtCase?.notes?.length ?? 0) === 0}>
       <Paragraph>{"Case has no notes."}</Paragraph>
+    </If>
+    <If condition={!lockedByAnotherUser}>
+      <LinkButton href="notes/add">{"Add Note"}</LinkButton>
     </If>
   </>
 )

@@ -6,15 +6,15 @@ const tryToLockCourtCase = async (
   courtCaseId: number,
   userName: string
 ): Promise<UpdateResult | Error> => {
-  const courtCaseRepository = await dataSource.getRepository(CourtCase)
+  const courtCaseRepository = dataSource.getRepository(CourtCase)
 
   try {
     return await courtCaseRepository
       .createQueryBuilder()
       .update(CourtCase)
       .set({
-        errorLockedById: userName,
-        triggerLockedById: userName
+        errorLockedByUsername: userName,
+        triggerLockedByUsername: userName
       })
       .where("error_id = :id", { id: courtCaseId })
       .andWhere("error_locked_by_id IS NULL")

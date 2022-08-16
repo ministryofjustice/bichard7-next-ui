@@ -74,10 +74,6 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const lockedByAnotherUser =
-      (!!courtCase.errorLockedById && courtCase.errorLockedById !== currentUser.username) ||
-      (!!courtCase.triggerLockedById && courtCase.triggerLockedById !== currentUser.username)
-
     const aho = parseAhoXml(courtCase.hearingOutcome)
     if (isError(aho)) {
       console.error(`Failed to parse aho: ${aho}`)
@@ -88,7 +84,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         user: currentUser.serialize(),
         courtCase: courtCase.serialize(),
         aho: JSON.parse(JSON.stringify(aho)),
-        lockedByAnotherUser
+        lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
       }
     }
   }
@@ -111,7 +107,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, aho, user, lockedByA
 
     <Layout user={user}>
       <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
-      <CourtCaseDetails courtCase={courtCase} aho={aho} />
+      <CourtCaseDetails courtCase={courtCase} aho={aho} lockedByAnotherUser={lockedByAnotherUser} />
     </Layout>
   </>
 )

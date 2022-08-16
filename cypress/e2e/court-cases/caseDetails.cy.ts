@@ -129,8 +129,8 @@ describe("Case details", () => {
     it("should not lock a court case when its already locked", () => {
       const existingUserLock = "Another name"
       cy.task("insertDummyCourtCaseWithLock", {
-        errorLockedById: existingUserLock,
-        triggerLockedById: existingUserLock,
+        errorLockedByUsername: existingUserLock,
+        triggerLockedByUsername: existingUserLock,
         orgCodes: ["01"]
       })
 
@@ -143,8 +143,8 @@ describe("Case details", () => {
     it("should unlock and lock a court case when its already locked", () => {
       const existingUserLock = "Another name"
       cy.task("insertDummyCourtCaseWithLock", {
-        errorLockedById: existingUserLock,
-        triggerLockedById: existingUserLock,
+        errorLockedByUsername: existingUserLock,
+        triggerLockedByUsername: existingUserLock,
         orgCodes: ["01"]
       })
 
