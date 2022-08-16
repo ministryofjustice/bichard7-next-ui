@@ -9,8 +9,8 @@ const unlockCourtCase = async (dataSource: DataSource, courtCaseId: number): Pro
       .createQueryBuilder()
       .update(CourtCase)
       .set({
-        errorLockedById: null,
-        triggerLockedById: null
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null
       })
       .where("error_id = :id", { id: courtCaseId })
       .execute()

@@ -28,9 +28,9 @@ describe("lock court case", () => {
 
   it("should unlock a locked court case", async () => {
     const lockedByName = "some user"
-    const lockedCourtCase = await getDummyCourtCase({
-      errorLockedById: lockedByName,
-      triggerLockedById: lockedByName
+    const lockedCourtCase = await await getDummyCourtCase({
+      errorLockedByUsername: lockedByName,
+      triggerLockedByUsername: lockedByName
     })
     await insertCourtCases(lockedCourtCase)
 
@@ -39,8 +39,8 @@ describe("lock court case", () => {
 
     const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
     const actualCourtCase = record as CourtCase
-    expect(actualCourtCase.errorLockedById).toBeNull()
-    expect(actualCourtCase.triggerLockedById).toBeNull()
+    expect(actualCourtCase.errorLockedByUsername).toBeNull()
+    expect(actualCourtCase.triggerLockedByUsername).toBeNull()
   })
 
   it("should return the error when failed to unlock court case", async () => {
@@ -48,9 +48,9 @@ describe("lock court case", () => {
       .spyOn(UpdateQueryBuilder<CourtCase>.prototype, "execute")
       .mockRejectedValue(Error("Failed to update record with some error"))
 
-    const lockedCourtCase = await getDummyCourtCase({
-      errorLockedById: "dummy",
-      triggerLockedById: "dummy"
+    const lockedCourtCase = await await getDummyCourtCase({
+      errorLockedByUsername: "dummy",
+      triggerLockedByUsername: "dummy"
     })
     await insertCourtCases(lockedCourtCase)
 
