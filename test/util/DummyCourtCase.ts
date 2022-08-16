@@ -27,7 +27,7 @@ const DummyCourtCase: Partial<CourtCase> = {
   userUpdatedFlag: 1,
   resolutionTimestamp: null,
   messageReceivedTimestamp: new Date("2022-06-30 09:44:03.93"),
-  errorResolvedBy: "essex.user",
+  errorResolvedBy: null,
   triggerResolvedBy: null,
   errorResolvedTimestamp: null,
   triggerResolvedTimestamp: null,
