@@ -29,7 +29,7 @@ const DummyCourtCase: Partial<CourtCase> = {
   messageReceivedTimestamp: new Date("2022-06-30 09:44:03.93"),
   errorResolvedBy: "essex.user",
   triggerResolvedBy: null,
-  errorResolvedTimestamp: new Date("2022-06-30 09:44:11.182"),
+  errorResolvedTimestamp: null,
   triggerResolvedTimestamp: null,
   orgForPoliceFilter: "36FP  ",
   courtRoom: "01",

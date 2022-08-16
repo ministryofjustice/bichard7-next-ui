@@ -88,10 +88,10 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "trigger_resolved_by", type: "varchar", nullable: true })
   triggerResolvedBy!: string | null
 
-  @Column({ name: "error_resolved_ts", type: "timestamptz", nullable: true })
+  @Column({ name: "error_resolved_ts", type: "timestamptz", nullable: true, transformer: dateTransformer })
   errorResolvedTimestamp!: Date | null
 
-  @Column({ name: "trigger_resolved_ts", type: "timestamptz", nullable: true })
+  @Column({ name: "trigger_resolved_ts", type: "timestamptz", nullable: true, transformer: dateTransformer })
   triggerResolvedTimestamp!: Date | null
 
   @Column({ name: "defendant_name", type: "varchar", nullable: true })
