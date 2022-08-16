@@ -1,7 +1,8 @@
 import type { TestUser } from "../../../test/util/manageUsers"
 import type { TestTrigger } from "../../../test/util/manageTriggers"
+import { differenceInMinutes, parse } from "date-fns"
 
-describe("Home", () => {
+describe("Case details", () => {
   context("720p resolution", () => {
     const users: TestUser[] = Array.from(Array(5)).map((_value, idx) => {
       return {
@@ -28,7 +29,7 @@ describe("Home", () => {
         {
           triggerId: 0,
           triggerCode: "TRPR0001",
-          status: 0,
+          status: "Unresolved",
           createdAt: new Date("2022-07-09T10:22:34.000Z")
         }
       ]
@@ -75,7 +76,7 @@ describe("Home", () => {
       cy.get("H3").contains("Triggers")
       cy.get("table").eq(1).find("tr").should("have.length", 2)
       cy.get("table").eq(1).find("tr").eq(1).find("td").first().should("have.text", "TRPR0001")
-      cy.get("table").eq(1).find("tr").eq(1).find("td").last().should("have.text", "09/07/2022 11:22:34")
+      cy.get("table").eq(1).find("tr").eq(1).find("td").eq(4).should("have.text", "09/07/2022 11:22:34")
 
       // Notes
       cy.get("H3").contains("Notes")
@@ -161,6 +162,39 @@ describe("Home", () => {
       cy.findByText("Case locked by another user").should("not.exist")
       cy.findByText("Trigger locked by: Bichard01").should("exist")
       cy.findByText("Error locked by: Bichard01").should("exist")
+    })
+
+    it("should resolve a trigger after clicking the button", () => {
+      const user = "Bichard01"
+      cy.task("insertDummyCourtCaseWithLock", {
+        errorLockedByUsername: user,
+        triggerLockedByUsername: user,
+        orgCodes: ["01"]
+      })
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+
+      cy.visit("/court-cases/0")
+      cy.findByText(`Trigger locked by: ${user}`).should("exist")
+      cy.findByText(`Error locked by: ${user}`).should("exist")
+
+      cy.get("button").contains("Resolve trigger").click()
+      cy.get("table")
+        .eq(1)
+        .then((table) => {
+          expect(table.find("td").eq(2).text()).to.equal(user)
+          const resolutionTime = parse(table.find("td").eq(3).text(), "dd/MM/yyyy HH:mm:ss", new Date())
+          const minsSinceResolved = differenceInMinutes(new Date(), resolutionTime)
+          expect(minsSinceResolved).to.be.at.least(0)
+          expect(minsSinceResolved).to.be.below(1)
+        })
     })
   })
 })

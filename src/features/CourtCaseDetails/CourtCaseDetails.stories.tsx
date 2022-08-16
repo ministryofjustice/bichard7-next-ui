@@ -25,7 +25,7 @@ const courtCase = {
   orgForPoliceFilter: "36FP  ",
   ptiurn: "42CY0300107",
   triggerReason: "TRPR0006",
-  triggers: [{ triggerCode: "TRPR0001" } as unknown as Trigger],
+  triggers: [{ triggerCode: "TRPR0001", triggerId: 0 } as unknown as Trigger],
   courtDate: new Date("2008-09-26")
 } as unknown as CourtCase
 
