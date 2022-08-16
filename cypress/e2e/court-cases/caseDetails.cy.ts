@@ -167,8 +167,8 @@ describe("Case details", () => {
     it("should resolve a trigger after clicking the button", () => {
       const user = "Bichard01"
       cy.task("insertDummyCourtCaseWithLock", {
-        errorLockedById: user,
-        triggerLockedById: user,
+        errorLockedByUsername: user,
+        triggerLockedByUsername: user,
         orgCodes: ["01"]
       })
       const triggers: TestTrigger[] = [
