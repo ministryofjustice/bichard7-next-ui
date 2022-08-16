@@ -45,7 +45,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         dataSource,
         +resolveTrigger,
         +courtCaseId,
-        currentUser.username
+        currentUser.username,
+        currentUser.visibleForces
       )
 
       if (isError(updateTriggerResult)) {

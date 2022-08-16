@@ -29,10 +29,11 @@ describe("listCourtCases", () => {
   })
 
   describe("Mark trigger as complete", () => {
-    it("Should set the resolvedAt and resolvedBy columns when marking as complete", async () => {
+    it("Should set the relevant columns when marking as complete", async () => {
       const resolverUsername = "triggerResolver01"
+      const visibleForces = ["36"]
 
-      await insertDummyCourtCaseWithLock(resolverUsername, resolverUsername, ["36"])
+      await insertDummyCourtCaseWithLock(resolverUsername, resolverUsername, visibleForces)
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
@@ -41,7 +42,14 @@ describe("listCourtCases", () => {
       }
       await insertTriggers(0, [trigger])
 
-      const result = await markTriggerComplete(dataSource, 0, 0, resolverUsername)
+      const beforeCourtCaseResult = await getCourtCase(dataSource, 0, visibleForces)
+      expect(isError(beforeCourtCaseResult)).toBeFalsy()
+      expect(beforeCourtCaseResult).not.toBeNull()
+      const beforeCourtCase = beforeCourtCaseResult as CourtCase
+      expect(beforeCourtCase.triggerResolvedBy).toBeNull()
+      expect(beforeCourtCase.triggerResolvedTimestamp).toBeNull()
+
+      const result = await markTriggerComplete(dataSource, 0, 0, resolverUsername, visibleForces)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeTruthy()
@@ -55,17 +63,31 @@ describe("listCourtCases", () => {
       expect(updatedTrigger.resolvedAt).toBeDefined()
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const minsSinceResolved = differenceInMinutes(new Date(), updatedTrigger.resolvedAt!)
+      expect(minsSinceResolved).toBeGreaterThanOrEqual(0)
       expect(minsSinceResolved).toBeLessThanOrEqual(5)
 
       expect(updatedTrigger.resolvedBy).toBeDefined()
       expect(updatedTrigger.resolvedBy).toStrictEqual(resolverUsername)
+
+      const afterCourtCaseResult = await getCourtCase(dataSource, 0, visibleForces)
+      expect(isError(afterCourtCaseResult)).toBeFalsy()
+      expect(afterCourtCaseResult).not.toBeNull()
+      const afterCourtCase = afterCourtCaseResult as CourtCase
+
+      expect(afterCourtCase.triggerResolvedBy).toStrictEqual(resolverUsername)
+      expect(afterCourtCase.triggerResolvedTimestamp).not.toBeNull()
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const minsSinceCaseTriggersResolved = differenceInMinutes(new Date(), afterCourtCase.triggerResolvedTimestamp!)
+      expect(minsSinceCaseTriggersResolved).toBeGreaterThanOrEqual(0)
+      expect(minsSinceCaseTriggersResolved).toBeLessThanOrEqual(5)
     })
 
     it("Shouldn't overwrite an already resolved trigger when attempting to resolve again", async () => {
       const resolverUsername = "triggerResolver01"
       const reResolverUsername = "triggerResolver02"
+      const visibleForces = ["36"]
 
-      await insertDummyCourtCaseWithLock(resolverUsername, resolverUsername, ["36"])
+      await insertDummyCourtCaseWithLock(resolverUsername, resolverUsername, visibleForces)
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
@@ -75,12 +97,12 @@ describe("listCourtCases", () => {
       await insertTriggers(0, [trigger])
 
       // Resolve trigger
-      const initialResolveResult = await markTriggerComplete(dataSource, 0, 0, resolverUsername)
+      const initialResolveResult = await markTriggerComplete(dataSource, 0, 0, resolverUsername, visibleForces)
       expect(isError(initialResolveResult)).toBeFalsy()
       expect(initialResolveResult as boolean).toBeTruthy()
 
       // Try to resolve again as a different user
-      const result = await markTriggerComplete(dataSource, 0, 0, reResolverUsername)
+      const result = await markTriggerComplete(dataSource, 0, 0, reResolverUsername, visibleForces)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeFalsy()
@@ -99,8 +121,9 @@ describe("listCourtCases", () => {
     it("Shouldn't resolve a trigger locked by someone else", async () => {
       const resolverUsername = "triggerResolver01"
       const lockHolderUsername = "triggerResolver02"
+      const visibleForces = ["36"]
 
-      await insertDummyCourtCaseWithLock(lockHolderUsername, lockHolderUsername, ["36"])
+      await insertDummyCourtCaseWithLock(lockHolderUsername, lockHolderUsername, visibleForces)
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
@@ -110,7 +133,7 @@ describe("listCourtCases", () => {
       await insertTriggers(0, [trigger])
 
       // Attempt to resolve trigger whilst not holding the lock
-      const resolveResult = await markTriggerComplete(dataSource, 0, 0, resolverUsername)
+      const resolveResult = await markTriggerComplete(dataSource, 0, 0, resolverUsername, visibleForces)
       expect(isError(resolveResult)).toBeFalsy()
       expect(resolveResult as boolean).toBeFalsy()
 
@@ -126,6 +149,7 @@ describe("listCourtCases", () => {
 
     it("Shouldn't resolve a trigger which is not locked", async () => {
       const resolverUsername = "triggerResolver01"
+      const visibleForces = ["36"]
 
       await insertCourtCasesWithOrgCodes(["01"])
       const trigger: TestTrigger = {
@@ -137,7 +161,7 @@ describe("listCourtCases", () => {
       await insertTriggers(0, [trigger])
 
       // Attempt to resolve trigger whilst not holding the lock
-      const resolveResult = await markTriggerComplete(dataSource, 0, 0, resolverUsername)
+      const resolveResult = await markTriggerComplete(dataSource, 0, 0, resolverUsername, visibleForces)
       expect(isError(resolveResult)).toBeFalsy()
       expect(resolveResult as boolean).toBeFalsy()
 
@@ -151,12 +175,12 @@ describe("listCourtCases", () => {
       expect(updatedTrigger.resolvedBy).toBeUndefined()
     })
 
-    // TODO implement logic to make this test pass
-    it.skip("Should set the case trigger columns only when the last trigger is resolved", async () => {
+    it("Should set the case trigger columns only when the last trigger is resolved", async () => {
       const resolverUsername = "triggerResolver01"
       const courtCaseId = 0
+      const visibleForces = ["36"]
 
-      await insertDummyCourtCaseWithLock(resolverUsername, resolverUsername, ["36"])
+      await insertDummyCourtCaseWithLock(resolverUsername, resolverUsername, visibleForces)
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId) => {
         return {
           triggerId,
@@ -169,7 +193,7 @@ describe("listCourtCases", () => {
 
       const insertedTriggers = await dataSource.getRepository(Trigger).find({ relations: { courtCase: true } })
       expect(insertedTriggers).toHaveLength(3)
-      let retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, ["36"])
+      let retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, visibleForces)
       expect(retrievedCourtCase).not.toBeNull()
       let insertedCourtCase = retrievedCourtCase as CourtCase
 
@@ -178,7 +202,7 @@ describe("listCourtCases", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      let triggerResolveResult = await markTriggerComplete(dataSource, 0, courtCaseId, resolverUsername)
+      let triggerResolveResult = await markTriggerComplete(dataSource, 0, courtCaseId, resolverUsername, visibleForces)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
@@ -190,7 +214,7 @@ describe("listCourtCases", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      triggerResolveResult = await markTriggerComplete(dataSource, 1, courtCaseId, resolverUsername)
+      triggerResolveResult = await markTriggerComplete(dataSource, 1, courtCaseId, resolverUsername, visibleForces)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
@@ -202,7 +226,7 @@ describe("listCourtCases", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      triggerResolveResult = await markTriggerComplete(dataSource, 2, courtCaseId, resolverUsername)
+      triggerResolveResult = await markTriggerComplete(dataSource, 2, courtCaseId, resolverUsername, visibleForces)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
