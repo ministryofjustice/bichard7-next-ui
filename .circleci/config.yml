@@ -151,10 +151,10 @@ jobs:
     steps:
       - checkout
       - clone_bichard_repo
-      - run:
-          name: Fetch the nginx nodejs supervisord image
-          working_directory: ~/bichard7-next
-          command: bash scripts/fetch_nginx_nodejs_supervisord_docker.sh
+      # - run:
+      #     name: Fetch the nginx nodejs supervisord image
+      #     working_directory: ~/bichard7-next
+      #     command: bash scripts/fetch_nginx_nodejs_supervisord_docker.sh
       - run:
           name: Build the UI application in the background
           command: ./.circleci/scripts/build-ui.sh
@@ -183,9 +183,13 @@ jobs:
           command: until [ -f uiBuilt ]; do sleep 1; done
           no_output_timeout: 15m
       - run:
-          name: Run built next container
-          command: docker run -p 4080:4080 --network=bichard7-next_default ui
+          name: Run built UI container
+          working_directory: ~/bichard7-next
+          command: make run-ui
           background: true
+      - run:
+          name: Wait for UI to start
+          command: ./.circleci/scripts/wait-for-ui
       - run:
           name: Run UI tests
           command: npm run cypress:run
