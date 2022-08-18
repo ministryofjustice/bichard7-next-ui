@@ -26,11 +26,19 @@ commands:
           name: Clone Bichard7 Next
           command: git clone --depth 1 git@github.com:ministryofjustice/bichard7-next.git ~/bichard7-next
 
-  run_postgres_database:
-    description: Spin up the postgres database
+  run_ui:
+    description: Run the UI container and dependencies
     steps:
       - run:
-          name: Spin up PostgreSQL database
+          name: Spin up UI container and dependencies
+          working_directory: ~/bichard7-next
+          command: make run-pg
+  
+  run_postgres:
+    description: Run the PostgreSQL database
+    steps:
+      - run:
+          name: Spin up the PostgreSQL database
           working_directory: ~/bichard7-next
           command: make run-pg
 
@@ -90,7 +98,7 @@ jobs:
       - attach_workspace:
           at: .
       - clone_bichard_repo
-      - run_postgres_database
+      - run_postgres
       - run:
           name: Run integration tests
           command: npm run test:integration
@@ -158,7 +166,6 @@ jobs:
           command: npm run install:assets
       - attach_workspace:
           at: .
-      - run_postgres_database
       - run:
           name: Wait for cypress install to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
@@ -171,13 +178,13 @@ jobs:
           command: until [ -f uiBuilt ]; do sleep 1; done
           no_output_timeout: 15m
       - run:
-          name: Run built UI container
+          name: Run UI container
           working_directory: ~/bichard7-next
           command: make run-ui
           background: true
       - run:
           name: Wait for UI to start
-          command: ./.circleci/scripts/wait-for-ui.sh
+          command: npx wait-on --config ./.circleci/config/wait-for-401.js https://localhost:4080/bichard
       - run:
           name: Run UI tests
           command: npm run cypress:run
