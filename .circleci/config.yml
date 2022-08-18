@@ -150,8 +150,6 @@ jobs:
       docker_layer_caching: true
     resource_class: medium
     working_directory: ~
-    environment:
-      TZ: "Europe/London"
     steps:
       - checkout
       - clone_bichard_repo
@@ -194,6 +192,7 @@ jobs:
           command: npm run cypress:run
           environment:
             UI_IS_HTTPS: true
+            TZ: "Europe/London"
       - store_artifacts:
           path: ./cypress/videos
       - store_artifacts:
