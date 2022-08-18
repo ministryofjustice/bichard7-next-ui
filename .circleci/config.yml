@@ -194,7 +194,7 @@ jobs:
           name: Run UI tests
           command: npm run cypress:run
           environment:
-            UI_US_HTTPS: true
+            UI_IS_HTTPS: true
       - store_artifacts:
           path: ./cypress/videos
       - store_artifacts:
