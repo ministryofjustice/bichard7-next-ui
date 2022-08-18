@@ -15,9 +15,10 @@ import { insertTriggers } from "./test/util/manageTriggers"
 import insertException from "./test/util/manageExceptions"
 import { deleteUsers, insertUsers, TestUser } from "./test/util/manageUsers"
 
+const protocol = process.env.UI_IS_HTTPS ? "https://" : "http://"
 export default defineConfig({
   e2e: {
-    baseUrl: "http://localhost:4080/bichard",
+    baseUrl: protocol + "localhost:4080/bichard",
     setupNodeEvents(on, _config) {
       on("task", {
         insertCourtCasesWithOrgCodes(orgCodes: string[]) {
@@ -73,5 +74,6 @@ export default defineConfig({
         }
       })
     }
-  }
+  },
+  chromeWebSecurity: false
 })

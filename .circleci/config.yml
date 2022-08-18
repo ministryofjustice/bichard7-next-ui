@@ -26,11 +26,19 @@ commands:
           name: Clone Bichard7 Next
           command: git clone --depth 1 git@github.com:ministryofjustice/bichard7-next.git ~/bichard7-next
 
-  run_postgres_database:
-    description: Spin up the postgres database
+  run_ui:
+    description: Run the UI container and dependencies
     steps:
       - run:
-          name: Spin up PostgreSQL database
+          name: Spin up UI container and dependencies
+          working_directory: ~/bichard7-next
+          command: make run-pg
+  
+  run_postgres:
+    description: Run the PostgreSQL database
+    steps:
+      - run:
+          name: Spin up the PostgreSQL database
           working_directory: ~/bichard7-next
           command: make run-pg
 
@@ -46,7 +54,7 @@ commands:
             nvm install
             nvm use
 jobs:
-  build:
+  lint:
     docker:
       - image: cimg/node:16.12.0
     resource_class: medium
@@ -58,15 +66,11 @@ jobs:
           name: Save node_modules cache
           key: v1-npm-deps-{{ checksum "package-lock.json.md5" }}
           paths: node_modules
+      - attach_workspace:
+          at: .
       - run:
           name: Check the code for linting errors
           command: npm run lint
-      - run:
-          name: Build the UI application
-          command: npm run build
-      - persist_to_workspace:
-          root: .
-          paths: .next
 
   unit_test:
     docker:
@@ -94,7 +98,7 @@ jobs:
       - attach_workspace:
           at: .
       - clone_bichard_repo
-      - run_postgres_database
+      - run_postgres
       - run:
           name: Run integration tests
           command: npm run test:integration
@@ -140,18 +144,21 @@ jobs:
           name: Run Chromatic
           command: npx chromatic --exit-zero-on-changes
 
-  ui_e2e_test:
+  build_and_e2e_test:
     machine:
       image: ubuntu-2004:2022.04.1
       docker_layer_caching: true
     resource_class: medium
     working_directory: ~
-    environment:
-      TZ: "Europe/London"
     steps:
       - checkout
+      - clone_bichard_repo
       - run:
-          name: Install Cypress in the background
+          name: Build the UI application in the background
+          command: ./.circleci/scripts/build-ui.sh
+          background: true
+      - run:
+          name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
           background: true
       - use_nvm_version
@@ -161,22 +168,31 @@ jobs:
           command: npm run install:assets
       - attach_workspace:
           at: .
-      - clone_bichard_repo
-      - run_postgres_database
       - run:
-          name: Run next application
-          command: npm run start
-          background: true
-      - run:
-          name: Wait for Cypress installation to finish
+          name: Wait for cypress install to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
           no_output_timeout: 5m
       - run:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
       - run:
+          name: Wait for UI build to finish
+          command: until [ -f uiBuilt ]; do sleep 1; done
+          no_output_timeout: 15m
+      - run:
+          name: Run UI container
+          working_directory: ~/bichard7-next
+          command: make run-ui
+          background: true
+      - run:
+          name: Wait for UI to start
+          command: npx wait-on --config ./.circleci/config/wait-for-401.js https://localhost:4080/bichard
+      - run:
           name: Run UI tests
           command: npm run cypress:run
+          environment:
+            UI_IS_HTTPS: true
+            TZ: "Europe/London"
       - store_artifacts:
           path: ./cypress/videos
       - store_artifacts:
@@ -186,19 +202,11 @@ workflows:
   version: 2
   build-and-test:
     jobs:
-      - build
-      - unit_test:
-          requires:
-            - build
-      - integration_test:
-          requires:
-            - build
-      - ui_test:
-          requires:
-            - build
-      - ui_e2e_test:
-          requires:
-            - build
+      - lint
+      - unit_test
+      - integration_test
+      - ui_test
+      - build_and_e2e_test
   publish_chromatic:
     jobs:
       - publish_chromatic:
