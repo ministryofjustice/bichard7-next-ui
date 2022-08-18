@@ -108,6 +108,8 @@ jobs:
       - image: cimg/node:16.12.0
     resource_class: medium
     working_directory: ~
+    environment:
+      TZ: "Europe/London"
     steps:
       - checkout
       - npm_install
@@ -148,6 +150,8 @@ jobs:
       docker_layer_caching: true
     resource_class: medium
     working_directory: ~
+    environment:
+      TZ: "Europe/London"
     steps:
       - checkout
       - clone_bichard_repo

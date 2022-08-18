@@ -1,3 +1,4 @@
+import { ResolutionStatus } from "types/ResolutionStatus"
 import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
 import getDataSource from "../../src/services/getDataSource"
@@ -5,7 +6,7 @@ import getDataSource from "../../src/services/getDataSource"
 type TestTrigger = {
   triggerId: number
   triggerCode: string
-  status: number
+  status: ResolutionStatus
   createdAt: Date
   resolvedBy?: string
   resolvedAt?: Date

@@ -5,6 +5,8 @@ import BaseEntity from "./BaseEntity"
 import dateTransformer from "./transformers/dateTransformer"
 import Note from "./Note"
 import Trigger from "./Trigger"
+import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
+import type { ResolutionStatus } from "types/ResolutionStatus"
 
 @Entity({ name: "error_list" })
 export default class CourtCase extends BaseEntity {
@@ -17,11 +19,11 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "phase" })
   phase!: number
 
-  @Column({ name: "error_status", type: "int4", nullable: true })
-  errorStatus!: number | null
+  @Column({ name: "error_status", type: "int4", transformer: resolutionStatusTransformer })
+  errorStatus!: ResolutionStatus
 
-  @Column({ name: "trigger_status", type: "int4", nullable: true })
-  triggerStatus!: number | null
+  @Column({ name: "trigger_status", type: "int4", transformer: resolutionStatusTransformer })
+  triggerStatus?: ResolutionStatus
 
   @Column({ name: "error_quality_checked", type: "int4", nullable: true })
   errorQualityChecked!: number | null
@@ -80,10 +82,10 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "msg_received_ts", type: "timestamptz" })
   messageReceivedTimestamp!: Date
 
-  @Column({ name: "error_resolved_by", type: "timestamptz", nullable: true })
+  @Column({ name: "error_resolved_by", type: "varchar", nullable: true })
   errorResolvedBy!: string | null
 
-  @Column({ name: "trigger_resolved_by", type: "timestamptz", nullable: true })
+  @Column({ name: "trigger_resolved_by", type: "varchar", nullable: true })
   triggerResolvedBy!: string | null
 
   @Column({ name: "error_resolved_ts", type: "timestamptz", nullable: true })
@@ -117,11 +119,18 @@ export default class CourtCase extends BaseEntity {
   triggers!: Relation<Trigger>[]
 
   @Column({ name: "error_locked_by_id", type: "varchar", nullable: true })
-  errorLockedById?: string | null
+  errorLockedByUsername?: string | null
 
   @Column({ name: "trigger_locked_by_id", type: "varchar", nullable: true })
-  triggerLockedById?: string | null
+  triggerLockedByUsername?: string | null
 
   @OneToMany(() => Note, (note) => note.courtCase)
   notes!: Relation<Note>[]
+
+  isLockedByAnotherUser(username: string) {
+    return (
+      (!!this.errorLockedByUsername && this.errorLockedByUsername !== username) ||
+      (!!this.triggerLockedByUsername && this.triggerLockedByUsername !== username)
+    )
+  }
 }

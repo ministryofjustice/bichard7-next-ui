@@ -1,10 +1,10 @@
-import { DataSource } from "typeorm"
+import { DataSource, EntityManager } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import PromiseResult from "../types/PromiseResult"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
 const getCourtCase = (
-  dataSource: DataSource,
+  dataSource: DataSource | EntityManager,
   courtCaseId: number,
   forces: string[]
 ): PromiseResult<CourtCase | null> => {
@@ -13,6 +13,7 @@ const getCourtCase = (
     .andWhere({ errorId: courtCaseId })
     .leftJoinAndSelect("courtCase.triggers", "trigger")
     .leftJoinAndSelect("courtCase.notes", "note")
+    .addOrderBy("note.createdAt", "ASC")
 
   return query.getOne().catch((error) => error)
 }

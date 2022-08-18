@@ -38,11 +38,15 @@ export default defineConfig({
         },
 
         insertDummyCourtCaseWithLock(params: {
-          errorLockedById: string
-          triggerLockedById: string
+          errorLockedByUsername: string
+          triggerLockedByUsername: string
           orgCodes: string[]
         }) {
-          return insertDummyCourtCaseWithLock(params.errorLockedById, params.triggerLockedById, params.orgCodes)
+          return insertDummyCourtCaseWithLock(
+            params.errorLockedByUsername,
+            params.triggerLockedByUsername,
+            params.orgCodes
+          )
         },
 
         insertCourtCases(params: { courtCases: CourtCase[] }) {

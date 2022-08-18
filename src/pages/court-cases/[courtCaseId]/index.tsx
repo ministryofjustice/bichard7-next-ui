@@ -17,12 +17,17 @@ import getCourtCase from "services/getCourtCase"
 import { isError } from "types/Result"
 import { isPost } from "utils/http"
 import { UpdateResult } from "typeorm"
+import resolveTrigger from "services/resolveTrigger"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { courtCaseId, lock } = query as { courtCaseId: string; lock: string }
+    const {
+      courtCaseId,
+      lock,
+      resolveTrigger: triggerToResolve
+    } = query as { courtCaseId: string; lock: string; resolveTrigger: string }
     const dataSource = await getDataSource()
 
     let lockResult: UpdateResult | Error | undefined
@@ -39,6 +44,24 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw lockResult
     }
 
+    if (isPost(req) && !!triggerToResolve) {
+      const updateTriggerResult = await resolveTrigger(
+        dataSource,
+        +triggerToResolve,
+        +courtCaseId,
+        currentUser.username,
+        currentUser.visibleForces
+      )
+
+      if (isError(updateTriggerResult)) {
+        throw updateTriggerResult
+      }
+
+      if (!updateTriggerResult) {
+        throw new Error("Failed to resolve trigger")
+      }
+    }
+
     const courtCase = await getCourtCase(dataSource, +courtCaseId, currentUser.visibleForces)
 
     if (isError(courtCase)) {
@@ -51,10 +74,6 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const lockedByAnotherUser =
-      (!!courtCase.errorLockedById && courtCase.errorLockedById !== currentUser.username) ||
-      (!!courtCase.triggerLockedById && courtCase.triggerLockedById !== currentUser.username)
-
     const aho = parseAhoXml(courtCase.hearingOutcome)
     if (isError(aho)) {
       console.error(`Failed to parse aho: ${aho}`)
@@ -65,7 +84,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         user: currentUser.serialize(),
         courtCase: courtCase.serialize(),
         aho: JSON.parse(JSON.stringify(aho)),
-        lockedByAnotherUser
+        lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
       }
     }
   }
@@ -88,7 +107,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, aho, user, lockedByA
 
     <Layout user={user}>
       <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
-      <CourtCaseDetails courtCase={courtCase} aho={aho} />
+      <CourtCaseDetails courtCase={courtCase} aho={aho} lockedByAnotherUser={lockedByAnotherUser} />
     </Layout>
   </>
 )

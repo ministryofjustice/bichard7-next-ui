@@ -10,8 +10,8 @@ export default {
 } as ComponentMeta<typeof CourtCaseLock>
 
 const courtCase = {
-  errorLockedById: "User",
-  triggerLockedById: "User"
+  errorLockedByUsername: "User",
+  triggerLockedByUsername: "User"
 } as unknown as CourtCase
 
 export const Lock: ComponentStory<typeof CourtCaseLock> = () => (
@@ -20,8 +20,8 @@ export const Lock: ComponentStory<typeof CourtCaseLock> = () => (
 
 Lock.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
-  await expect(canvas.getByText("Error locked by: " + courtCase.errorLockedById ?? "")).toBeInTheDocument()
-  await expect(canvas.getByText("Trigger locked by: " + courtCase.triggerLockedById ?? "")).toBeInTheDocument()
+  await expect(canvas.getByText("Error locked by: " + courtCase.errorLockedByUsername ?? "")).toBeInTheDocument()
+  await expect(canvas.getByText("Trigger locked by: " + courtCase.triggerLockedByUsername ?? "")).toBeInTheDocument()
 }
 
 export const LockedByAnotherUser: ComponentStory<typeof CourtCaseLock> = () => (
@@ -31,6 +31,6 @@ export const LockedByAnotherUser: ComponentStory<typeof CourtCaseLock> = () => (
 LockedByAnotherUser.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText("Case locked by another user")).toBeInTheDocument()
-  await expect(canvas.getByText("Error locked by: " + courtCase.errorLockedById ?? "")).toBeInTheDocument()
-  await expect(canvas.getByText("Trigger locked by: " + courtCase.triggerLockedById ?? "")).toBeInTheDocument()
+  await expect(canvas.getByText("Error locked by: " + courtCase.errorLockedByUsername ?? "")).toBeInTheDocument()
+  await expect(canvas.getByText("Trigger locked by: " + courtCase.triggerLockedByUsername ?? "")).toBeInTheDocument()
 }

@@ -190,7 +190,7 @@ describe("Home", () => {
         {
           triggerId: 0,
           triggerCode: "TRPR0001",
-          status: 0,
+          status: "Unresolved",
           createdAt: new Date("2022-07-09T10:22:34.000Z")
         }
       ]
