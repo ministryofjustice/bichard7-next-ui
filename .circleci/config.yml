@@ -185,7 +185,7 @@ jobs:
       - run:
           name: Wait for cypress install to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
-          no_output_timeout: 5m
+          no_output_timeout: 10m
       - run:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
