@@ -85,7 +85,9 @@ fi
       pull_trivy_db
 
       ## Run goss tests
-      DB_CONTAINER=docker ps -aqf "name=bichard7-next_pg"
+      DB_CONTAINER=$(docker ps -aqf "name=bichard7-next_pg")
+      echo "DB_CONTAINER"
+      echo $DB_CONTAINER
       DB_HOST=docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DB_CONTAINER
       GOSS_SLEEP=15 dgoss run -e DB_HOST=$DB_HOST "ui:latest"
 
