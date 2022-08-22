@@ -14,7 +14,7 @@ interface Props {
 
 const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser }) => (
   <>
-    <Heading as="h2" size="SMALL">
+    <Heading as="h2" size="LARGE">
       {"Case Details"}
     </Heading>
     <Table>
