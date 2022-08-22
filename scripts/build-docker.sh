@@ -86,10 +86,8 @@ fi
 
       ## Run goss tests
       DB_CONTAINER=$(docker ps -aqf "name=bichard7-next_pg")
-      echo "DB_CONTAINER"
-      echo $DB_CONTAINER
-      DB_HOST=docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DB_CONTAINER
-      GOSS_SLEEP=15 dgoss run -e DB_HOST=$DB_HOST "ui:latest"
+      DB_HOST=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DB_CONTAINER)
+      GOSS_SLEEP=$(15 dgoss run -e DB_HOST=$DB_HOST "ui:latest")
 
       ## Run Trivy scan
       TRIVY_CACHE_DIR=trivy trivy image \
