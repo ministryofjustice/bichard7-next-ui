@@ -26,7 +26,7 @@ function pull_and_build_from_aws() {
 
   echo "Building ui docker image on `date`"
 
-  if [[ -z "${AWS_ACCOUNT_ID}" ]]; then
+  if [[ -z ${AWS_ACCOUNT_ID+""} ]]; then
       AWS_ACCOUNT_ID=$FETCHED_AWS_ACCOUNT_ID
   fi
 
