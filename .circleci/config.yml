@@ -130,7 +130,7 @@ jobs:
           name: Run visual unit tests
           command: npm run test:ui:unit:ci
 
-  chromatic_test:
+  chromatic_publish:
     docker:
       - image: cimg/node:16.12.0
     resource_class: medium
@@ -144,7 +144,7 @@ jobs:
           name: Run Chromatic
           command: npm run chromatic:ci
 
-  chromatic_update:
+  chromatic_baseline_update:
     docker:
       - image: cimg/node:16.12.0
     resource_class: medium
@@ -220,11 +220,11 @@ workflows:
       - unit_test
       - integration_test
       - ui_test
-      - chromatic_test
+      - chromatic_publish
       - build_and_e2e_test
-  chromatic_update:
+  chromatic_baseline_update:
     jobs:
-      - chromatic_update:
+      - chromatic_baseline_update:
           filters:
             branches:
               only:

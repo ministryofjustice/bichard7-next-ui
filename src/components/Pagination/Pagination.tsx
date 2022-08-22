@@ -17,7 +17,7 @@ const Pagination: React.FC<Props> = ({ totalPages, pageNum }: Props) => {
           previousPage
           href={`${basePath}?${new URLSearchParams({ ...query, pageNum: `${pageNum - 1}` })}`}
         >
-          {"PAGE BEFORE"}
+          {"Previous page"}
         </GovPagination.Anchor>
       )}
       {pageNum < totalPages && (
