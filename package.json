@@ -9,7 +9,7 @@
     "start": "next start -p 4080",
     "lint": "eslint",
     "lint:fix": "eslint . --fix",
-    "chromatic": "chromatic",
+    "chromatic": "chromatic --exit-zero-on-changes",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:run:file": "cypress run --spec",

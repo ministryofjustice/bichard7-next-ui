@@ -33,7 +33,7 @@ commands:
           name: Spin up UI container and dependencies
           working_directory: ~/bichard7-next
           command: make run-pg
-  
+
   run_postgres:
     description: Run the PostgreSQL database
     steps:
@@ -130,7 +130,7 @@ jobs:
           name: Run visual unit tests
           command: npm run test:ui:unit:ci
 
-  publish_chromatic:
+  chromatic_test:
     docker:
       - image: cimg/node:16.12.0
     resource_class: medium
@@ -142,7 +142,7 @@ jobs:
           at: .
       - run:
           name: Run Chromatic
-          command: npx chromatic --exit-zero-on-changes
+          command: npm run chromatic
 
   build_and_e2e_test:
     machine:
@@ -206,11 +206,5 @@ workflows:
       - unit_test
       - integration_test
       - ui_test
+      - chromatic_test
       - build_and_e2e_test
-  publish_chromatic:
-    jobs:
-      - publish_chromatic:
-          filters:
-            branches:
-              only:
-                - main
