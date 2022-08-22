@@ -100,7 +100,7 @@ This is a link to our [chromatic](https://www.chromatic.com/builds?appId=62ce994
 
 We run visual regression/snapshot testing against all of our visual components in storybook using Chromatic.
 
-If you have made changes to how components look on your branch, you will need to review these changes in the Chromatic UI (and approve them in order to merge).
+If you have made changes to how components look on your branch, you will need to review these changes in the Chromatic UI and approve them in order to merge.
 
 ### Integration/E2e Testing
 
