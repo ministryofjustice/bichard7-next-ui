@@ -142,7 +142,21 @@ jobs:
           at: .
       - run:
           name: Run Chromatic
-          command: npm run chromatic
+          command: npm run chromatic:ci
+
+  chromatic_update:
+    docker:
+      - image: cimg/node:16.12.0
+    resource_class: medium
+    working_directory: ~
+    steps:
+      - checkout
+      - npm_install
+      - attach_workspace:
+          at: .
+      - run:
+          name: Update Chromatic baseline
+          command: npm run chromatic:ci:main
 
   build_and_e2e_test:
     machine:
@@ -208,3 +222,10 @@ workflows:
       - ui_test
       - chromatic_test
       - build_and_e2e_test
+  chromatic_update:
+    jobs:
+      - chromatic_update:
+          filters:
+            branches:
+              only:
+                - main
