@@ -33,7 +33,7 @@ commands:
           name: Spin up UI container and dependencies
           working_directory: ~/bichard7-next
           command: make run-pg
-  
+
   run_postgres:
     description: Run the PostgreSQL database
     steps:
@@ -130,7 +130,7 @@ jobs:
           name: Run visual unit tests
           command: npm run test:ui:unit:ci
 
-  publish_chromatic:
+  chromatic_publish:
     docker:
       - image: cimg/node:16.12.0
     resource_class: medium
@@ -142,7 +142,21 @@ jobs:
           at: .
       - run:
           name: Run Chromatic
-          command: npx chromatic --exit-zero-on-changes
+          command: npm run chromatic:ci
+
+  chromatic_baseline_update:
+    docker:
+      - image: cimg/node:16.12.0
+    resource_class: medium
+    working_directory: ~
+    steps:
+      - checkout
+      - npm_install
+      - attach_workspace:
+          at: .
+      - run:
+          name: Update Chromatic baseline
+          command: npm run chromatic:ci:main
 
   build_and_e2e_test:
     machine:
@@ -171,7 +185,7 @@ jobs:
       - run:
           name: Wait for cypress install to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
-          no_output_timeout: 5m
+          no_output_timeout: 10m
       - run:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
@@ -206,10 +220,11 @@ workflows:
       - unit_test
       - integration_test
       - ui_test
+      - chromatic_publish
       - build_and_e2e_test
-  publish_chromatic:
+  chromatic_baseline_update:
     jobs:
-      - publish_chromatic:
+      - chromatic_baseline_update:
           filters:
             branches:
               only:
