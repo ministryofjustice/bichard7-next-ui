@@ -5,6 +5,7 @@ import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult
 import { ParsedUrlQuery } from "querystring"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError, Result } from "types/Result"
+import getUser from "services/getUser"
 
 export default <Props>(getServerSidePropsFunction: GetServerSideProps<Props>): GetServerSideProps<Props> => {
   const result: GetServerSideProps<Props> = async (
@@ -16,10 +17,7 @@ export default <Props>(getServerSidePropsFunction: GetServerSideProps<Props>): G
 
     if (authJwt) {
       const dataSource = await getDataSource()
-      currentUser = await dataSource
-        .getRepository(User)
-        .findOneBy({ username: authJwt.username })
-        .catch((error) => error)
+      currentUser = await getUser(dataSource, authJwt.username)
     }
 
     if (!currentUser || isError(currentUser)) {

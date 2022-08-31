@@ -21,6 +21,6 @@ export default class User extends BaseEntity {
   @Column({ name: "visible_forces", transformer: delimitedPrefixedString(",", "0"), type: "varchar" })
   visibleForces!: string[]
 
-  @Column({ name: "feature_flags", transformer: featureFlagTransformer, type: "json" })
-  featureFlags?: KeyValuePair<string, boolean>
+  @Column({ name: "feature_flags", transformer: featureFlagTransformer, type: "jsonb" })
+  featureFlags!: KeyValuePair<string, boolean>
 }
