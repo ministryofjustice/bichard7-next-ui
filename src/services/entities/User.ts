@@ -23,4 +23,8 @@ export default class User extends BaseEntity {
 
   @Column({ name: "feature_flags", transformer: featureFlagTransformer, type: "json" })
   featureFlags?: KeyValuePair<string, boolean>
+
+  hasAccessToFeature(name: string): boolean {
+    return this.featureFlags !== undefined && this.featureFlags[name] === true
+  }
 }
