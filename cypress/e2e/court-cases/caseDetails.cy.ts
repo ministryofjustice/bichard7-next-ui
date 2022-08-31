@@ -1,19 +1,18 @@
-import { getDummyUser } from "../../../test/util/manageUsers"
 import type { TestTrigger } from "../../../test/util/manageTriggers"
 import { differenceInMinutes, parse } from "date-fns"
 import User from "services/entities/User"
 
 describe("Case details", () => {
   context("720p resolution", async () => {
-    const users: User[] = await Promise.all(
+    const users: Partial<User>[] = await Promise.all(
       Array.from(Array(5)).map(async (_value, idx) => {
-        return await getDummyUser({
+        return {
           username: `Bichard0${idx}`,
           visibleForces: [`0${idx}`],
           forenames: "Bichard Test User",
           surname: `0${idx}`,
           email: `bichard0${idx}@example.com`
-        })
+        }
       })
     )
 

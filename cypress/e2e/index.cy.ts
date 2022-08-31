@@ -1,6 +1,5 @@
 import User from "services/entities/User"
 import { TestTrigger } from "../../test/util/manageTriggers"
-import { getDummyUser } from "../../test/util/manageUsers"
 
 describe("Home", () => {
   context("720p resolution", async () => {
@@ -11,15 +10,15 @@ describe("Home", () => {
       cy.viewport(1280, 720)
     })
 
-    const users: User[] = await Promise.all(
+    const users: Partial<User>[] = await Promise.all(
       Array.from(Array(5)).map(async (_value, idx) => {
-        return await getDummyUser({
+        return {
           username: `Bichard0${idx}`,
           visibleForces: [`0${idx}`],
           forenames: "Bichard Test User",
           surname: `0${idx}`,
           email: `bichard0${idx}@example.com`
-        })
+        }
       })
     )
 

@@ -52,5 +52,16 @@ describe("getUser", () => {
     expect(result).toBeNull()
   })
 
-  //TODO: Add some extra tests around featureFlag edge cases
+  it("should parse missing feature flags correctly", async () => {
+    const inputUser = await getDummyUser({
+      featureFlags: {}
+    })
+    await insertUsers(inputUser)
+
+    const result = await getUser(dataSource, inputUser.username)
+    expect(isError(result)).toBe(false)
+
+    const actualUser = result as User
+    expect(actualUser).toStrictEqual(inputUser)
+  })
 })

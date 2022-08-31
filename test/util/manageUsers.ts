@@ -8,7 +8,7 @@ const DUMMY_USER: Partial<User> = {
   forenames: "Bichard Test User",
   surname: `01`,
   email: `bichard01@example.com`,
-  featureFlags: {}
+  featureFlags: { test_flag: true, test_flag_2: false }
 }
 
 const getDummyUser = async (overrides?: Partial<User>): Promise<User> =>
@@ -22,9 +22,18 @@ const insertUsers = async (users: User | User[]): Promise<InsertResult> => {
   return await dataSource.createQueryBuilder().insert().into(User).values(users).execute()
 }
 
+const insertUsersWithOverrides = async (userOverrides: Partial<User>[]) => {
+  const usersToInsert: User[] = []
+  for (let i = 0; i < userOverrides.length; i++) {
+    usersToInsert.push(await getDummyUser({ ...userOverrides[i] }))
+  }
+
+  return insertUsers(usersToInsert)
+}
+
 const deleteUsers = async (): Promise<InsertResult> => {
   const dataSource = await getDataSource()
   return await dataSource.manager.query(`DELETE FROM br7own.users_groups; DELETE FROM br7own.users`)
 }
 
-export { getDummyUser, insertUsers, deleteUsers }
+export { getDummyUser, insertUsers, insertUsersWithOverrides, deleteUsers }
