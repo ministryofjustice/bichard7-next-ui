@@ -9,11 +9,8 @@ export default {
   component: FeatureFlag
 } as ComponentMeta<typeof FeatureFlag>
 
-const userWithAccess = new User()
-userWithAccess.featureFlags = { "test-feature": true }
-
 export const EnabledFeature: ComponentStory<typeof FeatureFlag> = () => (
-  <FeatureFlag user={userWithAccess} featureName="test-feature">
+  <FeatureFlag featureFlags={{ "test-feature": true }} featureName="test-feature">
     {"This feature is enabled with a flag"}
   </FeatureFlag>
 )
@@ -23,16 +20,35 @@ EnabledFeature.play = ({ canvasElement }) => {
   expect(canvas.queryByText("This feature is enabled with a flag")).toBeInTheDocument()
 }
 
-const userWithoutAccess = new User()
-userWithAccess.featureFlags = { "test-feature": true }
-
 export const DisabledFeature: ComponentStory<typeof FeatureFlag> = () => (
-  <FeatureFlag user={userWithoutAccess} featureName="test-feature">
+  <FeatureFlag featureFlags={{ "test-feature": false }} featureName="test-feature">
     {"This feature is enabled with a flag"}
   </FeatureFlag>
 )
 
 DisabledFeature.play = ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+  expect(canvas.queryByText("This feature is enabled with a flag")).not.toBeInTheDocument()
+}
+
+export const NoFlags: ComponentStory<typeof FeatureFlag> = () => (
+  <FeatureFlag featureFlags={{}} featureName="test-feature">
+    {"This feature is enabled with a flag"}
+  </FeatureFlag>
+)
+
+NoFlags.play = ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+  expect(canvas.queryByText("This feature is enabled with a flag")).not.toBeInTheDocument()
+}
+
+export const UndefinedFlags: ComponentStory<typeof FeatureFlag> = () => (
+  <FeatureFlag featureFlags={undefined} featureName="test-feature">
+    {"This feature is enabled with a flag"}
+  </FeatureFlag>
+)
+
+UndefinedFlags.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
   expect(canvas.queryByText("This feature is enabled with a flag")).not.toBeInTheDocument()
 }

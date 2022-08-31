@@ -15,6 +15,7 @@ import { ParsedUrlQuery } from "querystring"
 import listCourtCases from "services/listCourtCases"
 
 import type CourtCase from "services/entities/CourtCase"
+import FeatureFlag from "components/FeatureFlag/FeatureFlag"
 
 interface Props {
   user: User
