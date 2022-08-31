@@ -1,8 +1,9 @@
+import User from "services/entities/User"
 import { TestTrigger } from "../../test/util/manageTriggers"
-import type { TestUser } from "../../test/util/manageUsers"
+import { getDummyUser } from "../../test/util/manageUsers"
 
 describe("Home", () => {
-  context("720p resolution", () => {
+  context("720p resolution", async () => {
     beforeEach(() => {
       cy.task("clearCourtCases")
       cy.task("clearUsers")
@@ -10,15 +11,17 @@ describe("Home", () => {
       cy.viewport(1280, 720)
     })
 
-    const users: TestUser[] = Array.from(Array(5)).map((_value, idx) => {
-      return {
-        username: `Bichard0${idx}`,
-        visibleForces: [`0${idx}`],
-        forenames: "Bichard Test User",
-        surname: `0${idx}`,
-        email: `bichard0${idx}@example.com`
-      }
-    })
+    const users: User[] = await Promise.all(
+      Array.from(Array(5)).map(async (_value, idx) => {
+        return await getDummyUser({
+          username: `Bichard0${idx}`,
+          visibleForces: [`0${idx}`],
+          forenames: "Bichard Test User",
+          surname: `0${idx}`,
+          email: `bichard0${idx}@example.com`
+        })
+      })
+    )
 
     it("should display 0 cases and the user's username when no cases are added", () => {
       cy.task("insertUsers", users)

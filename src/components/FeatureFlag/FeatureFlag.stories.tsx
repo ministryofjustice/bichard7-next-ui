@@ -1,7 +1,6 @@
 import { expect } from "@storybook/jest"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
-import User from "services/entities/User"
 import FeatureFlag from "./FeatureFlag"
 
 export default {

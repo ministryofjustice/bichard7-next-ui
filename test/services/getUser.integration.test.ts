@@ -1,12 +1,10 @@
 import { expect } from "@jest/globals"
 import { DataSource } from "typeorm"
-import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import getCourtCase from "../../src/services/getCourtCase"
 import { isError } from "../../src/types/Result"
-import deleteFromTable from "../util/deleteFromTable"
-import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
-import User from "services/entities/User"
+import User from "../../src/services/entities/User"
+import { deleteUsers, getDummyUser, insertUsers } from "../util/manageUsers"
+import getUser from "../../src/services/getUser"
 
 describe("getUser", () => {
   let dataSource: DataSource
@@ -16,7 +14,7 @@ describe("getUser", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(User)
+    await deleteUsers()
   })
 
   afterAll(async () => {
@@ -26,21 +24,32 @@ describe("getUser", () => {
   })
 
   it("should return the user when given a matching username", async () => {
-    // Put user in DB
-    // Run getUser(username)
-    // Assert user is correct
+    const inputUser = await getDummyUser()
+    await insertUsers(inputUser)
+
+    const result = await getUser(dataSource, inputUser.username)
+    expect(isError(result)).toBe(false)
+
+    const actualUser = result as User
+    expect(actualUser).toStrictEqual(inputUser)
   })
 
   it("shouldn't return the user when given different username", async () => {
-    // Put user in DB
-    // Run getUser(username)
-    // Assert user is correct
+    const inputUser = await getDummyUser()
+    await insertUsers(inputUser)
+
+    const result = await getUser(dataSource, "usernameWrong")
+    expect(isError(result)).toBe(false)
+    expect(result).toBeNull()
   })
 
   it("shouldn't return the user when given an empty username", async () => {
-    // Put user in DB
-    // Run getUser(username)
-    // Assert user is correct
+    const inputUser = await getDummyUser()
+    await insertUsers(inputUser)
+
+    const result = await getUser(dataSource, "")
+    expect(isError(result)).toBe(false)
+    expect(result).toBeNull()
   })
 
   //TODO: Add some extra tests around featureFlag edge cases
