@@ -1,6 +1,22 @@
 describe("GOV.UK Assets", () => {
-  it("should provide copyright logo", () => {
+  beforeEach(() => {
+    cy.viewport(1280, 720)
+    cy.task("clearCourtCases")
+    cy.task("clearUsers")
+
+    cy.task("insertUsers", [
+      {
+        username: "Bichard01",
+        visibleForces: ["01"],
+        forenames: "Bichard Test User",
+        surname: "01",
+        email: "bichard01@example.com"
+      }
+    ])
     cy.setAuthCookie("Bichard01")
+  })
+
+  it("should provide copyright logo", () => {
     cy.visit("/")
     cy.get(
       "a[href='https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/']"
@@ -10,7 +26,6 @@ describe("GOV.UK Assets", () => {
   })
 
   it("should provide favicon icon that loads correctly", () => {
-    cy.setAuthCookie("Bichard01")
     cy.get("link[rel='shortcut icon']")
       .should("have.attr", "href")
       .then((iconHref) => {
