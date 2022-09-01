@@ -1,16 +1,9 @@
+import User from "services/entities/User"
 import { TestTrigger } from "../../test/util/manageTriggers"
-import type { TestUser } from "../../test/util/manageUsers"
 
 describe("Home", () => {
   context("720p resolution", () => {
-    beforeEach(() => {
-      cy.task("clearCourtCases")
-      cy.task("clearUsers")
-      cy.setAuthCookie("Bichard01")
-      cy.viewport(1280, 720)
-    })
-
-    const users: TestUser[] = Array.from(Array(5)).map((_value, idx) => {
+    const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
       return {
         username: `Bichard0${idx}`,
         visibleForces: [`0${idx}`],
@@ -18,6 +11,13 @@ describe("Home", () => {
         surname: `0${idx}`,
         email: `bichard0${idx}@example.com`
       }
+    })
+
+    beforeEach(() => {
+      cy.task("clearCourtCases")
+      cy.task("clearUsers")
+      cy.setAuthCookie("Bichard01")
+      cy.viewport(1280, 720)
     })
 
     it("should display 0 cases and the user's username when no cases are added", () => {

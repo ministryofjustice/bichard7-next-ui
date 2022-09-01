@@ -1,10 +1,10 @@
-import type { TestUser } from "../../../test/util/manageUsers"
 import type { TestTrigger } from "../../../test/util/manageTriggers"
 import { differenceInMinutes, parse } from "date-fns"
+import User from "services/entities/User"
 
 describe("Case details", () => {
   context("720p resolution", () => {
-    const users: TestUser[] = Array.from(Array(5)).map((_value, idx) => {
+    const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
       return {
         username: `Bichard0${idx}`,
         visibleForces: [`0${idx}`],

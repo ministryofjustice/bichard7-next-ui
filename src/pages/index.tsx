@@ -13,7 +13,6 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import listCourtCases from "services/listCourtCases"
-
 import type CourtCase from "services/entities/CourtCase"
 
 interface Props {

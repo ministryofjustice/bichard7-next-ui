@@ -13,7 +13,8 @@ import {
 } from "./test/util/insertCourtCases"
 import { insertTriggers } from "./test/util/manageTriggers"
 import insertException from "./test/util/manageExceptions"
-import { deleteUsers, insertUsers, TestUser } from "./test/util/manageUsers"
+import { deleteUsers, insertUsersWithOverrides } from "./test/util/manageUsers"
+import User from "services/entities/User"
 
 const protocol = process.env.UI_IS_HTTPS ? "https://" : "http://"
 export default defineConfig({
@@ -57,12 +58,12 @@ export default defineConfig({
           return deleteFromTable(CourtCase)
         },
 
-        insertUsers(users: TestUser[]) {
-          return insertUsers(users)
+        insertUsers(users: Partial<User>[]) {
+          return insertUsersWithOverrides(users)
         },
 
         clearUsers() {
-          return deleteUsers()
+          return deleteUsers().then(() => true)
         },
 
         insertTriggers(args) {
