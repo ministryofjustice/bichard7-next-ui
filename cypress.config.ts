@@ -63,7 +63,7 @@ export default defineConfig({
         },
 
         clearUsers() {
-          return deleteUsers()
+          return deleteUsers().then(() => true)
         },
 
         insertTriggers(args) {
