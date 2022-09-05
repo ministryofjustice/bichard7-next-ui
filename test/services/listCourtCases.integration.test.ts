@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import "reflect-metadata"
-import { expect } from "@jest/globals"
 import { DataSource } from "typeorm"
 import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"

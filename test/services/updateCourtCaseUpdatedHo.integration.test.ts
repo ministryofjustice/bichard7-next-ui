@@ -1,4 +1,3 @@
-import { expect } from "@jest/globals"
 import { DataSource, UpdateResult } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
 import updateCourtCaseUpdatedHo from "../../src/services/updateCourtCaseUpdatedHo"

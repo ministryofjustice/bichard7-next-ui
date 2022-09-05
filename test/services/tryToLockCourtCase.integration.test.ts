@@ -1,4 +1,3 @@
-import { expect } from "@jest/globals"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getCourtCaseByVisibleForce from "../../src/services/getCourtCaseByVisibleForce"

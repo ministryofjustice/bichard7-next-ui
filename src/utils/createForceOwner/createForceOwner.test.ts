@@ -1,4 +1,3 @@
-import { describe, expect } from "@jest/globals"
 import { OrganisationUnitCodes } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import createForceOwner from "./createForceOwner"
 

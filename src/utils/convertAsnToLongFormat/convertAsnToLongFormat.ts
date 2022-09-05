@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 const ASN_MIN_VALID_LENGTH = 9
 /** The index into the ASN field that contains the unique number fields */
 const ASN_NN_INDEX = 7

@@ -1,4 +1,3 @@
-import { describe, expect } from "@jest/globals"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import createDummyAho from "../../../../test/helpers/createDummyAho"
 import amendForceOwner from "./amendForceOwner"

@@ -1,5 +1,4 @@
 import fs from "fs"
-import { expect } from "@jest/globals"
 import { DataSource } from "typeorm"
 import getDataSource from "services/getDataSource"
 import amendCourtCase from "services/amendCourtCase"
