@@ -31,6 +31,14 @@ describe("amend court case", () => {
     await deleteFromTable(CourtCase)
     jest.resetAllMocks()
     jest.clearAllMocks()
+    ;(getCourtCase as jest.Mock).mockImplementation(jest.requireActual("services/getCourtCase").default)
+    ;(parseAhoXml as jest.Mock).mockImplementation(
+      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml").default
+    )
+    ;(updateCourtCaseUpdatedHo as jest.Mock).mockImplementation(
+      jest.requireActual("services/updateCourtCaseUpdatedHo").default
+    )
+    ;(createForceOwner as jest.Mock).mockImplementation(jest.requireActual("utils/createForceOwner").default)
   })
 
   afterAll(async () => {
@@ -38,15 +46,6 @@ describe("amend court case", () => {
   })
 
   it("should amend the court case", async () => {
-    ;(getCourtCase as jest.Mock).mockImplementationOnce(jest.requireActual("services/getCourtCase").default)
-    ;(parseAhoXml as jest.Mock).mockImplementationOnce(
-      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml").default
-    )
-    ;(updateCourtCaseUpdatedHo as jest.Mock).mockImplementationOnce(
-      jest.requireActual("services/updateCourtCaseUpdatedHo").default
-    )
-    ;(createForceOwner as jest.Mock).mockImplementationOnce(jest.requireActual("utils/createForceOwner").default)
-
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -73,15 +72,6 @@ describe("amend court case", () => {
   })
   
   it("should amend the court case when the lock is held by the current user", async () => {
-    ;(getCourtCase as jest.Mock).mockImplementationOnce(jest.requireActual("services/getCourtCase").default)
-    ;(parseAhoXml as jest.Mock).mockImplementationOnce(
-      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml").default
-    )
-    ;(updateCourtCaseUpdatedHo as jest.Mock).mockImplementationOnce(
-      jest.requireActual("services/updateCourtCaseUpdatedHo").default
-    )
-    ;(createForceOwner as jest.Mock).mockImplementationOnce(jest.requireActual("utils/createForceOwner").default)
-
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: "Bichard01",
       triggerLockedByUsername: null,
@@ -109,15 +99,6 @@ describe("amend court case", () => {
 
 
   it("should not update the db if the case is locked by somebody else", async () => {
-    ;(getCourtCase as jest.Mock).mockImplementationOnce(jest.requireActual("services/getCourtCase").default)
-    ;(parseAhoXml as jest.Mock).mockImplementationOnce(
-      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml").default
-    )
-    ;(updateCourtCaseUpdatedHo as jest.Mock).mockImplementationOnce(
-      jest.requireActual("services/updateCourtCaseUpdatedHo").default
-    )
-    ;(createForceOwner as jest.Mock).mockImplementationOnce(jest.requireActual("utils/createForceOwner").default)
-
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: "Bichard02",
       triggerLockedByUsername: null,
@@ -144,15 +125,6 @@ describe("amend court case", () => {
   })
 
   it("should create a force owner if the force owner is not present", async () => {
-    ;(getCourtCase as jest.Mock).mockImplementationOnce(jest.requireActual("services/getCourtCase").default)
-    ;(parseAhoXml as jest.Mock).mockImplementationOnce(
-      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml").default
-    )
-    ;(updateCourtCaseUpdatedHo as jest.Mock).mockImplementationOnce(
-      jest.requireActual("services/updateCourtCaseUpdatedHo").default
-    )
-    ;(createForceOwner as jest.Mock).mockImplementationOnce(jest.requireActual("utils/createForceOwner").default)
-
     const inputXml = fs.readFileSync("test/test-data/AnnotatedHONoForceOwner.xml").toString()
 
     const inputCourtCase = await getDummyCourtCase({
@@ -209,7 +181,6 @@ describe("amend court case", () => {
   })
 
   it("should return an error if the xml is invalid", async () => {
-    ;(getCourtCase as jest.Mock).mockImplementationOnce(jest.requireActual("services/getCourtCase").default)
     ;(parseAhoXml as jest.Mock).mockImplementationOnce(() => new Error(`Failed to parse aho`))
 
     const inputCourtCase = await getDummyCourtCase({
@@ -233,12 +204,7 @@ describe("amend court case", () => {
   })
 
   it("should return an error if it cannot update the db", async () => {
-    ;(getCourtCase as jest.Mock).mockImplementationOnce(jest.requireActual("services/getCourtCase").default)
-    ;(parseAhoXml as jest.Mock).mockImplementationOnce(
-      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml").default
-    )
     ;(updateCourtCaseUpdatedHo as jest.Mock).mockImplementationOnce(() => new Error("Failed to update the database"))
-    ;(createForceOwner as jest.Mock).mockImplementationOnce(jest.requireActual("utils/createForceOwner").default)
 
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
@@ -259,13 +225,6 @@ describe("amend court case", () => {
   })
 
   it("should return an error if the force owner organistaion unit codes are invalid", async () => {
-    ;(getCourtCase as jest.Mock).mockImplementationOnce(jest.requireActual("services/getCourtCase").default)
-    ;(parseAhoXml as jest.Mock).mockImplementationOnce(
-      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml").default
-    )
-    ;(updateCourtCaseUpdatedHo as jest.Mock).mockImplementationOnce(
-      jest.requireActual("services/updateCourtCaseUpdatedHo").default
-    )
     ;(createForceOwner as jest.Mock).mockImplementationOnce(() => new Error("Failed to create organistaion unit codes"))
 
     const inputXml = fs.readFileSync("test/test-data/AnnotatedHONoForceOwner.xml").toString()
