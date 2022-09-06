@@ -131,7 +131,9 @@ describe("Case details", () => {
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedByUsername: existingUserLock,
         triggerLockedByUsername: existingUserLock,
-        orgCodes: ["01"]
+        orgCodes: ["01"],
+        errorCount: 1,
+        triggerCount: 1
       })
 
       cy.visit("/court-cases/0")
@@ -145,7 +147,7 @@ describe("Case details", () => {
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedByUsername: existingUserLock,
         triggerLockedByUsername: existingUserLock,
-        orgCodes: ["01"]
+        orgCodes: ["01"],
       })
 
       cy.visit("/court-cases/0")

@@ -26,7 +26,9 @@ const insertCourtCasesWithOrgCodes = async (orgsCodes: string[]) => {
         orgForPoliceFilter: orgsCodes[index].padEnd(6, " "),
         errorId: index,
         messageId: String(index).padStart(5, "x"),
-        ptiurn: "Case" + String(index).padStart(5, "0")
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        errorCount: 1,
+        triggerCount: 1
       })
     )
   }
@@ -118,7 +120,9 @@ const insertDummyCourtCaseWithLock = async (
         messageId: String(index).padStart(5, "x"),
         ptiurn: "Case" + String(index).padStart(5, "0"),
         errorLockedByUsername: errorLockedByUsername,
-        triggerLockedByUsername: triggerLockedByUsername
+        triggerLockedByUsername: triggerLockedByUsername,
+        errorCount: 1,
+        triggerCount: 1
       })
     )
   }

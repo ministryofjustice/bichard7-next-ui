@@ -1,4 +1,3 @@
-import { expect } from "@jest/globals"
 import { DataSource, UpdateQueryBuilder } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
@@ -28,7 +27,7 @@ describe("lock court case", () => {
 
   it("should unlock a locked court case", async () => {
     const lockedByName = "some user"
-    const lockedCourtCase = await await getDummyCourtCase({
+    const lockedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: lockedByName,
       triggerLockedByUsername: lockedByName
     })
@@ -48,7 +47,7 @@ describe("lock court case", () => {
       .spyOn(UpdateQueryBuilder<CourtCase>.prototype, "execute")
       .mockRejectedValue(Error("Failed to update record with some error"))
 
-    const lockedCourtCase = await await getDummyCourtCase({
+    const lockedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: "dummy",
       triggerLockedByUsername: "dummy"
     })

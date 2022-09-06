@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import "reflect-metadata"
-import { expect } from "@jest/globals"
 import { DataSource } from "typeorm"
 import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
@@ -439,7 +438,7 @@ describe("listCourtCases", () => {
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(1)
+      expect(cases).toHaveLength(2)
       expect(cases[0].errorId).toBe(0)
     })
 
@@ -456,7 +455,7 @@ describe("listCourtCases", () => {
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(1)
+      expect(cases).toHaveLength(2)
       expect(cases[0].errorId).toBe(0)
     })
   })

@@ -1,10 +1,9 @@
-import { expect } from "@jest/globals"
 import { differenceInMinutes } from "date-fns"
 import { DataSource } from "typeorm"
 import { isError } from "types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
-import getCourtCase from "../../src/services/getCourtCase"
+import getCourtCaseByVisibleForce from "../../src/services/getCourtCaseByVisibleForce"
 import getDataSource from "../../src/services/getDataSource"
 import resolveTrigger from "../../src/services/resolveTrigger"
 import deleteFromTable from "../util/deleteFromTable"
@@ -42,7 +41,7 @@ describe("resolveTrigger", () => {
       }
       await insertTriggers(0, [trigger])
 
-      const beforeCourtCaseResult = await getCourtCase(dataSource, 0, visibleForces)
+      const beforeCourtCaseResult = await getCourtCaseByVisibleForce(dataSource, 0, visibleForces)
       expect(isError(beforeCourtCaseResult)).toBeFalsy()
       expect(beforeCourtCaseResult).not.toBeNull()
       const beforeCourtCase = beforeCourtCaseResult as CourtCase
@@ -70,7 +69,7 @@ describe("resolveTrigger", () => {
       expect(updatedTrigger.resolvedBy).toStrictEqual(resolverUsername)
       expect(updatedTrigger.status).toStrictEqual("Resolved")
 
-      const afterCourtCaseResult = await getCourtCase(dataSource, 0, visibleForces)
+      const afterCourtCaseResult = await getCourtCaseByVisibleForce(dataSource, 0, visibleForces)
       expect(isError(afterCourtCaseResult)).toBeFalsy()
       expect(afterCourtCaseResult).not.toBeNull()
       const afterCourtCase = afterCourtCaseResult as CourtCase
@@ -194,7 +193,7 @@ describe("resolveTrigger", () => {
 
       const insertedTriggers = await dataSource.getRepository(Trigger).find({ relations: { courtCase: true } })
       expect(insertedTriggers).toHaveLength(3)
-      let retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, visibleForces)
+      let retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, visibleForces)
       expect(retrievedCourtCase).not.toBeNull()
       let insertedCourtCase = retrievedCourtCase as CourtCase
 
@@ -207,7 +206,7 @@ describe("resolveTrigger", () => {
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
-      retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, ["36"])
+      retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, ["36"])
       expect(retrievedCourtCase).not.toBeNull()
       insertedCourtCase = retrievedCourtCase as CourtCase
       expect(insertedCourtCase.triggerStatus).not.toBeNull()
@@ -219,7 +218,7 @@ describe("resolveTrigger", () => {
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
-      retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, ["36"])
+      retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, ["36"])
       expect(retrievedCourtCase).not.toBeNull()
       insertedCourtCase = retrievedCourtCase as CourtCase
       expect(insertedCourtCase.triggerStatus).not.toBeNull()
@@ -231,7 +230,7 @@ describe("resolveTrigger", () => {
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
-      retrievedCourtCase = await getCourtCase(dataSource, courtCaseId, ["36"])
+      retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, ["36"])
       expect(retrievedCourtCase).not.toBeNull()
       insertedCourtCase = retrievedCourtCase as CourtCase
       expect(insertedCourtCase.triggerStatus).not.toBeNull()

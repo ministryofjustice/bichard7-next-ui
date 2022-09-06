@@ -1,13 +1,14 @@
-import { expect } from "@jest/globals"
 import { DataSource } from "typeorm"
-import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import getCourtCase from "../../src/services/getCourtCase"
-import { isError } from "../../src/types/Result"
-import deleteFromTable from "../util/deleteFromTable"
 import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
+import deleteFromTable from "../util/deleteFromTable"
+import { isError } from "../../src/types/Result"
+import CourtCase from "../../src/services/entities/CourtCase"
 
-describe("getCourtCases", () => {
+jest.setTimeout(60 * 60 * 1000)
+
+describe("get court case", () => {
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -19,56 +20,39 @@ describe("getCourtCases", () => {
   })
 
   afterAll(async () => {
-    if (dataSource) {
-      await dataSource.destroy()
-    }
+    await dataSource.destroy()
   })
 
-  it("should return court case details when record exists and is visible to the specified forces", async () => {
-    const orgCode = "36FPA1"
+  it("should amend the court case", async () => {
     const inputCourtCase = await getDummyCourtCase({
-      orgForPoliceFilter: orgCode.padEnd(6, " ")
+      errorLockedByUsername: null,
+      triggerLockedByUsername: null,
+      errorCount: 1,
+      errorStatus: "Unresolved",
+      triggerCount: 1,
+      phase: 1
     })
+
     await insertCourtCases(inputCourtCase)
 
-    let result = await getCourtCase(dataSource, inputCourtCase.errorId, [orgCode])
+    expect(inputCourtCase.updatedHearingOutcome).toBe(null)
+
+    const result = await getCourtCase(dataSource, inputCourtCase.errorId)
     expect(isError(result)).toBe(false)
 
-    let actualCourtCase = result as CourtCase
-    expect(actualCourtCase).toStrictEqual(inputCourtCase)
-
-    result = await getCourtCase(dataSource, inputCourtCase.errorId, [orgCode.substring(0, 2)])
-    expect(isError(result)).toBe(false)
-
-    actualCourtCase = result as CourtCase
-    expect(actualCourtCase).toStrictEqual(inputCourtCase)
+    expect(result).toStrictEqual(inputCourtCase)
   })
 
   it("should return null if the court case doesn't exist", async () => {
-    const result = await getCourtCase(dataSource, 0, ["36FPA1"])
-
-    expect(result).toBeNull()
-  })
-
-  it("should return null when record exists and is not visible to the specified forces", async () => {
-    const orgCode = "36FPA1"
-    const differentOrgCode = "36FPA3"
     const inputCourtCase = await getDummyCourtCase({
-      orgForPoliceFilter: orgCode.padEnd(6, " ")
+      errorLockedByUsername: null,
+      triggerLockedByUsername: null,
+      errorCount: 1,
+      errorStatus: "Unresolved",
+      triggerCount: 1,
+      phase: 1
     })
-    await insertCourtCases(inputCourtCase)
-    const result = await getCourtCase(dataSource, 0, [differentOrgCode])
-
-    expect(result).toBeNull()
-  })
-
-  it("should return null when record exists and there is no visible forces", async () => {
-    const orgCode = "36FPA1"
-    const inputCourtCase = await getDummyCourtCase({
-      orgForPoliceFilter: orgCode.padEnd(6, " ")
-    })
-    await insertCourtCases(inputCourtCase)
-    const result = await getCourtCase(dataSource, 0, [])
+    const result = await getCourtCase(dataSource, inputCourtCase.errorId)
 
     expect(result).toBeNull()
   })
