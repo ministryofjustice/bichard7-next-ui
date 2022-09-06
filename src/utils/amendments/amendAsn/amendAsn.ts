@@ -1,5 +1,5 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
-import convertAsnToLongFormat from "utils/convertAsnToLongFormat"
+import convertAsnToLongFormat from "@moj-bichard7-developers/bichard7-next-core/build/src/enrichAho/enrichFunctions/enrichDefendant/convertAsnToLongFormat"
 
 const amendAsn = (newAsn: string, aho: AnnotatedHearingOutcome) => {
   if (newAsn.length < 19) {

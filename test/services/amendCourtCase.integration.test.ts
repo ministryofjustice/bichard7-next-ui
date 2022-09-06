@@ -1,15 +1,16 @@
-import fs from "fs"
-import { DataSource } from "typeorm"
-import getDataSource from "services/getDataSource"
-import amendCourtCase from "services/amendCourtCase"
-import User from "services/entities/User"
-import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
-import deleteFromTable from "../util/deleteFromTable"
-import CourtCase from "services/entities/CourtCase"
-import updateCourtCaseUpdatedHo from "services/updateCourtCaseUpdatedHo"
-import getCourtCase from "../../src/services/getCourtCase"
+import { expect } from "@jest/globals"
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
+import fs from "fs"
+import amendCourtCase from "services/amendCourtCase"
+import CourtCase from "services/entities/CourtCase"
+import User from "services/entities/User"
+import getDataSource from "services/getDataSource"
+import updateCourtCaseUpdatedHo from "services/updateCourtCaseUpdatedHo"
+import { DataSource } from "typeorm"
 import createForceOwner from "utils/createForceOwner"
+import getCourtCase from "../../src/services/getCourtCase"
+import deleteFromTable from "../util/deleteFromTable"
+import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
 
 jest.mock("services/getCourtCase")
 jest.mock("services/updateCourtCaseUpdatedHo")
@@ -69,7 +70,7 @@ describe("amend court case", () => {
 
     expect(retrievedCase?.updatedHearingOutcome).not.toBe(null)
   })
-  
+
   it("should amend the court case when the lock is held by the current user", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: "Bichard01",
@@ -95,7 +96,6 @@ describe("amend court case", () => {
 
     expect(retrievedCase?.updatedHearingOutcome).not.toBe(null)
   })
-
 
   it("should not update the db if the case is locked by somebody else", async () => {
     const inputCourtCase = await getDummyCourtCase({
@@ -146,7 +146,6 @@ describe("amend court case", () => {
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
   })
-
 
   it("should return an error when the court case is not found", async () => {
     const inputCourtCase = await getDummyCourtCase({
