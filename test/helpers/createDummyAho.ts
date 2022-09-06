@@ -1,9 +1,25 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/ExceptionCode"
 import createDummyOffence from "./createDummyOffence"
 import createDummyResult from "./createDummyResult"
 
 const createDummyAho = (): AnnotatedHearingOutcome => {
   return {
+    Exceptions: [
+      {
+        path: [
+          "AnnotatedHearingOutcome",
+          "HearingOutcome",
+          "Case",
+          "HearingDefendant",
+          "Offence",
+          1234,
+          "Result",
+          5678
+        ],
+        code: "Exception_Code" as ExceptionCode
+      }
+    ],
     AnnotatedHearingOutcome: {
       HearingOutcome: {
         Case: {
