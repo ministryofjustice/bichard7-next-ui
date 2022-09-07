@@ -35,6 +35,8 @@ function pull_and_build_from_aws() {
       --password-stdin \
       "${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com"
 
+  docker ps
+
   # Get our latest staged nodejs image
   IMAGE_HASH=$(aws ecr describe-images --repository-name "${DOCKER_REFERENCE}" | jq '.imageDetails|sort_by(.imagePushedAt)[-1].imageDigest' | tr -d '"')
 
@@ -51,7 +53,6 @@ else
 fi
 
   if [[ -n "${CODEBUILD_RESOLVED_SOURCE_VERSION}" && -n "${CODEBUILD_START_TIME}" ]]; then
-
       ## Install goss/trivy
       curl -L https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
       chmod +rx /usr/local/bin/goss
