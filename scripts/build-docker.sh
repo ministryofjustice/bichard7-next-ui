@@ -50,7 +50,7 @@ else
     docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" -t ui .
 fi
 
-  if [[ -n ${CODEBUILD_RESOLVED_SOURCE_VERSION+""} && -n ${CODEBUILD_START_TIME+""} ]]; then
+  if [[ -n "${CODEBUILD_RESOLVED_SOURCE_VERSION}" && -n "${CODEBUILD_START_TIME}" ]]; then
 
       ## Install goss/trivy
       curl -L https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
