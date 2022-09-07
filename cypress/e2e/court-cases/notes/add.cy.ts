@@ -45,8 +45,8 @@ describe("Home", () => {
 
       cy.get("H2").should("have.text", "Case Details")
       const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-      cy.get("table").eq(2).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
-      cy.get("table").eq(2).find("tr").eq(0).find("td").last().should("have.text", "Dummy note")
+      cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
+      cy.get("table").eq(-1).find("tr").eq(0).find("td").last().should("have.text", "Dummy note")
     })
 
     it("should be able to add a long note", () => {
@@ -70,12 +70,12 @@ describe("Home", () => {
 
       cy.get("H2").should("have.text", "Case Details")
       const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-      cy.get("table").eq(2).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
-      cy.get("table").eq(2).find("tr").eq(0).find("td").last().should("have.text", "A ".repeat(500))
-      cy.get("table").eq(2).find("tr").eq(1).find("td").first().contains(dateTimeRegex)
-      cy.get("table").eq(2).find("tr").eq(1).find("td").last().should("have.text", "B ".repeat(500))
-      cy.get("table").eq(2).find("tr").eq(2).find("td").first().contains(dateTimeRegex)
-      cy.get("table").eq(2).find("tr").eq(2).find("td").last().should("have.text", "C ".repeat(100))
+      cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
+      cy.get("table").eq(-1).find("tr").eq(0).find("td").last().should("have.text", "A ".repeat(500))
+      cy.get("table").eq(-1).find("tr").eq(1).find("td").first().contains(dateTimeRegex)
+      cy.get("table").eq(-1).find("tr").eq(1).find("td").last().should("have.text", "B ".repeat(500))
+      cy.get("table").eq(-1).find("tr").eq(2).find("td").first().contains(dateTimeRegex)
+      cy.get("table").eq(-1).find("tr").eq(2).find("td").last().should("have.text", "C ".repeat(100))
     })
 
     it("should show error message when note text is empty", () => {
@@ -101,7 +101,7 @@ describe("Home", () => {
       cy.get("SPAN").eq(3).should("have.text", "Required")
     })
 
-    it("should be able to add a note when case is visible to the user and not locked by another user", () => {
+    it("Adding an empty note doesn't add a note, when the case is visible to the user and not locked by another user", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["01"])
       const triggers: TestTrigger[] = [
         {
@@ -120,7 +120,6 @@ describe("Home", () => {
 
       cy.url().should("match", /.*\/court-cases\/0/)
       cy.get("H2").should("have.text", "Case Details")
-      cy.get("table").should("have.length", 2)
       cy.findByText("Case has no notes.").should("exist")
     })
 

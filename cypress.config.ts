@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { defineConfig } from "cypress"
-import CourtCase from "services/entities/CourtCase"
+import CourtCase from "./src/services/entities/CourtCase"
 import deleteFromTable from "./test/util/deleteFromTable"
 import {
   insertCourtCases,
@@ -14,7 +14,7 @@ import {
 import { insertTriggers } from "./test/util/manageTriggers"
 import insertException from "./test/util/manageExceptions"
 import { deleteUsers, insertUsersWithOverrides } from "./test/util/manageUsers"
-import User from "services/entities/User"
+import User from "./src/services/entities/User"
 
 const protocol = process.env.UI_IS_HTTPS ? "https://" : "http://"
 export default defineConfig({

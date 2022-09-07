@@ -74,13 +74,54 @@ describe("Case details", () => {
 
       // Triggers table
       cy.get("H3").contains("Triggers")
-      cy.get("table").eq(1).find("tr").should("have.length", 2)
-      cy.get("table").eq(1).find("tr").eq(1).find("td").first().should("have.text", "TRPR0001")
-      cy.get("table").eq(1).find("tr").eq(1).find("td").eq(4).should("have.text", "09/07/2022 12:22:34")
+      cy.get("table").eq(-1).find("tr").should("have.length", 2)
+      cy.get("table").eq(-1).find("tr").eq(1).find("td").first().should("have.text", "TRPR0001")
+      cy.get("table").eq(-1).find("tr").eq(1).find("td").eq(4).should("have.text", "09/07/2022 12:22:34")
 
       // Notes
       cy.get("H3").contains("Notes")
       cy.get("p").contains("Case has no notes.")
+    })
+
+    it("should load the hearing outcome details for the case that this user can see", () => {
+      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.visit("/court-cases/0")
+
+      // Hearing Outcome Table
+      // Hearing Tab
+      cy.get("ul").eq(1).find("li > a").eq(0).should("have.text", "Hearing")
+      cy.get("#0").find("table > tbody > tr > td").first().should("have.text", "Court location")
+      cy.get("#0").find("table > tbody > tr > td").eq(1).should("have.text", "B41ME00")
+
+      // Case Tab
+      cy.get("ul").eq(1).find("li > a").eq(1).should("have.text", "Case")
+      cy.get("ul").eq(1).find("li > a").eq(1).click()
+      cy.get("#1").find("table > tbody > tr > td").first().should("have.text", "PTIURN")
+      cy.get("#1").find("table > tbody > tr > td").eq(1).should("have.text", "41BP0510007")
+
+      // Defendant Tab
+      cy.get("ul").eq(1).find("li > a").eq(2).should("have.text", "Defendant")
+      cy.get("ul").eq(1).find("li > a").eq(2).click()
+      cy.get("#2").find("table > tbody > tr > td").first().should("have.text", "ASN")
+      cy.get("#2").find("table > tbody > tr > td").eq(1).should("have.text", "9625UC0000000118191Z")
+
+      // Offences
+      cy.get("ul").eq(1).find("li > a").eq(3).should("have.text", "Offences")
+      cy.get("ul").eq(1).find("li > a").eq(3).click()
+      cy.get("#3").find("table > tbody > tr > td").first().should("have.text", "1")
+      cy.get("#3")
+        .find("table > tbody > tr > td")
+        .last()
+        .should("have.text", "Burglary other than dwelling with intent to steal")
     })
 
     it("should return 404 for a case that this user can not see", () => {
@@ -147,7 +188,7 @@ describe("Case details", () => {
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedByUsername: existingUserLock,
         triggerLockedByUsername: existingUserLock,
-        orgCodes: ["01"],
+        orgCodes: ["01"]
       })
 
       cy.visit("/court-cases/0")
@@ -189,7 +230,7 @@ describe("Case details", () => {
 
       cy.get("button").contains("Resolve trigger").click()
       cy.get("table")
-        .eq(1)
+        .eq(-1)
         .then((table) => {
           expect(table.find("td").eq(2).text()).to.equal(user)
           const resolutionTime = parse(table.find("td").eq(3).text(), "dd/MM/yyyy HH:mm:ss", new Date())
