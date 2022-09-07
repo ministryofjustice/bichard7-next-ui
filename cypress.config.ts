@@ -76,5 +76,6 @@ export default defineConfig({
       })
     }
   },
-  chromeWebSecurity: false
+  chromeWebSecurity: false,
+  video: false
 })
