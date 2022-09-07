@@ -1,5 +1,6 @@
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
 import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/build/src/serialise/ahoXml/generate"
+import Phase from "@moj-bichard7-developers/bichard7-next-core/build/src/types/Phase"
 import getCourtCase from "../../services/getCourtCase"
 import updateCourtCaseUpdatedHo from "services/updateCourtCaseUpdatedHo"
 import { DataSource } from "typeorm"
@@ -9,12 +10,6 @@ import createForceOwner from "utils/createForceOwner"
 import applyAmendmentsToAho from "./applyAmendmentsToAho"
 
 import type User from "../entities/User"
-
-// TODO: export from core
-enum Phase {
-  HEARING_OUTCOME = 1,
-  PNC_UPDATE = 2
-}
 
 const amendCourtCase = async (
   amendments: Partial<Amendments>,

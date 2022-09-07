@@ -1,4 +1,3 @@
-import { expect } from "@jest/globals"
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
 import fs from "fs"
 import amendCourtCase from "services/amendCourtCase"
