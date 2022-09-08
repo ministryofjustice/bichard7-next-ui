@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eux
+set -ex
 
 readonly DOCKER_REFERENCE="nginx-nodejs-supervisord"
 
@@ -26,7 +26,7 @@ function pull_and_build_from_aws() {
 
   echo "Building ui docker image on `date`"
 
-  if [[ -z ${AWS_ACCOUNT_ID+""} ]]; then
+  if [[ -z "${AWS_ACCOUNT_ID}" ]]; then
       AWS_ACCOUNT_ID=$FETCHED_AWS_ACCOUNT_ID
   fi
 
@@ -46,10 +46,12 @@ function pull_and_build_from_aws() {
 if [ $(arch) = "arm64" ]
 then
     echo "Building for ARM(emulated linux/amd64)"
-    docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" --platform=linux/amd64 -t ui .
+    echo "BUILD PLACEHOLDER"
+    # docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" --platform=linux/amd64 -t ui .
 else
     echo "Building regular image"
-    docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" -t ui .
+    echo "BUILD PLACEHOLDER"
+    # docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" -t ui .
 fi
 
   if [[ -n "${CODEBUILD_RESOLVED_SOURCE_VERSION}" && -n "${CODEBUILD_START_TIME}" ]]; then
@@ -123,10 +125,12 @@ if [[ "$(has_local_image)" -gt 0 ]]; then
   if [ $(arch) = "arm64" ]
   then
       echo "Building for ARM"
-      docker build --platform=linux/amd64 -t ui:latest .
+      echo "BUILD PLACEHOLDER"
+      # docker build --platform=linux/amd64 -t ui:latest .
   else
       echo "Building regular image"
-      docker build -t ui:latest .
+      echo "BUILD PLACEHOLDER"
+      # docker build -t ui:latest .
   fi
 else
   pull_and_build_from_aws
