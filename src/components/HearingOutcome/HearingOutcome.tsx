@@ -5,15 +5,6 @@ interface Props {
   aho: AnnotatedHearingOutcome
 }
 
-const HearingOutcome: React.FC<Props> = ({ aho }) => (
-  <>
-    <HearingTable aho={aho} />
-    <CaseTable aho={aho} />
-    <DefendantTable aho={aho} />
-    <OffencesTable aho={aho} />
-  </>
-)
-
 const HearingTable: React.FC<{ aho: AnnotatedHearingOutcome }> = ({ aho }) => (
   <Table
     head={
@@ -223,6 +214,15 @@ const OffencesTable: React.FC<{ aho: AnnotatedHearingOutcome }> = ({ aho }) => (
       )
     })}
   </Table>
+)
+
+const HearingOutcome: React.FC<Props> = ({ aho }) => (
+  <>
+    <HearingTable aho={aho} />
+    <CaseTable aho={aho} />
+    <DefendantTable aho={aho} />
+    <OffencesTable aho={aho} />
+  </>
 )
 
 export default HearingOutcome
