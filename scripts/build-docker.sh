@@ -35,8 +35,6 @@ function pull_and_build_from_aws() {
       --password-stdin \
       "${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com"
 
-  docker ps
-
   # Get our latest staged nodejs image
   IMAGE_HASH=$(aws ecr describe-images --repository-name "${DOCKER_REFERENCE}" | jq '.imageDetails|sort_by(.imagePushedAt)[-1].imageDigest' | tr -d '"')
 
@@ -46,12 +44,10 @@ function pull_and_build_from_aws() {
 if [ $(arch) = "arm64" ]
 then
     echo "Building for ARM(emulated linux/amd64)"
-    echo "BUILD PLACEHOLDER"
-    # docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" --platform=linux/amd64 -t ui .
+    docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" --platform=linux/amd64 -t ui .
 else
     echo "Building regular image"
-    echo "BUILD PLACEHOLDER"
-    # docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" -t ui .
+    docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" -t ui .
 fi
 
   if [[ -n "${CODEBUILD_RESOLVED_SOURCE_VERSION}" && -n "${CODEBUILD_START_TIME}" ]]; then
@@ -88,9 +84,9 @@ fi
       pull_trivy_db
 
       ## Run goss tests
-      DB_CONTAINER=docker ps -aqf "name=bichard7-next_pg"
-      DB_HOST=docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DB_CONTAINER
-      GOSS_SLEEP=15 dgoss run -e DB_HOST=$DB_HOST "ui:latest"
+      # DB_CONTAINER=docker ps -aqf "name=bichard7-next_pg"
+      # DB_HOST=docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DB_CONTAINER
+      GOSS_SLEEP=15 dgoss run "ui:latest"
 
       ## Run Trivy scan
       TRIVY_CACHE_DIR=trivy trivy image \
@@ -125,12 +121,10 @@ if [[ "$(has_local_image)" -gt 0 ]]; then
   if [ $(arch) = "arm64" ]
   then
       echo "Building for ARM"
-      echo "BUILD PLACEHOLDER"
-      # docker build --platform=linux/amd64 -t ui:latest .
+      docker build --platform=linux/amd64 -t ui:latest .
   else
       echo "Building regular image"
-      echo "BUILD PLACEHOLDER"
-      # docker build -t ui:latest .
+      docker build -t ui:latest .
   fi
 else
   pull_and_build_from_aws
