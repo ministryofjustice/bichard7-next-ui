@@ -74,9 +74,9 @@ describe("Case details", () => {
 
       // Triggers table
       cy.get("H3").contains("Triggers")
-      cy.get("table").eq(1).find("tr").should("have.length", 2)
-      cy.get("table").eq(1).find("tr").eq(1).find("td").first().should("have.text", "TRPR0001")
-      cy.get("table").eq(1).find("tr").eq(1).find("td").eq(4).should("have.text", "09/07/2022 12:22:34")
+      cy.get("table").eq(-1).find("tr").should("have.length", 2)
+      cy.get("table").eq(-1).find("tr").eq(1).find("td").first().should("have.text", "TRPR0001")
+      cy.get("table").eq(-1).find("tr").eq(1).find("td").eq(4).should("have.text", "09/07/2022 12:22:34")
 
       // Notes
       cy.get("H3").contains("Notes")
@@ -147,7 +147,7 @@ describe("Case details", () => {
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedByUsername: existingUserLock,
         triggerLockedByUsername: existingUserLock,
-        orgCodes: ["01"],
+        orgCodes: ["01"]
       })
 
       cy.visit("/court-cases/0")
@@ -189,7 +189,7 @@ describe("Case details", () => {
 
       cy.get("button").contains("Resolve trigger").click()
       cy.get("table")
-        .eq(1)
+        .eq(-1)
         .then((table) => {
           expect(table.find("td").eq(2).text()).to.equal(user)
           const resolutionTime = parse(table.find("td").eq(3).text(), "dd/MM/yyyy HH:mm:ss", new Date())
