@@ -21,6 +21,7 @@ export default <Props>(getServerSidePropsFunction: GetServerSideProps<Props>): G
     }
 
     if (!currentUser || isError(currentUser)) {
+      console.error(currentUser)
       res.statusCode = 401
       res.statusMessage = "Unauthorized"
       res.end()
