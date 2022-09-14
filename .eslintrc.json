@@ -29,7 +29,7 @@
       ],
       "parserOptions": {
         "ecmaVersion": 2020,
-        "project": "tsconfig.json"
+        "project": ["tsconfig.json", "cypress/tsconfig.json"]
       },
       "plugins": ["@typescript-eslint", "filenames"],
       "rules": {
@@ -37,12 +37,12 @@
         "no-console": "off",
         "no-plusplus": "off",
         "no-useless-escape": "off",
-        "require-await": "error",
+        "require-await": "off",
         "filenames/match-exported": "error",
         "import/first": "error",
         "import/no-cycle": "error",
         "import/no-anonymous-default-export": "off",
-        "import/prefer-default-export": "error",
+        "import/prefer-default-export": "off",
         "prettier/prettier": ["error"],
         "react/jsx-curly-brace-presence": ["error", { "props": "ignore", "children": "always" }],
         "react/require-default-props": ["off"],
@@ -75,7 +75,9 @@
       "files": ["**/*.stories.*"],
       "rules": {
         "import/no-extraneous-dependencies": "off",
-        "import/prefer-default-export": "off"
+        "import/prefer-default-export": "off",
+        "@typescript-eslint/no-non-null-assertion": "off"
+
       }
     },
     {

@@ -9,6 +9,10 @@ const createDummyOffence = (): Offence =>
       },
       OffenceReasonSequence: "0000"
     },
+    ActualOffenceStartDate: {
+      StartDate: new Date()
+    },
+    OffenceTitle: "Crime",
 
     Result: [createDummyResult()]
   } as Offence)

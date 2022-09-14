@@ -1,7 +1,8 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import DateTime from "components/DateTime"
 import If from "components/If"
-import ResolveTrigger from "components/ResolveTrigger/ResolveTrigger"
+import HearingOutcome from "components/HearingOutcome"
+import ResolveTrigger from "components/ResolveTrigger"
 import LinkButton from "components/LinkButton"
 import { Heading, Paragraph, Table } from "govuk-react"
 import CourtCase from "services/entities/CourtCase"
@@ -45,8 +46,10 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         <Table.Cell>{courtCase.triggerReason}</Table.Cell>
       </Table.Row>
       <Table.Row>
-        <Table.CellHeader>{"Hearing OU"}</Table.CellHeader>
-        <Table.Cell>{"Implement me!"}</Table.Cell>
+        <Table.CellHeader>{"Hearing Outcome"}</Table.CellHeader>
+        <Table.Cell>
+          <HearingOutcome aho={aho} />
+        </Table.Cell>
       </Table.Row>
       <Table.Row>
         <Table.CellHeader>{"Organisation Unit Code"}</Table.CellHeader>
