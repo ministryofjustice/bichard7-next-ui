@@ -11,9 +11,10 @@ interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
   lockedByAnotherUser: boolean
+  triggersVisible: boolean
 }
 
-const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser }) => (
+const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser, triggersVisible }) => (
   <>
     <Heading as="h2" size="LARGE">
       {"Case Details"}
@@ -58,10 +59,10 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         </Table.Cell>
       </Table.Row>
     </Table>
-    <Heading as="h3" size="MEDIUM">
-      {"Triggers"}
-    </Heading>
-    <If condition={(courtCase?.triggers?.length ?? 0) > 0}>
+    <If condition={triggersVisible && (courtCase?.triggers?.length ?? 0) > 0}>
+      <Heading as="h3" size="MEDIUM">
+        {"Triggers"}
+      </Heading>
       <Table>
         <Table.Row>
           <Table.CellHeader>{"Code"}</Table.CellHeader>

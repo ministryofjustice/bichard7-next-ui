@@ -31,7 +31,7 @@ const courtCase = {
 const aho = parseAhoXml(CourtCaseAho.hearingOutcomeXml) as AnnotatedHearingOutcome
 
 export const DetailsNotLockedByAnotherUser: ComponentStory<typeof CourtCaseDetails> = () => (
-  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={false} aho={aho} />
+  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={false} aho={aho} triggersVisible={true} />
 )
 
 DetailsNotLockedByAnotherUser.play = ({ canvasElement }) => {
@@ -48,7 +48,7 @@ DetailsNotLockedByAnotherUser.play = ({ canvasElement }) => {
 }
 
 export const DetailsLockedByAnotherUser: ComponentStory<typeof CourtCaseDetails> = () => (
-  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={true} aho={aho} />
+  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={true} aho={aho} triggersVisible={true} />
 )
 
 DetailsLockedByAnotherUser.play = ({ canvasElement }) => {
@@ -62,4 +62,23 @@ DetailsLockedByAnotherUser.play = ({ canvasElement }) => {
     canvas.getAllByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
   ).toHaveLength(2)
   expect(canvas.queryByText("Add Note")).not.toBeInTheDocument()
+}
+
+export const TriggersNotVisibleToUser: ComponentStory<typeof CourtCaseDetails> = () => (
+  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={false} aho={aho} triggersVisible={false} />
+)
+
+TriggersNotVisibleToUser.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+  await expect(canvas.getByText(courtCase.ptiurn)).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  await expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy"))).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.defendantName!)).toBeInTheDocument()
+  await expect(canvas.getByText(courtCase.triggerReason!)).toBeInTheDocument()
+  await expect(
+    canvas.getByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
+  ).toBeInTheDocument()
+  expect(await canvas.queryByText("Resolve trigger")).toBeNull()
+  await expect(canvas.getByText("Add Note")).toBeInTheDocument()
 }
