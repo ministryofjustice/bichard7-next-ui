@@ -4,6 +4,7 @@ import { isError } from "../../src/types/Result"
 import User from "../../src/services/entities/User"
 import { deleteUsers, getDummyUser, insertUsers } from "../util/manageUsers"
 import getUser from "../../src/services/getUser"
+import GroupName from "types/GroupName"
 
 describe("getUser", () => {
   let dataSource: DataSource
@@ -25,12 +26,15 @@ describe("getUser", () => {
   it("should return the user when given a matching username", async () => {
     const inputUser = await getDummyUser()
     await insertUsers(inputUser)
+    const groups = ["B7Supervisor_grp", "B7GeneralHandler_grp"]
+    const expectedGroups: GroupName[] = ["Supervisor", "GeneralHandler"]
 
-    const result = await getUser(dataSource, inputUser.username)
+    const result = await getUser(dataSource, inputUser.username, groups)
+    console.log(result)
     expect(isError(result)).toBe(false)
 
     const actualUser = result as User
-    expect(actualUser).toStrictEqual(inputUser)
+    expect({ ...actualUser }).toStrictEqual({ ...inputUser, _groups: expectedGroups })
   })
 
   it("shouldn't return the user when given different username", async () => {

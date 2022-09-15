@@ -10,7 +10,7 @@ export default async (
 ): PromiseResult<User | null> => {
   const user = await dataSource
     .getRepository(User)
-    .findOne({ where: { username: username }, relations: { groups: true } })
+    .findOneBy({ username: username })
     .catch((error) => error)
 
   if (isError(user)) {
