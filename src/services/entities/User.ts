@@ -23,4 +23,20 @@ export default class User extends BaseEntity {
 
   @Column({ name: "feature_flags", transformer: featureFlagTransformer, type: "jsonb" })
   featureFlags!: KeyValuePair<string, boolean>
+
+  groups: string[] = []
+
+  get canLockTriggers() {
+    return this.groups.some(
+      (group) =>
+        group === "TriggerHandler" || group === "GeneralHandler" || group === "Allocator" || group === "Supervisor"
+    )
+  }
+
+  get canLockExceptions() {
+    return this.groups.some(
+      (group) =>
+        group === "ExceptionHandler" || group === "GeneralHandler" || group === "Allocator" || group === "Supervisor"
+    )
+  }
 }
