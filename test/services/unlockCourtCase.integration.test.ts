@@ -37,8 +37,6 @@ describe("lock court case", () => {
     const user = {
       canLockExceptions: true,
       canLockTriggers: true,
-      canUnlockOtherUsersExceptions: false,
-      canUnlockOtherUsersTriggers: false,
       username: lockedByName
     } as User
 
@@ -62,8 +60,6 @@ describe("lock court case", () => {
     const user = {
       canLockExceptions: true,
       canLockTriggers: false,
-      canUnlockOtherUsersExceptions: false,
-      canUnlockOtherUsersTriggers: false,
       username: lockedByName
     } as User
 
@@ -87,8 +83,6 @@ describe("lock court case", () => {
     const user = {
       canLockExceptions: false,
       canLockTriggers: true,
-      canUnlockOtherUsersExceptions: false,
-      canUnlockOtherUsersTriggers: false,
       username: lockedByName
     } as User
 
@@ -115,8 +109,6 @@ describe("lock court case", () => {
     const user = {
       canLockExceptions: false,
       canLockTriggers: false,
-      canUnlockOtherUsersExceptions: false,
-      canUnlockOtherUsersTriggers: false,
       username: "dummy username"
     } as User
 

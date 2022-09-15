@@ -48,12 +48,4 @@ export default class User extends BaseEntity {
         group === "ExceptionHandler" || group === "GeneralHandler" || group === "Allocator" || group === "Supervisor"
     )
   }
-
-  get canUnlockOtherUsersTriggers() {
-    return this._groups.some((group) => group === "Allocator" || group === "Supervisor")
-  }
-
-  get canUnlockOtherUsersExceptions() {
-    return this._groups.some((group) => group === "Allocator" || group === "Supervisor")
-  }
 }
