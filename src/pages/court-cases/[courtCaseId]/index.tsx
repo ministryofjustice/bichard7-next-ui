@@ -36,7 +36,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       if (!!lock && lock === "true") {
         lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser)
       } else if (!!lock && lock === "false") {
-        lockResult = await unlockCourtCase(dataSource, +courtCaseId)
+        lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser)
       }
     }
 
