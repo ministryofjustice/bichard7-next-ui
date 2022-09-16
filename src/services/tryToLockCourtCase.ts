@@ -8,10 +8,9 @@ const tryToLockCourtCase = (
   courtCaseId: number,
   user: User
 ): Promise<UpdateResult | Error> | Error => {
-  const lockException = user.canLockExceptions
-  const lockTrigger = user.canLockTriggers
+  const { canLockExceptions, canLockTriggers } = user
 
-  if (!lockException && !lockTrigger) {
+  if (!canLockExceptions && !canLockTriggers) {
     return new Error("update requires a lock (exception or trigger) to update")
   }
 
@@ -21,14 +20,14 @@ const tryToLockCourtCase = (
     .createQueryBuilder()
     .update(CourtCase)
     .set({
-      ...(lockException ? { errorLockedByUsername: user.username } : {}),
-      ...(lockTrigger ? { triggerLockedByUsername: user.username } : {})
+      ...(canLockExceptions ? { errorLockedByUsername: user.username } : {}),
+      ...(canLockTriggers ? { triggerLockedByUsername: user.username } : {})
     })
     .where({ errorId: courtCaseId })
 
   const submitted: ResolutionStatus = "Submitted"
 
-  if (lockException) {
+  if (canLockExceptions) {
     query.andWhere({
       errorLockedByUsername: IsNull(),
       errorCount: MoreThan(0),
@@ -36,7 +35,7 @@ const tryToLockCourtCase = (
     })
   }
 
-  if (lockTrigger) {
+  if (canLockTriggers) {
     // we are checking the trigger status, this is not what legacy bichard does but we think that's a bug. Legacy bichard checks error_status (bichard-backend/src/main/java/uk/gov/ocjr/mtu/br7/errorlistmanager/data/ErrorDAO.java ln 1455)
     query.andWhere({
       triggerLockedByUsername: IsNull(),
