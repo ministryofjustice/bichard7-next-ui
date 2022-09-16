@@ -49,7 +49,7 @@ const amendCourtCase = async (
   const generatedXml = convertAhoToXml(aho)
   // Depending on the phase, treat the update as either hoUpdate or pncUpdate
   if (courtCaseRow.phase === Phase.HEARING_OUTCOME) {
-    if (!amendments.noUpdatesResubmission || ahoForceOwner === undefined) {
+    if (!amendments.noUpdatesResubmit || ahoForceOwner === undefined) {
       if (courtCaseRow.errorLockedByUsername === userDetails.username || courtCaseRow.errorLockedByUsername === null) {
         const updateResult = await updateCourtCaseUpdatedHo(dataSource, courtCaseId, generatedXml)
         if (isError(updateResult)) {
@@ -62,7 +62,6 @@ const amendCourtCase = async (
   }
 
   // TODO: Set the status on the record -- see ScreenFlowImpl.java -> submitResolvedError -> line 872
-  // TODO: Unlock the record -- see ScreenFlowImpl.java -> submitResolvedError -> line 881
   return updatedAho
 }
 

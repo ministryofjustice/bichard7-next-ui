@@ -18,6 +18,8 @@ import { isError } from "types/Result"
 import { isPost } from "utils/http"
 import { UpdateResult } from "typeorm"
 import resolveTrigger from "services/resolveTrigger"
+import { resubmitCourtCase } from "services/resubmitCourtCase"
+import parseFormData from "utils/parseFormData"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -26,16 +28,17 @@ export const getServerSideProps = withMultipleServerSideProps(
     const {
       courtCaseId,
       lock,
-      resolveTrigger: triggerToResolve
-    } = query as { courtCaseId: string; lock: string; resolveTrigger: string }
+      resolveTrigger: triggerToResolve,
+      resubmitCase
+    } = query as { courtCaseId: string; lock: string; resolveTrigger: string; resubmitCase: string }
     const dataSource = await getDataSource()
 
     let lockResult: UpdateResult | Error | undefined
 
-    if (isPost(req)) {
-      if (!!lock && lock === "true") {
+    if (isPost(req) && !!lock) {
+      if (lock === "true") {
         lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser)
-      } else if (!!lock && lock === "false") {
+      } else if (lock === "false") {
         lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser)
       }
     }
@@ -59,6 +62,18 @@ export const getServerSideProps = withMultipleServerSideProps(
 
       if (!updateTriggerResult) {
         throw new Error("Failed to resolve trigger")
+      }
+    }
+
+    if (isPost(req) && resubmitCase === "true") {
+      const { amendments } = (await parseFormData(req)) as { amendments: string }
+
+      const parsedAmendments = amendments ? JSON.parse(amendments) : { noUpdatesResubmit: true }
+
+      const amendedCase = await resubmitCourtCase(dataSource, parsedAmendments, +courtCaseId, currentUser)
+
+      if (isError(amendedCase)) {
+        throw amendedCase
       }
     }
 

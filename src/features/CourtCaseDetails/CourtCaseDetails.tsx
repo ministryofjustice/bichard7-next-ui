@@ -49,7 +49,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       <Table.Row>
         <Table.CellHeader>{"Hearing Outcome"}</Table.CellHeader>
         <Table.Cell>
-          <HearingOutcome aho={aho} />
+          <HearingOutcome aho={aho} courtCaseId={courtCase.errorId} />
         </Table.Cell>
       </Table.Row>
       <Table.Row>
