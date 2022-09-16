@@ -19,9 +19,7 @@ export default async (
   }
 
   if (user && groups && groups.length > 0) {
-    user.groups = groups
-      .map((group) => group.match(/(?:B7)?(?<groupName>.*)(?:_grp)?/)?.groups?.groupName)
-      .map((group) => group as GroupName)
+    user.groups = groups.map((group) => group.replace("B7", "").replace("_grp", "")).map((group) => group as GroupName)
   }
 
   return user
