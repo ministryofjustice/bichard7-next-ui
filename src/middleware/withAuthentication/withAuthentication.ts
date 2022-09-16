@@ -17,7 +17,7 @@ export default <Props>(getServerSidePropsFunction: GetServerSideProps<Props>): G
 
     if (authJwt) {
       const dataSource = await getDataSource()
-      currentUser = await getUser(dataSource, authJwt.username)
+      currentUser = await getUser(dataSource, authJwt.username, authJwt.groups)
     }
 
     if (!currentUser || isError(currentUser)) {

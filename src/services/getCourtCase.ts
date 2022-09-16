@@ -2,10 +2,7 @@ import { DataSource, EntityManager } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import PromiseResult from "../types/PromiseResult"
 
-const getCourtCase = async (
-  dataSource: DataSource | EntityManager,
-  courtCaseId: number
-): PromiseResult<CourtCase | null> => {
+const getCourtCase = (dataSource: DataSource | EntityManager, courtCaseId: number): PromiseResult<CourtCase | null> => {
   const repository = dataSource.getRepository(CourtCase)
   const query = repository
     .createQueryBuilder("courtCase")

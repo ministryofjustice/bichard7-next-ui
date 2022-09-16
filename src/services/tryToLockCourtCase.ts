@@ -1,15 +1,16 @@
-import ResolutionStatus from "@moj-bichard7-developers/bichard7-next-core/build/src/types/ResolutionStatus"
-import { DataSource, UpdateResult } from "typeorm"
+import { DataSource, IsNull, MoreThan, Not, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
+import User from "./entities/User"
+import { ResolutionStatus } from "types/ResolutionStatus"
 
 const tryToLockCourtCase = (
   dataSource: DataSource,
   courtCaseId: number,
-  userName: string,
-  lockException = true,
-  lockTrigger = true
+  user: User
 ): Promise<UpdateResult | Error> | Error => {
-  if (!lockException && !lockTrigger) {
+  const { canLockExceptions, canLockTriggers } = user
+
+  if (!canLockExceptions && !canLockTriggers) {
     return new Error("update requires a lock (exception or trigger) to update")
   }
 
@@ -19,24 +20,28 @@ const tryToLockCourtCase = (
     .createQueryBuilder()
     .update(CourtCase)
     .set({
-      ...(lockException ? { errorLockedByUsername: userName } : {}),
-      ...(lockTrigger ? { triggerLockedByUsername: userName } : {})
+      ...(canLockExceptions ? { errorLockedByUsername: user.username } : {}),
+      ...(canLockTriggers ? { triggerLockedByUsername: user.username } : {})
     })
-    .where("error_id = :id", { id: courtCaseId })
+    .where({ errorId: courtCaseId })
 
-  if (lockException) {
-    query
-      .andWhere("error_locked_by_id IS NULL")
-      .andWhere("error_count > 0")
-      .andWhere(`error_status != ${ResolutionStatus.SUBMITTED}`)
+  const submitted: ResolutionStatus = "Submitted"
+
+  if (canLockExceptions) {
+    query.andWhere({
+      errorLockedByUsername: IsNull(),
+      errorCount: MoreThan(0),
+      errorStatus: Not(submitted)
+    })
   }
 
-  if (lockTrigger) {
+  if (canLockTriggers) {
     // we are checking the trigger status, this is not what legacy bichard does but we think that's a bug. Legacy bichard checks error_status (bichard-backend/src/main/java/uk/gov/ocjr/mtu/br7/errorlistmanager/data/ErrorDAO.java ln 1455)
-    query
-      .andWhere("trigger_locked_by_id IS NULL")
-      .andWhere("trigger_count > 0")
-      .andWhere(`trigger_status != ${ResolutionStatus.SUBMITTED}`)
+    query.andWhere({
+      triggerLockedByUsername: IsNull(),
+      triggerCount: MoreThan(0),
+      triggerStatus: Not(submitted)
+    })
   }
 
   return query.execute().catch((error) => error)

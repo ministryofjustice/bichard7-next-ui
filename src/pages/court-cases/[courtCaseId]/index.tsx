@@ -34,9 +34,9 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     if (isPost(req)) {
       if (!!lock && lock === "true") {
-        lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser.username)
+        lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser)
       } else if (!!lock && lock === "false") {
-        lockResult = await unlockCourtCase(dataSource, +courtCaseId)
+        lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser)
       }
     }
 
@@ -82,6 +82,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     return {
       props: {
         user: currentUser.serialize(),
+        triggersVisible: currentUser.canLockTriggers,
         courtCase: courtCase.serialize(),
         aho: JSON.parse(JSON.stringify(aho)),
         lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
@@ -95,9 +96,16 @@ interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
   lockedByAnotherUser: boolean
+  triggersVisible: boolean
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, aho, user, lockedByAnotherUser }: Props) => (
+const CourtCaseDetailsPage: NextPage<Props> = ({
+  courtCase,
+  aho,
+  user,
+  lockedByAnotherUser,
+  triggersVisible
+}: Props) => (
   <>
     <Head>
       <title>{"Case Details | Bichard7"}</title>
@@ -107,7 +115,12 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, aho, user, lockedByA
 
     <Layout user={user}>
       <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
-      <CourtCaseDetails courtCase={courtCase} aho={aho} lockedByAnotherUser={lockedByAnotherUser} />
+      <CourtCaseDetails
+        courtCase={courtCase}
+        aho={aho}
+        lockedByAnotherUser={lockedByAnotherUser}
+        triggersVisible={triggersVisible}
+      />
     </Layout>
   </>
 )
