@@ -44,6 +44,7 @@ DetailsNotLockedByAnotherUser.play = ({ canvasElement }) => {
   expect(
     canvas.getAllByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
   ).toHaveLength(2)
+  expect(canvas.queryByText("Resolve trigger")).toBeInTheDocument()
   expect(canvas.getByText("Add Note")).toBeInTheDocument()
 }
 
@@ -61,6 +62,7 @@ DetailsLockedByAnotherUser.play = ({ canvasElement }) => {
   expect(
     canvas.getAllByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
   ).toHaveLength(2)
+  expect(canvas.queryByText("Resolve trigger")).toBeInTheDocument()
   expect(canvas.queryByText("Add Note")).not.toBeInTheDocument()
 }
 
@@ -70,14 +72,14 @@ export const TriggersNotVisibleToUser: ComponentStory<typeof CourtCaseDetails> =
 
 TriggersNotVisibleToUser.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
-  await expect(canvas.getByText(courtCase.ptiurn)).toBeInTheDocument()
-  await expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
-  await expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy"))).toBeInTheDocument()
-  await expect(canvas.getByText(courtCase.defendantName!)).toBeInTheDocument()
-  await expect(canvas.getByText(courtCase.triggerReason!)).toBeInTheDocument()
-  await expect(
-    canvas.getByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
-  ).toBeInTheDocument()
-  expect(await canvas.queryByText("Resolve trigger")).toBeNull()
-  await expect(canvas.getByText("Add Note")).toBeInTheDocument()
+  expect(canvas.getByText(courtCase.ptiurn)).toBeInTheDocument()
+  expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
+  expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy"))).toBeInTheDocument()
+  expect(canvas.getByText(courtCase.defendantName!)).toBeInTheDocument()
+  expect(canvas.getByText(courtCase.triggerReason!)).toBeInTheDocument()
+  expect(
+    canvas.getAllByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
+  ).toHaveLength(2)
+  expect(canvas.queryByText("Resolve trigger")).not.toBeInTheDocument()
+  expect(canvas.getByText("Add Note")).toBeInTheDocument()
 }
