@@ -1,6 +1,9 @@
-import { ServerResponse } from "http"
+import crypto from "crypto"
 import { addBasePath } from "next/dist/shared/lib/router/router"
 import Document, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document"
+import React from "react"
+import generateCSP from "utils/generateCsp"
+import { ServerStyleSheet } from "styled-components"
 
 const GovUkMetadata = () => (
   <>
@@ -21,29 +24,69 @@ const GovUkMetadata = () => (
   </>
 )
 
-type ResponseWithNonce = ServerResponse & { locals: { nonce?: string } }
-
-type CustomDocumentProps = {
-  nonce: string | null
+const generateNonce = (): string => {
+  return crypto.randomBytes(16).toString("base64")
 }
 
-class GovUkDocument extends Document<CustomDocumentProps> {
-  static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps & CustomDocumentProps> {
-    const nonce = (ctx.res as ResponseWithNonce)?.locals?.nonce ?? null
+interface DocumentProps {
+  nonce: string
+  styles: any
+}
+
+class GovUkDocument extends Document<DocumentProps> {
+  static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps & DocumentProps> {
     const initialProps = await Document.getInitialProps(ctx)
-    return { ...initialProps, nonce }
+
+    const nonce = generateNonce()
+    ctx.res?.setHeader("Content-Security-Policy", generateCSP({ nonce }))
+
+    const styledComponentsSheet = new ServerStyleSheet()
+    const additionalProps = { nonce }
+
+    // let csp = `default-src 'self'; frame-src 'self'; frame-ancestors 'self'; form-action 'self'; style-src 'self' 'nonce-${nonce}';`
+    // if (process.env.NODE_ENV !== "production") {
+    //   csp = `default-src 'self'; frame-src 'self'; frame-ancestors 'self'; form-action 'self'; style-src 'self' 'unsafe-inline';`
+    // }
+
+    const sheetStyles = styledComponentsSheet.getStyleElement()
+    const style =
+      (sheetStyles &&
+        React.Children.map(sheetStyles, (child) =>
+          React.cloneElement(child, {
+            nonce
+          } as React.StyleHTMLAttributes<HTMLStyleElement>)
+        )) ||
+      null
+
+    return {
+      ...initialProps,
+      ...additionalProps,
+      styles: (
+        <>
+          {initialProps.styles}
+          {style}
+        </>
+      ) as any
+    }
   }
 
   render() {
+    const { nonce } = this.props
     return (
       <Html className="govuk-template" lang="en">
-        <Head nonce={this.props.nonce === null ? "" : this.props.nonce}>
+        <Head nonce={this.props.nonce}>
+          <script
+            nonce={nonce}
+            dangerouslySetInnerHTML={{
+              __html: `window.__webpack_nonce__ = "${nonce}"`
+            }}
+          />
           <GovUkMetadata />
         </Head>
 
         <body className="govuk-template__body">
           <Main />
-          <NextScript nonce={this.props.nonce === null ? "" : this.props.nonce} />
+          <NextScript nonce={this.props.nonce} />
         </body>
       </Html>
     )
