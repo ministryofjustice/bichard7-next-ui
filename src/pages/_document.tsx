@@ -1,5 +1,6 @@
+import { ServerResponse } from "http"
 import { addBasePath } from "next/dist/shared/lib/router/router"
-import Document, { Html, Head, Main, NextScript } from "next/document"
+import Document, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document"
 
 const GovUkMetadata = () => (
   <>
@@ -20,17 +21,29 @@ const GovUkMetadata = () => (
   </>
 )
 
-class GovUkDocument extends Document {
+type ResponseWithNonce = ServerResponse & { locals: { nonce?: string } }
+
+type CustomDocumentProps = {
+  nonce: string | null
+}
+
+class GovUkDocument extends Document<CustomDocumentProps> {
+  static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps & CustomDocumentProps> {
+    const nonce = (ctx.res as ResponseWithNonce)?.locals?.nonce ?? null
+    const initialProps = await Document.getInitialProps(ctx)
+    return { ...initialProps, nonce }
+  }
+
   render() {
     return (
       <Html className="govuk-template" lang="en">
-        <Head>
+        <Head nonce={this.props.nonce === null ? "" : this.props.nonce}>
           <GovUkMetadata />
         </Head>
 
         <body className="govuk-template__body">
           <Main />
-          <NextScript />
+          <NextScript nonce={this.props.nonce === null ? "" : this.props.nonce} />
         </body>
       </Html>
     )
