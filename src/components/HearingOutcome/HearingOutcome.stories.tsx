@@ -11,7 +11,7 @@ export default {
 
 export const HearingOutcomeStory: ComponentStory<typeof HearingOutcome> = () => {
   const aho = createDummyAho()
-  return <HearingOutcome aho={aho} />
+  return <HearingOutcome aho={aho} courtCaseId={79057} />
 }
 
 HearingOutcomeStory.play = ({ canvasElement }) => {
@@ -36,4 +36,6 @@ HearingOutcomeStory.play = ({ canvasElement }) => {
   expect(offenceTable).toBeInTheDocument()
   expect(within(offenceTable).getByText("1")).toBeInTheDocument()
   expect(within(offenceTable).getByText("Crime")).toBeInTheDocument()
+
+  expect(canvas.getByRole("button", { name: "Resubmit" })).toBeInTheDocument()
 }

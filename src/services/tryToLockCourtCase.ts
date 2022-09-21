@@ -6,10 +6,8 @@ import { ResolutionStatus } from "types/ResolutionStatus"
 const tryToLockCourtCase = (
   dataSource: DataSource,
   courtCaseId: number,
-  user: User
+  { canLockExceptions, canLockTriggers, username }: User
 ): Promise<UpdateResult | Error> | Error => {
-  const { canLockExceptions, canLockTriggers } = user
-
   if (!canLockExceptions && !canLockTriggers) {
     return new Error("update requires a lock (exception or trigger) to update")
   }
@@ -20,8 +18,8 @@ const tryToLockCourtCase = (
     .createQueryBuilder()
     .update(CourtCase)
     .set({
-      ...(canLockExceptions ? { errorLockedByUsername: user.username } : {}),
-      ...(canLockTriggers ? { triggerLockedByUsername: user.username } : {})
+      ...(canLockExceptions ? { errorLockedByUsername: username } : {}),
+      ...(canLockTriggers ? { triggerLockedByUsername: username } : {})
     })
     .where({ errorId: courtCaseId })
 

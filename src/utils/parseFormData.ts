@@ -7,6 +7,5 @@ const encoding = "utf-8"
 
 export default async function parseFormData(req: IncomingMessage) {
   const body = await getRawBody(req, { limit, encoding })
-  const data = parse(body.toString())
-  return data
+  return parse(body.toString())
 }
