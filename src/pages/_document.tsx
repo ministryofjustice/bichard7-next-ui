@@ -1,5 +1,10 @@
 import { addBasePath } from "next/dist/shared/lib/router/router"
-import Document, { Html, Head, Main, NextScript } from "next/document"
+import Document, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document"
+import React from "react"
+import { ReactFragment } from "react"
+import { ServerStyleSheet } from "styled-components"
+import generateCsp from "utils/generateCsp"
+import generateNonce from "utils/generateNonce"
 
 const GovUkMetadata = () => (
   <>
@@ -20,11 +25,61 @@ const GovUkMetadata = () => (
   </>
 )
 
-class GovUkDocument extends Document {
+interface DocumentProps {
+  nonce: string
+}
+
+class GovUkDocument extends Document<DocumentProps> {
+  static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
+    const sheet = new ServerStyleSheet()
+    const originalRenderPage = ctx.renderPage
+
+    try {
+      ctx.renderPage = () =>
+        originalRenderPage({
+          enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />)
+        })
+
+      const nonce = generateNonce()
+      ctx.res?.setHeader("Content-Security-Policy", generateCsp({ nonce }))
+
+      const initialProps = await Document.getInitialProps(ctx)
+      const additionalProps = { nonce }
+      const sheetStyles = sheet.getStyleElement()
+      const style =
+        (sheetStyles &&
+          React.Children.map(sheetStyles, (child) =>
+            React.cloneElement(child, {
+              nonce
+            } as React.StyleHTMLAttributes<HTMLStyleElement>)
+          )) ||
+        null
+      return {
+        ...initialProps,
+        ...additionalProps,
+        styles: (
+          <>
+            {initialProps.styles}
+            {style}
+          </>
+        ) as unknown as ReactFragment
+      }
+    } finally {
+      sheet.seal()
+    }
+  }
+
   render() {
+    const { nonce } = this.props
     return (
       <Html className="govuk-template" lang="en">
         <Head>
+          <script
+            nonce={nonce}
+            dangerouslySetInnerHTML={{
+              __html: `window.__webpack_nonce__ = "${nonce}"`
+            }}
+          />
           <GovUkMetadata />
         </Head>
 
