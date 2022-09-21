@@ -80,6 +80,7 @@ class GovUkDocument extends Document<DocumentProps> {
               __html: `window.__webpack_nonce__ = "${nonce}"`
             }}
           />
+          <meta property="csp-nonce" content={nonce} />
           <GovUkMetadata />
         </Head>
 
