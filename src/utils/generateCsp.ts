@@ -59,13 +59,8 @@ const generateCSP = ({ nonce }: generateCSPProps = {}) => {
 
   // style-src
   add("style-src", `'nonce-${nonce}'`)
-  add("style-src", `'unsafe-inline'`)
 
-  // script-src
-  add("script-src", `'unsafe-eval'`, { devOnly: true })
-
-  // connect-src
-  add("connect-src", `'self'`, { devOnly: true })
+  add("img-src", `'self'`)
 
   // return the object in a formatted value (this won't work on IE11 without a polyfill!)
   return Object.entries(policy)
