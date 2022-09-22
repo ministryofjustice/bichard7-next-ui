@@ -42,7 +42,7 @@ describe("Home", () => {
         cy.visit("/")
         cy.injectAxe()
 
-        cy.checkA11y(undefined, undefined, logAccessibilityViolations)
+        cy.checkA11y(undefined, { includedImpacts: ["critical"] }, logAccessibilityViolations)
       })
     })
 
@@ -54,7 +54,7 @@ describe("Home", () => {
         cy.visit("/")
         cy.injectAxe()
 
-        cy.checkA11y(undefined, undefined, logAccessibilityViolations)
+        cy.checkA11y(undefined, { includedImpacts: ["critical"] }, logAccessibilityViolations)
       })
 
       it("should display multiple cases", () => {
