@@ -72,6 +72,10 @@ export default defineConfig({
 
         insertException(params: { caseId: number; exceptionCode: string }) {
           return insertException(params.caseId, params.exceptionCode)
+        },
+        table(message) {
+          console.table(message)
+          return null
         }
       })
     }
