@@ -1,4 +1,4 @@
-import { Button, Select } from "govuk-react"
+import { Button, Select, LabelText } from "govuk-react"
 import { Filter } from "types/CaseListQueryParams"
 
 const queryParamToFilterState = (value: string) =>
@@ -7,6 +7,9 @@ const queryParamToFilterState = (value: string) =>
 const ResultFilter = (props: { initialSelection: Filter }) => {
   return (
     <>
+      <label htmlFor={"result-filter-select"}>
+        <LabelText hidden={true}>{"Filter cases"}</LabelText>
+      </label>
       <Select
         label={""}
         input={{
@@ -19,11 +22,11 @@ const ResultFilter = (props: { initialSelection: Filter }) => {
           }
         }}
       >
-        <option value={""}>{"Show all cases"}</option>
+        <option value={"all"}>{"Show all"}</option>
         <option value={"triggers"}>{"Show only cases with triggers"}</option>
         <option value={"exceptions"}>{"Show only cases with exceptions"}</option>
       </Select>
-      <Button type={"submit"} id={"result-filter-button"} style={{ marginTop: "0.1rem" }}>
+      <Button type={"submit"} id={"result-filter-button"}>
         {"Filter"}
       </Button>
     </>
