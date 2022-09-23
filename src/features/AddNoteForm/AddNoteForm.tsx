@@ -28,7 +28,9 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, error }: Props) => 
           </TextArea>
         </FormGroup>
 
-        <Button type="submit">{"Add"}</Button>
+        <Button id="Add Note" type="submit">
+          {"Add"}
+        </Button>
       </form>
     </If>
   </>

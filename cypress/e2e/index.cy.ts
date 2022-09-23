@@ -1,5 +1,6 @@
 import User from "services/entities/User"
 import { TestTrigger } from "../../test/util/manageTriggers"
+import a11yConfig from "../support/a11yConfig"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 
 describe("Home", () => {
@@ -42,7 +43,7 @@ describe("Home", () => {
         cy.visit("/")
         cy.injectAxe()
 
-        cy.checkA11y(undefined, undefined, logAccessibilityViolations)
+        cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
       })
     })
 
@@ -54,7 +55,7 @@ describe("Home", () => {
         cy.visit("/")
         cy.injectAxe()
 
-        cy.checkA11y(undefined, undefined, logAccessibilityViolations)
+        cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
       })
 
       it("should display multiple cases", () => {
