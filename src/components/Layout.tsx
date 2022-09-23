@@ -10,6 +10,7 @@ interface Props {
   user: User
 }
 
+// We're overriding Company to implement an svg fix for the govuk-react-icon-crown repo
 const Company = (
   <IconTitle icon={<Crown width="36" height="32" fill="currentColor" title="GOV.UK" />}>{"GOV.UK"}</IconTitle>
 )
