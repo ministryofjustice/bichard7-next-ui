@@ -2,7 +2,7 @@
 // Typescript type checking breaks when using SearchBox.Input and SearchBox.Button,
 // for now we disable type checking for this file as it is a proof of concept
 
-import { SearchBox } from "govuk-react"
+import { SearchBox } from "../../components/govuk-react-forked/SearchBox"
 
 interface Props {
   defendantName?: string
