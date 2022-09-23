@@ -30,7 +30,6 @@ describe("getUser", () => {
     const expectedGroups: GroupName[] = ["Supervisor", "GeneralHandler"]
 
     const result = await getUser(dataSource, inputUser.username, groups)
-    console.log(result)
     expect(isError(result)).toBe(false)
 
     const actualUser = result as User

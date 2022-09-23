@@ -1,4 +1,4 @@
-import { Button, Select } from "govuk-react"
+import { Button, Select, LabelText } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import { Filter } from "types/CaseListQueryParams"
 
@@ -22,6 +22,9 @@ const ResultFilter = (props: { initialSelection: Filter }) => {
   const classes = useStyles()
   return (
     <>
+      <label htmlFor={"result-filter-select"}>
+        <LabelText hidden={true}>{"Filter cases"}</LabelText>
+      </label>
       <Select
         label={""}
         input={{
@@ -31,7 +34,7 @@ const ResultFilter = (props: { initialSelection: Filter }) => {
           className: classes.select
         }}
       >
-        <option value={""}>{"Show all cases"}</option>
+        <option value={"all"}>{"Show all"}</option>
         <option value={"triggers"}>{"Show only cases with triggers"}</option>
         <option value={"exceptions"}>{"Show only cases with exceptions"}</option>
       </Select>

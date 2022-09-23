@@ -157,7 +157,7 @@ describe("amend court case", () => {
     })
 
     const result = await amendCourtCase(
-      { noUpdatesResubmission: true },
+      { noUpdatesResubmit: true },
       inputCourtCase.errorId,
       { username: userName } as User,
       dataSource
@@ -169,7 +169,7 @@ describe("amend court case", () => {
   it("should return an error if produce an error getting the court case", async () => {
     ;(getCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Failed to get court case`))
     const result = await amendCourtCase(
-      { noUpdatesResubmission: true },
+      { noUpdatesResubmit: true },
       "random" as unknown as number,
       { username: userName } as User,
       dataSource
@@ -192,7 +192,7 @@ describe("amend court case", () => {
     await insertCourtCases(inputCourtCase)
 
     const result = await amendCourtCase(
-      { noUpdatesResubmission: true },
+      { noUpdatesResubmit: true },
       inputCourtCase.errorId,
       { username: userName } as User,
       dataSource
