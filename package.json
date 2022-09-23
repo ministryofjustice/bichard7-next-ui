@@ -47,6 +47,7 @@
     "react-dom": "18.2.0",
     "react-jss": "^10.9.2",
     "reflect-metadata": "^0.1.13",
+    "styled-components": "^5.3.5",
     "typeorm": "^0.3.7"
   },
   "devDependencies": {
