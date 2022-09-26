@@ -45,6 +45,18 @@ commands:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm install
             nvm use
+
+  fetch_docker_image:
+    parameters:
+      image:
+        type: string
+    steps:
+      - run:
+          name: Fetch the <<parameters.image>> image
+          working_directory: ~/bichard7-next
+          command: bash scripts/fetch_docker_image.sh <<parameters.image>>
+          background: true
+
 jobs:
   lint:
     docker:
@@ -159,6 +171,10 @@ jobs:
     steps:
       - checkout
       - clone_bichard_repo
+      - fetch_docker_image:
+          image: user-service
+      - fetch_docker_image:
+          image: nginx-auth-proxy
       - run:
           name: Build the UI application in the background
           command: ./.circleci/scripts/build-ui.sh
@@ -186,7 +202,7 @@ jobs:
           command: until [ -f uiBuilt ]; do sleep 1; done
           no_output_timeout: 15m
       - run:
-          name: Run UI container
+          name: Run UI stack
           working_directory: ~/bichard7-next
           command: make run-ui
           background: true
