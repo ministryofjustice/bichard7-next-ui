@@ -1,4 +1,4 @@
 module.exports = {
-  timeout: 90_000,
+  timeout: 500_000,
   validateStatus: (status) => status === 401
 }
