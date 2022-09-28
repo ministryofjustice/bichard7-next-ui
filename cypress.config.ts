@@ -16,10 +16,10 @@ import insertException from "./test/util/manageExceptions"
 import { deleteUsers, insertUsersWithOverrides } from "./test/util/manageUsers"
 import User from "./src/services/entities/User"
 
-const protocol = process.env.UI_IS_HTTPS ? "https://" : "http://"
+// const protocol = process.env.UI_IS_HTTPS ? "https://" : "http://"
 export default defineConfig({
   e2e: {
-    baseUrl: protocol + "localhost:4443/bichard",
+    baseUrl: "https://" + "localhost:4443/bichard",
     setupNodeEvents(on, _config) {
       on("task", {
         insertCourtCasesWithOrgCodes(orgCodes: string[]) {
