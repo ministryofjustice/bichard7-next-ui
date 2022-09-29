@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import GroupName from "../../src/types/GroupName"
 import generateBichardJwt from "./generateBichardJwt"
-import getUser from "../../src/services/getUser"
+import getEmailVerificationCode from "../../src/utils/getEmailVerificationCode"
 
 Cypress.Commands.add("setAuthCookie", (username: string) => {
   const groups: GroupName[] = ["ExceptionHandler", "TriggerHandler"]
@@ -29,12 +29,13 @@ Cypress.Commands.add("loginAs", (username: string) => {
   cy.get("#email").type(email)
   cy.get("button[type='submit']").click()
 
-  // // TODO: Implement with cypress async behaviour
-  const verificationCode = await getUser()
+  cy.window().then(async () => {
+    const verificationCode = await getEmailVerificationCode(username)
 
-  cy.get("#validationCode").type("012345")
-  cy.get("#password").type("password")
-  cy.get("button[type='submit']").click()
+    cy.get("#validationCode").type(verificationCode)
+    cy.get("#password").type("password")
+    cy.get("button[type='submit']").click()
+  })
 })
 
 declare global {

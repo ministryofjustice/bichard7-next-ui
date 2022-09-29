@@ -53,7 +53,7 @@ describe("Home", () => {
         cy.task("insertUsers", users)
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
 
-        cy.visit("/")
+        cy.visit("/bichard")
         cy.injectAxe()
 
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
@@ -63,7 +63,7 @@ describe("Home", () => {
         cy.task("insertUsers", users)
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
 
-        cy.visit("/")
+        cy.visit("/bichard")
         cy.findByText(`Case00000`).should("exist")
         cy.findByText(`Case00001`).should("exist")
         cy.findByText(`Case00002`).should("exist")
@@ -75,7 +75,7 @@ describe("Home", () => {
         cy.task("insertUsers", users)
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
 
-        cy.visit("/")
+        cy.visit("/bichard")
         cy.findByText("Previous page").should("not.exist")
         cy.findByText("Next page").should("exist")
         // paginate next page until the last page
@@ -102,7 +102,7 @@ describe("Home", () => {
         cy.task("insertUsers", users)
         cy.task("insertCourtCasesWithOrgCodes", ["01"])
 
-        cy.visit("/")
+        cy.visit("/bichard")
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
       })
 
@@ -111,7 +111,7 @@ describe("Home", () => {
         cy.task("insertCourtCasesWithOrgCodes", ["01", "02", "03", "04"])
         cy.setAuthCookie("Bichard02")
 
-        cy.visit("/")
+        cy.visit("/bichard")
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
       })
 
@@ -119,7 +119,7 @@ describe("Home", () => {
         cy.task("insertUsers", users)
         cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "012A", "013A1"])
 
-        cy.visit("/")
+        cy.visit("/bichard")
         cy.get("tr")
           .not(":first")
           .each((row, index) => {
@@ -139,7 +139,7 @@ describe("Home", () => {
         ])
         cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "0111", "01111", "011111"])
 
-        cy.visit("/")
+        cy.visit("/bichard")
         cy.get("tr")
           .not(":first")
           .each((row, index) => {
@@ -161,7 +161,7 @@ describe("Home", () => {
         ])
         cy.task("insertCourtCasesWithCourtNames", { courtNames: ["BBBB", "AAAA", "DDDD", "CCCC"], force: "011111" })
 
-        cy.visit("/")
+        cy.visit("/bichard")
 
         cy.findByText("Court Name").click()
 
@@ -197,7 +197,7 @@ describe("Home", () => {
           force: "011111"
         })
 
-        cy.visit("/")
+        cy.visit("/bichard")
 
         cy.get("input[type=search]").type("Bruce Wayne")
 
@@ -225,7 +225,7 @@ describe("Home", () => {
 
         cy.task("insertException", { caseId: 2, exceptionCode: "HO100207" })
 
-        cy.visit("/")
+        cy.visit("/bichard")
 
         // Default: no filter, all cases shown
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
