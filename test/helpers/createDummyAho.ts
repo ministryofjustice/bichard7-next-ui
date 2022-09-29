@@ -48,7 +48,7 @@ const createDummyAho = (): AnnotatedHearingOutcome => {
             BottomLevelCode: "67",
             OrganisationUnitCode: "01234567"
           },
-          DateOfHearing: new Date(),
+          DateOfHearing: new Date("1990-01-01"),
           TimeOfHearing: "0900",
           HearingLanguage: "english",
           HearingDocumentationLanguage: "english",

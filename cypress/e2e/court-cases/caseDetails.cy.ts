@@ -198,6 +198,20 @@ describe("Case details", () => {
           expect(minsSinceResolved).to.be.below(1)
         })
     })
+
+    it("should resubmit a case when the resubmit button is clicked", () => {
+      cy.task("insertDummyCourtCaseWithLock", {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgCodes: ["01"]
+      })
+      cy.visit("/court-cases/0")
+
+      cy.get("button").contains("Resubmit").click()
+      cy.location().should((loc) => {
+        expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
+      })
+    })
   })
 })
 

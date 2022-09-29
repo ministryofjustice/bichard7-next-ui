@@ -20,7 +20,16 @@ export default <Props>(getServerSidePropsFunction: GetServerSideProps<Props>): G
       currentUser = await getUser(dataSource, authJwt.username, authJwt.groups)
     }
 
-    if (!currentUser || isError(currentUser)) {
+    if (isError(currentUser)) {
+      console.error("Failed to retrieve user with error:", currentUser.message)
+
+      res.statusCode = 502
+      res.statusMessage = "Bad Gateway"
+      res.end()
+      return { props: {} } as unknown as GetServerSidePropsResult<Props>
+    }
+
+    if (!currentUser) {
       res.statusCode = 401
       res.statusMessage = "Unauthorized"
       res.end()

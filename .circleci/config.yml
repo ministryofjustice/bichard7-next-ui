@@ -26,14 +26,6 @@ commands:
           name: Clone Bichard7 Next
           command: git clone --depth 1 git@github.com:ministryofjustice/bichard7-next.git ~/bichard7-next
 
-  run_ui:
-    description: Run the UI container and dependencies
-    steps:
-      - run:
-          name: Spin up UI container and dependencies
-          working_directory: ~/bichard7-next
-          command: make run-pg
-
   run_postgres:
     description: Run the PostgreSQL database
     steps:

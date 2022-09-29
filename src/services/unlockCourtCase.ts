@@ -3,7 +3,11 @@ import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 
-const unlockCourtCase = (dataSource: DataSource, courtCaseId: number, user: User): Promise<UpdateResult | Error> => {
+const unlockCourtCase = async (
+  dataSource: DataSource,
+  courtCaseId: number,
+  user: User
+): Promise<UpdateResult | Error> => {
   const courtCaseRepository = dataSource.getRepository(CourtCase)
   const setFields: QueryDeepPartialEntity<CourtCase> = {}
   const { canLockExceptions, canLockTriggers } = user

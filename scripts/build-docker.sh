@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eux
+set -ex
 
 readonly DOCKER_REFERENCE="nginx-nodejs-supervisord"
 
@@ -26,7 +26,7 @@ function pull_and_build_from_aws() {
 
   echo "Building ui docker image on `date`"
 
-  if [[ -z ${AWS_ACCOUNT_ID+""} ]]; then
+  if [[ -z "${AWS_ACCOUNT_ID}" ]]; then
       AWS_ACCOUNT_ID=$FETCHED_AWS_ACCOUNT_ID
   fi
 
@@ -50,8 +50,7 @@ else
     docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" -t ui .
 fi
 
-  if [[ -n ${CODEBUILD_RESOLVED_SOURCE_VERSION+""} && -n ${CODEBUILD_START_TIME+""} ]]; then
-
+  if [[ -n "${CODEBUILD_RESOLVED_SOURCE_VERSION}" && -n "${CODEBUILD_START_TIME}" ]]; then
       ## Install goss/trivy
       curl -L https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
       chmod +rx /usr/local/bin/goss
@@ -85,9 +84,9 @@ fi
       pull_trivy_db
 
       ## Run goss tests
-      DB_CONTAINER=docker ps -aqf "name=bichard7-next_pg"
-      DB_HOST=docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DB_CONTAINER
-      GOSS_SLEEP=15 dgoss run -e DB_HOST=$DB_HOST "ui:latest"
+      # DB_CONTAINER=docker ps -aqf "name=bichard7-next_pg"
+      # DB_HOST=docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DB_CONTAINER
+      GOSS_SLEEP=15 dgoss run "ui:latest"
 
       ## Run Trivy scan
       TRIVY_CACHE_DIR=trivy trivy image \
@@ -117,7 +116,6 @@ EOF
       fi
   fi
 }
-
 if [[ "$(has_local_image)" -gt 0 ]]; then
   if [ $(arch) = "arm64" ]
   then

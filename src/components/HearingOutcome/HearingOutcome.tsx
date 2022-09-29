@@ -1,8 +1,10 @@
+import { useRouter } from "next/router"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
-import { Table } from "govuk-react"
+import { Table, Button } from "govuk-react"
 
 interface Props {
   aho: AnnotatedHearingOutcome
+  courtCaseId: number
 }
 
 const HearingTable: React.FC<{ aho: AnnotatedHearingOutcome }> = ({ aho }) => (
@@ -216,13 +218,26 @@ const OffencesTable: React.FC<{ aho: AnnotatedHearingOutcome }> = ({ aho }) => (
   </Table>
 )
 
-const HearingOutcome: React.FC<Props> = ({ aho }) => (
-  <>
-    <HearingTable aho={aho} />
-    <CaseTable aho={aho} />
-    <DefendantTable aho={aho} />
-    <OffencesTable aho={aho} />
-  </>
-)
+const HearingOutcome: React.FC<Props> = ({ aho, courtCaseId }) => {
+  const { basePath, query } = useRouter()
+
+  const amendments = {}
+  const resubmitCasePath = `${basePath}/court-cases/${courtCaseId}?${new URLSearchParams({
+    ...query,
+    resubmitCase: "true"
+  })}`
+  return (
+    <>
+      <HearingTable aho={aho} />
+      <CaseTable aho={aho} />
+      <DefendantTable aho={aho} />
+      <OffencesTable aho={aho} />
+      <form method="post" action={resubmitCasePath}>
+        <input type="hidden" name="resubmitCase" value={JSON.stringify(amendments)} />
+        <Button type="submit">{"Resubmit"}</Button>
+      </form>
+    </>
+  )
+}
 
 export default HearingOutcome

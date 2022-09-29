@@ -331,7 +331,7 @@ describe("applyAmendmentsToAho", () => {
   it("applies no updates if no amendments have been applied", () => {
     const originalAho = cloneDeep(aho)
     const amendments = {
-      noUpdatesResubmission: true
+      noUpdatesResubmit: true
     } as Amendments
 
     const actualAho = applyAmendmentsToAho(amendments, aho)

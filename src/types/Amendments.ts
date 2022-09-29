@@ -10,7 +10,7 @@ export type Amendments = {
   courtReference: string
   courtOffenceSequenceNumber: UpdatedCourtOffenceSequenceNumber
   forceOwner: string
-  noUpdatesResubmission?: boolean
+  noUpdatesResubmit?: boolean
 }
 
 export type AmendmentValues =

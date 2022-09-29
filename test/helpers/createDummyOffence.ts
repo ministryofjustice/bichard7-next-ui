@@ -10,7 +10,7 @@ const createDummyOffence = (): Offence =>
       OffenceReasonSequence: "0000"
     },
     ActualOffenceStartDate: {
-      StartDate: new Date()
+      StartDate: new Date("1990-01-01")
     },
     OffenceTitle: "Crime",
 
