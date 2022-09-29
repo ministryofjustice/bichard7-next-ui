@@ -14,6 +14,7 @@ import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import listCourtCases from "services/listCourtCases"
 import type CourtCase from "services/entities/CourtCase"
+import { Heading } from "govuk-react"
 
 interface Props {
   user: User
@@ -88,8 +89,10 @@ const Home: NextPage<Props> = ({
       <title>{"Case List | Bichard7"}</title>
       <meta name="description" content="Case List | Bichard7" />
     </Head>
-
     <Layout user={user}>
+      <Heading as="h1" size="LARGE">
+        {"Court cases"}
+      </Heading>
       <CourtCaseFilter resultFilter={resultFilter} defendantName={defendantNameFilter} />
       <CourtCaseList courtCases={courtCases} order={order} />
       <Pagination totalPages={totalPages} pageNum={pageNum} />

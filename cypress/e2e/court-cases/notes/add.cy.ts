@@ -1,5 +1,7 @@
 import type { TestTrigger } from "../../../../test/util/manageTriggers"
 import User from "services/entities/User"
+import a11yConfig from "../../../support/a11yConfig"
+import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 
 describe("Home", () => {
   context("720p resolution", async () => {
@@ -22,6 +24,25 @@ describe("Home", () => {
       cy.clearCookies()
       cy.setAuthCookie("Bichard01")
       cy.viewport(1280, 720)
+    })
+
+    it("should be accessible", () => {
+      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.visit("/court-cases/0")
+      cy.get("button").contains("Add Note").click()
+
+      cy.injectAxe()
+
+      cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
     it("should be able to add a note when case is visible to the user and not locked by another user", () => {
