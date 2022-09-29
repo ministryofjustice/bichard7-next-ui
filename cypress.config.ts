@@ -19,7 +19,7 @@ import User from "./src/services/entities/User"
 // const protocol = process.env.UI_IS_HTTPS ? "https://" : "http://"
 export default defineConfig({
   e2e: {
-    baseUrl: "https://" + "localhost:4443/bichard",
+    baseUrl: "https://" + "localhost:4443",
     setupNodeEvents(on, _config) {
       on("task", {
         insertCourtCasesWithOrgCodes(orgCodes: string[]) {

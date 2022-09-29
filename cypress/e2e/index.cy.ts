@@ -18,7 +18,8 @@ describe("Home", () => {
     beforeEach(() => {
       cy.task("clearCourtCases")
       cy.task("clearUsers")
-      cy.setAuthCookie("Bichard01")
+      // cy.setAuthCookie("Bichard01")
+      cy.loginAs("Bichard01")
       cy.viewport(1280, 720)
     })
 
@@ -26,13 +27,13 @@ describe("Home", () => {
       it("should display 0 cases and the user's username when no cases are added", () => {
         cy.task("insertUsers", users)
 
-        cy.visit("/")
+        cy.visit("/bichard")
       })
 
       it("should not show pagination buttons when there are 0 cases", () => {
         cy.task("insertUsers", users)
 
-        cy.visit("/")
+        cy.visit("/bichard")
 
         cy.findByText("Previous page").should("not.exist")
         cy.findByText("Next page").should("not.exist")
@@ -40,7 +41,7 @@ describe("Home", () => {
 
       it("should be accessible", () => {
         cy.task("insertUsers", users)
-        cy.visit("/")
+        cy.visit("/bichard")
         cy.injectAxe()
 
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
