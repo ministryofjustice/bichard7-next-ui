@@ -1,9 +1,10 @@
-import { expect } from "@storybook/jest"
+import expect from "../../../test/util/storybook/expect"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
 import CourtCase from "services/entities/CourtCase"
 import Trigger from "services/entities/Trigger"
 import ResolveTrigger from "./ResolveTrigger"
+import { axe } from "jest-axe"
 
 export default {
   title: "Components/ResolveTrigger",
@@ -59,4 +60,17 @@ ResolvedTrigger.play = async ({ canvasElement }) => {
   await expect(canvas.queryByText("Resolve trigger")).toBeInTheDocument()
   await expect(canvas.queryByText("Resolve trigger")).toBeVisible()
   await expect(canvas.queryByText("Resolve trigger")).toHaveAttribute("disabled")
+}
+
+export const ShouldBeAccessible: ComponentStory<typeof ResolveTrigger> = () => (
+  <div data-testid="resolve">
+    <ResolveTrigger trigger={unresolvedTriggerEntity} courtCase={courtCaseEntity} />
+  </div>
+)
+
+ShouldBeAccessible.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+
+  const resolve = canvas.getByTestId("resolve")
+  expect(await axe(resolve)).toHaveNoViolations()
 }

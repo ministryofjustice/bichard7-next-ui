@@ -1,6 +1,8 @@
 import type { TestTrigger } from "../../../test/util/manageTriggers"
 import { differenceInMinutes, parse } from "date-fns"
 import User from "services/entities/User"
+import logAccessibilityViolations from "../../support/logAccessibilityViolations"
+import a11yConfig from "../../support/a11yConfig"
 
 describe("Case details", () => {
   context("720p resolution", () => {
@@ -21,6 +23,24 @@ describe("Case details", () => {
       cy.clearCookies()
       cy.setAuthCookie("Bichard01")
       cy.viewport(1280, 720)
+    })
+
+    it("should be accessible", () => {
+      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.visit("/court-cases/0")
+
+      cy.injectAxe()
+
+      cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
     it("should load case details for the case that this user can see", () => {
