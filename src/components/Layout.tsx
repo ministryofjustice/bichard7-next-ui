@@ -17,9 +17,11 @@ const Company = (
 
 const Layout = ({ children, user }: Props) => {
   const header = (
-    <TopNav serviceTitle={"Bichard7"} company={Company}>
-      {[user.forenames, user.surname].join(" ")}
-    </TopNav>
+    <div role={"navigation"}>
+      <TopNav serviceTitle={"Bichard7"} company={Company}>
+        {[user.forenames, user.surname].join(" ")}
+      </TopNav>
+    </div>
   )
   return (
     <>

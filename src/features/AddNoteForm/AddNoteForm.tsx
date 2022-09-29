@@ -8,7 +8,7 @@ interface Props {
 
 const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, error }: Props) => (
   <>
-    <Heading as="h3" size="MEDIUM">
+    <Heading as="h2" size="MEDIUM">
       {"Add Note"}
     </Heading>
     <If condition={lockedByAnotherUser}>{"Case is locked by another user."}</If>
