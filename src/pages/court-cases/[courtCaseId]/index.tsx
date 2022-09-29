@@ -3,7 +3,6 @@ import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
 import CourtCaseLock from "features/CourtCaseLock/CourtCaseLock"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
-import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
@@ -20,6 +19,7 @@ import { UpdateResult } from "typeorm"
 import resolveTrigger from "services/resolveTrigger"
 import { resubmitCourtCase } from "services/resubmitCourtCase"
 import parseFormData from "utils/parseFormData"
+import { Heading } from "govuk-react"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -122,13 +122,12 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   triggersVisible
 }: Props) => (
   <>
-    <Head>
-      <title>{"Case Details | Bichard7"}</title>
-      <meta name="description" content="Case Details | Bichard7" />
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
-
     <Layout user={user}>
+      <Heading as="h1" size="LARGE" aria-label="Case details">
+        <title>{"Case Details | Bichard7"}</title>
+        <meta name="description" content="Case Details | Bichard7" />
+        <link rel="icon" href="/favicon.ico" />
+      </Heading>
       <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
       <CourtCaseDetails
         courtCase={courtCase}

@@ -1,13 +1,12 @@
 import Layout from "components/Layout"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
-import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { BackLink } from "govuk-react"
+import { BackLink, Heading } from "govuk-react"
 import { useRouter } from "next/router"
 import parseFormData from "utils/parseFormData"
 import { isPost } from "utils/http"
@@ -79,13 +78,12 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
 
   return (
     <>
-      <Head>
-        <title>{"Add Note | Bichard7"}</title>
-        <meta name="description" content="Add Note | Bichard7" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <Layout user={user}>
+        <Heading as="h1" size="LARGE" aria-label="Add Note">
+          <title>{"Add Note | Bichard7"}</title>
+          <meta name="description" content="Add Note | Bichard7" />
+          <link rel="icon" href="/favicon.ico" />
+        </Heading>
         <BackLink href={`${basePath}/court-cases/${courtCase.errorId}`} onClick={function noRefCheck() {}}>
           {"Case Details"}
         </BackLink>

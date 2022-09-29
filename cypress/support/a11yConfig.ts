@@ -1,4 +1,4 @@
 const a11yConfig = {
-  includedImpacts: ["critical", "serious"]
+  includedImpacts: []
 }
 export default a11yConfig
