@@ -1,10 +1,9 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
-import { expect } from "@storybook/jest"
 import createDummyAho from "../../../test/helpers/createDummyAho"
 import HearingOutcome from "./HearingOutcome"
-import { axe, toHaveNoViolations } from "jest-axe"
-expect.extend(toHaveNoViolations)
+import expect from "../../../test/util/storybook/expect"
+import { axe } from "jest-axe"
 
 export default {
   title: "Components/HearingOutcome",
