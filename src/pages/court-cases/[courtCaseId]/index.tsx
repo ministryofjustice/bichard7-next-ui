@@ -19,7 +19,8 @@ import { UpdateResult } from "typeorm"
 import resolveTrigger from "services/resolveTrigger"
 import { resubmitCourtCase } from "services/resubmitCourtCase"
 import parseFormData from "utils/parseFormData"
-import { Heading } from "govuk-react"
+import { BackLink, Heading } from "govuk-react"
+import { useRouter } from "next/router"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -120,23 +121,29 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   user,
   lockedByAnotherUser,
   triggersVisible
-}: Props) => (
-  <>
-    <Layout user={user}>
-      <Heading as="h1" size="LARGE" aria-label="Case details">
-        <title>{"Case Details | Bichard7"}</title>
-        <meta name="description" content="Case Details | Bichard7" />
-        <link rel="icon" href="/favicon.ico" />
-      </Heading>
-      <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
-      <CourtCaseDetails
-        courtCase={courtCase}
-        aho={aho}
-        lockedByAnotherUser={lockedByAnotherUser}
-        triggersVisible={triggersVisible}
-      />
-    </Layout>
-  </>
-)
+}: Props) => {
+  const { basePath } = useRouter()
+  return (
+    <>
+      <Layout user={user}>
+        <Heading as="h1" size="LARGE" aria-label="Case details">
+          <title>{"Case Details | Bichard7"}</title>
+          <meta name="description" content="Case Details | Bichard7" />
+          <link rel="icon" href="/favicon.ico" />
+        </Heading>
+        <BackLink href={`${basePath}`} onClick={function noRefCheck() {}}>
+          {"Cases"}
+        </BackLink>
+        <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
+        <CourtCaseDetails
+          courtCase={courtCase}
+          aho={aho}
+          lockedByAnotherUser={lockedByAnotherUser}
+          triggersVisible={triggersVisible}
+        />
+      </Layout>
+    </>
+  )
+}
 
 export default CourtCaseDetailsPage

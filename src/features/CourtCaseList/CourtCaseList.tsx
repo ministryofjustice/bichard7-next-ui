@@ -14,6 +14,8 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
 
   const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
 
+  const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
+
   const tableHead = (
     <Table.Row>
       <Table.CellHeader>
@@ -51,7 +53,11 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
           <DateTime date={courtDate} />
         </Table.Cell>
         <Table.Cell>{ptiurn}</Table.Cell>
-        <Table.Cell>{defendantName}</Table.Cell>
+        <Table.Cell>
+          <Link href={caseDetailsPath(courtCases[idx].errorId)} id={`Case details ${idx}`}>
+            {defendantName}
+          </Link>
+        </Table.Cell>
         <Table.Cell>{courtName}</Table.Cell>
         <Table.Cell>{triggers?.map((trigger) => trigger.triggerCode).join(", ")}</Table.Cell>
         <Table.Cell>{errorReason}</Table.Cell>
