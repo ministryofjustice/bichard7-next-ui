@@ -116,17 +116,6 @@ Code-based integration tests to be run alongside the bichard7-next `postgres` in
 
 Browser-based E2E `cypress` tests to be run alongside:
 
-- The Postgres instance from the bichard7-next repo
-- The ActiveMQ messaging queue
-- The User Service
-- The Nginx auth proxy
-
-This can be stood up via the Makefile in this repo.
-
-```bash
-    make run-all // Stands up all dependencies and UI container
-```
-
 To run the `cypress` tests against this, run:
 
 ```bash

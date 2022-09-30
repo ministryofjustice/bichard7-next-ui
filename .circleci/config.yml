@@ -34,6 +34,14 @@ commands:
           working_directory: ~/bichard7-next
           command: make run-pg
 
+  run_mq:
+    description: Run MQ
+    steps:
+      - run:
+          name: Spin up MQ
+          working_directory: ~/bichard7-next
+          command: make run-activemq
+
   use_nvm_version:
     description: Install nvm and use configured node version
     steps:
@@ -103,6 +111,7 @@ jobs:
           at: .
       - clone_bichard_repo
       - run_postgres
+      - run_mq
       - run:
           name: Run integration tests
           command: npm run test:integration

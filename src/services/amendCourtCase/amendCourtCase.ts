@@ -1,22 +1,24 @@
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
 import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/build/src/serialise/ahoXml/generate"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/build/src/types/Phase"
-import getCourtCase from "../../services/getCourtCase"
 import updateCourtCaseUpdatedHo from "services/updateCourtCaseUpdatedHo"
 import { DataSource } from "typeorm"
 import { Amendments } from "types/Amendments"
 import { isError } from "types/Result"
 import createForceOwner from "utils/createForceOwner"
+import getCourtCase from "../../services/getCourtCase"
 import applyAmendmentsToAho from "./applyAmendmentsToAho"
 
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import type User from "../entities/User"
+import sendToQueue from "services/mq/sendToQueue"
 
 const amendCourtCase = async (
   amendments: Partial<Amendments>,
   courtCaseId: number,
   userDetails: User,
   dataSource: DataSource
-) => {
+): Promise<AnnotatedHearingOutcome | Error> => {
   // database call to retrieve the current court case
   // Check current court case exception and triggers are locked by current user
   const courtCaseRow = await getCourtCase(dataSource, courtCaseId)
@@ -51,17 +53,22 @@ const amendCourtCase = async (
   if (courtCaseRow.phase === Phase.HEARING_OUTCOME) {
     if (!amendments.noUpdatesResubmit || ahoForceOwner === undefined) {
       if (courtCaseRow.errorLockedByUsername === userDetails.username || courtCaseRow.errorLockedByUsername === null) {
+        // TODO: Double check this logic when implementing updates (ScreenFlowImpl -> line 647)
         const updateResult = await updateCourtCaseUpdatedHo(dataSource, courtCaseId, generatedXml)
         if (isError(updateResult)) {
           return updateResult
         }
       }
     }
+    const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: "HEARING_OUTCOME_INPUT_QUEUE" })
+
+    if (isError(queueResult)) {
+      return queueResult
+    }
   } else {
     // TODO: Cover PNC update phase
   }
 
-  // TODO: Set the status on the record -- see ScreenFlowImpl.java -> submitResolvedError -> line 872
   return updatedAho
 }
 
