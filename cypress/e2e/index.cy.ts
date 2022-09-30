@@ -274,6 +274,22 @@ describe("Home", () => {
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
       })
+
+      it("should be able to navigate to the case details page and back", () => {
+        cy.task("insertUsers", users)
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
+
+        cy.visit("/")
+        cy.findByText("Defendant Name 0").click()
+
+        cy.url().should("match", /\/court-cases\//)
+        cy.findByText("Case Details").should("exist")
+
+        cy.findByText("Cases").click()
+
+        cy.url().should("match", /\/bichard/)
+        cy.findByText("Court cases").should("exist")
+      })
     })
   })
 })
