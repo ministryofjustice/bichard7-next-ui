@@ -11,6 +11,9 @@ export default class User extends BaseEntity {
   username!: string
 
   @Column()
+  password!: string
+
+  @Column()
   email!: string
 
   @Column()
@@ -24,9 +27,6 @@ export default class User extends BaseEntity {
 
   @Column({ name: "feature_flags", transformer: featureFlagTransformer, type: "jsonb" })
   featureFlags!: KeyValuePair<string, boolean>
-
-  @Column({ name: "email_verification_code", type: "varchar", nullable: true })
-  emailVerificationCode!: string | null
 
   private _groups: GroupName[] = []
 

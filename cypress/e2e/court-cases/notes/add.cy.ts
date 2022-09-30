@@ -22,7 +22,7 @@ describe("Home", () => {
       cy.task("clearUsers")
       cy.task("insertUsers", users)
       cy.clearCookies()
-      cy.setAuthCookie("Bichard01")
+      cy.login("bichard01@example.com", "password")
       cy.viewport(1280, 720)
     })
 
@@ -166,7 +166,7 @@ describe("Home", () => {
 
     it("should return 401 if the auth token provided is for a non-existent user", () => {
       cy.clearCookies()
-      cy.setAuthCookie("InvalidUser")
+      // cy.setAuthCookie("InvalidUser")
 
       cy.request({
         failOnStatusCode: false,

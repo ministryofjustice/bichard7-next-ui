@@ -15,13 +15,24 @@ import { insertTriggers } from "./test/util/manageTriggers"
 import insertException from "./test/util/manageExceptions"
 import { deleteUsers, insertUsersWithOverrides } from "./test/util/manageUsers"
 import User from "./src/services/entities/User"
+import pgPromise from "pg-promise"
 
 // const protocol = process.env.UI_IS_HTTPS ? "https://" : "http://"
 export default defineConfig({
   e2e: {
     baseUrl: "https://" + "localhost:4443",
     setupNodeEvents(on, _config) {
+      const pgp = pgPromise()
+      const db = pgp("postgres://bichard:password@localhost:5432/bichard")
+
       on("task", {
+        async getVerificationCode(emailAddress: string): Promise<string> {
+          const result = await db
+            .one("SELECT email_verification_code FROM br7own.users WHERE email = $1", emailAddress)
+            .catch(console.error)
+
+          return result.email_verification_code
+        },
         insertCourtCasesWithOrgCodes(orgCodes: string[]) {
           return insertCourtCasesWithOrgCodes(orgCodes)
         },

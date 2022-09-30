@@ -13,7 +13,7 @@ describe("GOV.UK Assets", () => {
         email: "bichard01@example.com"
       }
     ])
-    cy.setAuthCookie("Bichard01")
+    cy.login("bichard01@example.com", "password")
   })
 
   it("should provide copyright logo", () => {

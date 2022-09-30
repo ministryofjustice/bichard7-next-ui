@@ -11,27 +11,29 @@ describe("Home", () => {
         visibleForces: [`0${idx}`],
         forenames: "Bichard Test User",
         surname: `0${idx}`,
-        email: `bichard0${idx}@example.com`
+        email: `bichard0${idx}@example.com`,
+        password:
+          "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
       }
     })
 
     beforeEach(() => {
       cy.task("clearCourtCases")
       cy.task("clearUsers")
-      // cy.setAuthCookie("Bichard01")
-      cy.loginAs("Bichard01")
       cy.viewport(1280, 720)
     })
 
     context("when there are 0 cases", () => {
-      it("should display 0 cases and the user's username when no cases are added", () => {
+      it.only("should display 0 cases and the user's username when no cases are added", () => {
         cy.task("insertUsers", users)
+        cy.login("bichard01@example.com", "password")
 
         cy.visit("/bichard")
       })
 
       it("should not show pagination buttons when there are 0 cases", () => {
         cy.task("insertUsers", users)
+        cy.login("bichard01@example.com", "password")
 
         cy.visit("/bichard")
 
@@ -41,6 +43,7 @@ describe("Home", () => {
 
       it("should be accessible", () => {
         cy.task("insertUsers", users)
+        cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
         cy.injectAxe()
 
@@ -51,6 +54,7 @@ describe("Home", () => {
     context("when there multiple cases", () => {
       it("should be accessible", () => {
         cy.task("insertUsers", users)
+        cy.login("bichard01@example.com", "password")
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
 
         cy.visit("/bichard")
@@ -61,6 +65,7 @@ describe("Home", () => {
 
       it("should display multiple cases", () => {
         cy.task("insertUsers", users)
+        cy.login("bichard01@example.com", "password")
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
 
         cy.visit("/bichard")
@@ -73,6 +78,7 @@ describe("Home", () => {
 
       it("should paginate buttons", () => {
         cy.task("insertUsers", users)
+        cy.login("bichard01@example.com", "password")
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
 
         cy.visit("/bichard")
@@ -100,6 +106,7 @@ describe("Home", () => {
 
       it("should display a case for the user's org", () => {
         cy.task("insertUsers", users)
+        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithOrgCodes", ["01"])
 
         cy.visit("/bichard")
@@ -108,8 +115,10 @@ describe("Home", () => {
 
       it("should only display cases visible to users forces", () => {
         cy.task("insertUsers", users)
+        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithOrgCodes", ["01", "02", "03", "04"])
-        cy.setAuthCookie("Bichard02")
+
+        cy.login("bichard02@example.com", "password") // TODO: Revisit
 
         cy.visit("/bichard")
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
@@ -117,6 +126,7 @@ describe("Home", () => {
 
       it("should display cases for sub-forces", () => {
         cy.task("insertUsers", users)
+        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "012A", "013A1"])
 
         cy.visit("/bichard")
@@ -137,6 +147,7 @@ describe("Home", () => {
             email: "bichard01@example.com"
           }
         ])
+        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "0111", "01111", "011111"])
 
         cy.visit("/bichard")
@@ -159,6 +170,7 @@ describe("Home", () => {
             email: "bichard01@example.com"
           }
         ])
+        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithCourtNames", { courtNames: ["BBBB", "AAAA", "DDDD", "CCCC"], force: "011111" })
 
         cy.visit("/bichard")
@@ -192,6 +204,7 @@ describe("Home", () => {
             email: "bichard01@example.com"
           }
         ])
+        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithDefendantNames", {
           defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"],
           force: "011111"
@@ -208,6 +221,7 @@ describe("Home", () => {
 
       it("Should filter cases by whether they have triggers and exceptions", () => {
         cy.task("insertUsers", users)
+        cy.login("bichard01@example.com", "password")
 
         cy.task("insertCourtCasesWithOrgCodes", ["01", "01", "01", "01"])
         const triggers: TestTrigger[] = [
