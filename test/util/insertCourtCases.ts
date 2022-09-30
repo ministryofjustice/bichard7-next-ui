@@ -98,7 +98,8 @@ const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: strin
         orgForPoliceFilter: orgCode,
         messageId: String(index).padStart(5, "x"),
         errorId: index,
-        ptiurn: "Case" + String(index).padStart(5, "0")
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        defendantName: `Defendant Name ${index}`
       })
     )
   }
