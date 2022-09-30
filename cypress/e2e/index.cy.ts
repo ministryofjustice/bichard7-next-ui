@@ -23,12 +23,16 @@ describe("Home", () => {
       cy.viewport(1280, 720)
     })
 
-    context("when there are 0 cases", () => {
+    context("when there are 0 cases", async () => {
       it.only("should display 0 cases and the user's username when no cases are added", () => {
         cy.task("insertUsers", users)
-        cy.login("bichard01@example.com", "password")
+        const userEmail = "bichard01@example.com"
+        cy.task("insertIntoUserGroup", { emailAddress: userEmail, groupName: "B7NewUI_grp" })
+        cy.login(userEmail, "password")
 
         cy.visit("/bichard")
+
+        cy.findByText("There are no court cases to show").should("exist")
       })
 
       it("should not show pagination buttons when there are 0 cases", () => {
