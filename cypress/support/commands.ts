@@ -1,4 +1,5 @@
 Cypress.Commands.add("login", (emailAddress, password) => {
+  cy.intercept("GET", "http://bichard7.service.justice.gov.uk/forces.js?forceID=***", {})
   cy.visit("/users")
   cy.get("input[type=email]").type(emailAddress)
   cy.get("button[type=submit]").click()
@@ -11,6 +12,7 @@ Cypress.Commands.add("login", (emailAddress, password) => {
 })
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
       findByText(text: string): Chainable<Element>

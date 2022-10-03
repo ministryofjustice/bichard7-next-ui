@@ -4,6 +4,9 @@ import a11yConfig from "../support/a11yConfig"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 
 describe("Home", () => {
+  const hashedPassword =
+    "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
+
   context("720p resolution", () => {
     const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
       return {
@@ -12,8 +15,7 @@ describe("Home", () => {
         forenames: "Bichard Test User",
         surname: `0${idx}`,
         email: `bichard0${idx}@example.com`,
-        password:
-          "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
+        password: hashedPassword
       }
     })
 
@@ -23,13 +25,12 @@ describe("Home", () => {
       cy.viewport(1280, 720)
     })
 
-    context("when there are 0 cases", async () => {
-      it.only("should display 0 cases and the user's username when no cases are added", () => {
+    context("when there are 0 cases", () => {
+      it("should display 0 cases and the user's username when no cases are added", () => {
         cy.task("insertUsers", users)
         const userEmail = "bichard01@example.com"
         cy.task("insertIntoUserGroup", { emailAddress: userEmail, groupName: "B7NewUI_grp" })
         cy.login(userEmail, "password")
-
         cy.visit("/bichard")
 
         cy.findByText("There are no court cases to show").should("exist")
@@ -38,7 +39,6 @@ describe("Home", () => {
       it("should not show pagination buttons when there are 0 cases", () => {
         cy.task("insertUsers", users)
         cy.login("bichard01@example.com", "password")
-
         cy.visit("/bichard")
 
         cy.findByText("Previous page").should("not.exist")
@@ -49,6 +49,7 @@ describe("Home", () => {
         cy.task("insertUsers", users)
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
+
         cy.injectAxe()
 
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
@@ -58,10 +59,10 @@ describe("Home", () => {
     context("when there multiple cases", () => {
       it("should be accessible", () => {
         cy.task("insertUsers", users)
-        cy.login("bichard01@example.com", "password")
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
-
+        cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
+
         cy.injectAxe()
 
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
@@ -69,10 +70,10 @@ describe("Home", () => {
 
       it("should display multiple cases", () => {
         cy.task("insertUsers", users)
-        cy.login("bichard01@example.com", "password")
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
-
+        cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
+
         cy.findByText(`Case00000`).should("exist")
         cy.findByText(`Case00001`).should("exist")
         cy.findByText(`Case00002`).should("exist")
@@ -82,10 +83,10 @@ describe("Home", () => {
 
       it("should paginate buttons", () => {
         cy.task("insertUsers", users)
-        cy.login("bichard01@example.com", "password")
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
-
+        cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
+
         cy.findByText("Previous page").should("not.exist")
         cy.findByText("Next page").should("exist")
         // paginate next page until the last page
@@ -110,30 +111,30 @@ describe("Home", () => {
 
       it("should display a case for the user's org", () => {
         cy.task("insertUsers", users)
-        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithOrgCodes", ["01"])
-
+        cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
+
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
       })
 
       it("should only display cases visible to users forces", () => {
         cy.task("insertUsers", users)
-        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithOrgCodes", ["01", "02", "03", "04"])
 
-        cy.login("bichard02@example.com", "password") // TODO: Revisit
-
+        cy.login("bichard02@example.com", "password")
         cy.visit("/bichard")
+
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
       })
 
       it("should display cases for sub-forces", () => {
         cy.task("insertUsers", users)
-        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "012A", "013A1"])
 
+        cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
+
         cy.get("tr")
           .not(":first")
           .each((row, index) => {
@@ -148,13 +149,15 @@ describe("Home", () => {
             visibleForces: ["011111"],
             forenames: "Bichard Test User",
             surname: "01",
-            email: "bichard01@example.com"
+            email: "bichard01@example.com",
+            password: hashedPassword
           }
         ])
-        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "0111", "01111", "011111"])
 
+        cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
+
         cy.get("tr")
           .not(":first")
           .each((row, index) => {
@@ -171,12 +174,13 @@ describe("Home", () => {
             visibleForces: ["011111"],
             forenames: "Bichard Test User",
             surname: "01",
-            email: "bichard01@example.com"
+            email: "bichard01@example.com",
+            password: hashedPassword
           }
         ])
-        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithCourtNames", { courtNames: ["BBBB", "AAAA", "DDDD", "CCCC"], force: "011111" })
 
+        cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
         cy.findByText("Court Name").click()
@@ -205,15 +209,16 @@ describe("Home", () => {
             visibleForces: ["011111"],
             forenames: "Bichard Test User",
             surname: "01",
-            email: "bichard01@example.com"
+            email: "bichard01@example.com",
+            password: hashedPassword
           }
         ])
-        cy.login("bichard01@example.com", "password")
         cy.task("insertCourtCasesWithDefendantNames", {
           defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"],
           force: "011111"
         })
 
+        cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
         cy.get("input[type=search]").type("Bruce Wayne")
@@ -225,8 +230,6 @@ describe("Home", () => {
 
       it("Should filter cases by whether they have triggers and exceptions", () => {
         cy.task("insertUsers", users)
-        cy.login("bichard01@example.com", "password")
-
         cy.task("insertCourtCasesWithOrgCodes", ["01", "01", "01", "01"])
         const triggers: TestTrigger[] = [
           {
@@ -243,6 +246,7 @@ describe("Home", () => {
 
         cy.task("insertException", { caseId: 2, exceptionCode: "HO100207" })
 
+        cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
         // Default: no filter, all cases shown
@@ -279,7 +283,9 @@ describe("Home", () => {
         cy.task("insertUsers", users)
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
-        cy.visit("/")
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
         cy.findByText("Defendant Name 0").click()
 
         cy.url().should("match", /\/court-cases\//)
