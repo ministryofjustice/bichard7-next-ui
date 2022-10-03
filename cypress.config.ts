@@ -19,7 +19,7 @@ import pgPromise from "pg-promise"
 
 export default defineConfig({
   e2e: {
-    baseUrl: "https://" + "localhost:4443",
+    baseUrl: "https://localhost:4443",
     setupNodeEvents(on, _config) {
       const pgp = pgPromise()
       const db = pgp("postgres://bichard:password@localhost:5432/bichard")
