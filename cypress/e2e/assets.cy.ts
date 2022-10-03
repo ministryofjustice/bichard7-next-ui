@@ -10,14 +10,16 @@ describe("GOV.UK Assets", () => {
         visibleForces: ["01"],
         forenames: "Bichard Test User",
         surname: "01",
-        email: "bichard01@example.com"
+        email: "bichard01@example.com",
+        password:
+          "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
       }
     ])
     cy.login("bichard01@example.com", "password")
   })
 
   it("should provide copyright logo", () => {
-    cy.visit("/")
+    cy.visit("/bichard")
     cy.get(
       "a[href='https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/']"
     )
