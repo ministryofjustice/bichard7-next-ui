@@ -114,8 +114,27 @@ Code-based integration tests to be run alongside the bichard7-next `postgres` in
 
 #### E2E
 
-Browser-based E2E cypress tests to be run alongside the bichard7-next `postgres` instance
+Browser-based E2E `cypress` tests to be run alongside:
+
+- The Postgres instance from the bichard7-next repo
+- The ActiveMQ messaging queue
+- The User Service
+- The Nginx auth proxy
+
+This can be stood up via the Makefile in this repo.
 
 ```bash
-    npm run test:ui:e2e
+    make run-all // Stands up all dependencies and UI container
+```
+
+To run the `cypress` tests against this, run:
+
+```bash
+    npm run cypress:open:docker
+```
+
+or if you're running the UI locally (`npm run dev` - will require you to kill the UI docker container first):
+
+```bash
+    npm run cypress:open
 ```
