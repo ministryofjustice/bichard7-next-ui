@@ -12,7 +12,9 @@ describe("Home", () => {
           visibleForces: [`0${idx}`],
           forenames: "Bichard Test User",
           surname: `0${idx}`,
-          email: `bichard0${idx}@example.com`
+          email: `bichard0${idx}@example.com`,
+          password:
+            "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
         }
       })
     )
@@ -22,7 +24,6 @@ describe("Home", () => {
       cy.task("clearUsers")
       cy.task("insertUsers", users)
       cy.clearCookies()
-      cy.setAuthCookie("Bichard01")
       cy.viewport(1280, 720)
     })
 
@@ -37,7 +38,9 @@ describe("Home", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
-      cy.visit("/court-cases/0")
+
+      cy.login("bichard01@example.com", "password")
+      cy.visit("/bichard/court-cases/0")
       cy.get("button").contains("Add Note").click()
 
       cy.injectAxe()
@@ -56,7 +59,10 @@ describe("Home", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
-      cy.visit("/court-cases/0")
+
+      cy.login("bichard01@example.com", "password")
+
+      cy.visit("/bichard/court-cases/0")
       cy.get("button").contains("Add Note").click()
       cy.get("H2").should("have.text", "Add Note")
       cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
@@ -81,7 +87,9 @@ describe("Home", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
-      cy.visit("/court-cases/0")
+      cy.login("bichard01@example.com", "password")
+
+      cy.visit("/bichard/court-cases/0")
       cy.get("button").contains("Add Note").click()
       cy.get("H2").should("have.text", "Add Note")
       cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
@@ -110,7 +118,9 @@ describe("Home", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
-      cy.visit("/court-cases/0")
+      cy.login("bichard01@example.com", "password")
+
+      cy.visit("/bichard/court-cases/0")
       cy.get("button").contains("Add Note").click()
       cy.get("H2").should("have.text", "Add Note")
       cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
@@ -133,7 +143,9 @@ describe("Home", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
-      cy.visit("/court-cases/0")
+      cy.login("bichard01@example.com", "password")
+
+      cy.visit("/bichard/court-cases/0")
       cy.get("button").contains("Add Note").click()
       cy.get("H2").should("have.text", "Add Note")
 
@@ -146,16 +158,19 @@ describe("Home", () => {
 
     it("should return 404 for a case that this user can not see", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["02"])
+      cy.login("bichard01@example.com", "password")
 
       cy.request({
         failOnStatusCode: false,
-        url: "/court-cases/0/notes/add"
+        url: "/bichard/court-cases/0/notes/add"
       }).then((response) => {
         expect(response.status).to.eq(404)
       })
     })
 
     it("should return 404 for a case that does not exist", () => {
+      cy.login("bichard01@example.com", "password")
+
       cy.request({
         failOnStatusCode: false,
         url: "/court-cases/1/notes/add"
@@ -164,15 +179,14 @@ describe("Home", () => {
       })
     })
 
-    it("should return 401 if the auth token provided is for a non-existent user", () => {
+    it("should redirect to the user-service if the auth token provided is for a non-existent user", () => {
       cy.clearCookies()
-      cy.setAuthCookie("InvalidUser")
 
       cy.request({
         failOnStatusCode: false,
         url: "/court-cases/1/notes/add"
-      }).then((response) => {
-        expect(response.status).to.eq(401)
+      }).then(() => {
+        cy.url().should("match", /\/users/)
       })
     })
   })

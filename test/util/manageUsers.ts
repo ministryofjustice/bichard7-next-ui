@@ -6,6 +6,7 @@ const TemplateUser: Partial<User> = {
   username: `Bichard01`,
   visibleForces: [`01`],
   forenames: "Bichard Test User",
+  password: "",
   surname: `01`,
   email: `bichard01@example.com`,
   featureFlags: { test_flag: true, test_flag_2: false }

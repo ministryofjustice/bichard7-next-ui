@@ -12,7 +12,9 @@ describe("Case details", () => {
         visibleForces: [`0${idx}`],
         forenames: "Bichard Test User",
         surname: `0${idx}`,
-        email: `bichard0${idx}@example.com`
+        email: `bichard0${idx}@example.com`,
+        password:
+          "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
       }
     })
 
@@ -21,7 +23,6 @@ describe("Case details", () => {
       cy.task("clearUsers")
       cy.task("insertUsers", users)
       cy.clearCookies()
-      cy.setAuthCookie("Bichard01")
       cy.viewport(1280, 720)
     })
 
@@ -36,7 +37,9 @@ describe("Case details", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
-      cy.visit("/court-cases/0")
+      cy.login("bichard01@example.com", "password")
+
+      cy.visit("/bichard/court-cases/0")
 
       cy.injectAxe()
 
@@ -54,7 +57,11 @@ describe("Case details", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
-      cy.visit("/court-cases/0")
+      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
+
+      cy.login("bichard01@example.com", "password")
+
+      cy.visit("/bichard/court-cases/0")
 
       cy.get("H2").should("have.text", "Case Details")
 
@@ -105,16 +112,19 @@ describe("Case details", () => {
 
     it("should return 404 for a case that this user can not see", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["02"])
+      cy.login("bichard01@example.com", "password")
 
       cy.request({
         failOnStatusCode: false,
-        url: "/court-cases/0"
+        url: "/bichard/court-cases/0"
       }).then((response) => {
         expect(response.status).to.eq(404)
       })
     })
 
     it("should return 404 for a case that does not exist", () => {
+      cy.login("bichard01@example.com", "password")
+
       cy.request({
         failOnStatusCode: false,
         url: "/court-cases/1"
@@ -123,22 +133,23 @@ describe("Case details", () => {
       })
     })
 
-    it("should return 401 if the auth token provided is for a non-existent user", () => {
+    it("should redirect to the user-service if the auth token provided is for a non-existent user", () => {
+      cy.login("bichard01@example.com", "password")
       cy.clearCookies()
-      cy.setAuthCookie("InvalidUser")
 
       cy.request({
         failOnStatusCode: false,
         url: "/court-cases/1"
-      }).then((response) => {
-        expect(response.status).to.eq(401)
+      }).then(() => {
+        cy.url().should("match", /\/users/)
       })
     })
 
     it("should lock a case when a user views a case details page", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["01"])
-
-      cy.visit("/court-cases/0")
+      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
+      cy.login("bichard01@example.com", "password")
+      cy.visit("/bichard/court-cases/0")
 
       cy.findByText("Lock Court Case").click()
       cy.findByText("Case locked by another user").should("not.exist")
@@ -156,7 +167,8 @@ describe("Case details", () => {
         triggerCount: 1
       })
 
-      cy.visit("/court-cases/0")
+      cy.login("bichard01@example.com", "password")
+      cy.visit("/bichard/court-cases/0")
       cy.findByText("Case locked by another user").should("exist")
       cy.findByText("Trigger locked by: Another name").should("exist")
       cy.findByText("Error locked by: Another name").should("exist")
@@ -169,8 +181,10 @@ describe("Case details", () => {
         triggerLockedByUsername: existingUserLock,
         orgCodes: ["01"]
       })
+      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
 
-      cy.visit("/court-cases/0")
+      cy.login("bichard01@example.com", "password")
+      cy.visit("/bichard/court-cases/0")
       cy.findByText("Case locked by another user").should("exist")
       cy.findByText("Trigger locked by: Another name").should("exist")
       cy.findByText("Error locked by: Another name").should("exist")
@@ -202,8 +216,10 @@ describe("Case details", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
 
-      cy.visit("/court-cases/0")
+      cy.login("bichard01@example.com", "password")
+      cy.visit("/bichard/court-cases/0")
       cy.findByText(`Trigger locked by: ${user}`).should("exist")
       cy.findByText(`Error locked by: ${user}`).should("exist")
 
@@ -225,7 +241,11 @@ describe("Case details", () => {
         triggerLockedByUsername: null,
         orgCodes: ["01"]
       })
-      cy.visit("/court-cases/0")
+
+      cy.login("bichard01@example.com", "password")
+      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
+
+      cy.visit("/bichard/court-cases/0")
 
       cy.get("button").contains("Resubmit").click()
       cy.location().should((loc) => {
