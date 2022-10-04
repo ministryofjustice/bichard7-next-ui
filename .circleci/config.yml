@@ -211,7 +211,7 @@ jobs:
           command: npx wait-on --config ./.circleci/config/wait-for-401.js https://localhost:4080/bichard
       - run:
           name: Run UI tests
-          command: npm run cypress:run
+          command: npm run cypress:run:docker
           environment:
             UI_IS_HTTPS: true
             TZ: "Europe/London"
