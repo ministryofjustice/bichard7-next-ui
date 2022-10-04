@@ -31,6 +31,7 @@ describe("Home", () => {
         const userEmail = "bichard01@example.com"
         cy.task("insertIntoUserGroup", { emailAddress: userEmail, groupName: "B7NewUI_grp" })
         cy.login(userEmail, "password")
+
         cy.visit("/bichard")
 
         cy.findByText("There are no court cases to show").should("exist")

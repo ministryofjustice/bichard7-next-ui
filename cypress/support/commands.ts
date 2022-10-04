@@ -1,5 +1,17 @@
 Cypress.Commands.add("login", (emailAddress, password) => {
   cy.intercept("GET", "http://bichard7.service.justice.gov.uk/forces.js?forceID=***", {})
+
+  const loginUrl = "https://localhost:4443"
+  if (Cypress.config("baseUrl") !== loginUrl) {
+    console.log(`Running locally: ${Cypress.config("baseUrl")}`)
+    cy.origin(loginUrl, { args: { emailAddress, password } }, login)
+  } else {
+    console.log(`Running with proxy: ${Cypress.config("baseUrl")}`)
+    login({ emailAddress, password })
+  }
+})
+
+const login = ({ emailAddress, password }: { emailAddress: string; password: string }) => {
   cy.visit("/users")
   cy.get("input[type=email]").type(emailAddress)
   cy.get("button[type=submit]").click()
@@ -9,7 +21,7 @@ Cypress.Commands.add("login", (emailAddress, password) => {
     cy.get("input#password").type(password)
     cy.get("button[type=submit]").click()
   })
-})
+}
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace

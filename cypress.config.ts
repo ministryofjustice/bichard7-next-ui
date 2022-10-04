@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/naming-convention */
 import { defineConfig } from "cypress"
 import CourtCase from "./src/services/entities/CourtCase"
 import deleteFromTable from "./test/util/deleteFromTable"
@@ -19,7 +17,8 @@ import pgPromise from "pg-promise"
 
 export default defineConfig({
   e2e: {
-    baseUrl: "https://localhost:4443",
+    experimentalSessionAndOrigin: true,
+    baseUrl: "http://localhost:4080", // Default value: We can override this in package.json
     setupNodeEvents(on, _config) {
       const pgp = pgPromise()
       const db = pgp("postgres://bichard:password@localhost:5432/bichard")

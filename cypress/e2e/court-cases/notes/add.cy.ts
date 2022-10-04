@@ -178,17 +178,6 @@ describe("Home", () => {
         expect(response.status).to.eq(404)
       })
     })
-
-    it("should redirect to the user-service if the auth token provided is for a non-existent user", () => {
-      cy.clearCookies()
-
-      cy.request({
-        failOnStatusCode: false,
-        url: "/court-cases/1/notes/add"
-      }).then(() => {
-        cy.url().should("match", /\/users/)
-      })
-    })
   })
 })
 
