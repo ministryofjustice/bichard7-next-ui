@@ -1,15 +1,17 @@
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import amendCourtCase from "services/amendCourtCase"
-import unlockCourtCase from "services/unlockCourtCase"
-import tryToLockCourtCase from "services/tryToLockCourtCase"
 import User from "services/entities/User"
-import { isError } from "types/Result"
+import tryToLockCourtCase from "services/tryToLockCourtCase"
+import unlockCourtCase from "services/unlockCourtCase"
+// import updateCaseErrorStatus from "services/updateCaseErrorStatus"
 import { DataSource } from "typeorm"
+import { isError } from "types/Result"
+
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import type { Amendments } from "types/Amendments"
 
 const resubmitCourtCase = async (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dataSource: DataSource,
-  form: any,
+  form: Partial<Amendments>,
   courtCaseId: number,
   currentUser: User
 ): Promise<AnnotatedHearingOutcome | Error> => {
@@ -19,11 +21,19 @@ const resubmitCourtCase = async (
     throw lockResult
   }
 
-  const amendedCase = await amendCourtCase(form, courtCaseId, currentUser, dataSource)
+  const amendedCourtCase = await amendCourtCase(form, courtCaseId, currentUser, dataSource)
 
-  if (isError(amendCourtCase)) {
-    return amendCourtCase
+  if (isError(amendedCourtCase)) {
+    return amendedCourtCase
   }
+
+  // TODO: set error status as submitted = 3
+  // TODO: Set the status on the record -- see ScreenFlowImpl.java -> submitResolvedError -> line 872
+  // const statusResult = await updateCaseErrorStatus(dataSource, +courtCaseId, "Submitted", currentUser)
+
+  // if (isError(statusResult)) {
+  //   return statusResult
+  // }
 
   const unlockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser)
 
@@ -31,7 +41,7 @@ const resubmitCourtCase = async (
     return unlockResult
   }
 
-  return amendedCase
+  return amendedCourtCase
 }
 
 export default resubmitCourtCase

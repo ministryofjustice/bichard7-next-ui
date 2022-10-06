@@ -50,6 +50,7 @@
     "react-dom": "18.2.0",
     "react-jss": "^10.9.2",
     "reflect-metadata": "^0.1.13",
+    "stompit": "^1.0.0",
     "styled-components": "^5.3.5",
     "typeorm": "^0.3.7"
   },
@@ -76,6 +77,7 @@
     "@types/node": "18.0.0",
     "@types/react": "18.0.14",
     "@types/react-dom": "18.0.5",
+    "@types/stompit": "^0.26.3",
     "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",

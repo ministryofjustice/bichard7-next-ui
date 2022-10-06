@@ -10,9 +10,13 @@ const unlockCourtCase = async (
 ): Promise<UpdateResult | Error> => {
   const courtCaseRepository = dataSource.getRepository(CourtCase)
   const setFields: QueryDeepPartialEntity<CourtCase> = {}
-  const { canLockExceptions, canLockTriggers } = user
+  const { canLockExceptions, canLockTriggers, username } = user
 
-  const query = courtCaseRepository.createQueryBuilder().update(CourtCase)
+  // TODO: Allow user to unlock error and triggers separately
+  const query = courtCaseRepository
+    .createQueryBuilder()
+    .update(CourtCase)
+    .where({ errorLockedByUsername: username, triggerLockedByUsername: username })
 
   if (canLockExceptions) {
     setFields.errorLockedByUsername = null
