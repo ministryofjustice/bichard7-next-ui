@@ -10,6 +10,7 @@ import getDataSource from "services/getDataSource"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
+import parseAnnotatedPNCUpdateDatasetXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAnnotatedPNCUpdateDatasetXml/parseAnnotatedPNCUpdateDatasetXml"
 import tryToLockCourtCase from "services/tryToLockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
 import getCourtCaseByVisibleForce from "services/getCourtCaseByVisibleForce"
@@ -21,6 +22,7 @@ import { resubmitCourtCase } from "services/resubmitCourtCase"
 import parseFormData from "utils/parseFormData"
 import { BackLink, Heading } from "govuk-react"
 import { useRouter } from "next/router"
+import { isPncUpdateDataset } from "utils/isPncUpdateDataset"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -90,9 +92,24 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const aho = parseAhoXml(courtCase.hearingOutcome)
-    if (isError(aho)) {
-      console.error(`Failed to parse aho: ${aho}`)
+    let annotatedHearingOutcome: AnnotatedHearingOutcome | Error
+
+    if (isPncUpdateDataset(courtCase.hearingOutcome)) {
+      const pncUpdateDataset = parseAnnotatedPNCUpdateDatasetXml(courtCase.hearingOutcome)
+
+      if (isError(pncUpdateDataset)) {
+        console.error(`Failed to parse AnnotatedPNCUpdateDatasetXml: ${pncUpdateDataset}`)
+
+        annotatedHearingOutcome = pncUpdateDataset
+      } else {
+        annotatedHearingOutcome = pncUpdateDataset.AnnotatedPNCUpdateDataset.PNCUpdateDataset
+      }
+    } else {
+      annotatedHearingOutcome = parseAhoXml(courtCase.hearingOutcome)
+
+      if (isError(annotatedHearingOutcome)) {
+        console.error(`Failed to parse aho: ${annotatedHearingOutcome}`)
+      }
     }
 
     return {
@@ -100,7 +117,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         user: currentUser.serialize(),
         triggersVisible: currentUser.canLockTriggers,
         courtCase: courtCase.serialize(),
-        aho: JSON.parse(JSON.stringify(aho)),
+        aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
       }
     }
