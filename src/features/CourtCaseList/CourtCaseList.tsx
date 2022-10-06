@@ -54,7 +54,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
         </Table.Cell>
         <Table.Cell>{ptiurn}</Table.Cell>
         <Table.Cell>
-          <Link href={caseDetailsPath(courtCases[idx].errorId)} id={`Case details ${idx}`}>
+          <Link href={caseDetailsPath(courtCases[idx].errorId)} id={`Case details for ${defendantName}`}>
             {defendantName}
           </Link>
         </Table.Cell>
