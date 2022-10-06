@@ -63,30 +63,32 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       <Heading as="h3" size="MEDIUM">
         {"Triggers"}
       </Heading>
-      <Table>
-        <Table.Row>
-          <Table.CellHeader>{"Code"}</Table.CellHeader>
-          <Table.CellHeader>{"Item ID"}</Table.CellHeader>
-          <Table.CellHeader>{"Resolved by"}</Table.CellHeader>
-          <Table.CellHeader>{"Resolved at"}</Table.CellHeader>
-          <Table.CellHeader>{"Created at"}</Table.CellHeader>
-          <Table.CellHeader>{"Mark as resolved"}</Table.CellHeader>
-        </Table.Row>
-        {courtCase.triggers.map((trigger, index) => (
-          <Table.Row key={index}>
-            <Table.Cell>{trigger.triggerCode}</Table.Cell>
-            <Table.Cell>{trigger.triggerItemIdentity}</Table.Cell>
-            <Table.Cell>{trigger.resolvedBy}</Table.Cell>
-            <Table.Cell>{!!trigger.resolvedAt && <DateTime date={trigger.resolvedAt} />}</Table.Cell>
-            <Table.Cell>
-              <DateTime date={trigger.createdAt} />
-            </Table.Cell>
-            <Table.Cell>
-              <ResolveTrigger trigger={trigger} courtCase={courtCase}></ResolveTrigger>
-            </Table.Cell>
+      <div id="Triggers_table">
+        <Table>
+          <Table.Row>
+            <Table.CellHeader>{"Code"}</Table.CellHeader>
+            <Table.CellHeader>{"Item ID"}</Table.CellHeader>
+            <Table.CellHeader>{"Resolved by"}</Table.CellHeader>
+            <Table.CellHeader>{"Resolved at"}</Table.CellHeader>
+            <Table.CellHeader>{"Created at"}</Table.CellHeader>
+            <Table.CellHeader>{"Mark as resolved"}</Table.CellHeader>
           </Table.Row>
-        ))}
-      </Table>
+          {courtCase.triggers.map((trigger, index) => (
+            <Table.Row key={index}>
+              <Table.Cell>{trigger.triggerCode}</Table.Cell>
+              <Table.Cell>{trigger.triggerItemIdentity}</Table.Cell>
+              <Table.Cell>{trigger.resolvedBy}</Table.Cell>
+              <Table.Cell>{!!trigger.resolvedAt && <DateTime date={trigger.resolvedAt} />}</Table.Cell>
+              <Table.Cell>
+                <DateTime date={trigger.createdAt} />
+              </Table.Cell>
+              <Table.Cell>
+                <ResolveTrigger trigger={trigger} courtCase={courtCase}></ResolveTrigger>
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table>
+      </div>
     </If>
     <If condition={(courtCase?.triggers?.length ?? 0) === 0}>
       <Paragraph>{"Case has no triggers."}</Paragraph>
