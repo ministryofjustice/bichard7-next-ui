@@ -97,7 +97,7 @@ describe("lock court case", () => {
 
   it("should return the error when failed to unlock court case", async () => {
     jest
-      .spyOn(UpdateQueryBuilder<CourtCase>.prototype, "execute")
+      .spyOn(UpdateQueryBuilder.prototype, "execute")
       .mockRejectedValue(Error("Failed to update record with some error"))
 
     const lockedCourtCase = await getDummyCourtCase({

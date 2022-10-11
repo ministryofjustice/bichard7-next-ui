@@ -1,23 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`resubmit court case should resubmit a court case with no updates 1`] = `
-Object {
-  "AnnotatedHearingOutcome": Object {
-    "HearingOutcome": Object {
-      "Case": Object {
+{
+  "AnnotatedHearingOutcome": {
+    "HearingOutcome": {
+      "Case": {
         "CourtCaseReferenceNumber": undefined,
-        "CourtReference": Object {
+        "CourtReference": {
           "MagistratesCourtReference": "01ZD0300208",
         },
-        "ForceOwner": Object {
+        "ForceOwner": {
           "BottomLevelCode": "00",
           "OrganisationUnitCode": "01ZD00",
           "SecondLevelCode": "01",
           "ThirdLevelCode": "ZD",
           "TopLevelCode": undefined,
         },
-        "HearingDefendant": Object {
-          "Address": Object {
+        "HearingDefendant": {
+          "Address": {
             "AddressLine1": "ScenarioAE Address Line 1",
             "AddressLine2": "ScenarioAE Address Line 2",
             "AddressLine3": "ScenarioAE Address Line 3",
@@ -25,27 +25,27 @@ Object {
             "AddressLine5": undefined,
           },
           "ArrestSummonsNumber": "1101ZD0100000411423H",
-          "BailConditions": Array [],
+          "BailConditions": [],
           "CourtPNCIdentifier": undefined,
-          "DefendantDetail": Object {
+          "DefendantDetail": {
             "BirthDate": 1948-11-11T00:00:00.000Z,
             "Gender": 1,
             "GeneratedPNCFilename": "PINKERTON/MARCUS",
-            "PersonName": Object {
+            "PersonName": {
               "FamilyName": "Pinkerton",
-              "GivenName": Array [
+              "GivenName": [
                 "Marcus",
               ],
               "Title": "Mr",
             },
           },
-          "Offence": Array [
-            Object {
+          "Offence": [
+            {
               "ActualOffenceDateCode": "1",
-              "ActualOffenceEndDate": Object {
+              "ActualOffenceEndDate": {
                 "EndDate": 2010-09-23T00:00:00.000Z,
               },
-              "ActualOffenceStartDate": Object {
+              "ActualOffenceStartDate": {
                 "StartDate": 2010-09-21T00:00:00.000Z,
               },
               "ActualOffenceWording": "Theft from shop - shoplifting.",
@@ -57,11 +57,11 @@ Object {
               "ConvictionDate": 2011-10-01T00:00:00.000Z,
               "CourtCaseReferenceNumber": undefined,
               "CourtOffenceSequenceNumber": 1,
-              "CriminalProsecutionReference": Object {
-                "DefendantOrOffender": Object {
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
                   "CheckDigit": "H",
                   "DefendantOrOffenderSequenceNumber": "00000411423",
-                  "OrganisationUnitIdentifierCode": Object {
+                  "OrganisationUnitIdentifierCode": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "01ZD01",
                     "SecondLevelCode": "01",
@@ -70,8 +70,8 @@ Object {
                   },
                   "Year": "11",
                 },
-                "OffenceReason": Object {
-                  "OffenceCode": Object {
+                "OffenceReason": {
+                  "OffenceCode": {
                     "ActOrSource": "TH",
                     "FullCode": "TH68010",
                     "Qualifier": undefined,
@@ -91,16 +91,16 @@ Object {
               "OffenceCategory": "CE",
               "OffenceTitle": "Theft from a shop",
               "RecordableOnPNCindicator": true,
-              "Result": Array [
-                Object {
+              "Result": [
+                {
                   "AmountSpecifiedInResult": undefined,
-                  "BailCondition": Array [],
+                  "BailCondition": [],
                   "CJSresultCode": 1002,
                   "ConvictingCourt": undefined,
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
-                  "Duration": Array [
-                    Object {
+                  "Duration": [
+                    {
                       "DurationLength": 12,
                       "DurationType": "Duration",
                       "DurationUnit": "M",
@@ -118,14 +118,14 @@ Object {
                   "PNCDisposalType": 1002,
                   "PleaStatus": "NG",
                   "ReasonForOffenceBailConditions": undefined,
-                  "ResultApplicableQualifierCode": Array [],
+                  "ResultApplicableQualifierCode": [],
                   "ResultClass": "Judgement with final result",
                   "ResultHalfLifeHours": 72,
                   "ResultHearingDate": 2011-10-01T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
-                  "ResultQualifierVariable": Array [],
+                  "ResultQualifierVariable": [],
                   "ResultVariableText": "Imprisonment for 12 Months",
-                  "SourceOrganisation": Object {
+                  "SourceOrganisation": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "B01EF01",
                     "SecondLevelCode": "01",
@@ -136,20 +136,20 @@ Object {
                   "Verdict": "G",
                   "WarrantIssueDate": undefined,
                 },
-                Object {
-                  "AmountSpecifiedInResult": Array [
-                    Object {
+                {
+                  "AmountSpecifiedInResult": [
+                    {
                       "Amount": 100,
                       "DecimalPlaces": 2,
                       "Type": "Fine",
                     },
                   ],
-                  "BailCondition": Array [],
+                  "BailCondition": [],
                   "CJSresultCode": 1015,
                   "ConvictingCourt": undefined,
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
-                  "Duration": Array [],
+                  "Duration": [],
                   "ModeOfTrialReason": "SUM",
                   "NextCourtType": undefined,
                   "NextHearingDate": undefined,
@@ -162,14 +162,14 @@ Object {
                   "PNCDisposalType": 1015,
                   "PleaStatus": "NG",
                   "ReasonForOffenceBailConditions": undefined,
-                  "ResultApplicableQualifierCode": Array [],
+                  "ResultApplicableQualifierCode": [],
                   "ResultClass": "Judgement with final result",
                   "ResultHalfLifeHours": 72,
                   "ResultHearingDate": 2011-10-01T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
-                  "ResultQualifierVariable": Array [],
+                  "ResultQualifierVariable": [],
                   "ResultVariableText": "Fined 100.",
-                  "SourceOrganisation": Object {
+                  "SourceOrganisation": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "B01EF01",
                     "SecondLevelCode": "01",
@@ -182,12 +182,12 @@ Object {
                 },
               ],
             },
-            Object {
+            {
               "ActualOffenceDateCode": "1",
-              "ActualOffenceEndDate": Object {
+              "ActualOffenceEndDate": {
                 "EndDate": 2010-09-23T00:00:00.000Z,
               },
-              "ActualOffenceStartDate": Object {
+              "ActualOffenceStartDate": {
                 "StartDate": 2010-09-21T00:00:00.000Z,
               },
               "ActualOffenceWording": "Theft from shop - shoplifting.",
@@ -199,11 +199,11 @@ Object {
               "ConvictionDate": 2011-10-01T00:00:00.000Z,
               "CourtCaseReferenceNumber": undefined,
               "CourtOffenceSequenceNumber": 2,
-              "CriminalProsecutionReference": Object {
-                "DefendantOrOffender": Object {
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
                   "CheckDigit": "H",
                   "DefendantOrOffenderSequenceNumber": "00000411423",
-                  "OrganisationUnitIdentifierCode": Object {
+                  "OrganisationUnitIdentifierCode": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "01ZD01",
                     "SecondLevelCode": "01",
@@ -212,8 +212,8 @@ Object {
                   },
                   "Year": "11",
                 },
-                "OffenceReason": Object {
-                  "OffenceCode": Object {
+                "OffenceReason": {
+                  "OffenceCode": {
                     "ActOrSource": "TH",
                     "FullCode": "TH68010",
                     "Qualifier": undefined,
@@ -233,21 +233,21 @@ Object {
               "OffenceCategory": "CE",
               "OffenceTitle": "Theft from a shop",
               "RecordableOnPNCindicator": true,
-              "Result": Array [
-                Object {
-                  "AmountSpecifiedInResult": Array [
-                    Object {
+              "Result": [
+                {
+                  "AmountSpecifiedInResult": [
+                    {
                       "Amount": 300,
                       "DecimalPlaces": 2,
                       "Type": "Fine",
                     },
                   ],
-                  "BailCondition": Array [],
+                  "BailCondition": [],
                   "CJSresultCode": 1015,
                   "ConvictingCourt": undefined,
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
-                  "Duration": Array [],
+                  "Duration": [],
                   "ModeOfTrialReason": "SUM",
                   "NextCourtType": undefined,
                   "NextHearingDate": undefined,
@@ -260,14 +260,14 @@ Object {
                   "PNCDisposalType": 1015,
                   "PleaStatus": "NG",
                   "ReasonForOffenceBailConditions": undefined,
-                  "ResultApplicableQualifierCode": Array [],
+                  "ResultApplicableQualifierCode": [],
                   "ResultClass": "Judgement with final result",
                   "ResultHalfLifeHours": 72,
                   "ResultHearingDate": 2011-10-01T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
-                  "ResultQualifierVariable": Array [],
+                  "ResultQualifierVariable": [],
                   "ResultVariableText": "Fined 300.",
-                  "SourceOrganisation": Object {
+                  "SourceOrganisation": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "B01EF01",
                     "SecondLevelCode": "01",
@@ -278,15 +278,15 @@ Object {
                   "Verdict": "G",
                   "WarrantIssueDate": undefined,
                 },
-                Object {
+                {
                   "AmountSpecifiedInResult": undefined,
-                  "BailCondition": Array [],
+                  "BailCondition": [],
                   "CJSresultCode": 1002,
                   "ConvictingCourt": undefined,
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
-                  "Duration": Array [
-                    Object {
+                  "Duration": [
+                    {
                       "DurationLength": 12,
                       "DurationType": "Duration",
                       "DurationUnit": "M",
@@ -304,14 +304,14 @@ Object {
                   "PNCDisposalType": 1002,
                   "PleaStatus": "NG",
                   "ReasonForOffenceBailConditions": undefined,
-                  "ResultApplicableQualifierCode": Array [],
+                  "ResultApplicableQualifierCode": [],
                   "ResultClass": "Judgement with final result",
                   "ResultHalfLifeHours": 72,
                   "ResultHearingDate": 2011-10-01T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
-                  "ResultQualifierVariable": Array [],
+                  "ResultQualifierVariable": [],
                   "ResultVariableText": "Imprisonment for 12 Months",
-                  "SourceOrganisation": Object {
+                  "SourceOrganisation": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "B01EF01",
                     "SecondLevelCode": "01",
@@ -338,8 +338,8 @@ Object {
         "RecordableOnPNCindicator": true,
         "Urgent": undefined,
       },
-      "Hearing": Object {
-        "CourtHearingLocation": Object {
+      "Hearing": {
+        "CourtHearingLocation": {
           "BottomLevelCode": "01",
           "OrganisationUnitCode": "B01EF01",
           "SecondLevelCode": "01",
@@ -353,7 +353,7 @@ Object {
         "DefendantPresentAtHearing": "A",
         "HearingDocumentationLanguage": "D",
         "HearingLanguage": "D",
-        "SourceReference": Object {
+        "SourceReference": {
           "DocumentName": "SPI Marcus Pinkerton",
           "DocumentType": "SPI Case Result",
           "UniqueID": "CID-a7428cb6-b0d7-4921-a2cf-3b767d4f4c49",
@@ -362,7 +362,7 @@ Object {
       },
     },
   },
-  "Exceptions": Array [],
+  "Exceptions": [],
   "PncErrorMessage": undefined,
   "PncQuery": undefined,
   "PncQueryDate": undefined,

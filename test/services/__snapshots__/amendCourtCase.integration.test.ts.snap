@@ -1,23 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`amend court case should amend the court case 1`] = `
-Object {
-  "AnnotatedHearingOutcome": Object {
-    "HearingOutcome": Object {
-      "Case": Object {
+{
+  "AnnotatedHearingOutcome": {
+    "HearingOutcome": {
+      "Case": {
         "CourtCaseReferenceNumber": undefined,
-        "CourtReference": Object {
+        "CourtReference": {
           "MagistratesCourtReference": "41BP0510007",
         },
-        "ForceOwner": Object {
+        "ForceOwner": {
           "BottomLevelCode": "00",
           "OrganisationUnitCode": "04CA00",
           "SecondLevelCode": "04",
           "ThirdLevelCode": "CA",
           "TopLevelCode": undefined,
         },
-        "HearingDefendant": Object {
-          "Address": Object {
+        "HearingDefendant": {
+          "Address": {
             "AddressLine1": "112 Letsbeavenue",
             "AddressLine2": "Frimley,Camberley, Surrey",
             "AddressLine3": undefined,
@@ -25,27 +25,27 @@ Object {
             "AddressLine5": undefined,
           },
           "ArrestSummonsNumber": "9625UC0000000118191Z",
-          "BailConditions": Array [
+          "BailConditions": [
             "give to the court any passport held",
           ],
           "CourtPNCIdentifier": "2706/1234567P",
-          "DefendantDetail": Object {
+          "DefendantDetail": {
             "BirthDate": 1949-10-29T00:00:00.000Z,
             "Gender": 1,
             "GeneratedPNCFilename": "RIGOUT/DEAN",
-            "PersonName": Object {
+            "PersonName": {
               "FamilyName": "Rigout",
-              "GivenName": Array [
+              "GivenName": [
                 "Dean",
               ],
               "Title": "Mr",
             },
           },
-          "Offence": Array [
-            Object {
+          "Offence": [
+            {
               "ActualOffenceDateCode": "1",
               "ActualOffenceEndDate": undefined,
-              "ActualOffenceStartDate": Object {
+              "ActualOffenceStartDate": {
                 "StartDate": 2007-09-15T00:00:00.000Z,
               },
               "ActualOffenceWording": "Burglary (with intent to steal - other than in dwelling)",
@@ -57,11 +57,11 @@ Object {
               "ConvictionDate": 2007-04-29T00:00:00.000Z,
               "CourtCaseReferenceNumber": undefined,
               "CourtOffenceSequenceNumber": 1,
-              "CriminalProsecutionReference": Object {
-                "DefendantOrOffender": Object {
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
                   "CheckDigit": "Z",
                   "DefendantOrOffenderSequenceNumber": "00000118191",
-                  "OrganisationUnitIdentifierCode": Object {
+                  "OrganisationUnitIdentifierCode": {
                     "BottomLevelCode": "00",
                     "OrganisationUnitCode": "25UC00",
                     "SecondLevelCode": "25",
@@ -70,8 +70,8 @@ Object {
                   },
                   "Year": "96",
                 },
-                "OffenceReason": Object {
-                  "OffenceCode": Object {
+                "OffenceReason": {
+                  "OffenceCode": {
                     "ActOrSource": "TH",
                     "FullCode": "TH68027",
                     "Qualifier": undefined,
@@ -91,20 +91,20 @@ Object {
               "OffenceCategory": "CE",
               "OffenceTitle": "Burglary other than dwelling with intent to steal",
               "RecordableOnPNCindicator": true,
-              "Result": Array [
-                Object {
+              "Result": [
+                {
                   "AmountSpecifiedInResult": undefined,
-                  "BailCondition": Array [],
+                  "BailCondition": [],
                   "CJSresultCode": 4023,
                   "ConvictingCourt": "2723",
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
-                  "Duration": Array [],
+                  "Duration": [],
                   "ModeOfTrialReason": "EST",
                   "NextCourtType": "MCA",
                   "NextHearingDate": 2008-02-01T00:00:00.000Z,
                   "NextHearingTime": "13:30",
-                  "NextResultSourceOrganisation": Object {
+                  "NextResultSourceOrganisation": {
                     "BottomLevelCode": "00",
                     "OrganisationUnitCode": "B41ME00",
                     "SecondLevelCode": "41",
@@ -118,14 +118,14 @@ Object {
                   "PNCDisposalType": 4023,
                   "PleaStatus": "NG",
                   "ReasonForOffenceBailConditions": "to ensure appearance;",
-                  "ResultApplicableQualifierCode": Array [],
+                  "ResultApplicableQualifierCode": [],
                   "ResultClass": "Adjournment post Judgement",
                   "ResultHalfLifeHours": 72,
                   "ResultHearingDate": 2007-04-29T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
-                  "ResultQualifierVariable": Array [],
+                  "ResultQualifierVariable": [],
                   "ResultVariableText": "Remittal for Sentence on Adjournment",
-                  "SourceOrganisation": Object {
+                  "SourceOrganisation": {
                     "BottomLevelCode": "00",
                     "OrganisationUnitCode": "B41ME00",
                     "SecondLevelCode": "41",
@@ -152,8 +152,8 @@ Object {
         "RecordableOnPNCindicator": true,
         "Urgent": undefined,
       },
-      "Hearing": Object {
-        "CourtHearingLocation": Object {
+      "Hearing": {
+        "CourtHearingLocation": {
           "BottomLevelCode": "00",
           "OrganisationUnitCode": "B41ME00",
           "SecondLevelCode": "41",
@@ -167,7 +167,7 @@ Object {
         "DefendantPresentAtHearing": "Y",
         "HearingDocumentationLanguage": "D",
         "HearingLanguage": "D",
-        "SourceReference": Object {
+        "SourceReference": {
           "DocumentName": "SPI Dean Rigout",
           "DocumentType": "SPI Case Result",
           "UniqueID": "http://www.altova.com",
@@ -176,10 +176,10 @@ Object {
       },
     },
   },
-  "Exceptions": Array [
-    Object {
+  "Exceptions": [
+    {
       "code": "HO100304",
-      "path": Array [
+      "path": [
         "AnnotatedHearingOutcome",
         "HearingOutcome",
         "Case",
@@ -189,16 +189,16 @@ Object {
     },
   ],
   "PncErrorMessage": undefined,
-  "PncQuery": Object {
+  "PncQuery": {
     "checkName": "MIDDLETONN",
-    "courtCases": Array [
-      Object {
+    "courtCases": [
+      {
         "courtCaseReference": "97/1626/008395Q",
-        "offences": Array [
-          Object {
+        "offences": [
+          {
             "adjudication": undefined,
             "disposals": undefined,
-            "offence": Object {
+            "offence": {
               "acpoOffenceCode": "12:15:24:1",
               "cjsOffenceCode": "TH68006",
               "endTime": undefined,
@@ -222,23 +222,23 @@ Object {
 `;
 
 exports[`amend court case should amend the court case when the lock is held by the current user 1`] = `
-Object {
-  "AnnotatedHearingOutcome": Object {
-    "HearingOutcome": Object {
-      "Case": Object {
+{
+  "AnnotatedHearingOutcome": {
+    "HearingOutcome": {
+      "Case": {
         "CourtCaseReferenceNumber": undefined,
-        "CourtReference": Object {
+        "CourtReference": {
           "MagistratesCourtReference": "41BP0510007",
         },
-        "ForceOwner": Object {
+        "ForceOwner": {
           "BottomLevelCode": "00",
           "OrganisationUnitCode": "04CA00",
           "SecondLevelCode": "04",
           "ThirdLevelCode": "CA",
           "TopLevelCode": undefined,
         },
-        "HearingDefendant": Object {
-          "Address": Object {
+        "HearingDefendant": {
+          "Address": {
             "AddressLine1": "112 Letsbeavenue",
             "AddressLine2": "Frimley,Camberley, Surrey",
             "AddressLine3": undefined,
@@ -246,27 +246,27 @@ Object {
             "AddressLine5": undefined,
           },
           "ArrestSummonsNumber": "9625UC0000000118191Z",
-          "BailConditions": Array [
+          "BailConditions": [
             "give to the court any passport held",
           ],
           "CourtPNCIdentifier": "2706/1234567P",
-          "DefendantDetail": Object {
+          "DefendantDetail": {
             "BirthDate": 1949-10-29T00:00:00.000Z,
             "Gender": 1,
             "GeneratedPNCFilename": "RIGOUT/DEAN",
-            "PersonName": Object {
+            "PersonName": {
               "FamilyName": "Rigout",
-              "GivenName": Array [
+              "GivenName": [
                 "Dean",
               ],
               "Title": "Mr",
             },
           },
-          "Offence": Array [
-            Object {
+          "Offence": [
+            {
               "ActualOffenceDateCode": "1",
               "ActualOffenceEndDate": undefined,
-              "ActualOffenceStartDate": Object {
+              "ActualOffenceStartDate": {
                 "StartDate": 2007-09-15T00:00:00.000Z,
               },
               "ActualOffenceWording": "Burglary (with intent to steal - other than in dwelling)",
@@ -278,11 +278,11 @@ Object {
               "ConvictionDate": 2007-04-29T00:00:00.000Z,
               "CourtCaseReferenceNumber": undefined,
               "CourtOffenceSequenceNumber": 1,
-              "CriminalProsecutionReference": Object {
-                "DefendantOrOffender": Object {
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
                   "CheckDigit": "Z",
                   "DefendantOrOffenderSequenceNumber": "00000118191",
-                  "OrganisationUnitIdentifierCode": Object {
+                  "OrganisationUnitIdentifierCode": {
                     "BottomLevelCode": "00",
                     "OrganisationUnitCode": "25UC00",
                     "SecondLevelCode": "25",
@@ -291,8 +291,8 @@ Object {
                   },
                   "Year": "96",
                 },
-                "OffenceReason": Object {
-                  "OffenceCode": Object {
+                "OffenceReason": {
+                  "OffenceCode": {
                     "ActOrSource": "TH",
                     "FullCode": "TH68027",
                     "Qualifier": undefined,
@@ -312,20 +312,20 @@ Object {
               "OffenceCategory": "CE",
               "OffenceTitle": "Burglary other than dwelling with intent to steal",
               "RecordableOnPNCindicator": true,
-              "Result": Array [
-                Object {
+              "Result": [
+                {
                   "AmountSpecifiedInResult": undefined,
-                  "BailCondition": Array [],
+                  "BailCondition": [],
                   "CJSresultCode": 4023,
                   "ConvictingCourt": "2723",
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
-                  "Duration": Array [],
+                  "Duration": [],
                   "ModeOfTrialReason": "EST",
                   "NextCourtType": "MCA",
                   "NextHearingDate": 2008-02-01T00:00:00.000Z,
                   "NextHearingTime": "13:30",
-                  "NextResultSourceOrganisation": Object {
+                  "NextResultSourceOrganisation": {
                     "BottomLevelCode": "00",
                     "OrganisationUnitCode": "B41ME00",
                     "SecondLevelCode": "41",
@@ -339,14 +339,14 @@ Object {
                   "PNCDisposalType": 4023,
                   "PleaStatus": "NG",
                   "ReasonForOffenceBailConditions": "to ensure appearance;",
-                  "ResultApplicableQualifierCode": Array [],
+                  "ResultApplicableQualifierCode": [],
                   "ResultClass": "Adjournment post Judgement",
                   "ResultHalfLifeHours": 72,
                   "ResultHearingDate": 2007-04-29T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
-                  "ResultQualifierVariable": Array [],
+                  "ResultQualifierVariable": [],
                   "ResultVariableText": "Remittal for Sentence on Adjournment",
-                  "SourceOrganisation": Object {
+                  "SourceOrganisation": {
                     "BottomLevelCode": "00",
                     "OrganisationUnitCode": "B41ME00",
                     "SecondLevelCode": "41",
@@ -373,8 +373,8 @@ Object {
         "RecordableOnPNCindicator": true,
         "Urgent": undefined,
       },
-      "Hearing": Object {
-        "CourtHearingLocation": Object {
+      "Hearing": {
+        "CourtHearingLocation": {
           "BottomLevelCode": "00",
           "OrganisationUnitCode": "B41ME00",
           "SecondLevelCode": "41",
@@ -388,7 +388,7 @@ Object {
         "DefendantPresentAtHearing": "Y",
         "HearingDocumentationLanguage": "D",
         "HearingLanguage": "D",
-        "SourceReference": Object {
+        "SourceReference": {
           "DocumentName": "SPI Dean Rigout",
           "DocumentType": "SPI Case Result",
           "UniqueID": "http://www.altova.com",
@@ -397,10 +397,10 @@ Object {
       },
     },
   },
-  "Exceptions": Array [
-    Object {
+  "Exceptions": [
+    {
       "code": "HO100304",
-      "path": Array [
+      "path": [
         "AnnotatedHearingOutcome",
         "HearingOutcome",
         "Case",
@@ -410,16 +410,16 @@ Object {
     },
   ],
   "PncErrorMessage": undefined,
-  "PncQuery": Object {
+  "PncQuery": {
     "checkName": "MIDDLETONN",
-    "courtCases": Array [
-      Object {
+    "courtCases": [
+      {
         "courtCaseReference": "97/1626/008395Q",
-        "offences": Array [
-          Object {
+        "offences": [
+          {
             "adjudication": undefined,
             "disposals": undefined,
-            "offence": Object {
+            "offence": {
               "acpoOffenceCode": "12:15:24:1",
               "cjsOffenceCode": "TH68006",
               "endTime": undefined,
@@ -443,22 +443,22 @@ Object {
 `;
 
 exports[`amend court case should create a force owner if the force owner is not present 1`] = `
-Object {
-  "AnnotatedHearingOutcome": Object {
-    "HearingOutcome": Object {
-      "Case": Object {
+{
+  "AnnotatedHearingOutcome": {
+    "HearingOutcome": {
+      "Case": {
         "CourtCaseReferenceNumber": "97/1626/008395Q",
-        "CourtReference": Object {
+        "CourtReference": {
           "MagistratesCourtReference": "01ZD0303208",
         },
-        "ForceOwner": Object {
+        "ForceOwner": {
           "BottomLevelCode": "00",
           "OrganisationUnitCode": "36FP00",
           "SecondLevelCode": "36",
           "ThirdLevelCode": "FP",
         },
-        "HearingDefendant": Object {
-          "Address": Object {
+        "HearingDefendant": {
+          "Address": {
             "AddressLine1": "Scenario1 Address Line 1",
             "AddressLine2": "Scenario1 Address Line 2",
             "AddressLine3": "Scenario1 Address Line 3",
@@ -466,25 +466,25 @@ Object {
             "AddressLine5": undefined,
           },
           "ArrestSummonsNumber": "1101ZD0100000448754K",
-          "BailConditions": Array [],
+          "BailConditions": [],
           "CourtPNCIdentifier": undefined,
-          "DefendantDetail": Object {
+          "DefendantDetail": {
             "BirthDate": 1948-11-11T00:00:00.000Z,
             "Gender": 1,
             "GeneratedPNCFilename": "SEXOFFENCE/TRPRFOUR",
-            "PersonName": Object {
+            "PersonName": {
               "FamilyName": "SEXOFFENCE",
-              "GivenName": Array [
+              "GivenName": [
                 "TRPRFOUR",
               ],
               "Title": "Mr",
             },
           },
-          "Offence": Array [
-            Object {
+          "Offence": [
+            {
               "ActualOffenceDateCode": "1",
               "ActualOffenceEndDate": undefined,
-              "ActualOffenceStartDate": Object {
+              "ActualOffenceStartDate": {
                 "StartDate": 2010-11-28T00:00:00.000Z,
               },
               "ActualOffenceWording": "Attempt to rape a girl aged 13 / 14 / 15 / years of age - SOA 2003.",
@@ -496,11 +496,11 @@ Object {
               "ConvictionDate": 2011-09-26T00:00:00.000Z,
               "CourtCaseReferenceNumber": undefined,
               "CourtOffenceSequenceNumber": 1,
-              "CriminalProsecutionReference": Object {
-                "DefendantOrOffender": Object {
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
                   "CheckDigit": "K",
                   "DefendantOrOffenderSequenceNumber": "00000448754",
-                  "OrganisationUnitIdentifierCode": Object {
+                  "OrganisationUnitIdentifierCode": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "01ZD01",
                     "SecondLevelCode": "01",
@@ -509,8 +509,8 @@ Object {
                   },
                   "Year": "11",
                 },
-                "OffenceReason": Object {
-                  "OffenceCode": Object {
+                "OffenceReason": {
+                  "OffenceCode": {
                     "ActOrSource": "SX",
                     "FullCode": "SX03001A",
                     "Qualifier": "A",
@@ -530,15 +530,15 @@ Object {
               "OffenceCategory": "CI",
               "OffenceTitle": "Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003",
               "RecordableOnPNCindicator": true,
-              "Result": Array [
-                Object {
+              "Result": [
+                {
                   "AmountSpecifiedInResult": undefined,
-                  "BailCondition": Array [],
+                  "BailCondition": [],
                   "CJSresultCode": 3078,
                   "ConvictingCourt": undefined,
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
-                  "Duration": Array [],
+                  "Duration": [],
                   "ModeOfTrialReason": "SUM",
                   "NextCourtType": undefined,
                   "NextHearingDate": undefined,
@@ -551,14 +551,14 @@ Object {
                   "PNCDisposalType": 3078,
                   "PleaStatus": "NG",
                   "ReasonForOffenceBailConditions": undefined,
-                  "ResultApplicableQualifierCode": Array [],
+                  "ResultApplicableQualifierCode": [],
                   "ResultClass": "Judgement with final result",
                   "ResultHalfLifeHours": 72,
                   "ResultHearingDate": 2011-09-26T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
-                  "ResultQualifierVariable": Array [],
+                  "ResultQualifierVariable": [],
                   "ResultVariableText": "Travel Restriction Order",
-                  "SourceOrganisation": Object {
+                  "SourceOrganisation": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "B01EF01",
                     "SecondLevelCode": "01",
@@ -571,10 +571,10 @@ Object {
                 },
               ],
             },
-            Object {
+            {
               "ActualOffenceDateCode": "1",
               "ActualOffenceEndDate": undefined,
-              "ActualOffenceStartDate": Object {
+              "ActualOffenceStartDate": {
                 "StartDate": 2010-11-28T00:00:00.000Z,
               },
               "ActualOffenceWording": "Rape of a Female",
@@ -586,11 +586,11 @@ Object {
               "ConvictionDate": 2011-09-26T00:00:00.000Z,
               "CourtCaseReferenceNumber": undefined,
               "CourtOffenceSequenceNumber": 2,
-              "CriminalProsecutionReference": Object {
-                "DefendantOrOffender": Object {
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
                   "CheckDigit": "K",
                   "DefendantOrOffenderSequenceNumber": "00000448754",
-                  "OrganisationUnitIdentifierCode": Object {
+                  "OrganisationUnitIdentifierCode": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "01ZD01",
                     "SecondLevelCode": "01",
@@ -599,8 +599,8 @@ Object {
                   },
                   "Year": "11",
                 },
-                "OffenceReason": Object {
-                  "OffenceCode": Object {
+                "OffenceReason": {
+                  "OffenceCode": {
                     "ActOrSource": "SX",
                     "FullCode": "SX03001",
                     "Qualifier": undefined,
@@ -620,15 +620,15 @@ Object {
               "OffenceCategory": "CI",
               "OffenceTitle": "Rape a girl aged 13 / 14 / 15 - SOA 2003",
               "RecordableOnPNCindicator": true,
-              "Result": Array [
-                Object {
+              "Result": [
+                {
                   "AmountSpecifiedInResult": undefined,
-                  "BailCondition": Array [],
+                  "BailCondition": [],
                   "CJSresultCode": 3052,
                   "ConvictingCourt": undefined,
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
-                  "Duration": Array [],
+                  "Duration": [],
                   "ModeOfTrialReason": "SUM",
                   "NextCourtType": undefined,
                   "NextHearingDate": undefined,
@@ -641,21 +641,21 @@ Object {
                   "PNCDisposalType": 3052,
                   "PleaStatus": "NG",
                   "ReasonForOffenceBailConditions": undefined,
-                  "ResultApplicableQualifierCode": Array [],
+                  "ResultApplicableQualifierCode": [],
                   "ResultClass": "Judgement with final result",
                   "ResultHalfLifeHours": 24,
                   "ResultHearingDate": 2011-09-26T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
-                  "ResultQualifierVariable": Array [],
+                  "ResultQualifierVariable": [],
                   "ResultVariableText": "defendant must never be allowed out",
-                  "SourceOrganisation": Object {
+                  "SourceOrganisation": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "B01EF01",
                     "SecondLevelCode": "01",
                     "ThirdLevelCode": "EF",
                     "TopLevelCode": "B",
                   },
-                  "Urgent": Object {
+                  "Urgent": {
                     "urgency": 24,
                     "urgent": true,
                   },
@@ -664,10 +664,10 @@ Object {
                 },
               ],
             },
-            Object {
+            {
               "ActualOffenceDateCode": "1",
               "ActualOffenceEndDate": undefined,
-              "ActualOffenceStartDate": Object {
+              "ActualOffenceStartDate": {
                 "StartDate": 2010-11-28T00:00:00.000Z,
               },
               "ActualOffenceWording": "Use a motor vehicle without third party insurance.",
@@ -679,11 +679,11 @@ Object {
               "ConvictionDate": 2011-09-26T00:00:00.000Z,
               "CourtCaseReferenceNumber": undefined,
               "CourtOffenceSequenceNumber": 3,
-              "CriminalProsecutionReference": Object {
-                "DefendantOrOffender": Object {
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
                   "CheckDigit": "K",
                   "DefendantOrOffenderSequenceNumber": "00000448754",
-                  "OrganisationUnitIdentifierCode": Object {
+                  "OrganisationUnitIdentifierCode": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "01ZD01",
                     "SecondLevelCode": "01",
@@ -692,8 +692,8 @@ Object {
                   },
                   "Year": "11",
                 },
-                "OffenceReason": Object {
-                  "OffenceCode": Object {
+                "OffenceReason": {
+                  "OffenceCode": {
                     "ActOrSource": "RT",
                     "FullCode": "RT88191",
                     "Qualifier": undefined,
@@ -713,21 +713,21 @@ Object {
               "OffenceCategory": "CM",
               "OffenceTitle": "Use a motor vehicle on a road / public place without third party insurance",
               "RecordableOnPNCindicator": false,
-              "Result": Array [
-                Object {
-                  "AmountSpecifiedInResult": Array [
-                    Object {
+              "Result": [
+                {
+                  "AmountSpecifiedInResult": [
+                    {
                       "Amount": 100,
                       "DecimalPlaces": 2,
                       "Type": "Fine",
                     },
                   ],
-                  "BailCondition": Array [],
+                  "BailCondition": [],
                   "CJSresultCode": 1015,
                   "ConvictingCourt": undefined,
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
-                  "Duration": Array [],
+                  "Duration": [],
                   "ModeOfTrialReason": "SUM",
                   "NextCourtType": undefined,
                   "NextHearingDate": undefined,
@@ -740,14 +740,14 @@ Object {
                   "PNCDisposalType": 1015,
                   "PleaStatus": "NG",
                   "ReasonForOffenceBailConditions": undefined,
-                  "ResultApplicableQualifierCode": Array [],
+                  "ResultApplicableQualifierCode": [],
                   "ResultClass": "Judgement with final result",
                   "ResultHalfLifeHours": 72,
                   "ResultHearingDate": 2011-09-26T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
-                  "ResultQualifierVariable": Array [],
+                  "ResultQualifierVariable": [],
                   "ResultVariableText": "Fined 100.",
-                  "SourceOrganisation": Object {
+                  "SourceOrganisation": {
                     "BottomLevelCode": "01",
                     "OrganisationUnitCode": "B01EF01",
                     "SecondLevelCode": "01",
@@ -772,13 +772,13 @@ Object {
         "PenaltyNoticeCaseReferenceNumber": undefined,
         "PreChargeDecisionIndicator": false,
         "RecordableOnPNCindicator": true,
-        "Urgent": Object {
+        "Urgent": {
           "urgency": 24,
           "urgent": true,
         },
       },
-      "Hearing": Object {
-        "CourtHearingLocation": Object {
+      "Hearing": {
+        "CourtHearingLocation": {
           "BottomLevelCode": "01",
           "OrganisationUnitCode": "B01EF01",
           "SecondLevelCode": "01",
@@ -792,7 +792,7 @@ Object {
         "DefendantPresentAtHearing": "A",
         "HearingDocumentationLanguage": "D",
         "HearingLanguage": "D",
-        "SourceReference": Object {
+        "SourceReference": {
           "DocumentName": "SPI TRPRFOUR SEXOFFENCE",
           "DocumentType": "SPI Case Result",
           "UniqueID": "CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415",
@@ -801,18 +801,18 @@ Object {
       },
     },
   },
-  "Exceptions": Array [],
+  "Exceptions": [],
   "PncErrorMessage": undefined,
-  "PncQuery": Object {
+  "PncQuery": {
     "checkName": "SEXOFFENCE",
-    "courtCases": Array [
-      Object {
+    "courtCases": [
+      {
         "courtCaseReference": "97/1626/008395Q",
-        "offences": Array [
-          Object {
+        "offences": [
+          {
             "adjudication": undefined,
             "disposals": undefined,
-            "offence": Object {
+            "offence": {
               "acpoOffenceCode": "12:15:24:1",
               "cjsOffenceCode": "SX03001A",
               "endTime": undefined,
@@ -824,10 +824,10 @@ Object {
               "title": "Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003",
             },
           },
-          Object {
+          {
             "adjudication": undefined,
             "disposals": undefined,
-            "offence": Object {
+            "offence": {
               "acpoOffenceCode": "12:15:24:1",
               "cjsOffenceCode": "SX03001",
               "endTime": undefined,
@@ -839,10 +839,10 @@ Object {
               "title": "Rape a girl aged 13 / 14 / 15 - SOA 2003",
             },
           },
-          Object {
+          {
             "adjudication": undefined,
             "disposals": undefined,
-            "offence": Object {
+            "offence": {
               "acpoOffenceCode": "12:15:24:1",
               "cjsOffenceCode": "RT88191",
               "endTime": undefined,
@@ -866,23 +866,23 @@ Object {
 `;
 
 exports[`amend court case should not update the db if the case is locked by somebody else 1`] = `
-Object {
-  "AnnotatedHearingOutcome": Object {
-    "HearingOutcome": Object {
-      "Case": Object {
+{
+  "AnnotatedHearingOutcome": {
+    "HearingOutcome": {
+      "Case": {
         "CourtCaseReferenceNumber": undefined,
-        "CourtReference": Object {
+        "CourtReference": {
           "MagistratesCourtReference": "41BP0510007",
         },
-        "ForceOwner": Object {
+        "ForceOwner": {
           "BottomLevelCode": "00",
           "OrganisationUnitCode": "04CA00",
           "SecondLevelCode": "04",
           "ThirdLevelCode": "CA",
           "TopLevelCode": undefined,
         },
-        "HearingDefendant": Object {
-          "Address": Object {
+        "HearingDefendant": {
+          "Address": {
             "AddressLine1": "112 Letsbeavenue",
             "AddressLine2": "Frimley,Camberley, Surrey",
             "AddressLine3": undefined,
@@ -890,27 +890,27 @@ Object {
             "AddressLine5": undefined,
           },
           "ArrestSummonsNumber": "9625UC0000000118191Z",
-          "BailConditions": Array [
+          "BailConditions": [
             "give to the court any passport held",
           ],
           "CourtPNCIdentifier": "2706/1234567P",
-          "DefendantDetail": Object {
+          "DefendantDetail": {
             "BirthDate": 1949-10-29T00:00:00.000Z,
             "Gender": 1,
             "GeneratedPNCFilename": "RIGOUT/DEAN",
-            "PersonName": Object {
+            "PersonName": {
               "FamilyName": "Rigout",
-              "GivenName": Array [
+              "GivenName": [
                 "Dean",
               ],
               "Title": "Mr",
             },
           },
-          "Offence": Array [
-            Object {
+          "Offence": [
+            {
               "ActualOffenceDateCode": "1",
               "ActualOffenceEndDate": undefined,
-              "ActualOffenceStartDate": Object {
+              "ActualOffenceStartDate": {
                 "StartDate": 2007-09-15T00:00:00.000Z,
               },
               "ActualOffenceWording": "Burglary (with intent to steal - other than in dwelling)",
@@ -922,11 +922,11 @@ Object {
               "ConvictionDate": 2007-04-29T00:00:00.000Z,
               "CourtCaseReferenceNumber": undefined,
               "CourtOffenceSequenceNumber": 1,
-              "CriminalProsecutionReference": Object {
-                "DefendantOrOffender": Object {
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
                   "CheckDigit": "Z",
                   "DefendantOrOffenderSequenceNumber": "00000118191",
-                  "OrganisationUnitIdentifierCode": Object {
+                  "OrganisationUnitIdentifierCode": {
                     "BottomLevelCode": "00",
                     "OrganisationUnitCode": "25UC00",
                     "SecondLevelCode": "25",
@@ -935,8 +935,8 @@ Object {
                   },
                   "Year": "96",
                 },
-                "OffenceReason": Object {
-                  "OffenceCode": Object {
+                "OffenceReason": {
+                  "OffenceCode": {
                     "ActOrSource": "TH",
                     "FullCode": "TH68027",
                     "Qualifier": undefined,
@@ -956,20 +956,20 @@ Object {
               "OffenceCategory": "CE",
               "OffenceTitle": "Burglary other than dwelling with intent to steal",
               "RecordableOnPNCindicator": true,
-              "Result": Array [
-                Object {
+              "Result": [
+                {
                   "AmountSpecifiedInResult": undefined,
-                  "BailCondition": Array [],
+                  "BailCondition": [],
                   "CJSresultCode": 4023,
                   "ConvictingCourt": "2723",
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
-                  "Duration": Array [],
+                  "Duration": [],
                   "ModeOfTrialReason": "EST",
                   "NextCourtType": "MCA",
                   "NextHearingDate": 2008-02-01T00:00:00.000Z,
                   "NextHearingTime": "13:30",
-                  "NextResultSourceOrganisation": Object {
+                  "NextResultSourceOrganisation": {
                     "BottomLevelCode": "00",
                     "OrganisationUnitCode": "B41ME00",
                     "SecondLevelCode": "41",
@@ -983,14 +983,14 @@ Object {
                   "PNCDisposalType": 4023,
                   "PleaStatus": "NG",
                   "ReasonForOffenceBailConditions": "to ensure appearance;",
-                  "ResultApplicableQualifierCode": Array [],
+                  "ResultApplicableQualifierCode": [],
                   "ResultClass": "Adjournment post Judgement",
                   "ResultHalfLifeHours": 72,
                   "ResultHearingDate": 2007-04-29T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
-                  "ResultQualifierVariable": Array [],
+                  "ResultQualifierVariable": [],
                   "ResultVariableText": "Remittal for Sentence on Adjournment",
-                  "SourceOrganisation": Object {
+                  "SourceOrganisation": {
                     "BottomLevelCode": "00",
                     "OrganisationUnitCode": "B41ME00",
                     "SecondLevelCode": "41",
@@ -1017,8 +1017,8 @@ Object {
         "RecordableOnPNCindicator": true,
         "Urgent": undefined,
       },
-      "Hearing": Object {
-        "CourtHearingLocation": Object {
+      "Hearing": {
+        "CourtHearingLocation": {
           "BottomLevelCode": "00",
           "OrganisationUnitCode": "B41ME00",
           "SecondLevelCode": "41",
@@ -1032,7 +1032,7 @@ Object {
         "DefendantPresentAtHearing": "Y",
         "HearingDocumentationLanguage": "D",
         "HearingLanguage": "D",
-        "SourceReference": Object {
+        "SourceReference": {
           "DocumentName": "SPI Dean Rigout",
           "DocumentType": "SPI Case Result",
           "UniqueID": "http://www.altova.com",
@@ -1041,10 +1041,10 @@ Object {
       },
     },
   },
-  "Exceptions": Array [
-    Object {
+  "Exceptions": [
+    {
       "code": "HO100304",
-      "path": Array [
+      "path": [
         "AnnotatedHearingOutcome",
         "HearingOutcome",
         "Case",
@@ -1054,16 +1054,16 @@ Object {
     },
   ],
   "PncErrorMessage": undefined,
-  "PncQuery": Object {
+  "PncQuery": {
     "checkName": "MIDDLETONN",
-    "courtCases": Array [
-      Object {
+    "courtCases": [
+      {
         "courtCaseReference": "97/1626/008395Q",
-        "offences": Array [
-          Object {
+        "offences": [
+          {
             "adjudication": undefined,
             "disposals": undefined,
-            "offence": Object {
+            "offence": {
               "acpoOffenceCode": "12:15:24:1",
               "cjsOffenceCode": "TH68006",
               "endTime": undefined,

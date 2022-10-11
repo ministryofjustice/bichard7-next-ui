@@ -21,6 +21,7 @@
     "test:unit": "jest --testPathIgnorePatterns=\"integration\" \"e2e\" --runInBand",
     "test:unit:update": "npm run test:unit -- -u",
     "test:integration": "jest --testPathPattern=\"integration\" --runInBand --testNamePattern=",
+    "test:integration:update": "npm run test:integration -- -u",
     "test:file": "jest --runInBand --testPathPattern",
     "test:ui:unit:dev": "npm run test-storybook",
     "test:ui:unit:ci": "concurrently -k -s first -n \"STORYBOOK,TEST\" -c \"magenta,blue\" \"http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && npm run test-storybook\"",
