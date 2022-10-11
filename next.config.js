@@ -3,6 +3,7 @@ const withTM = require("next-transpile-modules")(["hex-rgb", "is-plain-obj"])
 
 const nextConfig = {
   basePath: "/bichard",
+  assetPrefix: "/bichard/",
   reactStrictMode: true
 }
 

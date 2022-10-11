@@ -1,9 +1,9 @@
 import { Page, Footer, TopNav } from "govuk-react"
-import { addBasePath } from "next/dist/shared/lib/router/router"
 import { ReactNode } from "react"
 import User from "../services/entities/User"
 import IconTitle from "./govuk-react-forked/IconTitle"
 import Crown from "./govuk-react-forked/CrownIcon"
+import { useRouter } from "next/router"
 
 interface Props {
   children: ReactNode
@@ -16,6 +16,7 @@ const Company = (
 )
 
 const Layout = ({ children, user }: Props) => {
+  const { basePath } = useRouter()
   const header = (
     <div role={"navigation"}>
       <TopNav serviceTitle={"Bichard7"} company={Company}>
@@ -30,7 +31,7 @@ const Layout = ({ children, user }: Props) => {
         copyright={{
           image: {
             height: 102,
-            src: addBasePath("/images/govuk-crest.png"),
+            src: `${basePath}/images/govuk-crest.png`,
             width: 125
           },
           link: "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",

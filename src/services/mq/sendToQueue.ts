@@ -18,4 +18,3 @@ export default async function sendToQueue({ messageXml, queueName }: SendToQueue
 
   return
 }
-

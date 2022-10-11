@@ -7,7 +7,9 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError, Result } from "types/Result"
 import getUser from "services/getUser"
 
-export default <Props>(getServerSidePropsFunction: GetServerSideProps<Props>): GetServerSideProps<Props> => {
+export default <Props extends { [key: string]: any }>(
+  getServerSidePropsFunction: GetServerSideProps<Props>
+): GetServerSideProps<Props> => {
   const result: GetServerSideProps<Props> = async (
     context: GetServerSidePropsContext<ParsedUrlQuery>
   ): Promise<GetServerSidePropsResult<Props>> => {

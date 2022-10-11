@@ -1,6 +1,6 @@
-import { Repository } from "typeorm"
+import { ObjectLiteral, Repository } from "typeorm"
 
-const getColumnName = <T>(repository: Repository<T>, propertyName: string): string => {
+const getColumnName = <T extends ObjectLiteral>(repository: Repository<T>, propertyName: string): string => {
   const property = repository.metadata.columns.find((c) => c.propertyName === propertyName)
 
   if (!property) {
