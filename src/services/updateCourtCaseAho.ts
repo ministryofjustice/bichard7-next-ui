@@ -1,7 +1,7 @@
 import { DataSource, UpdateResult } from "typeorm/"
 import CourtCase from "./entities/CourtCase"
 
-const updateCourtCaseUpdatedHo = async (
+const updateCourtCaseAho = async (
   dataSource: DataSource,
   courtCaseId: number,
   updatedHo: string
@@ -13,7 +13,7 @@ const updateCourtCaseUpdatedHo = async (
       .createQueryBuilder()
       .update(CourtCase)
       .set({
-        updatedHearingOutcome: updatedHo,
+        hearingOutcome: updatedHo,
         userUpdatedFlag: 1
       })
       .where("error_id = :id", { id: courtCaseId })
@@ -24,4 +24,4 @@ const updateCourtCaseUpdatedHo = async (
   }
 }
 
-export default updateCourtCaseUpdatedHo
+export default updateCourtCaseAho

@@ -1,4 +1,4 @@
-import type { TestTrigger } from "../../../test/util/manageTriggers"
+import type { TestTrigger } from "../../../test/utils/manageTriggers"
 import { differenceInMinutes, parse } from "date-fns"
 import User from "services/entities/User"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"

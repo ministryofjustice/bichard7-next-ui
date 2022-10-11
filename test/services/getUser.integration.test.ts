@@ -2,7 +2,7 @@ import { DataSource } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
 import { isError } from "../../src/types/Result"
 import User from "../../src/services/entities/User"
-import { deleteUsers, getDummyUser, insertUsers } from "../util/manageUsers"
+import { deleteUsers, getDummyUser, insertUsers } from "../utils/manageUsers"
 import getUser from "../../src/services/getUser"
 import GroupName from "types/GroupName"
 

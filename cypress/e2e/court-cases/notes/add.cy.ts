@@ -1,4 +1,4 @@
-import type { TestTrigger } from "../../../../test/util/manageTriggers"
+import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import User from "services/entities/User"
 import a11yConfig from "../../../support/a11yConfig"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"

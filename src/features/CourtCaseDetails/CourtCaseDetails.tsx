@@ -36,9 +36,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       </Table.Row>
       <Table.Row>
         <Table.CellHeader>{"Urgency"}</Table.CellHeader>
-        <Table.Cell>
-          {courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}
-        </Table.Cell>
+        <Table.Cell>{courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}</Table.Cell>
       </Table.Row>
       <Table.Row>
         <Table.CellHeader>{"Defendant name"}</Table.CellHeader>
@@ -53,15 +51,15 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         <Table.Cell>{courtCase.triggerReason}</Table.Cell>
       </Table.Row>
       <Table.Row>
-        <Table.CellHeader>{"Hearing Outcome"}</Table.CellHeader>
-        <Table.Cell>
-          <HearingOutcome aho={aho} courtCaseId={courtCase.errorId} />
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
         <Table.CellHeader>{"Organisation Unit Code"}</Table.CellHeader>
         <Table.Cell>
           {aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode}
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.CellHeader>{"Hearing Outcome"}</Table.CellHeader>
+        <Table.Cell>
+          <HearingOutcome aho={aho} courtCaseId={courtCase.errorId} />
         </Table.Cell>
       </Table.Row>
     </Table>

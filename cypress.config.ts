@@ -1,6 +1,6 @@
 import { defineConfig } from "cypress"
 import CourtCase from "./src/services/entities/CourtCase"
-import deleteFromTable from "./test/util/deleteFromTable"
+import deleteFromTable from "./test/utils/deleteFromTable"
 import {
   insertCourtCases,
   insertCourtCasesWithCourtNames,
@@ -9,10 +9,10 @@ import {
   insertMultipleDummyCourtCases,
   insertDummyCourtCaseWithLock,
   insertDummyCourtCasesWithUrgencies
-} from "./test/util/insertCourtCases"
-import { insertTriggers } from "./test/util/manageTriggers"
-import insertException from "./test/util/manageExceptions"
-import { deleteUsers, insertUsersWithOverrides } from "./test/util/manageUsers"
+} from "./test/utils/insertCourtCases"
+import { insertTriggers } from "./test/utils/manageTriggers"
+import insertException from "./test/utils/manageExceptions"
+import { deleteUsers, insertUsersWithOverrides } from "./test/utils/manageUsers"
 import User from "./src/services/entities/User"
 import pgPromise from "pg-promise"
 
