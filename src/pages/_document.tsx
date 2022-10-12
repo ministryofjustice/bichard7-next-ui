@@ -78,7 +78,7 @@ class GovUkDocument extends Document<DocumentProps> {
           <script
             nonce={nonce}
             dangerouslySetInnerHTML={{
-              __html: `window.__webpack_nonce__ = "${nonce}"`
+              __html: `__webpack_nonce__ = "${nonce}"`
             }}
           />
           <meta property="csp-nonce" content={nonce} />
