@@ -50,12 +50,6 @@ class GovUkDocument extends Document<DocumentProps> {
     return (
       <Html className="govuk-template" lang="en">
         <Head>
-          <script
-            nonce={nonce}
-            dangerouslySetInnerHTML={{
-              __html: `__webpack_nonce__ = "${nonce}"`
-            }}
-          />
           <meta property="csp-nonce" content={nonce} />
           <GovUkMetadata />
         </Head>
