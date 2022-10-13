@@ -1,7 +1,5 @@
 import Document, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document"
 import React from "react"
-import { ReactFragment } from "react"
-import { ServerStyleSheet } from "styled-components"
 import generateCsp from "utils/generateCsp"
 import generateNonce from "utils/generateNonce"
 
