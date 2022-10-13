@@ -26,17 +26,15 @@ const GovUkMetadata = () => {
 
 interface DocumentProps {
   nonce: string
-  csp: string
 }
 
 class GovUkDocument extends Document<DocumentProps> {
   static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
     const nonce = generateNonce()
-    const csp = generateCsp(nonce)
     ctx.res?.setHeader("Content-Security-Policy", generateCsp(nonce))
 
     const initialProps = await Document.getInitialProps(ctx)
-    const additionalProps = { nonce, csp }
+    const additionalProps = { nonce }
     return {
       ...initialProps,
       ...additionalProps
