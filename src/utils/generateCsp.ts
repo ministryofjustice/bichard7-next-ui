@@ -1,9 +1,5 @@
-interface props {
-  nonce?: string
-}
-
-const generateCsp = ({ nonce }: props = {}) => {
-  return `default-src 'none'; script-src-elem 'self' 'nonce-${nonce}'; style-src 'self' 'nonce-${nonce}'; img-src 'self'; frame-src 'self'; frame-ancestors 'self'; form-action 'self'; object-src 'none'`
+const generateCsp = (nonce: string) => {
+  return `default-src 'self'; script-src 'self' 'nonce-${nonce}' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-src 'self'; form-action 'self'; object-src 'none'; base-uri 'none'`
 }
 
 export default generateCsp

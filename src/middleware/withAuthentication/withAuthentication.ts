@@ -7,6 +7,7 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError, Result } from "types/Result"
 import getUser from "services/getUser"
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default <Props extends { [key: string]: any }>(
   getServerSidePropsFunction: GetServerSideProps<Props>
 ): GetServerSideProps<Props> => {

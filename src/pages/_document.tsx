@@ -1,7 +1,5 @@
 import Document, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document"
 import React from "react"
-import { ReactFragment } from "react"
-import { ServerStyleSheet } from "styled-components"
 import generateCsp from "utils/generateCsp"
 import generateNonce from "utils/generateNonce"
 
@@ -32,41 +30,14 @@ interface DocumentProps {
 
 class GovUkDocument extends Document<DocumentProps> {
   static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
-    const sheet = new ServerStyleSheet()
-    const originalRenderPage = ctx.renderPage
+    const nonce = generateNonce()
+    ctx.res?.setHeader("Content-Security-Policy", generateCsp(nonce))
 
-    try {
-      ctx.renderPage = () =>
-        originalRenderPage({
-          enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />)
-        })
-
-      const nonce = generateNonce()
-      ctx.res?.setHeader("Content-Security-Policy", generateCsp({ nonce }))
-
-      const initialProps = await Document.getInitialProps(ctx)
-      const additionalProps = { nonce }
-      const sheetStyles = sheet.getStyleElement()
-      const style =
-        (sheetStyles &&
-          React.Children.map(sheetStyles, (child) =>
-            React.cloneElement(child, {
-              nonce
-            } as React.StyleHTMLAttributes<HTMLStyleElement>)
-          )) ||
-        null
-      return {
-        ...initialProps,
-        ...additionalProps,
-        styles: (
-          <>
-            {initialProps.styles}
-            {style}
-          </>
-        ) as unknown as ReactFragment
-      }
-    } finally {
-      sheet.seal()
+    const initialProps = await Document.getInitialProps(ctx)
+    const additionalProps = { nonce }
+    return {
+      ...initialProps,
+      ...additionalProps
     }
   }
 
@@ -75,12 +46,6 @@ class GovUkDocument extends Document<DocumentProps> {
     return (
       <Html className="govuk-template" lang="en">
         <Head>
-          <script
-            nonce={nonce}
-            dangerouslySetInnerHTML={{
-              __html: `window.__webpack_nonce__ = "${nonce}"`
-            }}
-          />
           <meta property="csp-nonce" content={nonce} />
           <GovUkMetadata />
         </Head>
