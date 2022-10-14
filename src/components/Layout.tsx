@@ -1,9 +1,10 @@
-import { Page, Footer, TopNav } from "govuk-react"
+import { Page, Footer } from "govuk-react"
 import { ReactNode } from "react"
 import User from "../services/entities/User"
 import IconTitle from "./govuk-react-forked/IconTitle"
 import Crown from "./govuk-react-forked/CrownIcon"
 import { useRouter } from "next/router"
+import Header from "components/Header"
 
 interface Props {
   children: ReactNode
@@ -17,16 +18,10 @@ const Company = (
 
 const Layout = ({ children, user }: Props) => {
   const { basePath } = useRouter()
-  const header = (
-    <div role={"navigation"}>
-      <TopNav serviceTitle={"Bichard7"} company={Company}>
-        {[user.forenames, user.surname].join(" ")}
-      </TopNav>
-    </div>
-  )
   return (
     <>
-      <Page header={header}>{children}</Page>
+      <Header />
+      {children}
       <Footer
         copyright={{
           image: {
