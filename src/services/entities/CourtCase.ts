@@ -7,6 +7,7 @@ import Note from "./Note"
 import Trigger from "./Trigger"
 import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
 import type { ResolutionStatus } from "types/ResolutionStatus"
+import booleanIntTransformer from "./transformers/booleanIntTransformer"
 
 @Entity({ name: "error_list" })
 export default class CourtCase extends BaseEntity {
@@ -34,8 +35,8 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "trigger_count" })
   triggerCount!: number
 
-  @Column({ name: "is_urgent", type: "int2" })
-  urgency!: number
+  @Column({ name: "is_urgent", type: "int2", transformer: booleanIntTransformer })
+  isUrgent!: boolean
 
   @Column({ name: "asn", type: "varchar", nullable: true })
   asn!: string | null

@@ -21,7 +21,8 @@ const courtCase = {
   ptiurn: "42CY0300107",
   triggerReason: "TRPR0006",
   triggers: [{ triggerCode: "TRPR0001" } as unknown as Trigger],
-  courtDate: new Date("2008-09-26")
+  courtDate: new Date("2008-09-26"),
+  isUrgent: true
 } as unknown as CourtCase
 
 export const EmptyList: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={[]} />
