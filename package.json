@@ -113,6 +113,7 @@
     "prettier": "^2.7.1",
     "sass": "^1.55.0",
     "storybook-addon-designs": "^6.3.1",
+    "storybook-addon-next": "^1.6.9",
     "storybook-addon-next-router": "^4.0.1",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
