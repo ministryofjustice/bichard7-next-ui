@@ -4,7 +4,6 @@ import User from "../services/entities/User"
 import { useRouter } from "next/router"
 import Header from "components/Header"
 
-
 interface Props {
   children: ReactNode
   user: User
@@ -14,7 +13,7 @@ const Layout = ({ children }: Props) => {
   const { basePath } = useRouter()
   return (
     <>
-      <Header serviceName={""} />
+      <Header serviceName={"Bichard7"} />
       {children}
       <Footer
         copyright={{
