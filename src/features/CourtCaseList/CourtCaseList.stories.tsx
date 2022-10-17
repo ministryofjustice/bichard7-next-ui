@@ -56,7 +56,7 @@ ManyRecords.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
 
   const urgentTags = await canvas.findAllByText("Urgent")
-  expect(urgentTags).toHaveLength(courtCases.length)
+  expect(urgentTags).toHaveLength(courtCases.length + 1) // The column header also matches this
 }
 
 const mixedUrgencies: CourtCase[] = new Array(10).fill(0).map((_, index) => {
@@ -72,5 +72,5 @@ MixedUrgencies.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
 
   const urgentTags = await canvas.findAllByText("Urgent")
-  expect(urgentTags).toHaveLength(mixedUrgencies.filter((c) => c.isUrgent).length)
+  expect(urgentTags).toHaveLength(mixedUrgencies.filter((c) => c.isUrgent).length + 1) // The column header also matches this
 }
