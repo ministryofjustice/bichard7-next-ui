@@ -4,7 +4,7 @@ import If from "components/If"
 import HearingOutcome from "components/HearingOutcome"
 import ResolveTrigger from "components/ResolveTrigger"
 import LinkButton from "components/LinkButton"
-import { Heading, Paragraph, Table } from "govuk-react"
+import { Heading, Paragraph, Table, Tag } from "govuk-react"
 import CourtCase from "services/entities/CourtCase"
 
 interface Props {
@@ -32,6 +32,13 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         <Table.CellHeader>{"Court date"}</Table.CellHeader>
         <Table.Cell>
           <DateTime date={courtCase.courtDate} dateFormat="dd/MM/yyyy" />
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.CellHeader>{"Urgency"}</Table.CellHeader>
+        <Table.Cell>
+          {courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}
+          {!courtCase.isUrgent && <Tag tint="GREY">{"Non-urgent"}</Tag>}
         </Table.Cell>
       </Table.Row>
       <Table.Row>

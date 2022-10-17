@@ -108,6 +108,13 @@ describe("Case details", () => {
       // Notes
       cy.get("H3").contains("Notes")
       cy.get("p").contains("Case has no notes.")
+
+      // Urgency
+      cy.get("th")
+        .contains("Urgency")
+        .then(($cell) => {
+          expect($cell.parent().find("td").text()).to.equal("Urgent")
+        })
     })
 
     it("should return 404 for a case that this user can not see", () => {
