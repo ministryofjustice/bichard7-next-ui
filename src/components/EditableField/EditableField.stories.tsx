@@ -12,7 +12,13 @@ export default {
 
 const dummyAho = createDummyAho()
 
-export const EditableFieldShowInput: ComponentStory<typeof EditableField> = () => <EditableField aho={dummyAho} objPath="AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber" amendFn={() => console.log("amending")} />
+export const EditableFieldShowInput: ComponentStory<typeof EditableField> = () => (
+  <EditableField
+    aho={dummyAho}
+    objPath="AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber"
+    amendFn={() => console.log("amending")}
+  />
+)
 
 EditableFieldShowInput.story = {
   parameters: {
@@ -28,7 +34,13 @@ EditableFieldShowInput.play = async ({ canvasElement }) => {
   expect(canvas.getByText("original_value")).toBeInTheDocument()
 }
 
-export const EditableFieldShowValue: ComponentStory<typeof EditableField> = () => <EditableField aho={dummyAho} objPath="AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.RemandStatus" amendFn={() => console.log("amending")} />
+export const EditableFieldShowValue: ComponentStory<typeof EditableField> = () => (
+  <EditableField
+    aho={dummyAho}
+    objPath="AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.RemandStatus"
+    amendFn={() => console.log("amending")}
+  />
+)
 
 EditableFieldShowInput.story = {
   parameters: {
@@ -46,7 +58,11 @@ EditableFieldShowValue.play = async ({ canvasElement }) => {
 
 export const ShouldBeAccessible: ComponentStory<typeof EditableField> = () => (
   <div data-testid="editable-field">
-    <EditableField aho={dummyAho} objPath="AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber" amendFn={() => console.log("amending")}/>
+    <EditableField
+      aho={dummyAho}
+      objPath="AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber"
+      amendFn={() => console.log("amending")}
+    />
   </div>
 )
 
@@ -56,4 +72,3 @@ ShouldBeAccessible.play = async ({ canvasElement }) => {
   const editableField = canvas.getByTestId("editable-field")
   expect(await axe(editableField)).toHaveNoViolations()
 }
-

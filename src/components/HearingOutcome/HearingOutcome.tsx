@@ -5,7 +5,7 @@ import {
   Offence
 } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { Table, Button } from "govuk-react"
-import EditableField from "components/EditableField/EditableField"
+import EditableField from "components/EditableField"
 import ResultVariableText from "components/ResultVariableText/ResultVariableText"
 
 interface Props {
