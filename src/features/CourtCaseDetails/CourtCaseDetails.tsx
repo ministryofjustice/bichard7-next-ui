@@ -38,7 +38,6 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         <Table.CellHeader>{"Urgency"}</Table.CellHeader>
         <Table.Cell>
           {courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}
-          {!courtCase.isUrgent && <Tag tint="GREY">{"Non-urgent"}</Tag>}
         </Table.Cell>
       </Table.Row>
       <Table.Row>

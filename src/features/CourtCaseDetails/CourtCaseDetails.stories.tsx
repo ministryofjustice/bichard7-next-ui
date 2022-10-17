@@ -26,7 +26,7 @@ const courtCase = {
   triggerReason: "TRPR0006",
   triggers: [{ triggerCode: "TRPR0001", triggerId: 0 } as unknown as Trigger],
   courtDate: new Date("2008-09-26"),
-  isUrgent: false
+  isUrgent: true
 } as unknown as CourtCase
 
 const aho = parseAhoXml(CourtCaseAho.hearingOutcomeXml) as AnnotatedHearingOutcome
@@ -47,7 +47,7 @@ DetailsNotLockedByAnotherUser.play = ({ canvasElement }) => {
   ).toHaveLength(2)
   expect(canvas.queryByText("Resolve trigger")).toBeInTheDocument()
   expect(canvas.getByText("Add Note")).toBeInTheDocument()
-  expect(canvas.getByText("Non-urgent")).toBeInTheDocument()
+  expect(canvas.getByText("Urgent")).toBeInTheDocument()
 }
 
 export const DetailsLockedByAnotherUser: ComponentStory<typeof CourtCaseDetails> = () => (
@@ -66,7 +66,7 @@ DetailsLockedByAnotherUser.play = ({ canvasElement }) => {
   ).toHaveLength(2)
   expect(canvas.queryByText("Resolve trigger")).toBeInTheDocument()
   expect(canvas.queryByText("Add Note")).not.toBeInTheDocument()
-  expect(canvas.getByText("Non-urgent")).toBeInTheDocument()
+  expect(canvas.getByText("Urgent")).toBeInTheDocument()
 }
 
 export const TriggersNotVisibleToUser: ComponentStory<typeof CourtCaseDetails> = () => (
@@ -85,5 +85,5 @@ TriggersNotVisibleToUser.play = async ({ canvasElement }) => {
   ).toHaveLength(2)
   expect(canvas.queryByText("Resolve trigger")).not.toBeInTheDocument()
   expect(canvas.getByText("Add Note")).toBeInTheDocument()
-  expect(canvas.getByText("Non-urgent")).toBeInTheDocument()
+  expect(canvas.getByText("Urgent")).toBeInTheDocument()
 }
