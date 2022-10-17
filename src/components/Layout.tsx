@@ -1,8 +1,6 @@
-import { Page, Footer } from "govuk-react"
+import { Footer } from "govuk-react"
 import { ReactNode } from "react"
 import User from "../services/entities/User"
-import IconTitle from "./govuk-react-forked/IconTitle"
-import Crown from "./govuk-react-forked/CrownIcon"
 import { useRouter } from "next/router"
 import Header from "components/Header"
 
@@ -11,16 +9,11 @@ interface Props {
   user: User
 }
 
-// We're overriding Company to implement an svg fix for the govuk-react-icon-crown repo
-const Company = (
-  <IconTitle icon={<Crown width="36" height="32" fill="currentColor" title="GOV.UK" />}>{"GOV.UK"}</IconTitle>
-)
-
-const Layout = ({ children, user }: Props) => {
+const Layout = ({ children }: Props) => {
   const { basePath } = useRouter()
   return (
     <>
-      <Header />
+      <Header serviceName={""} />
       {children}
       <Footer
         copyright={{
