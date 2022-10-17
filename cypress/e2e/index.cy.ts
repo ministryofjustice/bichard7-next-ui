@@ -297,6 +297,19 @@ describe("Home", () => {
         cy.url().should("match", /\/bichard/)
         cy.findByText("Court cases").should("exist")
       })
+
+      it("Should display the urgent badge on cases marked as urgent", () => {
+        cy.task("insertUsers", users)
+        cy.task("insertCourtCasesWithUrgencies", { urgencies: [true, false, true], force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("tr").not(":first").eq(0).get("td:nth-child(2)").contains(`Case00000`)
+        cy.get("tr").not(":first").eq(0).contains(`Urgent`).should("exist")
+        cy.get("tr").not(":first").eq(1).contains(`Urgent`).should("not.exist")
+        cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
+      })
     })
   })
 })

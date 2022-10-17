@@ -131,6 +131,22 @@ const insertDummyCourtCaseWithLock = async (
   return insertCourtCases(existingCourtCases)
 }
 
+const insertDummyCourtCasesWithUrgencies = async (urgencies: boolean[], orgCode: string) => {
+  const existingCourtCases: CourtCase[] = await Promise.all(
+    urgencies.map((urgency, index) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        errorId: index,
+        messageId: String(index).padStart(5, "x"),
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        isUrgent: urgency
+      })
+    )
+  )
+
+  return insertCourtCases(existingCourtCases)
+}
+
 export {
   getDummyCourtCase,
   insertCourtCases,
@@ -139,5 +155,6 @@ export {
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithDefendantNames,
   insertMultipleDummyCourtCases,
-  insertDummyCourtCaseWithLock
+  insertDummyCourtCaseWithLock,
+  insertDummyCourtCasesWithUrgencies
 }

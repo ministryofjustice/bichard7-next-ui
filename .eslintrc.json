@@ -53,9 +53,12 @@
           "error",
           {
             "selector": "variableLike",
-            "format": ["StrictPascalCase", "strictCamelCase", "UPPER_CASE"]
+            "format": ["StrictPascalCase", "strictCamelCase", "UPPER_CASE"],
+            "argsIgnorePattern": "^_+$",
+            "varsIgnorePattern": "^_+$"
           }
-        ]
+        ],
+        "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_+$", "varsIgnorePattern": "^_+$" }]
       }
     },
     {
@@ -77,7 +80,6 @@
         "import/no-extraneous-dependencies": "off",
         "import/prefer-default-export": "off",
         "@typescript-eslint/no-non-null-assertion": "off"
-
       }
     },
     {

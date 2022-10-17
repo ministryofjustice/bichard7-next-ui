@@ -21,7 +21,8 @@ const courtCase = {
   ptiurn: "42CY0300107",
   triggerReason: "TRPR0006",
   triggers: [{ triggerCode: "TRPR0001" } as unknown as Trigger],
-  courtDate: new Date("2008-09-26")
+  courtDate: new Date("2008-09-26"),
+  isUrgent: true
 } as unknown as CourtCase
 
 export const EmptyList: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={[]} />
@@ -33,9 +34,9 @@ EmptyList.play = async ({ canvasElement }) => {
 
 export const OneRecord: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={[courtCase]} />
 
-export const ManyRecords: ComponentStory<typeof CourtCaseList> = () => (
-  <CourtCaseList courtCases={new Array(100).fill(courtCase)} />
-)
+const courtCases = new Array(100).fill(courtCase)
+export const ManyRecords: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={courtCases} />
+
 ManyRecords.parameters = {
   design: [
     {
@@ -49,4 +50,27 @@ ManyRecords.parameters = {
       url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=0%3A1"
     }
   ]
+}
+
+ManyRecords.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+
+  const urgentTags = await canvas.findAllByText("Urgent")
+  expect(urgentTags).toHaveLength(courtCases.length + 1) // The column header also matches this
+}
+
+const mixedUrgencies: CourtCase[] = new Array(10).fill(0).map((_, index) => {
+  const urgencyCourtCase = Object.assign({}, courtCase)
+  if (index % 2 === 0) {
+    urgencyCourtCase.isUrgent = false
+  }
+  return urgencyCourtCase
+})
+export const MixedUrgencies: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={mixedUrgencies} />
+
+MixedUrgencies.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+
+  const urgentTags = await canvas.findAllByText("Urgent")
+  expect(urgentTags).toHaveLength(mixedUrgencies.filter((c) => c.isUrgent).length + 1) // The column header also matches this
 }
