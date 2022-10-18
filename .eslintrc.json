@@ -54,6 +54,10 @@
           {
             "selector": "variableLike",
             "format": ["StrictPascalCase", "strictCamelCase", "UPPER_CASE"],
+            "filter": {
+              "regex": "^_+$",
+              "match": false
+            },
             "leadingUnderscore": "allow"
           }
         ],

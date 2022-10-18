@@ -1,20 +1,21 @@
-// @ts-nocheck
-// Typescript type checking breaks when using SearchBox.Input and SearchBox.Button,
-// for now we disable type checking for this file as it is a proof of concept
-
-import { SearchBox } from "../../components/govuk-react-forked/SearchBox"
+import { SearchBox } from "govuk-react"
 
 interface Props {
   defendantName?: string
 }
 
-const DefendantNameFilter = (props: Props) => (
-  <>
-    <SearchBox>
-      <SearchBox.Input placeholder="Search defendants by name" name={"defendant"} defaultValue={props.defendantName} />
-      <SearchBox.Button />
-    </SearchBox>
-  </>
-)
+const DefendantNameFilter = (props: Props) => {
+  /* eslint-disable  @typescript-eslint/no-non-null-assertion */
+  const Input = SearchBox.Input!
+  const Button = SearchBox.Button!
+  return (
+    <>
+      <SearchBox>
+        <Input placeholder="Search defendants by name" name={"defendant"} defaultValue={props.defendantName} />
+        <Button />
+      </SearchBox>
+    </>
+  )
+}
 
 export default DefendantNameFilter
