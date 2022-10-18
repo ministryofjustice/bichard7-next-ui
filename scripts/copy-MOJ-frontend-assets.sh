@@ -13,4 +13,5 @@ if [ ! -d $MOJ_ASSETS_SOURCE ]; then
     exit 1
 fi
 
+rm -rf $MOJ_ASSETS_DESTINATION
 cp -Rv $MOJ_ASSETS_SOURCE $MOJ_ASSETS_DESTINATION

@@ -33,7 +33,7 @@ describe("Home", () => {
 
         cy.findByText("Help").click()
         // TODO: Point to actual help doc container.
-        cy.visit("/bichard-ui/help")
+        cy.visit("/bichard/help/")
       })
     })
   })
