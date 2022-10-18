@@ -2,7 +2,7 @@ import { Footer } from "govuk-react"
 import { ReactNode } from "react"
 import User from "../services/entities/User"
 import { useRouter } from "next/router"
-import MojHeader from "./MojHeader"
+import MojHeader from "./Header"
 
 interface Props {
   children: ReactNode

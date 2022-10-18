@@ -1,4 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
+import { within } from "@storybook/testing-library"
+import expect from "../../test/util/storybook/expect"
 import Header from "./Header"
 
 export default {
@@ -6,25 +8,9 @@ export default {
   component: Header
 } as ComponentMeta<typeof Header>
 
-export const HeaderStoryEmpty: ComponentStory<typeof Header> = () => <Header serviceName={""} />
-HeaderStoryEmpty.story = {
-  parameters: {
-    nextRouter: {
-      basePath: "/bichard"
-    }
-  }
-}
-
-HeaderStoryEmpty.parameters = {
-  design: [
-    {
-      name: "Design",
-      type: "figma",
-      url: "https://www.figma.com/file/gy3HppiITvQdHAOD2rpO42/05_-B7_22-Completed-initial-components-(for-devs)?node-id=43%3A10"
-    }
-  ]
-}
-export const HeaderStory: ComponentStory<typeof Header> = () => <Header serviceName={"Bichard7"} />
+export const HeaderStory: ComponentStory<typeof Header> = () => (
+  <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={"User01"} />
+)
 HeaderStory.story = {
   parameters: {
     nextRouter: {
@@ -41,4 +27,11 @@ HeaderStory.parameters = {
       url: "https://www.figma.com/file/gy3HppiITvQdHAOD2rpO42/05_-B7_22-Completed-initial-components-(for-devs)?node-id=43%3A10"
     }
   ]
+}
+
+HeaderStory.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+  await expect(canvas.getByText("Ministry of Justice")).toBeInTheDocument()
+  await expect(canvas.getByText("Bichard7")).toBeInTheDocument()
+  await expect(canvas.getByText("User01")).toBeInTheDocument()
 }
