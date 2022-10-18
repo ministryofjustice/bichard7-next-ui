@@ -36,9 +36,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       </Table.Row>
       <Table.Row>
         <Table.CellHeader>{"Urgency"}</Table.CellHeader>
-        <Table.Cell>
-          {courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}
-        </Table.Cell>
+        <Table.Cell>{courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}</Table.Cell>
       </Table.Row>
       <Table.Row>
         <Table.CellHeader>{"Defendant name"}</Table.CellHeader>
