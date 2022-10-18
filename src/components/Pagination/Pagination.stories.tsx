@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import Pagination from "./Pagination"
 import { within } from "@storybook/testing-library"
-import expect from "../../../test/util/storybook/expect"
+import expect from "../../../test/utils/storybook/expect"
 import { axe } from "jest-axe"
 
 export default {

@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
 import createDummyAho from "../../../test/helpers/createDummyAho"
 import HearingOutcome from "./HearingOutcome"
-import expect from "../../../test/util/storybook/expect"
+import expect from "../../../test/utils/storybook/expect"
 import { axe } from "jest-axe"
 
 export default {
@@ -36,7 +36,9 @@ HearingOutcomeStory.play = async ({ canvasElement }) => {
   const offenceTable = canvas.getByRole("table", { name: "Offences" })
   expect(offenceTable).toBeInTheDocument()
   expect(within(offenceTable).getByText("1")).toBeInTheDocument()
-  expect(within(offenceTable).getByText("Crime")).toBeInTheDocument()
+
+  const offenceTitles = within(offenceTable).getAllByText("Crime")
+  expect(offenceTitles).toHaveLength(2)
 
   const button = canvas.getByRole("button", { name: "Resubmit" })
   expect(button).toBeInTheDocument()
