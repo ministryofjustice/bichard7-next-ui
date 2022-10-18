@@ -1,8 +1,8 @@
 import { DataSource, UpdateResult } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
-import updateCourtCaseUpdatedHo from "../../src/services/updateCourtCaseUpdatedHo"
-import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
-import deleteFromTable from "../util/deleteFromTable"
+import updateCourtCaseAho from "../../src/services/updateCourtCaseAho"
+import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
+import deleteFromTable from "../utils/deleteFromTable"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 
@@ -41,11 +41,11 @@ describe("update court case updated hearing outcome", () => {
 
     expect(retrievedCase?.updatedHearingOutcome).toBe(null)
 
-    const result = await updateCourtCaseUpdatedHo(dataSource, inputCourtCase.errorId, "this_new_string")
+    const result = await updateCourtCaseAho(dataSource, inputCourtCase.errorId, "this_new_string")
     expect(isError(result)).toBe(false)
 
     const courtCaseRow = (result as UpdateResult).raw[0]
-    expect(courtCaseRow.updated_msg).toStrictEqual("this_new_string")
+    expect(courtCaseRow.annotated_msg).toStrictEqual("this_new_string")
     expect(courtCaseRow.user_updated_flag).toBe(1)
   })
 
@@ -59,7 +59,7 @@ describe("update court case updated hearing outcome", () => {
       phase: 1
     })
 
-    const result = await updateCourtCaseUpdatedHo(dataSource, inputCourtCase.errorId, "this_new_string")
+    const result = await updateCourtCaseAho(dataSource, inputCourtCase.errorId, "this_new_string")
 
     expect((result as UpdateResult).raw).toHaveLength(0)
     expect((result as UpdateResult).affected).toBe(0)

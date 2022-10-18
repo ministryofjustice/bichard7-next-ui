@@ -4,15 +4,16 @@ import amendCourtCase from "services/amendCourtCase"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
-import updateCourtCaseUpdatedHo from "services/updateCourtCaseUpdatedHo"
+import updateCourtCaseAho from "services/updateCourtCaseAho"
 import { DataSource } from "typeorm"
 import createForceOwner from "utils/createForceOwner"
 import getCourtCase from "../../src/services/getCourtCase"
-import deleteFromTable from "../util/deleteFromTable"
-import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
+import deleteFromTable from "../utils/deleteFromTable"
+import DummyAho from "../test-data/error_list_aho.json"
+import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 
 jest.mock("services/getCourtCase")
-jest.mock("services/updateCourtCaseUpdatedHo")
+jest.mock("services/updateCourtCaseAho")
 jest.mock("@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml")
 jest.mock("utils/createForceOwner")
 
@@ -34,9 +35,7 @@ describe("amend court case", () => {
     ;(parseAhoXml as jest.Mock).mockImplementation(
       jest.requireActual("@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml").default
     )
-    ;(updateCourtCaseUpdatedHo as jest.Mock).mockImplementation(
-      jest.requireActual("services/updateCourtCaseUpdatedHo").default
-    )
+    ;(updateCourtCaseAho as jest.Mock).mockImplementation(jest.requireActual("services/updateCourtCaseAho").default)
     ;(createForceOwner as jest.Mock).mockImplementation(jest.requireActual("utils/createForceOwner").default)
   })
 
@@ -56,7 +55,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    expect(inputCourtCase.updatedHearingOutcome).toBe(null)
+    expect(inputCourtCase.hearingOutcome).toBe(DummyAho.hearingOutcomeXml)
 
     const result = await amendCourtCase({}, inputCourtCase.errorId, { username: userName } as User, dataSource)
 
@@ -67,7 +66,7 @@ describe("amend court case", () => {
       .getRepository(CourtCase)
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
-    expect(retrievedCase?.updatedHearingOutcome).not.toBe(null)
+    expect(retrievedCase?.hearingOutcome).toMatchSnapshot()
   })
 
   it("should amend the court case when the lock is held by the current user", async () => {
@@ -82,7 +81,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    expect(inputCourtCase.updatedHearingOutcome).toBe(null)
+    expect(inputCourtCase.hearingOutcome).toBe(DummyAho.hearingOutcomeXml)
 
     const result = await amendCourtCase({}, inputCourtCase.errorId, { username: userName } as User, dataSource)
 
@@ -93,7 +92,7 @@ describe("amend court case", () => {
       .getRepository(CourtCase)
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
-    expect(retrievedCase?.updatedHearingOutcome).not.toBe(null)
+    expect(retrievedCase?.hearingOutcome).toMatchSnapshot()
   })
 
   it("should not update the db if the case is locked by somebody else", async () => {
@@ -108,7 +107,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    expect(inputCourtCase.updatedHearingOutcome).toBe(null)
+    expect(inputCourtCase.hearingOutcome).toBe(DummyAho.hearingOutcomeXml)
 
     const result = await amendCourtCase({}, inputCourtCase.errorId, { username: userName } as User, dataSource)
 
@@ -119,7 +118,7 @@ describe("amend court case", () => {
       .getRepository(CourtCase)
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
-    expect(retrievedCase?.updatedHearingOutcome).toBe(null)
+    expect(retrievedCase?.hearingOutcome).toBe(DummyAho.hearingOutcomeXml)
   })
 
   it("should create a force owner if the force owner is not present", async () => {
@@ -132,7 +131,7 @@ describe("amend court case", () => {
       errorStatus: "Unresolved",
       triggerCount: 1,
       phase: 1,
-      updatedHearingOutcome: inputXml
+      hearingOutcome: inputXml
     })
 
     await insertCourtCases(inputCourtCase)
@@ -140,7 +139,7 @@ describe("amend court case", () => {
     const result = await amendCourtCase({}, inputCourtCase.errorId, { username: userName } as User, dataSource)
 
     expect(createForceOwner).toHaveBeenCalledTimes(1)
-    expect(updateCourtCaseUpdatedHo).toHaveBeenCalledTimes(1)
+    expect(updateCourtCaseAho).toHaveBeenCalledTimes(1)
     expect(createForceOwner).toHaveBeenCalledWith(inputCourtCase.orgForPoliceFilter)
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -201,7 +200,7 @@ describe("amend court case", () => {
   })
 
   it("should return an error if it cannot update the db", async () => {
-    ;(updateCourtCaseUpdatedHo as jest.Mock).mockImplementationOnce(() => new Error("Failed to update the database"))
+    ;(updateCourtCaseAho as jest.Mock).mockImplementationOnce(() => new Error("Failed to update the database"))
 
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
@@ -213,8 +212,6 @@ describe("amend court case", () => {
     })
 
     await insertCourtCases(inputCourtCase)
-
-    expect(inputCourtCase.updatedHearingOutcome).toBe(null)
 
     const result = await amendCourtCase({}, inputCourtCase.errorId, { username: userName } as User, dataSource)
 
@@ -233,7 +230,7 @@ describe("amend court case", () => {
       errorStatus: "Unresolved",
       triggerCount: 1,
       phase: 1,
-      updatedHearingOutcome: inputXml
+      hearingOutcome: inputXml
     })
 
     await insertCourtCases(inputCourtCase)

@@ -5,8 +5,8 @@ import getCourtCaseByVisibleForce from "../../src/services/getCourtCaseByVisible
 import getDataSource from "../../src/services/getDataSource"
 import tryToLockCourtCase from "../../src/services/tryToLockCourtCase"
 import { isError } from "../../src/types/Result"
-import deleteFromTable from "../util/deleteFromTable"
-import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
+import deleteFromTable from "../utils/deleteFromTable"
+import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 
 describe("lock court case", () => {
   let dataSource: DataSource

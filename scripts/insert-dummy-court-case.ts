@@ -1,3 +1,3 @@
-import { insertCourtCasesWithOrgCodes } from "../test/util/insertCourtCases"
+import { insertCourtCasesWithOrgCodes } from "../test/utils/insertCourtCases"
 
 insertCourtCasesWithOrgCodes(["01"])

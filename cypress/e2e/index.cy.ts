@@ -1,5 +1,5 @@
 import User from "services/entities/User"
-import { TestTrigger } from "../../test/util/manageTriggers"
+import { TestTrigger } from "../../test/utils/manageTriggers"
 import a11yConfig from "../support/a11yConfig"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 

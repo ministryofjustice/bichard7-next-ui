@@ -3,8 +3,8 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import getCourtCaseByVisibleForce from "../../src/services/getCourtCaseByVisibleForce"
 import { isError } from "../../src/types/Result"
-import deleteFromTable from "../util/deleteFromTable"
-import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
+import deleteFromTable from "../utils/deleteFromTable"
+import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 
 describe("getCourtCaseByVisibleForces", () => {
   let dataSource: DataSource

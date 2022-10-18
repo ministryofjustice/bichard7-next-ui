@@ -1,8 +1,8 @@
 import { DataSource } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
 import getCourtCase from "../../src/services/getCourtCase"
-import { getDummyCourtCase, insertCourtCases } from "../util/insertCourtCases"
-import deleteFromTable from "../util/deleteFromTable"
+import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
+import deleteFromTable from "../utils/deleteFromTable"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 

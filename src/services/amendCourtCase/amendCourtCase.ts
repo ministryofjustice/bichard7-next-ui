@@ -1,7 +1,7 @@
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
 import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/build/src/serialise/ahoXml/generate"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/build/src/types/Phase"
-import updateCourtCaseUpdatedHo from "services/updateCourtCaseUpdatedHo"
+import updateCourtCaseAho from "services/updateCourtCaseAho"
 import { DataSource } from "typeorm"
 import { Amendments } from "types/Amendments"
 import { isError } from "types/Result"
@@ -54,7 +54,7 @@ const amendCourtCase = async (
     if (!amendments.noUpdatesResubmit || ahoForceOwner === undefined) {
       if (courtCaseRow.errorLockedByUsername === userDetails.username || courtCaseRow.errorLockedByUsername === null) {
         // TODO: Double check this logic when implementing updates (ScreenFlowImpl -> line 647)
-        const updateResult = await updateCourtCaseUpdatedHo(dataSource, courtCaseId, generatedXml)
+        const updateResult = await updateCourtCaseAho(dataSource, courtCaseId, generatedXml)
         if (isError(updateResult)) {
           return updateResult
         }

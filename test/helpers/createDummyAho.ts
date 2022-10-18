@@ -18,7 +18,17 @@ const createDummyAho = (): AnnotatedHearingOutcome => {
           5678
         ],
         code: "Exception_Code" as ExceptionCode
-      }
+      },
+      {
+        path: [
+          "AnnotatedHearingOutcome",
+          "HearingOutcome",
+          "Case",
+          "HearingDefendant",
+          "ArrestSummonsNumber"
+        ],
+        code: "HO100302" as ExceptionCode
+      },
     ],
     AnnotatedHearingOutcome: {
       HearingOutcome: {

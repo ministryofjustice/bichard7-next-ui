@@ -1,4 +1,4 @@
-import expect from "../../../test/util/storybook/expect"
+import expect from "../../../test/utils/storybook/expect"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
 import CourtCase from "services/entities/CourtCase"

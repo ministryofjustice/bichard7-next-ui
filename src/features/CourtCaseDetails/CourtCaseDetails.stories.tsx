@@ -6,7 +6,7 @@ import { within } from "@storybook/testing-library"
 import { format } from "date-fns"
 import CourtCase from "services/entities/CourtCase"
 import Trigger from "services/entities/Trigger"
-import CourtCaseAho from "../../../test/util/error_list_aho.json"
+import CourtCaseAho from "../../../test/test-data/error_list_aho.json"
 import CourtCaseDetails from "./CourtCaseDetails"
 
 export default {
