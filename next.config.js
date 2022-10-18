@@ -8,3 +8,14 @@ const nextConfig = {
 }
 
 module.exports = withTM(nextConfig)
+
+module.exports = {
+  async rewrites() {
+    return [
+      {
+        source: "/bichard/help/",
+        destination: "/help/"
+      }
+    ]
+  }
+}
