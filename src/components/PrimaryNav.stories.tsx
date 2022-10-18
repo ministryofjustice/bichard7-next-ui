@@ -4,7 +4,7 @@ import NavBar from "./NavBar"
 import expect from "../../test/util/storybook/expect"
 
 export default {
-  title: "Components/PrimaryNav",
+  title: "Components/NavBar",
   component: NavBar
 } as ComponentMeta<typeof NavBar>
 

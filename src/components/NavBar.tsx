@@ -1,4 +1,4 @@
-const NavItem: React.FC = () => (
+const NavItem: React.FC = ({ NavItem, NavItemLink }) => (
   <li className="moj-primary-navigation__item">
     <a className="moj-primary-navigation__link" aria-current="page" href={NavItemLink}>
       {NavItem}
@@ -6,7 +6,7 @@ const NavItem: React.FC = () => (
   </li>
 )
 
-const NavBar: React.FC = ({ NavItem, NavItemLink }) => (
+const NavBar: React.FC = () => (
   <div className="moj-primary-navigation">
     <div className="moj-primary-navigation__container">
       <div className="moj-primary-navigation__nav">
