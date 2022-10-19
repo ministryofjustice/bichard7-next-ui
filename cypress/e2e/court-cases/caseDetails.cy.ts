@@ -242,15 +242,15 @@ describe("Case details", () => {
         })
     })
 
-    it("should resubmit a case when the resubmit button is clicked", () => {
+    it.only("should resubmit a case when the resubmit button is clicked", () => {
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
         orgCodes: ["01"]
       })
 
-      cy.login("bichard01@example.com", "password")
       cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
+      cy.login("bichard01@example.com", "password")
 
       cy.visit("/bichard/court-cases/0")
 
@@ -258,6 +258,17 @@ describe("Case details", () => {
       cy.location().should((loc) => {
         expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
       })
+
+      cy.get("H2").should("have.text", "Case Details")
+      const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
+      cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
+      cy.get("table")
+        .eq(-1)
+        .find("tr")
+        .eq(0)
+        .find("td")
+        .last()
+        .should("have.text", "Bichard01: Portal Action: Resubmitted Message.")
     })
   })
 })
