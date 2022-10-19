@@ -1,9 +1,8 @@
-import { Footer } from "govuk-react"
+import { Page, Footer } from "govuk-react"
 import { ReactNode } from "react"
 import User from "../services/entities/User"
 import { useRouter } from "next/router"
 import Header from "./Header"
-import NavBar from "./NavBar"
 
 interface Props {
   children: ReactNode
@@ -12,11 +11,11 @@ interface Props {
 
 const Layout = ({ children }: Props) => {
   const { basePath } = useRouter()
+  const header = <Header serviceName={"Bichard7"} organisationName={"Minsitry of Justice"} userName={"User 0001"} />
+
   return (
     <>
-      <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={"User Name"} />
-      <NavBar />
-      {children}
+      <Page header={header}>{children}</Page>
       <Footer
         copyright={{
           image: {
