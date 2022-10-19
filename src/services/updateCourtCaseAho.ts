@@ -1,8 +1,8 @@
-import { DataSource, UpdateResult } from "typeorm/"
+import { DataSource, EntityManager, UpdateResult } from "typeorm/"
 import CourtCase from "./entities/CourtCase"
 
 const updateCourtCaseAho = async (
-  dataSource: DataSource,
+  dataSource: DataSource | EntityManager,
   courtCaseId: number,
   updatedHo: string
 ): Promise<UpdateResult | Error> => {
