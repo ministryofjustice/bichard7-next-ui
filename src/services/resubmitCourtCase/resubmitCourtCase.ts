@@ -9,7 +9,7 @@ import { isError } from "types/Result"
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import type { Amendments } from "types/Amendments"
 import PromiseResult from "types/PromiseResult"
-
+import insertNotes from "services/insertNotes"
 const resubmitCourtCase = async (
   dataSource: DataSource,
   form: Partial<Amendments>,
@@ -27,7 +27,19 @@ const resubmitCourtCase = async (
       const amendedCourtCase = await amendCourtCase(form, courtCaseId, currentUser, entityManager)
 
       if (isError(amendedCourtCase)) {
-        return amendedCourtCase
+        throw amendedCourtCase
+      }
+
+      const addNoteResult = await insertNotes(entityManager, [
+        {
+          noteText: "Bichard01: Portal Action: Resubmitted Message.",
+          errorId: courtCaseId,
+          userId: "System"
+        }
+      ])
+
+      if (isError(addNoteResult)) {
+        throw addNoteResult
       }
 
       // TODO: set error status as submitted = 3
@@ -41,7 +53,7 @@ const resubmitCourtCase = async (
       const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, currentUser)
 
       if (isError(unlockResult)) {
-        return unlockResult
+        throw unlockResult
       }
 
       return amendedCourtCase

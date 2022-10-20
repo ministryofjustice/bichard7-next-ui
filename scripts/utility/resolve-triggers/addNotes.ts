@@ -1,7 +1,7 @@
-import Note from "../../../src/services/entities/Note"
 import Trigger from "../../../src/services/entities/Trigger"
 import { DataSource, EntityManager } from "typeorm"
 import { isError } from "../../../src/types/Result"
+import insertNotes from "../../../src/services/insertNotes"
 
 export default async function addNotes(
   pgDataSource: DataSource | EntityManager,
@@ -17,18 +17,16 @@ export default async function addNotes(
     return acc
   }, [])
   if (triggersNotes.length > 0) {
-    const notesResult = await pgDataSource
-      .getRepository(Note)
-      .insert({
+    const notesResult = await insertNotes(pgDataSource, [
+      {
         errorId: courtCaseId,
         userId: "System",
-        createdAt: new Date(),
         noteText: [
           `System Action: Triggers Resolved. Code ${triggersNotes.join(", ")}. `,
           process.env.TRIGGER_NOTE
         ].join("\n")
-      })
-      .catch((error: Error) => error)
+      }
+    ])
 
     if (isError(notesResult)) {
       throw notesResult

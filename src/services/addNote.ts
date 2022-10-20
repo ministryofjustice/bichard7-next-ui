@@ -1,14 +1,14 @@
-import { DataSource } from "typeorm"
+import { DataSource, EntityManager } from "typeorm"
 import { isError } from "types/Result"
 import { ServiceResultPromise } from "types/ServiceResult"
 import CourtCase from "./entities/CourtCase"
-import Note from "./entities/Note"
+import insertNotes from "./insertNotes"
 
 const MaxNoteLength = 1000
 const notesRegex = new RegExp(`(.{1,${MaxNoteLength}})`, "g")
 
 const addNote = async (
-  dataSource: DataSource,
+  dataSource: DataSource | EntityManager,
   courtCaseId: number,
   username: string,
   noteText: string
@@ -33,21 +33,14 @@ const addNote = async (
     }
   }
 
-  const noteRepository = dataSource.getRepository(Note)
-  const addNoteResult = await noteRepository
-    .createQueryBuilder()
-    .insert()
-    .into(Note)
-    .values(
-      noteText.match(notesRegex)?.map((text) => ({
-        createdAt: new Date(),
-        noteText: text,
-        errorId: courtCaseId,
-        userId: username
-      })) ?? []
-    )
-    .execute()
-    .catch((error: Error) => error)
+  const notes =
+    noteText.match(notesRegex)?.map((text) => ({
+      noteText: text,
+      errorId: courtCaseId,
+      userId: username
+    })) ?? []
+
+  const addNoteResult = await insertNotes(dataSource, notes)
 
   if (isError(addNoteResult)) {
     console.error(addNoteResult)

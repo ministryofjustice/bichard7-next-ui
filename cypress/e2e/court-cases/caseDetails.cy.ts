@@ -242,7 +242,7 @@ describe("Case details", () => {
         })
     })
 
-    it.only("should resubmit a case when the resubmit button is clicked", () => {
+    it("should resubmit a case when the resubmit button is clicked", () => {
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
