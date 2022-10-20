@@ -20,7 +20,7 @@ const Layout = ({ children, user }: Props) => {
         copyright={{
           image: {
             height: 102,
-            src: `${basePath}/images/govuk-crest.png`,
+            src: `${basePath}/govuk_assets/images/govuk-crest.png`,
             width: 125
           },
           link: "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",
