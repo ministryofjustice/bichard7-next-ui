@@ -4,12 +4,7 @@ const withTM = require("next-transpile-modules")(["hex-rgb", "is-plain-obj"])
 const nextConfig = {
   basePath: "/bichard",
   assetPrefix: "/bichard/",
-  reactStrictMode: true
-}
-
-module.exports = withTM(nextConfig)
-
-module.exports = {
+  reactStrictMode: true,
   async rewrites() {
     return [
       {
@@ -19,3 +14,5 @@ module.exports = {
     ]
   }
 }
+
+module.exports = withTM(nextConfig)

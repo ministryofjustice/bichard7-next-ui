@@ -1,7 +1,4 @@
 import User from "services/entities/User"
-import { TestTrigger } from "../../test/util/manageTriggers"
-import a11yConfig from "../support/a11yConfig"
-import logAccessibilityViolations from "../support/logAccessibilityViolations"
 
 describe("Home", () => {
   const hashedPassword =
@@ -28,12 +25,13 @@ describe("Home", () => {
     context("top-nav", () => {
       it("should goto help page", () => {
         cy.task("insertUsers", users)
+        cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7NewUI_grp" })
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
         cy.findByText("Help").click()
         // TODO: Point to actual help doc container.
-        cy.visit("/bichard/help/")
+        cy.visit("/help/")
       })
     })
   })

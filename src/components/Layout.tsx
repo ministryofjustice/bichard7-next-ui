@@ -9,9 +9,9 @@ interface Props {
   user: User
 }
 
-const Layout = ({ children }: Props) => {
+const Layout = ({ children, user }: Props) => {
   const { basePath } = useRouter()
-  const header = <Header serviceName={"Bichard7"} organisationName={"Minsitry of Justice"} userName={"User 0001"} />
+  const header = <Header serviceName={"Bichard7"} organisationName={"Minsitry of Justice"} userName={user.username} />
 
   return (
     <>
