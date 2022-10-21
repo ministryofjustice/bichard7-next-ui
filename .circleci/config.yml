@@ -211,6 +211,11 @@ jobs:
           command: until [ -f uiBuilt ]; do sleep 1; done
           no_output_timeout: 15m
       - run:
+          name: Run MQ
+          working_directory: ~/bichard7-next
+          command: docker-compose up -d activemq
+          background: true
+      - run:
           name: Run UI stack
           working_directory: ~/bichard7-next
           command: make run-ui
