@@ -5,7 +5,9 @@ import getDataSource from "../../src/services/getDataSource"
 import addNote from "../../src/services/addNote"
 import deleteFromTable from "../utils/deleteFromTable"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import Note from "../../src/services/entities/Note"
+import insertNotes from "services/insertNotes"
+
+jest.mock("services/insertNotes")
 
 const note = "Dummy note"
 
@@ -36,6 +38,8 @@ describe("addNote", () => {
 
   beforeEach(async () => {
     await deleteFromTable(CourtCase)
+    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   afterEach(() => {
@@ -52,12 +56,10 @@ describe("addNote", () => {
     MockDate.set(date)
     const result = await addNote(dataSource, 0, "username", note)
 
+    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [{ errorId: 0, noteText: note, userId: "username" }])
+
     expect(result).toStrictEqual({ isSuccessful: true })
-    const record = await dataSource.getRepository(Note).findOne({ where: { errorId: 0 } })
-    const actualCourtCase = record as Note
-    expect(actualCourtCase.noteText).toBe(note)
-    expect(actualCourtCase.userId).toBe("username")
-    expect(actualCourtCase.createdAt).toEqual(date)
   })
 
   it("should not add note when error is locked by other user", async () => {
@@ -70,8 +72,8 @@ describe("addNote", () => {
       isSuccessful: false,
       ValidationException: "Case is locked by another user"
     })
-    const record = await dataSource.getRepository(Note).findOne({ where: { errorId: 0 } })
-    expect(record).toBeNull()
+
+    expect(insertNotes).toHaveBeenCalledTimes(0)
   })
 
   it("should not add note when trigger is locked by other user", async () => {
@@ -84,8 +86,7 @@ describe("addNote", () => {
       isSuccessful: false,
       ValidationException: "Case is locked by another user"
     })
-    const actualNote = await dataSource.getRepository(Note).findOne({ where: { errorId: 0 } })
-    expect(actualNote).toBeNull()
+    expect(insertNotes).toHaveBeenCalledTimes(0)
   })
 
   it("should not add note when case does not exist", async () => {
@@ -95,40 +96,21 @@ describe("addNote", () => {
       isSuccessful: false,
       ValidationException: "Case not found"
     })
-    const actualNote = await dataSource.getRepository(Note).findOne({ where: { errorId: 0 } })
-    expect(actualNote).toBeNull()
+
+    expect(insertNotes).toHaveBeenCalledTimes(0)
   })
 
   it("should add multiple notes when note text length is more than the 1000 characters", async () => {
     await insertRecords()
-    const date = new Date()
-    MockDate.set(date)
 
     const result = await addNote(dataSource, 0, "username", "A".repeat(2503))
     expect(result).toStrictEqual({ isSuccessful: true })
 
-    const actualNotes = await dataSource.getRepository(Note).find()
-    expect(actualNotes).toHaveLength(3)
-    expect({ ...actualNotes[0], noteId: 0 }).toStrictEqual({
-      errorId: 0,
-      createdAt: date,
-      userId: "username",
-      noteId: 0,
-      noteText: "A".repeat(1000)
-    })
-    expect({ ...actualNotes[1], noteId: 0 }).toStrictEqual({
-      errorId: 0,
-      createdAt: date,
-      userId: "username",
-      noteId: 0,
-      noteText: "A".repeat(1000)
-    })
-    expect({ ...actualNotes[2], noteId: 0 }).toStrictEqual({
-      errorId: 0,
-      createdAt: date,
-      userId: "username",
-      noteId: 0,
-      noteText: "A".repeat(503)
-    })
+    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
+      { errorId: 0, noteText: "A".repeat(1000), userId: "username" },
+      { errorId: 0, noteText: "A".repeat(1000), userId: "username" },
+      { errorId: 0, noteText: "A".repeat(503), userId: "username" }
+    ])
   })
 })

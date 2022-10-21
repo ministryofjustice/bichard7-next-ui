@@ -1,10 +1,10 @@
-import { DataSource, UpdateResult } from "typeorm/"
+import { DataSource, EntityManager, UpdateResult } from "typeorm/"
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 
 const unlockCourtCase = async (
-  dataSource: DataSource,
+  dataSource: DataSource | EntityManager,
   courtCaseId: number,
   user: User
 ): Promise<UpdateResult | Error> => {

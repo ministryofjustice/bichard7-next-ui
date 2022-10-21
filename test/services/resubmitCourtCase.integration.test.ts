@@ -1,6 +1,7 @@
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
+import insertNotes from "services/insertNotes"
 import sendToQueue from "services/mq/sendToQueue"
 import { resubmitCourtCase } from "services/resubmitCourtCase"
 import { DataSource } from "typeorm"
@@ -9,6 +10,7 @@ import deleteFromTable from "../utils/deleteFromTable"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 
 jest.mock("services/mq/sendToQueue")
+jest.mock("services/insertNotes")
 
 jest.setTimeout(60 * 60 * 1000)
 
@@ -61,6 +63,10 @@ describe("resubmit court case", () => {
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
     expect(sendToQueue).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
+      { errorId: inputCourtCase.errorId, noteText: "Bichard01: Portal Action: Resubmitted Message.", userId: "System" }
+    ])
     expect(retrievedCase?.updatedHearingOutcome).toEqual(offenceSequenceException.updatedHearingOutcomeXml)
     expect(retrievedCase?.hearingOutcome).toEqual(offenceSequenceException.hearingOutcomeXml)
     // expect(retrievedCase?.errorStatus).toBe("Submitted")

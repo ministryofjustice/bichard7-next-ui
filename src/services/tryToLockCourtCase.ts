@@ -1,10 +1,10 @@
-import { DataSource, IsNull, MoreThan, Not, UpdateResult } from "typeorm"
+import { DataSource, EntityManager, IsNull, MoreThan, Not, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import { ResolutionStatus } from "types/ResolutionStatus"
 
 const tryToLockCourtCase = (
-  dataSource: DataSource,
+  dataSource: DataSource | EntityManager,
   courtCaseId: number,
   { canLockExceptions, canLockTriggers, username }: User
 ): Promise<UpdateResult | Error> | Error => {

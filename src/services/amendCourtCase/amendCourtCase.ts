@@ -2,7 +2,7 @@ import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/p
 import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/build/src/serialise/ahoXml/generate"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/build/src/types/Phase"
 import updateCourtCaseAho from "services/updateCourtCaseAho"
-import { DataSource } from "typeorm"
+import { DataSource, EntityManager } from "typeorm"
 import { Amendments } from "types/Amendments"
 import { isError } from "types/Result"
 import createForceOwner from "utils/createForceOwner"
@@ -17,7 +17,7 @@ const amendCourtCase = async (
   amendments: Partial<Amendments>,
   courtCaseId: number,
   userDetails: User,
-  dataSource: DataSource
+  dataSource: DataSource | EntityManager
 ): Promise<AnnotatedHearingOutcome | Error> => {
   // database call to retrieve the current court case
   // Check current court case exception and triggers are locked by current user
