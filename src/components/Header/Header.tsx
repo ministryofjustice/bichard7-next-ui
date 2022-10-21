@@ -1,5 +1,3 @@
-import NavBar from "./NavBar"
-
 interface HeaderProps {
   serviceName: string
   organisationName: string
@@ -53,7 +51,6 @@ const Header: React.FC<HeaderProps> = ({ organisationName, serviceName, userName
           </div>
         </div>
       </header>
-      <NavBar />
     </>
   )
 }
