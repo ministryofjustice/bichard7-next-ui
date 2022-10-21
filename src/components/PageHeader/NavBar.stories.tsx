@@ -30,4 +30,5 @@ NavBarStory.parameters = {
 NavBarStory.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText("Help")).toBeInTheDocument()
+  await expect(canvas.getByText("Case list")).toBeInTheDocument()
 }

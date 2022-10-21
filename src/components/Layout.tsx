@@ -2,8 +2,8 @@ import { Page, Footer } from "govuk-react"
 import { ReactNode } from "react"
 import User from "../services/entities/User"
 import { useRouter } from "next/router"
-import Header from "./Header/Header"
-import NavBar from "./Header/NavBar"
+import Header from "./PageHeader/Header"
+import NavBar from "./PageHeader/NavBar"
 
 interface Props {
   children: ReactNode
