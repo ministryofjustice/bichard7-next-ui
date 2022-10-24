@@ -134,4 +134,8 @@ export default class CourtCase extends BaseEntity {
       (!!this.triggerLockedByUsername && this.triggerLockedByUsername !== username)
     )
   }
+
+  countUserNotes(): number {
+    return this.notes ? this.notes.filter((note) => note.userId !== "System").length : 0
+  }
 }
