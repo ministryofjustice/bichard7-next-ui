@@ -25,7 +25,7 @@ const NavBar: React.FC = () => {
           <nav className="moj-primary-navigation" aria-label="Primary navigation">
             <ul className="moj-primary-navigation__list">
               {/* TODO: need to add logic to swap aria-current to be active on currently selected page. Currently hard coded to CaseList */}
-              <NavItem name={"Case List"} aria-current="page" link={"/"} />
+              <NavItem name={"Case list"} aria-current="page" link={"/"} />
               <NavItem name={"Help"} aria-current="false" link={"/help/"} />
             </ul>
           </nav>

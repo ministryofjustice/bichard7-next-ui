@@ -32,3 +32,28 @@ NavBarStory.play = async ({ canvasElement }) => {
   await expect(canvas.getByText("Help")).toBeInTheDocument()
   await expect(canvas.getByText("Case list")).toBeInTheDocument()
 }
+
+export const NavBarStoryFocus: ComponentStory<typeof NavBar> = () => <NavBar />
+NavBarStoryFocus.story = {
+  parameters: {
+    nextRouter: {
+      basePath: "/bichard"
+    }
+  }
+}
+
+NavBarStoryFocus.parameters = {
+  design: [
+    {
+      name: "Design",
+      type: "figma",
+      url: "https://www.figma.com/file/gy3HppiITvQdHAOD2rpO42/05_-B7_22-Completed-initial-components-(for-devs)?node-id=43%3A10"
+    }
+  ]
+}
+
+NavBarStoryFocus.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+  const highlightedNavitem = canvas.getByText("Help")
+  await (await highlightedNavitem).focus()
+}
