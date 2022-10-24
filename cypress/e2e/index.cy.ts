@@ -310,6 +310,51 @@ describe("Home", () => {
         cy.get("tr").not(":first").eq(1).contains(`Urgent`).should("not.exist")
         cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
       })
+
+      it.only("Should display the correct number of user-created notes on cases", () => {
+        cy.task("insertUsers", users)
+        const caseNotes: { user: string; text: string }[][] = [
+          [
+            {
+              user: "System",
+              text: "System note 1"
+            }
+          ],
+          [
+            {
+              user: "System",
+              text: "System note 2"
+            },
+            {
+              user: "bichard01",
+              text: "Test note 1"
+            },
+            {
+              user: "System",
+              text: "System note 3"
+            }
+          ],
+          [
+            {
+              user: "bichard01",
+              text: "Test note 2"
+            },
+            {
+              user: "bichard01",
+              text: "Test note 3"
+            }
+          ]
+        ]
+        cy.task("insertCourtCasesWithNotes", { caseNotes: caseNotes, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("tr").not(":first").eq(0).get("td:nth-child(2)").contains(`Case00000`)
+        cy.get("tr").not(":first").eq(0).get("td:nth-child()").contains(`Urgent`).should("exist")
+        cy.get("tr").not(":first").eq(1).contains(`Urgent`).should("not.exist")
+        cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
+      })
     })
   })
 })

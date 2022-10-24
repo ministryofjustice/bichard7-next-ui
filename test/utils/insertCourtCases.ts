@@ -5,6 +5,7 @@ import { InsertResult } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
 import DummyAho from "../test-data/error_list_aho.json"
 import DummyCourtCase from "./DummyCourtCase"
+import Note from "services/entities/Note"
 
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
   (await getDataSource()).getRepository(CourtCase).create({
@@ -147,6 +148,30 @@ const insertDummyCourtCasesWithUrgencies = async (urgencies: boolean[], orgCode:
   return insertCourtCases(existingCourtCases)
 }
 
+const insertDummyCourtCasesWithNotes = async (caseNotes: { user: string; text: string }[][], orgCode: string) => {
+  const existingCourtCases: CourtCase[] = await Promise.all(
+    caseNotes.map((notes, index) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        errorId: index,
+        messageId: String(index).padStart(5, "x"),
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        notes: notes.map(
+          (note, _) =>
+            ({
+              createdAt: new Date(),
+              noteText: note.text,
+              userId: note.user,
+              errorId: index
+            } as unknown as Note)
+        )
+      })
+    )
+  )
+
+  return insertCourtCases(existingCourtCases)
+}
+
 export {
   getDummyCourtCase,
   insertCourtCases,
@@ -156,5 +181,6 @@ export {
   insertCourtCasesWithDefendantNames,
   insertMultipleDummyCourtCases,
   insertDummyCourtCaseWithLock,
-  insertDummyCourtCasesWithUrgencies
+  insertDummyCourtCasesWithUrgencies,
+  insertDummyCourtCasesWithNotes
 }
