@@ -6,7 +6,10 @@ import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import updateCourtCaseStatus from "services/updateCourtCaseStatus"
 import { isError } from "services/mq/types/Result"
 import { ResolutionStatus } from "types/ResolutionStatus"
+import User from "services/entities/User"
+
 const courtCaseId = 0
+const testUser = { username: "Test user" } as User
 
 const insertRecord = async (
   errorLockedByUsername: string | null = null,
@@ -47,31 +50,69 @@ describe("updateCourtCaseStatus", () => {
 
   it("should not update if the court case doesn't exist", async () => {
     const nonExistentCase = 9999
-    const result = await updateCourtCaseStatus(dataSource, nonExistentCase, "Error", "Submitted")
+    const result = await updateCourtCaseStatus(dataSource, nonExistentCase, "Error", "Submitted", testUser)
 
     expect((result as UpdateResult).raw).toHaveLength(0)
     expect((result as UpdateResult).affected).toBe(0)
   })
 
-  it("can update the error status", async () => {
-    await insertRecord()
+  describe("Updating error status", () => {
+    it("should not update if the court case if its locked by another user", async () => {
+      const errorLockedByUsername = "Another User"
+      await insertRecord(errorLockedByUsername)
 
-    const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Submitted")
-    expect(isError(result)).toBe(false)
+      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Submitted", testUser)
 
-    const courtCaseRow = (result as UpdateResult).raw[0]
-    expect(courtCaseRow.error_status).toEqual(3)
-    expect(courtCaseRow.trigger_status).toBeNull()
+      expect((result as UpdateResult).raw).toHaveLength(0)
+      expect((result as UpdateResult).affected).toBe(0)
+    })
+
+    it("can update when its not locked", async () => {
+      await insertRecord()
+
+      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Submitted", testUser)
+      expect(isError(result)).toBe(false)
+
+      const courtCaseRow = (result as UpdateResult).raw[0]
+      expect(courtCaseRow.error_status).toEqual(3)
+      expect(courtCaseRow.trigger_status).toBeNull()
+    })
+
+    it("can update when its locked by the user", async () => {
+      const errorLockedByUsername = testUser.username
+      await insertRecord(errorLockedByUsername)
+
+      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Submitted", testUser)
+      expect(isError(result)).toBe(false)
+
+      const courtCaseRow = (result as UpdateResult).raw[0]
+      expect(courtCaseRow.error_status).toEqual(3)
+      expect(courtCaseRow.trigger_status).toBeNull()
+    })
   })
 
-  it("can update the error status", async () => {
-    await insertRecord()
+  describe("can update when its locked by the user", () => {
+    it("can update when its not locked", async () => {
+      await insertRecord()
 
-    const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Submitted")
-    expect(isError(result)).toBe(false)
+      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Submitted", testUser)
+      expect(isError(result)).toBe(false)
 
-    const courtCaseRow = (result as UpdateResult).raw[0]
-    expect(courtCaseRow.trigger_status).toEqual(3)
-    expect(courtCaseRow.error_status).toBeNull()
+      const courtCaseRow = (result as UpdateResult).raw[0]
+      expect(courtCaseRow.trigger_status).toEqual(3)
+      expect(courtCaseRow.error_status).toBeNull()
+    })
+
+    it("can update the trigger status", async () => {
+      const triggerLockedByUsername = testUser.username
+      await insertRecord(null, triggerLockedByUsername)
+
+      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Submitted", testUser)
+      expect(isError(result)).toBe(false)
+
+      const courtCaseRow = (result as UpdateResult).raw[0]
+      expect(courtCaseRow.trigger_status).toEqual(3)
+      expect(courtCaseRow.error_status).toBeNull()
+    })
   })
 })
