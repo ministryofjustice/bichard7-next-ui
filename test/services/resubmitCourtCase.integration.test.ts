@@ -69,6 +69,6 @@ describe("resubmit court case", () => {
     ])
     expect(retrievedCase?.updatedHearingOutcome).toEqual(offenceSequenceException.updatedHearingOutcomeXml)
     expect(retrievedCase?.hearingOutcome).toEqual(offenceSequenceException.hearingOutcomeXml)
-    // expect(retrievedCase?.errorStatus).toBe("Submitted")
+    expect(retrievedCase?.errorStatus).toBe("Submitted")
   })
 })
