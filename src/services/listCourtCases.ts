@@ -16,6 +16,7 @@ const listCourtCases = async (
   const courtCaseRepository = connection.getRepository(CourtCase)
   const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces)
     .leftJoinAndSelect("courtCase.triggers", "trigger")
+    .leftJoinAndSelect("courtCase.notes", "note")
     .orderBy(`courtCase.${getColumnName(courtCaseRepository, orderBy ?? "errorId")}`, order === "desc" ? "DESC" : "ASC")
     .offset(pageNumValidated * maxPageItemsValidated)
     .limit(maxPageItemsValidated)

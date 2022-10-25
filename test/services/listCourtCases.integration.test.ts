@@ -8,7 +8,8 @@ import {
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithOrgCodes,
-  insertCourtCasesWithDefendantNames
+  insertCourtCasesWithDefendantNames,
+  insertDummyCourtCasesWithNotes
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
@@ -34,6 +35,58 @@ describe("listCourtCases", () => {
     if (dataSource) {
       await dataSource.destroy()
     }
+  })
+
+  it("should return cases with notes correctly", async () => {
+    const caseNotes: { user: string; text: string }[][] = [
+      [
+        {
+          user: "System",
+          text: "System note 1"
+        }
+      ],
+      [
+        {
+          user: "System",
+          text: "System note 2"
+        },
+        {
+          user: "bichard01",
+          text: "Test note 1"
+        },
+        {
+          user: "System",
+          text: "System note 3"
+        }
+      ],
+      [
+        {
+          user: "bichard01",
+          text: "Test note 2"
+        },
+        {
+          user: "bichard02",
+          text: "Test note 3"
+        },
+        {
+          user: "bichard01",
+          text: "Test note 2"
+        }
+      ]
+    ]
+
+    const query = await insertDummyCourtCasesWithNotes(caseNotes, "01")
+    expect(isError(query)).toBe(false)
+
+    const result = await listCourtCases(dataSource, { forces: ["01"], maxPageItems: "100" })
+    expect(isError(result)).toBe(false)
+    const { result: cases } = result as ListCourtCaseResult
+
+    expect(cases).toHaveLength(3)
+
+    expect(cases[0].notes).toHaveLength(1)
+    expect(cases[1].notes).toHaveLength(3)
+    expect(cases[2].notes).toHaveLength(3)
   })
 
   it("should return all the cases if they number less than or equal to the specified maxPageItems", async () => {
@@ -66,6 +119,59 @@ describe("listCourtCases", () => {
     expect(cases[0].messageId).toBe("xxxx0")
     expect(cases[9].messageId).toBe("xxxx9")
     expect(totalCases).toEqual(100)
+  })
+
+  it.only("shouldn't return more cases than the specified maxPageItems when cases have notes", async () => {
+    const caseNotes: { user: string; text: string }[][] = [
+      [
+        {
+          user: "System",
+          text: "System note 1"
+        }
+      ],
+      [
+        {
+          user: "System",
+          text: "System note 2"
+        },
+        {
+          user: "bichard01",
+          text: "Test note 1"
+        },
+        {
+          user: "System",
+          text: "System note 3"
+        }
+      ],
+      [
+        {
+          user: "bichard01",
+          text: "Test note 2"
+        },
+        {
+          user: "bichard02",
+          text: "Test note 3"
+        },
+        {
+          user: "bichard01",
+          text: "Test note 2"
+        }
+      ]
+    ]
+
+    await Promise.all(Array(100).fill(insertDummyCourtCasesWithNotes(caseNotes, "01")))
+
+    const result = await listCourtCases(dataSource, { forces: ["01"], maxPageItems: "10" })
+    expect(isError(result)).toBe(false)
+    const { result: cases, totalCases } = result as ListCourtCaseResult
+
+    expect(cases).toHaveLength(10)
+
+    expect(cases[0].errorId).toBe(0)
+    expect(cases[9].errorId).toBe(9)
+    expect(cases[0].messageId).toBe("xxxx0")
+    expect(cases[9].messageId).toBe("xxxx9")
+    expect(totalCases).toEqual(300)
   })
 
   it("should return the next page of items", async () => {

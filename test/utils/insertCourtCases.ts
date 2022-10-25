@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import CourtCase from "../../src/services/entities/CourtCase"
-import { InsertResult } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
 import DummyAho from "../test-data/error_list_aho.json"
 import DummyCourtCase from "./DummyCourtCase"
@@ -14,10 +13,8 @@ const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtC
     ...overrides
   } as CourtCase)
 
-const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<InsertResult> => {
-  const dataSource = await getDataSource()
-  return dataSource.createQueryBuilder().insert().into(CourtCase).values(courtCases).execute()
-}
+const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<CourtCase[]> =>
+  (await getDataSource()).getRepository(CourtCase).save(Array.isArray(courtCases) ? courtCases : [courtCases])
 
 const insertCourtCasesWithOrgCodes = async (orgsCodes: string[]) => {
   const existingCourtCases: CourtCase[] = []

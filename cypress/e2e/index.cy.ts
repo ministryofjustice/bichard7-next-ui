@@ -311,7 +311,7 @@ describe("Home", () => {
         cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
       })
 
-      it.only("Should display the correct number of user-created notes on cases", () => {
+      it("Should display the correct number of user-created notes on cases", () => {
         cy.task("insertUsers", users)
         const caseNotes: { user: string; text: string }[][] = [
           [
@@ -340,8 +340,12 @@ describe("Home", () => {
               text: "Test note 2"
             },
             {
-              user: "bichard01",
+              user: "bichard02",
               text: "Test note 3"
+            },
+            {
+              user: "bichard01",
+              text: "Test note 4"
             }
           ]
         ]
@@ -351,9 +355,9 @@ describe("Home", () => {
         cy.visit("/bichard")
 
         cy.get("tr").not(":first").eq(0).get("td:nth-child(2)").contains(`Case00000`)
-        cy.get("tr").not(":first").eq(0).get("td:nth-child()").contains(`Urgent`).should("exist")
-        cy.get("tr").not(":first").eq(1).contains(`Urgent`).should("not.exist")
-        cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
+        cy.get("tr").not(":first").eq(1).get("td:nth-child(6)").should("be.empty")
+        cy.get("tr").not(":first").eq(2).get("td:nth-child(6)").contains(`1`).should("exist")
+        cy.get("tr").not(":first").eq(3).get("td:nth-child(6)").contains(`3`).should("exist")
       })
     })
   })
