@@ -8,8 +8,8 @@ export default {
   component: NavBar
 } as ComponentMeta<typeof NavBar>
 
-export const DisplaysNavBar: ComponentStory<typeof NavBar> = () => <NavBar />
-DisplaysNavBar.story = {
+export const OnCaseList: ComponentStory<typeof NavBar> = () => <NavBar />
+OnCaseList.story = {
   parameters: {
     nextRouter: {
       basePath: "/bichard"
@@ -17,7 +17,7 @@ DisplaysNavBar.story = {
   }
 }
 
-DisplaysNavBar.parameters = {
+OnCaseList.parameters = {
   design: [
     {
       name: "Design",
@@ -27,10 +27,39 @@ DisplaysNavBar.parameters = {
   ]
 }
 
-DisplaysNavBar.play = async ({ canvasElement }) => {
+OnCaseList.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText("Help")).toBeInTheDocument()
   await expect(canvas.getByText("Case list")).toBeInTheDocument()
+  await expect(canvas.getByText("Case list")).toHaveAttribute("aria-current", "page")
+  await expect(canvas.getByText("Help")).not.toHaveAttribute("aria-current", "page")
+}
+
+export const OnHelp: ComponentStory<typeof NavBar> = () => <NavBar />
+OnHelp.story = {
+  parameters: {
+    nextRouter: {
+      basePath: "/help"
+    }
+  }
+}
+
+OnHelp.parameters = {
+  design: [
+    {
+      name: "Design",
+      type: "figma",
+      url: "https://www.figma.com/file/gy3HppiITvQdHAOD2rpO42/05_-B7_22-Completed-initial-components-(for-devs)?node-id=43%3A10"
+    }
+  ]
+}
+
+OnHelp.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+  await expect(canvas.getByText("Help")).toBeInTheDocument()
+  await expect(canvas.getByText("Case list")).toBeInTheDocument()
+  await expect(canvas.getByText("Case list")).not.toHaveAttribute("aria-current", "page")
+  await expect(canvas.getByText("Help")).toHaveAttribute("aria-current", "page")
 }
 
 export const FocusNavBar: ComponentStory<typeof NavBar> = () => <NavBar />
