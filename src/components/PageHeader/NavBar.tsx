@@ -19,7 +19,7 @@ const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
 
 const NavBar: React.FC = () => {
   return (
-    <div className="moj-primary-navigation">
+    <div className="moj-primary-navigation" role="navigation">
       <div className="moj-primary-navigation__container">
         <div className="moj-primary-navigation__nav">
           <nav className="moj-primary-navigation" aria-label="Primary navigation">
