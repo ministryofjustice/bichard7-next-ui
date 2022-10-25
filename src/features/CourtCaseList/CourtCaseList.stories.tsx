@@ -4,11 +4,24 @@ import type Trigger from "services/entities/Trigger"
 import CourtCaseList from "./CourtCaseList"
 import { within } from "@storybook/testing-library"
 import { expect } from "@storybook/jest"
+import Note from "services/entities/Note"
 
 export default {
-  title: "Features/CourtCase/List",
+  title: "Features/CourtCaseList",
   component: CourtCaseList
 } as ComponentMeta<typeof CourtCaseList>
+
+const userNote = {
+  errorId: 79057,
+  userId: "test_user_1",
+  noteText: "Test note"
+} as unknown as Note
+
+const systemNote = {
+  errorId: 79057,
+  userId: "System",
+  noteText: "Test note"
+} as unknown as Note
 
 const courtCase = {
   courtName: "Magistrates' Courts Essex Basildon",
@@ -16,7 +29,7 @@ const courtCase = {
   errorId: 79057,
   errorReason: "HO100206",
   messageId: "cf60600b-52a0-4bc7-b117-3acfb851a7f5",
-  notes: [],
+  notes: [userNote, userNote, systemNote],
   orgForPoliceFilter: "36FP  ",
   ptiurn: "42CY0300107",
   triggerReason: "TRPR0006",
@@ -33,11 +46,16 @@ EmptyList.play = async ({ canvasElement }) => {
 }
 
 export const OneRecord: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={[courtCase]} />
+OneRecord.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
 
-const courtCases = new Array(100).fill(courtCase)
-export const ManyRecords: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={courtCases} />
+  const urgentTags = await canvas.findAllByText("Urgent")
+  expect(urgentTags).toHaveLength(2) // The column header also matches this
 
-ManyRecords.parameters = {
+  expect(canvas.getByText("Notes")).toBeInTheDocument()
+  expect(canvas.getByText("2")).toBeInTheDocument()
+}
+OneRecord.parameters = {
   design: [
     {
       name: "Table component",
@@ -52,11 +70,32 @@ ManyRecords.parameters = {
   ]
 }
 
+const courtCases = new Array(100).fill(courtCase)
+export const ManyRecords: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={courtCases} />
+
 ManyRecords.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
 
   const urgentTags = await canvas.findAllByText("Urgent")
   expect(urgentTags).toHaveLength(courtCases.length + 1) // The column header also matches this
+
+  expect(canvas.getByText("Notes")).toBeInTheDocument()
+  const noteTags = await canvas.findAllByText("2")
+  expect(noteTags).toHaveLength(courtCases.length)
+}
+ManyRecords.parameters = {
+  design: [
+    {
+      name: "Table component",
+      type: "figma",
+      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=1%3A1170"
+    },
+    {
+      name: "Entire file",
+      type: "figma",
+      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=0%3A1"
+    }
+  ]
 }
 
 const mixedUrgencies: CourtCase[] = new Array(10).fill(0).map((_, index) => {
@@ -73,4 +112,49 @@ MixedUrgencies.play = async ({ canvasElement }) => {
 
   const urgentTags = await canvas.findAllByText("Urgent")
   expect(urgentTags).toHaveLength(mixedUrgencies.filter((c) => c.isUrgent).length + 1) // The column header also matches this
+}
+MixedUrgencies.parameters = {
+  design: [
+    {
+      name: "Table component",
+      type: "figma",
+      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=1%3A1170"
+    },
+    {
+      name: "Entire file",
+      type: "figma",
+      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=0%3A1"
+    }
+  ]
+}
+
+const mixedNotes: CourtCase[] = new Array(10).fill(0).map((_, index) => {
+  const notesCourtCase = Object.assign({}, courtCase)
+  if (index % 2 === 0) {
+    notesCourtCase.notes = []
+  }
+  return notesCourtCase
+})
+export const MixedNotes: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={mixedNotes} />
+
+MixedNotes.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+
+  expect(canvas.getByText("Notes")).toBeInTheDocument()
+  const noteTags = await canvas.findAllByText("2")
+  expect(noteTags).toHaveLength(mixedNotes.filter((c) => c.notes.length).length)
+}
+MixedNotes.parameters = {
+  design: [
+    {
+      name: "Table component",
+      type: "figma",
+      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=1%3A1170"
+    },
+    {
+      name: "Entire file",
+      type: "figma",
+      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=0%3A1"
+    }
+  ]
 }

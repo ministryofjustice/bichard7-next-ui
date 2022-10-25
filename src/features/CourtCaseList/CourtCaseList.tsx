@@ -1,8 +1,10 @@
 import { useRouter } from "next/router"
 import CourtCase from "services/entities/CourtCase"
-import { Paragraph, Table, Link, Tag } from "govuk-react"
+import { Paragraph, Table, Link } from "govuk-react"
 import DateTime from "components/DateTime"
 import type { QueryOrder } from "types/CaseListQueryParams"
+import UrgentTag from "./tags/UrgentTag"
+import NotesTag from "./tags/NotesTag"
 
 interface Props {
   courtCases: CourtCase[]
@@ -39,6 +41,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>{"Urgent"}</Table.CellHeader>
+      <Table.CellHeader>{"Notes"}</Table.CellHeader>
       <Table.CellHeader>{"Triggers"}</Table.CellHeader>
       <Table.CellHeader>
         <Link href={orderByParams("errorReason")} id="exceptions">
@@ -48,7 +51,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
     </Table.Row>
   )
   const tableBody = courtCases.map(
-    ({ courtDate, ptiurn, defendantName, courtName, triggers, errorReason, isUrgent }, idx) => {
+    ({ courtDate, ptiurn, defendantName, courtName, triggers, errorReason, isUrgent, notes }, idx) => {
       return (
         <Table.Row key={idx}>
           <Table.Cell>
@@ -61,7 +64,12 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
             </Link>
           </Table.Cell>
           <Table.Cell>{courtName}</Table.Cell>
-          <Table.Cell>{isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}</Table.Cell>
+          <Table.Cell>
+            <UrgentTag isUrgent={isUrgent} />
+          </Table.Cell>
+          <Table.Cell>
+            <NotesTag notes={notes} />
+          </Table.Cell>
           <Table.Cell>{triggers?.map((trigger) => trigger.triggerCode).join(", ")}</Table.Cell>
           <Table.Cell>{errorReason}</Table.Cell>
         </Table.Row>
