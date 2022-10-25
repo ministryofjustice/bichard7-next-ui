@@ -5,7 +5,7 @@ set -e
 SCRIPTS_DIR=$(dirname "$0")
 REPO_ROOT=$(dirname "$SCRIPTS_DIR")
 
-ASSETS_SOURCE="${REPO_ROOT}/node_modules/govuk-frontend/govuk/assets/*"
+ASSETS_SOURCE="${REPO_ROOT}/node_modules/govuk-frontend/govuk/assets/"
 ASSETS_DESTINATION="${REPO_ROOT}/public/govuk_assets"
 
 if [ ! -d $ASSETS_SOURCE ]; then
