@@ -1,6 +1,6 @@
 import { ResolutionStatus } from "./ResolutionStatus"
 
-type UpdateResolutionStatus = {
+export type UpdateResolutionStatus = {
   errorStatus?: ResolutionStatus
   errorResolvedBy?: string
   errorResolvedTimestamp?: Date
@@ -9,5 +9,3 @@ type UpdateResolutionStatus = {
   triggerResolvedTimestamp?: Date
   resolutionTimestamp?: Date
 }
-
-export default UpdateResolutionStatus

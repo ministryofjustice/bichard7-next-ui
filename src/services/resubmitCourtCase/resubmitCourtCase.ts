@@ -2,7 +2,6 @@ import amendCourtCase from "services/amendCourtCase"
 import User from "services/entities/User"
 import tryToLockCourtCase from "services/tryToLockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
-// import updateCaseErrorStatus from "services/updateCaseErrorStatus"
 import { DataSource } from "typeorm"
 import { isError } from "types/Result"
 
