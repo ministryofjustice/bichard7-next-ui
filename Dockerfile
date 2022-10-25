@@ -15,6 +15,7 @@ RUN yum install jq -y
 COPY package.json .
 COPY package-lock.json .
 COPY ./scripts/copy-govuk-frontend-assets.sh scripts/copy-govuk-frontend-assets.sh
+COPY ./scripts/copy-MOJ-frontend-assets.sh scripts/copy-MOJ-frontend-assets.sh
 
 RUN npm ci && \
     npm run install:assets
