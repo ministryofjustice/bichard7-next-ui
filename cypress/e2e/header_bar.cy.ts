@@ -29,9 +29,7 @@ describe("Home", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.findByText("Help").click()
-        // TODO: Point to actual help doc container.
-        cy.visit("/help/")
+        cy.contains("nav a", "Help").should("have.attr", "href", "/help/")
       })
     })
   })
