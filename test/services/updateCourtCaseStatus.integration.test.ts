@@ -7,6 +7,7 @@ import updateCourtCaseStatus from "services/updateCourtCaseStatus"
 import { isError } from "services/mq/types/Result"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import User from "services/entities/User"
+import MockDate from "mockdate"
 
 const courtCaseId = 0
 const testUser = { username: "Test user" } as User
@@ -17,7 +18,7 @@ const insertRecord = async (
   errorStatus: ResolutionStatus | null = null,
   triggerStatus: ResolutionStatus | null = null
 ) => {
-  const existingCourtCasesDbObject = [
+  const existingCourtCasesDbObjects = [
     await getDummyCourtCase({
       courtDate: new Date("2008-09-25"),
       orgForPoliceFilter: "36FPA1".padEnd(6, " "),
@@ -40,7 +41,7 @@ const insertRecord = async (
     })
   ]
 
-  await insertCourtCases(existingCourtCasesDbObject)
+  await insertCourtCases(existingCourtCasesDbObjects)
 }
 
 describe("updateCourtCaseStatus", () => {
@@ -54,11 +55,15 @@ describe("updateCourtCaseStatus", () => {
     await deleteFromTable(CourtCase)
   })
 
+  afterEach(() => {
+    MockDate.reset()
+  })
+
   afterAll(async () => {
     await dataSource.destroy()
   })
 
-  it("should not update if the court case doesn't exist", async () => {
+  it("should not update if the case doesn't exist", async () => {
     const nonExistentCase = 9999
     const result = await updateCourtCaseStatus(dataSource, nonExistentCase, "Error", "Submitted", testUser)
 
@@ -67,7 +72,7 @@ describe("updateCourtCaseStatus", () => {
   })
 
   describe("Updating error status", () => {
-    it("should not update if the court case if its locked by another user", async () => {
+    it("should not update the case if its locked by another user", async () => {
       const errorLockedByUsername = "Another User"
       await insertRecord(errorLockedByUsername)
 
@@ -77,7 +82,7 @@ describe("updateCourtCaseStatus", () => {
       expect((result as UpdateResult).affected).toBe(0)
     })
 
-    it("should not update if the court case if the current error status is not set", async () => {
+    it("should not update the case if the current error status is not set", async () => {
       const errorLockedByUsername = testUser.username
       const triggerLockedByUsername = testUser.username
       await insertRecord(errorLockedByUsername, triggerLockedByUsername, null, null)
@@ -88,7 +93,7 @@ describe("updateCourtCaseStatus", () => {
       expect((result as UpdateResult).affected).toBe(0)
     })
 
-    it("can update when its not locked and error status is not null", async () => {
+    it("can updates the case when its not locked and error status is not null", async () => {
       const errorStatus = "Unresolved"
       await insertRecord(null, null, errorStatus, null)
 
@@ -100,10 +105,15 @@ describe("updateCourtCaseStatus", () => {
 
       const courtCaseRow = updateResult.raw[0]
       expect(courtCaseRow.error_status).toEqual(3)
+      expect(courtCaseRow.error_resolved_by).toEqual(testUser.username)
+      expect(courtCaseRow.error_resolved_ts).toBeNull()
+
+      expect(courtCaseRow.trigger_resolved_ts).toBeNull()
       expect(courtCaseRow.trigger_status).toBeNull()
+      expect(courtCaseRow.resolution_ts).toBeNull()
     })
 
-    it("can update when its locked by the user and error status is not null", async () => {
+    it("should update the case when its locked by the user and error status is not null", async () => {
       const errorLockedByUsername = testUser.username
       const errorStatus = "Unresolved"
       await insertRecord(errorLockedByUsername, null, errorStatus, null)
@@ -116,12 +126,88 @@ describe("updateCourtCaseStatus", () => {
 
       const courtCaseRow = updateResult.raw[0]
       expect(courtCaseRow.error_status).toEqual(3)
+      expect(courtCaseRow.error_resolved_by).toEqual(testUser.username)
+      expect(courtCaseRow.error_resolved_ts).toBeNull()
       expect(courtCaseRow.trigger_status).toBeNull()
+    })
+
+    it("updates error resolved timestamp when the resolution status is 'Resolved'", async () => {
+      const date = new Date()
+      MockDate.set(date)
+      const errorLockedByUsername = testUser.username
+      const errorStatus = "Unresolved"
+      const triggerStatus = "Unresolved"
+      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+
+      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Resolved", testUser)
+      expect(isError(result)).toBe(false)
+
+      const updateResult = result as UpdateResult
+      expect(updateResult.raw).toHaveLength(1)
+
+      const courtCaseRow = updateResult.raw[0]
+      expect(courtCaseRow.error_status).toEqual(2)
+      expect(courtCaseRow.error_resolved_by).toEqual(testUser.username)
+      expect(courtCaseRow.error_resolved_ts).toEqual(date)
+      expect(courtCaseRow.resolution_ts).toBeNull()
+    })
+
+    it("updates resolution timestamp when the triggerStatus is NULL and resolution status is 'Resolved'", async () => {
+      const date = new Date()
+      MockDate.set(date)
+      const errorLockedByUsername = testUser.username
+      const errorStatus = "Unresolved"
+      const triggerStatus = null
+      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+
+      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Resolved", testUser)
+      expect(isError(result)).toBe(false)
+
+      const updateResult = result as UpdateResult
+      expect(updateResult.raw).toHaveLength(1)
+
+      const courtCaseRow = updateResult.raw[0]
+      expect(courtCaseRow.error_status).toEqual(2)
+      expect(courtCaseRow.error_resolved_by).toEqual(testUser.username)
+      expect(courtCaseRow.error_resolved_ts).toEqual(date)
+      expect(courtCaseRow.resolution_ts).toEqual(date)
+    })
+
+    it("updates resolution timestamp when the triggerStatus is 'Resolved' and resolution status is 'Resolved'", async () => {
+      const date = new Date()
+      MockDate.set(date)
+      const errorLockedByUsername = testUser.username
+      const errorStatus = "Unresolved"
+      const triggerStatus = "Resolved"
+      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+
+      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Resolved", testUser)
+      expect(isError(result)).toBe(false)
+
+      const updateResult = result as UpdateResult
+      expect(updateResult.raw).toHaveLength(1)
+
+      const courtCaseRow = updateResult.raw[0]
+      expect(courtCaseRow.error_status).toEqual(2)
+      expect(courtCaseRow.error_resolved_by).toEqual(testUser.username)
+      expect(courtCaseRow.error_resolved_ts).toEqual(date)
+      expect(courtCaseRow.resolution_ts).toEqual(date)
     })
   })
 
-  describe("can update when its locked by the user", () => {
-    it("can update when its not locked and trigger status is not null", async () => {
+  describe("Updating trigger status", () => {
+    it("should not update the case if the current trigger status is not set", async () => {
+      const errorLockedByUsername = testUser.username
+      const triggerLockedByUsername = testUser.username
+      await insertRecord(errorLockedByUsername, triggerLockedByUsername, null, null)
+
+      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Submitted", testUser)
+
+      expect((result as UpdateResult).raw).toHaveLength(0)
+      expect((result as UpdateResult).affected).toBe(0)
+    })
+
+    it("should update trigger status when its not locked and trigger status is not null", async () => {
       const triggerStatus = "Unresolved"
       await insertRecord(null, null, null, triggerStatus)
 
@@ -133,10 +219,13 @@ describe("updateCourtCaseStatus", () => {
 
       const courtCaseRow = updateResult.raw[0]
       expect(courtCaseRow.trigger_status).toEqual(3)
+      expect(courtCaseRow.trigger_resolved_ts).toBeNull()
+      expect(courtCaseRow.error_resolved_ts).toBeNull()
       expect(courtCaseRow.error_status).toBeNull()
+      expect(courtCaseRow.resolution_ts).toBeNull()
     })
 
-    it("can update when its locked by the user and trigger status is not null", async () => {
+    it("should update the case when its locked by the user and trigger status is not null", async () => {
       const triggerLockedByUsername = testUser.username
       const triggerStatus = "Unresolved"
 
@@ -150,7 +239,76 @@ describe("updateCourtCaseStatus", () => {
 
       const courtCaseRow = updateResult.raw[0]
       expect(courtCaseRow.trigger_status).toEqual(3)
+      expect(courtCaseRow.trigger_resolved_ts).toBeNull()
+      expect(courtCaseRow.error_resolved_ts).toBeNull()
       expect(courtCaseRow.error_status).toBeNull()
+      expect(courtCaseRow.resolution_ts).toBeNull()
+    })
+
+    it("updates trigger resolved timestamp when the resolution status is 'Resolved'", async () => {
+      const date = new Date()
+      MockDate.set(date)
+      const errorLockedByUsername = testUser.username
+      const errorStatus = "Unresolved"
+      const triggerStatus = "Unresolved"
+      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+
+      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Resolved", testUser)
+      expect(isError(result)).toBe(false)
+
+      const updateResult = result as UpdateResult
+      expect(updateResult.raw).toHaveLength(1)
+
+      const courtCaseRow = updateResult.raw[0]
+      expect(courtCaseRow.trigger_resolved_by).toEqual(testUser.username)
+      expect(courtCaseRow.trigger_resolved_ts).toEqual(date)
+      expect(courtCaseRow.resolution_ts).toBeNull()
+      expect(courtCaseRow.error_status).toEqual(1)
+      expect(courtCaseRow.error_resolved_ts).toBeNull()
+    })
+
+    it("updates resolution timestamp when the errorStatus is NULL and resolution status is 'Resolved'", async () => {
+      const date = new Date()
+      MockDate.set(date)
+      const errorLockedByUsername = testUser.username
+      const errorStatus = null
+      const triggerStatus = "Unresolved"
+      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+
+      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Resolved", testUser)
+      expect(isError(result)).toBe(false)
+
+      const updateResult = result as UpdateResult
+      expect(updateResult.raw).toHaveLength(1)
+
+      const courtCaseRow = updateResult.raw[0]
+      expect(courtCaseRow.trigger_status).toEqual(2)
+      expect(courtCaseRow.trigger_resolved_by).toEqual(testUser.username)
+      expect(courtCaseRow.trigger_resolved_ts).toEqual(date)
+      expect(courtCaseRow.resolution_ts).toEqual(date)
+      expect(courtCaseRow.error_resolved_ts).toBeNull()
+      expect(courtCaseRow.error_status).toBeNull()
+    })
+
+    it("updates resolution timestamp when the errorStatus is 'Resolved' and resolution status is 'Resolved'", async () => {
+      const date = new Date()
+      MockDate.set(date)
+      const errorLockedByUsername = testUser.username
+      const errorStatus = "Resolved"
+      const triggerStatus = "Unresolved"
+      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+
+      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Resolved", testUser)
+      expect(isError(result)).toBe(false)
+
+      const updateResult = result as UpdateResult
+      expect(updateResult.raw).toHaveLength(1)
+
+      const courtCaseRow = updateResult.raw[0]
+      expect(courtCaseRow.trigger_status).toEqual(2)
+      expect(courtCaseRow.trigger_resolved_by).toEqual(testUser.username)
+      expect(courtCaseRow.trigger_resolved_ts).toEqual(date)
+      expect(courtCaseRow.resolution_ts).toEqual(date)
     })
   })
 })
