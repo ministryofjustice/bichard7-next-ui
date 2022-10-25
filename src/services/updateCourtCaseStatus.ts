@@ -1,10 +1,13 @@
 import { Brackets, DataSource, EntityManager, UpdateResult } from "typeorm/"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { RecordType } from "types/RecordType"
+import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
+import UpdateResolutionStatus from "types/UpdateResolutionStatus"
 
 const isErrorUpdate = (recordType: RecordType) => recordType === "Error"
+const isResolved = (resolutionStatus: ResolutionStatus) => resolutionStatus === "Resolved"
 
 const updateCourtCaseStatus = async (
   dataSource: DataSource | EntityManager,
@@ -13,16 +16,42 @@ const updateCourtCaseStatus = async (
   resolutionStatus: ResolutionStatus,
   { username }: User
 ): Promise<UpdateResult | Error> => {
+  const timestamp = new Date()
+  let updateResolutionStatus: UpdateResolutionStatus
+  let updatedField: string
   const courtCaseRepository = dataSource.getRepository(CourtCase)
-  const updateResolutionStatus = isErrorUpdate(recordType)
-    ? {
-        errorStatus: resolutionStatus
-      }
-    : {
-        triggerStatus: resolutionStatus
-      }
+  const courtCase = await courtCaseRepository
+    .createQueryBuilder("courtCase")
+    .andWhere({ errorId: courtCaseId })
+    .getOne()
 
-  const field = isErrorUpdate(recordType) ? "error" : "trigger"
+  if (isError(courtCase)) {
+    return courtCase
+  }
+
+  if (isErrorUpdate(recordType)) {
+    updateResolutionStatus = {
+      errorStatus: resolutionStatus,
+      errorResolvedBy: username,
+      ...(isResolved(resolutionStatus) && { errorResolvedTimestamp: timestamp }),
+      ...(((isResolved(resolutionStatus) && courtCase?.triggerStatus === undefined) ||
+        (courtCase && courtCase.triggerStatus && isResolved(courtCase.triggerStatus))) && {
+        resolutionTimestamp: timestamp
+      })
+    }
+    updatedField = "error"
+  } else {
+    updateResolutionStatus = {
+      triggerStatus: resolutionStatus,
+      triggerResolvedBy: username,
+      ...(isResolved(resolutionStatus) && { triggerResolvedTimestamp: timestamp }),
+      ...(((isResolved(resolutionStatus) && courtCase?.errorStatus === undefined) ||
+        (courtCase && courtCase.errorStatus && isResolved(courtCase.errorStatus))) && {
+        resolutionTimestamp: timestamp
+      })
+    }
+    updatedField = "trigger"
+  }
 
   try {
     const query = courtCaseRepository
@@ -30,10 +59,12 @@ const updateCourtCaseStatus = async (
       .update(CourtCase)
       .set(updateResolutionStatus)
       .where("error_id = :id", { id: courtCaseId })
-      .andWhere(`${field}_status is NOT NULL`)
+      .andWhere(`${updatedField}_status is NOT NULL`)
       .andWhere(
         new Brackets((qb) => {
-          qb.where(`${field}_locked_by_id = :user`, { user: username }).orWhere(`${field}_locked_by_id is NULL`)
+          qb.where(`${updatedField}_locked_by_id = :user`, { user: username }).orWhere(
+            `${updatedField}_locked_by_id is NULL`
+          )
         })
       )
 
