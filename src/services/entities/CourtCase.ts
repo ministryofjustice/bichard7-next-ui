@@ -21,10 +21,10 @@ export default class CourtCase extends BaseEntity {
   phase!: number
 
   @Column({ name: "error_status", type: "int4", transformer: resolutionStatusTransformer })
-  errorStatus!: ResolutionStatus
+  errorStatus!: ResolutionStatus | null
 
   @Column({ name: "trigger_status", type: "int4", transformer: resolutionStatusTransformer })
-  triggerStatus?: ResolutionStatus
+  triggerStatus?: ResolutionStatus | null
 
   @Column({ name: "error_quality_checked", type: "int4", nullable: true })
   errorQualityChecked!: number | null
