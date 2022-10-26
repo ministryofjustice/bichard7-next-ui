@@ -1,6 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
-import expect from "../../../test/util/storybook/expect"
 import Header from "./Header"
 
 export default {
