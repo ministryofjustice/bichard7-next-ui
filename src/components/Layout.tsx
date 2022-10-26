@@ -1,7 +1,9 @@
-import { Page, Footer, TopNav } from "govuk-react"
+import { Page, Footer } from "govuk-react"
 import { ReactNode } from "react"
 import User from "../services/entities/User"
 import { useRouter } from "next/router"
+import Header from "./Header"
+import NavBar from "./NavBar"
 
 interface Props {
   children: ReactNode
@@ -11,10 +13,12 @@ interface Props {
 const Layout = ({ children, user }: Props) => {
   const { basePath } = useRouter()
   const header = (
-    <div role={"navigation"}>
-      <TopNav serviceTitle={"Bichard7"}>{[user.forenames, user.surname].join(" ")}</TopNav>
-    </div>
+    <>
+      <Header serviceName={"Bichard7"} organisationName={"Minsitry of Justice"} userName={user.username} />
+      <NavBar />
+    </>
   )
+
   return (
     <>
       <Page header={header}>{children}</Page>
@@ -22,7 +26,7 @@ const Layout = ({ children, user }: Props) => {
         copyright={{
           image: {
             height: 102,
-            src: `${basePath}/images/govuk-crest.png`,
+            src: `${basePath}/govuk_assets/images/govuk-crest.png`,
             width: 125
           },
           link: "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",
