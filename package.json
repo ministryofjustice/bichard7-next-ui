@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "install:assets": "./scripts/copy-govuk-frontend-assets.sh",
+    "install:assets": "./scripts/copy-govuk-frontend-assets.sh && ./scripts/copy-moj-frontend-assets.sh",
     "dev": "next dev -p 4080",
     "build": "next build",
     "start": "next start -p 4080",
@@ -33,6 +33,7 @@
     "test-storybook": "test-storybook"
   },
   "dependencies": {
+    "@ministryofjustice/frontend": "^1.6.0",
     "@moj-bichard7-developers/bichard7-next-core": "^1.1.6",
     "@types/lodash.clonedeep": "^4.5.7",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
@@ -115,6 +116,7 @@
     "prettier": "^2.7.1",
     "sass": "^1.55.0",
     "storybook-addon-designs": "^6.3.1",
+    "storybook-addon-next": "^1.6.9",
     "storybook-addon-next-router": "^4.0.1",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",

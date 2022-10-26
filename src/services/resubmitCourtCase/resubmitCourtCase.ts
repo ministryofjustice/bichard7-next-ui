@@ -2,7 +2,6 @@ import amendCourtCase from "services/amendCourtCase"
 import User from "services/entities/User"
 import tryToLockCourtCase from "services/tryToLockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
-// import updateCaseErrorStatus from "services/updateCaseErrorStatus"
 import { DataSource } from "typeorm"
 import { isError } from "types/Result"
 
@@ -10,6 +9,8 @@ import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-
 import type { Amendments } from "types/Amendments"
 import PromiseResult from "types/PromiseResult"
 import insertNotes from "services/insertNotes"
+import updateCourtCaseStatus from "services/updateCourtCaseStatus"
+
 const resubmitCourtCase = async (
   dataSource: DataSource,
   form: Partial<Amendments>,
@@ -42,13 +43,11 @@ const resubmitCourtCase = async (
         throw addNoteResult
       }
 
-      // TODO: set error status as submitted = 3
-      // TODO: Set the status on the record -- see ScreenFlowImpl.java -> submitResolvedError -> line 872
-      // const statusResult = await updateCaseErrorStatus(entityManager, +courtCaseId, "Submitted", currentUser)
+      const statusResult = await updateCourtCaseStatus(entityManager, +courtCaseId, "Error", "Submitted", currentUser)
 
-      // if (isError(statusResult)) {
-      //   return statusResult
-      // }
+      if (isError(statusResult)) {
+        return statusResult
+      }
 
       const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, currentUser)
 
