@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
+import expect from "../../../test/utils/storybook/expect"
 import NavBar from "./NavBar"
 
 export default {
