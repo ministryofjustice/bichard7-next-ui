@@ -5,6 +5,8 @@ import getDataSource from "../../src/services/getDataSource"
 import DummyAho from "../test-data/error_list_aho.json"
 import DummyCourtCase from "./DummyCourtCase"
 import Note from "services/entities/Note"
+import { ResolutionStatus } from "types/ResolutionStatus"
+import Trigger from "services/entities/Trigger"
 
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
   (await getDataSource()).getRepository(CourtCase).create({
@@ -169,6 +171,33 @@ const insertDummyCourtCasesWithNotes = async (caseNotes: { user: string; text: s
   return insertCourtCases(existingCourtCases)
 }
 
+const insertDummyCourtCasesWithTriggers = async (
+  caseTriggers: { code: string; status: ResolutionStatus }[][],
+  orgCode: string
+) => {
+  const existingCourtCases: CourtCase[] = await Promise.all(
+    caseTriggers.map((triggers, index) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        errorId: index,
+        messageId: String(index).padStart(5, "x"),
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        triggers: triggers.map(
+          (trigger, _) =>
+            ({
+              createdAt: new Date(),
+              triggerCode: trigger.code,
+              errorId: index,
+              status: trigger.status
+            } as unknown as Trigger)
+        )
+      })
+    )
+  )
+
+  return insertCourtCases(existingCourtCases)
+}
+
 export {
   getDummyCourtCase,
   insertCourtCases,
@@ -179,5 +208,6 @@ export {
   insertMultipleDummyCourtCases,
   insertDummyCourtCaseWithLock,
   insertDummyCourtCasesWithUrgencies,
-  insertDummyCourtCasesWithNotes
+  insertDummyCourtCasesWithNotes,
+  insertDummyCourtCasesWithTriggers
 }

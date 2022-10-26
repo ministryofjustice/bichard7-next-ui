@@ -9,13 +9,16 @@ import {
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithOrgCodes,
   insertCourtCasesWithDefendantNames,
-  insertDummyCourtCasesWithNotes
+  insertDummyCourtCasesWithNotes,
+  insertDummyCourtCasesWithTriggers
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
+import Note from "services/entities/Note"
+import { ResolutionStatus } from "types/ResolutionStatus"
 
 jest.setTimeout(100000)
 const orgCodes = ["36", "36F", "36FP", "36FPA", "36FPA1", "36FQ", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC"]
@@ -29,6 +32,7 @@ describe("listCourtCases", () => {
 
   beforeEach(async () => {
     await deleteFromTable(CourtCase)
+    await deleteFromTable(Note)
   })
 
   afterAll(async () => {
@@ -121,57 +125,62 @@ describe("listCourtCases", () => {
     expect(totalCases).toEqual(100)
   })
 
-  it.only("shouldn't return more cases than the specified maxPageItems when cases have notes", async () => {
-    const caseNotes: { user: string; text: string }[][] = [
-      [
-        {
-          user: "System",
-          text: "System note 1"
-        }
-      ],
-      [
-        {
-          user: "System",
-          text: "System note 2"
-        },
-        {
-          user: "bichard01",
-          text: "Test note 1"
-        },
-        {
-          user: "System",
-          text: "System note 3"
-        }
-      ],
-      [
-        {
-          user: "bichard01",
-          text: "Test note 2"
-        },
-        {
-          user: "bichard02",
-          text: "Test note 3"
-        },
-        {
-          user: "bichard01",
-          text: "Test note 2"
-        }
-      ]
+  it("shouldn't return more cases than the specified maxPageItems when cases have notes", async () => {
+    const caseNote: { user: string; text: string }[] = [
+      {
+        user: "bichard01",
+        text: "Test note 2"
+      },
+      {
+        user: "bichard02",
+        text: "Test note 3"
+      },
+      {
+        user: "bichard01",
+        text: "Test note 2"
+      }
     ]
 
-    await Promise.all(Array(100).fill(insertDummyCourtCasesWithNotes(caseNotes, "01")))
+    const caseNotes: { user: string; text: string }[][] = new Array(100).fill(caseNote)
+
+    await insertDummyCourtCasesWithNotes(caseNotes, "01")
 
     const result = await listCourtCases(dataSource, { forces: ["01"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
     expect(cases).toHaveLength(10)
+    expect(cases[0].notes[0].noteText).toBe("Test note 2")
+    expect(totalCases).toEqual(100)
+  })
 
-    expect(cases[0].errorId).toBe(0)
-    expect(cases[9].errorId).toBe(9)
-    expect(cases[0].messageId).toBe("xxxx0")
-    expect(cases[9].messageId).toBe("xxxx9")
-    expect(totalCases).toEqual(300)
+  it("shouldn't return more cases than the specified maxPageItems when cases have triggers", async () => {
+    const caseTrigger: { code: string; status: ResolutionStatus }[] = [
+      {
+        code: "TRPR0001",
+        status: "Unresolved"
+      },
+      {
+        code: "TRPR0002",
+        status: "Resolved"
+      },
+      {
+        code: "TRPR0003",
+        status: "Submitted"
+      }
+    ]
+    const caseTriggers: { code: string; status: ResolutionStatus }[][] = new Array(100).fill(caseTrigger)
+
+    await insertDummyCourtCasesWithTriggers(caseTriggers, "01")
+
+    const result = await listCourtCases(dataSource, { forces: ["01"], maxPageItems: "10" })
+    expect(isError(result)).toBe(false)
+    const { result: cases, totalCases } = result as ListCourtCaseResult
+
+    expect(cases).toHaveLength(10)
+    expect(cases[0].triggers[0].triggerCode).toBe("TRPR0001")
+    expect(cases[0].triggers[0].status).toBe("Unresolved")
+    expect(totalCases).toEqual(100)
   })
 
   it("should return the next page of items", async () => {
