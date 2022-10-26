@@ -4,7 +4,6 @@ import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
-import getColumnName from "./getColumnName"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
 const listCourtCases = async (
@@ -14,12 +13,13 @@ const listCourtCases = async (
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
   const maxPageItemsValidated = maxPageItems ? parseInt(maxPageItems, 10) : 25
   const courtCaseRepository = connection.getRepository(CourtCase)
+  const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
   const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces)
     .leftJoinAndSelect("courtCase.triggers", "trigger")
     .leftJoinAndSelect("courtCase.notes", "note")
-    .orderBy(`courtCase.${getColumnName(courtCaseRepository, orderBy ?? "errorId")}`, order === "desc" ? "DESC" : "ASC")
-    .offset(pageNumValidated * maxPageItemsValidated)
-    .limit(maxPageItemsValidated)
+    .orderBy(orderByQuery, order === "desc" ? "DESC" : "ASC")
+    .skip(pageNumValidated * maxPageItemsValidated)
+    .take(maxPageItemsValidated)
 
   if (defendantName) {
     query.andWhere("courtCase.defendantName ilike '%' || :name || '%'", {
