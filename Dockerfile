@@ -17,9 +17,6 @@ COPY package-lock.json .
 COPY ./scripts/copy-govuk-frontend-assets.sh scripts/copy-govuk-frontend-assets.sh
 COPY ./scripts/copy-moj-frontend-assets.sh scripts/copy-moj-frontend-assets.sh
 
-RUN npm ci && \
-    npm run install:assets
-
 
 RUN npm ci && \
     npm run install:assets
