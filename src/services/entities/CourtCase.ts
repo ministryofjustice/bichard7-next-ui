@@ -116,7 +116,7 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "pnc_update_enabled", type: "varchar", nullable: true })
   pncUpdateEnabled!: string | null
 
-  @OneToMany(() => Trigger, (trigger) => trigger.courtCase)
+  @OneToMany(() => Trigger, (trigger) => trigger.courtCase, { eager: true, cascade: ["insert", "update"] })
   triggers!: Relation<Trigger>[]
 
   @Column({ name: "error_locked_by_id", type: "varchar", nullable: true })
@@ -125,7 +125,7 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "trigger_locked_by_id", type: "varchar", nullable: true })
   triggerLockedByUsername?: string | null
 
-  @OneToMany(() => Note, (note) => note.courtCase)
+  @OneToMany(() => Note, (note) => note.courtCase, { eager: true, cascade: ["insert", "update"] })
   notes!: Relation<Note>[]
 
   isLockedByAnotherUser(username: string) {
