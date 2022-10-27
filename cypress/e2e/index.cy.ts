@@ -355,9 +355,9 @@ describe("Home", () => {
         cy.visit("/bichard")
 
         cy.get("tr").not(":first").eq(0).get("td:nth-child(2)").contains(`Case00000`)
-        cy.get("tr").not(":first").eq(1).get("td:nth-child(6)").should("be.empty")
-        cy.get("tr").not(":first").eq(2).get("td:nth-child(6)").contains(`1`).should("exist")
-        cy.get("tr").not(":first").eq(3).get("td:nth-child(6)").contains(`3`).should("exist")
+        cy.get("tr").not(":first").eq(0).get("td:nth-child(6)").should("be.empty")
+        cy.get("tr").not(":first").eq(1).get("td:nth-child(6)").contains(`1`).should("exist")
+        cy.get("tr").not(":first").eq(2).get("td:nth-child(6)").contains(`3`).should("exist")
       })
     })
   })
