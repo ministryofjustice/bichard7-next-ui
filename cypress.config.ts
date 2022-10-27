@@ -8,7 +8,8 @@ import {
   insertCourtCasesWithOrgCodes,
   insertMultipleDummyCourtCases,
   insertDummyCourtCaseWithLock,
-  insertDummyCourtCasesWithUrgencies
+  insertDummyCourtCasesWithUrgencies,
+  insertDummyCourtCasesWithNotes
 } from "./test/utils/insertCourtCases"
 import { insertTriggers } from "./test/utils/manageTriggers"
 import insertException from "./test/utils/manageExceptions"
@@ -80,6 +81,10 @@ export default defineConfig({
 
         insertCourtCasesWithUrgencies(params: { urgencies: boolean[]; force: string }) {
           return insertDummyCourtCasesWithUrgencies(params.urgencies, params.force)
+        },
+
+        insertCourtCasesWithNotes(params: { caseNotes: { user: string; text: string }[][]; force: string }) {
+          return insertDummyCourtCasesWithNotes(params.caseNotes, params.force)
         },
 
         insertCourtCases(params: { courtCases: CourtCase[] }) {

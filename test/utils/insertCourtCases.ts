@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import CourtCase from "../../src/services/entities/CourtCase"
-import { InsertResult } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
 import DummyAho from "../test-data/error_list_aho.json"
 import DummyCourtCase from "./DummyCourtCase"
+import Note from "services/entities/Note"
+import { ResolutionStatus } from "types/ResolutionStatus"
+import Trigger from "services/entities/Trigger"
 
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
   (await getDataSource()).getRepository(CourtCase).create({
@@ -13,10 +15,8 @@ const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtC
     ...overrides
   } as CourtCase)
 
-const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<InsertResult> => {
-  const dataSource = await getDataSource()
-  return dataSource.createQueryBuilder().insert().into(CourtCase).values(courtCases).execute()
-}
+const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<CourtCase[]> =>
+  (await getDataSource()).getRepository(CourtCase).save(Array.isArray(courtCases) ? courtCases : [courtCases])
 
 const insertCourtCasesWithOrgCodes = async (orgsCodes: string[]) => {
   const existingCourtCases: CourtCase[] = []
@@ -147,6 +147,57 @@ const insertDummyCourtCasesWithUrgencies = async (urgencies: boolean[], orgCode:
   return insertCourtCases(existingCourtCases)
 }
 
+const insertDummyCourtCasesWithNotes = async (caseNotes: { user: string; text: string }[][], orgCode: string) => {
+  const existingCourtCases: CourtCase[] = await Promise.all(
+    caseNotes.map((notes, index) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        errorId: index,
+        messageId: String(index).padStart(5, "x"),
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        notes: notes.map(
+          (note, _) =>
+            ({
+              createdAt: new Date(),
+              noteText: note.text,
+              userId: note.user,
+              errorId: index
+            } as unknown as Note)
+        )
+      })
+    )
+  )
+
+  return insertCourtCases(existingCourtCases)
+}
+
+const insertDummyCourtCasesWithTriggers = async (
+  caseTriggers: { code: string; status: ResolutionStatus }[][],
+  orgCode: string
+) => {
+  const existingCourtCases: CourtCase[] = await Promise.all(
+    caseTriggers.map((triggers, index) =>
+      getDummyCourtCase({
+        orgForPoliceFilter: orgCode,
+        errorId: index,
+        messageId: String(index).padStart(5, "x"),
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        triggers: triggers.map(
+          (trigger, _) =>
+            ({
+              createdAt: new Date(),
+              triggerCode: trigger.code,
+              errorId: index,
+              status: trigger.status
+            } as unknown as Trigger)
+        )
+      })
+    )
+  )
+
+  return insertCourtCases(existingCourtCases)
+}
+
 export {
   getDummyCourtCase,
   insertCourtCases,
@@ -156,5 +207,7 @@ export {
   insertCourtCasesWithDefendantNames,
   insertMultipleDummyCourtCases,
   insertDummyCourtCaseWithLock,
-  insertDummyCourtCasesWithUrgencies
+  insertDummyCourtCasesWithUrgencies,
+  insertDummyCourtCasesWithNotes,
+  insertDummyCourtCasesWithTriggers
 }
