@@ -1,18 +1,14 @@
-Cypress.Commands.add("login", (emailAddress, password) => {
-  cy.intercept("GET", "http://bichard7.service.justice.gov.uk/forces.js?forceID=***", {})
-
-  const loginUrl = "https://localhost:4443"
-  if (Cypress.config("baseUrl") !== loginUrl) {
-    console.log(`Running locally: ${Cypress.config("baseUrl")}`)
-    cy.origin(loginUrl, { args: { emailAddress, password } }, login)
-  } else {
-    console.log(`Running with proxy: ${Cypress.config("baseUrl")}`)
-    login({ emailAddress, password })
-  }
-})
-
 const login = ({ emailAddress, password }: { emailAddress: string; password: string }) => {
-  cy.visit("/users")
+  let runningWithProxy: boolean
+  if (Cypress.config("baseUrl") !== "https://localhost:4443") {
+    console.log(`Running with proxy: ${Cypress.config("baseUrl")}`)
+    runningWithProxy = true
+  } else {
+    console.log(`Running locally: ${Cypress.config("baseUrl")}`)
+    runningWithProxy = false
+  }
+
+  cy.visit(runningWithProxy ? "https://localhost:4443/users" : "/users")
   cy.get("input[type=email]").type(emailAddress)
   cy.get("button[type=submit]").click()
   cy.get("input#validationCode").should("exist")
@@ -22,6 +18,12 @@ const login = ({ emailAddress, password }: { emailAddress: string; password: str
     cy.get("button[type=submit]").click()
   })
 }
+
+Cypress.Commands.add("login", (emailAddress, password) => {
+  cy.intercept("GET", "http://bichard7.service.justice.gov.uk/forces.js?forceID=***", {})
+
+  login({ emailAddress, password })
+})
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
