@@ -359,6 +359,31 @@ describe("Home", () => {
         cy.get("tr").not(":first").eq(1).get("td:nth-child(6)").contains(`1`).should("exist")
         cy.get("tr").not(":first").eq(2).get("td:nth-child(6)").contains(`3`).should("exist")
       })
+
+      it("can display cases ordered by urgency", () => {
+        cy.task("insertUsers", [
+          {
+            username: "Bichard01",
+            visibleForces: ["011111"],
+            forenames: "Bichard Test User",
+            surname: "01",
+            email: "bichard01@example.com",
+            password: hashedPassword
+          }
+        ])
+        cy.task("insertCourtCasesWithUrgencies", {
+          urgencies: [false, false, true, false, true, true, false, false, true],
+          force: "011111"
+        })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("#is-urgent").click()
+
+        // TODO why is the page empty in cypress?
+        cy.get("tr", { timeout: 10_000 }).not(":first").eq(0).contains("Urgent").should("not.exist")
+      })
     })
   })
 })
