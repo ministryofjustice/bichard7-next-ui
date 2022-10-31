@@ -26,7 +26,7 @@ const NavBar: React.FC = () => {
           <nav className="moj-primary-navigation" aria-label="Primary navigation">
             <ul className="moj-primary-navigation__list">
               <NavItem name={"Case list"} link={"/bichard/"} />
-              <NavItem name={"Reports"} link={"/bichard-ui/ReturnToReportIndex"} />
+              <NavItem name={"Reports"} link={"/bichard-ui/ReturnToReportIndex/"} />
               <NavItem name={"Help"} link={"/help/"} />
             </ul>
           </nav>

@@ -119,6 +119,7 @@ OnReports.play = async ({ canvasElement }) => {
   await expect(canvas.getByText("Case list")).toBeInTheDocument()
   await expect(canvas.getByText("Case list")).not.toHaveAttribute("aria-current", "page")
   await expect(canvas.getByText("Reports")).toBeInTheDocument()
+  await expect(canvas.getByText("Reports")).toHaveAttribute("aria-current", "page")
 }
 
 export const OnUserManagement: ComponentStory<typeof NavBar> = () => <NavBar />
