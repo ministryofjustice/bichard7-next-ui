@@ -8,7 +8,7 @@ import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQ
 
 const listCourtCases = async (
   connection: DataSource,
-  { pageNum, maxPageItems, forces, orderBy, order, defendantName, resultFilter }: CaseListQueryParams
+  { pageNum, maxPageItems, forces, orderBy, order, defendantName, resultFilter, isUrgent }: CaseListQueryParams
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
   const maxPageItemsValidated = maxPageItems ? parseInt(maxPageItems, 10) : 25
@@ -31,6 +31,10 @@ const listCourtCases = async (
     query.andWhere("courtCase.triggerCount > 0")
   } else if (resultFilter === "exceptions") {
     query.andWhere("courtCase.errorCount > 0")
+  }
+
+  if (isUrgent !== undefined) {
+    query.andWhere("courtCase.isUrgent = :urgentFilter", { urgentFilter: isUrgent ? 1 : 0 })
   }
 
   const result = await query.getManyAndCount().catch((error: Error) => error)

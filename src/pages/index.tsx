@@ -22,6 +22,7 @@ interface Props {
   order: QueryOrder
   resultFilter?: Filter
   defendantNameFilter?: string
+  isUrgent?: boolean
   totalPages: number
   pageNum: number
 }
@@ -33,20 +34,24 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, pageNum, resultFilter: resultFilterParam, defendant, maxPageItems, order } = query
+    const { orderBy, pageNum, resultFilter: resultFilterParam, defendant, maxPageItems, order, isUrgent } = query
     const resultFilter = queryParamToFilterState(resultFilterParam as string)
 
-    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
-    const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
-    const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedDefendantName = validateQueryParams(defendant) ? defendant : undefined
+    const validatedUrgentFilter = validateQueryParams(isUrgent) ? isUrgent === "true" : undefined
+
+    const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
+
+    const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
+    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
 
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
       forces: currentUser.visibleForces,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
       resultFilter: resultFilter,
+      isUrgent: validatedUrgentFilter,
       maxPageItems: validatedMaxPageItems,
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
