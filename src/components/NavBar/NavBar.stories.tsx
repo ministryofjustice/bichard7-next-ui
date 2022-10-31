@@ -31,10 +31,12 @@ OnCaseList.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText("Help")).toBeInTheDocument()
   await expect(canvas.getByText("Help")).not.toHaveAttribute("aria-current", "page")
-  await expect(canvas.getByText("Case List")).toBeInTheDocument()
-  await expect(canvas.getByText("Case List")).toHaveAttribute("aria-current", "page")
+  await expect(canvas.getByText("Case list")).toBeInTheDocument()
+  await expect(canvas.getByText("Case list")).toHaveAttribute("aria-current", "page")
   await expect(canvas.getByText("Reports")).toBeInTheDocument()
   await expect(canvas.getByText("Reports")).not.toHaveAttribute("aria-current", "page")
+  await expect(canvas.getByText("User management")).toBeInTheDocument()
+  await expect(canvas.getByText("User management")).not.toHaveAttribute("aria-current", "page")
 }
 
 export const OnHelp: ComponentStory<typeof NavBar> = () => <NavBar />
@@ -60,8 +62,8 @@ OnHelp.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText("Help")).toBeInTheDocument()
   await expect(canvas.getByText("Help")).toHaveAttribute("aria-current", "page")
-  await expect(canvas.getByText("Case List")).toBeInTheDocument()
-  await expect(canvas.getByText("Case List")).not.toHaveAttribute("aria-current", "page")
+  await expect(canvas.getByText("Case list")).toBeInTheDocument()
+  await expect(canvas.getByText("Case list")).not.toHaveAttribute("aria-current", "page")
   await expect(canvas.getByText("Reports")).toBeInTheDocument()
   await expect(canvas.getByText("Reports")).not.toHaveAttribute("aria-current", "page")
 }
@@ -114,7 +116,38 @@ OnReports.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText("Help")).toBeInTheDocument()
   await expect(canvas.getByText("Help")).not.toHaveAttribute("aria-current", "page")
-  await expect(canvas.getByText("Case List")).toBeInTheDocument()
-  await expect(canvas.getByText("Case List")).not.toHaveAttribute("aria-current", "page")
+  await expect(canvas.getByText("Case list")).toBeInTheDocument()
+  await expect(canvas.getByText("Case list")).not.toHaveAttribute("aria-current", "page")
   await expect(canvas.getByText("Reports")).toBeInTheDocument()
+}
+
+export const OnUserManagement: ComponentStory<typeof NavBar> = () => <NavBar />
+OnUserManagement.story = {
+  parameters: {
+    nextRouter: {
+      basePath: "/users/users"
+    }
+  }
+}
+
+OnUserManagement.parameters = {
+  design: [
+    {
+      name: "Design",
+      type: "figma",
+      url: "https://www.figma.com/file/gy3HppiITvQdHAOD2rpO42/05_-B7_22-Completed-initial-components-(for-devs)?node-id=43%3A10"
+    }
+  ]
+}
+
+OnUserManagement.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+  await expect(canvas.getByText("Help")).toBeInTheDocument()
+  await expect(canvas.getByText("Help")).not.toHaveAttribute("aria-current", "page")
+  await expect(canvas.getByText("Case list")).toBeInTheDocument()
+  await expect(canvas.getByText("Case list")).not.toHaveAttribute("aria-current", "page")
+  await expect(canvas.getByText("Reports")).toBeInTheDocument()
+  await expect(canvas.getByText("Reports")).not.toHaveAttribute("aria-current", "page")
+  await expect(canvas.getByText("User management")).toBeInTheDocument()
+  await expect(canvas.getByText("User management")).toHaveAttribute("aria-current", "page")
 }
