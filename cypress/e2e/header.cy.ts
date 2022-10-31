@@ -7,7 +7,7 @@ describe("Home", () => {
     })
 
     context("top-nav", () => {
-      it("as a supervisor, I should have access to these nav items", () => {
+      it.only("as a supervisor, I should have access to these nav items", () => {
         cy.task("insertUsers", [
           {
             username: `Bichard01`,
@@ -23,13 +23,13 @@ describe("Home", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.contains("nav a", "Case List").should("have.attr", "href", "/bichard/")
-        cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex")
+        cy.contains("nav a", "Case list").should("have.attr", "href", "/bichard/")
+        cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex/")
         cy.contains("nav a", "User management").should("have.attr", "href", "/users/users")
         cy.contains("nav a", "Help").should("have.attr", "href", "/help/")
       })
 
-      it("as a non-supervisor, I should have access to these nav items", () => {
+      it.only("as a non-supervisor, I should have access to these nav items", () => {
         cy.task("insertUsers", [
           {
             username: `generalhandler2`,
@@ -45,8 +45,8 @@ describe("Home", () => {
         cy.login("generalhandler2@example.com", "password")
         cy.visit("/bichard")
 
-        cy.contains("nav a", "Case List").should("have.attr", "href", "/bichard/")
-        cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex")
+        cy.contains("nav a", "Case list").should("have.attr", "href", "/bichard/")
+        cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex/")
         cy.contains("nav a", "User management").should("not.exist")
         cy.contains("nav a", "Help").should("have.attr", "href", "/help/")
       })
