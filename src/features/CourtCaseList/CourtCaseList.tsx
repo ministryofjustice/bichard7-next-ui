@@ -15,6 +15,8 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
   const { basePath, query } = useRouter()
 
   const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
+  const isUrgentParams = () =>
+    `${basePath}/?${new URLSearchParams({ ...query, isUrgent: query.isUrgent === "true" ? "false" : "true" })}`
 
   const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
 
@@ -40,7 +42,11 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
           {"Court Name"}
         </Link>
       </Table.CellHeader>
-      <Table.CellHeader>{"Urgent"}</Table.CellHeader>
+      <Table.CellHeader>
+        <Link href={isUrgentParams()} id="court-name">
+          {"Urgent"}
+        </Link>
+      </Table.CellHeader>
       <Table.CellHeader>{"Notes"}</Table.CellHeader>
       <Table.CellHeader>{"Triggers"}</Table.CellHeader>
       <Table.CellHeader>
