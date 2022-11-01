@@ -15,7 +15,7 @@ const Layout = ({ children, user }: Props) => {
   const header = (
     <>
       <Header serviceName={"Bichard7"} organisationName={"Minsitry of Justice"} userName={user.username} />
-      <NavBar />
+      <NavBar groups={user.groups} />
     </>
   )
 

@@ -1,8 +1,14 @@
+import If from "components/If"
 import { useRouter } from "next/router"
+import { default as GroupName, default as UserGroup } from "types/GroupName"
 
 interface NavItemProps {
   name: string
   link: string
+}
+
+interface NavBarProps {
+  groups: GroupName[]
 }
 
 const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
@@ -18,7 +24,13 @@ const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
   )
 }
 
-const NavBar: React.FC = () => {
+const UserManagementNavItem: React.FC<NavBarProps> = ({ groups }) => (
+  <If condition={groups.includes("UserManager" as UserGroup)}>
+    <NavItem name={"User management"} link={"/users/users/"} />
+  </If>
+)
+
+const NavBar: React.FC<NavBarProps> = ({ groups }) => {
   return (
     <div className="moj-primary-navigation" role="navigation">
       <div className="moj-primary-navigation__container">
@@ -27,6 +39,7 @@ const NavBar: React.FC = () => {
             <ul className="moj-primary-navigation__list">
               <NavItem name={"Case list"} link={"/bichard/"} />
               <NavItem name={"Reports"} link={"/bichard-ui/ReturnToReportIndex/"} />
+              <UserManagementNavItem groups={groups} />
               <NavItem name={"Help"} link={"/help/"} />
             </ul>
           </nav>
