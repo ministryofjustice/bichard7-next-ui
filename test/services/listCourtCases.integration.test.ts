@@ -554,7 +554,7 @@ describe("listCourtCases", () => {
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(2)
+      expect(cases).toHaveLength(1)
       expect(cases[0].errorId).toBe(0)
     })
 
@@ -571,7 +571,7 @@ describe("listCourtCases", () => {
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(2)
+      expect(cases).toHaveLength(1)
       expect(cases[0].errorId).toBe(0)
     })
   })

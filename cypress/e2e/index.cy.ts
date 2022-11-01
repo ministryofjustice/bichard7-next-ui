@@ -222,9 +222,9 @@ describe("Home", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("input[type=search]").type("Bruce Wayne")
+        cy.get("input[id=defendant]").type("Bruce Wayne")
 
-        cy.get("button[title=Search]").click()
+        cy.get("button[id=search]").click()
         cy.get("tr").eq(1).get("td:nth-child(3)").first().contains("Bruce Wayne")
         cy.get("tr").should("have.length", 2)
       })
@@ -257,22 +257,35 @@ describe("Home", () => {
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
 
         // Filtering by having triggers
-        cy.get("#result-filter-select").select("triggers")
-        cy.get("#result-filter-button").click()
+        cy.get('[id="triggers-type"]').check()
+        cy.get("button[id=search]").click()
 
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`).should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`).should("not.exist")
 
         // Filtering by having exceptions
-        cy.get("#result-filter-select").select("exceptions")
-        cy.get("#result-filter-button").click()
+        cy.get('[id="exceptions-type"]').check()
+        cy.get("button[id=search]").click()
 
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`).should("not.exist")
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`).should("not.exist")
+
+        // Filter for both triggers and exceptions
+        cy.get('[id="triggers-type"]').check()
+        cy.get('[id="exceptions-type"]').check()
+        cy.get("button[id=search]").click()
+
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
 
         // Clearing filters
-        cy.get("#result-filter-select").select(0)
-        cy.get("#result-filter-button").click()
+        cy.get("button[id=search]").click()
 
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)

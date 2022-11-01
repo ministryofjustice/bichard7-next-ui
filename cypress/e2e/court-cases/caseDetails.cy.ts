@@ -154,6 +154,14 @@ describe("Case details", () => {
 
     it("should lock a case when a user views a case details page", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      cy.task("insertDummyCourtCaseWithLock", {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgCodes: ["01"],
+        errorCount: 1,
+        triggerCount: 1
+      })
+
       cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")

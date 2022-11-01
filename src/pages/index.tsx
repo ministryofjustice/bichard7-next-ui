@@ -1,4 +1,3 @@
-import { queryParamToFilterState } from "features/CourtCaseFilters/ResultFilter"
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { Filter, QueryOrder } from "types/CaseListQueryParams"
@@ -27,6 +26,14 @@ interface Props {
   pageNum: number
 }
 
+const queryParamToFilterState = (value: string | string[] | undefined) => {
+  if (typeof value === "string") {
+    // todo: handle other types here
+    return (value === "triggers" || value === "exceptions" ? value : undefined) as Filter
+  } else {
+    return undefined
+  }
+}
 const validateQueryParams = (param: string | string[] | undefined): param is string => typeof param === "string"
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
 
@@ -34,8 +41,8 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, pageNum, resultFilter: resultFilterParam, defendant, maxPageItems, order, isUrgent } = query
-    const resultFilter = queryParamToFilterState(resultFilterParam as string)
+    const { orderBy, pageNum, type, defendant, maxPageItems, order } = query
+    const resultFilter = queryParamToFilterState(type)
 
     const validatedDefendantName = validateQueryParams(defendant) ? defendant : undefined
     const validatedUrgentFilter = validateQueryParams(isUrgent) && isUrgent !== ""
@@ -81,16 +88,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const Home: NextPage<Props> = ({
-  user,
-  courtCases,
-  order,
-  totalPages,
-  pageNum,
-  resultFilter,
-  defendantNameFilter,
-  urgentFilter
-}: Props) => (
+const Home: NextPage<Props> = ({ user, courtCases, order, totalPages, pageNum }: Props) => (
   <>
     <Head>
       <title>{"Case List | Bichard7"}</title>
@@ -100,7 +98,7 @@ const Home: NextPage<Props> = ({
       <Heading as="h1" size="LARGE">
         {"Court cases"}
       </Heading>
-      <CourtCaseFilter resultFilter={resultFilter} defendantName={defendantNameFilter} urgentFilter={urgentFilter} />
+      <CourtCaseFilter />
       <CourtCaseList courtCases={courtCases} order={order} />
       <Pagination totalPages={totalPages} pageNum={pageNum} />
     </Layout>
