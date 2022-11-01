@@ -24,11 +24,13 @@ const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
   )
 }
 
-const UserManagementNavItem: React.FC<NavBarProps> = ({ groups }) => (
-  <If condition={groups.includes("UserManager" as UserGroup)}>
-    <NavItem name={"User management"} link={"/users/users/"} />
-  </If>
-)
+const UserManagementNavItem: React.FC<NavBarProps> = ({ groups }) => {
+  return (
+    <If condition={groups.includes("UserManager" as UserGroup)}>
+      <NavItem name={"User management"} link={"/users/users/"} />
+    </If>
+  )
+}
 
 const NavBar: React.FC<NavBarProps> = ({ groups }) => {
   return (
