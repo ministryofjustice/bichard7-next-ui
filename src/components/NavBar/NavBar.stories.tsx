@@ -8,7 +8,7 @@ export default {
   component: NavBar
 } as ComponentMeta<typeof NavBar>
 
-export const OnCaseList: ComponentStory<typeof NavBar> = () => <NavBar />
+export const OnCaseList: ComponentStory<typeof NavBar> = () => <NavBar groups={["UserManager"]} />
 OnCaseList.story = {
   parameters: {
     nextRouter: {
@@ -39,7 +39,7 @@ OnCaseList.play = async ({ canvasElement }) => {
   await expect(canvas.getByText("User management")).not.toHaveAttribute("aria-current", "page")
 }
 
-export const OnHelp: ComponentStory<typeof NavBar> = () => <NavBar />
+export const OnHelp: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
 OnHelp.story = {
   parameters: {
     nextRouter: {
@@ -68,7 +68,7 @@ OnHelp.play = async ({ canvasElement }) => {
   await expect(canvas.getByText("Reports")).not.toHaveAttribute("aria-current", "page")
 }
 
-export const FocusNavBar: ComponentStory<typeof NavBar> = () => <NavBar />
+export const FocusNavBar: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
 FocusNavBar.story = {
   parameters: {
     nextRouter: {
@@ -93,7 +93,7 @@ FocusNavBar.play = async ({ canvasElement }) => {
   await (await highlightedNavitem).focus()
 }
 
-export const OnReports: ComponentStory<typeof NavBar> = () => <NavBar />
+export const OnReports: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
 OnReports.story = {
   parameters: {
     nextRouter: {
@@ -122,7 +122,7 @@ OnReports.play = async ({ canvasElement }) => {
   await expect(canvas.getByText("Reports")).toHaveAttribute("aria-current", "page")
 }
 
-export const OnUserManagement: ComponentStory<typeof NavBar> = () => <NavBar />
+export const OnUserManagement: ComponentStory<typeof NavBar> = () => <NavBar groups={["UserManager"]} />
 OnUserManagement.story = {
   parameters: {
     nextRouter: {
