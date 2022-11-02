@@ -3,6 +3,7 @@ import { createUseStyles } from "react-jss"
 import { Filter } from "types/CaseListQueryParams"
 import DefendantNameFilter from "./DefendantNameFilter"
 import { ResultFilter } from "./ResultFilter"
+import UrgentFilter from "./UrgentFilter"
 
 const useStyles = createUseStyles({
   flex: {
@@ -13,6 +14,7 @@ const useStyles = createUseStyles({
 interface Props {
   defendantName?: string
   resultFilter: Filter
+  urgentFilter: boolean
 }
 
 const CourtCaseFilter = (props: Props) => {
@@ -20,11 +22,14 @@ const CourtCaseFilter = (props: Props) => {
   return (
     <form method={"get"}>
       <GridRow>
-        <GridCol setWidth={"one-half"} className={classes.flex}>
+        <GridCol setWidth={"one-third"} className={classes.flex}>
           <DefendantNameFilter defendantName={props.defendantName} />
         </GridCol>
-        <GridCol setWidth={"one-half"} className={classes.flex}>
+        <GridCol setWidth={"one-third"} className={classes.flex}>
           <ResultFilter initialSelection={props.resultFilter} />
+        </GridCol>
+        <GridCol setWidth={"one-third"} className={classes.flex}>
+          <UrgentFilter checked={props.urgentFilter} />
         </GridCol>
       </GridRow>
       <GridRow></GridRow>

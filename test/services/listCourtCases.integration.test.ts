@@ -10,7 +10,8 @@ import {
   insertCourtCasesWithOrgCodes,
   insertCourtCasesWithDefendantNames,
   insertDummyCourtCasesWithNotes,
-  insertDummyCourtCasesWithTriggers
+  insertDummyCourtCasesWithTriggers,
+  insertDummyCourtCasesWithUrgencies
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
@@ -572,6 +573,53 @@ describe("listCourtCases", () => {
 
       expect(cases).toHaveLength(2)
       expect(cases[0].errorId).toBe(0)
+    })
+  })
+
+  describe("Filter cases by urgency", () => {
+    it("Should filter only urgent cases", async () => {
+      await insertDummyCourtCasesWithUrgencies([false, true, false, true], "01")
+
+      const result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        urgentFilter: true
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([1, 3])
+    })
+
+    it("Should not filter cases when the urgent filter is not set", async () => {
+      await insertDummyCourtCasesWithUrgencies([false, true, false, true], "01")
+
+      const result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        urgentFilter: false
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(4)
+    })
+
+    it("Should not filter cases when the urgent filter is undefined", async () => {
+      await insertDummyCourtCasesWithUrgencies([false, true, false, true], "01")
+
+      const result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100"
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(4)
     })
   })
 })

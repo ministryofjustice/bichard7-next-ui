@@ -22,6 +22,7 @@ interface Props {
   order: QueryOrder
   resultFilter?: Filter
   defendantNameFilter?: string
+  urgentFilter: boolean
   totalPages: number
   pageNum: number
 }
@@ -33,20 +34,24 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, pageNum, resultFilter: resultFilterParam, defendant, maxPageItems, order } = query
+    const { orderBy, pageNum, resultFilter: resultFilterParam, defendant, maxPageItems, order, isUrgent } = query
     const resultFilter = queryParamToFilterState(resultFilterParam as string)
 
-    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
-    const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
-    const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedDefendantName = validateQueryParams(defendant) ? defendant : undefined
+    const validatedUrgentFilter = validateQueryParams(isUrgent) && isUrgent !== ""
+
+    const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
+
+    const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
+    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
 
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
       forces: currentUser.visibleForces,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
       resultFilter: resultFilter,
+      urgentFilter: validatedUrgentFilter,
       maxPageItems: validatedMaxPageItems,
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
@@ -69,7 +74,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         totalPages: totalPages === 0 ? 1 : totalPages,
         pageNum: parseInt(validatedPageNum, 10) || 1,
         ...(resultFilter && { resultFilter }),
-        ...(validatedDefendantName && { defendantNameFilter: validatedDefendantName })
+        ...(validatedDefendantName && { defendantNameFilter: validatedDefendantName }),
+        urgentFilter: validatedUrgentFilter
       }
     }
   }
@@ -82,7 +88,8 @@ const Home: NextPage<Props> = ({
   totalPages,
   pageNum,
   resultFilter,
-  defendantNameFilter
+  defendantNameFilter,
+  urgentFilter
 }: Props) => (
   <>
     <Head>
@@ -93,7 +100,7 @@ const Home: NextPage<Props> = ({
       <Heading as="h1" size="LARGE">
         {"Court cases"}
       </Heading>
-      <CourtCaseFilter resultFilter={resultFilter} defendantName={defendantNameFilter} />
+      <CourtCaseFilter resultFilter={resultFilter} defendantName={defendantNameFilter} urgentFilter={urgentFilter} />
       <CourtCaseList courtCases={courtCases} order={order} />
       <Pagination totalPages={totalPages} pageNum={pageNum} />
     </Layout>
