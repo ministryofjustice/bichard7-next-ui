@@ -360,7 +360,7 @@ describe("Home", () => {
         cy.get("tr").not(":first").eq(2).get("td:nth-child(6)").contains(`3`).should("exist")
       })
 
-      it.only("can display cases ordered by urgency", () => {
+      it("can display cases ordered by urgency", () => {
         cy.task("insertUsers", [
           {
             username: "Bichard01",
