@@ -153,7 +153,6 @@ describe("Case details", () => {
     })
 
     it("should lock a case when a user views a case details page", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["01"])
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
