@@ -222,7 +222,7 @@ describe("Home", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("input[id=defendant]").type("Bruce Wayne")
+        cy.get("input[id=keywords]").type("Bruce Wayne")
 
         cy.get("button[id=search]").click()
         cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bruce Wayne")

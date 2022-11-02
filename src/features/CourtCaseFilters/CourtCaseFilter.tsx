@@ -2,6 +2,7 @@ import { HintText } from "govuk-react"
 import { Filter } from "types/CaseListQueryParams"
 import If from "components/If"
 import { useRouter } from "next/router"
+import deleteQueryParam from "utils/deleteQueryParam"
 
 interface Props {
   courtCaseTypes: Filter[]
@@ -11,18 +12,10 @@ interface Props {
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) => {
   const { basePath, query } = useRouter()
 
-  const removeQueryParamPath = (paramToRemove: string): string => {
-    const searchParams: { [key: string]: string | string[] } = {}
+  const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
+    const searchParams = deleteQueryParam(paramToRemove, query)
 
-    Object.keys(query).forEach(function (key) {
-      if (typeof query[key] === "string" && query[key] !== paramToRemove) {
-        searchParams[key] = String(query[key])
-      } else if (Array.isArray(query[key])) {
-        searchParams[key] = (query[key] as string[]).filter((e) => e !== paramToRemove)
-      }
-    })
-
-    return `${basePath}/?${new URLSearchParams({ ...searchParams, "": "" })}`
+    return `${basePath}/?${searchParams}`
   }
 
   return (
@@ -47,8 +40,8 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) =
                 return (
                   <ul key={t} className="moj-filter-tags">
                     <li>
-                      <a className="moj-filter__tag" href={removeQueryParamPath(t)}>
-                        <span className="govuk-visually-hidden">{"Remove this filter"}</span>
+                      <a className="moj-filter__tag" href={removeQueryParamFromPath({ type: t })}>
+                        <span className="govuk-visually-hidden">{`Remove ${t} filter`}</span>
                         {t}
                       </a>
                     </li>
@@ -62,8 +55,8 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) =
                 return (
                   <ul key={keyword} className="moj-filter-tags">
                     <li>
-                      <a className="moj-filter__tag" href={removeQueryParamPath(keyword)}>
-                        <span className="govuk-visually-hidden">{"Remove this filter"}</span>
+                      <a className="moj-filter__tag" href={removeQueryParamFromPath({ keywords: keyword })}>
+                        <span className="govuk-visually-hidden">{`Remove ${keyword} filter`}</span>
                         {keyword}
                       </a>
                     </li>
@@ -77,11 +70,11 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) =
               {"Apply filters"}
             </button>
             <div className="govuk-form-group">
-              <label className="govuk-label govuk-label--m" htmlFor="defendant">
+              <label className="govuk-label govuk-label--m" htmlFor="keywords">
                 {"Keywords"}
               </label>
               <HintText>{"Defendent name, Court name, Reason, PTIURN"}</HintText>
-              <input className="govuk-input" id="defendant" name="defendant" type="text"></input>
+              <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
             </div>
           </div>
           <div className="govuk-form-group">

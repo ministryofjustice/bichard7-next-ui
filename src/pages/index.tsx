@@ -33,11 +33,12 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, pageNum, type, defendant, maxPageItems, order } = query
+    const { orderBy, pageNum, type, keywords, maxPageItems, order } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Filter[]
-
-    const validatedDefendantName = validateQueryParams(defendant) ? defendant : undefined
+    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
+    const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
+    const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
 
     const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
