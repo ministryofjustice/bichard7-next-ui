@@ -361,16 +361,7 @@ describe("Home", () => {
       })
 
       it("can display cases ordered by urgency", () => {
-        cy.task("insertUsers", [
-          {
-            username: "Bichard01",
-            visibleForces: ["011111"],
-            forenames: "Bichard Test User",
-            surname: "01",
-            email: "bichard01@example.com",
-            password: hashedPassword
-          }
-        ])
+        cy.task("insertUsers", users)
         cy.task("insertCourtCasesWithUrgencies", {
           urgencies: [false, false, true, false, true, true, false, true, false, true],
           force: "011111"
