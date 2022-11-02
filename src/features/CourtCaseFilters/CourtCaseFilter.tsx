@@ -5,9 +5,10 @@ import { useRouter } from "next/router"
 
 interface Props {
   courtCaseTypes: Filter[]
+  keywords: string[]
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes }: Props) => {
+const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) => {
   const { basePath, query } = useRouter()
 
   const removeQueryParamPath = (paramToRemove: string): string => {
@@ -49,6 +50,21 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes }: Props) => {
                       <a className="moj-filter__tag" href={removeQueryParamPath(t)}>
                         <span className="govuk-visually-hidden">{"Remove this filter"}</span>
                         {t}
+                      </a>
+                    </li>
+                  </ul>
+                )
+              })}
+            </If>
+            <If condition={keywords.length > 0}>
+              <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Keywords"}</h3>
+              {keywords.map((keyword) => {
+                return (
+                  <ul key={keyword} className="moj-filter-tags">
+                    <li>
+                      <a className="moj-filter__tag" href={removeQueryParamPath(keyword)}>
+                        <span className="govuk-visually-hidden">{"Remove this filter"}</span>
+                        {keyword}
                       </a>
                     </li>
                   </ul>

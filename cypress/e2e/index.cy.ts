@@ -225,8 +225,17 @@ describe("Home", () => {
         cy.get("input[id=defendant]").type("Bruce Wayne")
 
         cy.get("button[id=search]").click()
-        cy.get("tr").eq(1).get("td:nth-child(3)").first().contains("Bruce Wayne")
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bruce Wayne")
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Barbara Gordon").should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth").should("not.exist")
         cy.get("tr").should("have.length", 2)
+        cy.get('*[class^="moj-filter-tags"]').contains("Bruce Wayne")
+
+        // Removing filter tag
+        cy.get('*[class^="moj-filter-tags"]').contains("Bruce Wayne").click()
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bruce Wayne")
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Barbara Gordon")
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth")
       })
 
       it("Should filter cases by whether they have triggers and exceptions", () => {

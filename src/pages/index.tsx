@@ -20,6 +20,7 @@ interface Props {
   courtCases: CourtCase[]
   order: QueryOrder
   courtCaseTypes: Filter[]
+  keywords: string[]
   totalPages: number
   pageNum: number
 }
@@ -68,13 +69,14 @@ export const getServerSideProps = withMultipleServerSideProps(
         order: oppositeOrder,
         totalPages: totalPages === 0 ? 1 : totalPages,
         pageNum: parseInt(validatedPageNum, 10) || 1,
-        courtCaseTypes: courtCaseTypes
+        courtCaseTypes: courtCaseTypes,
+        keywords: validatedDefendantName ? [validatedDefendantName] : []
       }
     }
   }
 )
 
-const Home: NextPage<Props> = ({ user, courtCases, order, totalPages, pageNum, courtCaseTypes }: Props) => (
+const Home: NextPage<Props> = ({ user, courtCases, order, totalPages, pageNum, courtCaseTypes, keywords }: Props) => (
   <>
     <Head>
       <title>{"Case List | Bichard7"}</title>
@@ -84,7 +86,7 @@ const Home: NextPage<Props> = ({ user, courtCases, order, totalPages, pageNum, c
       <Heading as="h1" size="LARGE">
         {"Court cases"}
       </Heading>
-      <CourtCaseFilter courtCaseTypes={courtCaseTypes} />
+      <CourtCaseFilter courtCaseTypes={courtCaseTypes} keywords={keywords} />
       <CourtCaseList courtCases={courtCases} order={order} />
       <Pagination totalPages={totalPages} pageNum={pageNum} />
     </Layout>
