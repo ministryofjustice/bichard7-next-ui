@@ -360,7 +360,7 @@ describe("Home", () => {
         cy.get("tr").not(":first").eq(2).get("td:nth-child(6)").contains(`3`).should("exist")
       })
 
-      it("can display cases ordered by urgency", () => {
+      it.only("can display cases ordered by urgency", () => {
         cy.task("insertUsers", [
           {
             username: "Bichard01",
@@ -372,7 +372,7 @@ describe("Home", () => {
           }
         ])
         cy.task("insertCourtCasesWithUrgencies", {
-          urgencies: [false, false, true, false, true, true, false, false, true],
+          urgencies: [false, false, true, false, true, true, false, true, false, true],
           force: "011111"
         })
 
@@ -381,8 +381,19 @@ describe("Home", () => {
 
         cy.get("#is-urgent").click()
 
-        // TODO why is the page empty in cypress?
-        cy.get("tr", { timeout: 10_000 }).not(":first").eq(0).contains("Urgent").should("not.exist")
+        cy.get("tr")
+          .not(":first")
+          .each((row) => {
+            cy.wrap(row).contains(`Urgent`).should("not.exist")
+          })
+
+        cy.get("#is-urgent").click()
+
+        cy.get("tr")
+          .not(":first")
+          .each((row) => {
+            cy.wrap(row).contains(`Urgent`).should("exist")
+          })
       })
     })
   })
