@@ -17,7 +17,11 @@ const UrgentFilter = (props: Props) => {
 
   return (
     <>
-      <Checkbox defaultChecked={props.checked} onClick={() => router.push(getTargetUrl(props.checked))}>
+      <Checkbox
+        defaultChecked={props.checked}
+        onClick={() => router.push(getTargetUrl(props.checked))}
+        id="is-urgent-filter"
+      >
         {"Urgent cases only"}
       </Checkbox>
     </>

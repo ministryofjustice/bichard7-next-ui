@@ -41,7 +41,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("isUrgent")} id="is-urgent">
+        <Link href={orderByParams("isUrgent")} id="is-urgent-sort">
           {"Urgent"}
         </Link>
       </Table.CellHeader>

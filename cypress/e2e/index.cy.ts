@@ -379,7 +379,7 @@ describe("Home", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("#is-urgent").click()
+        cy.get("#is-urgent-sort").click()
 
         cy.get("tr")
           .not(":first")
@@ -387,13 +387,37 @@ describe("Home", () => {
             cy.wrap(row).contains(`Urgent`).should("not.exist")
           })
 
-        cy.get("#is-urgent").click()
+        cy.get("#is-urgent-sort").click()
 
         cy.get("tr")
           .not(":first")
           .each((row) => {
             cy.wrap(row).contains(`Urgent`).should("exist")
           })
+      })
+
+      it("Should filter cases by urgency", () => {
+        cy.task("insertUsers", users)
+        cy.task("insertCourtCasesWithUrgencies", {
+          urgencies: [true, false, true, false, true, false, false],
+          force: "01"
+        })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("#is-urgent-filter").click()
+
+        cy.get("tr").not(":first").should("have.length", 3)
+        cy.get("tr")
+          .not(":first")
+          .each((row) => {
+            cy.wrap(row).contains("Urgent").should("exist")
+          })
+
+        cy.get("#is-urgent-filter").click()
+        // A non-urgent case should be shown with the filter disabled
+        cy.get("tr").contains("Case00001").should("exist")
       })
     })
   })
