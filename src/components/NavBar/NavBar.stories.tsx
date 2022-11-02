@@ -8,7 +8,7 @@ export default {
   component: NavBar
 } as ComponentMeta<typeof NavBar>
 
-export const OnCaseList: ComponentStory<typeof NavBar> = () => <NavBar groups={["UserManager"]} />
+export const OnCaseList: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
 OnCaseList.story = {
   parameters: {
     nextRouter: {
@@ -35,8 +35,7 @@ OnCaseList.play = async ({ canvasElement }) => {
   await expect(canvas.getByText("Case list")).toHaveAttribute("aria-current", "page")
   await expect(canvas.getByText("Reports")).toBeInTheDocument()
   await expect(canvas.getByText("Reports")).not.toHaveAttribute("aria-current", "page")
-  await expect(canvas.getByText("User management")).toBeInTheDocument()
-  await expect(canvas.getByText("User management")).not.toHaveAttribute("aria-current", "page")
+  await expect(canvas.queryByText("User management")).not.toBeInTheDocument()
 }
 
 export const OnHelp: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
