@@ -86,9 +86,15 @@ const Home: NextPage<Props> = ({ user, courtCases, order, totalPages, pageNum, c
       <Heading as="h1" size="LARGE">
         {"Court cases"}
       </Heading>
-      <CourtCaseFilter courtCaseTypes={courtCaseTypes} keywords={keywords} />
-      <CourtCaseList courtCases={courtCases} order={order} />
-      <Pagination totalPages={totalPages} pageNum={pageNum} />
+      <div className="govuk-grid-row">
+        <div className={"govuk-grid-column-one-third"}>
+          <CourtCaseFilter courtCaseTypes={courtCaseTypes} keywords={keywords} />
+        </div>
+        <div className={"govuk-grid-column-two-thirds"}>
+          <CourtCaseList courtCases={courtCases} order={order} />
+          <Pagination totalPages={totalPages} pageNum={pageNum} />
+        </div>
+      </div>
     </Layout>
   </>
 )
