@@ -548,7 +548,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        resultFilter: "triggers"
+        resultFilter: ["triggers"]
       })
 
       expect(isError(result)).toBeFalsy()
@@ -565,7 +565,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        resultFilter: "exceptions"
+        resultFilter: ["exceptions"]
       })
 
       expect(isError(result)).toBeFalsy()

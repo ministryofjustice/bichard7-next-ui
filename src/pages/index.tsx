@@ -21,19 +21,10 @@ interface Props {
   order: QueryOrder
   resultFilter?: Filter
   defendantNameFilter?: string
-  urgentFilter: boolean
   totalPages: number
   pageNum: number
 }
 
-const queryParamToFilterState = (value: string | string[] | undefined) => {
-  if (typeof value === "string") {
-    // todo: handle other types here
-    return (value === "triggers" || value === "exceptions" ? value : undefined) as Filter
-  } else {
-    return undefined
-  }
-}
 const validateQueryParams = (param: string | string[] | undefined): param is string => typeof param === "string"
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
 
@@ -42,11 +33,9 @@ export const getServerSideProps = withMultipleServerSideProps(
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { orderBy, pageNum, type, defendant, maxPageItems, order } = query
-    const resultFilter = queryParamToFilterState(type)
+    const courtCaseTypes = [type].flat() as Filter[]
 
     const validatedDefendantName = validateQueryParams(defendant) ? defendant : undefined
-    const validatedUrgentFilter = validateQueryParams(isUrgent) && isUrgent !== ""
-
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
 
@@ -57,8 +46,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const courtCases = await listCourtCases(dataSource, {
       forces: currentUser.visibleForces,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
-      resultFilter: resultFilter,
-      urgentFilter: validatedUrgentFilter,
+      resultFilter: courtCaseTypes,
       maxPageItems: validatedMaxPageItems,
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
@@ -79,10 +67,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
         order: oppositeOrder,
         totalPages: totalPages === 0 ? 1 : totalPages,
-        pageNum: parseInt(validatedPageNum, 10) || 1,
-        ...(resultFilter && { resultFilter }),
-        ...(validatedDefendantName && { defendantNameFilter: validatedDefendantName }),
-        urgentFilter: validatedUrgentFilter
+        pageNum: parseInt(validatedPageNum, 10) || 1
       }
     }
   }

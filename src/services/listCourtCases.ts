@@ -27,9 +27,9 @@ const listCourtCases = async (
     })
   }
 
-  if (resultFilter === "triggers") {
+  if (resultFilter?.includes("triggers") && !resultFilter?.includes("exceptions")) {
     query.andWhere("courtCase.triggerCount > 0")
-  } else if (resultFilter === "exceptions") {
+  } else if (resultFilter?.includes("exceptions") && !resultFilter?.includes("triggers")) {
     query.andWhere("courtCase.errorCount > 0")
   }
 
