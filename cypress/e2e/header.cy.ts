@@ -10,17 +10,17 @@ describe("Home", () => {
       it("as a non-supervisor, I should have access to these nav items", () => {
         cy.task("insertUsers", [
           {
-            username: `Bichard01`,
+            username: `generalhandler2`,
             visibleForces: [`01`],
             forenames: "Bichard Test User",
             surname: `01`,
-            email: `bichard01@example.com`,
+            email: `generalhandler2@example.com`,
             password:
-              "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
+              "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw"
           }
         ])
-        cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7NewUI_grp" })
-        cy.login("bichard01@example.com", "password")
+        cy.task("insertIntoUserGroup", { emailAddress: "generalhandler2@example.com", groupName: "B7NewUI_grp" })
+        cy.login("generalhandler2@example.com", "password")
         cy.visit("/bichard")
 
         cy.contains("nav a", "Case list").should("have.attr", "href", "/bichard/")
