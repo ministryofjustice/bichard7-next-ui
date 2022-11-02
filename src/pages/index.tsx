@@ -19,21 +19,21 @@ interface Props {
   user: User
   courtCases: CourtCase[]
   order: QueryOrder
-  resultFilter?: Filter
-  defendantNameFilter?: string
+  courtCaseTypes: Filter[]
   totalPages: number
   pageNum: number
 }
 
 const validateQueryParams = (param: string | string[] | undefined): param is string => typeof param === "string"
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
+const validCourtCaseTypes = ["triggers", "exceptions"]
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { orderBy, pageNum, type, defendant, maxPageItems, order } = query
-    const courtCaseTypes = [type].flat() as Filter[]
+    const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Filter[]
 
     const validatedDefendantName = validateQueryParams(defendant) ? defendant : undefined
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
@@ -67,13 +67,14 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
         order: oppositeOrder,
         totalPages: totalPages === 0 ? 1 : totalPages,
-        pageNum: parseInt(validatedPageNum, 10) || 1
+        pageNum: parseInt(validatedPageNum, 10) || 1,
+        courtCaseTypes: courtCaseTypes
       }
     }
   }
 )
 
-const Home: NextPage<Props> = ({ user, courtCases, order, totalPages, pageNum }: Props) => (
+const Home: NextPage<Props> = ({ user, courtCases, order, totalPages, pageNum, courtCaseTypes }: Props) => (
   <>
     <Head>
       <title>{"Case List | Bichard7"}</title>
@@ -83,7 +84,7 @@ const Home: NextPage<Props> = ({ user, courtCases, order, totalPages, pageNum }:
       <Heading as="h1" size="LARGE">
         {"Court cases"}
       </Heading>
-      <CourtCaseFilter />
+      <CourtCaseFilter courtCaseTypes={courtCaseTypes} />
       <CourtCaseList courtCases={courtCases} order={order} />
       <Pagination totalPages={totalPages} pageNum={pageNum} />
     </Layout>

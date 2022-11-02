@@ -1,6 +1,29 @@
 import { HintText } from "govuk-react"
+import { Filter } from "types/CaseListQueryParams"
+import If from "components/If"
+import { useRouter } from "next/router"
 
-const CourtCaseFilter = () => {
+interface Props {
+  courtCaseTypes: Filter[]
+}
+
+const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes }: Props) => {
+  const { basePath, query } = useRouter()
+
+  const removeQueryParamPath = (paramToRemove: string): string => {
+    const searchParams: { [key: string]: string | string[] } = {}
+
+    Object.keys(query).forEach(function (key) {
+      if (typeof query[key] === "string" && query[key] !== paramToRemove) {
+        searchParams[key] = String(query[key])
+      } else if (Array.isArray(query[key])) {
+        searchParams[key] = (query[key] as string[]).filter((e) => e !== paramToRemove)
+      }
+    })
+
+    return `${basePath}/?${new URLSearchParams({ ...searchParams, "": "" })}`
+  }
+
   return (
     <form method={"get"}>
       <div className="moj-filter">
@@ -17,6 +40,21 @@ const CourtCaseFilter = () => {
                 <h2 className="govuk-heading-m">{"Selected filters"}</h2>
               </div>
             </div>
+            <If condition={courtCaseTypes.length > 0}>
+              <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Case type"}</h3>
+              {courtCaseTypes.map((t) => {
+                return (
+                  <ul key={t} className="moj-filter-tags">
+                    <li>
+                      <a className="moj-filter__tag" href={removeQueryParamPath(t)}>
+                        <span className="govuk-visually-hidden">{"Remove this filter"}</span>
+                        {t}
+                      </a>
+                    </li>
+                  </ul>
+                )
+              })}
+            </If>
           </div>
           <div className="moj-filter__options">
             <button className="govuk-button" data-module="govuk-button" id="search">

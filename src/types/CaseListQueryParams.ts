@@ -1,6 +1,6 @@
 export type QueryOrder = "asc" | "desc" | undefined
 
-export type Filter = "triggers" | "exceptions" | undefined
+export type Filter = "triggers" | "exceptions"
 
 export type CaseListQueryParams = {
   orderBy?: string
