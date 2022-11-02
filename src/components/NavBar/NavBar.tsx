@@ -1,6 +1,7 @@
 import If from "components/If"
 import { useRouter } from "next/router"
-import { default as GroupName, default as UserGroup } from "types/GroupName"
+import hasUserManagementAccess from "services/hasUserManagementAccess"
+import { default as GroupName } from "types/GroupName"
 
 interface NavItemProps {
   name: string
@@ -24,9 +25,9 @@ const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
   )
 }
 
-const UserManagementNavItem: React.FC<NavBarProps> = ({ groups }) => {
+const UserManagementNavItem: React.FC<NavBarProps> = (groups) => {
   return (
-    <If condition={groups.includes("UserManager" as UserGroup)}>
+    <If condition={hasUserManagementAccess(groups)}>
       <NavItem name={"User management"} link={"/users/users/"} />
     </If>
   )

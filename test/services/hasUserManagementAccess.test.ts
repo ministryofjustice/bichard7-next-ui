@@ -1,12 +1,12 @@
-import getUserManagementAccess, { AuthenticationTokenPayload } from "../../src/services/getUserManagementAccess"
+import hasUserManagementAccess, { Props } from "../../src/services/hasUserManagementAccess"
 
 it("should say that user has only access to User Management when user has one of the User Management's user groups", () => {
-  const hasAccess = getUserManagementAccess({ groups: ["UserManager"] } as AuthenticationTokenPayload)
+  const hasAccess = hasUserManagementAccess({ groups: ["UserManager"] } as Props)
   expect(hasAccess).toBe(true)
 })
 
 it("should check if it doesn't have access to the UserManagement page", () => {
-  const hasAccess = getUserManagementAccess({
+  const hasAccess = hasUserManagementAccess({
     groups: [
       "GeneralHandler",
       "Allocator",
@@ -19,14 +19,14 @@ it("should check if it doesn't have access to the UserManagement page", () => {
       "SuperUserManager",
       "NewUI"
     ]
-  } as AuthenticationTokenPayload)
+  } as Props)
 
   expect(hasAccess).toBe(false)
 })
 
 it("should say it does not have access to User Management when there are no user groups", () => {
-  const hasAccess = getUserManagementAccess({
+  const hasAccess = hasUserManagementAccess({
     groups: ["IncorrectGroupName"]
-  } as unknown as AuthenticationTokenPayload)
+  } as unknown as Props)
   expect(hasAccess).toBe(false)
 })
