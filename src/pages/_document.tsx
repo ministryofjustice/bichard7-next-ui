@@ -12,14 +12,31 @@ const GovUkMetadata = () => {
 
       <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
 
-      <link rel="shortcut icon" sizes="16x16 32x32 48x48" href={`images/favicon.ico`} type="image/x-icon" />
+      <link
+        rel="shortcut icon"
+        sizes="16x16 32x32 48x48"
+        href={`bichard/govuk_assets/images/favicon.ico`}
+        type="image/x-icon"
+      />
       <link rel="mask-icon" href={`images/govuk-mask-icon.svg`} color="#0b0c0c" />
-      <link rel="apple-touch-icon" sizes="180x180" href={`images/govuk-apple-touch-icon-180x180.png`} />
-      <link rel="apple-touch-icon" sizes="167x167" href={`images/govuk-apple-touch-icon-167x167.png`} />
-      <link rel="apple-touch-icon" sizes="152x152" href={`images/govuk-apple-touch-icon-152x152.png`} />
-      <link rel="apple-touch-icon" href={`images/govuk-apple-touch-icon.png`} />
+      <link
+        rel="apple-touch-icon"
+        sizes="180x180"
+        href={`bichard/govuk_assets/images/govuk-apple-touch-icon-180x180.png`}
+      />
+      <link
+        rel="apple-touch-icon"
+        sizes="167x167"
+        href={`bichard/govuk_assets/images/govuk-apple-touch-icon-167x167.png`}
+      />
+      <link
+        rel="apple-touch-icon"
+        sizes="152x152"
+        href={`bichard/govuk_assets/images/govuk-apple-touch-icon-152x152.png`}
+      />
+      <link rel="apple-touch-icon" href={`bichard/govuk_assets/images/govuk-apple-touch-icon.png`} />
 
-      <meta property="og:image" content={`images/govuk-opengraph-image.png`} />
+      <meta property="og:image" content={`bichard/govuk_assets/images/govuk-opengraph-image.png`} />
     </>
   )
 }
