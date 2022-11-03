@@ -28,7 +28,7 @@ interface Props {
 
 const validateQueryParams = (param: string | string[] | undefined): param is string => typeof param === "string"
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
-const validCourtCaseTypes = ["triggers", "exceptions"]
+const validCourtCaseTypes = ["Triggers", "Exceptions"]
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,

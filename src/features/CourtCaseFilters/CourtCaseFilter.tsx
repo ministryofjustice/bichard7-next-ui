@@ -99,8 +99,8 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }:
                     id="exceptions-type"
                     name="type"
                     type="checkbox"
-                    value="exceptions"
-                    defaultChecked={courtCaseTypes.includes("exceptions")}
+                    value="Exceptions"
+                    defaultChecked={courtCaseTypes.includes("Exceptions")}
                   ></input>
                   <label className="govuk-label govuk-checkboxes__label" htmlFor="exceptions-type">
                     {"Exceptions"}
@@ -112,8 +112,8 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }:
                     id="triggers-type"
                     name="type"
                     type="checkbox"
-                    value="triggers"
-                    defaultChecked={courtCaseTypes.includes("triggers")}
+                    value="Triggers"
+                    defaultChecked={courtCaseTypes.includes("Triggers")}
                   ></input>
                   <label className="govuk-label govuk-checkboxes__label" htmlFor="triggers-type">
                     {"Triggers"}
@@ -132,7 +132,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }:
                   name="urgency"
                   type="checkbox"
                   value="Urgent"
-                  defaultChecked={false}
+                  defaultChecked={urgency}
                 ></input>
                 <label className="govuk-label govuk-checkboxes__label" htmlFor="is-urgent-filter">
                   {"Urgent"}
