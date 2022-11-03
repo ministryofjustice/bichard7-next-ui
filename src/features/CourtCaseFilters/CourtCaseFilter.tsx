@@ -88,8 +88,8 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) =
                     name="type"
                     type="checkbox"
                     value="exceptions"
+                    defaultChecked={courtCaseTypes.includes("exceptions") ? true : false}
                   ></input>
-
                   <label className="govuk-label govuk-checkboxes__label" htmlFor="exceptions-type">
                     {"Exceptions"}
                   </label>
@@ -101,6 +101,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) =
                     name="type"
                     type="checkbox"
                     value="triggers"
+                    defaultChecked={courtCaseTypes.includes("triggers") ? true : false}
                   ></input>
                   <label className="govuk-label govuk-checkboxes__label" htmlFor="triggers-type">
                     {"Triggers"}

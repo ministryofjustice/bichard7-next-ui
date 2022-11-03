@@ -297,8 +297,6 @@ describe("Home", () => {
 
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
 
         // Removing exceptions filter tag
         cy.get('*[class^="moj-filter-tags"]').contains("exceptions").click()
