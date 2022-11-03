@@ -7,9 +7,10 @@ import deleteQueryParam from "utils/deleteQueryParam"
 interface Props {
   courtCaseTypes: Filter[]
   keywords: string[]
+  urgency: boolean
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) => {
+const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: Props) => {
   const { basePath, query } = useRouter()
 
   const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
@@ -64,6 +65,17 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) =
                 )
               })}
             </If>
+            <If condition={urgency}>
+              <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Urgency"}</h3>
+              <ul key={"Urgent"} className="moj-filter-tags">
+                <li>
+                  <a className="moj-filter__tag" href={removeQueryParamFromPath({ urgency: "Urgent" })}>
+                    <span className="govuk-visually-hidden">{`Remove urgent filter`}</span>
+                    {"Urgent"}
+                  </a>
+                </li>
+              </ul>
+            </If>
           </div>
           <div className="moj-filter__options">
             <button className="govuk-button" data-module="govuk-button" id="search">
@@ -88,7 +100,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) =
                     name="type"
                     type="checkbox"
                     value="exceptions"
-                    defaultChecked={courtCaseTypes.includes("exceptions") ? true : false}
+                    defaultChecked={courtCaseTypes.includes("exceptions")}
                   ></input>
                   <label className="govuk-label govuk-checkboxes__label" htmlFor="exceptions-type">
                     {"Exceptions"}
@@ -101,7 +113,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) =
                     name="type"
                     type="checkbox"
                     value="triggers"
-                    defaultChecked={courtCaseTypes.includes("triggers") ? true : false}
+                    defaultChecked={courtCaseTypes.includes("triggers")}
                   ></input>
                   <label className="govuk-label govuk-checkboxes__label" htmlFor="triggers-type">
                     {"Triggers"}
@@ -110,6 +122,24 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords }: Props) =
               </div>
             </fieldset>
           </div>
+          <fieldset className="govuk-fieldset">
+            <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Urgency"}</legend>
+            <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+              <div className="govuk-checkboxes__item">
+                <input
+                  className="govuk-checkboxes__input"
+                  id="is-urgent-filter"
+                  name="urgency"
+                  type="checkbox"
+                  value="Urgent"
+                  defaultChecked={false}
+                ></input>
+                <label className="govuk-label govuk-checkboxes__label" htmlFor="is-urgent-filter">
+                  {"Urgent"}
+                </label>
+              </div>
+            </div>
+          </fieldset>
         </div>
       </div>
     </form>

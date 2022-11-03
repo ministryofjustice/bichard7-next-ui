@@ -21,6 +21,7 @@ interface Props {
   order: QueryOrder
   courtCaseTypes: Filter[]
   keywords: string[]
+  urgentFilter: boolean
   totalPages: number
   pageNum: number
 }
@@ -33,22 +34,22 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, pageNum, type, keywords, maxPageItems, order } = query
+    const { orderBy, pageNum, type, keywords, maxPageItems, order, urgency } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Filter[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
     const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
-    const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
 
-    const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
-    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
+    const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
+    const validatedUrgentFilter = validateQueryParams(urgency) && urgency !== ""
 
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
       forces: currentUser.visibleForces,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
       resultFilter: courtCaseTypes,
+      urgentFilter: validatedUrgentFilter,
       maxPageItems: validatedMaxPageItems,
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
@@ -71,13 +72,23 @@ export const getServerSideProps = withMultipleServerSideProps(
         totalPages: totalPages === 0 ? 1 : totalPages,
         pageNum: parseInt(validatedPageNum, 10) || 1,
         courtCaseTypes: courtCaseTypes,
-        keywords: validatedDefendantName ? [validatedDefendantName] : []
+        keywords: validatedDefendantName ? [validatedDefendantName] : [],
+        urgentFilter: validatedUrgentFilter
       }
     }
   }
 )
 
-const Home: NextPage<Props> = ({ user, courtCases, order, totalPages, pageNum, courtCaseTypes, keywords }: Props) => (
+const Home: NextPage<Props> = ({
+  user,
+  courtCases,
+  order,
+  totalPages,
+  pageNum,
+  courtCaseTypes,
+  keywords,
+  urgentFilter
+}: Props) => (
   <>
     <Head>
       <title>{"Case List | Bichard7"}</title>
@@ -89,7 +100,7 @@ const Home: NextPage<Props> = ({ user, courtCases, order, totalPages, pageNum, c
       </Heading>
       <div className="govuk-grid-row">
         <div className={"govuk-grid-column-one-third"}>
-          <CourtCaseFilter courtCaseTypes={courtCaseTypes} keywords={keywords} />
+          <CourtCaseFilter courtCaseTypes={courtCaseTypes} keywords={keywords} urgency={urgentFilter} />
         </div>
         <div className={"govuk-grid-column-two-thirds"}>
           <CourtCaseList courtCases={courtCases} order={order} />

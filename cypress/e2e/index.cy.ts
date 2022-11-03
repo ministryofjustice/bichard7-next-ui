@@ -277,6 +277,7 @@ describe("Home", () => {
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`).should("not.exist")
 
         // Filtering by having exceptions
+        cy.get('*[class^="moj-filter-tags"]').contains("triggers").click() // Removing triggers filter tag
         cy.get('[id="exceptions-type"]').check()
         cy.get("button[id=search]").click()
 
@@ -433,6 +434,7 @@ describe("Home", () => {
         cy.visit("/bichard")
 
         cy.get("#is-urgent-filter").click()
+        cy.get("button[id=search]").click()
 
         cy.get("tr").not(":first").should("have.length", 3)
         cy.get("tr")
@@ -441,8 +443,8 @@ describe("Home", () => {
             cy.wrap(row).contains("Urgent").should("exist")
           })
 
-        cy.get("#is-urgent-filter").click()
-        // A non-urgent case should be shown with the filter disabled
+        // Removing urgent filter tag a non-urgent case should be shown with the filter disabled
+        cy.get('*[class^="moj-filter-tags"]').contains("Urgent").click()
         cy.get("tr").contains("Case00001").should("exist")
       })
     })
