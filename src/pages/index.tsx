@@ -1,4 +1,5 @@
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
+import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { Filter, QueryOrder } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
@@ -100,9 +101,10 @@ const Home: NextPage<Props> = ({
       </Heading>
       <div className="govuk-grid-row">
         <div className={"govuk-grid-column-one-third"}>
-          <CourtCaseFilter courtCaseTypes={courtCaseTypes} keywords={keywords} urgency={urgentFilter} />
+          <CourtCaseFilter courtCaseTypes={courtCaseTypes} urgency={urgentFilter} />
         </div>
         <div className={"govuk-grid-column-two-thirds"}>
+          <AppliedFilters courtCaseTypes={courtCaseTypes} keywords={keywords} urgency={urgentFilter} />
           <CourtCaseList courtCases={courtCases} order={order} />
           <Pagination totalPages={totalPages} pageNum={pageNum} />
         </div>

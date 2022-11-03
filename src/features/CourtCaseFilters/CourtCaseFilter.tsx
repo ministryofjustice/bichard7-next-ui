@@ -1,24 +1,12 @@
 import { HintText } from "govuk-react"
 import { Filter } from "types/CaseListQueryParams"
-import If from "components/If"
-import { useRouter } from "next/router"
-import deleteQueryParam from "utils/deleteQueryParam"
 
 interface Props {
   courtCaseTypes: Filter[]
-  keywords: string[]
   urgency: boolean
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: Props) => {
-  const { basePath, query } = useRouter()
-
-  const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
-    const searchParams = deleteQueryParam(paramToRemove, query)
-
-    return `${basePath}/?${searchParams}`
-  }
-
+const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) => {
   return (
     <form method={"get"}>
       <div className="moj-filter">
@@ -35,47 +23,6 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }:
                 <h2 className="govuk-heading-m">{"Selected filters"}</h2>
               </div>
             </div>
-            <If condition={courtCaseTypes.length > 0}>
-              <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Case type"}</h3>
-              {courtCaseTypes.map((t) => {
-                return (
-                  <ul key={t} className="moj-filter-tags">
-                    <li>
-                      <a className="moj-filter__tag" href={removeQueryParamFromPath({ type: t })}>
-                        <span className="govuk-visually-hidden">{`Remove ${t} filter`}</span>
-                        {t}
-                      </a>
-                    </li>
-                  </ul>
-                )
-              })}
-            </If>
-            <If condition={keywords.length > 0}>
-              <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Keywords"}</h3>
-              {keywords.map((keyword) => {
-                return (
-                  <ul key={keyword} className="moj-filter-tags">
-                    <li>
-                      <a className="moj-filter__tag" href={removeQueryParamFromPath({ keywords: keyword })}>
-                        <span className="govuk-visually-hidden">{`Remove ${keyword} filter`}</span>
-                        {keyword}
-                      </a>
-                    </li>
-                  </ul>
-                )
-              })}
-            </If>
-            <If condition={urgency}>
-              <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Urgency"}</h3>
-              <ul key={"Urgent"} className="moj-filter-tags">
-                <li>
-                  <a className="moj-filter__tag" href={removeQueryParamFromPath({ urgency: "Urgent" })}>
-                    <span className="govuk-visually-hidden">{`Remove urgent filter`}</span>
-                    {"Urgent"}
-                  </a>
-                </li>
-              </ul>
-            </If>
           </div>
           <div className="moj-filter__options">
             <button className="govuk-button" data-module="govuk-button" id="search">
