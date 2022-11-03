@@ -27,8 +27,8 @@ const insertCourtCasesWithOrgCodes = async (orgsCodes: string[]) => {
         errorId: index,
         messageId: String(index).padStart(5, "x"),
         ptiurn: "Case" + String(index).padStart(5, "0"),
-        errorCount: 1,
-        triggerCount: 1
+        errorCount: 0,
+        triggerCount: 0
       })
     )
   }

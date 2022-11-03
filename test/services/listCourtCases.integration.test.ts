@@ -548,13 +548,13 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        resultFilter: "triggers"
+        resultFilter: ["triggers"]
       })
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(2)
+      expect(cases).toHaveLength(1)
       expect(cases[0].errorId).toBe(0)
     })
 
@@ -565,13 +565,13 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        resultFilter: "exceptions"
+        resultFilter: ["exceptions"]
       })
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(2)
+      expect(cases).toHaveLength(1)
       expect(cases[0].errorId).toBe(0)
     })
   })

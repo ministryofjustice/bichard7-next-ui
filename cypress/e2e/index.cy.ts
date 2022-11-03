@@ -222,11 +222,20 @@ describe("Home", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("input[type=search]").type("Bruce Wayne")
+        cy.get("input[id=keywords]").type("Bruce Wayne")
 
-        cy.get("button[title=Search]").click()
-        cy.get("tr").eq(1).get("td:nth-child(3)").first().contains("Bruce Wayne")
+        cy.get("button[id=search]").click()
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bruce Wayne")
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Barbara Gordon").should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth").should("not.exist")
         cy.get("tr").should("have.length", 2)
+        cy.get('*[class^="moj-filter-tags"]').contains("Bruce Wayne")
+
+        // Removing filter tag
+        cy.get('*[class^="moj-filter-tags"]').contains("Bruce Wayne").click()
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bruce Wayne")
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Barbara Gordon")
+        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth")
       })
 
       it("Should filter cases by whether they have triggers and exceptions", () => {
@@ -257,22 +266,49 @@ describe("Home", () => {
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
 
         // Filtering by having triggers
-        cy.get("#result-filter-select").select("triggers")
-        cy.get("#result-filter-button").click()
+        cy.get('[id="triggers-type"]').check()
+        cy.get("button[id=search]").click()
+
+        cy.get('*[class^="moj-filter-tags"]').contains("triggers")
+
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`).should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`).should("not.exist")
+
+        // Filtering by having exceptions
+        cy.get('*[class^="moj-filter-tags"]').contains("triggers").click() // Removing triggers filter tag
+        cy.get('[id="exceptions-type"]').check()
+        cy.get("button[id=search]").click()
+
+        cy.get('*[class^="moj-filter-tags"]').contains("exceptions")
+
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`).should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`).should("not.exist")
+
+        // Filter for both triggers and exceptions
+        cy.get('[id="triggers-type"]').check()
+        cy.get('[id="exceptions-type"]').check()
+        cy.get("button[id=search]").click()
+
+        cy.get('*[class^="moj-filter-tags"]').contains("exceptions")
+        cy.get('*[class^="moj-filter-tags"]').contains("triggers")
 
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
 
-        // Filtering by having exceptions
-        cy.get("#result-filter-select").select("exceptions")
-        cy.get("#result-filter-button").click()
+        // Removing exceptions filter tag
+        cy.get('*[class^="moj-filter-tags"]').contains("exceptions").click()
 
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`).should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`).should("not.exist")
 
-        // Clearing filters
-        cy.get("#result-filter-select").select(0)
-        cy.get("#result-filter-button").click()
+        // Removing triggers filter tag
+        cy.get('*[class^="moj-filter-tags"]').contains("triggers").click()
 
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
         cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
@@ -398,6 +434,7 @@ describe("Home", () => {
         cy.visit("/bichard")
 
         cy.get("#is-urgent-filter").click()
+        cy.get("button[id=search]").click()
 
         cy.get("tr").not(":first").should("have.length", 3)
         cy.get("tr")
@@ -406,8 +443,8 @@ describe("Home", () => {
             cy.wrap(row).contains("Urgent").should("exist")
           })
 
-        cy.get("#is-urgent-filter").click()
-        // A non-urgent case should be shown with the filter disabled
+        // Removing urgent filter tag a non-urgent case should be shown with the filter disabled
+        cy.get('*[class^="moj-filter-tags"]').contains("Urgent").click()
         cy.get("tr").contains("Case00001").should("exist")
       })
     })
