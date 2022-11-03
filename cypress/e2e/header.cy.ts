@@ -7,7 +7,7 @@ describe("Home", () => {
     })
 
     context("top-nav", () => {
-      it("as a non-supervisor, I should have access to these nav items", () => {
+      it("as a user that is not part of the 'UserManager' group, I should have access to these nav items", () => {
         cy.task("insertUsers", [
           {
             username: `generalhandler2`,
@@ -29,7 +29,7 @@ describe("Home", () => {
         cy.contains("nav a", "Help").should("have.attr", "href", "/help/")
       })
 
-      it("as a supervisor, I should have access to these nav items", () => {
+      it("as a user who is part of the 'UserManager' group, I should have access to these nav items", () => {
         cy.task("insertUsers", [
           {
             username: `Bichard01`,
