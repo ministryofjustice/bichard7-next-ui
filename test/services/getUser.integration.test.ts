@@ -33,7 +33,7 @@ describe("getUser", () => {
     expect(isError(result)).toBe(false)
 
     const actualUser = result as User
-    expect({ ...actualUser }).toStrictEqual({ ...inputUser, _groups: expectedGroups })
+    expect({ ...actualUser }).toStrictEqual({ ...inputUser, groups: expectedGroups })
   })
 
   it("shouldn't return the user when given different username", async () => {

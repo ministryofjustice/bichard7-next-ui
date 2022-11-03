@@ -7,7 +7,29 @@ describe("Home", () => {
     })
 
     context("top-nav", () => {
-      it("should link to other pages", () => {
+      it("as a user that is not part of the 'UserManager' group, I should have access to these nav items", () => {
+        cy.task("insertUsers", [
+          {
+            username: `generalhandler2`,
+            visibleForces: [`01`],
+            forenames: "Bichard Test User",
+            surname: `01`,
+            email: `generalhandler2@example.com`,
+            password:
+              "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw"
+          }
+        ])
+        cy.task("insertIntoUserGroup", { emailAddress: "generalhandler2@example.com", groupName: "B7NewUI_grp" })
+        cy.login("generalhandler2@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.contains("nav a", "Case list").should("have.attr", "href", "/bichard/")
+        cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex/")
+        cy.contains("nav a", "User management").should("not.exist")
+        cy.contains("nav a", "Help").should("have.attr", "href", "/help/")
+      })
+
+      it("as a user who is part of the 'UserManager' group, I should have access to these nav items", () => {
         cy.task("insertUsers", [
           {
             username: `Bichard01`,
@@ -19,13 +41,14 @@ describe("Home", () => {
               "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
           }
         ])
-        cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7NewUI_grp" })
+        cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7UserManager_grp" })
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.contains("nav a", "Case List").should("have.attr", "href", "/bichard/")
+        cy.contains("nav a", "Case list").should("have.attr", "href", "/bichard/")
+        cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex/")
+        cy.contains("nav a", "User management").should("have.attr", "href", "/users/users/")
         cy.contains("nav a", "Help").should("have.attr", "href", "/help/")
-        cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex")
       })
     })
   })
