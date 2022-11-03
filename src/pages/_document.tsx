@@ -18,7 +18,7 @@ const GovUkMetadata = () => {
         href={`bichard/govuk_assets/images/favicon.ico`}
         type="image/x-icon"
       />
-      <link rel="mask-icon" href={`images/govuk-mask-icon.svg`} color="#0b0c0c" />
+      <link rel="mask-icon" href={`bichard/govuk_assets/images/govuk-mask-icon.svg`} color="#0b0c0c" />
       <link
         rel="apple-touch-icon"
         sizes="180x180"
