@@ -6,13 +6,13 @@ import deleteQueryParam from "utils/deleteQueryParam"
 interface Props {
   courtCaseTypes: Filter[]
   keywords: string[]
-  urgency: boolean
+  urgency?: boolean
 }
 
 const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: Props) => {
   const { basePath, query } = useRouter()
 
-  const hasAnyAppliedFilters = () => courtCaseTypes.length > 0 || keywords.length > 0 || urgency
+  const hasAnyAppliedFilters = (): boolean => courtCaseTypes.length > 0 || keywords.length > 0 || !!urgency
 
   const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
     const searchParams = deleteQueryParam(paramToRemove, query)
@@ -47,7 +47,7 @@ const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: 
               </li>
             )
           })}
-          <If condition={urgency}>
+          <If condition={!!urgency}>
             <li>
               <a className="moj-filter__tag" href={removeQueryParamFromPath({ urgency: "Urgent" })}>
                 <span className="govuk-visually-hidden">{`Remove urgent filter`}</span>
