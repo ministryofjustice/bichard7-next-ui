@@ -1,3 +1,4 @@
+import FilterTag from "components/FilterTag/FilterTag"
 import If from "components/If"
 import { useRouter } from "next/router"
 import { Filter } from "types/CaseListQueryParams"
@@ -30,29 +31,20 @@ const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: 
           {courtCaseTypes.map((t) => {
             return (
               <li key={`${t}`}>
-                <a className="moj-filter__tag" href={removeQueryParamFromPath({ type: t })}>
-                  <span className="govuk-visually-hidden">{`Remove ${t} filter`}</span>
-                  {t}
-                </a>
+                <FilterTag tag={t} href={removeQueryParamFromPath({ type: t })} />
               </li>
             )
           })}
           {keywords.map((keyword) => {
             return (
               <li key={`${keyword}`}>
-                <a className="moj-filter__tag" href={removeQueryParamFromPath({ keywords: keyword })}>
-                  <span className="govuk-visually-hidden">{`Remove ${keyword} filter`}</span>
-                  {keyword}
-                </a>
+                <FilterTag tag={keyword} href={removeQueryParamFromPath({ keywords: keyword })} />
               </li>
             )
           })}
           <If condition={!!urgency}>
             <li>
-              <a className="moj-filter__tag" href={removeQueryParamFromPath({ urgency: "Urgent" })}>
-                <span className="govuk-visually-hidden">{`Remove urgent filter`}</span>
-                {"Urgent"}
-              </a>
+              <FilterTag tag={"Urgent"} href={removeQueryParamFromPath({ urgency: "Urgent" })} />
             </li>
           </If>
         </ul>
