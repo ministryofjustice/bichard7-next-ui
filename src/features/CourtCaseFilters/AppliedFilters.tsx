@@ -26,7 +26,7 @@ const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: 
       <If condition={hasAnyAppliedFilters()}>
         <ul key={"applied-filters"} className="moj-filter-tags">
           <li>
-            <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Applied filters:"}</h3>
+            <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Filters applied:"}</h3>
           </li>
           {courtCaseTypes.map((t) => {
             return (

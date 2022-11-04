@@ -28,11 +28,12 @@ export const WhenThereAreFiltersApplied: ComponentStory<typeof AppliedFilters> =
 
 WhenThereAreFiltersApplied.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
-  expect(canvas.queryByText("Applied filters:")).toBeInTheDocument()
+  expect(canvas.queryByText("Filters applied:")).toBeInTheDocument()
   expect(canvas.queryByText("Exceptions")).toBeInTheDocument()
   expect(canvas.queryByText("Triggers")).toBeInTheDocument()
   expect(canvas.queryByText("Test keyword")).toBeInTheDocument()
   expect(canvas.queryByText("Urgent")).toBeInTheDocument()
+  expect(canvas.queryByText("Clear filters")).toBeInTheDocument()
 }
 
 export const WhenThereAreNoFiltersApplied: ComponentStory<typeof AppliedFilters> = () => (
@@ -41,7 +42,7 @@ export const WhenThereAreNoFiltersApplied: ComponentStory<typeof AppliedFilters>
 
 WhenThereAreNoFiltersApplied.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
-  expect(canvas.queryByText("Applied filters:")).not.toBeInTheDocument()
+  expect(canvas.queryByText("Filters applied:")).not.toBeInTheDocument()
   expect(canvas.queryByText("Exceptions")).not.toBeInTheDocument()
   expect(canvas.queryByText("Triggers")).not.toBeInTheDocument()
   expect(canvas.queryByText("Test keyword")).not.toBeInTheDocument()
