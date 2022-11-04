@@ -1,12 +1,9 @@
 import User from "services/entities/User"
-import { TestTrigger } from "../../test/utils/manageTriggers"
 import a11yConfig from "../support/a11yConfig"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
+import hashedPassword from "../fixtures/hashedPassword"
 
-describe("Home", () => {
-  const hashedPassword =
-    "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
-
+describe("Case list", () => {
   context("720p resolution", () => {
     const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
       return {
@@ -203,119 +200,6 @@ describe("Home", () => {
           })
       })
 
-      it("can display cases filtered by defendant name", () => {
-        cy.task("insertUsers", [
-          {
-            username: "Bichard01",
-            visibleForces: ["011111"],
-            forenames: "Bichard Test User",
-            surname: "01",
-            email: "bichard01@example.com",
-            password: hashedPassword
-          }
-        ])
-        cy.task("insertCourtCasesWithDefendantNames", {
-          defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"],
-          force: "011111"
-        })
-
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
-
-        cy.get("input[id=keywords]").type("Bruce Wayne")
-
-        cy.get("button[id=search]").click()
-        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bruce Wayne")
-        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Barbara Gordon").should("not.exist")
-        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth").should("not.exist")
-        cy.get("tr").should("have.length", 2)
-        cy.get('*[class^="moj-filter-tags"]').contains("Bruce Wayne")
-
-        // Removing filter tag
-        cy.get('*[class^="moj-filter-tags"]').contains("Bruce Wayne").click()
-        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bruce Wayne")
-        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Barbara Gordon")
-        cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth")
-      })
-
-      it("Should filter cases by whether they have triggers and exceptions", () => {
-        cy.task("insertUsers", users)
-        cy.task("insertCourtCasesWithOrgCodes", ["01", "01", "01", "01"])
-        const triggers: TestTrigger[] = [
-          {
-            triggerId: 0,
-            triggerCode: "TRPR0001",
-            status: "Unresolved",
-            createdAt: new Date("2022-07-09T10:22:34.000Z")
-          }
-        ]
-        cy.task("insertTriggers", { caseId: 0, triggers })
-        cy.task("insertException", { caseId: 0, exceptionCode: "HO100206" })
-
-        cy.task("insertTriggers", { caseId: 1, triggers })
-
-        cy.task("insertException", { caseId: 2, exceptionCode: "HO100207" })
-
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
-
-        // Default: no filter, all cases shown
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
-
-        // Filtering by having triggers
-        cy.get('[id="triggers-type"]').check()
-        cy.get("button[id=search]").click()
-
-        cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
-
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`).should("not.exist")
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`).should("not.exist")
-
-        // Filtering by having exceptions
-        cy.get('*[class^="moj-filter-tags"]').contains("Triggers").click() // Removing triggers filter tag
-        cy.get('[id="exceptions-type"]').check()
-        cy.get("button[id=search]").click()
-
-        cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
-
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`).should("not.exist")
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`).should("not.exist")
-
-        // Filter for both triggers and exceptions
-        cy.get('[id="triggers-type"]').check()
-        cy.get('[id="exceptions-type"]').check()
-        cy.get("button[id=search]").click()
-
-        cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
-        cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
-
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
-
-        // Removing exceptions filter tag
-        cy.get('*[class^="moj-filter-tags"]').contains("Exceptions").click()
-
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`).should("not.exist")
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`).should("not.exist")
-
-        // Removing triggers filter tag
-        cy.get('*[class^="moj-filter-tags"]').contains("Triggers").click()
-
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00002`)
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
-      })
-
       it("should be able to navigate to the case details page and back", () => {
         cy.task("insertUsers", users)
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
@@ -421,31 +305,6 @@ describe("Home", () => {
           .each((row) => {
             cy.wrap(row).contains(`Urgent`).should("exist")
           })
-      })
-
-      it("Should filter cases by urgency", () => {
-        cy.task("insertUsers", users)
-        cy.task("insertCourtCasesWithUrgencies", {
-          urgencies: [true, false, true, false, true, false, false],
-          force: "01"
-        })
-
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
-
-        cy.get("#is-urgent-filter").click()
-        cy.get("button[id=search]").click()
-
-        cy.get("tr").not(":first").should("have.length", 3)
-        cy.get("tr")
-          .not(":first")
-          .each((row) => {
-            cy.wrap(row).contains("Urgent").should("exist")
-          })
-
-        // Removing urgent filter tag a non-urgent case should be shown with the filter disabled
-        cy.get('*[class^="moj-filter-tags"]').contains("Urgent").click()
-        cy.get("tr").contains("Case00001").should("exist")
       })
     })
   })
