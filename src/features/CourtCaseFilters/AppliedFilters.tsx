@@ -49,7 +49,7 @@ const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: 
           </If>
           <li>
             <p className="moj-filter__heading-action" id="clear-filters-applied">
-              <a class="govuk-link govuk-link--no-visited-state" href="/bichard">
+              <a className="govuk-link govuk-link--no-visited-state" href="/bichard">
                 {"Clear filters"}
               </a>
             </p>
