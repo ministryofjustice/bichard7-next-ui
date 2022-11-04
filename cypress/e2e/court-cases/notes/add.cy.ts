@@ -5,19 +5,17 @@ import logAccessibilityViolations from "../../../support/logAccessibilityViolati
 import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("Case details", () => {
-  context("720p resolution", async () => {
-    const users: Partial<User>[] = await Promise.all(
-      Array.from(Array(5)).map(async (_value, idx) => {
-        return {
-          username: `Bichard0${idx}`,
-          visibleForces: [`0${idx}`],
-          forenames: "Bichard Test User",
-          surname: `0${idx}`,
-          email: `bichard0${idx}@example.com`,
-          password: hashedPassword
-        }
-      })
-    )
+  context("720p resolution", () => {
+    const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
+      return {
+        username: `Bichard0${idx}`,
+        visibleForces: [`0${idx}`],
+        forenames: "Bichard Test User",
+        surname: `0${idx}`,
+        email: `bichard0${idx}@example.com`,
+        password: hashedPassword
+      }
+    })
 
     beforeEach(() => {
       cy.task("clearCourtCases")
