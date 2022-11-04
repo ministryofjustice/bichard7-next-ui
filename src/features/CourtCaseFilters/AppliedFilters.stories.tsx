@@ -46,4 +46,5 @@ WhenThereAreNoFiltersApplied.play = ({ canvasElement }) => {
   expect(canvas.queryByText("Triggers")).not.toBeInTheDocument()
   expect(canvas.queryByText("Test keyword")).not.toBeInTheDocument()
   expect(canvas.queryByText("Urgent")).not.toBeInTheDocument()
+  expect(canvas.queryByText("Clear filters")).not.toBeInTheDocument()
 }

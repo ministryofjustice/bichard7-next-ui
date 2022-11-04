@@ -47,6 +47,13 @@ const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: 
               <FilterTag tag={"Urgent"} href={removeQueryParamFromPath({ urgency: "Urgent" })} />
             </li>
           </If>
+          <li>
+            <p className="moj-filter__heading-action" id="clear-filters-applied">
+              <a class="govuk-link govuk-link--no-visited-state" href="/bichard">
+                {"Clear filters"}
+              </a>
+            </p>
+          </li>
         </ul>
       </If>
     </div>

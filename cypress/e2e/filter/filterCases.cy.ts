@@ -22,10 +22,10 @@ describe("Case list", () => {
     beforeEach(() => {
       cy.task("clearCourtCases")
       cy.viewport(1280, 720)
+      cy.login("bichard01@example.com", "password")
     })
 
     it("Should be accessible", () => {
-      cy.login("bichard01@example.com", "password")
       cy.visit("/bichard")
 
       cy.get("input[id=keywords]").type("Dummy")
@@ -44,7 +44,6 @@ describe("Case list", () => {
         force: "011111"
       })
 
-      cy.login("bichard01@example.com", "password")
       cy.visit("/bichard")
 
       cy.get("input[id=keywords]").type("Bruce Wayne")
@@ -80,7 +79,6 @@ describe("Case list", () => {
 
       cy.task("insertException", { caseId: 2, exceptionCode: "HO100207" })
 
-      cy.login("bichard01@example.com", "password")
       cy.visit("/bichard")
 
       // Default: no filter, all cases shown
@@ -146,7 +144,6 @@ describe("Case list", () => {
         force: "011111"
       })
 
-      cy.login("bichard01@example.com", "password")
       cy.visit("/bichard")
 
       cy.get("#is-urgent-filter").click()
@@ -162,6 +159,26 @@ describe("Case list", () => {
       // Removing urgent filter tag a non-urgent case should be shown with the filter disabled
       cy.get('*[class^="moj-filter-tags"]').contains("Urgent").click()
       cy.get("tr").contains("Case00001").should("exist")
+    })
+
+    it("Should clear filters", () => {
+      cy.visit("/bichard")
+
+      cy.get("input[id=keywords]").type("Dummy")
+      cy.get('[id="triggers-type"]').check()
+      cy.get('[id="exceptions-type"]').check()
+      cy.get("button[id=search]").click()
+
+      cy.get('*[class^="moj-filter-tags"]').contains("Dummy")
+      cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
+      cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
+
+      cy.get("#clear-filters-applied").click()
+
+      cy.get('*[class^="moj-filter-tags"]').should("not.exist")
+      cy.location().should((loc) => {
+        expect(loc.pathname).to.eq("/bichard")
+      })
     })
   })
 })
