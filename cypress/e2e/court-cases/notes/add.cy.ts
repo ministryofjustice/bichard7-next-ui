@@ -2,22 +2,20 @@ import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import User from "services/entities/User"
 import a11yConfig from "../../../support/a11yConfig"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
+import hashedPassword from "../../../fixtures/hashedPassword"
 
-describe("Home", () => {
-  context("720p resolution", async () => {
-    const users: Partial<User>[] = await Promise.all(
-      Array.from(Array(5)).map(async (_value, idx) => {
-        return {
-          username: `Bichard0${idx}`,
-          visibleForces: [`0${idx}`],
-          forenames: "Bichard Test User",
-          surname: `0${idx}`,
-          email: `bichard0${idx}@example.com`,
-          password:
-            "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
-        }
-      })
-    )
+describe("Case details", () => {
+  context("720p resolution", () => {
+    const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
+      return {
+        username: `Bichard0${idx}`,
+        visibleForces: [`0${idx}`],
+        forenames: "Bichard Test User",
+        surname: `0${idx}`,
+        email: `bichard0${idx}@example.com`,
+        password: hashedPassword
+      }
+    })
 
     beforeEach(() => {
       cy.task("clearCourtCases")

@@ -1,3 +1,5 @@
+import hashedPassword from "../fixtures/hashedPassword"
+
 describe("Home", () => {
   context("720p resolution", () => {
     beforeEach(() => {
@@ -37,8 +39,7 @@ describe("Home", () => {
             forenames: "Bichard Test User",
             surname: `01`,
             email: `bichard01@example.com`,
-            password:
-              "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
+            password: hashedPassword
           }
         ])
         cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7UserManager_grp" })
