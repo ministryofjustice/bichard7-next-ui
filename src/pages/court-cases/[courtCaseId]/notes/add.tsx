@@ -82,7 +82,6 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
         <Heading as="h1" size="LARGE" aria-label="Add Note">
           <title>{"Add Note | Bichard7"}</title>
           <meta name="description" content="Add Note | Bichard7" />
-          <link rel="icon" href="/favicon.ico" />
         </Heading>
         <BackLink href={`${basePath}/court-cases/${courtCase.errorId}`} onClick={function noRefCheck() {}}>
           {"Case Details"}

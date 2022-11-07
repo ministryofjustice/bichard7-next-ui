@@ -146,7 +146,6 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         <Heading as="h1" size="LARGE" aria-label="Case details">
           <title>{"Case Details | Bichard7"}</title>
           <meta name="description" content="Case Details | Bichard7" />
-          <link rel="icon" href="/favicon.ico" />
         </Heading>
         <BackLink href={`${basePath}`} onClick={function noRefCheck() {}}>
           {"Cases"}
