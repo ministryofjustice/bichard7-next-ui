@@ -28,13 +28,17 @@ describe("Case list", () => {
     it("Should be accessible", () => {
       cy.visit("/bichard")
 
+      cy.get("button[id=filter-button]").click()
       cy.get("input[id=keywords]").type("Dummy")
       cy.get('[id="triggers-type"]').check()
       cy.get('[id="exceptions-type"]').check()
+
+      cy.injectAxe()
+      cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
+
       cy.get("button[id=search]").click()
 
       cy.injectAxe()
-
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
@@ -46,6 +50,7 @@ describe("Case list", () => {
 
       cy.visit("/bichard")
 
+      cy.get("button[id=filter-button]").click()
       cy.get("input[id=keywords]").type("Bruce Wayne")
 
       cy.get("button[id=search]").click()
@@ -88,6 +93,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`)
 
       // Filtering by having triggers
+      cy.get("button[id=filter-button]").click()
       cy.get('[id="triggers-type"]').check()
       cy.get("button[id=search]").click()
 
@@ -100,6 +106,7 @@ describe("Case list", () => {
 
       // Filtering by having exceptions
       cy.get('*[class^="moj-filter-tags"]').contains("Triggers").click() // Removing triggers filter tag
+      cy.get("button[id=filter-button]").click()
       cy.get('[id="exceptions-type"]').check()
       cy.get("button[id=search]").click()
 
@@ -111,6 +118,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00003`).should("not.exist")
 
       // Filter for both triggers and exceptions
+      cy.get("button[id=filter-button]").click()
       cy.get('[id="triggers-type"]').check()
       cy.get('[id="exceptions-type"]').check()
       cy.get("button[id=search]").click()
@@ -146,6 +154,7 @@ describe("Case list", () => {
 
       cy.visit("/bichard")
 
+      cy.get("button[id=filter-button]").click()
       cy.get("#is-urgent-filter").click()
       cy.get("button[id=search]").click()
 
@@ -164,6 +173,7 @@ describe("Case list", () => {
     it("Should clear filters", () => {
       cy.visit("/bichard")
 
+      cy.get("button[id=filter-button]").click()
       cy.get("input[id=keywords]").type("Dummy")
       cy.get('[id="triggers-type"]').check()
       cy.get('[id="exceptions-type"]').check()
