@@ -2,6 +2,7 @@ import Document, { Html, Head, Main, NextScript, DocumentContext, DocumentInitia
 import React from "react"
 import generateCsp from "utils/generateCsp"
 import generateNonce from "utils/generateNonce"
+import { basePath } from "../../next.config"
 
 const GovUkMetadata = () => {
   return (
@@ -15,28 +16,28 @@ const GovUkMetadata = () => {
       <link
         rel="shortcut icon"
         sizes="16x16 32x32 48x48"
-        href={`bichard/govuk_assets/images/favicon.ico`}
+        href={`${basePath}/govuk_assets/images/favicon.ico`}
         type="image/x-icon"
       />
-      <link rel="mask-icon" href={`bichard/govuk_assets/images/govuk-mask-icon.svg`} color="#0b0c0c" />
+      <link rel="mask-icon" href={`${basePath}/govuk_assets/images/govuk-mask-icon.svg`} color="#0b0c0c" />
       <link
         rel="apple-touch-icon"
         sizes="180x180"
-        href={`bichard/govuk_assets/images/govuk-apple-touch-icon-180x180.png`}
+        href={`${basePath}/govuk_assets/images/govuk-apple-touch-icon-180x180.png`}
       />
       <link
         rel="apple-touch-icon"
         sizes="167x167"
-        href={`bichard/govuk_assets/images/govuk-apple-touch-icon-167x167.png`}
+        href={`${basePath}/govuk_assets/images/govuk-apple-touch-icon-167x167.png`}
       />
       <link
         rel="apple-touch-icon"
         sizes="152x152"
-        href={`bichard/govuk_assets/images/govuk-apple-touch-icon-152x152.png`}
+        href={`${basePath}/govuk_assets/images/govuk-apple-touch-icon-152x152.png`}
       />
-      <link rel="apple-touch-icon" href={`bichard/govuk_assets/images/govuk-apple-touch-icon.png`} />
+      <link rel="apple-touch-icon" href={`${basePath}/govuk_assets/images/govuk-apple-touch-icon.png`} />
 
-      <meta property="og:image" content={`bichard/govuk_assets/images/govuk-opengraph-image.png`} />
+      <meta property="og:image" content={`${basePath}/govuk_assets/images/govuk-opengraph-image.png`} />
     </>
   )
 }
