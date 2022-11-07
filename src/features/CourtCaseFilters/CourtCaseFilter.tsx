@@ -9,7 +9,7 @@ interface Props {
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) => {
   return (
     <form method={"get"}>
-      <div className="moj-filter">
+      <div className="moj-filter moj-hidden">
         <div className="moj-filter__header">
           <div className="moj-filter__header-title">
             <h2 className="govuk-heading-m">{"Filter"}</h2>
