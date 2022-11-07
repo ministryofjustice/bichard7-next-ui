@@ -1,3 +1,5 @@
+import hashedPassword from "../fixtures/hashedPassword"
+
 describe("GOV.UK Assets", () => {
   beforeEach(() => {
     cy.viewport(1280, 720)
@@ -11,8 +13,7 @@ describe("GOV.UK Assets", () => {
         forenames: "Bichard Test User",
         surname: "01",
         email: "bichard01@example.com",
-        password:
-          "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
+        password: hashedPassword
       }
     ])
     cy.login("bichard01@example.com", "password")

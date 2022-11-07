@@ -26,7 +26,7 @@ const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: 
       <If condition={hasAnyAppliedFilters()}>
         <ul key={"applied-filters"} className="moj-filter-tags">
           <li>
-            <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Applied filters:"}</h3>
+            <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Filters applied:"}</h3>
           </li>
           {courtCaseTypes.map((t) => {
             return (
@@ -47,6 +47,13 @@ const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: 
               <FilterTag tag={"Urgent"} href={removeQueryParamFromPath({ urgency: "Urgent" })} />
             </li>
           </If>
+          <li>
+            <p className="moj-filter__heading-action" id="clear-filters-applied">
+              <a className="govuk-link govuk-link--no-visited-state" href="/bichard">
+                {"Clear filters"}
+              </a>
+            </p>
+          </li>
         </ul>
       </If>
     </div>

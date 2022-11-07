@@ -3,6 +3,7 @@ import { differenceInMinutes, parse } from "date-fns"
 import User from "services/entities/User"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 import a11yConfig from "../../support/a11yConfig"
+import hashedPassword from "../../fixtures/hashedPassword"
 
 describe("Case details", () => {
   context("720p resolution", () => {
@@ -13,8 +14,7 @@ describe("Case details", () => {
         forenames: "Bichard Test User",
         surname: `0${idx}`,
         email: `bichard0${idx}@example.com`,
-        password:
-          "$argon2id$v=19$m=256,t=20,p=2$TTFCN3BRcldZVUtGejQ3WE45TGFqPT0$WOE+jDILDnVIAt1dytb+h65uegrMomp2xb0Q6TxbkLA"
+        password: hashedPassword
       }
     })
 
