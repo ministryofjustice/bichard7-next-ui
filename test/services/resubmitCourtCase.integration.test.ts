@@ -15,7 +15,7 @@ jest.mock("services/insertNotes")
 jest.setTimeout(60 * 60 * 1000)
 
 describe("resubmit court case", () => {
-  const userName = "Bichard01"
+  const userName = "UserName"
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -65,7 +65,7 @@ describe("resubmit court case", () => {
     expect(sendToQueue).toHaveBeenCalledTimes(1)
     expect(insertNotes).toHaveBeenCalledTimes(1)
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
-      { errorId: inputCourtCase.errorId, noteText: "Bichard01: Portal Action: Resubmitted Message.", userId: "System" }
+      { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
     ])
     expect(retrievedCase?.updatedHearingOutcome).toEqual(offenceSequenceException.updatedHearingOutcomeXml)
     expect(retrievedCase?.hearingOutcome).toEqual(offenceSequenceException.hearingOutcomeXml)
