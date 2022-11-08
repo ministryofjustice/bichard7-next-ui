@@ -1,7 +1,7 @@
 import hashedPassword from "../fixtures/hashedPassword"
 
 describe("GOV.UK Assets", () => {
-  beforeEach(() => {
+  before(() => {
     cy.viewport(1280, 720)
     cy.task("clearCourtCases")
     cy.task("clearUsers")
@@ -28,7 +28,7 @@ describe("GOV.UK Assets", () => {
       .should("have.attr", "image", "[object Object]")
   })
 
-  it.only("should provide favicon icon that loads correctly", () => {
+  it("should provide favicon icon that loads correctly", () => {
     cy.visit("/bichard")
     cy.get("link[rel='shortcut icon']")
       .should("have.attr", "href")
