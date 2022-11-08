@@ -6,16 +6,18 @@ describe("GOV.UK Assets", () => {
     cy.task("clearCourtCases")
     cy.task("clearUsers")
 
-    cy.task("insertUsers", [
-      {
-        username: "Bichard01",
-        visibleForces: ["01"],
-        forenames: "Bichard Test User",
-        surname: "01",
-        email: "bichard01@example.com",
-        password: hashedPassword
-      }
-    ])
+    cy.task("insertUsers", {
+      users: [
+        {
+          username: "Bichard01",
+          visibleForces: ["01"],
+          forenames: "Bichard Test User",
+          surname: "01",
+          email: "bichard01@example.com",
+          password: hashedPassword
+        }
+      ]
+    })
     cy.login("bichard01@example.com", "password")
   })
 

@@ -19,7 +19,7 @@ describe("Case details", () => {
 
     before(() => {
       cy.task("clearUsers")
-      cy.task("insertUsers", users)
+      cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
       cy.clearCookies()
       cy.viewport(1280, 720)
     })
