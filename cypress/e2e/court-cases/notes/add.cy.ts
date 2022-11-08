@@ -17,12 +17,15 @@ describe("Case details", () => {
       }
     })
 
-    beforeEach(() => {
-      cy.task("clearCourtCases")
+    before(() => {
       cy.task("clearUsers")
       cy.task("insertUsers", users)
       cy.clearCookies()
       cy.viewport(1280, 720)
+    })
+
+    beforeEach(() => {
+      cy.task("clearCourtCases")
     })
 
     it("should be accessible", () => {
