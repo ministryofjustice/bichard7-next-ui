@@ -15,6 +15,7 @@ import { ParsedUrlQuery } from "querystring"
 import listCourtCases from "services/listCourtCases"
 import type CourtCase from "services/entities/CourtCase"
 import { Heading } from "govuk-react"
+import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
 
 interface Props {
   user: User
@@ -99,16 +100,12 @@ const Home: NextPage<Props> = ({
       <Heading as="h1" size="LARGE">
         {"Court cases"}
       </Heading>
-      <div className="govuk-grid-row">
-        <div className={"govuk-grid-column-one-third"}>
-          <CourtCaseFilter courtCaseTypes={courtCaseTypes} urgency={urgentFilter} />
-        </div>
-        <div className={"govuk-grid-column-two-thirds"}>
-          <AppliedFilters courtCaseTypes={courtCaseTypes} keywords={keywords} urgency={urgentFilter} />
-          <CourtCaseList courtCases={courtCases} order={order} />
-          <Pagination totalPages={totalPages} pageNum={pageNum} />
-        </div>
-      </div>
+      <CourtCaseWrapper
+        filter={<CourtCaseFilter courtCaseTypes={courtCaseTypes} urgency={urgentFilter} />}
+        appliedFilters={<AppliedFilters courtCaseTypes={courtCaseTypes} keywords={keywords} urgency={urgentFilter} />}
+        courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
+        pagination={<Pagination totalPages={totalPages} pageNum={pageNum} />}
+      />
     </Layout>
   </>
 )
