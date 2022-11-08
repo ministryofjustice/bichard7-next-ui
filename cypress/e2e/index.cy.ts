@@ -149,13 +149,11 @@ describe("Case list", () => {
         cy.login("bichard011111@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr")
-          .not(":first")
-          .each((row, index) => {
-            cy.wrap(row)
-              .get("td:nth-child(2)")
-              .contains(`Case0000${index + 2}`)
-          })
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains("Case00000").should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains("Case00001").should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains("Case00002")
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains("Case00003")
+        cy.get("tr").not(":first").get("td:nth-child(2)").contains("Case00004")
       })
 
       it("can display cases ordered by court name", () => {
