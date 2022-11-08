@@ -21,7 +21,7 @@ export default defineConfig({
   e2e: {
     experimentalSessionAndOrigin: true,
     baseUrl: "http://localhost:4080", // Default value: We can override this in package.json
-    setupNodeEvents(on, _config) {
+    setupNodeEvents(on, _) {
       const pgp = pgPromise()
       const db = pgp("postgres://bichard:password@localhost:5432/bichard")
 
@@ -95,8 +95,8 @@ export default defineConfig({
           return deleteFromTable(CourtCase)
         },
 
-        insertUsers(users: Partial<User>[]) {
-          return insertUsersWithOverrides(users)
+        insertUsers(params: { users: Partial<User>[]; userGroups?: string[] }) {
+          return insertUsersWithOverrides(params.users, params.userGroups)
         },
 
         clearUsers() {

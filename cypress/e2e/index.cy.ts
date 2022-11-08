@@ -26,7 +26,7 @@ describe("Case list", () => {
 
     before(() => {
       cy.task("clearUsers")
-      cy.task("insertUsers", defaultUsers)
+      cy.task("insertUsers", { user: defaultUsers, userGroups: ["B7NewUI_grp"] })
     })
 
     beforeEach(() => {
@@ -35,9 +35,9 @@ describe("Case list", () => {
     })
 
     context("when there are 0 cases", () => {
-      it("should display 0 cases and the user's username when no cases are added", () => {
+      it.only("should display 0 cases and the user's username when no cases are added", () => {
         const userEmail = "bichard01@example.com"
-        cy.task("insertIntoUserGroup", { emailAddress: userEmail, groupName: "B7NewUI_grp" })
+        // cy.task("insertIntoUserGroup", { emailAddress: userEmail, groupName: "B7NewUI_grp" })
         cy.login(userEmail, "password")
 
         cy.visit("/bichard")
