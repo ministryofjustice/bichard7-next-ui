@@ -18,12 +18,18 @@ describe("Case details", () => {
       }
     })
 
-    beforeEach(() => {
+    before(() => {
       cy.task("clearCourtCases")
       cy.task("clearUsers")
       cy.task("insertUsers", users)
+      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
+      cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7GeneralHandler_grp" })
       cy.clearCookies()
       cy.viewport(1280, 720)
+    })
+
+    beforeEach(() => {
+      cy.task("clearCourtCases")
     })
 
     it("should be accessible", () => {
@@ -57,7 +63,6 @@ describe("Case details", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
-      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
 
       cy.login("bichard01@example.com", "password")
 
@@ -143,32 +148,27 @@ describe("Case details", () => {
     it("should redirect to the user-service if the auth token provided is for a non-existent user", () => {
       cy.login("bichard01@example.com", "password")
       cy.clearCookies()
+      cy.visit("/bichard/court-cases/0")
 
-      cy.request({
-        failOnStatusCode: false,
-        url: "/court-cases/1"
-      }).then(() => {
-        cy.url().should("match", /\/users/)
-      })
+      cy.url().should("match", /\/users/)
     })
 
     it("should lock a case when a user views a case details page", () => {
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgCodes: ["01"],
+        orgCodes: ["02"],
         errorCount: 1,
         triggerCount: 1
       })
 
-      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
-      cy.login("bichard01@example.com", "password")
+      cy.login("bichard02@example.com", "password")
       cy.visit("/bichard/court-cases/0")
 
       cy.findByText("Lock Court Case").click()
       cy.findByText("Case locked by another user").should("not.exist")
-      cy.findByText("Trigger locked by: Bichard01").should("exist")
-      cy.findByText("Error locked by: Bichard01").should("exist")
+      cy.findByText("Trigger locked by: Bichard02").should("exist")
+      cy.findByText("Error locked by: Bichard02").should("exist")
     })
 
     it("should not lock a court case when its already locked", () => {
@@ -193,11 +193,10 @@ describe("Case details", () => {
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedByUsername: existingUserLock,
         triggerLockedByUsername: existingUserLock,
-        orgCodes: ["01"]
+        orgCodes: ["02"]
       })
-      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
 
-      cy.login("bichard01@example.com", "password")
+      cy.login("bichard02@example.com", "password")
       cy.visit("/bichard/court-cases/0")
       cy.findByText("Case locked by another user").should("exist")
       cy.findByText("Trigger locked by: Another name").should("exist")
@@ -210,16 +209,16 @@ describe("Case details", () => {
 
       cy.findByText("Lock Court Case").click()
       cy.findByText("Case locked by another user").should("not.exist")
-      cy.findByText("Trigger locked by: Bichard01").should("exist")
-      cy.findByText("Error locked by: Bichard01").should("exist")
+      cy.findByText("Trigger locked by: Bichard02").should("exist")
+      cy.findByText("Error locked by: Bichard02").should("exist")
     })
 
     it("should resolve a trigger after clicking the button", () => {
-      const user = "Bichard01"
+      const userWithGeneralHandlerPermission = "Bichard02"
       cy.task("insertDummyCourtCaseWithLock", {
-        errorLockedByUsername: user,
-        triggerLockedByUsername: user,
-        orgCodes: ["01"]
+        errorLockedByUsername: userWithGeneralHandlerPermission,
+        triggerLockedByUsername: userWithGeneralHandlerPermission,
+        orgCodes: ["02"]
       })
       const triggers: TestTrigger[] = [
         {
@@ -230,18 +229,17 @@ describe("Case details", () => {
         }
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
-      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
 
-      cy.login("bichard01@example.com", "password")
+      cy.login("bichard02@example.com", "password")
       cy.visit("/bichard/court-cases/0")
-      cy.findByText(`Trigger locked by: ${user}`).should("exist")
-      cy.findByText(`Error locked by: ${user}`).should("exist")
+      cy.findByText(`Trigger locked by: ${userWithGeneralHandlerPermission}`).should("exist")
+      cy.findByText(`Error locked by: ${userWithGeneralHandlerPermission}`).should("exist")
 
       cy.get("button").contains("Resolve trigger").click()
       cy.get("table")
         .eq(-1)
         .then((table) => {
-          expect(table.find("td").eq(2).text()).to.equal(user)
+          expect(table.find("td").eq(2).text()).to.equal(userWithGeneralHandlerPermission)
           const resolutionTime = parse(table.find("td").eq(3).text(), "dd/MM/yyyy HH:mm:ss", new Date())
           const minsSinceResolved = differenceInMinutes(new Date(), resolutionTime)
           expect(minsSinceResolved).to.be.at.least(0)
@@ -253,11 +251,10 @@ describe("Case details", () => {
       cy.task("insertDummyCourtCaseWithLock", {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgCodes: ["01"]
+        orgCodes: ["02"]
       })
 
-      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
-      cy.login("bichard01@example.com", "password")
+      cy.login("bichard02@example.com", "password")
 
       cy.visit("/bichard/court-cases/0")
 
@@ -275,7 +272,7 @@ describe("Case details", () => {
         .eq(0)
         .find("td")
         .last()
-        .should("have.text", "Bichard01: Portal Action: Resubmitted Message.")
+        .should("have.text", "Bichard02: Portal Action: Resubmitted Message.")
     })
   })
 })
