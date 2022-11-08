@@ -20,11 +20,20 @@ const login = ({ emailAddress, password }: { emailAddress: string; password: str
 }
 
 Cypress.Commands.add("login", (emailAddress, password) => {
-  cy.session([emailAddress, password], () => {
-    cy.intercept("GET", "http://bichard7.service.justice.gov.uk/forces.js?forceID=***", {})
+  cy.session(
+    [emailAddress, password],
+    () => {
+      cy.intercept("GET", "http://bichard7.service.justice.gov.uk/forces.js?forceID=***", {})
 
-    login({ emailAddress, password })
-  })
+      login({ emailAddress, password })
+    },
+    {
+      validate() {
+        cy.visit("/bichard")
+        cy.get("a.moj-header__navigation-link").eq(1).should("have.text", "Sign out")
+      }
+    }
+  )
 })
 
 declare global {
