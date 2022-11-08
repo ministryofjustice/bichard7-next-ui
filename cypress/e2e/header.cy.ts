@@ -10,18 +10,20 @@ describe("Home", () => {
 
     context("top-nav", () => {
       it("as a user that is not part of the 'UserManager' group, I should have access to these nav items", () => {
-        cy.task("insertUsers", [
-          {
-            username: `generalhandler2`,
-            visibleForces: [`01`],
-            forenames: "Bichard Test User",
-            surname: `01`,
-            email: `generalhandler2@example.com`,
-            password:
-              "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw"
-          }
-        ])
-        cy.task("insertIntoUserGroup", { emailAddress: "generalhandler2@example.com", groupName: "B7NewUI_grp" })
+        cy.task("insertUsers", {
+          users: [
+            {
+              username: `generalhandler2`,
+              visibleForces: [`01`],
+              forenames: "Bichard Test User",
+              surname: `01`,
+              email: `generalhandler2@example.com`,
+              password:
+                "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw"
+            }
+          ],
+          userGroups: ["B7NewUI_grp"]
+        })
         cy.login("generalhandler2@example.com", "password")
         cy.visit("/bichard")
 
@@ -32,17 +34,19 @@ describe("Home", () => {
       })
 
       it("as a user who is part of the 'UserManager' group, I should have access to these nav items", () => {
-        cy.task("insertUsers", [
-          {
-            username: `Bichard01`,
-            visibleForces: [`01`],
-            forenames: "Bichard Test User",
-            surname: `01`,
-            email: `bichard01@example.com`,
-            password: hashedPassword
-          }
-        ])
-        cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7UserManager_grp" })
+        cy.task("insertUsers", {
+          users: [
+            {
+              username: `Bichard01`,
+              visibleForces: [`01`],
+              forenames: "Bichard Test User",
+              surname: `01`,
+              email: `bichard01@example.com`,
+              password: hashedPassword
+            }
+          ],
+          userGroups: ["B7UserManager_grp"]
+        })
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 

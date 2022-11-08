@@ -33,7 +33,7 @@ const resubmitCourtCase = async (
 
       const addNoteResult = await insertNotes(entityManager, [
         {
-          noteText: "Bichard01: Portal Action: Resubmitted Message.",
+          noteText: `${currentUser.username}: Portal Action: Resubmitted Message.`,
           errorId: courtCaseId,
           userId: "System"
         }

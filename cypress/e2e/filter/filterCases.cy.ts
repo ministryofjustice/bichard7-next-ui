@@ -7,16 +7,19 @@ describe("Case list", () => {
   context("When filters applied", () => {
     before(() => {
       cy.task("clearUsers")
-      cy.task("insertUsers", [
-        {
-          username: "Bichard01",
-          visibleForces: ["011111"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ])
+      cy.task("insertUsers", {
+        users: [
+          {
+            username: "Bichard01",
+            visibleForces: ["011111"],
+            forenames: "Bichard Test User",
+            surname: "01",
+            email: "bichard01@example.com",
+            password: hashedPassword
+          }
+        ],
+        userGroups: ["B7NewUI_grp"]
+      })
     })
 
     beforeEach(() => {
