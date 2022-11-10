@@ -45,7 +45,7 @@ describe("Case list", () => {
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
-    it("Should display cases filtered by defendant name", () => {
+    it.only("Should display cases filtered by defendant name", () => {
       cy.task("insertCourtCasesWithDefendantNames", {
         defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"],
         force: "011111"
@@ -71,12 +71,13 @@ describe("Case list", () => {
     })
 
     it.only("Should display today's cases when filtered by courtDate today radio button", () => {
-      const orgCode = "36FPA1"
-      const todayDate = new Date("2022-10-10")
+      const orgCode = "011111"
+      const todayDate = new Date("2022-10-9")
       const firstDate = new Date("2001-09-26")
       const secondDate = new Date("2008-01-26")
       const thirdDate = new Date("2008-03-26")
       const fourthDate = new Date("2013-10-16")
+      cy.clock(todayDate)
       cy.task("insertCourtCasesWithCourtDates", {
         courtDate: [todayDate, firstDate, secondDate, thirdDate, fourthDate],
         orgCode
@@ -85,7 +86,7 @@ describe("Case list", () => {
       cy.visit("/bichard")
 
       cy.get("button[id=filter-button]").click()
-      cy.get("#is-today-filter").click()
+      cy.get("#cases-for-today").click()
       cy.get("button[id=search]").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
@@ -95,7 +96,7 @@ describe("Case list", () => {
           cy.wrap(row).contains("2022-10-10").should("exist")
         })
 
-      cy.get('*[class^="moj-filter-tags"]').contains("2022-10-10").click()
+      cy.get('*[class^="moj-filter-tags"]').contains("2022-10-9").click()
       cy.get("tr").contains("Case00001").should("exist")
     })
 

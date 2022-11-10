@@ -60,8 +60,8 @@ export default defineConfig({
           return insertMultipleDummyCourtCases(params.numToInsert, params.force)
         },
 
-        insertCourtCasesWithCourtDates(params: { courtDate: Date[]; force: string }) {
-          return insertCourtCasesWithCourtDates(params.courtDate, params.force)
+        insertCourtCasesWithCourtDates(params: { courtDate: Date[]; orgCode: string }) {
+          return insertCourtCasesWithCourtDates(params.courtDate, params.orgCode)
         },
 
         insertCourtCasesWithCourtNames(params: { courtNames: string[]; orgCode: string }) {
