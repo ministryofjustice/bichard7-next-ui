@@ -70,6 +70,35 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth")
     })
 
+    it.only("Should display today's cases when filtered by courtDate today radio button", () => {
+      const orgCode = "36FPA1"
+      const todayDate = new Date("2022-10-10")
+      const firstDate = new Date("2001-09-26")
+      const secondDate = new Date("2008-01-26")
+      const thirdDate = new Date("2008-03-26")
+      const fourthDate = new Date("2013-10-16")
+      cy.task("insertCourtCasesWithCourtDates", {
+        courtDate: [todayDate, firstDate, secondDate, thirdDate, fourthDate],
+        orgCode
+      })
+
+      cy.visit("/bichard")
+
+      cy.get("button[id=filter-button]").click()
+      cy.get("#is-today-filter").click()
+      cy.get("button[id=search]").click()
+
+      cy.get("tr").not(":first").should("have.length", 1)
+      cy.get("tr")
+        .not(":first")
+        .each((row) => {
+          cy.wrap(row).contains("2022-10-10").should("exist")
+        })
+
+      cy.get('*[class^="moj-filter-tags"]').contains("2022-10-10").click()
+      cy.get("tr").contains("Case00001").should("exist")
+    })
+
     it("Should filter cases by whether they have triggers and exceptions", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["011111", "011111", "011111", "011111"])
       const triggers: TestTrigger[] = [
