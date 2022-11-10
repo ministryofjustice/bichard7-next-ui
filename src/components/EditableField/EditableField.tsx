@@ -10,7 +10,7 @@ const EditableField: React.FC<{
   amendFn: (newValue: string) => void
 }> = ({ aho, objPath, amendFn }) => {
   const result: ExceptionCode | null = isException(aho, objPath)
-  const value = get(aho, objPath, "").toString()
+  const value = (get(aho, objPath, "") ?? "").toString() // object is returned for dates
 
   return Boolean(result) ? (
     <InputField

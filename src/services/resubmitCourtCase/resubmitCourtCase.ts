@@ -3,6 +3,8 @@ import User from "services/entities/User"
 import tryToLockCourtCase from "services/tryToLockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
 import { DataSource } from "typeorm"
+import sendToQueue from "services/mq/sendToQueue"
+import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/build/src/serialise/ahoXml/generate"
 import { isError } from "types/Result"
 
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
@@ -18,45 +20,61 @@ const resubmitCourtCase = async (
   currentUser: User
 ): PromiseResult<AnnotatedHearingOutcome | Error> => {
   try {
-    return await dataSource.transaction("SERIALIZABLE", async (entityManager) => {
-      const lockResult = await tryToLockCourtCase(entityManager, +courtCaseId, currentUser)
+    const lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser)
 
-      if (isError(lockResult)) {
-        throw lockResult
-      }
+    if (isError(lockResult)) {
+      throw lockResult
+    }
 
-      const amendedCourtCase = await amendCourtCase(form, courtCaseId, currentUser, entityManager)
+    const courtCase = await dataSource.transaction(
+      "SERIALIZABLE",
+      async (entityManager): Promise<AnnotatedHearingOutcome | Error> => {
+        const amendedCourtCase = await amendCourtCase(entityManager, form, courtCaseId, currentUser)
 
-      if (isError(amendedCourtCase)) {
-        throw amendedCourtCase
-      }
-
-      const addNoteResult = await insertNotes(entityManager, [
-        {
-          noteText: `${currentUser.username}: Portal Action: Resubmitted Message.`,
-          errorId: courtCaseId,
-          userId: "System"
+        if (isError(amendedCourtCase)) {
+          throw amendedCourtCase
         }
-      ])
 
-      if (isError(addNoteResult)) {
-        throw addNoteResult
+        const addNoteResult = await insertNotes(entityManager, [
+          {
+            noteText: `${currentUser.username}: Portal Action: Resubmitted Message.`,
+            errorId: courtCaseId,
+            userId: "System"
+          }
+        ])
+
+        if (isError(addNoteResult)) {
+          throw addNoteResult
+        }
+
+        const statusResult = await updateCourtCaseStatus(entityManager, +courtCaseId, "Error", "Submitted", currentUser)
+
+        if (isError(statusResult)) {
+          return statusResult
+        }
+
+        const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, currentUser)
+
+        if (isError(unlockResult)) {
+          throw unlockResult
+        }
+
+        return amendedCourtCase
       }
+    )
 
-      const statusResult = await updateCourtCaseStatus(entityManager, +courtCaseId, "Error", "Submitted", currentUser)
+    if (isError(courtCase)) {
+      throw courtCase
+    }
 
-      if (isError(statusResult)) {
-        return statusResult
-      }
+    const generatedXml = convertAhoToXml(courtCase, false)
+    const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: "HEARING_OUTCOME_INPUT_QUEUE" })
 
-      const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, currentUser)
+    if (isError(queueResult)) {
+      return queueResult
+    }
 
-      if (isError(unlockResult)) {
-        throw unlockResult
-      }
-
-      return amendedCourtCase
-    })
+    return courtCase
   } catch (err) {
     return isError(err)
       ? err

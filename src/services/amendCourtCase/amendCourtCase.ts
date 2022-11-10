@@ -11,13 +11,12 @@ import applyAmendmentsToAho from "./applyAmendmentsToAho"
 
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import type User from "../entities/User"
-import sendToQueue from "services/mq/sendToQueue"
 
 const amendCourtCase = async (
+  dataSource: DataSource | EntityManager,
   amendments: Partial<Amendments>,
   courtCaseId: number,
-  userDetails: User,
-  dataSource: DataSource | EntityManager
+  userDetails: User
 ): Promise<AnnotatedHearingOutcome | Error> => {
   // database call to retrieve the current court case
   // Check current court case exception and triggers are locked by current user
@@ -33,6 +32,7 @@ const amendCourtCase = async (
 
   // we need to parse the annotated message due to being xml in db
   const aho = parseAhoXml(courtCaseRow.updatedHearingOutcome ?? courtCaseRow.hearingOutcome)
+
   if (isError(aho)) {
     return aho
   }
@@ -46,24 +46,22 @@ const amendCourtCase = async (
     }
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner = organisationUnitCodes
   }
-  const updatedAho = applyAmendmentsToAho(amendments, aho) // this fn returns the aho
+  const updatedAho = applyAmendmentsToAho(amendments, aho)
 
-  const generatedXml = convertAhoToXml(aho)
+  const generatedXml = convertAhoToXml(aho, false)
+
   // Depending on the phase, treat the update as either hoUpdate or pncUpdate
   if (courtCaseRow.phase === Phase.HEARING_OUTCOME) {
-    if (!amendments.noUpdatesResubmit || ahoForceOwner === undefined) {
-      if (courtCaseRow.errorLockedByUsername === userDetails.username || courtCaseRow.errorLockedByUsername === null) {
-        // TODO: Double check this logic when implementing updates (ScreenFlowImpl -> line 647)
-        const updateResult = await updateCourtCaseAho(dataSource, courtCaseId, generatedXml)
-        if (isError(updateResult)) {
-          return updateResult
-        }
+    if (courtCaseRow.errorLockedByUsername === userDetails.username || courtCaseRow.errorLockedByUsername === null) {
+      const updateResult = await updateCourtCaseAho(
+        dataSource,
+        courtCaseId,
+        generatedXml,
+        !amendments.noUpdatesResubmit
+      )
+      if (isError(updateResult)) {
+        return updateResult
       }
-    }
-    const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: "HEARING_OUTCOME_INPUT_QUEUE" })
-
-    if (isError(queueResult)) {
-      return queueResult
     }
   } else {
     // TODO: Cover PNC update phase

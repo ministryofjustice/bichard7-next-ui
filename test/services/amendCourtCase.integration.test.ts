@@ -57,7 +57,7 @@ describe("amend court case", () => {
 
     expect(inputCourtCase.hearingOutcome).toBe(DummyAho.hearingOutcomeXml)
 
-    const result = await amendCourtCase({}, inputCourtCase.errorId, { username: userName } as User, dataSource)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -83,7 +83,7 @@ describe("amend court case", () => {
 
     expect(inputCourtCase.hearingOutcome).toBe(DummyAho.hearingOutcomeXml)
 
-    const result = await amendCourtCase({}, inputCourtCase.errorId, { username: userName } as User, dataSource)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -109,7 +109,7 @@ describe("amend court case", () => {
 
     expect(inputCourtCase.hearingOutcome).toBe(DummyAho.hearingOutcomeXml)
 
-    const result = await amendCourtCase({}, inputCourtCase.errorId, { username: userName } as User, dataSource)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -136,7 +136,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase({}, inputCourtCase.errorId, { username: userName } as User, dataSource)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
 
     expect(createForceOwner).toHaveBeenCalledTimes(1)
     expect(updateCourtCaseAho).toHaveBeenCalledTimes(1)
@@ -155,12 +155,9 @@ describe("amend court case", () => {
       phase: 1
     })
 
-    const result = await amendCourtCase(
-      { noUpdatesResubmit: true },
-      inputCourtCase.errorId,
-      { username: userName } as User,
-      dataSource
-    )
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
+      username: userName
+    } as User)
 
     expect(result).toEqual(Error(`Failed to get court case`))
   })
@@ -168,10 +165,10 @@ describe("amend court case", () => {
   it("should return an error if produce an error getting the court case", async () => {
     ;(getCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Failed to get court case`))
     const result = await amendCourtCase(
+      dataSource,
       { noUpdatesResubmit: true },
       "random" as unknown as number,
-      { username: userName } as User,
-      dataSource
+      { username: userName } as User
     )
     expect(result).toEqual(Error(`Failed to get court case`))
   })
@@ -190,12 +187,9 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(
-      { noUpdatesResubmit: true },
-      inputCourtCase.errorId,
-      { username: userName } as User,
-      dataSource
-    )
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
+      username: userName
+    } as User)
     expect(result).toEqual(Error(`Failed to parse aho`))
   })
 
@@ -213,7 +207,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase({}, inputCourtCase.errorId, { username: userName } as User, dataSource)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
 
     expect(result).toEqual(Error("Failed to update the database"))
   })
@@ -235,7 +229,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase({}, inputCourtCase.errorId, { username: userName } as User, dataSource)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
 
     expect(createForceOwner).toHaveBeenCalledTimes(1)
     expect(result).toEqual(Error("Failed to create organistaion unit codes"))
