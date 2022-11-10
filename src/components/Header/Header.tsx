@@ -42,7 +42,7 @@ const Header: React.FC<HeaderProps> = ({ organisationName, serviceName, userName
                 </li>
                 <li className="moj-header__navigation-item">
                   {/* TODO: Link to userService */}
-                  <a className="moj-header__navigation-link" href="/">
+                  <a className="moj-header__navigation-link" href="users/logout">
                     {"Sign out"}
                   </a>
                 </li>
