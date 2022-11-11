@@ -91,6 +91,7 @@ fi
       ## Run Trivy scan
       TRIVY_CACHE_DIR=trivy trivy image \
         --exit-code 1 \
+        --ignorefile scripts/.trivyignore \
         --severity "CRITICAL" \
         --skip-update "ui:latest" # we have the most recent db pulled locally
 

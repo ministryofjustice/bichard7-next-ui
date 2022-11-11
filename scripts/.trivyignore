@@ -1,0 +1,3 @@
+# loader-utils pkg has a vulnerability in which hasn't been fixed in v16.18.1 wait for it to be updated upstream
+CVE-2022-37601
+
