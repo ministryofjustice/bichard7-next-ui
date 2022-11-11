@@ -12,7 +12,6 @@ const unlockCourtCase = async (
   const setFields: QueryDeepPartialEntity<CourtCase> = {}
   const { canLockExceptions, canLockTriggers, username } = user
 
-  // TODO: Allow user to unlock error and triggers separately
   const query = courtCaseRepository
     .createQueryBuilder()
     .update(CourtCase)

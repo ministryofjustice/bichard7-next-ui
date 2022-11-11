@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@ministryofjustice/frontend": "^1.6.0",
-    "@moj-bichard7-developers/bichard7-next-core": "^1.1.6",
+    "@moj-bichard7-developers/bichard7-next-core": "^1.1.7",
     "@types/lodash.clonedeep": "^4.5.7",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
     "date-fns": "^2.29.3",

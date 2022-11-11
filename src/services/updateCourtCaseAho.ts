@@ -4,7 +4,8 @@ import CourtCase from "./entities/CourtCase"
 const updateCourtCaseAho = async (
   dataSource: DataSource | EntityManager,
   courtCaseId: number,
-  updatedHo: string
+  updatedHo: string,
+  userUpdated: boolean
 ): Promise<UpdateResult | Error> => {
   const courtCaseRepository = dataSource.getRepository(CourtCase)
 
@@ -13,8 +14,8 @@ const updateCourtCaseAho = async (
       .createQueryBuilder()
       .update(CourtCase)
       .set({
-        hearingOutcome: updatedHo,
-        userUpdatedFlag: 1
+        updatedHearingOutcome: updatedHo,
+        userUpdatedFlag: userUpdated ? 1 : 0
       })
       .where("error_id = :id", { id: courtCaseId })
       .returning("*")
