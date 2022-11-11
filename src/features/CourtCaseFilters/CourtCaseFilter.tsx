@@ -68,6 +68,59 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
             </fieldset>
           </div>
           <div className="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Court Date"}</legend>
+              <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                <div class="govuk-radios__item">
+                  <input
+                    class="govuk-radios__input"
+                    id="court-date"
+                    name="court-date"
+                    type="radio"
+                    data-aria-controls="conditional-contact"
+                  />
+                  <label class="govuk-label govuk-radios__label" for="contact">
+                    {"Date Range"}
+                  </label>
+                </div>
+                <div class="govuk-radios__conditional" id="conditional-contact">
+                  <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                    <div class="govuk-radios__item">
+                      <input
+                        class="govuk-radios__input"
+                        id="date-range-today"
+                        name="date-range"
+                        type="radio"
+                        value="today"
+                      />
+                      <label class="govuk-label govuk-radios__label" for="date-range-today">
+                        {"Today"}
+                      </label>
+                    </div>
+                    <div class="govuk-radios__item">
+                      <input
+                        class="govuk-radios__input"
+                        id="date-range-yesterday"
+                        name="date-range"
+                        type="radio"
+                        value="yesterday"
+                      />
+                      <label class="govuk-label govuk-radios__label" for="date-range-yesterday">
+                        {"Yesterday"}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="custom-date-range" name="court-date" type="radio" value="" />
+                  <label class="govuk-label govuk-radios__label" for="custom-date-range">
+                    {"Custom date range"}
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          <div className="govuk-form-group">
             <fieldset className="govuk-fieldset">
               <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Urgency"}</legend>
               <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
