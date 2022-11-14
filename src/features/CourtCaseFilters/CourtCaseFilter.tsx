@@ -68,52 +68,58 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
             </fieldset>
           </div>
           <div className="govuk-form-group">
-            <fieldset class="govuk-fieldset">
+            <fieldset className="govuk-fieldset">
               <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Court Date"}</legend>
-              <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
-                <div class="govuk-radios__item">
+              <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                <div className="govuk-radios__item">
                   <input
-                    class="govuk-radios__input"
-                    id="court-date"
-                    name="court-date"
+                    className="govuk-radios__input"
+                    id="date-range"
+                    name="date-range"
                     type="radio"
                     data-aria-controls="conditional-contact"
                   />
-                  <label class="govuk-label govuk-radios__label" for="contact">
+                  <label className="govuk-label govuk-radios__label" htmlFor="date-range">
                     {"Date Range"}
                   </label>
                 </div>
-                <div class="govuk-radios__conditional" id="conditional-contact">
-                  <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
-                    <div class="govuk-radios__item">
+                <div className="govuk-radios__conditional" id="conditional-contact">
+                  <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                    <div className="govuk-radios__item">
                       <input
-                        class="govuk-radios__input"
+                        className="govuk-radios__input"
                         id="date-range-today"
                         name="date-range"
                         type="radio"
                         value="today"
                       />
-                      <label class="govuk-label govuk-radios__label" for="date-range-today">
+                      <label className="govuk-label govuk-radios__label" htmlFor="date-range-today">
                         {"Today"}
                       </label>
                     </div>
-                    <div class="govuk-radios__item">
+                    <div className="govuk-radios__item">
                       <input
-                        class="govuk-radios__input"
+                        className="govuk-radios__input"
                         id="date-range-yesterday"
                         name="date-range"
                         type="radio"
                         value="yesterday"
                       />
-                      <label class="govuk-label govuk-radios__label" for="date-range-yesterday">
+                      <label className="govuk-label govuk-radios__label" htmlFor="date-range-yesterday">
                         {"Yesterday"}
                       </label>
                     </div>
                   </div>
                 </div>
-                <div class="govuk-radios__item">
-                  <input class="govuk-radios__input" id="custom-date-range" name="court-date" type="radio" value="" />
-                  <label class="govuk-label govuk-radios__label" for="custom-date-range">
+                <div className="govuk-radios__item">
+                  <input
+                    className="govuk-radios__input"
+                    id="custom-date-range"
+                    name="court-date"
+                    type="radio"
+                    value=""
+                  />
+                  <label className="govuk-label govuk-radios__label" htmlFor="custom-date-range">
                     {"Custom date range"}
                   </label>
                 </div>
