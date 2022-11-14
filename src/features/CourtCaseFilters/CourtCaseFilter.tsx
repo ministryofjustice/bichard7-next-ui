@@ -74,6 +74,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
                 <div className="govuk-radios__item">
                   <input
                     className="govuk-radios__input"
+                    name="courtDate"
                     id="date-range"
                     type="radio"
                     data-aria-controls="conditional-contact"
