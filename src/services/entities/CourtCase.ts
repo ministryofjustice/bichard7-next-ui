@@ -68,6 +68,7 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "user_updated_flag", type: "int2", nullable: true })
   userUpdatedFlag!: number | null
 
+  // TODO: only show Date part of this and not time-stamp
   @Column({ name: "court_date", type: "date", nullable: true, transformer: dateTransformer })
   courtDate!: Date | null
 

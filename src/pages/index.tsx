@@ -1,7 +1,7 @@
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { Filter, QueryOrder } from "types/CaseListQueryParams"
+import { CourtDateRange, Filter, QueryOrder } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import CourtCaseList from "features/CourtCaseList/CourtCaseList"
 import Layout from "components/Layout"
@@ -16,6 +16,7 @@ import listCourtCases from "services/listCourtCases"
 import type CourtCase from "services/entities/CourtCase"
 import { Heading } from "govuk-react"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
+import KeyValuePair from "types/KeyValuePair"
 
 interface Props {
   user: User
@@ -31,18 +32,21 @@ interface Props {
 const validateQueryParams = (param: string | string[] | undefined): param is string => typeof param === "string"
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
 const validCourtCaseTypes = ["Triggers", "Exceptions"]
-
+const validateDateRange = (dateRange: string): CourtDateRange | undefined => {
+  const options: KeyValuePair<string, CourtDateRange> = { today: { from: new Date(), to: new Date() } }
+  return options[dateRange]
+}
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, pageNum, type, keywords, maxPageItems, order, urgency } = query
+    const { orderBy, pageNum, type, keywords, maxPageItems, order, urgency, dateRange } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Filter[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
     const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
-
+    const validatedDateRange = validateQueryParams(dateRange) ? validateDateRange(dateRange) : undefined
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedUrgentFilter = validateQueryParams(urgency) && urgency !== ""
 
@@ -55,7 +59,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       maxPageItems: validatedMaxPageItems,
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
-      order: validatedOrder
+      order: validatedOrder,
+      courtDateRange: validatedDateRange
     })
 
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"

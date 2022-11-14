@@ -78,6 +78,7 @@ describe("Case list", () => {
       const thirdDate = new Date("2008-03-26")
       const fourthDate = new Date("2013-10-16")
       cy.clock(todayDate)
+      // console.log(new Date())
       cy.task("insertCourtCasesWithCourtDates", {
         courtDate: [todayDate, firstDate, secondDate, thirdDate, fourthDate],
         orgCode

@@ -75,7 +75,6 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
                   <input
                     className="govuk-radios__input"
                     id="date-range"
-                    name="date-range"
                     type="radio"
                     data-aria-controls="conditional-contact"
                   />
@@ -89,7 +88,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
                       <input
                         className="govuk-radios__input"
                         id="date-range-today"
-                        name="date-range"
+                        name="dateRange"
                         type="radio"
                         value="today"
                       />
@@ -101,7 +100,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
                       <input
                         className="govuk-radios__input"
                         id="date-range-yesterday"
-                        name="date-range"
+                        name="dateRange"
                         type="radio"
                         value="yesterday"
                       />
@@ -115,7 +114,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
                   <input
                     className="govuk-radios__input"
                     id="custom-date-range"
-                    name="court-date"
+                    name="courtDate"
                     type="radio"
                     value=""
                   />

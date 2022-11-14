@@ -2,7 +2,7 @@ export type QueryOrder = "asc" | "desc" | undefined
 
 export type Filter = "Triggers" | "Exceptions"
 
-type CourtDateRange = {
+export type CourtDateRange = {
   from: Date
   to: Date
 }
