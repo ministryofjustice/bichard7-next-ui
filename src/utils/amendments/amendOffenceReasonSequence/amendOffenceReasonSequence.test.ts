@@ -69,14 +69,13 @@ describe("amend offence reason sequence", () => {
 
     amendOffenceReasonSequence(amendments, aho)
 
-    amendments.forEach((amendment) => {
+    amendments.forEach(({ updatedValue, offenceIndex }) => {
       expect(
-        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[amendment.offenceIndex]
+        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
           .CriminalProsecutionReference.OffenceReasonSequence
-      ).toEqual(amendment.updatedValue)
+      ).toEqual(updatedValue)
       expect(
-        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[amendment.offenceIndex]
-          .ManualSequenceNumber
+        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualSequenceNumber
       ).toBe(true)
     })
   })

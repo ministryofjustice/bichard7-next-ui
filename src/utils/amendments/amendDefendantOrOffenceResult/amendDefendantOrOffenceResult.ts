@@ -1,19 +1,21 @@
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
-import { UpdatedOffence, ValidProperties } from "types/Amendments"
+import {
+  AnnotatedHearingOutcome,
+  OrganisationUnitCodes
+} from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import { ValidProperties, UpdatedOffence } from "types/Amendments"
 
 const amendDefendantOrOffenceResult = (
   { offenceIndex, resultIndex }: UpdatedOffence,
   aho: AnnotatedHearingOutcome,
   propertyToAmend: ValidProperties,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  valueToAmend: any
+  valueToAmend: OrganisationUnitCodes | Date | string
 ) => {
   const defendant = aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
   if (offenceIndex === -1) {
     if (!defendant.Result) {
       throw new Error(`Cannot update the ${propertyToAmend}; Result in undefined`)
     }
-    defendant.Result[propertyToAmend] = valueToAmend
+    defendant.Result = { ...defendant.Result, [propertyToAmend]: valueToAmend }
     return
   }
 
@@ -27,7 +29,10 @@ const amendDefendantOrOffenceResult = (
     throw new Error(`Cannot update ${propertyToAmend}; Result index on Offence is out of range`)
   }
 
-  defendant.Offence[offenceIndex].Result[resultIndex][propertyToAmend] = valueToAmend
+  defendant.Offence[offenceIndex].Result[resultIndex] = {
+    ...defendant.Offence[offenceIndex].Result[resultIndex],
+    [propertyToAmend]: valueToAmend
+  }
   return
 }
 

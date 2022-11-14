@@ -1,12 +1,13 @@
-import { useRouter } from "next/router"
-import { useState } from "react"
 import {
   AnnotatedHearingOutcome,
   Offence
 } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
-import { Table, Button } from "govuk-react"
 import EditableField from "components/EditableField"
-import ResultVariableText from "components/ResultVariableText/ResultVariableText"
+import { Button, Table } from "govuk-react"
+import isObject from "lodash.isobject"
+import { useRouter } from "next/router"
+import { useState } from "react"
+import { AmendmentValues, IndividualAmendmentValues } from "types/Amendments"
 
 interface Props {
   aho: AnnotatedHearingOutcome
@@ -92,7 +93,7 @@ const HearingTable: React.FC<{ aho: AnnotatedHearingOutcome }> = ({ aho }) => (
 
 const CaseTable: React.FC<{
   aho: AnnotatedHearingOutcome
-  amendFn: (keyToAmend: string) => (newValue: string) => void
+  amendFn: (keyToAmend: string) => (newValue: IndividualAmendmentValues) => void
 }> = ({ aho, amendFn }) => (
   <Table
     head={
@@ -140,7 +141,7 @@ const CaseTable: React.FC<{
 
 const DefendantTable: React.FC<{
   aho: AnnotatedHearingOutcome
-  amendFn: (keyToAmend: string) => (newValue: string) => void
+  amendFn: (keyToAmend: string) => (newValue: IndividualAmendmentValues) => void
 }> = ({ aho, amendFn }) => (
   <Table
     head={
@@ -237,7 +238,7 @@ const DefendantTable: React.FC<{
 const OffenceDetails: React.FC<{
   aho: AnnotatedHearingOutcome
   index: number
-  amendFn: (keyToAmend: string) => (newValue: string) => void
+  amendFn: (keyToAmend: string) => (newValue: IndividualAmendmentValues) => void
 }> = ({ aho, index, amendFn }) =>
   aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index] && (
     <Table
@@ -337,6 +338,7 @@ const OffenceDetails: React.FC<{
             aho={aho}
             objPath={`AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[${index}].CourtOffenceSequenceNumber`}
             amendFn={amendFn("courtOffenceSequenceNumber")}
+            relevantIndexes={{ offenceIndex: index }}
           />
         </Table.Cell>
       </Table.Row>
@@ -358,7 +360,7 @@ const OffenceDetails: React.FC<{
 const ResultsTable: React.FC<{
   aho: AnnotatedHearingOutcome
   offenceIndex: number
-  amendFn: (keyToAmend: string) => (newValue: string) => void
+  amendFn: (keyToAmend: string) => (newValue: IndividualAmendmentValues) => void
 }> = ({ aho, offenceIndex, amendFn }) => (
   <>
     {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result.map(
@@ -453,6 +455,7 @@ const ResultsTable: React.FC<{
                   aho={aho}
                   objPath={`AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[${offenceIndex}].Result[${resultIndex}].NextHearingDate`}
                   amendFn={amendFn("nextHearingDate")}
+                  relevantIndexes={{ offenceIndex, resultIndex }}
                 />
               </Table.Cell>
             </Table.Row>
@@ -489,12 +492,11 @@ const ResultsTable: React.FC<{
             <Table.Row>
               <Table.Cell>{"Text"}</Table.Cell>
               <Table.Cell>
-                <ResultVariableText
-                  text={
-                    aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-                      resultIndex
-                    ]?.ResultVariableText ?? ""
-                  }
+                <EditableField
+                  aho={aho}
+                  objPath={`AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[${offenceIndex}].Result[${resultIndex}].ResultVariableText`}
+                  amendFn={amendFn("resultVariableText")}
+                  relevantIndexes={{ offenceIndex, resultIndex }}
                 />
               </Table.Cell>
             </Table.Row>
@@ -537,7 +539,7 @@ const ResultsTable: React.FC<{
 
 const OffencesTable: React.FC<{
   aho: AnnotatedHearingOutcome
-  amendFn: (keyToAmend: string) => (newValue: string) => void
+  amendFn: (keyToAmend: string) => (newValue: IndividualAmendmentValues) => void
 }> = ({ aho, amendFn }) => (
   <Table
     head={
@@ -574,12 +576,57 @@ const OffencesTable: React.FC<{
   </Table>
 )
 
+const isAmendmentValue = (value: unknown): value is AmendmentValues => {
+  if (typeof value === "string") {
+    return true
+  }
+
+  // if it's an array with these specific keys on then it's also an AmendmentValues
+  return Array.isArray(value) ? value.every((v) => "offenceIndex" in v && "updatedValue" in v) : false
+}
+
 const HearingOutcome: React.FC<Props> = ({ aho, courtCaseId }) => {
   const { basePath, query } = useRouter()
-  const [amendments, setAmendements] = useState({})
+  const [amendments, setAmendements] = useState<Record<string, AmendmentValues>>({})
 
-  const amendFn = (keyToAmend: string) => (newValue: string) => {
-    setAmendements({ ...amendments, [keyToAmend]: newValue })
+  const amendFn = (keyToAmend: string) => (newValue: IndividualAmendmentValues) => {
+    const doesUpdateExist = (
+      amendmentsArr: { offenceIndex: number; resultIndex: number }[],
+      value: { offenceIndex: number; resultIndex: number }
+    ): number =>
+      amendmentsArr.findIndex((update: { offenceIndex: number; resultIndex: number }) => {
+        let status = false
+
+        if (update.offenceIndex === value.offenceIndex) {
+          status = true
+        }
+
+        if (value.resultIndex) {
+          if (update.resultIndex === value?.resultIndex) {
+            status = true
+          } else {
+            status = false
+          }
+        }
+
+        return status
+      })
+
+    // @ts-ignore
+    const updateIdx = Array.isArray(amendments[keyToAmend]) && doesUpdateExist(amendments[keyToAmend], newValue)
+
+    const updatedArr = Array.isArray(amendments[keyToAmend])
+      ? // @ts-ignore
+        updateIdx > -1
+        ? (amendments[keyToAmend][updateIdx].updatedValue = newValue)
+        : [...amendments[keyToAmend].slice(), newValue]
+      : [newValue]
+    const updatedValue = isObject(newValue) ? updatedArr : newValue
+
+    setAmendements({
+      ...amendments,
+      ...(isAmendmentValue(updatedValue) && { [keyToAmend]: updatedValue })
+    })
   }
 
   const resubmitCasePath = `${basePath}/court-cases/${courtCaseId}?${new URLSearchParams({

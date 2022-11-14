@@ -2,14 +2,12 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import { UpdatedOffenceValue } from "types/Amendments"
 
 const amendOffenceReasonSequence = (newOffenceReasonSequence: UpdatedOffenceValue[], aho: AnnotatedHearingOutcome) => {
-  newOffenceReasonSequence.forEach((offence: UpdatedOffenceValue) => {
+  newOffenceReasonSequence.forEach(({ updatedValue, offenceIndex }: UpdatedOffenceValue) => {
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
-      offence.offenceIndex
-    ].CriminalProsecutionReference.OffenceReasonSequence = offence.updatedValue
+      offenceIndex
+    ].CriminalProsecutionReference.OffenceReasonSequence = updatedValue
 
-    aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
-      offence.offenceIndex
-    ].ManualSequenceNumber = true
+    aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualSequenceNumber = true
   })
 }
 

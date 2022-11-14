@@ -58,4 +58,39 @@ describe("court case reference", () => {
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[0].CourtCaseReferenceNumber
     ).toEqual(null)
   })
+
+  it("should amend court case reference on multiple offences", () => {
+    aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
+    ]
+
+    const amendments = [
+      {
+        offenceIndex: 3,
+        updatedValue: "newCourtCaseReference3"
+      },
+      {
+        offenceIndex: 2,
+        updatedValue: "newCourtCaseReference2"
+      },
+      {
+        offenceIndex: 0,
+        updatedValue: "newCourtCaseReference0"
+      }
+    ]
+
+    amendCourtCaseReference(amendments, aho)
+
+    amendments.forEach(({ updatedValue, offenceIndex }) => {
+      expect(
+        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].CourtCaseReferenceNumber
+      ).toEqual(updatedValue)
+      expect(
+        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualCourtCaseReference
+      ).toBe(true)
+    })
+  })
 })

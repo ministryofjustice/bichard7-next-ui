@@ -2,6 +2,7 @@ import {
   AnnotatedHearingOutcome,
   Offence
 } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import cloneDeep from "lodash.clonedeep"
 import createDummyAho from "../../../../test/helpers/createDummyAho"
 import createDummyOffence from "../../../../test/helpers/createDummyOffence"
 import amendResultVariableText from "./amendResultVariableText"
@@ -23,11 +24,13 @@ describe("amend fresult variable text", () => {
     expect(aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Result?.ResultVariableText).toBe(undefined)
 
     amendResultVariableText(
-      {
-        offenceIndex,
-        updatedValue,
-        resultIndex
-      },
+      [
+        {
+          offenceIndex,
+          updatedValue,
+          resultIndex
+        }
+      ],
       aho
     )
 
@@ -43,10 +46,10 @@ describe("amend fresult variable text", () => {
     const resultIndex = 0
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
-      dummyOffence,
-      dummyOffence,
-      dummyOffence,
-      dummyOffence
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
     ]
 
     expect(
@@ -55,11 +58,13 @@ describe("amend fresult variable text", () => {
     ).toBe(undefined)
 
     amendResultVariableText(
-      {
-        offenceIndex,
-        updatedValue,
-        resultIndex
-      },
+      [
+        {
+          offenceIndex,
+          updatedValue,
+          resultIndex
+        }
+      ],
       aho
     )
 
@@ -69,7 +74,7 @@ describe("amend fresult variable text", () => {
     ).toEqual(updatedValue)
   })
 
-  it("returns an error as defendant Result is undefined", () => {
+  it("throws an error as defendant Result is undefined", () => {
     const offenceIndex = -1
     const updatedValue = "random_string"
     const resultIndex = 0
@@ -78,47 +83,129 @@ describe("amend fresult variable text", () => {
 
     expect(() =>
       amendResultVariableText(
-        {
-          offenceIndex,
-          updatedValue,
-          resultIndex
-        },
+        [
+          {
+            offenceIndex,
+            updatedValue,
+            resultIndex
+          }
+        ],
         aho
       )
     ).toThrowError("Cannot update the ResultVariableText; Result in undefined")
   })
 
-  it("returns an error if result is out of range", () => {
+  it("throws an error if result is out of range", () => {
     const offenceIndex = 0
     const updatedValue = "random_string"
-    const resultIndex = 1
+    const resultIndex = 2
 
     expect(() =>
       amendResultVariableText(
-        {
-          offenceIndex,
-          updatedValue,
-          resultIndex
-        },
+        [
+          {
+            offenceIndex,
+            updatedValue,
+            resultIndex
+          }
+        ],
         aho
       )
     ).toThrowError("Cannot update ResultVariableText; Result index on Offence is out of range")
   })
 
-  it("returns an error if offence is out of range", () => {
+  it("throws an error if offence is out of range", () => {
     const offenceIndex = 1
     const updatedValue = "random_string"
     const resultIndex = 0
 
     expect(() =>
       amendResultVariableText(
-        {
-          offenceIndex,
-          updatedValue,
-          resultIndex
-        },
+        [
+          {
+            offenceIndex,
+            updatedValue,
+            resultIndex
+          }
+        ],
         aho
       )
     ).toThrowError("Cannot update the ResultVariableText; Offence index is out of range")
+  })
+
+  it("amend valid result variable text to multiple offenders", () => {
+    const amendments = [
+      {
+        offenceIndex: 0,
+        updatedValue: "random_string_0",
+        resultIndex: 0
+      },
+      {
+        offenceIndex: 2,
+        updatedValue: "random_string_2",
+        resultIndex: 0
+      }
+    ]
+
+    aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
+    ]
+
+    amendments.forEach(({ offenceIndex, resultIndex }) => {
+      expect(
+        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex]?.Result[resultIndex]
+          .ResultVariableText
+      ).toBe(undefined)
+    })
+
+    amendResultVariableText(amendments, aho)
+
+    amendments.forEach(({ offenceIndex, resultIndex, updatedValue }) => {
+      expect(
+        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex]?.Result[resultIndex]
+          .ResultVariableText
+      ).toEqual(updatedValue)
+    })
+  })
+
+  it("amend valid result variable text for multiple results on an offence", () => {
+    const amendments = [
+      {
+        offenceIndex: 0,
+        updatedValue: "random_string_0",
+        resultIndex: 0
+      },
+      {
+        offenceIndex: 0,
+        updatedValue: "random_string_1",
+        resultIndex: 1
+      }
+    ]
+
+    aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
+    ]
+
+    amendments.forEach(({ offenceIndex, resultIndex }) => {
+      expect(
+        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex]?.Result[resultIndex]
+          .ResultVariableText
+      ).toBe(undefined)
+    })
+
+    amendResultVariableText(amendments, aho)
+
+    amendments.forEach(({ offenceIndex, resultIndex, updatedValue }) => {
+      expect(
+        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex]?.Result[resultIndex]
+          .ResultVariableText
+      ).toEqual(updatedValue)
+    })
   })
 })

@@ -2,9 +2,9 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import { UpdatedNextHearingDate, ValidProperties } from "types/Amendments"
 import amendDefendantOrOffenceResult from "../amendDefendantOrOffenceResult"
 
-const amendNextHearingDate = (
-  { offenceIndex, resultIndex, updatedValue }: UpdatedNextHearingDate,
-  aho: AnnotatedHearingOutcome
-) => amendDefendantOrOffenceResult({ offenceIndex, resultIndex }, aho, ValidProperties.NextHearingDate, updatedValue)
+const amendNextHearingDate = (offences: UpdatedNextHearingDate[], aho: AnnotatedHearingOutcome) =>
+  offences.forEach(({ offenceIndex, resultIndex, updatedValue }: UpdatedNextHearingDate) =>
+    amendDefendantOrOffenceResult({ offenceIndex, resultIndex }, aho, ValidProperties.NextHearingDate, updatedValue)
+  )
 
 export default amendNextHearingDate

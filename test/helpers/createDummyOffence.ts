@@ -1,5 +1,6 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import createDummyResult from "./createDummyResult"
+import cloneDeep from "lodash.clonedeep"
 
 const createDummyOffence = (): Offence =>
   ({
@@ -14,7 +15,7 @@ const createDummyOffence = (): Offence =>
     },
     OffenceTitle: "Crime",
 
-    Result: [createDummyResult()]
+    Result: [cloneDeep(createDummyResult()), cloneDeep(createDummyResult())]
   } as Offence)
 
 export default createDummyOffence

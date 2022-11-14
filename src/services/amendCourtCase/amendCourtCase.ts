@@ -48,7 +48,11 @@ const amendCourtCase = async (
   }
   const updatedAho = applyAmendmentsToAho(amendments, aho)
 
-  const generatedXml = convertAhoToXml(aho, false)
+  if (isError(updatedAho)) {
+    return updatedAho
+  }
+
+  const generatedXml = convertAhoToXml(updatedAho, false)
 
   // Depending on the phase, treat the update as either hoUpdate or pncUpdate
   if (courtCaseRow.phase === Phase.HEARING_OUTCOME) {

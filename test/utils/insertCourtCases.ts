@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import DummyAho from "../test-data/error_list_aho.json"
+import DummyMultipleOffencesAho from "../test-data/HO100102_1.json"
 import DummyCourtCase from "./DummyCourtCase"
 import Note from "services/entities/Note"
 import { ResolutionStatus } from "types/ResolutionStatus"
@@ -11,7 +11,7 @@ import Trigger from "services/entities/Trigger"
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
   (await getDataSource()).getRepository(CourtCase).create({
     ...DummyCourtCase,
-    hearingOutcome: DummyAho.hearingOutcomeXml,
+    hearingOutcome: DummyMultipleOffencesAho.hearingOutcomeXml,
     ...overrides
   } as CourtCase)
 
