@@ -7,13 +7,15 @@ import deleteQueryParam from "utils/deleteQueryParam"
 interface Props {
   courtCaseTypes: Filter[]
   keywords: string[]
+  dateRange: string | null
   urgency?: boolean
 }
 
-const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: Props) => {
+const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, dateRange, urgency }: Props) => {
   const { basePath, query } = useRouter()
 
-  const hasAnyAppliedFilters = (): boolean => courtCaseTypes.length > 0 || keywords.length > 0 || !!urgency
+  const hasAnyAppliedFilters = (): boolean =>
+    courtCaseTypes.length > 0 || keywords.length > 0 || !!urgency || !!dateRange
 
   const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
     const searchParams = deleteQueryParam(paramToRemove, query)
@@ -42,6 +44,11 @@ const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, urgency }: 
               </li>
             )
           })}
+          <If condition={!!dateRange}>
+            <li>
+              <FilterTag tag={dateRange ?? ""} href={removeQueryParamFromPath({ dateRange: dateRange ?? "" })} />
+            </li>
+          </If>
           <If condition={!!urgency}>
             <li>
               <FilterTag tag={"Urgent"} href={removeQueryParamFromPath({ urgency: "Urgent" })} />

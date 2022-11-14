@@ -3,10 +3,11 @@ import { Filter } from "types/CaseListQueryParams"
 
 interface Props {
   courtCaseTypes: Filter[]
+  dateRange: string | null
   urgency: boolean
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) => {
+const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }: Props) => {
   return (
     <form method={"get"}>
       <div className="moj-filter__header">
@@ -78,6 +79,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
                     id="date-range"
                     type="radio"
                     data-aria-controls="conditional-contact"
+                    defaultChecked={dateRange === "Today"}
                   />
                   <label className="govuk-label govuk-radios__label" htmlFor="date-range">
                     {"Date Range"}
@@ -91,7 +93,8 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
                         id="date-range-today"
                         name="dateRange"
                         type="radio"
-                        value="today"
+                        value="Today"
+                        defaultChecked={dateRange === "Today"}
                       />
                       <label className="govuk-label govuk-radios__label" htmlFor="date-range-today">
                         {"Today"}
@@ -103,7 +106,8 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
                         id="date-range-yesterday"
                         name="dateRange"
                         type="radio"
-                        value="yesterday"
+                        value="Yesterday"
+                        defaultChecked={dateRange === "Yesterday"}
                       />
                       <label className="govuk-label govuk-radios__label" htmlFor="date-range-yesterday">
                         {"Yesterday"}

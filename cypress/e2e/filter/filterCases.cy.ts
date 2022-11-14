@@ -103,7 +103,7 @@ describe("Case list", () => {
           cy.wrap(row).contains("Case00000").should("exist")
         })
 
-      cy.get('*[class^="moj-filter-tags"]').contains(todayDateString).click()
+      cy.get('*[class^="moj-filter-tags"]').contains("Today").click()
       cy.get("tr").not(":first").should("have.length", 5)
     })
 
