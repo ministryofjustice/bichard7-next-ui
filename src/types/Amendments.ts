@@ -1,25 +1,25 @@
 export type Amendments = {
   asn: string
-  offenceReasonSequence: UpdatedOffenceValue
-  courtCaseReference: UpdatedOffenceValue
-  disposalQualifierCode: UpdatedDisposalQualifierCode
-  nextSourceOrganisation: UpdatedOffenceResult
-  nextHearingDate: UpdatedNextHearingDate
+  offenceReasonSequence: UpdatedOffenceValue[]
+  courtCaseReference: UpdatedOffenceValue[]
+  disposalQualifierCode: UpdatedDisposalQualifierCode[]
+  nextSourceOrganisation: UpdatedOffenceResult[]
+  nextHearingDate: UpdatedNextHearingDate[]
   courtPNCIdentifier: string
-  resultVariableText: UpdatedOffenceResult
+  resultVariableText: UpdatedOffenceResult[]
   courtReference: string
-  courtOffenceSequenceNumber: UpdatedCourtOffenceSequenceNumber
+  courtOffenceSequenceNumber: UpdatedCourtOffenceSequenceNumber[]
   forceOwner: string
   noUpdatesResubmit?: boolean
 }
 
 export type AmendmentValues =
   | string
-  | UpdatedOffenceValue
-  | UpdatedDisposalQualifierCode
-  | UpdatedOffenceResult
-  | UpdatedNextHearingDate
-  | UpdatedCourtOffenceSequenceNumber
+  | UpdatedOffenceValue[]
+  | UpdatedDisposalQualifierCode[]
+  | UpdatedOffenceResult[]
+  | UpdatedNextHearingDate[]
+  | UpdatedCourtOffenceSequenceNumber[]
 
 export type RawCourtCaseForAmend = {
   phase: number
