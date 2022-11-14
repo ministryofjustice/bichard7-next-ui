@@ -59,7 +59,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
       return (
         <Table.Row key={idx}>
           <Table.Cell>
-            <DateTime date={courtDate} />
+            <DateTime date={courtDate} dateFormat={"dd/MM/yyyy"} />
           </Table.Cell>
           <Table.Cell>{ptiurn}</Table.Cell>
           <Table.Cell>

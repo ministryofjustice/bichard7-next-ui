@@ -33,9 +33,12 @@ const validateQueryParams = (param: string | string[] | undefined): param is str
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
 const validCourtCaseTypes = ["Triggers", "Exceptions"]
 const validateDateRange = (dateRange: string): CourtDateRange | undefined => {
-  const options: KeyValuePair<string, CourtDateRange> = { today: { from: new Date(), to: new Date() } }
+  const options: KeyValuePair<string, CourtDateRange> = {
+    today: { from: new Date(), to: new Date() }
+  }
   return options[dateRange]
 }
+
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {

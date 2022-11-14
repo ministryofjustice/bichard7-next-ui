@@ -2,6 +2,7 @@ import { TestTrigger } from "../../../test/utils/manageTriggers"
 import a11yConfig from "../../support/a11yConfig"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 import hashedPassword from "../../fixtures/hashedPassword"
+import { addDays, format, subDays } from "date-fns"
 
 describe("Case list", () => {
   context("When filters applied", () => {
@@ -72,15 +73,18 @@ describe("Case list", () => {
 
     it.only("Should display today's cases when filtered by courtDate today radio button", () => {
       const orgCode = "011111"
-      const todayDate = new Date("2022-10-14")
+      const todayDate = new Date()
+      const yesterday = subDays(todayDate, 1)
+      const tomorrow = addDays(todayDate, 1)
       const firstDate = new Date("2001-09-26")
       const secondDate = new Date("2008-01-26")
       const thirdDate = new Date("2008-03-26")
       const fourthDate = new Date("2013-10-16")
-      cy.clock(todayDate)
-      // console.log(new Date())
+
+      const todayDateString = format(todayDate, "dd/MM/yyyy")
+
       cy.task("insertCourtCasesWithCourtDates", {
-        courtDate: [todayDate, firstDate, secondDate, thirdDate, fourthDate],
+        courtDate: [todayDate, yesterday, tomorrow, firstDate, secondDate, thirdDate, fourthDate],
         orgCode
       })
 
@@ -95,11 +99,11 @@ describe("Case list", () => {
       cy.get("tr")
         .not(":first")
         .each((row) => {
-          cy.wrap(row).contains("2022-10-14").should("exist")
+          cy.wrap(row).contains(todayDateString).should("exist")
           cy.wrap(row).contains("Case00000").should("exist")
         })
 
-      cy.get('*[class^="moj-filter-tags"]').contains("2022-10-14").click()
+      cy.get('*[class^="moj-filter-tags"]').contains(todayDateString).click()
       cy.get("tr").not(":first").should("have.length", 5)
     })
 
@@ -226,6 +230,8 @@ describe("Case list", () => {
         expect(loc.pathname).to.eq("/bichard")
       })
     })
+
+    // TODO test filtering court cases with a court date of NULL
   })
 })
 

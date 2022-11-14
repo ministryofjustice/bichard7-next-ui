@@ -1,3 +1,4 @@
+import { format } from "date-fns"
 import { DataSource } from "typeorm"
 import { CaseListQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
@@ -48,8 +49,8 @@ const listCourtCases = async (
   }
 
   if (courtDateRange) {
-    query.andWhere("courtCase.courtDate >= :from", { from: courtDateRange.from.toISOString() })
-    query.andWhere("courtCase.courtDate <= :to", { to: courtDateRange.to.toISOString() })
+    query.andWhere("courtCase.courtDate >= :from", { from: format(courtDateRange.from, "yyyy-MM-dd") })
+    query.andWhere("courtCase.courtDate <= :to", { to: format(courtDateRange.to, "yyyy-MM-dd") })
   }
 
   const result = await query.getManyAndCount().catch((error: Error) => error)
