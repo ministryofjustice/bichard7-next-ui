@@ -72,7 +72,7 @@ describe("Case list", () => {
     })
 
     it.only("Should display today's cases when filtered by courtDate today radio button", () => {
-      const orgCode = "011111"
+      const force = "011111"
       const todayDate = new Date()
       const yesterday = subDays(todayDate, 1)
       const tomorrow = addDays(todayDate, 1)
@@ -85,7 +85,7 @@ describe("Case list", () => {
 
       cy.task("insertCourtCasesWithCourtDates", {
         courtDate: [todayDate, yesterday, tomorrow, firstDate, secondDate, thirdDate, fourthDate],
-        orgCode
+        force
       })
 
       cy.visit("/bichard")
