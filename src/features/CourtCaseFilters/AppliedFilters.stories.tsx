@@ -11,7 +11,9 @@ export default {
 
 export const ShouldBeAccessible: ComponentStory<typeof AppliedFilters> = () => (
   <div data-testid="applied-filters">
-    <AppliedFilters courtCaseTypes={["Exceptions", "Triggers"]} keywords={["Test keyword"]} urgency={true} />
+    <AppliedFilters
+      filters={{ courtCaseTypes: ["Exceptions", "Triggers"], keywords: ["Test keyword"], urgency: true }}
+    />
   </div>
 )
 
@@ -23,7 +25,7 @@ ShouldBeAccessible.play = async ({ canvasElement }) => {
 }
 
 export const WhenThereAreFiltersApplied: ComponentStory<typeof AppliedFilters> = () => (
-  <AppliedFilters courtCaseTypes={["Exceptions", "Triggers"]} keywords={["Test keyword"]} urgency={true} />
+  <AppliedFilters filters={{ courtCaseTypes: ["Exceptions", "Triggers"], keywords: ["Test keyword"], urgency: true }} />
 )
 
 WhenThereAreFiltersApplied.play = ({ canvasElement }) => {
@@ -36,9 +38,7 @@ WhenThereAreFiltersApplied.play = ({ canvasElement }) => {
   expect(canvas.queryByText("Clear filters")).toBeInTheDocument()
 }
 
-export const WhenThereAreNoFiltersApplied: ComponentStory<typeof AppliedFilters> = () => (
-  <AppliedFilters courtCaseTypes={[]} keywords={[]} />
-)
+export const WhenThereAreNoFiltersApplied: ComponentStory<typeof AppliedFilters> = () => <AppliedFilters filters={{}} />
 
 WhenThereAreNoFiltersApplied.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)

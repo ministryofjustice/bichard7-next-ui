@@ -5,17 +5,22 @@ import { Filter } from "types/CaseListQueryParams"
 import deleteQueryParam from "utils/deleteQueryParam"
 
 interface Props {
-  courtCaseTypes: Filter[]
-  keywords: string[]
-  dateRange: string | null
-  urgency?: boolean
+  filters: {
+    courtCaseTypes?: Filter[]
+    keywords?: string[]
+    dateRange?: string | null
+    urgency?: boolean
+  }
 }
 
-const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, dateRange, urgency }: Props) => {
+const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
   const { basePath, query } = useRouter()
 
   const hasAnyAppliedFilters = (): boolean =>
-    courtCaseTypes.length > 0 || keywords.length > 0 || !!urgency || !!dateRange
+    (filters.courtCaseTypes && filters.courtCaseTypes.length > 0) ||
+    (filters.keywords && filters.keywords.length > 0) ||
+    !!filters.urgency ||
+    !!filters.dateRange
 
   const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
     const searchParams = deleteQueryParam(paramToRemove, query)
@@ -30,26 +35,31 @@ const AppliedFilters: React.FC<Props> = ({ courtCaseTypes, keywords, dateRange, 
           <li>
             <p className="govuk-heading-s govuk-!-margin-bottom-0">{"Filters applied:"}</p>
           </li>
-          {courtCaseTypes.map((t) => {
-            return (
-              <li key={`${t}`}>
-                <FilterTag tag={t} href={removeQueryParamFromPath({ type: t })} />
-              </li>
-            )
-          })}
-          {keywords.map((keyword) => {
-            return (
-              <li key={`${keyword}`}>
-                <FilterTag tag={keyword} href={removeQueryParamFromPath({ keywords: keyword })} />
-              </li>
-            )
-          })}
-          <If condition={!!dateRange}>
+          {filters.courtCaseTypes &&
+            filters.courtCaseTypes.map((courtCaseType) => {
+              return (
+                <li key={`${courtCaseType}`}>
+                  <FilterTag tag={courtCaseType} href={removeQueryParamFromPath({ type: courtCaseType })} />
+                </li>
+              )
+            })}
+          {filters.keywords &&
+            filters.keywords.map((keyword) => {
+              return (
+                <li key={`${keyword}`}>
+                  <FilterTag tag={keyword} href={removeQueryParamFromPath({ keywords: keyword })} />
+                </li>
+              )
+            })}
+          <If condition={!!filters.dateRange}>
             <li>
-              <FilterTag tag={dateRange ?? ""} href={removeQueryParamFromPath({ dateRange: dateRange ?? "" })} />
+              <FilterTag
+                tag={filters.dateRange ?? ""}
+                href={removeQueryParamFromPath({ dateRange: filters.dateRange ?? "" })}
+              />
             </li>
           </If>
-          <If condition={!!urgency}>
+          <If condition={!!filters.urgency}>
             <li>
               <FilterTag tag={"Urgent"} href={removeQueryParamFromPath({ urgency: "Urgent" })} />
             </li>
