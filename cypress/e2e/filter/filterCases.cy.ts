@@ -71,7 +71,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth")
     })
 
-    it.only("Should display today's cases when filtered by courtDate today radio button", () => {
+    it.only("Should display cases filtered for today or yesterday", () => {
       const force = "011111"
       const todayDate = new Date()
       const yesterday = subDays(todayDate, 1)
@@ -104,6 +104,21 @@ describe("Case list", () => {
         })
 
       cy.get('*[class^="moj-filter-tags"]').contains("Today").click()
+      cy.get("tr").not(":first").should("have.length", 5)
+
+      cy.get("button[id=filter-button]").click()
+      cy.get('[id="date-range"]').click()
+      cy.get('[id="date-range-yesterday"]').click()
+      cy.get("button[id=search]").click()
+      cy.get("tr").not(":first").should("have.length", 1)
+      cy.get("tr")
+        .not(":first")
+        .each((row) => {
+          cy.wrap(row).contains(todayDateString).should("exist")
+          cy.wrap(row).contains("Case00001").should("exist")
+        })
+
+      cy.get('*[class^="moj-filter-tags"]').contains("Yesterday").click()
       cy.get("tr").not(":first").should("have.length", 5)
     })
 

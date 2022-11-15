@@ -1,20 +1,40 @@
+import { subDays } from "date-fns"
 import MockDate from "mockdate"
-import { validateDateRanges } from "./validateDateRanges"
+import { mapDateRange, validateNamedDateRange } from "./validateDateRanges"
 
-describe("validateDateRanges", () => {
+describe("mapDateRange", () => {
   afterEach(() => {
     MockDate.reset()
   })
 
-  it("should return a date range for a valid key", () => {
+  it("should return a date range for 'Today'", () => {
     const dateToday = new Date("2022-11-15T12:30")
     MockDate.set(dateToday)
 
-    const result = validateDateRanges("Today")
+    const result = mapDateRange("Today")
     expect(result).toEqual({ from: dateToday, to: dateToday })
   })
 
+  it("should return a date range for 'Yesterday'", () => {
+    const dateToday = new Date("2022-11-15T12:30")
+    const dateYesterday = subDays(dateToday, 1)
+    MockDate.set(dateToday)
+
+    const result = mapDateRange("Yesterday")
+    expect(result).toEqual({ from: dateYesterday, to: dateYesterday })
+  })
+
   it("should return undefined for an invalid key", () => {
-    expect(validateDateRanges("Invalid date range key")).toBeUndefined()
+    expect(mapDateRange("Invalid date range key")).toBeUndefined()
+  })
+})
+
+describe("validateDateRange", () => {
+  it.each([
+    { input: "Today", expected: true },
+    { input: "Yesterday", expected: true },
+    { input: "Invalid Date Range", expected: false }
+  ])("check whether '$input' is a valid date range", ({ input, expected }) => {
+    expect(validateNamedDateRange(input)).toBe(expected)
   })
 })

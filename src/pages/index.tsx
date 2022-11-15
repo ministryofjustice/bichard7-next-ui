@@ -16,7 +16,7 @@ import listCourtCases from "services/listCourtCases"
 import type CourtCase from "services/entities/CourtCase"
 import { Heading } from "govuk-react"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
-import { validateDateRanges } from "utils/validators/validateDateRanges"
+import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 
 interface Props {
   user: User
@@ -44,7 +44,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
-    const validatedDateRange = validateDateRanges(dateRange)
+    const validatedDateRange = mapDateRange(dateRange)
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedUrgentFilter = validateQueryParams(urgency) && urgency !== ""
 
@@ -78,7 +78,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         pageNum: parseInt(validatedPageNum, 10) || 1,
         courtCaseTypes: courtCaseTypes,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
-        dateRange: validateQueryParams(dateRange) ? dateRange : null,
+        dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
         urgentFilter: validatedUrgentFilter
       }
     }
