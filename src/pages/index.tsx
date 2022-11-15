@@ -1,7 +1,7 @@
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CourtDateRange, Filter, NamedCourtDateRanges, QueryOrder } from "types/CaseListQueryParams"
+import { Filter, QueryOrder } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import CourtCaseList from "features/CourtCaseList/CourtCaseList"
 import Layout from "components/Layout"
@@ -16,7 +16,7 @@ import listCourtCases from "services/listCourtCases"
 import type CourtCase from "services/entities/CourtCase"
 import { Heading } from "govuk-react"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
-import KeyValuePair from "types/KeyValuePair"
+import { validateDateRanges } from "utils/validators/validateDateRanges"
 
 interface Props {
   user: User
@@ -33,13 +33,6 @@ interface Props {
 const validateQueryParams = (param: string | string[] | undefined): param is string => typeof param === "string"
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
 const validCourtCaseTypes = ["Triggers", "Exceptions"]
-const validCourtDateRanges = ["Today"]
-const getDateRange = (dateRange: NamedCourtDateRanges): CourtDateRange | undefined => {
-  const options: KeyValuePair<string, CourtDateRange> = {
-    Today: { from: new Date(), to: new Date() }
-  }
-  return dateRange && options[dateRange]
-}
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -51,10 +44,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
-    const validatedDateRangeNames = [dateRange]
-      .flat()
-      .filter((range) => validCourtDateRanges.includes(String(range))) as NamedCourtDateRanges[]
-    const validatedDateRange = validatedDateRangeNames.map((d) => getDateRange(d))[0]
+    const validatedDateRange = validateDateRanges(dateRange)
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedUrgentFilter = validateQueryParams(urgency) && urgency !== ""
 
