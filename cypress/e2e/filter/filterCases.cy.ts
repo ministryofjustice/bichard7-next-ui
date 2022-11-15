@@ -2,7 +2,7 @@ import { TestTrigger } from "../../../test/utils/manageTriggers"
 import a11yConfig from "../../support/a11yConfig"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 import hashedPassword from "../../fixtures/hashedPassword"
-import { addDays, format, subDays } from "date-fns"
+import { addDays, format, subDays, subWeeks } from "date-fns"
 
 describe("Case list", () => {
   context("When filters applied", () => {
@@ -71,29 +71,35 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth")
     })
 
-    it.only("Should display cases filtered for today or yesterday", () => {
+    it.only("Should display cases filtered for today, yesterday or this week", () => {
       const force = "011111"
+
       const todayDate = new Date()
-      const yesterday = subDays(todayDate, 1)
-      const tomorrow = addDays(todayDate, 1)
-      const firstDate = new Date("2001-09-26")
-      const secondDate = new Date("2008-01-26")
-      const thirdDate = new Date("2008-03-26")
-      const fourthDate = new Date("2013-10-16")
+      const yesterdayDate = subDays(todayDate, 1)
+      const tomorrowDate = addDays(todayDate, 1)
+      const oneWeekAgoDate = subWeeks(todayDate, 1)
+      const oneWeekAndOneDayAgoDate = subDays(todayDate, 8)
+
+      const aLongTimeAgoDate = new Date("2001-09-26")
 
       const todayDateString = format(todayDate, "dd/MM/yyyy")
+      const yesterdayDateString = format(yesterdayDate, "dd/MM/yyyy")
+      const oneWeekAgoDateString = format(oneWeekAgoDate, "dd/MM/yyyy")
+
+      const expectedThisWeekLabel = `This week (${oneWeekAgoDateString} - ${todayDateString})`
 
       cy.task("insertCourtCasesWithCourtDates", {
-        courtDate: [todayDate, yesterday, tomorrow, firstDate, secondDate, thirdDate, fourthDate],
+        courtDate: [todayDate, yesterdayDate, tomorrowDate, oneWeekAgoDate, oneWeekAndOneDayAgoDate, aLongTimeAgoDate],
         force
       })
 
       cy.visit("/bichard")
 
-      cy.get("button[id=filter-button]").click()
-      cy.get('[id="date-range"]').click()
-      cy.get('[id="date-range-today"]').click()
-      cy.get("button[id=search]").click()
+      // Tests for "Today"
+      cy.get("button#filter-button").click()
+      cy.get("#date-range").click()
+      cy.get("#date-range-today").click()
+      cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
       cy.get("tr")
@@ -103,22 +109,42 @@ describe("Case list", () => {
           cy.wrap(row).contains("Case00000").should("exist")
         })
 
-      cy.get('*[class^="moj-filter-tags"]').contains("Today").click()
+      cy.get(".moj-filter-tags").contains("Today").click()
       cy.get("tr").not(":first").should("have.length", 5)
 
-      cy.get("button[id=filter-button]").click()
-      cy.get('[id="date-range"]').click()
-      cy.get('[id="date-range-yesterday"]').click()
-      cy.get("button[id=search]").click()
+      // Tests for "yesterday"
+      cy.get("button#filter-button").click()
+      cy.get("#date-range").click()
+      cy.get("#date-range-yesterday").click()
+      cy.get("button#search").click()
+
       cy.get("tr").not(":first").should("have.length", 1)
       cy.get("tr")
         .not(":first")
         .each((row) => {
-          cy.wrap(row).contains(todayDateString).should("exist")
+          cy.wrap(row).contains(yesterdayDateString).should("exist")
           cy.wrap(row).contains("Case00001").should("exist")
         })
 
-      cy.get('*[class^="moj-filter-tags"]').contains("Yesterday").click()
+      cy.get(".moj-filter-tags").contains("Yesterday").click()
+      cy.get("tr").not(":first").should("have.length", 5)
+
+      // Tests for "This week"
+      cy.get("button#filter-button").click()
+      cy.get("#date-range").click()
+      cy.get('label[for="date-range-this-week"]').should("have.text", expectedThisWeekLabel)
+      cy.get("#date-range-this-week").click()
+      cy.get("button#search]").click()
+
+      cy.get("tr").not(":first").should("have.length", 3)
+      cy.get("tr").not(":first").contains(todayDateString).should("exist")
+      cy.get("tr").not(":first").contains(yesterdayDateString).should("exist")
+      cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains("Case00000").should("exist")
+      cy.get("tr").not(":first").contains("Case00001").should("exist")
+      cy.get("tr").not(":first").contains("Case00003").should("exist")
+
+      cy.get(".moj-filter-tags").contains("This week").click()
       cy.get("tr").not(":first").should("have.length", 5)
     })
 
