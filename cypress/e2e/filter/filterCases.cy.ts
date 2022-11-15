@@ -134,7 +134,7 @@ describe("Case list", () => {
       cy.get("#date-range").click()
       cy.get('label[for="date-range-this-week"]').should("have.text", expectedThisWeekLabel)
       cy.get("#date-range-this-week").click()
-      cy.get("button#search]").click()
+      cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 3)
       cy.get("tr").not(":first").contains(todayDateString).should("exist")
