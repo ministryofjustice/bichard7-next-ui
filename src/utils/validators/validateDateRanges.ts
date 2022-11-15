@@ -11,6 +11,9 @@ const NamedDateRangeOptions: KeyValuePair<string, () => CourtDateRange> = {
   },
   "This week": () => {
     return { from: subWeeks(new Date(), 1), to: new Date() }
+  },
+  "Last week": () => {
+    return { from: subWeeks(new Date(), 2), to: subWeeks(new Date(), 1) }
   }
 }
 

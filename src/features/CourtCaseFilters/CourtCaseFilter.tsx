@@ -10,8 +10,10 @@ interface Props {
 }
 
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }: Props) => {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  /* eslint-disable @typescript-eslint/no-non-null-assertion */
   const thisWeekDateRange = mapDateRange("This week")!
+  const lastWeekDateRange = mapDateRange("Last week")!
+  /* eslint-enable @typescript-eslint/no-non-null-assertion */
 
   return (
     <form method={"get"}>
@@ -130,6 +132,22 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }
                       <label className="govuk-label govuk-radios__label" htmlFor="date-range-this-week">
                         {`This week (${format(thisWeekDateRange.from, "dd/MM/yyyy")} - ${format(
                           thisWeekDateRange.to,
+                          "dd/MM/yyyy"
+                        )})`}
+                      </label>
+                    </div>
+                    <div className="govuk-radios__item">
+                      <input
+                        className="govuk-radios__input"
+                        id="date-range-last-week"
+                        name="dateRange"
+                        type="radio"
+                        value="Last week"
+                        defaultChecked={dateRange === "This week"}
+                      />
+                      <label className="govuk-label govuk-radios__label" htmlFor="date-range-last-week">
+                        {`Last week (${format(lastWeekDateRange.from, "dd/MM/yyyy")} - ${format(
+                          lastWeekDateRange.to,
                           "dd/MM/yyyy"
                         )})`}
                       </label>

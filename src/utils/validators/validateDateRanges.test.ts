@@ -34,6 +34,17 @@ describe("mapDateRange", () => {
     expect(result).toEqual({ from: dateLastWeek, to: dateToday })
   })
 
+  it("should return a date range for 'This week'", () => {
+    const dateToday = new Date("2022-11-15T12:30")
+    const dateLastWeek = subWeeks(dateToday, 1)
+    const dateTwoWeeksAgo = subWeeks(dateToday, 2)
+
+    MockDate.set(dateToday)
+
+    const result = mapDateRange("Last week")
+    expect(result).toEqual({ from: dateTwoWeeksAgo, to: dateLastWeek })
+  })
+
   it("should return undefined for an invalid key", () => {
     expect(mapDateRange("Invalid date range key")).toBeUndefined()
   })
@@ -44,6 +55,7 @@ describe("validateDateRange", () => {
     { input: "Today", expected: true },
     { input: "Yesterday", expected: true },
     { input: "This week", expected: true },
+    { input: "Last week", expected: true },
     { input: "Invalid Date Range", expected: false }
   ])("check whether '$input' is a valid date range", ({ input, expected }) => {
     expect(validateNamedDateRange(input)).toBe(expected)

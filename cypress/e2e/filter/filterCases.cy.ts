@@ -79,17 +79,29 @@ describe("Case list", () => {
       const tomorrowDate = addDays(todayDate, 1)
       const oneWeekAgoDate = subWeeks(todayDate, 1)
       const oneWeekAndOneDayAgoDate = subDays(todayDate, 8)
-
+      const twoWeeksAgoDate = subWeeks(todayDate, 2)
       const aLongTimeAgoDate = new Date("2001-09-26")
 
-      const todayDateString = format(todayDate, "dd/MM/yyyy")
-      const yesterdayDateString = format(yesterdayDate, "dd/MM/yyyy")
-      const oneWeekAgoDateString = format(oneWeekAgoDate, "dd/MM/yyyy")
+      const dateFormatString = "dd/MM/yyyy"
+      const todayDateString = format(todayDate, dateFormatString)
+      const yesterdayDateString = format(yesterdayDate, dateFormatString)
+      const oneWeekAgoDateString = format(oneWeekAgoDate, dateFormatString)
+      const oneWeekAndOneDayAgoDateString = format(oneWeekAndOneDayAgoDate, dateFormatString)
+      const twoWeeksAgoDateString = format(twoWeeksAgoDate, dateFormatString)
 
       const expectedThisWeekLabel = `This week (${oneWeekAgoDateString} - ${todayDateString})`
+      const expectedLastWeekLabel = `Last week (${twoWeeksAgoDateString} - ${oneWeekAgoDateString})`
 
       cy.task("insertCourtCasesWithCourtDates", {
-        courtDate: [todayDate, yesterdayDate, tomorrowDate, oneWeekAgoDate, oneWeekAndOneDayAgoDate, aLongTimeAgoDate],
+        courtDate: [
+          todayDate,
+          yesterdayDate,
+          tomorrowDate,
+          oneWeekAgoDate,
+          oneWeekAndOneDayAgoDate,
+          twoWeeksAgoDate,
+          aLongTimeAgoDate
+        ],
         force
       })
 
@@ -145,6 +157,24 @@ describe("Case list", () => {
       cy.get("tr").not(":first").contains("Case00003").should("exist")
 
       cy.get(".moj-filter-tags").contains("This week").click()
+      cy.get("tr").not(":first").should("have.length", 5)
+
+      // Tests for "Last week"
+      cy.get("button#filter-button").click()
+      cy.get("#date-range").click()
+      cy.get('label[for="date-range-last-week"]').should("have.text", expectedLastWeekLabel)
+      cy.get("#date-range-last-week").click()
+      cy.get("button#search").click()
+
+      cy.get("tr").not(":first").should("have.length", 3)
+      cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains(oneWeekAndOneDayAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains(twoWeeksAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains("Case00003").should("exist")
+      cy.get("tr").not(":first").contains("Case00004").should("exist")
+      cy.get("tr").not(":first").contains("Case00005").should("exist")
+
+      cy.get(".moj-filter-tags").contains("Last week").click()
       cy.get("tr").not(":first").should("have.length", 5)
     })
 
