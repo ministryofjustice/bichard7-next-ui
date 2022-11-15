@@ -1,4 +1,4 @@
-import { subDays } from "date-fns"
+import { subDays, subWeeks } from "date-fns"
 import { CourtDateRange, NamedCourtDateRanges } from "types/CaseListQueryParams"
 import KeyValuePair from "types/KeyValuePair"
 
@@ -8,6 +8,9 @@ const NamedDateRangeOptions: KeyValuePair<string, () => CourtDateRange> = {
   },
   Yesterday: () => {
     return { from: subDays(new Date(), 1), to: subDays(new Date(), 1) }
+  },
+  "This week": () => {
+    return { from: subWeeks(new Date(), 1), to: new Date() }
   }
 }
 
