@@ -1,4 +1,4 @@
-import { subDays, subWeeks } from "date-fns"
+import { subDays, subMonths, subWeeks } from "date-fns"
 import MockDate from "mockdate"
 import { mapDateRange, validateNamedDateRange } from "./validateDateRanges"
 
@@ -34,7 +34,7 @@ describe("mapDateRange", () => {
     expect(result).toEqual({ from: dateLastWeek, to: dateToday })
   })
 
-  it("should return a date range for 'This week'", () => {
+  it("should return a date range for 'Last week'", () => {
     const dateToday = new Date("2022-11-15T12:30")
     const dateLastWeek = subWeeks(dateToday, 1)
     const dateTwoWeeksAgo = subWeeks(dateToday, 2)
@@ -43,6 +43,16 @@ describe("mapDateRange", () => {
 
     const result = mapDateRange("Last week")
     expect(result).toEqual({ from: dateTwoWeeksAgo, to: dateLastWeek })
+  })
+
+  it("should return a date range for 'This month'", () => {
+    const dateToday = new Date("2022-11-15T12:30")
+    const dateOneMonthAgo = subMonths(dateToday, 1)
+
+    MockDate.set(dateToday)
+
+    const result = mapDateRange("This month")
+    expect(result).toEqual({ from: dateOneMonthAgo, to: dateToday })
   })
 
   it("should return undefined for an invalid key", () => {
@@ -56,6 +66,7 @@ describe("validateDateRange", () => {
     { input: "Yesterday", expected: true },
     { input: "This week", expected: true },
     { input: "Last week", expected: true },
+    { input: "This month", expected: true },
     { input: "Invalid Date Range", expected: false }
   ])("check whether '$input' is a valid date range", ({ input, expected }) => {
     expect(validateNamedDateRange(input)).toBe(expected)

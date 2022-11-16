@@ -13,6 +13,8 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   const thisWeekDateRange = mapDateRange("This week")!
   const lastWeekDateRange = mapDateRange("Last week")!
+  const thisMonthDateRange = mapDateRange("This month")!
+
   /* eslint-enable @typescript-eslint/no-non-null-assertion */
 
   return (
@@ -143,11 +145,27 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }
                         name="dateRange"
                         type="radio"
                         value="Last week"
-                        defaultChecked={dateRange === "This week"}
+                        defaultChecked={dateRange === "Last week"}
                       />
                       <label className="govuk-label govuk-radios__label" htmlFor="date-range-last-week">
                         {`Last week (${format(lastWeekDateRange.from, "dd/MM/yyyy")} - ${format(
                           lastWeekDateRange.to,
+                          "dd/MM/yyyy"
+                        )})`}
+                      </label>
+                    </div>
+                    <div className="govuk-radios__item">
+                      <input
+                        className="govuk-radios__input"
+                        id="date-range-this-month"
+                        name="dateRange"
+                        type="radio"
+                        value="This month"
+                        defaultChecked={dateRange === "This month"}
+                      />
+                      <label className="govuk-label govuk-radios__label" htmlFor="date-range-this-month">
+                        {`This month (${format(thisMonthDateRange.from, "dd/MM/yyyy")} - ${format(
+                          thisMonthDateRange.to,
                           "dd/MM/yyyy"
                         )})`}
                       </label>
