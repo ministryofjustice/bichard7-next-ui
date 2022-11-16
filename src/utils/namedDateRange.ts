@@ -1,4 +1,4 @@
-import { subDays, subMonths, subWeeks, subYears } from "date-fns"
+import { subDays, subMonths, subWeeks } from "date-fns"
 import { CourtDateRange } from "types/CaseListQueryParams"
 import KeyValuePair from "types/KeyValuePair"
 
