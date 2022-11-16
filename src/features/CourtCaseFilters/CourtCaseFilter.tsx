@@ -1,6 +1,7 @@
 import { format } from "date-fns"
 import { HintText } from "govuk-react"
 import { Filter } from "types/CaseListQueryParams"
+import { NamedDateRangeOptions } from "utils/namedDateRange"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 
 interface Props {
@@ -9,14 +10,18 @@ interface Props {
   urgency?: boolean
 }
 
+const labelForDateRange = (namedDateRange: string): string => {
+  if (["Today", "Yesterday"].includes(namedDateRange)) {
+    return namedDateRange
+  } else {
+    const dateRange = mapDateRange(namedDateRange)
+    return dateRange
+      ? `${namedDateRange} (${format(dateRange.from, "dd/MM/yyyy")} - ${format(dateRange.to, "dd/MM/yyyy")})`
+      : namedDateRange
+  }
+}
+
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }: Props) => {
-  /* eslint-disable @typescript-eslint/no-non-null-assertion */
-  const thisWeekDateRange = mapDateRange("This week")!
-  const lastWeekDateRange = mapDateRange("Last week")!
-  const thisMonthDateRange = mapDateRange("This month")!
-
-  /* eslint-enable @typescript-eslint/no-non-null-assertion */
-
   return (
     <form method={"get"}>
       <div className="moj-filter__header">
@@ -96,80 +101,24 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }
                 </div>
                 <div className="govuk-radios__conditional" id="conditional-contact">
                   <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-                    <div className="govuk-radios__item">
-                      <input
-                        className="govuk-radios__input"
-                        id="date-range-today"
-                        name="dateRange"
-                        type="radio"
-                        value="Today"
-                        defaultChecked={dateRange === "Today"}
-                      />
-                      <label className="govuk-label govuk-radios__label" htmlFor="date-range-today">
-                        {"Today"}
-                      </label>
-                    </div>
-                    <div className="govuk-radios__item">
-                      <input
-                        className="govuk-radios__input"
-                        id="date-range-yesterday"
-                        name="dateRange"
-                        type="radio"
-                        value="Yesterday"
-                        defaultChecked={dateRange === "Yesterday"}
-                      />
-                      <label className="govuk-label govuk-radios__label" htmlFor="date-range-yesterday">
-                        {"Yesterday"}
-                      </label>
-                    </div>
-                    <div className="govuk-radios__item">
-                      <input
-                        className="govuk-radios__input"
-                        id="date-range-this-week"
-                        name="dateRange"
-                        type="radio"
-                        value="This week"
-                        defaultChecked={dateRange === "This week"}
-                      />
-                      <label className="govuk-label govuk-radios__label" htmlFor="date-range-this-week">
-                        {`This week (${format(thisWeekDateRange.from, "dd/MM/yyyy")} - ${format(
-                          thisWeekDateRange.to,
-                          "dd/MM/yyyy"
-                        )})`}
-                      </label>
-                    </div>
-                    <div className="govuk-radios__item">
-                      <input
-                        className="govuk-radios__input"
-                        id="date-range-last-week"
-                        name="dateRange"
-                        type="radio"
-                        value="Last week"
-                        defaultChecked={dateRange === "Last week"}
-                      />
-                      <label className="govuk-label govuk-radios__label" htmlFor="date-range-last-week">
-                        {`Last week (${format(lastWeekDateRange.from, "dd/MM/yyyy")} - ${format(
-                          lastWeekDateRange.to,
-                          "dd/MM/yyyy"
-                        )})`}
-                      </label>
-                    </div>
-                    <div className="govuk-radios__item">
-                      <input
-                        className="govuk-radios__input"
-                        id="date-range-this-month"
-                        name="dateRange"
-                        type="radio"
-                        value="This month"
-                        defaultChecked={dateRange === "This month"}
-                      />
-                      <label className="govuk-label govuk-radios__label" htmlFor="date-range-this-month">
-                        {`This month (${format(thisMonthDateRange.from, "dd/MM/yyyy")} - ${format(
-                          thisMonthDateRange.to,
-                          "dd/MM/yyyy"
-                        )})`}
-                      </label>
-                    </div>
+                    {Object.keys(NamedDateRangeOptions).map((namedDateRange) => (
+                      <div className="govuk-radios__item" key={namedDateRange.toLowerCase().replace(" ", "-")}>
+                        <input
+                          className="govuk-radios__input"
+                          id={`date-range-${namedDateRange.toLowerCase().replace(" ", "-")}`}
+                          name="dateRange"
+                          type="radio"
+                          value={namedDateRange}
+                          defaultChecked={dateRange === namedDateRange}
+                        />
+                        <label
+                          className="govuk-label govuk-radios__label"
+                          htmlFor={`date-range-${namedDateRange.toLowerCase().replace(" ", "-")}`}
+                        >
+                          {labelForDateRange(namedDateRange)}
+                        </label>
+                      </div>
+                    ))}
                   </div>
                 </div>
                 <div className="govuk-radios__item">
