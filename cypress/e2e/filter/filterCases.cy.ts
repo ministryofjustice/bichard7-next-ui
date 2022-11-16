@@ -71,7 +71,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth")
     })
 
-    it.only("Should display cases filtered for today, yesterday or this week", () => {
+    it("Should display cases filtered for today, yesterday or this week", () => {
       const force = "011111"
 
       const todayDate = new Date()
@@ -212,6 +212,16 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 5)
     })
 
+    it("Should not allow passing an invalid date range filter", () => {
+      cy.task("insertCourtCasesWithCourtDates", {
+        courtDate: [new Date(), subDays(new Date(), 1), addDays(new Date(), 1)],
+        force: "011111"
+      })
+
+      cy.visit("/bichard?dateRange=invalid")
+      cy.get("tr").not(":first").should("have.length", 3)
+    })
+
     it("Should filter cases by whether they have triggers and exceptions", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["011111", "011111", "011111", "011111"])
       const triggers: TestTrigger[] = [
@@ -335,8 +345,6 @@ describe("Case list", () => {
         expect(loc.pathname).to.eq("/bichard")
       })
     })
-
-    // TODO test filtering court cases with a court date of NULL
   })
 })
 
