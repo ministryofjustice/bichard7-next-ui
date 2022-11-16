@@ -1,3 +1,4 @@
 import deleteQueryParam from "./deleteQueryParam"
+import deleteQueryParamsByName from "./deleteQueryParamsByName"
 
-export default deleteQueryParam
+export { deleteQueryParam, deleteQueryParamsByName }

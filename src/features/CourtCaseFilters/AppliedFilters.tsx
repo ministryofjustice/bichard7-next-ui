@@ -2,7 +2,7 @@ import FilterTag from "components/FilterTag/FilterTag"
 import If from "components/If"
 import { useRouter } from "next/router"
 import { Filter } from "types/CaseListQueryParams"
-import deleteQueryParam from "utils/deleteQueryParam"
+import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
 
 interface Props {
   filters: {
@@ -23,6 +23,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.dateRange
 
   const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
+    deleteQueryParamsByName(["pageNum"], query)
     const searchParams = deleteQueryParam(paramToRemove, query)
 
     return `${basePath}/?${searchParams}`

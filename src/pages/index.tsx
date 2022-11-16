@@ -17,6 +17,7 @@ import type CourtCase from "services/entities/CourtCase"
 import { Heading } from "govuk-react"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
+import { validateQueryParams } from "utils/validators/validateQueryParams"
 
 interface Props {
   user: User
@@ -30,7 +31,6 @@ interface Props {
   pageNum: number
 }
 
-const validateQueryParams = (param: string | string[] | undefined): param is string => typeof param === "string"
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
 const validCourtCaseTypes = ["Triggers", "Exceptions"]
 
