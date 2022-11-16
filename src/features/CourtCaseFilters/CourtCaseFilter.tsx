@@ -1,24 +1,11 @@
-import { format } from "date-fns"
 import { HintText } from "govuk-react"
 import { Filter } from "types/CaseListQueryParams"
-import { NamedDateRangeOptions } from "utils/namedDateRange"
-import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
+import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 
 interface Props {
   courtCaseTypes?: Filter[]
   dateRange?: string | null
   urgency?: boolean
-}
-
-const labelForDateRange = (namedDateRange: string): string => {
-  if (["Today", "Yesterday"].includes(namedDateRange)) {
-    return namedDateRange
-  } else {
-    const dateRange = mapDateRange(namedDateRange)
-    return dateRange
-      ? `${namedDateRange} (${format(dateRange.from, "dd/MM/yyyy")} - ${format(dateRange.to, "dd/MM/yyyy")})`
-      : namedDateRange
-  }
 }
 
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }: Props) => {
@@ -83,58 +70,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }
             </fieldset>
           </div>
           <div className="govuk-form-group">
-            <fieldset className="govuk-fieldset">
-              <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Court Date"}</legend>
-              <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-                <div className="govuk-radios__item">
-                  <input
-                    className="govuk-radios__input"
-                    name="courtDate"
-                    id="date-range"
-                    type="radio"
-                    data-aria-controls="conditional-contact"
-                    defaultChecked={validateNamedDateRange(dateRange || "")}
-                  />
-                  <label className="govuk-label govuk-radios__label" htmlFor="date-range">
-                    {"Date Range"}
-                  </label>
-                </div>
-                <div className="govuk-radios__conditional" id="conditional-contact">
-                  <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-                    {Object.keys(NamedDateRangeOptions).map((namedDateRange) => (
-                      <div className="govuk-radios__item" key={namedDateRange.toLowerCase().replace(" ", "-")}>
-                        <input
-                          className="govuk-radios__input"
-                          id={`date-range-${namedDateRange.toLowerCase().replace(" ", "-")}`}
-                          name="dateRange"
-                          type="radio"
-                          value={namedDateRange}
-                          defaultChecked={dateRange === namedDateRange}
-                        />
-                        <label
-                          className="govuk-label govuk-radios__label"
-                          htmlFor={`date-range-${namedDateRange.toLowerCase().replace(" ", "-")}`}
-                        >
-                          {labelForDateRange(namedDateRange)}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="govuk-radios__item">
-                  <input
-                    className="govuk-radios__input"
-                    id="custom-date-range"
-                    name="courtDate"
-                    type="radio"
-                    value=""
-                  />
-                  <label className="govuk-label govuk-radios__label" htmlFor="custom-date-range">
-                    {"Custom date range"}
-                  </label>
-                </div>
-              </div>
-            </fieldset>
+            <CourtDateFilterOptions dateRange={dateRange} />
           </div>
           <div className="govuk-form-group">
             <fieldset className="govuk-fieldset">

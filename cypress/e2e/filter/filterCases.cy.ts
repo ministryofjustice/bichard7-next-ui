@@ -71,7 +71,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth")
     })
 
-    it("Should display cases filtered for today, yesterday or this week", () => {
+    it("Should display cases filtered for a named date range", () => {
       const force = "011111"
 
       const todayDate = new Date()
