@@ -1,12 +1,14 @@
 import { HintText } from "govuk-react"
 import { Filter } from "types/CaseListQueryParams"
+import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 
 interface Props {
-  courtCaseTypes: Filter[]
-  urgency: boolean
+  courtCaseTypes?: Filter[]
+  dateRange?: string | null
+  urgency?: boolean
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) => {
+const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }: Props) => {
   return (
     <form method={"get"}>
       <div className="moj-filter__header">
@@ -45,7 +47,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
                     name="type"
                     type="checkbox"
                     value="Exceptions"
-                    defaultChecked={courtCaseTypes.includes("Exceptions")}
+                    defaultChecked={courtCaseTypes && courtCaseTypes.includes("Exceptions")}
                   ></input>
                   <label className="govuk-label govuk-checkboxes__label" htmlFor="exceptions-type">
                     {"Exceptions"}
@@ -58,7 +60,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
                     name="type"
                     type="checkbox"
                     value="Triggers"
-                    defaultChecked={courtCaseTypes.includes("Triggers")}
+                    defaultChecked={courtCaseTypes && courtCaseTypes.includes("Triggers")}
                   ></input>
                   <label className="govuk-label govuk-checkboxes__label" htmlFor="triggers-type">
                     {"Triggers"}
@@ -66,6 +68,9 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, urgency }: Props) =>
                 </div>
               </div>
             </fieldset>
+          </div>
+          <div className="govuk-form-group">
+            <CourtDateFilterOptions dateRange={dateRange} />
           </div>
           <div className="govuk-form-group">
             <fieldset className="govuk-fieldset">

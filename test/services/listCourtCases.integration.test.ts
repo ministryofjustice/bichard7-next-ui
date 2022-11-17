@@ -622,4 +622,50 @@ describe("listCourtCases", () => {
       expect(cases).toHaveLength(4)
     })
   })
+
+  describe("Filter cases by court date", () => {
+    it("Should filter cases that within a start and end date ", async () => {
+      const orgCode = "36FPA1"
+      const firstDate = new Date("2001-09-26")
+      const secondDate = new Date("2008-01-26")
+      const thirdDate = new Date("2008-03-26")
+      const fourthDate = new Date("2013-10-16")
+
+      await insertCourtCasesWithCourtDates([firstDate, secondDate, thirdDate, fourthDate], orgCode)
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        courtDateRange: { from: new Date("2008-01-01"), to: new Date("2008-12-31") }
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([1, 2])
+    })
+
+    it("Should filter cases that within a specific date", async () => {
+      const orgCode = "36FPA1"
+      const firstDate = new Date("2001-09-26")
+      const secondDate = new Date("2008-01-26")
+      const thirdDate = new Date("2008-03-26")
+      const fourthDate = new Date("2013-10-16")
+
+      await insertCourtCasesWithCourtDates([firstDate, secondDate, thirdDate, fourthDate], orgCode)
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        courtDateRange: { from: new Date("2008-01-26"), to: new Date("2008-01-26") }
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([1])
+    })
+  })
 })

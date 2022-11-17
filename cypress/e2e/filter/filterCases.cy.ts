@@ -2,6 +2,7 @@ import { TestTrigger } from "../../../test/utils/manageTriggers"
 import a11yConfig from "../../support/a11yConfig"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 import hashedPassword from "../../fixtures/hashedPassword"
+import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
 
 describe("Case list", () => {
   context("When filters applied", () => {
@@ -68,6 +69,157 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bruce Wayne")
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Barbara Gordon")
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Alfred Pennyworth")
+    })
+
+    it("Should display cases filtered for a named date range", () => {
+      const force = "011111"
+
+      const todayDate = new Date()
+      const yesterdayDate = subDays(todayDate, 1)
+      const tomorrowDate = addDays(todayDate, 1)
+      const oneWeekAgoDate = subWeeks(todayDate, 1)
+      const oneWeekAndOneDayAgoDate = subDays(todayDate, 8)
+      const twoWeeksAgoDate = subWeeks(todayDate, 2)
+      const oneMonthAgoDate = subMonths(todayDate, 1)
+      const aLongTimeAgoDate = new Date("2001-09-26")
+
+      const dateFormatString = "dd/MM/yyyy"
+      const todayDateString = format(todayDate, dateFormatString)
+      const yesterdayDateString = format(yesterdayDate, dateFormatString)
+      const oneWeekAgoDateString = format(oneWeekAgoDate, dateFormatString)
+      const oneWeekAndOneDayAgoDateString = format(oneWeekAndOneDayAgoDate, dateFormatString)
+      const twoWeeksAgoDateString = format(twoWeeksAgoDate, dateFormatString)
+      const oneMonthAgoDateString = format(oneMonthAgoDate, dateFormatString)
+
+      const expectedThisWeekLabel = `This week (${oneWeekAgoDateString} - ${todayDateString})`
+      const expectedLastWeekLabel = `Last week (${twoWeeksAgoDateString} - ${oneWeekAgoDateString})`
+      const expectedThisMonthLabel = `This month (${oneMonthAgoDateString} - ${todayDateString})`
+
+      cy.task("insertCourtCasesWithCourtDates", {
+        courtDate: [
+          todayDate,
+          yesterdayDate,
+          tomorrowDate,
+          oneWeekAgoDate,
+          oneWeekAndOneDayAgoDate,
+          twoWeeksAgoDate,
+          oneMonthAgoDate,
+          aLongTimeAgoDate
+        ],
+        force
+      })
+
+      cy.visit("/bichard")
+
+      // Tests for "Today"
+      cy.get("button#filter-button").click()
+      cy.get("#date-range").click()
+      cy.get("#date-range-today").click()
+      cy.get("button#search").click()
+
+      cy.get("tr").not(":first").should("have.length", 1)
+      cy.get("tr")
+        .not(":first")
+        .each((row) => {
+          cy.wrap(row).contains(todayDateString).should("exist")
+          cy.wrap(row).contains("Case00000").should("exist")
+        })
+
+      cy.get(".moj-filter-tags").contains("Today").click()
+      cy.get("tr").not(":first").should("have.length", 5)
+
+      // Tests for "yesterday"
+      cy.get("button#filter-button").click()
+      cy.get("#date-range").click()
+      cy.get("#date-range-yesterday").click()
+      cy.get("button#search").click()
+
+      cy.get("tr").not(":first").should("have.length", 1)
+      cy.get("tr")
+        .not(":first")
+        .each((row) => {
+          cy.wrap(row).contains(yesterdayDateString).should("exist")
+          cy.wrap(row).contains("Case00001").should("exist")
+        })
+
+      cy.get(".moj-filter-tags").contains("Yesterday").click()
+      cy.get("tr").not(":first").should("have.length", 5)
+
+      // Tests for "This week"
+      cy.get("button#filter-button").click()
+      cy.get("#date-range").click()
+      cy.get('label[for="date-range-this-week"]').should("have.text", expectedThisWeekLabel)
+      cy.get("#date-range-this-week").click()
+      cy.get("button#search").click()
+
+      cy.get("tr").not(":first").should("have.length", 3)
+      cy.get("tr").not(":first").contains(todayDateString).should("exist")
+      cy.get("tr").not(":first").contains(yesterdayDateString).should("exist")
+      cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains("Case00000").should("exist")
+      cy.get("tr").not(":first").contains("Case00001").should("exist")
+      cy.get("tr").not(":first").contains("Case00003").should("exist")
+
+      cy.get(".moj-filter-tags").contains("This week").click()
+      cy.get("tr").not(":first").should("have.length", 5)
+
+      // Tests for "Last week"
+      cy.get("button#filter-button").click()
+      cy.get("#date-range").click()
+      cy.get('label[for="date-range-last-week"]').should("have.text", expectedLastWeekLabel)
+      cy.get("#date-range-last-week").click()
+      cy.get("button#search").click()
+
+      cy.get("tr").not(":first").should("have.length", 3)
+      cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains(oneWeekAndOneDayAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains(twoWeeksAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains("Case00003").should("exist")
+      cy.get("tr").not(":first").contains("Case00004").should("exist")
+      cy.get("tr").not(":first").contains("Case00005").should("exist")
+
+      cy.get(".moj-filter-tags").contains("Last week").click()
+      cy.get("tr").not(":first").should("have.length", 5)
+
+      // Tests for "This month"
+      cy.get("button#filter-button").click()
+      cy.get("#date-range").click()
+      cy.get('label[for="date-range-this-month"]').should("have.text", expectedThisMonthLabel)
+      cy.get("#date-range-this-month").click()
+      cy.get("button#search").click()
+
+      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").contains(todayDateString).should("exist")
+      cy.get("tr").not(":first").contains(yesterdayDateString).should("exist")
+      cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains(twoWeeksAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains(oneWeekAndOneDayAgoDateString).should("exist")
+
+      cy.get("tr").not(":first").contains("Case00000").should("exist")
+      cy.get("tr").not(":first").contains("Case00001").should("exist")
+      cy.get("tr").not(":first").contains("Case00003").should("exist")
+      cy.get("tr").not(":first").contains("Case00004").should("exist")
+      cy.get("tr").not(":first").contains("Case00005").should("exist")
+
+      cy.findByText("Next page").should("exist")
+      cy.findByText("Next page").click()
+      cy.get("tr").not(":first").should("have.length", 1)
+
+      cy.get("tr").not(":first").contains(oneMonthAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains("Case00006").should("exist")
+
+      cy.get(".moj-filter-tags").contains("This month").click()
+      cy.get("tr").not(":first").should("have.length", 5)
+    })
+
+    it("Should not allow passing an invalid date range filter", () => {
+      cy.task("insertCourtCasesWithCourtDates", {
+        courtDate: [new Date(), subDays(new Date(), 1), addDays(new Date(), 1)],
+        force: "011111"
+      })
+
+      cy.visit("/bichard?dateRange=invalid")
+      cy.get("tr").not(":first").should("have.length", 3)
     })
 
     it("Should filter cases by whether they have triggers and exceptions", () => {

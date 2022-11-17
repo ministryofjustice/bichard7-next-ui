@@ -9,7 +9,8 @@ import {
   insertMultipleDummyCourtCases,
   insertDummyCourtCaseWithLock,
   insertDummyCourtCasesWithUrgencies,
-  insertDummyCourtCasesWithNotes
+  insertDummyCourtCasesWithNotes,
+  insertCourtCasesWithCourtDates
 } from "./test/utils/insertCourtCases"
 import { insertTriggers } from "./test/utils/manageTriggers"
 import insertException from "./test/utils/manageExceptions"
@@ -57,6 +58,10 @@ export default defineConfig({
 
         insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
           return insertMultipleDummyCourtCases(params.numToInsert, params.force)
+        },
+
+        insertCourtCasesWithCourtDates(params: { courtDate: Date[]; force: string }) {
+          return insertCourtCasesWithCourtDates(params.courtDate, params.force)
         },
 
         insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {

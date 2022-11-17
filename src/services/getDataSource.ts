@@ -31,7 +31,7 @@ const getDataSource = async (): Promise<DataSource> => {
     migrations: [],
     schema: databaseConfig.schema,
     ssl: databaseConfig.ssl ? { rejectUnauthorized: false } : false,
-    logging: false,
+    logging: false, // Set to true to see what queries are being sent to Postgres
     extra: {
       max: 1
     }

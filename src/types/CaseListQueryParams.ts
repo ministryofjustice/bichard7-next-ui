@@ -2,6 +2,13 @@ export type QueryOrder = "asc" | "desc" | undefined
 
 export type Filter = "Triggers" | "Exceptions"
 
+export type NamedCourtDateRanges = "Today" | undefined
+
+export type CourtDateRange = {
+  from: Date
+  to: Date
+}
+
 export type CaseListQueryParams = {
   orderBy?: string
   order?: QueryOrder
@@ -11,4 +18,5 @@ export type CaseListQueryParams = {
   forces: string[]
   pageNum?: string
   maxPageItems: string
+  courtDateRange?: CourtDateRange
 }
