@@ -31,6 +31,7 @@ describe("Home", () => {
         cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex/")
         cy.contains("nav a", "User management").should("not.exist")
         cy.contains("nav a", "Help").should("have.attr", "href", "/help/")
+        cy.contains("nav a", "Sign out").should("have.attr", "href", "/users/logout/")
       })
 
       it("as a user who is part of the 'UserManager' group, I should have access to these nav items", () => {
@@ -54,6 +55,7 @@ describe("Home", () => {
         cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex/")
         cy.contains("nav a", "User management").should("have.attr", "href", "/users/users/")
         cy.contains("nav a", "Help").should("have.attr", "href", "/help/")
+        cy.contains("nav a", "Sign out").should("have.attr", "href", "/users/logout/")
       })
     })
   })
