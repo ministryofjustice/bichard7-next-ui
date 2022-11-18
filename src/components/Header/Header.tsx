@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ organisationName, serviceName, userName
                   </a>
                 </li>
                 <li className="moj-header__navigation-item">
-                  <a className="moj-header__navigation-link" href="users/logout">
+                  <a className="moj-header__navigation-link" href="/users/logout/">
                     {"Sign out"}
                   </a>
                 </li>
