@@ -171,7 +171,7 @@ jobs:
           name: Update Chromatic baseline
           command: npm run chromatic:ci:main
 
-  build_and_e2e_test:
+  build_and_cypress_test:
     machine:
       image: ubuntu-2004:2022.04.1
       docker_layer_caching: true
@@ -233,6 +233,67 @@ jobs:
           path: ./cypress/videos
       - store_artifacts:
           path: ./cypress/screenshots
+          
+  e2e_test:
+    machine:
+      image: ubuntu-2004:2022.07.1
+      docker_layer_caching: true
+    resource_class: xlarge
+    working_directory: ~
+    steps:
+      - checkout
+      - npm_install
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build next UI docker image
+          command: make build
+      - clone_bichard_repo
+      - fetch_docker_image:
+          image: user-service
+      - fetch_docker_image:
+          image: nginx-auth-proxy
+      - fetch_docker_image:
+          image: e2etests
+      - fetch_docker_image:
+          image: pncemulator
+      - fetch_docker_image:
+          image: beanconnect
+      - run:
+          name: Run full stack (excluding beanconnect and PNC emulator)
+          working_directory: ~/bichard7-next
+          command: |
+            make build-ci
+            make run-all-no-bc -j 4
+      - run:
+          name: Run beanconnect and PNC emulator
+          working_directory: ~/bichard7-next
+          command: make run-beanconnect
+      - run:
+          name: Wait for Bichard
+          working_directory: ~/bichard7-next
+          command: bash ./scripts/wait_for_bichard.sh
+      - run:
+          name: Trying to run beanconnect and PNC emulator again
+          working_directory: ~/bichard7-next
+          command: make run-beanconnect && bash ./scripts/wait_for_bichard.sh
+          when: on_fail
+      - run:
+          name: Run UI stack
+          working_directory: ~/bichard7-next
+          command: make run-ui
+          background: true
+      - run:
+          name: Wait for UI to start
+          command: npx wait-on --config ./.circleci/config/wait-for-401.js https://localhost:4080/bichard
+      - run:
+          name: Run end-to-end tests
+          working_directory: ~/bichard7-next
+          command: bash -c ". ./scripts/e2e-tests/e2e-tests-env.sh && docker-compose run --service-ports e2e-tests-record npm run test:nextUI"
+          environment:
+            STACK_TYPE: next
+            WORKSPACE: local-next
+            AUTH_TYPE: user-service
 
 workflows:
   version: 2
@@ -243,7 +304,8 @@ workflows:
       - integration_test
       - ui_test
       - chromatic_publish
-      - build_and_e2e_test
+      - build_and_cypress_test
+      - e2e_test
   chromatic_baseline_update:
     jobs:
       - chromatic_baseline_update:
