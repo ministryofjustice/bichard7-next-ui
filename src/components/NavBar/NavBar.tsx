@@ -13,8 +13,8 @@ interface NavBarProps {
 }
 
 const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
-  const { asPath, basePath } = useRouter()
-  const ariaCurrent = link === basePath + asPath ? "page" : undefined
+  const { basePath } = useRouter()
+  const ariaCurrent = link === basePath + "/" ? "page" : undefined
 
   return (
     <li className="moj-primary-navigation__item">
