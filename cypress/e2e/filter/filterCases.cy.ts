@@ -303,14 +303,14 @@ describe("Case list", () => {
 
     it("Should filter cases by urgency", () => {
       cy.task("insertCourtCasesWithUrgencies", {
-        urgencies: [true, false, true, false, true, false, false],
+        urgencies: [true, false, true, true],
         force: "011111"
       })
 
       cy.visit("/bichard")
 
       cy.get("button[id=filter-button]").click()
-      cy.get("#is-urgent-filter").click()
+      cy.get("#urgent").click()
       cy.get("button[id=search]").click()
 
       cy.get("tr").not(":first").should("have.length", 3)
@@ -320,9 +320,21 @@ describe("Case list", () => {
           cy.wrap(row).contains("Urgent").should("exist")
         })
 
-      // Removing urgent filter tag a non-urgent case should be shown with the filter disabled
+      // Removing urgent filter tag all case should be shown with the filter disabled
       cy.get('*[class^="moj-filter-tags"]').contains("Urgent").click()
+      cy.get("tr").not(":first").should("have.length", 4)
+
+      // Filter for non-urgent cases
+      cy.get("button[id=filter-button]").click()
+      cy.get("#non-urgent").click()
+      cy.get("button[id=search]").click()
+
+      cy.get("tr").not(":first").should("have.length", 1)
       cy.get("tr").contains("Case00001").should("exist")
+
+      // Removing non-urgent filter tag all case should be shown with the filter disabled
+      cy.get('*[class^="moj-filter-tags"]').contains("Non-urgent").click()
+      cy.get("tr").not(":first").should("have.length", 4)
     })
 
     it("Should clear filters", () => {

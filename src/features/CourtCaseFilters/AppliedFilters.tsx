@@ -9,7 +9,7 @@ interface Props {
     courtCaseTypes?: Filter[]
     keywords?: string[]
     dateRange?: string | null
-    urgency?: boolean
+    urgency?: string | null
   }
 }
 
@@ -62,7 +62,10 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
           </If>
           <If condition={!!filters.urgency}>
             <li>
-              <FilterTag tag={"Urgent"} href={removeQueryParamFromPath({ urgency: "Urgent" })} />
+              <FilterTag
+                tag={filters.urgency ?? ""}
+                href={removeQueryParamFromPath({ urgency: filters.urgency ?? "" })}
+              />
             </li>
           </If>
           <li>

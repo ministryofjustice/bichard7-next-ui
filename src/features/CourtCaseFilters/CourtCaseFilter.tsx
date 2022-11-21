@@ -1,3 +1,4 @@
+import RadioButton from "components/RadioButton/RadioButton"
 import { HintText } from "govuk-react"
 import { Filter } from "types/CaseListQueryParams"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
@@ -5,7 +6,7 @@ import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFi
 interface Props {
   courtCaseTypes?: Filter[]
   dateRange?: string | null
-  urgency?: boolean
+  urgency?: string | null
 }
 
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }: Props) => {
@@ -75,20 +76,17 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }
           <div className="govuk-form-group">
             <fieldset className="govuk-fieldset">
               <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Urgency"}</legend>
-              <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                <div className="govuk-checkboxes__item">
-                  <input
-                    className="govuk-checkboxes__input"
-                    id="is-urgent-filter"
-                    name="urgency"
-                    type="checkbox"
-                    value="Urgent"
-                    defaultChecked={urgency}
-                  ></input>
-                  <label className="govuk-label govuk-checkboxes__label" htmlFor="is-urgent-filter">
-                    {"Urgent"}
-                  </label>
-                </div>
+              <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                {["Urgent", "Non-urgent"].map((urgencyFilter) => (
+                  <RadioButton
+                    name={"urgency"}
+                    key={urgencyFilter.toLowerCase().replace(" ", "-")}
+                    id={urgencyFilter.toLowerCase().replace(" ", "-")}
+                    defaultChecked={urgency === urgencyFilter}
+                    value={urgencyFilter}
+                    label={urgencyFilter}
+                  />
+                ))}
               </div>
             </fieldset>
           </div>
