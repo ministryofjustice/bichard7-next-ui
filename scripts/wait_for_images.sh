@@ -1,6 +1,6 @@
 #!/bin/bash
 
-array=( ui user-service nginx-auth-proxy e2etests pncemulator beanconnect )
+array=("$@")
 for i in "${array[@]}"
 do
   image=`docker image ls | grep -w -c $i`;

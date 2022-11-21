@@ -207,8 +207,8 @@ jobs:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
       - run:
-          name: Wait for UI build to finish
-          command: until [ -f uiBuilt ]; do sleep 1; done
+          name: Wait for docker images
+          command: IMAGES=(ui user-service nginx-auth-proxy) && bash ./scripts/wait_for_images.sh "${IMAGES[@]}"
           no_output_timeout: 15m
       - run:
           name: Run MQ
@@ -262,7 +262,8 @@ jobs:
           image: beanconnect
       - run:
           name: Wait for docker images
-          command: bash ./scripts/wait_for_images.sh
+          command: IMAGES=(ui user-service nginx-auth-proxy e2etests pncemulator beanconnect) && bash ./scripts/wait_for_images.sh "${IMAGES[@]}"
+          no_output_timeout: 15m
       - run:
           name: Run full stack (excluding beanconnect and PNC emulator)
           working_directory: ~/bichard7-next
