@@ -17,13 +17,15 @@ const Layout = ({ children, user }: Props) => {
     <>
       <Header serviceName={"Bichard7"} organisationName={"Minsitry of Justice"} userName={user.username} />
       <NavBar groups={user.groups} />
-      <PhaseBanner phase={"prototype"} />
     </>
   )
 
   return (
     <>
-      <Page header={header}>{children}</Page>
+      <Page header={header}>
+        <PhaseBanner phase={"prototype"} />
+        {children}
+      </Page>
       <Footer
         copyright={{
           image: {
