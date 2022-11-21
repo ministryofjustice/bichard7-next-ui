@@ -4,6 +4,7 @@ import User from "../services/entities/User"
 import { useRouter } from "next/router"
 import Header from "./Header"
 import NavBar from "./NavBar"
+import PhaseBanner from "./PhaseBanner"
 
 interface Props {
   children: ReactNode
@@ -16,6 +17,7 @@ const Layout = ({ children, user }: Props) => {
     <>
       <Header serviceName={"Bichard7"} organisationName={"Minsitry of Justice"} userName={user.username} />
       <NavBar groups={user.groups} />
+      <PhaseBanner phase={"prototype"} />
     </>
   )
 
