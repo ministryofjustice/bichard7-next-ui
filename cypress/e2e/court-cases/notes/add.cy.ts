@@ -130,7 +130,7 @@ describe("Case details", () => {
 
       cy.url().should("match", /.*\/court-cases\/0\/notes\/add\?#/)
       cy.get("H2").should("have.text", "Add Note")
-      cy.get("span").eq(1).should("have.text", "Required")
+      cy.get("span").eq(2).should("have.text", "Required")
     })
 
     it("Adding an empty note doesn't add a note, when the case is visible to the user and not locked by another user", () => {

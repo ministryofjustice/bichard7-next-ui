@@ -4,6 +4,7 @@ import User from "../services/entities/User"
 import { useRouter } from "next/router"
 import Header from "./Header"
 import NavBar from "./NavBar"
+import PhaseBanner from "./PhaseBanner"
 
 interface Props {
   children: ReactNode
@@ -21,7 +22,10 @@ const Layout = ({ children, user }: Props) => {
 
   return (
     <>
-      <Page header={header}>{children}</Page>
+      <Page header={header}>
+        <PhaseBanner phase={"prototype"} />
+        {children}
+      </Page>
       <Footer
         copyright={{
           image: {

@@ -58,6 +58,28 @@ describe("Home", () => {
         cy.contains("nav a", "Sign out").should("have.attr", "href", "/users/logout/")
       })
     })
+    context("phase banner", () => {
+      it("displays a phase banner", () => {
+        cy.task("insertUsers", {
+          users: [
+            {
+              username: `generalhandler2`,
+              visibleForces: [`01`],
+              forenames: "Bichard Test User",
+              surname: `01`,
+              email: `generalhandler2@example.com`,
+              password:
+                "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw"
+            }
+          ],
+          userGroups: ["B7NewUI_grp"]
+        })
+        cy.login("generalhandler2@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.contains("prototype")
+      })
+    })
   })
 })
 
