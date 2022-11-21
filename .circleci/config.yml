@@ -248,6 +248,7 @@ jobs:
       - run:
           name: Build next UI docker image
           command: make build
+          background: true
       - clone_bichard_repo
       - fetch_docker_image:
           image: user-service
@@ -259,6 +260,9 @@ jobs:
           image: pncemulator
       - fetch_docker_image:
           image: beanconnect
+      - run:
+          name: Wait for docker images
+          command: bash ./scripts/wait_for_images.sh
       - run:
           name: Run full stack (excluding beanconnect and PNC emulator)
           working_directory: ~/bichard7-next
