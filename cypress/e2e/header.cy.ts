@@ -59,7 +59,7 @@ describe("Home", () => {
       })
     })
     context("phase banner", () => {
-      it.only("displays a pahse banner", () => {
+      it("displays a phase banner", () => {
         cy.task("insertUsers", {
           users: [
             {
