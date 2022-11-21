@@ -44,8 +44,10 @@ const listCourtCases = async (
     query.andWhere("courtCase.errorCount > 0")
   }
 
-  if (urgentFilter) {
+  if (urgentFilter === "Urgent") {
     query.andWhere("courtCase.isUrgent > 0")
+  } else if (urgentFilter === "Non-urgent") {
+    query.andWhere("courtCase.isUrgent = 0")
   }
 
   if (courtDateRange) {
