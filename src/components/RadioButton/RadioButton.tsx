@@ -1,16 +1,15 @@
 interface Props {
   name: string
   id: string
-  key?: string
   dataAriaControls?: string
   defaultChecked: boolean
   value?: string
   label: string
 }
 
-const RadioButton: React.FC<Props> = ({ name, id, key, dataAriaControls, defaultChecked, value, label }: Props) => {
+const RadioButton: React.FC<Props> = ({ name, id, dataAriaControls, defaultChecked, value, label }: Props) => {
   return (
-    <div className="govuk-radios__item" key={key}>
+    <div className="govuk-radios__item">
       <input
         className="govuk-radios__input"
         name={name}
