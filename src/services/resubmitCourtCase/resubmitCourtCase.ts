@@ -3,8 +3,8 @@ import User from "services/entities/User"
 import tryToLockCourtCase from "services/tryToLockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
 import { DataSource } from "typeorm"
-import sendToQueue from "services/mq/sendToQueue"
-import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/build/src/serialise/ahoXml/generate"
+//import sendToQueue from "services/mq/sendToQueue"
+//import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/build/src/serialise/ahoXml/generate"
 import { isError } from "types/Result"
 
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
@@ -67,12 +67,12 @@ const resubmitCourtCase = async (
       throw courtCase
     }
 
-    const generatedXml = convertAhoToXml(courtCase, false)
-    const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: "HEARING_OUTCOME_INPUT_QUEUE" })
+    // const generatedXml = convertAhoToXml(courtCase, false)
+    // const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: "HEARING_OUTCOME_INPUT_QUEUE" })
 
-    if (isError(queueResult)) {
-      return queueResult
-    }
+    // if (isError(queueResult)) {
+    //   return queueResult
+    // }
 
     return courtCase
   } catch (err) {

@@ -15,6 +15,8 @@ export type Amendments = {
   noUpdatesResubmit?: boolean
 }
 
+export type AmendmentArrValues = Exclude<AmendmentValues, string>
+
 export type AmendmentValues =
   | string
   | UpdatedOffenceValue[]
@@ -22,6 +24,8 @@ export type AmendmentValues =
   | UpdatedOffenceResult[]
   | UpdatedNextHearingDate[]
   | UpdatedCourtOffenceSequenceNumber[]
+
+export type IndividualAmendmentArrValues = Exclude<IndividualAmendmentValues, string>
 
 export type IndividualAmendmentValues =
   | string
