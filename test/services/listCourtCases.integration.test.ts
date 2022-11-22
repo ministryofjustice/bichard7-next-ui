@@ -583,7 +583,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        urgentFilter: true
+        urgentFilter: "Urgent"
       })
 
       expect(isError(result)).toBeFalsy()
@@ -593,19 +593,19 @@ describe("listCourtCases", () => {
       expect(cases.map((c) => c.errorId)).toStrictEqual([1, 3])
     })
 
-    it("Should not filter cases when the urgent filter is not set", async () => {
-      await insertDummyCourtCasesWithUrgencies([false, true, false, true], "01")
+    it("Should filter non-urgent cases", async () => {
+      await insertDummyCourtCasesWithUrgencies([false, true, false, false], "01")
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        urgentFilter: false
+        urgentFilter: "Non-urgent"
       })
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(4)
+      expect(cases).toHaveLength(3)
     })
 
     it("Should not filter cases when the urgent filter is undefined", async () => {

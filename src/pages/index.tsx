@@ -1,7 +1,7 @@
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { Filter, QueryOrder } from "types/CaseListQueryParams"
+import { Filter, QueryOrder, Urgency } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import CourtCaseList from "features/CourtCaseList/CourtCaseList"
 import Layout from "components/Layout"
@@ -25,7 +25,7 @@ interface Props {
   order: QueryOrder
   courtCaseTypes: Filter[]
   keywords: string[]
-  urgentFilter: boolean
+  urgentFilter: string | null
   totalPages: number
   dateRange: string | null
   pageNum: number
@@ -46,7 +46,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
     const validatedDateRange = mapDateRange(dateRange)
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
-    const validatedUrgentFilter = validateQueryParams(urgency) && urgency !== ""
+    const validatedUrgentFilter = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
 
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
@@ -79,7 +79,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCaseTypes: courtCaseTypes,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
-        urgentFilter: validatedUrgentFilter
+        urgentFilter: validatedUrgentFilter ? validatedUrgentFilter : null
       }
     }
   }

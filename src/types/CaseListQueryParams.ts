@@ -9,12 +9,14 @@ export type CourtDateRange = {
   to: Date
 }
 
+export type Urgency = "Urgent" | "Non-urgent" | undefined
+
 export type CaseListQueryParams = {
   orderBy?: string
   order?: QueryOrder
   resultFilter?: Filter[]
   defendantName?: string
-  urgentFilter?: boolean
+  urgentFilter?: Urgency
   forces: string[]
   pageNum?: string
   maxPageItems: string
