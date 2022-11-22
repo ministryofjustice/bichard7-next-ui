@@ -1,7 +1,7 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { Table } from "govuk-react"
 import { IndividualAmendmentValues } from "types/Amendments"
-import { getOffenceCode } from "./utils"
+import getOffenceCode from "utils/getOffenceCode"
 import OffenceDetails from "./OffenceDetails"
 import ResultsTable from "./ResultsTable"
 

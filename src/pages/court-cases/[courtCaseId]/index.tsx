@@ -39,10 +39,10 @@ export const getServerSideProps = withMultipleServerSideProps(
     let lockResult: UpdateResult | Error | undefined
 
     if (isPost(req) && !!lock) {
-      if (lock === "true") {
-        lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser)
-      } else if (lock === "false") {
+      if (lock === "false") {
         lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser)
+      } else {
+        lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser)
       }
     }
 

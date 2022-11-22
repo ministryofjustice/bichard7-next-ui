@@ -9,7 +9,6 @@ import { DataSource } from "typeorm"
 import createForceOwner from "utils/createForceOwner"
 import getCourtCase from "../../src/services/getCourtCase"
 import deleteFromTable from "../utils/deleteFromTable"
-import DummyAho from "../test-data/error_list_aho.json"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 
 jest.mock("services/getCourtCase")
@@ -55,7 +54,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    expect(inputCourtCase.hearingOutcome).toBe(DummyAho.hearingOutcomeXml)
+    expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
 
     const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
 
@@ -81,7 +80,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    expect(inputCourtCase.hearingOutcome).toBe(DummyAho.hearingOutcomeXml)
+    expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
 
     const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
 
@@ -107,7 +106,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    expect(inputCourtCase.hearingOutcome).toBe(DummyAho.hearingOutcomeXml)
+    expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
 
     const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
 
@@ -118,7 +117,7 @@ describe("amend court case", () => {
       .getRepository(CourtCase)
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
-    expect(retrievedCase?.hearingOutcome).toBe(DummyAho.hearingOutcomeXml)
+    expect(retrievedCase?.hearingOutcome).toEqual(inputCourtCase.hearingOutcome)
   })
 
   it("should create a force owner if the force owner is not present", async () => {

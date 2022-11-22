@@ -46,7 +46,6 @@ const selectKey = (aho: AnnotatedHearingOutcome) => (key: string, value: Amendme
       amendCourtPNCIdentifier(value as string, aho)
       break
     case "resultVariableText":
-      console.log("v", value)
       amendResultVariableText(value as UpdatedOffenceResult[], aho)
       break
     case "courtReference":
