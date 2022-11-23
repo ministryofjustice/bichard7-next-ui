@@ -20,7 +20,7 @@ const labelForDateRange = (namedDateRange: string): string =>
 const CourtDateFilterOptions: React.FC<Props> = ({ dateRange }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
-      <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Court Date"}</legend>
+      <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Court date"}</legend>
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
         <RadioButton
           name={"courtDate"}

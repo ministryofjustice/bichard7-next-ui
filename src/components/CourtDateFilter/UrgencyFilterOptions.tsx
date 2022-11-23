@@ -18,7 +18,7 @@ const UrgencyFilterOptions: React.FC<Props> = ({ urgency }: Props) => {
             id={urgencyFilter.toLowerCase()}
             defaultChecked={urgency === urgencyFilter}
             value={urgencyFilter}
-            label={urgencyFilter}
+            label={urgencyFilter + " cases only"}
           />
         ))}
       </div>
