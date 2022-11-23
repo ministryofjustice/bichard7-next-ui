@@ -29,6 +29,7 @@ interface Props {
   totalPages: number
   dateRange: string | null
   pageNum: number
+  lockedFilter: string | null
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
@@ -38,7 +39,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, pageNum, type, keywords, maxPageItems, order, urgency, dateRange } = query
+    const { orderBy, pageNum, type, keywords, maxPageItems, order, urgency, dateRange, locked } = query
     const courtCaseTypes = [type]
       .flat()
       .filter((t) => validCourtCaseTypes.includes(String(t))) as TriggerExceptionFilter[]
@@ -49,6 +50,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedDateRange = mapDateRange(dateRange)
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedUrgentFilter = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
+    const validatedLockedFilter = validateQueryParams(locked) ? locked : undefined
 
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
@@ -81,7 +83,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCaseTypes: courtCaseTypes,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
-        urgentFilter: validatedUrgentFilter ? validatedUrgentFilter : null
+        urgentFilter: validatedUrgentFilter ? validatedUrgentFilter : null,
+        lockedFilter: validatedLockedFilter ? validatedLockedFilter : null
       }
     }
   }
@@ -96,7 +99,8 @@ const Home: NextPage<Props> = ({
   courtCaseTypes,
   keywords,
   dateRange,
-  urgentFilter
+  urgentFilter,
+  lockedFilter
 }: Props) => (
   <>
     <Head>
@@ -108,8 +112,19 @@ const Home: NextPage<Props> = ({
         {"Court cases"}
       </Heading>
       <CourtCaseWrapper
-        filter={<CourtCaseFilter courtCaseTypes={courtCaseTypes} dateRange={dateRange} urgency={urgentFilter} />}
-        appliedFilters={<AppliedFilters filters={{ courtCaseTypes, keywords, dateRange, urgency: urgentFilter }} />}
+        filter={
+          <CourtCaseFilter
+            courtCaseTypes={courtCaseTypes}
+            dateRange={dateRange}
+            urgency={urgentFilter}
+            locked={lockedFilter}
+          />
+        }
+        appliedFilters={
+          <AppliedFilters
+            filters={{ courtCaseTypes, keywords, dateRange, urgency: urgentFilter, locked: lockedFilter }}
+          />
+        }
         courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
         pagination={<Pagination totalPages={totalPages} pageNum={pageNum} />}
       />

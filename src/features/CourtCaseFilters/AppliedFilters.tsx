@@ -10,6 +10,7 @@ interface Props {
     keywords?: string[]
     dateRange?: string | null
     urgency?: string | null
+    locked?: string | null
   }
 }
 
@@ -20,7 +21,8 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     (filters.courtCaseTypes && filters.courtCaseTypes.length > 0) ||
     (filters.keywords && filters.keywords.length > 0) ||
     !!filters.urgency ||
-    !!filters.dateRange
+    !!filters.dateRange ||
+    !!filters.locked
 
   const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
     deleteQueryParamsByName(["pageNum"], query)
@@ -66,6 +68,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
                 tag={filters.urgency ?? ""}
                 href={removeQueryParamFromPath({ urgency: filters.urgency ?? "" })}
               />
+            </li>
+          </If>
+          <If condition={!!filters.locked}>
+            <li>
+              <FilterTag tag={filters.locked ?? ""} href={removeQueryParamFromPath({ locked: filters.locked ?? "" })} />
             </li>
           </If>
           <li>

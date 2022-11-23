@@ -1,5 +1,6 @@
 import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
+import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
 import { TriggerExceptionFilter } from "types/CaseListQueryParams"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
@@ -8,9 +9,10 @@ interface Props {
   courtCaseTypes?: TriggerExceptionFilter[]
   dateRange?: string | null
   urgency?: string | null
+  locked?: string | null
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }: Props) => {
+const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
   return (
     <form method={"get"}>
       <div className="moj-filter__header">
@@ -46,6 +48,9 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency }
           </div>
           <div className="govuk-form-group">
             <UrgencyFilterOptions urgency={urgency} />
+          </div>
+          <div>
+            <LockedFilterOptions locked={locked} />
           </div>
         </div>
       </div>
