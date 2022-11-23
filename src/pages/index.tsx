@@ -18,6 +18,7 @@ import { Heading } from "govuk-react"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
+import { mapLockFilter } from "utils/validators/validateLockFilter"
 
 interface Props {
   user: User
@@ -52,6 +53,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedUrgentFilter = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLockedFilter = validateQueryParams(locked) ? locked : undefined
 
+    const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
       forces: currentUser.visibleForces,
@@ -62,7 +64,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
       order: validatedOrder,
-      courtDateRange: validatedDateRange
+      courtDateRange: validatedDateRange,
+      lockedFilter: lockedFilter
     })
 
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
