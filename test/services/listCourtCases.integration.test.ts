@@ -14,7 +14,6 @@ import {
   insertDummyCourtCasesWithUrgencies,
   getDummyCourtCase,
   insertCourtCases,
-  insertMultipleDummyCourtCases,
   insertMultipleDummyCourtCasesWithLock
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
