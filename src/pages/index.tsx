@@ -1,7 +1,7 @@
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { Filter, QueryOrder, Urgency } from "types/CaseListQueryParams"
+import { TriggerExceptionFilter, QueryOrder, Urgency } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import CourtCaseList from "features/CourtCaseList/CourtCaseList"
 import Layout from "components/Layout"
@@ -23,7 +23,7 @@ interface Props {
   user: User
   courtCases: CourtCase[]
   order: QueryOrder
-  courtCaseTypes: Filter[]
+  courtCaseTypes: TriggerExceptionFilter[]
   keywords: string[]
   urgentFilter: string | null
   totalPages: number
@@ -39,7 +39,9 @@ export const getServerSideProps = withMultipleServerSideProps(
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const { orderBy, pageNum, type, keywords, maxPageItems, order, urgency, dateRange } = query
-    const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Filter[]
+    const courtCaseTypes = [type]
+      .flat()
+      .filter((t) => validCourtCaseTypes.includes(String(t))) as TriggerExceptionFilter[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
     const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"

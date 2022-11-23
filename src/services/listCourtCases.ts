@@ -18,7 +18,8 @@ const listCourtCases = async (
     defendantName,
     resultFilter,
     urgentFilter,
-    courtDateRange
+    courtDateRange,
+    lockedFilter
   }: CaseListQueryParams
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
@@ -56,7 +57,7 @@ const listCourtCases = async (
   }
 
   const result = await query.getManyAndCount().catch((error: Error) => error)
-
+  console.log(lockedFilter)
   return isError(result)
     ? result
     : {

@@ -11,7 +11,9 @@ import {
   insertCourtCasesWithDefendantNames,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
-  insertDummyCourtCasesWithUrgencies
+  insertDummyCourtCasesWithUrgencies,
+  getDummyCourtCase,
+  insertCourtCases
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
@@ -666,6 +668,36 @@ describe("listCourtCases", () => {
 
       expect(cases).toHaveLength(1)
       expect(cases.map((c) => c.errorId)).toStrictEqual([1])
+    })
+  })
+
+  describe("Filter cases by locked status", () => {
+    it.only("Should filter cases that are locked ", async () => {
+      const orgCode = "36FP"
+      const lockedCase = await getDummyCourtCase({
+        errorId: 0,
+        errorLockedByUsername: "bichard01",
+        triggerLockedByUsername: "bichard01",
+        messageId: "0"
+      })
+      const unlockedCase = await getDummyCourtCase({
+        errorId: 1,
+        messageId: "1"
+      })
+
+      await insertCourtCases([lockedCase, unlockedCase])
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        lockedFilter: true
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([0])
     })
   })
 })
