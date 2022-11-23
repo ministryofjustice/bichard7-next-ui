@@ -13,7 +13,9 @@ import {
   insertDummyCourtCasesWithTriggers,
   insertDummyCourtCasesWithUrgencies,
   getDummyCourtCase,
-  insertCourtCases
+  insertCourtCases,
+  insertMultipleDummyCourtCases,
+  insertMultipleDummyCourtCasesWithLock
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
@@ -674,18 +676,10 @@ describe("listCourtCases", () => {
   describe("Filter cases by locked status", () => {
     it("Should filter cases that are locked ", async () => {
       const orgCode = "36FP"
-      const lockedCase = await getDummyCourtCase({
-        errorId: 0,
-        errorLockedByUsername: "bichard01",
-        triggerLockedByUsername: "bichard01",
-        messageId: "0"
-      })
-      const unlockedCase = await getDummyCourtCase({
-        errorId: 1,
-        messageId: "1"
-      })
-
-      await insertCourtCases([lockedCase, unlockedCase])
+      await insertMultipleDummyCourtCasesWithLock(
+        [{ errorLockedByUsername: "bichard01", triggerLockedByUsername: "bichard01" }, {}],
+        orgCode
+      )
 
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
