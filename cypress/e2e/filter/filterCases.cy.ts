@@ -346,7 +346,7 @@ describe("Case list", () => {
           },
           {}
         ],
-        orgCodes: ["011111"]
+        orgCode: "011111"
       })
 
       cy.visit("/bichard")

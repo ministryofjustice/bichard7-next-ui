@@ -133,25 +133,22 @@ const insertDummyCourtCaseWithLock = async (
 
 const insertMultipleDummyCourtCasesWithLock = async (
   lockHolders: { errorLockedByUsername?: string; triggerLockedByUsername?: string }[],
-  orgCodes: string[]
+  orgCode: string
 ) => {
   const existingCourtCases: CourtCase[] = []
-  for (let lockIndex = 0; lockIndex < lockHolders.length; lockIndex++) {
-    for (let orgCodeIndex = 0; orgCodeIndex < orgCodes.length; orgCodeIndex++) {
-      const index = lockIndex * lockHolders.length + orgCodeIndex
-      existingCourtCases.push(
-        await getDummyCourtCase({
-          orgForPoliceFilter: orgCodes[orgCodeIndex].padEnd(6, " "),
-          errorId: index,
-          messageId: String(index).padStart(5, "x"),
-          ptiurn: "Case" + String(index).padStart(5, "0"),
-          errorLockedByUsername: lockHolders[lockIndex].errorLockedByUsername ?? null,
-          triggerLockedByUsername: lockHolders[lockIndex].triggerLockedByUsername ?? null,
-          errorCount: 1,
-          triggerCount: 1
-        })
-      )
-    }
+  for (let index = 0; index < lockHolders.length; index++) {
+    existingCourtCases.push(
+      await getDummyCourtCase({
+        orgForPoliceFilter: orgCode.padEnd(6, " "),
+        errorId: index,
+        messageId: String(index).padStart(5, "x"),
+        ptiurn: "Case" + String(index).padStart(5, "0"),
+        errorLockedByUsername: lockHolders[index].errorLockedByUsername ?? null,
+        triggerLockedByUsername: lockHolders[index].triggerLockedByUsername ?? null,
+        errorCount: 1,
+        triggerCount: 1
+      })
+    )
   }
 
   return insertCourtCases(existingCourtCases)

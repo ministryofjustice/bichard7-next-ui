@@ -87,9 +87,9 @@ export default defineConfig({
 
         insertMultipleDummyCourtCasesWithLock(params: {
           lockHolders: { errorLockedByUsername?: string; triggerLockedByUsername?: string }[]
-          orgCodes: string[]
+          orgCode: string
         }) {
-          return insertMultipleDummyCourtCasesWithLock(params.lockHolders, params.orgCodes)
+          return insertMultipleDummyCourtCasesWithLock(params.lockHolders, params.orgCode)
         },
 
         insertCourtCasesWithUrgencies(params: { urgencies: boolean[]; force: string }) {
