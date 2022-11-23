@@ -337,7 +337,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 4)
     })
 
-    it.only("Should filter cases by locked state", () => {
+    it("Should filter cases by locked state", () => {
       cy.task("insertMultipleDummyCourtCasesWithLock", {
         lockHolders: [
           {
