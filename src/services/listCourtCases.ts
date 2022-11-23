@@ -1,5 +1,5 @@
 import { format } from "date-fns"
-import { DataSource } from "typeorm"
+import { Brackets, DataSource } from "typeorm"
 import { CaseListQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
@@ -56,8 +56,25 @@ const listCourtCases = async (
     query.andWhere("courtCase.courtDate <= :to", { to: format(courtDateRange.to, "yyyy-MM-dd") })
   }
 
+  if (lockedFilter !== undefined) {
+    if (lockedFilter) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where("courtCase.errorLockedByUsername IS NOT NULL").orWhere(
+            "courtCase.triggerLockedByUsername IS NOT NULL"
+          )
+        })
+      )
+    } else {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where("courtCase.errorLockedByUsername IS NULL").andWhere("courtCase.triggerLockedByUsername IS NULL")
+        })
+      )
+    }
+  }
+
   const result = await query.getManyAndCount().catch((error: Error) => error)
-  console.log(lockedFilter)
   return isError(result)
     ? result
     : {
