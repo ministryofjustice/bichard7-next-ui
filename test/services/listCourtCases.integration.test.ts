@@ -727,5 +727,49 @@ describe("listCourtCases", () => {
       expect(cases).toHaveLength(1)
       expect(cases.map((c) => c.errorId)).toStrictEqual([1])
     })
+
+    it("Should treat cases with only one lock as locked.  ", async () => {
+      const orgCode = "36FP"
+      const errorLockedCase = await getDummyCourtCase({
+        errorId: 0,
+        errorLockedByUsername: "bichard01",
+        messageId: "0"
+      })
+      const triggerLockedCase = await getDummyCourtCase({
+        errorId: 1,
+        triggerLockedByUsername: "bichard01",
+        messageId: "1"
+      })
+      const unlockedCase = await getDummyCourtCase({
+        errorId: 2,
+        messageId: "2"
+      })
+
+      await insertCourtCases([errorLockedCase, triggerLockedCase, unlockedCase])
+
+      const lockedResult = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        lockedFilter: true
+      })
+
+      expect(isError(lockedResult)).toBeFalsy()
+      const { result: lockedCases } = lockedResult as ListCourtCaseResult
+
+      expect(lockedCases).toHaveLength(2)
+      expect(lockedCases.map((c) => c.errorId)).toStrictEqual([0, 1])
+
+      const unlockedResult = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        lockedFilter: false
+      })
+
+      expect(isError(unlockedResult)).toBeFalsy()
+      const { result: unlockedCases } = unlockedResult as ListCourtCaseResult
+
+      expect(unlockedCases).toHaveLength(1)
+      expect(unlockedCases.map((c) => c.errorId)).toStrictEqual([2])
+    })
   })
 })
