@@ -1,9 +1,8 @@
 import { validateQueryParams } from "./validateQueryParams"
-
-const lockedFilterOptions = ["Locked", "Unlocked"]
+import lockedFilters from "utils/lockedFilters"
 
 export const validateLockFilter = (lockFilter: string | string[] | undefined): boolean =>
-  validateQueryParams(lockFilter) && lockedFilterOptions.includes(lockFilter)
+  validateQueryParams(lockFilter) && lockedFilters.includes(lockFilter)
 
 export const mapLockFilter = (lockFilter: string | string[] | undefined): boolean | undefined =>
   validateLockFilter(lockFilter) ? lockFilter === "Locked" : undefined
