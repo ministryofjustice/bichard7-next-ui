@@ -1,7 +1,7 @@
-import { Filter } from "types/CaseListQueryParams"
+import { Reason } from "types/CaseListQueryParams"
 
 interface Props {
-  courtCaseTypes?: Filter[]
+  courtCaseTypes?: Reason[]
 }
 
 const courtCaseTypeOptions = ["Exceptions", "Triggers"]
@@ -19,7 +19,7 @@ const CourtCaseTypeOptions: React.FC<Props> = ({ courtCaseTypes }: Props) => {
               name="type"
               type="checkbox"
               value={caseType}
-              defaultChecked={courtCaseTypes && courtCaseTypes.includes(caseType as Filter)}
+              defaultChecked={courtCaseTypes && courtCaseTypes.includes(caseType as Reason)}
             ></input>
             <label className="govuk-label govuk-checkboxes__label" htmlFor={`${caseType.toLowerCase()}-type`}>
               {caseType}

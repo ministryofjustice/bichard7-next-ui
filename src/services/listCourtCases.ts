@@ -1,5 +1,5 @@
 import { format } from "date-fns"
-import { DataSource } from "typeorm"
+import { Brackets, DataSource } from "typeorm"
 import { CaseListQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
@@ -16,9 +16,10 @@ const listCourtCases = async (
     orderBy,
     order,
     defendantName,
-    resultFilter,
-    urgentFilter,
-    courtDateRange
+    reasons: resultFilter,
+    urgent,
+    courtDateRange,
+    locked
   }: CaseListQueryParams
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
@@ -44,9 +45,9 @@ const listCourtCases = async (
     query.andWhere("courtCase.errorCount > 0")
   }
 
-  if (urgentFilter === "Urgent") {
+  if (urgent === "Urgent") {
     query.andWhere("courtCase.isUrgent > 0")
-  } else if (urgentFilter === "Non-urgent") {
+  } else if (urgent === "Non-urgent") {
     query.andWhere("courtCase.isUrgent = 0")
   }
 
@@ -55,8 +56,25 @@ const listCourtCases = async (
     query.andWhere("courtCase.courtDate <= :to", { to: format(courtDateRange.to, "yyyy-MM-dd") })
   }
 
-  const result = await query.getManyAndCount().catch((error: Error) => error)
+  if (locked !== undefined) {
+    if (locked) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where("courtCase.errorLockedByUsername IS NOT NULL").orWhere(
+            "courtCase.triggerLockedByUsername IS NOT NULL"
+          )
+        })
+      )
+    } else {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where("courtCase.errorLockedByUsername IS NULL").andWhere("courtCase.triggerLockedByUsername IS NULL")
+        })
+      )
+    }
+  }
 
+  const result = await query.getManyAndCount().catch((error: Error) => error)
   return isError(result)
     ? result
     : {

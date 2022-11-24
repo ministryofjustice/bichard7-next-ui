@@ -337,6 +337,45 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 4)
     })
 
+    it("Should filter cases by locked state", () => {
+      cy.task("insertMultipleDummyCourtCasesWithLock", {
+        lockHolders: [
+          {
+            errorLockedByUsername: "Bichard01",
+            triggerLockedByUsername: "Bichard01"
+          },
+          {}
+        ],
+        orgCode: "011111"
+      })
+
+      cy.visit("/bichard")
+
+      // Filter for locked cases
+      cy.get("button[id=filter-button]").click()
+      cy.get("#locked").click()
+      cy.get("button[id=search]").click()
+
+      cy.get("tr").not(":first").should("have.length", 1)
+      cy.get("tr").not(":first").contains("Case00000").should("exist")
+
+      // Removing locked filter tag all case should be shown with the filter disabled
+      cy.get('*[class^="moj-filter-tags"]').contains("Locked").click()
+      cy.get("tr").not(":first").should("have.length", 2)
+
+      // Filter for unlocked cases
+      cy.get("button[id=filter-button]").click()
+      cy.get("#unlocked").click()
+      cy.get("button[id=search]").click()
+
+      cy.get("tr").not(":first").should("have.length", 1)
+      cy.get("tr").contains("Case00001").should("exist")
+
+      // Removing unlocked filter tag all case should be shown with the filter disabled
+      cy.get('*[class^="moj-filter-tags"]').contains("Unlocked").click()
+      cy.get("tr").not(":first").should("have.length", 2)
+    })
+
     it("Should clear filters", () => {
       cy.visit("/bichard")
 
