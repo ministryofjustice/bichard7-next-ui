@@ -16,10 +16,10 @@ const listCourtCases = async (
     orderBy,
     order,
     defendantName,
-    resultFilter,
-    urgentFilter,
+    reasons: resultFilter,
+    urgent,
     courtDateRange,
-    lockedFilter
+    locked
   }: CaseListQueryParams
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
@@ -45,9 +45,9 @@ const listCourtCases = async (
     query.andWhere("courtCase.errorCount > 0")
   }
 
-  if (urgentFilter === "Urgent") {
+  if (urgent === "Urgent") {
     query.andWhere("courtCase.isUrgent > 0")
-  } else if (urgentFilter === "Non-urgent") {
+  } else if (urgent === "Non-urgent") {
     query.andWhere("courtCase.isUrgent = 0")
   }
 
@@ -56,8 +56,8 @@ const listCourtCases = async (
     query.andWhere("courtCase.courtDate <= :to", { to: format(courtDateRange.to, "yyyy-MM-dd") })
   }
 
-  if (lockedFilter !== undefined) {
-    if (lockedFilter) {
+  if (locked !== undefined) {
+    if (locked) {
       query.andWhere(
         new Brackets((qb) => {
           qb.where("courtCase.errorLockedByUsername IS NOT NULL").orWhere(

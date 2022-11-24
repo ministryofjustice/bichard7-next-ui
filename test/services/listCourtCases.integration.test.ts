@@ -551,7 +551,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        resultFilter: ["Triggers"]
+        reasons: ["Triggers"]
       })
 
       expect(isError(result)).toBeFalsy()
@@ -568,7 +568,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        resultFilter: ["Exceptions"]
+        reasons: ["Exceptions"]
       })
 
       expect(isError(result)).toBeFalsy()
@@ -586,7 +586,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        urgentFilter: "Urgent"
+        urgent: "Urgent"
       })
 
       expect(isError(result)).toBeFalsy()
@@ -602,7 +602,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        urgentFilter: "Non-urgent"
+        urgent: "Non-urgent"
       })
 
       expect(isError(result)).toBeFalsy()
@@ -683,7 +683,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        lockedFilter: true
+        locked: true
       })
 
       expect(isError(result)).toBeFalsy()
@@ -711,7 +711,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        lockedFilter: false
+        locked: false
       })
 
       expect(isError(result)).toBeFalsy()
@@ -743,7 +743,7 @@ describe("listCourtCases", () => {
       const lockedResult = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        lockedFilter: true
+        locked: true
       })
 
       expect(isError(lockedResult)).toBeFalsy()
@@ -755,7 +755,7 @@ describe("listCourtCases", () => {
       const unlockedResult = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        lockedFilter: false
+        locked: false
       })
 
       expect(isError(unlockedResult)).toBeFalsy()

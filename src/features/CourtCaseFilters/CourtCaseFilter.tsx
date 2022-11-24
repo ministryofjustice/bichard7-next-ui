@@ -2,11 +2,11 @@ import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOption
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
-import { TriggerExceptionFilter } from "types/CaseListQueryParams"
+import { Reason } from "types/CaseListQueryParams"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 
 interface Props {
-  courtCaseTypes?: TriggerExceptionFilter[]
+  courtCaseTypes?: Reason[]
   dateRange?: string | null
   urgency?: string | null
   locked?: string | null

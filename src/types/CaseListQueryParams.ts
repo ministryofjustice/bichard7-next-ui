@@ -1,6 +1,6 @@
 export type QueryOrder = "asc" | "desc" | undefined
 
-export type TriggerExceptionFilter = "Triggers" | "Exceptions"
+export type Reason = "Triggers" | "Exceptions"
 
 export type NamedCourtDateRanges = "Today" | undefined
 
@@ -14,12 +14,12 @@ export type Urgency = "Urgent" | "Non-urgent" | undefined
 export type CaseListQueryParams = {
   orderBy?: string
   order?: QueryOrder
-  resultFilter?: TriggerExceptionFilter[]
+  reasons?: Reason[]
   defendantName?: string
-  urgentFilter?: Urgency
+  urgent?: Urgency
   forces: string[]
   pageNum?: string
   maxPageItems: string
   courtDateRange?: CourtDateRange
-  lockedFilter?: boolean
+  locked?: boolean
 }

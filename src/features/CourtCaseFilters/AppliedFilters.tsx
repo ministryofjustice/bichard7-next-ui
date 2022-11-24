@@ -1,12 +1,12 @@
 import FilterTag from "components/FilterTag/FilterTag"
 import If from "components/If"
 import { useRouter } from "next/router"
-import { TriggerExceptionFilter } from "types/CaseListQueryParams"
+import { Reason } from "types/CaseListQueryParams"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
 
 interface Props {
   filters: {
-    courtCaseTypes?: TriggerExceptionFilter[]
+    courtCaseTypes?: Reason[]
     keywords?: string[]
     dateRange?: string | null
     urgency?: string | null
