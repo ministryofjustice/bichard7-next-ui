@@ -1,3 +1,5 @@
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
@@ -33,6 +35,7 @@ describe("resubmit court case", () => {
   })
 
   it("should resubmit a court case with no updates", async () => {
+    // set up court case in the right format to insert into the db
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -44,10 +47,10 @@ describe("resubmit court case", () => {
       updatedHearingOutcome: offenceSequenceException.updatedHearingOutcomeXml
     })
 
+    // insert the record to the db
     await insertCourtCases(inputCourtCase)
 
-    expect(inputCourtCase.updatedHearingOutcome).toEqual(offenceSequenceException.updatedHearingOutcomeXml)
-    expect(inputCourtCase.hearingOutcome).toEqual(offenceSequenceException.hearingOutcomeXml)
+    // check the queue hasn't been called
     expect(sendToQueue).toHaveBeenCalledTimes(0)
 
     const result = await resubmitCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
@@ -58,6 +61,7 @@ describe("resubmit court case", () => {
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
 
+    // pull out the case from the db
     const retrievedCase = await dataSource
       .getRepository(CourtCase)
       .findOne({ where: { errorId: inputCourtCase.errorId } })
@@ -67,8 +71,166 @@ describe("resubmit court case", () => {
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
       { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
     ])
-    expect(retrievedCase?.updatedHearingOutcome).toEqual(offenceSequenceException.updatedHearingOutcomeXml)
-    expect(retrievedCase?.hearingOutcome).toEqual(offenceSequenceException.hearingOutcomeXml)
+
+    // assert that the xml in the db is as we expect
+    expect(retrievedCase?.updatedHearingOutcome).toMatchSnapshot()
+    expect(retrievedCase?.hearingOutcome).toMatchSnapshot()
+    expect(retrievedCase?.errorStatus).toBe("Submitted")
+  })
+
+  it("should resubmit a court case with updates to Court Offence Sequence Number", async () => {
+    // set up court case in the right format to insert into the db
+    const inputCourtCase = await getDummyCourtCase({
+      errorLockedByUsername: null,
+      triggerLockedByUsername: null,
+      errorCount: 1,
+      errorStatus: "Unresolved",
+      triggerCount: 1,
+      phase: 1,
+      hearingOutcome: offenceSequenceException.hearingOutcomeXml,
+      updatedHearingOutcome: offenceSequenceException.updatedHearingOutcomeXml
+    })
+
+    // insert the record to the db
+    await insertCourtCases(inputCourtCase)
+
+    // check the queue hasn't been called
+    expect(sendToQueue).toHaveBeenCalledTimes(0)
+
+    // parse the xml so we can assert on the values before they change
+    const input = parseAhoXml(inputCourtCase.updatedHearingOutcome as string)
+
+    expect(input).not.toBeInstanceOf(Error)
+
+    expect(
+      (input as AnnotatedHearingOutcome).AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[0]
+        .CourtOffenceSequenceNumber
+    ).not.toEqual(1234)
+
+    const result = await resubmitCourtCase(
+      dataSource,
+      { courtOffenceSequenceNumber: [{ offenceIndex: 0, updatedValue: 1234 }] },
+      inputCourtCase.errorId,
+      {
+        username: userName,
+        canLockExceptions: true
+      } as User
+    )
+
+    expect(result).not.toBeInstanceOf(Error)
+    expect(result).toMatchSnapshot()
+
+    // pull out the case from the db
+    const retrievedCase = await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: inputCourtCase.errorId } })
+
+    expect(sendToQueue).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
+      { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
+    ])
+
+    // parse the retreived case to aho format so we can assert on the values
+    const parsedCase = parseAhoXml((retrievedCase as CourtCase).updatedHearingOutcome as string)
+
+    expect(parsedCase).not.toBeInstanceOf(Error)
+
+    expect(
+      (parsedCase as AnnotatedHearingOutcome).AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[0]
+        .CourtOffenceSequenceNumber
+    ).toEqual(1234)
+
+    // assert that the xml in the db is as we expect
+    expect(retrievedCase?.updatedHearingOutcome).toMatchSnapshot()
+    expect(retrievedCase?.hearingOutcome).toMatchSnapshot()
+    expect(retrievedCase?.errorStatus).toBe("Submitted")
+  })
+
+  it("should resubmit a court case with updates to multiple offences", async () => {
+    const amendments = [
+      { offenceIndex: 0, updatedValue: 1234 },
+      { offenceIndex: 1, updatedValue: 1234 }
+    ]
+
+    // set up court case in the right format to insert into the db
+    const inputCourtCase = await getDummyCourtCase({
+      errorLockedByUsername: null,
+      triggerLockedByUsername: null,
+      errorCount: 1,
+      errorStatus: "Unresolved",
+      triggerCount: 1,
+      phase: 1,
+      hearingOutcome: offenceSequenceException.hearingOutcomeXml,
+      updatedHearingOutcome: offenceSequenceException.updatedHearingOutcomeXml
+    })
+
+    // insert the record to the db
+    await insertCourtCases(inputCourtCase)
+
+    // check the queue hasn't been called
+    expect(sendToQueue).toHaveBeenCalledTimes(0)
+
+    // parse the xml so we can assert on the values before they change
+    const input = parseAhoXml(inputCourtCase.updatedHearingOutcome as string)
+
+    expect(input).not.toBeInstanceOf(Error)
+
+    amendments.forEach(({ offenceIndex, updatedValue }) => {
+      expect(
+        (input as AnnotatedHearingOutcome).AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
+          offenceIndex
+        ].CourtOffenceSequenceNumber
+      ).not.toEqual(updatedValue)
+    })
+
+    const result = await resubmitCourtCase(
+      dataSource,
+      {
+        courtOffenceSequenceNumber: amendments
+      },
+      inputCourtCase.errorId,
+      {
+        username: userName,
+        canLockExceptions: true
+      } as User
+    )
+
+    expect(result).not.toBeInstanceOf(Error)
+    expect(result).toMatchSnapshot()
+
+    // pull out the case from the db
+    const retrievedCase = await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: inputCourtCase.errorId } })
+
+    expect(sendToQueue).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
+      { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
+    ])
+
+    // parse the retreived case to aho format so we can assert on the values
+    const parsedCase = parseAhoXml((retrievedCase as CourtCase).updatedHearingOutcome as string)
+
+    expect(parsedCase).not.toBeInstanceOf(Error)
+
+    amendments.forEach(({ offenceIndex, updatedValue }) => {
+      expect(
+        (parsedCase as AnnotatedHearingOutcome).AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
+          offenceIndex
+        ].CourtOffenceSequenceNumber
+      ).toEqual(updatedValue)
+      expect(
+        (parsedCase as AnnotatedHearingOutcome).AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
+          offenceIndex
+        ].CourtOffenceSequenceNumber
+      ).toEqual(updatedValue)
+    })
+
+    // assert that the xml in the db is as we expect
+    expect(retrievedCase?.updatedHearingOutcome).toMatchSnapshot()
+    expect(retrievedCase?.hearingOutcome).toMatchSnapshot()
     expect(retrievedCase?.errorStatus).toBe("Submitted")
   })
 })

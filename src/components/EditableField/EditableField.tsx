@@ -1,29 +1,46 @@
-import isException from "utils/isException"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/ExceptionCode"
+import ResultVariableText from "components/ResultVariableText/ResultVariableText"
 import { InputField } from "govuk-react"
 import get from "lodash.get"
+import { IndividualAmendmentValues, RelevantIndexes } from "types/Amendments"
+import isException from "utils/isException"
 
 const EditableField: React.FC<{
   aho: AnnotatedHearingOutcome
   objPath: string
-  amendFn: (newValue: string) => void
-}> = ({ aho, objPath, amendFn }) => {
+  amendFn: (newValue: IndividualAmendmentValues) => void
+  relevantIndexes?: RelevantIndexes
+}> = ({ aho, objPath, amendFn, relevantIndexes }) => {
   const result: ExceptionCode | null = isException(aho, objPath)
   const value = (get(aho, objPath, "") ?? "").toString() // object is returned for dates
 
   return Boolean(result) ? (
-    <InputField
-      input={{
-        onChange: (event) => amendFn(event.target.value)
-      }}
-      meta={{
-        error: result as ExceptionCode,
-        touched: true
-      }}
-    >
-      {value}
-    </InputField>
+    objPath.includes("ResultVariableText") && relevantIndexes ? (
+      <ResultVariableText text={value} relevantIndexes={relevantIndexes} amendFn={amendFn} />
+    ) : (
+      <InputField
+        input={{
+          onChange: (event) =>
+            amendFn(
+              relevantIndexes
+                ? {
+                    ...relevantIndexes,
+                    updatedValue: event.target.value
+                  }
+                : event.target.value
+            )
+        }}
+        meta={{
+          error: result as ExceptionCode,
+          touched: true
+        }}
+      >
+        {value}
+      </InputField>
+    )
+  ) : objPath.includes("ResultVariableText") && relevantIndexes ? (
+    <ResultVariableText text={value} relevantIndexes={relevantIndexes} amendFn={amendFn} />
   ) : (
     <>{value}</>
   )

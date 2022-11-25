@@ -1,25 +1,45 @@
+import { OrganisationUnitCodes } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+
 export type Amendments = {
   asn: string
-  offenceReasonSequence: UpdatedOffenceValue
-  courtCaseReference: UpdatedOffenceValue
-  disposalQualifierCode: UpdatedDisposalQualifierCode
-  nextSourceOrganisation: UpdatedOffenceResult
-  nextHearingDate: UpdatedNextHearingDate
+  offenceReasonSequence: UpdatedOffenceValue[]
+  courtCaseReference: UpdatedOffenceValue[]
+  disposalQualifierCode: UpdatedDisposalQualifierCode[]
+  nextSourceOrganisation: UpdatedOffenceResult[]
+  nextHearingDate: UpdatedNextHearingDate[]
   courtPNCIdentifier: string
-  resultVariableText: UpdatedOffenceResult
+  resultVariableText: UpdatedOffenceResult[]
   courtReference: string
-  courtOffenceSequenceNumber: UpdatedCourtOffenceSequenceNumber
+  courtOffenceSequenceNumber: UpdatedCourtOffenceSequenceNumber[]
   forceOwner: string
   noUpdatesResubmit?: boolean
 }
 
 export type AmendmentValues =
   | string
+  | UpdatedOffenceValue[]
+  | UpdatedDisposalQualifierCode[]
+  | UpdatedOffenceResult[]
+  | UpdatedNextHearingDate[]
+  | UpdatedCourtOffenceSequenceNumber[]
+
+export type AmendmentArrValues = Exclude<AmendmentValues, string>
+
+export type IndividualAmendmentValues =
+  | string
   | UpdatedOffenceValue
   | UpdatedDisposalQualifierCode
   | UpdatedOffenceResult
   | UpdatedNextHearingDate
   | UpdatedCourtOffenceSequenceNumber
+
+export type IndividualAmendmentArrValues = Exclude<IndividualAmendmentValues, string>
+
+export type RelevantIndexes = {
+  offenceIndex: number
+  resultIndex?: number
+  resultQualifierIndex?: number
+}
 
 export type RawCourtCaseForAmend = {
   phase: number
@@ -63,3 +83,8 @@ export enum ValidProperties {
   NextHearingDate = "NextHearingDate",
   ResultVariableText = "ResultVariableText"
 }
+
+export type ValuesToAmend =
+  | { property: "NextHearingDate"; value: Date }
+  | { property: "NextResultSourceOrganisation"; value: OrganisationUnitCodes }
+  | { property: "ResultVariableText"; value: string }

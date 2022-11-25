@@ -24,7 +24,7 @@ const DummyCourtCase: Partial<CourtCase> = {
   errorReport: "",
   createdTimestamp: new Date("2022-06-30 09:44:03.93"),
   errorCount: 0,
-  userUpdatedFlag: 1,
+  userUpdatedFlag: 0,
   resolutionTimestamp: null,
   messageReceivedTimestamp: new Date("2022-06-30 09:44:03.93"),
   errorResolvedBy: null,

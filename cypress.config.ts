@@ -13,6 +13,7 @@ import {
   insertCourtCasesWithCourtDates,
   insertMultipleDummyCourtCasesWithLock
 } from "./test/utils/insertCourtCases"
+import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import { insertTriggers } from "./test/utils/manageTriggers"
 import insertException from "./test/utils/manageExceptions"
 import { deleteUsers, insertUsersWithOverrides } from "./test/utils/manageUsers"
@@ -122,6 +123,9 @@ export default defineConfig({
 
         insertException(params: { caseId: number; exceptionCode: string }) {
           return insertException(params.caseId, params.exceptionCode)
+        },
+        getCourtCaseById(params: { caseId: number }) {
+          return getCourtCaseById(params.caseId)
         },
         table(message) {
           console.table(message)

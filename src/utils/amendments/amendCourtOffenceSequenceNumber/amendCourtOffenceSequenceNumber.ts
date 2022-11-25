@@ -2,17 +2,19 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import { UpdatedCourtOffenceSequenceNumber } from "types/Amendments"
 
 const amendCourtOffenceSequenceNumber = (
-  { offenceIndex, updatedValue }: UpdatedCourtOffenceSequenceNumber,
+  offences: UpdatedCourtOffenceSequenceNumber[],
   aho: AnnotatedHearingOutcome
 ) => {
-  const defendant = aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
-  const offenceIndexOutOfRange = offenceIndex > defendant.Offence.length - 1
-  if (offenceIndexOutOfRange) {
-    throw new Error(`Cannot update the CourtOffenceSequenceNumber; Offence index is out of range`)
-  }
+  offences.forEach(({ offenceIndex, updatedValue }: UpdatedCourtOffenceSequenceNumber) => {
+    const defendant = aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
+    const offenceIndexOutOfRange = offenceIndex > defendant.Offence.length - 1
+    if (offenceIndexOutOfRange) {
+      throw new Error(`Cannot update the CourtOffenceSequenceNumber; Offence index is out of range`)
+    }
 
-  defendant.Offence[offenceIndex].CourtOffenceSequenceNumber = updatedValue
-  return
+    defendant.Offence[offenceIndex].CourtOffenceSequenceNumber = updatedValue
+    return
+  })
 }
 
 export default amendCourtOffenceSequenceNumber

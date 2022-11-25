@@ -1,3 +1,3 @@
-import { insertCourtCasesWithOrgCodes } from "../test/utils/insertCourtCases"
+import { insertDummyCourtCaseWithLock } from "../test/utils/insertCourtCases"
 
-insertCourtCasesWithOrgCodes(["01"])
+insertDummyCourtCaseWithLock("Bichard01", "Bichard01", ["02"])

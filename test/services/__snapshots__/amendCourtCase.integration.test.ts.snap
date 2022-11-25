@@ -1,416 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`amend court case should amend the court case 1`] = `
-{
-  "AnnotatedHearingOutcome": {
-    "HearingOutcome": {
-      "Case": {
-        "CourtCaseReferenceNumber": undefined,
-        "CourtReference": {
-          "MagistratesCourtReference": "41BP0510007",
-        },
-        "ForceOwner": {
-          "BottomLevelCode": "00",
-          "OrganisationUnitCode": "04CA00",
-          "SecondLevelCode": "04",
-          "ThirdLevelCode": "CA",
-          "TopLevelCode": undefined,
-        },
-        "HearingDefendant": {
-          "Address": {
-            "AddressLine1": "112 Letsbeavenue",
-            "AddressLine2": "Frimley,Camberley, Surrey",
-            "AddressLine3": undefined,
-            "AddressLine4": undefined,
-            "AddressLine5": undefined,
-          },
-          "ArrestSummonsNumber": "9625UC0000000118191Z",
-          "BailConditions": [
-            "give to the court any passport held",
-          ],
-          "CourtPNCIdentifier": "2706/1234567P",
-          "DefendantDetail": {
-            "BirthDate": 1949-10-29T00:00:00.000Z,
-            "Gender": 1,
-            "GeneratedPNCFilename": "RIGOUT/DEAN",
-            "PersonName": {
-              "FamilyName": "Rigout",
-              "GivenName": [
-                "Dean",
-              ],
-              "Title": "Mr",
-            },
-          },
-          "Offence": [
-            {
-              "ActualOffenceDateCode": "1",
-              "ActualOffenceEndDate": undefined,
-              "ActualOffenceStartDate": {
-                "StartDate": 2007-09-15T00:00:00.000Z,
-              },
-              "ActualOffenceWording": "Burglary (with intent to steal - other than in dwelling)",
-              "AddedByTheCourt": true,
-              "AlcoholLevel": undefined,
-              "ArrestDate": 2007-09-15T00:00:00.000Z,
-              "ChargeDate": 2007-09-15T00:00:00.000Z,
-              "CommittedOnBail": "D",
-              "ConvictionDate": 2007-04-29T00:00:00.000Z,
-              "CourtCaseReferenceNumber": undefined,
-              "CourtOffenceSequenceNumber": 1,
-              "CriminalProsecutionReference": {
-                "DefendantOrOffender": {
-                  "CheckDigit": "Z",
-                  "DefendantOrOffenderSequenceNumber": "00000118191",
-                  "OrganisationUnitIdentifierCode": {
-                    "BottomLevelCode": "00",
-                    "OrganisationUnitCode": "25UC00",
-                    "SecondLevelCode": "25",
-                    "ThirdLevelCode": "UC",
-                    "TopLevelCode": undefined,
-                  },
-                  "Year": "96",
-                },
-                "OffenceReason": {
-                  "OffenceCode": {
-                    "ActOrSource": "TH",
-                    "FullCode": "TH68027",
-                    "Qualifier": undefined,
-                    "Reason": "027",
-                    "Year": "68",
-                    "__type": "NonMatchingOffenceCode",
-                  },
-                  "__type": "NationalOffenceReason",
-                },
-                "OffenceReasonSequence": undefined,
-              },
-              "HomeOfficeClassification": "030/02",
-              "LocationOfOffence": "Woolwich Common London",
-              "ManualCourtCaseReference": undefined,
-              "ManualSequenceNumber": undefined,
-              "NotifiableToHOindicator": true,
-              "OffenceCategory": "CE",
-              "OffenceTitle": "Burglary other than dwelling with intent to steal",
-              "RecordableOnPNCindicator": true,
-              "Result": [
-                {
-                  "AmountSpecifiedInResult": undefined,
-                  "BailCondition": [],
-                  "CJSresultCode": 4023,
-                  "ConvictingCourt": "2723",
-                  "CourtType": "MCA",
-                  "DateSpecifiedInResult": undefined,
-                  "Duration": [],
-                  "ModeOfTrialReason": "EST",
-                  "NextCourtType": "MCA",
-                  "NextHearingDate": 2008-02-01T00:00:00.000Z,
-                  "NextHearingTime": "13:30",
-                  "NextResultSourceOrganisation": {
-                    "BottomLevelCode": "00",
-                    "OrganisationUnitCode": "B41ME00",
-                    "SecondLevelCode": "41",
-                    "ThirdLevelCode": "ME",
-                    "TopLevelCode": "B",
-                  },
-                  "NumberOfOffencesTIC": undefined,
-                  "NumberSpecifiedInResult": undefined,
-                  "OffenceRemandStatus": "CB",
-                  "PNCAdjudicationExists": undefined,
-                  "PNCDisposalType": 4023,
-                  "PleaStatus": "NG",
-                  "ReasonForOffenceBailConditions": "to ensure appearance;",
-                  "ResultApplicableQualifierCode": [],
-                  "ResultClass": "Adjournment post Judgement",
-                  "ResultHalfLifeHours": 72,
-                  "ResultHearingDate": 2007-04-29T00:00:00.000Z,
-                  "ResultHearingType": "OTHER",
-                  "ResultQualifierVariable": [],
-                  "ResultVariableText": "Remittal for Sentence on Adjournment",
-                  "SourceOrganisation": {
-                    "BottomLevelCode": "00",
-                    "OrganisationUnitCode": "B41ME00",
-                    "SecondLevelCode": "41",
-                    "ThirdLevelCode": "ME",
-                    "TopLevelCode": "B",
-                  },
-                  "Urgent": undefined,
-                  "Verdict": "G",
-                  "WarrantIssueDate": undefined,
-                },
-              ],
-            },
-          ],
-          "OrganisationName": undefined,
-          "PNCCheckname": undefined,
-          "PNCIdentifier": undefined,
-          "ReasonForBailConditions": "to ensure appearance;",
-          "RemandStatus": "CB",
-        },
-        "ManualForceOwner": undefined,
-        "PTIURN": "41BP0510007",
-        "PenaltyNoticeCaseReferenceNumber": undefined,
-        "PreChargeDecisionIndicator": false,
-        "RecordableOnPNCindicator": true,
-        "Urgent": undefined,
-      },
-      "Hearing": {
-        "CourtHearingLocation": {
-          "BottomLevelCode": "00",
-          "OrganisationUnitCode": "B41ME00",
-          "SecondLevelCode": "41",
-          "ThirdLevelCode": "ME",
-          "TopLevelCode": "B",
-        },
-        "CourtHouseCode": 1892,
-        "CourtHouseName": "Magistrates' Courts Hertfordshire St Albans",
-        "CourtType": "MCA",
-        "DateOfHearing": 2008-01-11T00:00:00.000Z,
-        "DefendantPresentAtHearing": "Y",
-        "HearingDocumentationLanguage": "D",
-        "HearingLanguage": "D",
-        "SourceReference": {
-          "DocumentName": "SPI Dean Rigout",
-          "DocumentType": "SPI Case Result",
-          "UniqueID": "http://www.altova.com",
-        },
-        "TimeOfHearing": "13:30",
-      },
-    },
-  },
-  "Exceptions": [
-    {
-      "code": "HO100304",
-      "path": [
-        "AnnotatedHearingOutcome",
-        "HearingOutcome",
-        "Case",
-        "HearingDefendant",
-        "ArrestSummonsNumber",
-      ],
-    },
-  ],
-  "PncErrorMessage": undefined,
-  "PncQuery": {
-    "checkName": "MIDDLETONN",
-    "courtCases": [
-      {
-        "courtCaseReference": "97/1626/008395Q",
-        "offences": [
-          {
-            "adjudication": undefined,
-            "disposals": undefined,
-            "offence": {
-              "acpoOffenceCode": "12:15:24:1",
-              "cjsOffenceCode": "TH68006",
-              "endTime": undefined,
-              "qualifier1": "",
-              "qualifier2": "",
-              "sequenceNumber": 1,
-              "startDate": 2010-11-28T00:00:00.000Z,
-              "startTime": "22:20",
-              "title": "Theft of pedal cycle",
-            },
-          },
-        ],
-      },
-    ],
-    "forceStationCode": "04CA",
-    "penaltyCases": undefined,
-    "pncId": "2000/0459646G",
-  },
-  "PncQueryDate": 2022-07-27T00:00:00.000Z,
-}
-`;
+exports[`amend court case should amend the court case 1`] = `"<!--Generated from test-data/e2e-comparison/test-001.json/annotatedHearingOutcome --> <?xml version="1.0" encoding="UTF-8" standalone="yes"?> <br7:AnnotatedHearingOutcome xmlns:br7="http://schemas.cjse.gov.uk/datastandards/BR7/2007-12" xmlns:ds="http://schemas.cjse.gov.uk/datastandards/2006-10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <br7:HearingOutcome> <br7:Hearing hasError="false" SchemaVersion="4.0"> <ds:CourtHearingLocation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:CourtHearingLocation> <ds:DateOfHearing>2011-09-26</ds:DateOfHearing> <ds:TimeOfHearing>10:00</ds:TimeOfHearing> <ds:HearingLanguage Literal="Don't Know">D</ds:HearingLanguage> <ds:HearingDocumentationLanguage Literal="Don't Know">D</ds:HearingDocumentationLanguage> <ds:DefendantPresentAtHearing Literal="Defendant was not present, but appeared by the presence of his/her barrister or solicitor">A</ds:DefendantPresentAtHearing> <br7:SourceReference> <br7:DocumentName>SPI TRPRFOUR SEXOFFENCE</br7:DocumentName> <br7:UniqueID>CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415</br7:UniqueID> <br7:DocumentType>SPI Case Result</br7:DocumentType> </br7:SourceReference> <br7:CourtType Literal="MC adult">MCA</br7:CourtType> <br7:CourtHouseCode>2576</br7:CourtHouseCode> <br7:CourtHouseName>London Croydon</br7:CourtHouseName> </br7:Hearing> <br7:Case hasError="false" SchemaVersion="4.0"> <ds:PTIURN>01ZD0303208</ds:PTIURN> <ds:PreChargeDecisionIndicator Literal="No">N</ds:PreChargeDecisionIndicator> <ds:CourtCaseReferenceNumber>97/1626/008395Q</ds:CourtCaseReferenceNumber> <br7:CourtReference> <ds:MagistratesCourtReference>01ZD0303208</ds:MagistratesCourtReference> </br7:CourtReference> <br7:RecordableOnPNCindicator Literal="Yes">Y</br7:RecordableOnPNCindicator> <br7:Urgent> <br7:urgent Literal="Yes">Y</br7:urgent> <br7:urgency>24</br7:urgency> </br7:Urgent> <br7:ForceOwner SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>00</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD00</ds:OrganisationUnitCode> </br7:ForceOwner> <br7:HearingDefendant hasError="false"> <br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber> <br7:PNCIdentifier>2000/0448754K</br7:PNCIdentifier> <br7:PNCCheckname>SEXOFFENCE</br7:PNCCheckname> <br7:DefendantDetail> <br7:PersonName> <ds:Title>Mr</ds:Title> <ds:GivenName NameSequence="1">TRPRFOUR</ds:GivenName> <ds:FamilyName NameSequence="1">SEXOFFENCE</ds:FamilyName> </br7:PersonName> <br7:GeneratedPNCFilename>SEXOFFENCE/TRPRFOUR</br7:GeneratedPNCFilename> <br7:BirthDate>1948-11-11</br7:BirthDate> <br7:Gender Literal="male">1</br7:Gender> </br7:DefendantDetail> <br7:Address> <ds:AddressLine1>Scenario1 Address Line 1</ds:AddressLine1> <ds:AddressLine2>Scenario1 Address Line 2</ds:AddressLine2> <ds:AddressLine3>Scenario1 Address Line 3</ds:AddressLine3> </br7:Address> <br7:RemandStatus Literal="Unconditional Bail">UB</br7:RemandStatus> <br7:Offence hasError="true" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>SX</ds:ActOrSource> <ds:Year>03</ds:Year> <ds:Reason>001</ds:Reason> <ds:Qualifier>A</ds:Qualifier> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>001</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Indictable">CI</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003</ds:OffenceTitle> <ds:ActualOffenceWording>Attempt to rape a girl aged 13 / 14 / 15 / years of age - SOA 2003.</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>019/11</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>1</br7:CourtOffenceSequenceNumber> <br7:Result hasError="true" SchemaVersion="2.0"> <ds:CJSresultCode>3078</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate><ds:NextHearingDate Error="HO100102">false</ds:NextHearingDate> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>Travel Restriction Order</ds:ResultVariableText> <ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours> <br7:PNCDisposalType>3078</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> <br7:Offence hasError="false" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>SX</ds:ActOrSource> <ds:Year>03</ds:Year> <ds:Reason>001</ds:Reason> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>002</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Indictable">CI</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Rape a girl aged 13 / 14 / 15 - SOA 2003</ds:OffenceTitle> <ds:ActualOffenceWording>Rape of a Female</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>019/07</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>2</br7:CourtOffenceSequenceNumber> <br7:Result hasError="false" SchemaVersion="2.0"> <ds:CJSresultCode>3052</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>defendant must never be allowed out</ds:ResultVariableText> <ds:ResultHalfLifeHours>24</ds:ResultHalfLifeHours> <br7:PNCDisposalType>3052</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:Urgent> <br7:urgent Literal="Yes">Y</br7:urgent> <br7:urgency>24</br7:urgency> </br7:Urgent> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> <br7:Offence hasError="false" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>RT</ds:ActOrSource> <ds:Year>88</ds:Year> <ds:Reason>191</ds:Reason> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>003</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Summary Motoring">CM</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Use a motor vehicle on a road / public place without third party insurance</ds:OffenceTitle> <ds:ActualOffenceWording>Use a motor vehicle without third party insurance.</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="No">N</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="No">N</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>809/01</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>3</br7:CourtOffenceSequenceNumber> <br7:Result hasError="false" SchemaVersion="2.0"> <ds:CJSresultCode>1015</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate> <ds:AmountSpecifiedInResult Type="Fine">100.00</ds:AmountSpecifiedInResult> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>Fined 100.</ds:ResultVariableText> <ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours> <br7:PNCDisposalType>1015</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> </br7:HearingDefendant> </br7:Case> </br7:HearingOutcome> <br7:HasError>false</br7:HasError> <CXE01> <FSC FSCode="01ZD" IntfcUpdateType="K"/> <IDS CRONumber="" Checkname="SEXOFFENCE" IntfcUpdateType="K" PNCID="2000/0448754K"/> <CourtCases> <CourtCase> <CCR CourtCaseRefNo="97/1626/008395Q" CrimeOffenceRefNo="" IntfcUpdateType="K"/> <Offences> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="SX03001A" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003" ReferenceNumber="001"/> </Offence> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="SX03001" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Rape a girl aged 13 / 14 / 15 - SOA 2003" ReferenceNumber="002"/> </Offence> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="RT88191" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Use a motor vehicle on a road / public place without third party insurance" ReferenceNumber="003"/> </Offence> </Offences> </CourtCase> </CourtCases> </CXE01> <br7:PNCQueryDate>2022-03-22</br7:PNCQueryDate> </br7:AnnotatedHearingOutcome>"`;
 
 exports[`amend court case should amend the court case 2`] = `
-"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<br7:AnnotatedHearingOutcome xmlns:br7="http://schemas.cjse.gov.uk/datastandards/BR7/2007-12" xmlns:ds="http://schemas.cjse.gov.uk/datastandards/2006-10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<br7:HearingOutcome>
-<br7:Hearing hasError="false" SchemaVersion="4.0">
-<ds:CourtHearingLocation SchemaVersion="2.0">
-<ds:TopLevelCode>B</ds:TopLevelCode>
-<ds:SecondLevelCode>41</ds:SecondLevelCode>
-<ds:ThirdLevelCode>ME</ds:ThirdLevelCode>
-<ds:BottomLevelCode>00</ds:BottomLevelCode>
-<ds:OrganisationUnitCode>B41ME00</ds:OrganisationUnitCode>
-</ds:CourtHearingLocation>
-<ds:DateOfHearing>2008-01-11</ds:DateOfHearing>
-<ds:TimeOfHearing>13:30</ds:TimeOfHearing>
-<ds:HearingLanguage Literal="Don't Know">D</ds:HearingLanguage>
-<ds:HearingDocumentationLanguage Literal="Don't Know">D</ds:HearingDocumentationLanguage>
-<ds:DefendantPresentAtHearing Literal="Yes">Y</ds:DefendantPresentAtHearing>
-<br7:SourceReference>
-<br7:DocumentName>SPI Dean Rigout</br7:DocumentName>
-<br7:UniqueID>http://www.altova.com</br7:UniqueID>
-<br7:DocumentType>SPI Case Result</br7:DocumentType>
-</br7:SourceReference>
-<br7:CourtType Literal="MC adult">MCA</br7:CourtType>
-<br7:CourtHouseCode>1892</br7:CourtHouseCode>
-<br7:CourtHouseName>Magistrates' Courts Hertfordshire St Albans</br7:CourtHouseName>
-</br7:Hearing>
-<br7:Case hasError="false" SchemaVersion="4.0">
-<ds:PTIURN>41BP0510007</ds:PTIURN>
-<ds:PreChargeDecisionIndicator Literal="No">N</ds:PreChargeDecisionIndicator>
-<br7:CourtReference>
-<ds:MagistratesCourtReference>41BP0510007</ds:MagistratesCourtReference>
-</br7:CourtReference>
-<br7:RecordableOnPNCindicator Literal="Yes">Y</br7:RecordableOnPNCindicator>
-<br7:ForceOwner SchemaVersion="2.0">
-<ds:SecondLevelCode>04</ds:SecondLevelCode>
-<ds:ThirdLevelCode>CA</ds:ThirdLevelCode>
-<ds:BottomLevelCode>00</ds:BottomLevelCode>
-<ds:OrganisationUnitCode>04CA00</ds:OrganisationUnitCode>
-</br7:ForceOwner>
-<br7:HearingDefendant hasError="true">
-<br7:ArrestSummonsNumber Error="HO100304">9625UC0000000118191Z</br7:ArrestSummonsNumber>
-<br7:DefendantDetail>
-<br7:PersonName>
-<ds:Title>Mr</ds:Title>
-<ds:GivenName NameSequence="1">Dean</ds:GivenName>
-<ds:FamilyName NameSequence="1">Rigout</ds:FamilyName>
-</br7:PersonName>
-<br7:GeneratedPNCFilename>RIGOUT/DEAN</br7:GeneratedPNCFilename>
-<br7:BirthDate>1949-10-29</br7:BirthDate>
-<br7:Gender Literal="male">1</br7:Gender>
-</br7:DefendantDetail>
-<br7:Address>
-<ds:AddressLine1>112 Letsbeavenue</ds:AddressLine1>
-<ds:AddressLine2>Frimley,Camberley, Surrey</ds:AddressLine2>
-</br7:Address>
-<br7:RemandStatus Literal="Conditional Bail">CB</br7:RemandStatus>
-<br7:BailConditions>give to the court any passport held</br7:BailConditions>
-<br7:ReasonForBailConditions>to ensure appearance;</br7:ReasonForBailConditions>
-<br7:CourtPNCIdentifier>2706/1234567P</br7:CourtPNCIdentifier>
-<br7:Offence hasError="false" SchemaVersion="4.0">
-<ds:CriminalProsecutionReference SchemaVersion="2.0">
-<ds:DefendantOrOffender>
-<ds:Year>96</ds:Year>
-<ds:OrganisationUnitIdentifierCode SchemaVersion="2.0">
-<ds:SecondLevelCode>25</ds:SecondLevelCode>
-<ds:ThirdLevelCode>UC</ds:ThirdLevelCode>
-<ds:BottomLevelCode>00</ds:BottomLevelCode>
-<ds:OrganisationUnitCode>25UC00</ds:OrganisationUnitCode>
-</ds:OrganisationUnitIdentifierCode>
-<ds:DefendantOrOffenderSequenceNumber>00000118191</ds:DefendantOrOffenderSequenceNumber>
-<ds:CheckDigit>Z</ds:CheckDigit>
-</ds:DefendantOrOffender>
-<ds:OffenceReason>
-<ds:OffenceCode>
-<ds:ActOrSource>TH</ds:ActOrSource>
-<ds:Year>68</ds:Year>
-<ds:Reason>027</ds:Reason>
-</ds:OffenceCode>
-</ds:OffenceReason>
-</ds:CriminalProsecutionReference>
-<ds:OffenceCategory Literal="Either Way">CE</ds:OffenceCategory>
-<ds:ArrestDate>2007-09-15</ds:ArrestDate>
-<ds:ChargeDate>2007-09-15</ds:ChargeDate>
-<ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode>
-<ds:ActualOffenceStartDate>
-<ds:StartDate>2007-09-15</ds:StartDate>
-</ds:ActualOffenceStartDate>
-<ds:LocationOfOffence>Woolwich Common London</ds:LocationOfOffence>
-<ds:OffenceTitle>Burglary other than dwelling with intent to steal</ds:OffenceTitle>
-<ds:ActualOffenceWording>Burglary (with intent to steal - other than in dwelling)</ds:ActualOffenceWording>
-<ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator>
-<ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator>
-<ds:HomeOfficeClassification>030/02</ds:HomeOfficeClassification>
-<ds:ConvictionDate>2007-04-29</ds:ConvictionDate>
-<br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail>
-<br7:CourtOffenceSequenceNumber>1</br7:CourtOffenceSequenceNumber>
-<br7:AddedByTheCourt Literal="Yes">Y</br7:AddedByTheCourt>
-<br7:Result hasError="false" SchemaVersion="2.0">
-<ds:CJSresultCode>4023</ds:CJSresultCode>
-<ds:OffenceRemandStatus Literal="Conditional Bail">CB</ds:OffenceRemandStatus>
-<ds:SourceOrganisation SchemaVersion="2.0">
-<ds:TopLevelCode>B</ds:TopLevelCode>
-<ds:SecondLevelCode>41</ds:SecondLevelCode>
-<ds:ThirdLevelCode>ME</ds:ThirdLevelCode>
-<ds:BottomLevelCode>00</ds:BottomLevelCode>
-<ds:OrganisationUnitCode>B41ME00</ds:OrganisationUnitCode>
-</ds:SourceOrganisation>
-<ds:CourtType>MCA</ds:CourtType>
-<ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType>
-<ds:ResultHearingDate>2007-04-29</ds:ResultHearingDate>
-<ds:NextResultSourceOrganisation SchemaVersion="2.0">
-<ds:TopLevelCode>B</ds:TopLevelCode>
-<ds:SecondLevelCode>41</ds:SecondLevelCode>
-<ds:ThirdLevelCode>ME</ds:ThirdLevelCode>
-<ds:BottomLevelCode>00</ds:BottomLevelCode>
-<ds:OrganisationUnitCode>B41ME00</ds:OrganisationUnitCode>
-</ds:NextResultSourceOrganisation>
-<ds:NextCourtType>MCA</ds:NextCourtType>
-<ds:NextHearingDate>2008-02-01</ds:NextHearingDate>
-<ds:NextHearingTime>13:30</ds:NextHearingTime>
-<ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus>
-<ds:Verdict Literal="Guilty">G</ds:Verdict>
-<ds:ModeOfTrialReason Literal="Defendant Elects Summary Trial">EST</ds:ModeOfTrialReason>
-<ds:ResultVariableText>Remittal for Sentence on Adjournment</ds:ResultVariableText>
-<ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours>
-<br7:PNCDisposalType>4023</br7:PNCDisposalType>
-<br7:ResultClass>Adjournment post Judgement</br7:ResultClass>
-<br7:ReasonForOffenceBailConditions>to ensure appearance;</br7:ReasonForOffenceBailConditions>
-<br7:ConvictingCourt>2723</br7:ConvictingCourt>
-</br7:Result>
-</br7:Offence>
-</br7:HearingDefendant>
-</br7:Case>
-</br7:HearingOutcome>
-<br7:HasError>true</br7:HasError>
-<CXE01>
-<FSC FSCode="04CA" IntfcUpdateType="K"/>
-<IDS CRONumber="" Checkname="MIDDLETONN" IntfcUpdateType="K" PNCID="2000/0459646G"/>
-<CourtCases>
-<CourtCase>
-<CCR CourtCaseRefNo="97/1626/008395Q" CrimeOffenceRefNo="" IntfcUpdateType="K"/>
-<Offences>
-<Offence>
-<COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="TH68006" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="2220" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Theft of pedal cycle" ReferenceNumber="001"/>
-</Offence>
-</Offences>
-</CourtCase>
-</CourtCases>
-</CXE01>
-<br7:PNCQueryDate>2022-07-27</br7:PNCQueryDate>
-</br7:AnnotatedHearingOutcome>"
-`;
-
-exports[`amend court case should amend the court case when the lock is held by the current user 1`] = `
 {
   "AnnotatedHearingOutcome": {
     "HearingOutcome": {
       "Case": {
-        "CourtCaseReferenceNumber": undefined,
+        "CourtCaseReferenceNumber": "97/1626/008395Q",
         "CourtReference": {
-          "MagistratesCourtReference": "41BP0510007",
+          "MagistratesCourtReference": "01ZD0303208",
         },
         "ForceOwner": {
           "BottomLevelCode": "00",
-          "OrganisationUnitCode": "04CA00",
-          "SecondLevelCode": "04",
-          "ThirdLevelCode": "CA",
+          "OrganisationUnitCode": "01ZD00",
+          "SecondLevelCode": "01",
+          "ThirdLevelCode": "ZD",
           "TopLevelCode": undefined,
         },
         "HearingDefendant": {
           "Address": {
-            "AddressLine1": "112 Letsbeavenue",
-            "AddressLine2": "Frimley,Camberley, Surrey",
-            "AddressLine3": undefined,
+            "AddressLine1": "Scenario1 Address Line 1",
+            "AddressLine2": "Scenario1 Address Line 2",
+            "AddressLine3": "Scenario1 Address Line 3",
             "AddressLine4": undefined,
             "AddressLine5": undefined,
           },
-          "ArrestSummonsNumber": "9625UC0000000118191Z",
-          "BailConditions": [
-            "give to the court any passport held",
-          ],
-          "CourtPNCIdentifier": "2706/1234567P",
+          "ArrestSummonsNumber": "1101ZD0100000448754K",
+          "BailConditions": [],
+          "CourtPNCIdentifier": undefined,
           "DefendantDetail": {
-            "BirthDate": 1949-10-29T00:00:00.000Z,
+            "BirthDate": 1948-11-11T00:00:00.000Z,
             "Gender": 1,
-            "GeneratedPNCFilename": "RIGOUT/DEAN",
+            "GeneratedPNCFilename": "SEXOFFENCE/TRPRFOUR",
             "PersonName": {
-              "FamilyName": "Rigout",
+              "FamilyName": "SEXOFFENCE",
               "GivenName": [
-                "Dean",
+                "TRPRFOUR",
               ],
               "Title": "Mr",
             },
@@ -420,90 +46,273 @@ exports[`amend court case should amend the court case when the lock is held by t
               "ActualOffenceDateCode": "1",
               "ActualOffenceEndDate": undefined,
               "ActualOffenceStartDate": {
-                "StartDate": 2007-09-15T00:00:00.000Z,
+                "StartDate": 2010-11-28T00:00:00.000Z,
               },
-              "ActualOffenceWording": "Burglary (with intent to steal - other than in dwelling)",
-              "AddedByTheCourt": true,
+              "ActualOffenceWording": "Attempt to rape a girl aged 13 / 14 / 15 / years of age - SOA 2003.",
+              "AddedByTheCourt": undefined,
               "AlcoholLevel": undefined,
-              "ArrestDate": 2007-09-15T00:00:00.000Z,
-              "ChargeDate": 2007-09-15T00:00:00.000Z,
+              "ArrestDate": 2010-12-01T00:00:00.000Z,
+              "ChargeDate": 2010-12-02T00:00:00.000Z,
               "CommittedOnBail": "D",
-              "ConvictionDate": 2007-04-29T00:00:00.000Z,
+              "ConvictionDate": 2011-09-26T00:00:00.000Z,
               "CourtCaseReferenceNumber": undefined,
               "CourtOffenceSequenceNumber": 1,
               "CriminalProsecutionReference": {
                 "DefendantOrOffender": {
-                  "CheckDigit": "Z",
-                  "DefendantOrOffenderSequenceNumber": "00000118191",
+                  "CheckDigit": "K",
+                  "DefendantOrOffenderSequenceNumber": "00000448754",
                   "OrganisationUnitIdentifierCode": {
-                    "BottomLevelCode": "00",
-                    "OrganisationUnitCode": "25UC00",
-                    "SecondLevelCode": "25",
-                    "ThirdLevelCode": "UC",
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "01ZD01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "ZD",
                     "TopLevelCode": undefined,
                   },
-                  "Year": "96",
+                  "Year": "11",
                 },
                 "OffenceReason": {
                   "OffenceCode": {
-                    "ActOrSource": "TH",
-                    "FullCode": "TH68027",
-                    "Qualifier": undefined,
-                    "Reason": "027",
-                    "Year": "68",
+                    "ActOrSource": "SX",
+                    "FullCode": "SX03001A",
+                    "Qualifier": "A",
+                    "Reason": "001",
+                    "Year": "03",
                     "__type": "NonMatchingOffenceCode",
                   },
                   "__type": "NationalOffenceReason",
                 },
-                "OffenceReasonSequence": undefined,
+                "OffenceReasonSequence": "001",
               },
-              "HomeOfficeClassification": "030/02",
-              "LocationOfOffence": "Woolwich Common London",
+              "HomeOfficeClassification": "019/11",
+              "LocationOfOffence": "Kingston High Street",
               "ManualCourtCaseReference": undefined,
               "ManualSequenceNumber": undefined,
               "NotifiableToHOindicator": true,
-              "OffenceCategory": "CE",
-              "OffenceTitle": "Burglary other than dwelling with intent to steal",
+              "OffenceCategory": "CI",
+              "OffenceTitle": "Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003",
               "RecordableOnPNCindicator": true,
               "Result": [
                 {
                   "AmountSpecifiedInResult": undefined,
                   "BailCondition": [],
-                  "CJSresultCode": 4023,
-                  "ConvictingCourt": "2723",
+                  "CJSresultCode": 3078,
+                  "ConvictingCourt": undefined,
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
                   "Duration": [],
-                  "ModeOfTrialReason": "EST",
-                  "NextCourtType": "MCA",
-                  "NextHearingDate": 2008-02-01T00:00:00.000Z,
-                  "NextHearingTime": "13:30",
-                  "NextResultSourceOrganisation": {
-                    "BottomLevelCode": "00",
-                    "OrganisationUnitCode": "B41ME00",
-                    "SecondLevelCode": "41",
-                    "ThirdLevelCode": "ME",
-                    "TopLevelCode": "B",
-                  },
+                  "ModeOfTrialReason": "SUM",
+                  "NextCourtType": undefined,
+                  "NextHearingDate": "false",
+                  "NextHearingTime": undefined,
+                  "NextResultSourceOrganisation": undefined,
                   "NumberOfOffencesTIC": undefined,
                   "NumberSpecifiedInResult": undefined,
-                  "OffenceRemandStatus": "CB",
-                  "PNCAdjudicationExists": undefined,
-                  "PNCDisposalType": 4023,
+                  "OffenceRemandStatus": undefined,
+                  "PNCAdjudicationExists": false,
+                  "PNCDisposalType": 3078,
                   "PleaStatus": "NG",
-                  "ReasonForOffenceBailConditions": "to ensure appearance;",
+                  "ReasonForOffenceBailConditions": undefined,
                   "ResultApplicableQualifierCode": [],
-                  "ResultClass": "Adjournment post Judgement",
+                  "ResultClass": "Judgement with final result",
                   "ResultHalfLifeHours": 72,
-                  "ResultHearingDate": 2007-04-29T00:00:00.000Z,
+                  "ResultHearingDate": 2011-09-26T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
                   "ResultQualifierVariable": [],
-                  "ResultVariableText": "Remittal for Sentence on Adjournment",
+                  "ResultVariableText": "Travel Restriction Order",
                   "SourceOrganisation": {
-                    "BottomLevelCode": "00",
-                    "OrganisationUnitCode": "B41ME00",
-                    "SecondLevelCode": "41",
-                    "ThirdLevelCode": "ME",
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "B01EF01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "EF",
+                    "TopLevelCode": "B",
+                  },
+                  "Urgent": undefined,
+                  "Verdict": "G",
+                  "WarrantIssueDate": undefined,
+                },
+              ],
+            },
+            {
+              "ActualOffenceDateCode": "1",
+              "ActualOffenceEndDate": undefined,
+              "ActualOffenceStartDate": {
+                "StartDate": 2010-11-28T00:00:00.000Z,
+              },
+              "ActualOffenceWording": "Rape of a Female",
+              "AddedByTheCourt": undefined,
+              "AlcoholLevel": undefined,
+              "ArrestDate": 2010-12-01T00:00:00.000Z,
+              "ChargeDate": 2010-12-02T00:00:00.000Z,
+              "CommittedOnBail": "D",
+              "ConvictionDate": 2011-09-26T00:00:00.000Z,
+              "CourtCaseReferenceNumber": undefined,
+              "CourtOffenceSequenceNumber": 2,
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
+                  "CheckDigit": "K",
+                  "DefendantOrOffenderSequenceNumber": "00000448754",
+                  "OrganisationUnitIdentifierCode": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "01ZD01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "ZD",
+                    "TopLevelCode": undefined,
+                  },
+                  "Year": "11",
+                },
+                "OffenceReason": {
+                  "OffenceCode": {
+                    "ActOrSource": "SX",
+                    "FullCode": "SX03001",
+                    "Qualifier": undefined,
+                    "Reason": "001",
+                    "Year": "03",
+                    "__type": "NonMatchingOffenceCode",
+                  },
+                  "__type": "NationalOffenceReason",
+                },
+                "OffenceReasonSequence": "002",
+              },
+              "HomeOfficeClassification": "019/07",
+              "LocationOfOffence": "Kingston High Street",
+              "ManualCourtCaseReference": undefined,
+              "ManualSequenceNumber": undefined,
+              "NotifiableToHOindicator": true,
+              "OffenceCategory": "CI",
+              "OffenceTitle": "Rape a girl aged 13 / 14 / 15 - SOA 2003",
+              "RecordableOnPNCindicator": true,
+              "Result": [
+                {
+                  "AmountSpecifiedInResult": undefined,
+                  "BailCondition": [],
+                  "CJSresultCode": 3052,
+                  "ConvictingCourt": undefined,
+                  "CourtType": "MCA",
+                  "DateSpecifiedInResult": undefined,
+                  "Duration": [],
+                  "ModeOfTrialReason": "SUM",
+                  "NextCourtType": undefined,
+                  "NextHearingDate": undefined,
+                  "NextHearingTime": undefined,
+                  "NextResultSourceOrganisation": undefined,
+                  "NumberOfOffencesTIC": undefined,
+                  "NumberSpecifiedInResult": undefined,
+                  "OffenceRemandStatus": undefined,
+                  "PNCAdjudicationExists": false,
+                  "PNCDisposalType": 3052,
+                  "PleaStatus": "NG",
+                  "ReasonForOffenceBailConditions": undefined,
+                  "ResultApplicableQualifierCode": [],
+                  "ResultClass": "Judgement with final result",
+                  "ResultHalfLifeHours": 24,
+                  "ResultHearingDate": 2011-09-26T00:00:00.000Z,
+                  "ResultHearingType": "OTHER",
+                  "ResultQualifierVariable": [],
+                  "ResultVariableText": "defendant must never be allowed out",
+                  "SourceOrganisation": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "B01EF01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "EF",
+                    "TopLevelCode": "B",
+                  },
+                  "Urgent": {
+                    "urgency": 24,
+                    "urgent": true,
+                  },
+                  "Verdict": "G",
+                  "WarrantIssueDate": undefined,
+                },
+              ],
+            },
+            {
+              "ActualOffenceDateCode": "1",
+              "ActualOffenceEndDate": undefined,
+              "ActualOffenceStartDate": {
+                "StartDate": 2010-11-28T00:00:00.000Z,
+              },
+              "ActualOffenceWording": "Use a motor vehicle without third party insurance.",
+              "AddedByTheCourt": undefined,
+              "AlcoholLevel": undefined,
+              "ArrestDate": 2010-12-01T00:00:00.000Z,
+              "ChargeDate": 2010-12-02T00:00:00.000Z,
+              "CommittedOnBail": "D",
+              "ConvictionDate": 2011-09-26T00:00:00.000Z,
+              "CourtCaseReferenceNumber": undefined,
+              "CourtOffenceSequenceNumber": 3,
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
+                  "CheckDigit": "K",
+                  "DefendantOrOffenderSequenceNumber": "00000448754",
+                  "OrganisationUnitIdentifierCode": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "01ZD01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "ZD",
+                    "TopLevelCode": undefined,
+                  },
+                  "Year": "11",
+                },
+                "OffenceReason": {
+                  "OffenceCode": {
+                    "ActOrSource": "RT",
+                    "FullCode": "RT88191",
+                    "Qualifier": undefined,
+                    "Reason": "191",
+                    "Year": "88",
+                    "__type": "NonMatchingOffenceCode",
+                  },
+                  "__type": "NationalOffenceReason",
+                },
+                "OffenceReasonSequence": "003",
+              },
+              "HomeOfficeClassification": "809/01",
+              "LocationOfOffence": "Kingston High Street",
+              "ManualCourtCaseReference": undefined,
+              "ManualSequenceNumber": undefined,
+              "NotifiableToHOindicator": false,
+              "OffenceCategory": "CM",
+              "OffenceTitle": "Use a motor vehicle on a road / public place without third party insurance",
+              "RecordableOnPNCindicator": false,
+              "Result": [
+                {
+                  "AmountSpecifiedInResult": [
+                    {
+                      "Amount": 100,
+                      "DecimalPlaces": 2,
+                      "Type": "Fine",
+                    },
+                  ],
+                  "BailCondition": [],
+                  "CJSresultCode": 1015,
+                  "ConvictingCourt": undefined,
+                  "CourtType": "MCA",
+                  "DateSpecifiedInResult": undefined,
+                  "Duration": [],
+                  "ModeOfTrialReason": "SUM",
+                  "NextCourtType": undefined,
+                  "NextHearingDate": undefined,
+                  "NextHearingTime": undefined,
+                  "NextResultSourceOrganisation": undefined,
+                  "NumberOfOffencesTIC": undefined,
+                  "NumberSpecifiedInResult": undefined,
+                  "OffenceRemandStatus": undefined,
+                  "PNCAdjudicationExists": false,
+                  "PNCDisposalType": 1015,
+                  "PleaStatus": "NG",
+                  "ReasonForOffenceBailConditions": undefined,
+                  "ResultApplicableQualifierCode": [],
+                  "ResultClass": "Judgement with final result",
+                  "ResultHalfLifeHours": 72,
+                  "ResultHearingDate": 2011-09-26T00:00:00.000Z,
+                  "ResultHearingType": "OTHER",
+                  "ResultQualifierVariable": [],
+                  "ResultVariableText": "Fined 100.",
+                  "SourceOrganisation": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "B01EF01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "EF",
                     "TopLevelCode": "B",
                   },
                   "Urgent": undefined,
@@ -514,57 +323,64 @@ exports[`amend court case should amend the court case when the lock is held by t
             },
           ],
           "OrganisationName": undefined,
-          "PNCCheckname": undefined,
-          "PNCIdentifier": undefined,
-          "ReasonForBailConditions": "to ensure appearance;",
-          "RemandStatus": "CB",
+          "PNCCheckname": "SEXOFFENCE",
+          "PNCIdentifier": "2000/0448754K",
+          "ReasonForBailConditions": undefined,
+          "RemandStatus": "UB",
         },
         "ManualForceOwner": undefined,
-        "PTIURN": "41BP0510007",
+        "PTIURN": "01ZD0303208",
         "PenaltyNoticeCaseReferenceNumber": undefined,
         "PreChargeDecisionIndicator": false,
         "RecordableOnPNCindicator": true,
-        "Urgent": undefined,
+        "Urgent": {
+          "urgency": 24,
+          "urgent": true,
+        },
       },
       "Hearing": {
         "CourtHearingLocation": {
-          "BottomLevelCode": "00",
-          "OrganisationUnitCode": "B41ME00",
-          "SecondLevelCode": "41",
-          "ThirdLevelCode": "ME",
+          "BottomLevelCode": "01",
+          "OrganisationUnitCode": "B01EF01",
+          "SecondLevelCode": "01",
+          "ThirdLevelCode": "EF",
           "TopLevelCode": "B",
         },
-        "CourtHouseCode": 1892,
-        "CourtHouseName": "Magistrates' Courts Hertfordshire St Albans",
+        "CourtHouseCode": 2576,
+        "CourtHouseName": "London Croydon",
         "CourtType": "MCA",
-        "DateOfHearing": 2008-01-11T00:00:00.000Z,
-        "DefendantPresentAtHearing": "Y",
+        "DateOfHearing": 2011-09-26T00:00:00.000Z,
+        "DefendantPresentAtHearing": "A",
         "HearingDocumentationLanguage": "D",
         "HearingLanguage": "D",
         "SourceReference": {
-          "DocumentName": "SPI Dean Rigout",
+          "DocumentName": "SPI TRPRFOUR SEXOFFENCE",
           "DocumentType": "SPI Case Result",
-          "UniqueID": "http://www.altova.com",
+          "UniqueID": "CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415",
         },
-        "TimeOfHearing": "13:30",
+        "TimeOfHearing": "10:00",
       },
     },
   },
   "Exceptions": [
     {
-      "code": "HO100304",
+      "code": "HO100102",
       "path": [
         "AnnotatedHearingOutcome",
         "HearingOutcome",
         "Case",
         "HearingDefendant",
-        "ArrestSummonsNumber",
+        "Offence",
+        0,
+        "Result",
+        0,
+        "NextHearingDate",
       ],
     },
   ],
   "PncErrorMessage": undefined,
   "PncQuery": {
-    "checkName": "MIDDLETONN",
+    "checkName": "SEXOFFENCE",
     "courtCases": [
       {
         "courtCaseReference": "97/1626/008395Q",
@@ -574,179 +390,501 @@ exports[`amend court case should amend the court case when the lock is held by t
             "disposals": undefined,
             "offence": {
               "acpoOffenceCode": "12:15:24:1",
-              "cjsOffenceCode": "TH68006",
+              "cjsOffenceCode": "SX03001A",
               "endTime": undefined,
               "qualifier1": "",
               "qualifier2": "",
               "sequenceNumber": 1,
               "startDate": 2010-11-28T00:00:00.000Z,
-              "startTime": "22:20",
-              "title": "Theft of pedal cycle",
+              "startTime": "00:00",
+              "title": "Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003",
+            },
+          },
+          {
+            "adjudication": undefined,
+            "disposals": undefined,
+            "offence": {
+              "acpoOffenceCode": "12:15:24:1",
+              "cjsOffenceCode": "SX03001",
+              "endTime": undefined,
+              "qualifier1": "",
+              "qualifier2": "",
+              "sequenceNumber": 2,
+              "startDate": 2010-11-28T00:00:00.000Z,
+              "startTime": "00:00",
+              "title": "Rape a girl aged 13 / 14 / 15 - SOA 2003",
+            },
+          },
+          {
+            "adjudication": undefined,
+            "disposals": undefined,
+            "offence": {
+              "acpoOffenceCode": "12:15:24:1",
+              "cjsOffenceCode": "RT88191",
+              "endTime": undefined,
+              "qualifier1": "",
+              "qualifier2": "",
+              "sequenceNumber": 3,
+              "startDate": 2010-11-28T00:00:00.000Z,
+              "startTime": "00:00",
+              "title": "Use a motor vehicle on a road / public place without third party insurance",
             },
           },
         ],
       },
     ],
-    "forceStationCode": "04CA",
+    "forceStationCode": "01ZD",
     "penaltyCases": undefined,
-    "pncId": "2000/0459646G",
+    "pncId": "2000/0448754K",
   },
-  "PncQueryDate": 2022-07-27T00:00:00.000Z,
+  "PncQueryDate": 2022-03-22T00:00:00.000Z,
 }
 `;
 
+exports[`amend court case should amend the court case 3`] = `"<!--Generated from test-data/e2e-comparison/test-001.json/annotatedHearingOutcome --> <?xml version="1.0" encoding="UTF-8" standalone="yes"?> <br7:AnnotatedHearingOutcome xmlns:br7="http://schemas.cjse.gov.uk/datastandards/BR7/2007-12" xmlns:ds="http://schemas.cjse.gov.uk/datastandards/2006-10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <br7:HearingOutcome> <br7:Hearing hasError="false" SchemaVersion="4.0"> <ds:CourtHearingLocation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:CourtHearingLocation> <ds:DateOfHearing>2011-09-26</ds:DateOfHearing> <ds:TimeOfHearing>10:00</ds:TimeOfHearing> <ds:HearingLanguage Literal="Don't Know">D</ds:HearingLanguage> <ds:HearingDocumentationLanguage Literal="Don't Know">D</ds:HearingDocumentationLanguage> <ds:DefendantPresentAtHearing Literal="Defendant was not present, but appeared by the presence of his/her barrister or solicitor">A</ds:DefendantPresentAtHearing> <br7:SourceReference> <br7:DocumentName>SPI TRPRFOUR SEXOFFENCE</br7:DocumentName> <br7:UniqueID>CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415</br7:UniqueID> <br7:DocumentType>SPI Case Result</br7:DocumentType> </br7:SourceReference> <br7:CourtType Literal="MC adult">MCA</br7:CourtType> <br7:CourtHouseCode>2576</br7:CourtHouseCode> <br7:CourtHouseName>London Croydon</br7:CourtHouseName> </br7:Hearing> <br7:Case hasError="false" SchemaVersion="4.0"> <ds:PTIURN>01ZD0303208</ds:PTIURN> <ds:PreChargeDecisionIndicator Literal="No">N</ds:PreChargeDecisionIndicator> <ds:CourtCaseReferenceNumber>97/1626/008395Q</ds:CourtCaseReferenceNumber> <br7:CourtReference> <ds:MagistratesCourtReference>01ZD0303208</ds:MagistratesCourtReference> </br7:CourtReference> <br7:RecordableOnPNCindicator Literal="Yes">Y</br7:RecordableOnPNCindicator> <br7:Urgent> <br7:urgent Literal="Yes">Y</br7:urgent> <br7:urgency>24</br7:urgency> </br7:Urgent> <br7:ForceOwner SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>00</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD00</ds:OrganisationUnitCode> </br7:ForceOwner> <br7:HearingDefendant hasError="false"> <br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber> <br7:PNCIdentifier>2000/0448754K</br7:PNCIdentifier> <br7:PNCCheckname>SEXOFFENCE</br7:PNCCheckname> <br7:DefendantDetail> <br7:PersonName> <ds:Title>Mr</ds:Title> <ds:GivenName NameSequence="1">TRPRFOUR</ds:GivenName> <ds:FamilyName NameSequence="1">SEXOFFENCE</ds:FamilyName> </br7:PersonName> <br7:GeneratedPNCFilename>SEXOFFENCE/TRPRFOUR</br7:GeneratedPNCFilename> <br7:BirthDate>1948-11-11</br7:BirthDate> <br7:Gender Literal="male">1</br7:Gender> </br7:DefendantDetail> <br7:Address> <ds:AddressLine1>Scenario1 Address Line 1</ds:AddressLine1> <ds:AddressLine2>Scenario1 Address Line 2</ds:AddressLine2> <ds:AddressLine3>Scenario1 Address Line 3</ds:AddressLine3> </br7:Address> <br7:RemandStatus Literal="Unconditional Bail">UB</br7:RemandStatus> <br7:Offence hasError="true" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>SX</ds:ActOrSource> <ds:Year>03</ds:Year> <ds:Reason>001</ds:Reason> <ds:Qualifier>A</ds:Qualifier> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>001</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Indictable">CI</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003</ds:OffenceTitle> <ds:ActualOffenceWording>Attempt to rape a girl aged 13 / 14 / 15 / years of age - SOA 2003.</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>019/11</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>1</br7:CourtOffenceSequenceNumber> <br7:Result hasError="true" SchemaVersion="2.0"> <ds:CJSresultCode>3078</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate><ds:NextHearingDate Error="HO100102">false</ds:NextHearingDate> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>Travel Restriction Order</ds:ResultVariableText> <ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours> <br7:PNCDisposalType>3078</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> <br7:Offence hasError="false" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>SX</ds:ActOrSource> <ds:Year>03</ds:Year> <ds:Reason>001</ds:Reason> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>002</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Indictable">CI</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Rape a girl aged 13 / 14 / 15 - SOA 2003</ds:OffenceTitle> <ds:ActualOffenceWording>Rape of a Female</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>019/07</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>2</br7:CourtOffenceSequenceNumber> <br7:Result hasError="false" SchemaVersion="2.0"> <ds:CJSresultCode>3052</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>defendant must never be allowed out</ds:ResultVariableText> <ds:ResultHalfLifeHours>24</ds:ResultHalfLifeHours> <br7:PNCDisposalType>3052</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:Urgent> <br7:urgent Literal="Yes">Y</br7:urgent> <br7:urgency>24</br7:urgency> </br7:Urgent> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> <br7:Offence hasError="false" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>RT</ds:ActOrSource> <ds:Year>88</ds:Year> <ds:Reason>191</ds:Reason> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>003</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Summary Motoring">CM</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Use a motor vehicle on a road / public place without third party insurance</ds:OffenceTitle> <ds:ActualOffenceWording>Use a motor vehicle without third party insurance.</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="No">N</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="No">N</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>809/01</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>3</br7:CourtOffenceSequenceNumber> <br7:Result hasError="false" SchemaVersion="2.0"> <ds:CJSresultCode>1015</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate> <ds:AmountSpecifiedInResult Type="Fine">100.00</ds:AmountSpecifiedInResult> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>Fined 100.</ds:ResultVariableText> <ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours> <br7:PNCDisposalType>1015</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> </br7:HearingDefendant> </br7:Case> </br7:HearingOutcome> <br7:HasError>false</br7:HasError> <CXE01> <FSC FSCode="01ZD" IntfcUpdateType="K"/> <IDS CRONumber="" Checkname="SEXOFFENCE" IntfcUpdateType="K" PNCID="2000/0448754K"/> <CourtCases> <CourtCase> <CCR CourtCaseRefNo="97/1626/008395Q" CrimeOffenceRefNo="" IntfcUpdateType="K"/> <Offences> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="SX03001A" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003" ReferenceNumber="001"/> </Offence> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="SX03001" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Rape a girl aged 13 / 14 / 15 - SOA 2003" ReferenceNumber="002"/> </Offence> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="RT88191" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Use a motor vehicle on a road / public place without third party insurance" ReferenceNumber="003"/> </Offence> </Offences> </CourtCase> </CourtCases> </CXE01> <br7:PNCQueryDate>2022-03-22</br7:PNCQueryDate> </br7:AnnotatedHearingOutcome>"`;
+
+exports[`amend court case should amend the court case when the lock is held by the current user 1`] = `"<!--Generated from test-data/e2e-comparison/test-001.json/annotatedHearingOutcome --> <?xml version="1.0" encoding="UTF-8" standalone="yes"?> <br7:AnnotatedHearingOutcome xmlns:br7="http://schemas.cjse.gov.uk/datastandards/BR7/2007-12" xmlns:ds="http://schemas.cjse.gov.uk/datastandards/2006-10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <br7:HearingOutcome> <br7:Hearing hasError="false" SchemaVersion="4.0"> <ds:CourtHearingLocation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:CourtHearingLocation> <ds:DateOfHearing>2011-09-26</ds:DateOfHearing> <ds:TimeOfHearing>10:00</ds:TimeOfHearing> <ds:HearingLanguage Literal="Don't Know">D</ds:HearingLanguage> <ds:HearingDocumentationLanguage Literal="Don't Know">D</ds:HearingDocumentationLanguage> <ds:DefendantPresentAtHearing Literal="Defendant was not present, but appeared by the presence of his/her barrister or solicitor">A</ds:DefendantPresentAtHearing> <br7:SourceReference> <br7:DocumentName>SPI TRPRFOUR SEXOFFENCE</br7:DocumentName> <br7:UniqueID>CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415</br7:UniqueID> <br7:DocumentType>SPI Case Result</br7:DocumentType> </br7:SourceReference> <br7:CourtType Literal="MC adult">MCA</br7:CourtType> <br7:CourtHouseCode>2576</br7:CourtHouseCode> <br7:CourtHouseName>London Croydon</br7:CourtHouseName> </br7:Hearing> <br7:Case hasError="false" SchemaVersion="4.0"> <ds:PTIURN>01ZD0303208</ds:PTIURN> <ds:PreChargeDecisionIndicator Literal="No">N</ds:PreChargeDecisionIndicator> <ds:CourtCaseReferenceNumber>97/1626/008395Q</ds:CourtCaseReferenceNumber> <br7:CourtReference> <ds:MagistratesCourtReference>01ZD0303208</ds:MagistratesCourtReference> </br7:CourtReference> <br7:RecordableOnPNCindicator Literal="Yes">Y</br7:RecordableOnPNCindicator> <br7:Urgent> <br7:urgent Literal="Yes">Y</br7:urgent> <br7:urgency>24</br7:urgency> </br7:Urgent> <br7:ForceOwner SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>00</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD00</ds:OrganisationUnitCode> </br7:ForceOwner> <br7:HearingDefendant hasError="false"> <br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber> <br7:PNCIdentifier>2000/0448754K</br7:PNCIdentifier> <br7:PNCCheckname>SEXOFFENCE</br7:PNCCheckname> <br7:DefendantDetail> <br7:PersonName> <ds:Title>Mr</ds:Title> <ds:GivenName NameSequence="1">TRPRFOUR</ds:GivenName> <ds:FamilyName NameSequence="1">SEXOFFENCE</ds:FamilyName> </br7:PersonName> <br7:GeneratedPNCFilename>SEXOFFENCE/TRPRFOUR</br7:GeneratedPNCFilename> <br7:BirthDate>1948-11-11</br7:BirthDate> <br7:Gender Literal="male">1</br7:Gender> </br7:DefendantDetail> <br7:Address> <ds:AddressLine1>Scenario1 Address Line 1</ds:AddressLine1> <ds:AddressLine2>Scenario1 Address Line 2</ds:AddressLine2> <ds:AddressLine3>Scenario1 Address Line 3</ds:AddressLine3> </br7:Address> <br7:RemandStatus Literal="Unconditional Bail">UB</br7:RemandStatus> <br7:Offence hasError="true" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>SX</ds:ActOrSource> <ds:Year>03</ds:Year> <ds:Reason>001</ds:Reason> <ds:Qualifier>A</ds:Qualifier> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>001</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Indictable">CI</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003</ds:OffenceTitle> <ds:ActualOffenceWording>Attempt to rape a girl aged 13 / 14 / 15 / years of age - SOA 2003.</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>019/11</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>1</br7:CourtOffenceSequenceNumber> <br7:Result hasError="true" SchemaVersion="2.0"> <ds:CJSresultCode>3078</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate><ds:NextHearingDate Error="HO100102">false</ds:NextHearingDate> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>Travel Restriction Order</ds:ResultVariableText> <ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours> <br7:PNCDisposalType>3078</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> <br7:Offence hasError="false" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>SX</ds:ActOrSource> <ds:Year>03</ds:Year> <ds:Reason>001</ds:Reason> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>002</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Indictable">CI</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Rape a girl aged 13 / 14 / 15 - SOA 2003</ds:OffenceTitle> <ds:ActualOffenceWording>Rape of a Female</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>019/07</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>2</br7:CourtOffenceSequenceNumber> <br7:Result hasError="false" SchemaVersion="2.0"> <ds:CJSresultCode>3052</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>defendant must never be allowed out</ds:ResultVariableText> <ds:ResultHalfLifeHours>24</ds:ResultHalfLifeHours> <br7:PNCDisposalType>3052</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:Urgent> <br7:urgent Literal="Yes">Y</br7:urgent> <br7:urgency>24</br7:urgency> </br7:Urgent> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> <br7:Offence hasError="false" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>RT</ds:ActOrSource> <ds:Year>88</ds:Year> <ds:Reason>191</ds:Reason> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>003</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Summary Motoring">CM</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Use a motor vehicle on a road / public place without third party insurance</ds:OffenceTitle> <ds:ActualOffenceWording>Use a motor vehicle without third party insurance.</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="No">N</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="No">N</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>809/01</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>3</br7:CourtOffenceSequenceNumber> <br7:Result hasError="false" SchemaVersion="2.0"> <ds:CJSresultCode>1015</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate> <ds:AmountSpecifiedInResult Type="Fine">100.00</ds:AmountSpecifiedInResult> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>Fined 100.</ds:ResultVariableText> <ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours> <br7:PNCDisposalType>1015</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> </br7:HearingDefendant> </br7:Case> </br7:HearingOutcome> <br7:HasError>false</br7:HasError> <CXE01> <FSC FSCode="01ZD" IntfcUpdateType="K"/> <IDS CRONumber="" Checkname="SEXOFFENCE" IntfcUpdateType="K" PNCID="2000/0448754K"/> <CourtCases> <CourtCase> <CCR CourtCaseRefNo="97/1626/008395Q" CrimeOffenceRefNo="" IntfcUpdateType="K"/> <Offences> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="SX03001A" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003" ReferenceNumber="001"/> </Offence> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="SX03001" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Rape a girl aged 13 / 14 / 15 - SOA 2003" ReferenceNumber="002"/> </Offence> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="RT88191" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Use a motor vehicle on a road / public place without third party insurance" ReferenceNumber="003"/> </Offence> </Offences> </CourtCase> </CourtCases> </CXE01> <br7:PNCQueryDate>2022-03-22</br7:PNCQueryDate> </br7:AnnotatedHearingOutcome>"`;
+
 exports[`amend court case should amend the court case when the lock is held by the current user 2`] = `
-"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<br7:AnnotatedHearingOutcome xmlns:br7="http://schemas.cjse.gov.uk/datastandards/BR7/2007-12" xmlns:ds="http://schemas.cjse.gov.uk/datastandards/2006-10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<br7:HearingOutcome>
-<br7:Hearing hasError="false" SchemaVersion="4.0">
-<ds:CourtHearingLocation SchemaVersion="2.0">
-<ds:TopLevelCode>B</ds:TopLevelCode>
-<ds:SecondLevelCode>41</ds:SecondLevelCode>
-<ds:ThirdLevelCode>ME</ds:ThirdLevelCode>
-<ds:BottomLevelCode>00</ds:BottomLevelCode>
-<ds:OrganisationUnitCode>B41ME00</ds:OrganisationUnitCode>
-</ds:CourtHearingLocation>
-<ds:DateOfHearing>2008-01-11</ds:DateOfHearing>
-<ds:TimeOfHearing>13:30</ds:TimeOfHearing>
-<ds:HearingLanguage Literal="Don't Know">D</ds:HearingLanguage>
-<ds:HearingDocumentationLanguage Literal="Don't Know">D</ds:HearingDocumentationLanguage>
-<ds:DefendantPresentAtHearing Literal="Yes">Y</ds:DefendantPresentAtHearing>
-<br7:SourceReference>
-<br7:DocumentName>SPI Dean Rigout</br7:DocumentName>
-<br7:UniqueID>http://www.altova.com</br7:UniqueID>
-<br7:DocumentType>SPI Case Result</br7:DocumentType>
-</br7:SourceReference>
-<br7:CourtType Literal="MC adult">MCA</br7:CourtType>
-<br7:CourtHouseCode>1892</br7:CourtHouseCode>
-<br7:CourtHouseName>Magistrates' Courts Hertfordshire St Albans</br7:CourtHouseName>
-</br7:Hearing>
-<br7:Case hasError="false" SchemaVersion="4.0">
-<ds:PTIURN>41BP0510007</ds:PTIURN>
-<ds:PreChargeDecisionIndicator Literal="No">N</ds:PreChargeDecisionIndicator>
-<br7:CourtReference>
-<ds:MagistratesCourtReference>41BP0510007</ds:MagistratesCourtReference>
-</br7:CourtReference>
-<br7:RecordableOnPNCindicator Literal="Yes">Y</br7:RecordableOnPNCindicator>
-<br7:ForceOwner SchemaVersion="2.0">
-<ds:SecondLevelCode>04</ds:SecondLevelCode>
-<ds:ThirdLevelCode>CA</ds:ThirdLevelCode>
-<ds:BottomLevelCode>00</ds:BottomLevelCode>
-<ds:OrganisationUnitCode>04CA00</ds:OrganisationUnitCode>
-</br7:ForceOwner>
-<br7:HearingDefendant hasError="true">
-<br7:ArrestSummonsNumber Error="HO100304">9625UC0000000118191Z</br7:ArrestSummonsNumber>
-<br7:DefendantDetail>
-<br7:PersonName>
-<ds:Title>Mr</ds:Title>
-<ds:GivenName NameSequence="1">Dean</ds:GivenName>
-<ds:FamilyName NameSequence="1">Rigout</ds:FamilyName>
-</br7:PersonName>
-<br7:GeneratedPNCFilename>RIGOUT/DEAN</br7:GeneratedPNCFilename>
-<br7:BirthDate>1949-10-29</br7:BirthDate>
-<br7:Gender Literal="male">1</br7:Gender>
-</br7:DefendantDetail>
-<br7:Address>
-<ds:AddressLine1>112 Letsbeavenue</ds:AddressLine1>
-<ds:AddressLine2>Frimley,Camberley, Surrey</ds:AddressLine2>
-</br7:Address>
-<br7:RemandStatus Literal="Conditional Bail">CB</br7:RemandStatus>
-<br7:BailConditions>give to the court any passport held</br7:BailConditions>
-<br7:ReasonForBailConditions>to ensure appearance;</br7:ReasonForBailConditions>
-<br7:CourtPNCIdentifier>2706/1234567P</br7:CourtPNCIdentifier>
-<br7:Offence hasError="false" SchemaVersion="4.0">
-<ds:CriminalProsecutionReference SchemaVersion="2.0">
-<ds:DefendantOrOffender>
-<ds:Year>96</ds:Year>
-<ds:OrganisationUnitIdentifierCode SchemaVersion="2.0">
-<ds:SecondLevelCode>25</ds:SecondLevelCode>
-<ds:ThirdLevelCode>UC</ds:ThirdLevelCode>
-<ds:BottomLevelCode>00</ds:BottomLevelCode>
-<ds:OrganisationUnitCode>25UC00</ds:OrganisationUnitCode>
-</ds:OrganisationUnitIdentifierCode>
-<ds:DefendantOrOffenderSequenceNumber>00000118191</ds:DefendantOrOffenderSequenceNumber>
-<ds:CheckDigit>Z</ds:CheckDigit>
-</ds:DefendantOrOffender>
-<ds:OffenceReason>
-<ds:OffenceCode>
-<ds:ActOrSource>TH</ds:ActOrSource>
-<ds:Year>68</ds:Year>
-<ds:Reason>027</ds:Reason>
-</ds:OffenceCode>
-</ds:OffenceReason>
-</ds:CriminalProsecutionReference>
-<ds:OffenceCategory Literal="Either Way">CE</ds:OffenceCategory>
-<ds:ArrestDate>2007-09-15</ds:ArrestDate>
-<ds:ChargeDate>2007-09-15</ds:ChargeDate>
-<ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode>
-<ds:ActualOffenceStartDate>
-<ds:StartDate>2007-09-15</ds:StartDate>
-</ds:ActualOffenceStartDate>
-<ds:LocationOfOffence>Woolwich Common London</ds:LocationOfOffence>
-<ds:OffenceTitle>Burglary other than dwelling with intent to steal</ds:OffenceTitle>
-<ds:ActualOffenceWording>Burglary (with intent to steal - other than in dwelling)</ds:ActualOffenceWording>
-<ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator>
-<ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator>
-<ds:HomeOfficeClassification>030/02</ds:HomeOfficeClassification>
-<ds:ConvictionDate>2007-04-29</ds:ConvictionDate>
-<br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail>
-<br7:CourtOffenceSequenceNumber>1</br7:CourtOffenceSequenceNumber>
-<br7:AddedByTheCourt Literal="Yes">Y</br7:AddedByTheCourt>
-<br7:Result hasError="false" SchemaVersion="2.0">
-<ds:CJSresultCode>4023</ds:CJSresultCode>
-<ds:OffenceRemandStatus Literal="Conditional Bail">CB</ds:OffenceRemandStatus>
-<ds:SourceOrganisation SchemaVersion="2.0">
-<ds:TopLevelCode>B</ds:TopLevelCode>
-<ds:SecondLevelCode>41</ds:SecondLevelCode>
-<ds:ThirdLevelCode>ME</ds:ThirdLevelCode>
-<ds:BottomLevelCode>00</ds:BottomLevelCode>
-<ds:OrganisationUnitCode>B41ME00</ds:OrganisationUnitCode>
-</ds:SourceOrganisation>
-<ds:CourtType>MCA</ds:CourtType>
-<ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType>
-<ds:ResultHearingDate>2007-04-29</ds:ResultHearingDate>
-<ds:NextResultSourceOrganisation SchemaVersion="2.0">
-<ds:TopLevelCode>B</ds:TopLevelCode>
-<ds:SecondLevelCode>41</ds:SecondLevelCode>
-<ds:ThirdLevelCode>ME</ds:ThirdLevelCode>
-<ds:BottomLevelCode>00</ds:BottomLevelCode>
-<ds:OrganisationUnitCode>B41ME00</ds:OrganisationUnitCode>
-</ds:NextResultSourceOrganisation>
-<ds:NextCourtType>MCA</ds:NextCourtType>
-<ds:NextHearingDate>2008-02-01</ds:NextHearingDate>
-<ds:NextHearingTime>13:30</ds:NextHearingTime>
-<ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus>
-<ds:Verdict Literal="Guilty">G</ds:Verdict>
-<ds:ModeOfTrialReason Literal="Defendant Elects Summary Trial">EST</ds:ModeOfTrialReason>
-<ds:ResultVariableText>Remittal for Sentence on Adjournment</ds:ResultVariableText>
-<ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours>
-<br7:PNCDisposalType>4023</br7:PNCDisposalType>
-<br7:ResultClass>Adjournment post Judgement</br7:ResultClass>
-<br7:ReasonForOffenceBailConditions>to ensure appearance;</br7:ReasonForOffenceBailConditions>
-<br7:ConvictingCourt>2723</br7:ConvictingCourt>
-</br7:Result>
-</br7:Offence>
-</br7:HearingDefendant>
-</br7:Case>
-</br7:HearingOutcome>
-<br7:HasError>true</br7:HasError>
-<CXE01>
-<FSC FSCode="04CA" IntfcUpdateType="K"/>
-<IDS CRONumber="" Checkname="MIDDLETONN" IntfcUpdateType="K" PNCID="2000/0459646G"/>
-<CourtCases>
-<CourtCase>
-<CCR CourtCaseRefNo="97/1626/008395Q" CrimeOffenceRefNo="" IntfcUpdateType="K"/>
-<Offences>
-<Offence>
-<COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="TH68006" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="2220" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Theft of pedal cycle" ReferenceNumber="001"/>
-</Offence>
-</Offences>
-</CourtCase>
-</CourtCases>
-</CXE01>
-<br7:PNCQueryDate>2022-07-27</br7:PNCQueryDate>
-</br7:AnnotatedHearingOutcome>"
+{
+  "AnnotatedHearingOutcome": {
+    "HearingOutcome": {
+      "Case": {
+        "CourtCaseReferenceNumber": "97/1626/008395Q",
+        "CourtReference": {
+          "MagistratesCourtReference": "01ZD0303208",
+        },
+        "ForceOwner": {
+          "BottomLevelCode": "00",
+          "OrganisationUnitCode": "01ZD00",
+          "SecondLevelCode": "01",
+          "ThirdLevelCode": "ZD",
+          "TopLevelCode": undefined,
+        },
+        "HearingDefendant": {
+          "Address": {
+            "AddressLine1": "Scenario1 Address Line 1",
+            "AddressLine2": "Scenario1 Address Line 2",
+            "AddressLine3": "Scenario1 Address Line 3",
+            "AddressLine4": undefined,
+            "AddressLine5": undefined,
+          },
+          "ArrestSummonsNumber": "1101ZD0100000448754K",
+          "BailConditions": [],
+          "CourtPNCIdentifier": undefined,
+          "DefendantDetail": {
+            "BirthDate": 1948-11-11T00:00:00.000Z,
+            "Gender": 1,
+            "GeneratedPNCFilename": "SEXOFFENCE/TRPRFOUR",
+            "PersonName": {
+              "FamilyName": "SEXOFFENCE",
+              "GivenName": [
+                "TRPRFOUR",
+              ],
+              "Title": "Mr",
+            },
+          },
+          "Offence": [
+            {
+              "ActualOffenceDateCode": "1",
+              "ActualOffenceEndDate": undefined,
+              "ActualOffenceStartDate": {
+                "StartDate": 2010-11-28T00:00:00.000Z,
+              },
+              "ActualOffenceWording": "Attempt to rape a girl aged 13 / 14 / 15 / years of age - SOA 2003.",
+              "AddedByTheCourt": undefined,
+              "AlcoholLevel": undefined,
+              "ArrestDate": 2010-12-01T00:00:00.000Z,
+              "ChargeDate": 2010-12-02T00:00:00.000Z,
+              "CommittedOnBail": "D",
+              "ConvictionDate": 2011-09-26T00:00:00.000Z,
+              "CourtCaseReferenceNumber": undefined,
+              "CourtOffenceSequenceNumber": 1,
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
+                  "CheckDigit": "K",
+                  "DefendantOrOffenderSequenceNumber": "00000448754",
+                  "OrganisationUnitIdentifierCode": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "01ZD01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "ZD",
+                    "TopLevelCode": undefined,
+                  },
+                  "Year": "11",
+                },
+                "OffenceReason": {
+                  "OffenceCode": {
+                    "ActOrSource": "SX",
+                    "FullCode": "SX03001A",
+                    "Qualifier": "A",
+                    "Reason": "001",
+                    "Year": "03",
+                    "__type": "NonMatchingOffenceCode",
+                  },
+                  "__type": "NationalOffenceReason",
+                },
+                "OffenceReasonSequence": "001",
+              },
+              "HomeOfficeClassification": "019/11",
+              "LocationOfOffence": "Kingston High Street",
+              "ManualCourtCaseReference": undefined,
+              "ManualSequenceNumber": undefined,
+              "NotifiableToHOindicator": true,
+              "OffenceCategory": "CI",
+              "OffenceTitle": "Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003",
+              "RecordableOnPNCindicator": true,
+              "Result": [
+                {
+                  "AmountSpecifiedInResult": undefined,
+                  "BailCondition": [],
+                  "CJSresultCode": 3078,
+                  "ConvictingCourt": undefined,
+                  "CourtType": "MCA",
+                  "DateSpecifiedInResult": undefined,
+                  "Duration": [],
+                  "ModeOfTrialReason": "SUM",
+                  "NextCourtType": undefined,
+                  "NextHearingDate": "false",
+                  "NextHearingTime": undefined,
+                  "NextResultSourceOrganisation": undefined,
+                  "NumberOfOffencesTIC": undefined,
+                  "NumberSpecifiedInResult": undefined,
+                  "OffenceRemandStatus": undefined,
+                  "PNCAdjudicationExists": false,
+                  "PNCDisposalType": 3078,
+                  "PleaStatus": "NG",
+                  "ReasonForOffenceBailConditions": undefined,
+                  "ResultApplicableQualifierCode": [],
+                  "ResultClass": "Judgement with final result",
+                  "ResultHalfLifeHours": 72,
+                  "ResultHearingDate": 2011-09-26T00:00:00.000Z,
+                  "ResultHearingType": "OTHER",
+                  "ResultQualifierVariable": [],
+                  "ResultVariableText": "Travel Restriction Order",
+                  "SourceOrganisation": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "B01EF01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "EF",
+                    "TopLevelCode": "B",
+                  },
+                  "Urgent": undefined,
+                  "Verdict": "G",
+                  "WarrantIssueDate": undefined,
+                },
+              ],
+            },
+            {
+              "ActualOffenceDateCode": "1",
+              "ActualOffenceEndDate": undefined,
+              "ActualOffenceStartDate": {
+                "StartDate": 2010-11-28T00:00:00.000Z,
+              },
+              "ActualOffenceWording": "Rape of a Female",
+              "AddedByTheCourt": undefined,
+              "AlcoholLevel": undefined,
+              "ArrestDate": 2010-12-01T00:00:00.000Z,
+              "ChargeDate": 2010-12-02T00:00:00.000Z,
+              "CommittedOnBail": "D",
+              "ConvictionDate": 2011-09-26T00:00:00.000Z,
+              "CourtCaseReferenceNumber": undefined,
+              "CourtOffenceSequenceNumber": 2,
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
+                  "CheckDigit": "K",
+                  "DefendantOrOffenderSequenceNumber": "00000448754",
+                  "OrganisationUnitIdentifierCode": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "01ZD01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "ZD",
+                    "TopLevelCode": undefined,
+                  },
+                  "Year": "11",
+                },
+                "OffenceReason": {
+                  "OffenceCode": {
+                    "ActOrSource": "SX",
+                    "FullCode": "SX03001",
+                    "Qualifier": undefined,
+                    "Reason": "001",
+                    "Year": "03",
+                    "__type": "NonMatchingOffenceCode",
+                  },
+                  "__type": "NationalOffenceReason",
+                },
+                "OffenceReasonSequence": "002",
+              },
+              "HomeOfficeClassification": "019/07",
+              "LocationOfOffence": "Kingston High Street",
+              "ManualCourtCaseReference": undefined,
+              "ManualSequenceNumber": undefined,
+              "NotifiableToHOindicator": true,
+              "OffenceCategory": "CI",
+              "OffenceTitle": "Rape a girl aged 13 / 14 / 15 - SOA 2003",
+              "RecordableOnPNCindicator": true,
+              "Result": [
+                {
+                  "AmountSpecifiedInResult": undefined,
+                  "BailCondition": [],
+                  "CJSresultCode": 3052,
+                  "ConvictingCourt": undefined,
+                  "CourtType": "MCA",
+                  "DateSpecifiedInResult": undefined,
+                  "Duration": [],
+                  "ModeOfTrialReason": "SUM",
+                  "NextCourtType": undefined,
+                  "NextHearingDate": undefined,
+                  "NextHearingTime": undefined,
+                  "NextResultSourceOrganisation": undefined,
+                  "NumberOfOffencesTIC": undefined,
+                  "NumberSpecifiedInResult": undefined,
+                  "OffenceRemandStatus": undefined,
+                  "PNCAdjudicationExists": false,
+                  "PNCDisposalType": 3052,
+                  "PleaStatus": "NG",
+                  "ReasonForOffenceBailConditions": undefined,
+                  "ResultApplicableQualifierCode": [],
+                  "ResultClass": "Judgement with final result",
+                  "ResultHalfLifeHours": 24,
+                  "ResultHearingDate": 2011-09-26T00:00:00.000Z,
+                  "ResultHearingType": "OTHER",
+                  "ResultQualifierVariable": [],
+                  "ResultVariableText": "defendant must never be allowed out",
+                  "SourceOrganisation": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "B01EF01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "EF",
+                    "TopLevelCode": "B",
+                  },
+                  "Urgent": {
+                    "urgency": 24,
+                    "urgent": true,
+                  },
+                  "Verdict": "G",
+                  "WarrantIssueDate": undefined,
+                },
+              ],
+            },
+            {
+              "ActualOffenceDateCode": "1",
+              "ActualOffenceEndDate": undefined,
+              "ActualOffenceStartDate": {
+                "StartDate": 2010-11-28T00:00:00.000Z,
+              },
+              "ActualOffenceWording": "Use a motor vehicle without third party insurance.",
+              "AddedByTheCourt": undefined,
+              "AlcoholLevel": undefined,
+              "ArrestDate": 2010-12-01T00:00:00.000Z,
+              "ChargeDate": 2010-12-02T00:00:00.000Z,
+              "CommittedOnBail": "D",
+              "ConvictionDate": 2011-09-26T00:00:00.000Z,
+              "CourtCaseReferenceNumber": undefined,
+              "CourtOffenceSequenceNumber": 3,
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
+                  "CheckDigit": "K",
+                  "DefendantOrOffenderSequenceNumber": "00000448754",
+                  "OrganisationUnitIdentifierCode": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "01ZD01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "ZD",
+                    "TopLevelCode": undefined,
+                  },
+                  "Year": "11",
+                },
+                "OffenceReason": {
+                  "OffenceCode": {
+                    "ActOrSource": "RT",
+                    "FullCode": "RT88191",
+                    "Qualifier": undefined,
+                    "Reason": "191",
+                    "Year": "88",
+                    "__type": "NonMatchingOffenceCode",
+                  },
+                  "__type": "NationalOffenceReason",
+                },
+                "OffenceReasonSequence": "003",
+              },
+              "HomeOfficeClassification": "809/01",
+              "LocationOfOffence": "Kingston High Street",
+              "ManualCourtCaseReference": undefined,
+              "ManualSequenceNumber": undefined,
+              "NotifiableToHOindicator": false,
+              "OffenceCategory": "CM",
+              "OffenceTitle": "Use a motor vehicle on a road / public place without third party insurance",
+              "RecordableOnPNCindicator": false,
+              "Result": [
+                {
+                  "AmountSpecifiedInResult": [
+                    {
+                      "Amount": 100,
+                      "DecimalPlaces": 2,
+                      "Type": "Fine",
+                    },
+                  ],
+                  "BailCondition": [],
+                  "CJSresultCode": 1015,
+                  "ConvictingCourt": undefined,
+                  "CourtType": "MCA",
+                  "DateSpecifiedInResult": undefined,
+                  "Duration": [],
+                  "ModeOfTrialReason": "SUM",
+                  "NextCourtType": undefined,
+                  "NextHearingDate": undefined,
+                  "NextHearingTime": undefined,
+                  "NextResultSourceOrganisation": undefined,
+                  "NumberOfOffencesTIC": undefined,
+                  "NumberSpecifiedInResult": undefined,
+                  "OffenceRemandStatus": undefined,
+                  "PNCAdjudicationExists": false,
+                  "PNCDisposalType": 1015,
+                  "PleaStatus": "NG",
+                  "ReasonForOffenceBailConditions": undefined,
+                  "ResultApplicableQualifierCode": [],
+                  "ResultClass": "Judgement with final result",
+                  "ResultHalfLifeHours": 72,
+                  "ResultHearingDate": 2011-09-26T00:00:00.000Z,
+                  "ResultHearingType": "OTHER",
+                  "ResultQualifierVariable": [],
+                  "ResultVariableText": "Fined 100.",
+                  "SourceOrganisation": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "B01EF01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "EF",
+                    "TopLevelCode": "B",
+                  },
+                  "Urgent": undefined,
+                  "Verdict": "G",
+                  "WarrantIssueDate": undefined,
+                },
+              ],
+            },
+          ],
+          "OrganisationName": undefined,
+          "PNCCheckname": "SEXOFFENCE",
+          "PNCIdentifier": "2000/0448754K",
+          "ReasonForBailConditions": undefined,
+          "RemandStatus": "UB",
+        },
+        "ManualForceOwner": undefined,
+        "PTIURN": "01ZD0303208",
+        "PenaltyNoticeCaseReferenceNumber": undefined,
+        "PreChargeDecisionIndicator": false,
+        "RecordableOnPNCindicator": true,
+        "Urgent": {
+          "urgency": 24,
+          "urgent": true,
+        },
+      },
+      "Hearing": {
+        "CourtHearingLocation": {
+          "BottomLevelCode": "01",
+          "OrganisationUnitCode": "B01EF01",
+          "SecondLevelCode": "01",
+          "ThirdLevelCode": "EF",
+          "TopLevelCode": "B",
+        },
+        "CourtHouseCode": 2576,
+        "CourtHouseName": "London Croydon",
+        "CourtType": "MCA",
+        "DateOfHearing": 2011-09-26T00:00:00.000Z,
+        "DefendantPresentAtHearing": "A",
+        "HearingDocumentationLanguage": "D",
+        "HearingLanguage": "D",
+        "SourceReference": {
+          "DocumentName": "SPI TRPRFOUR SEXOFFENCE",
+          "DocumentType": "SPI Case Result",
+          "UniqueID": "CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415",
+        },
+        "TimeOfHearing": "10:00",
+      },
+    },
+  },
+  "Exceptions": [
+    {
+      "code": "HO100102",
+      "path": [
+        "AnnotatedHearingOutcome",
+        "HearingOutcome",
+        "Case",
+        "HearingDefendant",
+        "Offence",
+        0,
+        "Result",
+        0,
+        "NextHearingDate",
+      ],
+    },
+  ],
+  "PncErrorMessage": undefined,
+  "PncQuery": {
+    "checkName": "SEXOFFENCE",
+    "courtCases": [
+      {
+        "courtCaseReference": "97/1626/008395Q",
+        "offences": [
+          {
+            "adjudication": undefined,
+            "disposals": undefined,
+            "offence": {
+              "acpoOffenceCode": "12:15:24:1",
+              "cjsOffenceCode": "SX03001A",
+              "endTime": undefined,
+              "qualifier1": "",
+              "qualifier2": "",
+              "sequenceNumber": 1,
+              "startDate": 2010-11-28T00:00:00.000Z,
+              "startTime": "00:00",
+              "title": "Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003",
+            },
+          },
+          {
+            "adjudication": undefined,
+            "disposals": undefined,
+            "offence": {
+              "acpoOffenceCode": "12:15:24:1",
+              "cjsOffenceCode": "SX03001",
+              "endTime": undefined,
+              "qualifier1": "",
+              "qualifier2": "",
+              "sequenceNumber": 2,
+              "startDate": 2010-11-28T00:00:00.000Z,
+              "startTime": "00:00",
+              "title": "Rape a girl aged 13 / 14 / 15 - SOA 2003",
+            },
+          },
+          {
+            "adjudication": undefined,
+            "disposals": undefined,
+            "offence": {
+              "acpoOffenceCode": "12:15:24:1",
+              "cjsOffenceCode": "RT88191",
+              "endTime": undefined,
+              "qualifier1": "",
+              "qualifier2": "",
+              "sequenceNumber": 3,
+              "startDate": 2010-11-28T00:00:00.000Z,
+              "startTime": "00:00",
+              "title": "Use a motor vehicle on a road / public place without third party insurance",
+            },
+          },
+        ],
+      },
+    ],
+    "forceStationCode": "01ZD",
+    "penaltyCases": undefined,
+    "pncId": "2000/0448754K",
+  },
+  "PncQueryDate": 2022-03-22T00:00:00.000Z,
+}
 `;
+
+exports[`amend court case should amend the court case when the lock is held by the current user 3`] = `"<!--Generated from test-data/e2e-comparison/test-001.json/annotatedHearingOutcome --> <?xml version="1.0" encoding="UTF-8" standalone="yes"?> <br7:AnnotatedHearingOutcome xmlns:br7="http://schemas.cjse.gov.uk/datastandards/BR7/2007-12" xmlns:ds="http://schemas.cjse.gov.uk/datastandards/2006-10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <br7:HearingOutcome> <br7:Hearing hasError="false" SchemaVersion="4.0"> <ds:CourtHearingLocation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:CourtHearingLocation> <ds:DateOfHearing>2011-09-26</ds:DateOfHearing> <ds:TimeOfHearing>10:00</ds:TimeOfHearing> <ds:HearingLanguage Literal="Don't Know">D</ds:HearingLanguage> <ds:HearingDocumentationLanguage Literal="Don't Know">D</ds:HearingDocumentationLanguage> <ds:DefendantPresentAtHearing Literal="Defendant was not present, but appeared by the presence of his/her barrister or solicitor">A</ds:DefendantPresentAtHearing> <br7:SourceReference> <br7:DocumentName>SPI TRPRFOUR SEXOFFENCE</br7:DocumentName> <br7:UniqueID>CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415</br7:UniqueID> <br7:DocumentType>SPI Case Result</br7:DocumentType> </br7:SourceReference> <br7:CourtType Literal="MC adult">MCA</br7:CourtType> <br7:CourtHouseCode>2576</br7:CourtHouseCode> <br7:CourtHouseName>London Croydon</br7:CourtHouseName> </br7:Hearing> <br7:Case hasError="false" SchemaVersion="4.0"> <ds:PTIURN>01ZD0303208</ds:PTIURN> <ds:PreChargeDecisionIndicator Literal="No">N</ds:PreChargeDecisionIndicator> <ds:CourtCaseReferenceNumber>97/1626/008395Q</ds:CourtCaseReferenceNumber> <br7:CourtReference> <ds:MagistratesCourtReference>01ZD0303208</ds:MagistratesCourtReference> </br7:CourtReference> <br7:RecordableOnPNCindicator Literal="Yes">Y</br7:RecordableOnPNCindicator> <br7:Urgent> <br7:urgent Literal="Yes">Y</br7:urgent> <br7:urgency>24</br7:urgency> </br7:Urgent> <br7:ForceOwner SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>00</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD00</ds:OrganisationUnitCode> </br7:ForceOwner> <br7:HearingDefendant hasError="false"> <br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber> <br7:PNCIdentifier>2000/0448754K</br7:PNCIdentifier> <br7:PNCCheckname>SEXOFFENCE</br7:PNCCheckname> <br7:DefendantDetail> <br7:PersonName> <ds:Title>Mr</ds:Title> <ds:GivenName NameSequence="1">TRPRFOUR</ds:GivenName> <ds:FamilyName NameSequence="1">SEXOFFENCE</ds:FamilyName> </br7:PersonName> <br7:GeneratedPNCFilename>SEXOFFENCE/TRPRFOUR</br7:GeneratedPNCFilename> <br7:BirthDate>1948-11-11</br7:BirthDate> <br7:Gender Literal="male">1</br7:Gender> </br7:DefendantDetail> <br7:Address> <ds:AddressLine1>Scenario1 Address Line 1</ds:AddressLine1> <ds:AddressLine2>Scenario1 Address Line 2</ds:AddressLine2> <ds:AddressLine3>Scenario1 Address Line 3</ds:AddressLine3> </br7:Address> <br7:RemandStatus Literal="Unconditional Bail">UB</br7:RemandStatus> <br7:Offence hasError="true" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>SX</ds:ActOrSource> <ds:Year>03</ds:Year> <ds:Reason>001</ds:Reason> <ds:Qualifier>A</ds:Qualifier> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>001</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Indictable">CI</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003</ds:OffenceTitle> <ds:ActualOffenceWording>Attempt to rape a girl aged 13 / 14 / 15 / years of age - SOA 2003.</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>019/11</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>1</br7:CourtOffenceSequenceNumber> <br7:Result hasError="true" SchemaVersion="2.0"> <ds:CJSresultCode>3078</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate><ds:NextHearingDate Error="HO100102">false</ds:NextHearingDate> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>Travel Restriction Order</ds:ResultVariableText> <ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours> <br7:PNCDisposalType>3078</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> <br7:Offence hasError="false" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>SX</ds:ActOrSource> <ds:Year>03</ds:Year> <ds:Reason>001</ds:Reason> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>002</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Indictable">CI</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Rape a girl aged 13 / 14 / 15 - SOA 2003</ds:OffenceTitle> <ds:ActualOffenceWording>Rape of a Female</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>019/07</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>2</br7:CourtOffenceSequenceNumber> <br7:Result hasError="false" SchemaVersion="2.0"> <ds:CJSresultCode>3052</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>defendant must never be allowed out</ds:ResultVariableText> <ds:ResultHalfLifeHours>24</ds:ResultHalfLifeHours> <br7:PNCDisposalType>3052</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:Urgent> <br7:urgent Literal="Yes">Y</br7:urgent> <br7:urgency>24</br7:urgency> </br7:Urgent> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> <br7:Offence hasError="false" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>RT</ds:ActOrSource> <ds:Year>88</ds:Year> <ds:Reason>191</ds:Reason> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>003</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Summary Motoring">CM</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Use a motor vehicle on a road / public place without third party insurance</ds:OffenceTitle> <ds:ActualOffenceWording>Use a motor vehicle without third party insurance.</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="No">N</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="No">N</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>809/01</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>3</br7:CourtOffenceSequenceNumber> <br7:Result hasError="false" SchemaVersion="2.0"> <ds:CJSresultCode>1015</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate> <ds:AmountSpecifiedInResult Type="Fine">100.00</ds:AmountSpecifiedInResult> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>Fined 100.</ds:ResultVariableText> <ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours> <br7:PNCDisposalType>1015</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> </br7:HearingDefendant> </br7:Case> </br7:HearingOutcome> <br7:HasError>false</br7:HasError> <CXE01> <FSC FSCode="01ZD" IntfcUpdateType="K"/> <IDS CRONumber="" Checkname="SEXOFFENCE" IntfcUpdateType="K" PNCID="2000/0448754K"/> <CourtCases> <CourtCase> <CCR CourtCaseRefNo="97/1626/008395Q" CrimeOffenceRefNo="" IntfcUpdateType="K"/> <Offences> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="SX03001A" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003" ReferenceNumber="001"/> </Offence> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="SX03001" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Rape a girl aged 13 / 14 / 15 - SOA 2003" ReferenceNumber="002"/> </Offence> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="RT88191" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Use a motor vehicle on a road / public place without third party insurance" ReferenceNumber="003"/> </Offence> </Offences> </CourtCase> </CourtCases> </CXE01> <br7:PNCQueryDate>2022-03-22</br7:PNCQueryDate> </br7:AnnotatedHearingOutcome>"`;
 
 exports[`amend court case should create a force owner if the force owner is not present 1`] = `
 {
@@ -1171,43 +1309,43 @@ exports[`amend court case should create a force owner if the force owner is not 
 }
 `;
 
-exports[`amend court case should not update the db if the case is locked by somebody else 1`] = `
+exports[`amend court case should not update the db if the case is locked by somebody else 1`] = `"<!--Generated from test-data/e2e-comparison/test-001.json/annotatedHearingOutcome --> <?xml version="1.0" encoding="UTF-8" standalone="yes"?> <br7:AnnotatedHearingOutcome xmlns:br7="http://schemas.cjse.gov.uk/datastandards/BR7/2007-12" xmlns:ds="http://schemas.cjse.gov.uk/datastandards/2006-10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <br7:HearingOutcome> <br7:Hearing hasError="false" SchemaVersion="4.0"> <ds:CourtHearingLocation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:CourtHearingLocation> <ds:DateOfHearing>2011-09-26</ds:DateOfHearing> <ds:TimeOfHearing>10:00</ds:TimeOfHearing> <ds:HearingLanguage Literal="Don't Know">D</ds:HearingLanguage> <ds:HearingDocumentationLanguage Literal="Don't Know">D</ds:HearingDocumentationLanguage> <ds:DefendantPresentAtHearing Literal="Defendant was not present, but appeared by the presence of his/her barrister or solicitor">A</ds:DefendantPresentAtHearing> <br7:SourceReference> <br7:DocumentName>SPI TRPRFOUR SEXOFFENCE</br7:DocumentName> <br7:UniqueID>CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415</br7:UniqueID> <br7:DocumentType>SPI Case Result</br7:DocumentType> </br7:SourceReference> <br7:CourtType Literal="MC adult">MCA</br7:CourtType> <br7:CourtHouseCode>2576</br7:CourtHouseCode> <br7:CourtHouseName>London Croydon</br7:CourtHouseName> </br7:Hearing> <br7:Case hasError="false" SchemaVersion="4.0"> <ds:PTIURN>01ZD0303208</ds:PTIURN> <ds:PreChargeDecisionIndicator Literal="No">N</ds:PreChargeDecisionIndicator> <ds:CourtCaseReferenceNumber>97/1626/008395Q</ds:CourtCaseReferenceNumber> <br7:CourtReference> <ds:MagistratesCourtReference>01ZD0303208</ds:MagistratesCourtReference> </br7:CourtReference> <br7:RecordableOnPNCindicator Literal="Yes">Y</br7:RecordableOnPNCindicator> <br7:Urgent> <br7:urgent Literal="Yes">Y</br7:urgent> <br7:urgency>24</br7:urgency> </br7:Urgent> <br7:ForceOwner SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>00</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD00</ds:OrganisationUnitCode> </br7:ForceOwner> <br7:HearingDefendant hasError="false"> <br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber> <br7:PNCIdentifier>2000/0448754K</br7:PNCIdentifier> <br7:PNCCheckname>SEXOFFENCE</br7:PNCCheckname> <br7:DefendantDetail> <br7:PersonName> <ds:Title>Mr</ds:Title> <ds:GivenName NameSequence="1">TRPRFOUR</ds:GivenName> <ds:FamilyName NameSequence="1">SEXOFFENCE</ds:FamilyName> </br7:PersonName> <br7:GeneratedPNCFilename>SEXOFFENCE/TRPRFOUR</br7:GeneratedPNCFilename> <br7:BirthDate>1948-11-11</br7:BirthDate> <br7:Gender Literal="male">1</br7:Gender> </br7:DefendantDetail> <br7:Address> <ds:AddressLine1>Scenario1 Address Line 1</ds:AddressLine1> <ds:AddressLine2>Scenario1 Address Line 2</ds:AddressLine2> <ds:AddressLine3>Scenario1 Address Line 3</ds:AddressLine3> </br7:Address> <br7:RemandStatus Literal="Unconditional Bail">UB</br7:RemandStatus> <br7:Offence hasError="true" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>SX</ds:ActOrSource> <ds:Year>03</ds:Year> <ds:Reason>001</ds:Reason> <ds:Qualifier>A</ds:Qualifier> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>001</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Indictable">CI</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003</ds:OffenceTitle> <ds:ActualOffenceWording>Attempt to rape a girl aged 13 / 14 / 15 / years of age - SOA 2003.</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>019/11</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>1</br7:CourtOffenceSequenceNumber> <br7:Result hasError="true" SchemaVersion="2.0"> <ds:CJSresultCode>3078</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate><ds:NextHearingDate Error="HO100102">false</ds:NextHearingDate> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>Travel Restriction Order</ds:ResultVariableText> <ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours> <br7:PNCDisposalType>3078</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> <br7:Offence hasError="false" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>SX</ds:ActOrSource> <ds:Year>03</ds:Year> <ds:Reason>001</ds:Reason> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>002</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Indictable">CI</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Rape a girl aged 13 / 14 / 15 - SOA 2003</ds:OffenceTitle> <ds:ActualOffenceWording>Rape of a Female</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="Yes">Y</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="Yes">Y</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>019/07</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>2</br7:CourtOffenceSequenceNumber> <br7:Result hasError="false" SchemaVersion="2.0"> <ds:CJSresultCode>3052</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>defendant must never be allowed out</ds:ResultVariableText> <ds:ResultHalfLifeHours>24</ds:ResultHalfLifeHours> <br7:PNCDisposalType>3052</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:Urgent> <br7:urgent Literal="Yes">Y</br7:urgent> <br7:urgency>24</br7:urgency> </br7:Urgent> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> <br7:Offence hasError="false" SchemaVersion="4.0"> <ds:CriminalProsecutionReference SchemaVersion="2.0"> <ds:DefendantOrOffender> <ds:Year>11</ds:Year> <ds:OrganisationUnitIdentifierCode SchemaVersion="2.0"> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>ZD</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>01ZD01</ds:OrganisationUnitCode> </ds:OrganisationUnitIdentifierCode> <ds:DefendantOrOffenderSequenceNumber>00000448754</ds:DefendantOrOffenderSequenceNumber> <ds:CheckDigit>K</ds:CheckDigit> </ds:DefendantOrOffender> <ds:OffenceReason> <ds:OffenceCode> <ds:ActOrSource>RT</ds:ActOrSource> <ds:Year>88</ds:Year> <ds:Reason>191</ds:Reason> </ds:OffenceCode> </ds:OffenceReason> <ds:OffenceReasonSequence>003</ds:OffenceReasonSequence> </ds:CriminalProsecutionReference> <ds:OffenceCategory Literal="Summary Motoring">CM</ds:OffenceCategory> <ds:ArrestDate>2010-12-01</ds:ArrestDate> <ds:ChargeDate>2010-12-02</ds:ChargeDate> <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode> <ds:ActualOffenceStartDate> <ds:StartDate>2010-11-28</ds:StartDate> </ds:ActualOffenceStartDate> <ds:LocationOfOffence>Kingston High Street</ds:LocationOfOffence> <ds:OffenceTitle>Use a motor vehicle on a road / public place without third party insurance</ds:OffenceTitle> <ds:ActualOffenceWording>Use a motor vehicle without third party insurance.</ds:ActualOffenceWording> <ds:RecordableOnPNCindicator Literal="No">N</ds:RecordableOnPNCindicator> <ds:NotifiableToHOindicator Literal="No">N</ds:NotifiableToHOindicator> <ds:HomeOfficeClassification>809/01</ds:HomeOfficeClassification> <ds:ConvictionDate>2011-09-26</ds:ConvictionDate> <br7:CommittedOnBail Literal="Don't Know">D</br7:CommittedOnBail> <br7:CourtOffenceSequenceNumber>3</br7:CourtOffenceSequenceNumber> <br7:Result hasError="false" SchemaVersion="2.0"> <ds:CJSresultCode>1015</ds:CJSresultCode> <ds:SourceOrganisation SchemaVersion="2.0"> <ds:TopLevelCode>B</ds:TopLevelCode> <ds:SecondLevelCode>01</ds:SecondLevelCode> <ds:ThirdLevelCode>EF</ds:ThirdLevelCode> <ds:BottomLevelCode>01</ds:BottomLevelCode> <ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode> </ds:SourceOrganisation> <ds:CourtType>MCA</ds:CourtType> <ds:ResultHearingType Literal="Other">OTHER</ds:ResultHearingType> <ds:ResultHearingDate>2011-09-26</ds:ResultHearingDate> <ds:AmountSpecifiedInResult Type="Fine">100.00</ds:AmountSpecifiedInResult> <ds:PleaStatus Literal="Not Guilty">NG</ds:PleaStatus> <ds:Verdict Literal="Guilty">G</ds:Verdict> <ds:ModeOfTrialReason Literal="Summary only">SUM</ds:ModeOfTrialReason> <ds:ResultVariableText>Fined 100.</ds:ResultVariableText> <ds:ResultHalfLifeHours>72</ds:ResultHalfLifeHours> <br7:PNCDisposalType>1015</br7:PNCDisposalType> <br7:ResultClass>Judgement with final result</br7:ResultClass> <br7:PNCAdjudicationExists Literal="No">N</br7:PNCAdjudicationExists> </br7:Result> </br7:Offence> </br7:HearingDefendant> </br7:Case> </br7:HearingOutcome> <br7:HasError>false</br7:HasError> <CXE01> <FSC FSCode="01ZD" IntfcUpdateType="K"/> <IDS CRONumber="" Checkname="SEXOFFENCE" IntfcUpdateType="K" PNCID="2000/0448754K"/> <CourtCases> <CourtCase> <CCR CourtCaseRefNo="97/1626/008395Q" CrimeOffenceRefNo="" IntfcUpdateType="K"/> <Offences> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="SX03001A" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003" ReferenceNumber="001"/> </Offence> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="SX03001" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Rape a girl aged 13 / 14 / 15 - SOA 2003" ReferenceNumber="002"/> </Offence> <Offence> <COF ACPOOffenceCode="12:15:24:1" CJSOffenceCode="RT88191" IntfcUpdateType="K" OffEndDate="" OffEndTime="" OffStartDate="28112010" OffStartTime="0000" OffenceQualifier1="" OffenceQualifier2="" OffenceTitle="Use a motor vehicle on a road / public place without third party insurance" ReferenceNumber="003"/> </Offence> </Offences> </CourtCase> </CourtCases> </CXE01> <br7:PNCQueryDate>2022-03-22</br7:PNCQueryDate> </br7:AnnotatedHearingOutcome>"`;
+
+exports[`amend court case should not update the db if the case is locked by somebody else 2`] = `
 {
   "AnnotatedHearingOutcome": {
     "HearingOutcome": {
       "Case": {
-        "CourtCaseReferenceNumber": undefined,
+        "CourtCaseReferenceNumber": "97/1626/008395Q",
         "CourtReference": {
-          "MagistratesCourtReference": "41BP0510007",
+          "MagistratesCourtReference": "01ZD0303208",
         },
         "ForceOwner": {
           "BottomLevelCode": "00",
-          "OrganisationUnitCode": "04CA00",
-          "SecondLevelCode": "04",
-          "ThirdLevelCode": "CA",
+          "OrganisationUnitCode": "01ZD00",
+          "SecondLevelCode": "01",
+          "ThirdLevelCode": "ZD",
           "TopLevelCode": undefined,
         },
         "HearingDefendant": {
           "Address": {
-            "AddressLine1": "112 Letsbeavenue",
-            "AddressLine2": "Frimley,Camberley, Surrey",
-            "AddressLine3": undefined,
+            "AddressLine1": "Scenario1 Address Line 1",
+            "AddressLine2": "Scenario1 Address Line 2",
+            "AddressLine3": "Scenario1 Address Line 3",
             "AddressLine4": undefined,
             "AddressLine5": undefined,
           },
-          "ArrestSummonsNumber": "9625UC0000000118191Z",
-          "BailConditions": [
-            "give to the court any passport held",
-          ],
-          "CourtPNCIdentifier": "2706/1234567P",
+          "ArrestSummonsNumber": "1101ZD0100000448754K",
+          "BailConditions": [],
+          "CourtPNCIdentifier": undefined,
           "DefendantDetail": {
-            "BirthDate": 1949-10-29T00:00:00.000Z,
+            "BirthDate": 1948-11-11T00:00:00.000Z,
             "Gender": 1,
-            "GeneratedPNCFilename": "RIGOUT/DEAN",
+            "GeneratedPNCFilename": "SEXOFFENCE/TRPRFOUR",
             "PersonName": {
-              "FamilyName": "Rigout",
+              "FamilyName": "SEXOFFENCE",
               "GivenName": [
-                "Dean",
+                "TRPRFOUR",
               ],
               "Title": "Mr",
             },
@@ -1217,90 +1355,273 @@ exports[`amend court case should not update the db if the case is locked by some
               "ActualOffenceDateCode": "1",
               "ActualOffenceEndDate": undefined,
               "ActualOffenceStartDate": {
-                "StartDate": 2007-09-15T00:00:00.000Z,
+                "StartDate": 2010-11-28T00:00:00.000Z,
               },
-              "ActualOffenceWording": "Burglary (with intent to steal - other than in dwelling)",
-              "AddedByTheCourt": true,
+              "ActualOffenceWording": "Attempt to rape a girl aged 13 / 14 / 15 / years of age - SOA 2003.",
+              "AddedByTheCourt": undefined,
               "AlcoholLevel": undefined,
-              "ArrestDate": 2007-09-15T00:00:00.000Z,
-              "ChargeDate": 2007-09-15T00:00:00.000Z,
+              "ArrestDate": 2010-12-01T00:00:00.000Z,
+              "ChargeDate": 2010-12-02T00:00:00.000Z,
               "CommittedOnBail": "D",
-              "ConvictionDate": 2007-04-29T00:00:00.000Z,
+              "ConvictionDate": 2011-09-26T00:00:00.000Z,
               "CourtCaseReferenceNumber": undefined,
               "CourtOffenceSequenceNumber": 1,
               "CriminalProsecutionReference": {
                 "DefendantOrOffender": {
-                  "CheckDigit": "Z",
-                  "DefendantOrOffenderSequenceNumber": "00000118191",
+                  "CheckDigit": "K",
+                  "DefendantOrOffenderSequenceNumber": "00000448754",
                   "OrganisationUnitIdentifierCode": {
-                    "BottomLevelCode": "00",
-                    "OrganisationUnitCode": "25UC00",
-                    "SecondLevelCode": "25",
-                    "ThirdLevelCode": "UC",
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "01ZD01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "ZD",
                     "TopLevelCode": undefined,
                   },
-                  "Year": "96",
+                  "Year": "11",
                 },
                 "OffenceReason": {
                   "OffenceCode": {
-                    "ActOrSource": "TH",
-                    "FullCode": "TH68027",
-                    "Qualifier": undefined,
-                    "Reason": "027",
-                    "Year": "68",
+                    "ActOrSource": "SX",
+                    "FullCode": "SX03001A",
+                    "Qualifier": "A",
+                    "Reason": "001",
+                    "Year": "03",
                     "__type": "NonMatchingOffenceCode",
                   },
                   "__type": "NationalOffenceReason",
                 },
-                "OffenceReasonSequence": undefined,
+                "OffenceReasonSequence": "001",
               },
-              "HomeOfficeClassification": "030/02",
-              "LocationOfOffence": "Woolwich Common London",
+              "HomeOfficeClassification": "019/11",
+              "LocationOfOffence": "Kingston High Street",
               "ManualCourtCaseReference": undefined,
               "ManualSequenceNumber": undefined,
               "NotifiableToHOindicator": true,
-              "OffenceCategory": "CE",
-              "OffenceTitle": "Burglary other than dwelling with intent to steal",
+              "OffenceCategory": "CI",
+              "OffenceTitle": "Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003",
               "RecordableOnPNCindicator": true,
               "Result": [
                 {
                   "AmountSpecifiedInResult": undefined,
                   "BailCondition": [],
-                  "CJSresultCode": 4023,
-                  "ConvictingCourt": "2723",
+                  "CJSresultCode": 3078,
+                  "ConvictingCourt": undefined,
                   "CourtType": "MCA",
                   "DateSpecifiedInResult": undefined,
                   "Duration": [],
-                  "ModeOfTrialReason": "EST",
-                  "NextCourtType": "MCA",
-                  "NextHearingDate": 2008-02-01T00:00:00.000Z,
-                  "NextHearingTime": "13:30",
-                  "NextResultSourceOrganisation": {
-                    "BottomLevelCode": "00",
-                    "OrganisationUnitCode": "B41ME00",
-                    "SecondLevelCode": "41",
-                    "ThirdLevelCode": "ME",
-                    "TopLevelCode": "B",
-                  },
+                  "ModeOfTrialReason": "SUM",
+                  "NextCourtType": undefined,
+                  "NextHearingDate": "false",
+                  "NextHearingTime": undefined,
+                  "NextResultSourceOrganisation": undefined,
                   "NumberOfOffencesTIC": undefined,
                   "NumberSpecifiedInResult": undefined,
-                  "OffenceRemandStatus": "CB",
-                  "PNCAdjudicationExists": undefined,
-                  "PNCDisposalType": 4023,
+                  "OffenceRemandStatus": undefined,
+                  "PNCAdjudicationExists": false,
+                  "PNCDisposalType": 3078,
                   "PleaStatus": "NG",
-                  "ReasonForOffenceBailConditions": "to ensure appearance;",
+                  "ReasonForOffenceBailConditions": undefined,
                   "ResultApplicableQualifierCode": [],
-                  "ResultClass": "Adjournment post Judgement",
+                  "ResultClass": "Judgement with final result",
                   "ResultHalfLifeHours": 72,
-                  "ResultHearingDate": 2007-04-29T00:00:00.000Z,
+                  "ResultHearingDate": 2011-09-26T00:00:00.000Z,
                   "ResultHearingType": "OTHER",
                   "ResultQualifierVariable": [],
-                  "ResultVariableText": "Remittal for Sentence on Adjournment",
+                  "ResultVariableText": "Travel Restriction Order",
                   "SourceOrganisation": {
-                    "BottomLevelCode": "00",
-                    "OrganisationUnitCode": "B41ME00",
-                    "SecondLevelCode": "41",
-                    "ThirdLevelCode": "ME",
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "B01EF01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "EF",
+                    "TopLevelCode": "B",
+                  },
+                  "Urgent": undefined,
+                  "Verdict": "G",
+                  "WarrantIssueDate": undefined,
+                },
+              ],
+            },
+            {
+              "ActualOffenceDateCode": "1",
+              "ActualOffenceEndDate": undefined,
+              "ActualOffenceStartDate": {
+                "StartDate": 2010-11-28T00:00:00.000Z,
+              },
+              "ActualOffenceWording": "Rape of a Female",
+              "AddedByTheCourt": undefined,
+              "AlcoholLevel": undefined,
+              "ArrestDate": 2010-12-01T00:00:00.000Z,
+              "ChargeDate": 2010-12-02T00:00:00.000Z,
+              "CommittedOnBail": "D",
+              "ConvictionDate": 2011-09-26T00:00:00.000Z,
+              "CourtCaseReferenceNumber": undefined,
+              "CourtOffenceSequenceNumber": 2,
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
+                  "CheckDigit": "K",
+                  "DefendantOrOffenderSequenceNumber": "00000448754",
+                  "OrganisationUnitIdentifierCode": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "01ZD01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "ZD",
+                    "TopLevelCode": undefined,
+                  },
+                  "Year": "11",
+                },
+                "OffenceReason": {
+                  "OffenceCode": {
+                    "ActOrSource": "SX",
+                    "FullCode": "SX03001",
+                    "Qualifier": undefined,
+                    "Reason": "001",
+                    "Year": "03",
+                    "__type": "NonMatchingOffenceCode",
+                  },
+                  "__type": "NationalOffenceReason",
+                },
+                "OffenceReasonSequence": "002",
+              },
+              "HomeOfficeClassification": "019/07",
+              "LocationOfOffence": "Kingston High Street",
+              "ManualCourtCaseReference": undefined,
+              "ManualSequenceNumber": undefined,
+              "NotifiableToHOindicator": true,
+              "OffenceCategory": "CI",
+              "OffenceTitle": "Rape a girl aged 13 / 14 / 15 - SOA 2003",
+              "RecordableOnPNCindicator": true,
+              "Result": [
+                {
+                  "AmountSpecifiedInResult": undefined,
+                  "BailCondition": [],
+                  "CJSresultCode": 3052,
+                  "ConvictingCourt": undefined,
+                  "CourtType": "MCA",
+                  "DateSpecifiedInResult": undefined,
+                  "Duration": [],
+                  "ModeOfTrialReason": "SUM",
+                  "NextCourtType": undefined,
+                  "NextHearingDate": undefined,
+                  "NextHearingTime": undefined,
+                  "NextResultSourceOrganisation": undefined,
+                  "NumberOfOffencesTIC": undefined,
+                  "NumberSpecifiedInResult": undefined,
+                  "OffenceRemandStatus": undefined,
+                  "PNCAdjudicationExists": false,
+                  "PNCDisposalType": 3052,
+                  "PleaStatus": "NG",
+                  "ReasonForOffenceBailConditions": undefined,
+                  "ResultApplicableQualifierCode": [],
+                  "ResultClass": "Judgement with final result",
+                  "ResultHalfLifeHours": 24,
+                  "ResultHearingDate": 2011-09-26T00:00:00.000Z,
+                  "ResultHearingType": "OTHER",
+                  "ResultQualifierVariable": [],
+                  "ResultVariableText": "defendant must never be allowed out",
+                  "SourceOrganisation": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "B01EF01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "EF",
+                    "TopLevelCode": "B",
+                  },
+                  "Urgent": {
+                    "urgency": 24,
+                    "urgent": true,
+                  },
+                  "Verdict": "G",
+                  "WarrantIssueDate": undefined,
+                },
+              ],
+            },
+            {
+              "ActualOffenceDateCode": "1",
+              "ActualOffenceEndDate": undefined,
+              "ActualOffenceStartDate": {
+                "StartDate": 2010-11-28T00:00:00.000Z,
+              },
+              "ActualOffenceWording": "Use a motor vehicle without third party insurance.",
+              "AddedByTheCourt": undefined,
+              "AlcoholLevel": undefined,
+              "ArrestDate": 2010-12-01T00:00:00.000Z,
+              "ChargeDate": 2010-12-02T00:00:00.000Z,
+              "CommittedOnBail": "D",
+              "ConvictionDate": 2011-09-26T00:00:00.000Z,
+              "CourtCaseReferenceNumber": undefined,
+              "CourtOffenceSequenceNumber": 3,
+              "CriminalProsecutionReference": {
+                "DefendantOrOffender": {
+                  "CheckDigit": "K",
+                  "DefendantOrOffenderSequenceNumber": "00000448754",
+                  "OrganisationUnitIdentifierCode": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "01ZD01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "ZD",
+                    "TopLevelCode": undefined,
+                  },
+                  "Year": "11",
+                },
+                "OffenceReason": {
+                  "OffenceCode": {
+                    "ActOrSource": "RT",
+                    "FullCode": "RT88191",
+                    "Qualifier": undefined,
+                    "Reason": "191",
+                    "Year": "88",
+                    "__type": "NonMatchingOffenceCode",
+                  },
+                  "__type": "NationalOffenceReason",
+                },
+                "OffenceReasonSequence": "003",
+              },
+              "HomeOfficeClassification": "809/01",
+              "LocationOfOffence": "Kingston High Street",
+              "ManualCourtCaseReference": undefined,
+              "ManualSequenceNumber": undefined,
+              "NotifiableToHOindicator": false,
+              "OffenceCategory": "CM",
+              "OffenceTitle": "Use a motor vehicle on a road / public place without third party insurance",
+              "RecordableOnPNCindicator": false,
+              "Result": [
+                {
+                  "AmountSpecifiedInResult": [
+                    {
+                      "Amount": 100,
+                      "DecimalPlaces": 2,
+                      "Type": "Fine",
+                    },
+                  ],
+                  "BailCondition": [],
+                  "CJSresultCode": 1015,
+                  "ConvictingCourt": undefined,
+                  "CourtType": "MCA",
+                  "DateSpecifiedInResult": undefined,
+                  "Duration": [],
+                  "ModeOfTrialReason": "SUM",
+                  "NextCourtType": undefined,
+                  "NextHearingDate": undefined,
+                  "NextHearingTime": undefined,
+                  "NextResultSourceOrganisation": undefined,
+                  "NumberOfOffencesTIC": undefined,
+                  "NumberSpecifiedInResult": undefined,
+                  "OffenceRemandStatus": undefined,
+                  "PNCAdjudicationExists": false,
+                  "PNCDisposalType": 1015,
+                  "PleaStatus": "NG",
+                  "ReasonForOffenceBailConditions": undefined,
+                  "ResultApplicableQualifierCode": [],
+                  "ResultClass": "Judgement with final result",
+                  "ResultHalfLifeHours": 72,
+                  "ResultHearingDate": 2011-09-26T00:00:00.000Z,
+                  "ResultHearingType": "OTHER",
+                  "ResultQualifierVariable": [],
+                  "ResultVariableText": "Fined 100.",
+                  "SourceOrganisation": {
+                    "BottomLevelCode": "01",
+                    "OrganisationUnitCode": "B01EF01",
+                    "SecondLevelCode": "01",
+                    "ThirdLevelCode": "EF",
                     "TopLevelCode": "B",
                   },
                   "Urgent": undefined,
@@ -1311,57 +1632,64 @@ exports[`amend court case should not update the db if the case is locked by some
             },
           ],
           "OrganisationName": undefined,
-          "PNCCheckname": undefined,
-          "PNCIdentifier": undefined,
-          "ReasonForBailConditions": "to ensure appearance;",
-          "RemandStatus": "CB",
+          "PNCCheckname": "SEXOFFENCE",
+          "PNCIdentifier": "2000/0448754K",
+          "ReasonForBailConditions": undefined,
+          "RemandStatus": "UB",
         },
         "ManualForceOwner": undefined,
-        "PTIURN": "41BP0510007",
+        "PTIURN": "01ZD0303208",
         "PenaltyNoticeCaseReferenceNumber": undefined,
         "PreChargeDecisionIndicator": false,
         "RecordableOnPNCindicator": true,
-        "Urgent": undefined,
+        "Urgent": {
+          "urgency": 24,
+          "urgent": true,
+        },
       },
       "Hearing": {
         "CourtHearingLocation": {
-          "BottomLevelCode": "00",
-          "OrganisationUnitCode": "B41ME00",
-          "SecondLevelCode": "41",
-          "ThirdLevelCode": "ME",
+          "BottomLevelCode": "01",
+          "OrganisationUnitCode": "B01EF01",
+          "SecondLevelCode": "01",
+          "ThirdLevelCode": "EF",
           "TopLevelCode": "B",
         },
-        "CourtHouseCode": 1892,
-        "CourtHouseName": "Magistrates' Courts Hertfordshire St Albans",
+        "CourtHouseCode": 2576,
+        "CourtHouseName": "London Croydon",
         "CourtType": "MCA",
-        "DateOfHearing": 2008-01-11T00:00:00.000Z,
-        "DefendantPresentAtHearing": "Y",
+        "DateOfHearing": 2011-09-26T00:00:00.000Z,
+        "DefendantPresentAtHearing": "A",
         "HearingDocumentationLanguage": "D",
         "HearingLanguage": "D",
         "SourceReference": {
-          "DocumentName": "SPI Dean Rigout",
+          "DocumentName": "SPI TRPRFOUR SEXOFFENCE",
           "DocumentType": "SPI Case Result",
-          "UniqueID": "http://www.altova.com",
+          "UniqueID": "CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415",
         },
-        "TimeOfHearing": "13:30",
+        "TimeOfHearing": "10:00",
       },
     },
   },
   "Exceptions": [
     {
-      "code": "HO100304",
+      "code": "HO100102",
       "path": [
         "AnnotatedHearingOutcome",
         "HearingOutcome",
         "Case",
         "HearingDefendant",
-        "ArrestSummonsNumber",
+        "Offence",
+        0,
+        "Result",
+        0,
+        "NextHearingDate",
       ],
     },
   ],
   "PncErrorMessage": undefined,
   "PncQuery": {
-    "checkName": "MIDDLETONN",
+    "checkName": "SEXOFFENCE",
     "courtCases": [
       {
         "courtCaseReference": "97/1626/008395Q",
@@ -1371,23 +1699,53 @@ exports[`amend court case should not update the db if the case is locked by some
             "disposals": undefined,
             "offence": {
               "acpoOffenceCode": "12:15:24:1",
-              "cjsOffenceCode": "TH68006",
+              "cjsOffenceCode": "SX03001A",
               "endTime": undefined,
               "qualifier1": "",
               "qualifier2": "",
               "sequenceNumber": 1,
               "startDate": 2010-11-28T00:00:00.000Z,
-              "startTime": "22:20",
-              "title": "Theft of pedal cycle",
+              "startTime": "00:00",
+              "title": "Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003",
+            },
+          },
+          {
+            "adjudication": undefined,
+            "disposals": undefined,
+            "offence": {
+              "acpoOffenceCode": "12:15:24:1",
+              "cjsOffenceCode": "SX03001",
+              "endTime": undefined,
+              "qualifier1": "",
+              "qualifier2": "",
+              "sequenceNumber": 2,
+              "startDate": 2010-11-28T00:00:00.000Z,
+              "startTime": "00:00",
+              "title": "Rape a girl aged 13 / 14 / 15 - SOA 2003",
+            },
+          },
+          {
+            "adjudication": undefined,
+            "disposals": undefined,
+            "offence": {
+              "acpoOffenceCode": "12:15:24:1",
+              "cjsOffenceCode": "RT88191",
+              "endTime": undefined,
+              "qualifier1": "",
+              "qualifier2": "",
+              "sequenceNumber": 3,
+              "startDate": 2010-11-28T00:00:00.000Z,
+              "startTime": "00:00",
+              "title": "Use a motor vehicle on a road / public place without third party insurance",
             },
           },
         ],
       },
     ],
-    "forceStationCode": "04CA",
+    "forceStationCode": "01ZD",
     "penaltyCases": undefined,
-    "pncId": "2000/0459646G",
+    "pncId": "2000/0448754K",
   },
-  "PncQueryDate": 2022-07-27T00:00:00.000Z,
+  "PncQueryDate": 2022-03-22T00:00:00.000Z,
 }
 `;

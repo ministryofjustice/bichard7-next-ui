@@ -92,17 +92,19 @@ describe("applyAmendmentsToAho", () => {
   it("applies OffenceReasonSequence amendments to aho", () => {
     const offenceIndex = 3
     const amendments = {
-      offenceReasonSequence: {
-        offenceIndex,
-        updatedValue: "newOffenceReasonSequenceValue"
-      }
+      offenceReasonSequence: [
+        {
+          offenceIndex,
+          updatedValue: "newOffenceReasonSequenceValue"
+        }
+      ]
     } as Amendments
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
-      dummyOffence,
-      dummyOffence,
-      dummyOffence,
-      dummyOffence
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
     ]
 
     applyAmendmentsToAho(amendments, aho)
@@ -114,17 +116,19 @@ describe("applyAmendmentsToAho", () => {
   it("applies CourtCaseReference amendments to aho", () => {
     const offenceIndex = 3
     const amendments = {
-      courtCaseReference: {
-        offenceIndex,
-        updatedValue: "newCourtCaseReference"
-      }
+      courtCaseReference: [
+        {
+          offenceIndex,
+          updatedValue: "newCourtCaseReference"
+        }
+      ]
     } as Amendments
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
-      dummyOffence,
-      dummyOffence,
-      dummyOffence,
-      dummyOffence
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
     ]
 
     applyAmendmentsToAho(amendments, aho)
@@ -136,19 +140,21 @@ describe("applyAmendmentsToAho", () => {
     const offenceIndex = 0
     const resultIndex = 0
     const amendments = {
-      disposalQualifierCode: {
-        offenceIndex,
-        updatedValue: "newQualifierCode",
-        resultQualifierIndex: 0,
-        resultIndex
-      }
+      disposalQualifierCode: [
+        {
+          offenceIndex,
+          updatedValue: "newQualifierCode",
+          resultQualifierIndex: 0,
+          resultIndex
+        }
+      ]
     } as Amendments
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
-      dummyOffence,
-      dummyOffence,
-      dummyOffence,
-      dummyOffence
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
     ]
 
     applyAmendmentsToAho(amendments, aho)
@@ -159,23 +165,25 @@ describe("applyAmendmentsToAho", () => {
   it("removes empty DisposalQualiferCode from the aho", () => {
     const offenceIndex = 2
     const amendments = {
-      disposalQualifierCode: {
-        offenceIndex,
-        updatedValue: "",
-        resultQualifierIndex: 2,
-        resultIndex: 0
-      }
+      disposalQualifierCode: [
+        {
+          offenceIndex,
+          updatedValue: "",
+          resultQualifierIndex: 2,
+          resultIndex: 0
+        }
+      ]
     } as Amendments
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
-      dummyOffence,
-      dummyOffence,
-      dummyOffence,
-      dummyOffence
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
     ]
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-      amendments.disposalQualifierCode.resultIndex || 0
+      amendments.disposalQualifierCode[0].resultIndex || 0
     ].ResultQualifierVariable = [
       ...dummyResultQualifierVariable,
       ...dummyResultQualifierVariable,
@@ -191,18 +199,20 @@ describe("applyAmendmentsToAho", () => {
   it("applies NextSourceOrganisation amendments to aho", () => {
     const offenceIndex = 2
     const amendments = {
-      nextSourceOrganisation: {
-        offenceIndex,
-        updatedValue: "RANDOM_TEST_STRING",
-        resultIndex: 0
-      }
+      nextSourceOrganisation: [
+        {
+          offenceIndex,
+          updatedValue: "RANDOM_TEST_STRING",
+          resultIndex: 0
+        }
+      ]
     } as Amendments
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
-      dummyOffence,
-      dummyOffence,
-      dummyOffence,
-      dummyOffence
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
     ]
 
     applyAmendmentsToAho(amendments, aho)
@@ -213,18 +223,20 @@ describe("applyAmendmentsToAho", () => {
   it("applies NextHearingDate amendments to aho", () => {
     const offenceIndex = 0
     const amendments = {
-      nextHearingDate: {
-        offenceIndex,
-        updatedValue: new Date(2022, 8, 24),
-        resultIndex: 0
-      }
+      nextHearingDate: [
+        {
+          offenceIndex,
+          updatedValue: new Date(2022, 8, 24),
+          resultIndex: 0
+        }
+      ]
     } as Amendments
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
-      dummyOffence,
-      dummyOffence,
-      dummyOffence,
-      dummyOffence
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
     ]
 
     applyAmendmentsToAho(amendments, aho)
@@ -245,18 +257,20 @@ describe("applyAmendmentsToAho", () => {
   it("applies ResultVariableText amendments to aho", () => {
     const offenceIndex = 0
     const amendments = {
-      resultVariableText: {
-        offenceIndex,
-        updatedValue: "random_string",
-        resultIndex: 0
-      }
+      resultVariableText: [
+        {
+          offenceIndex,
+          updatedValue: "random_string",
+          resultIndex: 0
+        }
+      ]
     } as Amendments
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
-      dummyOffence,
-      dummyOffence,
-      dummyOffence,
-      dummyOffence
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
     ]
     applyAmendmentsToAho(amendments, aho)
     expect(amendResultVariableText).toHaveBeenCalledTimes(1)
@@ -276,17 +290,19 @@ describe("applyAmendmentsToAho", () => {
   it("applies CourtOffenceSequence amendments to aho", () => {
     const offenceIndex = 3
     const amendments = {
-      courtOffenceSequenceNumber: {
-        offenceIndex,
-        updatedValue: 1111
-      }
+      courtOffenceSequenceNumber: [
+        {
+          offenceIndex,
+          updatedValue: 1111
+        }
+      ]
     } as Amendments
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
-      dummyOffence,
-      dummyOffence,
-      dummyOffence,
-      dummyOffence
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence),
+      cloneDeep(dummyOffence)
     ]
 
     applyAmendmentsToAho(amendments, aho)

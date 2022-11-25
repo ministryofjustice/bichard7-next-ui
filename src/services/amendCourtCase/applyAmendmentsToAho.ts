@@ -27,32 +27,32 @@ const selectKey = (aho: AnnotatedHearingOutcome) => (key: string, value: Amendme
       amendAsn(value as string, aho)
       break
     case "offenceReasonSequence":
-      amendOffenceReasonSequence(value as UpdatedOffenceValue, aho)
+      amendOffenceReasonSequence(value as UpdatedOffenceValue[], aho)
       break
     case "courtCaseReference":
-      amendCourtCaseReference(value as UpdatedOffenceValue, aho)
+      amendCourtCaseReference(value as UpdatedOffenceValue[], aho)
       break
     case "disposalQualifierCode":
-      amendDisposalQualifierCode(value as UpdatedDisposalQualifierCode, aho)
+      amendDisposalQualifierCode(value as UpdatedDisposalQualifierCode[], aho)
       removeEmptyResultQualifierVariable(aho)
       break
     case "nextSourceOrganisation":
-      amendNextResultSourceOrganisation(value as UpdatedOffenceResult, aho)
+      amendNextResultSourceOrganisation(value as UpdatedOffenceResult[], aho)
       break
     case "nextHearingDate":
-      amendNextHearingDate(value as UpdatedNextHearingDate, aho)
+      amendNextHearingDate(value as UpdatedNextHearingDate[], aho)
       break
     case "courtPNCIdentifier":
       amendCourtPNCIdentifier(value as string, aho)
       break
     case "resultVariableText":
-      amendResultVariableText(value as UpdatedOffenceResult, aho)
+      amendResultVariableText(value as UpdatedOffenceResult[], aho)
       break
     case "courtReference":
       amendCourtReference(value as string, aho)
       break
     case "courtOffenceSequenceNumber":
-      amendCourtOffenceSequenceNumber(value as UpdatedCourtOffenceSequenceNumber, aho)
+      amendCourtOffenceSequenceNumber(value as UpdatedCourtOffenceSequenceNumber[], aho)
       break
     case "forceOwner":
       amendForceOwner(value as string, aho)
