@@ -3,7 +3,7 @@ import { AmendmentArrValues, AmendmentValues, IndividualAmendmentArrValues } fro
 const isAmendmentArrValue = (value: AmendmentValues, indexToUpdate: number): value is AmendmentArrValues =>
   (value as AmendmentArrValues)[indexToUpdate].updatedValue !== undefined
 
-export const isAmendmentArr = (value: AmendmentValues): value is AmendmentArrValues => typeof value !== "string"
+export const isAmendmentArr = (value: AmendmentValues): value is AmendmentArrValues => Array.isArray(value)
 
 export const isAmendmentValue = (value: unknown): value is AmendmentValues => {
   if (typeof value === "string") {

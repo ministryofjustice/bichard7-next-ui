@@ -50,10 +50,10 @@ describe("Case details", () => {
 
       cy.injectAxe()
 
-      cy.checkA11y("#content", a11yConfig, logAccessibilityViolations)
+      cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
-    it.only("should load case details for the case that this user can see", () => {
+    it("should load case details for the case that this user can see", () => {
       cy.task("insertCourtCasesWithOrgCodes", ["01"])
       const triggers: TestTrigger[] = [
         {
