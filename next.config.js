@@ -12,8 +12,8 @@ const nextConfig = {
         destination: "/help/"
       },
       {
-        source: "/bichard/bichard-ui/ReturnToReportIndex/",
-        destination: "/bichard-ui/ReturnToReportIndex/"
+        source: "/bichard/bichard-ui/ReturnToReportIndex",
+        destination: "/bichard-ui/ReturnToReportIndex"
       },
       {
         source: "/bichard/users/users/",
