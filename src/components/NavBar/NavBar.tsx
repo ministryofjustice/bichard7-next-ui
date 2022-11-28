@@ -41,7 +41,7 @@ const NavBar: React.FC<NavBarProps> = ({ groups }) => {
           <nav className="moj-primary-navigation" aria-label="Primary navigation">
             <ul className="moj-primary-navigation__list">
               <NavItem name={"Case list"} link={"/bichard/"} />
-              <NavItem name={"Reports"} link={"/bichard-ui/ReturnToReportIndex/"} />
+              <NavItem name={"Reports"} link={"/bichard-ui/ReturnToReportIndex"} />
               <UserManagementNavItem groups={groups} />
               <NavItem name={"Help"} link={"/help/"} />
             </ul>

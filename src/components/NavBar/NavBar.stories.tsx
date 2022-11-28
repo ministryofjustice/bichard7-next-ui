@@ -92,35 +92,6 @@ FocusNavBar.play = async ({ canvasElement }) => {
   await (await highlightedNavitem).focus()
 }
 
-export const OnReports: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
-OnReports.story = {
-  parameters: {
-    nextRouter: {
-      basePath: "/bichard-ui/ReturnToReportIndex"
-    }
-  }
-}
-
-OnReports.parameters = {
-  design: [
-    {
-      name: "Design",
-      type: "figma",
-      url: "https://www.figma.com/file/gy3HppiITvQdHAOD2rpO42/05_-B7_22-Completed-initial-components-(for-devs)?node-id=43%3A10"
-    }
-  ]
-}
-
-OnReports.play = async ({ canvasElement }) => {
-  const canvas = within(canvasElement)
-  await expect(canvas.getByText("Help")).toBeInTheDocument()
-  await expect(canvas.getByText("Help")).not.toHaveAttribute("aria-current", "page")
-  await expect(canvas.getByText("Case list")).toBeInTheDocument()
-  await expect(canvas.getByText("Case list")).not.toHaveAttribute("aria-current", "page")
-  await expect(canvas.getByText("Reports")).toBeInTheDocument()
-  await expect(canvas.getByText("Reports")).toHaveAttribute("aria-current", "page")
-}
-
 export const OnUserManagement: ComponentStory<typeof NavBar> = () => <NavBar groups={["UserManager"]} />
 OnUserManagement.story = {
   parameters: {
