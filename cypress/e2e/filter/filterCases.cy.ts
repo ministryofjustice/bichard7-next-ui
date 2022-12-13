@@ -49,11 +49,11 @@ describe("Case list", () => {
     it.only("Should expand and collapse filter navigation", () => {
       cy.visit("/bichard")
       cy.get("button[id=filter-button]").click()
-      cy.get("#date-range").should("not.exist")
-      cy.get("#custom-date-range").should("not.exist")
-      cy.get("span[id=accordion-court-date]").click()
       cy.get("#date-range").should("exist")
       cy.get("#custom-date-range").should("exist")
+      cy.get("span[id=accordion-court-date]").click()
+      cy.get("#date-range").should("not.exist")
+      cy.get("#custom-date-range").should("not.exist")
     })
 
     it("Should display cases filtered by defendant name", () => {
