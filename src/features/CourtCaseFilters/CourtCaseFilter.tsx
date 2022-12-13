@@ -4,6 +4,7 @@ import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
 import { Reason } from "types/CaseListQueryParams"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
+import AccordionFilter from "./AccordionFilter"
 
 interface Props {
   courtCaseTypes?: Reason[]
@@ -44,6 +45,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} />
           </div>
           <div className="govuk-form-group">
+            <AccordionFilter />
             <CourtDateFilterOptions dateRange={dateRange} />
           </div>
           <div className="govuk-form-group">
