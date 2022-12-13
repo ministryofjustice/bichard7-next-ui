@@ -46,6 +46,16 @@ describe("Case list", () => {
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
+    it.only("Should expand and collapse filter navigation", () => {
+      cy.visit("/bichard")
+      cy.get("button[id=filter-button]").click()
+      cy.get("#date-range").should("not.exist")
+      cy.get("#custom-date-range").should("not.exist")
+      cy.get("span[id=accordion-court-date]").click()
+      cy.get("#date-range").should("exist")
+      cy.get("#custom-date-range").should("exist")
+    })
+
     it("Should display cases filtered by defendant name", () => {
       cy.task("insertCourtCasesWithDefendantNames", {
         defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"],
