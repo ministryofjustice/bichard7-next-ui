@@ -5,6 +5,7 @@ import RadioButton from "components/RadioButton/RadioButton"
 
 interface Props {
   dateRange?: string | null
+  onClick: (option: string) => void
 }
 
 const formatNamedDateRange = (namedDateRange: string): string => {
@@ -17,7 +18,7 @@ const formatNamedDateRange = (namedDateRange: string): string => {
 const labelForDateRange = (namedDateRange: string): string =>
   ["Today", "Yesterday"].includes(namedDateRange) ? namedDateRange : formatNamedDateRange(namedDateRange)
 
-const CourtDateFilterOptions: React.FC<Props> = ({ dateRange }: Props) => {
+const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, onClick }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
       <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Court date"}</legend>
@@ -39,6 +40,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange }: Props) => {
                 defaultChecked={dateRange === namedDateRange}
                 value={namedDateRange}
                 label={labelForDateRange(namedDateRange)}
+                onClick={(option: string) => onClick(option)}
               />
             ))}
           </div>

@@ -15,9 +15,18 @@ interface Props {
 }
 
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
-  const [filter, setFilter] = useState<boolean | undefined>(undefined)
-  const [filterChipLabel, setFilterChipLabel] = useState("")
-  const filterTag = filter !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"
+  const urgentFilterState = {
+    filter: useState<boolean | undefined>(undefined),
+    label: useState<string>("")
+  }
+  const dateFilterState = {
+    filter: useState<string | undefined>(undefined),
+    label: useState<string>("")
+  }
+  const lockedFilterState = {
+    filter: useState<boolean | undefined>(undefined),
+    label: useState<string>("")
+  }
 
   return (
     <form method={"get"}>
@@ -33,7 +42,23 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             <div className="moj-filter__heading-title">
               <h2 className="govuk-heading-m govuk-!-margin-bottom-0">{"Selected filters"}</h2>
               <ul className="moj-filter-tags">
-                <li>{<FilterChip tag={filterTag} chipLabel={filterChipLabel} paramName="urgency" />}</li>
+                <li>
+                  <FilterChip
+                    tag={urgentFilterState.filter[0] !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"}
+                    chipLabel={urgentFilterState.label[0]}
+                    paramName="urgency"
+                  />
+                  <FilterChip
+                    tag={dateFilterState.filter[0] !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"}
+                    chipLabel={dateFilterState.label[0]}
+                    paramName="dateRange"
+                  />
+                  <FilterChip
+                    tag={lockedFilterState.filter[0] !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"}
+                    chipLabel={lockedFilterState.label[0]}
+                    paramName="locked"
+                  />
+                </li>
               </ul>
             </div>
           </div>
@@ -53,20 +78,33 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} />
           </div>
           <div className="govuk-form-group">
-            <CourtDateFilterOptions dateRange={dateRange} />
+            <CourtDateFilterOptions
+              dateRange={dateRange}
+              onClick={(option: string) => {
+                dateFilterState.filter[1](option)
+                dateFilterState.label[1](option)
+              }}
+            />
           </div>
           <div>
             <UrgencyFilterOptions
               urgency={urgency}
               onClick={(option: string) => {
                 const filterValue = option === "Urgent" ? true : option === "Non-urgent" ? false : undefined
-                setFilter(filterValue)
-                setFilterChipLabel(option)
+                urgentFilterState.filter[1](filterValue)
+                urgentFilterState.label[1](option)
               }}
             />
           </div>
           <div>
-            <LockedFilterOptions locked={locked} />
+            <LockedFilterOptions
+              locked={locked}
+              onClick={(option: string) => {
+                const filterValue = option === "Locked" ? true : option === "Unlocked" ? false : undefined
+                lockedFilterState.filter[1](filterValue)
+                lockedFilterState.label[1](option)
+              }}
+            />
           </div>
         </div>
       </div>
