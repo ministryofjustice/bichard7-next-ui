@@ -1,8 +1,6 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
+import FilterChip from "components/FilterChip"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
 import { useState } from "react"
@@ -16,23 +14,9 @@ interface Props {
   locked?: string | null
 }
 
-interface FilterChipProps {
-  tag: string
-  chipLabel: string
-}
-
-const FilterChip: React.FC<FilterChipProps> = ({ tag, chipLabel }: FilterChipProps) => {
-  return (
-    <a className={tag} href="#">
-      <span className="govuk-visually-hidden">{"Remove this filter"}</span>
-      {chipLabel}
-    </a>
-  )
-}
-
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
   const [filter, setFilter] = useState<boolean | undefined>(undefined)
-  const [label, setLabel] = useState("")
+  const [filterChipLabel, setFilterChipLabel] = useState("")
   const filterTag = filter !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"
 
   return (
@@ -49,7 +33,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             <div className="moj-filter__heading-title">
               <h2 className="govuk-heading-m govuk-!-margin-bottom-0">{"Selected filters"}</h2>
               <ul className="moj-filter-tags">
-                <li>{<FilterChip tag={filterTag} chipLabel={label} />}</li>
+                <li>{<FilterChip tag={filterTag} chipLabel={filterChipLabel} paramName="urgency" />}</li>
               </ul>
             </div>
           </div>
@@ -77,8 +61,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
               onClick={(option: string) => {
                 const filterValue = option === "Urgent" ? true : option === "Non-urgent" ? false : undefined
                 setFilter(filterValue)
-                setLabel(option)
-                console.log(filterValue)
+                setFilterChipLabel(option)
               }}
             />
           </div>
