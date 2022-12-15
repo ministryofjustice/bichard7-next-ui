@@ -1,5 +1,5 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
+import { MouseEvent } from "react"
+
 interface Props {
   name: string
   id: string
@@ -7,7 +7,7 @@ interface Props {
   defaultChecked: boolean
   value?: string
   label: string
-  onClick: boolean
+  onClick?: (option: string) => void
 }
 
 const RadioButton: React.FC<Props> = ({ name, id, dataAriaControls, defaultChecked, value, label, onClick }: Props) => {
@@ -21,7 +21,12 @@ const RadioButton: React.FC<Props> = ({ name, id, dataAriaControls, defaultCheck
         data-aria-controls={dataAriaControls}
         value={value}
         defaultChecked={defaultChecked}
-        onClick={onClick}
+        onClick={(event: MouseEvent<HTMLInputElement>) => {
+          if (onClick) {
+            onClick(event.currentTarget.value)
+          }
+          console.log(event.currentTarget.nextSibling)
+        }}
       />
       <label className="govuk-label govuk-radios__label" htmlFor={id}>
         {label}

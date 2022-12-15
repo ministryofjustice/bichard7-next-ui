@@ -15,10 +15,25 @@ interface Props {
   urgency?: string | null
   locked?: string | null
 }
+
+interface FilterChipProps {
+  tag: string
+  chipLabel: string
+}
+
+const FilterChip: React.FC<FilterChipProps> = ({ tag, chipLabel }: FilterChipProps) => {
+  return (
+    <a className={tag} href="#">
+      <span className="govuk-visually-hidden">{"Remove this filter"}</span>
+      {chipLabel}
+    </a>
+  )
+}
+
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
-  const [isVisible, setVisible] = useState(false)
-  const [isLabel, setLabel] = useState("")
-  console.log(isLabel)
+  const [filter, setFilter] = useState<boolean | undefined>(undefined)
+  const [label, setLabel] = useState("")
+  const filterTag = filter !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"
 
   return (
     <form method={"get"}>
@@ -34,12 +49,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             <div className="moj-filter__heading-title">
               <h2 className="govuk-heading-m govuk-!-margin-bottom-0">{"Selected filters"}</h2>
               <ul className="moj-filter-tags">
-                <li>
-                  <a className={isVisible ? "moj-filter__tag" : "moj-filter moj-hidden"} href="#">
-                    <span className="govuk-visually-hidden">{"Remove this filter"}</span>
-                    {isLabel}
-                  </a>
-                </li>
+                <li>{<FilterChip tag={filterTag} chipLabel={label} />}</li>
               </ul>
             </div>
           </div>
@@ -64,10 +74,12 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
           <div>
             <UrgencyFilterOptions
               urgency={urgency}
-              onClick={() => {
-                setVisible(!isVisible)
+              onClick={(option: string) => {
+                const filterValue = option === "Urgent" ? true : option === "Non-urgent" ? false : undefined
+                setFilter(filterValue)
+                setLabel(option)
+                console.log(filterValue)
               }}
-              setLabel={setLabel}
             />
           </div>
           <div>
