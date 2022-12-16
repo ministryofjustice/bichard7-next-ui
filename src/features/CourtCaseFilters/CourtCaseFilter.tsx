@@ -1,7 +1,11 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
+import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
+import { useState } from "react"
 import { Reason } from "types/CaseListQueryParams"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 
@@ -12,7 +16,48 @@ interface Props {
   locked?: string | null
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
+const UpArrow: React.FC = () => {
+  return (
+    <svg width={18} height={10} viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0.999926 9.28432L8.74976 1.56866L16.4996 9.28432" stroke="#0B0C0C" strokeWidth={2} />
+    </svg>
+  )
+}
+
+const DownArrow: React.FC = () => {
+  return (
+    <svg width={18} height={11} viewBox="0 0 18 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16.9994 1.26702L9.26685 9L1.49977 1.30171" stroke="#0B0C0C" strokeWidth={2} />
+    </svg>
+  )
+}
+
+const ExpandingFilters: React.FC = ({ courtCaseTypes }: Props) => {
+  const [caseTypeIsVisible, setCaseTypeVisible] = useState(true)
+  return (
+    <>
+      <div
+        onClick={() => {
+          setCaseTypeVisible(!caseTypeIsVisible)
+        }}
+      >
+        <If condition={caseTypeIsVisible}>
+          <UpArrow /> <legend className="govuk-heading-m">{"Case type"}</legend>
+        </If>
+        <If condition={!caseTypeIsVisible}>
+          <DownArrow /> <legend className="govuk-heading-m">{"Case type"}</legend>
+        </If>
+      </div>
+      <If condition={caseTypeIsVisible}>
+        <div style={{ display: "inline-block" }}>
+          <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} />
+        </div>
+      </If>
+    </>
+  )
+}
+
+const CourtCaseFilter: React.FC<Props> = ({ dateRange, urgency, locked }: Props) => {
   return (
     <form method={"get"}>
       <div className="moj-filter__header">
@@ -41,9 +86,9 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
           </div>
           <div className="govuk-form-group">
-            <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} />
+            <ExpandingFilters />
           </div>
-          <div className="govuk-form-group">
+          {/* <div className="govuk-form-group">
             <CourtDateFilterOptions dateRange={dateRange} />
           </div>
           <div className="govuk-form-group">
@@ -51,7 +96,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
           </div>
           <div>
             <LockedFilterOptions locked={locked} />
-          </div>
+          </div> */}
         </div>
       </div>
     </form>
@@ -59,3 +104,6 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
 }
 
 export default CourtCaseFilter
+function useStatae(arg0: boolean): [any, any] {
+  throw new Error("Function not implemented.")
+}

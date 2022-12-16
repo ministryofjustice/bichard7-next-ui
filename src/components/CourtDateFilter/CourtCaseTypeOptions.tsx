@@ -9,7 +9,7 @@ const courtCaseTypeOptions = ["Exceptions", "Triggers"]
 const CourtCaseTypeOptions: React.FC<Props> = ({ courtCaseTypes }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
-      <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Case type"}</legend>
+      {/* <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Case type"}</legend> */}
       <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
         {courtCaseTypeOptions.map((caseType) => (
           <div className="govuk-checkboxes__item" key={caseType}>
