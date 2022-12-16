@@ -2,17 +2,18 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { MouseEvent } from "react"
+import type { Dispatch } from "react"
+import type { FilterAction } from "types/CourtCaseFilter"
+
 interface Props {
-  tag: string
   chipLabel: string
-  paramName: string
-  onClick: (option: string) => void
+  dispatch: Dispatch<FilterAction>
+  removeAction: () => FilterAction
 }
 
-const FilterChip: React.FC<Props> = ({ tag, chipLabel, onClick }: Props) => {
+const FilterChip: React.FC<Props> = ({ chipLabel, dispatch, removeAction }: Props) => {
   return (
-    <a className={tag} onClick={(event: MouseEvent<HTMLInputElement>) => onClick(event.currentTarget.value)}>
+    <a className="moj-filter__tag" onClick={() => dispatch(removeAction())}>
       <span className="govuk-visually-hidden">{"Remove this filter"}</span>
       {chipLabel}
     </a>

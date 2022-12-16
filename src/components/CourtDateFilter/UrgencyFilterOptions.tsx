@@ -1,13 +1,15 @@
 import RadioButton from "components/RadioButton/RadioButton"
+import type { Dispatch } from "react"
+import type { FilterAction } from "types/CourtCaseFilter"
 
 interface Props {
   urgency?: string | null
-  onClick: (option: string) => void
+  dispatch: Dispatch<FilterAction>
 }
 
 const UrgencyOptions = ["Urgent", "Non-urgent"]
 
-const UrgencyFilterOptions: React.FC<Props> = ({ urgency, onClick }: Props) => {
+const UrgencyFilterOptions: React.FC<Props> = ({ urgency, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
       <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Urgency"}</legend>
@@ -20,7 +22,10 @@ const UrgencyFilterOptions: React.FC<Props> = ({ urgency, onClick }: Props) => {
             defaultChecked={urgency === urgencyFilter}
             value={urgencyFilter}
             label={urgencyFilter + " cases only"}
-            onClick={(option: string) => onClick(option)}
+            onClick={(option: string) => {
+              const filterValue = option === "Urgent"
+              dispatch({ method: "add", type: "urgency", value: filterValue })
+            }}
           />
         ))}
       </div>

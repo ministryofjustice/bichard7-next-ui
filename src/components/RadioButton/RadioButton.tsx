@@ -25,7 +25,6 @@ const RadioButton: React.FC<Props> = ({ name, id, dataAriaControls, defaultCheck
           if (onClick) {
             onClick(event.currentTarget.value)
           }
-          console.log(event.currentTarget.nextSibling)
         }}
       />
       <label className="govuk-label govuk-radios__label" htmlFor={id}>

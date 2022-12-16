@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
 import FilterChip from "components/FilterChip"
+import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
-import { useState } from "react"
+import { useReducer } from "react"
 import { Reason } from "types/CaseListQueryParams"
+import type { FilterAction, FilterState } from "types/CourtCaseFilter"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 
 interface Props {
@@ -14,23 +17,57 @@ interface Props {
   locked?: string | null
 }
 
+const reducer = (state: FilterState, action: FilterAction) => {
+  console.log("reducer action dispatched", state, action)
+  if (action.method === "add") {
+    if (action.type === "urgency") {
+      state.urgentFilter.value = action.value
+      state.urgentFilter.label = action.value ? "Urgent" : "Non-urgent"
+    } else if (action.type === "date") {
+      state.dateFilter.value = action.value
+    } else if (action.type === "locked") {
+      state.lockedFilter.value = action.value
+    } else if (action.type === "reason") {
+      state.reasonFilter.value.push(action.value)
+    }
+  } else if (action.method === "remove") {
+    if (action.type === "urgency") {
+      state.urgentFilter.value = undefined
+    } else if (action.type === "date") {
+      state.dateFilter.value = undefined
+    } else if (action.type === "locked") {
+      state.lockedFilter.value = undefined
+    } else if (action.type === "reason") {
+      state.reasonFilter.value = state.reasonFilter.value.filter((reason: string) => reason === action.value)
+    }
+  }
+  return state
+}
+
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
-  const urgentFilterState = {
-    filter: useState<boolean | undefined>(undefined),
-    label: useState<string>("")
-  }
-  const dateFilterState = {
-    filter: useState<string | undefined>(undefined),
-    label: useState<string>("")
-  }
-  const lockedFilterState = {
-    filter: useState<boolean | undefined>(undefined),
-    label: useState<string>("")
-  }
-  const reasonFilterState = {
-    filter: useState<string[]>([]),
-    label: useState<string>("")
-  }
+  // const urgentFilterState = {
+  //   filter: useState<boolean | undefined>(undefined),
+  //   label: useState<string>("")
+  // }
+  // const dateFilterState = {
+  //   filter: useState<string | undefined>(undefined),
+  //   label: useState<string>("")
+  // }
+  // const lockedFilterState = {
+  //   filter: useState<boolean | undefined>(undefined),
+  //   label: useState<string>("")
+  // }
+  // const reasonFilterState = {
+  //   filter: useState<string[]>([]),
+  //   label: useState<string>("")
+  // }
+
+  const [state, dispatch] = useReducer(reducer, {
+    urgentFilter: {},
+    dateFilter: {},
+    lockedFilter: {},
+    reasonFilter: { value: [] }
+  })
 
   return (
     <form method={"get"}>
@@ -47,33 +84,39 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
               <h2 className="govuk-heading-m govuk-!-margin-bottom-0">{"Selected filters"}</h2>
               <ul className="moj-filter-tags">
                 <li>
-                  <FilterChip
-                    tag={urgentFilterState.filter[0] !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"}
-                    chipLabel={urgentFilterState.label[0]}
-                    paramName="urgency"
-                    onClick={() => urgentFilterState.filter[1](undefined)}
-                  />
-                  <FilterChip
-                    tag={dateFilterState.filter[0] !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"}
-                    chipLabel={dateFilterState.label[0]}
+                  <>
+                    {console.log("Rendering urgent filter chip, state: ", state)}
+                    <If condition={state.urgentFilter.value !== undefined && state.urgentFilter.label !== undefined}>
+                      <FilterChip
+                        chipLabel={state.urgentFilter.label!}
+                        dispatch={dispatch}
+                        removeAction={() => {
+                          return { method: "remove", type: "urgency", value: state.urgentFilter.value! }
+                        }}
+                      />
+                    </If>
+                  </>
+                  {/* <FilterChip
+                    tag={state.dateFilter !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"}
+                    chipLabel={state.dateFilter.label}
                     paramName="dateRange"
-                    onClick={() => dateFilterState.filter[1](undefined)}
+                    onClick={(option: string) => dispatch({ method: "add", type: "date", value: option })}
                   />
                   <FilterChip
-                    tag={lockedFilterState.filter[0] !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"}
-                    chipLabel={lockedFilterState.label[0]}
+                    tag={state.lockedFilter !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"}
+                    chipLabel={state.lockedFilter.label}
                     paramName="locked"
-                    onClick={() => lockedFilterState.filter[1](undefined)}
+                    onClick={() => dispatch({ method: "add", type: "locked", value: true })}
                   />
-                  {reasonFilterState.filter[0].map((reason: string) => (
+                  {state.reasonFilter.value.map((reason: Reason) => (
                     <FilterChip
                       key={reason}
                       tag="moj-filter__tag"
                       chipLabel={reason}
                       paramName="type"
-                      onClick={() => reasonFilterState.filter[1]([])}
+                      onClick={() => dispatch({ method: "add", type: "reason", value: reason })}
                     />
-                  ))}
+                  ))} */}
                 </li>
               </ul>
             </div>
@@ -90,7 +133,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             <HintText>{"Defendent name, Court name, Reason, PTIURN"}</HintText>
             <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
           </div>
-          <div className="govuk-form-group">
+          {/* <div className="govuk-form-group">
             <CourtCaseTypeOptions
               courtCaseTypes={courtCaseTypes}
               onClick={(option: string) => {
@@ -107,18 +150,11 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
                 dateFilterState.label[1](option)
               }}
             />
-          </div>
+          </div> */}
           <div>
-            <UrgencyFilterOptions
-              urgency={urgency}
-              onClick={(option: string) => {
-                const filterValue = option === "Urgent" ? true : option === "Non-urgent" ? false : undefined
-                urgentFilterState.filter[1](filterValue)
-                urgentFilterState.label[1](option)
-              }}
-            />
+            <UrgencyFilterOptions urgency={urgency} dispatch={dispatch} />
           </div>
-          <div>
+          {/* <div>
             <LockedFilterOptions
               locked={locked}
               onClick={(option: string) => {
@@ -127,7 +163,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
                 lockedFilterState.label[1](option)
               }}
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </form>
