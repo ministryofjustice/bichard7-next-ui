@@ -1,12 +1,14 @@
 import RadioButton from "components/RadioButton/RadioButton"
+import type { Dispatch } from "react"
+import type { FilterAction } from "types/CourtCaseFilter"
 import lockedFilters from "utils/lockedFilters"
 
 interface Props {
   locked?: string | null
-  onClick: (option: string) => void
+  dispatch: Dispatch<FilterAction>
 }
 
-const LockedFilterOptions: React.FC<Props> = ({ locked, onClick }: Props) => {
+const LockedFilterOptions: React.FC<Props> = ({ locked, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
       <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Locked state"}</legend>
@@ -19,7 +21,10 @@ const LockedFilterOptions: React.FC<Props> = ({ locked, onClick }: Props) => {
             defaultChecked={locked === lockedFilter}
             value={lockedFilter}
             label={lockedFilter + " cases only"}
-            onClick={(option: string) => onClick(option)}
+            onClick={(option: string) => {
+              const value = option === "Locked"
+              dispatch({ method: "add", type: "locked", value })
+            }}
           />
         ))}
       </div>

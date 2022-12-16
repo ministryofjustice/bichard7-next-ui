@@ -2,10 +2,12 @@ import { format } from "date-fns"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { NamedDateRangeOptions } from "utils/namedDateRange"
 import RadioButton from "components/RadioButton/RadioButton"
+import type { FilterAction } from "types/CourtCaseFilter"
+import type { Dispatch } from "react"
 
 interface Props {
   dateRange?: string | null
-  onClick: (option: string) => void
+  dispatch: Dispatch<FilterAction>
 }
 
 const formatNamedDateRange = (namedDateRange: string): string => {
@@ -18,7 +20,7 @@ const formatNamedDateRange = (namedDateRange: string): string => {
 const labelForDateRange = (namedDateRange: string): string =>
   ["Today", "Yesterday"].includes(namedDateRange) ? namedDateRange : formatNamedDateRange(namedDateRange)
 
-const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, onClick }: Props) => {
+const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
       <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Court date"}</legend>
@@ -40,7 +42,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, onClick }: Props) 
                 defaultChecked={dateRange === namedDateRange}
                 value={namedDateRange}
                 label={labelForDateRange(namedDateRange)}
-                onClick={(option: string) => onClick(option)}
+                onClick={(option: string) => dispatch({ method: "add", type: "date", value: option })}
               />
             ))}
           </div>

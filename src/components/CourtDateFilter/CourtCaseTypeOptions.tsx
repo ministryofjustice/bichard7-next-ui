@@ -1,14 +1,15 @@
 import { Reason } from "types/CaseListQueryParams"
-import type { MouseEvent } from "react"
+import type { MouseEvent, Dispatch } from "react"
+import type { FilterAction } from "types/CourtCaseFilter"
 
 interface Props {
   courtCaseTypes?: Reason[]
-  onClick: (option: string) => void
+  dispatch: Dispatch<FilterAction>
 }
 
 const courtCaseTypeOptions = ["Exceptions", "Triggers"]
 
-const CourtCaseTypeOptions: React.FC<Props> = ({ courtCaseTypes, onClick }: Props) => {
+const CourtCaseTypeOptions: React.FC<Props> = ({ courtCaseTypes, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
       <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Case type"}</legend>
@@ -22,7 +23,10 @@ const CourtCaseTypeOptions: React.FC<Props> = ({ courtCaseTypes, onClick }: Prop
               type="checkbox"
               value={caseType}
               defaultChecked={courtCaseTypes && courtCaseTypes.includes(caseType as Reason)}
-              onClick={(event: MouseEvent<HTMLInputElement>) => onClick(event.currentTarget.value)}
+              onClick={(event: MouseEvent<HTMLInputElement>) => {
+                const value = event.currentTarget.value === "Triggers" ? "Triggers" : "Exceptions"
+                dispatch({ method: "add", type: "reason", value })
+              }}
             ></input>
             <label className="govuk-label govuk-checkboxes__label" htmlFor={`${caseType.toLowerCase()}-type`}>
               {caseType}
