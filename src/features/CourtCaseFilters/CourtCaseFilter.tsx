@@ -27,6 +27,10 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
     filter: useState<boolean | undefined>(undefined),
     label: useState<string>("")
   }
+  const reasonFilterState = {
+    filter: useState<string[]>([]),
+    label: useState<string>("")
+  }
 
   return (
     <form method={"get"}>
@@ -58,6 +62,9 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
                     chipLabel={lockedFilterState.label[0]}
                     paramName="locked"
                   />
+                  {reasonFilterState.filter[0].map((reason: string) => (
+                    <FilterChip key={reason} tag="moj-filter__tag" chipLabel={reason} paramName="type" />
+                  ))}
                 </li>
               </ul>
             </div>
@@ -75,7 +82,13 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
           </div>
           <div className="govuk-form-group">
-            <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} />
+            <CourtCaseTypeOptions
+              courtCaseTypes={courtCaseTypes}
+              onClick={(option: string) => {
+                reasonFilterState.filter[1]([...reasonFilterState.filter[0], option])
+                reasonFilterState.label[1](option)
+              }}
+            />
           </div>
           <div className="govuk-form-group">
             <CourtDateFilterOptions
