@@ -16,27 +16,45 @@ interface Props {
   urgency?: string | null
   locked?: string | null
 }
-
-const UpArrow: React.FC = () => (
-  <svg width={18} height={10} viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0.999926 9.28432L8.74976 1.56866L16.4996 9.28432" stroke="#0B0C0C" strokeWidth={2} />
-  </svg>
-)
-
-const DownArrow: React.FC = () => (
-  <svg width={18} height={11} viewBox="0 0 18 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16.9994 1.26702L9.26685 9L1.49977 1.30171" stroke="#0B0C0C" strokeWidth={2} />
-  </svg>
-)
-
 const useStyles = createUseStyles({
   legendColour: {
     color: "#1D70B8"
   },
-  header: {
+  legendContainer: {
     display: "inline-block"
+  },
+  iconContainer: {
+    display: "inline-block",
+    height: "100%"
+  },
+  icon: {
+    alignItems: "middle"
+  },
+  container: {
+    display: "block"
   }
 })
+const UpArrow: React.FC = () => {
+  const classes = useStyles()
+  return (
+    <div className={classes.icon}>
+      <svg width={18} height={10} viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0.999926 9.28432L8.74976 1.56866L16.4996 9.28432" stroke="#0B0C0C" strokeWidth={2} />
+      </svg>
+    </div>
+  )
+}
+
+const DownArrow: React.FC = () => {
+  const classes = useStyles()
+  return (
+    <div className={classes.icon}>
+      <svg width={18} height={11} viewBox="0 0 18 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16.9994 1.26702L9.26685 9L1.49977 1.30171" stroke="#0B0C0C" strokeWidth={2} />
+      </svg>
+    </div>
+  )
+}
 
 const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = ({
   filterName,
@@ -53,12 +71,14 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
         onClick={() => {
           setCaseTypeVisible(!caseTypeIsVisible)
         }}
-        className={classes.header}
+        className={classes.container}
       >
-        {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
-        <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
-          <div className={classes.legendColour}>{filterName}</div>
-        </legend>
+        <div className={classes.iconContainer}>{caseTypeIsVisible ? <UpArrow /> : <DownArrow />}</div>
+        <div className={classes.legendContainer}>
+          <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <div className={classes.legendColour}>{filterName}</div>
+          </legend>
+        </div>
       </div>
       <If condition={caseTypeIsVisible}>{children}</If>
     </fieldset>
