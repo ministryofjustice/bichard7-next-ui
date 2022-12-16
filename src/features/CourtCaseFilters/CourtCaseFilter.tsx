@@ -51,19 +51,28 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
                     tag={urgentFilterState.filter[0] !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"}
                     chipLabel={urgentFilterState.label[0]}
                     paramName="urgency"
+                    onClick={() => urgentFilterState.filter[1](undefined)}
                   />
                   <FilterChip
                     tag={dateFilterState.filter[0] !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"}
                     chipLabel={dateFilterState.label[0]}
                     paramName="dateRange"
+                    onClick={() => dateFilterState.filter[1](undefined)}
                   />
                   <FilterChip
                     tag={lockedFilterState.filter[0] !== undefined ? "moj-filter__tag" : "moj-filter moj-hidden"}
                     chipLabel={lockedFilterState.label[0]}
                     paramName="locked"
+                    onClick={() => lockedFilterState.filter[1](undefined)}
                   />
                   {reasonFilterState.filter[0].map((reason: string) => (
-                    <FilterChip key={reason} tag="moj-filter__tag" chipLabel={reason} paramName="type" />
+                    <FilterChip
+                      key={reason}
+                      tag="moj-filter__tag"
+                      chipLabel={reason}
+                      paramName="type"
+                      onClick={() => reasonFilterState.filter[1]([])}
+                    />
                   ))}
                 </li>
               </ul>
