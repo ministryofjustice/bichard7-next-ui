@@ -30,8 +30,11 @@ const DownArrow: React.FC = () => (
 )
 
 const useStyles = createUseStyles({
-  redThing: {
-    color: "red"
+  legendColour: {
+    color: "#1D70B8"
+  },
+  header: {
+    display: "inline-block"
   }
 })
 
@@ -43,15 +46,19 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
   children: ReactNode
 }) => {
   const [caseTypeIsVisible, setCaseTypeVisible] = useState(true)
+  const classes = useStyles()
   return (
     <fieldset className="govuk-fieldset">
       <div
         onClick={() => {
           setCaseTypeVisible(!caseTypeIsVisible)
         }}
+        className={classes.header}
       >
         {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
-        <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{filterName}</legend>
+        <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
+          <div className={classes.legendColour}>{filterName}</div>
+        </legend>
       </div>
       <If condition={caseTypeIsVisible}>{children}</If>
     </fieldset>
