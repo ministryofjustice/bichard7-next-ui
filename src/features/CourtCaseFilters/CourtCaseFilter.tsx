@@ -6,6 +6,7 @@ import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
 import { useState } from "react"
+import { createUseStyles } from "react-jss"
 import { Reason } from "types/CaseListQueryParams"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 
@@ -32,6 +33,29 @@ const DownArrow: React.FC = () => {
   )
 }
 
+const useStyles = createUseStyles({
+  redThing: {
+    color: "red"
+  }
+})
+
+const VisibleFilter: React.FC = () => {
+  const classes = useStyles()
+  return (
+    <div className={classes.redThing}>
+      <UpArrow /> <p>{"Case type"}</p>
+    </div>
+  )
+}
+
+const NotVisibleFilter: React.FC = () => {
+  return (
+    <div style={{ display: "inline-block" }}>
+      <DownArrow /> {"Case type"}
+    </div>
+  )
+}
+
 const ExpandingFilters: React.FC = ({ courtCaseTypes }: Props) => {
   const [caseTypeIsVisible, setCaseTypeVisible] = useState(true)
   return (
@@ -41,17 +65,10 @@ const ExpandingFilters: React.FC = ({ courtCaseTypes }: Props) => {
           setCaseTypeVisible(!caseTypeIsVisible)
         }}
       >
-        <If condition={caseTypeIsVisible}>
-          <UpArrow /> <legend className="govuk-heading-m">{"Case type"}</legend>
-        </If>
-        <If condition={!caseTypeIsVisible}>
-          <DownArrow /> <legend className="govuk-heading-m">{"Case type"}</legend>
-        </If>
+        {caseTypeIsVisible ? <VisibleFilter /> : <NotVisibleFilter />}
       </div>
       <If condition={caseTypeIsVisible}>
-        <div style={{ display: "inline-block" }}>
-          <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} />
-        </div>
+        <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} />
       </If>
     </>
   )
