@@ -5,7 +5,7 @@ import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOption
 import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
-import { useState } from "react"
+import { ReactNode, useState } from "react"
 import { createUseStyles } from "react-jss"
 import { Reason } from "types/CaseListQueryParams"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
@@ -17,21 +17,17 @@ interface Props {
   locked?: string | null
 }
 
-const UpArrow: React.FC = () => {
-  return (
-    <svg width={18} height={10} viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0.999926 9.28432L8.74976 1.56866L16.4996 9.28432" stroke="#0B0C0C" strokeWidth={2} />
-    </svg>
-  )
-}
+const UpArrow: React.FC = () => (
+  <svg width={18} height={10} viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0.999926 9.28432L8.74976 1.56866L16.4996 9.28432" stroke="#0B0C0C" strokeWidth={2} />
+  </svg>
+)
 
-const DownArrow: React.FC = () => {
-  return (
-    <svg width={18} height={11} viewBox="0 0 18 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M16.9994 1.26702L9.26685 9L1.49977 1.30171" stroke="#0B0C0C" strokeWidth={2} />
-    </svg>
-  )
-}
+const DownArrow: React.FC = () => (
+  <svg width={18} height={11} viewBox="0 0 18 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16.9994 1.26702L9.26685 9L1.49977 1.30171" stroke="#0B0C0C" strokeWidth={2} />
+  </svg>
+)
 
 const useStyles = createUseStyles({
   redThing: {
@@ -39,42 +35,30 @@ const useStyles = createUseStyles({
   }
 })
 
-const VisibleFilter: React.FC = () => {
-  const classes = useStyles()
-  return (
-    <div className={classes.redThing}>
-      <UpArrow /> <p>{"Case type"}</p>
-    </div>
-  )
-}
-
-const NotVisibleFilter: React.FC = () => {
-  return (
-    <div style={{ display: "inline-block" }}>
-      <DownArrow /> {"Case type"}
-    </div>
-  )
-}
-
-const ExpandingFilters: React.FC = ({ courtCaseTypes }: Props) => {
+const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = ({
+  filterName,
+  children
+}: {
+  filterName: string
+  children: ReactNode
+}) => {
   const [caseTypeIsVisible, setCaseTypeVisible] = useState(true)
   return (
-    <>
+    <fieldset className="govuk-fieldset">
       <div
         onClick={() => {
           setCaseTypeVisible(!caseTypeIsVisible)
         }}
       >
-        {caseTypeIsVisible ? <VisibleFilter /> : <NotVisibleFilter />}
+        {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
+        <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{filterName}</legend>
       </div>
-      <If condition={caseTypeIsVisible}>
-        <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} />
-      </If>
-    </>
+      <If condition={caseTypeIsVisible}>{children}</If>
+    </fieldset>
   )
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ dateRange, urgency, locked }: Props) => {
+const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
   return (
     <form method={"get"}>
       <div className="moj-filter__header">
@@ -103,17 +87,25 @@ const CourtCaseFilter: React.FC<Props> = ({ dateRange, urgency, locked }: Props)
             <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
           </div>
           <div className="govuk-form-group">
-            <ExpandingFilters />
-          </div>
-          {/* <div className="govuk-form-group">
-            <CourtDateFilterOptions dateRange={dateRange} />
+            <ExpandingFilters filterName={"Case type"}>
+              <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} />
+            </ExpandingFilters>
           </div>
           <div className="govuk-form-group">
-            <UrgencyFilterOptions urgency={urgency} />
+            <ExpandingFilters filterName={"Court date"}>
+              <CourtDateFilterOptions dateRange={dateRange} />
+            </ExpandingFilters>
+          </div>
+          <div className="govuk-form-group">
+            <ExpandingFilters filterName={"Urgency"}>
+              <UrgencyFilterOptions urgency={urgency} />
+            </ExpandingFilters>
           </div>
           <div>
-            <LockedFilterOptions locked={locked} />
-          </div> */}
+            <ExpandingFilters filterName={"Locked state"}>
+              <LockedFilterOptions locked={locked} />
+            </ExpandingFilters>
+          </div>
         </div>
       </div>
     </form>
@@ -121,6 +113,3 @@ const CourtCaseFilter: React.FC<Props> = ({ dateRange, urgency, locked }: Props)
 }
 
 export default CourtCaseFilter
-function useStatae(arg0: boolean): [any, any] {
-  throw new Error("Function not implemented.")
-}
