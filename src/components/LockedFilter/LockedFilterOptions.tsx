@@ -1,11 +1,17 @@
 import RadioButton from "components/RadioButton/RadioButton"
 import type { ChangeEvent, Dispatch } from "react"
 import type { FilterAction } from "types/CourtCaseFilter"
+import KeyValuePair from "types/KeyValuePair"
 import lockedFilters from "utils/lockedFilters"
 
 interface Props {
-  locked?: string | null
+  locked?: boolean
   dispatch: Dispatch<FilterAction>
+}
+
+const LockedOptions: KeyValuePair<string, boolean> = {
+  Locked: true,
+  Unlocked: false
 }
 
 const LockedFilterOptions: React.FC<Props> = ({ locked, dispatch }: Props) => {
@@ -13,16 +19,16 @@ const LockedFilterOptions: React.FC<Props> = ({ locked, dispatch }: Props) => {
     <fieldset className="govuk-fieldset">
       <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Locked state"}</legend>
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-        {lockedFilters.map((lockedFilter) => (
+        {lockedFilters.map((optionName) => (
           <RadioButton
             name={"locked"}
-            key={lockedFilter.toLowerCase()}
-            id={lockedFilter.toLowerCase()}
-            checked={locked === lockedFilter}
-            value={lockedFilter}
-            label={lockedFilter + " cases only"}
+            key={optionName.toLowerCase()}
+            id={optionName.toLowerCase()}
+            checked={locked === LockedOptions[optionName]}
+            value={optionName}
+            label={optionName + " cases only"}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              dispatch({ method: "add", type: "locked", value: event.target.value })
+              dispatch({ method: "add", type: "locked", value: LockedOptions[event.target.value] })
             }}
           />
         ))}

@@ -39,10 +39,10 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch }: Props)
                 name={"dateRange"}
                 key={namedDateRange.toLowerCase().replace(" ", "-")}
                 id={`date-range-${namedDateRange.toLowerCase().replace(" ", "-")}`}
-                defaultChecked={dateRange === namedDateRange}
+                checked={dateRange === namedDateRange}
                 value={namedDateRange}
                 label={labelForDateRange(namedDateRange)}
-                onClick={(option: string) => dispatch({ method: "add", type: "date", value: option })}
+                onChange={(event) => dispatch({ method: "add", type: "date", value: event.target.value })}
               />
             ))}
           </div>

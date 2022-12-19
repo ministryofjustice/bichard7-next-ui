@@ -1,5 +1,5 @@
 import { Reason } from "types/CaseListQueryParams"
-import type { MouseEvent, Dispatch } from "react"
+import type { Dispatch } from "react"
 import type { FilterAction } from "types/CourtCaseFilter"
 
 interface Props {

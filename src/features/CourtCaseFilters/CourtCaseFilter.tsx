@@ -20,7 +20,7 @@ const reducer = (state: FilterState, action: FilterAction) => {
       newState.dateFilter.value = action.value
       newState.dateFilter.label = action.value
     } else if (action.type === "locked") {
-      newState.lockedFilter.value = action.value ? "Locked" : "Unlocked"
+      newState.lockedFilter.value = action.value
       newState.lockedFilter.label = action.value ? "Locked" : "Unlocked"
     } else if (action.type === "reason") {
       // React might invoke our reducer more than once for a single event,
@@ -129,11 +129,9 @@ const CourtCaseFilter: React.FC = () => {
             <CourtDateFilterOptions dateRange={state.dateFilter.value} dispatch={dispatch} />
           </div>
           <div>
-            {/* TODO fix state updates */}
-            <UrgencyFilterOptions urgency={"Urgent"} dispatch={dispatch} />
+            <UrgencyFilterOptions urgency={state.urgentFilter.value} dispatch={dispatch} />
           </div>
           <div>
-            {/* TODO selecting "non-urgent" doesn't work */}
             <LockedFilterOptions locked={state.lockedFilter.value} dispatch={dispatch} />
           </div>
         </div>

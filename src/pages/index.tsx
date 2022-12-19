@@ -113,9 +113,7 @@ const Home: NextPage<Props> = ({
         {"Court cases"}
       </Heading>
       <CourtCaseWrapper
-        filter={
-          <CourtCaseFilter courtCaseTypes={courtCaseTypes} dateRange={dateRange} urgency={urgent} locked={locked} />
-        }
+        filter={<CourtCaseFilter />}
         appliedFilters={
           <AppliedFilters filters={{ courtCaseTypes, keywords, dateRange, urgency: urgent, locked: locked }} />
         }

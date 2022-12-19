@@ -1,4 +1,4 @@
-import type { ChangeEvent, MouseEvent } from "react"
+import type { ChangeEvent } from "react"
 
 interface Props {
   name: string
@@ -8,7 +8,6 @@ interface Props {
   checked?: boolean
   value?: string
   label: string
-  onClick?: (option: string) => void
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
@@ -20,7 +19,6 @@ const RadioButton: React.FC<Props> = ({
   checked,
   value,
   label,
-  onClick,
   onChange
 }: Props) => {
   return (
@@ -34,11 +32,6 @@ const RadioButton: React.FC<Props> = ({
         value={value}
         defaultChecked={defaultChecked}
         checked={checked}
-        onClick={(event: MouseEvent<HTMLInputElement>) => {
-          if (onClick) {
-            onClick(event.currentTarget.value)
-          }
-        }}
         onChange={onChange}
       />
       <label className="govuk-label govuk-radios__label" htmlFor={id}>
