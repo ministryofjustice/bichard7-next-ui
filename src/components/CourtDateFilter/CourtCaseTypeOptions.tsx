@@ -22,8 +22,8 @@ const CourtCaseTypeOptions: React.FC<Props> = ({ courtCaseTypes, dispatch }: Pro
               name="type"
               type="checkbox"
               value={caseType}
-              defaultChecked={courtCaseTypes && courtCaseTypes.includes(caseType as Reason)}
-              onClick={(event: MouseEvent<HTMLInputElement>) => {
+              checked={courtCaseTypes && courtCaseTypes.includes(caseType as Reason)}
+              onChange={(event) => {
                 const value = event.currentTarget.value === "Triggers" ? "Triggers" : "Exceptions"
                 dispatch({ method: "add", type: "reason", value })
               }}

@@ -3,7 +3,7 @@ import { Reason } from "./CaseListQueryParams"
 export type FilterAction =
   | { method: FilterMethod; type: "urgency"; value: boolean }
   | { method: FilterMethod; type: "date"; value: string }
-  | { method: FilterMethod; type: "locked"; value: boolean }
+  | { method: FilterMethod; type: "locked"; value: string }
   | { method: FilterMethod; type: "reason"; value: Reason }
 
 export type FilterType = "urgency" | "date" | "locked" | "reason"
@@ -19,7 +19,7 @@ export type FilterState = {
     label?: string
   }
   lockedFilter: {
-    value?: boolean
+    value?: string
     label?: string
   }
   reasonFilter: {

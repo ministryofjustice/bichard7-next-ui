@@ -10,13 +10,6 @@ import { Reason } from "types/CaseListQueryParams"
 import type { FilterAction, FilterState } from "types/CourtCaseFilter"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 
-interface Props {
-  courtCaseTypes?: Reason[]
-  dateRange?: string | null
-  urgency?: string | null
-  locked?: string | null
-}
-
 const reducer = (state: FilterState, action: FilterAction) => {
   const newState = Object.assign({}, state)
   if (action.method === "add") {
@@ -25,8 +18,10 @@ const reducer = (state: FilterState, action: FilterAction) => {
       newState.urgentFilter.label = action.value ? "Urgent" : "Non-urgent"
     } else if (action.type === "date") {
       newState.dateFilter.value = action.value
+      newState.dateFilter.label = action.value
     } else if (action.type === "locked") {
-      newState.lockedFilter.value = action.value
+      newState.lockedFilter.value = action.value ? "Locked" : "Unlocked"
+      newState.lockedFilter.label = action.value ? "Locked" : "Unlocked"
     } else if (action.type === "reason") {
       // React might invoke our reducer more than once for a single event,
       // so avoid duplicating reason filters
@@ -37,10 +32,13 @@ const reducer = (state: FilterState, action: FilterAction) => {
   } else if (action.method === "remove") {
     if (action.type === "urgency") {
       newState.urgentFilter.value = undefined
+      newState.urgentFilter.label = undefined
     } else if (action.type === "date") {
       newState.dateFilter.value = undefined
+      newState.dateFilter.label = undefined
     } else if (action.type === "locked") {
       newState.lockedFilter.value = undefined
+      newState.dateFilter.label = undefined
     } else if (action.type === "reason") {
       newState.reasonFilter.value = newState.reasonFilter.value.filter((reason: string) => reason !== action.value)
     }
@@ -48,12 +46,12 @@ const reducer = (state: FilterState, action: FilterAction) => {
   return newState
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
+const CourtCaseFilter: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, {
     urgentFilter: {},
     dateFilter: {},
     lockedFilter: {},
-    reasonFilter: { value: courtCaseTypes || [] }
+    reasonFilter: { value: [] }
   })
 
   return (
@@ -128,13 +126,15 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             <CourtCaseTypeOptions courtCaseTypes={state.reasonFilter.value} dispatch={dispatch} />
           </div>
           <div className="govuk-form-group">
-            <CourtDateFilterOptions dateRange={dateRange} dispatch={dispatch} />
+            <CourtDateFilterOptions dateRange={state.dateFilter.value} dispatch={dispatch} />
           </div>
           <div>
-            <UrgencyFilterOptions urgency={urgency} dispatch={dispatch} />
+            {/* TODO fix state updates */}
+            <UrgencyFilterOptions urgency={"Urgent"} dispatch={dispatch} />
           </div>
           <div>
-            <LockedFilterOptions locked={locked} dispatch={dispatch} />
+            {/* TODO selecting "non-urgent" doesn't work */}
+            <LockedFilterOptions locked={state.lockedFilter.value} dispatch={dispatch} />
           </div>
         </div>
       </div>

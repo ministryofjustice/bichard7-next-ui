@@ -1,5 +1,5 @@
 import RadioButton from "components/RadioButton/RadioButton"
-import type { Dispatch } from "react"
+import type { ChangeEvent, Dispatch } from "react"
 import type { FilterAction } from "types/CourtCaseFilter"
 import lockedFilters from "utils/lockedFilters"
 
@@ -18,12 +18,11 @@ const LockedFilterOptions: React.FC<Props> = ({ locked, dispatch }: Props) => {
             name={"locked"}
             key={lockedFilter.toLowerCase()}
             id={lockedFilter.toLowerCase()}
-            defaultChecked={locked === lockedFilter}
+            checked={locked === lockedFilter}
             value={lockedFilter}
             label={lockedFilter + " cases only"}
-            onClick={(option: string) => {
-              const value = option === "Locked"
-              dispatch({ method: "add", type: "locked", value })
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              dispatch({ method: "add", type: "locked", value: event.target.value })
             }}
           />
         ))}
