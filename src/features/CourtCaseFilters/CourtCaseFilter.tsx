@@ -18,33 +18,34 @@ interface Props {
 }
 
 const reducer = (state: FilterState, action: FilterAction) => {
+  const newState = Object.assign({}, state)
   if (action.method === "add") {
     if (action.type === "urgency") {
-      state.urgentFilter.value = action.value
-      state.urgentFilter.label = action.value ? "Urgent" : "Non-urgent"
+      newState.urgentFilter.value = action.value
+      newState.urgentFilter.label = action.value ? "Urgent" : "Non-urgent"
     } else if (action.type === "date") {
-      state.dateFilter.value = action.value
+      newState.dateFilter.value = action.value
     } else if (action.type === "locked") {
-      state.lockedFilter.value = action.value
+      newState.lockedFilter.value = action.value
     } else if (action.type === "reason") {
       // React might invoke our reducer more than once for a single event,
       // so avoid duplicating reason filters
-      if (!state.reasonFilter.value.includes(action.value)) {
-        state.reasonFilter.value.push(action.value)
+      if (!newState.reasonFilter.value.includes(action.value)) {
+        newState.reasonFilter.value.push(action.value)
       }
     }
   } else if (action.method === "remove") {
     if (action.type === "urgency") {
-      state.urgentFilter.value = undefined
+      newState.urgentFilter.value = undefined
     } else if (action.type === "date") {
-      state.dateFilter.value = undefined
+      newState.dateFilter.value = undefined
     } else if (action.type === "locked") {
-      state.lockedFilter.value = undefined
+      newState.lockedFilter.value = undefined
     } else if (action.type === "reason") {
-      state.reasonFilter.value = state.reasonFilter.value.filter((reason: string) => reason === action.value)
+      newState.reasonFilter.value = newState.reasonFilter.value.filter((reason: string) => reason === action.value)
     }
   }
-  return state
+  return newState
 }
 
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
