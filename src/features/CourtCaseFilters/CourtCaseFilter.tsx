@@ -42,7 +42,7 @@ const reducer = (state: FilterState, action: FilterAction) => {
     } else if (action.type === "locked") {
       newState.lockedFilter.value = undefined
     } else if (action.type === "reason") {
-      newState.reasonFilter.value = newState.reasonFilter.value.filter((reason: string) => reason === action.value)
+      newState.reasonFilter.value = newState.reasonFilter.value.filter((reason: string) => reason !== action.value)
     }
   }
   return newState
@@ -53,7 +53,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
     urgentFilter: {},
     dateFilter: {},
     lockedFilter: {},
-    reasonFilter: { value: [] }
+    reasonFilter: { value: courtCaseTypes || [] }
   })
 
   return (
@@ -125,7 +125,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
           </div>
           <div className="govuk-form-group">
-            <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} dispatch={dispatch} />
+            <CourtCaseTypeOptions courtCaseTypes={state.reasonFilter.value} dispatch={dispatch} />
           </div>
           <div className="govuk-form-group">
             <CourtDateFilterOptions dateRange={dateRange} dispatch={dispatch} />
