@@ -69,6 +69,7 @@ const CourtCaseFilter: React.FC = () => {
               <h2 className="govuk-heading-m govuk-!-margin-bottom-0">{"Selected filters"}</h2>
               <ul className="moj-filter-tags">
                 <If condition={state.urgentFilter.value !== undefined && state.urgentFilter.label !== undefined}>
+                  <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Urgency"}</h3>
                   <FilterChip
                     chipLabel={state.urgentFilter.label!}
                     dispatch={dispatch}
@@ -78,6 +79,7 @@ const CourtCaseFilter: React.FC = () => {
                   />
                 </If>
                 <If condition={state.dateFilter.value !== undefined && state.dateFilter.label !== undefined}>
+                  <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Date range"}</h3>
                   <FilterChip
                     chipLabel={state.dateFilter.label!}
                     dispatch={dispatch}
@@ -87,6 +89,7 @@ const CourtCaseFilter: React.FC = () => {
                   />
                 </If>
                 <If condition={state.lockedFilter.value !== undefined && state.lockedFilter.label !== undefined}>
+                  <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Locked state"}</h3>
                   <FilterChip
                     chipLabel={state.lockedFilter.label!}
                     dispatch={dispatch}
@@ -95,6 +98,10 @@ const CourtCaseFilter: React.FC = () => {
                     }}
                   />
                 </If>
+                <If condition={state.reasonFilter.value.length > 0}>
+                  <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
+                </If>
+
                 {state.reasonFilter.value.map((reason: Reason) => (
                   <FilterChip
                     key={reason}
