@@ -85,7 +85,7 @@ describe("Case list", () => {
     })
 
     describe("Date range", () => {
-      it.only("Should allow you to add 'today' as the date range filter chip", () => {
+      it("Should allow you to add 'today' as the date range filter chip", () => {
         cy.get('[class^="moj-action-bar"]').click()
         cy.get("#date-range").click()
         cy.get("#date-range-today").click()
@@ -96,6 +96,26 @@ describe("Case list", () => {
         cy.get('*[class^="moj-filter__selected-heading"').contains("This week").should("not.exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Last week").should("not.exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("This month").should("not.exist")
+      })
+    })
+
+    describe("Urgency", () => {
+      it.only("Should apply the 'Urgent cases only' radio button", () => {
+        cy.get('[class^="moj-action-bar"]').click()
+        cy.get("#urgent").click()
+
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgency").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgent").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Non-urgent").should("not.exist")
+      })
+
+      it("Should apply the 'Non-urgent cases only' radio button", () => {
+        cy.get('[class^="moj-action-bar"]').click()
+        cy.get("#non-urgent").click()
+
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgency").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Non-urgent").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgent").should("not.exist")
       })
     })
   })
