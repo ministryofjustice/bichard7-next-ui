@@ -83,6 +83,21 @@ describe("Case list", () => {
         cy.get('h2[class^="govuk-heading-m govuk-!-margin-bottom-0"]').children().should("have.length", 0)
       })
     })
+
+    describe("Date range", () => {
+      it.only("Should allow you to add 'today' as the date range filter chip", () => {
+        cy.get('[class^="moj-action-bar"]').click()
+        cy.get("#date-range").click()
+        cy.get("#date-range-today").click()
+
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Date range").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Today").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Yesterday").should("not.exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("This week").should("not.exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Last week").should("not.exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("This month").should("not.exist")
+      })
+    })
   })
 })
 
