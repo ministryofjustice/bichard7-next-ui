@@ -13,10 +13,12 @@ interface Props {
 
 const FilterChip: React.FC<Props> = ({ chipLabel, dispatch, removeAction }: Props) => {
   return (
-    <a className="moj-filter__tag" onClick={() => dispatch(removeAction())}>
-      <span className="govuk-visually-hidden">{"Remove this filter"}</span>
-      {chipLabel}
-    </a>
+    <li>
+      <a className="moj-filter__tag" onClick={() => dispatch(removeAction())}>
+        <span className="govuk-visually-hidden">{"Remove this filter"}</span>
+        {chipLabel}
+      </a>
+    </li>
   )
 }
 

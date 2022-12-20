@@ -68,45 +68,43 @@ const CourtCaseFilter: React.FC = () => {
             <div className="moj-filter__heading-title">
               <h2 className="govuk-heading-m govuk-!-margin-bottom-0">{"Selected filters"}</h2>
               <ul className="moj-filter-tags">
-                <li>
-                  <If condition={state.urgentFilter.value !== undefined && state.urgentFilter.label !== undefined}>
-                    <FilterChip
-                      chipLabel={state.urgentFilter.label!}
-                      dispatch={dispatch}
-                      removeAction={() => {
-                        return { method: "remove", type: "urgency", value: state.urgentFilter.value! }
-                      }}
-                    />
-                  </If>
-                  <If condition={state.dateFilter.value !== undefined && state.dateFilter.label !== undefined}>
-                    <FilterChip
-                      chipLabel={state.dateFilter.label!}
-                      dispatch={dispatch}
-                      removeAction={() => {
-                        return { method: "remove", type: "date", value: state.dateFilter.value! }
-                      }}
-                    />
-                  </If>
-                  <If condition={state.lockedFilter.value !== undefined && state.lockedFilter.label !== undefined}>
-                    <FilterChip
-                      chipLabel={state.lockedFilter.label!}
-                      dispatch={dispatch}
-                      removeAction={() => {
-                        return { method: "remove", type: "locked", value: state.lockedFilter.value! }
-                      }}
-                    />
-                  </If>
-                  {state.reasonFilter.value.map((reason: Reason) => (
-                    <FilterChip
-                      key={reason}
-                      chipLabel={reason}
-                      dispatch={dispatch}
-                      removeAction={() => {
-                        return { method: "remove", type: "reason", value: reason }
-                      }}
-                    />
-                  ))}
-                </li>
+                <If condition={state.urgentFilter.value !== undefined && state.urgentFilter.label !== undefined}>
+                  <FilterChip
+                    chipLabel={state.urgentFilter.label!}
+                    dispatch={dispatch}
+                    removeAction={() => {
+                      return { method: "remove", type: "urgency", value: state.urgentFilter.value! }
+                    }}
+                  />
+                </If>
+                <If condition={state.dateFilter.value !== undefined && state.dateFilter.label !== undefined}>
+                  <FilterChip
+                    chipLabel={state.dateFilter.label!}
+                    dispatch={dispatch}
+                    removeAction={() => {
+                      return { method: "remove", type: "date", value: state.dateFilter.value! }
+                    }}
+                  />
+                </If>
+                <If condition={state.lockedFilter.value !== undefined && state.lockedFilter.label !== undefined}>
+                  <FilterChip
+                    chipLabel={state.lockedFilter.label!}
+                    dispatch={dispatch}
+                    removeAction={() => {
+                      return { method: "remove", type: "locked", value: state.lockedFilter.value! }
+                    }}
+                  />
+                </If>
+                {state.reasonFilter.value.map((reason: Reason) => (
+                  <FilterChip
+                    key={reason}
+                    chipLabel={reason}
+                    dispatch={dispatch}
+                    removeAction={() => {
+                      return { method: "remove", type: "reason", value: reason }
+                    }}
+                  />
+                ))}
               </ul>
             </div>
           </div>
