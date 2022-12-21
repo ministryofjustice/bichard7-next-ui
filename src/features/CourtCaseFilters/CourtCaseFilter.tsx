@@ -20,52 +20,39 @@ const useStyles = createUseStyles({
   legendColour: {
     color: "#1D70B8"
   },
-  icon: {
-    padding: "5px"
+  iconButton: {
+    padding: "5px 10px",
+    margin: "0 2px 0 -10px",
+    border: "3px solid transparent",
+    backgroundColor: "transparent",
+    "&:hover": {
+      backgroundColor: "#b0b4b6"
+    },
+    "&:active": {
+      backgroundColor: "#b0b4b6",
+      borderColor: "#ffe304"
+    }
   },
   iconContainer: {
-    paddingRight: "5px",
-    paddingTop: "5px"
+    margin: "5px 0"
   },
   container: {
-    display: "flex"
+    display: "flex",
+    margin: "0 0 5px 0"
   }
 })
-const UpArrow: React.FC = () => {
-  const classes = useStyles()
-  return (
-    <div className={classes.iconContainer}>
-      <svg
-        className={classes.icon}
-        width={18}
-        height={10}
-        viewBox="0 0 18 10"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M0.999926 9.28432L8.74976 1.56866L16.4996 9.28432" stroke="#0B0C0C" strokeWidth={2} />
-      </svg>
-    </div>
-  )
-}
 
-const DownArrow: React.FC = () => {
-  const classes = useStyles()
-  return (
-    <div className={classes.iconContainer}>
-      <svg
-        className={classes.icon}
-        width={18}
-        height={11}
-        viewBox="0 0 18 11"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M16.9994 1.26702L9.26685 9L1.49977 1.30171" stroke="#0B0C0C" strokeWidth={2} />
-      </svg>
-    </div>
-  )
-}
+const UpArrow: React.FC = () => (
+  <svg width={18} height={10} viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0.999926 9.28432L8.74976 1.56866L16.4996 9.28432" stroke="#0B0C0C" strokeWidth={2} />
+  </svg>
+)
+
+const DownArrow: React.FC = () => (
+  <svg width={18} height={11} viewBox="0 0 18 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16.9994 1.26702L9.26685 9L1.49977 1.30171" stroke="#0B0C0C" strokeWidth={2} />
+  </svg>
+)
 
 const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = ({
   filterName,
@@ -84,7 +71,11 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
         }}
         className={classes.container}
       >
-        {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
+        <div className={classes.iconContainer}>
+          <button type="button" className={classes.iconButton}>
+            {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
+          </button>
+        </div>
         <div>
           <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
             <div className={classes.legendColour}>{filterName}</div>
