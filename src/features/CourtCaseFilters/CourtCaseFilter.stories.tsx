@@ -11,7 +11,7 @@ export default {
 
 export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => (
   <div data-testid="filters">
-    <CourtCaseFilter />
+    <CourtCaseFilter courtCaseTypes={[]} dateRange={null} urgency={null} locked={null} />
   </div>
 )
 
@@ -22,7 +22,9 @@ ShouldBeAccessible.play = async ({ canvasElement }) => {
   expect(await axe(pagination)).toHaveNoViolations()
 }
 
-export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> = () => <CourtCaseFilter />
+export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> = () => (
+  <CourtCaseFilter courtCaseTypes={["Exceptions"]} dateRange={"today"} urgency={"Urgent"} locked={"Locked"} />
+)
 
 WhenThereAreFiltersApplied.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
