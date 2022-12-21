@@ -68,18 +68,6 @@ describe("Case list", () => {
         cy.get('*[class^="moj-filter__selected"]').contains("Exception").should("exist")
       })
 
-      it("Should display Trigger and Exception filter chips when selected", () => {
-        // Shows filters and clicks both options
-        cy.get('[class^="moj-action-bar"]').click()
-        cy.get('*[class^="govuk-checkboxes__item"]').contains("Triggers").click()
-        cy.get('*[class^="govuk-checkboxes__item"]').contains("Exception").click()
-
-        // Check if the correct heading for chips and filter labels are applied
-        cy.get('ul[class^="moj-filter-tags"]').contains("Reason").should("exist")
-        cy.get('*[class^="moj-filter__selected"]').contains("Trigger").should("exist")
-        cy.get('*[class^="moj-filter__selected"]').contains("Exception").should("exist")
-      })
-
       it("Should remove the Trigger and Exception filter chips when both chips are clicked and remove the selected option in the filter panel", () => {
         // Shows filters and clicks both options
         cy.get('[class^="moj-action-bar"]').click()
@@ -101,10 +89,12 @@ describe("Case list", () => {
 
     describe("Date range", () => {
       it("Should allow you to add 'today' as the date range filter chip", () => {
+        // Shows filters and clicks date range followed by today's date
         cy.get('[class^="moj-action-bar"]').click()
         cy.get("#date-range").click()
         cy.get("#date-range-today").click()
 
+        // Shows the correct heading 'Today' and checks that the others are not visible
         cy.get('*[class^="moj-filter__selected-heading"').contains("Date range").should("exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Today").should("exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Yesterday").should("not.exist")
@@ -115,15 +105,6 @@ describe("Case list", () => {
     })
 
     describe("Urgency", () => {
-      it("Should apply the 'Urgent cases only' radio button", () => {
-        cy.get('[class^="moj-action-bar"]').click()
-        cy.get("#urgent").click()
-
-        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgency").should("exist")
-        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgent").should("exist")
-        cy.get('*[class^="moj-filter__selected-heading"').contains("Non-urgent").should("not.exist")
-      })
-
       it("Should apply the 'Non-urgent cases only' radio button", () => {
         cy.get('[class^="moj-action-bar"]').click()
         cy.get("#non-urgent").click()
@@ -133,14 +114,13 @@ describe("Case list", () => {
         cy.get('*[class^="moj-filter__selected-heading"').contains("Urgent").should("not.exist")
       })
 
-      it("Should remove the 'Urgent cases only' filter chip when the correct chip is 'X' is clicked", () => {
+      it("Should apply the 'Urgent cases only' radio button and cancel it when the 'X' is clicked", () => {
         cy.get('[class^="moj-action-bar"]').click()
         cy.get("#urgent").click()
 
         cy.get('*[class^="moj-filter__selected-heading"').contains("Urgency").should("exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Urgent").should("exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Non-urgent").should("not.exist")
-        cy.get('li button[class^="moj-filter__tag"]').children().should("have.length", 1)
 
         // Removes the urgent filter chips
         cy.get('li button[class ^="moj-filter__tag"]').contains("Urgent").trigger("click")
@@ -153,7 +133,7 @@ describe("Case list", () => {
     })
 
     describe("Selecting multiple filter chips", () => {
-      it.only("should allow you to select 'Trigger', 'Last week', 'non-urgent'. This should display relevant header for each filter chip", () => {
+      it("should allow you to select 'Trigger', 'Last week', 'non-urgent'. This should display relevant header for each filter chip", () => {
         // Open filters and build filter chip query
         cy.get('[class^="moj-action-bar"]').click()
         cy.get('*[class^="govuk-checkboxes__item"]').contains("Triggers").click()
@@ -177,6 +157,12 @@ describe("Case list", () => {
         cy.get('*[class^="moj-filter__selected-heading"').contains("Yesterday").should("not.exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("This week").should("not.exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("This month").should("not.exist")
+
+        // submit query and display filter chips in filters applied section
+        cy.get("#search").contains("Apply filters").click()
+        cy.get('*[class^="moj-button-menu__wrapper"').contains("Triggers").should("exist")
+        cy.get('*[class^="moj-button-menu__wrapper"').contains("Non-urgent").should("exist")
+        cy.get('*[class^="moj-button-menu__wrapper"').contains("Last week").should("exist")
       })
     })
   })
