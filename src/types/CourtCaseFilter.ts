@@ -9,20 +9,25 @@ export type FilterAction =
 export type FilterType = "urgency" | "date" | "locked" | "reason"
 export type FilterMethod = "add" | "remove"
 export type FilterValue = boolean | string | Reason
-export type FilterState = {
+export type FilterState = "selected" | "applied"
+export type Filter = {
   urgentFilter: {
     value?: boolean
+    state?: FilterState
     label?: string
   }
   dateFilter: {
     value?: string
+    state?: FilterState
     label?: string
   }
   lockedFilter: {
     value?: boolean
+    state?: FilterState
     label?: string
   }
   reasonFilter: {
-    value: Reason[]
-  }
+    value: Reason
+    state: FilterState
+  }[]
 }

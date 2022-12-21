@@ -7,26 +7,36 @@ import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
 import { useReducer } from "react"
 import { Reason } from "types/CaseListQueryParams"
-import type { FilterAction, FilterState } from "types/CourtCaseFilter"
+import type { FilterAction, Filter } from "types/CourtCaseFilter"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 
-const reducer = (state: FilterState, action: FilterAction) => {
+interface Props {
+  courtCaseTypes: Reason[]
+  dateRange: string | null
+  urgency: string | null
+  locked: string | null
+}
+
+const reducer = (state: Filter, action: FilterAction): Filter => {
   const newState = Object.assign({}, state)
   if (action.method === "add") {
     if (action.type === "urgency") {
       newState.urgentFilter.value = action.value
       newState.urgentFilter.label = action.value ? "Urgent" : "Non-urgent"
+      newState.urgentFilter.state = "selected"
     } else if (action.type === "date") {
       newState.dateFilter.value = action.value
       newState.dateFilter.label = action.value
+      newState.dateFilter.state = "selected"
     } else if (action.type === "locked") {
       newState.lockedFilter.value = action.value
       newState.lockedFilter.label = action.value ? "Locked" : "Unlocked"
+      newState.lockedFilter.state = "selected"
     } else if (action.type === "reason") {
       // React might invoke our reducer more than once for a single event,
       // so avoid duplicating reason filters
-      if (!newState.reasonFilter.value.includes(action.value)) {
-        newState.reasonFilter.value.push(action.value)
+      if (newState.reasonFilter.filter((reasonFilter) => reasonFilter.value === action.value).length < 1) {
+        newState.reasonFilter.push({ value: action.value, state: "selected" })
       }
     }
   } else if (action.method === "remove") {
@@ -40,19 +50,25 @@ const reducer = (state: FilterState, action: FilterAction) => {
       newState.lockedFilter.value = undefined
       newState.dateFilter.label = undefined
     } else if (action.type === "reason") {
-      newState.reasonFilter.value = newState.reasonFilter.value.filter((reason: string) => reason !== action.value)
+      newState.reasonFilter = newState.reasonFilter.filter((reasonFilter) => reasonFilter.value !== action.value)
     }
   }
   return newState
 }
 
-const CourtCaseFilter: React.FC = () => {
-  const [state, dispatch] = useReducer(reducer, {
-    urgentFilter: {},
-    dateFilter: {},
-    lockedFilter: {},
-    reasonFilter: { value: [] }
-  })
+const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
+  const initialFilterState: Filter = {
+    urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "applied", label: urgency } : {},
+    dateFilter: dateRange !== null ? { value: dateRange, state: "applied", label: dateRange } : {},
+    lockedFilter: locked !== null ? { value: locked === "Locked", state: "applied", label: locked } : {},
+    reasonFilter: courtCaseTypes.map((courtCaseType) => {
+      return { value: courtCaseType, state: "applied" }
+    })
+  }
+
+  const [state, dispatch] = useReducer(reducer, initialFilterState)
+
+  console.log(state)
 
   return (
     <form method={"get"}>
@@ -98,17 +114,17 @@ const CourtCaseFilter: React.FC = () => {
                     }}
                   />
                 </If>
-                <If condition={state.reasonFilter.value.length > 0}>
+                <If condition={state.reasonFilter.length > 0}>
                   <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
                 </If>
 
-                {state.reasonFilter.value.map((reason: Reason) => (
+                {state.reasonFilter.map((reasonFilter) => (
                   <FilterChip
-                    key={reason}
-                    chipLabel={reason}
+                    key={reasonFilter.value}
+                    chipLabel={reasonFilter.value}
                     dispatch={dispatch}
                     removeAction={() => {
-                      return { method: "remove", type: "reason", value: reason }
+                      return { method: "remove", type: "reason", value: reasonFilter.value }
                     }}
                   />
                 ))}
@@ -128,7 +144,10 @@ const CourtCaseFilter: React.FC = () => {
             <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
           </div>
           <div className="govuk-form-group">
-            <CourtCaseTypeOptions courtCaseTypes={state.reasonFilter.value} dispatch={dispatch} />
+            <CourtCaseTypeOptions
+              courtCaseTypes={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
+              dispatch={dispatch}
+            />
           </div>
           <div className="govuk-form-group">
             <CourtDateFilterOptions dateRange={state.dateFilter.value} dispatch={dispatch} />
