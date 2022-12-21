@@ -147,6 +147,38 @@ describe("Case list", () => {
         cy.get('h2[class^="govuk-heading-m govuk-!-margin-bottom-0"]').children().should("have.length", 0)
       })
     })
+
+    describe("Locked status", () => {
+      it("", () => {})
+    })
+
+    describe("Selecting multiple filter chips", () => {
+      it.only("should allow you to select 'Trigger', 'Last week', 'non-urgent'. This should display relevant header for each filter chip", () => {
+        // Open filters and build filter chip query
+        cy.get('[class^="moj-action-bar"]').click()
+        cy.get('*[class^="govuk-checkboxes__item"]').contains("Triggers").click()
+        cy.get("#date-range").click()
+        cy.get("#date-range-last-week").click()
+        cy.get("#non-urgent").click()
+
+        // Check that relevant chips and headers are present on screen
+        // Reasons
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Reason").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Triggers").should("exist")
+        cy.get('*[class^="moj-filter-tag"]').contains("Exceptions").should("not.exist")
+        // Urgency
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgency").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Non-urgent").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgent").should("not.exist")
+        // Date Range
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Date range").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Last week").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Today").should("not.exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Yesterday").should("not.exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("This week").should("not.exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("This month").should("not.exist")
+      })
+    })
   })
 })
 
