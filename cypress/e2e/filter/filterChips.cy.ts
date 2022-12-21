@@ -26,7 +26,9 @@ describe("Case list", () => {
 
     it("Should display no filters chips as the default state", () => {
       cy.get('[class^="moj-action-bar"]').click()
-      cy.get('ui [class^="moj-filter-tags"]').should("have.length", 0)
+      cy.get('*[class^="moj-filter-tag"]').should("not.be.visible")
+      cy.get('*[class^="govuk-checkboxes__item"]').should("not.be.checked")
+      cy.get('*[class^="govuk-radios__input"]').should("not.be.checked")
     })
 
     describe("Case type", () => {
@@ -37,6 +39,7 @@ describe("Case list", () => {
         // Check if the correct heading and filter label are applied
         cy.get('*[class^="moj-filter__selected-heading"').contains("Reason").should("exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Triggers").should("exist")
+        cy.get('*[class^="moj-filter-tag"]').contains("Exceptions").should("not.exist")
       })
 
       it("Should remove the Trigger filter chip when the chip is clicked and remove the selected option in the filter panel", () => {
@@ -46,10 +49,11 @@ describe("Case list", () => {
         // Check if the correct heading and filter label are applied
         cy.get('*[class^="moj-filter__selected-heading"').contains("Reason").should("exist")
         cy.get('*[class^="moj-filter-tag"]').contains("Triggers").should("exist")
+        cy.get('*[class^="moj-filter-tag"]').contains("Exceptions").should("not.exist")
 
         // Removes the filter chip
         cy.get('li button[class ^="moj-filter__tag"]').trigger("click")
-        cy.get('ui [class^="moj-filter-tags"]').should("have.length", 0)
+        cy.get('*[class^="moj-filter-tag"]').contains("Trigger").should("not.exist")
       })
 
       it("Should display Trigger and Exception filter chips when selected", () => {
@@ -59,28 +63,39 @@ describe("Case list", () => {
         cy.get('*[class^="govuk-checkboxes__item"]').contains("Exception").click()
 
         // Check if the correct heading for chips and filter labels are applied
-        cy.get('*[class^="moj-filter__selected-heading"').contains("Reason").should("exist")
-        cy.get('*[class^="moj-filter__selected-heading"').contains("Trigger").should("exist")
-        cy.get('*[class^="moj-filter__selected-heading"').contains("Exception").should("exist")
-        cy.get('li button[class^="moj-filter__tag"]').children().should("have.length", 2)
+        cy.get('ul[class^="moj-filter-tags"]').contains("Reason").should("exist")
+        cy.get('*[class^="moj-filter__selected"]').contains("Trigger").should("exist")
+        cy.get('*[class^="moj-filter__selected"]').contains("Exception").should("exist")
       })
 
-      it("Should remove the Trigger and Exception filter chip when both chips are clicked and remove the selected option in the filter panel", () => {
+      it("Should display Trigger and Exception filter chips when selected", () => {
         // Shows filters and clicks both options
         cy.get('[class^="moj-action-bar"]').click()
         cy.get('*[class^="govuk-checkboxes__item"]').contains("Triggers").click()
         cy.get('*[class^="govuk-checkboxes__item"]').contains("Exception").click()
 
         // Check if the correct heading for chips and filter labels are applied
-        cy.get('*[class^="moj-filter__selected-heading"').contains("Reason").should("exist")
+        cy.get('ul[class^="moj-filter-tags"]').contains("Reason").should("exist")
+        cy.get('*[class^="moj-filter__selected"]').contains("Trigger").should("exist")
+        cy.get('*[class^="moj-filter__selected"]').contains("Exception").should("exist")
+      })
+
+      it("Should remove the Trigger and Exception filter chips when both chips are clicked and remove the selected option in the filter panel", () => {
+        // Shows filters and clicks both options
+        cy.get('[class^="moj-action-bar"]').click()
+        cy.get('*[class^="govuk-checkboxes__item"]').contains("Triggers").click()
+        cy.get('*[class^="govuk-checkboxes__item"]').contains("Exception").click()
+
+        // Check if the correct heading for chips and filter labels are applied
+        cy.get('*[class^="moj-filter-tags"').contains("Reason").should("exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Triggers").should("exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Exception").should("exist")
-        cy.get('li button[class^="moj-filter__tag"]').children().should("have.length", 2)
+        cy.get('*[class^="moj-filter-tags"]').children().should("have.length", 3)
 
         // Removes the two filter chips
         cy.get('li button[class ^="moj-filter__tag"]').contains("Triggers").trigger("click")
         cy.get('li button[class ^="moj-filter__tag"]').contains("Exception").trigger("click")
-        cy.get('h2[class^="govuk-heading-m govuk-!-margin-bottom-0"]').children().should("have.length", 0)
+        cy.get('*[class^="moj-filter-tag"]').should("not.contain", "Trigger").and("not.contain", "Exception")
       })
     })
 
@@ -100,7 +115,7 @@ describe("Case list", () => {
     })
 
     describe("Urgency", () => {
-      it.only("Should apply the 'Urgent cases only' radio button", () => {
+      it("Should apply the 'Urgent cases only' radio button", () => {
         cy.get('[class^="moj-action-bar"]').click()
         cy.get("#urgent").click()
 
@@ -116,6 +131,20 @@ describe("Case list", () => {
         cy.get('*[class^="moj-filter__selected-heading"').contains("Urgency").should("exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Non-urgent").should("exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Urgent").should("not.exist")
+      })
+
+      it("Should remove the 'Urgent cases only' filter chip when the correct chip is 'X' is clicked", () => {
+        cy.get('[class^="moj-action-bar"]').click()
+        cy.get("#urgent").click()
+
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgency").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgent").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Non-urgent").should("not.exist")
+        cy.get('li button[class^="moj-filter__tag"]').children().should("have.length", 1)
+
+        // Removes the urgent filter chips
+        cy.get('li button[class ^="moj-filter__tag"]').contains("Urgent").trigger("click")
+        cy.get('h2[class^="govuk-heading-m govuk-!-margin-bottom-0"]').children().should("have.length", 0)
       })
     })
   })
