@@ -12,7 +12,14 @@ interface Props {
 const useStyles = createUseStyles({
   appliedFilter: {
     backgroundColor: "#62696D",
-    color: "#ffffff"
+    color: "#ffffff",
+    "&:hover": {
+      backgroundColor: "#62696D",
+      color: "#ffffff"
+    },
+    "&:after": {
+      backgroundImage: "url(/bichard/moj_assets/images/icon-tag-remove-cross-white.svg)"
+    }
   }
 })
 

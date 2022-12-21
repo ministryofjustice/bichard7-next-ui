@@ -68,8 +68,6 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
 
   const [state, dispatch] = useReducer(reducer, initialFilterState)
 
-  console.log(state)
-
   return (
     <form method={"get"}>
       <div className="moj-filter__header">
