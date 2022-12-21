@@ -1,16 +1,27 @@
 import type { Dispatch } from "react"
-import type { FilterAction } from "types/CourtCaseFilter"
+import type { FilterAction, FilterState } from "types/CourtCaseFilter"
+import { createUseStyles } from "react-jss"
 
 interface Props {
   chipLabel: string
   dispatch: Dispatch<FilterAction>
   removeAction: () => FilterAction
+  state: FilterState
 }
 
-const FilterChip: React.FC<Props> = ({ chipLabel, dispatch, removeAction }: Props) => {
+const useStyles = createUseStyles({
+  appliedFilter: {
+    backgroundColor: "#62696D",
+    color: "#ffffff"
+  }
+})
+
+const FilterChip: React.FC<Props> = ({ chipLabel, dispatch, removeAction, state }: Props) => {
+  const classes = useStyles()
+  const buttonClass = "moj-filter__tag " + (state === "applied" ? classes.appliedFilter : "")
   return (
     <li>
-      <button className="moj-filter__tag" onClick={() => dispatch(removeAction())}>
+      <button className={buttonClass} onClick={() => dispatch(removeAction())}>
         <span className="govuk-visually-hidden">{"Remove this filter"}</span>
         {chipLabel}
       </button>

@@ -92,6 +92,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
                     removeAction={() => {
                       return { method: "remove", type: "urgency", value: state.urgentFilter.value! }
                     }}
+                    state={state.urgentFilter.state || "selected"}
                   />
                 </If>
                 <If condition={state.dateFilter.value !== undefined && state.dateFilter.label !== undefined}>
@@ -102,6 +103,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
                     removeAction={() => {
                       return { method: "remove", type: "date", value: state.dateFilter.value! }
                     }}
+                    state={state.dateFilter.state || "selected"}
                   />
                 </If>
                 <If condition={state.lockedFilter.value !== undefined && state.lockedFilter.label !== undefined}>
@@ -112,6 +114,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
                     removeAction={() => {
                       return { method: "remove", type: "locked", value: state.lockedFilter.value! }
                     }}
+                    state={state.lockedFilter.state || "selected"}
                   />
                 </If>
                 <If condition={state.reasonFilter.length > 0}>
@@ -126,6 +129,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
                     removeAction={() => {
                       return { method: "remove", type: "reason", value: reasonFilter.value }
                     }}
+                    state={reasonFilter.state}
                   />
                 ))}
               </ul>
