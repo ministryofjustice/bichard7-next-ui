@@ -46,6 +46,58 @@ describe("Case list", () => {
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
+    it("Should expand and collapse case type filter navigation", () => {
+      cy.visit("/bichard")
+      cy.get("button[id=filter-button]").click()
+
+      cy.contains("Exceptions").should("exist")
+
+      cy.contains("Case type").parent().parent().parent().find("button").click()
+      cy.contains("Exceptions").should("not.exist")
+
+      cy.contains("Case type").parent().parent().parent().find("button").click()
+      cy.contains("Exceptions").should("exist")
+    })
+
+    it("Should expand and collapse court date filter navigation", () => {
+      cy.visit("/bichard")
+      cy.get("button[id=filter-button]").click()
+
+      cy.contains("Date range").should("exist")
+
+      cy.contains("Court date").parent().parent().parent().find("button").click()
+      cy.contains("Date range").should("not.exist")
+
+      cy.contains("Court date").parent().parent().parent().find("button").click()
+      cy.contains("Date range").should("exist")
+    })
+
+    it("Should expand and collapse urgency filter navigation", () => {
+      cy.visit("/bichard")
+      cy.get("button[id=filter-button]").click()
+
+      cy.contains("Urgent cases only").should("exist")
+
+      cy.contains("Urgency").parent().parent().parent().find("button").click()
+      cy.contains("Urgent cases only").should("not.exist")
+
+      cy.contains("Urgency").parent().parent().parent().find("button").click()
+      cy.contains("Urgent cases only").should("exist")
+    })
+
+    it("Should expand and collapse locked state filter navigation", () => {
+      cy.visit("/bichard")
+      cy.get("button[id=filter-button]").click()
+
+      cy.contains("Locked cases only").should("exist")
+
+      cy.contains("Locked state").parent().parent().parent().find("button").click()
+      cy.contains("Locked cases only").should("not.exist")
+
+      cy.contains("Locked state").parent().parent().parent().find("button").click()
+      cy.contains("Locked cases only").should("exist")
+    })
+
     it("Should display cases filtered by defendant name", () => {
       cy.task("insertCourtCasesWithDefendantNames", {
         defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"],
