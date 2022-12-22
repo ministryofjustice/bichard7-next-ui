@@ -78,13 +78,13 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
             setCaseTypeVisible(!caseTypeIsVisible)
           }}
         >
-          <button type="button" className={classes.iconButton} aria-label={filterName}>
+          <button type="button" className={classes.iconButton} aria-label={`${filterName} filter options`}>
             {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
           </button>
         </div>
         <div className={classes.legendContainer}>
           <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
-            <div className={classes.legendColour}>{`${filterName} filter options`}</div>
+            <div className={classes.legendColour}>{filterName}</div>
           </legend>
         </div>
       </div>
