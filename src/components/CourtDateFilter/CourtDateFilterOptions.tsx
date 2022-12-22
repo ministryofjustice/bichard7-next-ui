@@ -25,7 +25,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange }: Props) => (
         id={"date-range"}
         dataAriaControls={"conditional-date-range"}
         defaultChecked={validateNamedDateRange(dateRange || "")}
-        label={"Date Range"}
+        label={"Date range"}
       />
       <div className="govuk-radios__conditional" id="conditional-date-range">
         <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">

@@ -20,6 +20,9 @@ const useStyles = createUseStyles({
   legendColour: {
     color: "#1D70B8"
   },
+  legendContainer: {
+    marginTop: "8px"
+  },
   iconButton: {
     padding: "5px 10px",
     margin: "0 2px 0 -10px",
@@ -38,7 +41,10 @@ const useStyles = createUseStyles({
   },
   container: {
     display: "flex",
-    margin: "0 0 5px 0"
+    margin: "0 0 0 0"
+  },
+  "govuk-form-group": {
+    marginBottom: "0"
   }
 })
 
@@ -65,20 +71,20 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
   const classes = useStyles()
   return (
     <fieldset className="govuk-fieldset">
-      <div
-        onClick={() => {
-          setCaseTypeVisible(!caseTypeIsVisible)
-        }}
-        className={classes.container}
-      >
-        <div className={classes.iconContainer}>
-          <button type="button" className={classes.iconButton}>
+      <div className={classes.container}>
+        <div
+          className={classes.iconContainer}
+          onClick={() => {
+            setCaseTypeVisible(!caseTypeIsVisible)
+          }}
+        >
+          <button type="button" className={classes.iconButton} aria-label={filterName}>
             {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
           </button>
         </div>
-        <div>
-          <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
-            <div className={classes.legendColour}>{filterName}</div>
+        <div className={classes.legendContainer}>
+          <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
+            <div className={classes.legendColour}>{`${filterName} filter options`}</div>
           </legend>
         </div>
       </div>
@@ -88,6 +94,7 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
 }
 
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
+  const classes = useStyles()
   return (
     <form method={"get"}>
       <div className="moj-filter__header">
@@ -108,29 +115,33 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
           <button className="govuk-button" data-module="govuk-button" id="search">
             {"Apply filters"}
           </button>
-          <div className="govuk-form-group">
+          <div className={classes["govuk-form-group"]}>
             <label className="govuk-label govuk-label--m" htmlFor="keywords">
               {"Keywords"}
             </label>
             <HintText>{"Defendent name, Court name, Reason, PTIURN"}</HintText>
             <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
           </div>
-          <div className="govuk-form-group">
+          <div className={classes["govuk-form-group"]}>
+            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Case type"}>
               <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} />
             </ExpandingFilters>
           </div>
-          <div className="govuk-form-group">
+          <div className={classes["govuk-form-group"]}>
+            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"}>
               <CourtDateFilterOptions dateRange={dateRange} />
             </ExpandingFilters>
           </div>
-          <div className="govuk-form-group">
+          <div className={classes["govuk-form-group"]}>
+            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Urgency"}>
               <UrgencyFilterOptions urgency={urgency} />
             </ExpandingFilters>
           </div>
           <div>
+            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Locked state"}>
               <LockedFilterOptions locked={locked} />
             </ExpandingFilters>
