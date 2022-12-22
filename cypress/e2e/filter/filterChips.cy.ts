@@ -105,7 +105,7 @@ describe("Case list", () => {
     })
 
     describe("Urgency", () => {
-      it("Should apply the 'Non-urgent cases only' radio button", () => {
+      it("Should apply the 'Non-urgent cases only' filter chip", () => {
         cy.get('[class^="moj-action-bar"]').click()
         cy.get("#non-urgent").click()
 
@@ -129,7 +129,17 @@ describe("Case list", () => {
     })
 
     describe("Locked status", () => {
-      it("", () => {})
+      it.only("Should apply the 'Locked cases only' filter chips then remove this chips to the original state", () => {
+        cy.get('[class^="moj-action-bar"]').click()
+        cy.get("#locked").click()
+
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Locked state").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Locked").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Unlocked").should("not.exist")
+
+        cy.get('li button[class ^="moj-filter__tag"]').contains("Locked").trigger("click")
+        cy.get('h2[class^="govuk-heading-m govuk-!-margin-bottom-0"]').children().should("have.length", 0)
+      })
     })
 
     describe("Selecting multiple filter chips", () => {
