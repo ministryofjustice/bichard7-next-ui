@@ -129,7 +129,7 @@ describe("Case list", () => {
     })
 
     describe("Locked status", () => {
-      it.only("Should apply the 'Locked cases only' filter chips then remove this chips to the original state", () => {
+      it("Should apply the 'Locked cases only' filter chips then remove this chips to the original state", () => {
         cy.get('[class^="moj-action-bar"]').click()
         cy.get("#locked").click()
 
@@ -173,6 +173,44 @@ describe("Case list", () => {
         cy.get('*[class^="moj-button-menu__wrapper"').contains("Triggers").should("exist")
         cy.get('*[class^="moj-button-menu__wrapper"').contains("Non-urgent").should("exist")
         cy.get('*[class^="moj-button-menu__wrapper"').contains("Last week").should("exist")
+      })
+
+      it.only("Should allow a user to apply 'Trigger' and 'Urgent cases only' filter, under the Applied filters section. Then selecting 'Non urgent cases only' and see the previous urgent filter removed", () => {
+        cy.get(".moj-action-bar button").click()
+        cy.get('*[class^="govuk-checkboxes__item"]').contains("Triggers").click()
+        cy.get("#non-urgent").click()
+
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Selected filters").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Applied filters").should("not.exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Reason").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Triggers").should("exist")
+
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgency").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Non-urgent").should("exist")
+        cy.get("#search").contains("Apply filters").click()
+
+        cy.get(".moj-action-bar button").click()
+
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Selected filters").should("not.exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Applied filters").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgency").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Reason").should("exist")
+        cy.get('*[class^="moj-filter__tag"').contains("Triggers").should("exist")
+        cy.get('*[class^="moj-filter__tag"').contains("Non-urgent").should("exist")
+
+        cy.get("#urgent").click()
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Applied filters").should("exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Urgency").should("exist")
+        cy.get('.moj-filter *[class^="moj-filter__tag"').contains("Non-urgent").should("not.exist")
+        cy.get('*[class^="moj-filter__selected-heading"').contains("Selected filters").should("exist")
+        cy.get('*[class^="moj-filter__tag"').contains("Urgent").should("exist")
+        cy.get('*[class^="moj-filter__tag"')
+          .contains("Urgent")
+          .parent()
+          .parent()
+          .prev()
+          .contains("Selected filters")
+          .should("exist")
       })
     })
   })
