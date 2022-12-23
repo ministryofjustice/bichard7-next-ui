@@ -9,7 +9,7 @@ export type FilterAction =
 export type FilterType = "urgency" | "date" | "locked" | "reason"
 export type FilterMethod = "add" | "remove"
 export type FilterValue = boolean | string | Reason
-export type FilterState = "selected" | "applied"
+export type FilterState = "Selected" | "Applied"
 export type Filter = {
   urgentFilter: {
     value?: boolean

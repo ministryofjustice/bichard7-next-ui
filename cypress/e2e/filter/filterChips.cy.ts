@@ -175,7 +175,7 @@ describe("Case list", () => {
         cy.get('*[class^="moj-button-menu__wrapper"').contains("Last week").should("exist")
       })
 
-      it.only("Should allow a user to apply 'Trigger' and 'Urgent cases only' filter, under the Applied filters section. Then selecting 'Non urgent cases only' and see the previous urgent filter removed", () => {
+      it("Should allow a user to apply 'Trigger' and 'Urgent cases only' filter, under the Applied filters section. Then selecting 'Non urgent cases only' and see the previous urgent filter removed", () => {
         cy.get(".moj-action-bar button").click()
         cy.get('*[class^="govuk-checkboxes__item"]').contains("Triggers").click()
         cy.get("#non-urgent").click()

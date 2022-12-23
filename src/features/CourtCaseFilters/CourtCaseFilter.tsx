@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
-import FilterChip from "components/FilterChip"
-import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
 import { useReducer } from "react"
 import { Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
+import FilterChipSection from "./FilterChipSection"
 
 interface Props {
   courtCaseTypes: Reason[]
@@ -23,20 +22,20 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
     if (action.type === "urgency") {
       newState.urgentFilter.value = action.value
       newState.urgentFilter.label = action.value ? "Urgent" : "Non-urgent"
-      newState.urgentFilter.state = "selected"
+      newState.urgentFilter.state = "Selected"
     } else if (action.type === "date") {
       newState.dateFilter.value = action.value
       newState.dateFilter.label = action.value
-      newState.dateFilter.state = "selected"
+      newState.dateFilter.state = "Selected"
     } else if (action.type === "locked") {
       newState.lockedFilter.value = action.value
       newState.lockedFilter.label = action.value ? "Locked" : "Unlocked"
-      newState.lockedFilter.state = "selected"
+      newState.lockedFilter.state = "Selected"
     } else if (action.type === "reason") {
       // React might invoke our reducer more than once for a single event,
       // so avoid duplicating reason filters
       if (newState.reasonFilter.filter((reasonFilter) => reasonFilter.value === action.value).length < 1) {
-        newState.reasonFilter.push({ value: action.value, state: "selected" })
+        newState.reasonFilter.push({ value: action.value, state: "Selected" })
       }
     }
   } else if (action.method === "remove") {
@@ -58,29 +57,15 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
 
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
   const initialFilterState: Filter = {
-    urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "applied", label: urgency } : {},
-    dateFilter: dateRange !== null ? { value: dateRange, state: "applied", label: dateRange } : {},
-    lockedFilter: locked !== null ? { value: locked === "Locked", state: "applied", label: locked } : {},
+    urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
+    dateFilter: dateRange !== null ? { value: dateRange, state: "Applied", label: dateRange } : {},
+    lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
-      return { value: courtCaseType, state: "applied" }
+      return { value: courtCaseType, state: "Applied" }
     })
   }
 
   const [state, dispatch] = useReducer(reducer, initialFilterState)
-  const noSelectedFilter =
-    [state.dateFilter, state.lockedFilter, state.urgentFilter]
-      .map((filter): number => {
-        return filter.value !== undefined && filter.state === "selected" ? 1 : 0
-      })
-      .reduce((i, x) => i + x, 0) + state.reasonFilter.filter((filter) => filter.state === "selected").length
-
-  const noAppliedFilters =
-    [state.dateFilter, state.lockedFilter, state.urgentFilter]
-      .map((filter): number => {
-        return filter.value !== undefined && filter.state === "applied" ? 1 : 0
-      })
-      .reduce((i, x) => i + x, 0) + state.reasonFilter.filter((filter) => filter.state === "applied").length
-
   return (
     <form method={"get"}>
       <div className="moj-filter__header">
@@ -93,158 +78,8 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
         <div className="moj-filter__selected">
           <div className="moj-filter__selected-heading">
             <div className="moj-filter__heading-title">
-              <If condition={noAppliedFilters > 0}>
-                <h2 className="govuk-heading-m govuk-!-margin-bottom-0">{"Applied filters"}</h2>
-                <ul className="moj-filter-tags">
-                  <If
-                    condition={
-                      state.urgentFilter.value !== undefined &&
-                      state.urgentFilter.label !== undefined &&
-                      state.urgentFilter.state === "applied"
-                    }
-                  >
-                    <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Urgency"}</h3>
-                    <FilterChip
-                      chipLabel={state.urgentFilter.label!}
-                      dispatch={dispatch}
-                      removeAction={() => {
-                        return { method: "remove", type: "urgency", value: state.urgentFilter.value! }
-                      }}
-                      state={state.urgentFilter.state || "applied"}
-                    />
-                  </If>
-                  <If
-                    condition={
-                      state.dateFilter.value !== undefined &&
-                      state.dateFilter.label !== undefined &&
-                      state.dateFilter.state === "applied"
-                    }
-                  >
-                    <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Date range"}</h3>
-                    <FilterChip
-                      chipLabel={state.dateFilter.label!}
-                      dispatch={dispatch}
-                      removeAction={() => {
-                        return { method: "remove", type: "date", value: state.dateFilter.value! }
-                      }}
-                      state={state.dateFilter.state || "applied"}
-                    />
-                  </If>
-                  <If
-                    condition={
-                      state.lockedFilter.value !== undefined &&
-                      state.lockedFilter.label !== undefined &&
-                      state.lockedFilter.state === "applied"
-                    }
-                  >
-                    <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Locked state"}</h3>
-                    <FilterChip
-                      chipLabel={state.lockedFilter.label!}
-                      dispatch={dispatch}
-                      removeAction={() => {
-                        return { method: "remove", type: "locked", value: state.lockedFilter.value! }
-                      }}
-                      state={state.lockedFilter.state || "applied"}
-                    />
-                  </If>
-                  <If
-                    condition={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === "applied").length > 0}
-                  >
-                    <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
-                  </If>
-
-                  {state.reasonFilter
-                    .filter((reasonFilter) => reasonFilter.state === "applied")
-                    .map((reasonFilter) => (
-                      <FilterChip
-                        key={reasonFilter.value}
-                        chipLabel={reasonFilter.value}
-                        dispatch={dispatch}
-                        removeAction={() => {
-                          return { method: "remove", type: "reason", value: reasonFilter.value }
-                        }}
-                        state={reasonFilter.state}
-                      />
-                    ))}
-                </ul>
-              </If>
-              <If condition={noSelectedFilter > 0}>
-                <h2 className="govuk-heading-m govuk-!-margin-bottom-0">{"Selected filters"}</h2>
-                <ul className="moj-filter-tags">
-                  <If
-                    condition={
-                      state.urgentFilter.value !== undefined &&
-                      state.urgentFilter.label !== undefined &&
-                      state.urgentFilter.state === "selected"
-                    }
-                  >
-                    <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Urgency"}</h3>
-                    <FilterChip
-                      chipLabel={state.urgentFilter.label!}
-                      dispatch={dispatch}
-                      removeAction={() => {
-                        return { method: "remove", type: "urgency", value: state.urgentFilter.value! }
-                      }}
-                      state={state.urgentFilter.state || "selected"}
-                    />
-                  </If>
-                  <If
-                    condition={
-                      state.dateFilter.value !== undefined &&
-                      state.dateFilter.label !== undefined &&
-                      state.dateFilter.state === "selected"
-                    }
-                  >
-                    <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Date range"}</h3>
-                    <FilterChip
-                      chipLabel={state.dateFilter.label!}
-                      dispatch={dispatch}
-                      removeAction={() => {
-                        return { method: "remove", type: "date", value: state.dateFilter.value! }
-                      }}
-                      state={state.dateFilter.state || "selected"}
-                    />
-                  </If>
-                  <If
-                    condition={
-                      state.lockedFilter.value !== undefined &&
-                      state.lockedFilter.label !== undefined &&
-                      state.lockedFilter.state === "selected"
-                    }
-                  >
-                    <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Locked state"}</h3>
-                    <FilterChip
-                      chipLabel={state.lockedFilter.label!}
-                      dispatch={dispatch}
-                      removeAction={() => {
-                        return { method: "remove", type: "locked", value: state.lockedFilter.value! }
-                      }}
-                      state={state.lockedFilter.state || "selected"}
-                    />
-                  </If>
-                  <If
-                    condition={
-                      state.reasonFilter.filter((reasonFilter) => reasonFilter.state === "selected").length > 0
-                    }
-                  >
-                    <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
-                  </If>
-
-                  {state.reasonFilter
-                    .filter((reasonFilter) => reasonFilter.state === "selected")
-                    .map((reasonFilter) => (
-                      <FilterChip
-                        key={reasonFilter.value}
-                        chipLabel={reasonFilter.value}
-                        dispatch={dispatch}
-                        removeAction={() => {
-                          return { method: "remove", type: "reason", value: reasonFilter.value }
-                        }}
-                        state={reasonFilter.state}
-                      />
-                    ))}
-                </ul>
-              </If>
+              <FilterChipSection state={state} dispatch={dispatch} sectionState={"Applied"} />
+              <FilterChipSection state={state} dispatch={dispatch} sectionState={"Selected"} />
             </div>
           </div>
         </div>
