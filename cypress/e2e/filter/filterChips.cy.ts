@@ -210,6 +210,7 @@ describe("Case list", () => {
           .parent()
           .parent()
           .prev()
+          .prev()
           .contains("Selected filters")
           .should("exist")
       })
