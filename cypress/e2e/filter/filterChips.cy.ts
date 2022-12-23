@@ -64,7 +64,7 @@ describe("Case list", () => {
         cy.get('*[class^="govuk-checkboxes__item"]').contains("Exception").click()
 
         // Check if the correct heading for chips and filter labels are applied
-        cy.get('ul[class^="moj-filter-tags"]').contains("Reason").should("exist")
+        cy.get("h3.govuk-heading-s").contains("Reason").should("exist")
         cy.get('*[class^="moj-filter__selected"]').contains("Trigger").should("exist")
         cy.get('*[class^="moj-filter__selected"]').contains("Exception").should("exist")
       })
@@ -76,10 +76,10 @@ describe("Case list", () => {
         cy.get('*[class^="govuk-checkboxes__item"]').contains("Exception").click()
 
         // Check if the correct heading for chips and filter labels are applied
-        cy.get('*[class^="moj-filter-tags"').contains("Reason").should("exist")
+        cy.get("h3.govuk-heading-s").contains("Reason").should("exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Triggers").should("exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Exception").should("exist")
-        cy.get('*[class^="moj-filter-tags"]').children().should("have.length", 3)
+        cy.get(".moj-filter-tags").children().should("have.length", 2)
 
         // Removes the two filter chips
         cy.get('li button[class ^="moj-filter__tag"]').contains("Triggers").trigger("click")
@@ -205,7 +205,7 @@ describe("Case list", () => {
         cy.get('.moj-filter *[class^="moj-filter__tag"').contains("Non-urgent").should("not.exist")
         cy.get('*[class^="moj-filter__selected-heading"').contains("Selected filters").should("exist")
         cy.get('*[class^="moj-filter__tag"').contains("Urgent").should("exist")
-        cy.get('*[class^="moj-filter__tag"')
+        cy.get(".moj-filter__tag")
           .contains("Urgent")
           .parent()
           .parent()

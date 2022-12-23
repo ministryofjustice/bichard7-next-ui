@@ -9,12 +9,15 @@ interface Props {
   state: Filter
   dispatch: Dispatch<FilterAction>
   sectionState: FilterState
+  marginTop: boolean
 }
 
-const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState }: Props) => {
+const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, marginTop }: Props) => {
   return (
     <If condition={countFilterChips(state, sectionState) > 0}>
-      <h2 className="govuk-heading-m govuk-!-margin-bottom-0">{`${sectionState} filters`}</h2>
+      <h2
+        className={"govuk-heading-m govuk-!-margin-bottom-0" + (marginTop ? " govuk-!-margin-top-2" : "")}
+      >{`${sectionState} filters`}</h2>
 
       <If
         condition={
@@ -23,8 +26,8 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState }: P
           state.urgentFilter.state === sectionState
         }
       >
-        <h3>{"Urgency"}</h3>
-        <ul className="moj-filter-tags">
+        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Urgency"}</h3>
+        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
           <FilterChip
             chipLabel={state.urgentFilter.label!}
             dispatch={dispatch}
@@ -43,7 +46,7 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState }: P
         }
       >
         <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Date range"}</h3>
-        <ul className="moj-filter-tags">
+        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
           <FilterChip
             chipLabel={state.dateFilter.label!}
             dispatch={dispatch}
@@ -62,7 +65,7 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState }: P
         }
       >
         <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Locked state"}</h3>
-        <ul className="moj-filter-tags">
+        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
           <FilterChip
             chipLabel={state.lockedFilter.label!}
             dispatch={dispatch}
@@ -75,7 +78,7 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState }: P
       </If>
       <If condition={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}>
         <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
-        <ul className="moj-filter-tags">
+        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
           {state.reasonFilter
             .filter((reasonFilter) => reasonFilter.state === sectionState)
             .map((reasonFilter) => (

@@ -82,8 +82,13 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
           <div className="moj-filter__selected">
             <div className="moj-filter__selected-heading">
               <div className="moj-filter__heading-title">
-                <FilterChipSection state={state} dispatch={dispatch} sectionState={"Applied"} />
-                <FilterChipSection state={state} dispatch={dispatch} sectionState={"Selected"} />
+                <FilterChipSection state={state} dispatch={dispatch} sectionState={"Applied"} marginTop={false} />
+                <FilterChipSection
+                  state={state}
+                  dispatch={dispatch}
+                  sectionState={"Selected"}
+                  marginTop={countFilterChips(state, "Applied") > 0}
+                />
               </div>
             </div>
           </div>
