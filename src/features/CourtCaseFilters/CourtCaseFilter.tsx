@@ -1,20 +1,61 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
 import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
-import { ReactNode, useState } from "react"
+import { ReactNode, useState, useReducer } from "react"
 import { createUseStyles } from "react-jss"
 import { Reason } from "types/CaseListQueryParams"
+import type { Filter, FilterAction } from "types/CourtCaseFilter"
+import { countFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
+import FilterChipSection from "./FilterChipSection"
 
 interface Props {
-  courtCaseTypes?: Reason[]
-  dateRange?: string | null
-  urgency?: string | null
-  locked?: string | null
+  courtCaseTypes: Reason[]
+  dateRange: string | null
+  urgency: string | null
+  locked: string | null
+}
+
+const reducer = (state: Filter, action: FilterAction): Filter => {
+  const newState = Object.assign({}, state)
+  if (action.method === "add") {
+    if (action.type === "urgency") {
+      newState.urgentFilter.value = action.value
+      newState.urgentFilter.label = action.value ? "Urgent" : "Non-urgent"
+      newState.urgentFilter.state = "Selected"
+    } else if (action.type === "date") {
+      newState.dateFilter.value = action.value
+      newState.dateFilter.label = action.value
+      newState.dateFilter.state = "Selected"
+    } else if (action.type === "locked") {
+      newState.lockedFilter.value = action.value
+      newState.lockedFilter.label = action.value ? "Locked" : "Unlocked"
+      newState.lockedFilter.state = "Selected"
+    } else if (action.type === "reason") {
+      // React might invoke our reducer more than once for a single event,
+      // so avoid duplicating reason filters
+      if (newState.reasonFilter.filter((reasonFilter) => reasonFilter.value === action.value).length < 1) {
+        newState.reasonFilter.push({ value: action.value, state: "Selected" })
+      }
+    }
+  } else if (action.method === "remove") {
+    if (action.type === "urgency") {
+      newState.urgentFilter.value = undefined
+      newState.urgentFilter.label = undefined
+    } else if (action.type === "date") {
+      newState.dateFilter.value = undefined
+      newState.dateFilter.label = undefined
+    } else if (action.type === "locked") {
+      newState.lockedFilter.value = undefined
+      newState.dateFilter.label = undefined
+    } else if (action.type === "reason") {
+      newState.reasonFilter = newState.reasonFilter.filter((reasonFilter) => reasonFilter.value !== action.value)
+    }
+  }
+  return newState
 }
 const useStyles = createUseStyles({
   legendColour: {
@@ -72,13 +113,15 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
   return (
     <fieldset className="govuk-fieldset">
       <div className={classes.container}>
-        <div
-          className={classes.iconContainer}
-          onClick={() => {
-            setCaseTypeVisible(!caseTypeIsVisible)
-          }}
-        >
-          <button type="button" className={classes.iconButton} aria-label={`${filterName} filter options`}>
+        <div className={classes.iconContainer}>
+          <button
+            type="button"
+            className={classes.iconButton}
+            aria-label={`${filterName} filter options`}
+            onClick={() => {
+              setCaseTypeVisible(!caseTypeIsVisible)
+            }}
+          >
             {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
           </button>
         </div>
@@ -94,9 +137,20 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
 }
 
 const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
+  const initialFilterState: Filter = {
+    urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
+    dateFilter: dateRange !== null ? { value: dateRange, state: "Applied", label: dateRange } : {},
+    lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
+    reasonFilter: courtCaseTypes.map((courtCaseType) => {
+      return { value: courtCaseType, state: "Applied" }
+    })
+  }
+  const [state, dispatch] = useReducer(reducer, initialFilterState)
+
   const classes = useStyles()
+
   return (
-    <form method={"get"}>
+    <form method={"get"} id="filter-panel">
       <div className="moj-filter__header">
         <div className="moj-filter__header-title">
           <h2 className="govuk-heading-m">{"Filter"}</h2>
@@ -104,13 +158,21 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
         <div className="moj-filter__header-action"></div>
       </div>
       <div className="moj-filter__content">
-        <div className="moj-filter__selected">
-          <div className="moj-filter__selected-heading">
-            <div className="moj-filter__heading-title">
-              <h2 className="govuk-heading-m">{"Selected filters"}</h2>
+        <If condition={countFilterChips(state) > 0}>
+          <div className="moj-filter__selected">
+            <div className="moj-filter__selected-heading">
+              <div className="moj-filter__heading-title">
+                <FilterChipSection state={state} dispatch={dispatch} sectionState={"Applied"} marginTop={false} />
+                <FilterChipSection
+                  state={state}
+                  dispatch={dispatch}
+                  sectionState={"Selected"}
+                  marginTop={countFilterChips(state, "Applied") > 0}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        </If>
         <div className="moj-filter__options">
           <button className="govuk-button" data-module="govuk-button" id="search">
             {"Apply filters"}
@@ -125,25 +187,28 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Case type"}>
-              <CourtCaseTypeOptions courtCaseTypes={courtCaseTypes} />
+              <CourtCaseTypeOptions
+                courtCaseTypes={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
+                dispatch={dispatch}
+              />
             </ExpandingFilters>
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"}>
-              <CourtDateFilterOptions dateRange={dateRange} />
+              <CourtDateFilterOptions dateRange={state.dateFilter.value} dispatch={dispatch} />
             </ExpandingFilters>
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Urgency"}>
-              <UrgencyFilterOptions urgency={urgency} />
+              <UrgencyFilterOptions urgency={state.urgentFilter.value} dispatch={dispatch} />
             </ExpandingFilters>
           </div>
           <div>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Locked state"}>
-              <LockedFilterOptions locked={locked} />
+              <LockedFilterOptions locked={state.lockedFilter.value} dispatch={dispatch} />
             </ExpandingFilters>
           </div>
         </div>

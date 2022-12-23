@@ -1,24 +1,40 @@
 import RadioButton from "components/RadioButton/RadioButton"
+import type { Dispatch } from "react"
+import type { FilterAction } from "types/CourtCaseFilter"
+import KeyValuePair from "types/KeyValuePair"
 
 interface Props {
-  urgency?: string | null
+  urgency?: boolean
+  dispatch: Dispatch<FilterAction>
 }
 
-const UrgencyOptions = ["Urgent", "Non-urgent"]
+const UrgencyOptions: KeyValuePair<string, boolean> = {
+  Urgent: true,
+  "Non-urgent": false
+}
 
-const UrgencyFilterOptions: React.FC<Props> = ({ urgency }: Props) => (
-  <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-    {UrgencyOptions.map((urgencyFilter) => (
-      <RadioButton
-        name={"urgency"}
-        key={urgencyFilter.toLowerCase()}
-        id={urgencyFilter.toLowerCase()}
-        defaultChecked={urgency === urgencyFilter}
-        value={urgencyFilter}
-        label={urgencyFilter + " cases only"}
-      />
-    ))}
-  </div>
-)
+const UrgencyFilterOptions: React.FC<Props> = ({ urgency, dispatch }: Props) => {
+  return (
+    <fieldset className="govuk-fieldset">
+      <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Urgency"}</legend>
+      <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+        {Object.keys(UrgencyOptions).map((optionName) => (
+          <RadioButton
+            name={"urgency"}
+            key={optionName.toLowerCase()}
+            id={optionName.toLowerCase()}
+            checked={urgency === UrgencyOptions[optionName]}
+            value={optionName}
+            label={optionName + " cases only"}
+            onChange={(event) => {
+              const filterValue = UrgencyOptions[event.target.value]
+              dispatch({ method: "add", type: "urgency", value: filterValue })
+            }}
+          />
+        ))}
+      </div>
+    </fieldset>
+  )
+}
 
 export default UrgencyFilterOptions

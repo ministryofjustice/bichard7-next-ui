@@ -11,7 +11,7 @@ export default {
 
 export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => (
   <div data-testid="filters">
-    <CourtCaseFilter courtCaseTypes={["Exceptions", "Triggers"]} urgency={"Urgent"} />
+    <CourtCaseFilter courtCaseTypes={[]} dateRange={null} urgency={null} locked={null} />
   </div>
 )
 
@@ -23,15 +23,14 @@ ShouldBeAccessible.play = async ({ canvasElement }) => {
 }
 
 export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> = () => (
-  <CourtCaseFilter courtCaseTypes={["Exceptions", "Triggers"]} urgency={"Urgent"} />
+  <CourtCaseFilter courtCaseTypes={["Exceptions"]} dateRange={"today"} urgency={"Urgent"} locked={"Locked"} />
 )
 
 WhenThereAreFiltersApplied.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
   expect(canvas.queryByText("Filter")).toBeInTheDocument()
-  expect(canvas.queryByText("Selected filters")).toBeInTheDocument()
+  expect(canvas.queryByText("Applied filters")).toBeInTheDocument()
   expect(canvas.queryByText("Apply filters")).toBeInTheDocument()
   expect(canvas.queryByText("Keywords")).toBeInTheDocument()
   expect(canvas.queryByText("Defendent name, Court name, Reason, PTIURN")).toBeInTheDocument()
-  expect(canvas.queryByText("Urgency")).toBeInTheDocument()
 }
