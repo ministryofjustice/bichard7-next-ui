@@ -29,9 +29,8 @@ export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> 
 WhenThereAreFiltersApplied.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
   expect(canvas.queryByText("Filter")).toBeInTheDocument()
-  expect(canvas.queryByText("Selected filters")).toBeInTheDocument()
+  expect(canvas.queryByText("Applied filters")).toBeInTheDocument()
   expect(canvas.queryByText("Apply filters")).toBeInTheDocument()
   expect(canvas.queryByText("Keywords")).toBeInTheDocument()
   expect(canvas.queryByText("Defendent name, Court name, Reason, PTIURN")).toBeInTheDocument()
-  expect(canvas.queryByText("Urgency")).toBeInTheDocument()
 }
