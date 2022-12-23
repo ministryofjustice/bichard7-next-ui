@@ -70,7 +70,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
   const [state, dispatch] = useReducer(reducer, initialFilterState)
 
   return (
-    <form method={"get"}>
+    <form method={"get"} id="filter-panel">
       <div className="moj-filter__header">
         <div className="moj-filter__header-title">
           <h2 className="govuk-heading-m">{"Filter"}</h2>
