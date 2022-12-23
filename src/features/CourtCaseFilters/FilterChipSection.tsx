@@ -3,6 +3,7 @@ import FilterChip from "components/FilterChip"
 import If from "components/If"
 import { Dispatch } from "react"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
+import { countFilterChips } from "utils/filterChips"
 
 interface Props {
   state: Filter
@@ -11,15 +12,8 @@ interface Props {
 }
 
 const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState }: Props) => {
-  const noOfChips =
-    [state.dateFilter, state.lockedFilter, state.urgentFilter]
-      .map((filter): number => {
-        return filter.value !== undefined && filter.state === sectionState ? 1 : 0
-      })
-      .reduce((i, x) => i + x, 0) + state.reasonFilter.filter((filter) => filter.state === sectionState).length
-
   return (
-    <If condition={noOfChips > 0}>
+    <If condition={countFilterChips(state, sectionState) > 0}>
       <h2 className="govuk-heading-m govuk-!-margin-bottom-0">{`${sectionState} filters`}</h2>
       <ul className="moj-filter-tags">
         <If

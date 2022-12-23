@@ -26,7 +26,8 @@ describe("Case list", () => {
 
     it("Should display no filters chips as the default state", () => {
       cy.get('[class^="moj-action-bar"]').click()
-      cy.get('*[class^="moj-filter-tag"]').should("not.be.visible")
+      cy.get('*[class^="moj-filter-tag"]').should("not.exist")
+      cy.get('*[class^="moj-filter__selected"]').should("not.exist")
       cy.get('*[class^="govuk-checkboxes__item"]').should("not.be.checked")
       cy.get('*[class^="govuk-radios__input"]').should("not.be.checked")
     })

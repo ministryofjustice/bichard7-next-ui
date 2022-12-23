@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
+import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
 import { useReducer } from "react"
 import { Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
+import { countFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 import FilterChipSection from "./FilterChipSection"
 
@@ -66,6 +68,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
   }
 
   const [state, dispatch] = useReducer(reducer, initialFilterState)
+
   return (
     <form method={"get"}>
       <div className="moj-filter__header">
@@ -75,14 +78,16 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
         <div className="moj-filter__header-action"></div>
       </div>
       <div className="moj-filter__content">
-        <div className="moj-filter__selected">
-          <div className="moj-filter__selected-heading">
-            <div className="moj-filter__heading-title">
-              <FilterChipSection state={state} dispatch={dispatch} sectionState={"Applied"} />
-              <FilterChipSection state={state} dispatch={dispatch} sectionState={"Selected"} />
+        <If condition={countFilterChips(state) > 0}>
+          <div className="moj-filter__selected">
+            <div className="moj-filter__selected-heading">
+              <div className="moj-filter__heading-title">
+                <FilterChipSection state={state} dispatch={dispatch} sectionState={"Applied"} />
+                <FilterChipSection state={state} dispatch={dispatch} sectionState={"Selected"} />
+              </div>
             </div>
           </div>
-        </div>
+        </If>
         <div className="moj-filter__options">
           <button className="govuk-button" data-module="govuk-button" id="search">
             {"Apply filters"}
