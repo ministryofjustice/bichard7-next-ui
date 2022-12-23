@@ -15,15 +15,16 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState }: P
   return (
     <If condition={countFilterChips(state, sectionState) > 0}>
       <h2 className="govuk-heading-m govuk-!-margin-bottom-0">{`${sectionState} filters`}</h2>
-      <ul className="moj-filter-tags">
-        <If
-          condition={
-            state.urgentFilter.value !== undefined &&
-            state.urgentFilter.label !== undefined &&
-            state.urgentFilter.state === sectionState
-          }
-        >
-          <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Urgency"}</h3>
+
+      <If
+        condition={
+          state.urgentFilter.value !== undefined &&
+          state.urgentFilter.label !== undefined &&
+          state.urgentFilter.state === sectionState
+        }
+      >
+        <h3>{"Urgency"}</h3>
+        <ul className="moj-filter-tags">
           <FilterChip
             chipLabel={state.urgentFilter.label!}
             dispatch={dispatch}
@@ -32,15 +33,17 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState }: P
             }}
             state={state.urgentFilter.state || sectionState}
           />
-        </If>
-        <If
-          condition={
-            state.dateFilter.value !== undefined &&
-            state.dateFilter.label !== undefined &&
-            state.dateFilter.state === sectionState
-          }
-        >
-          <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Date range"}</h3>
+        </ul>
+      </If>
+      <If
+        condition={
+          state.dateFilter.value !== undefined &&
+          state.dateFilter.label !== undefined &&
+          state.dateFilter.state === sectionState
+        }
+      >
+        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Date range"}</h3>
+        <ul className="moj-filter-tags">
           <FilterChip
             chipLabel={state.dateFilter.label!}
             dispatch={dispatch}
@@ -49,15 +52,17 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState }: P
             }}
             state={state.dateFilter.state || sectionState}
           />
-        </If>
-        <If
-          condition={
-            state.lockedFilter.value !== undefined &&
-            state.lockedFilter.label !== undefined &&
-            state.lockedFilter.state === sectionState
-          }
-        >
-          <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Locked state"}</h3>
+        </ul>
+      </If>
+      <If
+        condition={
+          state.lockedFilter.value !== undefined &&
+          state.lockedFilter.label !== undefined &&
+          state.lockedFilter.state === sectionState
+        }
+      >
+        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Locked state"}</h3>
+        <ul className="moj-filter-tags">
           <FilterChip
             chipLabel={state.lockedFilter.label!}
             dispatch={dispatch}
@@ -66,25 +71,26 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState }: P
             }}
             state={state.lockedFilter.state || sectionState}
           />
-        </If>
-        <If condition={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}>
-          <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
-        </If>
-
-        {state.reasonFilter
-          .filter((reasonFilter) => reasonFilter.state === sectionState)
-          .map((reasonFilter) => (
-            <FilterChip
-              key={reasonFilter.value}
-              chipLabel={reasonFilter.value}
-              dispatch={dispatch}
-              removeAction={() => {
-                return { method: "remove", type: "reason", value: reasonFilter.value }
-              }}
-              state={reasonFilter.state}
-            />
-          ))}
-      </ul>
+        </ul>
+      </If>
+      <If condition={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}>
+        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
+        <ul className="moj-filter-tags">
+          {state.reasonFilter
+            .filter((reasonFilter) => reasonFilter.state === sectionState)
+            .map((reasonFilter) => (
+              <FilterChip
+                key={reasonFilter.value}
+                chipLabel={reasonFilter.value}
+                dispatch={dispatch}
+                removeAction={() => {
+                  return { method: "remove", type: "reason", value: reasonFilter.value }
+                }}
+                state={reasonFilter.state}
+              />
+            ))}
+        </ul>
+      </If>
     </If>
   )
 }
