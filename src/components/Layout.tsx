@@ -15,7 +15,7 @@ const Layout = ({ children, user }: Props) => {
   const { basePath } = useRouter()
   const header = (
     <>
-      <Header serviceName={"Bichard7"} organisationName={"Minsitry of Justice"} userName={user.username} />
+      <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={user.username} />
       <NavBar groups={user.groups} />
     </>
   )
