@@ -54,7 +54,7 @@ describe("Case list", () => {
 
         // Removes the filter chip
         cy.get('li button[class ^="moj-filter__tag"]').trigger("click")
-        cy.get('*[class^="moj-filter-tag"]').contains("Trigger").should("not.exist")
+        cy.get('*[class^="moj-filter-tag"]').should("not.exist")
       })
 
       it("Should display Trigger and Exception filter chips when selected", () => {
@@ -84,7 +84,7 @@ describe("Case list", () => {
         // Removes the two filter chips
         cy.get('li button[class ^="moj-filter__tag"]').contains("Triggers").trigger("click")
         cy.get('li button[class ^="moj-filter__tag"]').contains("Exception").trigger("click")
-        cy.get('*[class^="moj-filter-tag"]').should("not.contain", "Trigger").and("not.contain", "Exception")
+        cy.get('*[class^="moj-filter-tag"]').should("not.exist")
       })
     })
 
@@ -125,7 +125,7 @@ describe("Case list", () => {
 
         // Removes the urgent filter chips
         cy.get('li button[class ^="moj-filter__tag"]').contains("Urgent").trigger("click")
-        cy.get('h2[class^="govuk-heading-m govuk-!-margin-bottom-0"]').children().should("have.length", 0)
+        cy.get('*[class^="moj-filter-tag"]').should("not.exist")
       })
     })
 
@@ -139,7 +139,7 @@ describe("Case list", () => {
         cy.get('*[class^="moj-filter__selected-heading"').contains("Unlocked").should("not.exist")
 
         cy.get('li button[class ^="moj-filter__tag"]').contains("Locked").trigger("click")
-        cy.get('h2[class^="govuk-heading-m govuk-!-margin-bottom-0"]').children().should("have.length", 0)
+        cy.get('*[class^="moj-filter-tag"]').should("not.exist")
       })
     })
 
