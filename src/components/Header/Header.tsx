@@ -1,13 +1,24 @@
+import { createUseStyles } from "react-jss"
+
 interface HeaderProps {
   serviceName: string
   organisationName: string
   userName: string
 }
+
+const useStyles = createUseStyles({
+  "max-width": {
+    maxWidth: "100%",
+    padding: "0 40px"
+  }
+})
+
 const Header: React.FC<HeaderProps> = ({ organisationName, serviceName, userName }: HeaderProps) => {
+  const classes = useStyles()
   return (
     <>
       <header className="moj-header" role="banner">
-        <div className="moj-header__container">
+        <div className={`${classes["max-width"]} moj-header__container`}>
           <div className="moj-header__logo">
             <svg
               aria-hidden="true"
