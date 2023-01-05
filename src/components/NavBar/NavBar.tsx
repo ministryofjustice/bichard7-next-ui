@@ -2,7 +2,7 @@ import If from "components/If"
 import { useRouter } from "next/router"
 import hasUserManagementAccess from "services/hasUserManagementAccess"
 import { default as GroupName } from "types/GroupName"
-import { createUseStyles } from "react-jss"
+import { useCustomStyles } from "../../../styles/customStyles"
 
 interface NavItemProps {
   name: string
@@ -34,15 +34,8 @@ const UserManagementNavItem: React.FC<NavBarProps> = (groups) => {
   )
 }
 
-const useStyles = createUseStyles({
-  "max-width": {
-    maxWidth: "100%",
-    padding: "0 40px"
-  }
-})
-
 const NavBar: React.FC<NavBarProps> = ({ groups }) => {
-  const classes = useStyles()
+  const classes = useCustomStyles()
   return (
     <div className="moj-primary-navigation" role="navigation">
       <div className={`${classes["max-width"]} moj-primary-navigation__container`}>

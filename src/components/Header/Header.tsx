@@ -1,4 +1,4 @@
-import { createUseStyles } from "react-jss"
+import { useCustomStyles } from "../../../styles/customStyles"
 
 interface HeaderProps {
   serviceName: string
@@ -6,15 +6,8 @@ interface HeaderProps {
   userName: string
 }
 
-const useStyles = createUseStyles({
-  "max-width": {
-    maxWidth: "100%",
-    padding: "0 40px"
-  }
-})
-
 const Header: React.FC<HeaderProps> = ({ organisationName, serviceName, userName }: HeaderProps) => {
-  const classes = useStyles()
+  const classes = useCustomStyles()
   return (
     <>
       <header className="moj-header" role="banner">
