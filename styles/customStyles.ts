@@ -8,5 +8,8 @@ export const useCustomStyles = createUseStyles({
   "govuk-width-container": {
     maxWidth: "100%",
     padding: "30px 40px"
+  },
+  "top-padding": {
+    paddingTop: "30px"
   }
 })
