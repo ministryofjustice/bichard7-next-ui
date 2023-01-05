@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useCustomStyles } from "../../../styles/customStyles"
 
 interface Props {
   filter: React.ReactNode
@@ -9,10 +10,10 @@ interface Props {
 
 const CourtCaseFilterWrapper: React.FC<Props> = ({ filter, appliedFilters, courtCaseList, pagination }: Props) => {
   const [isVisible, setVisible] = useState(false)
-
+  const classes = useCustomStyles()
   return (
     <>
-      <div className="moj-filter-layout">
+      <div className={`${classes["top-padding"]} moj-filter-layout`}>
         <div className="moj-filter-layout__filter">
           <div className={isVisible ? "moj-filter" : "moj-filter moj-hidden"}>{filter}</div>
         </div>

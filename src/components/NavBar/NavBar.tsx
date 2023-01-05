@@ -2,6 +2,7 @@ import If from "components/If"
 import { useRouter } from "next/router"
 import hasUserManagementAccess from "services/hasUserManagementAccess"
 import { default as GroupName } from "types/GroupName"
+import { useCustomStyles } from "../../../styles/customStyles"
 
 interface NavItemProps {
   name: string
@@ -34,9 +35,10 @@ const UserManagementNavItem: React.FC<NavBarProps> = (groups) => {
 }
 
 const NavBar: React.FC<NavBarProps> = ({ groups }) => {
+  const classes = useCustomStyles()
   return (
     <div className="moj-primary-navigation" role="navigation">
-      <div className="moj-primary-navigation__container">
+      <div className={`${classes["max-width"]} moj-primary-navigation__container`}>
         <div className="moj-primary-navigation__nav">
           <nav className="moj-primary-navigation" aria-label="Primary navigation">
             <ul className="moj-primary-navigation__list">
