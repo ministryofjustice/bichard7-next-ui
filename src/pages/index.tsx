@@ -14,7 +14,6 @@ import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import listCourtCases from "services/listCourtCases"
 import type CourtCase from "services/entities/CourtCase"
-import { Heading } from "govuk-react"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
@@ -109,9 +108,6 @@ const Home: NextPage<Props> = ({
       <meta name="description" content="Case List | Bichard7" />
     </Head>
     <Layout user={user}>
-      <Heading as="h1" size="LARGE">
-        {"Court cases"}
-      </Heading>
       <CourtCaseWrapper
         filter={
           <CourtCaseFilter courtCaseTypes={courtCaseTypes} dateRange={dateRange} urgency={urgent} locked={locked} />
