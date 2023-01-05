@@ -1,23 +1,24 @@
-import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
-import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
-import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { Reason, QueryOrder, Urgency } from "types/CaseListQueryParams"
-import { isError } from "types/Result"
-import CourtCaseList from "features/CourtCaseList/CourtCaseList"
 import Layout from "components/Layout"
 import Pagination from "components/Pagination/Pagination"
-import User from "services/entities/User"
-import getDataSource from "services/getDataSource"
+import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
+import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
+import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
+import CourtCaseList from "features/CourtCaseList/CourtCaseList"
+import { Heading } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
-import listCourtCases from "services/listCourtCases"
 import type CourtCase from "services/entities/CourtCase"
-import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
+import User from "services/entities/User"
+import getDataSource from "services/getDataSource"
+import listCourtCases from "services/listCourtCases"
+import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
+import { isError } from "types/Result"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
-import { validateQueryParams } from "utils/validators/validateQueryParams"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
+import { validateQueryParams } from "utils/validators/validateQueryParams"
 
 interface Props {
   user: User
@@ -108,6 +109,9 @@ const Home: NextPage<Props> = ({
       <meta name="description" content="Case List | Bichard7" />
     </Head>
     <Layout user={user}>
+      <Heading as="h1" size="LARGE">
+        {"Court cases"}
+      </Heading>
       <CourtCaseWrapper
         filter={
           <CourtCaseFilter courtCaseTypes={courtCaseTypes} dateRange={dateRange} urgency={urgent} locked={locked} />
