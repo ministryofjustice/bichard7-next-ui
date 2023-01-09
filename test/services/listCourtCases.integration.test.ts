@@ -14,7 +14,8 @@ import {
   insertDummyCourtCasesWithUrgencies,
   getDummyCourtCase,
   insertCourtCases,
-  insertMultipleDummyCourtCasesWithLock
+  insertMultipleDummyCourtCasesWithLock,
+  insertMultipleDummyCourtCasesWithResolutionTimestamp
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
@@ -763,6 +764,55 @@ describe("listCourtCases", () => {
 
       expect(unlockedCases).toHaveLength(1)
       expect(unlockedCases.map((c) => c.errorId)).toStrictEqual([2])
+    })
+  })
+
+  describe("Filter cases by case state", () => {
+    it("Should filter cases that are unresolved ", async () => {
+      const orgCode = "36FP"
+      const dummyTimestamp = new Date()
+      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
+        [null, dummyTimestamp, dummyTimestamp, dummyTimestamp],
+        orgCode
+      )
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        unresolved: true
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([null])
+    })
+
+    it("Should return all cases if a falsy value ", async () => {
+      const orgCode = "36FP"
+      const resolutionTimestamp = new Date()
+      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
+        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp],
+        orgCode
+      )
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        unresolved: false
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(4)
+      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([
+        null,
+        resolutionTimestamp,
+        resolutionTimestamp,
+        resolutionTimestamp
+      ])
     })
   })
 })

@@ -1,5 +1,5 @@
 import { format } from "date-fns"
-import { Brackets, DataSource } from "typeorm"
+import { Brackets, DataSource, IsNull } from "typeorm"
 import { CaseListQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
@@ -19,7 +19,8 @@ const listCourtCases = async (
     reasons: resultFilter,
     urgent,
     courtDateRange,
-    locked
+    locked,
+    unresolved
   }: CaseListQueryParams
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
@@ -54,6 +55,12 @@ const listCourtCases = async (
   if (courtDateRange) {
     query.andWhere("courtCase.courtDate >= :from", { from: format(courtDateRange.from, "yyyy-MM-dd") })
     query.andWhere("courtCase.courtDate <= :to", { to: format(courtDateRange.to, "yyyy-MM-dd") })
+  }
+
+  if (unresolved) {
+    query.andWhere({
+      resolutionTimestamp: IsNull()
+    })
   }
 
   if (locked !== undefined) {

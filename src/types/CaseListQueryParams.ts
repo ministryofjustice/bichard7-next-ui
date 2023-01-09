@@ -22,4 +22,5 @@ export type CaseListQueryParams = {
   maxPageItems: string
   courtDateRange?: CourtDateRange
   locked?: boolean
+  unresolved?: boolean
 }
