@@ -14,8 +14,9 @@ import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
+import { CaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
+import caseStateFilters from "utils/caseStateFilters"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
@@ -31,6 +32,7 @@ interface Props {
   dateRange: string | null
   pageNum: number
   locked: string | null
+  caseState: CaseState | null
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
@@ -40,7 +42,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, pageNum, type, keywords, maxPageItems, order, urgency, dateRange, locked } = query
+    const { orderBy, pageNum, type, keywords, maxPageItems, order, urgency, dateRange, locked, state } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Reason[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
     const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
@@ -50,6 +52,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLocked = validateQueryParams(locked) ? locked : undefined
+    const validatedCaseState = caseStateFilters.includes(String(state)) ? (state as CaseState) : undefined
 
     const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
@@ -63,7 +66,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       orderBy: validatedOrderBy,
       order: validatedOrder,
       courtDateRange: validatedDateRange,
-      locked: lockedFilter
+      locked: lockedFilter,
+      caseState: validatedCaseState
     })
 
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
@@ -85,7 +89,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
         urgent: validatedUrgent ? validatedUrgent : null,
-        locked: validatedLocked ? validatedLocked : null
+        locked: validatedLocked ? validatedLocked : null,
+        caseState: validatedCaseState ? validatedCaseState : null
       }
     }
   }
@@ -101,7 +106,8 @@ const Home: NextPage<Props> = ({
   keywords,
   dateRange,
   urgent,
-  locked
+  locked,
+  caseState
 }: Props) => (
   <>
     <Head>
@@ -114,10 +120,18 @@ const Home: NextPage<Props> = ({
       </Heading>
       <CourtCaseWrapper
         filter={
-          <CourtCaseFilter courtCaseTypes={courtCaseTypes} dateRange={dateRange} urgency={urgent} locked={locked} />
+          <CourtCaseFilter
+            courtCaseTypes={courtCaseTypes}
+            dateRange={dateRange}
+            urgency={urgent}
+            locked={locked}
+            caseState={caseState}
+          />
         }
         appliedFilters={
-          <AppliedFilters filters={{ courtCaseTypes, keywords, dateRange, urgency: urgent, locked: locked }} />
+          <AppliedFilters
+            filters={{ courtCaseTypes, keywords, dateRange, urgency: urgent, locked: locked, caseState: caseState }}
+          />
         }
         courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
         pagination={<Pagination totalPages={totalPages} pageNum={pageNum} />}

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import CaseStateFilterOptions from "components/CaseStateFilter/CaseStateFilterOptions"
 import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
 import If from "components/If"
@@ -6,7 +7,7 @@ import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
 import { ReactNode, useState, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import { Reason } from "types/CaseListQueryParams"
+import { CaseState, Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { countFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
@@ -17,6 +18,7 @@ interface Props {
   dateRange: string | null
   urgency: string | null
   locked: string | null
+  caseState: CaseState | null
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -136,11 +138,12 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
   )
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
+const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked, caseState }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
     dateFilter: dateRange !== null ? { value: dateRange, state: "Applied", label: dateRange } : {},
     lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
+    caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
       return { value: courtCaseType, state: "Applied" }
     })
@@ -203,6 +206,12 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"}>
               <CourtDateFilterOptions dateRange={state.dateFilter.value} dispatch={dispatch} />
+            </ExpandingFilters>
+          </div>
+          <div>
+            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
+            <ExpandingFilters filterName={"Case state"}>
+              <CaseStateFilterOptions state={state.caseStateFilter.value} dispatch={dispatch} />
             </ExpandingFilters>
           </div>
           <div>
