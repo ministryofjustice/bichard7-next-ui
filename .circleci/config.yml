@@ -21,7 +21,7 @@ commands:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - cd:21:43:ca:b8:83:a7:96:34:ab:96:d7:97:80:fa:25
+            - 56:12:d8:11:e2:11:41:bc:f3:29:b7:ba:cc:d5:0c:5a
       - run:
           name: Clone Bichard7 Next
           command: git clone --depth 1 git@github.com:ministryofjustice/bichard7-next.git ~/bichard7-next
@@ -233,7 +233,7 @@ jobs:
           path: ./cypress/videos
       - store_artifacts:
           path: ./cypress/screenshots
-          
+
   e2e_test:
     machine:
       image: ubuntu-2004:2022.07.1
