@@ -59,6 +59,25 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
       </If>
       <If
         condition={
+          state.caseStateFilter.value !== undefined &&
+          state.caseStateFilter.label !== undefined &&
+          state.caseStateFilter.state === sectionState
+        }
+      >
+        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Case state"}</h3>
+        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
+          <FilterChip
+            chipLabel={state.caseStateFilter.label!}
+            dispatch={dispatch}
+            removeAction={() => {
+              return { method: "remove", type: "caseState", value: state.caseStateFilter.value! }
+            }}
+            state={state.caseStateFilter.state || sectionState}
+          />
+        </ul>
+      </If>
+      <If
+        condition={
           state.lockedFilter.value !== undefined &&
           state.lockedFilter.label !== undefined &&
           state.lockedFilter.state === sectionState

@@ -5,7 +5,7 @@ export type FilterAction =
   | { method: FilterMethod; type: "date"; value: string }
   | { method: FilterMethod; type: "locked"; value: boolean }
   | { method: FilterMethod; type: "reason"; value: Reason }
-  | { method: FilterMethod; type: "state"; value: CaseState }
+  | { method: FilterMethod; type: "caseState"; value: CaseState }
 
 export type FilterType = "urgency" | "date" | "locked" | "reason"
 export type FilterMethod = "add" | "remove"

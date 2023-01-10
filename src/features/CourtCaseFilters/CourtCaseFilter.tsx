@@ -12,6 +12,7 @@ import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { countFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 import FilterChipSection from "./FilterChipSection"
+import { caseStateLabels } from "utils/caseStateFilters"
 
 interface Props {
   courtCaseTypes: Reason[]
@@ -32,6 +33,10 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.dateFilter.value = action.value
       newState.dateFilter.label = action.value
       newState.dateFilter.state = "Selected"
+    } else if (action.type === "caseState") {
+      newState.caseStateFilter.value = action.value
+      newState.caseStateFilter.label = caseStateLabels[action.value ?? ""]
+      newState.caseStateFilter.state = "Selected"
     } else if (action.type === "locked") {
       newState.lockedFilter.value = action.value
       newState.lockedFilter.label = action.value ? "Locked" : "Unlocked"
@@ -50,9 +55,12 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
     } else if (action.type === "date") {
       newState.dateFilter.value = undefined
       newState.dateFilter.label = undefined
+    } else if (action.type === "caseState") {
+      newState.caseStateFilter.value = undefined
+      newState.caseStateFilter.label = undefined
     } else if (action.type === "locked") {
       newState.lockedFilter.value = undefined
-      newState.dateFilter.label = undefined
+      newState.lockedFilter.label = undefined
     } else if (action.type === "reason") {
       newState.reasonFilter = newState.reasonFilter.filter((reasonFilter) => reasonFilter.value !== action.value)
     }
