@@ -768,7 +768,27 @@ describe("listCourtCases", () => {
   })
 
   describe("Filter cases by case state", () => {
-    it("Should filter cases that are unresolved ", async () => {
+    it("Should return unresolved cases if case state not set", async () => {
+      const orgCode = "36FP"
+      const resolutionTimestamp = new Date()
+      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
+        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp],
+        orgCode
+      )
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100"
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([null])
+    })
+
+    it("Should filter cases that are resolved", async () => {
       const orgCode = "36FP"
       const dummyTimestamp = new Date()
       await insertMultipleDummyCourtCasesWithResolutionTimestamp(
@@ -779,28 +799,28 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        unresolved: true
+        caseState: "Resolved"
       })
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(1)
-      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([null])
+      expect(cases).toHaveLength(3)
+      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([dummyTimestamp, dummyTimestamp, dummyTimestamp])
     })
 
-    it("Should return all cases if a falsy value ", async () => {
+    it("Should return all cases if case state is 'Unresolved and resolved'", async () => {
       const orgCode = "36FP"
-      const resolutionTimestamp = new Date()
+      const dummyTimestamp = new Date()
       await insertMultipleDummyCourtCasesWithResolutionTimestamp(
-        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp],
+        [null, dummyTimestamp, dummyTimestamp, dummyTimestamp],
         orgCode
       )
 
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        unresolved: false
+        caseState: "Unresolved and resolved"
       })
 
       expect(isError(result)).toBeFalsy()
@@ -809,9 +829,9 @@ describe("listCourtCases", () => {
       expect(cases).toHaveLength(4)
       expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([
         null,
-        resolutionTimestamp,
-        resolutionTimestamp,
-        resolutionTimestamp
+        dummyTimestamp,
+        dummyTimestamp,
+        dummyTimestamp
       ])
     })
   })
