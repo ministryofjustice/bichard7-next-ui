@@ -16,7 +16,6 @@ const UrgencyOptions: KeyValuePair<string, boolean> = {
 const UrgencyFilterOptions: React.FC<Props> = ({ urgency, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
-      <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Urgency"}</legend>
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
         {Object.keys(UrgencyOptions).map((optionName) => (
           <RadioButton

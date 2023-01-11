@@ -17,7 +17,6 @@ const LockedOptions: KeyValuePair<string, boolean> = {
 const LockedFilterOptions: React.FC<Props> = ({ locked, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
-      <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Locked state"}</legend>
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
         {lockedFilters.map((optionName) => (
           <RadioButton
