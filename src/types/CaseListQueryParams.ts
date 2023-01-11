@@ -9,6 +9,8 @@ export type CourtDateRange = {
   to: Date
 }
 
+export type CaseState = "Resolved" | "Unresolved and resolved" | undefined
+
 export type Urgency = "Urgent" | "Non-urgent" | undefined
 
 export type CaseListQueryParams = {
@@ -22,4 +24,5 @@ export type CaseListQueryParams = {
   maxPageItems: string
   courtDateRange?: CourtDateRange
   locked?: boolean
+  caseState?: CaseState
 }

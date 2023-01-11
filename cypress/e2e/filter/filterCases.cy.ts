@@ -98,6 +98,19 @@ describe("Case list", () => {
       cy.contains("Locked cases only").should("exist")
     })
 
+    it("Should expand and collapse case state filter navigation", () => {
+      cy.visit("/bichard")
+      cy.get("button[id=filter-button]").click()
+
+      cy.contains("Unresolved & resolved cases").should("exist")
+
+      cy.contains("Case state").parent().parent().parent().find("button").click()
+      cy.contains("Unresolved & resolved cases").should("not.exist")
+
+      cy.contains("Case state").parent().parent().parent().find("button").click()
+      cy.contains("Unresolved & resolved cases").should("exist")
+    })
+
     it("Should display cases filtered by defendant name", () => {
       cy.task("insertCourtCasesWithDefendantNames", {
         defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"],
@@ -387,6 +400,40 @@ describe("Case list", () => {
       // Removing non-urgent filter tag all case should be shown with the filter disabled
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Non-urgent").click({ force: true })
       cy.get("tr").not(":first").should("have.length", 4)
+    })
+
+    it("Should filter cases by case state", () => {
+      const resolutionTimestamp = new Date()
+      cy.task("insertMultipleDummyCourtCasesWithResolutionTimestamp", {
+        resolutionTimestamps: [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp],
+        orgCode: "011111"
+      })
+
+      cy.visit("/bichard")
+
+      // Filter for resolved and unresolved cases
+      cy.get("button[id=filter-button]").click()
+      cy.get("#unresolved-and-resolved").click()
+      cy.get("button[id=search]").click()
+
+      cy.get("tr").not(":first").should("have.length", 4)
+      cy.get("tr").not(":first").contains("Case00000").should("exist")
+
+      // Removing case state filter tag unresolved cases should be shown with the filter disabled
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Unresolved & resolved cases").click({ force: true })
+      cy.get("tr").not(":first").should("have.length", 1)
+
+      // Filter for resolved cases
+      cy.get("button[id=filter-button]").click()
+      cy.get("#resolved").click()
+      cy.get("button[id=search]").click()
+
+      cy.get("tr").not(":first").should("have.length", 3)
+      cy.get("tr").contains("Case00001").should("exist")
+
+      // Removing case state filter tag unresolved cases should be shown with the filter disabled
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Resolved cases").click({ force: true })
+      cy.get("tr").not(":first").should("have.length", 1)
     })
 
     it("Should filter cases by locked state", () => {

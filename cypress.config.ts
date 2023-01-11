@@ -11,7 +11,8 @@ import {
   insertDummyCourtCasesWithUrgencies,
   insertDummyCourtCasesWithNotes,
   insertCourtCasesWithCourtDates,
-  insertMultipleDummyCourtCasesWithLock
+  insertMultipleDummyCourtCasesWithLock,
+  insertMultipleDummyCourtCasesWithResolutionTimestamp
 } from "./test/utils/insertCourtCases"
 import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import { insertTriggers } from "./test/utils/manageTriggers"
@@ -84,6 +85,13 @@ export default defineConfig({
             params.triggerLockedByUsername,
             params.orgCodes
           )
+        },
+
+        insertMultipleDummyCourtCasesWithResolutionTimestamp(params: {
+          resolutionTimestamps: (Date | null)[]
+          orgCode: string
+        }) {
+          return insertMultipleDummyCourtCasesWithResolutionTimestamp(params.resolutionTimestamps, params.orgCode)
         },
 
         insertMultipleDummyCourtCasesWithLock(params: {

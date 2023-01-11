@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import CaseStateFilterOptions from "components/CaseStateFilter/CaseStateFilterOptions"
 import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
 import If from "components/If"
@@ -6,17 +7,19 @@ import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { HintText } from "govuk-react"
 import { ReactNode, useState, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import { Reason } from "types/CaseListQueryParams"
+import { CaseState, Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { countFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 import FilterChipSection from "./FilterChipSection"
+import { caseStateLabels } from "utils/caseStateFilters"
 
 interface Props {
   courtCaseTypes: Reason[]
   dateRange: string | null
   urgency: string | null
   locked: string | null
+  caseState: CaseState | null
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -30,6 +33,10 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.dateFilter.value = action.value
       newState.dateFilter.label = action.value
       newState.dateFilter.state = "Selected"
+    } else if (action.type === "caseState") {
+      newState.caseStateFilter.value = action.value
+      newState.caseStateFilter.label = caseStateLabels[action.value ?? ""]
+      newState.caseStateFilter.state = "Selected"
     } else if (action.type === "locked") {
       newState.lockedFilter.value = action.value
       newState.lockedFilter.label = action.value ? "Locked" : "Unlocked"
@@ -48,9 +55,12 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
     } else if (action.type === "date") {
       newState.dateFilter.value = undefined
       newState.dateFilter.label = undefined
+    } else if (action.type === "caseState") {
+      newState.caseStateFilter.value = undefined
+      newState.caseStateFilter.label = undefined
     } else if (action.type === "locked") {
       newState.lockedFilter.value = undefined
-      newState.dateFilter.label = undefined
+      newState.lockedFilter.label = undefined
     } else if (action.type === "reason") {
       newState.reasonFilter = newState.reasonFilter.filter((reasonFilter) => reasonFilter.value !== action.value)
     }
@@ -136,11 +146,12 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
   )
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked }: Props) => {
+const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked, caseState }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
     dateFilter: dateRange !== null ? { value: dateRange, state: "Applied", label: dateRange } : {},
     lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
+    caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
       return { value: courtCaseType, state: "Applied" }
     })
@@ -195,14 +206,20 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Court date"}>
-              <CourtDateFilterOptions dateRange={state.dateFilter.value} dispatch={dispatch} />
+            <ExpandingFilters filterName={"Urgency"}>
+              <UrgencyFilterOptions urgency={state.urgentFilter.value} dispatch={dispatch} />
             </ExpandingFilters>
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Urgency"}>
-              <UrgencyFilterOptions urgency={state.urgentFilter.value} dispatch={dispatch} />
+            <ExpandingFilters filterName={"Court date"}>
+              <CourtDateFilterOptions dateRange={state.dateFilter.value} dispatch={dispatch} />
+            </ExpandingFilters>
+          </div>
+          <div>
+            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
+            <ExpandingFilters filterName={"Case state"}>
+              <CaseStateFilterOptions state={state.caseStateFilter.value} dispatch={dispatch} />
             </ExpandingFilters>
           </div>
           <div>

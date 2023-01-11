@@ -14,7 +14,8 @@ import {
   insertDummyCourtCasesWithUrgencies,
   getDummyCourtCase,
   insertCourtCases,
-  insertMultipleDummyCourtCasesWithLock
+  insertMultipleDummyCourtCasesWithLock,
+  insertMultipleDummyCourtCasesWithResolutionTimestamp
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
@@ -763,6 +764,75 @@ describe("listCourtCases", () => {
 
       expect(unlockedCases).toHaveLength(1)
       expect(unlockedCases.map((c) => c.errorId)).toStrictEqual([2])
+    })
+  })
+
+  describe("Filter cases by case state", () => {
+    it("Should return unresolved cases if case state not set", async () => {
+      const orgCode = "36FP"
+      const resolutionTimestamp = new Date()
+      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
+        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp],
+        orgCode
+      )
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100"
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([null])
+    })
+
+    it("Should filter cases that are resolved", async () => {
+      const orgCode = "36FP"
+      const dummyTimestamp = new Date()
+      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
+        [null, dummyTimestamp, dummyTimestamp, dummyTimestamp],
+        orgCode
+      )
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        caseState: "Resolved"
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(3)
+      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([dummyTimestamp, dummyTimestamp, dummyTimestamp])
+    })
+
+    it("Should return all cases if case state is 'Unresolved and resolved'", async () => {
+      const orgCode = "36FP"
+      const dummyTimestamp = new Date()
+      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
+        [null, dummyTimestamp, dummyTimestamp, dummyTimestamp],
+        orgCode
+      )
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        caseState: "Unresolved and resolved"
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(4)
+      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([
+        null,
+        dummyTimestamp,
+        dummyTimestamp,
+        dummyTimestamp
+      ])
     })
   })
 })

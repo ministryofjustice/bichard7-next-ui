@@ -2,6 +2,7 @@ import FilterTag from "components/FilterTag/FilterTag"
 import If from "components/If"
 import { useRouter } from "next/router"
 import { Reason } from "types/CaseListQueryParams"
+import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
     dateRange?: string | null
     urgency?: string | null
     locked?: string | null
+    caseState?: string | null
   }
 }
 
@@ -22,7 +24,8 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     (filters.keywords && filters.keywords.length > 0) ||
     !!filters.urgency ||
     !!filters.dateRange ||
-    !!filters.locked
+    !!filters.locked ||
+    !!filters.caseState
 
   const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
     deleteQueryParamsByName(["pageNum"], query)
@@ -67,6 +70,14 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               <FilterTag
                 tag={filters.urgency ?? ""}
                 href={removeQueryParamFromPath({ urgency: filters.urgency ?? "" })}
+              />
+            </li>
+          </If>
+          <If condition={!!filters.caseState}>
+            <li>
+              <FilterTag
+                tag={caseStateLabels[String(filters.caseState)] ?? ""}
+                href={removeQueryParamFromPath({ state: filters.caseState ?? "" })}
               />
             </li>
           </If>

@@ -1,10 +1,11 @@
-import { Reason } from "./CaseListQueryParams"
+import { CaseState, Reason } from "./CaseListQueryParams"
 
 export type FilterAction =
   | { method: FilterMethod; type: "urgency"; value: boolean }
   | { method: FilterMethod; type: "date"; value: string }
   | { method: FilterMethod; type: "locked"; value: boolean }
   | { method: FilterMethod; type: "reason"; value: Reason }
+  | { method: FilterMethod; type: "caseState"; value: CaseState }
 
 export type FilterType = "urgency" | "date" | "locked" | "reason"
 export type FilterMethod = "add" | "remove"
@@ -23,6 +24,11 @@ export type Filter = {
   }
   lockedFilter: {
     value?: boolean
+    state?: FilterState
+    label?: string
+  }
+  caseStateFilter: {
+    value?: CaseState
     state?: FilterState
     label?: string
   }
