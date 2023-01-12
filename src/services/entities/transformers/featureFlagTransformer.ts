@@ -1,8 +1,8 @@
 import { ValueTransformer } from "typeorm"
 
 const featureFlagTransformer: ValueTransformer = {
-  to: (value) => JSON.stringify(value),
-  from: (value) => (value && value !== null && Object.keys(value)?.length > 0 ? JSON.parse(value) : {})
+  to: (value) => value,
+  from: (value) => value ?? {}
 }
 
 export default featureFlagTransformer

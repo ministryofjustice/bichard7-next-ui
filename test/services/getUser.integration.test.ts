@@ -2,7 +2,7 @@ import { DataSource } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
 import { isError } from "../../src/types/Result"
 import User from "../../src/services/entities/User"
-import { deleteUsers, getDummyUser, insertUsers } from "../utils/manageUsers"
+import { deleteUsers, getDummyUser, insertUsers, runQuery } from "../utils/manageUsers"
 import getUser from "../../src/services/getUser"
 import GroupName from "types/GroupName"
 
@@ -65,5 +65,17 @@ describe("getUser", () => {
 
     const actualUser = result as User
     expect(actualUser).toStrictEqual(inputUser)
+  })
+
+  it("should fetch feature flags correctly when unescaped values are in the DB", async () => {
+    const inputUser = await getDummyUser()
+    await insertUsers(inputUser)
+    await runQuery(`UPDATE br7own.users SET feature_flags = '{"test_flag":true}' WHERE username = 'Bichard01';`)
+
+    const result = await getUser(dataSource, inputUser.username)
+    expect(isError(result)).toBe(false)
+
+    const actualUser = result as User
+    expect(actualUser.featureFlags).toStrictEqual({ test_flag: true })
   })
 })

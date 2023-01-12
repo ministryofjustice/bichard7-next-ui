@@ -34,6 +34,11 @@ const insertUserIntoGroup = async (emailAddress: string, groupName: string): Pro
   )
 }
 
+const runQuery = async (query: string) => {
+  const dataSource = await getDataSource()
+  return dataSource.manager.query(query)
+}
+
 const insertUsers = async (users: User | User[], userGroups?: string[]): Promise<InsertResult> => {
   const dataSource = await getDataSource()
   const result = await dataSource.createQueryBuilder().insert().into(User).values(users).execute()
@@ -65,4 +70,4 @@ const deleteUsers = async (): Promise<InsertResult> => {
   return dataSource.manager.query(`DELETE FROM br7own.users_groups; DELETE FROM br7own.users`)
 }
 
-export { getDummyUser, insertUsers, insertUsersWithOverrides, deleteUsers, insertUserIntoGroup }
+export { getDummyUser, insertUsers, insertUsersWithOverrides, deleteUsers, insertUserIntoGroup, runQuery }
