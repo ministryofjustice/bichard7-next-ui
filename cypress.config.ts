@@ -1,29 +1,28 @@
 import { defineConfig } from "cypress"
+import pgPromise from "pg-promise"
 import CourtCase from "./src/services/entities/CourtCase"
+import User from "./src/services/entities/User"
 import deleteFromTable from "./test/utils/deleteFromTable"
+import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import {
   insertCourtCases,
+  insertCourtCasesWithCourtDates,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithDefendantNames,
   insertCourtCasesWithOrgCodes,
-  insertMultipleDummyCourtCases,
-  insertDummyCourtCaseWithLock,
-  insertDummyCourtCasesWithUrgencies,
   insertDummyCourtCasesWithNotes,
-  insertCourtCasesWithCourtDates,
+  insertDummyCourtCasesWithUrgencies,
+  insertDummyCourtCaseWithLock,
+  insertMultipleDummyCourtCases,
   insertMultipleDummyCourtCasesWithLock,
   insertMultipleDummyCourtCasesWithResolutionTimestamp
 } from "./test/utils/insertCourtCases"
-import { getCourtCaseById } from "./test/utils/getCourtCaseById"
-import { insertTriggers } from "./test/utils/manageTriggers"
 import insertException from "./test/utils/manageExceptions"
+import { insertTriggers } from "./test/utils/manageTriggers"
 import { deleteUsers, insertUsersWithOverrides } from "./test/utils/manageUsers"
-import User from "./src/services/entities/User"
-import pgPromise from "pg-promise"
 
 export default defineConfig({
   e2e: {
-    experimentalSessionAndOrigin: true,
     baseUrl: "http://localhost:4080", // Default value: We can override this in package.json
     setupNodeEvents(on, _) {
       const pgp = pgPromise()

@@ -1,10 +1,8 @@
-// Transpile some modules which use modern syntax to make them compatible with legacy browsers
-const withTM = require("next-transpile-modules")(["hex-rgb", "is-plain-obj"])
-
 const nextConfig = {
   basePath: "/bichard",
   assetPrefix: "/bichard/",
   reactStrictMode: true,
+  transpilePackages: ["hex-rgb", "is-plain-obj"],
   async rewrites() {
     return [
       {
@@ -23,4 +21,4 @@ const nextConfig = {
   }
 }
 
-module.exports = withTM(nextConfig)
+module.exports = nextConfig
