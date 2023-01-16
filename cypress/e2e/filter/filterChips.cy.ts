@@ -22,6 +22,7 @@ describe("Case list", () => {
     beforeEach(() => {
       cy.viewport(1280, 720)
       cy.login("bichard01@example.com", "password")
+      cy.visit("/bichard")
     })
 
     it("Should display no filters chips as the default state", () => {

@@ -1,7 +1,7 @@
 import hashedPassword from "../fixtures/hashedPassword"
 
 describe("GOV.UK Assets", () => {
-  before(() => {
+  beforeEach(() => {
     cy.viewport(1280, 720)
     cy.task("clearCourtCases")
     cy.task("clearUsers")
