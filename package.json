@@ -46,7 +46,6 @@
     "lodash.get": "^4.4.2",
     "lodash.isobject": "^3.0.2",
     "next": "13.1.2",
-    "next-transpile-modules": "^9.1.0",
     "pg": "^8.8.0",
     "qs": "^6.11.0",
     "raw-body": "^2.5.1",
