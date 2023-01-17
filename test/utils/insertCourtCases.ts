@@ -72,7 +72,7 @@ const insertCourtCasesWithCourtDates = async (courtDates: Date[], orgCode: strin
   return insertCourtCases(existingCourtCases)
 }
 
-const insertCourtCasesWithKeywords = async (
+const insertCourtCasesWithFieldOverrides = async (
   keywords: { defendantNames?: string[]; courtNames?: string[] },
   orgCode: string
 ) => {
@@ -254,7 +254,7 @@ export {
   insertCourtCasesWithOrgCodes,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithCourtDates,
-  insertCourtCasesWithKeywords,
+  insertCourtCasesWithFieldOverrides,
   insertMultipleDummyCourtCases,
   insertDummyCourtCaseWithLock,
   insertDummyCourtCasesWithUrgencies,

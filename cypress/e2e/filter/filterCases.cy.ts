@@ -112,7 +112,7 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by defendant name", () => {
-      cy.task("insertCourtCasesWithKeywords", {
+      cy.task("insertCourtCasesWithFieldOverrides", {
         keywords: { defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"] },
         force: "011111"
       })
@@ -137,7 +137,7 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by court name", () => {
-      cy.task("insertCourtCasesWithKeywords", {
+      cy.task("insertCourtCasesWithFieldOverrides", {
         keywords: { courtNames: ["Manchester Court", "London Court", "Bristol Court"] },
         force: "011111"
       })

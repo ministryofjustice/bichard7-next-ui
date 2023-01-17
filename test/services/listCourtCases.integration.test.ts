@@ -8,7 +8,7 @@ import {
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithOrgCodes,
-  insertCourtCasesWithKeywords,
+  insertCourtCasesWithFieldOverrides,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
   insertDummyCourtCasesWithUrgencies,
@@ -507,7 +507,7 @@ describe("listCourtCases", () => {
       const defendantToIncludeWithPartialMatch = "Bruce W. Ayne"
       const defendantToNotInclude = "Barbara Gordon"
 
-      await insertCourtCasesWithKeywords(
+      await insertCourtCasesWithFieldOverrides(
         { defendantNames: [defendantToInclude, defendantToNotInclude, defendantToIncludeWithPartialMatch] },
         orgCode
       )
@@ -544,7 +544,7 @@ describe("listCourtCases", () => {
       const courtNameToIncludeWithPartialMatch = "Magistrates' Courts London Something Else"
       const courtNameToNotInclude = "Court Name not to include"
 
-      await insertCourtCasesWithKeywords(
+      await insertCourtCasesWithFieldOverrides(
         { courtNames: [courtNameToInclude, courtNameToIncludeWithPartialMatch, courtNameToNotInclude] },
         orgCode
       )
