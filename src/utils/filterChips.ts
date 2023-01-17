@@ -2,7 +2,14 @@ import { Filter, FilterState } from "types/CourtCaseFilter"
 
 const countFilterChips = (state: Filter, countOfState?: FilterState): number => {
   return (
-    [state.dateFilter, state.lockedFilter, state.urgentFilter, state.caseStateFilter]
+    [
+      state.dateFilter,
+      state.lockedFilter,
+      state.urgentFilter,
+      state.caseStateFilter,
+      state.defendantNameSearch,
+      state.courtNameSearch
+    ]
       .map((filter): number => {
         return filter.value !== undefined && (countOfState === undefined || filter.state === countOfState) ? 1 : 0
       })

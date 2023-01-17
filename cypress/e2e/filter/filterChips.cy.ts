@@ -168,6 +168,32 @@ describe("Case list", () => {
       })
     })
 
+    describe("Defendant name", () => {
+      it("Should apply the 'Defendant name' filter chips then remove this chips to the original state", () => {
+        cy.get("#filter-button").click()
+        cy.get("input[id=keywords]").type("Foo")
+
+        cy.get(".govuk-heading-s").contains("Defendant name").should("exist")
+        cy.get(".moj-filter__tag").contains("Foo").should("exist")
+
+        cy.get("li button.moj-filter__tag").contains("Foo").trigger("click")
+        cy.get(".moj-filter__tag").should("not.exist")
+      })
+    })
+
+    describe("Court name", () => {
+      it("Should apply the 'Court name' filter chips then remove this chips to the original state", () => {
+        cy.get("#filter-button").click()
+        cy.get("input[id=court-name]").type("Bar")
+
+        cy.get(".govuk-heading-s").contains("Court name").should("exist")
+        cy.get(".moj-filter__tag").contains("Bar").should("exist")
+
+        cy.get("li button.moj-filter__tag").contains("Bar").trigger("click")
+        cy.get(".moj-filter__tag").should("not.exist")
+      })
+    })
+
     describe("Selecting multiple filter chips", () => {
       it("should allow you to select 'Trigger', 'Last week', 'non-urgent'. This should display relevant header for each filter chip", () => {
         // Open filters and build filter chip query

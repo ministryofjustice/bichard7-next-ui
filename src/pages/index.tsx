@@ -128,6 +128,8 @@ const Home: NextPage<Props> = ({
         filter={
           <CourtCaseFilter
             courtCaseTypes={courtCaseTypes}
+            defendantName={keywords[0]}
+            courtName={courtName}
             dateRange={dateRange}
             urgency={urgent}
             locked={locked}

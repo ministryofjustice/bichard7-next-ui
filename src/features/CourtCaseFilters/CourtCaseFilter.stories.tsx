@@ -11,7 +11,15 @@ export default {
 
 export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => (
   <div data-testid="filters">
-    <CourtCaseFilter courtCaseTypes={[]} dateRange={null} urgency={null} locked={null} caseState={null} />
+    <CourtCaseFilter
+      courtCaseTypes={[]}
+      dateRange={null}
+      urgency={null}
+      locked={null}
+      caseState={null}
+      courtName={null}
+      defendantName={null}
+    />
   </div>
 )
 
@@ -29,6 +37,8 @@ export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> 
     urgency={"Urgent"}
     locked={"Locked"}
     caseState={"Resolved"}
+    courtName={"City of London Magistrates' Court"}
+    defendantName={"Wilma Flintstone"}
   />
 )
 
