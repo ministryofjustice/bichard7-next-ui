@@ -187,16 +187,16 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             {"Apply filters"}
           </button>
           <div className={classes["govuk-form-group"]}>
-            <label className="govuk-label govuk-label--m" htmlFor="keywords">
-              {"Search"}
-            </label>
+            <label className="govuk-label govuk-label--m">{"Search"}</label>
             <div>
-              <LabelText>{"Defendent name"}</LabelText>
-              <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
-            </div>
-            <div>
-              <LabelText>{"Court name"}</LabelText>
-              <input className="govuk-input" id="court-name" name="courtName" type="text"></input>
+              <label className="govuk-label govuk-label--s" htmlFor="keywords">
+                <LabelText>{"Defendent name"}</LabelText>
+                <input className="govuk-input" id="keywords" name="keywords" type="text" />
+              </label>
+              <label className="govuk-label govuk-label--s" htmlFor="court-name">
+                <LabelText>{"Court name"}</LabelText>
+                <input className="govuk-input" id="court-name" name="courtName" type="text" />
+              </label>
             </div>
           </div>
           <div className={classes["govuk-form-group"]}>
