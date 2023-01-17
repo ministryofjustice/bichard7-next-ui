@@ -8,7 +8,7 @@ import {
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithOrgCodes,
-  insertCourtCasesWithDefendantNames,
+  insertCourtCasesWithKeywords,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
   insertDummyCourtCasesWithUrgencies,
@@ -507,8 +507,8 @@ describe("listCourtCases", () => {
       const defendantToIncludeWithPartialMatch = "Bruce W. Ayne"
       const defendantToNotInclude = "Barbara Gordon"
 
-      await insertCourtCasesWithDefendantNames(
-        [defendantToInclude, defendantToNotInclude, defendantToIncludeWithPartialMatch],
+      await insertCourtCasesWithKeywords(
+        { defendantNames: [defendantToInclude, defendantToNotInclude, defendantToIncludeWithPartialMatch] },
         orgCode
       )
 
@@ -534,6 +534,43 @@ describe("listCourtCases", () => {
       expect(cases).toHaveLength(2)
       expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
       expect(cases[1].defendantName).toStrictEqual(defendantToIncludeWithPartialMatch)
+    })
+  })
+
+  describe("filter by court name", () => {
+    it("should list cases when there is a case insensitive match", async () => {
+      const orgCode = "01FPA1"
+      const courtNameToInclude = "Magistrates' Courts London Croydon"
+      const courtNameToIncludeWithPartialMatch = "Magistrates' Courts London Something Else"
+      const courtNameToNotInclude = "Court Name not to include"
+
+      await insertCourtCasesWithKeywords(
+        { courtNames: [courtNameToInclude, courtNameToIncludeWithPartialMatch, courtNameToNotInclude] },
+        orgCode
+      )
+
+      let result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        courtName: "Magistrates' Courts London Croydon"
+      })
+      expect(isError(result)).toBe(false)
+      let { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].courtName).toStrictEqual(courtNameToInclude)
+
+      result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        courtName: "magistrates' courts london"
+      })
+      expect(isError(result)).toBe(false)
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].courtName).toStrictEqual(courtNameToInclude)
+      expect(cases[1].courtName).toStrictEqual(courtNameToIncludeWithPartialMatch)
     })
   })
 

@@ -16,6 +16,7 @@ const listCourtCases = async (
     orderBy,
     order,
     defendantName,
+    courtName,
     reasons: resultFilter,
     urgent,
     courtDateRange,
@@ -37,6 +38,12 @@ const listCourtCases = async (
   if (defendantName) {
     query.andWhere("courtCase.defendantName ilike '%' || :name || '%'", {
       name: defendantName
+    })
+  }
+
+  if (courtName) {
+    query.andWhere("courtCase.courtName ilike '%' || :name || '%'", {
+      name: courtName
     })
   }
 

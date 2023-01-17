@@ -112,8 +112,8 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by defendant name", () => {
-      cy.task("insertCourtCasesWithDefendantNames", {
-        defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"],
+      cy.task("insertCourtCasesWithKeywords", {
+        keywords: { defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"] },
         force: "011111"
       })
 
