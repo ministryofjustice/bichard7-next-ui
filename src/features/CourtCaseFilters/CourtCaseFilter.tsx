@@ -6,7 +6,7 @@ import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOption
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
 import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
-import { HintText } from "govuk-react"
+import { LabelText } from "govuk-react"
 import { ReactNode, useState, useReducer } from "react"
 import { createUseStyles } from "react-jss"
 import { CaseState, Reason } from "types/CaseListQueryParams"
@@ -188,10 +188,16 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
           </button>
           <div className={classes["govuk-form-group"]}>
             <label className="govuk-label govuk-label--m" htmlFor="keywords">
-              {"Keywords"}
+              {"Search"}
             </label>
-            <HintText>{"Defendent name, Court name, Reason, PTIURN"}</HintText>
-            <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
+            <div>
+              <LabelText>{"Defendent name"}</LabelText>
+              <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
+            </div>
+            <div>
+              <LabelText>{"Court name"}</LabelText>
+              <input className="govuk-input" id="court-name" name="courtName" type="text"></input>
+            </div>
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />

@@ -145,20 +145,20 @@ describe("Case list", () => {
       cy.visit("/bichard")
 
       cy.get("button[id=filter-button]").click()
-      cy.get("input[id=courtName]").type("Manchester Court")
+      cy.get("input[id=court-name]").type("Manchester Court")
 
       cy.get("button[id=search]").click()
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Manchester Court")
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("London Court").should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bristol Court").should("not.exist")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Manchester Court")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("London Court").should("not.exist")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Bristol Court").should("not.exist")
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Manchester Court")
 
       // Removing filter tag
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Manchester Court").click({ force: true })
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Manchester Court")
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("London Court")
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bristol Court")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Manchester Court")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("London Court")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Bristol Court")
     })
 
     it("Should display cases filtered for a named date range", () => {
