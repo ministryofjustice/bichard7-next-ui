@@ -19,6 +19,7 @@ export type CaseListQueryParams = {
   reasons?: Reason[]
   defendantName?: string
   courtName?: string
+  ptiurn?: string
   urgent?: Urgency
   forces: string[]
   pageNum?: string
