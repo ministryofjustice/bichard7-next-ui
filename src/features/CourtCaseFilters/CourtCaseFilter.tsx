@@ -19,6 +19,7 @@ import { caseStateLabels } from "utils/caseStateFilters"
 interface Props {
   defendantName: string | null
   courtName: string | null
+  ptiurn: string | null
   courtCaseTypes: Reason[]
   dateRange: string | null
   urgency: string | null
@@ -59,6 +60,10 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.courtNameSearch.value = action.value
       newState.courtNameSearch.label = action.value
       newState.courtNameSearch.state = "Selected"
+    } else if (action.type === "ptiurn") {
+      newState.ptiurnSearch.value = action.value
+      newState.ptiurnSearch.label = action.value
+      newState.ptiurnSearch.state = "Selected"
     }
   } else if (action.method === "remove") {
     if (action.type === "urgency") {
@@ -81,6 +86,10 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
     } else if (action.type === "courtName") {
       newState.courtNameSearch.value = ""
       newState.courtNameSearch.label = undefined
+    } else if (action.type === "ptiurn") {
+      newState.ptiurnSearch.value = action.value
+      newState.ptiurnSearch.label = action.value
+      newState.ptiurnSearch.state = "Selected"
     }
   }
   return newState
@@ -163,6 +172,7 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
 const CourtCaseFilter: React.FC<Props> = ({
   courtCaseTypes,
   defendantName,
+  ptiurn,
   courtName,
   dateRange,
   urgency,
@@ -176,6 +186,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
     courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
+    ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
       return { value: courtCaseType, state: "Applied" }
     })
@@ -238,6 +249,19 @@ const CourtCaseFilter: React.FC<Props> = ({
                   type="text"
                   onChange={(event) => {
                     dispatch({ method: "add", type: "courtName", value: event.currentTarget.value })
+                  }}
+                />
+              </label>
+              <label className="govuk-label govuk-label--s" htmlFor="court-name">
+                <LabelText>{"PTIURN"}</LabelText>
+                <input
+                  className="govuk-input"
+                  value={state.ptiurnSearch.value}
+                  id="court-name"
+                  name="courtName"
+                  type="text"
+                  onChange={(event) => {
+                    dispatch({ method: "add", type: "ptiurn", value: event.currentTarget.value })
                   }}
                 />
               </label>
