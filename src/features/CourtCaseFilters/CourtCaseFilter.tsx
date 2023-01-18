@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import CaseStateFilterOptions from "components/CaseStateFilter/CaseStateFilterOptions"
 import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
@@ -75,24 +77,24 @@ const useStyles = createUseStyles({
     marginTop: "8px"
   },
   iconButton: {
-    padding: "5px 10px",
-    margin: "0 2px 0 -10px",
     border: "3px solid transparent",
+    backgroundColor: "transparent",
+    "&:active": {
+      backgroundColor: "#b0b4b6"
+    }
+  },
+  container: {
+    marginLeft: "-10px",
+    width: "fit-content",
+    paddingRight: "10px",
+    display: "flex",
     backgroundColor: "transparent",
     "&:hover": {
       backgroundColor: "#b0b4b6"
     },
     "&:active": {
-      backgroundColor: "#b0b4b6",
-      borderColor: "#ffe304"
+      backgroundColor: "#b0b4b6"
     }
-  },
-  iconContainer: {
-    margin: "5px 0"
-  },
-  container: {
-    display: "flex",
-    margin: "0 0 0 0"
   },
   "govuk-form-group": {
     marginBottom: "0"
@@ -122,19 +124,15 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
   const classes = useStyles()
   return (
     <fieldset className="govuk-fieldset">
-      <div className={classes.container}>
-        <div className={classes.iconContainer}>
-          <button
-            type="button"
-            className={classes.iconButton}
-            aria-label={`${filterName} filter options`}
-            onClick={() => {
-              setCaseTypeVisible(!caseTypeIsVisible)
-            }}
-          >
-            {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
-          </button>
-        </div>
+      <div
+        className={classes.container}
+        onClick={() => {
+          setCaseTypeVisible(!caseTypeIsVisible)
+        }}
+      >
+        <button type="button" className={classes.iconButton} aria-label={`${filterName} filter options`}>
+          {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
+        </button>
         <div className={classes.legendContainer}>
           <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
             <div className={classes.legendColour}>{filterName}</div>
