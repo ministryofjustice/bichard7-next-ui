@@ -27,6 +27,7 @@ interface Props {
   order: QueryOrder
   courtCaseTypes: Reason[]
   keywords: string[]
+  ptiurn: string | null
   courtName: string | null
   urgent: string | null
   totalPages: number
@@ -43,8 +44,20 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
-    const { orderBy, pageNum, type, keywords, courtName, maxPageItems, order, urgency, dateRange, locked, state } =
-      query
+    const {
+      orderBy,
+      pageNum,
+      type,
+      keywords,
+      courtName,
+      ptiurn,
+      maxPageItems,
+      order,
+      urgency,
+      dateRange,
+      locked,
+      state
+    } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Reason[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
     const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
@@ -53,6 +66,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedDateRange = mapDateRange(dateRange)
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
+    const validatedPtiurn = validateQueryParams(ptiurn) ? ptiurn : undefined
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLocked = validateQueryParams(locked) ? locked : undefined
     const validatedCaseState = caseStateFilters.includes(String(state)) ? (state as CaseState) : undefined
@@ -92,6 +106,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCaseTypes: courtCaseTypes,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         courtName: validatedCourtName ? validatedCourtName : null,
+        ptiurn: validatedCourtName ? validatedCourtName : null,
         dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
@@ -110,6 +125,7 @@ const Home: NextPage<Props> = ({
   courtCaseTypes,
   keywords,
   courtName,
+  ptiurn,
   dateRange,
   urgent,
   locked,
@@ -130,6 +146,7 @@ const Home: NextPage<Props> = ({
             courtCaseTypes={courtCaseTypes}
             defendantName={keywords[0]}
             courtName={courtName}
+            ptiurn={ptiurn}
             dateRange={dateRange}
             urgency={urgent}
             locked={locked}
@@ -142,6 +159,7 @@ const Home: NextPage<Props> = ({
               courtCaseTypes,
               keywords,
               courtName,
+              ptiurn,
               dateRange,
               urgency: urgent,
               locked: locked,

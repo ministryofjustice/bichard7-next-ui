@@ -252,13 +252,13 @@ const CourtCaseFilter: React.FC<Props> = ({
                   }}
                 />
               </label>
-              <label className="govuk-label govuk-label--s" htmlFor="court-name">
+              <label className="govuk-label govuk-label--s" htmlFor="ptiurn">
                 <LabelText>{"PTIURN"}</LabelText>
                 <input
                   className="govuk-input"
                   value={state.ptiurnSearch.value}
-                  id="court-name"
-                  name="courtName"
+                  id="ptiurn"
+                  name="ptiurn"
                   type="text"
                   onChange={(event) => {
                     dispatch({ method: "add", type: "ptiurn", value: event.currentTarget.value })

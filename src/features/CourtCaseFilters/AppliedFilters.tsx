@@ -10,6 +10,7 @@ interface Props {
     courtCaseTypes?: Reason[]
     keywords?: string[]
     courtName?: string | null
+    ptiurn?: string | null
     dateRange?: string | null
     urgency?: string | null
     locked?: string | null
@@ -24,6 +25,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     (filters.courtCaseTypes && filters.courtCaseTypes.length > 0) ||
     (filters.keywords && filters.keywords.length > 0) ||
     !!filters.courtName ||
+    !!filters.ptiurn ||
     !!filters.urgency ||
     !!filters.dateRange ||
     !!filters.locked ||
@@ -65,6 +67,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
                 tag={filters.courtName ?? ""}
                 href={removeQueryParamFromPath({ courtName: filters.courtName ?? "" })}
               />
+            </li>
+          </If>
+          <If condition={!!filters.ptiurn}>
+            <li>
+              <FilterTag tag={filters.ptiurn ?? ""} href={removeQueryParamFromPath({ ptiurn: filters.ptiurn ?? "" })} />
             </li>
           </If>
           <If condition={!!filters.dateRange}>
