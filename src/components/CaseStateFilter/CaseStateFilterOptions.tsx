@@ -13,7 +13,6 @@ interface Props {
 const CaseStateFilterOptions: React.FC<Props> = ({ state, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
-      <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">{"Case state"}</legend>
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
         {caseStateFilters.map((optionName) => (
           <RadioButton
