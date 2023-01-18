@@ -194,6 +194,19 @@ describe("Case list", () => {
       })
     })
 
+    describe("PTIURN", () => {
+      it("Should apply the 'PTIURN' filter chips then remove this chips to the original state", () => {
+        cy.get("#filter-button").click()
+        cy.get("input[id=ptiurn]").type("Bar")
+
+        cy.get(".govuk-heading-s").contains("PTIURN").should("exist")
+        cy.get(".moj-filter__tag").contains("Bar").should("exist")
+
+        cy.get("li button.moj-filter__tag").contains("Bar").trigger("click")
+        cy.get(".moj-filter__tag").should("not.exist")
+      })
+    })
+
     describe("Selecting multiple filter chips", () => {
       it("should allow you to select 'Trigger', 'Last week', 'non-urgent'. This should display relevant header for each filter chip", () => {
         // Open filters and build filter chip query
