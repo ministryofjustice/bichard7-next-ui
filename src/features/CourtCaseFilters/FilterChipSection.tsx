@@ -21,6 +21,44 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
 
       <If
         condition={
+          state.ptiurnSearch.value !== undefined &&
+          state.ptiurnSearch.label !== undefined &&
+          state.ptiurnSearch.state === sectionState
+        }
+      >
+        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"PTIURN"}</h3>
+        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
+          <FilterChip
+            chipLabel={state.ptiurnSearch.label!}
+            dispatch={dispatch}
+            removeAction={() => {
+              return { method: "remove", type: "ptiurn", value: state.ptiurnSearch.value! }
+            }}
+            state={state.ptiurnSearch.state || sectionState}
+          />
+        </ul>
+      </If>
+      <If
+        condition={
+          state.ptiurnSearch.value !== undefined &&
+          state.ptiurnSearch.label !== undefined &&
+          state.ptiurnSearch.state === sectionState
+        }
+      >
+        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Court name"}</h3>
+        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
+          <FilterChip
+            chipLabel={state.ptiurnSearch.label!}
+            dispatch={dispatch}
+            removeAction={() => {
+              return { method: "remove", type: "ptiurn", value: state.ptiurnSearch.value! }
+            }}
+            state={state.ptiurnSearch.state || sectionState}
+          />
+        </ul>
+      </If>
+      <If
+        condition={
           state.defendantNameSearch.value !== undefined &&
           state.defendantNameSearch.label !== undefined &&
           state.defendantNameSearch.state === sectionState
