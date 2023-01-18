@@ -574,6 +574,43 @@ describe("listCourtCases", () => {
     })
   })
 
+  describe("filter by ptiurn", () => {
+    it("should list cases when there is a case insensitive match", async () => {
+      const orgCode = "01FPA1"
+      const ptiurnToInclude = "01ZD0303908"
+      const ptiurnToIncludeWithPartialMatch = "01ZD0303909"
+      const ptiurnToNotInclude = "00000000000"
+
+      await insertCourtCasesWithFieldOverrides(
+        { ptiurn: [ptiurnToInclude, ptiurnToIncludeWithPartialMatch, ptiurnToNotInclude] },
+        orgCode
+      )
+
+      let result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        ptiurn: "01ZD0303908"
+      })
+      expect(isError(result)).toBe(false)
+      let { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].ptiurn).toStrictEqual(ptiurnToInclude)
+
+      result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        ptiurn: "01ZD030390"
+      })
+      expect(isError(result)).toBe(false)
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].ptiurn).toStrictEqual(ptiurnToInclude)
+      expect(cases[1].ptiurn).toStrictEqual(ptiurnToIncludeWithPartialMatch)
+    })
+  })
+
   describe("Filter cases having triggers/exceptions", () => {
     it("Should filter by whether a case has triggers", async () => {
       await insertCourtCasesWithOrgCodes(["01", "01"])
