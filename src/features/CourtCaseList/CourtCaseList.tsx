@@ -21,23 +21,23 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
   const tableHead = (
     <Table.Row>
       <Table.CellHeader>
-        <Link href={orderByParams("courtDate")} id="court-date">
-          {"Court Date"}
-        </Link>
-      </Table.CellHeader>
-      <Table.CellHeader>
-        <Link href={orderByParams("ptiurn")} id="ptiurn">
-          {"PTIURN"}
-        </Link>
-      </Table.CellHeader>
-      <Table.CellHeader>
         <Link href={orderByParams("defendantName")} id="defendant-name">
           {"Defendant Name"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
+        <Link href={orderByParams("courtDate")} id="court-date">
+          {"Court Date"}
+        </Link>
+      </Table.CellHeader>
+      <Table.CellHeader>
         <Link href={orderByParams("courtName")} id="court-name">
           {"Court Name"}
+        </Link>
+      </Table.CellHeader>
+      <Table.CellHeader>
+        <Link href={orderByParams("ptiurn")} id="ptiurn">
+          {"PTIURN"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
@@ -59,15 +59,15 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
       return (
         <Table.Row key={idx}>
           <Table.Cell>
-            <DateTime date={courtDate} dateFormat={"dd/MM/yyyy"} />
-          </Table.Cell>
-          <Table.Cell>{ptiurn}</Table.Cell>
-          <Table.Cell>
             <Link href={caseDetailsPath(courtCases[idx].errorId)} id={`Case details for ${defendantName}`}>
               {defendantName}
             </Link>
           </Table.Cell>
+          <Table.Cell>
+            <DateTime date={courtDate} dateFormat={"dd/MM/yyyy"} />
+          </Table.Cell>
           <Table.Cell>{courtName}</Table.Cell>
+          <Table.Cell>{ptiurn}</Table.Cell>
           <Table.Cell>
             <UrgentTag isUrgent={isUrgent} />
           </Table.Cell>
