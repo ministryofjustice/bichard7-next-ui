@@ -116,7 +116,7 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00000`)
+        cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00000`)
       })
 
       it("should only display cases visible to users forces", () => {
@@ -125,7 +125,7 @@ describe("Case list", () => {
         cy.login("bichard02@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains(`Case00001`)
+        cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00001`)
       })
 
       it("should display cases for sub-forces", () => {
@@ -137,7 +137,7 @@ describe("Case list", () => {
         cy.get("tr")
           .not(":first")
           .each((row, index) => {
-            cy.wrap(row).get("td:nth-child(2)").contains(`Case0000${index}`)
+            cy.wrap(row).get("td:nth-child(4)").contains(`Case0000${index}`)
           })
       })
 
@@ -147,11 +147,11 @@ describe("Case list", () => {
         cy.login("bichard011111@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains("Case00000").should("not.exist")
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains("Case00001").should("not.exist")
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains("Case00002")
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains("Case00003")
-        cy.get("tr").not(":first").get("td:nth-child(2)").contains("Case00004")
+        cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000").should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001").should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002")
+        cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00003")
+        cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00004")
       })
 
       it("can display cases ordered by court name", () => {
@@ -165,8 +165,8 @@ describe("Case list", () => {
         cy.get("tr")
           .not(":first")
           .each((row) => {
-            cy.wrap(row).get("td:nth-child(4)").first().contains("AAAA")
-            cy.wrap(row).get("td:nth-child(4)").last().contains("DDDD")
+            cy.wrap(row).get("td:nth-child(3)").first().contains("AAAA")
+            cy.wrap(row).get("td:nth-child(3)").last().contains("DDDD")
           })
 
         cy.findByText("Court Name").click()
@@ -174,8 +174,8 @@ describe("Case list", () => {
         cy.get("tr")
           .not(":first")
           .each((row) => {
-            cy.wrap(row).get("td:nth-child(4)").first().contains("DDDD")
-            cy.wrap(row).get("td:nth-child(4)").last().contains("AAAA")
+            cy.wrap(row).get("td:nth-child(3)").first().contains("DDDD")
+            cy.wrap(row).get("td:nth-child(3)").last().contains("AAAA")
           })
       })
 
@@ -202,7 +202,7 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr").not(":first").eq(0).get("td:nth-child(2)").contains(`Case00000`)
+        cy.get("tr").not(":first").eq(0).get("td:nth-child(4)").contains(`Case00000`)
         cy.get("tr").not(":first").eq(0).contains(`Urgent`).should("exist")
         cy.get("tr").not(":first").eq(1).contains(`Urgent`).should("not.exist")
         cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
@@ -250,7 +250,7 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr").not(":first").eq(0).get("td:nth-child(2)").contains(`Case00000`)
+        cy.get("tr").not(":first").eq(0).get("td:nth-child(4)").contains(`Case00000`)
         cy.get("tr").not(":first").eq(0).get("td:nth-child(6)").should("be.empty")
         cy.get("tr").not(":first").eq(1).get("td:nth-child(6)").contains(`1`).should("exist")
         cy.get("tr").not(":first").eq(2).get("td:nth-child(6)").contains(`3`).should("exist")
