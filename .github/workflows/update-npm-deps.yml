@@ -23,6 +23,18 @@ jobs:
 
       - name: Update dependencies
         run: npm run update-deps
+             exit 1
+
+      - name: Report Status
+        if: always()
+        uses: ravsamhq/notify-slack-action@v1
+        with:
+          status: ${{ job.status }}
+          notify_when: 'failure'
+          notification_title: '{:elmo-fire:} *{workflow}* {status_message} in <{repo_url}|{repo}>'
+          footer: 'Linked to Repo <{repo_url}|{repo}>'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}
 
       - name: Report Status
         if: always()
