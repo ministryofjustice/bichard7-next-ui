@@ -170,7 +170,7 @@ describe("Case list", () => {
       cy.visit("/bichard")
 
       cy.get("button[id=filter-button]").click()
-      cy.get("input[id=court-name]").type("Case00001")
+      cy.get("input[id=ptiurn]").type("Case00001")
 
       cy.get("button[id=search]").click()
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")

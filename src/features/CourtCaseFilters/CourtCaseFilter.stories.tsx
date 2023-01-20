@@ -19,6 +19,7 @@ export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => 
       caseState={null}
       courtName={null}
       defendantName={null}
+      ptiurn={null}
     />
   </div>
 )
@@ -39,6 +40,7 @@ export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> 
     caseState={"Resolved"}
     courtName={"City of London Magistrates' Court"}
     defendantName={"Wilma Flintstone"}
+    ptiurn={"Case0000"}
   />
 )
 
