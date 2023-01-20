@@ -31,7 +31,7 @@ jobs:
         with:
           status: ${{ job.status }}
           notify_when: 'failure'
-          notification_title: ':elmo-fire: *{workflow}* {status_message} in <{repo_url}|{repo}>'
+          notification_title: ':elmo-fire:'
           footer: 'Linked to Repo <{repo_url}|{repo}>'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}
