@@ -50,7 +50,7 @@ const listCourtCases = async (
 
   if (ptiurn) {
     query.andWhere("courtCase.ptiurn ilike '%' || :name || '%'", {
-      name: courtName
+      name: ptiurn
     })
   }
 
