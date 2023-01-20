@@ -21,17 +21,17 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
       >{`${sectionState} filters`}</h2>
 
       <FilterChipRow
-        chipLabel={state.courtNameSearch.label!}
+        chipLabel={state.defendantNameSearch.label!}
         condition={
-          state.courtNameSearch.value !== undefined &&
-          state.courtNameSearch.label !== undefined &&
-          state.courtNameSearch.state === sectionState
+          state.defendantNameSearch.value !== undefined &&
+          state.defendantNameSearch.label !== undefined &&
+          state.defendantNameSearch.state === sectionState
         }
         dispatch={dispatch}
-        type="courtName"
-        label="Court name"
-        state={state.courtNameSearch.state || sectionState}
-        value={state.courtNameSearch.value!}
+        type="defendantName"
+        label="Defendant name"
+        state={state.defendantNameSearch.state || sectionState}
+        value={state.defendantNameSearch.value!}
       />
 
       <FilterChipRow
@@ -51,16 +51,35 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
       <FilterChipRow
         chipLabel={state.courtNameSearch.label!}
         condition={
-          state.defendantNameSearch.value !== undefined &&
-          state.defendantNameSearch.label !== undefined &&
-          state.defendantNameSearch.state === sectionState
+          state.courtNameSearch.value !== undefined &&
+          state.courtNameSearch.label !== undefined &&
+          state.courtNameSearch.state === sectionState
         }
         dispatch={dispatch}
-        type="defendantName"
-        label="Defendant name"
-        state={state.defendantNameSearch.state || sectionState}
-        value={state.defendantNameSearch.value!}
+        type="courtName"
+        label="Court name"
+        state={state.courtNameSearch.state || sectionState}
+        value={state.courtNameSearch.value!}
       />
+
+      <If condition={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}>
+        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
+        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
+          {state.reasonFilter
+            .filter((reasonFilter) => reasonFilter.state === sectionState)
+            .map((reasonFilter) => (
+              <FilterChip
+                key={reasonFilter.value}
+                chipLabel={reasonFilter.value}
+                dispatch={dispatch}
+                removeAction={() => {
+                  return { method: "remove", type: "reason", value: reasonFilter.value }
+                }}
+                state={reasonFilter.state}
+              />
+            ))}
+        </ul>
+      </If>
 
       <FilterChipRow
         chipLabel={state.urgentFilter.label!}
@@ -117,25 +136,6 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
         state={state.lockedFilter.state || sectionState}
         value={state.lockedFilter.value!}
       />
-
-      <If condition={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}>
-        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
-        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
-          {state.reasonFilter
-            .filter((reasonFilter) => reasonFilter.state === sectionState)
-            .map((reasonFilter) => (
-              <FilterChip
-                key={reasonFilter.value}
-                chipLabel={reasonFilter.value}
-                dispatch={dispatch}
-                removeAction={() => {
-                  return { method: "remove", type: "reason", value: reasonFilter.value }
-                }}
-                state={reasonFilter.state}
-              />
-            ))}
-        </ul>
-      </If>
     </If>
   )
 }
