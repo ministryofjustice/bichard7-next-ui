@@ -43,6 +43,7 @@ jobs:
         run: |
           echo "PR #${{ steps.cpr.outputs.pull-request-number}}"
           echo "${{ steps.cpr.outputs.pull-request-url }}"
+          exit 1
 
       - name: Report Status
         if: always()
