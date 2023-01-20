@@ -3,7 +3,7 @@ import FilterChip from "components/FilterChip"
 import If from "components/If"
 import { Dispatch } from "react"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
-import { countFilterChips } from "utils/filterChips"
+import { anyFilterChips } from "utils/filterChips"
 
 interface Props {
   state: Filter
@@ -14,27 +14,27 @@ interface Props {
 
 const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, marginTop }: Props) => {
   return (
-    <If condition={countFilterChips(state, sectionState) > 0}>
+    <If condition={anyFilterChips(state, sectionState)}>
       <h2
         className={"govuk-heading-m govuk-!-margin-bottom-0" + (marginTop ? " govuk-!-margin-top-2" : "")}
       >{`${sectionState} filters`}</h2>
 
       <If
         condition={
-          state.ptiurnSearch.value !== undefined &&
-          state.ptiurnSearch.label !== undefined &&
-          state.ptiurnSearch.state === sectionState
+          state.courtNameSearch.value !== undefined &&
+          state.courtNameSearch.label !== undefined &&
+          state.courtNameSearch.state === sectionState
         }
       >
-        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"PTIURN"}</h3>
+        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Court name"}</h3>
         <ul className="moj-filter-tags govuk-!-margin-bottom-0">
           <FilterChip
-            chipLabel={state.ptiurnSearch.label!}
+            chipLabel={state.courtNameSearch.label!}
             dispatch={dispatch}
             removeAction={() => {
-              return { method: "remove", type: "ptiurn", value: state.ptiurnSearch.value! }
+              return { method: "remove", type: "courtName", value: state.courtNameSearch.value! }
             }}
-            state={state.ptiurnSearch.state || sectionState}
+            state={state.courtNameSearch.state || sectionState}
           />
         </ul>
       </If>
@@ -45,7 +45,7 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
           state.ptiurnSearch.state === sectionState
         }
       >
-        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Court name"}</h3>
+        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"PTIURN"}</h3>
         <ul className="moj-filter-tags govuk-!-margin-bottom-0">
           <FilterChip
             chipLabel={state.ptiurnSearch.label!}

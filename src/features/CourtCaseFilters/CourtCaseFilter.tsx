@@ -11,7 +11,7 @@ import { ReactNode, useState, useReducer } from "react"
 import { createUseStyles } from "react-jss"
 import { CaseState, Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
-import { countFilterChips } from "utils/filterChips"
+import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 import FilterChipSection from "./FilterChipSection"
 import { caseStateLabels } from "utils/caseStateFilters"
@@ -87,9 +87,8 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.courtNameSearch.value = ""
       newState.courtNameSearch.label = undefined
     } else if (action.type === "ptiurn") {
-      newState.ptiurnSearch.value = action.value
-      newState.ptiurnSearch.label = action.value
-      newState.ptiurnSearch.state = "Selected"
+      newState.ptiurnSearch.value = ""
+      newState.ptiurnSearch.label = undefined
     }
   }
   return newState
@@ -204,7 +203,7 @@ const CourtCaseFilter: React.FC<Props> = ({
         <div className="moj-filter__header-action"></div>
       </div>
       <div className="moj-filter__content">
-        <If condition={countFilterChips(state) > 0}>
+        <If condition={anyFilterChips(state)}>
           <div className="moj-filter__selected">
             <div className="moj-filter__selected-heading">
               <div className="moj-filter__heading-title">
@@ -213,7 +212,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                   state={state}
                   dispatch={dispatch}
                   sectionState={"Selected"}
-                  marginTop={countFilterChips(state, "Applied") > 0}
+                  marginTop={anyFilterChips(state, "Applied")}
                 />
               </div>
             </div>
