@@ -20,6 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+             exit 1
 
       - name: Update dependencies
         run: npm run update-deps
