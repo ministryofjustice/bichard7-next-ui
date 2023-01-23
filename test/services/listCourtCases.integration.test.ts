@@ -642,9 +642,9 @@ describe("listCourtCases", () => {
       const errorNotToInclude = "HO999999"
 
       await insertTriggers(0, [triggerToInclude, triggerToIncludePartialMatch])
-      await insertException(1, errorToInclude)
-      await insertException(2, errorToIncludePartialMatch)
-      await insertException(3, errorNotToInclude)
+      await insertException(1, errorToInclude, `${errorToInclude}||ds:XMLField`)
+      await insertException(2, errorToIncludePartialMatch, `${errorToIncludePartialMatch}||ds:XMLField`)
+      await insertException(3, errorNotToInclude, `${errorNotToInclude}||ds:XMLField`)
       await insertTriggers(3, [triggerNotToInclude])
 
       // Searching for a full matched trigger code
@@ -686,6 +686,42 @@ describe("listCourtCases", () => {
       expect(cases).toHaveLength(2)
       expect(cases[0].triggers[1].triggerCode).toStrictEqual(triggerToIncludePartialMatch.triggerCode)
       expect(cases[1].errorReason).toStrictEqual(errorToIncludePartialMatch)
+    })
+
+    it("should list cases when there is a case insensitive match in any exceptions", async () => {
+      await insertCourtCasesWithOrgCodes(["01", "01"])
+      const errorToInclude = "HO100322"
+      const anotherErrorToInclude = "HO100323"
+      const errorReport = `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
+      const errorNotToInclude = "HO200212"
+
+      await insertException(0, errorToInclude, errorReport)
+      await insertException(0, anotherErrorToInclude, errorReport)
+      await insertException(1, errorNotToInclude, `${errorNotToInclude}||ds:XMLField`)
+
+      let result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasonsSearch: errorToInclude
+      })
+
+      expect(isError(result)).toBe(false)
+      let { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].errorReport).toStrictEqual(errorReport)
+
+      result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasonsSearch: anotherErrorToInclude
+      })
+
+      expect(isError(result)).toBe(false)
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].errorReport).toStrictEqual(errorReport)
     })
   })
 

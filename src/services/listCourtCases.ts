@@ -60,7 +60,7 @@ const listCourtCases = async (
       new Brackets((qb) => {
         qb.where("courtCase.trigger_reason ilike '%' || :reason || '%'", {
           reason: reasonsSearch
-        }).orWhere("courtCase.error_reason ilike '%' || :reason || '%'", {
+        }).orWhere("courtCase.error_report ilike '%' || :reason || '%'", {
           reason: reasonsSearch
         })
       })

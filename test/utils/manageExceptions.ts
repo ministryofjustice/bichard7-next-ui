@@ -1,7 +1,7 @@
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 
-export default async (caseId: number, exceptionCode: string): Promise<boolean> => {
+export default async (caseId: number, exceptionCode: string, errorReport?: string): Promise<boolean> => {
   const dataSource = await getDataSource()
 
   await dataSource
@@ -9,7 +9,8 @@ export default async (caseId: number, exceptionCode: string): Promise<boolean> =
     .update(CourtCase)
     .set({
       errorCount: () => "error_count + 1",
-      errorReason: exceptionCode
+      errorReason: exceptionCode,
+      ...(errorReport && { errorReport: errorReport })
     })
     .where("errorId = :id", { id: caseId })
     .execute()
