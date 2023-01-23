@@ -1,5 +1,6 @@
 import Document, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document"
 import React from "react"
+import { createGenerateId, JssProvider, SheetsRegistry } from "react-jss"
 import { ServerStyleSheet } from "styled-components"
 import generateCsp from "utils/generateCsp"
 import generateNonce from "utils/generateNonce"
@@ -52,18 +53,38 @@ class GovUkDocument extends Document<DocumentProps> {
     const nonce = generateNonce()
     ctx.res?.setHeader("Content-Security-Policy", generateCsp(nonce))
 
+    // styled-components
     const sheet = new ServerStyleSheet()
     const originalRenderPage = ctx.renderPage
 
+    // react-jss
+    const registry = new SheetsRegistry()
+    const generateId = createGenerateId()
+
+    // include styles from both styled-components and react-jss
     try {
       ctx.renderPage = () => {
         return originalRenderPage({
-          enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />)
+          enhanceApp: (App) => (props) =>
+            (
+              <JssProvider registry={registry} generateId={generateId}>
+                {sheet.collectStyles(<App {...props} />)}
+              </JssProvider>
+            )
         })
       }
 
       const initialProps = await Document.getInitialProps(ctx)
-      const additionalProps = { nonce, styles: [initialProps.styles, sheet.getStyleElement()] }
+      const additionalProps = {
+        nonce,
+        styles: [
+          initialProps.styles,
+          sheet.getStyleElement(),
+          <style key="react-jss" id="server-side-styles-react-jss">
+            {registry.toString()}
+          </style>
+        ]
+      }
 
       return {
         ...initialProps,
