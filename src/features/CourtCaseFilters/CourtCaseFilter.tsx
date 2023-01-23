@@ -226,7 +226,7 @@ const CourtCaseFilter: React.FC<Props> = ({
             <label className="govuk-label govuk-label--m">{"Search"}</label>
             <div>
               <label className="govuk-label govuk-label--s" htmlFor="keywords">
-                <LabelText>{"Defendent name"}</LabelText>
+                <LabelText>{"Defendant name"}</LabelText>
                 <input
                   className="govuk-input"
                   value={state.defendantNameSearch.value}
