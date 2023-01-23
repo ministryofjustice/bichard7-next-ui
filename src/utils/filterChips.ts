@@ -9,6 +9,7 @@ const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
       state.caseStateFilter,
       state.defendantNameSearch,
       state.courtNameSearch,
+      state.reasonSearch,
       state.ptiurnSearch
     ]
       .map((filter): number => {

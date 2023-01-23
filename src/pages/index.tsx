@@ -153,6 +153,7 @@ const Home: NextPage<Props> = ({
             courtCaseTypes={courtCaseTypes}
             defendantName={keywords[0]}
             courtName={courtName}
+            reasonSearch={reasonSearch}
             ptiurn={ptiurn}
             dateRange={dateRange}
             urgency={urgent}
