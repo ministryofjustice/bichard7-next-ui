@@ -29,6 +29,7 @@ interface Props {
   keywords: string[]
   ptiurn: string | null
   courtName: string | null
+  reasonSearch: string | null
   urgent: string | null
   totalPages: number
   dateRange: string | null
@@ -50,6 +51,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       type,
       keywords,
       courtName,
+      reasonSearch,
       ptiurn,
       maxPageItems,
       order,
@@ -66,6 +68,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedDateRange = mapDateRange(dateRange)
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
+    const validatedReasonSearch = validateQueryParams(reasonSearch) ? reasonSearch : undefined
     const validatedPtiurn = validateQueryParams(ptiurn) ? ptiurn : undefined
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLocked = validateQueryParams(locked) ? locked : undefined
@@ -77,6 +80,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       forces: currentUser.visibleForces,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
       ...(validatedCourtName && { courtName: validatedCourtName }),
+      ...(validatedReasonSearch && { reasonsSearch: validatedReasonSearch }),
       ...(validatedPtiurn && { ptiurn: validatedPtiurn }),
       reasonsFilter: courtCaseTypes,
       urgent: validatedUrgent,
@@ -107,6 +111,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCaseTypes: courtCaseTypes,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         courtName: validatedCourtName ? validatedCourtName : null,
+        reasonSearch: validatedReasonSearch ? validatedReasonSearch : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
         dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
         urgent: validatedUrgent ? validatedUrgent : null,
@@ -126,6 +131,7 @@ const Home: NextPage<Props> = ({
   courtCaseTypes,
   keywords,
   courtName,
+  reasonSearch,
   ptiurn,
   dateRange,
   urgent,
@@ -160,6 +166,7 @@ const Home: NextPage<Props> = ({
               courtCaseTypes,
               keywords,
               courtName,
+              reasonSearch,
               ptiurn,
               dateRange,
               urgency: urgent,

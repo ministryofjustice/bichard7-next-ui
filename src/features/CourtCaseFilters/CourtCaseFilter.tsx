@@ -251,6 +251,19 @@ const CourtCaseFilter: React.FC<Props> = ({
                   }}
                 />
               </label>
+              <label className="govuk-label govuk-label--s" htmlFor="reason-search">
+                <LabelText>{"Reason"}</LabelText>
+                <input
+                  className="govuk-input"
+                  // value={state.reasonSearch.value}
+                  id="reason-search"
+                  name="reasonSearch"
+                  type="text"
+                  // onChange={(event) => {
+                  //   dispatch({ method: "add", type: "reasonSearch", value: event.currentTarget.value })
+                  // }}
+                />
+              </label>
               <label className="govuk-label govuk-label--s" htmlFor="ptiurn">
                 <LabelText>{"PTIURN"}</LabelText>
                 <input

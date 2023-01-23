@@ -131,8 +131,8 @@ export default defineConfig({
           return insertTriggers(args.caseId, args.triggers)
         },
 
-        insertException(params: { caseId: number; exceptionCode: string }) {
-          return insertException(params.caseId, params.exceptionCode)
+        insertException(params: { caseId: number; exceptionCode: string; errorReport?: string }) {
+          return insertException(params.caseId, params.exceptionCode, params.errorReport)
         },
         getCourtCaseById(params: { caseId: number }) {
           return getCourtCaseById(params.caseId)

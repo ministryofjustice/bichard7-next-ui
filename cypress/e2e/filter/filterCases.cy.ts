@@ -186,6 +186,48 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00003")
     })
 
+    it("Should display cases filtered by reason", () => {
+      cy.task("insertCourtCasesWithOrgCodes", ["011111", "011111", "011111"])
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0107",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+
+      cy.visit("/bichard")
+
+      cy.get("button[id=filter-button]").click()
+      cy.get("input[id=reason-search]").type("TRPR0107")
+
+      cy.get("button[id=search]").click()
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001").should("not.exist")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
+      cy.get("tr").should("have.length", 2)
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107")
+
+      cy.get("button[id=filter-button]").click()
+      cy.get("input[id=reason-search]").type("HO200212")
+
+      cy.get("button[id=search]").click()
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000").should("not.exist")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
+      cy.get("tr").should("have.length", 2)
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("HO200212")
+
+      // Removing filter tag
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("HO200212").click({ force: true })
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002")
+    })
+
     it("Should display cases filtered for a named date range", () => {
       const force = "011111"
 
