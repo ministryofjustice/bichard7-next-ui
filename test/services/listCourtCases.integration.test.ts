@@ -627,17 +627,28 @@ describe("listCourtCases", () => {
       await insertException(0, "HO100300")
       await insertException(1, "HO100300")
 
-      const result = await listCourtCases(dataSource, {
+      let result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
         reasonsSearch: "TRPR0001"
       })
 
       expect(isError(result)).toBe(false)
-      const { result: cases } = result as ListCourtCaseResult
+      let { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(1)
       expect(cases[0].triggers[0].triggerCode).toStrictEqual("TRPR0001")
+
+      result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasonsSearch: "HO100300"
+      })
+
+      expect(isError(result)).toBe(false)
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(2)
     })
   })
 

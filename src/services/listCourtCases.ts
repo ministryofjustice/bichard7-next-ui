@@ -56,9 +56,15 @@ const listCourtCases = async (
   }
 
   if (reasonsSearch) {
-    query.andWhere("courtCase.trigger_reason ilike '%' || :reason || '%'", {
-      reason: reasonsSearch
-    })
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where("courtCase.trigger_reason ilike '%' || :reason || '%'", {
+          reason: reasonsSearch
+        }).orWhere("courtCase.error_reason ilike '%' || :reason || '%'", {
+          reason: reasonsSearch
+        })
+      })
+    )
   }
 
   if (resultFilter?.includes("Triggers")) {
