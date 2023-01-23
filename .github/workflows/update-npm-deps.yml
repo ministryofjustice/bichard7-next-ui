@@ -20,6 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+             exit 1
 
       - name: Update dependencies
         run: npm run update-deps
@@ -30,6 +31,7 @@ jobs:
         with:
           status: ${{ job.status }}
           notify_when: 'failure'
+          message_format: ':elmo-fire:'
           footer: 'Linked to Repo <{repo_url}|{repo}>'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}
