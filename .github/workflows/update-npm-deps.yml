@@ -24,6 +24,16 @@ jobs:
       - name: Update dependencies
         run: npm run update-deps
 
+      - name: Report Status
+        if: always()
+        uses: ravsamhq/notify-slack-action@v1
+        with:
+          status: ${{ job.status }}
+          notify_when: 'failure'
+          footer: 'Linked to Repo <{repo_url}|{repo}>'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}
+
       - name: Create pull request
         id: cpr
         uses: peter-evans/create-pull-request@v3
