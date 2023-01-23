@@ -78,7 +78,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
       ...(validatedCourtName && { courtName: validatedCourtName }),
       ...(validatedPtiurn && { ptiurn: validatedPtiurn }),
-      reasons: courtCaseTypes,
+      reasonsFilter: courtCaseTypes,
       urgent: validatedUrgent,
       maxPageItems: validatedMaxPageItems,
       pageNum: validatedPageNum,

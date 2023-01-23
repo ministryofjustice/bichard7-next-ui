@@ -16,7 +16,7 @@ export type Urgency = "Urgent" | "Non-urgent" | undefined
 export type CaseListQueryParams = {
   orderBy?: string
   order?: QueryOrder
-  reasons?: Reason[]
+  reasonsFilter?: Reason[]
   defendantName?: string
   courtName?: string
   ptiurn?: string
@@ -27,4 +27,5 @@ export type CaseListQueryParams = {
   courtDateRange?: CourtDateRange
   locked?: boolean
   caseState?: CaseState
+  reasonsSearch?: string
 }

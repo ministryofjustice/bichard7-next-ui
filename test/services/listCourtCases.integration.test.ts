@@ -20,6 +20,7 @@ import {
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
+import Trigger from "../../src/services/entities/Trigger"
 import getDataSource from "../../src/services/getDataSource"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 import Note from "services/entities/Note"
@@ -37,6 +38,7 @@ describe("listCourtCases", () => {
 
   beforeEach(async () => {
     await deleteFromTable(CourtCase)
+    await deleteFromTable(Trigger)
     await deleteFromTable(Note)
   })
 
@@ -611,6 +613,34 @@ describe("listCourtCases", () => {
     })
   })
 
+  describe("filter by reason", () => {
+    it("should list cases when there is a case insensitive match in triggers or exceptions", async () => {
+      await insertCourtCasesWithOrgCodes(["01", "01"])
+      const triggerToInclude: TestTrigger = {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      await insertTriggers(0, [triggerToInclude])
+      await insertException(0, "HO100300")
+      await insertException(1, "HO100300")
+
+      const result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasonsSearch: "TRPR0001"
+      })
+
+      expect(isError(result)).toBe(false)
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].triggers[0].triggerCode).toStrictEqual("TRPR0001")
+    })
+  })
+
   describe("Filter cases having triggers/exceptions", () => {
     it("Should filter by whether a case has triggers", async () => {
       await insertCourtCasesWithOrgCodes(["01", "01"])
@@ -626,7 +656,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasons: ["Triggers"]
+        reasonsFilter: ["Triggers"]
       })
 
       expect(isError(result)).toBeFalsy()
@@ -643,7 +673,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasons: ["Exceptions"]
+        reasonsFilter: ["Exceptions"]
       })
 
       expect(isError(result)).toBeFalsy()
