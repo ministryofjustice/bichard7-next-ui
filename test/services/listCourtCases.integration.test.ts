@@ -615,40 +615,77 @@ describe("listCourtCases", () => {
 
   describe("filter by reason", () => {
     it("should list cases when there is a case insensitive match in triggers or exceptions", async () => {
-      await insertCourtCasesWithOrgCodes(["01", "01"])
+      await insertCourtCasesWithOrgCodes(["01", "01", "01", "01"])
       const triggerToInclude: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: "TRPR0111",
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
 
-      await insertTriggers(0, [triggerToInclude])
-      await insertException(0, "HO100300")
-      await insertException(1, "HO100300")
+      const triggerToIncludePartialMatch: TestTrigger = {
+        triggerId: 1,
+        triggerCode: "TRPR2222",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
 
+      const triggerNotToInclude: TestTrigger = {
+        triggerId: 2,
+        triggerCode: "TRPR9999",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      const errorToInclude = "HO00001"
+      const errorToIncludePartialMatch = "HO002222"
+      const errorNotToInclude = "HO999999"
+
+      await insertTriggers(0, [triggerToInclude, triggerToIncludePartialMatch])
+      await insertException(1, errorToInclude)
+      await insertException(2, errorToIncludePartialMatch)
+      await insertException(3, errorNotToInclude)
+      await insertTriggers(3, [triggerNotToInclude])
+
+      // Searching for a full matched trigger code
       let result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: "TRPR0001"
+        reasonsSearch: triggerToInclude.triggerCode
       })
 
       expect(isError(result)).toBe(false)
       let { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(1)
-      expect(cases[0].triggers[0].triggerCode).toStrictEqual("TRPR0001")
+      expect(cases[0].triggers[0].triggerCode).toStrictEqual(triggerToInclude.triggerCode)
 
+      // Searching for a full matched error code
       result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: "HO100300"
+        reasonsSearch: errorToInclude
+      })
+
+      expect(isError(result)).toBe(false)
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].errorReason).toStrictEqual(errorToInclude)
+
+      // Searching for a partial match error/trigger code
+      result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasonsSearch: "2222"
       })
 
       expect(isError(result)).toBe(false)
       cases = (result as ListCourtCaseResult).result
 
       expect(cases).toHaveLength(2)
+      expect(cases[0].triggers[1].triggerCode).toStrictEqual(triggerToIncludePartialMatch.triggerCode)
+      expect(cases[1].errorReason).toStrictEqual(errorToIncludePartialMatch)
     })
   })
 
