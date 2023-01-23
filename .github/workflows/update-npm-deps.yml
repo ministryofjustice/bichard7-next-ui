@@ -30,7 +30,8 @@ jobs:
         uses: ravsamhq/notify-slack-action@v1
         with:
           status: ${{ job.status }}
-          notification_title: ':elmo-fire: *{workflow}* {status_message} in <{repo_url}|{repo}>'
+          notification_title: 'GitHub action failed'
+          message_format: ':elmo-fire: *{workflow}* {status_message} in <{repo_url}|{repo}>'
           notify_when: 'failure'
           footer: 'Linked to Repo <{repo_url}|{repo}>'
         env:
