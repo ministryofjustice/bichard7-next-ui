@@ -210,6 +210,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107")
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107").click({ force: true })
 
       cy.get("button[id=filter-button]").click()
       cy.get("input[id=reason-search]").type("HO200212")
