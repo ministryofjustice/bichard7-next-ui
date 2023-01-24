@@ -8,7 +8,7 @@ import {
   insertCourtCases,
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithCourtNames,
-  insertCourtCasesWithFieldOverrides,
+  insertCourtCasesWithFields,
   insertCourtCasesWithOrgCodes,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithUrgencies,
@@ -70,11 +70,8 @@ export default defineConfig({
           return insertCourtCasesWithCourtNames(params.courtNames, params.force)
         },
 
-        insertCourtCasesWithFieldOverrides(params: {
-          keywords: { defendantNames?: string[]; courtNames?: string[] }
-          force: string
-        }) {
-          return insertCourtCasesWithFieldOverrides(params.keywords, params.force)
+        insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {
+          return insertCourtCasesWithFields(cases)
         },
 
         insertDummyCourtCaseWithLock(params: {

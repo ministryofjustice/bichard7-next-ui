@@ -112,10 +112,11 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by defendant name", () => {
-      cy.task("insertCourtCasesWithFieldOverrides", {
-        keywords: { defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"] },
-        force: "011111"
-      })
+      cy.task("insertCourtCasesWithFields", [
+        { defendantName: "Bruce Wayne", orgForPoliceFilter: "011111" },
+        { defendantName: "Barbara Gordon", orgForPoliceFilter: "011111" },
+        { defendantName: "Alfred Pennyworth", orgForPoliceFilter: "011111" }
+      ])
 
       cy.visit("/bichard")
 
@@ -137,10 +138,11 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by court name", () => {
-      cy.task("insertCourtCasesWithFieldOverrides", {
-        keywords: { courtNames: ["Manchester Court", "London Court", "Bristol Court"] },
-        force: "011111"
-      })
+      cy.task("insertCourtCasesWithFields", [
+        { courtName: "Manchester Court", orgForPoliceFilter: "011111" },
+        { courtName: "London Court", orgForPoliceFilter: "011111" },
+        { courtName: "Bristol Court", orgForPoliceFilter: "011111" }
+      ])
 
       cy.visit("/bichard")
 
@@ -162,10 +164,11 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by PTIURN", () => {
-      cy.task("insertCourtCasesWithFieldOverrides", {
-        keywords: { ptiurn: ["Case00001", "Case00002", "Case00003"] },
-        force: "011111"
-      })
+      cy.task("insertCourtCasesWithFields", [
+        { ptiurn: "Case00001", orgForPoliceFilter: "011111" },
+        { ptiurn: "Case00002", orgForPoliceFilter: "011111" },
+        { ptiurn: "Case00003", orgForPoliceFilter: "011111" }
+      ])
 
       cy.visit("/bichard")
 

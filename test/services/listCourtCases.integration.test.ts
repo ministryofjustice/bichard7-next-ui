@@ -8,14 +8,14 @@ import {
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithOrgCodes,
-  insertCourtCasesWithFieldOverrides,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
   insertDummyCourtCasesWithUrgencies,
   getDummyCourtCase,
   insertCourtCases,
   insertMultipleDummyCourtCasesWithLock,
-  insertMultipleDummyCourtCasesWithResolutionTimestamp
+  insertMultipleDummyCourtCasesWithResolutionTimestamp,
+  insertCourtCasesWithFields
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
@@ -509,10 +509,11 @@ describe("listCourtCases", () => {
       const defendantToIncludeWithPartialMatch = "Bruce W. Ayne"
       const defendantToNotInclude = "Barbara Gordon"
 
-      await insertCourtCasesWithFieldOverrides(
-        { defendantNames: [defendantToInclude, defendantToNotInclude, defendantToIncludeWithPartialMatch] },
-        orgCode
-      )
+      await insertCourtCasesWithFields([
+        { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
+        { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
+        { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
+      ])
 
       let result = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -546,10 +547,11 @@ describe("listCourtCases", () => {
       const courtNameToIncludeWithPartialMatch = "Magistrates' Courts London Something Else"
       const courtNameToNotInclude = "Court Name not to include"
 
-      await insertCourtCasesWithFieldOverrides(
-        { courtNames: [courtNameToInclude, courtNameToIncludeWithPartialMatch, courtNameToNotInclude] },
-        orgCode
-      )
+      await insertCourtCasesWithFields([
+        { courtName: courtNameToInclude, orgForPoliceFilter: orgCode },
+        { courtName: courtNameToIncludeWithPartialMatch, orgForPoliceFilter: orgCode },
+        { courtName: courtNameToNotInclude, orgForPoliceFilter: orgCode }
+      ])
 
       let result = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -583,10 +585,11 @@ describe("listCourtCases", () => {
       const ptiurnToIncludeWithPartialMatch = "01ZD0303909"
       const ptiurnToNotInclude = "00000000000"
 
-      await insertCourtCasesWithFieldOverrides(
-        { ptiurn: [ptiurnToInclude, ptiurnToIncludeWithPartialMatch, ptiurnToNotInclude] },
-        orgCode
-      )
+      await insertCourtCasesWithFields([
+        { ptiurn: ptiurnToInclude, orgForPoliceFilter: orgCode },
+        { ptiurn: ptiurnToIncludeWithPartialMatch, orgForPoliceFilter: orgCode },
+        { ptiurn: ptiurnToNotInclude, orgForPoliceFilter: orgCode }
+      ])
 
       let result = await listCourtCases(dataSource, {
         forces: [orgCode],
