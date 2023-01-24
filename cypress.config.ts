@@ -8,7 +8,7 @@ import {
   insertCourtCases,
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithCourtNames,
-  insertCourtCasesWithDefendantNames,
+  insertCourtCasesWithFieldOverrides,
   insertCourtCasesWithOrgCodes,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithUrgencies,
@@ -70,8 +70,11 @@ export default defineConfig({
           return insertCourtCasesWithCourtNames(params.courtNames, params.force)
         },
 
-        insertCourtCasesWithDefendantNames(params: { defendantNames: string[]; force: string }) {
-          return insertCourtCasesWithDefendantNames(params.defendantNames, params.force)
+        insertCourtCasesWithFieldOverrides(params: {
+          keywords: { defendantNames?: string[]; courtNames?: string[] }
+          force: string
+        }) {
+          return insertCourtCasesWithFieldOverrides(params.keywords, params.force)
         },
 
         insertDummyCourtCaseWithLock(params: {
@@ -128,8 +131,8 @@ export default defineConfig({
           return insertTriggers(args.caseId, args.triggers)
         },
 
-        insertException(params: { caseId: number; exceptionCode: string }) {
-          return insertException(params.caseId, params.exceptionCode)
+        insertException(params: { caseId: number; exceptionCode: string; errorReport?: string }) {
+          return insertException(params.caseId, params.exceptionCode, params.errorReport)
         },
         getCourtCaseById(params: { caseId: number }) {
           return getCourtCaseById(params.caseId)

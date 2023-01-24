@@ -112,8 +112,8 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by defendant name", () => {
-      cy.task("insertCourtCasesWithDefendantNames", {
-        defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"],
+      cy.task("insertCourtCasesWithFieldOverrides", {
+        keywords: { defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"] },
         force: "011111"
       })
 
@@ -134,6 +134,99 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(1)").contains("Bruce Wayne")
       cy.get("tr").not(":first").get("td:nth-child(1)").contains("Barbara Gordon")
       cy.get("tr").not(":first").get("td:nth-child(1)").contains("Alfred Pennyworth")
+    })
+
+    it("Should display cases filtered by court name", () => {
+      cy.task("insertCourtCasesWithFieldOverrides", {
+        keywords: { courtNames: ["Manchester Court", "London Court", "Bristol Court"] },
+        force: "011111"
+      })
+
+      cy.visit("/bichard")
+
+      cy.get("button[id=filter-button]").click()
+      cy.get("input[id=court-name]").type("Manchester Court")
+
+      cy.get("button[id=search]").click()
+      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Manchester Court")
+      cy.get("tr").not(":first").get("td:nth-child(3)").contains("London Court").should("not.exist")
+      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bristol Court").should("not.exist")
+      cy.get("tr").should("have.length", 2)
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Manchester Court")
+
+      // Removing filter tag
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Manchester Court").click({ force: true })
+      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Manchester Court")
+      cy.get("tr").not(":first").get("td:nth-child(3)").contains("London Court")
+      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bristol Court")
+    })
+
+    it("Should display cases filtered by PTIURN", () => {
+      cy.task("insertCourtCasesWithFieldOverrides", {
+        keywords: { ptiurn: ["Case00001", "Case00002", "Case00003"] },
+        force: "011111"
+      })
+
+      cy.visit("/bichard")
+
+      cy.get("button[id=filter-button]").click()
+      cy.get("input[id=ptiurn]").type("Case00001")
+
+      cy.get("button[id=search]").click()
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00003").should("not.exist")
+      cy.get("tr").should("have.length", 2)
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Case00001")
+
+      // Removing filter tag
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Case00001").click({ force: true })
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00003")
+    })
+
+    it("Should display cases filtered by reason", () => {
+      cy.task("insertCourtCasesWithOrgCodes", ["011111", "011111", "011111"])
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0107",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+
+      cy.visit("/bichard")
+
+      cy.get("button[id=filter-button]").click()
+      cy.get("input[id=reason-search]").type("TRPR0107")
+
+      cy.get("button[id=search]").click()
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001").should("not.exist")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
+      cy.get("tr").should("have.length", 2)
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107")
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107").click({ force: true })
+
+      cy.get("button[id=filter-button]").click()
+      cy.get("input[id=reason-search]").type("HO200212")
+
+      cy.get("button[id=search]").click()
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000").should("not.exist")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
+      cy.get("tr").should("have.length", 2)
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("HO200212")
+
+      // Removing filter tag
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("HO200212").click({ force: true })
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
+      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002")
     })
 
     it("Should display cases filtered for a named date range", () => {

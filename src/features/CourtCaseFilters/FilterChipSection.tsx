@@ -3,7 +3,8 @@ import FilterChip from "components/FilterChip"
 import If from "components/If"
 import { Dispatch } from "react"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
-import { countFilterChips } from "utils/filterChips"
+import { anyFilterChips } from "utils/filterChips"
+import FilterChipRow from "./FilterChipRow"
 
 interface Props {
   state: Filter
@@ -14,87 +15,67 @@ interface Props {
 
 const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, marginTop }: Props) => {
   return (
-    <If condition={countFilterChips(state, sectionState) > 0}>
+    <If condition={anyFilterChips(state, sectionState)}>
       <h2
         className={"govuk-heading-m govuk-!-margin-bottom-0" + (marginTop ? " govuk-!-margin-top-2" : "")}
       >{`${sectionState} filters`}</h2>
 
-      <If
+      <FilterChipRow
+        chipLabel={state.defendantNameSearch.label!}
         condition={
-          state.urgentFilter.value !== undefined &&
-          state.urgentFilter.label !== undefined &&
-          state.urgentFilter.state === sectionState
+          state.defendantNameSearch.value !== undefined &&
+          state.defendantNameSearch.label !== undefined &&
+          state.defendantNameSearch.state === sectionState
         }
-      >
-        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Urgency"}</h3>
-        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
-          <FilterChip
-            chipLabel={state.urgentFilter.label!}
-            dispatch={dispatch}
-            removeAction={() => {
-              return { method: "remove", type: "urgency", value: state.urgentFilter.value! }
-            }}
-            state={state.urgentFilter.state || sectionState}
-          />
-        </ul>
-      </If>
-      <If
+        dispatch={dispatch}
+        type="defendantName"
+        label="Defendant name"
+        state={state.defendantNameSearch.state || sectionState}
+        value={state.defendantNameSearch.value!}
+      />
+
+      <FilterChipRow
+        chipLabel={state.ptiurnSearch.label!}
         condition={
-          state.dateFilter.value !== undefined &&
-          state.dateFilter.label !== undefined &&
-          state.dateFilter.state === sectionState
+          state.ptiurnSearch.value !== undefined &&
+          state.ptiurnSearch.label !== undefined &&
+          state.ptiurnSearch.state === sectionState
         }
-      >
-        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Date range"}</h3>
-        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
-          <FilterChip
-            chipLabel={state.dateFilter.label!}
-            dispatch={dispatch}
-            removeAction={() => {
-              return { method: "remove", type: "date", value: state.dateFilter.value! }
-            }}
-            state={state.dateFilter.state || sectionState}
-          />
-        </ul>
-      </If>
-      <If
+        dispatch={dispatch}
+        type="ptiurn"
+        label="PTIURN"
+        state={state.ptiurnSearch.state || sectionState}
+        value={state.ptiurnSearch.value!}
+      />
+
+      <FilterChipRow
+        chipLabel={state.courtNameSearch.label!}
         condition={
-          state.caseStateFilter.value !== undefined &&
-          state.caseStateFilter.label !== undefined &&
-          state.caseStateFilter.state === sectionState
+          state.courtNameSearch.value !== undefined &&
+          state.courtNameSearch.label !== undefined &&
+          state.courtNameSearch.state === sectionState
         }
-      >
-        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Case state"}</h3>
-        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
-          <FilterChip
-            chipLabel={state.caseStateFilter.label!}
-            dispatch={dispatch}
-            removeAction={() => {
-              return { method: "remove", type: "caseState", value: state.caseStateFilter.value! }
-            }}
-            state={state.caseStateFilter.state || sectionState}
-          />
-        </ul>
-      </If>
-      <If
+        dispatch={dispatch}
+        type="courtName"
+        label="Court name"
+        state={state.courtNameSearch.state || sectionState}
+        value={state.courtNameSearch.value!}
+      />
+
+      <FilterChipRow
+        chipLabel={state.reasonSearch.label!}
         condition={
-          state.lockedFilter.value !== undefined &&
-          state.lockedFilter.label !== undefined &&
-          state.lockedFilter.state === sectionState
+          state.reasonSearch.value !== undefined &&
+          state.reasonSearch.label !== undefined &&
+          state.reasonSearch.state === sectionState
         }
-      >
-        <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Locked state"}</h3>
-        <ul className="moj-filter-tags govuk-!-margin-bottom-0">
-          <FilterChip
-            chipLabel={state.lockedFilter.label!}
-            dispatch={dispatch}
-            removeAction={() => {
-              return { method: "remove", type: "locked", value: state.lockedFilter.value! }
-            }}
-            state={state.lockedFilter.state || sectionState}
-          />
-        </ul>
-      </If>
+        dispatch={dispatch}
+        type="reasonSearch"
+        label="Reason"
+        state={state.reasonSearch.state || sectionState}
+        value={state.reasonSearch.value!}
+      />
+
       <If condition={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}>
         <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
         <ul className="moj-filter-tags govuk-!-margin-bottom-0">
@@ -113,6 +94,62 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
             ))}
         </ul>
       </If>
+
+      <FilterChipRow
+        chipLabel={state.urgentFilter.label!}
+        condition={
+          state.urgentFilter.value !== undefined &&
+          state.urgentFilter.label !== undefined &&
+          state.urgentFilter.state === sectionState
+        }
+        dispatch={dispatch}
+        type="urgency"
+        label="Urgency"
+        state={state.urgentFilter.state || sectionState}
+        value={state.urgentFilter.value!}
+      />
+
+      <FilterChipRow
+        chipLabel={state.dateFilter.label!}
+        condition={
+          state.dateFilter.value !== undefined &&
+          state.dateFilter.label !== undefined &&
+          state.dateFilter.state === sectionState
+        }
+        dispatch={dispatch}
+        type="date"
+        label="Date range"
+        state={state.dateFilter.state || sectionState}
+        value={state.dateFilter.value!}
+      />
+
+      <FilterChipRow
+        chipLabel={state.caseStateFilter.label!}
+        condition={
+          state.caseStateFilter.value !== undefined &&
+          state.caseStateFilter.label !== undefined &&
+          state.caseStateFilter.state === sectionState
+        }
+        dispatch={dispatch}
+        type="caseState"
+        label="Case state"
+        state={state.caseStateFilter.state || sectionState}
+        value={state.caseStateFilter.value!}
+      />
+
+      <FilterChipRow
+        chipLabel={state.lockedFilter.label!}
+        condition={
+          state.lockedFilter.value !== undefined &&
+          state.lockedFilter.label !== undefined &&
+          state.lockedFilter.state === sectionState
+        }
+        dispatch={dispatch}
+        type="locked"
+        label="Locked state"
+        state={state.lockedFilter.state || sectionState}
+        value={state.lockedFilter.value!}
+      />
     </If>
   )
 }

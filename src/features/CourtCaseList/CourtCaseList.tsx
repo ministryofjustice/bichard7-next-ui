@@ -21,22 +21,22 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
   const tableHead = (
     <Table.Row>
       <Table.CellHeader>
-        <Link href={orderByParams("defendantName")} id="defendant-name">
+        <Link href={orderByParams("defendantName")} id="defendant-name-sort">
           {"Defendant Name"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("courtDate")} id="court-date">
+        <Link href={orderByParams("courtDate")} id="court-date-sort">
           {"Court Date"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("courtName")} id="court-name">
+        <Link href={orderByParams("courtName")} id="court-name-sort">
           {"Court Name"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("ptiurn")} id="ptiurn">
+        <Link href={orderByParams("ptiurn")} id="ptiurn-sort">
           {"PTIURN"}
         </Link>
       </Table.CellHeader>

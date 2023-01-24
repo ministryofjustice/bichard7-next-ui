@@ -11,7 +11,17 @@ export default {
 
 export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => (
   <div data-testid="filters">
-    <CourtCaseFilter courtCaseTypes={[]} dateRange={null} urgency={null} locked={null} caseState={null} />
+    <CourtCaseFilter
+      courtCaseTypes={[]}
+      dateRange={null}
+      urgency={null}
+      locked={null}
+      caseState={null}
+      courtName={null}
+      defendantName={null}
+      ptiurn={null}
+      reasonSearch={null}
+    />
   </div>
 )
 
@@ -29,6 +39,10 @@ export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> 
     urgency={"Urgent"}
     locked={"Locked"}
     caseState={"Resolved"}
+    courtName={"City of London Magistrates' Court"}
+    defendantName={"Wilma Flintstone"}
+    ptiurn={"Case0000"}
+    reasonSearch={"HO200212"}
   />
 )
 
@@ -37,6 +51,4 @@ WhenThereAreFiltersApplied.play = ({ canvasElement }) => {
   expect(canvas.queryByText("Filter")).toBeInTheDocument()
   expect(canvas.queryByText("Applied filters")).toBeInTheDocument()
   expect(canvas.queryByText("Apply filters")).toBeInTheDocument()
-  expect(canvas.queryByText("Keywords")).toBeInTheDocument()
-  expect(canvas.queryByText("Defendent name, Court name, Reason, PTIURN")).toBeInTheDocument()
 }

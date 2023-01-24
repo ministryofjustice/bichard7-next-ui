@@ -9,6 +9,9 @@ interface Props {
   filters: {
     courtCaseTypes?: Reason[]
     keywords?: string[]
+    courtName?: string | null
+    reasonSearch?: string | null
+    ptiurn?: string | null
     dateRange?: string | null
     urgency?: string | null
     locked?: string | null
@@ -22,6 +25,9 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
   const hasAnyAppliedFilters = (): boolean =>
     (filters.courtCaseTypes && filters.courtCaseTypes.length > 0) ||
     (filters.keywords && filters.keywords.length > 0) ||
+    !!filters.courtName ||
+    !!filters.reasonSearch ||
+    !!filters.ptiurn ||
     !!filters.urgency ||
     !!filters.dateRange ||
     !!filters.locked ||
@@ -57,6 +63,27 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
                 </li>
               )
             })}
+          <If condition={!!filters.courtName}>
+            <li>
+              <FilterTag
+                tag={filters.courtName ?? ""}
+                href={removeQueryParamFromPath({ courtName: filters.courtName ?? "" })}
+              />
+            </li>
+          </If>
+          <If condition={!!filters.reasonSearch}>
+            <li>
+              <FilterTag
+                tag={filters.reasonSearch ?? ""}
+                href={removeQueryParamFromPath({ reasonSearch: filters.reasonSearch ?? "" })}
+              />
+            </li>
+          </If>
+          <If condition={!!filters.ptiurn}>
+            <li>
+              <FilterTag tag={filters.ptiurn ?? ""} href={removeQueryParamFromPath({ ptiurn: filters.ptiurn ?? "" })} />
+            </li>
+          </If>
           <If condition={!!filters.dateRange}>
             <li>
               <FilterTag

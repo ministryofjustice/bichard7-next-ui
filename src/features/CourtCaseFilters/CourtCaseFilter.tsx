@@ -6,17 +6,21 @@ import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOption
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
 import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
-import { HintText } from "govuk-react"
+import { LabelText } from "govuk-react"
 import { ReactNode, useState, useReducer } from "react"
 import { createUseStyles } from "react-jss"
 import { CaseState, Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
-import { countFilterChips } from "utils/filterChips"
+import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 import FilterChipSection from "./FilterChipSection"
 import { caseStateLabels } from "utils/caseStateFilters"
 
 interface Props {
+  defendantName: string | null
+  courtName: string | null
+  reasonSearch: string | null
+  ptiurn: string | null
   courtCaseTypes: Reason[]
   dateRange: string | null
   urgency: string | null
@@ -49,6 +53,22 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       if (newState.reasonFilter.filter((reasonFilter) => reasonFilter.value === action.value).length < 1) {
         newState.reasonFilter.push({ value: action.value, state: "Selected" })
       }
+    } else if (action.type === "defendantName") {
+      newState.defendantNameSearch.value = action.value
+      newState.defendantNameSearch.label = action.value
+      newState.defendantNameSearch.state = "Selected"
+    } else if (action.type === "courtName") {
+      newState.courtNameSearch.value = action.value
+      newState.courtNameSearch.label = action.value
+      newState.courtNameSearch.state = "Selected"
+    } else if (action.type === "reasonSearch") {
+      newState.reasonSearch.value = action.value
+      newState.reasonSearch.label = action.value
+      newState.reasonSearch.state = "Selected"
+    } else if (action.type === "ptiurn") {
+      newState.ptiurnSearch.value = action.value
+      newState.ptiurnSearch.label = action.value
+      newState.ptiurnSearch.state = "Selected"
     }
   } else if (action.method === "remove") {
     if (action.type === "urgency") {
@@ -65,6 +85,18 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.lockedFilter.label = undefined
     } else if (action.type === "reason") {
       newState.reasonFilter = newState.reasonFilter.filter((reasonFilter) => reasonFilter.value !== action.value)
+    } else if (action.type === "defendantName") {
+      newState.defendantNameSearch.value = ""
+      newState.defendantNameSearch.label = undefined
+    } else if (action.type === "courtName") {
+      newState.courtNameSearch.value = ""
+      newState.courtNameSearch.label = undefined
+    } else if (action.type === "reasonSearch") {
+      newState.reasonSearch.value = ""
+      newState.reasonSearch.label = undefined
+    } else if (action.type === "ptiurn") {
+      newState.ptiurnSearch.value = ""
+      newState.ptiurnSearch.label = undefined
     }
   }
   return newState
@@ -144,12 +176,26 @@ const ExpandingFilters: React.FC<{ filterName: string; children: ReactNode }> = 
   )
 }
 
-const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, locked, caseState }: Props) => {
+const CourtCaseFilter: React.FC<Props> = ({
+  courtCaseTypes,
+  defendantName,
+  ptiurn,
+  courtName,
+  reasonSearch,
+  dateRange,
+  urgency,
+  locked,
+  caseState
+}: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
     dateFilter: dateRange !== null ? { value: dateRange, state: "Applied", label: dateRange } : {},
     lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
+    defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
+    courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
+    reasonSearch: reasonSearch !== null ? { value: reasonSearch, state: "Applied", label: reasonSearch } : {},
+    ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
       return { value: courtCaseType, state: "Applied" }
     })
@@ -167,7 +213,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
         <div className="moj-filter__header-action"></div>
       </div>
       <div className="moj-filter__content">
-        <If condition={countFilterChips(state) > 0}>
+        <If condition={anyFilterChips(state)}>
           <div className="moj-filter__selected">
             <div className="moj-filter__selected-heading">
               <div className="moj-filter__heading-title">
@@ -176,7 +222,7 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
                   state={state}
                   dispatch={dispatch}
                   sectionState={"Selected"}
-                  marginTop={countFilterChips(state, "Applied") > 0}
+                  marginTop={anyFilterChips(state, "Applied")}
                 />
               </div>
             </div>
@@ -187,11 +233,61 @@ const CourtCaseFilter: React.FC<Props> = ({ courtCaseTypes, dateRange, urgency, 
             {"Apply filters"}
           </button>
           <div className={classes["govuk-form-group"]}>
-            <label className="govuk-label govuk-label--m" htmlFor="keywords">
-              {"Keywords"}
-            </label>
-            <HintText>{"Defendent name, Court name, Reason, PTIURN"}</HintText>
-            <input className="govuk-input" id="keywords" name="keywords" type="text"></input>
+            <label className="govuk-label govuk-label--m">{"Search"}</label>
+            <div>
+              <label className="govuk-label govuk-label--s" htmlFor="keywords">
+                <LabelText>{"Defendant name"}</LabelText>
+                <input
+                  className="govuk-input"
+                  value={state.defendantNameSearch.value}
+                  id="keywords"
+                  name="keywords"
+                  type="text"
+                  onChange={(event) => {
+                    dispatch({ method: "add", type: "defendantName", value: event.currentTarget.value })
+                  }}
+                />
+              </label>
+              <label className="govuk-label govuk-label--s" htmlFor="court-name">
+                <LabelText>{"Court name"}</LabelText>
+                <input
+                  className="govuk-input"
+                  value={state.courtNameSearch.value}
+                  id="court-name"
+                  name="courtName"
+                  type="text"
+                  onChange={(event) => {
+                    dispatch({ method: "add", type: "courtName", value: event.currentTarget.value })
+                  }}
+                />
+              </label>
+              <label className="govuk-label govuk-label--s" htmlFor="reason-search">
+                <LabelText>{"Reason"}</LabelText>
+                <input
+                  className="govuk-input"
+                  value={state.reasonSearch.value}
+                  id="reason-search"
+                  name="reasonSearch"
+                  type="text"
+                  onChange={(event) => {
+                    dispatch({ method: "add", type: "reasonSearch", value: event.currentTarget.value })
+                  }}
+                />
+              </label>
+              <label className="govuk-label govuk-label--s" htmlFor="ptiurn">
+                <LabelText>{"PTIURN"}</LabelText>
+                <input
+                  className="govuk-input"
+                  value={state.ptiurnSearch.value}
+                  id="ptiurn"
+                  name="ptiurn"
+                  type="text"
+                  onChange={(event) => {
+                    dispatch({ method: "add", type: "ptiurn", value: event.currentTarget.value })
+                  }}
+                />
+              </label>
+            </div>
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />

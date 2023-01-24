@@ -72,16 +72,22 @@ const insertCourtCasesWithCourtDates = async (courtDates: Date[], orgCode: strin
   return insertCourtCases(existingCourtCases)
 }
 
-const insertCourtCasesWithDefendantNames = async (defendantNames: string[], orgCode: string) => {
+const insertCourtCasesWithFieldOverrides = async (
+  keywords: { defendantNames?: string[]; courtNames?: string[]; ptiurn?: string[] },
+  orgCode: string
+) => {
   const existingCourtCases: CourtCase[] = []
-  for (let index = 0; index < defendantNames.length; index++) {
+  const length = keywords.defendantNames?.length || keywords.courtNames?.length || keywords.ptiurn?.length || 0
+  for (let index = 0; index < length; index++) {
     existingCourtCases.push(
       await getDummyCourtCase({
         orgForPoliceFilter: orgCode,
         errorId: index,
         messageId: String(index).padStart(5, "x"),
         ptiurn: "Case" + String(index).padStart(5, "0"),
-        defendantName: defendantNames[index],
+        ...(keywords.defendantNames && { defendantName: keywords.defendantNames[index] }),
+        ...(keywords.courtNames && { courtName: keywords.courtNames[index] }),
+        ...(keywords.ptiurn && { ptiurn: keywords.ptiurn[index] }),
         courtDate: new Date("2" + String(index).padStart(3, "0") + "-01-01")
       })
     )
@@ -249,7 +255,7 @@ export {
   insertCourtCasesWithOrgCodes,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithCourtDates,
-  insertCourtCasesWithDefendantNames,
+  insertCourtCasesWithFieldOverrides,
   insertMultipleDummyCourtCases,
   insertDummyCourtCaseWithLock,
   insertDummyCourtCasesWithUrgencies,

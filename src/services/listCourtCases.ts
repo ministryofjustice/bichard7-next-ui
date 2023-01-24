@@ -16,11 +16,14 @@ const listCourtCases = async (
     orderBy,
     order,
     defendantName,
-    reasons: resultFilter,
+    courtName,
+    ptiurn,
+    reasonsFilter: resultFilter,
     urgent,
     courtDateRange,
     locked,
-    caseState
+    caseState,
+    reasonsSearch
   }: CaseListQueryParams
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
@@ -38,6 +41,30 @@ const listCourtCases = async (
     query.andWhere("courtCase.defendantName ilike '%' || :name || '%'", {
       name: defendantName
     })
+  }
+
+  if (courtName) {
+    query.andWhere("courtCase.courtName ilike '%' || :name || '%'", {
+      name: courtName
+    })
+  }
+
+  if (ptiurn) {
+    query.andWhere("courtCase.ptiurn ilike '%' || :ptiurn || '%'", {
+      ptiurn: ptiurn
+    })
+  }
+
+  if (reasonsSearch) {
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where("courtCase.trigger_reason ilike '%' || :reason || '%'", {
+          reason: reasonsSearch
+        }).orWhere("courtCase.error_report ilike '%' || :reason || '%'", {
+          reason: reasonsSearch
+        })
+      })
+    )
   }
 
   if (resultFilter?.includes("Triggers")) {

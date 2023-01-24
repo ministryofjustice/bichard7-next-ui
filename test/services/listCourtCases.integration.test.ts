@@ -8,7 +8,7 @@ import {
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithOrgCodes,
-  insertCourtCasesWithDefendantNames,
+  insertCourtCasesWithFieldOverrides,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
   insertDummyCourtCasesWithUrgencies,
@@ -20,6 +20,7 @@ import {
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
+import Trigger from "../../src/services/entities/Trigger"
 import getDataSource from "../../src/services/getDataSource"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 import Note from "services/entities/Note"
@@ -37,6 +38,7 @@ describe("listCourtCases", () => {
 
   beforeEach(async () => {
     await deleteFromTable(CourtCase)
+    await deleteFromTable(Trigger)
     await deleteFromTable(Note)
   })
 
@@ -507,8 +509,8 @@ describe("listCourtCases", () => {
       const defendantToIncludeWithPartialMatch = "Bruce W. Ayne"
       const defendantToNotInclude = "Barbara Gordon"
 
-      await insertCourtCasesWithDefendantNames(
-        [defendantToInclude, defendantToNotInclude, defendantToIncludeWithPartialMatch],
+      await insertCourtCasesWithFieldOverrides(
+        { defendantNames: [defendantToInclude, defendantToNotInclude, defendantToIncludeWithPartialMatch] },
         orgCode
       )
 
@@ -537,6 +539,192 @@ describe("listCourtCases", () => {
     })
   })
 
+  describe("filter by court name", () => {
+    it("should list cases when there is a case insensitive match", async () => {
+      const orgCode = "01FPA1"
+      const courtNameToInclude = "Magistrates' Courts London Croydon"
+      const courtNameToIncludeWithPartialMatch = "Magistrates' Courts London Something Else"
+      const courtNameToNotInclude = "Court Name not to include"
+
+      await insertCourtCasesWithFieldOverrides(
+        { courtNames: [courtNameToInclude, courtNameToIncludeWithPartialMatch, courtNameToNotInclude] },
+        orgCode
+      )
+
+      let result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        courtName: "Magistrates' Courts London Croydon"
+      })
+      expect(isError(result)).toBe(false)
+      let { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].courtName).toStrictEqual(courtNameToInclude)
+
+      result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        courtName: "magistrates' courts london"
+      })
+      expect(isError(result)).toBe(false)
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].courtName).toStrictEqual(courtNameToInclude)
+      expect(cases[1].courtName).toStrictEqual(courtNameToIncludeWithPartialMatch)
+    })
+  })
+
+  describe("filter by ptiurn", () => {
+    it("should list cases when there is a case insensitive match", async () => {
+      const orgCode = "01FPA1"
+      const ptiurnToInclude = "01ZD0303908"
+      const ptiurnToIncludeWithPartialMatch = "01ZD0303909"
+      const ptiurnToNotInclude = "00000000000"
+
+      await insertCourtCasesWithFieldOverrides(
+        { ptiurn: [ptiurnToInclude, ptiurnToIncludeWithPartialMatch, ptiurnToNotInclude] },
+        orgCode
+      )
+
+      let result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        ptiurn: "01ZD0303908"
+      })
+      expect(isError(result)).toBe(false)
+      let { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].ptiurn).toStrictEqual(ptiurnToInclude)
+
+      result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        ptiurn: "01ZD030390"
+      })
+      expect(isError(result)).toBe(false)
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].ptiurn).toStrictEqual(ptiurnToInclude)
+      expect(cases[1].ptiurn).toStrictEqual(ptiurnToIncludeWithPartialMatch)
+    })
+  })
+
+  describe("filter by reason", () => {
+    it("should list cases when there is a case insensitive match in triggers or exceptions", async () => {
+      await insertCourtCasesWithOrgCodes(["01", "01", "01", "01"])
+      const triggerToInclude: TestTrigger = {
+        triggerId: 0,
+        triggerCode: "TRPR0111",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      const triggerToIncludePartialMatch: TestTrigger = {
+        triggerId: 1,
+        triggerCode: "TRPR2222",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      const triggerNotToInclude: TestTrigger = {
+        triggerId: 2,
+        triggerCode: "TRPR9999",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      const errorToInclude = "HO00001"
+      const errorToIncludePartialMatch = "HO002222"
+      const errorNotToInclude = "HO999999"
+
+      await insertTriggers(0, [triggerToInclude, triggerToIncludePartialMatch])
+      await insertException(1, errorToInclude, `${errorToInclude}||ds:XMLField`)
+      await insertException(2, errorToIncludePartialMatch, `${errorToIncludePartialMatch}||ds:XMLField`)
+      await insertException(3, errorNotToInclude, `${errorNotToInclude}||ds:XMLField`)
+      await insertTriggers(3, [triggerNotToInclude])
+
+      // Searching for a full matched trigger code
+      let result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasonsSearch: triggerToInclude.triggerCode
+      })
+
+      expect(isError(result)).toBe(false)
+      let { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].triggers[0].triggerCode).toStrictEqual(triggerToInclude.triggerCode)
+
+      // Searching for a full matched error code
+      result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasonsSearch: errorToInclude
+      })
+
+      expect(isError(result)).toBe(false)
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].errorReason).toStrictEqual(errorToInclude)
+
+      // Searching for a partial match error/trigger code
+      result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasonsSearch: "2222"
+      })
+
+      expect(isError(result)).toBe(false)
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].triggers[1].triggerCode).toStrictEqual(triggerToIncludePartialMatch.triggerCode)
+      expect(cases[1].errorReason).toStrictEqual(errorToIncludePartialMatch)
+    })
+
+    it("should list cases when there is a case insensitive match in any exceptions", async () => {
+      await insertCourtCasesWithOrgCodes(["01", "01"])
+      const errorToInclude = "HO100322"
+      const anotherErrorToInclude = "HO100323"
+      const errorReport = `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
+      const errorNotToInclude = "HO200212"
+
+      await insertException(0, errorToInclude, errorReport)
+      await insertException(0, anotherErrorToInclude, errorReport)
+      await insertException(1, errorNotToInclude, `${errorNotToInclude}||ds:XMLField`)
+
+      let result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasonsSearch: errorToInclude
+      })
+
+      expect(isError(result)).toBe(false)
+      let { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].errorReport).toStrictEqual(errorReport)
+
+      result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasonsSearch: anotherErrorToInclude
+      })
+
+      expect(isError(result)).toBe(false)
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].errorReport).toStrictEqual(errorReport)
+    })
+  })
+
   describe("Filter cases having triggers/exceptions", () => {
     it("Should filter by whether a case has triggers", async () => {
       await insertCourtCasesWithOrgCodes(["01", "01"])
@@ -552,7 +740,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasons: ["Triggers"]
+        reasonsFilter: ["Triggers"]
       })
 
       expect(isError(result)).toBeFalsy()
@@ -569,7 +757,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasons: ["Exceptions"]
+        reasonsFilter: ["Exceptions"]
       })
 
       expect(isError(result)).toBeFalsy()
