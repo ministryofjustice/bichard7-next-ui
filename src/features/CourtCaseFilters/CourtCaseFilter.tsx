@@ -4,7 +4,7 @@ import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOption
 import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { LabelText } from "govuk-react"
-import { useReducer } from "react"
+import { useReducer, ChangeEvent } from "react"
 import { CaseState, Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
@@ -13,6 +13,7 @@ import FilterChipSection from "./FilterChipSection"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { createUseStyles } from "react-jss"
 import ExpandingFilters from "./ExpandingFilters"
+import KeyValuePair from "types/KeyValuePair"
 
 interface Props {
   defendantName: string | null
@@ -24,6 +25,7 @@ interface Props {
   urgency: string | null
   locked: string | null
   caseState: CaseState | null
+  myCases: string | null
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -45,6 +47,10 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.lockedFilter.value = action.value
       newState.lockedFilter.label = action.value ? "Locked" : "Unlocked"
       newState.lockedFilter.state = "Selected"
+    } else if (action.type === "myCases") {
+      newState.myCasesFilter.value = action.value
+      newState.myCasesFilter.label = action.value ? "Locked to me" : undefined
+      newState.myCasesFilter.state = "Selected"
     } else if (action.type === "reason") {
       // React might invoke our reducer more than once for a single event,
       // so avoid duplicating reason filters
@@ -81,6 +87,9 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
     } else if (action.type === "locked") {
       newState.lockedFilter.value = undefined
       newState.lockedFilter.label = undefined
+    } else if (action.type === "myCases") {
+      newState.myCasesFilter.value = false
+      newState.myCasesFilter.label = undefined
     } else if (action.type === "reason") {
       newState.reasonFilter = newState.reasonFilter.filter((reasonFilter) => reasonFilter.value !== action.value)
     } else if (action.type === "defendantName") {
@@ -115,7 +124,8 @@ const CourtCaseFilter: React.FC<Props> = ({
   dateRange,
   urgency,
   locked,
-  caseState
+  caseState,
+  myCases
 }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
@@ -128,11 +138,17 @@ const CourtCaseFilter: React.FC<Props> = ({
     ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
       return { value: courtCaseType, state: "Applied" }
-    })
+    }),
+    myCasesFilter: myCases !== null ? { value: false, state: "Applied", label: myCases } : {}
   }
   const [state, dispatch] = useReducer(reducer, initialFilterState)
 
   const classes = useStyles()
+
+  const LockedOptions: KeyValuePair<string, boolean> = {
+    Locked: true,
+    Unlocked: false
+  }
 
   return (
     <form method={"get"} id="filter-panel">
@@ -260,13 +276,16 @@ const CourtCaseFilter: React.FC<Props> = ({
                 <div className="govuk-checkboxes__item">
                   <input
                     className="govuk-checkboxes__input"
-                    id="is-urgent-filter"
-                    name="urgency"
+                    id="my-cases-filter"
+                    name="myCases"
                     type="checkbox"
-                    value="Urgent"
-                    // defaultChecked={urgency}
+                    value="myCases"
+                    defaultChecked={false}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                      dispatch({ method: "add", type: "myCases", value: event.target.checked })
+                    }}
                   ></input>
-                  <label className="govuk-label govuk-checkboxes__label" htmlFor="is-urgent-filter">
+                  <label className="govuk-label govuk-checkboxes__label" htmlFor="my-cases-filter">
                     {"View cases allocated to me"}
                   </label>
                 </div>
