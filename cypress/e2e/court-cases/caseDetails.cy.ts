@@ -155,13 +155,15 @@ describe("Case details", () => {
     })
 
     it("should lock a case when a user views a case details page", () => {
-      cy.task("insertDummyCourtCaseWithLock", {
-        errorLockedByUsername: null,
-        triggerLockedByUsername: null,
-        orgCodes: ["02"],
-        errorCount: 1,
-        triggerCount: 1
-      })
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: null,
+          triggerLockedByUsername: null,
+          orgForPoliceFilter: "02",
+          errorCount: 1,
+          triggerCount: 1
+        }
+      ])
 
       cy.login("bichard02@example.com", "password")
       cy.visit("/bichard/court-cases/0")
@@ -174,13 +176,15 @@ describe("Case details", () => {
 
     it("should not lock a court case when its already locked", () => {
       const existingUserLock = "Another name"
-      cy.task("insertDummyCourtCaseWithLock", {
-        errorLockedByUsername: existingUserLock,
-        triggerLockedByUsername: existingUserLock,
-        orgCodes: ["01"],
-        errorCount: 1,
-        triggerCount: 1
-      })
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: existingUserLock,
+          triggerLockedByUsername: existingUserLock,
+          orgForPoliceFilter: "01",
+          errorCount: 1,
+          triggerCount: 1
+        }
+      ])
 
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
@@ -191,11 +195,13 @@ describe("Case details", () => {
 
     it("should unlock and lock a court case when its already locked", () => {
       const existingUserLock = "Another name"
-      cy.task("insertDummyCourtCaseWithLock", {
-        errorLockedByUsername: existingUserLock,
-        triggerLockedByUsername: existingUserLock,
-        orgCodes: ["02"]
-      })
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: existingUserLock,
+          triggerLockedByUsername: existingUserLock,
+          orgForPoliceFilter: "02"
+        }
+      ])
 
       cy.login("bichard02@example.com", "password")
       cy.visit("/bichard/court-cases/0")
@@ -216,11 +222,14 @@ describe("Case details", () => {
 
     it("should resolve a trigger after clicking the button", () => {
       const userWithGeneralHandlerPermission = "Bichard02"
-      cy.task("insertDummyCourtCaseWithLock", {
-        errorLockedByUsername: userWithGeneralHandlerPermission,
-        triggerLockedByUsername: userWithGeneralHandlerPermission,
-        orgCodes: ["02"]
-      })
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: userWithGeneralHandlerPermission,
+          triggerLockedByUsername: userWithGeneralHandlerPermission,
+          orgForPoliceFilter: "02"
+        }
+      ])
+
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -249,11 +258,13 @@ describe("Case details", () => {
     })
 
     it("should resubmit a case when the resubmit button is clicked", () => {
-      cy.task("insertDummyCourtCaseWithLock", {
-        errorLockedByUsername: null,
-        triggerLockedByUsername: null,
-        orgCodes: ["02"]
-      })
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: null,
+          triggerLockedByUsername: null,
+          orgForPoliceFilter: "02"
+        }
+      ])
 
       cy.login("bichard02@example.com", "password")
 

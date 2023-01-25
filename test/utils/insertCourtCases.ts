@@ -106,30 +106,6 @@ const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: strin
   return insertCourtCases(existingCourtCases)
 }
 
-const insertDummyCourtCaseWithLock = async (
-  errorLockedByUsername: string | null,
-  triggerLockedByUsername: string | null,
-  orgsCodes: string[]
-) => {
-  const existingCourtCases: CourtCase[] = []
-  for (let index = 0; index < orgsCodes.length; index++) {
-    existingCourtCases.push(
-      await getDummyCourtCase({
-        orgForPoliceFilter: orgsCodes[index].padEnd(6, " "),
-        errorId: index,
-        messageId: String(index).padStart(5, "x"),
-        ptiurn: "Case" + String(index).padStart(5, "0"),
-        errorLockedByUsername: errorLockedByUsername,
-        triggerLockedByUsername: triggerLockedByUsername,
-        errorCount: 1,
-        triggerCount: 1
-      })
-    )
-  }
-
-  return insertCourtCases(existingCourtCases)
-}
-
 const insertMultipleDummyCourtCasesWithLock = async (
   lockHolders: { errorLockedByUsername?: string; triggerLockedByUsername?: string }[],
   orgCode: string
@@ -250,7 +226,6 @@ export {
   insertCourtCasesWithCourtDates,
   insertCourtCasesWithFields,
   insertMultipleDummyCourtCases,
-  insertDummyCourtCaseWithLock,
   insertDummyCourtCasesWithUrgencies,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,

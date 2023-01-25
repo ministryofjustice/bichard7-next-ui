@@ -12,7 +12,6 @@ import {
   insertCourtCasesWithOrgCodes,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithUrgencies,
-  insertDummyCourtCaseWithLock,
   insertMultipleDummyCourtCases,
   insertMultipleDummyCourtCasesWithLock,
   insertMultipleDummyCourtCasesWithResolutionTimestamp
@@ -72,18 +71,6 @@ export default defineConfig({
 
         insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {
           return insertCourtCasesWithFields(cases)
-        },
-
-        insertDummyCourtCaseWithLock(params: {
-          errorLockedByUsername: string
-          triggerLockedByUsername: string
-          orgCodes: string[]
-        }) {
-          return insertDummyCourtCaseWithLock(
-            params.errorLockedByUsername,
-            params.triggerLockedByUsername,
-            params.orgCodes
-          )
         },
 
         insertMultipleDummyCourtCasesWithResolutionTimestamp(params: {

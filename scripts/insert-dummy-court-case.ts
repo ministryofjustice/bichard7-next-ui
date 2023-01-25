@@ -1,3 +1,9 @@
-import { insertDummyCourtCaseWithLock } from "../test/utils/insertCourtCases"
+import { insertCourtCasesWithFields } from "../test/utils/insertCourtCases"
 
-insertDummyCourtCaseWithLock("Bichard01", "Bichard01", ["02"])
+insertCourtCasesWithFields([
+  {
+    errorLockedByUsername: "Bichard01",
+    triggerLockedByUsername: "Bichard01",
+    orgForPoliceFilter: "02"
+  }
+])
