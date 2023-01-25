@@ -613,6 +613,7 @@ describe("Case list", () => {
         cy.visit("/bichard")
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").click()
+        cy.get("")
       })
     })
   })

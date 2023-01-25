@@ -337,7 +337,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                     // defaultChecked={urgency}
                   ></input>
                   <label className="govuk-label govuk-checkboxes__label" htmlFor="is-urgent-filter">
-                    {"Urgent"}
+                    {"View cases allocated to me"}
                   </label>
                 </div>
               </div>
