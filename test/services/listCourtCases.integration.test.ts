@@ -5,17 +5,9 @@ import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import deleteFromTable from "../utils/deleteFromTable"
 import {
-  insertCourtCasesWithCourtDates,
-  insertCourtCasesWithCourtNames,
-  insertCourtCasesWithOrgCodes,
-  insertCourtCasesWithFieldOverrides,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
-  insertDummyCourtCasesWithUrgencies,
-  getDummyCourtCase,
-  insertCourtCases,
-  insertMultipleDummyCourtCasesWithLock,
-  insertMultipleDummyCourtCasesWithResolutionTimestamp
+  insertCourtCasesWithFields
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
@@ -101,7 +93,7 @@ describe("listCourtCases", () => {
   })
 
   it("should return all the cases if they number less than or equal to the specified maxPageItems", async () => {
-    await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
+    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
     const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "100" })
     expect(isError(result)).toBe(false)
@@ -117,7 +109,7 @@ describe("listCourtCases", () => {
   })
 
   it("shouldn't return more cases than the specified maxPageItems", async () => {
-    await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
+    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
     const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
@@ -191,7 +183,7 @@ describe("listCourtCases", () => {
   })
 
   it("should return the next page of items", async () => {
-    await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
+    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
     const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10", pageNum: "2" })
     expect(isError(result)).toBe(false)
@@ -207,7 +199,7 @@ describe("listCourtCases", () => {
   })
 
   it("should return the last page of items correctly", async () => {
-    await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
+    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
     const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10", pageNum: "10" })
     expect(isError(result)).toBe(false)
@@ -223,7 +215,7 @@ describe("listCourtCases", () => {
   })
 
   it("shouldn't return any cases if the page number is greater than the total pages", async () => {
-    await insertCourtCasesWithOrgCodes(Array.from(Array(100)).map(() => "36FPA1"))
+    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
     const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10", pageNum: "11" })
     expect(isError(result)).toBe(false)
@@ -250,7 +242,7 @@ describe("listCourtCases", () => {
       "12GHAB",
       "12GHAC"
     ]
-    await insertCourtCasesWithOrgCodes(orgCodesForceCodeLen1)
+    await insertCourtCasesWithFields(orgCodesForceCodeLen1.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
     const result = await listCourtCases(dataSource, { forces: ["3"], maxPageItems: "100" })
     expect(isError(result)).toBe(false)
@@ -272,7 +264,7 @@ describe("listCourtCases", () => {
   })
 
   it("should return a list of cases when the force code length is 2", async () => {
-    await insertCourtCasesWithOrgCodes(orgCodes)
+    await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
     const result = await listCourtCases(dataSource, { forces: ["36"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
@@ -292,7 +284,7 @@ describe("listCourtCases", () => {
   })
 
   it("should return a list of cases when the force code length is 3", async () => {
-    await insertCourtCasesWithOrgCodes(orgCodes)
+    await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
     const result = await listCourtCases(dataSource, { forces: ["36F"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
@@ -305,7 +297,7 @@ describe("listCourtCases", () => {
   })
 
   it("should return a list of cases when the force code length is 4", async () => {
-    await insertCourtCasesWithOrgCodes(orgCodes)
+    await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
     const result = await listCourtCases(dataSource, { forces: ["36FP"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
@@ -319,7 +311,7 @@ describe("listCourtCases", () => {
 
   it("a user with a visible force of length 5 can see cases for the 4-long prefix, and the exact match, and 6-long suffixes of the visible force", async () => {
     const orgCodesForVisibleForceLen5 = ["12GH", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC", "13BR", "14AT"]
-    await insertCourtCasesWithOrgCodes(orgCodesForVisibleForceLen5)
+    await insertCourtCasesWithFields(orgCodesForVisibleForceLen5.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
     const result = await listCourtCases(dataSource, { forces: ["12GHA"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
@@ -350,7 +342,7 @@ describe("listCourtCases", () => {
       "12GHAB",
       "12GHAC"
     ]
-    await insertCourtCasesWithOrgCodes(orgCodesForNonVisibleCases)
+    await insertCourtCasesWithFields(orgCodesForNonVisibleCases.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
     const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10" })
     expect(isError(result)).toBe(false)
@@ -385,7 +377,7 @@ describe("listCourtCases", () => {
       "13GHBA"
     ]
 
-    await insertCourtCasesWithOrgCodes(orgCodesForAllVisibleForces)
+    await insertCourtCasesWithFields(orgCodesForAllVisibleForces.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
     const result = await listCourtCases(dataSource, { forces: ["36FPA1", "13GH"], maxPageItems: "100" })
     expect(isError(result)).toBe(false)
@@ -428,7 +420,7 @@ describe("listCourtCases", () => {
       "13GHB",
       "13GHBA"
     ]
-    await insertCourtCasesWithOrgCodes(orgCodesForNoVisibleCases)
+    await insertCourtCasesWithFields(orgCodesForNoVisibleCases.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
     const result = await listCourtCases(dataSource, { forces: [], maxPageItems: "100" })
     expect(isError(result)).toBe(false)
@@ -440,7 +432,9 @@ describe("listCourtCases", () => {
 
   it("should order by court name", async () => {
     const orgCode = "36FPA1"
-    await insertCourtCasesWithCourtNames(["BBBB", "CCCC", "AAAA"], orgCode)
+    await insertCourtCasesWithFields(
+      ["BBBB", "CCCC", "AAAA"].map((courtName) => ({ courtName: courtName, orgForPoliceFilter: orgCode }))
+    )
 
     const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "courtName" })
     expect(isError(resultAsc)).toBe(false)
@@ -474,7 +468,11 @@ describe("listCourtCases", () => {
     const secondDate = new Date("2008-01-26")
     const thirdDate = new Date("2013-10-16")
 
-    await insertCourtCasesWithCourtDates([secondDate, firstDate, thirdDate], orgCode)
+    await insertCourtCasesWithFields([
+      { courtDate: secondDate, orgForPoliceFilter: orgCode },
+      { courtDate: firstDate, orgForPoliceFilter: orgCode },
+      { courtDate: thirdDate, orgForPoliceFilter: orgCode }
+    ])
 
     const result = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "courtDate" })
     expect(isError(result)).toBe(false)
@@ -509,10 +507,11 @@ describe("listCourtCases", () => {
       const defendantToIncludeWithPartialMatch = "Bruce W. Ayne"
       const defendantToNotInclude = "Barbara Gordon"
 
-      await insertCourtCasesWithFieldOverrides(
-        { defendantNames: [defendantToInclude, defendantToNotInclude, defendantToIncludeWithPartialMatch] },
-        orgCode
-      )
+      await insertCourtCasesWithFields([
+        { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
+        { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
+        { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
+      ])
 
       let result = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -546,10 +545,11 @@ describe("listCourtCases", () => {
       const courtNameToIncludeWithPartialMatch = "Magistrates' Courts London Something Else"
       const courtNameToNotInclude = "Court Name not to include"
 
-      await insertCourtCasesWithFieldOverrides(
-        { courtNames: [courtNameToInclude, courtNameToIncludeWithPartialMatch, courtNameToNotInclude] },
-        orgCode
-      )
+      await insertCourtCasesWithFields([
+        { courtName: courtNameToInclude, orgForPoliceFilter: orgCode },
+        { courtName: courtNameToIncludeWithPartialMatch, orgForPoliceFilter: orgCode },
+        { courtName: courtNameToNotInclude, orgForPoliceFilter: orgCode }
+      ])
 
       let result = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -583,10 +583,11 @@ describe("listCourtCases", () => {
       const ptiurnToIncludeWithPartialMatch = "01ZD0303909"
       const ptiurnToNotInclude = "00000000000"
 
-      await insertCourtCasesWithFieldOverrides(
-        { ptiurn: [ptiurnToInclude, ptiurnToIncludeWithPartialMatch, ptiurnToNotInclude] },
-        orgCode
-      )
+      await insertCourtCasesWithFields([
+        { ptiurn: ptiurnToInclude, orgForPoliceFilter: orgCode },
+        { ptiurn: ptiurnToIncludeWithPartialMatch, orgForPoliceFilter: orgCode },
+        { ptiurn: ptiurnToNotInclude, orgForPoliceFilter: orgCode }
+      ])
 
       let result = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -615,7 +616,8 @@ describe("listCourtCases", () => {
 
   describe("filter by reason", () => {
     it("should list cases when there is a case insensitive match in triggers or exceptions", async () => {
-      await insertCourtCasesWithOrgCodes(["01", "01", "01", "01"])
+      await insertCourtCasesWithFields(["01", "01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+
       const triggerToInclude: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0111",
@@ -689,7 +691,8 @@ describe("listCourtCases", () => {
     })
 
     it("should list cases when there is a case insensitive match in any exceptions", async () => {
-      await insertCourtCasesWithOrgCodes(["01", "01"])
+      await insertCourtCasesWithFields(["01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+
       const errorToInclude = "HO100322"
       const anotherErrorToInclude = "HO100323"
       const errorReport = `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
@@ -727,7 +730,7 @@ describe("listCourtCases", () => {
 
   describe("Filter cases having triggers/exceptions", () => {
     it("Should filter by whether a case has triggers", async () => {
-      await insertCourtCasesWithOrgCodes(["01", "01"])
+      await insertCourtCasesWithFields(["01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
       const trigger: TestTrigger = {
         triggerId: 0,
@@ -751,7 +754,7 @@ describe("listCourtCases", () => {
     })
 
     it("Should filter by whether a case has excecptions", async () => {
-      await insertCourtCasesWithOrgCodes(["01", "01"])
+      await insertCourtCasesWithFields(["01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
       await insertException(0, "HO100300")
 
       const result = await listCourtCases(dataSource, {
@@ -770,7 +773,13 @@ describe("listCourtCases", () => {
 
   describe("Filter cases by urgency", () => {
     it("Should filter only urgent cases", async () => {
-      await insertDummyCourtCasesWithUrgencies([false, true, false, true], "01")
+      const forceCode = "01"
+      await insertCourtCasesWithFields([
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: true, orgForPoliceFilter: forceCode },
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: true, orgForPoliceFilter: forceCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
@@ -786,7 +795,13 @@ describe("listCourtCases", () => {
     })
 
     it("Should filter non-urgent cases", async () => {
-      await insertDummyCourtCasesWithUrgencies([false, true, false, false], "01")
+      const forceCode = "01"
+      await insertCourtCasesWithFields([
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: true, orgForPoliceFilter: forceCode },
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: false, orgForPoliceFilter: forceCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
@@ -801,7 +816,13 @@ describe("listCourtCases", () => {
     })
 
     it("Should not filter cases when the urgent filter is undefined", async () => {
-      await insertDummyCourtCasesWithUrgencies([false, true, false, true], "01")
+      const forceCode = "01"
+      await insertCourtCasesWithFields([
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: true, orgForPoliceFilter: forceCode },
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: true, orgForPoliceFilter: forceCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
@@ -823,7 +844,12 @@ describe("listCourtCases", () => {
       const thirdDate = new Date("2008-03-26")
       const fourthDate = new Date("2013-10-16")
 
-      await insertCourtCasesWithCourtDates([firstDate, secondDate, thirdDate, fourthDate], orgCode)
+      await insertCourtCasesWithFields([
+        { courtDate: firstDate, orgForPoliceFilter: orgCode },
+        { courtDate: secondDate, orgForPoliceFilter: orgCode },
+        { courtDate: thirdDate, orgForPoliceFilter: orgCode },
+        { courtDate: fourthDate, orgForPoliceFilter: orgCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -845,7 +871,12 @@ describe("listCourtCases", () => {
       const thirdDate = new Date("2008-03-26")
       const fourthDate = new Date("2013-10-16")
 
-      await insertCourtCasesWithCourtDates([firstDate, secondDate, thirdDate, fourthDate], orgCode)
+      await insertCourtCasesWithFields([
+        { courtDate: firstDate, orgForPoliceFilter: orgCode },
+        { courtDate: secondDate, orgForPoliceFilter: orgCode },
+        { courtDate: thirdDate, orgForPoliceFilter: orgCode },
+        { courtDate: fourthDate, orgForPoliceFilter: orgCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -864,10 +895,10 @@ describe("listCourtCases", () => {
   describe("Filter cases by locked status", () => {
     it("Should filter cases that are locked ", async () => {
       const orgCode = "36FP"
-      await insertMultipleDummyCourtCasesWithLock(
-        [{ errorLockedByUsername: "bichard01", triggerLockedByUsername: "bichard01" }, {}],
-        orgCode
-      )
+      await insertCourtCasesWithFields([
+        { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: orgCode },
+        { orgForPoliceFilter: orgCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -884,18 +915,18 @@ describe("listCourtCases", () => {
 
     it("Should filter cases that are unlocked ", async () => {
       const orgCode = "36FP"
-      const lockedCase = await getDummyCourtCase({
+      const lockedCase = {
         errorId: 0,
         errorLockedByUsername: "bichard01",
         triggerLockedByUsername: "bichard01",
         messageId: "0"
-      })
-      const unlockedCase = await getDummyCourtCase({
+      }
+      const unlockedCase = {
         errorId: 1,
         messageId: "1"
-      })
+      }
 
-      await insertCourtCases([lockedCase, unlockedCase])
+      await insertCourtCasesWithFields([lockedCase, unlockedCase])
 
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -912,22 +943,22 @@ describe("listCourtCases", () => {
 
     it("Should treat cases with only one lock as locked.  ", async () => {
       const orgCode = "36FP"
-      const errorLockedCase = await getDummyCourtCase({
-        errorId: 0,
-        errorLockedByUsername: "bichard01",
-        messageId: "0"
-      })
-      const triggerLockedCase = await getDummyCourtCase({
-        errorId: 1,
-        triggerLockedByUsername: "bichard01",
-        messageId: "1"
-      })
-      const unlockedCase = await getDummyCourtCase({
-        errorId: 2,
-        messageId: "2"
-      })
-
-      await insertCourtCases([errorLockedCase, triggerLockedCase, unlockedCase])
+      await insertCourtCasesWithFields([
+        {
+          errorId: 0,
+          errorLockedByUsername: "bichard01",
+          messageId: "0"
+        },
+        {
+          errorId: 1,
+          triggerLockedByUsername: "bichard01",
+          messageId: "1"
+        },
+        {
+          errorId: 2,
+          messageId: "2"
+        }
+      ])
 
       const lockedResult = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -959,9 +990,11 @@ describe("listCourtCases", () => {
     it("Should return unresolved cases if case state not set", async () => {
       const orgCode = "36FP"
       const resolutionTimestamp = new Date()
-      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
-        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp],
-        orgCode
+      await insertCourtCasesWithFields(
+        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp].map((timeStamp) => ({
+          resolutionTimestamp: timeStamp,
+          orgForPoliceFilter: orgCode
+        }))
       )
 
       const result = await listCourtCases(dataSource, {
@@ -978,10 +1011,12 @@ describe("listCourtCases", () => {
 
     it("Should filter cases that are resolved", async () => {
       const orgCode = "36FP"
-      const dummyTimestamp = new Date()
-      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
-        [null, dummyTimestamp, dummyTimestamp, dummyTimestamp],
-        orgCode
+      const resolutionTimestamp = new Date()
+      await insertCourtCasesWithFields(
+        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp].map((timeStamp) => ({
+          resolutionTimestamp: timeStamp,
+          orgForPoliceFilter: orgCode
+        }))
       )
 
       const result = await listCourtCases(dataSource, {
@@ -994,15 +1029,21 @@ describe("listCourtCases", () => {
       const { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(3)
-      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([dummyTimestamp, dummyTimestamp, dummyTimestamp])
+      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([
+        resolutionTimestamp,
+        resolutionTimestamp,
+        resolutionTimestamp
+      ])
     })
 
     it("Should return all cases if case state is 'Unresolved and resolved'", async () => {
       const orgCode = "36FP"
-      const dummyTimestamp = new Date()
-      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
-        [null, dummyTimestamp, dummyTimestamp, dummyTimestamp],
-        orgCode
+      const resolutionTimestamp = new Date()
+      await insertCourtCasesWithFields(
+        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp].map((timeStamp) => ({
+          resolutionTimestamp: timeStamp,
+          orgForPoliceFilter: orgCode
+        }))
       )
 
       const result = await listCourtCases(dataSource, {
@@ -1017,9 +1058,9 @@ describe("listCourtCases", () => {
       expect(cases).toHaveLength(4)
       expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([
         null,
-        dummyTimestamp,
-        dummyTimestamp,
-        dummyTimestamp
+        resolutionTimestamp,
+        resolutionTimestamp,
+        resolutionTimestamp
       ])
     })
   })

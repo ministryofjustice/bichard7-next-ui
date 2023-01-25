@@ -112,10 +112,11 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by defendant name", () => {
-      cy.task("insertCourtCasesWithFieldOverrides", {
-        keywords: { defendantNames: ["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"] },
-        force: "011111"
-      })
+      cy.task("insertCourtCasesWithFields", [
+        { defendantName: "Bruce Wayne", orgForPoliceFilter: "011111" },
+        { defendantName: "Barbara Gordon", orgForPoliceFilter: "011111" },
+        { defendantName: "Alfred Pennyworth", orgForPoliceFilter: "011111" }
+      ])
 
       cy.visit("/bichard")
 
@@ -137,10 +138,11 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by court name", () => {
-      cy.task("insertCourtCasesWithFieldOverrides", {
-        keywords: { courtNames: ["Manchester Court", "London Court", "Bristol Court"] },
-        force: "011111"
-      })
+      cy.task("insertCourtCasesWithFields", [
+        { courtName: "Manchester Court", orgForPoliceFilter: "011111" },
+        { courtName: "London Court", orgForPoliceFilter: "011111" },
+        { courtName: "Bristol Court", orgForPoliceFilter: "011111" }
+      ])
 
       cy.visit("/bichard")
 
@@ -162,10 +164,11 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by PTIURN", () => {
-      cy.task("insertCourtCasesWithFieldOverrides", {
-        keywords: { ptiurn: ["Case00001", "Case00002", "Case00003"] },
-        force: "011111"
-      })
+      cy.task("insertCourtCasesWithFields", [
+        { ptiurn: "Case00001", orgForPoliceFilter: "011111" },
+        { ptiurn: "Case00002", orgForPoliceFilter: "011111" },
+        { ptiurn: "Case00003", orgForPoliceFilter: "011111" }
+      ])
 
       cy.visit("/bichard")
 
@@ -187,7 +190,12 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by reason", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["011111", "011111", "011111"])
+      cy.task("insertCourtCasesWithFields", [
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" }
+      ])
+
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -253,19 +261,16 @@ describe("Case list", () => {
       const expectedLastWeekLabel = `Last week (${twoWeeksAgoDateString} - ${oneWeekAgoDateString})`
       const expectedThisMonthLabel = `This month (${oneMonthAgoDateString} - ${todayDateString})`
 
-      cy.task("insertCourtCasesWithCourtDates", {
-        courtDate: [
-          todayDate,
-          yesterdayDate,
-          tomorrowDate,
-          oneWeekAgoDate,
-          oneWeekAndOneDayAgoDate,
-          twoWeeksAgoDate,
-          oneMonthAgoDate,
-          aLongTimeAgoDate
-        ],
-        force
-      })
+      cy.task("insertCourtCasesWithFields", [
+        { courtDate: todayDate, orgForPoliceFilter: force },
+        { courtDate: yesterdayDate, orgForPoliceFilter: force },
+        { courtDate: tomorrowDate, orgForPoliceFilter: force },
+        { courtDate: oneWeekAgoDate, orgForPoliceFilter: force },
+        { courtDate: oneWeekAndOneDayAgoDate, orgForPoliceFilter: force },
+        { courtDate: twoWeeksAgoDate, orgForPoliceFilter: force },
+        { courtDate: oneMonthAgoDate, orgForPoliceFilter: force },
+        { courtDate: aLongTimeAgoDate, orgForPoliceFilter: force }
+      ])
 
       cy.visit("/bichard")
 
@@ -371,17 +376,24 @@ describe("Case list", () => {
     })
 
     it("Should not allow passing an invalid date range filter", () => {
-      cy.task("insertCourtCasesWithCourtDates", {
-        courtDate: [new Date(), subDays(new Date(), 1), addDays(new Date(), 1)],
-        force: "011111"
-      })
+      const force = "011111"
+      cy.task("insertCourtCasesWithFields", [
+        { courtDate: new Date(), orgForPoliceFilter: force },
+        { courtDate: subDays(new Date(), 1), orgForPoliceFilter: force },
+        { courtDate: addDays(new Date(), 1), orgForPoliceFilter: force }
+      ])
 
       cy.visit("/bichard?dateRange=invalid")
       cy.get("tr").not(":first").should("have.length", 3)
     })
 
     it("Should filter cases by whether they have triggers and exceptions", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["011111", "011111", "011111", "011111"])
+      cy.task("insertCourtCasesWithFields", [
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" }
+      ])
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -460,10 +472,14 @@ describe("Case list", () => {
     })
 
     it("Should filter cases by urgency", () => {
-      cy.task("insertCourtCasesWithUrgencies", {
-        urgencies: [true, false, true, true],
-        force: "011111"
-      })
+      const force = "011111"
+      cy.task(
+        "insertCourtCasesWithFields",
+        [true, false, true, true].map((urgency) => ({
+          isUrgent: urgency,
+          orgForPoliceFilter: force
+        }))
+      )
 
       cy.visit("/bichard")
 
@@ -497,10 +513,13 @@ describe("Case list", () => {
 
     it("Should filter cases by case state", () => {
       const resolutionTimestamp = new Date()
-      cy.task("insertMultipleDummyCourtCasesWithResolutionTimestamp", {
-        resolutionTimestamps: [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp],
-        orgCode: "011111"
-      })
+      const force = "011111"
+      cy.task("insertCourtCasesWithFields", [
+        { resolutionTimestamp: null, orgForPoliceFilter: force },
+        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force },
+        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force },
+        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force }
+      ])
 
       cy.visit("/bichard")
 
@@ -530,16 +549,10 @@ describe("Case list", () => {
     })
 
     it("Should filter cases by locked state", () => {
-      cy.task("insertMultipleDummyCourtCasesWithLock", {
-        lockHolders: [
-          {
-            errorLockedByUsername: "Bichard01",
-            triggerLockedByUsername: "Bichard01"
-          },
-          {}
-        ],
-        orgCode: "011111"
-      })
+      cy.task("insertCourtCasesWithFields", [
+        { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" }
+      ])
 
       cy.visit("/bichard")
 

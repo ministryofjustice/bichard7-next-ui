@@ -112,7 +112,7 @@ describe("Case list", () => {
       })
 
       it("should display a case for the user's org", () => {
-        cy.task("insertCourtCasesWithOrgCodes", ["01"])
+        cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
@@ -120,7 +120,12 @@ describe("Case list", () => {
       })
 
       it("should only display cases visible to users forces", () => {
-        cy.task("insertCourtCasesWithOrgCodes", ["01", "02", "03", "04"])
+        cy.task("insertCourtCasesWithFields", [
+          { orgForPoliceFilter: "01" },
+          { orgForPoliceFilter: "02" },
+          { orgForPoliceFilter: "03" },
+          { orgForPoliceFilter: "04" }
+        ])
 
         cy.login("bichard02@example.com", "password")
         cy.visit("/bichard")
@@ -129,7 +134,12 @@ describe("Case list", () => {
       })
 
       it("should display cases for sub-forces", () => {
-        cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "012A", "013A1"])
+        cy.task("insertCourtCasesWithFields", [
+          { orgForPoliceFilter: "01" },
+          { orgForPoliceFilter: "011" },
+          { orgForPoliceFilter: "012A" },
+          { orgForPoliceFilter: "013A1" }
+        ])
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
@@ -142,7 +152,13 @@ describe("Case list", () => {
       })
 
       it("should display cases for parent forces up to the second-level force", () => {
-        cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "0111", "01111", "011111"])
+        cy.task("insertCourtCasesWithFields", [
+          { orgForPoliceFilter: "01" },
+          { orgForPoliceFilter: "011" },
+          { orgForPoliceFilter: "0111" },
+          { orgForPoliceFilter: "01111" },
+          { orgForPoliceFilter: "011111" }
+        ])
 
         cy.login("bichard011111@example.com", "password")
         cy.visit("/bichard")
@@ -155,7 +171,12 @@ describe("Case list", () => {
       })
 
       it("can display cases ordered by court name", () => {
-        cy.task("insertCourtCasesWithCourtNames", { courtNames: ["BBBB", "AAAA", "DDDD", "CCCC"], force: "011111" })
+        cy.task("insertCourtCasesWithFields", [
+          { courtName: "BBBB", orgForPoliceFilter: "011111" },
+          { courtName: "AAAA", orgForPoliceFilter: "011111" },
+          { courtName: "DDDD", orgForPoliceFilter: "011111" },
+          { courtName: "CCCC", orgForPoliceFilter: "011111" }
+        ])
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
@@ -197,7 +218,11 @@ describe("Case list", () => {
       })
 
       it("Should display the urgent badge on cases marked as urgent", () => {
-        cy.task("insertCourtCasesWithUrgencies", { urgencies: [true, false, true], force: "01" })
+        cy.task("insertCourtCasesWithFields", [
+          { isUrgent: true, orgForPoliceFilter: "01" },
+          { isUrgent: false, orgForPoliceFilter: "01" },
+          { isUrgent: true, orgForPoliceFilter: "01" }
+        ])
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
@@ -257,10 +282,14 @@ describe("Case list", () => {
       })
 
       it("can display cases ordered by urgency", () => {
-        cy.task("insertCourtCasesWithUrgencies", {
-          urgencies: [false, false, true, false, true, true, false, true, false, true],
-          force: "011111"
-        })
+        const force = "011111"
+        cy.task(
+          "insertCourtCasesWithFields",
+          [false, false, true, false, true, true, false, true, false, true].map((urgency) => ({
+            isUrgent: urgency,
+            orgForPoliceFilter: force
+          }))
+        )
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
