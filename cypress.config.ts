@@ -9,8 +9,7 @@ import {
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithUrgencies,
-  insertMultipleDummyCourtCases,
-  insertMultipleDummyCourtCasesWithResolutionTimestamp
+  insertMultipleDummyCourtCases
 } from "./test/utils/insertCourtCases"
 import insertException from "./test/utils/manageExceptions"
 import { insertTriggers } from "./test/utils/manageTriggers"
@@ -56,13 +55,6 @@ export default defineConfig({
 
         insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {
           return insertCourtCasesWithFields(cases)
-        },
-
-        insertMultipleDummyCourtCasesWithResolutionTimestamp(params: {
-          resolutionTimestamps: (Date | null)[]
-          orgCode: string
-        }) {
-          return insertMultipleDummyCourtCasesWithResolutionTimestamp(params.resolutionTimestamps, params.orgCode)
         },
 
         insertCourtCasesWithUrgencies(params: { urgencies: boolean[]; force: string }) {

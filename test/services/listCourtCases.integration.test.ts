@@ -10,7 +10,6 @@ import {
   insertDummyCourtCasesWithUrgencies,
   getDummyCourtCase,
   insertCourtCases,
-  insertMultipleDummyCourtCasesWithResolutionTimestamp,
   insertCourtCasesWithFields
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
@@ -976,9 +975,11 @@ describe("listCourtCases", () => {
     it("Should return unresolved cases if case state not set", async () => {
       const orgCode = "36FP"
       const resolutionTimestamp = new Date()
-      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
-        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp],
-        orgCode
+      await insertCourtCasesWithFields(
+        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp].map((timeStamp) => ({
+          resolutionTimestamp: timeStamp,
+          orgForPoliceFilter: orgCode
+        }))
       )
 
       const result = await listCourtCases(dataSource, {
@@ -995,10 +996,12 @@ describe("listCourtCases", () => {
 
     it("Should filter cases that are resolved", async () => {
       const orgCode = "36FP"
-      const dummyTimestamp = new Date()
-      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
-        [null, dummyTimestamp, dummyTimestamp, dummyTimestamp],
-        orgCode
+      const resolutionTimestamp = new Date()
+      await insertCourtCasesWithFields(
+        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp].map((timeStamp) => ({
+          resolutionTimestamp: timeStamp,
+          orgForPoliceFilter: orgCode
+        }))
       )
 
       const result = await listCourtCases(dataSource, {
@@ -1011,15 +1014,21 @@ describe("listCourtCases", () => {
       const { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(3)
-      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([dummyTimestamp, dummyTimestamp, dummyTimestamp])
+      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([
+        resolutionTimestamp,
+        resolutionTimestamp,
+        resolutionTimestamp
+      ])
     })
 
     it("Should return all cases if case state is 'Unresolved and resolved'", async () => {
       const orgCode = "36FP"
-      const dummyTimestamp = new Date()
-      await insertMultipleDummyCourtCasesWithResolutionTimestamp(
-        [null, dummyTimestamp, dummyTimestamp, dummyTimestamp],
-        orgCode
+      const resolutionTimestamp = new Date()
+      await insertCourtCasesWithFields(
+        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp].map((timeStamp) => ({
+          resolutionTimestamp: timeStamp,
+          orgForPoliceFilter: orgCode
+        }))
       )
 
       const result = await listCourtCases(dataSource, {
@@ -1034,9 +1043,9 @@ describe("listCourtCases", () => {
       expect(cases).toHaveLength(4)
       expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([
         null,
-        dummyTimestamp,
-        dummyTimestamp,
-        dummyTimestamp
+        resolutionTimestamp,
+        resolutionTimestamp,
+        resolutionTimestamp
       ])
     })
   })

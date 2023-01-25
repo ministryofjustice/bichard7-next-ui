@@ -51,28 +51,6 @@ const insertCourtCasesWithFields = async (cases: Partial<CourtCase>[]) => {
   return insertCourtCases(existingCourtCases)
 }
 
-const insertMultipleDummyCourtCasesWithResolutionTimestamp = async (
-  resolutionTimestamp: (Date | null)[],
-  orgCode: string
-) => {
-  const existingCourtCases: CourtCase[] = []
-  for (let index = 0; index < resolutionTimestamp.length; index++) {
-    existingCourtCases.push(
-      await getDummyCourtCase({
-        orgForPoliceFilter: orgCode.padEnd(6, " "),
-        errorId: index,
-        messageId: String(index).padStart(5, "x"),
-        ptiurn: "Case" + String(index).padStart(5, "0"),
-        errorCount: 1,
-        triggerCount: 1,
-        resolutionTimestamp: resolutionTimestamp[index] ?? null
-      })
-    )
-  }
-
-  return insertCourtCases(existingCourtCases)
-}
-
 const insertDummyCourtCasesWithUrgencies = async (urgencies: boolean[], orgCode: string) => {
   const existingCourtCases: CourtCase[] = await Promise.all(
     urgencies.map((urgency, index) =>
@@ -147,6 +125,5 @@ export {
   insertMultipleDummyCourtCases,
   insertDummyCourtCasesWithUrgencies,
   insertDummyCourtCasesWithNotes,
-  insertDummyCourtCasesWithTriggers,
-  insertMultipleDummyCourtCasesWithResolutionTimestamp
+  insertDummyCourtCasesWithTriggers
 }

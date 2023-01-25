@@ -509,10 +509,13 @@ describe("Case list", () => {
 
     it("Should filter cases by case state", () => {
       const resolutionTimestamp = new Date()
-      cy.task("insertMultipleDummyCourtCasesWithResolutionTimestamp", {
-        resolutionTimestamps: [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp],
-        orgCode: "011111"
-      })
+      const force = "011111"
+      cy.task("insertCourtCasesWithFields", [
+        { resolutionTimestamp: null, orgForPoliceFilter: force },
+        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force },
+        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force },
+        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force }
+      ])
 
       cy.visit("/bichard")
 
