@@ -13,7 +13,6 @@ import {
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithUrgencies,
   insertMultipleDummyCourtCases,
-  insertMultipleDummyCourtCasesWithLock,
   insertMultipleDummyCourtCasesWithResolutionTimestamp
 } from "./test/utils/insertCourtCases"
 import insertException from "./test/utils/manageExceptions"
@@ -78,13 +77,6 @@ export default defineConfig({
           orgCode: string
         }) {
           return insertMultipleDummyCourtCasesWithResolutionTimestamp(params.resolutionTimestamps, params.orgCode)
-        },
-
-        insertMultipleDummyCourtCasesWithLock(params: {
-          lockHolders: { errorLockedByUsername?: string; triggerLockedByUsername?: string }[]
-          orgCode: string
-        }) {
-          return insertMultipleDummyCourtCasesWithLock(params.lockHolders, params.orgCode)
         },
 
         insertCourtCasesWithUrgencies(params: { urgencies: boolean[]; force: string }) {

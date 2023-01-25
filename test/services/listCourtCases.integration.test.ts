@@ -13,7 +13,6 @@ import {
   insertDummyCourtCasesWithUrgencies,
   getDummyCourtCase,
   insertCourtCases,
-  insertMultipleDummyCourtCasesWithLock,
   insertMultipleDummyCourtCasesWithResolutionTimestamp,
   insertCourtCasesWithFields
 } from "../utils/insertCourtCases"
@@ -867,10 +866,10 @@ describe("listCourtCases", () => {
   describe("Filter cases by locked status", () => {
     it("Should filter cases that are locked ", async () => {
       const orgCode = "36FP"
-      await insertMultipleDummyCourtCasesWithLock(
-        [{ errorLockedByUsername: "bichard01", triggerLockedByUsername: "bichard01" }, {}],
-        orgCode
-      )
+      await insertCourtCasesWithFields([
+        { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: orgCode },
+        { orgForPoliceFilter: orgCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],

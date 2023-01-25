@@ -533,16 +533,10 @@ describe("Case list", () => {
     })
 
     it("Should filter cases by locked state", () => {
-      cy.task("insertMultipleDummyCourtCasesWithLock", {
-        lockHolders: [
-          {
-            errorLockedByUsername: "Bichard01",
-            triggerLockedByUsername: "Bichard01"
-          },
-          {}
-        ],
-        orgCode: "011111"
-      })
+      cy.task("insertCourtCasesWithFields", [
+        { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" }
+      ])
 
       cy.visit("/bichard")
 
