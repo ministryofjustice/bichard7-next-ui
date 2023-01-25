@@ -6,7 +6,6 @@ import deleteFromTable from "./test/utils/deleteFromTable"
 import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import {
   insertCourtCases,
-  insertCourtCasesWithCourtNames,
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithUrgencies,
@@ -53,10 +52,6 @@ export default defineConfig({
 
         insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
           return insertMultipleDummyCourtCases(params.numToInsert, params.force)
-        },
-
-        insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {
-          return insertCourtCasesWithCourtNames(params.courtNames, params.force)
         },
 
         insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {

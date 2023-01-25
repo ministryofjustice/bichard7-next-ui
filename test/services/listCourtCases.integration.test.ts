@@ -5,7 +5,6 @@ import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import deleteFromTable from "../utils/deleteFromTable"
 import {
-  insertCourtCasesWithCourtNames,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
   insertDummyCourtCasesWithUrgencies,
@@ -437,7 +436,9 @@ describe("listCourtCases", () => {
 
   it("should order by court name", async () => {
     const orgCode = "36FPA1"
-    await insertCourtCasesWithCourtNames(["BBBB", "CCCC", "AAAA"], orgCode)
+    await insertCourtCasesWithFields(
+      ["BBBB", "CCCC", "AAAA"].map((courtName) => ({ courtName: courtName, orgForPoliceFilter: orgCode }))
+    )
 
     const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "courtName" })
     expect(isError(resultAsc)).toBe(false)

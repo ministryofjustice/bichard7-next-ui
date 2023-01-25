@@ -171,7 +171,12 @@ describe("Case list", () => {
       })
 
       it("can display cases ordered by court name", () => {
-        cy.task("insertCourtCasesWithCourtNames", { courtNames: ["BBBB", "AAAA", "DDDD", "CCCC"], force: "011111" })
+        cy.task("insertCourtCasesWithFields", [
+          { courtName: "BBBB", orgForPoliceFilter: "011111" },
+          { courtName: "AAAA", orgForPoliceFilter: "011111" },
+          { courtName: "DDDD", orgForPoliceFilter: "011111" },
+          { courtName: "CCCC", orgForPoliceFilter: "011111" }
+        ])
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
