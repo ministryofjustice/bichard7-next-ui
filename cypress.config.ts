@@ -5,7 +5,6 @@ import User from "./src/services/entities/User"
 import deleteFromTable from "./test/utils/deleteFromTable"
 import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import {
-  insertCourtCases,
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
   insertMultipleDummyCourtCases
@@ -58,10 +57,6 @@ export default defineConfig({
 
         insertCourtCasesWithNotes(params: { caseNotes: { user: string; text: string }[][]; force: string }) {
           return insertDummyCourtCasesWithNotes(params.caseNotes, params.force)
-        },
-
-        insertCourtCases(params: { courtCases: CourtCase[] }) {
-          return insertCourtCases(params.courtCases)
         },
 
         clearCourtCases() {
