@@ -1,5 +1,5 @@
-import { Reason } from "types/CaseListQueryParams"
 import type { Dispatch } from "react"
+import { Reason } from "types/CaseListQueryParams"
 import type { FilterAction } from "types/CourtCaseFilter"
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 const courtCaseTypeOptions = ["Exceptions", "Triggers"]
 
 const CourtCaseTypeOptions: React.FC<Props> = ({ courtCaseTypes, dispatch }: Props) => {
+  console.log(courtCaseTypes)
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
@@ -24,7 +25,7 @@ const CourtCaseTypeOptions: React.FC<Props> = ({ courtCaseTypes, dispatch }: Pro
               checked={courtCaseTypes && courtCaseTypes.includes(caseType as Reason)}
               onChange={(event) => {
                 const value = event.currentTarget.value === "Triggers" ? "Triggers" : "Exceptions"
-                dispatch({ method: "add", type: "reason", value })
+                dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "reason", value })
               }}
             ></input>
             <label className="govuk-label govuk-checkboxes__label" htmlFor={`${caseType.toLowerCase()}-type`}>
