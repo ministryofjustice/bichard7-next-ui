@@ -35,7 +35,12 @@ const insertCourtCasesWithFields = async (cases: Partial<CourtCase>[]) => {
 }
 
 const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: string) => {
-  return insertCourtCasesWithFields(Array.from(Array(numToInsert)).map(() => ({ orgForPoliceFilter: orgCode })))
+  return insertCourtCasesWithFields(
+    Array.from(Array(numToInsert)).map((_, index) => ({
+      orgForPoliceFilter: orgCode,
+      defendantName: `Defendant Name ${index}`
+    }))
+  )
 }
 
 const insertDummyCourtCasesWithNotes = async (caseNotes: { user: string; text: string }[][], orgCode: string) => {
