@@ -472,10 +472,14 @@ describe("Case list", () => {
     })
 
     it("Should filter cases by urgency", () => {
-      cy.task("insertCourtCasesWithUrgencies", {
-        urgencies: [true, false, true, true],
-        force: "011111"
-      })
+      const force = "011111"
+      cy.task(
+        "insertCourtCasesWithFields",
+        [true, false, true, true].map((urgency) => ({
+          isUrgent: urgency,
+          orgForPoliceFilter: force
+        }))
+      )
 
       cy.visit("/bichard")
 

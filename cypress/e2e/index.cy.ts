@@ -218,7 +218,11 @@ describe("Case list", () => {
       })
 
       it("Should display the urgent badge on cases marked as urgent", () => {
-        cy.task("insertCourtCasesWithUrgencies", { urgencies: [true, false, true], force: "01" })
+        cy.task("insertCourtCasesWithFields", [
+          { isUrgent: true, orgForPoliceFilter: "01" },
+          { isUrgent: false, orgForPoliceFilter: "01" },
+          { isUrgent: true, orgForPoliceFilter: "01" }
+        ])
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
@@ -278,10 +282,14 @@ describe("Case list", () => {
       })
 
       it("can display cases ordered by urgency", () => {
-        cy.task("insertCourtCasesWithUrgencies", {
-          urgencies: [false, false, true, false, true, true, false, true, false, true],
-          force: "011111"
-        })
+        const force = "011111"
+        cy.task(
+          "insertCourtCasesWithFields",
+          [false, false, true, false, true, true, false, true, false, true].map((urgency) => ({
+            isUrgent: urgency,
+            orgForPoliceFilter: force
+          }))
+        )
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")

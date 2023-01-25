@@ -8,7 +8,6 @@ import {
   insertCourtCases,
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
-  insertDummyCourtCasesWithUrgencies,
   insertMultipleDummyCourtCases
 } from "./test/utils/insertCourtCases"
 import insertException from "./test/utils/manageExceptions"
@@ -55,10 +54,6 @@ export default defineConfig({
 
         insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {
           return insertCourtCasesWithFields(cases)
-        },
-
-        insertCourtCasesWithUrgencies(params: { urgencies: boolean[]; force: string }) {
-          return insertDummyCourtCasesWithUrgencies(params.urgencies, params.force)
         },
 
         insertCourtCasesWithNotes(params: { caseNotes: { user: string; text: string }[][]; force: string }) {

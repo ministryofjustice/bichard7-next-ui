@@ -7,7 +7,6 @@ import deleteFromTable from "../utils/deleteFromTable"
 import {
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
-  insertDummyCourtCasesWithUrgencies,
   getDummyCourtCase,
   insertCourtCases,
   insertCourtCasesWithFields
@@ -776,7 +775,13 @@ describe("listCourtCases", () => {
 
   describe("Filter cases by urgency", () => {
     it("Should filter only urgent cases", async () => {
-      await insertDummyCourtCasesWithUrgencies([false, true, false, true], "01")
+      const forceCode = "01"
+      await insertCourtCasesWithFields([
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: true, orgForPoliceFilter: forceCode },
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: true, orgForPoliceFilter: forceCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
@@ -792,7 +797,13 @@ describe("listCourtCases", () => {
     })
 
     it("Should filter non-urgent cases", async () => {
-      await insertDummyCourtCasesWithUrgencies([false, true, false, false], "01")
+      const forceCode = "01"
+      await insertCourtCasesWithFields([
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: true, orgForPoliceFilter: forceCode },
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: false, orgForPoliceFilter: forceCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
@@ -807,7 +818,13 @@ describe("listCourtCases", () => {
     })
 
     it("Should not filter cases when the urgent filter is undefined", async () => {
-      await insertDummyCourtCasesWithUrgencies([false, true, false, true], "01")
+      const forceCode = "01"
+      await insertCourtCasesWithFields([
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: true, orgForPoliceFilter: forceCode },
+        { isUrgent: false, orgForPoliceFilter: forceCode },
+        { isUrgent: true, orgForPoliceFilter: forceCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
