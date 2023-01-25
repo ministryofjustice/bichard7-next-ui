@@ -30,13 +30,13 @@ describe("resolveTrigger", () => {
   describe("Mark trigger as resolved", () => {
     it("Should set the relevant columns when resolving a trigger", async () => {
       const resolverUsername = "triggerResolver01"
-      const visibleForces = "36"
+      const visibleForce = "36"
 
       await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForces
+          orgForPoliceFilter: visibleForce
         }
       ])
 
@@ -48,14 +48,14 @@ describe("resolveTrigger", () => {
       }
       await insertTriggers(0, [trigger])
 
-      const beforeCourtCaseResult = await getCourtCaseByVisibleForce(dataSource, 0, [visibleForces])
+      const beforeCourtCaseResult = await getCourtCaseByVisibleForce(dataSource, 0, [visibleForce])
       expect(isError(beforeCourtCaseResult)).toBeFalsy()
       expect(beforeCourtCaseResult).not.toBeNull()
       const beforeCourtCase = beforeCourtCaseResult as CourtCase
       expect(beforeCourtCase.triggerResolvedBy).toBeNull()
       expect(beforeCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      const result = await resolveTrigger(dataSource, 0, 0, resolverUsername, [visibleForces])
+      const result = await resolveTrigger(dataSource, 0, 0, resolverUsername, [visibleForce])
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeTruthy()
@@ -76,7 +76,7 @@ describe("resolveTrigger", () => {
       expect(updatedTrigger.resolvedBy).toStrictEqual(resolverUsername)
       expect(updatedTrigger.status).toStrictEqual("Resolved")
 
-      const afterCourtCaseResult = await getCourtCaseByVisibleForce(dataSource, 0, [visibleForces])
+      const afterCourtCaseResult = await getCourtCaseByVisibleForce(dataSource, 0, [visibleForce])
       expect(isError(afterCourtCaseResult)).toBeFalsy()
       expect(afterCourtCaseResult).not.toBeNull()
       const afterCourtCase = afterCourtCaseResult as CourtCase
@@ -92,13 +92,13 @@ describe("resolveTrigger", () => {
     it("Shouldn't overwrite an already resolved trigger when attempting to resolve again", async () => {
       const resolverUsername = "triggerResolver01"
       const reResolverUsername = "triggerResolver02"
-      const visibleForces = "36"
+      const visibleForce = "36"
 
       await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForces
+          orgForPoliceFilter: visibleForce
         }
       ])
 
@@ -111,12 +111,12 @@ describe("resolveTrigger", () => {
       await insertTriggers(0, [trigger])
 
       // Resolve trigger
-      const initialResolveResult = await resolveTrigger(dataSource, 0, 0, resolverUsername, [visibleForces])
+      const initialResolveResult = await resolveTrigger(dataSource, 0, 0, resolverUsername, [visibleForce])
       expect(isError(initialResolveResult)).toBeFalsy()
       expect(initialResolveResult as boolean).toBeTruthy()
 
       // Try to resolve again as a different user
-      const result = await resolveTrigger(dataSource, 0, 0, reResolverUsername, [visibleForces])
+      const result = await resolveTrigger(dataSource, 0, 0, reResolverUsername, [visibleForce])
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeFalsy()
