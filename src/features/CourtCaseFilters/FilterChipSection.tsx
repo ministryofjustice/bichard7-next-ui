@@ -137,6 +137,7 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
         value={state.caseStateFilter.value!}
       />
 
+      {/* TODO: Put lockedFilter and myCasesFilter in one section under Locked state */}
       <FilterChipRow
         chipLabel={state.lockedFilter.label!}
         condition={
@@ -149,6 +150,20 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
         label="Locked state"
         state={state.lockedFilter.state || sectionState}
         value={state.lockedFilter.value!}
+      />
+
+      <FilterChipRow
+        chipLabel={state.myCasesFilter.label!}
+        condition={
+          state.myCasesFilter.value !== undefined &&
+          state.myCasesFilter.label !== undefined &&
+          state.myCasesFilter.state === sectionState
+        }
+        dispatch={dispatch}
+        type="myCases"
+        label="My cases"
+        state={state.myCasesFilter.state || state.myCasesFilter.state || sectionState}
+        value={state.myCasesFilter.value! || state.myCasesFilter.value!}
       />
     </If>
   )
