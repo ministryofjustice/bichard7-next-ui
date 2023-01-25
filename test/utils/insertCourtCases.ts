@@ -39,54 +39,40 @@ const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: strin
 }
 
 const insertDummyCourtCasesWithNotes = async (caseNotes: { user: string; text: string }[][], orgCode: string) => {
-  const existingCourtCases: CourtCase[] = await Promise.all(
-    caseNotes.map((notes, index) =>
-      getDummyCourtCase({
-        orgForPoliceFilter: orgCode,
-        errorId: index,
-        messageId: String(index).padStart(5, "x"),
-        ptiurn: "Case" + String(index).padStart(5, "0"),
-        notes: notes.map(
-          (note, _) =>
-            ({
-              createdAt: new Date(),
-              noteText: note.text,
-              userId: note.user,
-              errorId: index
-            } as unknown as Note)
-        )
-      })
-    )
+  return insertCourtCasesWithFields(
+    caseNotes.map((notes, index) => ({
+      orgForPoliceFilter: orgCode,
+      notes: notes.map(
+        (note, _) =>
+          ({
+            createdAt: new Date(),
+            noteText: note.text,
+            userId: note.user,
+            errorId: index
+          } as unknown as Note)
+      )
+    }))
   )
-
-  return insertCourtCases(existingCourtCases)
 }
 
 const insertDummyCourtCasesWithTriggers = async (
   caseTriggers: { code: string; status: ResolutionStatus }[][],
   orgCode: string
 ) => {
-  const existingCourtCases: CourtCase[] = await Promise.all(
-    caseTriggers.map((triggers, index) =>
-      getDummyCourtCase({
-        orgForPoliceFilter: orgCode,
-        errorId: index,
-        messageId: String(index).padStart(5, "x"),
-        ptiurn: "Case" + String(index).padStart(5, "0"),
-        triggers: triggers.map(
-          (trigger, _) =>
-            ({
-              createdAt: new Date(),
-              triggerCode: trigger.code,
-              errorId: index,
-              status: trigger.status
-            } as unknown as Trigger)
-        )
-      })
-    )
+  return insertCourtCasesWithFields(
+    caseTriggers.map((triggers, index) => ({
+      orgForPoliceFilter: orgCode,
+      triggers: triggers.map(
+        (trigger, _) =>
+          ({
+            createdAt: new Date(),
+            triggerCode: trigger.code,
+            errorId: index,
+            status: trigger.status
+          } as unknown as Trigger)
+      )
+    }))
   )
-
-  return insertCourtCases(existingCourtCases)
 }
 
 export {
