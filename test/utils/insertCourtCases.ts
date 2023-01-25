@@ -18,23 +18,6 @@ const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtC
 const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<CourtCase[]> =>
   (await getDataSource()).getRepository(CourtCase).save(Array.isArray(courtCases) ? courtCases : [courtCases])
 
-const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: string) => {
-  const existingCourtCases: CourtCase[] = []
-  for (let index = 0; index < numToInsert; index++) {
-    existingCourtCases.push(
-      await getDummyCourtCase({
-        orgForPoliceFilter: orgCode,
-        messageId: String(index).padStart(5, "x"),
-        errorId: index,
-        ptiurn: "Case" + String(index).padStart(5, "0"),
-        defendantName: `Defendant Name ${index}`
-      })
-    )
-  }
-
-  return insertCourtCases(existingCourtCases)
-}
-
 const insertCourtCasesWithFields = async (cases: Partial<CourtCase>[]) => {
   const existingCourtCases: CourtCase[] = []
   for (let index = 0; index < cases.length; index++) {
@@ -49,6 +32,10 @@ const insertCourtCasesWithFields = async (cases: Partial<CourtCase>[]) => {
   }
 
   return insertCourtCases(existingCourtCases)
+}
+
+const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: string) => {
+  return insertCourtCasesWithFields(Array.from(Array(numToInsert)).map(() => ({ orgForPoliceFilter: orgCode })))
 }
 
 const insertDummyCourtCasesWithNotes = async (caseNotes: { user: string; text: string }[][], orgCode: string) => {
