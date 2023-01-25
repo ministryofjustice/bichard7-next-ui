@@ -256,19 +256,16 @@ describe("Case list", () => {
       const expectedLastWeekLabel = `Last week (${twoWeeksAgoDateString} - ${oneWeekAgoDateString})`
       const expectedThisMonthLabel = `This month (${oneMonthAgoDateString} - ${todayDateString})`
 
-      cy.task("insertCourtCasesWithCourtDates", {
-        courtDate: [
-          todayDate,
-          yesterdayDate,
-          tomorrowDate,
-          oneWeekAgoDate,
-          oneWeekAndOneDayAgoDate,
-          twoWeeksAgoDate,
-          oneMonthAgoDate,
-          aLongTimeAgoDate
-        ],
-        force
-      })
+      cy.task("insertCourtCasesWithFields", [
+        { courtDate: todayDate, orgForPoliceFilter: force },
+        { courtDate: yesterdayDate, orgForPoliceFilter: force },
+        { courtDate: tomorrowDate, orgForPoliceFilter: force },
+        { courtDate: oneWeekAgoDate, orgForPoliceFilter: force },
+        { courtDate: oneWeekAndOneDayAgoDate, orgForPoliceFilter: force },
+        { courtDate: twoWeeksAgoDate, orgForPoliceFilter: force },
+        { courtDate: oneMonthAgoDate, orgForPoliceFilter: force },
+        { courtDate: aLongTimeAgoDate, orgForPoliceFilter: force }
+      ])
 
       cy.visit("/bichard")
 
@@ -374,10 +371,12 @@ describe("Case list", () => {
     })
 
     it("Should not allow passing an invalid date range filter", () => {
-      cy.task("insertCourtCasesWithCourtDates", {
-        courtDate: [new Date(), subDays(new Date(), 1), addDays(new Date(), 1)],
-        force: "011111"
-      })
+      const force = "011111"
+      cy.task("insertCourtCasesWithFields", [
+        { courtDate: new Date(), orgForPoliceFilter: force },
+        { courtDate: subDays(new Date(), 1), orgForPoliceFilter: force },
+        { courtDate: addDays(new Date(), 1), orgForPoliceFilter: force }
+      ])
 
       cy.visit("/bichard?dateRange=invalid")
       cy.get("tr").not(":first").should("have.length", 3)

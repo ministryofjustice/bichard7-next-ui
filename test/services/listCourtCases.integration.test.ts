@@ -5,7 +5,6 @@ import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import deleteFromTable from "../utils/deleteFromTable"
 import {
-  insertCourtCasesWithCourtDates,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithOrgCodes,
   insertDummyCourtCasesWithNotes,
@@ -473,7 +472,11 @@ describe("listCourtCases", () => {
     const secondDate = new Date("2008-01-26")
     const thirdDate = new Date("2013-10-16")
 
-    await insertCourtCasesWithCourtDates([secondDate, firstDate, thirdDate], orgCode)
+    await insertCourtCasesWithFields([
+      { courtDate: secondDate, orgForPoliceFilter: orgCode },
+      { courtDate: firstDate, orgForPoliceFilter: orgCode },
+      { courtDate: thirdDate, orgForPoliceFilter: orgCode }
+    ])
 
     const result = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "courtDate" })
     expect(isError(result)).toBe(false)
@@ -825,7 +828,12 @@ describe("listCourtCases", () => {
       const thirdDate = new Date("2008-03-26")
       const fourthDate = new Date("2013-10-16")
 
-      await insertCourtCasesWithCourtDates([firstDate, secondDate, thirdDate, fourthDate], orgCode)
+      await insertCourtCasesWithFields([
+        { courtDate: firstDate, orgForPoliceFilter: orgCode },
+        { courtDate: secondDate, orgForPoliceFilter: orgCode },
+        { courtDate: thirdDate, orgForPoliceFilter: orgCode },
+        { courtDate: fourthDate, orgForPoliceFilter: orgCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -847,7 +855,12 @@ describe("listCourtCases", () => {
       const thirdDate = new Date("2008-03-26")
       const fourthDate = new Date("2013-10-16")
 
-      await insertCourtCasesWithCourtDates([firstDate, secondDate, thirdDate, fourthDate], orgCode)
+      await insertCourtCasesWithFields([
+        { courtDate: firstDate, orgForPoliceFilter: orgCode },
+        { courtDate: secondDate, orgForPoliceFilter: orgCode },
+        { courtDate: thirdDate, orgForPoliceFilter: orgCode },
+        { courtDate: fourthDate, orgForPoliceFilter: orgCode }
+      ])
 
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],

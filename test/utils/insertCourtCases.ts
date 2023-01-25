@@ -55,16 +55,16 @@ const insertCourtCasesWithCourtNames = async (courtNames: string[], orgCode: str
   return insertCourtCases(existingCourtCases)
 }
 
-const insertCourtCasesWithCourtDates = async (courtDates: Date[], orgCode: string) => {
+const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: string) => {
   const existingCourtCases: CourtCase[] = []
-  for (let index = 0; index < courtDates.length; index++) {
+  for (let index = 0; index < numToInsert; index++) {
     existingCourtCases.push(
       await getDummyCourtCase({
         orgForPoliceFilter: orgCode,
-        errorId: index,
         messageId: String(index).padStart(5, "x"),
+        errorId: index,
         ptiurn: "Case" + String(index).padStart(5, "0"),
-        courtDate: courtDates[index]
+        defendantName: `Defendant Name ${index}`
       })
     )
   }
@@ -82,23 +82,6 @@ const insertCourtCasesWithFields = async (cases: Partial<CourtCase>[]) => {
         ptiurn: "Case" + String(index).padStart(5, "0"),
         courtDate: new Date("2" + String(index).padStart(3, "0") + "-01-01"),
         ...cases[index]
-      })
-    )
-  }
-
-  return insertCourtCases(existingCourtCases)
-}
-
-const insertMultipleDummyCourtCases = async (numToInsert: number, orgCode: string) => {
-  const existingCourtCases: CourtCase[] = []
-  for (let index = 0; index < numToInsert; index++) {
-    existingCourtCases.push(
-      await getDummyCourtCase({
-        orgForPoliceFilter: orgCode,
-        messageId: String(index).padStart(5, "x"),
-        errorId: index,
-        ptiurn: "Case" + String(index).padStart(5, "0"),
-        defendantName: `Defendant Name ${index}`
       })
     )
   }
@@ -200,7 +183,6 @@ export {
   insertCourtCases,
   insertCourtCasesWithOrgCodes,
   insertCourtCasesWithCourtNames,
-  insertCourtCasesWithCourtDates,
   insertCourtCasesWithFields,
   insertMultipleDummyCourtCases,
   insertDummyCourtCasesWithUrgencies,
