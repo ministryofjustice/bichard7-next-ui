@@ -1,8 +1,8 @@
+import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
+import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
-import hashedPassword from "../../fixtures/hashedPassword"
-import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
 
 describe("Case list", () => {
   context("When filters applied", () => {
@@ -586,6 +586,33 @@ describe("Case list", () => {
       cy.get('*[class^="moj-filter-tags"]').should("not.exist")
       cy.location().should((loc) => {
         expect(loc.pathname).to.eq("/bichard")
+      })
+    })
+
+    describe("Filtering cases allocated to me", () => {
+      it.only("Should filter cases that I hold the trigger lock for", () => {
+        cy.task("insertMultipleDummyCourtCasesWithLock", {
+          lockHolders: [
+            {
+              errorLockedByUsername: "Bichard01",
+              triggerLockedByUsername: "Bichard01"
+            },
+            { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01" },
+            {
+              errorLockedByUsername: "Bichard02",
+              triggerLockedByUsername: "Bichard02"
+            },
+            {
+              errorLockedByUsername: "Bichard03",
+              triggerLockedByUsername: "Bichard03"
+            }
+          ],
+          orgCode: "011111"
+        })
+
+        cy.visit("/bichard")
+        cy.get("#filter-button").click()
+        cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").click()
       })
     })
   })
