@@ -7,8 +7,6 @@ import deleteFromTable from "../utils/deleteFromTable"
 import {
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
-  getDummyCourtCase,
-  insertCourtCases,
   insertCourtCasesWithFields
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
@@ -917,18 +915,18 @@ describe("listCourtCases", () => {
 
     it("Should filter cases that are unlocked ", async () => {
       const orgCode = "36FP"
-      const lockedCase = await getDummyCourtCase({
+      const lockedCase = {
         errorId: 0,
         errorLockedByUsername: "bichard01",
         triggerLockedByUsername: "bichard01",
         messageId: "0"
-      })
-      const unlockedCase = await getDummyCourtCase({
+      }
+      const unlockedCase = {
         errorId: 1,
         messageId: "1"
-      })
+      }
 
-      await insertCourtCases([lockedCase, unlockedCase])
+      await insertCourtCasesWithFields([lockedCase, unlockedCase])
 
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -945,22 +943,22 @@ describe("listCourtCases", () => {
 
     it("Should treat cases with only one lock as locked.  ", async () => {
       const orgCode = "36FP"
-      const errorLockedCase = await getDummyCourtCase({
-        errorId: 0,
-        errorLockedByUsername: "bichard01",
-        messageId: "0"
-      })
-      const triggerLockedCase = await getDummyCourtCase({
-        errorId: 1,
-        triggerLockedByUsername: "bichard01",
-        messageId: "1"
-      })
-      const unlockedCase = await getDummyCourtCase({
-        errorId: 2,
-        messageId: "2"
-      })
-
-      await insertCourtCases([errorLockedCase, triggerLockedCase, unlockedCase])
+      await insertCourtCasesWithFields([
+        {
+          errorId: 0,
+          errorLockedByUsername: "bichard01",
+          messageId: "0"
+        },
+        {
+          errorId: 1,
+          triggerLockedByUsername: "bichard01",
+          messageId: "1"
+        },
+        {
+          errorId: 2,
+          messageId: "2"
+        }
+      ])
 
       const lockedResult = await listCourtCases(dataSource, {
         forces: [orgCode],
