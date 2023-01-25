@@ -62,8 +62,8 @@ export type Filter = {
     state: FilterState
   }[]
   myCasesFilter: {
-    value: boolean
-    state: FilterState
+    value?: boolean
+    state?: FilterState
     label?: string
   }
 }

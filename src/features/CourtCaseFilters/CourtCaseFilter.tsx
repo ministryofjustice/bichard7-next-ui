@@ -13,7 +13,6 @@ import FilterChipSection from "./FilterChipSection"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { createUseStyles } from "react-jss"
 import ExpandingFilters from "./ExpandingFilters"
-import KeyValuePair from "types/KeyValuePair"
 
 interface Props {
   defendantName: string | null
@@ -144,11 +143,6 @@ const CourtCaseFilter: React.FC<Props> = ({
   const [state, dispatch] = useReducer(reducer, initialFilterState)
 
   const classes = useStyles()
-
-  const LockedOptions: KeyValuePair<string, boolean> = {
-    Locked: true,
-    Unlocked: false
-  }
 
   return (
     <form method={"get"} id="filter-panel">
