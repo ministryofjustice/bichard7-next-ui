@@ -7,14 +7,14 @@ import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOption
 import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { LabelText } from "govuk-react"
-import { ReactNode, useState, useReducer } from "react"
+import { ReactNode, useReducer, useState } from "react"
 import { createUseStyles } from "react-jss"
 import { CaseState, Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
+import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
 import FilterChipSection from "./FilterChipSection"
-import { caseStateLabels } from "utils/caseStateFilters"
 
 interface Props {
   defendantName: string | null
@@ -321,6 +321,27 @@ const CourtCaseFilter: React.FC<Props> = ({
             <ExpandingFilters filterName={"Locked state"}>
               <LockedFilterOptions locked={state.lockedFilter.value} dispatch={dispatch} />
             </ExpandingFilters>
+          </div>
+          <div>
+            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
+            <fieldset className="govuk-fieldset">
+              <legend className="govuk-fieldset__legend govuk-body">{"My cases"}</legend>
+              <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                <div className="govuk-checkboxes__item">
+                  <input
+                    className="govuk-checkboxes__input"
+                    id="is-urgent-filter"
+                    name="urgency"
+                    type="checkbox"
+                    value="Urgent"
+                    // defaultChecked={urgency}
+                  ></input>
+                  <label className="govuk-label govuk-checkboxes__label" htmlFor="is-urgent-filter">
+                    {"Urgent"}
+                  </label>
+                </div>
+              </div>
+            </fieldset>
           </div>
         </div>
       </div>
