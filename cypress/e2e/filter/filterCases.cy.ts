@@ -190,7 +190,12 @@ describe("Case list", () => {
     })
 
     it("Should display cases filtered by reason", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["011111", "011111", "011111"])
+      cy.task("insertCourtCasesWithFields", [
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" }
+      ])
+
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -383,7 +388,12 @@ describe("Case list", () => {
     })
 
     it("Should filter cases by whether they have triggers and exceptions", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["011111", "011111", "011111", "011111"])
+      cy.task("insertCourtCasesWithFields", [
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" }
+      ])
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,

@@ -7,7 +7,7 @@ import getCourtCaseByVisibleForce from "../../src/services/getCourtCaseByVisible
 import getDataSource from "../../src/services/getDataSource"
 import resolveTrigger from "../../src/services/resolveTrigger"
 import deleteFromTable from "../utils/deleteFromTable"
-import { insertCourtCasesWithFields, insertCourtCasesWithOrgCodes } from "../utils/insertCourtCases"
+import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 
 jest.setTimeout(100000)
@@ -171,7 +171,7 @@ describe("resolveTrigger", () => {
       const resolverUsername = "triggerResolver01"
       const visibleForces = ["36"]
 
-      await insertCourtCasesWithOrgCodes(["01"])
+      await insertCourtCasesWithFields([{ orgForPoliceFilter: "01" }])
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",

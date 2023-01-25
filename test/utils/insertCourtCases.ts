@@ -18,24 +18,6 @@ const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtC
 const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<CourtCase[]> =>
   (await getDataSource()).getRepository(CourtCase).save(Array.isArray(courtCases) ? courtCases : [courtCases])
 
-const insertCourtCasesWithOrgCodes = async (orgsCodes: string[]) => {
-  const existingCourtCases: CourtCase[] = []
-  for (let index = 0; index < orgsCodes.length; index++) {
-    existingCourtCases.push(
-      await getDummyCourtCase({
-        orgForPoliceFilter: orgsCodes[index].padEnd(6, " "),
-        errorId: index,
-        messageId: String(index).padStart(5, "x"),
-        ptiurn: "Case" + String(index).padStart(5, "0"),
-        errorCount: 0,
-        triggerCount: 0
-      })
-    )
-  }
-
-  return insertCourtCases(existingCourtCases)
-}
-
 const insertCourtCasesWithCourtNames = async (courtNames: string[], orgCode: string) => {
   const existingCourtCases: CourtCase[] = []
   for (let index = 0; index < courtNames.length; index++) {
@@ -181,7 +163,6 @@ const insertDummyCourtCasesWithTriggers = async (
 export {
   getDummyCourtCase,
   insertCourtCases,
-  insertCourtCasesWithOrgCodes,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithFields,
   insertMultipleDummyCourtCases,

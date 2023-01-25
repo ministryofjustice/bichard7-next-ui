@@ -34,7 +34,7 @@ describe("Case details", () => {
     })
 
     it("should be accessible", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -54,7 +54,7 @@ describe("Case details", () => {
     })
 
     it("should load case details for the case that this user can see", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -124,7 +124,7 @@ describe("Case details", () => {
     })
 
     it("should return 404 for a case that this user can not see", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["02"])
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
       cy.login("bichard01@example.com", "password")
 
       cy.request({
@@ -290,8 +290,7 @@ describe("Case details", () => {
     })
 
     it("should resubmit a case when updates are made and the resubmit button is clicked", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["02"])
-
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
       cy.login("bichard02@example.com", "password")
 
       cy.visit("/bichard/court-cases/0")

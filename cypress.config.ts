@@ -8,7 +8,6 @@ import {
   insertCourtCases,
   insertCourtCasesWithCourtNames,
   insertCourtCasesWithFields,
-  insertCourtCasesWithOrgCodes,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithUrgencies,
   insertMultipleDummyCourtCases,
@@ -50,9 +49,6 @@ export default defineConfig({
           await updateUserGroup()
 
           return null
-        },
-        insertCourtCasesWithOrgCodes(orgCodes: string[]) {
-          return insertCourtCasesWithOrgCodes(orgCodes)
         },
 
         insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
