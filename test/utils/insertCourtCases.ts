@@ -43,7 +43,6 @@ const insertCourtCasesWithFields = async (cases: Partial<CourtCase>[]) => {
         errorId: index,
         messageId: String(index).padStart(5, "x"),
         ptiurn: "Case" + String(index).padStart(5, "0"),
-        courtDate: new Date("2" + String(index).padStart(3, "0") + "-01-01"),
         ...cases[index]
       })
     )
