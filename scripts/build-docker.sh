@@ -43,8 +43,8 @@ function pull_and_build_from_aws() {
 
 if [ $(arch) = "arm64" ]
 then
-    echo "Building for ARM(emulated linux/amd64)"
-    docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" --platform=linux/amd64 -t ui .
+    echo "Building for ARM"
+    docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" --platform=linux/arm64 -t ui .
 else
     echo "Building regular image"
     docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" -t ui .
@@ -121,7 +121,7 @@ if [[ "$(has_local_image)" -gt 0 ]]; then
   if [ $(arch) = "arm64" ]
   then
       echo "Building for ARM"
-      docker build --platform=linux/amd64 -t ui:latest .
+      docker build --platform=linux/arm64 -t ui:latest .
   else
       echo "Building regular image"
       docker build -t ui:latest .

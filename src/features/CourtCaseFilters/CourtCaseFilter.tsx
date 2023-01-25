@@ -252,6 +252,27 @@ const CourtCaseFilter: React.FC<Props> = ({
               <LockedFilterOptions locked={state.lockedFilter.value} dispatch={dispatch} />
             </ExpandingFilters>
           </div>
+          <div>
+            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
+            <fieldset className="govuk-fieldset">
+              <legend className="govuk-fieldset__legend govuk-body">{"My cases"}</legend>
+              <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                <div className="govuk-checkboxes__item">
+                  <input
+                    className="govuk-checkboxes__input"
+                    id="is-urgent-filter"
+                    name="urgency"
+                    type="checkbox"
+                    value="Urgent"
+                    // defaultChecked={urgency}
+                  ></input>
+                  <label className="govuk-label govuk-checkboxes__label" htmlFor="is-urgent-filter">
+                    {"View cases allocated to me"}
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </div>
         </div>
       </div>
     </form>
