@@ -686,7 +686,7 @@ describe("listCourtCases", () => {
       cases = (result as ListCourtCaseResult).result
 
       expect(cases).toHaveLength(2)
-      expect(cases[0].triggers[1].triggerCode).toStrictEqual(triggerToIncludePartialMatch.triggerCode)
+      expect(cases[0].triggers[0].triggerCode).toStrictEqual(triggerToIncludePartialMatch.triggerCode)
       expect(cases[1].errorReason).toStrictEqual(errorToIncludePartialMatch)
     })
 
