@@ -1,4 +1,5 @@
 import User from "services/entities/User"
+import { TestTrigger } from "../../test/utils/manageTriggers"
 import a11yConfig from "../support/a11yConfig"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 import hashedPassword from "../fixtures/hashedPassword"
@@ -285,6 +286,45 @@ describe("Case list", () => {
         cy.get("tr").not(":first").eq(0).get("td:nth-child(7)").should("be.empty")
         cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`1`).should("exist")
         cy.get("tr").not(":first").eq(2).get("td:nth-child(7)").contains(`3`).should("exist")
+      })
+
+      it("Should display reason (errors and triggers) with correct formatting", () => {
+        cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "011111" }, { orgForPoliceFilter: "011111" }])
+
+        cy.task("insertException", { caseId: 0, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+        cy.task("insertException", {
+          caseId: 0,
+          exceptionCode: "HO200212",
+          errorReport: "HO200212||ds:Reason,HO200212||ds:Reason"
+        })
+        cy.task("insertException", {
+          caseId: 0,
+          exceptionCode: "HO200213",
+          errorReport: "HO200212||ds:Reason,HO200212||ds:Reason"
+        })
+
+        const triggers: TestTrigger[] = [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0107",
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          },
+          {
+            triggerId: 1,
+            triggerCode: "TRPR0107",
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+        cy.task("insertTriggers", { caseId: 0, triggers })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("tr").eq(0).get("td:nth-child(7)").contains("Reason")
+        cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO200212")
+        cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0107")
       })
 
       it("can display cases ordered by urgency", () => {

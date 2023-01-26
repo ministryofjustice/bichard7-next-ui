@@ -1,9 +1,9 @@
 import DateTime from "components/DateTime"
 import If from "components/If"
-import { Link, Paragraph, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import CourtCase from "services/entities/CourtCase"
+import { Table, Link, GridRow, Paragraph } from "govuk-react"
 import type { QueryOrder } from "types/CaseListQueryParams"
 import LockedByTag from "./tags/LockedByTag"
 import NotesTag from "./tags/NotesTag"
@@ -50,10 +50,9 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>{"Notes"}</Table.CellHeader>
-      <Table.CellHeader>{"Triggers"}</Table.CellHeader>
       <Table.CellHeader>
         <Link href={orderByParams("errorReason")} id="exceptions">
-          {"Exceptions"}
+          {"Reason"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
@@ -65,11 +64,11 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
   )
   const tableBody = courtCases.map(
     (
-      { courtDate, ptiurn, defendantName, courtName, triggers, errorReason, isUrgent, notes, errorLockedByUsername },
+      { courtDate, ptiurn, defendantName, courtName, triggers, errorReport, isUrgent, notes, errorLockedByUsername },
       idx
     ) => {
       return (
-        <Table.Row key={idx}>
+        <Table.Row key={idx} style={{ verticalAlign: "top" }}>
           <Table.Cell>
             <If condition={!!errorLockedByUsername}>
               <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
@@ -91,8 +90,12 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
           <Table.Cell>
             <NotesTag notes={notes} />
           </Table.Cell>
-          <Table.Cell>{triggers?.map((trigger) => trigger.triggerCode).join(", ")}</Table.Cell>
-          <Table.Cell>{errorReason}</Table.Cell>
+          <Table.Cell>
+            <GridRow>{errorReport}</GridRow>
+            {triggers?.map((trigger, triggerId) => (
+              <GridRow key={triggerId}>{trigger.triggerCode}</GridRow>
+            ))}
+          </Table.Cell>
           <Table.Cell>
             <LockedByTag lockedBy={errorLockedByUsername} />
           </Table.Cell>
