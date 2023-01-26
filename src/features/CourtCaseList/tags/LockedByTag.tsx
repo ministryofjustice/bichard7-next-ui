@@ -2,6 +2,7 @@ import If from "components/If"
 import { Tag } from "govuk-react"
 import Image from "next/image"
 import { createUseStyles } from "react-jss"
+import { tagBlue, textBlue } from "utils/colours"
 
 const useStyles = createUseStyles({
   LockedByTag: {
@@ -12,8 +13,8 @@ const useStyles = createUseStyles({
     gap: 5
   },
   LockedIcon: {
-    // Change colour from black to #144e81 (GDS blue-text) with CSS filters
-    filter: "invert(12%) sepia(70%) saturate(4629%) hue-rotate(197deg) brightness(97%) contrast(84%)",
+    // Change colour from black to GDS text-blue (#144e81) with CSS filters
+    filter: "invert(12%) sepia(70%) saturate(4629%) hue-rotate(197deg) brightness(97%) contrast(84%)"
   },
   LockedByText: {
     textDecoration: "underline",
@@ -27,7 +28,7 @@ const LockedByTag: React.FC<{ lockedBy?: string | null }> = (props: { lockedBy?:
   const classes = useStyles()
   return (
     <If condition={!!props.lockedBy}>
-      <Tag backgroundColor="#e9f1f8" color="#114e81" className={`locked-by-tag ${classes.LockedByTag}`}>
+      <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag ${classes.LockedByTag}`}>
         <div className={classes.LockedByTag}>
           <Image
             src={"/bichard/assets/images/lock.svg"}
