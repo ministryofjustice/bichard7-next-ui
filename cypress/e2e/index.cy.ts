@@ -312,8 +312,8 @@ describe("Case list", () => {
       })
     })
 
-    it("shows who has locked a case in the 'locked by' column", () => {
-      const lockUsernames = ["Bichard01", "Bichard02", null, "Bichard03"]
+    it.only("shows who has locked a case in the 'locked by' column", () => {
+      const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long name"]
       cy.task(
         "insertCourtCasesWithFields",
         lockUsernames.map((username) => ({

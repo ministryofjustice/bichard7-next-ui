@@ -54,7 +54,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("lockedBy")} id="locked-by-sort">
+        <Link href={orderByParams("errorLockedByUsername")} id="locked-by-sort">
           {"Locked By"}
         </Link>
       </Table.CellHeader>
