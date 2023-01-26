@@ -1,10 +1,13 @@
+import DateTime from "components/DateTime"
+import If from "components/If"
+import { Link, Paragraph, Table } from "govuk-react"
+import Image from "next/image"
 import { useRouter } from "next/router"
 import CourtCase from "services/entities/CourtCase"
-import { Paragraph, Table, Link } from "govuk-react"
-import DateTime from "components/DateTime"
 import type { QueryOrder } from "types/CaseListQueryParams"
-import UrgentTag from "./tags/UrgentTag"
+import LockedByTag from "./tags/LockedByTag"
 import NotesTag from "./tags/NotesTag"
+import UrgentTag from "./tags/UrgentTag"
 
 interface Props {
   courtCases: CourtCase[]
@@ -20,6 +23,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
 
   const tableHead = (
     <Table.Row>
+      <Table.Cell></Table.Cell>
       <Table.CellHeader>
         <Link href={orderByParams("defendantName")} id="defendant-name-sort">
           {"Defendant Name"}
@@ -52,12 +56,25 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
           {"Exceptions"}
         </Link>
       </Table.CellHeader>
+      <Table.CellHeader>
+        <Link href={orderByParams("errorLockedByUsername")} id="locked-by-sort">
+          {"Locked By"}
+        </Link>
+      </Table.CellHeader>
     </Table.Row>
   )
   const tableBody = courtCases.map(
-    ({ courtDate, ptiurn, defendantName, courtName, triggers, errorReason, isUrgent, notes }, idx) => {
+    (
+      { courtDate, ptiurn, defendantName, courtName, triggers, errorReason, isUrgent, notes, errorLockedByUsername },
+      idx
+    ) => {
       return (
         <Table.Row key={idx}>
+          <Table.Cell>
+            <If condition={!!errorLockedByUsername}>
+              <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
+            </If>
+          </Table.Cell>
           <Table.Cell>
             <Link href={caseDetailsPath(courtCases[idx].errorId)} id={`Case details for ${defendantName}`}>
               {defendantName}
@@ -76,6 +93,9 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
           </Table.Cell>
           <Table.Cell>{triggers?.map((trigger) => trigger.triggerCode).join(", ")}</Table.Cell>
           <Table.Cell>{errorReason}</Table.Cell>
+          <Table.Cell>
+            <LockedByTag lockedBy={errorLockedByUsername} />
+          </Table.Cell>
         </Table.Row>
       )
     }

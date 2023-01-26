@@ -50,6 +50,9 @@ describe("Case details", () => {
 
       cy.injectAxe()
 
+      // Wait for the page to fully load
+      cy.get("h1")
+
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
