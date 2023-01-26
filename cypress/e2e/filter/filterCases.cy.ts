@@ -38,9 +38,16 @@ describe("Case list", () => {
       cy.get('[id="exceptions-type"]').check()
 
       cy.injectAxe()
+
+      // Wait for the page to fully load
+      cy.get("h1")
+
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
 
       cy.get("button[id=search]").click()
+
+      // Wait for the page to fully load
+      cy.get("h1")
 
       cy.injectAxe()
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)

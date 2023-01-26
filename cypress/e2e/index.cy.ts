@@ -57,6 +57,9 @@ describe("Case list", () => {
 
         cy.injectAxe()
 
+        // Wait for the page to fully load
+        cy.get("h1")
+        
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
       })
     })
@@ -68,6 +71,9 @@ describe("Case list", () => {
         cy.visit("/bichard")
 
         cy.injectAxe()
+
+        // Wait for the page to fully load
+        cy.get("h1")
 
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
       })
