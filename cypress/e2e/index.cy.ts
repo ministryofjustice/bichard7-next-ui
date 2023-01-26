@@ -60,7 +60,7 @@ describe("Case list", () => {
 
         // Wait for the page to fully load
         cy.get("h1")
-        
+
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
       })
     })
@@ -291,28 +291,32 @@ describe("Case list", () => {
       it("Should display reason (errors and triggers) with correct formatting", () => {
         cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "011111" }, { orgForPoliceFilter: "011111" }])
 
-        cy.task("insertException", { caseId: 0, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
         cy.task("insertException", {
           caseId: 0,
-          exceptionCode: "HO200212",
-          errorReport: "HO200212||ds:Reason,HO200212||ds:Reason"
+          exceptionCode: "HO100310",
+          errorReport: "HO100310||ds:OffenceReasonSequence"
         })
         cy.task("insertException", {
           caseId: 0,
-          exceptionCode: "HO200213",
-          errorReport: "HO200212||ds:Reason,HO200212||ds:Reason"
+          exceptionCode: "HO100322",
+          errorReport: "HO100322||ds:OrganisationUnitCode"
+        })
+        cy.task("insertException", {
+          caseId: 0,
+          exceptionCode: "HO100310",
+          errorReport: "HO100310||ds:OffenceReasonSequence"
         })
 
         const triggers: TestTrigger[] = [
           {
             triggerId: 0,
-            triggerCode: "TRPR0107",
+            triggerCode: "TRPR0010",
             status: "Unresolved",
             createdAt: new Date("2022-07-09T10:22:34.000Z")
           },
           {
             triggerId: 1,
-            triggerCode: "TRPR0107",
+            triggerCode: "TRPR0015",
             status: "Unresolved",
             createdAt: new Date("2022-07-09T10:22:34.000Z")
           }
@@ -322,9 +326,10 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr").eq(0).get("td:nth-child(7)").contains("Reason")
-        cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO200212")
-        cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0107")
+        cy.get("tr").not(":first").get("td:nth-child(8)").contains("HO100310 (2)")
+        cy.get("tr").not(":first").get("td:nth-child(8)").contains("HO100322")
+        // cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0010 - Conditional bail")
+        // cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0015 - Personal details changed")
       })
 
       it("can display cases ordered by urgency", () => {

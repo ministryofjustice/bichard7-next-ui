@@ -8,6 +8,7 @@ import type { QueryOrder } from "types/CaseListQueryParams"
 import LockedByTag from "./tags/LockedByTag"
 import NotesTag from "./tags/NotesTag"
 import UrgentTag from "./tags/UrgentTag"
+import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 
 interface Props {
   courtCases: CourtCase[]
@@ -67,6 +68,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
       { courtDate, ptiurn, defendantName, courtName, triggers, errorReport, isUrgent, notes, errorLockedByUsername },
       idx
     ) => {
+      const exceptions = groupErrorsFromReport(errorReport)
       return (
         <Table.Row key={idx} style={{ verticalAlign: "top" }}>
           <Table.Cell>
@@ -91,9 +93,14 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
             <NotesTag notes={notes} />
           </Table.Cell>
           <Table.Cell>
-            <GridRow>{errorReport}</GridRow>
+            {Object.keys(exceptions).map((code, codeId) => (
+              <GridRow key={`exception_${codeId}`}>
+                {code}
+                <b>&nbsp;{exceptions[code] > 1 ? `(${exceptions[code]})` : ""}</b>
+              </GridRow>
+            ))}
             {triggers?.map((trigger, triggerId) => (
-              <GridRow key={triggerId}>{trigger.triggerCode}</GridRow>
+              <GridRow key={`trigger_${triggerId}`}>{trigger.triggerCode}</GridRow>
             ))}
           </Table.Cell>
           <Table.Cell>
