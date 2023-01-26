@@ -5,6 +5,7 @@ import DateTime from "components/DateTime"
 import type { QueryOrder } from "types/CaseListQueryParams"
 import UrgentTag from "./tags/UrgentTag"
 import NotesTag from "./tags/NotesTag"
+import LockedByTag from "./tags/LockedByTag"
 
 interface Props {
   courtCases: CourtCase[]
@@ -52,10 +53,18 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
           {"Exceptions"}
         </Link>
       </Table.CellHeader>
+      <Table.CellHeader>
+        <Link href={orderByParams("lockedBy")} id="locked-by-sort">
+          {"Locked By"}
+        </Link>
+      </Table.CellHeader>
     </Table.Row>
   )
   const tableBody = courtCases.map(
-    ({ courtDate, ptiurn, defendantName, courtName, triggers, errorReason, isUrgent, notes }, idx) => {
+    (
+      { courtDate, ptiurn, defendantName, courtName, triggers, errorReason, isUrgent, notes, errorLockedByUsername },
+      idx
+    ) => {
       return (
         <Table.Row key={idx}>
           <Table.Cell>
@@ -76,6 +85,9 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
           </Table.Cell>
           <Table.Cell>{triggers?.map((trigger) => trigger.triggerCode).join(", ")}</Table.Cell>
           <Table.Cell>{errorReason}</Table.Cell>
+          <Table.Cell>
+            <LockedByTag lockedBy={errorLockedByUsername} />
+          </Table.Cell>
         </Table.Row>
       )
     }

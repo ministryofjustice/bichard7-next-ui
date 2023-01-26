@@ -311,6 +311,29 @@ describe("Case list", () => {
           })
       })
     })
+
+    it("shows who has locked a case in the 'locked by' column", () => {
+      const lockUsernames = ["Bichard01", "Bichard02", null, "Bichard03"]
+      cy.task(
+        "insertCourtCasesWithFields",
+        lockUsernames.map((username) => ({
+          errorLockedByUsername: username,
+          triggerLockedByUsername: username,
+          orgForPoliceFilter: "011111"
+        }))
+      )
+
+      cy.login("bichard01@example.com", "password")
+      cy.visit("/bichard")
+
+      lockUsernames.forEach((lockUsername, idx) => {
+        if (lockUsername !== null) {
+          cy.get(`tbody tr:nth-child(${idx + 1}) .locked-by-tag`).should("have.text", lockUsername)
+        } else {
+          cy.get(`tbody tr:nth-child(${idx + 1}) .locked-by-tag`).should("not.exist")
+        }
+      })
+    })
   })
 })
 
