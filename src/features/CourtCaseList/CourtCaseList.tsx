@@ -1,11 +1,13 @@
+import DateTime from "components/DateTime"
+import If from "components/If"
+import { Link, Paragraph, Table } from "govuk-react"
+import Image from "next/image"
 import { useRouter } from "next/router"
 import CourtCase from "services/entities/CourtCase"
-import { Paragraph, Table, Link } from "govuk-react"
-import DateTime from "components/DateTime"
 import type { QueryOrder } from "types/CaseListQueryParams"
-import UrgentTag from "./tags/UrgentTag"
-import NotesTag from "./tags/NotesTag"
 import LockedByTag from "./tags/LockedByTag"
+import NotesTag from "./tags/NotesTag"
+import UrgentTag from "./tags/UrgentTag"
 
 interface Props {
   courtCases: CourtCase[]
@@ -21,6 +23,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
 
   const tableHead = (
     <Table.Row>
+      <Table.CellHeader></Table.CellHeader>
       <Table.CellHeader>
         <Link href={orderByParams("defendantName")} id="defendant-name-sort">
           {"Defendant Name"}
@@ -67,6 +70,11 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
     ) => {
       return (
         <Table.Row key={idx}>
+          <Table.Cell>
+            <If condition={!!errorLockedByUsername}>
+              <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
+            </If>
+          </Table.Cell>
           <Table.Cell>
             <Link href={caseDetailsPath(courtCases[idx].errorId)} id={`Case details for ${defendantName}`}>
               {defendantName}
