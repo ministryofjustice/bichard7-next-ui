@@ -695,11 +695,10 @@ describe("listCourtCases", () => {
 
       const errorToInclude = "HO100322"
       const anotherErrorToInclude = "HO100323"
-      const errorReport = `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
       const errorNotToInclude = "HO200212"
 
-      await insertException(0, errorToInclude, errorReport)
-      await insertException(0, anotherErrorToInclude, errorReport)
+      await insertException(0, errorToInclude, `${errorToInclude}||ds:OrganisationUnitCode`)
+      await insertException(0, anotherErrorToInclude, `${anotherErrorToInclude}||ds:NextHearingDate`)
       await insertException(1, errorNotToInclude, `${errorNotToInclude}||ds:XMLField`)
 
       let result = await listCourtCases(dataSource, {
@@ -712,7 +711,9 @@ describe("listCourtCases", () => {
       let { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(1)
-      expect(cases[0].errorReport).toStrictEqual(errorReport)
+      expect(cases[0].errorReport).toStrictEqual(
+        `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
+      )
 
       result = await listCourtCases(dataSource, {
         forces: ["01"],
@@ -724,7 +725,9 @@ describe("listCourtCases", () => {
       cases = (result as ListCourtCaseResult).result
 
       expect(cases).toHaveLength(1)
-      expect(cases[0].errorReport).toStrictEqual(errorReport)
+      expect(cases[0].errorReport).toStrictEqual(
+        `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
+      )
     })
   })
 
