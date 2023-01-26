@@ -312,7 +312,7 @@ describe("Case list", () => {
       })
     })
 
-    it.only("shows who has locked a case in the 'locked by' column", () => {
+    it("shows who has locked a case in the 'locked by' column", () => {
       const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long name"]
       cy.task(
         "insertCourtCasesWithFields",
@@ -329,8 +329,10 @@ describe("Case list", () => {
       lockUsernames.forEach((lockUsername, idx) => {
         if (lockUsername !== null) {
           cy.get(`tbody tr:nth-child(${idx + 1}) .locked-by-tag`).should("have.text", lockUsername)
+          cy.get(`tbody tr:nth-child(${idx + 1}) img[alt="Lock icon"]`).should("exist")
         } else {
           cy.get(`tbody tr:nth-child(${idx + 1}) .locked-by-tag`).should("not.exist")
+          cy.get(`tbody tr:nth-child(${idx + 1}) img[alt="Lock icon"]`).should("not.exist")
         }
       })
     })
