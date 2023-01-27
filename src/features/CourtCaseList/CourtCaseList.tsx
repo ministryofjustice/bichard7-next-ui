@@ -1,13 +1,15 @@
 import DateTime from "components/DateTime"
 import If from "components/If"
-import { Link, Paragraph, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import CourtCase from "services/entities/CourtCase"
+import { Table, Link, GridRow, Paragraph } from "govuk-react"
 import type { QueryOrder } from "types/CaseListQueryParams"
 import LockedByTag from "./tags/LockedByTag"
 import NotesTag from "./tags/NotesTag"
 import UrgentTag from "./tags/UrgentTag"
+import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
+import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
 
 interface Props {
   courtCases: CourtCase[]
@@ -50,10 +52,9 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>{"Notes"}</Table.CellHeader>
-      <Table.CellHeader>{"Triggers"}</Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("errorReason")} id="exceptions">
-          {"Exceptions"}
+        <Link href={orderByParams("reason")} id="exceptions">
+          {"Reason"}
         </Link>
       </Table.CellHeader>
       <Table.CellHeader>
@@ -65,11 +66,12 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
   )
   const tableBody = courtCases.map(
     (
-      { courtDate, ptiurn, defendantName, courtName, triggers, errorReason, isUrgent, notes, errorLockedByUsername },
+      { courtDate, ptiurn, defendantName, courtName, triggers, errorReport, isUrgent, notes, errorLockedByUsername },
       idx
     ) => {
+      const exceptions = groupErrorsFromReport(errorReport)
       return (
-        <Table.Row key={idx}>
+        <Table.Row key={idx} style={{ verticalAlign: "top" }}>
           <Table.Cell>
             <If condition={!!errorLockedByUsername}>
               <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
@@ -91,8 +93,17 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
           <Table.Cell>
             <NotesTag notes={notes} />
           </Table.Cell>
-          <Table.Cell>{triggers?.map((trigger) => trigger.triggerCode).join(", ")}</Table.Cell>
-          <Table.Cell>{errorReason}</Table.Cell>
+          <Table.Cell>
+            {Object.keys(exceptions).map((code, codeId) => (
+              <GridRow key={`exception_${codeId}`}>
+                {code}
+                <b>&nbsp;{exceptions[code] > 1 ? `(${exceptions[code]})` : ""}</b>
+              </GridRow>
+            ))}
+            {triggers?.map((trigger, triggerId) => (
+              <GridRow key={`trigger_${triggerId}`}>{getTriggerWithDescription(trigger.triggerCode)}</GridRow>
+            ))}
+          </Table.Cell>
           <Table.Cell>
             <LockedByTag lockedBy={errorLockedByUsername} />
           </Table.Cell>

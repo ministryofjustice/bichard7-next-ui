@@ -500,6 +500,70 @@ describe("listCourtCases", () => {
     expect(totalCasesDesc).toEqual(3)
   })
 
+  it("should order by error reason as primary order when ordered by reason", async () => {
+    const orgCode = "36FPA1"
+    await insertCourtCasesWithFields(
+      ["HO100100", "HO100101", "HO100102"].map((code) => ({ errorReason: code, orgForPoliceFilter: orgCode }))
+    )
+
+    const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "reason" })
+    expect(isError(resultAsc)).toBe(false)
+    const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
+
+    expect(casesAsc).toHaveLength(3)
+    expect(casesAsc[0].errorReason).toStrictEqual("HO100100")
+    expect(casesAsc[1].errorReason).toStrictEqual("HO100101")
+    expect(casesAsc[2].errorReason).toStrictEqual("HO100102")
+    expect(totalCasesAsc).toEqual(3)
+
+    const resultDesc = await listCourtCases(dataSource, {
+      forces: [orgCode],
+      maxPageItems: "100",
+      orderBy: "reason",
+      order: "desc"
+    })
+    expect(isError(resultDesc)).toBe(false)
+    const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
+
+    expect(casesDesc).toHaveLength(3)
+    expect(casesDesc[0].errorReason).toStrictEqual("HO100102")
+    expect(casesDesc[1].errorReason).toStrictEqual("HO100101")
+    expect(casesDesc[2].errorReason).toStrictEqual("HO100100")
+    expect(totalCasesDesc).toEqual(3)
+  })
+
+  it("should order by trigger reason as secondary order when ordered by reason", async () => {
+    const orgCode = "36FPA1"
+    await insertCourtCasesWithFields(
+      ["TRPR0010", "TRPR0011", "TRPR0012"].map((code) => ({ triggerReason: code, orgForPoliceFilter: orgCode }))
+    )
+
+    const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "reason" })
+    expect(isError(resultAsc)).toBe(false)
+    const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
+
+    expect(casesAsc).toHaveLength(3)
+    expect(casesAsc[0].triggerReason).toStrictEqual("TRPR0010")
+    expect(casesAsc[1].triggerReason).toStrictEqual("TRPR0011")
+    expect(casesAsc[2].triggerReason).toStrictEqual("TRPR0012")
+    expect(totalCasesAsc).toEqual(3)
+
+    const resultDesc = await listCourtCases(dataSource, {
+      forces: [orgCode],
+      maxPageItems: "100",
+      orderBy: "reason",
+      order: "desc"
+    })
+    expect(isError(resultDesc)).toBe(false)
+    const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
+
+    expect(casesDesc).toHaveLength(3)
+    expect(casesDesc[0].triggerReason).toStrictEqual("TRPR0012")
+    expect(casesDesc[1].triggerReason).toStrictEqual("TRPR0011")
+    expect(casesDesc[2].triggerReason).toStrictEqual("TRPR0010")
+    expect(totalCasesDesc).toEqual(3)
+  })
+
   describe("filter by defendant name", () => {
     it("should list cases when there is a case insensitive match", async () => {
       const orgCode = "01FPA1"
@@ -686,7 +750,7 @@ describe("listCourtCases", () => {
       cases = (result as ListCourtCaseResult).result
 
       expect(cases).toHaveLength(2)
-      expect(cases[0].triggers[1].triggerCode).toStrictEqual(triggerToIncludePartialMatch.triggerCode)
+      expect(cases[0].triggers[0].triggerCode).toStrictEqual(triggerToIncludePartialMatch.triggerCode)
       expect(cases[1].errorReason).toStrictEqual(errorToIncludePartialMatch)
     })
 
@@ -695,11 +759,10 @@ describe("listCourtCases", () => {
 
       const errorToInclude = "HO100322"
       const anotherErrorToInclude = "HO100323"
-      const errorReport = `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
       const errorNotToInclude = "HO200212"
 
-      await insertException(0, errorToInclude, errorReport)
-      await insertException(0, anotherErrorToInclude, errorReport)
+      await insertException(0, errorToInclude, `${errorToInclude}||ds:OrganisationUnitCode`)
+      await insertException(0, anotherErrorToInclude, `${anotherErrorToInclude}||ds:NextHearingDate`)
       await insertException(1, errorNotToInclude, `${errorNotToInclude}||ds:XMLField`)
 
       let result = await listCourtCases(dataSource, {
@@ -712,7 +775,9 @@ describe("listCourtCases", () => {
       let { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(1)
-      expect(cases[0].errorReport).toStrictEqual(errorReport)
+      expect(cases[0].errorReport).toStrictEqual(
+        `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
+      )
 
       result = await listCourtCases(dataSource, {
         forces: ["01"],
@@ -724,7 +789,9 @@ describe("listCourtCases", () => {
       cases = (result as ListCourtCaseResult).result
 
       expect(cases).toHaveLength(1)
-      expect(cases[0].errorReport).toStrictEqual(errorReport)
+      expect(cases[0].errorReport).toStrictEqual(
+        `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
+      )
     })
   })
 
