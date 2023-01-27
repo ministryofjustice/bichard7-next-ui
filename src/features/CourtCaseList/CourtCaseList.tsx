@@ -53,7 +53,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
       </Table.CellHeader>
       <Table.CellHeader>{"Notes"}</Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("errorReason")} id="exceptions">
+        <Link href={orderByParams("reason")} id="exceptions">
           {"Reason"}
         </Link>
       </Table.CellHeader>

@@ -29,13 +29,19 @@ const listCourtCases = async (
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
   const maxPageItemsValidated = maxPageItems ? parseInt(maxPageItems, 10) : 25
   const courtCaseRepository = connection.getRepository(CourtCase)
-  const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
   const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces)
     .leftJoinAndSelect("courtCase.triggers", "trigger")
     .leftJoinAndSelect("courtCase.notes", "note")
-    .orderBy(orderByQuery, order === "desc" ? "DESC" : "ASC")
     .skip(pageNumValidated * maxPageItemsValidated)
     .take(maxPageItemsValidated)
+
+  const sortOrder = order === "desc" ? "DESC" : "ASC"
+  if (orderBy === "reason") {
+    query.orderBy("courtCase.errorReason", sortOrder).addOrderBy("courtCase.triggerReason", sortOrder)
+  } else {
+    const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
+    query.orderBy(orderByQuery, sortOrder)
+  }
 
   if (defendantName) {
     query.andWhere("courtCase.defendantName ilike '%' || :name || '%'", {
