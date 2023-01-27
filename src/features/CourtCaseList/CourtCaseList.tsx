@@ -9,6 +9,7 @@ import LockedByTag from "./tags/LockedByTag"
 import NotesTag from "./tags/NotesTag"
 import UrgentTag from "./tags/UrgentTag"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
+import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
 
 interface Props {
   courtCases: CourtCase[]
@@ -100,7 +101,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
               </GridRow>
             ))}
             {triggers?.map((trigger, triggerId) => (
-              <GridRow key={`trigger_${triggerId}`}>{trigger.triggerCode}</GridRow>
+              <GridRow key={`trigger_${triggerId}`}>{getTriggerWithDescription(trigger.triggerCode)}</GridRow>
             ))}
           </Table.Cell>
           <Table.Cell>
