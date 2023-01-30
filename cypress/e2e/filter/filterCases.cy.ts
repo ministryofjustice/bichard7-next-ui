@@ -4,6 +4,11 @@ import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 
+function showFilters() {
+  cy.visit("/bichard")
+  cy.get("button[id=filter-button]").click()
+}
+
 describe("Case list", () => {
   context("When filters applied", () => {
     before(() => {
@@ -30,9 +35,7 @@ describe("Case list", () => {
     })
 
     it("Should be accessible", () => {
-      cy.visit("/bichard")
-
-      cy.get("button[id=filter-button]").click()
+      showFilters()
       cy.get("input[id=keywords]").type("Dummy")
       cy.get('[id="triggers-type"]').check()
       cy.get('[id="exceptions-type"]').check()
@@ -47,8 +50,7 @@ describe("Case list", () => {
     })
 
     it("Should expand and collapse case type filter navigation", () => {
-      cy.visit("/bichard")
-      cy.get("button[id=filter-button]").click()
+      showFilters()
 
       cy.contains("Exceptions").should("exist")
 
@@ -60,8 +62,7 @@ describe("Case list", () => {
     })
 
     it("Should expand and collapse court date filter navigation", () => {
-      cy.visit("/bichard")
-      cy.get("button[id=filter-button]").click()
+      showFilters()
 
       cy.contains("Date range").should("exist")
 
@@ -73,8 +74,7 @@ describe("Case list", () => {
     })
 
     it("Should expand and collapse urgency filter navigation", () => {
-      cy.visit("/bichard")
-      cy.get("button[id=filter-button]").click()
+      showFilters()
 
       cy.contains("Urgent cases only").should("exist")
 
@@ -86,8 +86,7 @@ describe("Case list", () => {
     })
 
     it("Should expand and collapse locked state filter navigation", () => {
-      cy.visit("/bichard")
-      cy.get("button[id=filter-button]").click()
+      showFilters()
 
       cy.contains("Locked cases only").should("exist")
 
@@ -99,8 +98,7 @@ describe("Case list", () => {
     })
 
     it("Should expand and collapse case state filter navigation", () => {
-      cy.visit("/bichard")
-      cy.get("button[id=filter-button]").click()
+      showFilters()
 
       cy.contains("Unresolved & resolved cases").should("exist")
 
@@ -117,9 +115,8 @@ describe("Case list", () => {
         force: "011111"
       })
 
-      cy.visit("/bichard")
+      showFilters()
 
-      cy.get("button[id=filter-button]").click()
       cy.get("input[id=keywords]").type("Bruce Wayne")
 
       cy.get("button[id=search]").click()
@@ -142,9 +139,8 @@ describe("Case list", () => {
         force: "011111"
       })
 
-      cy.visit("/bichard")
+      showFilters()
 
-      cy.get("button[id=filter-button]").click()
       cy.get("input[id=court-name]").type("Manchester Court")
 
       cy.get("button[id=search]").click()
@@ -167,9 +163,8 @@ describe("Case list", () => {
         force: "011111"
       })
 
-      cy.visit("/bichard")
+      showFilters()
 
-      cy.get("button[id=filter-button]").click()
       cy.get("input[id=ptiurn]").type("Case00001")
 
       cy.get("button[id=search]").click()
@@ -199,9 +194,7 @@ describe("Case list", () => {
       cy.task("insertTriggers", { caseId: 0, triggers })
       cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
 
-      cy.visit("/bichard")
-
-      cy.get("button[id=filter-button]").click()
+      showFilters()
       cy.get("input[id=reason-search]").type("TRPR0107")
 
       cy.get("button[id=search]").click()
@@ -267,10 +260,9 @@ describe("Case list", () => {
         force
       })
 
-      cy.visit("/bichard")
+      showFilters()
 
       // Tests for "Today"
-      cy.get("button#filter-button").click()
       cy.get("#date-range").click()
       cy.get("#date-range-today").click()
       cy.get("button#search").click()
@@ -465,9 +457,7 @@ describe("Case list", () => {
         force: "011111"
       })
 
-      cy.visit("/bichard")
-
-      cy.get("button[id=filter-button]").click()
+      showFilters()
       cy.get("#urgent").click()
       cy.get("button[id=search]").click()
 
@@ -502,10 +492,9 @@ describe("Case list", () => {
         orgCode: "011111"
       })
 
-      cy.visit("/bichard")
+      showFilters()
 
       // Filter for resolved and unresolved cases
-      cy.get("button[id=filter-button]").click()
       cy.get("#unresolved-and-resolved").click()
       cy.get("button[id=search]").click()
 
@@ -541,10 +530,8 @@ describe("Case list", () => {
         orgCode: "011111"
       })
 
-      cy.visit("/bichard")
-
+      showFilters()
       // Filter for locked cases
-      cy.get("button[id=filter-button]").click()
       cy.get("#locked").click()
       cy.get("button[id=search]").click()
 
@@ -569,9 +556,7 @@ describe("Case list", () => {
     })
 
     it("Should clear filters", () => {
-      cy.visit("/bichard")
-
-      cy.get("button[id=filter-button]").click()
+      showFilters()
       cy.get("input[id=keywords]").type("Dummy")
       cy.get('[id="triggers-type"]').check()
       cy.get('[id="exceptions-type"]').check()
@@ -590,7 +575,7 @@ describe("Case list", () => {
     })
 
     describe("Filtering cases allocated to me", () => {
-      it.only("Should filter cases that I hold the trigger lock for", () => {
+      it("Should filter cases that I hold the trigger lock for", () => {
         cy.task("insertMultipleDummyCourtCasesWithLock", {
           lockHolders: [
             {
@@ -610,8 +595,7 @@ describe("Case list", () => {
           orgCode: "011111"
         })
 
-        cy.visit("/bichard")
-        cy.get("#filter-button").click()
+        showFilters()
         cy.get("#my-cases-filter").click()
         cy.get("")
       })
