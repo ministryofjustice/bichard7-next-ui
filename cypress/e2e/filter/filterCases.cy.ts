@@ -30,7 +30,6 @@ describe("Case list", () => {
 
     beforeEach(() => {
       cy.task("clearCourtCases")
-      cy.viewport(1280, 720)
       cy.login("bichard01@example.com", "password")
     })
 
