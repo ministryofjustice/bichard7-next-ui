@@ -23,6 +23,11 @@ function removeFilterTag(filterTag: string) {
   cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag).click({ force: true })
 }
 
+function inputAndSearch(inputId: string, phrase: string) {
+  cy.get(`input[id=${inputId}]`).type(phrase)
+  cy.get("button[id=search]").click()
+}
+
 describe("Case list", () => {
   context("When filters applied", () => {
     before(() => {
@@ -115,6 +120,7 @@ describe("Case list", () => {
 
       showFilters()
 
+      inputAndSearch("keywords", "Bruce Wayne")
       cy.contains("Bruce Wayne")
       cy.contains("Barbara Gordon").should("not.exist")
       cy.contains("Alfred Pennyworth").should("not.exist")
@@ -136,9 +142,7 @@ describe("Case list", () => {
 
       showFilters()
 
-      cy.get("input[id=court-name]").type("Manchester Court")
-
-      cy.get("button[id=search]").click()
+      inputAndSearch("court-name", "Manchester Court")
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Manchester Court")
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("London Court").should("not.exist")
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bristol Court").should("not.exist")
@@ -160,9 +164,7 @@ describe("Case list", () => {
 
       showFilters()
 
-      cy.get("input[id=ptiurn]").type("Case00001")
-
-      cy.get("button[id=search]").click()
+      inputAndSearch("ptiurn", "Case00001")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00003").should("not.exist")
@@ -190,9 +192,8 @@ describe("Case list", () => {
       cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
 
       showFilters()
-      cy.get("input[id=reason-search]").type("TRPR0107")
 
-      cy.get("button[id=search]").click()
+      inputAndSearch("reason-search", "TRPR0107")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001").should("not.exist")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
@@ -201,9 +202,8 @@ describe("Case list", () => {
       removeFilterTag("TRPR0107")
 
       cy.get("button[id=filter-button]").click()
-      cy.get("input[id=reason-search]").type("HO200212")
 
-      cy.get("button[id=search]").click()
+      inputAndSearch("reason-search", "HO200212")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000").should("not.exist")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
