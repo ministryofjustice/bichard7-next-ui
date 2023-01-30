@@ -12,13 +12,13 @@ const DateInput: React.FC<Props> = ({ dateType }: Props) => {
         <div className="govuk-date-input" id="passport-issued">
           <div className="govuk-date-input__item">
             <div className="govuk-form-group">
-              <label className="govuk-label govuk-date-input__label" htmlFor="passport-issued-day">
+              <label className="govuk-label govuk-date-input__label" htmlFor={`${dateType}-inputted-date-day`}>
                 {"Day"}
               </label>
               <input
                 className="govuk-input govuk-date-input__input govuk-input--width-2"
-                id="passport-issued-day"
-                name="passport-issued-day"
+                id={`${dateType}-inputted-date-day`}
+                name={`${dateType}-inputted-date-day`}
                 type="text"
                 inputMode="numeric"
               />
@@ -26,13 +26,13 @@ const DateInput: React.FC<Props> = ({ dateType }: Props) => {
           </div>
           <div className="govuk-date-input__item">
             <div className="govuk-form-group">
-              <label className="govuk-label govuk-date-input__label" htmlFor="passport-issued-month">
+              <label className="govuk-label govuk-date-input__label" htmlFor={`${dateType}-inputted-date-month`}>
                 {"Month"}
               </label>
               <input
                 className="govuk-input govuk-date-input__input govuk-input--width-2"
-                id="passport-issued-month"
-                name="passport-issued-month"
+                id={`${dateType}-inputted-date-month`}
+                name={`${dateType}-inputted-date-month`}
                 type="text"
                 inputMode="numeric"
               />
@@ -40,13 +40,13 @@ const DateInput: React.FC<Props> = ({ dateType }: Props) => {
           </div>
           <div className="govuk-date-input__item">
             <div className="govuk-form-group">
-              <label className="govuk-label govuk-date-input__label" htmlFor="passport-issued-year">
+              <label className="govuk-label govuk-date-input__label" htmlFor={`${dateType}-inputted-date-year`}>
                 {"Year"}
               </label>
               <input
                 className="govuk-input govuk-date-input__input govuk-input--width-4"
-                id="passport-issued-year"
-                name="passport-issued-year"
+                id={`${dateType}-inputted-date-year`}
+                name={`${dateType}-inputted-date-year`}
                 type="text"
                 inputMode="numeric"
               />
