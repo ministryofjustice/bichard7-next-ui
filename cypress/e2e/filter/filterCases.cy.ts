@@ -204,17 +204,17 @@ describe("Case list", () => {
       cy.get("button[id=filter-button]").click()
 
       inputAndSearch("reason-search", "HO200212")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000").should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
+      cy.contains("Case00001")
+      cy.contains("Case00000").should("not.exist")
+      cy.contains("Case00002").should("not.exist")
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("HO200212")
 
       // Removing filter tag
       removeFilterTag("HO200212")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002")
+      cy.contains("Case00000")
+      cy.contains("Case00001")
+      cy.contains("Case00002")
     })
 
     it("Should display cases filtered for a named date range", () => {
@@ -298,12 +298,12 @@ describe("Case list", () => {
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 3)
-      cy.get("tr").not(":first").contains(todayDateString).should("exist")
-      cy.get("tr").not(":first").contains(yesterdayDateString).should("exist")
-      cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
-      cy.get("tr").not(":first").contains("Case00000").should("exist")
-      cy.get("tr").not(":first").contains("Case00001").should("exist")
-      cy.get("tr").not(":first").contains("Case00003").should("exist")
+      cy.contains(todayDateString)
+      cy.contains(yesterdayDateString)
+      cy.contains(oneWeekAgoDateString)
+      cy.contains("Case00000")
+      cy.contains("Case00001")
+      cy.contains("Case00003")
 
       removeFilterTag("This week")
       cy.get("tr").not(":first").should("have.length", 5)
@@ -316,12 +316,12 @@ describe("Case list", () => {
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 3)
-      cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
-      cy.get("tr").not(":first").contains(oneWeekAndOneDayAgoDateString).should("exist")
-      cy.get("tr").not(":first").contains(twoWeeksAgoDateString).should("exist")
-      cy.get("tr").not(":first").contains("Case00003").should("exist")
-      cy.get("tr").not(":first").contains("Case00004").should("exist")
-      cy.get("tr").not(":first").contains("Case00005").should("exist")
+      cy.contains(oneWeekAgoDateString)
+      cy.contains(oneWeekAndOneDayAgoDateString)
+      cy.contains(twoWeeksAgoDateString)
+      cy.contains("Case00003")
+      cy.contains("Case00004")
+      cy.contains("Case00005")
 
       removeFilterTag("Last week")
       cy.get("tr").not(":first").should("have.length", 5)
@@ -334,24 +334,24 @@ describe("Case list", () => {
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 5)
-      cy.get("tr").not(":first").contains(todayDateString).should("exist")
-      cy.get("tr").not(":first").contains(yesterdayDateString).should("exist")
-      cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
-      cy.get("tr").not(":first").contains(twoWeeksAgoDateString).should("exist")
-      cy.get("tr").not(":first").contains(oneWeekAndOneDayAgoDateString).should("exist")
+      cy.contains(todayDateString)
+      cy.contains(yesterdayDateString)
+      cy.contains(oneWeekAgoDateString)
+      cy.contains(twoWeeksAgoDateString)
+      cy.contains(oneWeekAndOneDayAgoDateString)
 
-      cy.get("tr").not(":first").contains("Case00000").should("exist")
-      cy.get("tr").not(":first").contains("Case00001").should("exist")
-      cy.get("tr").not(":first").contains("Case00003").should("exist")
-      cy.get("tr").not(":first").contains("Case00004").should("exist")
-      cy.get("tr").not(":first").contains("Case00005").should("exist")
+      cy.contains("Case00000")
+      cy.contains("Case00001")
+      cy.contains("Case00003")
+      cy.contains("Case00004")
+      cy.contains("Case00005")
 
       cy.findByText("Next page").should("exist")
       cy.findByText("Next page").click()
       cy.get("tr").not(":first").should("have.length", 1)
 
-      cy.get("tr").not(":first").contains(oneMonthAgoDateString).should("exist")
-      cy.get("tr").not(":first").contains("Case00006").should("exist")
+      cy.contains(oneMonthAgoDateString)
+      cy.contains("Case00006")
 
       removeFilterTag("This month")
       cy.get("tr").not(":first").should("have.length", 5)
@@ -387,10 +387,10 @@ describe("Case list", () => {
       cy.visit("/bichard")
 
       // Default: no filter, all cases shown
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00000`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00001`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00002`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00003`)
+      cy.contains(`Case00000`)
+      cy.contains(`Case00001`)
+      cy.contains(`Case00002`)
+      cy.contains(`Case00003`)
 
       // Filtering by having triggers
       cy.get("button[id=filter-button]").click()
@@ -399,10 +399,10 @@ describe("Case list", () => {
 
       cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
 
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00000`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00001`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00002`).should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00003`).should("not.exist")
+      cy.contains(`Case00000`)
+      cy.contains(`Case00001`)
+      cy.contains(`Case00002`).should("not.exist")
+      cy.contains(`Case00003`).should("not.exist")
 
       // Filtering by having exceptions
       removeFilterTag("Triggers")
@@ -412,10 +412,10 @@ describe("Case list", () => {
 
       cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
 
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00000`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00001`).should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00002`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00003`).should("not.exist")
+      cy.contains(`Case00000`)
+      cy.contains(`Case00001`).should("not.exist")
+      cy.contains(`Case00002`)
+      cy.contains(`Case00003`).should("not.exist")
 
       // Filter for both triggers and exceptions
       cy.get("button[id=filter-button]").click()
@@ -426,24 +426,24 @@ describe("Case list", () => {
       cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
       cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
 
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00000`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00001`)
+      cy.contains(`Case00000`)
+      cy.contains(`Case00001`)
 
       // Removing exceptions filter tag
       removeFilterTag("Exceptions")
 
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00000`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00001`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00002`).should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00003`).should("not.exist")
+      cy.contains(`Case00000`)
+      cy.contains(`Case00001`)
+      cy.contains(`Case00002`).should("not.exist")
+      cy.contains(`Case00003`).should("not.exist")
 
       // Removing triggers filter tag
       removeFilterTag("Triggers")
 
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00000`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00001`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00002`)
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00003`)
+      cy.contains(`Case00000`)
+      cy.contains(`Case00001`)
+      cy.contains(`Case00002`)
+      cy.contains(`Case00003`)
     })
 
     it("Should filter cases by urgency", () => {
@@ -473,7 +473,7 @@ describe("Case list", () => {
       cy.get("button[id=search]").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
-      cy.get("tr").contains("Case00001").should("exist")
+      cy.contains("Case00001")
 
       // Removing non-urgent filter tag all case should be shown with the filter disabled
       removeFilterTag("Non-urgent")
@@ -494,7 +494,7 @@ describe("Case list", () => {
       cy.get("button[id=search]").click()
 
       cy.get("tr").not(":first").should("have.length", 4)
-      cy.get("tr").not(":first").contains("Case00000").should("exist")
+      cy.contains("Case00000")
 
       // Removing case state filter tag unresolved cases should be shown with the filter disabled
       removeFilterTag("Unresolved & resolved cases")
@@ -506,7 +506,7 @@ describe("Case list", () => {
       cy.get("button[id=search]").click()
 
       cy.get("tr").not(":first").should("have.length", 3)
-      cy.get("tr").contains("Case00001").should("exist")
+      cy.contains("Case00001")
 
       // Removing case state filter tag unresolved cases should be shown with the filter disabled
       removeFilterTag("Resolved cases")
@@ -531,7 +531,7 @@ describe("Case list", () => {
       cy.get("button[id=search]").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
-      cy.get("tr").not(":first").contains("Case00000").should("exist")
+      cy.contains("Case00000")
 
       // Removing locked filter tag all case should be shown with the filter disabled
       removeFilterTag("Locked")
@@ -543,7 +543,7 @@ describe("Case list", () => {
       cy.get("button[id=search]").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
-      cy.get("tr").contains("Case00001").should("exist")
+      cy.contains("Case00001")
 
       // Removing unlocked filter tag all case should be shown with the filter disabled
       removeFilterTag("Unlocked")
