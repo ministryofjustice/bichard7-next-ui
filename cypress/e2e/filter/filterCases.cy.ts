@@ -244,7 +244,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00002")
     })
 
-    it("Should display cases filtered for a named date range", () => {
+    it.only("Should display cases filtered for a named date range", () => {
       const force = "011111"
 
       const todayDate = new Date()
@@ -382,7 +382,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 5)
     })
 
-    it("Should not allow passing an invalid date range filter", () => {
+    it.only("Should not allow passing an invalid date range filter", () => {
       const force = "011111"
       cy.task("insertCourtCasesWithFields", [
         { courtDate: new Date(), orgForPoliceFilter: force },

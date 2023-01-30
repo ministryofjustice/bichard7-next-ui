@@ -4,6 +4,7 @@ import { NamedDateRangeOptions } from "utils/namedDateRange"
 import RadioButton from "components/RadioButton/RadioButton"
 import type { FilterAction } from "types/CourtCaseFilter"
 import type { Dispatch } from "react"
+import DateInput from "components/CustomDateInput/DateInput"
 
 interface Props {
   dateRange?: string | null
@@ -46,11 +47,29 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch }: Props)
             ))}
           </div>
         </div>
-        <div className="govuk-radios__item">
-          <input className="govuk-radios__input" id="custom-date-range" name="courtDate" type="radio" value="" />
-          <label className="govuk-label govuk-radios__label" htmlFor="custom-date-range">
-            {"Custom date range"}
-          </label>
+        <RadioButton
+          name={"courtDate"}
+          id={"custom-date-range"}
+          dataAriaControls={"conditional-custom-date-range"}
+          defaultChecked={validateNamedDateRange(dateRange || "")}
+          label={"Custom Date range"}
+        />
+        <div className="govuk-radios__conditional" id="conditional-custom-date-range">
+          <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+            <DateInput />
+            {/* <div className="govuk-radios__item">
+              <input
+                className="govuk-radios__input"
+                id="conditional-custom-date-range"
+                name="courtDate"
+                type="radio"
+                value=""
+              />
+              <label className="govuk-label govuk-radios__label" htmlFor="conditional-custom-date-range">
+                {"Custom date range"}
+              </label>
+            </div> */}
+          </div>
         </div>
       </div>
     </fieldset>
