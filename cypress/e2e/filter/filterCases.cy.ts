@@ -129,9 +129,9 @@ describe("Case list", () => {
 
       // Removing filter tag
       removeFilterTag("Bruce Wayne")
-      cy.get("tr").not(":first").get("td:nth-child(1)").contains("Bruce Wayne")
-      cy.get("tr").not(":first").get("td:nth-child(1)").contains("Barbara Gordon")
-      cy.get("tr").not(":first").get("td:nth-child(1)").contains("Alfred Pennyworth")
+      cy.contains("Bruce Wayne")
+      cy.contains("Barbara Gordon")
+      cy.contains("Alfred Pennyworth")
     })
 
     it("Should display cases filtered by court name", () => {
@@ -143,17 +143,17 @@ describe("Case list", () => {
       showFilters()
 
       inputAndSearch("court-name", "Manchester Court")
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Manchester Court")
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("London Court").should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bristol Court").should("not.exist")
+      cy.contains("Manchester Court")
+      cy.contains("London Court").should("not.exist")
+      cy.contains("Bristol Court").should("not.exist")
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Manchester Court")
 
       // Removing filter tag
       removeFilterTag("Manchester Court")
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Manchester Court")
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("London Court")
-      cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bristol Court")
+      cy.contains("Manchester Court")
+      cy.contains("London Court")
+      cy.contains("Bristol Court")
     })
 
     it("Should display cases filtered by PTIURN", () => {
@@ -165,17 +165,17 @@ describe("Case list", () => {
       showFilters()
 
       inputAndSearch("ptiurn", "Case00001")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00003").should("not.exist")
+      cy.contains("Case00001")
+      cy.contains("Case00002").should("not.exist")
+      cy.contains("Case00003").should("not.exist")
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Case00001")
 
       // Removing filter tag
       removeFilterTag("Case00001")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00003")
+      cy.contains("Case00001")
+      cy.contains("Case00002")
+      cy.contains("Case00003")
     })
 
     it("Should display cases filtered by reason", () => {
@@ -194,9 +194,9 @@ describe("Case list", () => {
       showFilters()
 
       inputAndSearch("reason-search", "TRPR0107")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001").should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
+      cy.contains("Case00000")
+      cy.contains("Case00001").should("not.exist")
+      cy.contains("Case00002").should("not.exist")
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107")
       removeFilterTag("TRPR0107")
