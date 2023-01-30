@@ -10,6 +10,17 @@ import NotesTag from "./tags/NotesTag"
 import UrgentTag from "./tags/UrgentTag"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
+import { createUseStyles } from "react-jss"
+
+const useStyles = createUseStyles({
+  caseDetailsRow: {
+    verticalAlign: "top"
+  },
+  triggersRow: {
+    verticalAlign: "top",
+    backgroundColor: "#f3f2f1" // GDS light-grey color
+  }
+})
 
 interface Props {
   courtCases: CourtCase[]
@@ -17,6 +28,7 @@ interface Props {
 }
 
 const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) => {
+  const classes = useStyles()
   const { basePath, query } = useRouter()
 
   const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
@@ -64,14 +76,26 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
       </Table.CellHeader>
     </Table.Row>
   )
-  const tableBody = courtCases.map(
+  const tableBody: JSX.Element[] = []
+  courtCases.forEach(
     (
-      { courtDate, ptiurn, defendantName, courtName, triggers, errorReport, isUrgent, notes, errorLockedByUsername },
+      {
+        courtDate,
+        ptiurn,
+        defendantName,
+        courtName,
+        triggers,
+        errorReport,
+        isUrgent,
+        notes,
+        errorLockedByUsername,
+        triggerLockedByUsername
+      },
       idx
     ) => {
       const exceptions = groupErrorsFromReport(errorReport)
-      return (
-        <Table.Row key={idx} style={{ verticalAlign: "top" }}>
+      tableBody.push(
+        <Table.Row key={`case-details-row-${idx}`} className={classes.caseDetailsRow}>
           <Table.Cell>
             <If condition={!!errorLockedByUsername}>
               <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
@@ -100,15 +124,38 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
                 <b>&nbsp;{exceptions[code] > 1 ? `(${exceptions[code]})` : ""}</b>
               </GridRow>
             ))}
-            {triggers?.map((trigger, triggerId) => (
-              <GridRow key={`trigger_${triggerId}`}>{getTriggerWithDescription(trigger.triggerCode)}</GridRow>
-            ))}
           </Table.Cell>
           <Table.Cell>
             <LockedByTag lockedBy={errorLockedByUsername} />
           </Table.Cell>
         </Table.Row>
       )
+
+      if (triggers.length > 0) {
+        tableBody.push(
+          <Table.Row key={`triggers-row-${idx}`} className={classes.triggersRow}>
+            <Table.Cell>
+              <If condition={!!triggerLockedByUsername}>
+                <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
+              </If>
+            </Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell>
+              {triggers?.map((trigger, triggerId) => (
+                <GridRow key={`trigger_${triggerId}`}>{getTriggerWithDescription(trigger.triggerCode)}</GridRow>
+              ))}
+            </Table.Cell>
+            <Table.Cell>
+              <LockedByTag lockedBy={triggerLockedByUsername} />
+            </Table.Cell>
+          </Table.Row>
+        )
+      }
     }
   )
 
