@@ -28,6 +28,18 @@ function inputAndSearch(inputId: string, phrase: string) {
   cy.get("button[id=search]").click()
 }
 
+function confirmMultipleFieldsDisplayed(fields: string[]) {
+  fields.forEach((field) => {
+    cy.contains(field)
+  })
+}
+
+function confirmMultipleFieldsNotDisplayed(fields: string[]) {
+  fields.forEach((field) => {
+    cy.contains(field).should("not.exist")
+  })
+}
+
 describe("Case list", () => {
   context("When filters applied", () => {
     before(() => {
@@ -70,7 +82,7 @@ describe("Case list", () => {
     it("Should expand and collapse case type filter navigation", () => {
       showFilters()
 
-      cy.contains("Exceptions").should("exist")
+      cy.contains("Exceptions")
 
       collapseFilterSection("Case type", "Exceptions")
       expandFilterSection("Case type", "Exceptions")
@@ -79,7 +91,7 @@ describe("Case list", () => {
     it("Should expand and collapse court date filter navigation", () => {
       showFilters()
 
-      cy.contains("Date range").should("exist")
+      cy.contains("Date range")
 
       collapseFilterSection("Court date", "Date range")
       expandFilterSection("Court date", "Date range")
@@ -88,7 +100,7 @@ describe("Case list", () => {
     it("Should expand and collapse urgency filter navigation", () => {
       showFilters()
 
-      cy.contains("Urgent cases only").should("exist")
+      cy.contains("Urgent cases only")
 
       collapseFilterSection("Urgency", "Urgent cases only")
       expandFilterSection("Urgency", "Urgent cases only")
@@ -97,7 +109,7 @@ describe("Case list", () => {
     it("Should expand and collapse locked state filter navigation", () => {
       showFilters()
 
-      cy.contains("Locked cases only").should("exist")
+      cy.contains("Locked cases only")
 
       collapseFilterSection("Locked state", "Locked cases only")
       expandFilterSection("Locked state", "Locked cases only")
@@ -106,7 +118,7 @@ describe("Case list", () => {
     it("Should expand and collapse case state filter navigation", () => {
       showFilters()
 
-      cy.contains("Unresolved & resolved cases").should("exist")
+      cy.contains("Unresolved & resolved cases")
 
       collapseFilterSection("Case state", "Unresolved & resolved cases")
       expandFilterSection("Case state", "Unresolved & resolved cases")
@@ -122,16 +134,12 @@ describe("Case list", () => {
 
       inputAndSearch("keywords", "Bruce Wayne")
       cy.contains("Bruce Wayne")
-      cy.contains("Barbara Gordon").should("not.exist")
-      cy.contains("Alfred Pennyworth").should("not.exist")
+      confirmMultipleFieldsNotDisplayed(["Barbara Gordon", "Alfred Pennyworth"])
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Bruce Wayne")
 
-      // Removing filter tag
       removeFilterTag("Bruce Wayne")
-      cy.contains("Bruce Wayne")
-      cy.contains("Barbara Gordon")
-      cy.contains("Alfred Pennyworth")
+      confirmMultipleFieldsDisplayed(["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"])
     })
 
     it("Should display cases filtered by court name", () => {
@@ -144,16 +152,13 @@ describe("Case list", () => {
 
       inputAndSearch("court-name", "Manchester Court")
       cy.contains("Manchester Court")
-      cy.contains("London Court").should("not.exist")
-      cy.contains("Bristol Court").should("not.exist")
+      confirmMultipleFieldsNotDisplayed(["London Court", "Bristol Court"])
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Manchester Court")
 
       // Removing filter tag
       removeFilterTag("Manchester Court")
-      cy.contains("Manchester Court")
-      cy.contains("London Court")
-      cy.contains("Bristol Court")
+      confirmMultipleFieldsDisplayed(["Manchester Court", "London Court", "Bristol Court"])
     })
 
     it("Should display cases filtered by PTIURN", () => {
@@ -166,16 +171,13 @@ describe("Case list", () => {
 
       inputAndSearch("ptiurn", "Case00001")
       cy.contains("Case00001")
-      cy.contains("Case00002").should("not.exist")
-      cy.contains("Case00003").should("not.exist")
+      confirmMultipleFieldsNotDisplayed(["Case00002", "Case00003"])
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Case00001")
 
       // Removing filter tag
       removeFilterTag("Case00001")
-      cy.contains("Case00001")
-      cy.contains("Case00002")
-      cy.contains("Case00003")
+      confirmMultipleFieldsDisplayed(["Case00001", "Case00002", "Case00003"])
     })
 
     it("Should display cases filtered by reason", () => {
@@ -195,8 +197,7 @@ describe("Case list", () => {
 
       inputAndSearch("reason-search", "TRPR0107")
       cy.contains("Case00000")
-      cy.contains("Case00001").should("not.exist")
-      cy.contains("Case00002").should("not.exist")
+      confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107")
       removeFilterTag("TRPR0107")
@@ -205,16 +206,13 @@ describe("Case list", () => {
 
       inputAndSearch("reason-search", "HO200212")
       cy.contains("Case00001")
-      cy.contains("Case00000").should("not.exist")
-      cy.contains("Case00002").should("not.exist")
+      confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002"])
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("HO200212")
 
       // Removing filter tag
       removeFilterTag("HO200212")
-      cy.contains("Case00000")
-      cy.contains("Case00001")
-      cy.contains("Case00002")
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
     })
 
     it("Should display cases filtered for a named date range", () => {
@@ -298,12 +296,14 @@ describe("Case list", () => {
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 3)
-      cy.contains(todayDateString)
-      cy.contains(yesterdayDateString)
-      cy.contains(oneWeekAgoDateString)
-      cy.contains("Case00000")
-      cy.contains("Case00001")
-      cy.contains("Case00003")
+      confirmMultipleFieldsDisplayed([
+        todayDateString,
+        yesterdayDateString,
+        oneWeekAgoDateString,
+        "Case00000",
+        "Case00001",
+        "Case00003"
+      ])
 
       removeFilterTag("This week")
       cy.get("tr").not(":first").should("have.length", 5)
@@ -316,12 +316,14 @@ describe("Case list", () => {
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 3)
-      cy.contains(oneWeekAgoDateString)
-      cy.contains(oneWeekAndOneDayAgoDateString)
-      cy.contains(twoWeeksAgoDateString)
-      cy.contains("Case00003")
-      cy.contains("Case00004")
-      cy.contains("Case00005")
+      confirmMultipleFieldsDisplayed([
+        oneWeekAgoDateString,
+        oneWeekAndOneDayAgoDateString,
+        twoWeeksAgoDateString,
+        "Case00003",
+        "Case00004",
+        "Case00005"
+      ])
 
       removeFilterTag("Last week")
       cy.get("tr").not(":first").should("have.length", 5)
@@ -334,24 +336,24 @@ describe("Case list", () => {
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 5)
-      cy.contains(todayDateString)
-      cy.contains(yesterdayDateString)
-      cy.contains(oneWeekAgoDateString)
-      cy.contains(twoWeeksAgoDateString)
-      cy.contains(oneWeekAndOneDayAgoDateString)
-
-      cy.contains("Case00000")
-      cy.contains("Case00001")
-      cy.contains("Case00003")
-      cy.contains("Case00004")
-      cy.contains("Case00005")
+      confirmMultipleFieldsDisplayed([
+        todayDateString,
+        yesterdayDateString,
+        oneWeekAgoDateString,
+        twoWeeksAgoDateString,
+        oneWeekAndOneDayAgoDateString,
+        "Case00000",
+        "Case00001",
+        "Case00003",
+        "Case00004",
+        "Case00005"
+      ])
 
       cy.findByText("Next page").should("exist")
       cy.findByText("Next page").click()
       cy.get("tr").not(":first").should("have.length", 1)
 
-      cy.contains(oneMonthAgoDateString)
-      cy.contains("Case00006")
+      confirmMultipleFieldsDisplayed([oneMonthAgoDateString, "Case00006"])
 
       removeFilterTag("This month")
       cy.get("tr").not(":first").should("have.length", 5)
@@ -387,10 +389,7 @@ describe("Case list", () => {
       cy.visit("/bichard")
 
       // Default: no filter, all cases shown
-      cy.contains(`Case00000`)
-      cy.contains(`Case00001`)
-      cy.contains(`Case00002`)
-      cy.contains(`Case00003`)
+      confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`, `Case00003`])
 
       // Filtering by having triggers
       cy.get("button[id=filter-button]").click()
@@ -399,10 +398,8 @@ describe("Case list", () => {
 
       cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
 
-      cy.contains(`Case00000`)
-      cy.contains(`Case00001`)
-      cy.contains(`Case00002`).should("not.exist")
-      cy.contains(`Case00003`).should("not.exist")
+      confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`])
+      confirmMultipleFieldsNotDisplayed(["Case00002", "Case00003"])
 
       // Filtering by having exceptions
       removeFilterTag("Triggers")
@@ -412,10 +409,8 @@ describe("Case list", () => {
 
       cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
 
-      cy.contains(`Case00000`)
-      cy.contains(`Case00001`).should("not.exist")
-      cy.contains(`Case00002`)
-      cy.contains(`Case00003`).should("not.exist")
+      confirmMultipleFieldsDisplayed([`Case00000`, `Case00002`])
+      confirmMultipleFieldsNotDisplayed([`Case00001`, `Case00003`])
 
       // Filter for both triggers and exceptions
       cy.get("button[id=filter-button]").click()
@@ -426,24 +421,16 @@ describe("Case list", () => {
       cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
       cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
 
-      cy.contains(`Case00000`)
-      cy.contains(`Case00001`)
+      confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`])
 
       // Removing exceptions filter tag
       removeFilterTag("Exceptions")
-
-      cy.contains(`Case00000`)
-      cy.contains(`Case00001`)
-      cy.contains(`Case00002`).should("not.exist")
-      cy.contains(`Case00003`).should("not.exist")
+      confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`])
+      confirmMultipleFieldsNotDisplayed([`Case00002`, `Case00003`])
 
       // Removing triggers filter tag
       removeFilterTag("Triggers")
-
-      cy.contains(`Case00000`)
-      cy.contains(`Case00001`)
-      cy.contains(`Case00002`)
-      cy.contains(`Case00003`)
+      confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`, `Case00003`])
     })
 
     it("Should filter cases by urgency", () => {
