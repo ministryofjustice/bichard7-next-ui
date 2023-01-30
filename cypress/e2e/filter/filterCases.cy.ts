@@ -19,6 +19,10 @@ function expandFilterSection(sectionToBeExpanded: string, optionToBeExpanded: st
   cy.contains(optionToBeExpanded).should("exist")
 }
 
+function removeFilterTag(filterTag: string) {
+  cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag).click({ force: true })
+}
+
 describe("Case list", () => {
   context("When filters applied", () => {
     before(() => {
@@ -121,7 +125,7 @@ describe("Case list", () => {
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Bruce Wayne")
 
       // Removing filter tag
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Bruce Wayne").click({ force: true })
+      removeFilterTag("Bruce Wayne")
       cy.get("tr").not(":first").get("td:nth-child(1)").contains("Bruce Wayne")
       cy.get("tr").not(":first").get("td:nth-child(1)").contains("Barbara Gordon")
       cy.get("tr").not(":first").get("td:nth-child(1)").contains("Alfred Pennyworth")
@@ -145,7 +149,7 @@ describe("Case list", () => {
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Manchester Court")
 
       // Removing filter tag
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Manchester Court").click({ force: true })
+      removeFilterTag("Manchester Court")
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Manchester Court")
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("London Court")
       cy.get("tr").not(":first").get("td:nth-child(3)").contains("Bristol Court")
@@ -169,7 +173,7 @@ describe("Case list", () => {
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Case00001")
 
       // Removing filter tag
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Case00001").click({ force: true })
+      removeFilterTag("Case00001")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00003")
@@ -197,7 +201,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002").should("not.exist")
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107")
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107").click({ force: true })
+      removeFilterTag("TRPR0107")
 
       cy.get("button[id=filter-button]").click()
       cy.get("input[id=reason-search]").type("HO200212")
@@ -210,7 +214,7 @@ describe("Case list", () => {
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("HO200212")
 
       // Removing filter tag
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("HO200212").click({ force: true })
+      removeFilterTag("HO200212")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001")
       cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002")
@@ -269,7 +273,7 @@ describe("Case list", () => {
           cy.wrap(row).contains("Case00000").should("exist")
         })
 
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Today").click({ force: true })
+      removeFilterTag("Today")
       cy.get("tr").not(":first").should("have.length", 5)
 
       // Tests for "yesterday"
@@ -286,7 +290,7 @@ describe("Case list", () => {
           cy.wrap(row).contains("Case00001").should("exist")
         })
 
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Yesterday").click({ force: true })
+      removeFilterTag("Yesterday")
       cy.get("tr").not(":first").should("have.length", 5)
 
       // Tests for "This week"
@@ -304,7 +308,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").contains("Case00001").should("exist")
       cy.get("tr").not(":first").contains("Case00003").should("exist")
 
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("This week").click({ force: true })
+      removeFilterTag("This week")
       cy.get("tr").not(":first").should("have.length", 5)
 
       // Tests for "Last week"
@@ -322,7 +326,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").contains("Case00004").should("exist")
       cy.get("tr").not(":first").contains("Case00005").should("exist")
 
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Last week").click({ force: true })
+      removeFilterTag("Last week")
       cy.get("tr").not(":first").should("have.length", 5)
 
       // Tests for "This month"
@@ -352,7 +356,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").contains(oneMonthAgoDateString).should("exist")
       cy.get("tr").not(":first").contains("Case00006").should("exist")
 
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("This month").click({ force: true })
+      removeFilterTag("This month")
       cy.get("tr").not(":first").should("have.length", 5)
     })
 
@@ -404,7 +408,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00003`).should("not.exist")
 
       // Filtering by having exceptions
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Triggers").click({ force: true })
+      removeFilterTag("Triggers")
       cy.get("button[id=filter-button]").click()
       cy.get('[id="exceptions-type"]').check()
       cy.get("button[id=search]").click()
@@ -429,7 +433,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00001`)
 
       // Removing exceptions filter tag
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Exceptions").click({ force: true })
+      removeFilterTag("Exceptions")
 
       cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00000`)
       cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00001`)
@@ -437,7 +441,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00003`).should("not.exist")
 
       // Removing triggers filter tag
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Triggers").click({ force: true })
+      removeFilterTag("Triggers")
 
       cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00000`)
       cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00001`)
@@ -463,7 +467,7 @@ describe("Case list", () => {
         })
 
       // Removing urgent filter tag all case should be shown with the filter disabled
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Urgent").click({ force: true })
+      removeFilterTag("Urgent")
       cy.get("tr").not(":first").should("have.length", 4)
 
       // Filter for non-urgent cases
@@ -475,7 +479,7 @@ describe("Case list", () => {
       cy.get("tr").contains("Case00001").should("exist")
 
       // Removing non-urgent filter tag all case should be shown with the filter disabled
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Non-urgent").click({ force: true })
+      removeFilterTag("Non-urgent")
       cy.get("tr").not(":first").should("have.length", 4)
     })
 
@@ -496,7 +500,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").contains("Case00000").should("exist")
 
       // Removing case state filter tag unresolved cases should be shown with the filter disabled
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Unresolved & resolved cases").click({ force: true })
+      removeFilterTag("Unresolved & resolved cases")
       cy.get("tr").not(":first").should("have.length", 1)
 
       // Filter for resolved cases
@@ -508,7 +512,7 @@ describe("Case list", () => {
       cy.get("tr").contains("Case00001").should("exist")
 
       // Removing case state filter tag unresolved cases should be shown with the filter disabled
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Resolved cases").click({ force: true })
+      removeFilterTag("Resolved cases")
       cy.get("tr").not(":first").should("have.length", 1)
     })
 
@@ -533,7 +537,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").contains("Case00000").should("exist")
 
       // Removing locked filter tag all case should be shown with the filter disabled
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Locked").click({ force: true })
+      removeFilterTag("Locked")
       cy.get("tr").not(":first").should("have.length", 2)
 
       // Filter for unlocked cases
@@ -545,7 +549,7 @@ describe("Case list", () => {
       cy.get("tr").contains("Case00001").should("exist")
 
       // Removing unlocked filter tag all case should be shown with the filter disabled
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Unlocked").click({ force: true })
+      removeFilterTag("Unlocked")
       cy.get("tr").not(":first").should("have.length", 2)
     })
 
