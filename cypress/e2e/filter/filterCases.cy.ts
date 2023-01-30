@@ -115,12 +115,9 @@ describe("Case list", () => {
 
       showFilters()
 
-      cy.get("input[id=keywords]").type("Bruce Wayne")
-
-      cy.get("button[id=search]").click()
-      cy.get("tr").not(":first").get("td:nth-child(1)").contains("Bruce Wayne")
-      cy.get("tr").not(":first").get("td:nth-child(1)").contains("Barbara Gordon").should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(1)").contains("Alfred Pennyworth").should("not.exist")
+      cy.contains("Bruce Wayne")
+      cy.contains("Barbara Gordon").should("not.exist")
+      cy.contains("Alfred Pennyworth").should("not.exist")
       cy.get("tr").should("have.length", 2)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Bruce Wayne")
 
