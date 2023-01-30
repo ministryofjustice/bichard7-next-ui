@@ -1,12 +1,13 @@
-const DateInput: React.FC = () => {
+interface Props {
+  dateType: string
+}
+
+const DateInput: React.FC<Props> = ({ dateType }: Props) => {
   return (
     <div className="govuk-form-group">
       <fieldset className="govuk-fieldset" role="group" aria-describedby="passport-issued-hint">
-        <legend className="govuk-fieldset__legend govuk-fieldset__legend--l">
-          <h1 className="govuk-fieldset__heading">{"When was your passport issued?"}</h1>
-        </legend>
         <div id="passport-issued-hint" className="govuk-hint">
-          {"For example, 27 3 2007"}
+          {dateType}
         </div>
         <div className="govuk-date-input" id="passport-issued">
           <div className="govuk-date-input__item">
