@@ -3,6 +3,7 @@ import Link from "next/link"
 import { generatePageLinks } from "./generatePageLinks"
 import ResultsPerPage from "./ResultsPerPage"
 import { UrlObject } from "url"
+import { createUseStyles } from "react-jss"
 
 interface RelativeNavigationProps {
   className: string
@@ -48,14 +49,24 @@ interface Props {
   totalCases: number
 }
 
+const useStyles = createUseStyles({
+  "bottom-navigation": {
+    display: "inline-flex",
+    flexWrap: "nowrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "99%"
+  }
+})
+
 const Pagination: React.FC<Props> = ({ totalPages, pageNum, resultsPerPage, totalCases }: Props) => {
   const { query } = useRouter()
-
   const pageLinks = generatePageLinks(pageNum, totalPages)
+  const classes = useStyles()
 
   return (
-    <div className="bottom-navigation">
-      <p className="moj-pagination__results">
+    <div className={classes["bottom-navigation"]}>
+      <p className={"moj-pagination__results"} id="pagination-results">
         {"Showing "}
         <b>{(pageNum - 1) * resultsPerPage + 1}</b>
         {" to "}
@@ -65,9 +76,9 @@ const Pagination: React.FC<Props> = ({ totalPages, pageNum, resultsPerPage, tota
         {" cases"}
       </p>
 
-      <ResultsPerPage options={[5, 10, 25, 100]} selected={resultsPerPage} className="moj-pagination__results" />
+      <ResultsPerPage options={[5, 10, 25, 100]} selected={resultsPerPage} className={"moj-pagination__results"} />
 
-      <nav className="moj-pagination" aria-label="Pagination navigation">
+      <nav className={"moj-pagination"} aria-label="Pagination navigation">
         <ul className="moj-pagination__list">
           {pageLinks.map((pageLink, index) => {
             if (pageLink.label === "Previous") {

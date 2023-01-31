@@ -1,5 +1,6 @@
 import { SelectInput } from "@govuk-react/select"
 import { useRouter } from "next/router"
+import { createUseStyles } from "react-jss"
 
 interface Props {
   options: number[]
@@ -7,8 +8,15 @@ interface Props {
   className?: string
 }
 
+const useStyles = createUseStyles({
+  "results-per-page-picker": {
+    width: "auto"
+  }
+})
+
 const ResultsPerPage: React.FC<Props> = ({ options, selected, className }: Props) => {
   const router = useRouter()
+  const classes = useStyles()
 
   return (
     <div className={className}>
@@ -20,6 +28,7 @@ const ResultsPerPage: React.FC<Props> = ({ options, selected, className }: Props
         }}
         value={selected}
         id="results-per-page"
+        className={classes["results-per-page-picker"]}
       >
         {options.map((option) => (
           <option value={option} key={option}>
