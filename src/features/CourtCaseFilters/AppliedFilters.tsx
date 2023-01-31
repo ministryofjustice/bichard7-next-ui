@@ -2,7 +2,7 @@ import FilterTag from "components/FilterTag/FilterTag"
 import If from "components/If"
 import { useRouter } from "next/router"
 import { Reason } from "types/CaseListQueryParams"
-import { caseStateLabels } from "utils/caseStateFilters"
+import { caseStateLabels, myCaseStateFilters } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
 
 interface Props {
@@ -16,6 +16,7 @@ interface Props {
     urgency?: string | null
     locked?: string | null
     caseState?: string | null
+    myCaseState?: string | null
   }
 }
 
@@ -31,7 +32,8 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.urgency ||
     !!filters.dateRange ||
     !!filters.locked ||
-    !!filters.caseState
+    !!filters.caseState ||
+    !!filters.myCaseState
 
   const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
     deleteQueryParamsByName(["pageNum"], query)
@@ -39,6 +41,8 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
 
     return `${basePath}/?${searchParams}`
   }
+
+  console.log("filters", filters)
 
   return (
     <div>
@@ -100,17 +104,25 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </If>
-          <If condition={!!filters.caseState}>
+          <If condition={!!filters.myCaseState}>
             <li>
               <FilterTag
-                tag={caseStateLabels[String(filters.caseState)] ?? ""}
-                href={removeQueryParamFromPath({ state: filters.caseState ?? "" })}
+                tag={myCaseStateFilters ?? ""}
+                href={removeQueryParamFromPath({ state: filters.myCaseState ?? "" })}
               />
             </li>
           </If>
           <If condition={!!filters.locked}>
             <li>
               <FilterTag tag={filters.locked ?? ""} href={removeQueryParamFromPath({ locked: filters.locked ?? "" })} />
+            </li>
+          </If>
+          <If condition={!!filters.caseState}>
+            <li>
+              <FilterTag
+                tag={caseStateLabels[String(filters.caseState)] ?? ""}
+                href={removeQueryParamFromPath({ state: filters.caseState ?? "" })}
+              />
             </li>
           </If>
           <li>
