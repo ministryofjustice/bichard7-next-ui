@@ -1,5 +1,10 @@
 import hashedPassword from "../../fixtures/hashedPassword"
 
+export function removeFilterChip() {
+  cy.get("li button.moj-filter__tag").trigger("click")
+  cy.get(".moj-filter__tag").should("not.exist")
+}
+
 describe("Case list", () => {
   context("When filters applied", () => {
     before(() => {
@@ -53,8 +58,7 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
 
         // Removes the filter chip
-        cy.get("li button.moj-filter__tag").trigger("click")
-        cy.get(".moj-filter__tag").should("not.exist")
+        removeFilterChip()
       })
 
       it("Should display Trigger and Exception filter chips when selected", () => {

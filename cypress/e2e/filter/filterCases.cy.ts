@@ -3,6 +3,7 @@ import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
+import { removeFilterChip } from "./filterChips.cy"
 
 function showFilters() {
   cy.visit("/bichard")
@@ -579,8 +580,7 @@ describe("Case list", () => {
         cy.get("#my-cases-filter").click()
         cy.contains("Selected filters")
         cy.contains("My cases")
-        cy.get("li button.moj-filter__tag").trigger("click")
-        cy.get(".moj-filter__tag").should("not.exist")
+        removeFilterChip()
         cy.get("#my-cases-filter").should("not.be.checked")
       })
     })
