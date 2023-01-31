@@ -107,7 +107,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         user: currentUser.serialize(),
         courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
         order: oppositeOrder,
-        totalPages: totalPages === 0 ? 1 : totalPages,
+        totalPages: totalPages,
         pageNum: parseInt(validatedPageNum, 10) || 1,
         resultsPerPage: parseInt(validatedPageNum, 10) || 5,
         courtCaseTypes: courtCaseTypes,

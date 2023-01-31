@@ -1,6 +1,6 @@
 import { useRouter } from "next/router"
-import { Pagination as GovPagination } from "govuk-react"
-import ResultsPerPage from "./ResultsPerPage"
+import Link from "next/link"
+import { generatePageLinks } from "./generatePageLinks"
 
 interface Props {
   totalPages: number
@@ -9,30 +9,39 @@ interface Props {
 }
 
 const Pagination: React.FC<Props> = ({ totalPages, pageNum, resultsPerPage }: Props) => {
-  const { basePath, query } = useRouter()
+  const { query } = useRouter()
+
+  const pageLinks = generatePageLinks(pageNum, totalPages)
 
   return (
-    <GovPagination>
-      {pageNum > 1 && (
-        <GovPagination.Anchor
-          pageTitle={`${pageNum - 1} of ${totalPages}`}
-          previousPage
-          href={`${basePath}?${new URLSearchParams({ ...query, pageNum: `${pageNum - 1}` })}`}
-        >
-          {"Previous page"}
-        </GovPagination.Anchor>
-      )}
-      <ResultsPerPage options={[5, 10, 15, 20, 25]} selected={resultsPerPage || 0} />
-      {pageNum < totalPages && (
-        <GovPagination.Anchor
-          nextPage
-          pageTitle={`${pageNum + 1} of ${totalPages}`}
-          href={`${basePath}?${new URLSearchParams({ ...query, pageNum: `${pageNum + 1}` })}`}
-        >
-          {"Next page"}
-        </GovPagination.Anchor>
-      )}
-    </GovPagination>
+    <nav className="moj-pagination" aria-label="Pagination navigation">
+      <p className="moj-pagination__results">
+        {"Showing "}
+        <b>{(pageNum - 1) * resultsPerPage}</b>
+        {" to "}
+        <b>{pageNum * resultsPerPage}</b>
+        {" of "}
+        {/* TODO: the total number of results will be less than this when the last page isn't full */}
+        <b>{totalPages * resultsPerPage}</b>
+        {" cases"}
+      </p>
+
+      <ul className="moj-pagination__list">
+        {pageLinks.map((pageLink, index) => {
+          const labelText = pageLink.label === "Ellipsis" ? "…" : pageLink.label.toString()
+          const label = pageLink.bold ? <b>{labelText}</b> : labelText
+          const paginationItem = pageLink.destinationPage ? (
+            <Link href={{ query: { ...query, pageNum: pageLink.destinationPage } }} className="moj-pagination__link">
+              {label}
+            </Link>
+          ) : (
+            label
+          )
+
+          return <li key={index}>{paginationItem}</li>
+        })}
+      </ul>
+    </nav>
   )
 }
 

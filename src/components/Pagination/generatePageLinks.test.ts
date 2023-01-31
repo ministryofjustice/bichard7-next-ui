@@ -1,4 +1,4 @@
-import { generatePageLabels } from "./generatePageLinks"
+import { generatePageLinks } from "./generatePageLinks"
 
 describe.each([
   [0, 0, []],
@@ -89,6 +89,6 @@ describe.each([
   ]
 ])("generatePageLabels(%i, %i)", (currentPage, totalPages, expected) => {
   test("returns correct labels", () => {
-    expect(generatePageLabels(currentPage, totalPages)).toStrictEqual(expected)
+    expect(generatePageLinks(currentPage, totalPages)).toStrictEqual(expected)
   })
 })

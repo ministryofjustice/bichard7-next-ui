@@ -4,7 +4,7 @@ export type PageLink = { label: PageLabel; destinationPage?: number; bold: boole
 // Returns an list of elements to display in the pagination widget
 // Page numbers are 1-indexed
 // totalPages should be >= 0 and currentPage should be >=0 and <= totalPages
-export const generatePageLabels = (currentPage: number, totalPages: number): PageLink[] => {
+export const generatePageLinks = (currentPage: number, totalPages: number): PageLink[] => {
   const labels: PageLink[] = []
 
   // Previous page arrow
