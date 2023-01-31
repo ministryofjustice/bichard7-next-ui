@@ -76,9 +76,6 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedCaseState = caseStateFilters.includes(String(state)) ? (state as CaseState) : undefined
     const validatedMyCaseState = myCaseStateFilters.includes(String(state)) ? (state as MyCaseState) : undefined
 
-    console.log("myCaseStateFilters", myCaseStateFilters)
-    console.log("state", state)
-
     const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
@@ -167,7 +164,7 @@ const Home: NextPage<Props> = ({
             urgency={urgent}
             locked={locked}
             caseState={caseState}
-            myCases={null}
+            myCaseState={myCaseState}
           />
         }
         appliedFilters={
@@ -182,7 +179,7 @@ const Home: NextPage<Props> = ({
               urgency: urgent,
               locked: locked,
               caseState: caseState,
-              myCaseState: myCaseState
+              myCaseState
             }}
           />
         }

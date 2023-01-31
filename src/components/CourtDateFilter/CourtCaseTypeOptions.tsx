@@ -10,7 +10,6 @@ interface Props {
 const courtCaseTypeOptions = ["Exceptions", "Triggers"]
 
 const CourtCaseTypeOptions: React.FC<Props> = ({ courtCaseTypes, dispatch }: Props) => {
-  console.log(courtCaseTypes)
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
