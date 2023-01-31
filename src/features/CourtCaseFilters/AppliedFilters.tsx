@@ -42,8 +42,6 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     return `${basePath}/?${searchParams}`
   }
 
-  console.log("filters", filters)
-
   return (
     <div>
       <If condition={hasAnyAppliedFilters()}>
