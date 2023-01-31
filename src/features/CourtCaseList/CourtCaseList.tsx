@@ -139,12 +139,12 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
                 <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
               </If>
             </Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
             <Table.Cell>
               {triggers?.map((trigger, triggerId) => (
                 <GridRow key={`trigger_${triggerId}`}>{getTriggerWithDescription(trigger.triggerCode)}</GridRow>
