@@ -38,6 +38,10 @@ const listCourtCases = async (
   const sortOrder = order === "desc" ? "DESC" : "ASC"
   if (orderBy === "reason") {
     query.orderBy("courtCase.errorReason", sortOrder).addOrderBy("courtCase.triggerReason", sortOrder)
+  } else if (orderBy === "lockedBy") {
+    query
+      .orderBy("courtCase.errorLockedByUsername", sortOrder)
+      .addOrderBy("courtCase.triggerLockedByUsername", sortOrder)
   } else {
     const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
     query.orderBy(orderByQuery, sortOrder)
