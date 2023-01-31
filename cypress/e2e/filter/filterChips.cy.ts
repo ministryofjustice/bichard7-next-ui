@@ -292,6 +292,26 @@ describe("Case list", () => {
           .should("exist")
       })
     })
+    describe('Applied filter chips to "Filter applied" section', () => {
+      it.only("Should display the Trigger filter chip when selected", () => {
+        cy.get("#filter-button").click()
+        cy.get(".govuk-checkboxes__item").contains("Triggers").click()
+
+        // Check if the correct heading and filter label are applied
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
+        cy.get(".moj-filter__tag").contains("Triggers").should("exist")
+        cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
+
+        // Check if the filter chip is applied to the "Filters applied" section at the top of the case list
+        cy.contains("Apply filters").click()
+        cy.get(".moj-filter-tags").contains("Triggers")
+
+        // Clears filter chip and check the checkbox is deselected
+        cy.contains("Clear filters").click()
+        cy.get("#filter-button").click()
+        cy.get(".govuk-checkboxes__item").contains("Triggers").should("not.be.checked")
+      })
+    })
   })
 })
 
