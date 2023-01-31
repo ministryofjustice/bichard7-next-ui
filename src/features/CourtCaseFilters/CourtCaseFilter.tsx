@@ -4,15 +4,15 @@ import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOption
 import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { LabelText } from "govuk-react"
-import { useReducer, ChangeEvent } from "react"
-import { CaseState, Reason } from "types/CaseListQueryParams"
+import { ChangeEvent, useReducer } from "react"
+import { createUseStyles } from "react-jss"
+import { CaseState, MyCaseState, Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
+import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
-import FilterChipSection from "./FilterChipSection"
-import { caseStateLabels } from "utils/caseStateFilters"
-import { createUseStyles } from "react-jss"
 import ExpandingFilters from "./ExpandingFilters"
+import FilterChipSection from "./FilterChipSection"
 
 interface Props {
   defendantName: string | null
@@ -24,7 +24,7 @@ interface Props {
   urgency: string | null
   locked: string | null
   caseState: CaseState | null
-  myCases: string | null
+  myCases: MyCaseState | null
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -87,7 +87,7 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.lockedFilter.value = undefined
       newState.lockedFilter.label = undefined
     } else if (action.type === "myCases") {
-      newState.myCasesFilter.value = false
+      newState.myCasesFilter.value = undefined
       newState.myCasesFilter.label = undefined
     } else if (action.type === "reason") {
       newState.reasonFilter = newState.reasonFilter.filter((reasonFilter) => reasonFilter.value !== action.value)
@@ -138,7 +138,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
       return { value: courtCaseType, state: "Applied" }
     }),
-    myCasesFilter: myCases !== null ? { value: false, state: "Applied", label: myCases } : {}
+    myCasesFilter: myCases !== null ? { value: myCases, state: "Applied", label: myCases } : {}
   }
   const [state, dispatch] = useReducer(reducer, initialFilterState)
 
@@ -276,7 +276,11 @@ const CourtCaseFilter: React.FC<Props> = ({
                     value="myCases"
                     defaultChecked={false}
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                      dispatch({ method: "add", type: "myCases", value: event.target.checked })
+                      dispatch({
+                        method: "add",
+                        type: "myCases",
+                        value: event.currentTarget.checked ? "View cases allocated to me" : undefined
+                      })
                     }}
                   ></input>
                   <label className="govuk-label govuk-checkboxes__label" htmlFor="my-cases-filter">
