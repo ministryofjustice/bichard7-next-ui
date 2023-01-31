@@ -579,7 +579,11 @@ describe("Case list", () => {
 
         showFilters()
         cy.get("#my-cases-filter").click()
-        cy.get("")
+        cy.contains("Selected filters")
+        cy.contains("My cases")
+        cy.get("li button.moj-filter__tag").trigger("click")
+        cy.get(".moj-filter__tag").should("not.exist")
+        cy.get("#my-cases-filter").should("not.be.checked")
       })
     })
   })
