@@ -20,7 +20,6 @@ describe("Case list", () => {
     })
 
     beforeEach(() => {
-      cy.viewport(1280, 720)
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard")
     })
@@ -314,7 +313,7 @@ describe("Case list", () => {
       })
     })
 
-    it.only("Should display the 'Locked to me' filter chip when selected", () => {
+    it("Should display the 'Locked to me' filter chip when selected", () => {
       cy.get("#filter-button").click()
       cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").click()
 
@@ -332,7 +331,7 @@ describe("Case list", () => {
       cy.get(".govuk-checkboxes__item").contains("Locked to me").should("not.be.checked")
     })
 
-    it.only("Should apply the 'Locked to me' filter chips then remove this chips to the original state", () => {
+    it("Should apply the 'Locked to me' filter chips then remove this chips to the original state", () => {
       cy.get("#filter-button").click()
       cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").click()
 
