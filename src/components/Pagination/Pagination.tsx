@@ -39,78 +39,80 @@ const PageNum: React.FC<PageNumProps> = ({ pageNum, totalPages, className, link 
   return <li className={"moj-pagination__item" + (className ? " " + className : "")}>{label}</li>
 }
 
-const Ellipsis = () => <li className="moj-pagination__item moj-pagination__item--dots">…</li>
+const Ellipsis = () => <li className="moj-pagination__item moj-pagination__item--dots">{"…"}</li>
 
 interface Props {
   totalPages: number
   pageNum: number
   resultsPerPage: number
+  totalCases: number
 }
 
-const Pagination: React.FC<Props> = ({ totalPages, pageNum, resultsPerPage }: Props) => {
+const Pagination: React.FC<Props> = ({ totalPages, pageNum, resultsPerPage, totalCases }: Props) => {
   const { query } = useRouter()
 
   const pageLinks = generatePageLinks(pageNum, totalPages)
 
   return (
-    <nav className="moj-pagination" aria-label="Pagination navigation">
+    <div className="bottom-navigation">
       <p className="moj-pagination__results">
         {"Showing "}
-        <b>{(pageNum - 1) * resultsPerPage}</b>
+        <b>{(pageNum - 1) * resultsPerPage + 1}</b>
         {" to "}
-        <b>{pageNum * resultsPerPage}</b>
+        <b>{Math.min(pageNum * resultsPerPage, totalCases)}</b>
         {" of "}
-        {/* TODO: the total number of results will be less than this when the last page isn't full */}
-        <b>{totalPages * resultsPerPage}</b>
+        <b>{totalCases}</b>
         {" cases"}
       </p>
 
-      <ResultsPerPage options={[5, 10, 25, 100]} selected={resultsPerPage} />
+      <ResultsPerPage options={[5, 10, 25, 100]} selected={resultsPerPage} className="moj-pagination__results" />
 
-      <ul className="moj-pagination__list">
-        {pageLinks.map((pageLink, index) => {
-          if (pageLink.label === "Previous") {
-            return (
-              <RelativeNavigation
-                className={"prev"}
-                label="Previous"
-                link={{ query: { ...query, pageNum: pageLink.destinationPage } }}
-                key={index}
-              />
-            )
-          } else if (pageLink.label === "Next") {
-            return (
-              <RelativeNavigation
-                className={"next"}
-                label="Next"
-                link={{ query: { ...query, pageNum: pageLink.destinationPage } }}
-                key={index}
-              />
-            )
-          } else if (pageLink.label === "Ellipsis") {
-            return <Ellipsis key={index} />
-          } else if (!pageLink.destinationPage) {
-            return (
-              <PageNum
-                pageNum={pageLink.label}
-                totalPages={totalPages}
-                className="moj-pagination__item--active"
-                key={index}
-              />
-            )
-          } else {
-            return (
-              <PageNum
-                pageNum={pageLink.label}
-                totalPages={totalPages}
-                link={{ query: { ...query, pageNum: pageLink.destinationPage } }}
-                key={index}
-              />
-            )
-          }
-        })}
-      </ul>
-    </nav>
+      <nav className="moj-pagination" aria-label="Pagination navigation">
+        <ul className="moj-pagination__list">
+          {pageLinks.map((pageLink, index) => {
+            if (pageLink.label === "Previous") {
+              return (
+                <RelativeNavigation
+                  className={"prev"}
+                  label="Previous"
+                  link={{ query: { ...query, pageNum: pageLink.destinationPage } }}
+                  key={index}
+                />
+              )
+            } else if (pageLink.label === "Next") {
+              return (
+                <RelativeNavigation
+                  className={"next"}
+                  label="Next"
+                  link={{ query: { ...query, pageNum: pageLink.destinationPage } }}
+                  key={index}
+                />
+              )
+            } else if (pageLink.label === "Ellipsis") {
+              return <Ellipsis key={index} />
+            } else if (!pageLink.destinationPage) {
+              return (
+                <PageNum
+                  pageNum={pageLink.label}
+                  totalPages={totalPages}
+                  className="moj-pagination__item--active"
+                  key={index}
+                />
+              )
+            } else {
+              return (
+                <PageNum
+                  pageNum={pageLink.label}
+                  totalPages={totalPages}
+                  link={{ query: { ...query, pageNum: pageLink.destinationPage } }}
+                  key={index}
+                />
+              )
+            }
+          })}
+        </ul>
+      </nav>
+    </div>
   )
 }
 

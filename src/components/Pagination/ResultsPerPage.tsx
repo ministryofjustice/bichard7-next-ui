@@ -4,13 +4,14 @@ import { useRouter } from "next/router"
 interface Props {
   options: number[]
   selected: number
+  className?: string
 }
 
-const ResultsPerPage: React.FC<Props> = ({ options, selected }: Props) => {
+const ResultsPerPage: React.FC<Props> = ({ options, selected, className }: Props) => {
   const router = useRouter()
 
   return (
-    <div className="results-per-page">
+    <div className={className}>
       {"View "}
       <SelectInput
         onChange={(event) => {
