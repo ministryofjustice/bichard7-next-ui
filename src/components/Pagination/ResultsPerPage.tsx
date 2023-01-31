@@ -17,10 +17,11 @@ const ResultsPerPage: React.FC<Props> = ({ options, selected }: Props) => {
           const target = event.target.value
           router.push({ query: { maxPageItems: target } })
         }}
+        value={selected}
         id="results-per-page"
       >
         {options.map((option) => (
-          <option value={option} key={option} selected={option === selected}>
+          <option value={option} key={option}>
             {option}
           </option>
         ))}

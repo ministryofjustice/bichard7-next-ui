@@ -1,6 +1,7 @@
 import { useRouter } from "next/router"
 import Link from "next/link"
 import { generatePageLinks } from "./generatePageLinks"
+import ResultsPerPage from "./ResultsPerPage"
 
 interface Props {
   totalPages: number
@@ -25,6 +26,8 @@ const Pagination: React.FC<Props> = ({ totalPages, pageNum, resultsPerPage }: Pr
         <b>{totalPages * resultsPerPage}</b>
         {" cases"}
       </p>
+
+      <ResultsPerPage options={[5, 10, 25, 100]} selected={resultsPerPage} />
 
       <ul className="moj-pagination__list">
         {pageLinks.map((pageLink, index) => {
