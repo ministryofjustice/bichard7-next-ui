@@ -273,7 +273,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                     id="my-cases-filter"
                     name="myCases"
                     type="checkbox"
-                    value="myCases"
+                    value={state.myCasesFilter.value}
                     defaultChecked={false}
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
                       dispatch({
