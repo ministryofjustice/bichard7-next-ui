@@ -161,8 +161,8 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
         dispatch={dispatch}
         type="myCases"
         label="My cases"
-        state={state.myCasesFilter.state || state.myCasesFilter.state || sectionState}
-        value={state.myCasesFilter.value! || state.myCasesFilter.value!}
+        state={state.myCasesFilter.state || sectionState}
+        value={state.myCasesFilter.value!}
       />
     </If>
   )
