@@ -1,12 +1,14 @@
 import { useRouter } from "next/router"
 import { Pagination as GovPagination } from "govuk-react"
+import ResultsPerPage from "./ResultsPerPage"
 
 interface Props {
   totalPages: number
   pageNum: number
+  resultsPerPage: number
 }
 
-const Pagination: React.FC<Props> = ({ totalPages, pageNum }: Props) => {
+const Pagination: React.FC<Props> = ({ totalPages, pageNum, resultsPerPage }: Props) => {
   const { basePath, query } = useRouter()
 
   return (
@@ -20,6 +22,7 @@ const Pagination: React.FC<Props> = ({ totalPages, pageNum }: Props) => {
           {"Previous page"}
         </GovPagination.Anchor>
       )}
+      <ResultsPerPage options={[5, 10, 15, 20, 25]} selected={resultsPerPage || 0} />
       {pageNum < totalPages && (
         <GovPagination.Anchor
           nextPage

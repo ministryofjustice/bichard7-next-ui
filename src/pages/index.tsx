@@ -31,9 +31,10 @@ interface Props {
   courtName: string | null
   reasonSearch: string | null
   urgent: string | null
-  totalPages: number
   dateRange: string | null
+  totalPages: number
   pageNum: number
+  resultsPerPage: number
   locked: string | null
   caseState: CaseState | null
 }
@@ -108,6 +109,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         order: oppositeOrder,
         totalPages: totalPages === 0 ? 1 : totalPages,
         pageNum: parseInt(validatedPageNum, 10) || 1,
+        resultsPerPage: parseInt(validatedPageNum, 10) || 5,
         courtCaseTypes: courtCaseTypes,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         courtName: validatedCourtName ? validatedCourtName : null,
@@ -128,6 +130,7 @@ const Home: NextPage<Props> = ({
   order,
   totalPages,
   pageNum,
+  resultsPerPage,
   courtCaseTypes,
   keywords,
   courtName,
@@ -177,7 +180,7 @@ const Home: NextPage<Props> = ({
           />
         }
         courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
-        pagination={<Pagination totalPages={totalPages} pageNum={pageNum} />}
+        pagination={<Pagination totalPages={totalPages} pageNum={pageNum} resultsPerPage={resultsPerPage} />}
       />
     </Layout>
   </>

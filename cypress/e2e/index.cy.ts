@@ -444,6 +444,18 @@ describe("Case list", () => {
         })
       })
     })
+
+    it("lets users select how many cases to show per page", () => {
+      cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
+
+      cy.login("bichard01@example.com", "password")
+      cy.visit("/bichard")
+
+      cy.get("tbody tr").should("have.length", 5)
+
+      cy.get("#results-per-page").select("10")
+      cy.get("tbody tr").should("have.length", 10)
+    })
   })
 })
 
