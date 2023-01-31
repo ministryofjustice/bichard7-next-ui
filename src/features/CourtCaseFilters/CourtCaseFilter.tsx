@@ -274,7 +274,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                     name="myCases"
                     type="checkbox"
                     value={state.myCasesFilter.value}
-                    defaultChecked={false}
+                    checked={state.myCasesFilter.value === "View cases allocated to me"}
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
                       dispatch({
                         method: "add",
