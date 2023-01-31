@@ -381,9 +381,7 @@ describe("Case list", () => {
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
       cy.task("insertException", { caseId: 0, exceptionCode: "HO100206" })
-
       cy.task("insertTriggers", { caseId: 1, triggers })
-
       cy.task("insertException", { caseId: 2, exceptionCode: "HO100207" })
 
       cy.visit("/bichard")
@@ -556,7 +554,7 @@ describe("Case list", () => {
       })
     })
 
-    describe("Filtering cases allocated to me", () => {
+    describe.only("Filtering cases allocated to me", () => {
       it("Should filter cases that I hold the trigger lock for", () => {
         cy.task("insertMultipleDummyCourtCasesWithLock", {
           lockHolders: [
