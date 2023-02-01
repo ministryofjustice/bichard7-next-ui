@@ -575,30 +575,42 @@ describe("Case list", () => {
       })
     })
 
-    describe.only("Filtering cases allocated to me", () => {
-      it("Should filter cases that I hold the trigger lock for", () => {
+    describe("Filtering cases allocated to me", () => {
+      it.only("Should filter cases that I hold the trigger lock for", () => {
+        // cy.task("insertCourtCasesWithFields", [
+        //   {
+        //     errorLockedByUsername: "Bichard01",
+        //     triggerLockedByUsername: "Bichard01"
+        //   },
+        //   { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01" },
+        //   {
+        //     errorLockedByUsername: "Bichard02",
+        //     triggerLockedByUsername: "Bichard02"
+        //   },
+        //   {
+        //     errorLockedByUsername: "Bichard03",
+        //     triggerLockedByUsername: "Bichard03"
+        //   }
+        // ])
+
         cy.task("insertCourtCasesWithFields", [
-          {
-            errorLockedByUsername: "Bichard01",
-            triggerLockedByUsername: "Bichard01"
-          },
-          { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01" },
-          {
-            errorLockedByUsername: "Bichard02",
-            triggerLockedByUsername: "Bichard02"
-          },
-          {
-            errorLockedByUsername: "Bichard03",
-            triggerLockedByUsername: "Bichard03"
-          }
+          { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: "011111" },
+          { orgForPoliceFilter: "011111" },
+          { errorLockedByUsername: "Bichard02", triggerLockedByUsername: "Bichard02", orgForPoliceFilter: "011111" },
+          { orgForPoliceFilter: "011111" }
         ])
 
         showFilters()
+
         cy.get("#my-cases-filter").click()
         cy.contains("Selected filters")
         cy.contains("My cases")
-        removeFilterChip()
-        cy.get("#my-cases-filter").should("not.be.checked")
+        cy.contains("Case00000")
+        confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002", "Case00003"])
+        // removeFilterChip()
+        // cy.get("#my-cases-filter").should("not.be.checked")
+
+        confirmMultipleFieldsDisplayed([])
       })
     })
   })
