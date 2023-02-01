@@ -59,7 +59,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       urgency,
       dateRange,
       locked,
-      state
+      state,
+      myCases
     } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Reason[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
@@ -74,8 +75,9 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLocked = validateQueryParams(locked) ? locked : undefined
     const validatedCaseState = caseStateFilters.includes(String(state)) ? (state as CaseState) : undefined
-    const validatedMyCaseState = myCaseStateFilters.includes(String(state)) ? (state as MyCaseState) : undefined
-
+    const validatedMyCaseState = myCaseStateFilters === String(myCases) ? myCaseStateFilters : undefined
+    console.log("myCases", myCases)
+    console.log("validate", validatedMyCaseState)
     const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
