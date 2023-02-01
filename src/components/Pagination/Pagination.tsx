@@ -1,16 +1,16 @@
-import ResultsPerPage from "./ResultsPerPage"
+import CasesPerPage from "./CasesPerPage"
 import { createUseStyles } from "react-jss"
 import PaginationResults from "./PaginationResults"
 import PaginationNavigation from "./PaginationNavigation"
 
 interface Props {
   pageNum: number
-  resultsPerPage: number
+  casesPerPage: number
   totalCases: number
 }
 
 const useStyles = createUseStyles({
-  "bottom-navigation": {
+  "pagination-bar": {
     display: "inline-flex",
     flexWrap: "nowrap",
     justifyContent: "space-between",
@@ -19,14 +19,14 @@ const useStyles = createUseStyles({
   }
 })
 
-const Pagination: React.FC<Props> = ({ pageNum, resultsPerPage, totalCases }: Props) => {
+const Pagination: React.FC<Props> = ({ pageNum, casesPerPage, totalCases }: Props) => {
   const classes = useStyles()
 
   return (
-    <div className={classes["bottom-navigation"]}>
-      <PaginationResults pageNum={pageNum} resultsPerPage={resultsPerPage} totalCases={totalCases} />
-      <ResultsPerPage options={[5, 10, 25, 100]} selected={resultsPerPage} />
-      <PaginationNavigation pageNum={pageNum} totalPages={Math.ceil(totalCases / resultsPerPage)} />
+    <div className={classes["pagination-bar"]}>
+      <PaginationResults pageNum={pageNum} resultsPerPage={casesPerPage} totalCases={totalCases} />
+      <CasesPerPage options={[5, 10, 25, 100]} selected={casesPerPage} />
+      <PaginationNavigation pageNum={pageNum} totalPages={Math.ceil(totalCases / casesPerPage)} />
     </div>
   )
 }
