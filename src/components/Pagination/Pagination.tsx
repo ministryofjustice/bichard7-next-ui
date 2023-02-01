@@ -4,6 +4,7 @@ import { generatePageLinks } from "./generatePageLinks"
 import ResultsPerPage from "./ResultsPerPage"
 import { UrlObject } from "url"
 import { createUseStyles } from "react-jss"
+import PaginationResults from "./PaginationResults"
 
 interface RelativeNavigationProps {
   className: string
@@ -66,15 +67,7 @@ const Pagination: React.FC<Props> = ({ totalPages, pageNum, resultsPerPage, tota
 
   return (
     <div className={classes["bottom-navigation"]}>
-      <p className={"moj-pagination__results"} id="pagination-results">
-        {"Showing "}
-        <b>{(pageNum - 1) * resultsPerPage + 1}</b>
-        {" to "}
-        <b>{Math.min(pageNum * resultsPerPage, totalCases)}</b>
-        {" of "}
-        <b>{totalCases}</b>
-        {" cases"}
-      </p>
+      <PaginationResults pageNum={pageNum} resultsPerPage={resultsPerPage} totalCases={totalCases} />
 
       <ResultsPerPage options={[5, 10, 25, 100]} selected={resultsPerPage} className={"moj-pagination__results"} />
 
