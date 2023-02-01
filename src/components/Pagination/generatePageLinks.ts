@@ -7,6 +7,11 @@ export type PageLink = { label: PageLabel; destinationPage?: number }
 export const generatePageLinks = (currentPage: number, totalPages: number): PageLink[] => {
   const labels: PageLink[] = []
 
+  // Don't show any pagination controls if there's only one page
+  if (totalPages < 2) {
+    return []
+  }
+
   // Previous page arrow
   if (currentPage > 1) {
     labels.push({

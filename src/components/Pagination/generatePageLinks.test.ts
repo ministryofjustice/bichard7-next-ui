@@ -2,7 +2,7 @@ import { generatePageLinks } from "./generatePageLinks"
 
 describe.each([
   [0, 0, []],
-  [1, 1, [{ label: 1 }]],
+  [1, 1, []],
   [1, 2, [{ label: 1 }, { label: 2, destinationPage: 2 }, { label: "Next", destinationPage: 2 }]],
   [2, 2, [{ label: "Previous", destinationPage: 1 }, { label: 1, destinationPage: 1 }, { label: 2 }]],
   [
