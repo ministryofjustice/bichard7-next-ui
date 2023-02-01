@@ -28,6 +28,7 @@ const ResultsPerPage: React.FC<Props> = ({ options, selected }: Props) => {
         value={selected}
         id="results-per-page"
         className={classes["results-per-page-picker"]}
+        aria-label="Cases per page"
       >
         {options.map((option) => (
           <option value={option} key={option}>
