@@ -223,7 +223,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00000")
       cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00001").should("not.exist")
       cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00002").should("not.exist")
-      cy.get("tr").should("have.length", 2)
+      cy.get("tr").should("have.length", 3) // Triggers rendered on a new row
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107")
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107").click({ force: true })
 

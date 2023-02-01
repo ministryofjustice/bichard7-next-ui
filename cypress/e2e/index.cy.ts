@@ -372,19 +372,41 @@ describe("Case list", () => {
             orgForPoliceFilter: "011111"
           }))
         )
+        const triggers: TestTrigger[] = [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0001",
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+        cy.task("insertTriggers", { caseId: 0, triggers })
+        cy.task("insertTriggers", { caseId: 1, triggers })
+        cy.task("insertTriggers", { caseId: 2, triggers })
+        cy.task("insertTriggers", { caseId: 3, triggers })
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        lockUsernames.forEach((lockUsername, idx) => {
-          if (lockUsername !== null) {
-            cy.get(`tbody tr:nth-child(${idx + 1}) .locked-by-tag`).should("have.text", lockUsername)
-            cy.get(`tbody tr:nth-child(${idx + 1}) img[alt="Lock icon"]`).should("exist")
-          } else {
-            cy.get(`tbody tr:nth-child(${idx + 1}) .locked-by-tag`).should("not.exist")
-            cy.get(`tbody tr:nth-child(${idx + 1}) img[alt="Lock icon"]`).should("not.exist")
-          }
-        })
+        //Error locks
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard01")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(5) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(5) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(7) .locked-by-tag`).should("have.text", "A really really really long name")
+        cy.get(`tbody tr:nth-child(7) img[alt="Lock icon"]`).should("exist")
+
+        //Trigger locks
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard01")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(4) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(4) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(6) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(6) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(8) .locked-by-tag`).should("have.text", "A really really really long name")
+        cy.get(`tbody tr:nth-child(8) img[alt="Lock icon"]`).should("exist")
       })
 
       it("can sort cases by who has locked it", () => {
