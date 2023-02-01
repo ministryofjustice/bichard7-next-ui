@@ -32,7 +32,6 @@ interface Props {
   reasonSearch: string | null
   urgent: string | null
   dateRange: string | null
-  totalPages: number
   pageNum: number
   resultsPerPage: number
   totalCases: number
@@ -101,14 +100,11 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw courtCases
     }
 
-    const totalPages = Math.ceil(courtCases.totalCases / parseInt(validatedMaxPageItems, 10)) ?? 1
-
     return {
       props: {
         user: currentUser.serialize(),
         courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
         order: oppositeOrder,
-        totalPages: totalPages,
         totalCases: courtCases.totalCases,
         pageNum: parseInt(validatedPageNum, 10) || 1,
         resultsPerPage: parseInt(validatedMaxPageItems, 10) || 5,
@@ -130,7 +126,6 @@ const Home: NextPage<Props> = ({
   user,
   courtCases,
   order,
-  totalPages,
   pageNum,
   resultsPerPage,
   totalCases,
@@ -183,14 +178,7 @@ const Home: NextPage<Props> = ({
           />
         }
         courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
-        pagination={
-          <Pagination
-            totalPages={totalPages}
-            pageNum={pageNum}
-            resultsPerPage={resultsPerPage}
-            totalCases={totalCases}
-          />
-        }
+        pagination={<Pagination pageNum={pageNum} resultsPerPage={resultsPerPage} totalCases={totalCases} />}
       />
     </Layout>
   </>
