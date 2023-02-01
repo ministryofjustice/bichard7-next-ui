@@ -41,7 +41,6 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
 
     return `${basePath}/?${searchParams}`
   }
-
   return (
     <div>
       <If condition={hasAnyAppliedFilters()}>
@@ -106,7 +105,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
             <li>
               <FilterTag
                 tag={myCaseStateFilters ?? ""}
-                href={removeQueryParamFromPath({ state: filters.myCaseState ?? "" })}
+                href={removeQueryParamFromPath({ myCases: filters.myCaseState ?? "" })}
               />
             </li>
           </If>
