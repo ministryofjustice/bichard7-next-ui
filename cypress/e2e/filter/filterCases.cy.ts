@@ -214,7 +214,7 @@ describe("Case list", () => {
       inputAndSearch("reason-search", "TRPR0107")
       cy.contains("Case00000")
       confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
-      cy.get("tr").should("have.length", 2)
+      cy.get("tr").should("have.length", 3)
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107")
       removeFilterTag("TRPR0107")
 
@@ -575,7 +575,7 @@ describe("Case list", () => {
       })
     })
 
-    describe.only("Filtering cases allocated to me", () => {
+    describe("Filtering cases allocated to me", () => {
       it("Should filter cases that I hold the trigger lock for", () => {
         cy.task("insertMultipleDummyCourtCasesWithLock", {
           lockHolders: [
