@@ -41,17 +41,23 @@ const Ellipsis = () => <li className="moj-pagination__item moj-pagination__item-
 interface PaginationNavigationProps {
   pageNum: number
   totalPages: number
+  name?: string
 }
 
 const PaginationNavigation: React.FC<PaginationNavigationProps> = ({
   pageNum,
-  totalPages
+  totalPages,
+  name
 }: PaginationNavigationProps) => {
   const { query } = useRouter()
   const pageLinks = generatePageLinks(pageNum, totalPages)
 
   return (
-    <nav className={"moj-pagination"} aria-label="Pagination navigation">
+    <nav
+      className={"moj-pagination"}
+      aria-label={`Pagination navigation ${name}`}
+      id={`pagination-navigation${name ? "-" + name : ""}`}
+    >
       <ul className="moj-pagination__list">
         {pageLinks.map((pageLink, index) => {
           if (pageLink.label === "Previous") {

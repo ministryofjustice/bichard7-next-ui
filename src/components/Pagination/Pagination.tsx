@@ -7,6 +7,7 @@ interface Props {
   pageNum: number
   casesPerPage: number
   totalCases: number
+  name?: string
 }
 
 const useStyles = createUseStyles({
@@ -19,14 +20,14 @@ const useStyles = createUseStyles({
   }
 })
 
-const Pagination: React.FC<Props> = ({ pageNum, casesPerPage, totalCases }: Props) => {
+const Pagination: React.FC<Props> = ({ pageNum, casesPerPage, totalCases, name }: Props) => {
   const classes = useStyles()
 
   return (
     <div className={classes["pagination-bar"]}>
       <PaginationResults pageNum={pageNum} resultsPerPage={casesPerPage} totalCases={totalCases} />
       <CasesPerPage options={[5, 10, 25, 100]} selected={casesPerPage} />
-      <PaginationNavigation pageNum={pageNum} totalPages={Math.ceil(totalCases / casesPerPage)} />
+      <PaginationNavigation pageNum={pageNum} totalPages={Math.ceil(totalCases / casesPerPage)} name={name} />
     </div>
   )
 }

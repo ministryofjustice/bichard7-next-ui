@@ -5,10 +5,17 @@ interface Props {
   filter: React.ReactNode
   courtCaseList: React.ReactNode
   appliedFilters: React.ReactNode
-  pagination: React.ReactNode
+  paginationTop: React.ReactNode
+  paginationBottom: React.ReactNode
 }
 
-const CourtCaseFilterWrapper: React.FC<Props> = ({ filter, appliedFilters, courtCaseList, pagination }: Props) => {
+const CourtCaseFilterWrapper: React.FC<Props> = ({
+  filter,
+  appliedFilters,
+  courtCaseList,
+  paginationTop,
+  paginationBottom
+}: Props) => {
   const [isVisible, setVisible] = useState(false)
   const classes = useCustomStyles()
   return (
@@ -38,13 +45,13 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({ filter, appliedFilters, court
             </div>
           </div>
 
-          {pagination}
+          {paginationTop}
 
           <div className="moj-scrollable-pane">
             <div className="moj-scrollable-pane__wrapper">{courtCaseList}</div>
           </div>
 
-          {pagination}
+          {paginationBottom}
         </div>
       </div>
     </>

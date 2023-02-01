@@ -371,8 +371,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").contains("Case00004").should("exist")
       cy.get("tr").not(":first").contains("Case00005").should("exist")
 
-      cy.findByText("Next page").should("exist")
-      cy.findByText("Next page").click()
+      cy.get(".moj-pagination__item:last-child").first().click()
       cy.get("tr").not(":first").should("have.length", 1)
 
       cy.get("tr").not(":first").contains(oneMonthAgoDateString).should("exist")

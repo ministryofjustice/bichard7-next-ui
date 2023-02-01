@@ -6,7 +6,7 @@ interface Props {
 
 const PaginationResults: React.FC<Props> = ({ pageNum, resultsPerPage, totalCases }: Props) => {
   return (
-    <p className={"moj-pagination__results"} id="pagination-results">
+    <p className={"moj-pagination__results"}>
       {"Showing "}
       <b>{(pageNum - 1) * resultsPerPage + 1}</b>
       {" to "}

@@ -445,8 +445,22 @@ describe("Case list", () => {
       })
     })
 
-    describe.only("Pagination", () => {
-      it.skip("lets users select how many cases to show per page", () => {
+    describe("Pagination", () => {
+      it("should be accessible", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.injectAxe()
+
+        // Wait for the page to fully load
+        cy.get("h1")
+
+        cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
+      })
+
+      it("lets users select how many cases to show per page", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
         cy.login("bichard01@example.com", "password")
@@ -456,10 +470,10 @@ describe("Case list", () => {
         cy.get("tr").contains("Case00000").should("exist")
         cy.get("tr").contains("Case00004").should("exist")
 
-        cy.get("#cases-per-page").select("10")
+        cy.get(".cases-per-page").first().select("10")
         cy.get("tbody tr").should("have.length", 10)
 
-        cy.get("#cases-per-page").select("25")
+        cy.get(".cases-per-page").first().select("25")
         cy.get("tbody tr").should("have.length", 25)
 
         // Navigating to a different page should keep the same page size
@@ -468,8 +482,25 @@ describe("Case list", () => {
         cy.get("tr").contains("Case00025").should("exist")
         cy.get("tr").contains("Case00049").should("exist")
 
-        // Check that the starting position in the case list is kept the same
-        cy.get("#cases-per-page").select("10")
+        cy.get(".cases-per-page").first().select("10")
+        cy.get("tbody tr").should("have.length", 10)
+      })
+
+      it("keeps the starting position in the case list when changing page size", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get(".cases-per-page").first().select("25")
+        cy.get("tbody tr").should("have.length", 25)
+
+        cy.get(".moj-pagination__item").contains("Next").first().click()
+        cy.get("tbody tr").should("have.length", 25)
+        cy.get("tr").contains("Case00025").should("exist")
+        cy.get("tr").contains("Case00049").should("exist")
+
+        cy.get(".cases-per-page").first().select("10")
         cy.get("tbody tr").should("have.length", 10)
         cy.get("tr").contains("Case00025").should("exist")
         cy.get("tr").contains("Case00034").should("exist")

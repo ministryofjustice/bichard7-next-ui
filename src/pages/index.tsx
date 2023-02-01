@@ -178,7 +178,12 @@ const Home: NextPage<Props> = ({
           />
         }
         courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
-        pagination={<Pagination pageNum={pageNum} casesPerPage={resultsPerPage} totalCases={totalCases} />}
+        paginationTop={
+          <Pagination pageNum={pageNum} casesPerPage={resultsPerPage} totalCases={totalCases} name="top" />
+        }
+        paginationBottom={
+          <Pagination pageNum={pageNum} casesPerPage={resultsPerPage} totalCases={totalCases} name="bottom" />
+        }
       />
     </Layout>
   </>
