@@ -5,7 +5,6 @@ import { createUseStyles } from "react-jss"
 interface Props {
   options: number[]
   selected: number
-  className?: string
 }
 
 const useStyles = createUseStyles({
@@ -14,12 +13,12 @@ const useStyles = createUseStyles({
   }
 })
 
-const ResultsPerPage: React.FC<Props> = ({ options, selected, className }: Props) => {
+const ResultsPerPage: React.FC<Props> = ({ options, selected }: Props) => {
   const router = useRouter()
   const classes = useStyles()
 
   return (
-    <div className={className}>
+    <div className="moj-pagination__results">
       {"View "}
       <SelectInput
         onChange={(event) => {

@@ -69,7 +69,7 @@ const Pagination: React.FC<Props> = ({ totalPages, pageNum, resultsPerPage, tota
     <div className={classes["bottom-navigation"]}>
       <PaginationResults pageNum={pageNum} resultsPerPage={resultsPerPage} totalCases={totalCases} />
 
-      <ResultsPerPage options={[5, 10, 25, 100]} selected={resultsPerPage} className={"moj-pagination__results"} />
+      <ResultsPerPage options={[5, 10, 25, 100]} selected={resultsPerPage} />
 
       <nav className={"moj-pagination"} aria-label="Pagination navigation">
         <ul className="moj-pagination__list">
