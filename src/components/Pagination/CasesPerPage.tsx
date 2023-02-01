@@ -8,12 +8,12 @@ interface Props {
 }
 
 const useStyles = createUseStyles({
-  "results-per-page-picker": {
+  "cases-per-page-picker": {
     width: "auto"
   }
 })
 
-const ResultsPerPage: React.FC<Props> = ({ options, selected }: Props) => {
+const CasesPerPage: React.FC<Props> = ({ options, selected }: Props) => {
   const router = useRouter()
   const classes = useStyles()
 
@@ -26,8 +26,8 @@ const ResultsPerPage: React.FC<Props> = ({ options, selected }: Props) => {
           router.push({ query: { maxPageItems: target } })
         }}
         value={selected}
-        id="results-per-page"
-        className={classes["results-per-page-picker"]}
+        id="cases-per-page"
+        className={classes["cases-per-page-picker"]}
         aria-label="Cases per page"
       >
         {options.map((option) => (
@@ -41,4 +41,4 @@ const ResultsPerPage: React.FC<Props> = ({ options, selected }: Props) => {
   )
 }
 
-export default ResultsPerPage
+export default CasesPerPage
