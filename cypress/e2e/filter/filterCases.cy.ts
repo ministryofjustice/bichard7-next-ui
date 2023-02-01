@@ -575,26 +575,23 @@ describe("Case list", () => {
       })
     })
 
-    describe("Filtering cases allocated to me", () => {
+    describe.only("Filtering cases allocated to me", () => {
       it("Should filter cases that I hold the trigger lock for", () => {
-        cy.task("insertMultipleDummyCourtCasesWithLock", {
-          lockHolders: [
-            {
-              errorLockedByUsername: "Bichard01",
-              triggerLockedByUsername: "Bichard01"
-            },
-            { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01" },
-            {
-              errorLockedByUsername: "Bichard02",
-              triggerLockedByUsername: "Bichard02"
-            },
-            {
-              errorLockedByUsername: "Bichard03",
-              triggerLockedByUsername: "Bichard03"
-            }
-          ],
-          orgCode: "011111"
-        })
+        cy.task("insertCourtCasesWithFields", [
+          {
+            errorLockedByUsername: "Bichard01",
+            triggerLockedByUsername: "Bichard01"
+          },
+          { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01" },
+          {
+            errorLockedByUsername: "Bichard02",
+            triggerLockedByUsername: "Bichard02"
+          },
+          {
+            errorLockedByUsername: "Bichard03",
+            triggerLockedByUsername: "Bichard03"
+          }
+        ])
 
         showFilters()
         cy.get("#my-cases-filter").click()
