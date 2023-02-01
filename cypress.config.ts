@@ -5,17 +5,9 @@ import User from "./src/services/entities/User"
 import deleteFromTable from "./test/utils/deleteFromTable"
 import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import {
-  insertCourtCases,
-  insertCourtCasesWithCourtDates,
-  insertCourtCasesWithCourtNames,
-  insertCourtCasesWithFieldOverrides,
-  insertCourtCasesWithOrgCodes,
+  insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
-  insertDummyCourtCasesWithUrgencies,
-  insertDummyCourtCaseWithLock,
-  insertMultipleDummyCourtCases,
-  insertMultipleDummyCourtCasesWithLock,
-  insertMultipleDummyCourtCasesWithResolutionTimestamp
+  insertMultipleDummyCourtCases
 } from "./test/utils/insertCourtCases"
 import insertException from "./test/utils/manageExceptions"
 import { insertTriggers } from "./test/utils/manageTriggers"
@@ -54,65 +46,17 @@ export default defineConfig({
 
           return null
         },
-        insertCourtCasesWithOrgCodes(orgCodes: string[]) {
-          return insertCourtCasesWithOrgCodes(orgCodes)
-        },
 
         insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
           return insertMultipleDummyCourtCases(params.numToInsert, params.force)
         },
 
-        insertCourtCasesWithCourtDates(params: { courtDate: Date[]; force: string }) {
-          return insertCourtCasesWithCourtDates(params.courtDate, params.force)
-        },
-
-        insertCourtCasesWithCourtNames(params: { courtNames: string[]; force: string }) {
-          return insertCourtCasesWithCourtNames(params.courtNames, params.force)
-        },
-
-        insertCourtCasesWithFieldOverrides(params: {
-          keywords: { defendantNames?: string[]; courtNames?: string[] }
-          force: string
-        }) {
-          return insertCourtCasesWithFieldOverrides(params.keywords, params.force)
-        },
-
-        insertDummyCourtCaseWithLock(params: {
-          errorLockedByUsername: string
-          triggerLockedByUsername: string
-          orgCodes: string[]
-        }) {
-          return insertDummyCourtCaseWithLock(
-            params.errorLockedByUsername,
-            params.triggerLockedByUsername,
-            params.orgCodes
-          )
-        },
-
-        insertMultipleDummyCourtCasesWithResolutionTimestamp(params: {
-          resolutionTimestamps: (Date | null)[]
-          orgCode: string
-        }) {
-          return insertMultipleDummyCourtCasesWithResolutionTimestamp(params.resolutionTimestamps, params.orgCode)
-        },
-
-        insertMultipleDummyCourtCasesWithLock(params: {
-          lockHolders: { errorLockedByUsername?: string; triggerLockedByUsername?: string }[]
-          orgCode: string
-        }) {
-          return insertMultipleDummyCourtCasesWithLock(params.lockHolders, params.orgCode)
-        },
-
-        insertCourtCasesWithUrgencies(params: { urgencies: boolean[]; force: string }) {
-          return insertDummyCourtCasesWithUrgencies(params.urgencies, params.force)
+        insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {
+          return insertCourtCasesWithFields(cases)
         },
 
         insertCourtCasesWithNotes(params: { caseNotes: { user: string; text: string }[][]; force: string }) {
           return insertDummyCourtCasesWithNotes(params.caseNotes, params.force)
-        },
-
-        insertCourtCases(params: { courtCases: CourtCase[] }) {
-          return insertCourtCases(params.courtCases)
         },
 
         clearCourtCases() {

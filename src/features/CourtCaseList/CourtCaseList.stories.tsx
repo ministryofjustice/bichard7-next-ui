@@ -28,6 +28,7 @@ const courtCase = {
   defendantName: "Allocation Trigger",
   errorId: 79057,
   errorReason: "HO100206",
+  errorReport: "HO100206",
   messageId: "cf60600b-52a0-4bc7-b117-3acfb851a7f5",
   notes: [userNote, userNote, systemNote],
   orgForPoliceFilter: "36FP  ",

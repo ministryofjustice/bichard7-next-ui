@@ -29,7 +29,7 @@ describe("Case details", () => {
     })
 
     it("should be accessible", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -46,11 +46,14 @@ describe("Case details", () => {
 
       cy.injectAxe()
 
+      // Wait for the page to fully load
+      cy.get("h1")
+
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
     it("should be able to add a note when case is visible to the user and not locked by another user", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -78,7 +81,7 @@ describe("Case details", () => {
     })
 
     it("should be able to add a long note", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -109,7 +112,7 @@ describe("Case details", () => {
     })
 
     it("should show error message when note text is empty", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -134,7 +137,7 @@ describe("Case details", () => {
     })
 
     it("Adding an empty note doesn't add a note, when the case is visible to the user and not locked by another user", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["01"])
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -158,7 +161,7 @@ describe("Case details", () => {
     })
 
     it("should return 404 for a case that this user can not see", () => {
-      cy.task("insertCourtCasesWithOrgCodes", ["02"])
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
       cy.login("bichard01@example.com", "password")
 
       cy.request({

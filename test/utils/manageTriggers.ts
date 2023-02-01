@@ -31,7 +31,7 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
     .update(CourtCase)
     .set({
       triggerCount: () => "trigger_count + 1",
-      triggerReason: triggers.map((t) => t.triggerCode).join(", ")
+      triggerReason: triggers[triggers.length - 1].triggerCode
     })
     .where("errorId = :id", { id: caseId })
     .execute()

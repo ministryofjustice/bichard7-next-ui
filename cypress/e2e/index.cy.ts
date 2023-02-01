@@ -1,4 +1,5 @@
 import User from "services/entities/User"
+import { TestTrigger } from "../../test/utils/manageTriggers"
 import a11yConfig from "../support/a11yConfig"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 import hashedPassword from "../fixtures/hashedPassword"
@@ -57,6 +58,9 @@ describe("Case list", () => {
 
         cy.injectAxe()
 
+        // Wait for the page to fully load
+        cy.get("h1")
+
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
       })
     })
@@ -68,6 +72,9 @@ describe("Case list", () => {
         cy.visit("/bichard")
 
         cy.injectAxe()
+
+        // Wait for the page to fully load
+        cy.get("h1")
 
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
       })
@@ -112,24 +119,34 @@ describe("Case list", () => {
       })
 
       it("should display a case for the user's org", () => {
-        cy.task("insertCourtCasesWithOrgCodes", ["01"])
+        cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00000`)
+        cy.get("tr").not(":first").get("td:nth-child(5)").contains(`Case00000`)
       })
 
       it("should only display cases visible to users forces", () => {
-        cy.task("insertCourtCasesWithOrgCodes", ["01", "02", "03", "04"])
+        cy.task("insertCourtCasesWithFields", [
+          { orgForPoliceFilter: "01" },
+          { orgForPoliceFilter: "02" },
+          { orgForPoliceFilter: "03" },
+          { orgForPoliceFilter: "04" }
+        ])
 
         cy.login("bichard02@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr").not(":first").get("td:nth-child(4)").contains(`Case00001`)
+        cy.get("tr").not(":first").get("td:nth-child(5)").contains(`Case00001`)
       })
 
       it("should display cases for sub-forces", () => {
-        cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "012A", "013A1"])
+        cy.task("insertCourtCasesWithFields", [
+          { orgForPoliceFilter: "01" },
+          { orgForPoliceFilter: "011" },
+          { orgForPoliceFilter: "012A" },
+          { orgForPoliceFilter: "013A1" }
+        ])
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
@@ -137,25 +154,36 @@ describe("Case list", () => {
         cy.get("tr")
           .not(":first")
           .each((row, index) => {
-            cy.wrap(row).get("td:nth-child(4)").contains(`Case0000${index}`)
+            cy.wrap(row).get("td:nth-child(5)").contains(`Case0000${index}`)
           })
       })
 
       it("should display cases for parent forces up to the second-level force", () => {
-        cy.task("insertCourtCasesWithOrgCodes", ["01", "011", "0111", "01111", "011111"])
+        cy.task("insertCourtCasesWithFields", [
+          { orgForPoliceFilter: "01" },
+          { orgForPoliceFilter: "011" },
+          { orgForPoliceFilter: "0111" },
+          { orgForPoliceFilter: "01111" },
+          { orgForPoliceFilter: "011111" }
+        ])
 
         cy.login("bichard011111@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00000").should("not.exist")
-        cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00001").should("not.exist")
-        cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00002")
-        cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00003")
-        cy.get("tr").not(":first").get("td:nth-child(4)").contains("Case00004")
+        cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00000").should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00001").should("not.exist")
+        cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00002")
+        cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00003")
+        cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00004")
       })
 
       it("can display cases ordered by court name", () => {
-        cy.task("insertCourtCasesWithCourtNames", { courtNames: ["BBBB", "AAAA", "DDDD", "CCCC"], force: "011111" })
+        cy.task("insertCourtCasesWithFields", [
+          { courtName: "BBBB", orgForPoliceFilter: "011111" },
+          { courtName: "AAAA", orgForPoliceFilter: "011111" },
+          { courtName: "DDDD", orgForPoliceFilter: "011111" },
+          { courtName: "CCCC", orgForPoliceFilter: "011111" }
+        ])
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
@@ -165,8 +193,8 @@ describe("Case list", () => {
         cy.get("tr")
           .not(":first")
           .each((row) => {
-            cy.wrap(row).get("td:nth-child(3)").first().contains("AAAA")
-            cy.wrap(row).get("td:nth-child(3)").last().contains("DDDD")
+            cy.wrap(row).get("td:nth-child(4)").first().contains("AAAA")
+            cy.wrap(row).get("td:nth-child(4)").last().contains("DDDD")
           })
 
         cy.findByText("Court Name").click()
@@ -174,8 +202,8 @@ describe("Case list", () => {
         cy.get("tr")
           .not(":first")
           .each((row) => {
-            cy.wrap(row).get("td:nth-child(3)").first().contains("DDDD")
-            cy.wrap(row).get("td:nth-child(3)").last().contains("AAAA")
+            cy.wrap(row).get("td:nth-child(4)").first().contains("DDDD")
+            cy.wrap(row).get("td:nth-child(4)").last().contains("AAAA")
           })
       })
 
@@ -197,12 +225,16 @@ describe("Case list", () => {
       })
 
       it("Should display the urgent badge on cases marked as urgent", () => {
-        cy.task("insertCourtCasesWithUrgencies", { urgencies: [true, false, true], force: "01" })
+        cy.task("insertCourtCasesWithFields", [
+          { isUrgent: true, orgForPoliceFilter: "01" },
+          { isUrgent: false, orgForPoliceFilter: "01" },
+          { isUrgent: true, orgForPoliceFilter: "01" }
+        ])
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr").not(":first").eq(0).get("td:nth-child(4)").contains(`Case00000`)
+        cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
         cy.get("tr").not(":first").eq(0).contains(`Urgent`).should("exist")
         cy.get("tr").not(":first").eq(1).contains(`Urgent`).should("not.exist")
         cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
@@ -250,17 +282,65 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tr").not(":first").eq(0).get("td:nth-child(4)").contains(`Case00000`)
-        cy.get("tr").not(":first").eq(0).get("td:nth-child(6)").should("be.empty")
-        cy.get("tr").not(":first").eq(1).get("td:nth-child(6)").contains(`1`).should("exist")
-        cy.get("tr").not(":first").eq(2).get("td:nth-child(6)").contains(`3`).should("exist")
+        cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
+        cy.get("tr").not(":first").eq(0).get("td:nth-child(7)").should("be.empty")
+        cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`1`).should("exist")
+        cy.get("tr").not(":first").eq(2).get("td:nth-child(7)").contains(`3`).should("exist")
+      })
+
+      it("Should display reason (errors and triggers) with correct formatting", () => {
+        cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "011111" }, { orgForPoliceFilter: "011111" }])
+
+        cy.task("insertException", {
+          caseId: 0,
+          exceptionCode: "HO100310",
+          errorReport: "HO100310||ds:OffenceReasonSequence"
+        })
+        cy.task("insertException", {
+          caseId: 0,
+          exceptionCode: "HO100322",
+          errorReport: "HO100322||ds:OrganisationUnitCode"
+        })
+        cy.task("insertException", {
+          caseId: 0,
+          exceptionCode: "HO100310",
+          errorReport: "HO100310||ds:OffenceReasonSequence"
+        })
+
+        const triggers: TestTrigger[] = [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0010",
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          },
+          {
+            triggerId: 1,
+            triggerCode: "TRPR0015",
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+        cy.task("insertTriggers", { caseId: 0, triggers })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("tr").not(":first").get("td:nth-child(8)").contains("HO100310 (2)")
+        cy.get("tr").not(":first").get("td:nth-child(8)").contains("HO100322")
+        cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0010 - Conditional bail")
+        cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0015 - Personal details changed")
       })
 
       it("can display cases ordered by urgency", () => {
-        cy.task("insertCourtCasesWithUrgencies", {
-          urgencies: [false, false, true, false, true, true, false, true, false, true],
-          force: "011111"
-        })
+        const force = "011111"
+        cy.task(
+          "insertCourtCasesWithFields",
+          [false, false, true, false, true, true, false, true, false, true].map((urgency) => ({
+            isUrgent: urgency,
+            orgForPoliceFilter: force
+          }))
+        )
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
@@ -280,6 +360,88 @@ describe("Case list", () => {
           .each((row) => {
             cy.wrap(row).contains(`Urgent`).should("exist")
           })
+      })
+
+      it("shows who has locked a case in the 'locked by' column", () => {
+        const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long name"]
+        cy.task(
+          "insertCourtCasesWithFields",
+          lockUsernames.map((username) => ({
+            errorLockedByUsername: username,
+            triggerLockedByUsername: username,
+            orgForPoliceFilter: "011111"
+          }))
+        )
+        const triggers: TestTrigger[] = [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0001",
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+        cy.task("insertTriggers", { caseId: 0, triggers })
+        cy.task("insertTriggers", { caseId: 1, triggers })
+        cy.task("insertTriggers", { caseId: 2, triggers })
+        cy.task("insertTriggers", { caseId: 3, triggers })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        //Error locks
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard01")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(5) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(5) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(7) .locked-by-tag`).should("have.text", "A really really really long name")
+        cy.get(`tbody tr:nth-child(7) img[alt="Lock icon"]`).should("exist")
+
+        //Trigger locks
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard01")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(4) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(4) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(6) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(6) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(8) .locked-by-tag`).should("have.text", "A really really really long name")
+        cy.get(`tbody tr:nth-child(8) img[alt="Lock icon"]`).should("exist")
+      })
+
+      it("can sort cases by who has locked it", () => {
+        const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long name"]
+        cy.task(
+          "insertCourtCasesWithFields",
+          lockUsernames.map((username) => ({
+            errorLockedByUsername: username,
+            triggerLockedByUsername: username,
+            orgForPoliceFilter: "011111"
+          }))
+        )
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        // Default: sorted by case ID
+        const caseIdOrder = [0, 1, 2, 3]
+        cy.get("tbody td:nth-child(5)").each((element, index) => {
+          cy.wrap(element).should("have.text", `Case0000${caseIdOrder[index]}`)
+        })
+
+        // Sort ascending
+        cy.get("#locked-by-sort").click()
+        const ascendingOrder = [3, 0, 1, 2]
+        cy.get("tbody td:nth-child(5)").each((element, index) => {
+          cy.wrap(element).should("have.text", `Case0000${ascendingOrder[index]}`)
+        })
+
+        // Sort descending
+        cy.get("#locked-by-sort").click()
+        const descendingOrder = [2, 1, 0, 3]
+        cy.get("tbody td:nth-child(5)").each((element, index) => {
+          cy.wrap(element).should("have.text", `Case0000${descendingOrder[index]}`)
+        })
       })
     })
   })

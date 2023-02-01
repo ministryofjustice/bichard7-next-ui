@@ -4,7 +4,7 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import addNote from "../../src/services/addNote"
 import deleteFromTable from "../utils/deleteFromTable"
-import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
+import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import insertNotes from "services/insertNotes"
 
 jest.mock("services/insertNotes")
@@ -15,18 +15,16 @@ const insertRecords = async (
   errorLockedByUsername: string | null = null,
   triggerLockedByUsername: string | null = null
 ) => {
-  const existingCourtCasesDbObject = [
-    await getDummyCourtCase({
-      courtDate: new Date("2008-09-25"),
-      orgForPoliceFilter: "36FPA1".padEnd(6, " "),
-      errorId: 0,
-      messageId: String(0).padStart(5, "x"),
-      errorLockedByUsername: errorLockedByUsername,
-      triggerLockedByUsername: triggerLockedByUsername
-    })
-  ]
+  const existingCourtCasesDbObject = {
+    courtDate: new Date("2008-09-25"),
+    orgForPoliceFilter: "36FPA1".padEnd(6, " "),
+    errorId: 0,
+    messageId: String(0).padStart(5, "x"),
+    errorLockedByUsername: errorLockedByUsername,
+    triggerLockedByUsername: triggerLockedByUsername
+  }
 
-  await insertCourtCases(existingCourtCasesDbObject)
+  await insertCourtCasesWithFields([existingCourtCasesDbObject])
 }
 
 describe("addNote", () => {
