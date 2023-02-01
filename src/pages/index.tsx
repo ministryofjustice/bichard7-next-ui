@@ -1,5 +1,5 @@
 import Layout from "components/Layout"
-import Pagination from "components/Pagination/Pagination"
+import Pagination from "components/Pagination"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
