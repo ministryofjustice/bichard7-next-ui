@@ -38,9 +38,12 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({ filter, appliedFilters, court
             </div>
           </div>
 
+          {pagination}
+
           <div className="moj-scrollable-pane">
             <div className="moj-scrollable-pane__wrapper">{courtCaseList}</div>
           </div>
+
           {pagination}
         </div>
       </div>
