@@ -57,7 +57,6 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
 
-        // Removes the filter chip
         removeFilterChip()
       })
 
