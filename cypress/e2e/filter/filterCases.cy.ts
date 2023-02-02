@@ -385,27 +385,6 @@ describe("Case list", () => {
     it.only("Should display cases filtered for a custom date range", () => {
       const force = "011111"
 
-      const todayDate = new Date()
-      const yesterdayDate = subDays(todayDate, 1)
-      const tomorrowDate = addDays(todayDate, 1)
-      const oneWeekAgoDate = subWeeks(todayDate, 1)
-      const oneWeekAndOneDayAgoDate = subDays(todayDate, 8)
-      const twoWeeksAgoDate = subWeeks(todayDate, 2)
-      const oneMonthAgoDate = subMonths(todayDate, 1)
-      const aLongTimeAgoDate = new Date("2001-09-26")
-
-      const dateFormatString = "dd/MM/yyyy"
-      const todayDateString = format(todayDate, dateFormatString)
-      const yesterdayDateString = format(yesterdayDate, dateFormatString)
-      const oneWeekAgoDateString = format(oneWeekAgoDate, dateFormatString)
-      const oneWeekAndOneDayAgoDateString = format(oneWeekAndOneDayAgoDate, dateFormatString)
-      const twoWeeksAgoDateString = format(twoWeeksAgoDate, dateFormatString)
-      const oneMonthAgoDateString = format(oneMonthAgoDate, dateFormatString)
-
-      const expectedThisWeekLabel = `This week (${oneWeekAgoDateString} - ${todayDateString})`
-      const expectedLastWeekLabel = `Last week (${twoWeeksAgoDateString} - ${oneWeekAgoDateString})`
-      const expectedThisMonthLabel = `This month (${oneMonthAgoDateString} - ${todayDateString})`
-
       cy.task("insertCourtCasesWithFields", [
         { courtDate: new Date("2023-01-1"), orgForPoliceFilter: force },
         { courtDate: new Date("2023-02-1"), orgForPoliceFilter: force },
@@ -427,12 +406,8 @@ describe("Case list", () => {
       // Tests for all cases in 2022
       cy.get("button#filter-button").click()
       cy.get("#custom-date-range").click()
-      cy.get("#fromDay").click().type("01")
-      cy.get("#fromMonth").click().type("01")
-      cy.get("#fromYear").click().type("2022")
-      cy.get("#toDay").click().type("31")
-      cy.get("#toMonth").click().type("12")
-      cy.get("#toYear").click().type("2022")
+      cy.get("#date-from").click().type("2022-01-01")
+      cy.get("#date-to").click().type("2022-12-31")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 5)

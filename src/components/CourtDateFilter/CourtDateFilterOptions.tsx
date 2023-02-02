@@ -58,18 +58,6 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch }: Props)
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
             <DateInput dateType="from" />
             <DateInput dateType="to" />
-            {/* <div className="govuk-radios__item">
-              <input
-                className="govuk-radios__input"
-                id="conditional-custom-date-range"
-                name="courtDate"
-                type="radio"
-                value=""
-              />
-              <label className="govuk-label govuk-radios__label" htmlFor="conditional-custom-date-range">
-                {"Custom date range"}
-              </label>
-            </div> */}
           </div>
         </div>
       </div>

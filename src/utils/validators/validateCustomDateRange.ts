@@ -2,12 +2,8 @@ import { CourtDateRange } from "types/CaseListQueryParams"
 import { validateQueryParams } from "./validateQueryParams"
 
 export const validateCustomDateRange = (customDate: {
-  fromDay: string | string[] | undefined
-  fromMonth: string | string[] | undefined
-  fromYear: string | string[] | undefined
-  toDay: string | string[] | undefined
-  toMonth: string | string[] | undefined
-  toYear: string | string[] | undefined
+  from: string | string[] | undefined
+  to: string | string[] | undefined
 }): CourtDateRange | undefined => {
   let hasInvalidParam = false
   Object.values(customDate).forEach((param) => {
@@ -19,7 +15,13 @@ export const validateCustomDateRange = (customDate: {
   if (hasInvalidParam) {
     return undefined
   }
-  const fromDate = `${customDate.fromYear}-${customDate.fromMonth}-${customDate.fromDay}`
-  const toDate = `${customDate.toYear}-${customDate.toMonth}-${customDate.toDay}`
-  return { from: new Date(fromDate), to: new Date(toDate) }
+
+  const fromTimeStamp = Date.parse(`${customDate.from}`)
+  const toTimeStamp = Date.parse(`${customDate.to}`)
+
+  if (isNaN(fromTimeStamp) || isNaN(toTimeStamp)) {
+    return undefined
+  }
+
+  return { from: new Date(fromTimeStamp), to: new Date(toTimeStamp) }
 }
