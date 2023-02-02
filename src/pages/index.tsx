@@ -17,6 +17,7 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { CaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
+import { validateCustomDateRange } from "utils/validators/validateCustomDateRange"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
@@ -72,14 +73,20 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
     const validatedDateRange = mapDateRange(dateRange)
-    const validatedCustomFromDay = validateQueryParams(fromDay)
-    const validatedCustomFromMonth = validateQueryParams(fromMonth)
-    const validatedCustomFromYear = validateQueryParams(fromYear)
-    const validatedCustomToDay = validateQueryParams(toDay)
-    const validatedCustomToMonth = validateQueryParams(toMonth)
-    const validatedCustomToYear = validateQueryParams(toYear)
-    const validatedCustomFromDateRange = `${validatedCustomFromYear}-${validatedCustomFromMonth}-${validatedCustomFromDay}`
-    const validatedCustomToDateRange = `${validatedCustomToYear}-${validatedCustomToMonth}-${validatedCustomToDay}`
+    const validatedFromDay = validateQueryParams(fromDay) ? fromDay : undefined
+    const validatedFromMonth = validateQueryParams(fromMonth) ? fromMonth : undefined
+    const validatedFromYear = validateQueryParams(fromYear) ? fromYear : undefined
+    const validatedToDay = validateQueryParams(toDay) ? toDay : undefined
+    const validatedToMonth = validateQueryParams(toMonth) ? toMonth : undefined
+    const validatedToYear = validateQueryParams(toYear) ? toYear : undefined
+    const validatedCustomDateRange = validateCustomDateRange({
+      fromYear: validatedFromYear,
+      fromMonth: validatedFromMonth,
+      fromDay: validatedFromDay,
+      toYear: validatedToYear,
+      toMonth: validatedToMonth,
+      toDay: validatedToDay
+    })
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
     const validatedReasonSearch = validateQueryParams(reasonSearch) ? reasonSearch : undefined
