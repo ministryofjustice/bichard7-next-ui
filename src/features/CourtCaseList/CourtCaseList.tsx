@@ -34,6 +34,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
   const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
 
   const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
+  const unlockPath = (unlock: string) => `${basePath}/?${new URLSearchParams({ ...query, unlock })}`
 
   const tableHead = (
     <Table.Row>
@@ -80,6 +81,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
   courtCases.forEach(
     (
       {
+        errorId,
         courtDate,
         ptiurn,
         defendantName,
@@ -126,7 +128,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
             ))}
           </Table.Cell>
           <Table.Cell>
-            <LockedByTag lockedBy={errorLockedByUsername} />
+            <LockedByTag lockedBy={errorLockedByUsername} unlockPath={unlockPath(`${errorId}`)} />
           </Table.Cell>
         </Table.Row>
       )
@@ -151,7 +153,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
               ))}
             </Table.Cell>
             <Table.Cell>
-              <LockedByTag lockedBy={triggerLockedByUsername} />
+              <LockedByTag lockedBy={triggerLockedByUsername} unlockPath={""} />
             </Table.Cell>
           </Table.Row>
         )

@@ -20,11 +20,21 @@ const useStyles = createUseStyles({
     textDecoration: "underline",
     marginTop: 4,
     marginBottom: 2,
-    fontWeight: "normal"
+    fontWeight: "normal",
+    border: "none",
+    outline: "none",
+    background: "none",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    fontSize: "inherit",
+    color: "inherit"
   }
 })
 
-const LockedByTag: React.FC<{ lockedBy?: string | null }> = (props: { lockedBy?: string | null }) => {
+const LockedByTag: React.FC<{ lockedBy?: string | null; unlockPath?: string }> = (props: {
+  lockedBy?: string | null
+  unlockPath?: string
+}) => {
   const classes = useStyles()
   return (
     <If condition={!!props.lockedBy}>
@@ -37,7 +47,9 @@ const LockedByTag: React.FC<{ lockedBy?: string | null }> = (props: { lockedBy?:
             className={classes.LockedIcon}
             alt="Lock icon"
           />
-          <span className={classes.LockedByText}>{props.lockedBy}</span>
+          <form method="POST" action={props.unlockPath}>
+            <button className={classes.LockedByText}>{props.lockedBy}</button>
+          </form>
         </div>
       </Tag>
     </If>
