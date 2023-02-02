@@ -651,7 +651,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe.only("filter by cases allocated to me", () => {
+  describe("filter by cases allocated to me", () => {
     it("should list cases that are locked to me", async () => {
       const orgCode = "36FPA1"
 
