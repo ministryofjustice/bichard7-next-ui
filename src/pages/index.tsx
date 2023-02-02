@@ -57,8 +57,12 @@ export const getServerSideProps = withMultipleServerSideProps(
       order,
       urgency,
       dateRange,
-      customDateFrom,
-      customDateTo,
+      fromDay,
+      fromMonth,
+      fromYear,
+      toDay,
+      toMonth,
+      toYear,
       locked,
       state
     } = query
@@ -68,6 +72,14 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
     const validatedDateRange = mapDateRange(dateRange)
+    const validatedCustomFromDay = validateQueryParams(fromDay)
+    const validatedCustomFromMonth = validateQueryParams(fromMonth)
+    const validatedCustomFromYear = validateQueryParams(fromYear)
+    const validatedCustomToDay = validateQueryParams(toDay)
+    const validatedCustomToMonth = validateQueryParams(toMonth)
+    const validatedCustomToYear = validateQueryParams(toYear)
+    const validatedCustomFromDateRange = `${validatedCustomFromYear}-${validatedCustomFromMonth}-${validatedCustomFromDay}`
+    const validatedCustomToDateRange = `${validatedCustomToYear}-${validatedCustomToMonth}-${validatedCustomToDay}`
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
     const validatedReasonSearch = validateQueryParams(reasonSearch) ? reasonSearch : undefined
@@ -90,7 +102,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
       order: validatedOrder,
-      courtDateRange: validatedDateRange,
+      courtDateRange: validatedDateRange || validatedCustomDateRange,
       locked: lockedFilter,
       caseState: validatedCaseState
     })
