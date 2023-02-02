@@ -309,7 +309,7 @@ describe("Case list", () => {
         const force = "011111"
         cy.task(
           "insertCourtCasesWithFields",
-          [false, false, true, false, true, true, false, true, false, true].map((urgency) => ({
+          [false, false, true, false, true, true, true, false, true, false, true, false, false, false, false, true, true, false, true, true].map((urgency) => ({
             isUrgent: urgency,
             orgForPoliceFilter: force
           }))
@@ -319,6 +319,7 @@ describe("Case list", () => {
         cy.visit("/bichard")
 
         cy.get("#is-urgent-sort").click()
+        cy.get(".cases-per-page").first().select("10")
 
         cy.get("tr")
           .not(":first")
@@ -439,16 +440,20 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("tbody tr").should("have.length", 5)
+        cy.get("tbody tr").should("have.length", 25)
         cy.get("tr").contains("Case00000").should("exist")
-        cy.get("tr").contains("Case00004").should("exist")
+        cy.get("tr").contains("Case00024").should("exist")
 
         cy.get(".cases-per-page").first().select("10")
         cy.get("tbody tr").should("have.length", 10)
 
-        cy.get(".cases-per-page").first().select("25")
-        cy.get("tbody tr").should("have.length", 25)
+        cy.get(".cases-per-page").first().select("50")
+        cy.get("tbody tr").should("have.length", 50)
 
+        cy.get(".cases-per-page").first().select("100")
+        cy.get("tbody tr").should("have.length", 100)
+
+        cy.get(".cases-per-page").first().select("25")
         // Navigating to a different page should keep the same page size
         cy.get(".moj-pagination__item").contains("Next").first().click()
         cy.get("tbody tr").should("have.length", 25)
@@ -496,66 +501,66 @@ describe("Case list", () => {
       })
 
       it("lets users navigate back and forth between pages using the page numbers", () => {
-        cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 1 to 5 of 50 cases")
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 1 to 25 of 250 cases")
         cy.get("tr").contains("Case00000").should("exist")
-        cy.get("tr").contains("Case00004").should("exist")
+        cy.get("tr").contains("Case00024").should("exist")
 
         cy.get("li.moj-pagination__item").contains("2").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 6 to 10 of 50 cases")
-        cy.get("tr").contains("Case00005").should("exist")
-        cy.get("tr").contains("Case00009").should("exist")
-
-        cy.get("li.moj-pagination__item").contains("10").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 46 to 50 of 50 cases")
-        cy.get("tr").contains("Case00045").should("exist")
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("tr").contains("Case00025").should("exist")
         cy.get("tr").contains("Case00049").should("exist")
 
+        cy.get("li.moj-pagination__item").contains("10").click()
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 226 to 250 of 250 cases")
+        cy.get("tr").contains("Case00225").should("exist")
+        cy.get("tr").contains("Case00249").should("exist")
+
         cy.get("li.moj-pagination__item").contains("9").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 41 to 45 of 50 cases")
-        cy.get("tr").contains("Case00040").should("exist")
-        cy.get("tr").contains("Case00044").should("exist")
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 201 to 225 of 250 cases")
+        cy.get("tr").contains("Case00200").should("exist")
+        cy.get("tr").contains("Case00224").should("exist")
       })
 
       it("lets users navigate back and forth between pages using the next and previous arrows", () => {
-        cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 1 to 5 of 50 cases")
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 1 to 25 of 250 cases")
         cy.get("tr").contains("Case00000").should("exist")
-        cy.get("tr").contains("Case00004").should("exist")
+        cy.get("tr").contains("Case00024").should("exist")
 
         cy.get("li.moj-pagination__item").contains("Next").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 6 to 10 of 50 cases")
-        cy.get("tr").contains("Case00005").should("exist")
-        cy.get("tr").contains("Case00009").should("exist")
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("tr").contains("Case00025").should("exist")
+        cy.get("tr").contains("Case00049").should("exist")
 
         cy.get("li.moj-pagination__item").contains("Next").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 11 to 15 of 50 cases")
-        cy.get("tr").contains("Case00010").should("exist")
-        cy.get("tr").contains("Case00014").should("exist")
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 51 to 75 of 250 cases")
+        cy.get("tr").contains("Case00050").should("exist")
+        cy.get("tr").contains("Case00074").should("exist")
 
         cy.get("li.moj-pagination__item").contains("Previous").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 6 to 10 of 50 cases")
-        cy.get("tr").contains("Case00005").should("exist")
-        cy.get("tr").contains("Case00009").should("exist")
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("tr").contains("Case00025").should("exist")
+        cy.get("tr").contains("Case00049").should("exist")
       })
 
       it("has correct pagination information on page 5 out of 10", () => {
-        cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard?page=5")
 
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 21 to 25 of 50 cases")
-        cy.get("tr").contains("Case00020").should("exist")
-        cy.get("tr").contains("Case00024").should("exist")
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 101 to 125 of 250 cases")
+        cy.get("tr").contains("Case00100").should("exist")
+        cy.get("tr").contains("Case00124").should("exist")
       })
 
       it("keeps other filters applied when changing pages", () => {

@@ -62,7 +62,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       state
     } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Reason[]
-    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
+    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"

@@ -287,7 +287,7 @@ describe("Case list", () => {
       cy.get("#date-range-today").click()
       cy.get("button#search").click()
 
-      cy.get("tr").not(":first").should("have.length", 1)
+      cy.get(".tr").not(":first").should("have.length", 1)
       cy.get("tr")
         .not(":first")
         .each((row) => {
@@ -296,7 +296,7 @@ describe("Case list", () => {
         })
 
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Today").click({ force: true })
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 8)
 
       // Tests for "yesterday"
       cy.get("button#filter-button").click()
@@ -313,7 +313,7 @@ describe("Case list", () => {
         })
 
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Yesterday").click({ force: true })
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 8)
 
       // Tests for "This week"
       cy.get("button#filter-button").click()
@@ -331,7 +331,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").contains("Case00003").should("exist")
 
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("This week").click({ force: true })
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 8)
 
       // Tests for "Last week"
       cy.get("button#filter-button").click()
@@ -349,7 +349,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").contains("Case00005").should("exist")
 
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("Last week").click({ force: true })
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 8)
 
       // Tests for "This month"
       cy.get("button#filter-button").click()
@@ -358,27 +358,23 @@ describe("Case list", () => {
       cy.get("#date-range-this-month").click()
       cy.get("button#search").click()
 
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 6)
       cy.get("tr").not(":first").contains(todayDateString).should("exist")
       cy.get("tr").not(":first").contains(yesterdayDateString).should("exist")
       cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
       cy.get("tr").not(":first").contains(twoWeeksAgoDateString).should("exist")
       cy.get("tr").not(":first").contains(oneWeekAndOneDayAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains(oneMonthAgoDateString).should("exist")
 
       cy.get("tr").not(":first").contains("Case00000").should("exist")
       cy.get("tr").not(":first").contains("Case00001").should("exist")
       cy.get("tr").not(":first").contains("Case00003").should("exist")
       cy.get("tr").not(":first").contains("Case00004").should("exist")
       cy.get("tr").not(":first").contains("Case00005").should("exist")
-
-      cy.get(".moj-pagination__item:last-child").first().click()
-      cy.get("tr").not(":first").should("have.length", 1)
-
-      cy.get("tr").not(":first").contains(oneMonthAgoDateString).should("exist")
       cy.get("tr").not(":first").contains("Case00006").should("exist")
 
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("This month").click({ force: true })
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 8)
     })
 
     it("Should not allow passing an invalid date range filter", () => {
