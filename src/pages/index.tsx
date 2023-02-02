@@ -14,9 +14,9 @@ import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CaseState, MyCaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
+import { CaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
-import caseStateFilters, { myCaseStateFilters } from "utils/caseStateFilters"
+import caseStateFilters from "utils/caseStateFilters"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
@@ -36,7 +36,7 @@ interface Props {
   pageNum: number
   locked: string | null
   caseState: CaseState | null
-  myCaseState: MyCaseState | null
+  myCaseState: string | null
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
@@ -75,9 +75,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLocked = validateQueryParams(locked) ? locked : undefined
     const validatedCaseState = caseStateFilters.includes(String(state)) ? (state as CaseState) : undefined
-    const validatedMyCaseState = myCaseStateFilters === String(myCases) ? myCaseStateFilters : undefined
-    console.log("myCases", myCases)
-    console.log("validate", validatedMyCaseState)
+    const validatedMyCaseState = validateQueryParams(myCases) ? currentUser.username : undefined
     const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
@@ -95,7 +93,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       courtDateRange: validatedDateRange,
       locked: lockedFilter,
       caseState: validatedCaseState,
-      myCaseState: validatedMyCaseState
+      allocatedToUserName: validatedMyCaseState
     })
 
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"

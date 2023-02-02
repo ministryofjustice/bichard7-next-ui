@@ -11,8 +11,6 @@ export type CourtDateRange = {
 
 export type CaseState = "Resolved" | "Unresolved and resolved" | undefined
 
-export type MyCaseState = "View cases allocated to me" | undefined
-
 export type Urgency = "Urgent" | "Non-urgent" | undefined
 
 export type CaseListQueryParams = {
@@ -29,6 +27,6 @@ export type CaseListQueryParams = {
   courtDateRange?: CourtDateRange
   locked?: boolean
   caseState?: CaseState
-  myCaseState?: MyCaseState
+  allocatedToUserName?: string
   reasonsSearch?: string
 }

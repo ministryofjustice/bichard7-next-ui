@@ -23,6 +23,7 @@ const listCourtCases = async (
     courtDateRange,
     locked,
     caseState,
+    allocatedToUserName,
     reasonsSearch
   }: CaseListQueryParams
 ): PromiseResult<ListCourtCaseResult> => {
@@ -102,6 +103,18 @@ const listCourtCases = async (
     query.andWhere({
       resolutionTimestamp: Not(IsNull())
     })
+  }
+
+  if (allocatedToUserName) {
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where("courtCase.errorLockedByUsername = :userName", {
+          userName: allocatedToUserName
+        }).orWhere("courtCase.triggerLockedByUsername = :userName", {
+          userName: allocatedToUserName
+        })
+      })
+    )
   }
 
   if (locked !== undefined) {
