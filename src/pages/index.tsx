@@ -32,8 +32,8 @@ interface Props {
   reasonSearch: string | null
   urgent: string | null
   dateRange: string | null
-  pageNum: number
-  resultsPerPage: number
+  page: number
+  casesPerPage: number
   totalCases: number
   locked: string | null
   caseState: CaseState | null
@@ -48,7 +48,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const {
       orderBy,
-      pageNum,
+      page,
       type,
       keywords,
       courtName,
@@ -63,7 +63,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Reason[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
-    const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
+    const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
     const validatedDateRange = mapDateRange(dateRange)
@@ -106,8 +106,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
         order: oppositeOrder,
         totalCases: courtCases.totalCases,
-        pageNum: parseInt(validatedPageNum, 10) || 1,
-        resultsPerPage: parseInt(validatedMaxPageItems, 10) || 5,
+        page: parseInt(validatedPageNum, 10) || 1,
+        casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,
         courtCaseTypes: courtCaseTypes,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         courtName: validatedCourtName ? validatedCourtName : null,
@@ -126,8 +126,8 @@ const Home: NextPage<Props> = ({
   user,
   courtCases,
   order,
-  pageNum,
-  resultsPerPage,
+  page,
+  casesPerPage,
   totalCases,
   courtCaseTypes,
   keywords,
@@ -178,11 +178,9 @@ const Home: NextPage<Props> = ({
           />
         }
         courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
-        paginationTop={
-          <Pagination pageNum={pageNum} casesPerPage={resultsPerPage} totalCases={totalCases} name="top" />
-        }
+        paginationTop={<Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />}
         paginationBottom={
-          <Pagination pageNum={pageNum} casesPerPage={resultsPerPage} totalCases={totalCases} name="bottom" />
+          <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
         }
       />
     </Layout>

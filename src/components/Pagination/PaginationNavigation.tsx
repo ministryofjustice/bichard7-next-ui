@@ -1,35 +1,50 @@
-import Link from "next/link"
 import { useRouter } from "next/router"
-import { UrlObject } from "url"
 import { generatePageLinks } from "./generatePageLinks"
 
 interface RelativeNavigationProps {
   className: string
   label: string
-  link: UrlObject
+  linkedPageNum: number
 }
 
-const RelativeNavigation: React.FC<RelativeNavigationProps> = ({ className, label, link }: RelativeNavigationProps) => (
-  <li className={`moj-pagination__item moj-pagination__item--${className}`}>
-    <Link className="moj-pagination__link" href={link}>
-      {label}
-      <span className="govuk-visually-hidden">{" page"}</span>
-    </Link>
-  </li>
-)
+const RelativeNavigation: React.FC<RelativeNavigationProps> = ({
+  className,
+  label,
+  linkedPageNum
+}: RelativeNavigationProps) => {
+  const { query, basePath } = useRouter()
+
+  return (
+    <li className={`moj-pagination__item moj-pagination__item--${className}`}>
+      <a
+        className="moj-pagination__link"
+        href={`${basePath}/?${new URLSearchParams({ ...query, page: linkedPageNum.toString() })}`}
+      >
+        {label}
+        <span className="govuk-visually-hidden">{" page"}</span>
+      </a>
+    </li>
+  )
+}
 
 interface PageNumProps {
   pageNum: number
   totalPages: number
   className?: string
-  link?: UrlObject
+  linkedPageNum?: number
 }
 
-const PageNum: React.FC<PageNumProps> = ({ pageNum, totalPages, className, link }: PageNumProps) => {
-  const label = !!link ? (
-    <Link className="moj-pagination__link" href={link} aria-label={`Page ${pageNum} of ${totalPages}`}>
+const PageNum: React.FC<PageNumProps> = ({ pageNum, totalPages, className, linkedPageNum }: PageNumProps) => {
+  const { query, basePath } = useRouter()
+
+  const label = !!linkedPageNum ? (
+    <a
+      className="moj-pagination__link"
+      href={`${basePath}/?${new URLSearchParams({ ...query, page: linkedPageNum.toString() })}`}
+      aria-label={`Page ${pageNum} of ${totalPages}`}
+    >
       {pageNum}
-    </Link>
+    </a>
   ) : (
     pageNum
   )
@@ -49,14 +64,13 @@ const PaginationNavigation: React.FC<PaginationNavigationProps> = ({
   totalPages,
   name
 }: PaginationNavigationProps) => {
-  const { query } = useRouter()
   const pageLinks = generatePageLinks(pageNum, totalPages)
 
   return (
     <nav
       className={"moj-pagination"}
       aria-label={`Pagination navigation ${name}`}
-      id={`pagination-navigation${name ? "-" + name : ""}`}
+      id={`pagination-navigation${name && "-" + name}`}
     >
       <ul className="moj-pagination__list">
         {pageLinks.map((pageLink, index) => {
@@ -65,7 +79,7 @@ const PaginationNavigation: React.FC<PaginationNavigationProps> = ({
               <RelativeNavigation
                 className={"prev"}
                 label="Previous"
-                link={{ query: { ...query, pageNum: pageLink.destinationPage } }}
+                linkedPageNum={pageLink.destinationPage || 1}
                 key={index}
               />
             )
@@ -74,7 +88,7 @@ const PaginationNavigation: React.FC<PaginationNavigationProps> = ({
               <RelativeNavigation
                 className={"next"}
                 label="Next"
-                link={{ query: { ...query, pageNum: pageLink.destinationPage } }}
+                linkedPageNum={pageLink.destinationPage || totalPages}
                 key={index}
               />
             )
@@ -94,7 +108,7 @@ const PaginationNavigation: React.FC<PaginationNavigationProps> = ({
               <PageNum
                 pageNum={pageLink.label}
                 totalPages={totalPages}
-                link={{ query: { ...query, pageNum: pageLink.destinationPage } }}
+                linkedPageNum={pageLink.destinationPage}
                 key={index}
               />
             )

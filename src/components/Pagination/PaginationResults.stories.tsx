@@ -10,7 +10,7 @@ export default {
 
 export const OnePage: ComponentStory<typeof PaginationResults> = () => (
   <div data-testid="pagination-results">
-    <PaginationResults pageNum={1} totalCases={5} resultsPerPage={10} />
+    <PaginationResults pageNum={1} totalCases={5} casesPerPage={10} />
   </div>
 )
 OnePage.play = async ({ canvasElement }) => {
@@ -20,7 +20,7 @@ OnePage.play = async ({ canvasElement }) => {
 
 export const PageOneOfMany: ComponentStory<typeof PaginationResults> = () => (
   <div data-testid="pagination-results">
-    <PaginationResults pageNum={1} totalCases={42} resultsPerPage={10} />
+    <PaginationResults pageNum={1} totalCases={42} casesPerPage={10} />
   </div>
 )
 PageOneOfMany.play = async ({ canvasElement }) => {
@@ -30,7 +30,7 @@ PageOneOfMany.play = async ({ canvasElement }) => {
 
 export const MidRange: ComponentStory<typeof PaginationResults> = () => (
   <div data-testid="pagination-results">
-    <PaginationResults pageNum={3} totalCases={42} resultsPerPage={10} />
+    <PaginationResults pageNum={3} totalCases={42} casesPerPage={10} />
   </div>
 )
 MidRange.play = async ({ canvasElement }) => {
@@ -40,7 +40,7 @@ MidRange.play = async ({ canvasElement }) => {
 
 export const LastPageFull: ComponentStory<typeof PaginationResults> = () => (
   <div data-testid="pagination-results">
-    <PaginationResults pageNum={5} totalCases={50} resultsPerPage={10} />
+    <PaginationResults pageNum={5} totalCases={50} casesPerPage={10} />
   </div>
 )
 LastPageFull.play = async ({ canvasElement }) => {
@@ -50,7 +50,7 @@ LastPageFull.play = async ({ canvasElement }) => {
 
 export const LastPagePartial: ComponentStory<typeof PaginationResults> = () => (
   <div data-testid="pagination-results">
-    <PaginationResults pageNum={5} totalCases={42} resultsPerPage={10} />
+    <PaginationResults pageNum={5} totalCases={42} casesPerPage={10} />
   </div>
 )
 LastPagePartial.play = async ({ canvasElement }) => {
