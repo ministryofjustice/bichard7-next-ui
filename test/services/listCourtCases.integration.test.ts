@@ -651,6 +651,47 @@ describe("listCourtCases", () => {
     })
   })
 
+  describe.only("filter by cases allocated to me", () => {
+    it("should list cases that are locked to me", async () => {
+      const orgCode = "36FPA1"
+
+      await insertCourtCasesWithFields([
+        { errorLockedByUsername: "User1", triggerLockedByUsername: "User1", orgForPoliceFilter: orgCode },
+        { errorLockedByUsername: "User2", triggerLockedByUsername: "User2", orgForPoliceFilter: orgCode },
+        { errorLockedByUsername: "User3", triggerLockedByUsername: "User3", orgForPoliceFilter: orgCode }
+      ])
+
+      const resultBefore = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100"
+      })
+      expect(isError(resultBefore)).toBe(false)
+      const { result: casesAscBefore, totalCases: totalCasesAscBefore } = resultBefore as ListCourtCaseResult
+
+      expect(casesAscBefore).toHaveLength(3)
+      expect(casesAscBefore[0].errorLockedByUsername).toStrictEqual("User1")
+      expect(casesAscBefore[0].triggerLockedByUsername).toStrictEqual("User1")
+      expect(casesAscBefore[1].errorLockedByUsername).toStrictEqual("User2")
+      expect(casesAscBefore[1].triggerLockedByUsername).toStrictEqual("User2")
+      expect(casesAscBefore[2].errorLockedByUsername).toStrictEqual("User3")
+      expect(casesAscBefore[2].triggerLockedByUsername).toStrictEqual("User3")
+      expect(totalCasesAscBefore).toEqual(3)
+
+      const resultAfter = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        allocatedToUserName: "User1"
+      })
+      expect(isError(resultAfter)).toBe(false)
+      const { result: casesAscAfter, totalCases: totalCasesAscAfter } = resultAfter as ListCourtCaseResult
+
+      expect(casesAscAfter).toHaveLength(1)
+      expect(casesAscAfter[0].errorLockedByUsername).toStrictEqual("User1")
+      expect(casesAscAfter[0].triggerLockedByUsername).toStrictEqual("User1")
+      expect(totalCasesAscAfter).toEqual(1)
+    })
+  })
+
   describe("filter by court name", () => {
     it("should list cases when there is a case insensitive match", async () => {
       const orgCode = "01FPA1"
