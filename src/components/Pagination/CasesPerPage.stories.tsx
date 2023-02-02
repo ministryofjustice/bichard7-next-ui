@@ -10,7 +10,7 @@ export default {
 
 export const TenPerPage: ComponentStory<typeof CasesPerPage> = () => (
   <div data-testid="cases-per-page">
-    <CasesPerPage options={[5, 10, 25, 100]} selected={10} />
+    <CasesPerPage options={[5, 10, 25, 100]} selected={10} pageNum={1} casesPerPage={10} />
   </div>
 )
 TenPerPage.play = async ({ canvasElement }) => {

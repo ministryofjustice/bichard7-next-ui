@@ -5,6 +5,8 @@ import { createUseStyles } from "react-jss"
 interface Props {
   options: number[]
   selected: number
+  pageNum: number
+  casesPerPage: number
 }
 
 const useStyles = createUseStyles({
@@ -13,7 +15,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const CasesPerPage: React.FC<Props> = ({ options, selected }: Props) => {
+const CasesPerPage: React.FC<Props> = ({ options, selected, pageNum, casesPerPage }: Props) => {
   const router = useRouter()
   const classes = useStyles()
 
@@ -22,8 +24,12 @@ const CasesPerPage: React.FC<Props> = ({ options, selected }: Props) => {
       {"View "}
       <SelectInput
         onChange={(event) => {
-          const target = event.target.value
-          router.push({ query: { maxPageItems: target } })
+          const newCasesPerPage = event.target.value
+
+          const firstCaseIndex = (pageNum - 1) * casesPerPage + 1
+          const newPageNum = Math.floor(firstCaseIndex / parseInt(newCasesPerPage, 10)) + 1
+
+          router.push({ query: { ...router.query, maxPageItems: newCasesPerPage, page: newPageNum } })
         }}
         value={selected}
         className={`cases-per-page ${classes["cases-per-page-picker"]}`}
