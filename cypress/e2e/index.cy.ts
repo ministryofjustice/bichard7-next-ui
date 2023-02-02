@@ -557,6 +557,22 @@ describe("Case list", () => {
         cy.get("tr").contains("Case00020").should("exist")
         cy.get("tr").contains("Case00024").should("exist")
       })
+
+      it("keeps other filters applied when changing pages", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("#filter-button").click()
+        cy.get("#urgent").click()
+        cy.get("#search").click()
+
+        cy.get(".moj-filter-tags a.moj-filter__tag").contains("Urgent").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("Next").click()
+        cy.get(".moj-filter-tags a.moj-filter__tag").contains("Urgent").should("exist")
+      })
     })
   })
 })
