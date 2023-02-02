@@ -575,7 +575,7 @@ describe("Case list", () => {
     })
 
     describe("Filtering cases allocated to me", () => {
-      it.only("Should filter cases that I hold the trigger lock for", () => {
+      it("Should filter cases that I hold the trigger lock for", () => {
         cy.task("insertCourtCasesWithFields", [
           { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: "011111" },
           { orgForPoliceFilter: "011111" },
