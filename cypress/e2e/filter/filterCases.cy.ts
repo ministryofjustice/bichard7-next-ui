@@ -427,12 +427,12 @@ describe("Case list", () => {
       // Tests for all cases in 2022
       cy.get("button#filter-button").click()
       cy.get("#custom-date-range").click()
-      cy.get("#from-inputted-date-day").click().type("01")
-      cy.get("#from-inputted-date-month").click().type("01")
-      cy.get("#from-inputted-date-year").click().type("2022")
-      cy.get("#to-inputted-date-day").click().type("31")
-      cy.get("#to-inputted-date-month").click().type("12")
-      cy.get("#to-inputted-date-year").click().type("2022")
+      cy.get("#fromDay").click().type("01")
+      cy.get("#fromMonth").click().type("01")
+      cy.get("#fromYear").click().type("2022")
+      cy.get("#toDay").click().type("31")
+      cy.get("#toMonth").click().type("12")
+      cy.get("#toYear").click().type("2022")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 5)
