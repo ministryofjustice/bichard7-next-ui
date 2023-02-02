@@ -138,7 +138,9 @@ const CourtCaseFilter: React.FC<Props> = ({
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
       return { value: courtCaseType, state: "Applied" }
     }),
-    myCasesFilter: myCases ? { value: "View cases allocated to me", state: "Applied", label: "Cases locked to me" } : {}
+    myCasesFilter: !myCases
+      ? { value: "View cases allocated to me", state: "Applied", label: "Cases locked to me" }
+      : {}
   }
   const [state, dispatch] = useReducer(reducer, initialFilterState)
 
