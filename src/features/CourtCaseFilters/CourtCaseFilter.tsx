@@ -6,7 +6,7 @@ import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import { CaseState, MyCaseState, Reason } from "types/CaseListQueryParams"
+import { CaseState, Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
@@ -24,7 +24,7 @@ interface Props {
   urgency: string | null
   locked: string | null
   caseState: CaseState | null
-  myCaseState: MyCaseState | null
+  myCaseState: string | null
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -279,7 +279,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                       dispatch({
                         method: "add",
                         type: "myCases",
-                        value: event.currentTarget.checked ? "View cases allocated to me" : undefined
+                        value: event.currentTarget.checked ? "View cases allocated to me" : ""
                       })
                     }}
                   ></input>
