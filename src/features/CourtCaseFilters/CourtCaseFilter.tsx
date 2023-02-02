@@ -24,7 +24,7 @@ interface Props {
   urgency: string | null
   locked: string | null
   caseState: CaseState | null
-  myCases: string | null
+  myCases: boolean
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -138,8 +138,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
       return { value: courtCaseType, state: "Applied" }
     }),
-    myCasesFilter:
-      myCases !== null ? { value: "View cases allocated to me", state: "Applied", label: "Cases locked to me" } : {}
+    myCasesFilter: myCases ? { value: "View cases allocated to me", state: "Applied", label: "Cases locked to me" } : {}
   }
   const [state, dispatch] = useReducer(reducer, initialFilterState)
 

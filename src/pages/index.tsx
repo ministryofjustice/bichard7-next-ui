@@ -164,7 +164,7 @@ const Home: NextPage<Props> = ({
             urgency={urgent}
             locked={locked}
             caseState={caseState}
-            myCases={myCases}
+            myCases={true}
           />
         }
         appliedFilters={
