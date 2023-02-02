@@ -666,16 +666,16 @@ describe("listCourtCases", () => {
         maxPageItems: "100"
       })
       expect(isError(resultBefore)).toBe(false)
-      const { result: casesAscBefore, totalCases: totalCasesAscBefore } = resultBefore as ListCourtCaseResult
+      const { result: casesBefore, totalCases: totalCasesBefore } = resultBefore as ListCourtCaseResult
 
-      expect(casesAscBefore).toHaveLength(3)
-      expect(casesAscBefore[0].errorLockedByUsername).toStrictEqual("User1")
-      expect(casesAscBefore[0].triggerLockedByUsername).toStrictEqual("User1")
-      expect(casesAscBefore[1].errorLockedByUsername).toStrictEqual("User2")
-      expect(casesAscBefore[1].triggerLockedByUsername).toStrictEqual("User2")
-      expect(casesAscBefore[2].errorLockedByUsername).toStrictEqual("User3")
-      expect(casesAscBefore[2].triggerLockedByUsername).toStrictEqual("User3")
-      expect(totalCasesAscBefore).toEqual(3)
+      expect(casesBefore).toHaveLength(3)
+      expect(casesBefore[0].errorLockedByUsername).toStrictEqual("User1")
+      expect(casesBefore[0].triggerLockedByUsername).toStrictEqual("User1")
+      expect(casesBefore[1].errorLockedByUsername).toStrictEqual("User2")
+      expect(casesBefore[1].triggerLockedByUsername).toStrictEqual("User2")
+      expect(casesBefore[2].errorLockedByUsername).toStrictEqual("User3")
+      expect(casesBefore[2].triggerLockedByUsername).toStrictEqual("User3")
+      expect(totalCasesBefore).toEqual(3)
 
       const resultAfter = await listCourtCases(dataSource, {
         forces: [orgCode],
@@ -683,12 +683,12 @@ describe("listCourtCases", () => {
         allocatedToUserName: "User1"
       })
       expect(isError(resultAfter)).toBe(false)
-      const { result: casesAscAfter, totalCases: totalCasesAscAfter } = resultAfter as ListCourtCaseResult
+      const { result: casesAfter, totalCases: totalCasesAfter } = resultAfter as ListCourtCaseResult
 
-      expect(casesAscAfter).toHaveLength(1)
-      expect(casesAscAfter[0].errorLockedByUsername).toStrictEqual("User1")
-      expect(casesAscAfter[0].triggerLockedByUsername).toStrictEqual("User1")
-      expect(totalCasesAscAfter).toEqual(1)
+      expect(casesAfter).toHaveLength(1)
+      expect(casesAfter[0].errorLockedByUsername).toStrictEqual("User1")
+      expect(casesAfter[0].triggerLockedByUsername).toStrictEqual("User1")
+      expect(totalCasesAfter).toEqual(1)
     })
   })
 
