@@ -3,7 +3,6 @@ import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
-import { removeFilterChip } from "./filterChips.cy"
 
 function showFilters() {
   cy.visit("/bichard")
@@ -577,22 +576,6 @@ describe("Case list", () => {
 
     describe("Filtering cases allocated to me", () => {
       it.only("Should filter cases that I hold the trigger lock for", () => {
-        // cy.task("insertCourtCasesWithFields", [
-        //   {
-        //     errorLockedByUsername: "Bichard01",
-        //     triggerLockedByUsername: "Bichard01"
-        //   },
-        //   { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01" },
-        //   {
-        //     errorLockedByUsername: "Bichard02",
-        //     triggerLockedByUsername: "Bichard02"
-        //   },
-        //   {
-        //     errorLockedByUsername: "Bichard03",
-        //     triggerLockedByUsername: "Bichard03"
-        //   }
-        // ])
-
         cy.task("insertCourtCasesWithFields", [
           { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: "011111" },
           { orgForPoliceFilter: "011111" },
@@ -605,12 +588,12 @@ describe("Case list", () => {
         cy.get("#my-cases-filter").click()
         cy.contains("Selected filters")
         cy.contains("My cases")
-        cy.contains("Case00000")
-        confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002", "Case00003"])
-        // removeFilterChip()
-        // cy.get("#my-cases-filter").should("not.be.checked")
 
-        confirmMultipleFieldsDisplayed([])
+        cy.get("#search").click()
+
+        cy.contains("Case00000")
+        cy.contains("Bichard01")
+        confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002", "Case00003"])
       })
     })
   })
