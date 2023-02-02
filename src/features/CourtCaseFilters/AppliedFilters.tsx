@@ -2,7 +2,7 @@ import FilterTag from "components/FilterTag/FilterTag"
 import If from "components/If"
 import { useRouter } from "next/router"
 import { Reason } from "types/CaseListQueryParams"
-import { caseStateLabels, myCaseStateFilters } from "utils/caseStateFilters"
+import { caseStateLabels, myCasesFilters } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
     urgency?: string | null
     locked?: string | null
     caseState?: string | null
-    myCaseState?: string | null
+    myCases?: string | null
   }
 }
 
@@ -33,7 +33,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.dateRange ||
     !!filters.locked ||
     !!filters.caseState ||
-    !!filters.myCaseState
+    !!filters.myCases
 
   const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
     deleteQueryParamsByName(["pageNum"], query)
@@ -101,11 +101,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </If>
-          <If condition={!!filters.myCaseState}>
+          <If condition={!!filters.myCases}>
             <li>
               <FilterTag
-                tag={myCaseStateFilters ?? ""}
-                href={removeQueryParamFromPath({ myCases: filters.myCaseState ?? "" })}
+                tag={myCasesFilters ?? ""}
+                href={removeQueryParamFromPath({ myCases: filters.myCases ?? "" })}
               />
             </li>
           </If>

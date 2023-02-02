@@ -36,7 +36,7 @@ interface Props {
   pageNum: number
   locked: string | null
   caseState: CaseState | null
-  myCaseState: string | null
+  myCases: string | null
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
@@ -75,7 +75,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLocked = validateQueryParams(locked) ? locked : undefined
     const validatedCaseState = caseStateFilters.includes(String(state)) ? (state as CaseState) : undefined
-    const validatedMyCaseState = validateQueryParams(myCases) ? currentUser.username : undefined
+    const validatedmyCases = validateQueryParams(myCases) ? currentUser.username : undefined
     const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
@@ -93,7 +93,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       courtDateRange: validatedDateRange,
       locked: lockedFilter,
       caseState: validatedCaseState,
-      allocatedToUserName: validatedMyCaseState
+      allocatedToUserName: validatedmyCases
     })
 
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
@@ -120,7 +120,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null,
-        myCaseState: validatedMyCaseState ? validatedMyCaseState : null
+        myCases: validatedmyCases ? validatedmyCases : null
       }
     }
   }
@@ -141,7 +141,7 @@ const Home: NextPage<Props> = ({
   urgent,
   locked,
   caseState,
-  myCaseState
+  myCases
 }: Props) => (
   <>
     <Head>
@@ -164,7 +164,7 @@ const Home: NextPage<Props> = ({
             urgency={urgent}
             locked={locked}
             caseState={caseState}
-            myCaseState={myCaseState}
+            myCases={myCases}
           />
         }
         appliedFilters={
@@ -179,7 +179,7 @@ const Home: NextPage<Props> = ({
               urgency: urgent,
               locked: locked,
               caseState: caseState,
-              myCaseState
+              myCases
             }}
           />
         }

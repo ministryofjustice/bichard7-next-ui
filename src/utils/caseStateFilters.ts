@@ -6,6 +6,6 @@ export const caseStateLabels: KeyValuePair<string, string> = {
 }
 
 const caseStateFilters: string[] = ["Unresolved and resolved", "Resolved"]
-export const myCaseStateFilters = "View cases allocated to me"
+export const myCasesFilters = "View cases allocated to me"
 
 export default caseStateFilters
