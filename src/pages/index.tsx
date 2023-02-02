@@ -57,6 +57,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       order,
       urgency,
       dateRange,
+      customDateFrom,
+      customDateTo,
       locked,
       state
     } = query

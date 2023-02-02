@@ -244,7 +244,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00002")
     })
 
-    it.only("Should display cases filtered for a named date range", () => {
+    it("Should display cases filtered for a named date range", () => {
       const force = "011111"
 
       const todayDate = new Date()
@@ -382,7 +382,69 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 5)
     })
 
-    it.only("Should not allow passing an invalid date range filter", () => {
+    it.only("Should display cases filtered for a custom date range", () => {
+      const force = "011111"
+
+      const todayDate = new Date()
+      const yesterdayDate = subDays(todayDate, 1)
+      const tomorrowDate = addDays(todayDate, 1)
+      const oneWeekAgoDate = subWeeks(todayDate, 1)
+      const oneWeekAndOneDayAgoDate = subDays(todayDate, 8)
+      const twoWeeksAgoDate = subWeeks(todayDate, 2)
+      const oneMonthAgoDate = subMonths(todayDate, 1)
+      const aLongTimeAgoDate = new Date("2001-09-26")
+
+      const dateFormatString = "dd/MM/yyyy"
+      const todayDateString = format(todayDate, dateFormatString)
+      const yesterdayDateString = format(yesterdayDate, dateFormatString)
+      const oneWeekAgoDateString = format(oneWeekAgoDate, dateFormatString)
+      const oneWeekAndOneDayAgoDateString = format(oneWeekAndOneDayAgoDate, dateFormatString)
+      const twoWeeksAgoDateString = format(twoWeeksAgoDate, dateFormatString)
+      const oneMonthAgoDateString = format(oneMonthAgoDate, dateFormatString)
+
+      const expectedThisWeekLabel = `This week (${oneWeekAgoDateString} - ${todayDateString})`
+      const expectedLastWeekLabel = `Last week (${twoWeeksAgoDateString} - ${oneWeekAgoDateString})`
+      const expectedThisMonthLabel = `This month (${oneMonthAgoDateString} - ${todayDateString})`
+
+      cy.task("insertCourtCasesWithFields", [
+        { courtDate: new Date("2023-01-1"), orgForPoliceFilter: force },
+        { courtDate: new Date("2023-02-1"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-12-1"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-11-15"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-11-2"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-10-30"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-10-15"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-10-1"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-09-15"), orgForPoliceFilter: force },
+        { courtDate: new Date("2021-12-15"), orgForPoliceFilter: force },
+        { courtDate: new Date("2021-02-10"), orgForPoliceFilter: force },
+        { courtDate: new Date("2020-05-30"), orgForPoliceFilter: force },
+        { courtDate: new Date("2019-05-10"), orgForPoliceFilter: force }
+      ])
+
+      cy.visit("/bichard")
+
+      // Tests for all cases in 2022
+      cy.get("button#filter-button").click()
+      cy.get("#custom-date-range").click()
+      cy.get("#from-inputted-date-day").click().type("01")
+      cy.get("#from-inputted-date-month").click().type("01")
+      cy.get("#from-inputted-date-year").click().type("2022")
+      cy.get("#to-inputted-date-day").click().type("31")
+      cy.get("#to-inputted-date-month").click().type("12")
+      cy.get("#to-inputted-date-year").click().type("2022")
+      cy.get("button#search").click()
+
+      cy.get("tr").not(":first").should("have.length", 5)
+      cy.findByText("Next page").should("exist")
+      cy.findByText("Next page").click()
+      cy.get("tr").not(":first").should("have.length", 2)
+
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").click({ force: true })
+      cy.get("tr").not(":first").should("have.length", 5)
+    })
+
+    it("Should not allow passing an invalid date range filter", () => {
       const force = "011111"
       cy.task("insertCourtCasesWithFields", [
         { courtDate: new Date(), orgForPoliceFilter: force },
