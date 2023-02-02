@@ -48,7 +48,7 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.lockedFilter.state = "Selected"
     } else if (action.type === "myCases") {
       newState.myCasesFilter.value = action.value
-      newState.myCasesFilter.label = action.value ? "Locked to me" : undefined
+      newState.myCasesFilter.label = action.value && "Locked to me"
       newState.myCasesFilter.state = "Selected"
     } else if (action.type === "reason") {
       // React might invoke our reducer more than once for a single event,
