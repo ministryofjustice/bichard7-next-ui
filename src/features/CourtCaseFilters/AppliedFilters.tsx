@@ -2,7 +2,7 @@ import FilterTag from "components/FilterTag/FilterTag"
 import If from "components/If"
 import { useRouter } from "next/router"
 import { Reason } from "types/CaseListQueryParams"
-import { caseStateLabels, myCasesFilters } from "utils/caseStateFilters"
+import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
 
 interface Props {
@@ -104,7 +104,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
           <If condition={!!filters.myCases}>
             <li>
               <FilterTag
-                tag={myCasesFilters ?? ""}
+                tag={"View cases allocated to me" ?? ""}
                 href={removeQueryParamFromPath({ myCases: filters.myCases ?? "" })}
               />
             </li>
