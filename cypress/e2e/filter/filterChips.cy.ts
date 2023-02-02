@@ -316,7 +316,7 @@ describe("Case list", () => {
       })
     })
 
-    it.only("Should display the 'Locked to me' filter chip when selected", () => {
+    it("Should display the 'Locked to me' filter chip when selected", () => {
       cy.get("#filter-button").click()
       cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").click()
 
