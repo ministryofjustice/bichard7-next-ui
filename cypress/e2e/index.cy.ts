@@ -418,7 +418,7 @@ describe("Case list", () => {
       })
     })
 
-    describe.only("Pagination", () => {
+    describe("Pagination", () => {
       it("should be accessible", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 

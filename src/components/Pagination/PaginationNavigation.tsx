@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { useRouter } from "next/router"
 import { generatePageLinks } from "./generatePageLinks"
 
@@ -12,17 +13,14 @@ const RelativeNavigation: React.FC<RelativeNavigationProps> = ({
   label,
   linkedPageNum
 }: RelativeNavigationProps) => {
-  const { query, basePath } = useRouter()
+  const { query } = useRouter()
 
   return (
     <li className={`moj-pagination__item moj-pagination__item--${className}`}>
-      <a
-        className="moj-pagination__link"
-        href={`${basePath}/?${new URLSearchParams({ ...query, page: linkedPageNum.toString() })}`}
-      >
+      <Link className="moj-pagination__link" href={{ query: { ...query, page: linkedPageNum } }}>
         {label}
         <span className="govuk-visually-hidden">{" page"}</span>
-      </a>
+      </Link>
     </li>
   )
 }
@@ -35,16 +33,16 @@ interface PageNumProps {
 }
 
 const PageNum: React.FC<PageNumProps> = ({ pageNum, totalPages, className, linkedPageNum }: PageNumProps) => {
-  const { query, basePath } = useRouter()
+  const { query } = useRouter()
 
   const label = !!linkedPageNum ? (
-    <a
+    <Link
       className="moj-pagination__link"
-      href={`${basePath}/?${new URLSearchParams({ ...query, page: linkedPageNum.toString() })}`}
+      href={{ query: { ...query, page: linkedPageNum } }}
       aria-label={`Page ${pageNum} of ${totalPages}`}
     >
       {pageNum}
-    </a>
+    </Link>
   ) : (
     pageNum
   )
