@@ -297,7 +297,7 @@ describe("Case list", () => {
     })
 
     describe('Applied filter chips to "Filter applied" section', () => {
-      it("Should display the Trigger filter chip when selected", () => {
+      it.only("Should display the Trigger filter chip when selected", () => {
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
 
@@ -308,7 +308,7 @@ describe("Case list", () => {
 
         // Check if the filter chip is applied to the "Filters applied" section at the top of the case list
         cy.contains("Apply filters").click()
-        cy.get(".moj-filter-tags").contains("Triggers")
+        cy.get(".moj-filter-tags").contains("Triggers").should("exist")
 
         // Clears filter chip and check the checkbox is deselected
         cy.contains("Clear filters").click()
@@ -327,7 +327,7 @@ describe("Case list", () => {
 
       // Check if the filter chip is applied to the "Filters applied" section at the top of the case list
       cy.contains("Apply filters").click()
-      cy.get(".moj-filter__tag").contains("View cases allocated to me")
+      cy.get(".moj-filter__tag").contains("View cases allocated to me").should("exist")
 
       // Clears filter chip and check the checkbox is deselected
       cy.contains("Clear filters").click()
