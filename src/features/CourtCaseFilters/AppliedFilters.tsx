@@ -104,7 +104,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
           <If condition={!!filters.myCases}>
             <li>
               <FilterTag
-                tag={"View cases allocated to me" ?? ""}
+                tag={"Cases locked to me" ?? ""}
                 href={removeQueryParamFromPath({ myCases: filters.myCases ?? "" })}
               />
             </li>

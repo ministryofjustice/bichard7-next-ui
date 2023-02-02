@@ -48,7 +48,7 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.lockedFilter.state = "Selected"
     } else if (action.type === "myCases") {
       newState.myCasesFilter.value = action.value
-      newState.myCasesFilter.label = action.value && "Locked to me"
+      newState.myCasesFilter.label = action.value && "Cases locked to me"
       newState.myCasesFilter.state = "Selected"
     } else if (action.type === "reason") {
       // React might invoke our reducer more than once for a single event,
@@ -138,7 +138,8 @@ const CourtCaseFilter: React.FC<Props> = ({
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
       return { value: courtCaseType, state: "Applied" }
     }),
-    myCasesFilter: myCases !== null ? { value: myCases, state: "Applied", label: myCases } : {}
+    myCasesFilter:
+      myCases !== null ? { value: "View cases allocated to me", state: "Applied", label: "Cases locked to me" } : {}
   }
   const [state, dispatch] = useReducer(reducer, initialFilterState)
 
