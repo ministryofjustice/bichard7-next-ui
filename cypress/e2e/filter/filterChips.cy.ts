@@ -296,7 +296,7 @@ describe("Case list", () => {
     })
 
     describe('Applied filter chips to "Filter applied" section', () => {
-      it.only("Should display the Trigger filter chip when selected", () => {
+      it("Should display the Trigger filter chip when selected", () => {
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
 
