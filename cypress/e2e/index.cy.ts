@@ -305,11 +305,32 @@ describe("Case list", () => {
         cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0015 - Personal details changed")
       })
 
-      it("can display cases ordered by urgency", () => {
+      it.only("can display cases ordered by urgency", () => {
         const force = "011111"
         cy.task(
           "insertCourtCasesWithFields",
-          [false, false, true, false, true, true, true, false, true, false, true, false, false, false, false, true, true, false, true, true].map((urgency) => ({
+          [
+            false,
+            false,
+            true,
+            false,
+            true,
+            true,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            true,
+            true
+          ].map((urgency) => ({
             isUrgent: urgency,
             orgForPoliceFilter: force
           }))
@@ -318,8 +339,9 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("#is-urgent-sort").click()
         cy.get(".cases-per-page").first().select("10")
+        cy.location("search").should("include", "maxPageItems=10")
+        cy.get("#is-urgent-sort").click()
 
         cy.get("tr")
           .not(":first")
@@ -327,6 +349,8 @@ describe("Case list", () => {
             cy.wrap(row).contains(`Urgent`).should("not.exist")
           })
 
+        cy.get(".cases-per-page").first().select("10")
+        cy.location("search").should("include", "maxPageItems=10")
         cy.get("#is-urgent-sort").click()
 
         cy.get("tr")
