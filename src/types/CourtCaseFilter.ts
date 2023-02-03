@@ -10,7 +10,7 @@ export type FilterAction =
   | { method: FilterMethod; type: "locked"; value: boolean }
   | { method: FilterMethod; type: "reason"; value: Reason }
   | { method: FilterMethod; type: "caseState"; value: CaseState }
-  | { method: FilterMethod; type: "myCases"; value: string }
+  | { method: FilterMethod; type: "myCases"; value: boolean }
 
 export type FilterType = "urgency" | "date" | "locked" | "reason"
 export type FilterMethod = "add" | "remove"
@@ -62,7 +62,7 @@ export type Filter = {
     state: FilterState
   }[]
   myCasesFilter: {
-    value?: string
+    value?: boolean
     state?: FilterState
     label?: string
   }
