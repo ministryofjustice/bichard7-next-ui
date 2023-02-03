@@ -75,7 +75,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLocked = validateQueryParams(locked) ? locked : undefined
     const validatedCaseState = caseStateFilters.includes(String(state)) ? (state as CaseState) : undefined
-    const validatedmyCases = validateQueryParams(myCases) ? currentUser.username : undefined
+    const validatedMyCases = validateQueryParams(myCases) ? currentUser.username : undefined
     const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
@@ -93,7 +93,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       courtDateRange: validatedDateRange,
       locked: lockedFilter,
       caseState: validatedCaseState,
-      allocatedToUserName: validatedmyCases
+      allocatedToUserName: validatedMyCases
     })
 
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
@@ -120,7 +120,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null,
-        myCases: !!validatedmyCases
+        myCases: !!validatedMyCases
       }
     }
   }
