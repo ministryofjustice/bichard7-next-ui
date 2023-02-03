@@ -36,7 +36,7 @@ interface Props {
   pageNum: number
   locked: string | null
   caseState: CaseState | null
-  myCases: string | null
+  myCases: boolean
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
@@ -120,7 +120,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null,
-        myCases: validatedmyCases ? validatedmyCases : null
+        myCases: !!validatedmyCases
       }
     }
   }
@@ -164,7 +164,7 @@ const Home: NextPage<Props> = ({
             urgency={urgent}
             locked={locked}
             caseState={caseState}
-            myCases={true}
+            myCases={myCases}
           />
         }
         appliedFilters={
