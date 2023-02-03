@@ -91,33 +91,6 @@ describe("Case list", () => {
         cy.findByText(`Case00004`).should("exist")
       })
 
-      it("should paginate buttons", () => {
-        cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
-
-        cy.findByText("Previous page").should("not.exist")
-        cy.findByText("Next page").should("exist")
-        // paginate next page until the last page
-        ;[...Array(8).keys()].forEach(() => {
-          cy.findByText("Next page").click()
-          cy.findByText("Previous page").should("exist")
-          cy.findByText("Next page").should("exist")
-        })
-        cy.findByText("Next page").click()
-        cy.findByText("Previous page").should("exist")
-        cy.findByText("Next page").should("not.exist")
-        // paginate previous page until the first page
-        ;[...Array(8).keys()].forEach(() => {
-          cy.findByText("Previous page").click()
-          cy.findByText("Previous page").should("exist")
-          cy.findByText("Next page").should("exist")
-        })
-        cy.findByText("Previous page").click()
-        cy.findByText("Previous page").should("not.exist")
-        cy.findByText("Next page").should("exist")
-      })
-
       it("should display a case for the user's org", () => {
         cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
         cy.login("bichard01@example.com", "password")
@@ -336,7 +309,28 @@ describe("Case list", () => {
         const force = "011111"
         cy.task(
           "insertCourtCasesWithFields",
-          [false, false, true, false, true, true, false, true, false, true].map((urgency) => ({
+          [
+            false,
+            false,
+            true,
+            false,
+            true,
+            true,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            true,
+            true
+          ].map((urgency) => ({
             isUrgent: urgency,
             orgForPoliceFilter: force
           }))
@@ -345,6 +339,8 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
+        cy.get(".cases-per-page").first().select("10")
+        cy.location("search").should("include", "maxPageItems=10")
         cy.get("#is-urgent-sort").click()
 
         cy.get("tr")
@@ -353,6 +349,8 @@ describe("Case list", () => {
             cy.wrap(row).contains(`Urgent`).should("not.exist")
           })
 
+        cy.get(".cases-per-page").first().select("10")
+        cy.location("search").should("include", "maxPageItems=10")
         cy.get("#is-urgent-sort").click()
 
         cy.get("tr")
@@ -442,6 +440,167 @@ describe("Case list", () => {
         cy.get("tbody td:nth-child(5)").each((element, index) => {
           cy.wrap(element).should("have.text", `Case0000${descendingOrder[index]}`)
         })
+      })
+    })
+
+    describe("Pagination", () => {
+      it("should be accessible", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.injectAxe()
+
+        // Wait for the page to fully load
+        cy.get("h1")
+
+        cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
+      })
+
+      it("lets users select how many cases to show per page", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("tbody tr").should("have.length", 25)
+        cy.get("tr").contains("Case00000").should("exist")
+        cy.get("tr").contains("Case00024").should("exist")
+
+        cy.get(".cases-per-page").first().select("10")
+        cy.get("tbody tr").should("have.length", 10)
+
+        cy.get(".cases-per-page").first().select("50")
+        cy.get("tbody tr").should("have.length", 50)
+
+        cy.get(".cases-per-page").first().select("100")
+        cy.get("tbody tr").should("have.length", 100)
+
+        cy.get(".cases-per-page").first().select("25")
+        // Navigating to a different page should keep the same page size
+        cy.get(".moj-pagination__item").contains("Next").first().click()
+        cy.get("tbody tr").should("have.length", 25)
+        cy.get("tr").contains("Case00025").should("exist")
+        cy.get("tr").contains("Case00049").should("exist")
+
+        cy.get(".cases-per-page").first().select("10")
+        cy.get("tbody tr").should("have.length", 10)
+      })
+
+      it("keeps roughly the same position in the case list when changing page size", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get(".cases-per-page").first().select("25")
+        cy.get("tbody tr").should("have.length", 25)
+
+        cy.get(".moj-pagination__item").contains("Next").first().click()
+        cy.get("tbody tr").should("have.length", 25)
+        cy.get("tr").contains("Case00025").should("exist")
+
+        cy.get(".cases-per-page").first().select("10")
+        cy.get("tbody tr").should("have.length", 10)
+        cy.get("tr").contains("Case00025").should("exist")
+      })
+
+      it("doesn't show navigation options when there is only one page", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get(".moj-pagination__list li").should("not.exist")
+      })
+
+      it("has correct pagination information when there is only one page", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 1 to 3 of 3 cases")
+      })
+
+      it("lets users navigate back and forth between pages using the page numbers", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 250 cases")
+        cy.get("tr").contains("Case00000").should("exist")
+        cy.get("tr").contains("Case00024").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("2").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("tr").contains("Case00025").should("exist")
+        cy.get("tr").contains("Case00049").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("10").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 226 to 250 of 250 cases")
+        cy.get("tr").contains("Case00225").should("exist")
+        cy.get("tr").contains("Case00249").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("9").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 201 to 225 of 250 cases")
+        cy.get("tr").contains("Case00200").should("exist")
+        cy.get("tr").contains("Case00224").should("exist")
+      })
+
+      it("lets users navigate back and forth between pages using the next and previous arrows", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 250 cases")
+        cy.get("tr").contains("Case00000").should("exist")
+        cy.get("tr").contains("Case00024").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("Next").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("tr").contains("Case00025").should("exist")
+        cy.get("tr").contains("Case00049").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("Next").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 51 to 75 of 250 cases")
+        cy.get("tr").contains("Case00050").should("exist")
+        cy.get("tr").contains("Case00074").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("Previous").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("tr").contains("Case00025").should("exist")
+        cy.get("tr").contains("Case00049").should("exist")
+      })
+
+      it("has correct pagination information on page 5 out of 10", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard?page=5")
+
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 101 to 125 of 250 cases")
+        cy.get("tr").contains("Case00100").should("exist")
+        cy.get("tr").contains("Case00124").should("exist")
+      })
+
+      it("keeps other filters applied when changing pages", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("#filter-button").click()
+        cy.get("#urgent").click()
+        cy.get("#search").click()
+
+        cy.get(".moj-filter-tags a.moj-filter__tag").contains("Urgent").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("Next").click()
+        cy.get(".moj-filter-tags a.moj-filter__tag").contains("Urgent").should("exist")
       })
     })
   })
