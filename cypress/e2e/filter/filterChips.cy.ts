@@ -327,11 +327,13 @@ describe("Case list", () => {
       // Check if the filter chip is applied to the "Filters applied" section at the top of the case list
       cy.contains("Apply filters").click()
       cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist")
+      cy.get("#filter-button").contains("Show filter").click()
+      cy.get("#my-cases-filter").should("be.checked")
 
       // Clears filter chip and check the checkbox is deselected
       cy.contains("Clear filters").click()
-      cy.get("#filter-button").click()
-      cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").should("not.be.checked")
+      cy.get("#filter-button").contains("Show filter").click()
+      cy.get("#my-cases-filter").should("not.be.checked")
     })
 
     it("Should apply the 'Locked to me' filter chips then remove this chips to the original state", () => {
