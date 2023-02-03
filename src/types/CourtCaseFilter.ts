@@ -7,11 +7,12 @@ export type FilterAction =
   | { method: FilterMethod; type: "ptiurn"; value: string }
   | { method: FilterMethod; type: "urgency"; value: boolean }
   | { method: FilterMethod; type: "date"; value: string }
+  | { method: FilterMethod; type: "customDate"; value: string }
   | { method: FilterMethod; type: "locked"; value: boolean }
   | { method: FilterMethod; type: "reason"; value: Reason }
   | { method: FilterMethod; type: "caseState"; value: CaseState }
 
-export type FilterType = "urgency" | "date" | "locked" | "reason"
+export type FilterType = "urgency" | "date" | "locked" | "reason" | "customDate"
 export type FilterMethod = "add" | "remove"
 export type FilterValue = boolean | string | Reason
 export type FilterState = "Selected" | "Applied"
@@ -22,6 +23,11 @@ export type Filter = {
     label?: string
   }
   dateFilter: {
+    value?: string
+    state?: FilterState
+    label?: string
+  }
+  customDateFilter: {
     value?: string
     state?: FilterState
     label?: string

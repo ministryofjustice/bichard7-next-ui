@@ -4,6 +4,7 @@ const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
   return (
     [
       state.dateFilter,
+      state.customDateFilter,
       state.lockedFilter,
       state.urgentFilter,
       state.caseStateFilter,

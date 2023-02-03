@@ -23,6 +23,7 @@ interface Props {
   ptiurn: string | null
   courtCaseTypes: Reason[]
   dateRange: string | null
+  customDateRange: string | null
   urgency: string | null
   locked: string | null
   caseState: CaseState | null
@@ -39,6 +40,10 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.dateFilter.value = action.value
       newState.dateFilter.label = action.value
       newState.dateFilter.state = "Selected"
+    } else if (action.type === "customDate") {
+      newState.customDateFilter.value = action.value
+      newState.customDateFilter.label = action.value
+      newState.customDateFilter.state = "Selected"
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = action.value
       newState.caseStateFilter.label = caseStateLabels[action.value ?? ""]
@@ -77,6 +82,9 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
     } else if (action.type === "date") {
       newState.dateFilter.value = undefined
       newState.dateFilter.label = undefined
+    } else if (action.type === "customDate") {
+      newState.customDateFilter.value = undefined
+      newState.customDateFilter.label = undefined
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = undefined
       newState.caseStateFilter.label = undefined
@@ -183,6 +191,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   courtName,
   reasonSearch,
   dateRange,
+  customDateRange,
   urgency,
   locked,
   caseState
@@ -190,6 +199,8 @@ const CourtCaseFilter: React.FC<Props> = ({
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
     dateFilter: dateRange !== null ? { value: dateRange, state: "Applied", label: dateRange } : {},
+    customDateFilter:
+      customDateRange !== null ? { value: customDateRange, state: "Applied", label: customDateRange } : {},
     lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},

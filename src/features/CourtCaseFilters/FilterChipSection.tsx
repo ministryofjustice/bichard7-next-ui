@@ -124,6 +124,20 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
       />
 
       <FilterChipRow
+        chipLabel={state.customDateFilter.label!}
+        condition={
+          state.customDateFilter.value !== undefined &&
+          state.customDateFilter.label !== undefined &&
+          state.customDateFilter.state === sectionState
+        }
+        dispatch={dispatch}
+        type="date"
+        label="Date from"
+        state={state.dateFilter.state || sectionState}
+        value={state.dateFilter.value!}
+      />
+
+      <FilterChipRow
         chipLabel={state.caseStateFilter.label!}
         condition={
           state.caseStateFilter.value !== undefined &&
