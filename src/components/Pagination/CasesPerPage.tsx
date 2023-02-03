@@ -26,6 +26,7 @@ const CasesPerPage: React.FC<Props> = ({ options, selected, pageNum, casesPerPag
         onChange={(event) => {
           const newCasesPerPage = event.target.value
 
+          // Ensure that the first case on the page remains after changing number of cases per page
           const firstCaseIndex = (pageNum - 1) * casesPerPage + 1
           const newPageNum = Math.floor(firstCaseIndex / parseInt(newCasesPerPage, 10)) + 1
 
