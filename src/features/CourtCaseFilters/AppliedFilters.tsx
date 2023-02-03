@@ -16,7 +16,7 @@ interface Props {
     urgency?: string | null
     locked?: string | null
     caseState?: string | null
-    myCases?: string | null
+    myCases?: boolean
   }
 }
 
@@ -105,7 +105,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
             <li>
               <FilterTag
                 tag={"Cases locked to me" ?? ""}
-                href={removeQueryParamFromPath({ myCases: filters.myCases ?? "" })}
+                href={removeQueryParamFromPath({ myCases: String(filters.myCases) })}
               />
             </li>
           </If>

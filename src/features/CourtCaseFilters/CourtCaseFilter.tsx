@@ -48,7 +48,7 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.lockedFilter.state = "Selected"
     } else if (action.type === "myCases") {
       newState.myCasesFilter.value = action.value
-      newState.myCasesFilter.label = action.value && "Cases locked to me"
+      newState.myCasesFilter.label = action.value ? "Cases locked to me" : undefined
       newState.myCasesFilter.state = "Selected"
     } else if (action.type === "reason") {
       // React might invoke our reducer more than once for a single event,
@@ -138,14 +138,10 @@ const CourtCaseFilter: React.FC<Props> = ({
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
       return { value: courtCaseType, state: "Applied" }
     }),
-    myCasesFilter: !myCases
-      ? { value: "View cases allocated to me", state: "Applied", label: "Cases locked to me" }
-      : {}
+    myCasesFilter: myCases ? { value: true, state: "Applied", label: "Cases locked to me" } : {}
   }
   const [state, dispatch] = useReducer(reducer, initialFilterState)
-
   const classes = useStyles()
-
   return (
     <form method={"get"} id="filter-panel">
       <div className="moj-filter__header">
@@ -275,13 +271,13 @@ const CourtCaseFilter: React.FC<Props> = ({
                     id="my-cases-filter"
                     name="myCases"
                     type="checkbox"
-                    value={state.myCasesFilter.value}
-                    checked={state.myCasesFilter.value === "View cases allocated to me"}
+                    value={"true"}
+                    checked={state.myCasesFilter.value}
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
                       dispatch({
                         method: "add",
                         type: "myCases",
-                        value: event.currentTarget.checked ? "View cases allocated to me" : ""
+                        value: event.currentTarget.checked
                       })
                     }}
                   ></input>
