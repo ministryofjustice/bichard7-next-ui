@@ -131,10 +131,10 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
           state.customDateFilter.state === sectionState
         }
         dispatch={dispatch}
-        type="date"
-        label="Date from"
-        state={state.dateFilter.state || sectionState}
-        value={state.dateFilter.value!}
+        type="customDate"
+        label="Custom date range"
+        state={state.customDateFilter.state || sectionState}
+        value={state.customDateFilter.value!}
       />
 
       <FilterChipRow

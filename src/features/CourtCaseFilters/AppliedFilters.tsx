@@ -13,6 +13,7 @@ interface Props {
     reasonSearch?: string | null
     ptiurn?: string | null
     dateRange?: string | null
+    customDateRange?: string | null
     urgency?: string | null
     locked?: string | null
     caseState?: string | null
@@ -30,6 +31,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.ptiurn ||
     !!filters.urgency ||
     !!filters.dateRange ||
+    !!filters.customDateRange ||
     !!filters.locked ||
     !!filters.caseState
 
@@ -89,6 +91,14 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               <FilterTag
                 tag={filters.dateRange ?? ""}
                 href={removeQueryParamFromPath({ dateRange: filters.dateRange ?? "" })}
+              />
+            </li>
+          </If>
+          <If condition={!!filters.customDateRange}>
+            <li>
+              <FilterTag
+                tag={filters.customDateRange ?? ""}
+                href={removeQueryParamFromPath({ customDateRange: filters.customDateRange ?? "" })}
               />
             </li>
           </If>
