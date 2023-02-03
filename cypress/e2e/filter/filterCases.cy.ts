@@ -347,23 +347,21 @@ describe("Case list", () => {
       cy.get("#date-range-this-month").click()
       cy.get("button#search").click()
 
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 6)
       confirmMultipleFieldsDisplayed([
         todayDateString,
         yesterdayDateString,
         oneWeekAgoDateString,
         twoWeeksAgoDateString,
         oneWeekAndOneDayAgoDateString,
+        oneMonthAgoDateString,
         "Case00000",
         "Case00001",
         "Case00003",
         "Case00004",
-        "Case00005"
+        "Case00005",
+        "Case00006"
       ])
-
-      cy.findByText("Next page").should("exist")
-      cy.findByText("Next page").click()
-      cy.get("tr").not(":first").should("have.length", 1)
 
       confirmMultipleFieldsDisplayed([oneMonthAgoDateString, "Case00006"])
       cy.get("tr").not(":first").should("have.length", 6)
