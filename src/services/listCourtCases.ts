@@ -108,10 +108,8 @@ const listCourtCases = async (
   if (allocatedToUserName) {
     query.andWhere(
       new Brackets((qb) => {
-        qb.where("courtCase.errorLockedByUsername = :userName", {
-          userName: allocatedToUserName
-        }).orWhere("courtCase.triggerLockedByUsername = :userName", {
-          userName: allocatedToUserName
+        qb.where({ errorLockedByUsername: allocatedToUserName }).orWhere({
+          triggerLockedByUsername: allocatedToUserName
         })
       })
     )
