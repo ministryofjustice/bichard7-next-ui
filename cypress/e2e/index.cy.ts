@@ -305,7 +305,7 @@ describe("Case list", () => {
         cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0015 - Personal details changed")
       })
 
-      it.only("can display cases ordered by urgency", () => {
+      it("can display cases ordered by urgency", () => {
         const force = "011111"
         cy.task(
           "insertCourtCasesWithFields",
@@ -530,22 +530,22 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 1 to 25 of 250 cases")
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 250 cases")
         cy.get("tr").contains("Case00000").should("exist")
         cy.get("tr").contains("Case00024").should("exist")
 
         cy.get("li.moj-pagination__item").contains("2").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 26 to 50 of 250 cases")
         cy.get("tr").contains("Case00025").should("exist")
         cy.get("tr").contains("Case00049").should("exist")
 
         cy.get("li.moj-pagination__item").contains("10").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 226 to 250 of 250 cases")
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 226 to 250 of 250 cases")
         cy.get("tr").contains("Case00225").should("exist")
         cy.get("tr").contains("Case00249").should("exist")
 
         cy.get("li.moj-pagination__item").contains("9").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 201 to 225 of 250 cases")
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 201 to 225 of 250 cases")
         cy.get("tr").contains("Case00200").should("exist")
         cy.get("tr").contains("Case00224").should("exist")
       })
@@ -556,22 +556,22 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 1 to 25 of 250 cases")
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 250 cases")
         cy.get("tr").contains("Case00000").should("exist")
         cy.get("tr").contains("Case00024").should("exist")
 
         cy.get("li.moj-pagination__item").contains("Next").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 26 to 50 of 250 cases")
         cy.get("tr").contains("Case00025").should("exist")
         cy.get("tr").contains("Case00049").should("exist")
 
         cy.get("li.moj-pagination__item").contains("Next").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 51 to 75 of 250 cases")
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 51 to 75 of 250 cases")
         cy.get("tr").contains("Case00050").should("exist")
         cy.get("tr").contains("Case00074").should("exist")
 
         cy.get("li.moj-pagination__item").contains("Previous").click()
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 26 to 50 of 250 cases")
         cy.get("tr").contains("Case00025").should("exist")
         cy.get("tr").contains("Case00049").should("exist")
       })
@@ -582,7 +582,7 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard?page=5")
 
-        cy.get("p.moj-pagination__results").should("contain.text", "Showing 101 to 125 of 250 cases")
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 101 to 125 of 250 cases")
         cy.get("tr").contains("Case00100").should("exist")
         cy.get("tr").contains("Case00124").should("exist")
       })
