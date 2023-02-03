@@ -1,5 +1,4 @@
-import { format } from "date-fns"
-import { Brackets, DataSource, IsNull, Not } from "typeorm"
+import { Brackets, DataSource, IsNull, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not } from "typeorm"
 import { CaseListQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
@@ -79,20 +78,20 @@ const listCourtCases = async (
   }
 
   if (resultFilter?.includes("Triggers")) {
-    query.andWhere("courtCase.triggerCount > 0")
+    query.andWhere({ triggerCount: MoreThan(0) })
   } else if (resultFilter?.includes("Exceptions")) {
-    query.andWhere("courtCase.errorCount > 0")
+    query.andWhere({ errorCount: MoreThan(0) })
   }
 
   if (urgent === "Urgent") {
-    query.andWhere("courtCase.isUrgent > 0")
+    query.andWhere({ isUrgent: MoreThan(0) })
   } else if (urgent === "Non-urgent") {
-    query.andWhere("courtCase.isUrgent = 0")
+    query.andWhere({ isUrgent: 0 })
   }
 
   if (courtDateRange) {
-    query.andWhere("courtCase.courtDate >= :from", { from: format(courtDateRange.from, "yyyy-MM-dd") })
-    query.andWhere("courtCase.courtDate <= :to", { to: format(courtDateRange.to, "yyyy-MM-dd") })
+    query.andWhere({ courtDate: MoreThanOrEqual(courtDateRange.from) })
+    query.andWhere({ courtDate: LessThanOrEqual(courtDateRange.to) })
   }
 
   if (!caseState) {
@@ -119,15 +118,13 @@ const listCourtCases = async (
     if (locked) {
       query.andWhere(
         new Brackets((qb) => {
-          qb.where("courtCase.errorLockedByUsername IS NOT NULL").orWhere(
-            "courtCase.triggerLockedByUsername IS NOT NULL"
-          )
+          qb.where({ errorLockedByUsername: Not(IsNull()) }).orWhere({ triggerLockedByUsername: Not(IsNull()) })
         })
       )
     } else {
       query.andWhere(
         new Brackets((qb) => {
-          qb.where("courtCase.errorLockedByUsername IS NULL").andWhere("courtCase.triggerLockedByUsername IS NULL")
+          qb.where({ errorLockedByUsername: IsNull() }).andWhere({ triggerLockedByUsername: IsNull() })
         })
       )
     }

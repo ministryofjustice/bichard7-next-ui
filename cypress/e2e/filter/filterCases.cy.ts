@@ -281,7 +281,7 @@ describe("Case list", () => {
         })
 
       removeFilterTag("Today")
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 8)
 
       // Tests for "yesterday"
       cy.get("button#filter-button").click()
@@ -298,7 +298,7 @@ describe("Case list", () => {
         })
 
       removeFilterTag("Yesterday")
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 8)
 
       // Tests for "This week"
       cy.get("button#filter-button").click()
@@ -318,7 +318,7 @@ describe("Case list", () => {
       ])
 
       removeFilterTag("This week")
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 8)
 
       // Tests for "Last week"
       cy.get("button#filter-button").click()
@@ -338,7 +338,7 @@ describe("Case list", () => {
       ])
 
       removeFilterTag("Last week")
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 8)
 
       // Tests for "This month"
       cy.get("button#filter-button").click()
@@ -366,9 +366,23 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 1)
 
       confirmMultipleFieldsDisplayed([oneMonthAgoDateString, "Case00006"])
+      cy.get("tr").not(":first").should("have.length", 6)
+      cy.get("tr").not(":first").contains(todayDateString).should("exist")
+      cy.get("tr").not(":first").contains(yesterdayDateString).should("exist")
+      cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains(twoWeeksAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains(oneWeekAndOneDayAgoDateString).should("exist")
+      cy.get("tr").not(":first").contains(oneMonthAgoDateString).should("exist")
+
+      cy.get("tr").not(":first").contains("Case00000").should("exist")
+      cy.get("tr").not(":first").contains("Case00001").should("exist")
+      cy.get("tr").not(":first").contains("Case00003").should("exist")
+      cy.get("tr").not(":first").contains("Case00004").should("exist")
+      cy.get("tr").not(":first").contains("Case00005").should("exist")
+      cy.get("tr").not(":first").contains("Case00006").should("exist")
 
       removeFilterTag("This month")
-      cy.get("tr").not(":first").should("have.length", 5)
+      cy.get("tr").not(":first").should("have.length", 8)
     })
 
     it("Should not allow passing an invalid date range filter", () => {

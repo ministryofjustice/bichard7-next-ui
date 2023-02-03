@@ -1,5 +1,5 @@
 import Layout from "components/Layout"
-import Pagination from "components/Pagination/Pagination"
+import Pagination from "components/Pagination"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
@@ -31,9 +31,10 @@ interface Props {
   courtName: string | null
   reasonSearch: string | null
   urgent: string | null
-  totalPages: number
   dateRange: string | null
-  pageNum: number
+  page: number
+  casesPerPage: number
+  totalCases: number
   locked: string | null
   caseState: CaseState | null
   myCases: boolean
@@ -48,7 +49,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { currentUser, query } = context as AuthenticationServerSidePropsContext
     const {
       orderBy,
-      pageNum,
+      page,
       type,
       keywords,
       courtName,
@@ -63,8 +64,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       myCases
     } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Reason[]
-    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "5"
-    const validatedPageNum = validateQueryParams(pageNum) ? pageNum : "1"
+    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
+    const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
     const validatedDateRange = mapDateRange(dateRange)
@@ -102,15 +103,14 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw courtCases
     }
 
-    const totalPages = Math.ceil(courtCases.totalCases / parseInt(validatedMaxPageItems, 10)) ?? 1
-
     return {
       props: {
         user: currentUser.serialize(),
         courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
         order: oppositeOrder,
-        totalPages: totalPages === 0 ? 1 : totalPages,
-        pageNum: parseInt(validatedPageNum, 10) || 1,
+        totalCases: courtCases.totalCases,
+        page: parseInt(validatedPageNum, 10) || 1,
+        casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,
         courtCaseTypes: courtCaseTypes,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         courtName: validatedCourtName ? validatedCourtName : null,
@@ -130,8 +130,9 @@ const Home: NextPage<Props> = ({
   user,
   courtCases,
   order,
-  totalPages,
-  pageNum,
+  page,
+  casesPerPage,
+  totalCases,
   courtCaseTypes,
   keywords,
   courtName,
@@ -184,7 +185,10 @@ const Home: NextPage<Props> = ({
           />
         }
         courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
-        pagination={<Pagination totalPages={totalPages} pageNum={pageNum} />}
+        paginationTop={<Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />}
+        paginationBottom={
+          <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
+        }
       />
     </Layout>
   </>
