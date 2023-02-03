@@ -287,7 +287,7 @@ describe("Case list", () => {
       cy.get("#date-range-today").click()
       cy.get("button#search").click()
 
-      cy.get(".tr").not(":first").should("have.length", 1)
+      cy.get("tr").not(":first").should("have.length", 1)
       cy.get("tr")
         .not(":first")
         .each((row) => {
