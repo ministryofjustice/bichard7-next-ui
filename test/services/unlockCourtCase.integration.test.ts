@@ -96,31 +96,6 @@ describe("lock court case", () => {
       expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
     })
-
-    it("should return the error when failed to unlock court case", async () => {
-      jest
-        .spyOn(UpdateQueryBuilder.prototype, "execute")
-        .mockRejectedValue(Error("Failed to update record with some error"))
-
-      const lockedCourtCase = await getDummyCourtCase({
-        errorLockedByUsername: "dummy",
-        triggerLockedByUsername: "dummy"
-      })
-      await insertCourtCases(lockedCourtCase)
-
-      const user = {
-        canLockExceptions: true,
-        canLockTriggers: false,
-        username: "dummy username"
-      } as User
-
-      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
-      expect(isError(result)).toBe(true)
-
-      const receivedError = result as Error
-
-      expect(receivedError.message).toEqual("Failed to update record with some error")
-    })
   })
 
   describe("when user doesn't have permission to unlock a case", () => {
@@ -144,6 +119,82 @@ describe("lock court case", () => {
       const receivedError = result as Error
 
       expect(receivedError.message).toEqual("User hasn't got permission to unlock a case")
+    })
+
+    it("is does not update the lock when the case locked by another user", async () => {
+      const lockedByName = "another user"
+      const lockedCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: lockedByName,
+        triggerLockedByUsername: lockedByName
+      })
+      await insertCourtCases(lockedCourtCase)
+
+      const user = {
+        canLockExceptions: true,
+        canLockTriggers: true,
+        username: "User with different name"
+      } as User
+
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      expect(isError(result)).toBe(false)
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.errorLockedByUsername).toEqual(lockedByName)
+      expect(actualCourtCase.triggerLockedByUsername).toEqual(lockedByName)
+    })
+  })
+
+  describe("when user is a supervisor", () => {
+    it("can unlock a case that is locked by another user", async () => {
+      const lockedByName = "another user"
+      const lockedCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: lockedByName,
+        triggerLockedByUsername: lockedByName
+      })
+      await insertCourtCases(lockedCourtCase)
+
+      const user = {
+        canLockExceptions: true,
+        canLockTriggers: true,
+        isSupervisor: true,
+        username: "Sup User"
+      } as User
+
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      expect(isError(result)).toBe(false)
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.errorLockedByUsername).toBeNull()
+      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
+    })
+  })
+
+  describe("when there is an error", () => {
+    it("should return the error when failed to unlock court case", async () => {
+      jest
+        .spyOn(UpdateQueryBuilder.prototype, "execute")
+        .mockRejectedValue(Error("Failed to update record with some error"))
+
+      const lockedCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: "dummy",
+        triggerLockedByUsername: "dummy"
+      })
+      await insertCourtCases(lockedCourtCase)
+
+      const user = {
+        canLockExceptions: true,
+        canLockTriggers: false,
+        username: "dummy username"
+      } as User
+
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      expect(isError(result)).toBe(true)
+
+      const receivedError = result as Error
+
+      expect(receivedError.message).toEqual("Failed to update record with some error")
     })
   })
 })

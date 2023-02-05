@@ -43,4 +43,8 @@ export default class User extends BaseEntity {
         group === "ExceptionHandler" || group === "GeneralHandler" || group === "Allocator" || group === "Supervisor"
     )
   }
+
+  get isSupervisor() {
+    return this.groups.some((group) => group === "Supervisor")
+  }
 }

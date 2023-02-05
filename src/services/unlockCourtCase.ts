@@ -7,9 +7,8 @@ const unlockCourtCase = async (
   dataSource: DataSource | EntityManager,
   courtCaseId: number,
   user: User
-  // fieldToUnlock?: "Trigger" | "Error"
 ): Promise<UpdateResult | Error> => {
-  const { canLockExceptions, canLockTriggers, username } = user
+  const { canLockExceptions, canLockTriggers, isSupervisor, username } = user
 
   if (!canLockExceptions && !canLockTriggers) {
     return new Error("User hasn't got permission to unlock a case")
@@ -18,10 +17,7 @@ const unlockCourtCase = async (
   const courtCaseRepository = dataSource.getRepository(CourtCase)
   const setFields: QueryDeepPartialEntity<CourtCase> = {}
 
-  const query = courtCaseRepository
-    .createQueryBuilder()
-    .update(CourtCase)
-    .where({ errorLockedByUsername: username, triggerLockedByUsername: username })
+  const query = courtCaseRepository.createQueryBuilder().update(CourtCase)
 
   if (canLockExceptions) {
     setFields.errorLockedByUsername = null
@@ -32,7 +28,11 @@ const unlockCourtCase = async (
 
   query.set(setFields).where("error_id = :id", { id: courtCaseId })
 
-  return query.execute().catch((error: Error) => error)
+  if (!isSupervisor) {
+    query.andWhere({ errorLockedByUsername: username, triggerLockedByUsername: username })
+  }
+
+  return query.execute()?.catch((error: Error) => error)
 }
 
 export default unlockCourtCase

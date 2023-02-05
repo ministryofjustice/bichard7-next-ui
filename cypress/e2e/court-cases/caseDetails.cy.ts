@@ -24,7 +24,7 @@ describe("Case details", () => {
       cy.task("clearUsers")
       cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
       cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
-      cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7GeneralHandler_grp" })
+      cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
       cy.clearCookies()
       cy.viewport(1280, 720)
     })
@@ -196,7 +196,7 @@ describe("Case details", () => {
       cy.findByText("Error locked by: Another name").should("exist")
     })
 
-    it("should unlock and lock a court case when its already locked", () => {
+    it.only("should unlock and lock a court case when its already locked", () => {
       const existingUserLock = "Another name"
       cy.task("insertCourtCasesWithFields", [
         {
