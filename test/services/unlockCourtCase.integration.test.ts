@@ -19,6 +19,7 @@ describe("lock court case", () => {
   })
 
   afterEach(() => {
+    jest.resetAllMocks()
     jest.clearAllMocks()
   })
 
@@ -26,97 +27,123 @@ describe("lock court case", () => {
     await dataSource.destroy()
   })
 
-  it("should unlock a locked court case", async () => {
-    const lockedByName = "some user"
-    const lockedCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: lockedByName,
-      triggerLockedByUsername: lockedByName
+  describe("when user has permission to unlock a case", () => {
+    it("should unlock a locked court case", async () => {
+      const lockedByName = "some user"
+      const lockedCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: lockedByName,
+        triggerLockedByUsername: lockedByName
+      })
+      await insertCourtCases(lockedCourtCase)
+
+      const user = {
+        canLockExceptions: true,
+        canLockTriggers: true,
+        username: lockedByName
+      } as User
+
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      expect(isError(result)).toBe(false)
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.errorLockedByUsername).toBeNull()
+      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
     })
-    await insertCourtCases(lockedCourtCase)
 
-    const user = {
-      canLockExceptions: true,
-      canLockTriggers: true,
-      username: lockedByName
-    } as User
+    it("should unlock exceptions lock of a court case", async () => {
+      const lockedByName = "some user"
+      const lockedCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: lockedByName,
+        triggerLockedByUsername: lockedByName
+      })
+      await insertCourtCases(lockedCourtCase)
 
-    const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
-    expect(isError(result)).toBe(false)
+      const user = {
+        canLockExceptions: true,
+        canLockTriggers: false,
+        username: lockedByName
+      } as User
 
-    const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-    const actualCourtCase = record as CourtCase
-    expect(actualCourtCase.errorLockedByUsername).toBeNull()
-    expect(actualCourtCase.triggerLockedByUsername).toBeNull()
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      expect(isError(result)).toBe(false)
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.errorLockedByUsername).toBeNull()
+      expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
+    })
+
+    it("should unlock triggers lock of a court case", async () => {
+      const lockedByName = "some user"
+      const lockedCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: lockedByName,
+        triggerLockedByUsername: lockedByName
+      })
+      await insertCourtCases(lockedCourtCase)
+
+      const user = {
+        canLockExceptions: false,
+        canLockTriggers: true,
+        username: lockedByName
+      } as User
+
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      expect(isError(result)).toBe(false)
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
+      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
+    })
+
+    it("should return the error when failed to unlock court case", async () => {
+      jest
+        .spyOn(UpdateQueryBuilder.prototype, "execute")
+        .mockRejectedValue(Error("Failed to update record with some error"))
+
+      const lockedCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: "dummy",
+        triggerLockedByUsername: "dummy"
+      })
+      await insertCourtCases(lockedCourtCase)
+
+      const user = {
+        canLockExceptions: true,
+        canLockTriggers: false,
+        username: "dummy username"
+      } as User
+
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      expect(isError(result)).toBe(true)
+
+      const receivedError = result as Error
+
+      expect(receivedError.message).toEqual("Failed to update record with some error")
+    })
   })
 
-  it("should unlock exceptions lock of a court case", async () => {
-    const lockedByName = "some user"
-    const lockedCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: lockedByName,
-      triggerLockedByUsername: lockedByName
+  describe("when user doesn't have permission to unlock a case", () => {
+    it("can handle missing permission gracefully", async () => {
+      const lockedByName = "some user"
+      const lockedCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: lockedByName,
+        triggerLockedByUsername: lockedByName
+      })
+      await insertCourtCases(lockedCourtCase)
+
+      const user = {
+        canLockExceptions: false,
+        canLockTriggers: false,
+        username: lockedByName
+      } as User
+
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      expect(isError(result)).toBe(true)
+
+      const receivedError = result as Error
+
+      expect(receivedError.message).toEqual("User hasn't got permission to unlock a case")
     })
-    await insertCourtCases(lockedCourtCase)
-
-    const user = {
-      canLockExceptions: true,
-      canLockTriggers: false,
-      username: lockedByName
-    } as User
-
-    const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
-    expect(isError(result)).toBe(false)
-
-    const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-    const actualCourtCase = record as CourtCase
-    expect(actualCourtCase.errorLockedByUsername).toBeNull()
-    expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
-  })
-
-  it("should unlock triggers lock of a court case", async () => {
-    const lockedByName = "some user"
-    const lockedCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: lockedByName,
-      triggerLockedByUsername: lockedByName
-    })
-    await insertCourtCases(lockedCourtCase)
-
-    const user = {
-      canLockExceptions: false,
-      canLockTriggers: true,
-      username: lockedByName
-    } as User
-
-    const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
-    expect(isError(result)).toBe(false)
-
-    const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-    const actualCourtCase = record as CourtCase
-    expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
-    expect(actualCourtCase.triggerLockedByUsername).toBeNull()
-  })
-
-  it("should return the error when failed to unlock court case", async () => {
-    jest
-      .spyOn(UpdateQueryBuilder.prototype, "execute")
-      .mockRejectedValue(Error("Failed to update record with some error"))
-
-    const lockedCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: "dummy",
-      triggerLockedByUsername: "dummy"
-    })
-    await insertCourtCases(lockedCourtCase)
-
-    const user = {
-      canLockExceptions: false,
-      canLockTriggers: false,
-      username: "dummy username"
-    } as User
-
-    const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
-    expect(isError(result)).toBe(true)
-
-    const receivedError = result as Error
-
-    expect(receivedError.message).toEqual("Failed to update record with some error")
   })
 })
