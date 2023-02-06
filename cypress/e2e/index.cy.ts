@@ -24,11 +24,20 @@ describe("Case list", () => {
       email: `bichard011111@example.com`,
       password: hashedPassword
     })
+    defaultUsers.push({
+      username: `Supervisor`,
+      visibleForces: [`011111`],
+      forenames: "Sup",
+      surname: "User",
+      email: "supervisor@example.com",
+      password: hashedPassword
+    })
 
     before(() => {
       cy.task("clearUsers")
       cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp"] })
       cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
+      cy.task("insertIntoUserGroup", { emailAddress: "supervisor@example.com", groupName: "B7Supervisor_grp" })
     })
 
     beforeEach(() => {
@@ -471,6 +480,37 @@ describe("Case list", () => {
         cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
         cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard02")
         cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+      })
+
+      it("should unlock any case as a supervisor user", () => {
+        const lockUsernames = ["Bichard01", "Bichard02"]
+        cy.task(
+          "insertCourtCasesWithFields",
+          lockUsernames.map((username) => ({
+            errorLockedByUsername: username,
+            triggerLockedByUsername: username,
+            orgForPoliceFilter: "011111",
+            errorCount: 1,
+            triggerCount: 1
+          }))
+        )
+
+        cy.login("supervisor@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard01")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+
+        // Unlock both cases
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard01").click()
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard02").click()
+
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("not.exist")
       })
     })
 
