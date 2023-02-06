@@ -37,6 +37,7 @@ interface Props {
   totalCases: number
   locked: string | null
   caseState: CaseState | null
+  myCases: boolean
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
@@ -59,7 +60,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       urgency,
       dateRange,
       locked,
-      state
+      state,
+      myCases
     } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Reason[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
@@ -74,7 +76,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLocked = validateQueryParams(locked) ? locked : undefined
     const validatedCaseState = caseStateFilters.includes(String(state)) ? (state as CaseState) : undefined
-
+    const validatedMyCases = validateQueryParams(myCases) ? currentUser.username : undefined
     const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
     const courtCases = await listCourtCases(dataSource, {
@@ -91,7 +93,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       order: validatedOrder,
       courtDateRange: validatedDateRange,
       locked: lockedFilter,
-      caseState: validatedCaseState
+      caseState: validatedCaseState,
+      allocatedToUserName: validatedMyCases
     })
 
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
@@ -116,7 +119,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
-        caseState: validatedCaseState ? validatedCaseState : null
+        caseState: validatedCaseState ? validatedCaseState : null,
+        myCases: !!validatedMyCases
       }
     }
   }
@@ -137,7 +141,8 @@ const Home: NextPage<Props> = ({
   dateRange,
   urgent,
   locked,
-  caseState
+  caseState,
+  myCases
 }: Props) => (
   <>
     <Head>
@@ -160,6 +165,7 @@ const Home: NextPage<Props> = ({
             urgency={urgent}
             locked={locked}
             caseState={caseState}
+            myCases={myCases}
           />
         }
         appliedFilters={
@@ -173,7 +179,8 @@ const Home: NextPage<Props> = ({
               dateRange,
               urgency: urgent,
               locked: locked,
-              caseState: caseState
+              caseState: caseState,
+              myCases
             }}
           />
         }
