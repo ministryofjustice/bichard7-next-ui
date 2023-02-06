@@ -5,6 +5,7 @@ import CourtCaseList from "./CourtCaseList"
 import { within } from "@storybook/testing-library"
 import { expect } from "@storybook/jest"
 import Note from "services/entities/Note"
+import User from "services/entities/User"
 
 export default {
   title: "Features/CourtCaseList",
@@ -39,14 +40,22 @@ const courtCase = {
   isUrgent: true
 } as unknown as CourtCase
 
-export const EmptyList: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={[]} />
+const user = {
+  isSupervisor: true,
+  username: "Sup User"
+} as User
+export const EmptyList: ComponentStory<typeof CourtCaseList> = () => (
+  <CourtCaseList courtCases={[]} currentUser={user} />
+)
 
 EmptyList.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText("There are no court cases to show")).toBeInTheDocument()
 }
 
-export const OneRecord: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={[courtCase]} />
+export const OneRecord: ComponentStory<typeof CourtCaseList> = () => (
+  <CourtCaseList courtCases={[courtCase]} currentUser={user} />
+)
 OneRecord.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
 
@@ -72,7 +81,9 @@ OneRecord.parameters = {
 }
 
 const courtCases = new Array(100).fill(courtCase)
-export const ManyRecords: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={courtCases} />
+export const ManyRecords: ComponentStory<typeof CourtCaseList> = () => (
+  <CourtCaseList courtCases={courtCases} currentUser={user} />
+)
 
 ManyRecords.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
@@ -106,7 +117,9 @@ const mixedUrgencies: CourtCase[] = new Array(10).fill(0).map((_, index) => {
   }
   return urgencyCourtCase
 })
-export const MixedUrgencies: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={mixedUrgencies} />
+export const MixedUrgencies: ComponentStory<typeof CourtCaseList> = () => (
+  <CourtCaseList courtCases={mixedUrgencies} currentUser={user} />
+)
 
 MixedUrgencies.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
@@ -136,7 +149,9 @@ const mixedNotes: CourtCase[] = new Array(10).fill(0).map((_, index) => {
   }
   return notesCourtCase
 })
-export const MixedNotes: ComponentStory<typeof CourtCaseList> = () => <CourtCaseList courtCases={mixedNotes} />
+export const MixedNotes: ComponentStory<typeof CourtCaseList> = () => (
+  <CourtCaseList courtCases={mixedNotes} currentUser={user} />
+)
 
 MixedNotes.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)

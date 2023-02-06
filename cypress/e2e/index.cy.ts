@@ -470,11 +470,16 @@ describe("Case list", () => {
 
         cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard01")
         cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
-        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard02")
+
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
+
+        // User should not see unlock button when a case assigned to another user
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard02").should("not.exist")
         cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
 
-        // Unlock the first case
-        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard01").click()
+        // Unlock the case assigned to the user
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").click()
 
         cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
         cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
@@ -498,14 +503,14 @@ describe("Case list", () => {
         cy.login("supervisor@example.com", "password")
         cy.visit("/bichard")
 
-        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard01")
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
         cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
-        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard02").should("exist")
         cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
 
         // Unlock both cases
-        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard01").click()
-        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard02").click()
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").click()
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard02").click()
 
         cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
         cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
