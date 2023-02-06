@@ -23,7 +23,8 @@ interface Props {
   ptiurn: string | null
   courtCaseTypes: Reason[]
   dateRange: string | null
-  customDateRange: string | null
+  customDateFrom: Date | null
+  customDateTo: Date | null
   urgency: string | null
   locked: string | null
   caseState: CaseState | null
@@ -40,10 +41,12 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.dateFilter.value = action.value
       newState.dateFilter.label = action.value
       newState.dateFilter.state = "Selected"
-    } else if (action.type === "customDate") {
-      newState.customDateFilter.value = action.value
-      newState.customDateFilter.label = action.value
-      newState.customDateFilter.state = "Selected"
+    } else if (action.type === "customDateFrom") {
+      newState.customDateFrom.value = action.value
+      newState.customDateFrom.state = "Selected"
+    } else if (action.type === "customDateTo") {
+      newState.customDateTo.value = action.value
+      newState.customDateTo.state = "Selected"
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = action.value
       newState.caseStateFilter.label = caseStateLabels[action.value ?? ""]
@@ -83,8 +86,8 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.dateFilter.value = undefined
       newState.dateFilter.label = undefined
     } else if (action.type === "customDate") {
-      newState.customDateFilter.value = undefined
-      newState.customDateFilter.label = undefined
+      newState.customDateFrom.value = undefined
+      newState.customDateTo.value = undefined
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = undefined
       newState.caseStateFilter.label = undefined
@@ -191,7 +194,8 @@ const CourtCaseFilter: React.FC<Props> = ({
   courtName,
   reasonSearch,
   dateRange,
-  customDateRange,
+  customDateFrom,
+  customDateTo,
   urgency,
   locked,
   caseState
@@ -199,8 +203,8 @@ const CourtCaseFilter: React.FC<Props> = ({
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
     dateFilter: dateRange !== null ? { value: dateRange, state: "Applied", label: dateRange } : {},
-    customDateFilter:
-      customDateRange !== null ? { value: customDateRange, state: "Applied", label: customDateRange } : {},
+    customDateFrom: customDateFrom !== null ? { value: customDateFrom, state: "Applied" } : {},
+    customDateTo: customDateTo !== null ? { value: customDateTo, state: "Applied" } : {},
     lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},

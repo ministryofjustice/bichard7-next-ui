@@ -1,5 +1,6 @@
 import FilterTag from "components/FilterTag/FilterTag"
 import If from "components/If"
+import { format } from "date-fns"
 import { useRouter } from "next/router"
 import { Reason } from "types/CaseListQueryParams"
 import { caseStateLabels } from "utils/caseStateFilters"
@@ -13,7 +14,8 @@ interface Props {
     reasonSearch?: string | null
     ptiurn?: string | null
     dateRange?: string | null
-    customDateRange?: string | null
+    customDateFrom?: Date | null
+    customDateTo?: Date | null
     urgency?: string | null
     locked?: string | null
     caseState?: string | null
@@ -31,7 +33,8 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.ptiurn ||
     !!filters.urgency ||
     !!filters.dateRange ||
-    !!filters.customDateRange ||
+    !!filters.customDateFrom ||
+    !!filters.customDateTo ||
     !!filters.locked ||
     !!filters.caseState
 
@@ -41,6 +44,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
 
     return `${basePath}/?${searchParams}`
   }
+// TODO: created a new function that takes in multiple params and deletes them from query. Issue we had was that the deleteQueryParams function did not like the result type having undefined.
 
   return (
     <div>
@@ -94,11 +98,16 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </If>
-          <If condition={!!filters.customDateRange}>
+          <If condition={!!filters.customDateFrom && !!filters.customDateTo}>
             <li>
               <FilterTag
-                tag={filters.customDateRange ?? ""}
-                href={removeQueryParamFromPath({ customDateRange: filters.customDateRange ?? "" })}
+                tag={
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                  `${format(filters.customDateFrom!, "dd/MM/yyyy")} - ${format(filters.customDateTo!, "dd/MM/yyyy")}` ??
+                  ""
+                }
+                // TODO update deleteQueryParams
+                href={deleteQueryParamsByName(["from", "to"])}
               />
             </li>
           </If>

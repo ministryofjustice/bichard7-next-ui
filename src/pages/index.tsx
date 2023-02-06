@@ -35,7 +35,8 @@ interface Props {
   urgent: string | null
   totalPages: number
   dateRange: string | null
-  customDateRange: string | null
+  customDateFrom: Date | null
+  customDateTo: Date | null
   pageNum: number
   locked: string | null
   caseState: CaseState | null
@@ -123,13 +124,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         reasonSearch: validatedReasonSearch ? validatedReasonSearch : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
         dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
-        customDateRange:
-          validatedCustomDateRange?.from && validatedCustomDateRange?.to
-            ? `${format(validatedCustomDateRange.from, "dd/MM/yyyy")} - ${format(
-                validatedCustomDateRange.to,
-                "dd/MM/yyyy"
-              )}`
-            : null,
+        customDateFrom: validatedCustomDateRange?.from ?? null,
+        customDateTo: validatedCustomDateRange?.to ?? null,
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null
@@ -150,7 +146,8 @@ const Home: NextPage<Props> = ({
   reasonSearch,
   ptiurn,
   dateRange,
-  customDateRange,
+  customDateFrom,
+  customDateTo,
   urgent,
   locked,
   caseState
@@ -173,7 +170,8 @@ const Home: NextPage<Props> = ({
             reasonSearch={reasonSearch}
             ptiurn={ptiurn}
             dateRange={dateRange}
-            customDateRange={customDateRange}
+            customDateFrom={customDateFrom}
+            customDateTo={customDateTo}
             urgency={urgent}
             locked={locked}
             caseState={caseState}
@@ -188,6 +186,8 @@ const Home: NextPage<Props> = ({
               reasonSearch,
               ptiurn,
               dateRange,
+              customDateFrom,
+              customDateTo,
               urgency: urgent,
               locked: locked,
               caseState: caseState

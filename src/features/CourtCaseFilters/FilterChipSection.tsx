@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import FilterChip from "components/FilterChip"
 import If from "components/If"
+import { format } from "date-fns"
 import { Dispatch } from "react"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
@@ -14,6 +15,10 @@ interface Props {
 }
 
 const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, marginTop }: Props) => {
+  const customDateRangeLabel =
+    !!state.customDateFrom.value && !!state.customDateTo.value
+      ? `${format(state.customDateFrom.value, "dd/MM/yyyy")} - ${format(state.customDateTo.value, "dd/MM/yyyy")}`
+      : ""
   return (
     <If condition={anyFilterChips(state, sectionState)}>
       <h2
@@ -124,17 +129,19 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
       />
 
       <FilterChipRow
-        chipLabel={state.customDateFilter.label!}
+        chipLabel={customDateRangeLabel}
         condition={
-          state.customDateFilter.value !== undefined &&
-          state.customDateFilter.label !== undefined &&
-          state.customDateFilter.state === sectionState
+          state.customDateFrom.value !== undefined &&
+          state.customDateTo.value !== undefined &&
+          state.customDateFrom.state === sectionState &&
+          state.customDateTo.state === sectionState
         }
         dispatch={dispatch}
         type="customDate"
         label="Custom date range"
-        state={state.customDateFilter.state || sectionState}
-        value={state.customDateFilter.value!}
+        // TODO: check behaviour if only 1 field set.
+        state={state.customDateFrom.state || sectionState}
+        value={customDateRangeLabel}
       />
 
       <FilterChipRow
