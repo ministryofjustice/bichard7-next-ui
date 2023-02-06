@@ -1,5 +1,10 @@
 import hashedPassword from "../../fixtures/hashedPassword"
 
+export function removeFilterChip() {
+  cy.get("li button.moj-filter__tag").trigger("click")
+  cy.get(".moj-filter__tag").should("not.exist")
+}
+
 describe("Case list", () => {
   context("When filters applied", () => {
     before(() => {
@@ -20,7 +25,6 @@ describe("Case list", () => {
     })
 
     beforeEach(() => {
-      cy.viewport(1280, 720)
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard")
     })
@@ -53,9 +57,7 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
 
-        // Removes the filter chip
-        cy.get("li button.moj-filter__tag").trigger("click")
-        cy.get(".moj-filter__tag").should("not.exist")
+        removeFilterChip()
       })
 
       it("Should display Trigger and Exception filter chips when selected", () => {
@@ -291,6 +293,57 @@ describe("Case list", () => {
           .contains("Selected filters")
           .should("exist")
       })
+    })
+
+    describe('Applied filter chips to "Filter applied" section', () => {
+      it("Should display the Trigger filter chip when selected", () => {
+        cy.get("#filter-button").click()
+        cy.get(".govuk-checkboxes__item").contains("Triggers").click()
+
+        // Check if the correct heading and filter label are applied
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
+        cy.get(".moj-filter__tag").contains("Triggers").should("exist")
+        cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
+
+        // Check if the filter chip is applied to the "Filters applied" section at the top of the case list
+        cy.contains("Apply filters").click()
+        cy.get(".moj-filter-tags").contains("Triggers").should("exist")
+
+        // Clears filter chip and check the checkbox is deselected
+        cy.contains("Clear filters").click()
+        cy.get("#filter-button").click()
+        cy.get(".govuk-checkboxes__item").contains("Triggers").should("not.be.checked")
+      })
+    })
+
+    it("Should display the 'Locked to me' filter chip when selected", () => {
+      cy.get("#filter-button").click()
+      cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").click()
+
+      // Check if the correct heading and filter label are applied
+      cy.get(".govuk-heading-s").contains("My cases").should("exist")
+      cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist")
+
+      // Check if the filter chip is applied to the "Filters applied" section at the top of the case list
+      cy.contains("Apply filters").click()
+      cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist")
+      cy.get("#filter-button").contains("Show filter").click()
+      cy.get("#my-cases-filter").should("be.checked")
+
+      // Clears filter chip and check the checkbox is deselected
+      cy.contains("Clear filters").click()
+      cy.get("#filter-button").contains("Show filter").click()
+      cy.get("#my-cases-filter").should("not.be.checked")
+    })
+
+    it("Should apply the 'Locked to me' filter chips then remove this chips to the original state", () => {
+      cy.get("#filter-button").click()
+      cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").click()
+
+      cy.get(".govuk-heading-s").contains("My cases").should("exist")
+      cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist").trigger("click")
+
+      cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").should("not.be.checked")
     })
   })
 })

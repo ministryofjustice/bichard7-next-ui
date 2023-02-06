@@ -27,5 +27,6 @@ export type CaseListQueryParams = {
   courtDateRange?: CourtDateRange
   locked?: boolean
   caseState?: CaseState
+  allocatedToUserName?: string
   reasonsSearch?: string
 }

@@ -150,6 +150,20 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
         state={state.lockedFilter.state || sectionState}
         value={state.lockedFilter.value!}
       />
+
+      <FilterChipRow
+        chipLabel={state.myCasesFilter.label!}
+        condition={
+          state.myCasesFilter.value !== undefined &&
+          state.myCasesFilter.label !== undefined &&
+          state.myCasesFilter.state === sectionState
+        }
+        dispatch={dispatch}
+        type="myCases"
+        label="My cases"
+        state={state.myCasesFilter.state || sectionState}
+        value={state.myCasesFilter.value!}
+      />
     </If>
   )
 }
