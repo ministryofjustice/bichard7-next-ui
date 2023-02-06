@@ -19,7 +19,6 @@ import { CaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParam
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
 import { isPost } from "utils/http"
-import { UpdateResult } from "typeorm"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
@@ -84,14 +83,13 @@ export const getServerSideProps = withMultipleServerSideProps(
     const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
 
-    let lockResult: UpdateResult | Error | undefined
     if (isPost(req) && !!unlock) {
       if (unlock) {
-        lockResult = await unlockCourtCase(dataSource, +unlock, currentUser)
+        const lockResult = await unlockCourtCase(dataSource, +unlock, currentUser)
+        if (isError(lockResult)) {
+          throw lockResult
+        }
       }
-    }
-    if (isError(lockResult)) {
-      throw lockResult
     }
 
     const courtCases = await listCourtCases(dataSource, {

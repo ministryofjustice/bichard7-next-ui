@@ -96,6 +96,29 @@ describe("lock court case", () => {
       expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
     })
+
+    it("should unlock exception only when locked field specified", async () => {
+      const lockedByName = "some user"
+      const lockedCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: lockedByName,
+        triggerLockedByUsername: lockedByName
+      })
+      await insertCourtCases(lockedCourtCase)
+
+      const user = {
+        canLockExceptions: true,
+        canLockTriggers: true,
+        username: lockedByName
+      } as User
+
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, "Exception")
+      expect(isError(result)).toBe(false)
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.errorLockedByUsername).toBeNull()
+      expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
+    })
   })
 
   describe("when user doesn't have permission to unlock a case", () => {
@@ -118,7 +141,7 @@ describe("lock court case", () => {
 
       const receivedError = result as Error
 
-      expect(receivedError.message).toEqual("User hasn't got permission to unlock a case")
+      expect(receivedError.message).toEqual("User hasn't got permission to unlock the case")
     })
 
     it("is does not update the lock when the case locked by another user", async () => {
