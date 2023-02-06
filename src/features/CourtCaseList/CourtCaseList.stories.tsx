@@ -41,8 +41,8 @@ const courtCase = {
 } as unknown as CourtCase
 
 const user = {
-  isSupervisor: true,
-  username: "Sup User"
+  username: "Sup User",
+  groups: ["NewUI"]
 } as User
 export const EmptyList: ComponentStory<typeof CourtCaseList> = () => (
   <CourtCaseList courtCases={[]} currentUser={user} />
@@ -173,4 +173,65 @@ MixedNotes.parameters = {
       url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=0%3A1"
     }
   ]
+}
+
+const expectedNameLocks = ["Homer Simpson", "Donald Duck", "Bugs Bunny"]
+const casesWithLocks: CourtCase[] = expectedNameLocks.map((lockName) => {
+  const cases = Object.assign({}, courtCase)
+  cases.errorLockedByUsername = lockName
+  cases.triggerLockedByUsername = lockName
+
+  return cases
+})
+export const CasesWithLocks: ComponentStory<typeof CourtCaseList> = () => (
+  <CourtCaseList courtCases={casesWithLocks} currentUser={user} />
+)
+
+CasesWithLocks.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+
+  expectedNameLocks.forEach(async (name) => {
+    const foundNames = await canvas.findAllByText(name)
+    expect(foundNames).toHaveLength(2)
+  })
+}
+
+const lockHolderUsername = "Bugs Bunny"
+const caseLockedToUser = Object.assign({}, courtCase)
+caseLockedToUser.errorLockedByUsername = lockHolderUsername
+caseLockedToUser.triggerLockedByUsername = lockHolderUsername
+const lockHolderUser = {
+  username: lockHolderUsername,
+  groups: ["NewUI"]
+} as User
+
+export const CaseLockedToUser: ComponentStory<typeof CourtCaseList> = () => (
+  <CourtCaseList courtCases={[caseLockedToUser]} currentUser={lockHolderUser} />
+)
+
+CaseLockedToUser.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+
+  const expectedUnlockButtons = await canvas.findAllByRole("button")
+  expect(expectedUnlockButtons).toHaveLength(2)
+  expect(expectedUnlockButtons[0]).toHaveTextContent("Bugs Bunny")
+  expect(expectedUnlockButtons[1]).toHaveTextContent("Bugs Bunny")
+}
+
+const superUser = {
+  username: lockHolderUsername,
+  groups: ["NewUI", "Supervisor"]
+} as User
+
+export const CaseViewedBySupervisor: ComponentStory<typeof CourtCaseList> = () => (
+  <CourtCaseList courtCases={[caseLockedToUser]} currentUser={superUser} />
+)
+
+CaseViewedBySupervisor.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+
+  const expectedUnlockButtons = await canvas.findAllByRole("button")
+  expect(expectedUnlockButtons).toHaveLength(2)
+  expect(expectedUnlockButtons[0]).toHaveTextContent("Bugs Bunny")
+  expect(expectedUnlockButtons[1]).toHaveTextContent("Bugs Bunny")
 }
