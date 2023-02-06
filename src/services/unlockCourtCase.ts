@@ -30,8 +30,12 @@ const unlockCourtCase = async (
 
   query.set(setFields).where("error_id = :id", { id: courtCaseId })
 
-  if (!isSupervisor) {
-    query.andWhere({ errorLockedByUsername: username, triggerLockedByUsername: username })
+  if (!isSupervisor && shouldUnlockExceptions) {
+    query.andWhere({ errorLockedByUsername: username })
+  }
+
+  if (!isSupervisor && shouldUnlockTriggers) {
+    query.andWhere({ triggerLockedByUsername: username })
   }
 
   return query.execute()?.catch((error: Error) => error)

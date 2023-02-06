@@ -64,7 +64,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       locked,
       state,
       myCases,
-      unlock
+      unlockException,
+      unlockTrigger
     } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Reason[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
@@ -83,9 +84,16 @@ export const getServerSideProps = withMultipleServerSideProps(
     const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
 
-    if (isPost(req) && !!unlock) {
-      if (unlock) {
-        const lockResult = await unlockCourtCase(dataSource, +unlock, currentUser)
+    if (isPost(req) && !!unlockException) {
+      if (unlockException) {
+        const lockResult = await unlockCourtCase(dataSource, +unlockException, currentUser, "Exception")
+        if (isError(lockResult)) {
+          throw lockResult
+        }
+      }
+    } else if (isPost(req) && !!unlockTrigger) {
+      if (unlockTrigger) {
+        const lockResult = await unlockCourtCase(dataSource, +unlockTrigger, currentUser, "Trigger")
         if (isError(lockResult)) {
           throw lockResult
         }

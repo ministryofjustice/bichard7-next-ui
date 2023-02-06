@@ -142,6 +142,50 @@ describe("lock court case", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
       expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
     })
+
+    it("can unlock trigger when exception is not locked", async () => {
+      const lockedByName = "some user"
+      const lockedCourtCase = await getDummyCourtCase({
+        triggerLockedByUsername: lockedByName
+      })
+      await insertCourtCases(lockedCourtCase)
+
+      const user = {
+        canLockExceptions: true,
+        canLockTriggers: true,
+        username: lockedByName
+      } as User
+
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, "Trigger")
+      expect(isError(result)).toBe(false)
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
+      expect(actualCourtCase.errorLockedByUsername).toBeNull()
+    })
+
+    it("can unlock exception when trigger is not locked", async () => {
+      const lockedByName = "some user"
+      const lockedCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: lockedByName
+      })
+      await insertCourtCases(lockedCourtCase)
+
+      const user = {
+        canLockExceptions: true,
+        canLockTriggers: true,
+        username: lockedByName
+      } as User
+
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, "Exception")
+      expect(isError(result)).toBe(false)
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
+      expect(actualCourtCase.errorLockedByUsername).toBeNull()
+    })
   })
 
   describe("when user doesn't have permission to unlock a case", () => {
