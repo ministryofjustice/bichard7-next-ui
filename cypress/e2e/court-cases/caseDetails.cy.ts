@@ -196,7 +196,7 @@ describe("Case details", () => {
       cy.findByText("Error locked by: Another name").should("exist")
     })
 
-    it.only("should unlock and lock a court case when its already locked", () => {
+    it("should unlock and lock a court case when its already locked", () => {
       const existingUserLock = "Another name"
       cy.task("insertCourtCasesWithFields", [
         {
