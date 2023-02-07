@@ -185,8 +185,8 @@ const Home: NextPage<Props> = ({
               reasonSearch,
               ptiurn,
               dateRange,
-              customDateFrom: new Date(customDateFrom || ""),
-              customDateTo: new Date(customDateTo || ""),
+              customDateFrom: customDateFrom !== null ? new Date(customDateFrom) : null,
+              customDateTo: customDateTo !== null ? new Date(customDateTo) : null,
               urgency: urgent,
               locked: locked,
               caseState: caseState

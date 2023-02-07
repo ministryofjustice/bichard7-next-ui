@@ -52,14 +52,6 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     return `${basePath}/?${searchParams}`
   }
 
-  // TODO: created a new function that takes in multiple params and deletes them from query. Issue we had was that the deleteQueryParams function did not like the result type having undefined.
-  // const removeQueryParamsFromPath = (paramsToRemove: { [key: string[]]: string[] }): string => {
-  //   deleteQueryParamsByName(["pageNum"], query)
-  //   const searchParams = deleteQueryParam(paramsToRemove, query)
-
-  //   return `${basePath}/?${searchParams}`
-  // }
-
   return (
     <div>
       <If condition={hasAnyAppliedFilters()}>
