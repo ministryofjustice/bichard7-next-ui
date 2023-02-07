@@ -1,4 +1,13 @@
-import { Brackets, DataSource, IsNull, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not } from "typeorm"
+import {
+  Brackets,
+  DataSource,
+  IsNull,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+  SelectQueryBuilder
+} from "typeorm"
 import { CaseListQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
@@ -28,8 +37,10 @@ const listCourtCases = async (
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
   const maxPageItemsValidated = maxPageItems ? parseInt(maxPageItems, 10) : 25
-  const courtCaseRepository = connection.getRepository(CourtCase)
-  const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces)
+  const repository = connection.getRepository(CourtCase)
+  let query = repository.createQueryBuilder("courtCase")
+  query = courtCasesByVisibleForcesQuery(query, forces) as SelectQueryBuilder<CourtCase>
+  query
     .leftJoinAndSelect("courtCase.triggers", "trigger")
     .leftJoinAndSelect("courtCase.notes", "note")
     .skip(pageNumValidated * maxPageItemsValidated)
