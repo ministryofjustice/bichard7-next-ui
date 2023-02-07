@@ -21,7 +21,6 @@ import { validateCustomDateRange } from "utils/validators/validateCustomDateRang
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
-import { format } from "date-fns"
 
 interface Props {
   user: User
@@ -35,8 +34,8 @@ interface Props {
   urgent: string | null
   totalPages: number
   dateRange: string | null
-  customDateFrom: Date | null
-  customDateTo: Date | null
+  customDateFrom: string | null
+  customDateTo: string | null
   pageNum: number
   locked: string | null
   caseState: CaseState | null
@@ -124,8 +123,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         reasonSearch: validatedReasonSearch ? validatedReasonSearch : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
         dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
-        customDateFrom: validatedCustomDateRange?.from ?? null,
-        customDateTo: validatedCustomDateRange?.to ?? null,
+        customDateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
+        customDateTo: validatedCustomDateRange?.to.toJSON() ?? null,
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null
@@ -170,8 +169,8 @@ const Home: NextPage<Props> = ({
             reasonSearch={reasonSearch}
             ptiurn={ptiurn}
             dateRange={dateRange}
-            customDateFrom={customDateFrom}
-            customDateTo={customDateTo}
+            customDateFrom={customDateFrom !== null ? new Date(customDateFrom) : null}
+            customDateTo={customDateTo !== null ? new Date(customDateTo) : null}
             urgency={urgent}
             locked={locked}
             caseState={caseState}
@@ -186,8 +185,8 @@ const Home: NextPage<Props> = ({
               reasonSearch,
               ptiurn,
               dateRange,
-              customDateFrom,
-              customDateTo,
+              customDateFrom: new Date(customDateFrom || ""),
+              customDateTo: new Date(customDateTo || ""),
               urgency: urgent,
               locked: locked,
               caseState: caseState

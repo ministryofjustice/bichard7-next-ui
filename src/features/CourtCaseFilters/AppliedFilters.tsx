@@ -2,6 +2,7 @@ import FilterTag from "components/FilterTag/FilterTag"
 import If from "components/If"
 import { format } from "date-fns"
 import { useRouter } from "next/router"
+import { encode } from "querystring"
 import { Reason } from "types/CaseListQueryParams"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
@@ -39,12 +40,25 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.caseState
 
   const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
-    deleteQueryParamsByName(["pageNum"], query)
-    const searchParams = deleteQueryParam(paramToRemove, query)
+    let searchParams = deleteQueryParam(paramToRemove, query)
+    searchParams = deleteQueryParamsByName(["pageNum"], searchParams)
 
     return `${basePath}/?${searchParams}`
   }
-// TODO: created a new function that takes in multiple params and deletes them from query. Issue we had was that the deleteQueryParams function did not like the result type having undefined.
+
+  const removeQueryParamsByName = (paramsToRemove: string[]): string => {
+    let searchParams = new URLSearchParams(encode(query))
+    searchParams = deleteQueryParamsByName(paramsToRemove, searchParams)
+    return `${basePath}/?${searchParams}`
+  }
+
+  // TODO: created a new function that takes in multiple params and deletes them from query. Issue we had was that the deleteQueryParams function did not like the result type having undefined.
+  // const removeQueryParamsFromPath = (paramsToRemove: { [key: string[]]: string[] }): string => {
+  //   deleteQueryParamsByName(["pageNum"], query)
+  //   const searchParams = deleteQueryParam(paramsToRemove, query)
+
+  //   return `${basePath}/?${searchParams}`
+  // }
 
   return (
     <div>
@@ -102,12 +116,13 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
             <li>
               <FilterTag
                 tag={
-                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                  `${format(filters.customDateFrom!, "dd/MM/yyyy")} - ${format(filters.customDateTo!, "dd/MM/yyyy")}` ??
-                  ""
+                  `${format(filters.customDateFrom || new Date(), "dd/MM/yyyy")} - ${format(
+                    filters.customDateTo || new Date(),
+                    "dd/MM/yyyy"
+                  )}` ?? ""
                 }
                 // TODO update deleteQueryParams
-                href={deleteQueryParamsByName(["from", "to"])}
+                href={removeQueryParamsByName(["from", "to"])}
               />
             </li>
           </If>

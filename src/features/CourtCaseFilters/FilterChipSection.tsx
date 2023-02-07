@@ -15,6 +15,7 @@ interface Props {
 }
 
 const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, marginTop }: Props) => {
+  console.log(state)
   const customDateRangeLabel =
     !!state.customDateFrom.value && !!state.customDateTo.value
       ? `${format(state.customDateFrom.value, "dd/MM/yyyy")} - ${format(state.customDateTo.value, "dd/MM/yyyy")}`

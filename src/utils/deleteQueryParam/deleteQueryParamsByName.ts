@@ -1,8 +1,5 @@
-const deleteQueryParamsByName = (
-  keysToRemove: string[],
-  query: { [key: string]: string | string[] | undefined }
-): { [key: string]: string | string[] | undefined } => {
-  keysToRemove.forEach((key: string) => delete query[key])
+const deleteQueryParamsByName = (keysToRemove: string[], query: URLSearchParams): URLSearchParams => {
+  keysToRemove.forEach((key: string) => query.delete(key))
   return query
 }
 
