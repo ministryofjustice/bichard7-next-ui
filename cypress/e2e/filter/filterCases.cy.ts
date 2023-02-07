@@ -408,6 +408,8 @@ describe("Case list", () => {
       cy.get("#custom-date-range").click()
       cy.get("#date-from").click().type("2022-01-01")
       cy.get("#date-to").click().type("2022-12-31")
+      cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+      cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 5)
@@ -415,6 +417,7 @@ describe("Case list", () => {
       cy.findByText("Next page").click()
       cy.get("tr").not(":first").should("have.length", 2)
 
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").click({ force: true })
       cy.get("tr").not(":first").should("have.length", 5)
     })

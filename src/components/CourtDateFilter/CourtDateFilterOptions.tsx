@@ -51,11 +51,12 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch }: Props)
           name={"courtDate"}
           id={"custom-date-range"}
           dataAriaControls={"conditional-custom-date-range"}
-          defaultChecked={validateNamedDateRange(dateRange || "")}
-          label={"Custom Date range"}
+          checked={validateNamedDateRange(dateRange || "")}
+          label={"Custom date range"}
         />
         <div className="govuk-radios__conditional" id="conditional-custom-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+            {/* TODO- weird behaviour when changing custom dates when dates are already applied. */}
             <DateInput dateType="from" dispatch={dispatch} />
             <DateInput dateType="to" dispatch={dispatch} />
           </div>
