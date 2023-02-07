@@ -1,13 +1,10 @@
 import CourtCase from "../entities/CourtCase"
-import { Brackets, In, Repository, SelectQueryBuilder } from "typeorm"
-import KeyValuePair from "../../types/KeyValuePair"
+import { Brackets, In, Like, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
 
 const courtCasesByVisibleForcesQuery = (
-  repository: Repository<CourtCase>,
+  query: SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase>,
   forces: string[]
-): SelectQueryBuilder<CourtCase> => {
-  const query = repository.createQueryBuilder("courtCase")
-
+): SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> => {
   query.where(
     new Brackets((qb) => {
       if (forces.length < 1) {
@@ -15,14 +12,13 @@ const courtCasesByVisibleForcesQuery = (
         return query
       }
 
-      forces.forEach((force, i) => {
-        const args: KeyValuePair<string, string> = {}
-        args[`force${i}`] = force
-        // use different named parameters for each force
+      forces.forEach((force) => {
         if (force.length === 1) {
-          qb.orWhere(`courtCase.orgForPoliceFilter like :force${i} || '__%'`, args)
+          const condition = { orgForPoliceFilter: Like(`${force}__%`) }
+          qb.where(condition)
         } else {
-          qb.orWhere(`courtCase.orgForPoliceFilter like :force${i} || '%'`, args)
+          const condition = { orgForPoliceFilter: Like(`${force}%`) }
+          qb.orWhere(condition)
         }
 
         if (force.length > 3) {

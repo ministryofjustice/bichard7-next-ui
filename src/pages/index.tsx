@@ -13,10 +13,12 @@ import type CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
+import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { CaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
+import { isPost } from "utils/http"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
@@ -46,7 +48,7 @@ const validCourtCaseTypes = ["Triggers", "Exceptions"]
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query } = context as AuthenticationServerSidePropsContext
+    const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
     const {
       orderBy,
       page,
@@ -61,7 +63,9 @@ export const getServerSideProps = withMultipleServerSideProps(
       dateRange,
       locked,
       state,
-      myCases
+      myCases,
+      unlockException,
+      unlockTrigger
     } = query
     const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Reason[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
@@ -79,6 +83,23 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedMyCases = validateQueryParams(myCases) ? currentUser.username : undefined
     const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
+
+    if (isPost(req) && !!unlockException) {
+      if (unlockException) {
+        const lockResult = await unlockCourtCase(dataSource, +unlockException, currentUser, "Exception")
+        if (isError(lockResult)) {
+          throw lockResult
+        }
+      }
+    } else if (isPost(req) && !!unlockTrigger) {
+      if (unlockTrigger) {
+        const lockResult = await unlockCourtCase(dataSource, +unlockTrigger, currentUser, "Trigger")
+        if (isError(lockResult)) {
+          throw lockResult
+        }
+      }
+    }
+
     const courtCases = await listCourtCases(dataSource, {
       forces: currentUser.visibleForces,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
@@ -184,7 +205,7 @@ const Home: NextPage<Props> = ({
             }}
           />
         }
-        courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
+        courtCaseList={<CourtCaseList courtCases={courtCases} order={order} currentUser={user} />}
         paginationTop={<Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />}
         paginationBottom={
           <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />

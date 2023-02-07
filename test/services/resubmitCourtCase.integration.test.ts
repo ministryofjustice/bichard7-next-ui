@@ -44,7 +44,8 @@ describe("resubmit court case", () => {
       triggerCount: 1,
       phase: 1,
       hearingOutcome: offenceSequenceException.hearingOutcomeXml,
-      updatedHearingOutcome: offenceSequenceException.updatedHearingOutcomeXml
+      updatedHearingOutcome: offenceSequenceException.updatedHearingOutcomeXml,
+      orgForPoliceFilter: "1"
     })
 
     // insert the record to the db
@@ -55,7 +56,8 @@ describe("resubmit court case", () => {
 
     const result = await resubmitCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
       username: userName,
-      canLockExceptions: true
+      canLockExceptions: true,
+      visibleForces: ["1"]
     } as User)
 
     expect(result).not.toBeInstanceOf(Error)
@@ -88,7 +90,8 @@ describe("resubmit court case", () => {
       triggerCount: 1,
       phase: 1,
       hearingOutcome: offenceSequenceException.hearingOutcomeXml,
-      updatedHearingOutcome: offenceSequenceException.updatedHearingOutcomeXml
+      updatedHearingOutcome: offenceSequenceException.updatedHearingOutcomeXml,
+      orgForPoliceFilter: "1111"
     })
 
     // insert the record to the db
@@ -113,7 +116,8 @@ describe("resubmit court case", () => {
       inputCourtCase.errorId,
       {
         username: userName,
-        canLockExceptions: true
+        canLockExceptions: true,
+        visibleForces: ["1111"]
       } as User
     )
 
@@ -162,7 +166,8 @@ describe("resubmit court case", () => {
       triggerCount: 1,
       phase: 1,
       hearingOutcome: offenceSequenceException.hearingOutcomeXml,
-      updatedHearingOutcome: offenceSequenceException.updatedHearingOutcomeXml
+      updatedHearingOutcome: offenceSequenceException.updatedHearingOutcomeXml,
+      orgForPoliceFilter: "1111"
     })
 
     // insert the record to the db
@@ -192,7 +197,8 @@ describe("resubmit court case", () => {
       inputCourtCase.errorId,
       {
         username: userName,
-        canLockExceptions: true
+        canLockExceptions: true,
+        visibleForces: ["1111"]
       } as User
     )
 

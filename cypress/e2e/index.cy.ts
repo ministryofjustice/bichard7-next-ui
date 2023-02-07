@@ -24,10 +24,20 @@ describe("Case list", () => {
       email: `bichard011111@example.com`,
       password: hashedPassword
     })
+    defaultUsers.push({
+      username: `Supervisor`,
+      visibleForces: [`011111`],
+      forenames: "Sup",
+      surname: "User",
+      email: "supervisor@example.com",
+      password: hashedPassword
+    })
 
     before(() => {
       cy.task("clearUsers")
       cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp"] })
+      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
+      cy.task("insertIntoUserGroup", { emailAddress: "supervisor@example.com", groupName: "B7Supervisor_grp" })
     })
 
     beforeEach(() => {
@@ -440,6 +450,103 @@ describe("Case list", () => {
         cy.get("tbody td:nth-child(5)").each((element, index) => {
           cy.wrap(element).should("have.text", `Case0000${descendingOrder[index]}`)
         })
+      })
+
+      it("should unlock a case that is locked to the user", () => {
+        const lockUsernames = ["Bichard01", "Bichard02"]
+        cy.task(
+          "insertCourtCasesWithFields",
+          lockUsernames.map((username) => ({
+            errorLockedByUsername: username,
+            triggerLockedByUsername: username,
+            orgForPoliceFilter: "011111",
+            errorCount: 1,
+            triggerCount: 1
+          }))
+        )
+        const triggers: TestTrigger[] = [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0001",
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+        cy.task("insertTriggers", { caseId: 0, triggers })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        // Exception lock
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
+        // Trigger lock
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+        // User should not see unlock button when a case assigned to another user
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard02").should("not.exist")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+
+        // Unlock the exception assigned to the user
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").click()
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+
+        // Unlock the trigger assigned to the user
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").click()
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+      })
+
+      it("should unlock any case as a supervisor user", () => {
+        const lockUsernames = ["Bichard01", "Bichard02"]
+        cy.task(
+          "insertCourtCasesWithFields",
+          lockUsernames.map((username) => ({
+            errorLockedByUsername: username,
+            triggerLockedByUsername: username,
+            orgForPoliceFilter: "011111",
+            errorCount: 1,
+            triggerCount: 1
+          }))
+        )
+        const triggers: TestTrigger[] = [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0001",
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+        cy.task("insertTriggers", { caseId: 0, triggers })
+
+        cy.login("supervisor@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard02").should("exist")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+
+        // Unlock both cases
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").click()
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").click()
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard02").click()
+
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("not.exist")
       })
     })
 

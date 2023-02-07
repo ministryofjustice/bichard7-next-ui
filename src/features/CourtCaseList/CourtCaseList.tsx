@@ -11,6 +11,8 @@ import UrgentTag from "./tags/UrgentTag"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
 import { createUseStyles } from "react-jss"
+import User from "services/entities/User"
+import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 
 const useStyles = createUseStyles({
   caseDetailsRow: {
@@ -25,15 +27,24 @@ const useStyles = createUseStyles({
 interface Props {
   courtCases: CourtCase[]
   order?: QueryOrder
+  currentUser: User
 }
 
-const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) => {
+const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser }: Props) => {
   const classes = useStyles()
   const { basePath, query } = useRouter()
 
-  const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
+  deleteQueryParamsByName(["unlockException", "unlockTrigger"], query)
 
+  const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
   const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
+  const unlockExceptionPath = (unlockException: string) =>
+    `${basePath}/?${new URLSearchParams({ ...query, unlockException })}`
+  const unlockTriggerPath = (unlockTrigger: string) =>
+    `${basePath}/?${new URLSearchParams({ ...query, unlockTrigger })}`
+  const canUnlockCase = (lockedUsername: string): boolean => {
+    return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
+  }
 
   const tableHead = (
     <Table.Row>
@@ -80,6 +91,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
   courtCases.forEach(
     (
       {
+        errorId,
         courtDate,
         ptiurn,
         defendantName,
@@ -126,7 +138,11 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
             ))}
           </Table.Cell>
           <Table.Cell>
-            <LockedByTag lockedBy={errorLockedByUsername} />
+            {errorLockedByUsername && canUnlockCase(errorLockedByUsername) ? (
+              <LockedByTag lockedBy={errorLockedByUsername} unlockPath={unlockExceptionPath(`${errorId}`)} />
+            ) : (
+              <LockedByTag lockedBy={errorLockedByUsername} />
+            )}
           </Table.Cell>
         </Table.Row>
       )
@@ -151,7 +167,11 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
               ))}
             </Table.Cell>
             <Table.Cell>
-              <LockedByTag lockedBy={triggerLockedByUsername} />
+              {triggerLockedByUsername && canUnlockCase(triggerLockedByUsername) ? (
+                <LockedByTag lockedBy={triggerLockedByUsername} unlockPath={unlockTriggerPath(`${errorId}`)} />
+              ) : (
+                <LockedByTag lockedBy={triggerLockedByUsername} />
+              )}
             </Table.Cell>
           </Table.Row>
         )
