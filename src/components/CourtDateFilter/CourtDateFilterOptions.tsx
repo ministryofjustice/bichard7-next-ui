@@ -21,6 +21,7 @@ const formatNamedDateRange = (namedDateRange: string): string => {
 const labelForDateRange = (namedDateRange: string): string =>
   ["Today", "Yesterday"].includes(namedDateRange) ? namedDateRange : formatNamedDateRange(namedDateRange)
 
+// TODO- update radio button logic for nested radios. Move away from GOV UK condition classes and use "states" instead.
 const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
@@ -56,7 +57,6 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch }: Props)
         />
         <div className="govuk-radios__conditional" id="conditional-custom-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-            {/* TODO- weird behaviour when changing custom dates when dates are already applied. */}
             <DateInput dateType="from" dispatch={dispatch} />
             <DateInput dateType="to" dispatch={dispatch} />
           </div>
