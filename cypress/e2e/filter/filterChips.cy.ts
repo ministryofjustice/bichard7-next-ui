@@ -126,9 +126,10 @@ describe("Case list", () => {
         cy.get("#custom-date-range").click()
         cy.get("#date-from").should("have.value", "")
         cy.get("#date-to").should("have.value", "")
-        cy.get("#date-from").click().type("2022-01-01")
-        cy.get("#date-to").click().type("2022-12-31")
+        cy.get("#date-from").type("2022-01-01")
+        cy.get("#date-to").type("2022-12-31")
 
+        cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
         cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist").trigger("click")
         cy.get(".moj-filter__tag").should("not.exist")
