@@ -9,6 +9,7 @@ import DateInput from "components/CustomDateInput/DateInput"
 interface Props {
   dateRange?: string | null
   dispatch: Dispatch<FilterAction>
+  hasCustomDateRange?: boolean
 }
 
 const formatNamedDateRange = (namedDateRange: string): string => {
@@ -22,7 +23,7 @@ const labelForDateRange = (namedDateRange: string): string =>
   ["Today", "Yesterday"].includes(namedDateRange) ? namedDateRange : formatNamedDateRange(namedDateRange)
 
 // TODO- update radio button logic for nested radios. Move away from GOV UK condition classes and use "states" instead.
-const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch }: Props) => {
+const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, hasCustomDateRange }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
@@ -49,10 +50,10 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch }: Props)
           </div>
         </div>
         <RadioButton
-          name={"courtDate"}
+          name={"customCourtDate"}
           id={"custom-date-range"}
           dataAriaControls={"conditional-custom-date-range"}
-          checked={validateNamedDateRange(dateRange || "")}
+          checked={hasCustomDateRange}
           label={"Custom date range"}
         />
         <div className="govuk-radios__conditional" id="conditional-custom-date-range">

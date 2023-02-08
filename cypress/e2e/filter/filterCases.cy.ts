@@ -406,8 +406,8 @@ describe("Case list", () => {
       // Tests for all cases in 2022
       cy.get("button#filter-button").click()
       cy.get("#custom-date-range").click()
-      cy.get("#date-from").click().type("2022-01-01")
-      cy.get("#date-to").click().type("2022-12-31")
+      cy.get("#date-from").type("2022-01-01")
+      cy.get("#date-to").type("2022-12-31")
       cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
       cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
       cy.get("button#search").click()
@@ -420,6 +420,46 @@ describe("Case list", () => {
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").click({ force: true })
       cy.get("tr").not(":first").should("have.length", 5)
+      cy.findByText("Next page").click()
+      cy.get("tr").not(":first").should("have.length", 5)
+      cy.findByText("Next page").click()
+      cy.get("tr").not(":first").should("have.length", 3)
+      cy.findByText("Next page").click()
+    })
+
+    it.skip("Should ensure radio buttons are correctly selected for 'date range' and 'custom date range' filters", () => {
+      // TODO- BICAWS-2616 filter panel bug with court date radio buttons.
+      cy.visit("/bichard")
+      cy.get("button#filter-button").click()
+
+      cy.get("#date-range").click().should("be.checked")
+
+      cy.get("#date-range-yesterday").click().should("be.checked")
+
+      cy.get("#date-range").should("be.checked")
+      cy.get("#date-range-yesterday").should("be.checked")
+      cy.get("#custom-date-range").should("not.be.checked")
+
+      cy.get("#custom-date-range").click().should("be.checked")
+      cy.get("#date-range").should("not.be.checked")
+
+      cy.get("#date-range-yesterday").should("not.be.checked")
+      cy.get(".moj-filter__tag").contains("Yesterday").should("not.exist")
+    })
+
+    it("Should update 'selected filter' chip when changing custom date range filter", () => {
+      cy.visit("/bichard")
+      cy.get("button#filter-button").click()
+      cy.get("#custom-date-range").click()
+
+      cy.get("#date-from").type("1999-01-01")
+      cy.get("#date-to").type("2000-12-31")
+      cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+      cy.get(".moj-filter__tag").contains("01/01/1999 - 31/12/2000")
+
+      cy.get("#date-from").type("2022-01-01")
+      cy.get("#date-to").type("2022-12-31")
+      cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
     })
 
     it("Should not allow passing an invalid date range filter", () => {
