@@ -1,13 +1,13 @@
+import { faker } from "@faker-js/faker"
 import { differenceInDays, subDays } from "date-fns"
 import sample from "lodash.sample"
+import { DataSource } from "typeorm"
 import { v4 as uuidv4 } from "uuid"
 import CourtCase from "../../src/services/entities/CourtCase"
 import { ResolutionStatus } from "../../src/types/ResolutionStatus"
 import createDummyAsn from "./createDummyAsn"
 import createDummyCourtCode from "./createDummyCourtCode"
 import createDummyPtiurn from "./createDummyPtiurn"
-import { faker } from "@faker-js/faker"
-import { DataSource } from "typeorm"
 
 const randomResolutionStatus = (): ResolutionStatus => {
   const choices: ResolutionStatus[] = ["Unresolved", "Resolved", "Submitted"]
@@ -22,7 +22,7 @@ const randomBoolean = (): boolean => sample([true, false]) ?? true
 export default (dataSource: DataSource, orgForPoliceFilter: string, dateFrom?: Date, dateTo?: Date): CourtCase => {
   const dateRangeDays = dateFrom && dateTo ? differenceInDays(dateFrom, dateTo) : 12 * 30
   const caseDate = subDays(new Date(dateTo || new Date()), Math.round(Math.random() * dateRangeDays))
-  const ptiurn = createDummyPtiurn()
+  const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgForPoliceFilter + faker.random.alpha(2).toUpperCase())
 
   const courtCase = dataSource.getRepository(CourtCase).create({
     messageId: uuidv4(),
@@ -34,7 +34,7 @@ export default (dataSource: DataSource, orgForPoliceFilter: string, dateFrom?: D
     triggerQualityChecked: 1,
     triggerCount: 0,
     isUrgent: randomBoolean(),
-    asn: createDummyAsn(caseDate.getFullYear(), orgForPoliceFilter),
+    asn: createDummyAsn(caseDate.getFullYear(), orgForPoliceFilter + faker.random.alpha(2).toUpperCase()),
     courtCode: createDummyCourtCode(),
     hearingOutcome: "",
     errorReport: "",
