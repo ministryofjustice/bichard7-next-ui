@@ -19,14 +19,14 @@ const randomPhase = (): number => sample([1, 2, 3]) || 1
 const randomBoolean = (): boolean => sample([true, false]) ?? true
 
 // Generates a random case with no triggers or exceptions
-export default (dataSource: DataSource, orgForPoliceFilter: string, dateFrom?: Date, dateTo?: Date): CourtCase => {
+export default (dataSource: DataSource, orgCode: string, dateFrom?: Date, dateTo?: Date): CourtCase => {
   const dateRangeDays = dateFrom && dateTo ? differenceInDays(dateFrom, dateTo) : 12 * 30
   const caseDate = subDays(new Date(dateTo || new Date()), Math.round(Math.random() * dateRangeDays))
-  const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgForPoliceFilter + faker.random.alpha(2).toUpperCase())
+  const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgCode + faker.random.alpha(2).toUpperCase())
 
   const courtCase = dataSource.getRepository(CourtCase).create({
     messageId: uuidv4(),
-    orgForPoliceFilter,
+    orgForPoliceFilter: orgCode,
     phase: randomPhase(),
     errorStatus: randomResolutionStatus(),
     triggerStatus: randomResolutionStatus(),
@@ -34,8 +34,8 @@ export default (dataSource: DataSource, orgForPoliceFilter: string, dateFrom?: D
     triggerQualityChecked: 1,
     triggerCount: 0,
     isUrgent: randomBoolean(),
-    asn: createDummyAsn(caseDate.getFullYear(), orgForPoliceFilter + faker.random.alpha(2).toUpperCase()),
-    courtCode: createDummyCourtCode(),
+    asn: createDummyAsn(caseDate.getFullYear(), orgCode + faker.random.alpha(2).toUpperCase()),
+    courtCode: createDummyCourtCode(orgCode),
     hearingOutcome: "",
     errorReport: "",
     createdTimestamp: caseDate,
