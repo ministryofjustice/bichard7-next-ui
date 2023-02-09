@@ -6,7 +6,7 @@ import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromTable from "../test/utils/deleteFromTable"
 
-const minCases = 100
+const minCases = 500
 const maxCases = 1_000
 const forceId = process.env.FORCE_ID || "01"
 const maxCaseAge = 12 * 30
