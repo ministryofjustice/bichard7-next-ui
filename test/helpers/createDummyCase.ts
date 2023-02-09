@@ -7,6 +7,7 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import dummyAHO from "../test-data/AnnotatedHO1.json"
 import createDummyAsn from "./createDummyAsn"
 import createDummyCourtCode from "./createDummyCourtCode"
+import createDummyExceptions from "./createDummyExceptions"
 import createDummyNotes from "./createDummyNotes"
 import createDummyPtiurn from "./createDummyPtiurn"
 import createDummyTriggers from "./createDummyTriggers"
@@ -50,7 +51,7 @@ export default async (
     asn: createDummyAsn(caseDate.getFullYear(), orgCode + faker.random.alpha(2).toUpperCase()),
     courtCode: createDummyCourtCode(orgCode),
     hearingOutcome: dummyAHO.hearingOutcomeXml,
-    errorReport: "",
+    errorReport: createDummyExceptions(),
     createdTimestamp: caseDate,
     errorReason: "",
     triggerReason: "",
