@@ -34,7 +34,7 @@ export default (dataSource: DataSource, orgForPoliceFilter: string, dateFrom?: D
     triggerQualityChecked: 1,
     triggerCount: 0,
     isUrgent: randomBoolean(),
-    asn: createDummyAsn(23, orgForPoliceFilter),
+    asn: createDummyAsn(caseDate.getFullYear(), orgForPoliceFilter),
     courtCode: createDummyCourtCode(),
     hearingOutcome: "",
     errorReport: "",
