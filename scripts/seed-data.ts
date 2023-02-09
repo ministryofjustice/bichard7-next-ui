@@ -1,6 +1,7 @@
 import { subDays } from "date-fns"
 import CourtCase from "../src/services/entities/CourtCase"
 import Trigger from "../src/services/entities/Trigger"
+import Note from "../src/services/entities/Trigger"
 import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromTable from "../test/utils/deleteFromTable"
@@ -18,6 +19,7 @@ console.log(`Seeding ${numCases} cases for force ID ${forceId}`)
 getDataSource().then(async (dataSource) => {
   await deleteFromTable(CourtCase)
   await deleteFromTable(Trigger)
+  await deleteFromTable(Note)
 
   await Promise.all(
     new Array(numCases)
