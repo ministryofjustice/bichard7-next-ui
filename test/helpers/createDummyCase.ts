@@ -47,7 +47,7 @@ export default (dataSource: DataSource, orgForPoliceFilter: string, dateFrom?: D
     ptiurn: ptiurn,
     courtName: faker.address.city(),
     messageReceivedTimestamp: caseDate,
-    defendantName: faker.name.fullName(),
+    defendantName: faker.name.firstName() + " " + faker.name.lastName(),
     courtRoom: Math.round(Math.random() * 15)
       .toString()
       .padStart(2, "0"),
