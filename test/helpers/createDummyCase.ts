@@ -1,7 +1,6 @@
 import { faker } from "@faker-js/faker"
 import { differenceInDays, subDays } from "date-fns"
 import sample from "lodash.sample"
-// import Trigger from "../../src/services/entities/Trigger"
 import { DataSource } from "typeorm"
 import { v4 as uuidv4 } from "uuid"
 import CourtCase from "../../src/services/entities/CourtCase"
@@ -19,7 +18,7 @@ const randomBoolean = (): boolean => sample([true, false]) ?? true
 
 const randomUsername = (): string => `${faker.name.firstName().toLowerCase()}.${faker.name.lastName().toLowerCase()}`
 
-const randomName = (): string => `${faker.name.firstName().toLowerCase()} ${faker.name.lastName().toLowerCase()}`
+const randomName = (): string => `${faker.name.firstName()} ${faker.name.lastName()}`
 
 export default async (
   dataSource: DataSource,

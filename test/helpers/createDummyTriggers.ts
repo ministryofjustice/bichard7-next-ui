@@ -5,7 +5,7 @@ import { DataSource } from "typeorm"
 import Trigger from "../../src/services/entities/Trigger"
 import createResolutionStatus from "./createResolutionStatus"
 
-const triggerDistribution = {
+const triggerFrequency = {
   TRPR0015: 112166,
   TRPR0010: 86986,
   TRPR0020: 74545,
@@ -40,12 +40,12 @@ const triggerDistribution = {
   TRPS0002: 41,
   TRPS0013: 19
 }
-const totalFrequency = Object.values(triggerDistribution).reduce((a, b) => a + b, 0)
-const probs = Object.values(triggerDistribution).map((freq) => freq / totalFrequency)
+const totalFrequency = Object.values(triggerFrequency).reduce((a, b) => a + b, 0)
+const probs = Object.values(triggerFrequency).map((freq) => freq / totalFrequency)
 
 export default (dataSource: DataSource, errorId: number, creationDate: Date): Trigger[] => {
   const numTriggers = Math.min(Math.round(exponential(2) * 2), 5) + 1
-  const triggerCodes = sample(Object.keys(triggerDistribution), {
+  const triggerCodes = sample(Object.keys(triggerFrequency), {
     size: numTriggers,
     probs,
     replace: true

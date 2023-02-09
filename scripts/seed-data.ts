@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { subDays } from "date-fns"
-import Trigger from "../src/services/entities/Trigger"
 import CourtCase from "../src/services/entities/CourtCase"
+import Trigger from "../src/services/entities/Trigger"
 import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromTable from "../test/utils/deleteFromTable"
