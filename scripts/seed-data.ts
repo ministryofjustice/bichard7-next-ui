@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { subDays } from "date-fns"
+import Trigger from "../src/services/entities/Trigger"
 import CourtCase from "../src/services/entities/CourtCase"
 import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromTable from "../test/utils/deleteFromTable"
-import { insertCourtCases } from "../test/utils/insertCourtCases"
 
 const minCases = 100
 const maxCases = 1_000
@@ -18,13 +18,13 @@ console.log(`Seeding ${numCases} cases for force ID ${forceId}`)
 
 getDataSource().then(async (dataSource) => {
   await deleteFromTable(CourtCase)
+  await deleteFromTable(Trigger)
 
-  const courtCases = new Array(numCases)
-    .fill(0)
-    .map(() => createDummyCase(dataSource, forceId, subDays(new Date(), maxCaseAge)))
-    .sort((caseA, caseB) => caseB.courtDate!.getTime() - caseA.courtDate!.getTime())
-
-  await insertCourtCases(courtCases)
+  await Promise.all(
+    new Array(numCases)
+      .fill(0)
+      .map((_, idx) => createDummyCase(dataSource, idx, forceId, subDays(new Date(), maxCaseAge)))
+  )
 })
 
 export {}
