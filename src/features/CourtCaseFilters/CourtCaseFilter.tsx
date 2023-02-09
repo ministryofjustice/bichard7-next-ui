@@ -218,7 +218,6 @@ const CourtCaseFilter: React.FC<Props> = ({
   const [state, dispatch] = useReducer(reducer, initialFilterState)
 
   const classes = useStyles()
-  console.log(state)
   return (
     <form method={"get"} id="filter-panel">
       <div className="moj-filter__header">

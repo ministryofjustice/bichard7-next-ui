@@ -107,7 +107,7 @@ describe("Case list", () => {
     })
 
     describe("Custom Date range", () => {
-      it.only("Should allow you to add custom date range filter chip", () => {
+      it("Should allow you to add custom date range filter chip", () => {
         cy.get("button#filter-button").click()
         cy.get("#custom-date-range").click()
         cy.get("#date-from").click().type("2022-01-01")
@@ -121,7 +121,7 @@ describe("Case list", () => {
         cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
       })
 
-      it.only("Should apply the 'Cutom date filter' filter chips then remove this chips to the original state", () => {
+      it("Should apply the 'Cutom date filter' filter chips then remove this chips to the original state", () => {
         cy.get("#filter-button").click()
         cy.get("#custom-date-range").click()
         cy.get("#date-from").should("have.value", "")

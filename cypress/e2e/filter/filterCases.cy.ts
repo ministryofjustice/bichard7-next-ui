@@ -382,7 +382,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 5)
     })
 
-    it.only("Should display cases filtered for a custom date range", () => {
+    it("Should display cases filtered for a custom date range", () => {
       const force = "011111"
 
       cy.task("insertCourtCasesWithFields", [
@@ -424,7 +424,6 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 5)
       cy.findByText("Next page").click()
       cy.get("tr").not(":first").should("have.length", 3)
-      cy.findByText("Next page").click()
     })
 
     it.skip("Should ensure radio buttons are correctly selected for 'date range' and 'custom date range' filters", () => {

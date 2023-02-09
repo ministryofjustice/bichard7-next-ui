@@ -24,7 +24,6 @@ const labelForDateRange = (namedDateRange: string): string =>
 
 // TODO- update radio button logic for nested radios. Move away from GOV UK condition classes and use "states" instead.
 const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, hasCustomDateRange }: Props) => {
-  console.log("dateRange: ", dateRange)
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">

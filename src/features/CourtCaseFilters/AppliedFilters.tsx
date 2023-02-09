@@ -113,8 +113,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
                     "dd/MM/yyyy"
                   )}` ?? ""
                 }
-                // TODO update deleteQueryParams
-                href={removeQueryParamsByName(["from", "to"])}
+                href={removeQueryParamsByName(["from", "to", "pageNum"])}
               />
             </li>
           </If>
