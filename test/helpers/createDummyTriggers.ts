@@ -48,7 +48,7 @@ export default (dataSource: DataSource, errorId: number, creationDate: Date): Tr
   const triggerCodes = sample(Object.keys(triggerDistribution), {
     size: numTriggers,
     probs,
-    replace: false
+    replace: true
   })
 
   return triggerCodes.map((triggerCode, idx) => {

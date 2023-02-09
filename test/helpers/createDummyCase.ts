@@ -8,6 +8,7 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import dummyAHO from "../test-data/AnnotatedHO1.json"
 import createDummyAsn from "./createDummyAsn"
 import createDummyCourtCode from "./createDummyCourtCode"
+import createDummyNotes from "./createDummyNotes"
 import createDummyPtiurn from "./createDummyPtiurn"
 import createDummyTriggers from "./createDummyTriggers"
 import createResolutionStatus from "./createResolutionStatus"
@@ -15,6 +16,10 @@ import createResolutionStatus from "./createResolutionStatus"
 const randomPhase = (): number => sample([1, 2, 3]) || 1
 
 const randomBoolean = (): boolean => sample([true, false]) ?? true
+
+const randomUsername = (): string => `${faker.name.firstName().toLowerCase()}.${faker.name.lastName().toLowerCase()}`
+
+const randomName = (): string => `${faker.name.firstName().toLowerCase()} ${faker.name.lastName().toLowerCase()}`
 
 export default async (
   dataSource: DataSource,
@@ -26,12 +31,16 @@ export default async (
   const dateRangeDays = dateFrom && dateTo ? differenceInDays(dateFrom, dateTo) : 12 * 30
   const caseDate = subDays(new Date(dateTo || new Date()), Math.round(Math.random() * dateRangeDays))
   const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgCode + faker.random.alpha(2).toUpperCase())
+  const isResolved = randomBoolean()
   const triggers = createDummyTriggers(dataSource, caseId, caseDate)
+  const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
 
   const courtCase = await dataSource.getRepository(CourtCase).save({
     errorId: caseId,
     messageId: uuidv4(),
     orgForPoliceFilter: orgCode,
+    errorLockedByUsername: !isResolved && randomBoolean() ? randomUsername() : null,
+    triggerLockedByUsername: !isResolved && randomBoolean() ? randomUsername() : null,
     phase: randomPhase(),
     errorStatus: createResolutionStatus(),
     triggerStatus: createResolutionStatus(),
@@ -52,7 +61,7 @@ export default async (
     ptiurn: ptiurn,
     courtName: faker.address.city(),
     messageReceivedTimestamp: caseDate,
-    defendantName: faker.name.firstName() + " " + faker.name.lastName(),
+    defendantName: randomName(),
     courtRoom: Math.round(Math.random() * 15)
       .toString()
       .padStart(2, "0"),
@@ -60,7 +69,7 @@ export default async (
     errorInsertedTimestamp: caseDate,
     triggerInsertedTimestamp: caseDate,
     pncUpdateEnabled: "Y",
-    notes: [],
+    notes: notes,
     triggers: triggers
   })
 
