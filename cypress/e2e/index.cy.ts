@@ -24,10 +24,20 @@ describe("Case list", () => {
       email: `bichard011111@example.com`,
       password: hashedPassword
     })
+    defaultUsers.push({
+      username: `Supervisor`,
+      visibleForces: [`011111`],
+      forenames: "Sup",
+      surname: "User",
+      email: "supervisor@example.com",
+      password: hashedPassword
+    })
 
     before(() => {
       cy.task("clearUsers")
       cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp"] })
+      cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
+      cy.task("insertIntoUserGroup", { emailAddress: "supervisor@example.com", groupName: "B7Supervisor_grp" })
     })
 
     beforeEach(() => {
@@ -89,33 +99,6 @@ describe("Case list", () => {
         cy.findByText(`Case00002`).should("exist")
         cy.findByText(`Case00003`).should("exist")
         cy.findByText(`Case00004`).should("exist")
-      })
-
-      it("should paginate buttons", () => {
-        cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
-
-        cy.findByText("Previous page").should("not.exist")
-        cy.findByText("Next page").should("exist")
-        // paginate next page until the last page
-        ;[...Array(8).keys()].forEach(() => {
-          cy.findByText("Next page").click()
-          cy.findByText("Previous page").should("exist")
-          cy.findByText("Next page").should("exist")
-        })
-        cy.findByText("Next page").click()
-        cy.findByText("Previous page").should("exist")
-        cy.findByText("Next page").should("not.exist")
-        // paginate previous page until the first page
-        ;[...Array(8).keys()].forEach(() => {
-          cy.findByText("Previous page").click()
-          cy.findByText("Previous page").should("exist")
-          cy.findByText("Next page").should("exist")
-        })
-        cy.findByText("Previous page").click()
-        cy.findByText("Previous page").should("not.exist")
-        cy.findByText("Next page").should("exist")
       })
 
       it("should display a case for the user's org", () => {
@@ -336,7 +319,28 @@ describe("Case list", () => {
         const force = "011111"
         cy.task(
           "insertCourtCasesWithFields",
-          [false, false, true, false, true, true, false, true, false, true].map((urgency) => ({
+          [
+            false,
+            false,
+            true,
+            false,
+            true,
+            true,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            true,
+            true
+          ].map((urgency) => ({
             isUrgent: urgency,
             orgForPoliceFilter: force
           }))
@@ -345,6 +349,8 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
+        cy.get(".cases-per-page").first().select("10")
+        cy.location("search").should("include", "maxPageItems=10")
         cy.get("#is-urgent-sort").click()
 
         cy.get("tr")
@@ -353,6 +359,8 @@ describe("Case list", () => {
             cy.wrap(row).contains(`Urgent`).should("not.exist")
           })
 
+        cy.get(".cases-per-page").first().select("10")
+        cy.location("search").should("include", "maxPageItems=10")
         cy.get("#is-urgent-sort").click()
 
         cy.get("tr")
@@ -372,19 +380,41 @@ describe("Case list", () => {
             orgForPoliceFilter: "011111"
           }))
         )
+        const triggers: TestTrigger[] = [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0001",
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+        cy.task("insertTriggers", { caseId: 0, triggers })
+        cy.task("insertTriggers", { caseId: 1, triggers })
+        cy.task("insertTriggers", { caseId: 2, triggers })
+        cy.task("insertTriggers", { caseId: 3, triggers })
 
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        lockUsernames.forEach((lockUsername, idx) => {
-          if (lockUsername !== null) {
-            cy.get(`tbody tr:nth-child(${idx + 1}) .locked-by-tag`).should("have.text", lockUsername)
-            cy.get(`tbody tr:nth-child(${idx + 1}) img[alt="Lock icon"]`).should("exist")
-          } else {
-            cy.get(`tbody tr:nth-child(${idx + 1}) .locked-by-tag`).should("not.exist")
-            cy.get(`tbody tr:nth-child(${idx + 1}) img[alt="Lock icon"]`).should("not.exist")
-          }
-        })
+        //Error locks
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard01")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(5) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(5) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(7) .locked-by-tag`).should("have.text", "A really really really long name")
+        cy.get(`tbody tr:nth-child(7) img[alt="Lock icon"]`).should("exist")
+
+        //Trigger locks
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard01")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(4) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(4) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(6) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(6) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(8) .locked-by-tag`).should("have.text", "A really really really long name")
+        cy.get(`tbody tr:nth-child(8) img[alt="Lock icon"]`).should("exist")
       })
 
       it("can sort cases by who has locked it", () => {
@@ -420,6 +450,264 @@ describe("Case list", () => {
         cy.get("tbody td:nth-child(5)").each((element, index) => {
           cy.wrap(element).should("have.text", `Case0000${descendingOrder[index]}`)
         })
+      })
+
+      it("should unlock a case that is locked to the user", () => {
+        const lockUsernames = ["Bichard01", "Bichard02"]
+        cy.task(
+          "insertCourtCasesWithFields",
+          lockUsernames.map((username) => ({
+            errorLockedByUsername: username,
+            triggerLockedByUsername: username,
+            orgForPoliceFilter: "011111",
+            errorCount: 1,
+            triggerCount: 1
+          }))
+        )
+        const triggers: TestTrigger[] = [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0001",
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+        cy.task("insertTriggers", { caseId: 0, triggers })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        // Exception lock
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
+        // Trigger lock
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+        // User should not see unlock button when a case assigned to another user
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard02").should("not.exist")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+
+        // Unlock the exception assigned to the user
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").click()
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+
+        // Unlock the trigger assigned to the user
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").click()
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+      })
+
+      it("should unlock any case as a supervisor user", () => {
+        const lockUsernames = ["Bichard01", "Bichard02"]
+        cy.task(
+          "insertCourtCasesWithFields",
+          lockUsernames.map((username) => ({
+            errorLockedByUsername: username,
+            triggerLockedByUsername: username,
+            orgForPoliceFilter: "011111",
+            errorCount: 1,
+            triggerCount: 1
+          }))
+        )
+        const triggers: TestTrigger[] = [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0001",
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+        cy.task("insertTriggers", { caseId: 0, triggers })
+
+        cy.login("supervisor@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard02").should("exist")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+
+        // Unlock both cases
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").click()
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").click()
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard02").click()
+
+        cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("not.exist")
+        cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("not.exist")
+        cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("not.exist")
+      })
+    })
+
+    describe("Pagination", () => {
+      it("should be accessible", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.injectAxe()
+
+        // Wait for the page to fully load
+        cy.get("h1")
+
+        cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
+      })
+
+      it("lets users select how many cases to show per page", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("tbody tr").should("have.length", 25)
+        cy.get("tr").contains("Case00000").should("exist")
+        cy.get("tr").contains("Case00024").should("exist")
+
+        cy.get(".cases-per-page").first().select("10")
+        cy.get("tbody tr").should("have.length", 10)
+
+        cy.get(".cases-per-page").first().select("50")
+        cy.get("tbody tr").should("have.length", 50)
+
+        cy.get(".cases-per-page").first().select("100")
+        cy.get("tbody tr").should("have.length", 100)
+
+        cy.get(".cases-per-page").first().select("25")
+        // Navigating to a different page should keep the same page size
+        cy.get(".moj-pagination__item").contains("Next").first().click()
+        cy.get("tbody tr").should("have.length", 25)
+        cy.get("tr").contains("Case00025").should("exist")
+        cy.get("tr").contains("Case00049").should("exist")
+
+        cy.get(".cases-per-page").first().select("10")
+        cy.get("tbody tr").should("have.length", 10)
+      })
+
+      it("keeps roughly the same position in the case list when changing page size", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get(".cases-per-page").first().select("25")
+        cy.get("tbody tr").should("have.length", 25)
+
+        cy.get(".moj-pagination__item").contains("Next").first().click()
+        cy.get("tbody tr").should("have.length", 25)
+        cy.get("tr").contains("Case00025").should("exist")
+
+        cy.get(".cases-per-page").first().select("10")
+        cy.get("tbody tr").should("have.length", 10)
+        cy.get("tr").contains("Case00025").should("exist")
+      })
+
+      it("doesn't show navigation options when there is only one page", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get(".moj-pagination__list li").should("not.exist")
+      })
+
+      it("has correct pagination information when there is only one page", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 1 to 3 of 3 cases")
+      })
+
+      it("lets users navigate back and forth between pages using the page numbers", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 250 cases")
+        cy.get("tr").contains("Case00000").should("exist")
+        cy.get("tr").contains("Case00024").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("2").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("tr").contains("Case00025").should("exist")
+        cy.get("tr").contains("Case00049").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("10").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 226 to 250 of 250 cases")
+        cy.get("tr").contains("Case00225").should("exist")
+        cy.get("tr").contains("Case00249").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("9").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 201 to 225 of 250 cases")
+        cy.get("tr").contains("Case00200").should("exist")
+        cy.get("tr").contains("Case00224").should("exist")
+      })
+
+      it("lets users navigate back and forth between pages using the next and previous arrows", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 250 cases")
+        cy.get("tr").contains("Case00000").should("exist")
+        cy.get("tr").contains("Case00024").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("Next").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("tr").contains("Case00025").should("exist")
+        cy.get("tr").contains("Case00049").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("Next").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 51 to 75 of 250 cases")
+        cy.get("tr").contains("Case00050").should("exist")
+        cy.get("tr").contains("Case00074").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("Previous").click()
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 26 to 50 of 250 cases")
+        cy.get("tr").contains("Case00025").should("exist")
+        cy.get("tr").contains("Case00049").should("exist")
+      })
+
+      it("has correct pagination information on page 5 out of 10", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard?page=5")
+
+        cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 101 to 125 of 250 cases")
+        cy.get("tr").contains("Case00100").should("exist")
+        cy.get("tr").contains("Case00124").should("exist")
+      })
+
+      it("keeps other filters applied when changing pages", () => {
+        cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("#filter-button").click()
+        cy.get("#urgent").click()
+        cy.get("#search").click()
+
+        cy.get(".moj-filter-tags a.moj-filter__tag").contains("Urgent").should("exist")
+
+        cy.get("li.moj-pagination__item").contains("Next").click()
+        cy.get(".moj-filter-tags a.moj-filter__tag").contains("Urgent").should("exist")
       })
     })
   })

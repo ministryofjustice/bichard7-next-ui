@@ -1,5 +1,14 @@
-import { format } from "date-fns"
-import { Brackets, DataSource, IsNull, Not } from "typeorm"
+import {
+  Brackets,
+  DataSource,
+  IsNull,
+  LessThanOrEqual,
+  ILike,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+  SelectQueryBuilder
+} from "typeorm"
 import { CaseListQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
@@ -23,13 +32,16 @@ const listCourtCases = async (
     courtDateRange,
     locked,
     caseState,
+    allocatedToUserName,
     reasonsSearch
   }: CaseListQueryParams
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
   const maxPageItemsValidated = maxPageItems ? parseInt(maxPageItems, 10) : 25
-  const courtCaseRepository = connection.getRepository(CourtCase)
-  const query = courtCasesByVisibleForcesQuery(courtCaseRepository, forces)
+  const repository = connection.getRepository(CourtCase)
+  let query = repository.createQueryBuilder("courtCase")
+  query = courtCasesByVisibleForcesQuery(query, forces) as SelectQueryBuilder<CourtCase>
+  query
     .leftJoinAndSelect("courtCase.triggers", "trigger")
     .leftJoinAndSelect("courtCase.notes", "note")
     .skip(pageNumValidated * maxPageItemsValidated)
@@ -38,27 +50,28 @@ const listCourtCases = async (
   const sortOrder = order === "desc" ? "DESC" : "ASC"
   if (orderBy === "reason") {
     query.orderBy("courtCase.errorReason", sortOrder).addOrderBy("courtCase.triggerReason", sortOrder)
+  } else if (orderBy === "lockedBy") {
+    query
+      .orderBy("courtCase.errorLockedByUsername", sortOrder)
+      .addOrderBy("courtCase.triggerLockedByUsername", sortOrder)
   } else {
     const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
     query.orderBy(orderByQuery, sortOrder)
   }
 
   if (defendantName) {
-    query.andWhere("courtCase.defendantName ilike '%' || :name || '%'", {
-      name: defendantName
-    })
+    const defendantNameLike = { defendantName: ILike(`%${defendantName}%`) }
+    query.andWhere(defendantNameLike)
   }
 
   if (courtName) {
-    query.andWhere("courtCase.courtName ilike '%' || :name || '%'", {
-      name: courtName
-    })
+    const courtNameLike = { courtName: ILike(`%${courtName}%`) }
+    query.andWhere(courtNameLike)
   }
 
   if (ptiurn) {
-    query.andWhere("courtCase.ptiurn ilike '%' || :ptiurn || '%'", {
-      ptiurn: ptiurn
-    })
+    const ptiurnLike = { ptiurn: ILike(`%${ptiurn}%`) }
+    query.andWhere(ptiurnLike)
   }
 
   if (reasonsSearch) {
@@ -74,20 +87,20 @@ const listCourtCases = async (
   }
 
   if (resultFilter?.includes("Triggers")) {
-    query.andWhere("courtCase.triggerCount > 0")
+    query.andWhere({ triggerCount: MoreThan(0) })
   } else if (resultFilter?.includes("Exceptions")) {
-    query.andWhere("courtCase.errorCount > 0")
+    query.andWhere({ errorCount: MoreThan(0) })
   }
 
   if (urgent === "Urgent") {
-    query.andWhere("courtCase.isUrgent > 0")
+    query.andWhere({ isUrgent: MoreThan(0) })
   } else if (urgent === "Non-urgent") {
-    query.andWhere("courtCase.isUrgent = 0")
+    query.andWhere({ isUrgent: 0 })
   }
 
   if (courtDateRange) {
-    query.andWhere("courtCase.courtDate >= :from", { from: format(courtDateRange.from, "yyyy-MM-dd") })
-    query.andWhere("courtCase.courtDate <= :to", { to: format(courtDateRange.to, "yyyy-MM-dd") })
+    query.andWhere({ courtDate: MoreThanOrEqual(courtDateRange.from) })
+    query.andWhere({ courtDate: LessThanOrEqual(courtDateRange.to) })
   }
 
   if (!caseState) {
@@ -100,19 +113,27 @@ const listCourtCases = async (
     })
   }
 
+  if (allocatedToUserName) {
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where({ errorLockedByUsername: allocatedToUserName }).orWhere({
+          triggerLockedByUsername: allocatedToUserName
+        })
+      })
+    )
+  }
+
   if (locked !== undefined) {
     if (locked) {
       query.andWhere(
         new Brackets((qb) => {
-          qb.where("courtCase.errorLockedByUsername IS NOT NULL").orWhere(
-            "courtCase.triggerLockedByUsername IS NOT NULL"
-          )
+          qb.where({ errorLockedByUsername: Not(IsNull()) }).orWhere({ triggerLockedByUsername: Not(IsNull()) })
         })
       )
     } else {
       query.andWhere(
         new Brackets((qb) => {
-          qb.where("courtCase.errorLockedByUsername IS NULL").andWhere("courtCase.triggerLockedByUsername IS NULL")
+          qb.where({ errorLockedByUsername: IsNull() }).andWhere({ triggerLockedByUsername: IsNull() })
         })
       )
     }

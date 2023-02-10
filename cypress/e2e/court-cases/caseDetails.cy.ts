@@ -24,7 +24,7 @@ describe("Case details", () => {
       cy.task("clearUsers")
       cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
       cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
-      cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7GeneralHandler_grp" })
+      cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
       cy.clearCookies()
       cy.viewport(1280, 720)
     })

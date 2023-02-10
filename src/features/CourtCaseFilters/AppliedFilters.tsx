@@ -20,6 +20,7 @@ interface Props {
     urgency?: string | null
     locked?: string | null
     caseState?: string | null
+    myCases?: boolean
   }
 }
 
@@ -37,7 +38,8 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.customDateFrom ||
     !!filters.customDateTo ||
     !!filters.locked ||
-    !!filters.caseState
+    !!filters.caseState ||
+    !!filters.myCases
 
   const removeQueryParamFromPath = (paramToRemove: { [key: string]: string }): string => {
     let searchParams = deleteQueryParam(paramToRemove, query)
@@ -125,17 +127,25 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </If>
-          <If condition={!!filters.caseState}>
+          <If condition={!!filters.myCases}>
             <li>
               <FilterTag
-                tag={caseStateLabels[String(filters.caseState)] ?? ""}
-                href={removeQueryParamFromPath({ state: filters.caseState ?? "" })}
+                tag={"Cases locked to me" ?? ""}
+                href={removeQueryParamFromPath({ myCases: String(filters.myCases) })}
               />
             </li>
           </If>
           <If condition={!!filters.locked}>
             <li>
               <FilterTag tag={filters.locked ?? ""} href={removeQueryParamFromPath({ locked: filters.locked ?? "" })} />
+            </li>
+          </If>
+          <If condition={!!filters.caseState}>
+            <li>
+              <FilterTag
+                tag={caseStateLabels[String(filters.caseState)] ?? ""}
+                href={removeQueryParamFromPath({ state: filters.caseState ?? "" })}
+              />
             </li>
           </If>
           <li>

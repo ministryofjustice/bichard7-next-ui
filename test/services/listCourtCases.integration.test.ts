@@ -500,68 +500,117 @@ describe("listCourtCases", () => {
     expect(totalCasesDesc).toEqual(3)
   })
 
-  it("should order by error reason as primary order when ordered by reason", async () => {
-    const orgCode = "36FPA1"
-    await insertCourtCasesWithFields(
-      ["HO100100", "HO100101", "HO100102"].map((code) => ({ errorReason: code, orgForPoliceFilter: orgCode }))
-    )
+  describe("ordered by 'lockedBy' reason", () => {
+    it("should order by error reason as primary order", async () => {
+      const orgCode = "36FPA1"
+      await insertCourtCasesWithFields(
+        ["HO100100", "HO100101", "HO100102"].map((code) => ({ errorReason: code, orgForPoliceFilter: orgCode }))
+      )
 
-    const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "reason" })
-    expect(isError(resultAsc)).toBe(false)
-    const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
+      const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "reason" })
+      expect(isError(resultAsc)).toBe(false)
+      const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
 
-    expect(casesAsc).toHaveLength(3)
-    expect(casesAsc[0].errorReason).toStrictEqual("HO100100")
-    expect(casesAsc[1].errorReason).toStrictEqual("HO100101")
-    expect(casesAsc[2].errorReason).toStrictEqual("HO100102")
-    expect(totalCasesAsc).toEqual(3)
+      expect(casesAsc).toHaveLength(3)
+      expect(casesAsc[0].errorReason).toStrictEqual("HO100100")
+      expect(casesAsc[1].errorReason).toStrictEqual("HO100101")
+      expect(casesAsc[2].errorReason).toStrictEqual("HO100102")
+      expect(totalCasesAsc).toEqual(3)
 
-    const resultDesc = await listCourtCases(dataSource, {
-      forces: [orgCode],
-      maxPageItems: "100",
-      orderBy: "reason",
-      order: "desc"
+      const resultDesc = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        orderBy: "reason",
+        order: "desc"
+      })
+      expect(isError(resultDesc)).toBe(false)
+      const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
+
+      expect(casesDesc).toHaveLength(3)
+      expect(casesDesc[0].errorReason).toStrictEqual("HO100102")
+      expect(casesDesc[1].errorReason).toStrictEqual("HO100101")
+      expect(casesDesc[2].errorReason).toStrictEqual("HO100100")
+      expect(totalCasesDesc).toEqual(3)
     })
-    expect(isError(resultDesc)).toBe(false)
-    const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
 
-    expect(casesDesc).toHaveLength(3)
-    expect(casesDesc[0].errorReason).toStrictEqual("HO100102")
-    expect(casesDesc[1].errorReason).toStrictEqual("HO100101")
-    expect(casesDesc[2].errorReason).toStrictEqual("HO100100")
-    expect(totalCasesDesc).toEqual(3)
+    it("should order by trigger reason as secondary order", async () => {
+      const orgCode = "36FPA1"
+      await insertCourtCasesWithFields(
+        ["TRPR0010", "TRPR0011", "TRPR0012"].map((code) => ({ triggerReason: code, orgForPoliceFilter: orgCode }))
+      )
+
+      const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "reason" })
+      expect(isError(resultAsc)).toBe(false)
+      const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
+
+      expect(casesAsc).toHaveLength(3)
+      expect(casesAsc[0].triggerReason).toStrictEqual("TRPR0010")
+      expect(casesAsc[1].triggerReason).toStrictEqual("TRPR0011")
+      expect(casesAsc[2].triggerReason).toStrictEqual("TRPR0012")
+      expect(totalCasesAsc).toEqual(3)
+
+      const resultDesc = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        orderBy: "reason",
+        order: "desc"
+      })
+      expect(isError(resultDesc)).toBe(false)
+      const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
+
+      expect(casesDesc).toHaveLength(3)
+      expect(casesDesc[0].triggerReason).toStrictEqual("TRPR0012")
+      expect(casesDesc[1].triggerReason).toStrictEqual("TRPR0011")
+      expect(casesDesc[2].triggerReason).toStrictEqual("TRPR0010")
+      expect(totalCasesDesc).toEqual(3)
+    })
   })
 
-  it("should order by trigger reason as secondary order when ordered by reason", async () => {
-    const orgCode = "36FPA1"
-    await insertCourtCasesWithFields(
-      ["TRPR0010", "TRPR0011", "TRPR0012"].map((code) => ({ triggerReason: code, orgForPoliceFilter: orgCode }))
-    )
+  describe("ordered by 'lockedBy' username", () => {
+    it("should order by errorLockedByUsername as primary order and triggerLockedByUsername as secondary order", async () => {
+      const orgCode = "36FPA1"
 
-    const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "reason" })
-    expect(isError(resultAsc)).toBe(false)
-    const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
+      await insertCourtCasesWithFields([
+        { errorLockedByUsername: "User1", triggerLockedByUsername: "User4", orgForPoliceFilter: orgCode },
+        { errorLockedByUsername: "User1", triggerLockedByUsername: "User3", orgForPoliceFilter: orgCode },
+        { errorLockedByUsername: "User2", triggerLockedByUsername: "User1", orgForPoliceFilter: orgCode }
+      ])
 
-    expect(casesAsc).toHaveLength(3)
-    expect(casesAsc[0].triggerReason).toStrictEqual("TRPR0010")
-    expect(casesAsc[1].triggerReason).toStrictEqual("TRPR0011")
-    expect(casesAsc[2].triggerReason).toStrictEqual("TRPR0012")
-    expect(totalCasesAsc).toEqual(3)
+      const resultAsc = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        orderBy: "lockedBy"
+      })
+      expect(isError(resultAsc)).toBe(false)
+      const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
 
-    const resultDesc = await listCourtCases(dataSource, {
-      forces: [orgCode],
-      maxPageItems: "100",
-      orderBy: "reason",
-      order: "desc"
+      expect(casesAsc).toHaveLength(3)
+      expect(casesAsc[0].errorLockedByUsername).toStrictEqual("User1")
+      expect(casesAsc[0].triggerLockedByUsername).toStrictEqual("User3")
+      expect(casesAsc[1].errorLockedByUsername).toStrictEqual("User1")
+      expect(casesAsc[1].triggerLockedByUsername).toStrictEqual("User4")
+      expect(casesAsc[2].errorLockedByUsername).toStrictEqual("User2")
+      expect(casesAsc[2].triggerLockedByUsername).toStrictEqual("User1")
+      expect(totalCasesAsc).toEqual(3)
+
+      const resultDesc = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        orderBy: "lockedBy",
+        order: "desc"
+      })
+      expect(isError(resultDesc)).toBe(false)
+      const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
+
+      expect(casesDesc).toHaveLength(3)
+      expect(casesDesc[0].errorLockedByUsername).toStrictEqual("User2")
+      expect(casesDesc[0].triggerLockedByUsername).toStrictEqual("User1")
+      expect(casesDesc[1].errorLockedByUsername).toStrictEqual("User1")
+      expect(casesDesc[1].triggerLockedByUsername).toStrictEqual("User4")
+      expect(casesDesc[2].errorLockedByUsername).toStrictEqual("User1")
+      expect(casesDesc[2].triggerLockedByUsername).toStrictEqual("User3")
+      expect(totalCasesDesc).toEqual(3)
     })
-    expect(isError(resultDesc)).toBe(false)
-    const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
-
-    expect(casesDesc).toHaveLength(3)
-    expect(casesDesc[0].triggerReason).toStrictEqual("TRPR0012")
-    expect(casesDesc[1].triggerReason).toStrictEqual("TRPR0011")
-    expect(casesDesc[2].triggerReason).toStrictEqual("TRPR0010")
-    expect(totalCasesDesc).toEqual(3)
   })
 
   describe("filter by defendant name", () => {
@@ -599,6 +648,117 @@ describe("listCourtCases", () => {
       expect(cases).toHaveLength(2)
       expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
       expect(cases[1].defendantName).toStrictEqual(defendantToIncludeWithPartialMatch)
+    })
+  })
+
+  describe("filter by cases allocated to me", () => {
+    it("should list cases that are locked to me", async () => {
+      const orgCode = "36FPA1"
+
+      await insertCourtCasesWithFields([
+        { errorLockedByUsername: "User1", triggerLockedByUsername: "User1", orgForPoliceFilter: orgCode },
+        { errorLockedByUsername: "User2", triggerLockedByUsername: "User2", orgForPoliceFilter: orgCode },
+        { errorLockedByUsername: "User3", triggerLockedByUsername: "User3", orgForPoliceFilter: orgCode }
+      ])
+
+      const resultBefore = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100"
+      })
+      expect(isError(resultBefore)).toBe(false)
+      const { result: casesBefore, totalCases: totalCasesBefore } = resultBefore as ListCourtCaseResult
+
+      expect(casesBefore).toHaveLength(3)
+      expect(casesBefore[0].errorLockedByUsername).toStrictEqual("User1")
+      expect(casesBefore[0].triggerLockedByUsername).toStrictEqual("User1")
+      expect(casesBefore[1].errorLockedByUsername).toStrictEqual("User2")
+      expect(casesBefore[1].triggerLockedByUsername).toStrictEqual("User2")
+      expect(casesBefore[2].errorLockedByUsername).toStrictEqual("User3")
+      expect(casesBefore[2].triggerLockedByUsername).toStrictEqual("User3")
+      expect(totalCasesBefore).toEqual(3)
+
+      const resultAfter = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        allocatedToUserName: "User1"
+      })
+      expect(isError(resultAfter)).toBe(false)
+      const { result: casesAfter, totalCases: totalCasesAfter } = resultAfter as ListCourtCaseResult
+
+      expect(casesAfter).toHaveLength(1)
+      expect(casesAfter[0].errorLockedByUsername).toStrictEqual("User1")
+      expect(casesAfter[0].triggerLockedByUsername).toStrictEqual("User1")
+      expect(totalCasesAfter).toEqual(1)
+    })
+
+    it("should list cases that have triggers locked to me", async () => {
+      const orgCode = "36FPA1"
+
+      await insertCourtCasesWithFields([
+        { triggerLockedByUsername: "User1", orgForPoliceFilter: orgCode },
+        { triggerLockedByUsername: "User2", orgForPoliceFilter: orgCode },
+        { triggerLockedByUsername: "User3", orgForPoliceFilter: orgCode }
+      ])
+
+      const resultBefore = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100"
+      })
+      expect(isError(resultBefore)).toBe(false)
+      const { result: casesBefore, totalCases: totalCasesBefore } = resultBefore as ListCourtCaseResult
+
+      expect(casesBefore).toHaveLength(3)
+      expect(casesBefore[0].triggerLockedByUsername).toStrictEqual("User1")
+      expect(casesBefore[1].triggerLockedByUsername).toStrictEqual("User2")
+      expect(casesBefore[2].triggerLockedByUsername).toStrictEqual("User3")
+      expect(totalCasesBefore).toEqual(3)
+
+      const resultAfter = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        allocatedToUserName: "User1"
+      })
+      expect(isError(resultAfter)).toBe(false)
+      const { result: casesAfter, totalCases: totalCasesAfter } = resultAfter as ListCourtCaseResult
+
+      expect(casesAfter).toHaveLength(1)
+      expect(casesAfter[0].triggerLockedByUsername).toStrictEqual("User1")
+      expect(totalCasesAfter).toEqual(1)
+    })
+
+    it("should list cases that have errors locked to me", async () => {
+      const orgCode = "36FPA1"
+
+      await insertCourtCasesWithFields([
+        { errorLockedByUsername: "User1", orgForPoliceFilter: orgCode },
+        { errorLockedByUsername: "User2", orgForPoliceFilter: orgCode },
+        { errorLockedByUsername: "User3", orgForPoliceFilter: orgCode }
+      ])
+
+      const resultBefore = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100"
+      })
+      expect(isError(resultBefore)).toBe(false)
+      const { result: casesBefore, totalCases: totalCasesBefore } = resultBefore as ListCourtCaseResult
+
+      expect(casesBefore).toHaveLength(3)
+      expect(casesBefore[0].errorLockedByUsername).toStrictEqual("User1")
+      expect(casesBefore[1].errorLockedByUsername).toStrictEqual("User2")
+      expect(casesBefore[2].errorLockedByUsername).toStrictEqual("User3")
+      expect(totalCasesBefore).toEqual(3)
+
+      const resultAfter = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        allocatedToUserName: "User1"
+      })
+      expect(isError(resultAfter)).toBe(false)
+      const { result: casesAfter, totalCases: totalCasesAfter } = resultAfter as ListCourtCaseResult
+
+      expect(casesAfter).toHaveLength(1)
+      expect(casesAfter[0].errorLockedByUsername).toStrictEqual("User1")
+      expect(totalCasesAfter).toEqual(1)
     })
   })
 

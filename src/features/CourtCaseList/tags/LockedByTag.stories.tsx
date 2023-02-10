@@ -69,3 +69,12 @@ LongName.parameters = {
     }
   ]
 }
+
+export const WithUnlockPath: ComponentStory<typeof LockedByTag> = () => (
+  <LockedByTag lockedBy="Some Name" unlockPath="/some/path" />
+)
+WithUnlockPath.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+  const expectedUnlockButton = await canvas.findByRole("button")
+  expect(expectedUnlockButton).toHaveTextContent("Some Name")
+}

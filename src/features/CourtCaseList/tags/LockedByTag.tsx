@@ -17,14 +17,34 @@ const useStyles = createUseStyles({
     filter: "invert(12%) sepia(70%) saturate(4629%) hue-rotate(197deg) brightness(97%) contrast(84%)"
   },
   LockedByText: {
+    marginTop: 4,
+    marginBottom: 2,
+    fontWeight: "normal",
+    color: "black",
+    letterSpacing: "0.5px",
+    textTransform: "none"
+  },
+  LockedByURL: {
     textDecoration: "underline",
     marginTop: 4,
     marginBottom: 2,
-    fontWeight: "normal"
+    fontWeight: "normal",
+    border: "none",
+    outline: "none",
+    background: "none",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    fontSize: "inherit",
+    color: "inherit",
+    letterSpacing: "0.5px",
+    textTransform: "none"
   }
 })
 
-const LockedByTag: React.FC<{ lockedBy?: string | null }> = (props: { lockedBy?: string | null }) => {
+const LockedByTag: React.FC<{ lockedBy?: string | null; unlockPath?: string }> = (props: {
+  lockedBy?: string | null
+  unlockPath?: string
+}) => {
   const classes = useStyles()
   return (
     <If condition={!!props.lockedBy}>
@@ -34,10 +54,16 @@ const LockedByTag: React.FC<{ lockedBy?: string | null }> = (props: { lockedBy?:
             src={"/bichard/assets/images/lock.svg"}
             width={18}
             height={18}
-            className={classes.LockedIcon}
+            className={props.unlockPath ? classes.LockedIcon : undefined}
             alt="Lock icon"
           />
-          <span className={classes.LockedByText}>{props.lockedBy}</span>
+          {props.unlockPath ? (
+            <form method="POST" action={props.unlockPath}>
+              <button className={classes.LockedByURL}>{props.lockedBy}</button>
+            </form>
+          ) : (
+            <span className={classes.LockedByText}>{props.lockedBy}</span>
+          )}
         </div>
       </Tag>
     </If>
