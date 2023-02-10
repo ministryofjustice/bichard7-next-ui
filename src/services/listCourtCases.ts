@@ -3,7 +3,7 @@ import {
   DataSource,
   IsNull,
   LessThanOrEqual,
-  Like,
+  ILike,
   MoreThan,
   MoreThanOrEqual,
   Not,
@@ -60,17 +60,17 @@ const listCourtCases = async (
   }
 
   if (defendantName) {
-    const defendantNameLike = { defendantName: Like(`%${defendantName}%`) }
+    const defendantNameLike = { defendantName: ILike(`%${defendantName}%`) }
     query.andWhere(defendantNameLike)
   }
 
   if (courtName) {
-    const courtNameLike = { courtName: Like(`%${courtName}%`) }
+    const courtNameLike = { courtName: ILike(`%${courtName}%`) }
     query.andWhere(courtNameLike)
   }
 
   if (ptiurn) {
-    const ptiurnLike = { ptiurn: Like(`%${ptiurn}%`) }
+    const ptiurnLike = { ptiurn: ILike(`%${ptiurn}%`) }
     query.andWhere(ptiurnLike)
   }
 
