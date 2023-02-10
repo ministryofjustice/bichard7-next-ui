@@ -30,7 +30,8 @@
     "update-deps": "ncu -u && npm install",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "test-storybook": "test-storybook"
+    "test-storybook": "test-storybook",
+    "seed-data": "ts-node ./scripts/seed-data.ts"
   },
   "dependencies": {
     "@govuk-react/select": "^0.10.5",
@@ -62,8 +63,11 @@
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/plugin-proposal-decorators": "^7.20.13",
+    "@faker-js/faker": "^7.6.0",
     "@jest/globals": "^29.4.1",
     "@next/eslint-plugin-next": "^13.1.6",
+    "@stdlib/random-base-exponential": "^0.0.6",
+    "@stdlib/random-sample": "^0.0.7",
     "@storybook/addon-actions": "^6.5.16",
     "@storybook/addon-essentials": "^6.5.16",
     "@storybook/addon-interactions": "^6.5.16",
@@ -82,11 +86,13 @@
     "@types/lodash.frompairs": "^4.0.7",
     "@types/lodash.get": "^4.4.7",
     "@types/lodash.isobject": "^3.0.7",
+    "@types/lodash.sample": "^4.2.7",
     "@types/node": "18.11.19",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
     "@types/stompit": "^0.26.3",
     "@types/styled-components": "^5.1.26",
+    "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
     "axe-core": "^4.6.3",
@@ -114,6 +120,7 @@
     "jsonwebtoken": "^9.0.0",
     "lint-staged": "^13.1.0",
     "lodash.frompairs": "^4.0.1",
+    "lodash.sample": "^4.2.1",
     "mockdate": "^3.0.5",
     "npm-check-updates": "^16.6.4",
     "pg-promise": "^11.2.0",
