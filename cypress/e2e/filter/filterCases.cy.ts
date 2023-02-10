@@ -4,7 +4,7 @@ import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 
-function showFilters() {
+function visitBasePathAndShowFilters() {
   cy.visit("/bichard")
   cy.get("button[id=filter-button]").click()
 }
@@ -65,7 +65,7 @@ describe("Case list", () => {
     })
 
     it("Should be accessible", () => {
-      showFilters()
+      visitBasePathAndShowFilters()
       cy.get("input[id=keywords]").type("Dummy")
       cy.get('[id="triggers-type"]').check()
       cy.get('[id="exceptions-type"]').check()
@@ -87,7 +87,7 @@ describe("Case list", () => {
     })
 
     it("Should expand and collapse case type filter navigation", () => {
-      showFilters()
+      visitBasePathAndShowFilters()
 
       cy.contains("Exceptions")
 
@@ -96,7 +96,7 @@ describe("Case list", () => {
     })
 
     it("Should expand and collapse court date filter navigation", () => {
-      showFilters()
+      visitBasePathAndShowFilters()
 
       cy.contains("Date range")
 
@@ -105,7 +105,7 @@ describe("Case list", () => {
     })
 
     it("Should expand and collapse urgency filter navigation", () => {
-      showFilters()
+      visitBasePathAndShowFilters()
 
       cy.contains("Urgent cases only")
 
@@ -114,7 +114,7 @@ describe("Case list", () => {
     })
 
     it("Should expand and collapse locked state filter navigation", () => {
-      showFilters()
+      visitBasePathAndShowFilters()
 
       cy.contains("Locked cases only")
 
@@ -123,7 +123,7 @@ describe("Case list", () => {
     })
 
     it("Should expand and collapse case state filter navigation", () => {
-      showFilters()
+      visitBasePathAndShowFilters()
 
       cy.contains("Unresolved & resolved cases")
 
@@ -138,7 +138,7 @@ describe("Case list", () => {
         { defendantName: "Alfred Pennyworth", orgForPoliceFilter: "011111" }
       ])
 
-      showFilters()
+      visitBasePathAndShowFilters()
 
       inputAndSearch("keywords", "Bruce Wayne")
       cy.contains("Bruce Wayne")
@@ -157,7 +157,7 @@ describe("Case list", () => {
         { courtName: "Bristol Court", orgForPoliceFilter: "011111" }
       ])
 
-      showFilters()
+      visitBasePathAndShowFilters()
 
       inputAndSearch("court-name", "Manchester Court")
       cy.contains("Manchester Court")
@@ -177,7 +177,7 @@ describe("Case list", () => {
         { ptiurn: "Case00003", orgForPoliceFilter: "011111" }
       ])
 
-      showFilters()
+      visitBasePathAndShowFilters()
 
       inputAndSearch("ptiurn", "Case00001")
       cy.contains("Case00001")
@@ -208,7 +208,7 @@ describe("Case list", () => {
       cy.task("insertTriggers", { caseId: 0, triggers })
       cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
 
-      showFilters()
+      visitBasePathAndShowFilters()
 
       inputAndSearch("reason-search", "TRPR0107")
       cy.contains("Case00000")
@@ -228,6 +228,54 @@ describe("Case list", () => {
       // Removing filter tag
       removeFilterTag("HO200212")
       confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
+    })
+
+    it("Should let to use all search fields", () => {
+      cy.task("insertCourtCasesWithFields", [
+        { defendantName: "Bruce Wayne", courtName: "London Court", ptiurn: "Case00001", orgForPoliceFilter: "011111" },
+        { defendantName: "Bruce Gordon", courtName: "London Court", ptiurn: "Case00002", orgForPoliceFilter: "011111" },
+        {
+          defendantName: "Bruce Pennyworth",
+          courtName: "Manchester Court",
+          ptiurn: "Case00003",
+          orgForPoliceFilter: "011111"
+        },
+        {
+          defendantName: "Alfred Pennyworth",
+          courtName: "London Court",
+          ptiurn: "Case00004",
+          orgForPoliceFilter: "011111"
+        }
+      ])
+      cy.task("insertException", { caseId: 0, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+      cy.task("insertException", { caseId: 1, exceptionCode: "HO200213", errorReport: "HO200213||ds:Reason" })
+      cy.task("insertException", { caseId: 2, exceptionCode: "HO200214", errorReport: "HO200214||ds:Reason" })
+
+      visitBasePathAndShowFilters()
+
+      inputAndSearch("keywords", "Bruce")
+      confirmMultipleFieldsNotDisplayed(["Alfred Pennyworth"])
+      cy.get("tr").should("have.length", 4)
+      confirmMultipleFieldsDisplayed(["Bruce Wayne", "Bruce Gordon", "Bruce Pennyworth"])
+
+      cy.get("button[id=filter-button]").click()
+      inputAndSearch("court-name", "London Court")
+      confirmMultipleFieldsNotDisplayed(["Bruce Pennyworth", "Alfred Pennyworth"])
+      cy.get("tr").should("have.length", 3)
+      confirmMultipleFieldsDisplayed(["Bruce Wayne", "Bruce Gordon"])
+
+      cy.get("button[id=filter-button]").click()
+      inputAndSearch("ptiurn", "Case0000")
+      confirmMultipleFieldsNotDisplayed(["Bruce Pennyworth", "Alfred Pennyworth"])
+      cy.get("tr").should("have.length", 3)
+      confirmMultipleFieldsDisplayed(["Bruce Wayne", "Bruce Gordon"])
+      removeFilterTag("Case0000")
+
+      cy.get("button[id=filter-button]").click()
+      inputAndSearch("reason-search", "HO200212")
+      confirmMultipleFieldsNotDisplayed(["Bruce Gordon", "Bruce Pennyworth", "Alfred Pennyworth"])
+      cy.get("tr").should("have.length", 2)
+      confirmMultipleFieldsDisplayed(["Bruce Wayne"])
     })
 
     it("Should display cases filtered for a named date range", () => {
@@ -265,7 +313,7 @@ describe("Case list", () => {
         { courtDate: aLongTimeAgoDate, orgForPoliceFilter: force }
       ])
 
-      showFilters()
+      visitBasePathAndShowFilters()
 
       // Tests for "Today"
       cy.get("#date-range").click()
@@ -472,7 +520,7 @@ describe("Case list", () => {
         }))
       )
 
-      showFilters()
+      visitBasePathAndShowFilters()
       cy.get("#urgent").click()
       cy.get("button[id=search]").click()
 
@@ -510,7 +558,7 @@ describe("Case list", () => {
         { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force }
       ])
 
-      showFilters()
+      visitBasePathAndShowFilters()
 
       // Filter for resolved and unresolved cases
       cy.get("#unresolved-and-resolved").click()
@@ -542,7 +590,7 @@ describe("Case list", () => {
         { orgForPoliceFilter: "011111" }
       ])
 
-      showFilters()
+      visitBasePathAndShowFilters()
       // Filter for locked cases
       cy.get("#locked").click()
       cy.get("button[id=search]").click()
@@ -568,7 +616,7 @@ describe("Case list", () => {
     })
 
     it("Should clear filters", () => {
-      showFilters()
+      visitBasePathAndShowFilters()
       cy.get("input[id=keywords]").type("Dummy")
       cy.get('[id="triggers-type"]').check()
       cy.get('[id="exceptions-type"]').check()
@@ -595,7 +643,7 @@ describe("Case list", () => {
           { orgForPoliceFilter: "011111" }
         ])
 
-        showFilters()
+        visitBasePathAndShowFilters()
 
         cy.get("#my-cases-filter").click()
         cy.contains("Selected filters")
