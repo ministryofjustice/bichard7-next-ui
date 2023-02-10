@@ -10,7 +10,6 @@ import { isDate } from "date-fns/fp"
 interface Props {
   dateRange?: string | null
   dispatch: Dispatch<FilterAction>
-  hasCustomDateRange?: boolean
   customDateFrom: Date | null
   customDateTo: Date | null
 }
@@ -26,15 +25,11 @@ const labelForDateRange = (namedDateRange: string): string =>
   ["Today", "Yesterday"].includes(namedDateRange) ? namedDateRange : formatNamedDateRange(namedDateRange)
 
 // TODO- update radio button logic for nested radios. Move away from GOV UK condition classes and use "states" instead.
-const CourtDateFilterOptions: React.FC<Props> = ({
-  dateRange,
-  dispatch,
-  hasCustomDateRange,
-  customDateFrom,
-  customDateTo
-}: Props) => {
+const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDateFrom, customDateTo }: Props) => {
   const customDateFromNotNull = customDateFrom !== null ? customDateFrom : 0
   const customDateToNotNull = customDateTo !== null ? customDateTo : 0
+  const hasCustomDateRange = !!customDateFrom && !!customDateTo
+
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">

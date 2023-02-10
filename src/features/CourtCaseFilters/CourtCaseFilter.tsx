@@ -324,7 +324,6 @@ const CourtCaseFilter: React.FC<Props> = ({
               <CourtDateFilterOptions
                 dateRange={state.dateFilter.value}
                 dispatch={dispatch}
-                hasCustomDateRange={!!customDateFrom && !!customDateTo}
                 customDateFrom={customDateFrom}
                 customDateTo={customDateTo}
               />
