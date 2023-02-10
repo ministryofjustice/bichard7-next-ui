@@ -13,7 +13,6 @@ const unlockCourtCase = async (
   const { canLockExceptions, canLockTriggers, isSupervisor, username, visibleForces } = user
   const shouldUnlockExceptions = canLockExceptions && (unlockReason === undefined || unlockReason === "Exception")
   const shouldUnlockTriggers = canLockTriggers && (unlockReason === undefined || unlockReason === "Trigger")
-
   if (!shouldUnlockExceptions && !shouldUnlockTriggers) {
     return new Error("User hasn't got permission to unlock the case")
   }

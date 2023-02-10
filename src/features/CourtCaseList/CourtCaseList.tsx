@@ -35,15 +35,20 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
   const classes = useStyles()
   const { basePath, query } = useRouter()
 
-  const searchParams = new URLSearchParams(encode(query))
-  deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
+  let searchParams = new URLSearchParams(encode(query))
+  searchParams = deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
 
   const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
   const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
-  const unlockExceptionPath = (unlockException: string) =>
-    `${basePath}/?${new URLSearchParams({ ...query, unlockException })}`
-  const unlockTriggerPath = (unlockTrigger: string) =>
-    `${basePath}/?${new URLSearchParams({ ...query, unlockTrigger })}`
+  const unlockExceptionPath = (unlockException: string) => {
+    searchParams.append("unlockException", unlockException)
+    return `${basePath}/?${searchParams}`
+  }
+  const unlockTriggerPath = (unlockTrigger: string) => {
+    searchParams.append("unlockTrigger", unlockTrigger)
+    return `${basePath}/?${searchParams}`
+  }
+
   const canUnlockCase = (lockedUsername: string): boolean => {
     return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
   }
