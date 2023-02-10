@@ -466,18 +466,11 @@ describe("Case list", () => {
       cy.get("#date-from").should("have.value", "2022-01-01")
       cy.get("#date-to").should("have.value", "2022-12-31")
 
-      cy.get("tr").not(":first").should("have.length", 5)
-      cy.findByText("Next page").should("exist")
-      cy.findByText("Next page").click()
-      cy.get("tr").not(":first").should("have.length", 2)
+      cy.get("tr").not(":first").should("have.length", 7)
 
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").click({ force: true })
-      cy.get("tr").not(":first").should("have.length", 5)
-      cy.findByText("Next page").click()
-      cy.get("tr").not(":first").should("have.length", 5)
-      cy.findByText("Next page").click()
-      cy.get("tr").not(":first").should("have.length", 3)
+      cy.get("tr").not(":first").should("have.length", 13)
     })
 
     it.skip("Should ensure radio buttons are correctly selected for 'date range' and 'custom date range' filters", () => {

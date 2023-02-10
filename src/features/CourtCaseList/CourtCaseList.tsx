@@ -13,6 +13,7 @@ import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescrip
 import { createUseStyles } from "react-jss"
 import User from "services/entities/User"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
+import { encode } from "querystring"
 
 const useStyles = createUseStyles({
   caseDetailsRow: {
@@ -34,7 +35,8 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
   const classes = useStyles()
   const { basePath, query } = useRouter()
 
-  deleteQueryParamsByName(["unlockException", "unlockTrigger"], query)
+  const searchParams = new URLSearchParams(encode(query))
+  deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
 
   const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
   const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
