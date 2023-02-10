@@ -412,6 +412,11 @@ describe("Case list", () => {
       cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
       cy.get("button#search").click()
 
+      cy.get("button#filter-button").click()
+      cy.get("#date-range").click().should("be.checked")
+      cy.get("#date-from").should("have.value", "2022-01-01")
+      cy.get("#date-to").should("have.value", "2022-12-31")
+
       cy.get("tr").not(":first").should("have.length", 5)
       cy.findByText("Next page").should("exist")
       cy.findByText("Next page").click()

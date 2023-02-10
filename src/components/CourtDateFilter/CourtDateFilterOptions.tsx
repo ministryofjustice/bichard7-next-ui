@@ -5,7 +5,6 @@ import RadioButton from "components/RadioButton/RadioButton"
 import type { FilterAction } from "types/CourtCaseFilter"
 import type { Dispatch } from "react"
 import DateInput from "components/CustomDateInput/DateInput"
-import { isDate } from "date-fns/fp"
 
 interface Props {
   dateRange?: string | null
@@ -26,9 +25,13 @@ const labelForDateRange = (namedDateRange: string): string =>
 
 // TODO- update radio button logic for nested radios. Move away from GOV UK condition classes and use "states" instead.
 const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDateFrom, customDateTo }: Props) => {
-  const customDateFromNotNull = customDateFrom !== null ? customDateFrom : 0
-  const customDateToNotNull = customDateTo !== null ? customDateTo : 0
   const hasCustomDateRange = !!customDateFrom && !!customDateTo
+  const defaultDateValue = (date?: Date | null): string => {
+    if (!!date) {
+      return format(date, "yyyy-MM-dd")
+    }
+    return ""
+  }
 
   return (
     <fieldset className="govuk-fieldset">
@@ -64,16 +67,8 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
         />
         <div className="govuk-radios__conditional" id="conditional-custom-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-            <DateInput
-              dateType="from"
-              dispatch={dispatch}
-              defaultValue={isDate(customDateFromNotNull) ? format(customDateFromNotNull, "yyyy-MM-dd") : ""}
-            />
-            <DateInput
-              dateType="to"
-              dispatch={dispatch}
-              defaultValue={isDate(customDateToNotNull) ? format(customDateToNotNull, "yyyy-MM-dd") : ""}
-            />
+            <DateInput dateType="from" dispatch={dispatch} defaultValue={defaultDateValue(customDateFrom)} />
+            <DateInput dateType="to" dispatch={dispatch} defaultValue={defaultDateValue(customDateTo)} />
           </div>
         </div>
       </div>
