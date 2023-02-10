@@ -230,7 +230,7 @@ describe("Case list", () => {
       confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
     })
 
-    it("Should let to use all search fields", () => {
+    it("Should let users use all search fields", () => {
       cy.task("insertCourtCasesWithFields", [
         { defendantName: "Bruce Wayne", courtName: "London Court", ptiurn: "Case00001", orgForPoliceFilter: "011111" },
         { defendantName: "Bruce Gordon", courtName: "London Court", ptiurn: "Case00002", orgForPoliceFilter: "011111" },
