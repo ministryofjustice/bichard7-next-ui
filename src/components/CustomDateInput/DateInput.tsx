@@ -4,9 +4,10 @@ import { FilterAction } from "types/CourtCaseFilter"
 interface Props {
   dateType: string
   dispatch: Dispatch<FilterAction>
+  defaultValue: string
 }
 
-const DateInput: React.FC<Props> = ({ dateType, dispatch }: Props) => {
+const DateInput: React.FC<Props> = ({ dateType, dispatch, defaultValue }: Props) => {
   const actionType = dateType === "from" ? "customDateFrom" : "customDateTo"
   return (
     <div className="govuk-form-group">
@@ -18,6 +19,7 @@ const DateInput: React.FC<Props> = ({ dateType, dispatch }: Props) => {
         type="date"
         id={`date-${dateType}`}
         name={dateType}
+        defaultValue={defaultValue}
         // TODO: use defaultValue attribute to pre-populated any existing customDate to and from values.
         onChange={(event) => {
           if (Date.parse(event.target.value)) {
