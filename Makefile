@@ -19,6 +19,9 @@ goss:
 setup-e2e-env:
 	./scripts/setup-e2e-env.sh
 
+generate-codebuild-vpn:
+	./scripts/generate-codebuild-vpn
+
 .PHONY: destroy
 destroy:
 	$(DOCKER_COMPOSE) down
