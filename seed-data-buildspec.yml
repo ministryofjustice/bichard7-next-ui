@@ -6,6 +6,7 @@ phases:
     runtime-versions:
       nodejs: 16
     commands:
+      - scripts/generate-codebuild-vpn.sh
       - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
       - nvm use
       - npm ci
