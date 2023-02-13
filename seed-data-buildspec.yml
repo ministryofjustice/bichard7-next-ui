@@ -18,6 +18,6 @@ phases:
       - export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | jq -r .Credentials.SecretAccessKey)
       - export AWS_SESSION_TOKEN=$(echo $temp_role | jq -r .Credentials.SessionToken)
       - openvpn --config ~/cjse-${WORKSPACE}-config.ovpn --daemon
-      - make setup-e2e-tests
+      - make setup-e2e-env
       - source ./workspaces/${WORKSPACE}.env
       - npm run seed-data

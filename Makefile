@@ -20,7 +20,7 @@ setup-e2e-env:
 	./scripts/setup-e2e-env.sh
 
 generate-codebuild-vpn:
-	./scripts/generate-codebuild-vpn
+	./scripts/generate-codebuild-vpn.sh
 
 .PHONY: destroy
 destroy:
