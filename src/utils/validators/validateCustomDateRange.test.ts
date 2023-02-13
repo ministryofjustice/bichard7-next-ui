@@ -1,7 +1,7 @@
 import { validateCustomDateRange } from "./validateCustomDateRange"
 
 describe("validateCustomDateRange", () => {
-  it("should return a date range for a valid from and to dates", () => {
+  it("should return a date range for a valid from and to date", () => {
     const expectedToDate = new Date("2022-01-01")
     const expectedFromDate = new Date("2022-12-31")
 

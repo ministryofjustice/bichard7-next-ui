@@ -1,4 +1,4 @@
-import deleteQueryParamsByName from "./deleteQueryParamsByName"
+import deleteQueryParamsByKey from "./deleteQueryParamsByKey"
 
 describe("deleteQueryParams", () => {
   let query: URLSearchParams
@@ -14,19 +14,19 @@ describe("deleteQueryParams", () => {
   it("can delete a named parameter from search queries", () => {
     expectedQuery.append("type", "exeptions")
     expectedQuery.append("type", "triggers")
-    expect(deleteQueryParamsByName(["defendant"], query)).toStrictEqual(expectedQuery)
+    expect(deleteQueryParamsByKey(["defendant"], query)).toStrictEqual(expectedQuery)
   })
 
   it("should not modify query when deleting a parameter that does not exist", () => {
-    expect(deleteQueryParamsByName(["invalid key"], query)).toStrictEqual(query)
+    expect(deleteQueryParamsByKey(["invalid key"], query)).toStrictEqual(query)
   })
 
   it("should delete a named parameter with multiple values", () => {
     expectedQuery.append("defendant", "Name")
-    expect(deleteQueryParamsByName(["type"], query)).toStrictEqual(expectedQuery)
+    expect(deleteQueryParamsByKey(["type"], query)).toStrictEqual(expectedQuery)
   })
 
   it("should delete multiple named parameters", () => {
-    expect(deleteQueryParamsByName(["type", "defendant"], query)).toStrictEqual(expectedQuery)
+    expect(deleteQueryParamsByKey(["type", "defendant"], query)).toStrictEqual(expectedQuery)
   })
 })

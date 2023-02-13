@@ -139,7 +139,6 @@ const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, mar
         dispatch={dispatch}
         type="customDate"
         label="Custom date range"
-        // TODO: check behaviour if only 1 field set.
         state={state.customDateFrom.state || sectionState}
         value={customDateRangeLabel}
       />

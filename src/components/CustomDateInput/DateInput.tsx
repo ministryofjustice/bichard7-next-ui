@@ -20,7 +20,6 @@ const DateInput: React.FC<Props> = ({ dateType, dispatch, defaultValue }: Props)
         id={`date-${dateType}`}
         name={dateType}
         defaultValue={defaultValue}
-        // TODO: use defaultValue attribute to pre-populated any existing customDate to and from values.
         onChange={(event) => {
           if (Date.parse(event.target.value)) {
             dispatch({ method: "add", type: actionType, value: new Date(Date.parse(event.target.value)) })

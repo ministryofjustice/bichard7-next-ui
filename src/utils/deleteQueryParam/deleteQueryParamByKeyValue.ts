@@ -1,4 +1,4 @@
-const deleteQueryParam = (
+const deleteQueryParamByKeyValue = (
   paramToRemove: { [key: string]: string },
   query: { [key: string]: string | string[] | undefined }
 ): URLSearchParams => {
@@ -21,4 +21,4 @@ const deleteQueryParam = (
   return searchParams
 }
 
-export default deleteQueryParam
+export default deleteQueryParamByKeyValue
