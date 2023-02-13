@@ -2,7 +2,7 @@ import { Dispatch } from "react"
 import { FilterAction } from "types/CourtCaseFilter"
 
 interface Props {
-  dateType: string
+  dateType: "from" | "to"
   dispatch: Dispatch<FilterAction>
   defaultValue: string
 }
