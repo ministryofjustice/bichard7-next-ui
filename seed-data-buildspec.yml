@@ -7,6 +7,7 @@ phases:
       nodejs: 16
     commands:
       - scripts/generate-codebuild-vpn.sh
+      - yum -y install openvpn
       - npm ci
   build:
     commands:
