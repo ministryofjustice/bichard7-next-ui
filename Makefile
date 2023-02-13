@@ -16,6 +16,9 @@ run:
 goss:
 	GOSS_SLEEP=15 dgoss run -e DB_HOST=$(DB_HOST) "ui:latest"
 
+setup-e2e-env:
+	./scripts/setup-e2e-env.sh
+
 .PHONY: destroy
 destroy:
 	$(DOCKER_COMPOSE) down
