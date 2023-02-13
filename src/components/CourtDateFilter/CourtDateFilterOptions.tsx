@@ -5,6 +5,7 @@ import RadioButton from "components/RadioButton/RadioButton"
 import type { FilterAction } from "types/CourtCaseFilter"
 import type { Dispatch } from "react"
 import DateInput from "components/CustomDateInput/DateInput"
+import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
   dateRange?: string | null
@@ -16,7 +17,10 @@ interface Props {
 const formatNamedDateRange = (namedDateRange: string): string => {
   const dateRange = mapDateRange(namedDateRange)
   return dateRange
-    ? `${namedDateRange} (${format(dateRange.from, "dd/MM/yyyy")} - ${format(dateRange.to, "dd/MM/yyyy")})`
+    ? `${namedDateRange} (${format(dateRange.from, displayedDateFormat)} - ${format(
+        dateRange.to,
+        displayedDateFormat
+      )})`
     : namedDateRange
 }
 

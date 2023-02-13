@@ -6,6 +6,7 @@ import { encode } from "querystring"
 import { Reason } from "types/CaseListQueryParams"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
+import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
   filters: {
@@ -110,9 +111,9 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
             <li>
               <FilterTag
                 tag={
-                  `${format(filters.customDateFrom || new Date(), "dd/MM/yyyy")} - ${format(
+                  `${format(filters.customDateFrom || new Date(), displayedDateFormat)} - ${format(
                     filters.customDateTo || new Date(),
-                    "dd/MM/yyyy"
+                    displayedDateFormat
                   )}` ?? ""
                 }
                 href={removeQueryParamsByName(["from", "to", "pageNum"])}

@@ -6,6 +6,7 @@ import ResolveTrigger from "components/ResolveTrigger"
 import LinkButton from "components/LinkButton"
 import { Heading, Paragraph, Table, Tag } from "govuk-react"
 import CourtCase from "services/entities/CourtCase"
+import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
   courtCase: CourtCase
@@ -31,7 +32,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       <Table.Row>
         <Table.CellHeader>{"Court date"}</Table.CellHeader>
         <Table.Cell>
-          <DateTime date={courtCase.courtDate} dateFormat="dd/MM/yyyy" />
+          <DateTime date={courtCase.courtDate} dateFormat={displayedDateFormat} />
         </Table.Cell>
       </Table.Row>
       <Table.Row>

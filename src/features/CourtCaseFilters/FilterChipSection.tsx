@@ -5,6 +5,7 @@ import { format } from "date-fns"
 import { Dispatch } from "react"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
+import { displayedDateFormat } from "utils/formattedDate"
 import FilterChipRow from "./FilterChipRow"
 
 interface Props {
@@ -17,7 +18,10 @@ interface Props {
 const FilterChipSection: React.FC<Props> = ({ state, dispatch, sectionState, marginTop }: Props) => {
   const customDateRangeLabel =
     !!state.customDateFrom.value && !!state.customDateTo.value
-      ? `${format(state.customDateFrom.value, "dd/MM/yyyy")} - ${format(state.customDateTo.value, "dd/MM/yyyy")}`
+      ? `${format(state.customDateFrom.value, displayedDateFormat)} - ${format(
+          state.customDateTo.value,
+          displayedDateFormat
+        )}`
       : ""
   return (
     <If condition={anyFilterChips(state, sectionState)}>
