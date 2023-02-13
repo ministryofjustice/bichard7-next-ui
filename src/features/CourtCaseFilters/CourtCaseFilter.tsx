@@ -21,6 +21,8 @@ interface Props {
   ptiurn: string | null
   courtCaseTypes: Reason[]
   dateRange: string | null
+  customDateFrom: Date | null
+  customDateTo: Date | null
   urgency: string | null
   locked: string | null
   caseState: CaseState | null
@@ -38,6 +40,12 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.dateFilter.value = action.value
       newState.dateFilter.label = action.value
       newState.dateFilter.state = "Selected"
+    } else if (action.type === "customDateFrom") {
+      newState.customDateFrom.value = action.value
+      newState.customDateFrom.state = "Selected"
+    } else if (action.type === "customDateTo") {
+      newState.customDateTo.value = action.value
+      newState.customDateTo.state = "Selected"
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = action.value
       newState.caseStateFilter.label = caseStateLabels[action.value ?? ""]
@@ -80,6 +88,9 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
     } else if (action.type === "date") {
       newState.dateFilter.value = undefined
       newState.dateFilter.label = undefined
+    } else if (action.type === "customDate") {
+      newState.customDateFrom.value = undefined
+      newState.customDateTo.value = undefined
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = undefined
       newState.caseStateFilter.label = undefined
@@ -121,6 +132,8 @@ const CourtCaseFilter: React.FC<Props> = ({
   courtName,
   reasonSearch,
   dateRange,
+  customDateFrom,
+  customDateTo,
   urgency,
   locked,
   caseState,
@@ -129,6 +142,8 @@ const CourtCaseFilter: React.FC<Props> = ({
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
     dateFilter: dateRange !== null ? { value: dateRange, state: "Applied", label: dateRange } : {},
+    customDateFrom: customDateFrom !== null ? { value: customDateFrom, state: "Applied" } : {},
+    customDateTo: customDateTo !== null ? { value: customDateTo, state: "Applied" } : {},
     lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
@@ -245,7 +260,12 @@ const CourtCaseFilter: React.FC<Props> = ({
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"}>
-              <CourtDateFilterOptions dateRange={state.dateFilter.value} dispatch={dispatch} />
+              <CourtDateFilterOptions
+                dateRange={state.dateFilter.value}
+                dispatch={dispatch}
+                customDateFrom={customDateFrom}
+                customDateTo={customDateTo}
+              />
             </ExpandingFilters>
           </div>
           <div>

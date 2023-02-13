@@ -18,6 +18,7 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { CaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
+import { validateCustomDateRange } from "utils/validators/validateCustomDateRange"
 import { isPost } from "utils/http"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
@@ -34,6 +35,8 @@ interface Props {
   reasonSearch: string | null
   urgent: string | null
   dateRange: string | null
+  customDateFrom: string | null
+  customDateTo: string | null
   page: number
   casesPerPage: number
   totalCases: number
@@ -61,6 +64,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       order,
       urgency,
       dateRange,
+      from,
+      to,
       locked,
       state,
       myCases,
@@ -73,6 +78,10 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
     const validatedDateRange = mapDateRange(dateRange)
+    const validatedCustomDateRange = validateCustomDateRange({
+      from,
+      to
+    })
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
     const validatedReasonSearch = validateQueryParams(reasonSearch) ? reasonSearch : undefined
@@ -112,7 +121,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
       order: validatedOrder,
-      courtDateRange: validatedDateRange,
+      courtDateRange: validatedDateRange || validatedCustomDateRange,
       locked: lockedFilter,
       caseState: validatedCaseState,
       allocatedToUserName: validatedMyCases
@@ -138,6 +147,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         reasonSearch: validatedReasonSearch ? validatedReasonSearch : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
         dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
+        customDateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
+        customDateTo: validatedCustomDateRange?.to.toJSON() ?? null,
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null,
@@ -160,6 +171,8 @@ const Home: NextPage<Props> = ({
   reasonSearch,
   ptiurn,
   dateRange,
+  customDateFrom,
+  customDateTo,
   urgent,
   locked,
   caseState,
@@ -183,6 +196,8 @@ const Home: NextPage<Props> = ({
             reasonSearch={reasonSearch}
             ptiurn={ptiurn}
             dateRange={dateRange}
+            customDateFrom={customDateFrom !== null ? new Date(customDateFrom) : null}
+            customDateTo={customDateTo !== null ? new Date(customDateTo) : null}
             urgency={urgent}
             locked={locked}
             caseState={caseState}
@@ -198,6 +213,8 @@ const Home: NextPage<Props> = ({
               reasonSearch,
               ptiurn,
               dateRange,
+              customDateFrom: customDateFrom !== null ? new Date(customDateFrom) : null,
+              customDateTo: customDateTo !== null ? new Date(customDateTo) : null,
               urgency: urgent,
               locked: locked,
               caseState: caseState,

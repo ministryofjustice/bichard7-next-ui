@@ -108,6 +108,41 @@ describe("Case list", () => {
       })
     })
 
+    describe("Custom Date range", () => {
+      it("Should allow you to add custom date range filter chip", () => {
+        cy.get("button#filter-button").click()
+        cy.get("#custom-date-range").click()
+        cy.get("#date-from").click().type("2022-01-01")
+        cy.get("#date-to").click().type("2022-12-31")
+        cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
+        cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+        cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
+        cy.get("button#search").click()
+
+        cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
+        cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
+      })
+
+      it.skip("Should apply the 'Custom date filter' filter chips then remove this chips to the original state", () => {
+        // TODO: fix during the state refactor - 2616 (filter panel bug)
+        cy.get("#filter-button").click()
+        cy.get("#custom-date-range").click()
+        cy.get("#date-from").should("have.value", "")
+        cy.get("#date-to").should("have.value", "")
+        cy.get("#date-from").type("2022-01-01")
+        cy.get("#date-to").type("2022-12-31")
+
+        cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
+        cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+        cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist").trigger("click")
+        cy.get(".moj-filter__tag").should("not.exist")
+        cy.get("#date-from").should("have.value", "")
+        cy.get("#date-to").should("have.value", "")
+
+        cy.get("#custom-date-range").should("not.be.checked")
+      })
+    })
+
     describe("Urgency", () => {
       it("Should apply the 'Non-urgent cases only' filter chip", () => {
         cy.get("#filter-button").click()

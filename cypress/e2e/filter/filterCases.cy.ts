@@ -431,6 +431,82 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 8)
     })
 
+    it("Should display cases filtered for a custom date range", () => {
+      const force = "011111"
+
+      cy.task("insertCourtCasesWithFields", [
+        { courtDate: new Date("2023-01-1"), orgForPoliceFilter: force },
+        { courtDate: new Date("2023-02-1"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-12-1"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-11-15"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-11-2"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-10-30"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-10-15"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-10-1"), orgForPoliceFilter: force },
+        { courtDate: new Date("2022-09-15"), orgForPoliceFilter: force },
+        { courtDate: new Date("2021-12-15"), orgForPoliceFilter: force },
+        { courtDate: new Date("2021-02-10"), orgForPoliceFilter: force },
+        { courtDate: new Date("2020-05-30"), orgForPoliceFilter: force },
+        { courtDate: new Date("2019-05-10"), orgForPoliceFilter: force }
+      ])
+
+      cy.visit("/bichard")
+
+      cy.get("button#filter-button").click()
+      cy.get("#custom-date-range").click()
+      cy.get("#date-from").type("2022-01-01")
+      cy.get("#date-to").type("2022-12-31")
+      cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+      cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
+      cy.get("button#search").click()
+
+      cy.get("button#filter-button").click()
+      cy.get("#date-range").click().should("be.checked")
+      cy.get("#date-from").should("have.value", "2022-01-01")
+      cy.get("#date-to").should("have.value", "2022-12-31")
+
+      cy.get("tr").not(":first").should("have.length", 7)
+
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
+      cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").click({ force: true })
+      cy.get("tr").not(":first").should("have.length", 13)
+    })
+
+    it.skip("Should ensure radio buttons are correctly selected for 'date range' and 'custom date range' filters", () => {
+      // TODO- BICAWS-2616 filter panel bug with court date radio buttons.
+      cy.visit("/bichard")
+      cy.get("button#filter-button").click()
+
+      cy.get("#date-range").click().should("be.checked")
+
+      cy.get("#date-range-yesterday").click().should("be.checked")
+
+      cy.get("#date-range").should("be.checked")
+      cy.get("#date-range-yesterday").should("be.checked")
+      cy.get("#custom-date-range").should("not.be.checked")
+
+      cy.get("#custom-date-range").click().should("be.checked")
+      cy.get("#date-range").should("not.be.checked")
+
+      cy.get("#date-range-yesterday").should("not.be.checked")
+      cy.get(".moj-filter__tag").contains("Yesterday").should("not.exist")
+    })
+
+    it("Should update 'selected filter' chip when changing custom date range filter", () => {
+      cy.visit("/bichard")
+      cy.get("button#filter-button").click()
+      cy.get("#custom-date-range").click()
+
+      cy.get("#date-from").type("1999-01-01")
+      cy.get("#date-to").type("2000-12-31")
+      cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+      cy.get(".moj-filter__tag").contains("01/01/1999 - 31/12/2000")
+
+      cy.get("#date-from").type("2022-01-01")
+      cy.get("#date-to").type("2022-12-31")
+      cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
+    })
+
     it("Should not allow passing an invalid date range filter", () => {
       const force = "011111"
       cy.task("insertCourtCasesWithFields", [

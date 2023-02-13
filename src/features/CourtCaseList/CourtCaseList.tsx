@@ -13,6 +13,8 @@ import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescrip
 import { createUseStyles } from "react-jss"
 import User from "services/entities/User"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
+import { encode } from "querystring"
+import { displayedDateFormat } from "utils/formattedDate"
 
 const useStyles = createUseStyles({
   caseDetailsRow: {
@@ -34,14 +36,16 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
   const classes = useStyles()
   const { basePath, query } = useRouter()
 
-  deleteQueryParamsByName(["unlockException", "unlockTrigger"], query)
+  let searchParams = new URLSearchParams(encode(query))
+  searchParams = deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
 
   const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
   const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
-  const unlockExceptionPath = (unlockException: string) =>
-    `${basePath}/?${new URLSearchParams({ ...query, unlockException })}`
-  const unlockTriggerPath = (unlockTrigger: string) =>
-    `${basePath}/?${new URLSearchParams({ ...query, unlockTrigger })}`
+  const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
+    searchParams.append(`unlock${reason}`, caseId)
+    return `${basePath}/?${searchParams}`
+  }
+
   const canUnlockCase = (lockedUsername: string): boolean => {
     return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
   }
@@ -119,7 +123,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
             </Link>
           </Table.Cell>
           <Table.Cell>
-            <DateTime date={courtDate} dateFormat={"dd/MM/yyyy"} />
+            <DateTime date={courtDate} dateFormat={displayedDateFormat} />
           </Table.Cell>
           <Table.Cell>{courtName}</Table.Cell>
           <Table.Cell>{ptiurn}</Table.Cell>
@@ -139,7 +143,10 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
           </Table.Cell>
           <Table.Cell>
             {errorLockedByUsername && canUnlockCase(errorLockedByUsername) ? (
-              <LockedByTag lockedBy={errorLockedByUsername} unlockPath={unlockExceptionPath(`${errorId}`)} />
+              <LockedByTag
+                lockedBy={errorLockedByUsername}
+                unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
+              />
             ) : (
               <LockedByTag lockedBy={errorLockedByUsername} />
             )}
@@ -168,7 +175,10 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
             </Table.Cell>
             <Table.Cell>
               {triggerLockedByUsername && canUnlockCase(triggerLockedByUsername) ? (
-                <LockedByTag lockedBy={triggerLockedByUsername} unlockPath={unlockTriggerPath(`${errorId}`)} />
+                <LockedByTag
+                  lockedBy={triggerLockedByUsername}
+                  unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
+                />
               ) : (
                 <LockedByTag lockedBy={triggerLockedByUsername} />
               )}
