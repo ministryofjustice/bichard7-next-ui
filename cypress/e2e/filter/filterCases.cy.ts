@@ -452,7 +452,6 @@ describe("Case list", () => {
 
       cy.visit("/bichard")
 
-      // Tests for all cases in 2022
       cy.get("button#filter-button").click()
       cy.get("#custom-date-range").click()
       cy.get("#date-from").type("2022-01-01")
