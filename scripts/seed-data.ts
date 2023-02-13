@@ -6,6 +6,11 @@ import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromTable from "../test/utils/deleteFromTable"
 
+if (process.env.DEPLOY_NAME !== "e2e-test") {
+  console.error("Not running in e2e environment, bailing out. Set DEPLOY_NAME='e2e-test' if you're sure.")
+  process.exit(1)
+}
+
 const minCases = 500
 const maxCases = 1_000
 const forceId = process.env.FORCE_ID || "01"
