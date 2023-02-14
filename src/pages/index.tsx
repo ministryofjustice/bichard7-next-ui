@@ -128,8 +128,6 @@ export const getServerSideProps = withMultipleServerSideProps(
       allocatedToUserName: validatedMyCases
     })
 
-    const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
-
     if (isError(courtCases)) {
       throw courtCases
     }
