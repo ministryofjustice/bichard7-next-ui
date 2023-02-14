@@ -55,7 +55,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
     <Table.Row>
       <Table.Cell></Table.Cell>
       <Table.CellHeader>
-        <ColumnOrderIcon>
+        <ColumnOrderIcon order={order} >
           <Link href={orderByParams("defendantName")} id="defendant-name-sort">
             {"Defendant Name"}
           </Link>

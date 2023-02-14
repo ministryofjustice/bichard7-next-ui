@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+import convertAsnToLongFormat from "@moj-bichard7-developers/bichard7-next-core/build/src/enrichAho/enrichFunctions/enrichDefendant/convertAsnToLongFormat"
 import { ReactNode } from "react"
 import { QueryOrder } from "types/CaseListQueryParams"
 
@@ -28,7 +29,8 @@ interface Props {
   order?: QueryOrder
 }
 
-const ColumnOrderIcon: React.FC<Props> = ({ children }) => {
+const ColumnOrderIcon: React.FC<Props> = ({ children, order }) => {
+  console.log("order", order)
   return (
     <>
       {children}

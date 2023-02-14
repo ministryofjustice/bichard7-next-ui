@@ -126,7 +126,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       caseState: validatedCaseState,
       allocatedToUserName: validatedMyCases
     })
-
+    console.log("before opposite", order)
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
 
     if (isError(courtCases)) {
@@ -138,6 +138,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         user: currentUser.serialize(),
         courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
         order: oppositeOrder,
+        currentOrder: order,
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,
         casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,
