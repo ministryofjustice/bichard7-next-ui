@@ -45,7 +45,7 @@ interface Props {
   myCases: boolean
 }
 
-const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
+const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === null
 const validCourtCaseTypes = ["Triggers", "Exceptions"]
 
 export const getServerSideProps = withMultipleServerSideProps(
@@ -76,7 +76,8 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
-    const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
+    const mappedOrder = order ?? null
+    const validatedOrder: QueryOrder = validateOrder(mappedOrder) ? mappedOrder : "asc"
     const validatedDateRange = mapDateRange(dateRange)
     const validatedCustomDateRange = validateCustomDateRange({
       from,
@@ -126,7 +127,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       caseState: validatedCaseState,
       allocatedToUserName: validatedMyCases
     })
-    console.log("before opposite", order)
+
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
 
     if (isError(courtCases)) {
@@ -137,7 +138,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       props: {
         user: currentUser.serialize(),
         courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
-        order: oppositeOrder,
+        order: validatedOrder,
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,
         casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,
