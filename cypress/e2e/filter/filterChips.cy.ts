@@ -307,7 +307,7 @@ describe("Case list", () => {
 
         cy.get(".moj-action-bar button").click()
 
-        cy.get(".govuk-heading-m").contains("Selected filters").should("not.exist")
+        cy.get(".govuk-heading-m + p").should("contain.text", "No filters selected")
         cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
         cy.get(".govuk-heading-s").contains("Urgency").should("exist")
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
