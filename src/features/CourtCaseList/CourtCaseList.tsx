@@ -55,42 +55,54 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
     <Table.Row>
       <Table.Cell></Table.Cell>
       <Table.CellHeader>
-        <ColumnOrderIcon currentOrder={query.order} orderBy={query.orderBy}>
+        <ColumnOrderIcon columnName={"defendantName"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("defendantName")} id="defendant-name-sort">
             {"Defendant Name"}
           </Link>
         </ColumnOrderIcon>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("courtDate")} id="court-date-sort">
-          {"Court Date"}
-        </Link>
+        <ColumnOrderIcon columnName={"courtDate"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("courtDate")} id="court-date-sort">
+            {"Court Date"}
+          </Link>
+        </ColumnOrderIcon>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("courtName")} id="court-name-sort">
-          {"Court Name"}
-        </Link>
+        <ColumnOrderIcon columnName={"courtName"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("courtName")} id="court-name-sort">
+            {"Court Name"}
+          </Link>
+        </ColumnOrderIcon>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("ptiurn")} id="ptiurn-sort">
-          {"PTIURN"}
-        </Link>
+        <ColumnOrderIcon columnName={"ptiurn"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("ptiurn")} id="ptiurn-sort">
+            {"PTIURN"}
+          </Link>
+        </ColumnOrderIcon>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("isUrgent")} id="is-urgent-sort">
-          {"Urgent"}
-        </Link>
+        <ColumnOrderIcon columnName={"isUrgent"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("isUrgent")} id="is-urgent-sort">
+            {"Urgent"}
+          </Link>
+        </ColumnOrderIcon>
       </Table.CellHeader>
       <Table.CellHeader>{"Notes"}</Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("reason")} id="exceptions">
-          {"Reason"}
-        </Link>
+        <ColumnOrderIcon columnName={"reason"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("reason")} id="exceptions">
+            {"Reason"}
+          </Link>
+        </ColumnOrderIcon>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("lockedBy")} id="locked-by-sort">
-          {"Locked By"}
-        </Link>
+        <ColumnOrderIcon columnName={"lockedBy"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("lockedBy")} id="locked-by-sort">
+            {"Locked By"}
+          </Link>
+        </ColumnOrderIcon>
       </Table.CellHeader>
     </Table.Row>
   )

@@ -29,20 +29,21 @@ interface Props {
   orderBy: string | string[] | undefined
   children: ReactNode
   currentOrder: string | string[] | undefined
+  columnName: string
 }
 
-const ColumnOrderIcon: React.FC<Props> = ({ currentOrder, orderBy, children }) => {
+const ColumnOrderIcon: React.FC<Props> = ({ currentOrder, orderBy, children, columnName }) => {
   return (
     <>
-      <If condition={currentOrder === "asc"}>
+      <If condition={currentOrder === "asc" && orderBy === columnName}>
         {children}
         <UpArrow />
       </If>
-      <If condition={orderBy === undefined}>
+      <If condition={orderBy === undefined || orderBy !== columnName}>
         {children}
         <Unordered />
       </If>
-      <If condition={currentOrder === "desc"}>
+      <If condition={currentOrder === "desc" && orderBy === columnName}>
         {children}
         <DownArrow />
       </If>
