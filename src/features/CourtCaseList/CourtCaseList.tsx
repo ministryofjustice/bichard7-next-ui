@@ -29,16 +29,14 @@ const useStyles = createUseStyles({
 
 interface Props {
   courtCases: CourtCase[]
-  order: QueryOrder
+  order?: QueryOrder
   currentUser: User
 }
 
-const CourtCaseList: React.FC<Props> = ({ courtCases, order, currentUser }: Props) => {
+const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser }: Props) => {
   const classes = useStyles()
   const { basePath, query } = useRouter()
 
-  // TODO: resistate oposite order
-  // const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
   let searchParams = new URLSearchParams(encode(query))
   searchParams = deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
 

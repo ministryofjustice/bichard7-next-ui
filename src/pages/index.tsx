@@ -18,8 +18,8 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { CaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
-import { validateCustomDateRange } from "utils/validators/validateCustomDateRange"
 import { isPost } from "utils/http"
+import { validateCustomDateRange } from "utils/validators/validateCustomDateRange"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
@@ -45,7 +45,7 @@ interface Props {
   myCases: boolean
 }
 
-const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === null
+const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
 const validCourtCaseTypes = ["Triggers", "Exceptions"]
 
 export const getServerSideProps = withMultipleServerSideProps(
@@ -76,8 +76,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
-    const mappedOrder = order ?? null
-    const validatedOrder: QueryOrder = validateOrder(mappedOrder) ? mappedOrder : "asc"
+    const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
     const validatedDateRange = mapDateRange(dateRange)
     const validatedCustomDateRange = validateCustomDateRange({
       from,
@@ -128,6 +127,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       allocatedToUserName: validatedMyCases
     })
 
+    const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
+
     if (isError(courtCases)) {
       throw courtCases
     }
@@ -136,7 +137,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       props: {
         user: currentUser.serialize(),
         courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
-        order: validatedOrder,
+        order: oppositeOrder,
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,
         casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,

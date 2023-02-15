@@ -32,10 +32,6 @@ interface Props {
 }
 
 const ColumnOrderIcon: React.FC<Props> = ({ currentOrder, orderBy, children }) => {
-  console.log(UpArrow)
-  console.log(DownArrow)
-  console.log("orderBy in component", orderBy)
-
   return (
     <>
       <If condition={currentOrder === "asc"}>
@@ -51,10 +47,6 @@ const ColumnOrderIcon: React.FC<Props> = ({ currentOrder, orderBy, children }) =
         <DownArrow />
       </If>
     </>
-    // initialstate/ default icon of column will be unordered icon
-    // logic if asc | desc is not in query= show unordered icon
-    // if asc in query show up arrow
-    // if desc in query show down arrow.
   )
 }
 
