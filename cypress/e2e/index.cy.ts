@@ -58,8 +58,14 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.findByText("Previous page").should("not.exist")
-        cy.findByText("Next page").should("not.exist")
+        cy.get(".moj-pagination__item").should("not.exist")
+      })
+
+      it("should display appropriate pagination results when there are 0 cases", () => {
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("p.moj-pagination__results").should("contain.text", "Showing 0 cases")
       })
 
       it("should be accessible", () => {
