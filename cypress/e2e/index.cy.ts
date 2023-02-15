@@ -43,7 +43,6 @@ describe("Case list", () => {
 
     beforeEach(() => {
       cy.task("clearCourtCases")
-      cy.viewport(1280, 720)
     })
 
     context("when there are 0 cases", () => {
