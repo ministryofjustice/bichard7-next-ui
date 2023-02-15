@@ -26,7 +26,7 @@ interface Props {
 
 const UpArrow: React.FC = () => {
   return (
-    <div>
+    <div className="upArrow">
       <svg width={15} height={25} viewBox="0 0 15 25" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M2 14L7.5 5L13 14H2Z" fill="#1D70B8" />
       </svg>
@@ -34,18 +34,26 @@ const UpArrow: React.FC = () => {
   )
 }
 
-const DownArrow: React.FC = () => (
-  <svg width={15} height={25} viewBox="0 0 15 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M13 11L7.5 20L2 11L13 11Z" fill="#1D70B8" />
-  </svg>
-)
+const DownArrow: React.FC = () => {
+  return (
+    <div className="downArrow">
+      <svg width={15} height={25} viewBox="0 0 15 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13 11L7.5 20L2 11L13 11Z" fill="#1D70B8" />
+      </svg>
+    </div>
+  )
+}
 
-const Unordered: React.FC = () => (
-  <svg width={15} height={25} viewBox="0 0 15 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 11L7.5 3L11 11H4Z" fill="#1D70B8" />
-    <path d="M11 13L7.5 21L4 13L11 13Z" fill="#1D70B8" />
-  </svg>
-)
+const Unordered: React.FC = () => {
+  return (
+    <div className="unorderedArrow">
+      <svg width={15} height={25} viewBox="0 0 15 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 11L7.5 3L11 11H4Z" fill="#1D70B8" />
+        <path d="M11 13L7.5 21L4 13L11 13Z" fill="#1D70B8" />
+      </svg>
+    </div>
+  )
+}
 
 const ColumnOrderIcons: React.FC<Props> = ({ orderBy, currentOrder, columnName, children }) => {
   const classes = useStyles()
