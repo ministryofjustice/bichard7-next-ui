@@ -5,6 +5,11 @@ import a11yConfig from "../support/a11yConfig"
 import { waitForPageToLoad } from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 
+const loginAndGoToBichard = (emailAddress = "bichard01@example.com", url = "/bichard") => {
+  cy.login(emailAddress, "password")
+  cy.visit(url)
+}
+
 describe("Case list", () => {
   context("720p resolution", () => {
     const defaultUsers: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
@@ -47,16 +52,13 @@ describe("Case list", () => {
 
     context("when there are 0 cases", () => {
       it("should display 0 cases and the user's username when no cases are added", () => {
-        cy.login("bichard01@example.com", "password")
-
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.findByText("There are no court cases to show").should("exist")
       })
 
       it("should not show pagination buttons when there are 0 cases", () => {
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get(".moj-pagination__item").should("not.exist")
       })
@@ -69,8 +71,7 @@ describe("Case list", () => {
       })
 
       it("should be accessible", () => {
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.injectAxe()
 
@@ -83,8 +84,7 @@ describe("Case list", () => {
     context("when there multiple cases", () => {
       it("should be accessible", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.injectAxe()
 
@@ -95,8 +95,7 @@ describe("Case list", () => {
 
       it("should display multiple cases", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.findByText(`Case00000`).should("exist")
         cy.findByText(`Case00001`).should("exist")
@@ -107,8 +106,7 @@ describe("Case list", () => {
 
       it("should display a case for the user's org", () => {
         cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get("tr").not(":first").get("td:nth-child(5)").contains(`Case00000`)
       })
@@ -121,8 +119,7 @@ describe("Case list", () => {
           { orgForPoliceFilter: "04" }
         ])
 
-        cy.login("bichard02@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard("bichard02@example.com")
 
         cy.get("tr").not(":first").get("td:nth-child(5)").contains(`Case00001`)
       })
@@ -135,8 +132,7 @@ describe("Case list", () => {
           { orgForPoliceFilter: "013A1" }
         ])
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get("tr")
           .not(":first")
@@ -154,8 +150,7 @@ describe("Case list", () => {
           { orgForPoliceFilter: "011111" }
         ])
 
-        cy.login("bichard011111@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard("bichard011111@example.com")
 
         cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00000").should("not.exist")
         cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00001").should("not.exist")
@@ -172,8 +167,7 @@ describe("Case list", () => {
           { courtName: "CCCC", orgForPoliceFilter: "011111" }
         ])
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.findByText("Court Name").parent().siblings().get('*[class^="icon"]').get(".unorderedArrow").should("exist")
         cy.findByText("Court Name").click()
@@ -201,8 +195,7 @@ describe("Case list", () => {
       it("should be able to navigate to the case details page and back", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.findByText("Defendant Name 0").click()
 
@@ -222,8 +215,7 @@ describe("Case list", () => {
           { isUrgent: true, orgForPoliceFilter: "01" }
         ])
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
         cy.get("tr").not(":first").eq(0).contains(`Urgent`).should("exist")
@@ -238,8 +230,7 @@ describe("Case list", () => {
           { resolutionTimestamp: new Date(), orgForPoliceFilter: "01" }
         ])
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get("#filter-button").contains("Show filter").click()
         cy.get("#unresolved-and-resolved").click()
@@ -290,8 +281,7 @@ describe("Case list", () => {
         ]
         cy.task("insertCourtCasesWithNotes", { caseNotes: caseNotes, force: "01" })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
         cy.get("tr").not(":first").eq(0).get("td:nth-child(7)").should("be.empty")
@@ -334,8 +324,7 @@ describe("Case list", () => {
         ]
         cy.task("insertTriggers", { caseId: 0, triggers })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get("tr").not(":first").get("td:nth-child(8)").contains("HO100310 (2)")
         cy.get("tr").not(":first").get("td:nth-child(8)").contains("HO100322")
@@ -374,8 +363,7 @@ describe("Case list", () => {
           }))
         )
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get(".cases-per-page").first().select("10")
         cy.location("search").should("include", "maxPageItems=10")
@@ -421,8 +409,7 @@ describe("Case list", () => {
         cy.task("insertTriggers", { caseId: 2, triggers })
         cy.task("insertTriggers", { caseId: 3, triggers })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         //Error locks
         cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard01")
@@ -456,8 +443,7 @@ describe("Case list", () => {
           }))
         )
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         // Default: sorted by case ID
         const caseIdOrder = [0, 1, 2, 3]
@@ -502,8 +488,7 @@ describe("Case list", () => {
         ]
         cy.task("insertTriggers", { caseId: 0, triggers })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         // Exception lock
         cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
@@ -554,8 +539,7 @@ describe("Case list", () => {
         ]
         cy.task("insertTriggers", { caseId: 0, triggers })
 
-        cy.login("supervisor@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard("supervisor@example.com")
 
         cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
         cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
@@ -582,8 +566,7 @@ describe("Case list", () => {
       it("should be accessible", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.injectAxe()
 
@@ -595,8 +578,7 @@ describe("Case list", () => {
       it("lets users select how many cases to show per page", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get("tbody tr").should("have.length", 25)
         cy.get("tr").contains("Case00000").should("exist")
@@ -625,8 +607,7 @@ describe("Case list", () => {
       it("keeps roughly the same position in the case list when changing page size", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get(".cases-per-page").first().select("25")
         cy.get("tbody tr").should("have.length", 25)
@@ -643,8 +624,7 @@ describe("Case list", () => {
       it("doesn't show navigation options when there is only one page", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get(".moj-pagination__list li").should("not.exist")
       })
@@ -652,8 +632,7 @@ describe("Case list", () => {
       it("has correct pagination information when there is only one page", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get("p.moj-pagination__results").should("contain.text", "Showing 1 to 3 of 3 cases")
       })
@@ -661,8 +640,7 @@ describe("Case list", () => {
       it("lets users navigate back and forth between pages using the page numbers", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 250 cases")
         cy.get("tr").contains("Case00000").should("exist")
@@ -687,8 +665,7 @@ describe("Case list", () => {
       it("lets users navigate back and forth between pages using the next and previous arrows", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 250 cases")
         cy.get("tr").contains("Case00000").should("exist")
@@ -713,8 +690,7 @@ describe("Case list", () => {
       it("has correct pagination information on page 5 out of 10", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard?page=5")
+        loginAndGoToBichard(undefined, "/bichard?page=5")
 
         cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 101 to 125 of 250 cases")
         cy.get("tr").contains("Case00100").should("exist")
@@ -724,8 +700,7 @@ describe("Case list", () => {
       it("keeps other filters applied when changing pages", () => {
         cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndGoToBichard()
 
         cy.get("#filter-button").click()
         cy.get("#urgent").click()
