@@ -52,12 +52,12 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order, currentUser }: Prop
   const canUnlockCase = (lockedUsername: string): boolean => {
     return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
   }
-
+  console.log("query", query)
   const tableHead = (
     <Table.Row>
       <Table.Cell></Table.Cell>
       <Table.CellHeader>
-        <ColumnOrderIcon order={order}>
+        <ColumnOrderIcon currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("defendantName")} id="defendant-name-sort">
             {"Defendant Name"}
           </Link>

@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import convertAsnToLongFormat from "@moj-bichard7-developers/bichard7-next-core/build/src/enrichAho/enrichFunctions/enrichDefendant/convertAsnToLongFormat"
+import If from "components/If"
 import { ReactNode } from "react"
 import { QueryOrder } from "types/CaseListQueryParams"
 
@@ -25,16 +25,31 @@ const Unordered: React.FC = () => (
 
 interface Props {
   // columnName: string
-  children: ReactNode
   order?: QueryOrder
+  orderBy: string | string[] | undefined
+  children: ReactNode
+  currentOrder: string | string[] | undefined
 }
 
-const ColumnOrderIcon: React.FC<Props> = ({ children, order }) => {
-  console.log("order", order)
+const ColumnOrderIcon: React.FC<Props> = ({ currentOrder, orderBy, children }) => {
+  console.log(UpArrow)
+  console.log(DownArrow)
+  console.log("orderBy in component", orderBy)
+
   return (
     <>
-      {children}
-      <Unordered />
+      <If condition={currentOrder === "asc"}>
+        {children}
+        <UpArrow />
+      </If>
+      <If condition={orderBy === undefined}>
+        {children}
+        <Unordered />
+      </If>
+      <If condition={currentOrder === "desc"}>
+        {children}
+        <DownArrow />
+      </If>
     </>
     // initialstate/ default icon of column will be unordered icon
     // logic if asc | desc is not in query= show unordered icon
