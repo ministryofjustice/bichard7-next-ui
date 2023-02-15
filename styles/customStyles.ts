@@ -15,5 +15,8 @@ export const useCustomStyles = createUseStyles({
   },
   "border-grey": {
     border: `3px solid ${textGrey}`
+  },
+  "margin-top-bottom": {
+    margin: "12px 0"
   }
 })
