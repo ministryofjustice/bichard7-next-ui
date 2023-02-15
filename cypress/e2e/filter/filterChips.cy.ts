@@ -29,12 +29,13 @@ describe("Case list", () => {
       cy.visit("/bichard")
     })
 
-    it("Should display no filters chips as the default state", () => {
+    it("Should display no filters chips and a placeholder message as the default state", () => {
       cy.get("#filter-button").click()
       cy.get(".moj-filter__tag").should("not.exist")
-      cy.get(".moj-filter__selected").should("not.exist")
       cy.get(".govuk-checkboxes__item").should("not.be.checked")
       cy.get(".govuk-radios__input").should("not.be.checked")
+
+      cy.get(".moj-filter__selected").should("exist").should("contain.text", "No filters selected")
     })
 
     describe("Case type", () => {
@@ -306,7 +307,7 @@ describe("Case list", () => {
 
         cy.get(".moj-action-bar button").click()
 
-        cy.get(".govuk-heading-m").contains("Selected filters").should("not.exist")
+        cy.get(".govuk-heading-m + p").should("contain.text", "No filters selected")
         cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
         cy.get(".govuk-heading-s").contains("Urgency").should("exist")
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
