@@ -64,6 +64,19 @@ describe("Case list", () => {
       cy.login("bichard01@example.com", "password")
     })
 
+    it("Should be accessible with conditional radio buttons opened", () => {
+      visitBasePathAndShowFilters()
+      collapseFilterSection("Court date", "Date range")
+      expandFilterSection("Court date", "Date range")
+
+      cy.injectAxe()
+
+      // Wait for the page to fully load
+      cy.get("h1")
+
+      cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
+    })
+
     it("Should be accessible", () => {
       visitBasePathAndShowFilters()
       cy.get("input[id=keywords]").type("Dummy")
