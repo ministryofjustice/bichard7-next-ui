@@ -21,7 +21,7 @@ interface Props {
   orderBy: string | string[] | undefined
   currentOrder: string | string[] | undefined
   columnName: string
-  children: ReactNode
+  children?: ReactNode
 }
 
 const UpArrow: React.FC = () => {
