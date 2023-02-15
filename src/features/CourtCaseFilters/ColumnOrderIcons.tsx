@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import If from "components/If"
 import { ReactNode } from "react"
 import { createUseStyles } from "react-jss"
 
@@ -50,32 +49,26 @@ const Unordered: React.FC = () => (
 
 const ColumnOrderIcons: React.FC<Props> = ({ orderBy, currentOrder, columnName, children }) => {
   const classes = useStyles()
+  let arrow: JSX.Element | undefined = undefined
+
+  if (orderBy === undefined || orderBy !== columnName) {
+    arrow = <Unordered />
+  } else if (orderBy === columnName) {
+    if (currentOrder === "asc") {
+      arrow = <UpArrow />
+    } else if (currentOrder === "desc") {
+      arrow = <DownArrow />
+    }
+  }
+
+  if (arrow === undefined) {
+    return <></>
+  }
+
   return (
-    <div>
-      <If condition={orderBy === undefined || orderBy !== columnName}>
-        <div className={classes.container}>
-          <div className={classes.content}>{children}</div>
-          <div className={classes.icon}>
-            <Unordered />
-          </div>
-        </div>
-      </If>
-      <If condition={currentOrder === "asc" && orderBy === columnName}>
-        <div className={classes.container}>
-          <div className={classes.content}>{children}</div>
-          <div className={classes.icon}>
-            <UpArrow />
-          </div>
-        </div>
-      </If>
-      <If condition={currentOrder === "desc" && orderBy === columnName}>
-        <div className={classes.container}>
-          <div className={classes.content}>{children}</div>
-          <div className={classes.icon}>
-            <DownArrow />
-          </div>
-        </div>
-      </If>
+    <div className={classes.container}>
+      <div className={classes.content}>{children}</div>
+      <div className={classes.icon}>{arrow}</div>
     </div>
   )
 }
