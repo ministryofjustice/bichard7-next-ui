@@ -50,7 +50,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
   const canUnlockCase = (lockedUsername: string): boolean => {
     return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
   }
-  console.log("query", query)
+
   const tableHead = (
     <Table.Row>
       <Table.Cell></Table.Cell>

@@ -32,13 +32,13 @@ const Unordered: React.FC = () => (
 const ColumnOrderIcon: React.FC<Props> = ({ orderBy, currentOrder, columnName, children }) => {
   return (
     <>
-      <If condition={currentOrder === "asc" && orderBy === columnName}>
-        {children}
-        <UpArrow />
-      </If>
       <If condition={orderBy === undefined || orderBy !== columnName}>
         {children}
         <Unordered />
+      </If>
+      <If condition={currentOrder === "asc" && orderBy === columnName}>
+        {children}
+        <UpArrow />
       </If>
       <If condition={currentOrder === "desc" && orderBy === columnName}>
         {children}
