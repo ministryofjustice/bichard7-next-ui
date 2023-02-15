@@ -2,7 +2,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import If from "components/If"
 import { ReactNode } from "react"
-import { QueryOrder } from "types/CaseListQueryParams"
+
+interface Props {
+  orderBy: string | string[] | undefined
+  currentOrder: string | string[] | undefined
+  columnName: string
+  children: ReactNode
+}
 
 const UpArrow: React.FC = () => (
   <svg width={15} height={25} viewBox="0 0 15 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -23,16 +29,7 @@ const Unordered: React.FC = () => (
   </svg>
 )
 
-interface Props {
-  // columnName: string
-  order?: QueryOrder
-  orderBy: string | string[] | undefined
-  children: ReactNode
-  currentOrder: string | string[] | undefined
-  columnName: string
-}
-
-const ColumnOrderIcon: React.FC<Props> = ({ currentOrder, orderBy, children, columnName }) => {
+const ColumnOrderIcon: React.FC<Props> = ({ orderBy, currentOrder, columnName, children }) => {
   return (
     <>
       <If condition={currentOrder === "asc" && orderBy === columnName}>
