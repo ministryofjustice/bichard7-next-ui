@@ -48,7 +48,7 @@ const Unordered: React.FC = () => (
   </svg>
 )
 
-const ColumnOrderIcon: React.FC<Props> = ({ orderBy, currentOrder, columnName, children }) => {
+const ColumnOrderIcons: React.FC<Props> = ({ orderBy, currentOrder, columnName, children }) => {
   const classes = useStyles()
   return (
     <div>
@@ -80,4 +80,4 @@ const ColumnOrderIcon: React.FC<Props> = ({ orderBy, currentOrder, columnName, c
   )
 }
 
-export default ColumnOrderIcon
+export default ColumnOrderIcons

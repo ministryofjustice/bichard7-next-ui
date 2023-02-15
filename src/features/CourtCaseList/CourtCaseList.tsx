@@ -1,6 +1,6 @@
 import DateTime from "components/DateTime"
 import If from "components/If"
-import ColumnOrderIcon from "features/CourtCaseFilters/ColumnOrderIcon"
+import ColumnOrderIcon from "features/CourtCaseFilters/ColumnOrderIcons"
 import { GridRow, Link, Paragraph, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
