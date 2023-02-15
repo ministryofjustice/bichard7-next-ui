@@ -7,7 +7,11 @@ const ResolvedTag: React.FC<{ isResolved: boolean }> = (props: { isResolved: boo
   const classes = useCustomStyles()
   return (
     <If condition={props.isResolved}>
-      <Tag backgroundColor="white" color={textGrey} className={`locked-by-tag ${classes["border-grey"]}`}>
+      <Tag
+        backgroundColor="white"
+        color={textGrey}
+        className={`${classes["border-grey"]} ${classes["margin-top-bottom"]}`}
+      >
         {"Resolved"}
       </Tag>
     </If>
