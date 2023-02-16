@@ -1,5 +1,4 @@
 import { createUseStyles } from "react-jss"
-import { textGrey } from "utils/colours"
 
 export const useCustomStyles = createUseStyles({
   "max-width": {
@@ -12,9 +11,6 @@ export const useCustomStyles = createUseStyles({
   },
   "top-padding": {
     paddingTop: "30px"
-  },
-  "border-grey": {
-    border: `3px solid ${textGrey}`
   },
   "margin-top-bottom": {
     margin: "12px 0"
