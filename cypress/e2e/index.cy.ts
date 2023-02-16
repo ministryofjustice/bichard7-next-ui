@@ -160,7 +160,7 @@ describe("Case list", () => {
         cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00004")
       })
 
-      it.only("can display cases ordered by court name", () => {
+      it("can display cases ordered by court name", () => {
         // TODO: figure out how to access parent classes to then assert for the sibling of that parent class.
         cy.task("insertCourtCasesWithFields", [
           { courtName: "BBBB", orgForPoliceFilter: "011111" },
@@ -172,8 +172,14 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.findByText("Court Name").parent().get('*[class^="container"]').should("exist")
         cy.findByText("Court Name").click()
+        cy.findByText("Court Name").parent().siblings().get('*[class^="icon"]').should("exist")
+        cy.findByText("Court Name")
+          .parent()
+          .siblings()
+          .get('*[class^="icon"]')
+          .get('*[class^="upArrow"]')
+          .should("exist")
 
         cy.get("tr")
           .not(":first")
@@ -183,7 +189,12 @@ describe("Case list", () => {
           })
 
         cy.findByText("Court Name").click()
-        cy.get('*[class^="upArrow"]').should("exist")
+        cy.findByText("Court Name")
+          .parent()
+          .siblings()
+          .get('*[class^="icon"]')
+          .get('*[class^="downArrow"]')
+          .should("exist")
 
         cy.get("tr")
           .not(":first")
