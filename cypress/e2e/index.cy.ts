@@ -2,6 +2,7 @@ import User from "services/entities/User"
 import { TestTrigger } from "../../test/utils/manageTriggers"
 import hashedPassword from "../fixtures/hashedPassword"
 import a11yConfig from "../support/a11yConfig"
+import { waitForPageToLoad } from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 
 describe("Case list", () => {
@@ -74,8 +75,7 @@ describe("Case list", () => {
 
         cy.injectAxe()
 
-        // Wait for the page to fully load
-        cy.get("h1")
+        waitForPageToLoad()
 
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
       })
@@ -89,8 +89,7 @@ describe("Case list", () => {
 
         cy.injectAxe()
 
-        // Wait for the page to fully load
-        cy.get("h1")
+        waitForPageToLoad()
 
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
       })
@@ -569,8 +568,7 @@ describe("Case list", () => {
 
         cy.injectAxe()
 
-        // Wait for the page to fully load
-        cy.get("h1")
+        waitForPageToLoad()
 
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
       })
