@@ -229,6 +229,12 @@ jobs:
           environment:
             UI_IS_HTTPS: true
             TZ: "Europe/London"
+      - run:
+          name: Run UI component tests
+          command: npm run cypress:component:docker
+          environment:
+            UI_IS_HTTPS: true
+            TZ: "Europe/London"
       - store_artifacts:
           path: ./cypress/videos
       - store_artifacts:
