@@ -231,7 +231,7 @@ jobs:
             TZ: "Europe/London"
       - run:
           name: Run UI component tests
-          command: npm run cypress:component:docker
+          command: npm run cypress:run:component:docker
           environment:
             UI_IS_HTTPS: true
             TZ: "Europe/London"

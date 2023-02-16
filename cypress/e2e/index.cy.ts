@@ -166,7 +166,7 @@ describe("Case list", () => {
         cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00004")
       })
 
-      it.only("can display cases ordered by court name", () => {
+      it("can display cases ordered by court name", () => {
         cy.task("insertCourtCasesWithFields", [
           { courtName: "BBBB", orgForPoliceFilter: "011111" },
           { courtName: "AAAA", orgForPoliceFilter: "011111" },
