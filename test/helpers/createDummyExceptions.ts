@@ -34,12 +34,16 @@ const fields = [
   "OrganisationUnitCode"
 ]
 
-export default (): string => {
+export default (): { errorReason: string; errorReport: string; exceptionCount: number } => {
   if (Math.random() > 0.5) {
-    return ""
+    return { errorReason: "", errorReport: "", exceptionCount: 0 }
   }
 
   const numExceptions = Math.min(Math.round(exponential(2) * 2), 5) + 1
   const exceptions = sampleMany(possibleExceptions, { size: numExceptions })
-  return exceptions.map((exception) => `${exception}||br7:${sampleOne(fields)}`).join(", ")
+  return {
+    errorReport: exceptions.map((exception) => `${exception}||br7:${sampleOne(fields)}`).join(", "),
+    errorReason: exceptions[0],
+    exceptionCount: exceptions.length
+  }
 }
