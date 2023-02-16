@@ -161,7 +161,7 @@ describe("Case list", () => {
       })
 
       it.only("can display cases ordered by court name", () => {
-        // TODO: figure out how to access parent classes to then assert for the sibling of that parent class. 
+        // TODO: figure out how to access parent classes to then assert for the sibling of that parent class.
         cy.task("insertCourtCasesWithFields", [
           { courtName: "BBBB", orgForPoliceFilter: "011111" },
           { courtName: "AAAA", orgForPoliceFilter: "011111" },
@@ -172,7 +172,7 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
-        cy.findByText("Court Name").siblings().get('*[class^="unoderedArrow"]').should("exist")
+        cy.findByText("Court Name").parent().get('*[class^="container"]').should("exist")
         cy.findByText("Court Name").click()
 
         cy.get("tr")
