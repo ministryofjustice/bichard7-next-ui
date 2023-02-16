@@ -1,8 +1,8 @@
 import User from "services/entities/User"
 import { TestTrigger } from "../../test/utils/manageTriggers"
+import hashedPassword from "../fixtures/hashedPassword"
 import a11yConfig from "../support/a11yConfig"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
-import hashedPassword from "../fixtures/hashedPassword"
 
 describe("Case list", () => {
   context("720p resolution", () => {
@@ -177,7 +177,10 @@ describe("Case list", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
+        cy.findByText("Court Name").parent().siblings().get('*[class^="icon"]').get(".unorderedArrow").should("exist")
         cy.findByText("Court Name").click()
+        cy.findByText("Court Name").parent().siblings().get('*[class^="icon"]').should("exist")
+        cy.findByText("Court Name").parent().siblings().get('*[class^="icon"]').get(".upArrow").should("exist")
 
         cy.get("tr")
           .not(":first")
@@ -187,6 +190,7 @@ describe("Case list", () => {
           })
 
         cy.findByText("Court Name").click()
+        cy.findByText("Court Name").parent().siblings().get('*[class^="icon"]').get(".downArrow").should("exist")
 
         cy.get("tr")
           .not(":first")

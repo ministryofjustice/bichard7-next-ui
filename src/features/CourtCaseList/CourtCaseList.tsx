@@ -1,20 +1,21 @@
 import DateTime from "components/DateTime"
 import If from "components/If"
+import ColumnOrderIcons from "features/CourtCaseFilters/ColumnOrderIcons"
+import { GridRow, Link, Paragraph, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
+import { encode } from "querystring"
+import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
-import { Table, Link, GridRow, Paragraph } from "govuk-react"
+import User from "services/entities/User"
 import type { QueryOrder } from "types/CaseListQueryParams"
+import { deleteQueryParamsByName } from "utils/deleteQueryParam"
+import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
+import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
+import { displayedDateFormat } from "utils/formattedDate"
 import LockedByTag from "./tags/LockedByTag"
 import NotesTag from "./tags/NotesTag"
 import UrgentTag from "./tags/UrgentTag"
-import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
-import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
-import { createUseStyles } from "react-jss"
-import User from "services/entities/User"
-import { deleteQueryParamsByName } from "utils/deleteQueryParam"
-import { encode } from "querystring"
-import { displayedDateFormat } from "utils/formattedDate"
 
 const useStyles = createUseStyles({
   caseDetailsRow: {
@@ -54,40 +55,54 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
     <Table.Row>
       <Table.Cell></Table.Cell>
       <Table.CellHeader>
-        <Link href={orderByParams("defendantName")} id="defendant-name-sort">
-          {"Defendant Name"}
-        </Link>
+        <ColumnOrderIcons columnName={"defendantName"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("defendantName")} id="defendant-name-sort">
+            {"Defendant Name"}
+          </Link>
+        </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("courtDate")} id="court-date-sort">
-          {"Court Date"}
-        </Link>
+        <ColumnOrderIcons columnName={"courtDate"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("courtDate")} id="court-date-sort">
+            {"Court Date"}
+          </Link>
+        </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("courtName")} id="court-name-sort">
-          {"Court Name"}
-        </Link>
+        <ColumnOrderIcons columnName={"courtName"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("courtName")} id="court-name-sort">
+            {"Court Name"}
+          </Link>
+        </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("ptiurn")} id="ptiurn-sort">
-          {"PTIURN"}
-        </Link>
+        <ColumnOrderIcons columnName={"ptiurn"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("ptiurn")} id="ptiurn-sort">
+            {"PTIURN"}
+          </Link>
+        </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("isUrgent")} id="is-urgent-sort">
-          {"Urgent"}
-        </Link>
+        <ColumnOrderIcons columnName={"isUrgent"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("isUrgent")} id="is-urgent-sort">
+            {"Urgent"}
+          </Link>
+        </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>{"Notes"}</Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("reason")} id="exceptions">
-          {"Reason"}
-        </Link>
+        <ColumnOrderIcons columnName={"reason"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("reason")} id="exceptions">
+            {"Reason"}
+          </Link>
+        </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>
-        <Link href={orderByParams("lockedBy")} id="locked-by-sort">
-          {"Locked By"}
-        </Link>
+        <ColumnOrderIcons columnName={"lockedBy"} currentOrder={query.order} orderBy={query.orderBy}>
+          <Link href={orderByParams("lockedBy")} id="locked-by-sort">
+            {"Locked By"}
+          </Link>
+        </ColumnOrderIcons>
       </Table.CellHeader>
     </Table.Row>
   )

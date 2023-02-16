@@ -88,6 +88,14 @@ export default defineConfig({
       })
     }
   },
+
   chromeWebSecurity: false,
-  video: false
+  video: false,
+
+  component: {
+    devServer: {
+      framework: "next",
+      bundler: "webpack"
+    }
+  }
 })
