@@ -1,7 +1,6 @@
 import CaseStateFilterOptions from "components/CaseStateFilter/CaseStateFilterOptions"
 import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
-import If from "components/If"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
@@ -166,21 +165,20 @@ const CourtCaseFilter: React.FC<Props> = ({
         <div className="moj-filter__header-action"></div>
       </div>
       <div className="moj-filter__content">
-        <If condition={anyFilterChips(state)}>
-          <div className="moj-filter__selected">
-            <div className="moj-filter__selected-heading">
-              <div className="moj-filter__heading-title">
-                <FilterChipSection state={state} dispatch={dispatch} sectionState={"Applied"} marginTop={false} />
-                <FilterChipSection
-                  state={state}
-                  dispatch={dispatch}
-                  sectionState={"Selected"}
-                  marginTop={anyFilterChips(state, "Applied")}
-                />
-              </div>
+        <div className="moj-filter__selected">
+          <div className="moj-filter__selected-heading">
+            <div className="moj-filter__heading-title">
+              <FilterChipSection state={state} dispatch={dispatch} sectionState={"Applied"} marginTop={false} />
+              <FilterChipSection
+                state={state}
+                dispatch={dispatch}
+                sectionState={"Selected"}
+                marginTop={anyFilterChips(state, "Applied")}
+                placeholderMessage={"No filters selected"}
+              />
             </div>
           </div>
-        </If>
+        </div>
         <div className="moj-filter__options">
           <button className="govuk-button" data-module="govuk-button" id="search">
             {"Apply filters"}
