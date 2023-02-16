@@ -13,7 +13,7 @@ import createDummyPtiurn from "./createDummyPtiurn"
 import createDummyTriggers from "./createDummyTriggers"
 import createResolutionStatus from "./createResolutionStatus"
 
-const randomPhase = (): number => sample([1, 2, 3]) || 1
+const randomPhase = (): number => sample([1, 2]) || 1
 
 const randomBoolean = (): boolean => sample([true, false]) ?? true
 
