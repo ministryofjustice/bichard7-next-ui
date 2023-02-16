@@ -1,5 +1,4 @@
 const a11yConfig = {
-  includedImpacts: [],
-  rules: { "aria-allowed-attr": { enabled: false } }
+  includedImpacts: []
 }
 export default a11yConfig
