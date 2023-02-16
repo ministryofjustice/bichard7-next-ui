@@ -161,7 +161,6 @@ describe("Case list", () => {
       })
 
       it("can display cases ordered by court name", () => {
-        // TODO: figure out how to access parent classes to then assert for the sibling of that parent class.
         cy.task("insertCourtCasesWithFields", [
           { courtName: "BBBB", orgForPoliceFilter: "011111" },
           { courtName: "AAAA", orgForPoliceFilter: "011111" },
