@@ -34,7 +34,7 @@ export default async (
   const isResolved = randomBoolean()
   const triggers = createDummyTriggers(dataSource, caseId, caseDate)
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
-
+  const { errorReport, errorReason, exceptionCount } = createDummyExceptions()
   const courtCase = await dataSource.getRepository(CourtCase).save({
     errorId: caseId,
     messageId: uuidv4(),
@@ -46,16 +46,16 @@ export default async (
     triggerStatus: createResolutionStatus(),
     errorQualityChecked: 1,
     triggerQualityChecked: 1,
-    triggerCount: 0,
+    triggerCount: triggers.length,
     isUrgent: randomBoolean(),
     asn: createDummyAsn(caseDate.getFullYear(), orgCode + faker.random.alpha(2).toUpperCase()),
     courtCode: createDummyCourtCode(orgCode),
     hearingOutcome: dummyAHO.hearingOutcomeXml,
-    errorReport: createDummyExceptions(),
+    errorReport: errorReport,
     createdTimestamp: caseDate,
-    errorReason: "",
+    errorReason: errorReason,
     triggerReason: "",
-    errorCount: 0,
+    errorCount: exceptionCount,
     userUpdatedFlag: randomBoolean() ? 1 : 0,
     courtDate: caseDate,
     ptiurn: ptiurn,
