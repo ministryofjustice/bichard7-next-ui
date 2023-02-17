@@ -65,11 +65,8 @@ describe("Case list", () => {
 
     it("should be accessible", () => {
       loginAndGoToUrl()
-
       cy.injectAxe()
-
-      // Wait for the page to fully load
-      cy.get("h1")
+      waitForPageToLoad()
 
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
@@ -79,11 +76,8 @@ describe("Case list", () => {
     it("should be accessible", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
       loginAndGoToUrl()
-
       cy.injectAxe()
-
-      // Wait for the page to fully load
-      cy.get("h1")
+      waitForPageToLoad()
 
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
@@ -113,9 +107,7 @@ describe("Case list", () => {
 
       it("should be accessible", () => {
         loginAndGoToUrl()
-
         cy.injectAxe()
-
         waitForPageToLoad()
 
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
@@ -742,8 +734,7 @@ describe("Case list", () => {
 
       cy.injectAxe()
 
-      // Wait for the page to fully load
-      cy.get("h1")
+      waitForPageToLoad()
 
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
