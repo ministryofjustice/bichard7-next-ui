@@ -15,6 +15,7 @@ import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { displayedDateFormat } from "utils/formattedDate"
 import LockedByTag from "./tags/LockedByTag"
 import NotesTag from "./tags/NotesTag"
+import ResolvedTag from "./tags/ResolvedTag"
 import UrgentTag from "./tags/UrgentTag"
 
 const useStyles = createUseStyles({
@@ -120,7 +121,8 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
         isUrgent,
         notes,
         errorLockedByUsername,
-        triggerLockedByUsername
+        triggerLockedByUsername,
+        resolutionTimestamp
       },
       idx
     ) => {
@@ -135,6 +137,8 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
           <Table.Cell>
             <Link href={caseDetailsPath(courtCases[idx].errorId)} id={`Case details for ${defendantName}`}>
               {defendantName}
+              <br />
+              <ResolvedTag isResolved={resolutionTimestamp !== null} />
             </Link>
           </Table.Cell>
           <Table.Cell>
