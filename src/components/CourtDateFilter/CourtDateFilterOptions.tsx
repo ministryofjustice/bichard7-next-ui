@@ -43,7 +43,6 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
         <RadioButton
           name={"courtDate"}
           id={"date-range"}
-          dataAriaControls={"conditional-date-range"}
           defaultChecked={validateNamedDateRange(dateRange || "")}
           label={"Date range"}
         />
@@ -65,7 +64,6 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
         <RadioButton
           name={"courtDate"}
           id={"custom-date-range"}
-          dataAriaControls={"conditional-custom-date-range"}
           defaultChecked={hasCustomDateRange}
           label={"Custom date range"}
         />
