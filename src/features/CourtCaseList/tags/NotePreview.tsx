@@ -3,30 +3,46 @@
 import If from "components/If"
 import { useState } from "react"
 import Note from "services/entities/Note"
+import { createUseStyles } from "react-jss"
+
+const useStyles = createUseStyles({
+  expandingButtonContainer: {
+    color: "#1d70b8"
+  },
+  expandingButton: {}
+})
 
 const TempDetails: React.FC = () => {
-  const [labelText, setLabelText] = useState(true)
-  const ShowNotes = () => {
+  const classes = useStyles()
+  const [labelText, setLabelText] = useState(false)
+  const HideNotes = () => {
     return (
       <>
-        <span className="govuk-accordion-nav__chevron govuk-accordion-nav__chevron--down"></span>
-        <span className="govuk-accordion__section-toggle-text">{"Show"}</span>
+        <div className={classes.expandingButtonContainer}>
+          <span className="govuk-accordion-nav__chevron govuk-accordion-nav__chevron--down"></span>
+          <span className={classes.expandingButton}>{"Preview"}</span>
+        </div>
       </>
     )
   }
 
-  const HideNotes = () => {
+  const PreviewNotes = () => {
     return (
       <>
-        <span className="govuk-accordion-nav__chevron govuk-accordion-nav__chevron--up"></span>
-        <span className="govuk-accordion__section-toggle-text">{"Hide"}</span>
+        <div className={classes.expandingButtonContainer}>
+          <span className="govuk-accordion-nav__chevron govuk-accordion-nav__chevron--up"></span>
+          <span className={classes.expandingButton}>{"Hide"}</span>
+        </div>
+        <div className="dummy-class">{"Lorem ipsum dolor sit, amet consectetur adipisicing elit."}</div>
       </>
     )
   }
 
   return (
     <>
-      <button onClick={() => setLabelText(!labelText)}>{labelText ? <ShowNotes /> : <HideNotes />}</button>
+      <div className="dummy-class" onClick={() => setLabelText(!labelText)}>
+        {labelText ? <HideNotes /> : <PreviewNotes />}
+      </div>
     </>
   )
 }
