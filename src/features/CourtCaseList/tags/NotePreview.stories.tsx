@@ -1,13 +1,13 @@
+import { expect } from "@storybook/jest"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
-import { expect } from "@storybook/jest"
-import NotesTag from "./NotesTag"
 import Note from "services/entities/Note"
+import NotePreview from "./NotePreview"
 
 export default {
-  title: "Features/CourtCaseList/NotesTag",
-  component: NotesTag
-} as ComponentMeta<typeof NotesTag>
+  title: "Features/CourtCaseList/NotePreview",
+  component: NotePreview
+} as ComponentMeta<typeof NotePreview>
 
 const userNote = {
   errorId: 79057,
@@ -21,7 +21,7 @@ const systemNote = {
   noteText: "Test note"
 } as unknown as Note
 
-export const NoNotes: ComponentStory<typeof NotesTag> = () => <NotesTag notes={[]} />
+export const NoNotes: ComponentStory<typeof NotePreview> = () => <NotePreview notes={[]} />
 NoNotes.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
   expect(canvas.queryByText("0")).toBeNull()
@@ -41,7 +41,7 @@ NoNotes.parameters = {
   ]
 }
 
-export const OneUserNote: ComponentStory<typeof NotesTag> = () => <NotesTag notes={[userNote]} />
+export const OneUserNote: ComponentStory<typeof NotePreview> = () => <NotePreview notes={[userNote]} />
 OneUserNote.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
   expect(canvas.getByText("1")).toBeInTheDocument()
@@ -62,7 +62,7 @@ OneUserNote.parameters = {
 }
 
 const manyUserNotes: Note[] = new Array(100).fill(userNote)
-export const OneHundredUserNotes: ComponentStory<typeof NotesTag> = () => <NotesTag notes={manyUserNotes} />
+export const OneHundredUserNotes: ComponentStory<typeof NotePreview> = () => <NotePreview notes={manyUserNotes} />
 OneHundredUserNotes.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
   expect(canvas.getByText("100")).toBeInTheDocument()
@@ -82,7 +82,7 @@ OneHundredUserNotes.parameters = {
   ]
 }
 
-export const OneSystemNote: ComponentStory<typeof NotesTag> = () => <NotesTag notes={[systemNote]} />
+export const OneSystemNote: ComponentStory<typeof NotePreview> = () => <NotePreview notes={[systemNote]} />
 OneSystemNote.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
   expect(canvas.queryByText("1")).toBeNull()
@@ -103,7 +103,7 @@ OneSystemNote.parameters = {
 }
 
 const manySystemNotes: Note[] = new Array(100).fill(systemNote)
-export const OneHundredSystemNotes: ComponentStory<typeof NotesTag> = () => <NotesTag notes={manySystemNotes} />
+export const OneHundredSystemNotes: ComponentStory<typeof NotePreview> = () => <NotePreview notes={manySystemNotes} />
 OneHundredSystemNotes.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
   expect(canvas.queryByText("100")).toBeNull()
@@ -123,8 +123,8 @@ OneHundredSystemNotes.parameters = {
   ]
 }
 
-export const MixedNotes: ComponentStory<typeof NotesTag> = () => (
-  <NotesTag notes={[userNote, systemNote, userNote, systemNote]} />
+export const MixedNotes: ComponentStory<typeof NotePreview> = () => (
+  <NotePreview notes={[userNote, systemNote, userNote, systemNote]} />
 )
 MixedNotes.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)

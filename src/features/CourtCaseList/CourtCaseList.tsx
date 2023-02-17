@@ -14,7 +14,7 @@ import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescrip
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { displayedDateFormat } from "utils/formattedDate"
 import LockedByTag from "./tags/LockedByTag"
-import NotesTag from "./tags/NotesTag"
+import NotePreview from "./tags/NotePreview"
 import UrgentTag from "./tags/UrgentTag"
 
 const useStyles = createUseStyles({
@@ -146,7 +146,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
             <UrgentTag isUrgent={isUrgent} />
           </Table.Cell>
           <Table.Cell>
-            <NotesTag notes={notes} />
+            <NotePreview notes={notes} />
           </Table.Cell>
           <Table.Cell>
             {Object.keys(exceptions).map((code, codeId) => (
