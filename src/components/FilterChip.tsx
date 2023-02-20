@@ -1,6 +1,7 @@
 import type { Dispatch } from "react"
 import { createUseStyles } from "react-jss"
 import type { FilterAction, FilterState } from "types/CourtCaseFilter"
+import { darkGray } from "utils/colours"
 
 interface Props {
   chipLabel: string
@@ -11,10 +12,10 @@ interface Props {
 
 const useStyles = createUseStyles({
   appliedFilter: {
-    backgroundColor: "#62696D",
+    backgroundColor: darkGray,
     color: "#ffffff",
     "&:hover": {
-      backgroundColor: "#62696D",
+      backgroundColor: darkGray,
       color: "#ffffff"
     },
     "&:after": {
