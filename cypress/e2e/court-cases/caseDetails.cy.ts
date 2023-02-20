@@ -5,7 +5,6 @@ import logAccessibilityViolations from "../../support/logAccessibilityViolations
 import a11yConfig from "../../support/a11yConfig"
 import hashedPassword from "../../fixtures/hashedPassword"
 import resubmitCaseJson from "../../fixtures/expected_resubmit_01.json"
-import { waitForPageToLoad } from "../../support/helpers"
 
 describe("Case details", () => {
   context("720p resolution", () => {
@@ -51,7 +50,8 @@ describe("Case details", () => {
 
       cy.injectAxe()
 
-      waitForPageToLoad()
+      // Wait for the page to fully load
+      cy.get("h1")
 
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
