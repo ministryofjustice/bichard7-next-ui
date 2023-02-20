@@ -1,13 +1,32 @@
-export const DefaultDownChevron = () => (
-  <svg width={20} height={20} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g>
-      <circle cx={10} cy={10} r={9.5} fill="#1D70B8" stroke="#1D70B8" />
-      <g>
-        <path d="M6.94 7.71997L10 10.78L13.06 7.71997L14 8.66664L10 12.6666L6 8.66664L6.94 7.71997Z" fill="white" />
-      </g>
-    </g>
-  </svg>
-)
+import { createUseStyles } from "react-jss"
+
+const useStyles = createUseStyles({
+  defaultDownChevron: {}
+})
+
+export const DefaultDownChevron = () => {
+  const classes = useStyles()
+
+  return (
+    <div>
+      <svg
+        className={classes.defaultDownChevron}
+        width={20}
+        height={20}
+        viewBox="0 0 20 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g>
+          <circle cx={10} cy={10} r={9.5} fill="#1D70B8" stroke="#1D70B8" />
+          <g>
+            <path d="M6.94 7.71997L10 10.78L13.06 7.71997L14 8.66664L10 12.6666L6 8.66664L6.94 7.71997Z" fill="white" />
+          </g>
+        </g>
+      </svg>
+    </div>
+  )
+}
 
 export const DefaultUpChevron = () => (
   <svg width={20} height={21} viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
