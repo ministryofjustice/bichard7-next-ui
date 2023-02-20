@@ -1,4 +1,5 @@
 import { createUseStyles } from "react-jss"
+import { darkGray } from "utils/colours"
 
 export const useCustomStyles = createUseStyles({
   "max-width": {
@@ -14,5 +15,15 @@ export const useCustomStyles = createUseStyles({
   },
   "margin-top-bottom": {
     margin: "12px 0"
+  },
+  "dark-gray-filter-tag": {
+    background: darkGray,
+    color: "#ffffff",
+    "&:visited": {
+      color: "#ffffff"
+    },
+    "&:after": {
+      backgroundImage: "url(/bichard/moj_assets/images/icon-tag-remove-cross-white.svg)"
+    }
   }
 })
