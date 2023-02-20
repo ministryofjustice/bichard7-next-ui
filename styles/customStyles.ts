@@ -18,9 +18,9 @@ export const useCustomStyles = createUseStyles({
   },
   "dark-gray-filter-tag": {
     background: darkGray,
-    color: "#ffffff",
+    color: "white",
     "&:visited": {
-      color: "#ffffff"
+      color: "white"
     },
     "&:after": {
       backgroundImage: "url(/bichard/moj_assets/images/icon-tag-remove-cross-white.svg)"
