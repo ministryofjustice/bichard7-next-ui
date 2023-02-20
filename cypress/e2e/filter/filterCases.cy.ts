@@ -2,7 +2,6 @@ import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
-import { waitForPageToLoad } from "../../support/helpers"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 
 function visitBasePathAndShowFilters() {
@@ -67,11 +66,13 @@ describe("Case list", () => {
 
     it("Should be accessible with conditional radio buttons opened", () => {
       visitBasePathAndShowFilters()
-      cy.injectAxe()
       collapseFilterSection("Court date", "Date range")
       expandFilterSection("Court date", "Date range")
 
-      waitForPageToLoad()
+      cy.injectAxe()
+
+      // Wait for the page to fully load
+      cy.get("h1")
 
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
@@ -84,13 +85,15 @@ describe("Case list", () => {
 
       cy.injectAxe()
 
-      waitForPageToLoad()
+      // Wait for the page to fully load
+      cy.get("h1")
 
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
 
       cy.get("button[id=search]").click()
 
-      waitForPageToLoad()
+      // Wait for the page to fully load
+      cy.get("h1")
 
       cy.injectAxe()
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)

@@ -2,7 +2,6 @@ import User from "services/entities/User"
 import { TestTrigger } from "../../test/utils/manageTriggers"
 import hashedPassword from "../fixtures/hashedPassword"
 import a11yConfig from "../support/a11yConfig"
-import { waitForPageToLoad } from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 
 const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard") => {
@@ -66,7 +65,9 @@ describe("Case list", () => {
     it("should be accessible", () => {
       loginAndGoToUrl()
       cy.injectAxe()
-      waitForPageToLoad()
+
+      // Wait for the page to fully load
+      cy.get("h1")
 
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
@@ -77,7 +78,9 @@ describe("Case list", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
       loginAndGoToUrl()
       cy.injectAxe()
-      waitForPageToLoad()
+
+      // Wait for the page to fully load
+      cy.get("h1")
 
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
@@ -108,7 +111,9 @@ describe("Case list", () => {
       it("should be accessible", () => {
         loginAndGoToUrl()
         cy.injectAxe()
-        waitForPageToLoad()
+
+        // Wait for the page to fully load
+        cy.get("h1")
 
         cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
       })
@@ -734,7 +739,8 @@ describe("Case list", () => {
 
       cy.injectAxe()
 
-      waitForPageToLoad()
+      // Wait for the page to fully load
+      cy.get("h1")
 
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
