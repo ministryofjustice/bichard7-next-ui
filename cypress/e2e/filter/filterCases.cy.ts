@@ -118,6 +118,16 @@ describe("Case list", () => {
       expandFilterSection("Court date", "Date range")
     })
 
+    it("Should remove the selection of the date range when it's been changed to the custom date range", () => {
+      visitBasePathAndShowFilters()
+      cy.get("#date-range").click()
+      cy.get("#date-range-yesterday").click()
+      cy.get("#date-range-yesterday").should("be.checked")
+      cy.get("#custom-date-range").click()
+      cy.get("#date-range").click()
+      cy.get("#date-range-yesterday").should("not.be.checked")
+    })
+
     it("Should expand and collapse urgency filter navigation", () => {
       visitBasePathAndShowFilters()
 
