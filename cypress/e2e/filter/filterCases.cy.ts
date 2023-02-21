@@ -2,6 +2,7 @@ import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
+import { confirmFiltersAppliedContains } from "../../support/helpers"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 
 function visitBasePathAndShowFilters() {
@@ -38,10 +39,6 @@ function confirmMultipleFieldsNotDisplayed(fields: string[]) {
   fields.forEach((field) => {
     cy.contains(field).should("not.exist")
   })
-}
-
-function confirmFiltersAppliedContains(filterTag: string) {
-  cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag)
 }
 
 describe("Case list", () => {
