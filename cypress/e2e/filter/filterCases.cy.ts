@@ -747,6 +747,30 @@ describe("Case list", () => {
         confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002", "Case00003"])
       })
     })
+
+    describe("Applied filter section", () => {
+      it("Should show the applied filter section when the filter panel is hidden", () => {
+        visitBasePathAndShowFilters()
+        inputAndSearch("keywords", "Bruce Wayne")
+
+        cy.contains("Show filter")
+        cy.contains("Hide filter").should("not.exist")
+        cy.contains("Filters applied")
+        cy.contains("Clear filters")
+      })
+      it("Should hide the applied filter section when the filter panel is shown", () => {
+        visitBasePathAndShowFilters()
+        inputAndSearch("keywords", "Bruce Wayne")
+
+        cy.contains("Show filter")
+        cy.contains("Show filter").click()
+        cy.contains("Show filter").should("not.exist")
+        cy.contains("Hide filter")
+        cy.contains("Filters applied").should("not.exist")
+        cy.contains("Clear filters").should("not.exist")
+        cy.contains("Applied filters")
+      })
+    })
   })
 })
 
