@@ -480,6 +480,8 @@ describe("Case list", () => {
 
       cy.get("tr").not(":first").should("have.length", 7)
 
+      cy.contains("Hide filter").click()
+
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
       cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").click({ force: true })
       cy.get("tr").not(":first").should("have.length", 13)
