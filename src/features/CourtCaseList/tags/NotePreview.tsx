@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+import { DefaultDownChevron, DefaultUpChevron } from "components/icons/NotePreviewChevron"
 import If from "components/If"
 import { useState } from "react"
-import Note from "services/entities/Note"
 import { createUseStyles } from "react-jss"
-import { DefaultDownChevron, DefaultUpChevron } from "components/icons/NotePreviewChevron"
+import Note from "services/entities/Note"
 
 interface Props {
   sampleText: string | string[]
@@ -18,7 +18,17 @@ const useStyles = createUseStyles({
   expandingButtonContainer: {
     color: "#1d70b8"
   },
-  expandingButton: {}
+  expandingButton: {},
+  notePreviewContainer: {
+    maxWidth: "85px",
+    paddingBottom: "200px"
+  },
+  notePreview: {
+    zIndex: "1",
+    maxWidth: "215px",
+    position: "absolute",
+    backgroundColor: "#F3F2F1"
+  }
 })
 
 export const HideNotes = () => {
@@ -43,7 +53,9 @@ export const PreviewNotes = ({ sampleText }: Props) => {
         <DefaultUpChevron />
         <span className={classes.expandingButton}>{"Hide"}</span>
       </div>
-      <div className="dummy-class">{sampleText}</div>
+      <div className={classes.notePreviewContainer}>
+        <div className={classes.notePreview}>{sampleText}</div>
+      </div>
     </>
   )
 }
@@ -62,7 +74,7 @@ const NotePreview: React.FC<{ notes: Note[] }> = (props: { notes: Note[] }) => {
       <If condition={!!userNotes}>
         {userNotes > 1 ? `${userNotes} notes` : `${userNotes} note`}
         <div className="dummy-class" onClick={() => setLabelText(!labelText)}>
-          {labelText ? <PreviewNotes sampleText={mostRecentNoteText} /> : <HideNotes />}
+          {labelText ? <PreviewNotes sampleText={mostRecentNoteText.slice(0, 100)} /> : <HideNotes />}
         </div>
       </If>
     </>
