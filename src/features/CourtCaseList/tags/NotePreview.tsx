@@ -20,9 +20,13 @@ interface Props {
 
 const useStyles = createUseStyles({
   expandingButtonContainer: {
-    color: "#1d70b8"
+    color: "#1d70b8",
+    display: "flex"
   },
-  expandingButton: {},
+  expandingButton: {
+    display: "inline-block",
+    padding: "0 4px"
+  },
   notePreviewContainer: {
     paddingBottom: "200px",
     backgroundColor: "#F3F2F1"
