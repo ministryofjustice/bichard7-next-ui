@@ -24,32 +24,19 @@ const useStyles = createUseStyles({
     display: "flex"
   },
   expandingButton: {
-    display: "inline-block",
-    padding: "0 4px"
+    display: "inline-block"
+    // padding: "0 4px"
   },
   notePreviewContainer: {
-    paddingBottom: "200px",
-    backgroundColor: "#F3F2F1"
+    backgroundColor: "#F3F2F1",
+    maxWidth: "215px",
+    position: "relative"
+    // zIndex: "0"
   },
   notePreview: {
-    zIndex: "1",
-    maxWidth: "215px",
-    position: "absolute"
+    maxWidth: "215px"
   }
 })
-
-export const HideNotes = () => {
-  const classes = useStyles()
-
-  return (
-    <>
-      <div className={classes.expandingButtonContainer}>
-        <DefaultDownChevron />
-        <span className={classes.expandingButton}>{"Preview"}</span>
-      </div>
-    </>
-  )
-}
 
 export const PreviewNotes = ({ latestNote, displayDate }: Props) => {
   const classes = useStyles()
@@ -61,8 +48,22 @@ export const PreviewNotes = ({ latestNote, displayDate }: Props) => {
         <span className={classes.expandingButton}>{"Hide"}</span>
       </div>
       <div className={classes.notePreviewContainer}>
-        <p className="govuk-body govuk-!-font-weight-bold">{`Note added ${displayDate}`}</p>
-        <p className={classes.notePreview}>{latestNote}</p>
+        <p className="govuk-body-s">{`Last note added ${displayDate}`}</p>
+        <p className={`${classes.notePreview} ${classes.notePreviewContainer} govuk-body-s`}>
+          {"efefefefefefefefefefefefefefefefefefefefefefefefefefef eefe efefe "}
+        </p>
+      </div>
+    </>
+  )
+}
+export const HideNotes = () => {
+  const classes = useStyles()
+
+  return (
+    <>
+      <div className={classes.expandingButtonContainer}>
+        <DefaultDownChevron />
+        <span className={classes.expandingButton}>{"Preview"}</span>
       </div>
     </>
   )
