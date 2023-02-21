@@ -16,13 +16,13 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
   paginationTop,
   paginationBottom
 }: Props) => {
-  const [isVisible, setVisible] = useState(false)
+  const [areAppliedFiltersShown, setAreAppliedFiltersShown] = useState(false)
   const classes = useCustomStyles()
   return (
     <>
       <div className={`${classes["top-padding"]} moj-filter-layout`}>
         <div className="moj-filter-layout__filter">
-          <div className={isVisible ? "moj-filter" : "moj-filter moj-hidden"}>{filter}</div>
+          <div className={areAppliedFiltersShown ? "moj-filter" : "moj-filter moj-hidden"}>{filter}</div>
         </div>
 
         <div className="moj-filter-layout__content">
@@ -36,12 +36,12 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
                 aria-haspopup="true"
                 aria-expanded="false"
                 onClick={() => {
-                  setVisible(!isVisible)
+                  setAreAppliedFiltersShown(!areAppliedFiltersShown)
                 }}
               >
-                {isVisible ? "Hide filter" : "Show filter"}
+                {areAppliedFiltersShown ? "Hide filter" : "Show filter"}
               </button>
-              {!isVisible && <div className="moj-button-menu__wrapper">{appliedFilters}</div>}
+              {!areAppliedFiltersShown && <div className="moj-button-menu__wrapper">{appliedFilters}</div>}
             </div>
           </div>
 
