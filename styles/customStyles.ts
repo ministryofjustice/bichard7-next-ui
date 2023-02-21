@@ -24,6 +24,9 @@ export const useCustomStyles = createUseStyles({
     },
     "&:after": {
       backgroundImage: "url(/bichard/moj_assets/images/icon-tag-remove-cross-white.svg)"
+    },
+    "&:link": {
+      color: "white"
     }
   }
 })
