@@ -32,6 +32,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
   const hasCustomDateRange = !!customDateFrom && !!customDateTo
   const defaultDateValue = (date?: Date | null): string => {
     if (!!date) {
+      console.log("in courtdatefilteroptions:", date)
       return format(date, "yyyy-MM-dd")
     }
     return ""

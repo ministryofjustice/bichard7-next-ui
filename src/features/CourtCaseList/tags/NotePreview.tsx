@@ -2,12 +2,15 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { DefaultDownChevron, DefaultUpChevron } from "components/icons/NotePreviewChevron"
 import If from "components/If"
+import { format } from "date-fns"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import Note from "services/entities/Note"
+import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
-  sampleText: string | string[]
+  latestNote: string | string[]
+  displayDate: string
 }
 // Modify componenet to use gds accordion and details pattern
 // Number of notes(userNotes)
@@ -20,14 +23,13 @@ const useStyles = createUseStyles({
   },
   expandingButton: {},
   notePreviewContainer: {
-    maxWidth: "85px",
-    paddingBottom: "200px"
+    paddingBottom: "200px",
+    backgroundColor: "#F3F2F1"
   },
   notePreview: {
     zIndex: "1",
     maxWidth: "215px",
-    position: "absolute",
-    backgroundColor: "#F3F2F1"
+    position: "absolute"
   }
 })
 
@@ -44,7 +46,7 @@ export const HideNotes = () => {
   )
 }
 
-export const PreviewNotes = ({ sampleText }: Props) => {
+export const PreviewNotes = ({ latestNote, displayDate }: Props) => {
   const classes = useStyles()
 
   return (
@@ -54,7 +56,8 @@ export const PreviewNotes = ({ sampleText }: Props) => {
         <span className={classes.expandingButton}>{"Hide"}</span>
       </div>
       <div className={classes.notePreviewContainer}>
-        <div className={classes.notePreview}>{sampleText}</div>
+        <h3 className="govuk-heading-s">{`Note added ${displayDate}`}</h3>
+        <p className={classes.notePreview}>{latestNote}</p>
       </div>
     </>
   )
@@ -63,10 +66,10 @@ export const PreviewNotes = ({ sampleText }: Props) => {
 const NotePreview: React.FC<{ notes: Note[] }> = (props: { notes: Note[] }) => {
   const userNotes = props.notes ? props.notes.filter((note) => note.userId !== "System").length : 0
   const allNotes = props.notes.map((note) => note.createdAt)
-  const mostRecentNoteCreatedAtValue = allNotes.sort().slice(-1)[0]
-  const mostRecentNote = props.notes.filter((note) => note.createdAt === mostRecentNoteCreatedAtValue)
+  const latestNoteCreatedDate = allNotes.sort().slice(-1)[0]
+  const validatedLatestNoteCreatedDate = new Date(latestNoteCreatedDate.toString().slice(0, 10))
+  const mostRecentNote = props.notes.filter((note) => note.createdAt === latestNoteCreatedDate)
   const mostRecentNoteText = mostRecentNote[0].noteText
-
   const [labelText, setLabelText] = useState(false)
 
   return (
@@ -74,7 +77,14 @@ const NotePreview: React.FC<{ notes: Note[] }> = (props: { notes: Note[] }) => {
       <If condition={!!userNotes}>
         {userNotes > 1 ? `${userNotes} notes` : `${userNotes} note`}
         <div className="dummy-class" onClick={() => setLabelText(!labelText)}>
-          {labelText ? <PreviewNotes sampleText={mostRecentNoteText.slice(0, 100)} /> : <HideNotes />}
+          {labelText ? (
+            <PreviewNotes
+              latestNote={mostRecentNoteText.slice(0, 100)}
+              displayDate={format(validatedLatestNoteCreatedDate, displayedDateFormat)}
+            />
+          ) : (
+            <HideNotes />
+          )}
         </div>
       </If>
     </>
