@@ -179,7 +179,6 @@ describe("Case list", () => {
       cy.get("tr").should("have.length", 2)
       confirmFiltersAppliedContains("Manchester Court")
 
-      // Removing filter tag
       removeFilterTag("Manchester Court")
       confirmMultipleFieldsDisplayed(["Manchester Court", "London Court", "Bristol Court"])
     })
@@ -199,7 +198,6 @@ describe("Case list", () => {
       cy.get("tr").should("have.length", 2)
       confirmFiltersAppliedContains("Case00001")
 
-      // Removing filter tag
       removeFilterTag("Case00001")
       confirmMultipleFieldsDisplayed(["Case00001", "Case00002", "Case00003"])
     })
@@ -239,7 +237,6 @@ describe("Case list", () => {
       cy.get("tr").should("have.length", 2)
       confirmFiltersAppliedContains("HO200212")
 
-      // Removing filter tag
       removeFilterTag("HO200212")
       confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
     })
