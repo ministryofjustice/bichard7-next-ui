@@ -41,7 +41,7 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
               >
                 {isVisible ? "Hide filter" : "Show filter"}
               </button>
-              <div className="moj-button-menu__wrapper">{appliedFilters}</div>
+              {!isVisible && <div className="moj-button-menu__wrapper">{appliedFilters}</div>}
             </div>
           </div>
 
