@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { DefaultDownChevron, DefaultUpChevron } from "components/icons/NotePreviewChevron"
+import { DefaultUpChevron } from "components/icons/NotePreviewChevron"
 import If from "components/If"
 import { format } from "date-fns"
 import { useState } from "react"
@@ -19,23 +19,17 @@ interface Props {
 // Preview box needs stylings to have z-index to span 2 columns
 
 const useStyles = createUseStyles({
-  expandingButtonContainer: {
+  wrapper: {
+    maxWidth: "87px"
+  },
+  buttonContainer: {
     color: "#1d70b8",
     display: "flex"
   },
-  expandingButton: {
-    display: "inline-block"
-    // padding: "0 4px"
-  },
   notePreviewContainer: {
-    backgroundColor: "#F3F2F1",
-    maxWidth: "215px",
-    position: "relative"
-    // zIndex: "0"
+    backgroundColor: "#F3F2F1"
   },
-  notePreview: {
-    maxWidth: "215px"
-  }
+  notePreview: {}
 })
 
 export const PreviewNotes = ({ latestNote, displayDate }: Props) => {
@@ -43,15 +37,15 @@ export const PreviewNotes = ({ latestNote, displayDate }: Props) => {
 
   return (
     <>
-      <div className={classes.expandingButtonContainer}>
-        <DefaultUpChevron />
-        <span className={classes.expandingButton}>{"Hide"}</span>
-      </div>
-      <div className={classes.notePreviewContainer}>
-        <p className="govuk-body-s">{`Last note added ${displayDate}`}</p>
-        <p className={`${classes.notePreview} ${classes.notePreviewContainer} govuk-body-s`}>
-          {"efefefefefefefefefefefefefefefefefefefefefefefefefefef eefe efefe "}
-        </p>
+      <div className={classes.wrapper}>
+        <div className={classes.buttonContainer}>
+          <DefaultUpChevron />
+          <span style={{ paddingLeft: "4px" }}>{"Hide"}</span>
+        </div>
+        <div className={classes.notePreviewContainer}>
+          <p className="govuk-body-s">{`Last note added ${displayDate}`}</p>
+          <p className={`${classes.notePreview} ${classes.notePreviewContainer} govuk-body-s`}>{latestNote}</p>
+        </div>
       </div>
     </>
   )
@@ -61,9 +55,9 @@ export const HideNotes = () => {
 
   return (
     <>
-      <div className={classes.expandingButtonContainer}>
-        <DefaultDownChevron />
-        <span className={classes.expandingButton}>{"Preview"}</span>
+      <div className={classes.buttonContainer}>
+        <DefaultUpChevron />
+        <span style={{ paddingLeft: "4px" }}>{"Preview"}</span>
       </div>
     </>
   )
@@ -82,7 +76,7 @@ const NotePreview: React.FC<{ notes: Note[] }> = (props: { notes: Note[] }) => {
     <>
       <If condition={!!userNotes}>
         {userNotes > 1 ? `${userNotes} notes` : `${userNotes} note`}
-        <div className="dummy-class" onClick={() => setLabelText(!labelText)}>
+        <div onClick={() => setLabelText(!labelText)}>
           {labelText ? (
             <PreviewNotes
               latestNote={mostRecentNoteText.slice(0, 100)}
