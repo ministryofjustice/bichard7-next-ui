@@ -367,6 +367,7 @@ describe("Case list", () => {
       cy.get("#my-cases-filter").should("be.checked")
 
       // Clears filter chip and check the checkbox is deselected
+      cy.contains("Hide filter").click()
       cy.contains("Clear filters").click()
       cy.get("#filter-button").contains("Show filter").click()
       cy.get("#my-cases-filter").should("not.be.checked")
