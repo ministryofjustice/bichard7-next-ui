@@ -11,7 +11,7 @@ interface Props {
 
 const FilterChip: React.FC<Props> = ({ chipLabel, dispatch, removeAction, state }: Props) => {
   const classes = useCustomStyles()
-  const buttonClass = "moj-filter__tag " + (state === "Applied" ? classes["dark-gray-filter-tag"] : "")
+  const buttonClass = "moj-filter__tag " + (state === "Applied" ? classes["dark-grey-filter-tag"] : "")
   return (
     <li>
       <button className={buttonClass} onClick={() => dispatch(removeAction())} style={{ cursor: "pointer" }}>
