@@ -2,6 +2,7 @@ import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
+import { confirmFiltersAppliedContains } from "../../support/helpers"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 
 function visitBasePathAndShowFilters() {
@@ -157,7 +158,7 @@ describe("Case list", () => {
       cy.contains("Bruce Wayne")
       confirmMultipleFieldsNotDisplayed(["Barbara Gordon", "Alfred Pennyworth"])
       cy.get("tr").should("have.length", 2)
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Bruce Wayne")
+      confirmFiltersAppliedContains("Bruce Wayne")
 
       removeFilterTag("Bruce Wayne")
       confirmMultipleFieldsDisplayed(["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"])
@@ -176,9 +177,8 @@ describe("Case list", () => {
       cy.contains("Manchester Court")
       confirmMultipleFieldsNotDisplayed(["London Court", "Bristol Court"])
       cy.get("tr").should("have.length", 2)
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Manchester Court")
+      confirmFiltersAppliedContains("Manchester Court")
 
-      // Removing filter tag
       removeFilterTag("Manchester Court")
       confirmMultipleFieldsDisplayed(["Manchester Court", "London Court", "Bristol Court"])
     })
@@ -196,9 +196,8 @@ describe("Case list", () => {
       cy.contains("Case00001")
       confirmMultipleFieldsNotDisplayed(["Case00002", "Case00003"])
       cy.get("tr").should("have.length", 2)
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Case00001")
+      confirmFiltersAppliedContains("Case00001")
 
-      // Removing filter tag
       removeFilterTag("Case00001")
       confirmMultipleFieldsDisplayed(["Case00001", "Case00002", "Case00003"])
     })
@@ -227,7 +226,7 @@ describe("Case list", () => {
       cy.contains("Case00000")
       confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
       cy.get("tr").should("have.length", 3)
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("TRPR0107")
+      confirmFiltersAppliedContains("TRPR0107")
       removeFilterTag("TRPR0107")
 
       cy.get("button[id=filter-button]").click()
@@ -236,9 +235,8 @@ describe("Case list", () => {
       cy.contains("Case00001")
       confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002"])
       cy.get("tr").should("have.length", 2)
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("HO200212")
+      confirmFiltersAppliedContains("HO200212")
 
-      // Removing filter tag
       removeFilterTag("HO200212")
       confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
     })
@@ -480,8 +478,10 @@ describe("Case list", () => {
 
       cy.get("tr").not(":first").should("have.length", 7)
 
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").click({ force: true })
+      cy.contains("Hide filter").click()
+
+      confirmFiltersAppliedContains("01/01/2022 - 31/12/2022")
+      removeFilterTag("01/01/2022 - 31/12/2022")
       cy.get("tr").not(":first").should("have.length", 13)
     })
 
@@ -743,6 +743,30 @@ describe("Case list", () => {
         cy.contains("Case00000")
         cy.contains("Bichard01")
         confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002", "Case00003"])
+      })
+    })
+
+    describe("Applied filter section", () => {
+      it("Should show the applied filter section when the filter panel is hidden", () => {
+        visitBasePathAndShowFilters()
+        inputAndSearch("keywords", "Bruce Wayne")
+
+        cy.contains("Show filter")
+        cy.contains("Hide filter").should("not.exist")
+        cy.contains("Filters applied")
+        cy.contains("Clear filters")
+      })
+      it("Should hide the applied filter section when the filter panel is shown", () => {
+        visitBasePathAndShowFilters()
+        inputAndSearch("keywords", "Bruce Wayne")
+
+        cy.contains("Show filter")
+        cy.contains("Show filter").click()
+        cy.contains("Show filter").should("not.exist")
+        cy.contains("Hide filter")
+        cy.contains("Filters applied").should("not.exist")
+        cy.contains("Clear filters").should("not.exist")
+        cy.contains("Applied filters")
       })
     })
   })

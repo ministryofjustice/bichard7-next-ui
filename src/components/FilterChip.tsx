@@ -1,6 +1,6 @@
 import type { Dispatch } from "react"
-import { createUseStyles } from "react-jss"
 import type { FilterAction, FilterState } from "types/CourtCaseFilter"
+import { useCustomStyles } from "../../styles/customStyles"
 
 interface Props {
   chipLabel: string
@@ -9,26 +9,12 @@ interface Props {
   state: FilterState
 }
 
-const useStyles = createUseStyles({
-  appliedFilter: {
-    backgroundColor: "#62696D",
-    color: "#ffffff",
-    "&:hover": {
-      backgroundColor: "#62696D",
-      color: "#ffffff"
-    },
-    "&:after": {
-      backgroundImage: "url(/bichard/moj_assets/images/icon-tag-remove-cross-white.svg)"
-    }
-  }
-})
-
 const FilterChip: React.FC<Props> = ({ chipLabel, dispatch, removeAction, state }: Props) => {
-  const classes = useStyles()
-  const buttonClass = "moj-filter__tag " + (state === "Applied" ? classes.appliedFilter : "")
+  const classes = useCustomStyles()
+  const buttonClass = "moj-filter__tag " + (state === "Applied" ? classes["dark-grey-filter-tag"] : "")
   return (
     <li>
-      <button className={buttonClass} onClick={() => dispatch(removeAction())}>
+      <button className={buttonClass} onClick={() => dispatch(removeAction())} style={{ cursor: "pointer" }}>
         <span className="govuk-visually-hidden">{"Remove this filter"}</span>
         {chipLabel}
       </button>

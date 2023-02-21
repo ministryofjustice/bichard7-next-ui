@@ -1,4 +1,5 @@
 import hashedPassword from "../../fixtures/hashedPassword"
+import { confirmFiltersAppliedContains } from "../../support/helpers"
 
 export function removeFilterChip() {
   cy.get("li button.moj-filter__tag").trigger("click")
@@ -121,7 +122,7 @@ describe("Case list", () => {
         cy.get("button#search").click()
 
         cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
-        cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
+        confirmFiltersAppliedContains("01/01/2022 - 31/12/2022")
       })
 
       it.skip("Should apply the 'Custom date filter' filter chips then remove this chips to the original state", () => {
@@ -367,6 +368,7 @@ describe("Case list", () => {
       cy.get("#my-cases-filter").should("be.checked")
 
       // Clears filter chip and check the checkbox is deselected
+      cy.contains("Hide filter").click()
       cy.contains("Clear filters").click()
       cy.get("#filter-button").contains("Show filter").click()
       cy.get("#my-cases-filter").should("not.be.checked")

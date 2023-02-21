@@ -2,6 +2,7 @@ import User from "services/entities/User"
 import { TestTrigger } from "../../test/utils/manageTriggers"
 import hashedPassword from "../fixtures/hashedPassword"
 import a11yConfig from "../support/a11yConfig"
+import { confirmFiltersAppliedContains } from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 
 const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard") => {
@@ -876,10 +877,10 @@ describe("Case list", () => {
       cy.get("#urgent").click()
       cy.get("#search").click()
 
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Urgent").should("exist")
+      confirmFiltersAppliedContains("Urgent")
 
       cy.get("li.moj-pagination__item").contains("Next").click()
-      cy.get(".moj-filter-tags a.moj-filter__tag").contains("Urgent").should("exist")
+      confirmFiltersAppliedContains("Urgent")
     })
   })
 })
