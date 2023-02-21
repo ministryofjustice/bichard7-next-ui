@@ -53,51 +53,51 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
 
   const tableHead = (
     <Table.Row>
-      <Table.Cell></Table.Cell>
-      <Table.CellHeader>
+      <Table.Cell setWidth="20px"></Table.Cell>
+      <Table.CellHeader setWidth="178px">
         <ColumnOrderIcons columnName={"defendantName"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("defendantName")} id="defendant-name-sort">
             {"Defendant Name"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>
+      <Table.CellHeader setWidth="115px">
         <ColumnOrderIcons columnName={"courtDate"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("courtDate")} id="court-date-sort">
             {"Court Date"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>
+      <Table.CellHeader setWidth="175px">
         <ColumnOrderIcons columnName={"courtName"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("courtName")} id="court-name-sort">
             {"Court Name"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>
+      <Table.CellHeader setWidth="125px">
         <ColumnOrderIcons columnName={"ptiurn"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("ptiurn")} id="ptiurn-sort">
             {"PTIURN"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>
+      <Table.CellHeader setWidth="100px">
         <ColumnOrderIcons columnName={"isUrgent"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("isUrgent")} id="is-urgent-sort">
             {"Urgent"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>{"Notes"}</Table.CellHeader>
-      <Table.CellHeader>
+      <Table.CellHeader setWidth="85px">{"Notes"}</Table.CellHeader>
+      <Table.CellHeader setWidth="150px">
         <ColumnOrderIcons columnName={"reason"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("reason")} id="exceptions">
             {"Reason"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>
+      <Table.CellHeader setWidth="160px">
         <ColumnOrderIcons columnName={"lockedBy"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("lockedBy")} id="locked-by-sort">
             {"Locked By"}

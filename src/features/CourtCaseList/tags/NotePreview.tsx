@@ -17,6 +17,7 @@ interface Props {
 // Accordion button
 // Preview 100 lines with elipse ... props.notes.noteText.splice(0,100)
 // Preview box needs stylings to have z-index to span 2 columns
+
 const useStyles = createUseStyles({
   expandingButtonContainer: {
     color: "#1d70b8"
@@ -56,7 +57,7 @@ export const PreviewNotes = ({ latestNote, displayDate }: Props) => {
         <span className={classes.expandingButton}>{"Hide"}</span>
       </div>
       <div className={classes.notePreviewContainer}>
-        <h3 className="govuk-heading-s">{`Note added ${displayDate}`}</h3>
+        <p className="govuk-body govuk-!-font-weight-bold">{`Note added ${displayDate}`}</p>
         <p className={classes.notePreview}>{latestNote}</p>
       </div>
     </>
