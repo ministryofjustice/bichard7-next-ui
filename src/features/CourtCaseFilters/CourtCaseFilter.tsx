@@ -261,8 +261,8 @@ const CourtCaseFilter: React.FC<Props> = ({
               <CourtDateFilterOptions
                 dateRange={state.dateFilter.value}
                 dispatch={dispatch}
-                customDateFrom={customDateFrom}
-                customDateTo={customDateTo}
+                customDateFrom={state.customDateFrom.value ?? null}
+                customDateTo={state.customDateTo.value ?? null}
               />
             </ExpandingFilters>
           </div>
