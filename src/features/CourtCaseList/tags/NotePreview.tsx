@@ -2,16 +2,24 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { DefaultUpChevron } from "components/icons/NotePreviewChevron"
 import If from "components/If"
-import { format } from "date-fns"
-import { useState } from "react"
+import { Dispatch, SetStateAction } from "react"
+// import { format } from "date-fns"
+// import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import Note from "services/entities/Note"
-import { displayedDateFormat } from "utils/formattedDate"
+// import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
   latestNote: string | string[]
   displayDate: string
-  switcher: () => void
+  switcher: Dispatch<SetStateAction<boolean>>
+  currentState: boolean
+}
+
+interface NotePreviewProps {
+  initialState: boolean
+  numberOfNotes: number
+  stateSwitcher: Dispatch<SetStateAction<boolean>>
 }
 // Modify componenet to use gds accordion and details pattern
 // Number of notes(userNotes)
@@ -33,9 +41,9 @@ const useStyles = createUseStyles({
   notePreview: {}
 })
 
-export const PreviewNotes = ({ latestNote, displayDate, switcher }: Props) => {
+export const PreviewNotes = ({ latestNote, displayDate, switcher, currentState }: Props) => {
   const classes = useStyles()
-
+  console.log(switcher, currentState)
   return (
     <>
       <div className={classes.wrapper}>
@@ -60,21 +68,22 @@ export const HideNotes = () => {
   )
 }
 
-const NotePreview: React.FC<{ notes: Note[] }> = (props: { notes: Note[] }) => {
-  const userNotes = props.notes ? props.notes.filter((note) => note.userId !== "System").length : 0
-  const allNotes = props.notes.map((note) => note.createdAt)
-  const latestNoteCreatedDate = allNotes.sort().slice(-1)[0]
-  const validatedLatestNoteCreatedDate = new Date(latestNoteCreatedDate.toString().slice(0, 10))
-  const mostRecentNote = props.notes.filter((note) => note.createdAt === latestNoteCreatedDate)
-  const mostRecentNoteText = mostRecentNote[0].noteText
-  const [labelText, setLabelText] = useState(false)
+const NotePreview: React.FC<NotePreviewProps> = (props: NotePreviewProps) => {
+  console.log("passed state in notePreview component: should be false--", props.initialState)
+  // const userNotes = props.notes ? props.notes.filter((note) => note.userId !== "System").length : 0
+  // const allNotes = props.notes.map((note) => note.createdAt)
+  // const latestNoteCreatedDate = allNotes.sort().slice(-1)[0]
+  // const validatedLatestNoteCreatedDate = new Date(latestNoteCreatedDate.toString().slice(0, 10))
+  // const mostRecentNote = props.notes.filter((note) => note.createdAt === latestNoteCreatedDate)
+  // const mostRecentNoteText = mostRecentNote[0].noteText
+  // const [labelText, setLabelText] = useState(false)
   const classes = useStyles()
 
   return (
     <>
-      <If condition={!!userNotes}>
-        {userNotes > 1 ? `${userNotes} notes` : `${userNotes} note`}
-        <div className={classes.buttonContainer}>
+      <If condition={props.numberOfNotes > 0}>
+        {props.numberOfNotes > 1 ? `${props.numberOfNotes} notes` : `${props.numberOfNotes} note`}
+        <div className={classes.buttonContainer} onClick={() => props.stateSwitcher(!props.initialState)}>
           <DefaultUpChevron />
           <span style={{ paddingLeft: "4px" }}>{"Hide"}</span>
         </div>
