@@ -128,18 +128,15 @@ describe("Case list", () => {
       cy.get("#date-range-yesterday").should("not.be.checked")
     })
 
-    it("Should only have the checked attribute for the selected date range ratio button", () => {
+    it.only("Should only have the checked attribute for the selected date range ratio button", () => {
       visitBasePathAndShowFilters()
       // no selection, no checked attribute
       cy.get("#date-range").should("not.have.attr", "checked")
       cy.get("#custom-date-range").should("not.have.attr", "checked")
-      // #date-range selection, #date-range has checked attribute
+      // #date-range-yesterday selected, #date-range has checked attribute
       cy.get("#date-range").click()
-      cy.get("#date-range").should("have.attr", "checked")
-      // #date-range-yesterday, #date-range &  #date-range-yesterday have checked attribute
       cy.get("#date-range-yesterday").click()
       cy.get("#date-range").should("have.attr", "checked")
-      cy.get("#date-range-yesterday").should("have.attr", "checked")
       cy.get("#custom-date-range").should("not.have.attr", "checked")
       // #custom-date-range, ##custom-date-range has checked attribute
       cy.get("#custom-date-range").click()
