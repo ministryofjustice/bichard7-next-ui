@@ -20,7 +20,7 @@ interface Props {
 
 const useStyles = createUseStyles({
   wrapper: {
-    maxWidth: "87px"
+    // maxWidth: "87px"
   },
   buttonContainer: {
     color: "#1d70b8",
@@ -38,10 +38,6 @@ export const PreviewNotes = ({ latestNote, displayDate }: Props) => {
   return (
     <>
       <div className={classes.wrapper}>
-        <div className={classes.buttonContainer}>
-          <DefaultUpChevron />
-          <span style={{ paddingLeft: "4px" }}>{"Hide"}</span>
-        </div>
         <div className={classes.notePreviewContainer}>
           <p className="govuk-body-s">{`Last note added ${displayDate}`}</p>
           <p className={`${classes.notePreview} ${classes.notePreviewContainer} govuk-body-s`}>{latestNote}</p>
@@ -71,12 +67,17 @@ const NotePreview: React.FC<{ notes: Note[] }> = (props: { notes: Note[] }) => {
   const mostRecentNote = props.notes.filter((note) => note.createdAt === latestNoteCreatedDate)
   const mostRecentNoteText = mostRecentNote[0].noteText
   const [labelText, setLabelText] = useState(false)
+  const classes = useStyles()
 
   return (
     <>
       <If condition={!!userNotes}>
         {userNotes > 1 ? `${userNotes} notes` : `${userNotes} note`}
-        <div onClick={() => setLabelText(!labelText)}>
+        <div className={classes.buttonContainer}>
+          <DefaultUpChevron />
+          <span style={{ paddingLeft: "4px" }}>{"Hide"}</span>
+        </div>
+        {/* <div onClick={() => setLabelText(!labelText)}>
           {labelText ? (
             <PreviewNotes
               latestNote={mostRecentNoteText.slice(0, 100)}
@@ -85,7 +86,7 @@ const NotePreview: React.FC<{ notes: Note[] }> = (props: { notes: Note[] }) => {
           ) : (
             <HideNotes />
           )}
-        </div>
+        </div> */}
       </If>
     </>
   )

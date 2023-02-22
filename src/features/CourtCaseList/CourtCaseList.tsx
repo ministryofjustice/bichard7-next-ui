@@ -1,10 +1,12 @@
 import DateTime from "components/DateTime"
 import If from "components/If"
+import { format } from "date-fns"
 import ColumnOrderIcons from "features/CourtCaseFilters/ColumnOrderIcons"
 import { GridRow, Link, Paragraph, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
+import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
@@ -14,7 +16,7 @@ import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescrip
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { displayedDateFormat } from "utils/formattedDate"
 import LockedByTag from "./tags/LockedByTag"
-import NotePreview from "./tags/NotePreview"
+import NotePreview, { PreviewNotes } from "./tags/NotePreview"
 import UrgentTag from "./tags/UrgentTag"
 
 const useStyles = createUseStyles({
@@ -24,6 +26,9 @@ const useStyles = createUseStyles({
   triggersRow: {
     verticalAlign: "top",
     backgroundColor: "#f3f2f1" // GDS light-grey color
+  },
+  flexBox: {
+    display: "flex"
   }
 })
 
@@ -166,6 +171,34 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
               <LockedByTag lockedBy={errorLockedByUsername} />
             )}
           </Table.Cell>
+        </Table.Row>
+      )
+      const allNotes = courtCases[idx].notes.map((note) => note.createdAt)
+      const latestNoteCreatedDate = allNotes.sort().slice(-1)[0]
+      const validatedLatestNoteCreatedDate = new Date(latestNoteCreatedDate.toString().slice(0, 10))
+      const mostRecentNote = courtCases[idx].notes.filter((note) => note.createdAt === latestNoteCreatedDate)
+      const mostRecentNoteText = mostRecentNote[0].noteText
+      const [showPreview, setShowPreview] = useState(false)
+      // flesh out state switcher- use what we already had.
+      // pass in the switcher function to the PreviewNote -> clickable button component
+      // re-think container logic e.g break out clickable buttons. and displayed note number
+      // css / jss alignment
+
+      tableBody.push(
+        <Table.Row key={`note-preview-row-${idx}`}>
+          <Table.Cell></Table.Cell>
+          <Table.Cell></Table.Cell>
+          <Table.Cell></Table.Cell>
+          <Table.Cell></Table.Cell>
+          <Table.Cell></Table.Cell>
+          <Table.Cell></Table.Cell>
+          <Table.Cell colSpan={2}>
+            <PreviewNotes
+              latestNote={mostRecentNoteText.slice(0, 100)}
+              displayDate={format(validatedLatestNoteCreatedDate, displayedDateFormat)}
+            />
+          </Table.Cell>
+          <Table.Cell></Table.Cell>
         </Table.Row>
       )
 
