@@ -11,6 +11,7 @@ import { displayedDateFormat } from "utils/formattedDate"
 interface Props {
   latestNote: string | string[]
   displayDate: string
+  switcher: () => void
 }
 // Modify componenet to use gds accordion and details pattern
 // Number of notes(userNotes)
@@ -32,7 +33,7 @@ const useStyles = createUseStyles({
   notePreview: {}
 })
 
-export const PreviewNotes = ({ latestNote, displayDate }: Props) => {
+export const PreviewNotes = ({ latestNote, displayDate, switcher }: Props) => {
   const classes = useStyles()
 
   return (
@@ -79,9 +80,9 @@ const NotePreview: React.FC<{ notes: Note[] }> = (props: { notes: Note[] }) => {
         </div>
         {/* <div onClick={() => setLabelText(!labelText)}>
           {labelText ? (
-            <PreviewNotes
-              latestNote={mostRecentNoteText.slice(0, 100)}
-              displayDate={format(validatedLatestNoteCreatedDate, displayedDateFormat)}
+            // <PreviewNotes
+            //   latestNote={mostRecentNoteText.slice(0, 100)}
+            //   displayDate={format(validatedLatestNoteCreatedDate, displayedDateFormat)}
             />
           ) : (
             <HideNotes />
