@@ -68,6 +68,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
           dataAriaControls={"conditional-custom-date-range"}
           defaultChecked={hasCustomDateRange}
           label={"Custom date range"}
+          onChange={(event) => dispatch({ method: "remove", type: "date", value: event.target.value })}
         />
         <div className="govuk-radios__conditional" id="conditional-custom-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
