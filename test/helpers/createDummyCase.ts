@@ -13,8 +13,6 @@ import createDummyPtiurn from "./createDummyPtiurn"
 import createDummyTriggers from "./createDummyTriggers"
 import createResolutionStatus from "./createResolutionStatus"
 
-const randomPhase = (): number => sample([1, 2]) || 1
-
 const randomBoolean = (): boolean => sample([true, false]) ?? true
 
 const randomUsername = (): string => `${faker.name.firstName().toLowerCase()}.${faker.name.lastName().toLowerCase()}`
@@ -41,7 +39,7 @@ export default async (
     orgForPoliceFilter: orgCode,
     errorLockedByUsername: !isResolved && randomBoolean() ? randomUsername() : null,
     triggerLockedByUsername: !isResolved && randomBoolean() ? randomUsername() : null,
-    phase: randomPhase(),
+    phase: 1,
     errorStatus: createResolutionStatus(),
     triggerStatus: createResolutionStatus(),
     errorQualityChecked: 1,
