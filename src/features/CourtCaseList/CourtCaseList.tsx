@@ -124,7 +124,6 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
         triggers,
         errorReport,
         isUrgent,
-        notes,
         errorLockedByUsername,
         triggerLockedByUsername
       },
@@ -180,11 +179,11 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
           </Table.Cell>
         </Table.Row>
       )
-      // const allNotes = courtCases[idx].notes.map((note) => note.createdAt)
-      // const latestNoteCreatedDate = allNotes.sort().slice(-1)[0]
-      // const validatedLatestNoteCreatedDate = new Date(latestNoteCreatedDate.toString().slice(0, 10))
-      // const mostRecentNote = courtCases[idx].notes.filter((note) => note.createdAt === latestNoteCreatedDate)
-      // const mostRecentNoteText = mostRecentNote[0].noteText
+      const allNotes = courtCases[idx].notes.map((note) => note.createdAt)
+      const latestNoteCreatedDate = allNotes.sort().slice(-1)[0]
+      const validatedLatestNoteCreatedDate = new Date(latestNoteCreatedDate.toString().slice(0, 10))
+      const mostRecentNote = courtCases[idx].notes.filter((note) => note.createdAt === latestNoteCreatedDate)
+      const mostRecentNoteText = mostRecentNote[0].noteText
       // const [showPreview, setShowPreview] = useState(false)
       // flesh out state switcher- use what we already had.
       // pass in the switcher function to the PreviewNote -> clickable button component
@@ -192,23 +191,25 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
       // css / jss alignment
 
       tableBody.push(
-        <Table.Row key={`note-preview-row-${idx}`}>
-          <Table.Cell></Table.Cell>
-          <Table.Cell></Table.Cell>
-          <Table.Cell></Table.Cell>
-          <Table.Cell></Table.Cell>
-          <Table.Cell></Table.Cell>
-          <Table.Cell></Table.Cell>
-          <Table.Cell colSpan={2}>
-            {/* <PreviewNotes
-              latestNote={mostRecentNoteText.slice(0, 100)}
-              displayDate={format(validatedLatestNoteCreatedDate, displayedDateFormat)}
-              switcher={setShowPreview}
-              currentState={showPreview}
-            /> */}
-          </Table.Cell>
-          <Table.Cell></Table.Cell>
-        </Table.Row>
+        <If condition={!!showPreview}>
+          <Table.Row key={`note-preview-row-${idx}`}>
+            <Table.Cell></Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell colSpan={2}>
+              <PreviewNotes
+                latestNote={mostRecentNoteText.slice(0, 100)}
+                displayDate={format(validatedLatestNoteCreatedDate, displayedDateFormat)}
+                switcher={setShowPreview}
+                currentState={showPreview}
+              />
+            </Table.Cell>
+            <Table.Cell></Table.Cell>
+          </Table.Row>
+        </If>
       )
 
       if (triggers.length > 0) {
