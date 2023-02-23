@@ -109,13 +109,22 @@ describe("Case list", () => {
       expandFilterSection("Case type", "#exceptions-type")
     })
 
-    it("Should expand and collapse court date filter navigation", () => {
+    it.only("Should expand and collapse court date filter navigation with the ratio conditional sections collapsed after the second expand", () => {
       visitBasePathAndShowFilters()
 
       cy.contains("Date range")
 
-      collapseFilterSection("Court date", "Date range")
-      expandFilterSection("Court date", "Date range")
+      cy.get("#date-range").click()
+      cy.get("#date-range-yesterday").click()
+
+      collapseFilterSection("Court date", "#date-range")
+      expandFilterSection("Court date", "#date-range")
+
+      // Custom date range is collapsed
+      cy.get("#date-from").should("not.exist")
+      // Opening custom date range collapses date range
+      cy.get("#custom-date-range").click()
+      cy.get("#date-range-yesterday").should("not.exist")
     })
 
     it("Should remove the selection of the date range when it's been changed to the custom date range", () => {
