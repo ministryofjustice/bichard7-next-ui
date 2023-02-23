@@ -20,7 +20,7 @@ export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => 
       courtName={null}
       defendantName={null}
       ptiurn={null}
-      reasonSearch={null}
+      reasonCode={null}
       customDateFrom={null}
       customDateTo={null}
       myCases={false}
@@ -45,7 +45,7 @@ export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> 
     courtName={"City of London Magistrates' Court"}
     defendantName={"Wilma Flintstone"}
     ptiurn={"Case0000"}
-    reasonSearch={"HO200212"}
+    reasonCode={"HO200212"}
     customDateFrom={new Date()}
     customDateTo={new Date()}
     myCases={true}

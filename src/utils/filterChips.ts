@@ -11,7 +11,7 @@ const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
       state.caseStateFilter,
       state.defendantNameSearch,
       state.courtNameSearch,
-      state.reasonSearch,
+      state.reasonCode,
       state.ptiurnSearch,
       state.myCasesFilter
     ]

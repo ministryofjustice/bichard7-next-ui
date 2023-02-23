@@ -16,7 +16,7 @@ import FilterChipSection from "./FilterChipSection"
 interface Props {
   defendantName: string | null
   courtName: string | null
-  reasonSearch: string | null
+  reasonCode: string | null
   ptiurn: string | null
   courtCaseTypes: Reason[]
   dateRange: string | null
@@ -71,10 +71,10 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.courtNameSearch.value = action.value
       newState.courtNameSearch.label = action.value
       newState.courtNameSearch.state = "Selected"
-    } else if (action.type === "reasonSearch") {
-      newState.reasonSearch.value = action.value
-      newState.reasonSearch.label = action.value
-      newState.reasonSearch.state = "Selected"
+    } else if (action.type === "reasonCode") {
+      newState.reasonCode.value = action.value
+      newState.reasonCode.label = action.value
+      newState.reasonCode.state = "Selected"
     } else if (action.type === "ptiurn") {
       newState.ptiurnSearch.value = action.value
       newState.ptiurnSearch.label = action.value
@@ -107,9 +107,9 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
     } else if (action.type === "courtName") {
       newState.courtNameSearch.value = ""
       newState.courtNameSearch.label = undefined
-    } else if (action.type === "reasonSearch") {
-      newState.reasonSearch.value = ""
-      newState.reasonSearch.label = undefined
+    } else if (action.type === "reasonCode") {
+      newState.reasonCode.value = ""
+      newState.reasonCode.label = undefined
     } else if (action.type === "ptiurn") {
       newState.ptiurnSearch.value = ""
       newState.ptiurnSearch.label = undefined
@@ -129,7 +129,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   defendantName,
   ptiurn,
   courtName,
-  reasonSearch,
+  reasonCode,
   dateRange,
   customDateFrom,
   customDateTo,
@@ -147,7 +147,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
     courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
-    reasonSearch: reasonSearch !== null ? { value: reasonSearch, state: "Applied", label: reasonSearch } : {},
+    reasonCode: reasonCode !== null ? { value: reasonCode, state: "Applied", label: reasonCode } : {},
     ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
     reasonFilter: courtCaseTypes.map((courtCaseType) => {
       return { value: courtCaseType, state: "Applied" }
@@ -212,16 +212,16 @@ const CourtCaseFilter: React.FC<Props> = ({
                   }}
                 />
               </label>
-              <label className="govuk-label govuk-label--s" htmlFor="reason-search">
-                <LabelText>{"Reason"}</LabelText>
+              <label className="govuk-label govuk-label--s" htmlFor="reason-code">
+                <LabelText>{"Reason code"}</LabelText>
                 <input
                   className="govuk-input"
-                  value={state.reasonSearch.value}
-                  id="reason-search"
-                  name="reasonSearch"
+                  value={state.reasonCode.value}
+                  id="reason-code"
+                  name="reasonCode"
                   type="text"
                   onChange={(event) => {
-                    dispatch({ method: "add", type: "reasonSearch", value: event.currentTarget.value })
+                    dispatch({ method: "add", type: "reasonCode", value: event.currentTarget.value })
                   }}
                 />
               </label>

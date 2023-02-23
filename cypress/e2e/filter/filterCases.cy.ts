@@ -202,7 +202,7 @@ describe("Case list", () => {
       confirmMultipleFieldsDisplayed(["Case00001", "Case00002", "Case00003"])
     })
 
-    it("Should display cases filtered by reason", () => {
+    it("Should display cases filtered by reason code", () => {
       cy.task("insertCourtCasesWithFields", [
         { orgForPoliceFilter: "011111" },
         { orgForPoliceFilter: "011111" },
@@ -222,7 +222,7 @@ describe("Case list", () => {
 
       visitBasePathAndShowFilters()
 
-      inputAndSearch("reason-search", "TRPR0107")
+      inputAndSearch("reason-code", "TRPR0107")
       cy.contains("Case00000")
       confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
       cy.get("tr").should("have.length", 3)
@@ -231,7 +231,7 @@ describe("Case list", () => {
 
       cy.get("button[id=filter-button]").click()
 
-      inputAndSearch("reason-search", "HO200212")
+      inputAndSearch("reason-code", "HO200212")
       cy.contains("Case00001")
       confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002"])
       cy.get("tr").should("have.length", 2)
@@ -283,7 +283,7 @@ describe("Case list", () => {
       removeFilterTag("Case0000")
 
       cy.get("button[id=filter-button]").click()
-      inputAndSearch("reason-search", "HO200212")
+      inputAndSearch("reason-code", "HO200212")
       confirmMultipleFieldsNotDisplayed(["Bruce Gordon", "Bruce Pennyworth", "Alfred Pennyworth"])
       cy.get("tr").should("have.length", 2)
       confirmMultipleFieldsDisplayed(["Bruce Wayne"])

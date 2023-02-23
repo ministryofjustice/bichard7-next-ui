@@ -33,7 +33,7 @@ interface Props {
   keywords: string[]
   ptiurn: string | null
   courtName: string | null
-  reasonSearch: string | null
+  reasonCode: string | null
   urgent: string | null
   dateRange: string | null
   customDateFrom: string | null
@@ -58,7 +58,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       type,
       keywords,
       courtName,
-      reasonSearch,
+      reasonCode,
       ptiurn,
       maxPageItems,
       order,
@@ -84,7 +84,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     })
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
-    const validatedReasonSearch = validateQueryParams(reasonSearch) ? reasonSearch : undefined
+    const validatedreasonCode = validateQueryParams(reasonCode) ? reasonCode : undefined
     const validatedPtiurn = validateQueryParams(ptiurn) ? ptiurn : undefined
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLocked = validateQueryParams(locked) ? locked : undefined
@@ -113,7 +113,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       forces: currentUser.visibleForces,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
       ...(validatedCourtName && { courtName: validatedCourtName }),
-      ...(validatedReasonSearch && { reasonsSearch: validatedReasonSearch }),
+      ...(validatedreasonCode && { reasonsSearch: validatedreasonCode }),
       ...(validatedPtiurn && { ptiurn: validatedPtiurn }),
       reasonsFilter: courtCaseTypes,
       urgent: validatedUrgent,
@@ -144,7 +144,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCaseTypes: courtCaseTypes,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         courtName: validatedCourtName ? validatedCourtName : null,
-        reasonSearch: validatedReasonSearch ? validatedReasonSearch : null,
+        reasonCode: validatedreasonCode ? validatedreasonCode : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
         dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
         customDateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
@@ -168,7 +168,7 @@ const Home: NextPage<Props> = ({
   courtCaseTypes,
   keywords,
   courtName,
-  reasonSearch,
+  reasonCode,
   ptiurn,
   dateRange,
   customDateFrom,
@@ -193,7 +193,7 @@ const Home: NextPage<Props> = ({
             courtCaseTypes={courtCaseTypes}
             defendantName={keywords[0]}
             courtName={courtName}
-            reasonSearch={reasonSearch}
+            reasonCode={reasonCode}
             ptiurn={ptiurn}
             dateRange={dateRange}
             customDateFrom={customDateFrom !== null ? new Date(customDateFrom) : null}
@@ -210,7 +210,7 @@ const Home: NextPage<Props> = ({
               courtCaseTypes,
               keywords,
               courtName,
-              reasonSearch,
+              reasonCode,
               ptiurn,
               dateRange,
               customDateFrom: customDateFrom !== null ? new Date(customDateFrom) : null,

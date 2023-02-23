@@ -80,21 +80,21 @@ const FilterChipSection: React.FC<Props> = ({
         />
 
         <FilterChipRow
-          chipLabel={state.reasonSearch.label!}
+          chipLabel={state.reasonCode.label!}
           condition={
-            state.reasonSearch.value !== undefined &&
-            state.reasonSearch.label !== undefined &&
-            state.reasonSearch.state === sectionState
+            state.reasonCode.value !== undefined &&
+            state.reasonCode.label !== undefined &&
+            state.reasonCode.state === sectionState
           }
           dispatch={dispatch}
-          type="reasonSearch"
-          label="Reason"
-          state={state.reasonSearch.state || sectionState}
-          value={state.reasonSearch.value!}
+          type="reasonCode"
+          label="Reason code"
+          state={state.reasonCode.state || sectionState}
+          value={state.reasonCode.value!}
         />
 
         <If condition={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}>
-          <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
+          <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Case type"}</h3>
           <ul className="moj-filter-tags govuk-!-margin-bottom-0">
             {state.reasonFilter
               .filter((reasonFilter) => reasonFilter.state === sectionState)

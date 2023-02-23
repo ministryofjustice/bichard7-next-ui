@@ -13,7 +13,7 @@ interface Props {
     courtCaseTypes?: Reason[]
     keywords?: string[]
     courtName?: string | null
-    reasonSearch?: string | null
+    reasonCode?: string | null
     ptiurn?: string | null
     dateRange?: string | null
     customDateFrom?: Date | null
@@ -32,7 +32,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     (filters.courtCaseTypes && filters.courtCaseTypes.length > 0) ||
     (filters.keywords && filters.keywords.length > 0) ||
     !!filters.courtName ||
-    !!filters.reasonSearch ||
+    !!filters.reasonCode ||
     !!filters.ptiurn ||
     !!filters.urgency ||
     !!filters.dateRange ||
@@ -86,11 +86,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </If>
-          <If condition={!!filters.reasonSearch}>
+          <If condition={!!filters.reasonCode}>
             <li>
               <FilterTag
-                tag={filters.reasonSearch ?? ""}
-                href={removeFilterFromPath({ reasonSearch: filters.reasonSearch ?? "" })}
+                tag={filters.reasonCode ?? ""}
+                href={removeFilterFromPath({ reasonCode: filters.reasonCode ?? "" })}
               />
             </li>
           </If>
