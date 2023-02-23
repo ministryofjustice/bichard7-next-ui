@@ -3,8 +3,8 @@
 // import { within } from "@storybook/testing-library"
 // import Note from "services/entities/Note"
 
-import NotePreview from "./NotePreview"
-console.log(NotePreview)
+import NotePreviewButton from "./NotePreviewButton"
+console.log(NotePreviewButton)
 
 // import NotePreview from "./NotePreview"
 // export default {

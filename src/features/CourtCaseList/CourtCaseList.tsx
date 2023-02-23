@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable react-hooks/rules-of-hooks */ //TODO: check if hooks can be applied to JSX elements.
 import DateTime from "components/DateTime"
 import If from "components/If"
 import { format } from "date-fns"
@@ -17,7 +17,7 @@ import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescrip
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { displayedDateFormat } from "utils/formattedDate"
 import LockedByTag from "./tags/LockedByTag"
-import NotePreview, { PreviewNotes } from "./tags/NotePreview"
+import NotePreviewButton, { NotePreview } from "./tags/NotePreviewButton"
 import UrgentTag from "./tags/UrgentTag"
 
 const useStyles = createUseStyles({
@@ -134,7 +134,6 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
       idx
     ) => {
       const [showPreview, setShowPreview] = useState(false)
-      console.log("initial state: should be false-- ", showPreview)
       const exceptions = groupErrorsFromReport(errorReport)
       tableBody.push(
         <Table.Row key={`case-details-row-${idx}`} className={classes.caseDetailsRow}>
@@ -157,7 +156,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
             <UrgentTag isUrgent={isUrgent} />
           </Table.Cell>
           <Table.Cell>
-            <NotePreview
+            <NotePreviewButton
               previewState={showPreview}
               setShowPreview={setShowPreview}
               numberOfNotes={courtCases[idx].notes.length}
@@ -183,18 +182,16 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
           </Table.Cell>
         </Table.Row>
       )
+      // TODO: refactor code below
       const allNotes = courtCases[idx].notes.map((note) => note.createdAt)
       const latestNoteCreatedDate = allNotes.sort().slice(-1)[0]
       const validatedLatestNoteCreatedDate = new Date(latestNoteCreatedDate.toString().slice(0, 10))
       const mostRecentNote = courtCases[idx].notes.filter((note) => note.createdAt === latestNoteCreatedDate)
       const mostRecentNoteText = mostRecentNote[0].noteText
-      // flesh out state switcher- use what we already had.
-      // pass in the switcher function to the PreviewNote -> clickable button component
-      // re-think container logic e.g break out clickable buttons. and displayed note number
-      // css / jss alignment
 
       tableBody.push(
         <If condition={!!showPreview}>
+          {/* TODO: remove in-line styles */}
           <Table.Row key={`note-preview-row-${idx}`} className={classes.notesRow}>
             <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
             <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
@@ -203,11 +200,10 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
             <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
             <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
             <Table.Cell style={{ paddingTop: "0px" }} colSpan={2}>
-              <PreviewNotes
+              <NotePreview
+                // TODO: put latestNote input into own variable & add elipsis logic
                 latestNote={mostRecentNoteText.slice(0, 100)}
                 displayDate={format(validatedLatestNoteCreatedDate, displayedDateFormat)}
-                switcher={setShowPreview}
-                currentState={showPreview}
               />
             </Table.Cell>
             <Table.Cell></Table.Cell>
