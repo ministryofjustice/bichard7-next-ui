@@ -1,4 +1,4 @@
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import { useRouter } from "next/router"
 import hasUserManagementAccess from "services/hasUserManagementAccess"
 import { default as GroupName } from "types/GroupName"
@@ -28,9 +28,9 @@ const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
 
 const UserManagementNavItem: React.FC<NavBarProps> = (groups) => {
   return (
-    <If isRendered={hasUserManagementAccess(groups)}>
+    <ConditionalRender isRendered={hasUserManagementAccess(groups)}>
       <NavItem name={"User management"} link={"/users/users/"} />
-    </If>
+    </ConditionalRender>
   )
 }
 

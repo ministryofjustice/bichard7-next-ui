@@ -1,6 +1,6 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import DateTime from "components/DateTime"
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import HearingOutcome from "components/HearingOutcome"
 import ResolveTrigger from "components/ResolveTrigger"
 import LinkButton from "components/LinkButton"
@@ -64,7 +64,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         </Table.Cell>
       </Table.Row>
     </Table>
-    <If isRendered={triggersVisible && (courtCase?.triggers?.length ?? 0) > 0}>
+    <ConditionalRender isRendered={triggersVisible && (courtCase?.triggers?.length ?? 0) > 0}>
       <Heading as="h3" size="MEDIUM">
         {"Triggers"}
       </Heading>
@@ -94,14 +94,14 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           ))}
         </Table>
       </div>
-    </If>
-    <If isRendered={(courtCase?.triggers?.length ?? 0) === 0}>
+    </ConditionalRender>
+    <ConditionalRender isRendered={(courtCase?.triggers?.length ?? 0) === 0}>
       <Paragraph>{"Case has no triggers."}</Paragraph>
-    </If>
+    </ConditionalRender>
     <Heading as="h3" size="MEDIUM">
       {"Notes"}
     </Heading>
-    <If isRendered={(courtCase?.notes?.length ?? 0) > 0}>
+    <ConditionalRender isRendered={(courtCase?.notes?.length ?? 0) > 0}>
       <Table>
         {courtCase.notes.map((note, index) => (
           <Table.Row key={index}>
@@ -112,13 +112,13 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </Table.Row>
         ))}
       </Table>
-    </If>
-    <If isRendered={(courtCase?.notes?.length ?? 0) === 0}>
+    </ConditionalRender>
+    <ConditionalRender isRendered={(courtCase?.notes?.length ?? 0) === 0}>
       <Paragraph>{"Case has no notes."}</Paragraph>
-    </If>
-    <If isRendered={!lockedByAnotherUser}>
+    </ConditionalRender>
+    <ConditionalRender isRendered={!lockedByAnotherUser}>
       <LinkButton href="notes/add">{"Add Note"}</LinkButton>
-    </If>
+    </ConditionalRender>
   </>
 )
 

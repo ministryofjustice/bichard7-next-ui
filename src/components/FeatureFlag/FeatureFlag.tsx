@@ -1,4 +1,4 @@
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import { ReactNode } from "react"
 import KeyValuePair from "types/KeyValuePair"
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const FeatureFlag: React.FC<Props> = ({ featureFlags, featureName, children }: Props) => {
-  return <If isRendered={featureFlags ? featureFlags[featureName] : false}>{children}</If>
+  return <ConditionalRender isRendered={featureFlags ? featureFlags[featureName] : false}>{children}</ConditionalRender>
 }
 
 export default FeatureFlag

@@ -4,7 +4,7 @@ interface Props {
   isRendered: boolean
   children: ReactNode
 }
-const If = ({ isRendered, children }: Props) => {
+const ConditionalRender = ({ isRendered, children }: Props) => {
   if (!isRendered) {
     return null
   }
@@ -12,4 +12,4 @@ const If = ({ isRendered, children }: Props) => {
   return <>{children}</>
 }
 
-export default If
+export default ConditionalRender

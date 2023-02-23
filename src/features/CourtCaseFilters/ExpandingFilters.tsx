@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import ConditionalDisplay from "components/ConditionalDisplay"
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import { ReactNode, useState } from "react"
 import { createUseStyles } from "react-jss"
 
@@ -75,7 +75,7 @@ const ExpandingFilters: React.FC<Props> = ({ filterName, children, hideChildren 
       {hideChildren ? (
         <ConditionalDisplay isDisplayed={caseTypeIsVisible}>{children}</ConditionalDisplay>
       ) : (
-        <If isRendered={caseTypeIsVisible}>{children}</If>
+        <ConditionalRender isRendered={caseTypeIsVisible}>{children}</ConditionalRender>
       )}
     </fieldset>
   )
