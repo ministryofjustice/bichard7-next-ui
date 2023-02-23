@@ -6,7 +6,6 @@ import { Dispatch, SetStateAction } from "react"
 // import { format } from "date-fns"
 // import { useState } from "react"
 import { createUseStyles } from "react-jss"
-import Note from "services/entities/Note"
 // import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
@@ -17,9 +16,9 @@ interface Props {
 }
 
 interface NotePreviewProps {
-  initialState: boolean
+  previewState: boolean
+  setShowPreview: Dispatch<SetStateAction<boolean>>
   numberOfNotes: number
-  stateSwitcher: Dispatch<SetStateAction<boolean>>
 }
 // Modify componenet to use gds accordion and details pattern
 // Number of notes(userNotes)
@@ -36,7 +35,9 @@ const useStyles = createUseStyles({
     display: "flex"
   },
   notePreviewContainer: {
-    backgroundColor: "#F3F2F1"
+    backgroundColor: "#F3F2F1",
+    borderLeft: "5px solid #b1b4b6",
+    padding: "15px 20px"
   },
   notePreview: {}
 })
@@ -48,8 +49,8 @@ export const PreviewNotes = ({ latestNote, displayDate, switcher, currentState }
     <>
       <div className={classes.wrapper}>
         <div className={classes.notePreviewContainer}>
-          <p className="govuk-body-s">{`Last note added ${displayDate}`}</p>
-          <p className={`${classes.notePreview} ${classes.notePreviewContainer} govuk-body-s`}>{latestNote}</p>
+          <p className="govuk-body govuk-!-font-weight-bold">{`Last note added ${displayDate}`}</p>
+          <p className={`${classes.notePreview} "govuk-details__text"`}>{latestNote}</p>
         </div>
       </div>
     </>
@@ -69,7 +70,7 @@ export const HideNotes = () => {
 }
 
 const NotePreview: React.FC<NotePreviewProps> = (props: NotePreviewProps) => {
-  console.log("passed state in notePreview component: should be false--", props.initialState)
+  console.log("passed state in notePreview component: should be false--", props.previewState)
   // const userNotes = props.notes ? props.notes.filter((note) => note.userId !== "System").length : 0
   // const allNotes = props.notes.map((note) => note.createdAt)
   // const latestNoteCreatedDate = allNotes.sort().slice(-1)[0]
@@ -83,7 +84,7 @@ const NotePreview: React.FC<NotePreviewProps> = (props: NotePreviewProps) => {
     <>
       <If condition={props.numberOfNotes > 0}>
         {props.numberOfNotes > 1 ? `${props.numberOfNotes} notes` : `${props.numberOfNotes} note`}
-        <div className={classes.buttonContainer} onClick={() => props.stateSwitcher(!props.initialState)}>
+        <div className={classes.buttonContainer} onClick={() => props.setShowPreview(!props.previewState)}>
           <DefaultUpChevron />
           <span style={{ paddingLeft: "4px" }}>{"Hide"}</span>
         </div>

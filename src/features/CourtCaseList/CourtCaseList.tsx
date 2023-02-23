@@ -154,8 +154,8 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
           </Table.Cell>
           <Table.Cell>
             <NotePreview
-              initialState={showPreview}
-              stateSwitcher={setShowPreview}
+              previewState={showPreview}
+              setShowPreview={setShowPreview}
               numberOfNotes={courtCases[idx].notes.length}
             />
           </Table.Cell>
@@ -184,7 +184,6 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
       const validatedLatestNoteCreatedDate = new Date(latestNoteCreatedDate.toString().slice(0, 10))
       const mostRecentNote = courtCases[idx].notes.filter((note) => note.createdAt === latestNoteCreatedDate)
       const mostRecentNoteText = mostRecentNote[0].noteText
-      // const [showPreview, setShowPreview] = useState(false)
       // flesh out state switcher- use what we already had.
       // pass in the switcher function to the PreviewNote -> clickable button component
       // re-think container logic e.g break out clickable buttons. and displayed note number
