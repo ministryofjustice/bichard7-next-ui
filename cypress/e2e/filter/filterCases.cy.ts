@@ -114,16 +114,15 @@ describe("Case list", () => {
 
       cy.contains("Date range")
 
-      cy.get("#date-range").click()
-      cy.get("#date-range-yesterday").click()
-
       collapseFilterSection("Court date", "#date-range")
       expandFilterSection("Court date", "#date-range")
 
-      // Custom date range is collapsed
+      // // Custom date range & date range are collapsed
       cy.get("#date-from").should("not.exist")
-      // Opening custom date range collapses date range
+      cy.get("#date-range-yesterday").should("not.exist")
+      // Opening custom date range collapses date range & opens custom date range
       cy.get("#custom-date-range").click()
+      cy.get("#date-from").should("exist")
       cy.get("#date-range-yesterday").should("not.exist")
     })
 
