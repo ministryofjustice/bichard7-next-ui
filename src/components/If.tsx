@@ -1,11 +1,11 @@
 import type { ReactNode } from "react"
 
 interface Props {
-  condition: boolean
+  isRendered: boolean
   children: ReactNode
 }
-const If = ({ condition, children }: Props) => {
-  if (!condition) {
+const If = ({ isRendered, children }: Props) => {
+  if (!isRendered) {
     return null
   }
 

@@ -64,7 +64,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         </Table.Cell>
       </Table.Row>
     </Table>
-    <If condition={triggersVisible && (courtCase?.triggers?.length ?? 0) > 0}>
+    <If isRendered={triggersVisible && (courtCase?.triggers?.length ?? 0) > 0}>
       <Heading as="h3" size="MEDIUM">
         {"Triggers"}
       </Heading>
@@ -95,13 +95,13 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         </Table>
       </div>
     </If>
-    <If condition={(courtCase?.triggers?.length ?? 0) === 0}>
+    <If isRendered={(courtCase?.triggers?.length ?? 0) === 0}>
       <Paragraph>{"Case has no triggers."}</Paragraph>
     </If>
     <Heading as="h3" size="MEDIUM">
       {"Notes"}
     </Heading>
-    <If condition={(courtCase?.notes?.length ?? 0) > 0}>
+    <If isRendered={(courtCase?.notes?.length ?? 0) > 0}>
       <Table>
         {courtCase.notes.map((note, index) => (
           <Table.Row key={index}>
@@ -113,10 +113,10 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         ))}
       </Table>
     </If>
-    <If condition={(courtCase?.notes?.length ?? 0) === 0}>
+    <If isRendered={(courtCase?.notes?.length ?? 0) === 0}>
       <Paragraph>{"Case has no notes."}</Paragraph>
     </If>
-    <If condition={!lockedByAnotherUser}>
+    <If isRendered={!lockedByAnotherUser}>
       <LinkButton href="notes/add">{"Add Note"}</LinkButton>
     </If>
   </>

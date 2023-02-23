@@ -11,8 +11,8 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, error }: Props) => 
     <Heading as="h2" size="MEDIUM">
       {"Add Note"}
     </Heading>
-    <If condition={lockedByAnotherUser}>{"Case is locked by another user."}</If>
-    <If condition={!lockedByAnotherUser}>
+    <If isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</If>
+    <If isRendered={!lockedByAnotherUser}>
       <form method="POST" action="#">
         <FormGroup>
           <TextArea

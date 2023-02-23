@@ -9,7 +9,7 @@ interface Props {
 }
 
 const FeatureFlag: React.FC<Props> = ({ featureFlags, featureName, children }: Props) => {
-  return <If condition={featureFlags ? featureFlags[featureName] : false}>{children}</If>
+  return <If isRendered={featureFlags ? featureFlags[featureName] : false}>{children}</If>
 }
 
 export default FeatureFlag

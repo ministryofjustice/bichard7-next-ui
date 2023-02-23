@@ -19,10 +19,10 @@ const CourtCaseLock: React.FC<Props> = ({ courtCase, lockedByAnotherUser }) => {
 
   return (
     <>
-      <If condition={lockedByAnotherUser}>
+      <If isRendered={lockedByAnotherUser}>
         <ErrorSummary heading="Case locked by another user" />
       </If>
-      <If condition={isLocked}>
+      <If isRendered={isLocked}>
         <Paragraph>{`Trigger locked by: ${courtCase.triggerLockedByUsername}`}</Paragraph>
         <Paragraph>{`Error locked by: ${courtCase.errorLockedByUsername}`}</Paragraph>
       </If>

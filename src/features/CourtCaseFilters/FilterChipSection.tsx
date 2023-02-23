@@ -32,7 +32,7 @@ const FilterChipSection: React.FC<Props> = ({
       : ""
   return (
     <>
-      <If condition={anyFilterChips(state, sectionState)}>
+      <If isRendered={anyFilterChips(state, sectionState)}>
         <h2
           className={"govuk-heading-m govuk-!-margin-bottom-0" + (marginTop ? " govuk-!-margin-top-2" : "")}
         >{`${sectionState} filters`}</h2>
@@ -93,7 +93,7 @@ const FilterChipSection: React.FC<Props> = ({
           value={state.reasonCode.value!}
         />
 
-        <If condition={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}>
+        <If isRendered={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}>
           <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
           <ul className="moj-filter-tags govuk-!-margin-bottom-0">
             {state.reasonFilter
@@ -197,7 +197,7 @@ const FilterChipSection: React.FC<Props> = ({
           value={state.myCasesFilter.value!}
         />
       </If>
-      <If condition={!anyFilterChips(state, sectionState) && placeholderMessage !== undefined}>
+      <If isRendered={!anyFilterChips(state, sectionState) && placeholderMessage !== undefined}>
         <h2
           className={"govuk-heading-m govuk-!-margin-bottom-0" + (marginTop ? " govuk-!-margin-top-2" : "")}
         >{`${sectionState} filters`}</h2>

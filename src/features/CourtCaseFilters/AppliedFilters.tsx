@@ -57,7 +57,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
 
   return (
     <div>
-      <If condition={hasAnyAppliedFilters()}>
+      <If isRendered={hasAnyAppliedFilters()}>
         <ul key={"applied-filters"} className="moj-filter-tags">
           <li>
             <p className="govuk-heading-s govuk-!-margin-bottom-0">{"Filters applied:"}</p>
@@ -78,7 +78,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
                 </li>
               )
             })}
-          <If condition={!!filters.courtName}>
+          <If isRendered={!!filters.courtName}>
             <li>
               <FilterTag
                 tag={filters.courtName ?? ""}
@@ -86,7 +86,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </If>
-          <If condition={!!filters.reasonCode}>
+          <If isRendered={!!filters.reasonCode}>
             <li>
               <FilterTag
                 tag={filters.reasonCode ?? ""}
@@ -94,12 +94,12 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </If>
-          <If condition={!!filters.ptiurn}>
+          <If isRendered={!!filters.ptiurn}>
             <li>
               <FilterTag tag={filters.ptiurn ?? ""} href={removeFilterFromPath({ ptiurn: filters.ptiurn ?? "" })} />
             </li>
           </If>
-          <If condition={!!filters.dateRange}>
+          <If isRendered={!!filters.dateRange}>
             <li>
               <FilterTag
                 tag={filters.dateRange ?? ""}
@@ -107,7 +107,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </If>
-          <If condition={!!filters.customDateFrom && !!filters.customDateTo}>
+          <If isRendered={!!filters.customDateFrom && !!filters.customDateTo}>
             <li>
               <FilterTag
                 tag={
@@ -120,12 +120,12 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </If>
-          <If condition={!!filters.urgency}>
+          <If isRendered={!!filters.urgency}>
             <li>
               <FilterTag tag={filters.urgency ?? ""} href={removeFilterFromPath({ urgency: filters.urgency ?? "" })} />
             </li>
           </If>
-          <If condition={!!filters.myCases}>
+          <If isRendered={!!filters.myCases}>
             <li>
               <FilterTag
                 tag={"Cases locked to me" ?? ""}
@@ -133,12 +133,12 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </If>
-          <If condition={!!filters.locked}>
+          <If isRendered={!!filters.locked}>
             <li>
               <FilterTag tag={filters.locked ?? ""} href={removeFilterFromPath({ locked: filters.locked ?? "" })} />
             </li>
           </If>
-          <If condition={!!filters.caseState}>
+          <If isRendered={!!filters.caseState}>
             <li>
               <FilterTag
                 tag={caseStateLabels[String(filters.caseState)] ?? ""}

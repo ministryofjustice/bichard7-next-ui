@@ -75,7 +75,7 @@ const ExpandingFilters: React.FC<Props> = ({ filterName, children, hideChildren 
       {hideChildren ? (
         <Hide isVisible={caseTypeIsVisible}>{children}</Hide>
       ) : (
-        <If condition={caseTypeIsVisible}>{children}</If>
+        <If isRendered={caseTypeIsVisible}>{children}</If>
       )}
     </fieldset>
   )

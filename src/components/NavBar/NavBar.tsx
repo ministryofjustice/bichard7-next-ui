@@ -28,7 +28,7 @@ const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
 
 const UserManagementNavItem: React.FC<NavBarProps> = (groups) => {
   return (
-    <If condition={hasUserManagementAccess(groups)}>
+    <If isRendered={hasUserManagementAccess(groups)}>
       <NavItem name={"User management"} link={"/users/users/"} />
     </If>
   )

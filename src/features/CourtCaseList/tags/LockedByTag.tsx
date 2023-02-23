@@ -47,7 +47,7 @@ const LockedByTag: React.FC<{ lockedBy?: string | null; unlockPath?: string }> =
 }) => {
   const classes = useStyles()
   return (
-    <If condition={!!props.lockedBy}>
+    <If isRendered={!!props.lockedBy}>
       <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag ${classes.LockedByTag}`}>
         <div className={classes.LockedByTag}>
           <Image

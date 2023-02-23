@@ -130,7 +130,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
       tableBody.push(
         <Table.Row key={`case-details-row-${idx}`} className={classes.caseDetailsRow}>
           <Table.Cell>
-            <If condition={!!errorLockedByUsername}>
+            <If isRendered={!!errorLockedByUsername}>
               <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
             </If>
           </Table.Cell>
@@ -177,7 +177,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
         tableBody.push(
           <Table.Row key={`triggers-row-${idx}`} className={classes.triggersRow}>
             <Table.Cell>
-              <If condition={!!triggerLockedByUsername}>
+              <If isRendered={!!triggerLockedByUsername}>
                 <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
               </If>
             </Table.Cell>

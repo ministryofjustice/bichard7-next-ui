@@ -16,7 +16,7 @@ interface Props {
 
 const FilterChipRow: React.FC<Props> = ({ chipLabel, condition, dispatch, type, label, state, value }: Props) => {
   return (
-    <If condition={condition}>
+    <If isRendered={condition}>
       <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{label}</h3>
       <ul className="moj-filter-tags govuk-!-margin-bottom-0">
         <FilterChip

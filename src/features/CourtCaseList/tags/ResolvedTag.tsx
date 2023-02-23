@@ -5,7 +5,7 @@ const ResolvedTag: React.FC<{ isResolved: boolean }> = (props: { isResolved: boo
   const classes = useCustomStyles()
 
   return (
-    <If condition={props.isResolved}>
+    <If isRendered={props.isResolved}>
       <span className={`moj-badge moj-badge--grey ${classes["margin-top-bottom"]}`}>{"Resolved"}</span>
     </If>
   )
