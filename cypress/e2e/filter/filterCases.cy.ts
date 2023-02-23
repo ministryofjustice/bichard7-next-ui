@@ -599,6 +599,40 @@ describe("Case list", () => {
       confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`, `Case00003`])
     })
 
+    it("Should filter cases that has Bails", () => {
+      cy.task("insertCourtCasesWithFields", [
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" }
+      ])
+      const conditionalBailCode = "TRPR0010"
+      const conditionalBailTrigger: TestTrigger = {
+        triggerId: 0,
+        triggerCode: conditionalBailCode,
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+      cy.task("insertTriggers", { caseId: 0, triggers: [conditionalBailTrigger] })
+      cy.task("insertException", { caseId: 1, exceptionCode: "HO100206" })
+      cy.task("insertException", { caseId: 2, exceptionCode: "HO100206" })
+
+      cy.visit("/bichard")
+
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
+
+      cy.get("button[id=filter-button]").click()
+      cy.get('[id="bails-type"]').check()
+      cy.get("button[id=search]").click()
+
+      cy.get('*[class^="moj-filter-tags"]').contains("Bails")
+
+      confirmMultipleFieldsDisplayed(["Case00000"])
+      confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
+
+      removeFilterTag("Bails")
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
+    })
+
     it("Should filter cases by urgency", () => {
       const force = "011111"
       cy.task(

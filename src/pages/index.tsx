@@ -19,6 +19,7 @@ import { CaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParam
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
 import { isPost } from "utils/http"
+import { courtCaseTypeOptions } from "utils/courtCaseTypeOptions"
 import { validateCustomDateRange } from "utils/validators/validateCustomDateRange"
 import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
@@ -46,7 +47,6 @@ interface Props {
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
-const validCourtCaseTypes = ["Triggers", "Exceptions"]
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -72,7 +72,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       unlockException,
       unlockTrigger
     } = query
-    const courtCaseTypes = [type].flat().filter((t) => validCourtCaseTypes.includes(String(t))) as Reason[]
+    const courtCaseTypes = [type].flat().filter((t) => courtCaseTypeOptions.includes(String(t) as Reason)) as Reason[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"

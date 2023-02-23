@@ -1,13 +1,12 @@
 import type { Dispatch } from "react"
 import { Reason } from "types/CaseListQueryParams"
 import type { FilterAction } from "types/CourtCaseFilter"
+import { courtCaseTypeOptions } from "utils/courtCaseTypeOptions"
 
 interface Props {
   courtCaseTypes?: Reason[]
   dispatch: Dispatch<FilterAction>
 }
-
-const courtCaseTypeOptions = ["Exceptions", "Triggers"]
 
 const CourtCaseTypeOptions: React.FC<Props> = ({ courtCaseTypes, dispatch }: Props) => {
   return (
@@ -23,7 +22,7 @@ const CourtCaseTypeOptions: React.FC<Props> = ({ courtCaseTypes, dispatch }: Pro
               value={caseType}
               checked={courtCaseTypes && courtCaseTypes.includes(caseType as Reason)}
               onChange={(event) => {
-                const value = event.currentTarget.value === "Triggers" ? "Triggers" : "Exceptions"
+                const value = event.currentTarget.value as Reason
                 dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "reason", value })
               }}
             ></input>
