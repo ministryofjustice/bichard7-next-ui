@@ -38,7 +38,7 @@ interface Props {
   courtCase: CourtCase
   currentUser: User
 }
-
+// TODO- compare against old courtCaseList file and reorder helper functions
 const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) => {
   const {
     errorId,
