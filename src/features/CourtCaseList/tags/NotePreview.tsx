@@ -99,6 +99,7 @@ const NotePreview: React.FC<NotePreviewProps> = (props: NotePreviewProps) => {
           <button
             type="button"
             className="govuk-accordion__show-all"
+            style={{ marginBottom: "0px" }}
             onClick={() => props.setShowPreview(!props.previewState)}
           >
             {!props.previewState ? <PreviewButton /> : <HideButton />}

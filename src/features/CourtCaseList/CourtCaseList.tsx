@@ -196,13 +196,13 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
       tableBody.push(
         <If condition={!!showPreview}>
           <Table.Row key={`note-preview-row-${idx}`} className={classes.notesRow}>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell></Table.Cell>
-            <Table.Cell colSpan={2}>
+            <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
+            <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
+            <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
+            <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
+            <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
+            <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
+            <Table.Cell style={{ paddingTop: "0px" }} colSpan={2}>
               <PreviewNotes
                 latestNote={mostRecentNoteText.slice(0, 100)}
                 displayDate={format(validatedLatestNoteCreatedDate, displayedDateFormat)}
