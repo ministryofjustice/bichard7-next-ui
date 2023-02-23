@@ -116,7 +116,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
       </Table.CellHeader>
     </Table.Row>
   )
-  const tableBody: JSX.Element[] = []
+  const TableBody: JSX.Element[] = []
   courtCases.forEach(
     (
       {
@@ -135,7 +135,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
     ) => {
       const [showPreview, setShowPreview] = useState(false)
       const exceptions = groupErrorsFromReport(errorReport)
-      tableBody.push(
+      TableBody.push(
         <Table.Row key={`case-details-row-${idx}`} className={classes.caseDetailsRow}>
           <Table.Cell>
             <If condition={!!errorLockedByUsername}>
@@ -189,7 +189,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
       const mostRecentNote = courtCases[idx].notes.filter((note) => note.createdAt === latestNoteCreatedDate)
       const mostRecentNoteText = mostRecentNote[0].noteText
 
-      tableBody.push(
+      TableBody.push(
         <If condition={!!showPreview}>
           {/* TODO: remove in-line styles */}
           <Table.Row key={`note-preview-row-${idx}`} className={classes.notesRow}>
@@ -213,7 +213,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
       )
 
       if (triggers.length > 0) {
-        tableBody.push(
+        TableBody.push(
           <Table.Row key={`triggers-row-${idx}`} className={classes.triggersRow}>
             <Table.Cell>
               <If condition={!!triggerLockedByUsername}>
@@ -251,7 +251,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
     return <Paragraph>{"There are no court cases to show"}</Paragraph>
   }
 
-  return <Table head={tableHead}>{tableBody}</Table>
+  return <Table head={tableHead}>{TableBody}</Table>
 }
 
 export default CourtCaseList

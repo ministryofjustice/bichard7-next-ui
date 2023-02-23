@@ -2,18 +2,6 @@ import If from "components/If"
 import { Dispatch, SetStateAction } from "react"
 import { createUseStyles } from "react-jss"
 
-interface NotePreviewProps {
-  latestNote: string
-  displayDate: string
-  numberOfNotes: number
-}
-
-interface NotePreviewButtonProps {
-  previewState: boolean
-  setShowPreview: Dispatch<SetStateAction<boolean>>
-  numberOfNotes: number
-}
-
 const useStyles = createUseStyles({
   buttonContainer: {
     color: "#1d70b8",
@@ -25,6 +13,18 @@ const useStyles = createUseStyles({
     padding: "15px 20px"
   }
 })
+
+interface NotePreviewProps {
+  latestNote: string
+  displayDate: string
+  numberOfNotes: number
+}
+
+interface NotePreviewButtonProps {
+  previewState: boolean
+  setShowPreview: Dispatch<SetStateAction<boolean>>
+  numberOfNotes: number
+}
 
 export const NotePreview = ({ latestNote, displayDate, numberOfNotes }: NotePreviewProps) => {
   const classes = useStyles()
