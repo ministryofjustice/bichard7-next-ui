@@ -1,5 +1,4 @@
 import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
-import { it } from "node:test"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
