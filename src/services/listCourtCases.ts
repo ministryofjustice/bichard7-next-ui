@@ -28,7 +28,7 @@ const listCourtCases = async (
     defendantName,
     courtName,
     ptiurn,
-    reasonsFilter: resultFilter,
+    reasonsFilter,
     urgent,
     courtDateRange,
     locked,
@@ -87,18 +87,18 @@ const listCourtCases = async (
     )
   }
 
-  if (resultFilter) {
+  if (reasonsFilter) {
     query.andWhere(
       new Brackets((qb) => {
-        if (resultFilter?.includes("Triggers")) {
+        if (reasonsFilter?.includes("Triggers")) {
           qb.where({ triggerCount: MoreThan(0) })
         }
 
-        if (resultFilter?.includes("Exceptions")) {
+        if (reasonsFilter?.includes("Exceptions")) {
           qb.orWhere({ errorCount: MoreThan(0) })
         }
 
-        if (resultFilter?.includes("Bails")) {
+        if (reasonsFilter?.includes("Bails")) {
           Object.keys(BailCodes).forEach((triggerCode, i) => {
             const paramName = `bails${i}`
             qb.orWhere(`trigger.trigger_code ilike '%' || :${paramName} || '%'`, {
