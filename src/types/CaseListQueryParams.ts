@@ -1,6 +1,6 @@
 export type QueryOrder = "asc" | "desc" | undefined
 
-export type Reason = "Triggers" | "Exceptions"
+export type Reason = "Triggers" | "Exceptions" | "Bails"
 
 export type NamedCourtDateRanges = "Today" | undefined
 

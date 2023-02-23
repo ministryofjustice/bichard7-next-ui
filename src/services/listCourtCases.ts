@@ -13,6 +13,7 @@ import { CaseListQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
+import { BailCodes } from "utils/bailCodes"
 import CourtCase from "./entities/CourtCase"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
@@ -86,10 +87,27 @@ const listCourtCases = async (
     )
   }
 
-  if (resultFilter?.includes("Triggers")) {
-    query.andWhere({ triggerCount: MoreThan(0) })
-  } else if (resultFilter?.includes("Exceptions")) {
-    query.andWhere({ errorCount: MoreThan(0) })
+  if (resultFilter) {
+    query.andWhere(
+      new Brackets((qb) => {
+        if (resultFilter?.includes("Triggers")) {
+          qb.where({ triggerCount: MoreThan(0) })
+        }
+
+        if (resultFilter?.includes("Exceptions")) {
+          qb.orWhere({ errorCount: MoreThan(0) })
+        }
+
+        if (resultFilter?.includes("Bails")) {
+          Object.keys(BailCodes).forEach((triggerCode, i) => {
+            const paramName = `bails${i}`
+            qb.orWhere(`trigger.trigger_code ilike '%' || :${paramName} || '%'`, {
+              [paramName]: triggerCode
+            })
+          })
+        }
+      })
+    )
   }
 
   if (urgent === "Urgent") {
