@@ -67,8 +67,8 @@ describe("Case list", () => {
 
     it("Should be accessible with conditional radio buttons opened", () => {
       visitBasePathAndShowFilters()
-      collapseFilterSection("Court date", "Date range")
-      expandFilterSection("Court date", "Date range")
+      collapseFilterSection("Court date", "#date-range")
+      expandFilterSection("Court date", "#date-range")
 
       cy.injectAxe()
 
@@ -105,8 +105,8 @@ describe("Case list", () => {
 
       cy.contains("Exceptions")
 
-      collapseFilterSection("Reason", "Exceptions")
-      expandFilterSection("Reason", "Exceptions")
+      collapseFilterSection("Case type", "#exceptions-type")
+      expandFilterSection("Case type", "#exceptions-type")
     })
 
     it("Should expand and collapse court date filter navigation", () => {
@@ -149,8 +149,8 @@ describe("Case list", () => {
 
       cy.contains("Urgent cases only")
 
-      collapseFilterSection("Urgency", "Urgent cases only")
-      expandFilterSection("Urgency", "Urgent cases only")
+      collapseFilterSection("Urgency", "#urgent")
+      expandFilterSection("Urgency", "#urgent")
     })
 
     it("Should expand and collapse locked state filter navigation", () => {
@@ -158,8 +158,8 @@ describe("Case list", () => {
 
       cy.contains("Locked cases only")
 
-      collapseFilterSection("Locked state", "Locked cases only")
-      expandFilterSection("Locked state", "Locked cases only")
+      collapseFilterSection("Locked state", "#locked")
+      expandFilterSection("Locked state", "#locked")
     })
 
     it("Should expand and collapse case state filter navigation", () => {
