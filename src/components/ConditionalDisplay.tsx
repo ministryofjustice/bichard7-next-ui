@@ -6,9 +6,9 @@ interface Props {
   children: ReactNode
 }
 
-const Hide = ({ isVisible, children }: Props) => {
+const ConditionalDisplay = ({ isVisible, children }: Props) => {
   const classes = useCustomStyles()
   return <div className={isVisible ? "" : classes.hidden}>{children}</div>
 }
 
-export default Hide
+export default ConditionalDisplay
