@@ -204,6 +204,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
                 // TODO: put latestNote input into own variable & add elipsis logic
                 latestNote={mostRecentNoteText.slice(0, 100)}
                 displayDate={format(validatedLatestNoteCreatedDate, displayedDateFormat)}
+                numberOfNotes={courtCases[idx].notes.length}
               />
             </Table.Cell>
             <Table.Cell></Table.Cell>

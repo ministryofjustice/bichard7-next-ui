@@ -5,6 +5,7 @@ import { createUseStyles } from "react-jss"
 interface NotePreviewProps {
   latestNote: string
   displayDate: string
+  numberOfNotes: number
 }
 
 interface NotePreviewButtonProps {
@@ -25,12 +26,14 @@ const useStyles = createUseStyles({
   }
 })
 
-export const NotePreview = ({ latestNote, displayDate }: NotePreviewProps) => {
+export const NotePreview = ({ latestNote, displayDate, numberOfNotes }: NotePreviewProps) => {
   const classes = useStyles()
   return (
     <>
       <div className={classes.notePreviewContainer}>
-        <p className="govuk-body govuk-!-font-weight-bold">{`Last note added ${displayDate}`}</p>
+        <p className="govuk-body govuk-!-font-weight-bold">
+          {numberOfNotes > 1 ? `Most recent note added ${displayDate}` : `Note added ${displayDate}`}
+        </p>
         <p>{latestNote}</p>
       </div>
     </>
@@ -38,7 +41,6 @@ export const NotePreview = ({ latestNote, displayDate }: NotePreviewProps) => {
 }
 
 const NotePreviewButton: React.FC<NotePreviewButtonProps> = (props: NotePreviewButtonProps) => {
-  console.log("passed state in notePreview component: should be false--", props.previewState)
   const classes = useStyles()
 
   const PreviewButton = () => {
