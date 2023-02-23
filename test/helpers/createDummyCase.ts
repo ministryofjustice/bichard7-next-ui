@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker"
-import { differenceInDays, subDays } from "date-fns"
+import { differenceInDays, subDays, subYears } from "date-fns"
 import sample from "lodash.sample"
 import { DataSource } from "typeorm"
 import { v4 as uuidv4 } from "uuid"
@@ -11,13 +11,17 @@ import createDummyExceptions from "./createDummyExceptions"
 import createDummyNotes from "./createDummyNotes"
 import createDummyPtiurn from "./createDummyPtiurn"
 import createDummyTriggers from "./createDummyTriggers"
-import createResolutionStatus from "./createResolutionStatus"
 
 const randomBoolean = (): boolean => sample([true, false]) ?? true
 
 const randomUsername = (): string => `${faker.name.firstName().toLowerCase()}.${faker.name.lastName().toLowerCase()}`
 
 const randomName = (): string => `${faker.name.firstName()} ${faker.name.lastName()}`
+
+const randomDate = (from: Date, to: Date): Date => {
+  const dateRangeDays = differenceInDays(from, to)
+  return subDays(to, Math.round(Math.random() * dateRangeDays))
+}
 
 export default async (
   dataSource: DataSource,
@@ -26,10 +30,11 @@ export default async (
   dateFrom?: Date,
   dateTo?: Date
 ): Promise<CourtCase> => {
-  const dateRangeDays = dateFrom && dateTo ? differenceInDays(dateFrom, dateTo) : 12 * 30
-  const caseDate = subDays(new Date(dateTo || new Date()), Math.round(Math.random() * dateRangeDays))
+  const caseDate = randomDate(dateFrom || subYears(new Date(), 1), dateTo || new Date())
   const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgCode + faker.random.alpha(2).toUpperCase())
   const isResolved = randomBoolean()
+  const resolutionStatus = isResolved ? "Resolved" : "Unresolved"
+  const resolutionDate = isResolved ? randomDate(caseDate, dateTo || new Date()) : null
   const triggers = createDummyTriggers(dataSource, caseId, caseDate)
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
   const { errorReport, errorReason, exceptionCount } = createDummyExceptions()
@@ -40,8 +45,8 @@ export default async (
     errorLockedByUsername: !isResolved && randomBoolean() ? randomUsername() : null,
     triggerLockedByUsername: !isResolved && randomBoolean() ? randomUsername() : null,
     phase: 1,
-    errorStatus: createResolutionStatus(),
-    triggerStatus: createResolutionStatus(),
+    errorStatus: resolutionStatus,
+    triggerStatus: resolutionStatus,
     errorQualityChecked: 1,
     triggerQualityChecked: 1,
     triggerCount: triggers.length,
@@ -68,7 +73,10 @@ export default async (
     triggerInsertedTimestamp: caseDate,
     pncUpdateEnabled: "Y",
     notes: notes,
-    triggers: triggers
+    triggers: triggers,
+    resolutionTimestamp: resolutionDate,
+    errorResolvedBy: isResolved ? randomName() : null,
+    triggerResolvedBy: isResolved ? randomName() : null
   })
 
   return courtCase
