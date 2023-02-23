@@ -22,7 +22,8 @@ import UrgentTag from "./tags/UrgentTag"
 
 const useStyles = createUseStyles({
   caseDetailsRow: {
-    verticalAlign: "top"
+    verticalAlign: "top",
+    borderColor: "unset"
   },
   triggersRow: {
     verticalAlign: "top",
@@ -30,6 +31,9 @@ const useStyles = createUseStyles({
   },
   flexBox: {
     display: "flex"
+  },
+  notesRow: {
+    borderTop: "white solid"
   }
 })
 
@@ -95,7 +99,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader setWidth="85px">{"Notes"}</Table.CellHeader>
+      <Table.CellHeader setWidth="97px">{"Notes"}</Table.CellHeader>
       <Table.CellHeader setWidth="150px">
         <ColumnOrderIcons columnName={"reason"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("reason")} id="exceptions">
@@ -191,7 +195,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
 
       tableBody.push(
         <If condition={!!showPreview}>
-          <Table.Row key={`note-preview-row-${idx}`}>
+          <Table.Row key={`note-preview-row-${idx}`} className={classes.notesRow}>
             <Table.Cell></Table.Cell>
             <Table.Cell></Table.Cell>
             <Table.Cell></Table.Cell>

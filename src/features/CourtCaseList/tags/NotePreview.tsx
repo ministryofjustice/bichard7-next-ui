@@ -32,7 +32,7 @@ const useStyles = createUseStyles({
   },
   buttonContainer: {
     color: "#1d70b8",
-    display: "flex"
+    width: "97px"
   },
   notePreviewContainer: {
     backgroundColor: "#F3F2F1",
@@ -71,33 +71,40 @@ export const HideNotes = () => {
 
 const NotePreview: React.FC<NotePreviewProps> = (props: NotePreviewProps) => {
   console.log("passed state in notePreview component: should be false--", props.previewState)
-  // const userNotes = props.notes ? props.notes.filter((note) => note.userId !== "System").length : 0
-  // const allNotes = props.notes.map((note) => note.createdAt)
-  // const latestNoteCreatedDate = allNotes.sort().slice(-1)[0]
-  // const validatedLatestNoteCreatedDate = new Date(latestNoteCreatedDate.toString().slice(0, 10))
-  // const mostRecentNote = props.notes.filter((note) => note.createdAt === latestNoteCreatedDate)
-  // const mostRecentNoteText = mostRecentNote[0].noteText
-  // const [labelText, setLabelText] = useState(false)
   const classes = useStyles()
+
+  const PreviewButton = () => {
+    return (
+      <>
+        <span className="govuk-accordion-nav__chevron govuk-accordion-nav__chevron--down"></span>
+        <span className="govuk-accordion__show-all-text">{"Preview"}</span>
+      </>
+    )
+  }
+
+  const HideButton = () => {
+    return (
+      <>
+        <span className="govuk-accordion-nav__chevron"></span>
+        <span className="govuk-accordion__show-all-text">{"Hide"}</span>
+      </>
+    )
+  }
 
   return (
     <>
       <If condition={props.numberOfNotes > 0}>
         {props.numberOfNotes > 1 ? `${props.numberOfNotes} notes` : `${props.numberOfNotes} note`}
-        <div className={classes.buttonContainer} onClick={() => props.setShowPreview(!props.previewState)}>
-          <DefaultUpChevron />
-          <span style={{ paddingLeft: "4px" }}>{"Hide"}</span>
+        <div className={classes.buttonContainer}>
+          <button
+            type="button"
+            className="govuk-accordion__show-all"
+            onClick={() => props.setShowPreview(!props.previewState)}
+          >
+            {!props.previewState ? <PreviewButton /> : <HideButton />}
+          </button>
+          <span style={{ paddingLeft: "4px" }}></span>
         </div>
-        {/* <div onClick={() => setLabelText(!labelText)}>
-          {labelText ? (
-            // <PreviewNotes
-            //   latestNote={mostRecentNoteText.slice(0, 100)}
-            //   displayDate={format(validatedLatestNoteCreatedDate, displayedDateFormat)}
-            />
-          ) : (
-            <HideNotes />
-          )}
-        </div> */}
       </If>
     </>
   )
