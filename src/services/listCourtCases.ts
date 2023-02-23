@@ -28,13 +28,13 @@ const listCourtCases = async (
     defendantName,
     courtName,
     ptiurn,
-    reasonsFilter,
+    reasons,
     urgent,
     courtDateRange,
     locked,
     caseState,
     allocatedToUserName,
-    reasonsSearch
+    reasonCode
   }: CaseListQueryParams
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
@@ -75,30 +75,30 @@ const listCourtCases = async (
     query.andWhere(ptiurnLike)
   }
 
-  if (reasonsSearch) {
+  if (reasonCode) {
     query.andWhere(
       new Brackets((qb) => {
         qb.where("trigger.trigger_code ilike '%' || :reason || '%'", {
-          reason: reasonsSearch
+          reason: reasonCode
         }).orWhere("courtCase.error_report ilike '%' || :reason || '%'", {
-          reason: reasonsSearch
+          reason: reasonCode
         })
       })
     )
   }
 
-  if (reasonsFilter) {
+  if (reasons) {
     query.andWhere(
       new Brackets((qb) => {
-        if (reasonsFilter?.includes("Triggers")) {
+        if (reasons?.includes("Triggers")) {
           qb.where({ triggerCount: MoreThan(0) })
         }
 
-        if (reasonsFilter?.includes("Exceptions")) {
+        if (reasons?.includes("Exceptions")) {
           qb.orWhere({ errorCount: MoreThan(0) })
         }
 
-        if (reasonsFilter?.includes("Bails")) {
+        if (reasons?.includes("Bails")) {
           Object.keys(BailCodes).forEach((triggerCode, i) => {
             const paramName = `bails${i}`
             qb.orWhere(`trigger.trigger_code ilike '%' || :${paramName} || '%'`, {

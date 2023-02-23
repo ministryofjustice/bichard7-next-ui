@@ -39,13 +39,13 @@ describe("Case list", () => {
       cy.get(".moj-filter__selected").should("exist").should("contain.text", "No filters selected")
     })
 
-    describe("Case type", () => {
+    describe("Reason", () => {
       it("Should display the Trigger filter chip when selected", () => {
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
 
         // Check if the correct heading and filter label are applied
-        cy.get(".govuk-heading-s").contains("Case type").should("exist")
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
       })
@@ -55,7 +55,7 @@ describe("Case list", () => {
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
 
         // Check if the correct heading and filter label are applied
-        cy.get(".govuk-heading-s").contains("Case type").should("exist")
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
 
@@ -69,7 +69,7 @@ describe("Case list", () => {
         cy.get(".govuk-checkboxes__item").contains("Exception").click()
 
         // Check if the correct heading for chips and filter labels are applied
-        cy.get("h3.govuk-heading-s").contains("Case type").should("exist")
+        cy.get("h3.govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Trigger").should("exist")
         cy.get(".moj-filter__tag").contains("Exception").should("exist")
       })
@@ -81,7 +81,7 @@ describe("Case list", () => {
         cy.get(".govuk-checkboxes__item").contains("Exception").click()
 
         // Check if the correct heading for chips and filter labels are applied
-        cy.get("h3.govuk-heading-s").contains("Case type").should("exist")
+        cy.get("h3.govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-filter__tag").contains("Exception").should("exist")
         cy.get(".moj-filter-tags").children().should("have.length", 2)
@@ -233,7 +233,7 @@ describe("Case list", () => {
       })
     })
 
-    describe("Reason", () => {
+    describe("Reason code", () => {
       it("Should apply the 'Court name' filter chips then remove this chips to the original state", () => {
         cy.get("#filter-button").click()
         cy.get("input[id=reason-code]").type("Bar")
@@ -269,8 +269,8 @@ describe("Case list", () => {
         cy.get("#non-urgent").click()
 
         // Check that relevant chips and headers are present on screen
-        // Reasons
-        cy.get(".govuk-heading-s").contains("Case type").should("exist")
+        // Reason
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
         // Urgency
@@ -299,7 +299,7 @@ describe("Case list", () => {
 
         cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
         cy.get(".govuk-heading-m").contains("Applied filters").should("not.exist")
-        cy.get(".govuk-heading-s").contains("Case type").should("exist")
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
 
         cy.get(".govuk-heading-s").contains("Urgency").should("exist")
@@ -311,7 +311,7 @@ describe("Case list", () => {
         cy.get(".govuk-heading-m + p").should("contain.text", "No filters selected")
         cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
         cy.get(".govuk-heading-s").contains("Urgency").should("exist")
-        cy.get(".govuk-heading-s").contains("Case type").should("exist")
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-filter__tag").contains("Non-urgent").should("exist")
 
@@ -338,7 +338,7 @@ describe("Case list", () => {
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
 
         // Check if the correct heading and filter label are applied
-        cy.get(".govuk-heading-s").contains("Case type").should("exist")
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
 

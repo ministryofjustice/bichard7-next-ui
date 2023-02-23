@@ -94,7 +94,7 @@ const FilterChipSection: React.FC<Props> = ({
         />
 
         <If condition={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}>
-          <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Case type"}</h3>
+          <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
           <ul className="moj-filter-tags govuk-!-margin-bottom-0">
             {state.reasonFilter
               .filter((reasonFilter) => reasonFilter.state === sectionState)

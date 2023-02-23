@@ -1,5 +1,5 @@
 import CaseStateFilterOptions from "components/CaseStateFilter/CaseStateFilterOptions"
-import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
+import ReasonFilterOptions from "components/CourtDateFilter/ReasonFilterOptions"
 import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
 import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
 import { LabelText } from "govuk-react"
@@ -18,7 +18,7 @@ interface Props {
   courtName: string | null
   reasonCode: string | null
   ptiurn: string | null
-  courtCaseTypes: Reason[]
+  reasons: Reason[]
   dateRange: string | null
   customDateFrom: Date | null
   customDateTo: Date | null
@@ -125,7 +125,7 @@ const useStyles = createUseStyles({
 })
 
 const CourtCaseFilter: React.FC<Props> = ({
-  courtCaseTypes,
+  reasons,
   defendantName,
   ptiurn,
   courtName,
@@ -149,8 +149,8 @@ const CourtCaseFilter: React.FC<Props> = ({
     courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
     reasonCode: reasonCode !== null ? { value: reasonCode, state: "Applied", label: reasonCode } : {},
     ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
-    reasonFilter: courtCaseTypes.map((courtCaseType) => {
-      return { value: courtCaseType, state: "Applied" }
+    reasonFilter: reasons.map((reason) => {
+      return { value: reason, state: "Applied" }
     }),
     myCasesFilter: myCases ? { value: true, state: "Applied", label: "Cases locked to me" } : {}
   }
@@ -242,9 +242,9 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Case type"}>
-              <CourtCaseTypeOptions
-                courtCaseTypes={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
+            <ExpandingFilters filterName={"Reason"}>
+              <ReasonFilterOptions
+                reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
                 dispatch={dispatch}
               />
             </ExpandingFilters>

@@ -877,7 +877,7 @@ describe("listCourtCases", () => {
       let result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: triggerToInclude.triggerCode
+        reasonCode: triggerToInclude.triggerCode
       })
 
       expect(isError(result)).toBe(false)
@@ -890,7 +890,7 @@ describe("listCourtCases", () => {
       result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: errorToInclude
+        reasonCode: errorToInclude
       })
 
       expect(isError(result)).toBe(false)
@@ -903,7 +903,7 @@ describe("listCourtCases", () => {
       result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: "2222"
+        reasonCode: "2222"
       })
 
       expect(isError(result)).toBe(false)
@@ -928,7 +928,7 @@ describe("listCourtCases", () => {
       let result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: errorToInclude
+        reasonCode: errorToInclude
       })
 
       expect(isError(result)).toBe(false)
@@ -942,7 +942,7 @@ describe("listCourtCases", () => {
       result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: anotherErrorToInclude
+        reasonCode: anotherErrorToInclude
       })
 
       expect(isError(result)).toBe(false)
@@ -990,7 +990,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsFilter: ["Triggers"]
+        reasons: ["Triggers"]
       })
 
       expect(isError(result)).toBeFalsy()
@@ -1009,7 +1009,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsFilter: ["Exceptions"]
+        reasons: ["Exceptions"]
       })
 
       expect(isError(result)).toBeFalsy()
@@ -1032,7 +1032,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsFilter: ["Bails"]
+        reasons: ["Bails"]
       })
 
       expect(isError(result)).toBeFalsy()
@@ -1053,7 +1053,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsFilter: ["Exceptions", "Triggers", "Bails"]
+        reasons: ["Exceptions", "Triggers", "Bails"]
       })
 
       expect(isError(result)).toBeFalsy()

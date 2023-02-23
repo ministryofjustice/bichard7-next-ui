@@ -2,7 +2,7 @@ import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
-import { confirmFiltersAppliedContains } from "../../support/helpers"
+import { confirmFiltersAppliedContains, exactMatch } from "../../support/helpers"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 
 function visitBasePathAndShowFilters() {
@@ -11,12 +11,12 @@ function visitBasePathAndShowFilters() {
 }
 
 function collapseFilterSection(sectionToBeCollapsed: string, optionToBeCollapsed: string) {
-  cy.contains(sectionToBeCollapsed).parent().parent().parent().find("button").click()
+  cy.contains(exactMatch(sectionToBeCollapsed), { matchCase: true }).parent().parent().parent().find("button").click()
   cy.contains(optionToBeCollapsed).should("not.exist")
 }
 
 function expandFilterSection(sectionToBeExpanded: string, optionToBeExpanded: string) {
-  cy.contains(sectionToBeExpanded).parent().parent().parent().find("button").click()
+  cy.contains(exactMatch(sectionToBeExpanded), { matchCase: true }).parent().parent().parent().find("button").click()
   cy.contains(optionToBeExpanded).should("exist")
 }
 
@@ -100,13 +100,13 @@ describe("Case list", () => {
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
-    it("Should expand and collapse case type filter navigation", () => {
+    it("Should expand and collapse reason filter navigation", () => {
       visitBasePathAndShowFilters()
 
       cy.contains("Exceptions")
 
-      collapseFilterSection("Case type", "Exceptions")
-      expandFilterSection("Case type", "Exceptions")
+      collapseFilterSection("Reason", "Exceptions")
+      expandFilterSection("Reason", "Exceptions")
     })
 
     it("Should expand and collapse court date filter navigation", () => {
