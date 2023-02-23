@@ -1,4 +1,5 @@
 import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
+import { it } from "node:test"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
@@ -128,20 +129,20 @@ describe("Case list", () => {
       cy.get("#date-range-yesterday").should("not.be.checked")
     })
 
-    it.only("Should only have the checked attribute for the selected date range ratio button", () => {
+    it("Should only have the checked attribute for the selected date range ratio button", () => {
       visitBasePathAndShowFilters()
-      // no selection, no checked attribute
-      cy.get("#date-range").should("not.have.attr", "checked")
-      cy.get("#custom-date-range").should("not.have.attr", "checked")
-      // #date-range-yesterday selected, #date-range has checked attribute
+      // no selection, nothing is checked
+      cy.get("#date-range").should("not.be.checked")
+      cy.get("#custom-date-range").should("not.be.checked")
+      // #date-range-yesterday selected, #date-range is checked
       cy.get("#date-range").click()
       cy.get("#date-range-yesterday").click()
-      cy.get("#date-range").should("have.attr", "checked")
-      cy.get("#custom-date-range").should("not.have.attr", "checked")
-      // #custom-date-range, ##custom-date-range has checked attribute
+      cy.get("#date-range").should("be.checked")
+      cy.get("#custom-date-range").should("not.be.checked")
+      // #custom-date-range, ##custom-date-range is checked
       cy.get("#custom-date-range").click()
-      cy.get("#date-range").should("not.have.attr", "checked")
-      cy.get("#custom-date-range").should("have.attr", "checked")
+      cy.get("#date-range").should("not.be.checked")
+      cy.get("#custom-date-range").should("be.checked")
     })
 
     it("Should expand and collapse urgency filter navigation", () => {
