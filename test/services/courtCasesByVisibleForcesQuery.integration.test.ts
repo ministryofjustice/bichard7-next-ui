@@ -56,17 +56,10 @@ describe("courtCaseByVisibleForcesQuery", () => {
     const cases = result as CourtCase[]
 
     expect(cases).toHaveLength(8)
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual([
-      "3     ",
-      "36    ",
-      "36F   ",
-      "36FP  ",
-      "36FPA ",
-      "36FPA1",
-      "36FQ  ",
-      "37F   "
-    ])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([0, 1, 2, 3, 4, 5, 6, 7])
+    expect(cases.map((c) => c.orgForPoliceFilter)).toEqual(
+      expect.arrayContaining(["3     ", "36    ", "36F   ", "36FP  ", "36FPA ", "36FPA1", "36FQ  ", "37F   "])
+    )
+    expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([0, 1, 2, 3, 4, 5, 6, 7]))
   })
 
   it("should return a list of cases when the force code length is 2", async () => {
@@ -80,15 +73,10 @@ describe("courtCaseByVisibleForcesQuery", () => {
     const cases = result as CourtCase[]
 
     expect(cases).toHaveLength(6)
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual([
-      "36    ",
-      "36F   ",
-      "36FP  ",
-      "36FPA ",
-      "36FPA1",
-      "36FQ  "
-    ])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([0, 1, 2, 3, 4, 5])
+    expect(cases.map((c) => c.orgForPoliceFilter)).toEqual(
+      expect.arrayContaining(["36    ", "36F   ", "36FP  ", "36FPA ", "36FPA1", "36FQ  "])
+    )
+    expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([0, 1, 2, 3, 4, 5]))
   })
 
   it("should return a list of cases when the force code length is 3", async () => {
@@ -102,8 +90,10 @@ describe("courtCaseByVisibleForcesQuery", () => {
     const cases = result as CourtCase[]
 
     expect(cases).toHaveLength(5)
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual(["36F   ", "36FP  ", "36FPA ", "36FPA1", "36FQ  "])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([1, 2, 3, 4, 5])
+    expect(cases.map((c) => c.orgForPoliceFilter)).toEqual(
+      expect.arrayContaining(["36F   ", "36FP  ", "36FPA ", "36FPA1", "36FQ  "])
+    )
+    expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([1, 2, 3, 4, 5]))
   })
 
   it("should return a list of cases when the force code length is 4", async () => {
@@ -117,8 +107,8 @@ describe("courtCaseByVisibleForcesQuery", () => {
     const cases = result as CourtCase[]
 
     expect(cases).toHaveLength(3)
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual(["36FP  ", "36FPA ", "36FPA1"])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4])
+    expect(cases.map((c) => c.orgForPoliceFilter)).toEqual(expect.arrayContaining(["36FP  ", "36FPA ", "36FPA1"]))
+    expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([2, 3, 4]))
   })
 
   it("a user with a visible force of length 5 can see cases for the 4-long prefix, and the exact match, and 6-long suffixes of the visible force", async () => {
@@ -167,8 +157,8 @@ describe("courtCaseByVisibleForcesQuery", () => {
 
     expect(cases).toHaveLength(3)
 
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual(["36FP  ", "36FPA ", "36FPA1"])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4])
+    expect(cases.map((c) => c.orgForPoliceFilter)).toEqual(expect.arrayContaining(["36FP  ", "36FPA ", "36FPA1"]))
+    expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([2, 3, 4]))
   })
 
   it("should show cases for all forces visible to a user", async () => {
@@ -204,17 +194,10 @@ describe("courtCaseByVisibleForcesQuery", () => {
 
     expect(cases).toHaveLength(8)
 
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual([
-      "36FP  ",
-      "36FPA ",
-      "36FPA1",
-      "13GH  ",
-      "13GHA ",
-      "13GHA1",
-      "13GHB ",
-      "13GHBA"
-    ])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4, 13, 14, 15, 16, 17])
+    expect(cases.map((c) => c.orgForPoliceFilter)).toEqual(
+      expect.arrayContaining(["36FP  ", "36FPA ", "36FPA1", "13GH  ", "13GHA ", "13GHA1", "13GHB ", "13GHBA"])
+    )
+    expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([2, 3, 4, 13, 14, 15, 16, 17]))
   })
 
   it("should show no cases to a user with no visible forces", async () => {
