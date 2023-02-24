@@ -613,7 +613,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("filter by defendant name", () => {
+  describe("search by defendant name", () => {
     it("should list cases when there is a case insensitive match", async () => {
       const orgCode = "01FPA1"
       const defendantToInclude = "Bruce Wayne"
@@ -762,7 +762,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("filter by court name", () => {
+  describe("search by court name", () => {
     it("should list cases when there is a case insensitive match", async () => {
       const orgCode = "01FPA1"
       const courtNameToInclude = "Magistrates' Courts London Croydon"
@@ -800,7 +800,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("filter by ptiurn", () => {
+  describe("search by ptiurn", () => {
     it("should list cases when there is a case insensitive match", async () => {
       const orgCode = "01FPA1"
       const ptiurnToInclude = "01ZD0303908"
@@ -838,7 +838,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("filter by reason", () => {
+  describe("search by reason", () => {
     it("should list cases when there is a case insensitive match in triggers or exceptions", async () => {
       await insertCourtCasesWithFields(["01", "01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
@@ -877,7 +877,7 @@ describe("listCourtCases", () => {
       let result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: triggerToInclude.triggerCode
+        reasonCode: triggerToInclude.triggerCode
       })
 
       expect(isError(result)).toBe(false)
@@ -890,7 +890,7 @@ describe("listCourtCases", () => {
       result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: errorToInclude
+        reasonCode: errorToInclude
       })
 
       expect(isError(result)).toBe(false)
@@ -903,7 +903,7 @@ describe("listCourtCases", () => {
       result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: "2222"
+        reasonCode: "2222"
       })
 
       expect(isError(result)).toBe(false)
@@ -928,7 +928,7 @@ describe("listCourtCases", () => {
       let result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: errorToInclude
+        reasonCode: errorToInclude
       })
 
       expect(isError(result)).toBe(false)
@@ -942,7 +942,7 @@ describe("listCourtCases", () => {
       result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: anotherErrorToInclude
+        reasonCode: anotherErrorToInclude
       })
 
       expect(isError(result)).toBe(false)
@@ -955,22 +955,61 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("Filter cases having triggers/exceptions", () => {
-    it("Should filter by whether a case has triggers", async () => {
-      await insertCourtCasesWithFields(["01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+  describe("Filter cases having reason", () => {
+    const testTrigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0001",
+      status: "Unresolved",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
 
-      const trigger: TestTrigger = {
-        triggerId: 0,
-        triggerCode: "TRPR0001",
-        status: "Unresolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
-      }
-      await insertTriggers(0, [trigger])
+    const conditionalBailTrigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0010",
+      status: "Unresolved",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
+    const bailDirectionTrigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0019",
+      status: "Unresolved",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
+    const preChargeBailApplicationTrigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0019",
+      status: "Unresolved",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
+
+    it("Should filter by whether a case has triggers", async () => {
+      await insertCourtCasesWithFields(["01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+      await insertTriggers(0, [testTrigger])
+      await insertTriggers(1, [bailDirectionTrigger])
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsFilter: ["Triggers"]
+        reasons: ["Triggers"]
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].errorId).toBe(0)
+      expect(cases[1].errorId).toBe(1)
+    })
+
+    it("Should filter by whether a case has excecptions", async () => {
+      await insertCourtCasesWithFields(["01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+      await insertException(0, "HO100300")
+      await insertTriggers(1, [testTrigger])
+
+      const result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasons: ["Exceptions"]
       })
 
       expect(isError(result)).toBeFalsy()
@@ -980,21 +1019,50 @@ describe("listCourtCases", () => {
       expect(cases[0].errorId).toBe(0)
     })
 
-    it("Should filter by whether a case has excecptions", async () => {
-      await insertCourtCasesWithFields(["01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+    it("Should filter cases that has bails", async () => {
+      await insertCourtCasesWithFields(
+        ["01", "01", "01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode }))
+      )
       await insertException(0, "HO100300")
+      await insertTriggers(1, [testTrigger])
+      await insertTriggers(2, [conditionalBailTrigger])
+      await insertTriggers(3, [bailDirectionTrigger])
+      await insertTriggers(4, [preChargeBailApplicationTrigger])
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsFilter: ["Exceptions"]
+        reasons: ["Bails"]
       })
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(1)
+      expect(cases).toHaveLength(3)
+      expect(cases[0].errorId).toBe(2)
+      expect(cases[1].errorId).toBe(3)
+      expect(cases[2].errorId).toBe(4)
+    })
+
+    it("Should filter cases with all reasons", async () => {
+      await insertCourtCasesWithFields(["01", "01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+      await insertException(0, "HO100300")
+      await insertTriggers(1, [testTrigger])
+      await insertTriggers(2, [conditionalBailTrigger])
+
+      const result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasons: ["Exceptions", "Triggers", "Bails"]
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(3)
       expect(cases[0].errorId).toBe(0)
+      expect(cases[1].errorId).toBe(1)
+      expect(cases[2].errorId).toBe(2)
     })
   })
 

@@ -39,7 +39,7 @@ describe("Case list", () => {
       cy.get(".moj-filter__selected").should("exist").should("contain.text", "No filters selected")
     })
 
-    describe("Case type", () => {
+    describe("Reason", () => {
       it("Should display the Trigger filter chip when selected", () => {
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
@@ -233,12 +233,12 @@ describe("Case list", () => {
       })
     })
 
-    describe("Reason", () => {
+    describe("Reason code", () => {
       it("Should apply the 'Court name' filter chips then remove this chips to the original state", () => {
         cy.get("#filter-button").click()
-        cy.get("input[id=reason-search]").type("Bar")
+        cy.get("input[id=reason-code]").type("Bar")
 
-        cy.get(".govuk-heading-s").contains("Reason").should("exist")
+        cy.get(".govuk-heading-s").contains("Reason code").should("exist")
         cy.get(".moj-filter__tag").contains("Bar").should("exist")
 
         cy.get("li button.moj-filter__tag").contains("Bar").trigger("click")
@@ -269,7 +269,7 @@ describe("Case list", () => {
         cy.get("#non-urgent").click()
 
         // Check that relevant chips and headers are present on screen
-        // Reasons
+        // Reason
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")

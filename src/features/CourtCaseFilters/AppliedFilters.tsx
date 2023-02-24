@@ -10,10 +10,10 @@ import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
   filters: {
-    courtCaseTypes?: Reason[]
+    reasons?: Reason[]
     keywords?: string[]
     courtName?: string | null
-    reasonSearch?: string | null
+    reasonCode?: string | null
     ptiurn?: string | null
     dateRange?: string | null
     customDateFrom?: Date | null
@@ -29,10 +29,10 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
   const { basePath, query } = useRouter()
 
   const hasAnyAppliedFilters = (): boolean =>
-    (filters.courtCaseTypes && filters.courtCaseTypes.length > 0) ||
+    (filters.reasons && filters.reasons.length > 0) ||
     (filters.keywords && filters.keywords.length > 0) ||
     !!filters.courtName ||
-    !!filters.reasonSearch ||
+    !!filters.reasonCode ||
     !!filters.ptiurn ||
     !!filters.urgency ||
     !!filters.dateRange ||
@@ -62,11 +62,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
           <li>
             <p className="govuk-heading-s govuk-!-margin-bottom-0">{"Filters applied:"}</p>
           </li>
-          {filters.courtCaseTypes &&
-            filters.courtCaseTypes.map((courtCaseType) => {
+          {filters.reasons &&
+            filters.reasons.map((reason) => {
               return (
-                <li key={`${courtCaseType}`}>
-                  <FilterTag tag={courtCaseType} href={removeFilterFromPath({ type: courtCaseType })} />
+                <li key={`${reason}`}>
+                  <FilterTag tag={reason} href={removeFilterFromPath({ type: reason })} />
                 </li>
               )
             })}
@@ -86,11 +86,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </If>
-          <If condition={!!filters.reasonSearch}>
+          <If condition={!!filters.reasonCode}>
             <li>
               <FilterTag
-                tag={filters.reasonSearch ?? ""}
-                href={removeFilterFromPath({ reasonSearch: filters.reasonSearch ?? "" })}
+                tag={filters.reasonCode ?? ""}
+                href={removeFilterFromPath({ reasonCode: filters.reasonCode ?? "" })}
               />
             </li>
           </If>

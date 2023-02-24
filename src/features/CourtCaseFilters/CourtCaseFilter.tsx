@@ -1,7 +1,7 @@
-import CaseStateFilterOptions from "components/CaseStateFilter/CaseStateFilterOptions"
-import CourtCaseTypeOptions from "components/CourtDateFilter/CourtCaseTypeOptions"
-import UrgencyFilterOptions from "components/CourtDateFilter/UrgencyFilterOptions"
-import LockedFilterOptions from "components/LockedFilter/LockedFilterOptions"
+import CaseStateFilterOptions from "components/FilterOptions/CaseStateFilterOptions"
+import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions"
+import UrgencyFilterOptions from "components/FilterOptions/UrgencyFilterOptions"
+import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
@@ -9,16 +9,16 @@ import { CaseState, Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
-import CourtDateFilterOptions from "../../components/CourtDateFilter/CourtDateFilterOptions"
+import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 
 interface Props {
   defendantName: string | null
   courtName: string | null
-  reasonSearch: string | null
+  reasonCode: string | null
   ptiurn: string | null
-  courtCaseTypes: Reason[]
+  reasons: Reason[]
   dateRange: string | null
   customDateFrom: Date | null
   customDateTo: Date | null
@@ -71,10 +71,10 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.courtNameSearch.value = action.value
       newState.courtNameSearch.label = action.value
       newState.courtNameSearch.state = "Selected"
-    } else if (action.type === "reasonSearch") {
-      newState.reasonSearch.value = action.value
-      newState.reasonSearch.label = action.value
-      newState.reasonSearch.state = "Selected"
+    } else if (action.type === "reasonCode") {
+      newState.reasonCode.value = action.value
+      newState.reasonCode.label = action.value
+      newState.reasonCode.state = "Selected"
     } else if (action.type === "ptiurn") {
       newState.ptiurnSearch.value = action.value
       newState.ptiurnSearch.label = action.value
@@ -107,9 +107,9 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
     } else if (action.type === "courtName") {
       newState.courtNameSearch.value = ""
       newState.courtNameSearch.label = undefined
-    } else if (action.type === "reasonSearch") {
-      newState.reasonSearch.value = ""
-      newState.reasonSearch.label = undefined
+    } else if (action.type === "reasonCode") {
+      newState.reasonCode.value = ""
+      newState.reasonCode.label = undefined
     } else if (action.type === "ptiurn") {
       newState.ptiurnSearch.value = ""
       newState.ptiurnSearch.label = undefined
@@ -125,11 +125,11 @@ const useStyles = createUseStyles({
 })
 
 const CourtCaseFilter: React.FC<Props> = ({
-  courtCaseTypes,
+  reasons,
   defendantName,
   ptiurn,
   courtName,
-  reasonSearch,
+  reasonCode,
   dateRange,
   customDateFrom,
   customDateTo,
@@ -147,10 +147,10 @@ const CourtCaseFilter: React.FC<Props> = ({
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
     courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
-    reasonSearch: reasonSearch !== null ? { value: reasonSearch, state: "Applied", label: reasonSearch } : {},
+    reasonCode: reasonCode !== null ? { value: reasonCode, state: "Applied", label: reasonCode } : {},
     ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
-    reasonFilter: courtCaseTypes.map((courtCaseType) => {
-      return { value: courtCaseType, state: "Applied" }
+    reasonFilter: reasons.map((reason) => {
+      return { value: reason, state: "Applied" }
     }),
     myCasesFilter: myCases ? { value: true, state: "Applied", label: "Cases locked to me" } : {}
   }
@@ -212,16 +212,16 @@ const CourtCaseFilter: React.FC<Props> = ({
                   }}
                 />
               </label>
-              <label className="govuk-label govuk-label--s" htmlFor="reason-search">
-                <LabelText>{"Reason"}</LabelText>
+              <label className="govuk-label govuk-label--s" htmlFor="reason-code">
+                <LabelText>{"Reason code"}</LabelText>
                 <input
                   className="govuk-input"
-                  value={state.reasonSearch.value}
-                  id="reason-search"
-                  name="reasonSearch"
+                  value={state.reasonCode.value}
+                  id="reason-code"
+                  name="reasonCode"
                   type="text"
                   onChange={(event) => {
-                    dispatch({ method: "add", type: "reasonSearch", value: event.currentTarget.value })
+                    dispatch({ method: "add", type: "reasonCode", value: event.currentTarget.value })
                   }}
                 />
               </label>
@@ -242,9 +242,9 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Case type"}>
-              <CourtCaseTypeOptions
-                courtCaseTypes={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
+            <ExpandingFilters filterName={"Reason"}>
+              <ReasonFilterOptions
+                reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
                 dispatch={dispatch}
               />
             </ExpandingFilters>

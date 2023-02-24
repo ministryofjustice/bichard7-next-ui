@@ -12,7 +12,7 @@ export default {
 export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => (
   <div data-testid="filters">
     <CourtCaseFilter
-      courtCaseTypes={[]}
+      reasons={[]}
       dateRange={null}
       urgency={null}
       locked={null}
@@ -20,7 +20,7 @@ export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => 
       courtName={null}
       defendantName={null}
       ptiurn={null}
-      reasonSearch={null}
+      reasonCode={null}
       customDateFrom={null}
       customDateTo={null}
       myCases={false}
@@ -37,7 +37,7 @@ ShouldBeAccessible.play = async ({ canvasElement }) => {
 
 export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> = () => (
   <CourtCaseFilter
-    courtCaseTypes={["Exceptions"]}
+    reasons={["Exceptions"]}
     dateRange={"today"}
     urgency={"Urgent"}
     locked={"Locked"}
@@ -45,7 +45,7 @@ export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> 
     courtName={"City of London Magistrates' Court"}
     defendantName={"Wilma Flintstone"}
     ptiurn={"Case0000"}
-    reasonSearch={"HO200212"}
+    reasonCode={"HO200212"}
     customDateFrom={new Date()}
     customDateTo={new Date()}
     myCases={true}

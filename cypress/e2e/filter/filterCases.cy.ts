@@ -2,7 +2,7 @@ import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
-import { confirmFiltersAppliedContains } from "../../support/helpers"
+import { confirmFiltersAppliedContains, exactMatch } from "../../support/helpers"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 
 function visitBasePathAndShowFilters() {
@@ -11,12 +11,12 @@ function visitBasePathAndShowFilters() {
 }
 
 function collapseFilterSection(sectionToBeCollapsed: string, optionToBeCollapsed: string) {
-  cy.contains(sectionToBeCollapsed).parent().parent().parent().find("button").click()
+  cy.contains(exactMatch(sectionToBeCollapsed), { matchCase: true }).parent().parent().parent().find("button").click()
   cy.contains(optionToBeCollapsed).should("not.exist")
 }
 
 function expandFilterSection(sectionToBeExpanded: string, optionToBeExpanded: string) {
-  cy.contains(sectionToBeExpanded).parent().parent().parent().find("button").click()
+  cy.contains(exactMatch(sectionToBeExpanded), { matchCase: true }).parent().parent().parent().find("button").click()
   cy.contains(optionToBeExpanded).should("exist")
 }
 
@@ -100,13 +100,13 @@ describe("Case list", () => {
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
-    it("Should expand and collapse case type filter navigation", () => {
+    it("Should expand and collapse reason filter navigation", () => {
       visitBasePathAndShowFilters()
 
       cy.contains("Exceptions")
 
-      collapseFilterSection("Case type", "Exceptions")
-      expandFilterSection("Case type", "Exceptions")
+      collapseFilterSection("Reason", "Exceptions")
+      expandFilterSection("Reason", "Exceptions")
     })
 
     it("Should expand and collapse court date filter navigation", () => {
@@ -202,7 +202,7 @@ describe("Case list", () => {
       confirmMultipleFieldsDisplayed(["Case00001", "Case00002", "Case00003"])
     })
 
-    it("Should display cases filtered by reason", () => {
+    it("Should display cases filtered by reason code", () => {
       cy.task("insertCourtCasesWithFields", [
         { orgForPoliceFilter: "011111" },
         { orgForPoliceFilter: "011111" },
@@ -222,7 +222,7 @@ describe("Case list", () => {
 
       visitBasePathAndShowFilters()
 
-      inputAndSearch("reason-search", "TRPR0107")
+      inputAndSearch("reason-code", "TRPR0107")
       cy.contains("Case00000")
       confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
       cy.get("tr").should("have.length", 3)
@@ -231,7 +231,7 @@ describe("Case list", () => {
 
       cy.get("button[id=filter-button]").click()
 
-      inputAndSearch("reason-search", "HO200212")
+      inputAndSearch("reason-code", "HO200212")
       cy.contains("Case00001")
       confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002"])
       cy.get("tr").should("have.length", 2)
@@ -283,7 +283,7 @@ describe("Case list", () => {
       removeFilterTag("Case0000")
 
       cy.get("button[id=filter-button]").click()
-      inputAndSearch("reason-search", "HO200212")
+      inputAndSearch("reason-code", "HO200212")
       confirmMultipleFieldsNotDisplayed(["Bruce Gordon", "Bruce Pennyworth", "Alfred Pennyworth"])
       cy.get("tr").should("have.length", 2)
       confirmMultipleFieldsDisplayed(["Bruce Wayne"])
@@ -597,6 +597,40 @@ describe("Case list", () => {
       // Removing triggers filter tag
       removeFilterTag("Triggers")
       confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`, `Case00003`])
+    })
+
+    it("Should filter cases that has Bails", () => {
+      cy.task("insertCourtCasesWithFields", [
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" }
+      ])
+      const conditionalBailCode = "TRPR0010"
+      const conditionalBailTrigger: TestTrigger = {
+        triggerId: 0,
+        triggerCode: conditionalBailCode,
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+      cy.task("insertTriggers", { caseId: 0, triggers: [conditionalBailTrigger] })
+      cy.task("insertException", { caseId: 1, exceptionCode: "HO100206" })
+      cy.task("insertException", { caseId: 2, exceptionCode: "HO100206" })
+
+      cy.visit("/bichard")
+
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
+
+      cy.get("button[id=filter-button]").click()
+      cy.get('[id="bails-type"]').check()
+      cy.get("button[id=search]").click()
+
+      cy.get('*[class^="moj-filter-tags"]').contains("Bails")
+
+      confirmMultipleFieldsDisplayed(["Case00000"])
+      confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
+
+      removeFilterTag("Bails")
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
     })
 
     it("Should filter cases by urgency", () => {
