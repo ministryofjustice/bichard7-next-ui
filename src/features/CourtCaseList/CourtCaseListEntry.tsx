@@ -74,6 +74,8 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
   const mostRecentNote = notes.filter((note) => note.createdAt === mostRecentNoteDate)
   const validatedMostRecentNoteDate = new Date(mostRecentNoteDate.toString().slice(0, 10))
   const mostRecentNoteText = mostRecentNote[0].noteText
+  const first100CharsOfMostRecentNote =
+    mostRecentNoteText.length > 100 ? `${mostRecentNoteText.slice(0, 101)}...` : mostRecentNoteText
 
   const triggerRow =
     triggers.length > 0 ? (
@@ -164,7 +166,7 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
           <Table.Cell style={{ paddingTop: "0px" }} colSpan={2}>
             <NotePreview
               // TODO: put latestNote input into own variable & add elipsis logic
-              latestNote={mostRecentNoteText.slice(0, 100)}
+              latestNote={first100CharsOfMostRecentNote}
               displayDate={format(validatedMostRecentNoteDate, displayedDateFormat)}
               numberOfNotes={notes.length}
             />
