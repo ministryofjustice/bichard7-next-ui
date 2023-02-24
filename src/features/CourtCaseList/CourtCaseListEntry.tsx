@@ -155,7 +155,6 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
         </Table.Cell>
       </Table.Row>
       <If condition={!!showPreview}>
-        {/* TODO: remove in-line styles */}
         <Table.Row className={classes.notesRow}>
           <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
@@ -165,7 +164,7 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
           <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell style={{ paddingTop: "0px" }} colSpan={2}>
             <NotePreview
-              // TODO: put latestNote input into own variable & add elipsis logic
+              // TODO: add test for elispsis
               latestNote={first100CharsOfMostRecentNote}
               displayDate={format(validatedMostRecentNoteDate, displayedDateFormat)}
               numberOfNotes={notes.length}
