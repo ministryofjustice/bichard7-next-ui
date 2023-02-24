@@ -67,7 +67,8 @@ describe("Case list", () => {
 
     it("Should be accessible with conditional radio buttons opened", () => {
       visitBasePathAndShowFilters()
-      collapseFilterSection("Court date", "#date-range")
+      cy.contains("Court date").parent().parent().parent().find("button").click()
+      cy.get("#date-range").should("not.be.visible")
       expandFilterSection("Court date", "#date-range")
 
       cy.injectAxe()
