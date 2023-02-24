@@ -1,6 +1,5 @@
 import DateTime from "components/DateTime"
 import If from "components/If"
-import { format } from "date-fns"
 import { GridRow, Link, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
@@ -8,12 +7,12 @@ import { encode } from "querystring"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
-import Note from "services/entities/Note"
 import User from "services/entities/User"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { displayedDateFormat } from "utils/formattedDate"
+import { first100CharsOfMostRecentNote, validatedMostRecentNoteDate } from "./CourtCaseListEntryHelperFunction"
 import LockedByTag from "./tags/LockedByTag"
 import NotePreviewButton, { NotePreview } from "./tags/NotePreviewButton"
 import UrgentTag from "./tags/UrgentTag"
@@ -40,25 +39,6 @@ interface Props {
   currentUser: User
 }
 
-export const getMostRecentNote = (userNotes: Note[]) => {
-  console.log(userNotes)
-  const createdAtDatesForAllNotes = userNotes.map((note) => note.createdAt)
-  const mostRecentNoteDate = createdAtDatesForAllNotes.sort().slice(-1)[0]
-  const mostRecentNote = userNotes.filter((note) => note.createdAt === mostRecentNoteDate)
-
-  return mostRecentNote
-}
-
-export const first100CharsOfMostRecentNote = (userNotes: Note[]) => {
-  const mostRecentNoteText = getMostRecentNote(userNotes)[0].noteText
-  return mostRecentNoteText.length > 100 ? `${mostRecentNoteText.slice(0, 101)}...` : mostRecentNoteText
-}
-
-export const validatedMostRecentNoteDate = (mostRecentNote: Note[]) => {
-  const mostRecentNoteDate = mostRecentNote[0].createdAt
-  const formattedDate = format(new Date(mostRecentNoteDate.toString().slice(0, 10)), displayedDateFormat)
-  return formattedDate
-}
 const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) => {
   const {
     errorId,
@@ -75,7 +55,6 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
   } = courtCase
   const classes = useStyles()
   const { basePath, query } = useRouter()
-
   let searchParams = new URLSearchParams(encode(query))
   searchParams = deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
   const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
@@ -88,7 +67,7 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
   }
 
   const exceptions = groupErrorsFromReport(errorReport)
-
+  console.log(notes)
   const [showPreview, setShowPreview] = useState(false)
   // TODO: add filter for system notes
 
