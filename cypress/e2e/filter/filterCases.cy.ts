@@ -105,8 +105,8 @@ describe("Case list", () => {
 
       cy.contains("Exceptions")
 
-      collapseFilterSection("Case type", "#exceptions-type")
-      expandFilterSection("Case type", "#exceptions-type")
+      collapseFilterSection("Reason", "#exceptions-type")
+      expandFilterSection("Reason", "#exceptions-type")
     })
 
     it("Should expand and collapse court date filter navigation with the ratio conditional sections collapsed after the second expand", () => {
