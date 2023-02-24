@@ -1,10 +1,10 @@
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import { Tag } from "govuk-react"
 
 const UrgentTag: React.FC<{ isUrgent: boolean }> = (props: { isUrgent: boolean }) => (
-  <If condition={props.isUrgent}>
+  <ConditionalRender isRendered={props.isUrgent}>
     <Tag tint="RED">{"Urgent"}</Tag>
-  </If>
+  </ConditionalRender>
 )
 
 export default UrgentTag

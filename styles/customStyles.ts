@@ -28,5 +28,8 @@ export const useCustomStyles = createUseStyles({
     "&:link": {
       color: "white"
     }
+  },
+  hidden: {
+    display: "none"
   }
 })

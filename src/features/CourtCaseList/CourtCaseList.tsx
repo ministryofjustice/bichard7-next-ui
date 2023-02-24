@@ -1,5 +1,5 @@
 import DateTime from "components/DateTime"
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import ColumnOrderIcons from "features/CourtCaseFilters/ColumnOrderIcons"
 import { GridRow, Link, Paragraph, Table } from "govuk-react"
 import Image from "next/image"
@@ -130,9 +130,9 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
       tableBody.push(
         <Table.Row key={`case-details-row-${idx}`} className={classes.caseDetailsRow}>
           <Table.Cell>
-            <If condition={!!errorLockedByUsername}>
+            <ConditionalRender isRendered={!!errorLockedByUsername}>
               <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
-            </If>
+            </ConditionalRender>
           </Table.Cell>
           <Table.Cell>
             <Link href={caseDetailsPath(courtCases[idx].errorId)} id={`Case details for ${defendantName}`}>
@@ -177,9 +177,9 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
         tableBody.push(
           <Table.Row key={`triggers-row-${idx}`} className={classes.triggersRow}>
             <Table.Cell>
-              <If condition={!!triggerLockedByUsername}>
+              <ConditionalRender isRendered={!!triggerLockedByUsername}>
                 <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
-              </If>
+              </ConditionalRender>
             </Table.Cell>
             <Table.Cell />
             <Table.Cell />

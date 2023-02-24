@@ -12,12 +12,12 @@ function visitBasePathAndShowFilters() {
 
 function collapseFilterSection(sectionToBeCollapsed: string, optionToBeCollapsed: string) {
   cy.contains(exactMatch(sectionToBeCollapsed), { matchCase: true }).parent().parent().parent().find("button").click()
-  cy.contains(optionToBeCollapsed).should("not.exist")
+  cy.get(optionToBeCollapsed).should("not.exist")
 }
 
 function expandFilterSection(sectionToBeExpanded: string, optionToBeExpanded: string) {
   cy.contains(exactMatch(sectionToBeExpanded), { matchCase: true }).parent().parent().parent().find("button").click()
-  cy.contains(optionToBeExpanded).should("exist")
+  cy.get(optionToBeExpanded).should("exist")
 }
 
 function removeFilterTag(filterTag: string) {
@@ -67,8 +67,9 @@ describe("Case list", () => {
 
     it("Should be accessible with conditional radio buttons opened", () => {
       visitBasePathAndShowFilters()
-      collapseFilterSection("Court date", "Date range")
-      expandFilterSection("Court date", "Date range")
+      cy.contains("Court date").parent().parent().parent().find("button").click()
+      cy.get("#date-range").should("not.be.visible")
+      expandFilterSection("Court date", "#date-range")
 
       cy.injectAxe()
 
@@ -105,17 +106,64 @@ describe("Case list", () => {
 
       cy.contains("Exceptions")
 
-      collapseFilterSection("Reason", "Exceptions")
-      expandFilterSection("Reason", "Exceptions")
+      collapseFilterSection("Reason", "#exceptions-type")
+      expandFilterSection("Reason", "#exceptions-type")
     })
 
-    it("Should expand and collapse court date filter navigation", () => {
+    it("Should expand and collapse court date filter navigation with the ratio conditional sections collapsed after the second expand", () => {
       visitBasePathAndShowFilters()
 
       cy.contains("Date range")
 
-      collapseFilterSection("Court date", "Date range")
-      expandFilterSection("Court date", "Date range")
+      cy.contains("Court date").parent().parent().parent().find("button").click()
+      cy.get("#date-range").should("not.be.visible")
+      expandFilterSection("Court date", "#date-range")
+
+      // Custom date range & date range are collapsed
+      cy.get("#date-from").should("not.be.visible")
+      cy.get("#date-range-yesterday").should("not.be.visible")
+      // Opening custom date range collapses date range & opens custom date range
+      cy.get("#custom-date-range").click()
+      cy.get("#date-from").should("be.visible")
+      cy.get("#date-range-yesterday").should("not.be.visible")
+    })
+
+    it("Should remove the selection of the date range when it's been changed to the custom date range", () => {
+      visitBasePathAndShowFilters()
+      cy.get("#date-range").click()
+      cy.get("#date-range-yesterday").click()
+      cy.get("#date-range-yesterday").should("be.checked")
+      cy.get("#custom-date-range").click()
+      cy.get("#date-range").click()
+      cy.get("#date-range-yesterday").should("not.be.checked")
+    })
+
+    it("Should remove the selection of the custom date range when it's been changed to the date range", () => {
+      visitBasePathAndShowFilters()
+      cy.get("#custom-date-range").click()
+      cy.get("#date-from").type("2022-01-01")
+      cy.get("#date-to").type("2022-12-31")
+      cy.get("#custom-date-range").should("be.checked")
+      cy.get("#date-range").click()
+      cy.get("#date-range-yesterday").click()
+      cy.get("#date-range").should("be.checked")
+      cy.get("#date-range-yesterday").should("be.checked")
+    })
+
+    it("Should only have the checked attribute for the selected date range ratio button", () => {
+      visitBasePathAndShowFilters()
+      // no selection, nothing is checked
+      cy.get("#date-range").should("not.be.checked")
+      cy.get("#custom-date-range").should("not.be.checked")
+      // #date-range-yesterday selected, #date-range is checked
+      cy.get("#date-range").click()
+      cy.get("#date-range-yesterday").click()
+      cy.get("#date-range").should("be.checked")
+      cy.get("#custom-date-range").should("not.be.checked")
+      // #custom-date-range, ##custom-date-range is checked
+      cy.get("#custom-date-range").click()
+      cy.get("#date-range").should("not.be.checked")
+      cy.get("#custom-date-range").should("be.checked")
     })
 
     it("Should expand and collapse urgency filter navigation", () => {
@@ -123,8 +171,8 @@ describe("Case list", () => {
 
       cy.contains("Urgent cases only")
 
-      collapseFilterSection("Urgency", "Urgent cases only")
-      expandFilterSection("Urgency", "Urgent cases only")
+      collapseFilterSection("Urgency", "#urgent")
+      expandFilterSection("Urgency", "#urgent")
     })
 
     it("Should expand and collapse locked state filter navigation", () => {
@@ -132,8 +180,8 @@ describe("Case list", () => {
 
       cy.contains("Locked cases only")
 
-      collapseFilterSection("Locked state", "Locked cases only")
-      expandFilterSection("Locked state", "Locked cases only")
+      collapseFilterSection("Locked state", "#locked")
+      expandFilterSection("Locked state", "#locked")
     })
 
     it("Should expand and collapse case state filter navigation", () => {
@@ -141,8 +189,8 @@ describe("Case list", () => {
 
       cy.contains("Unresolved & resolved cases")
 
-      collapseFilterSection("Case state", "Unresolved & resolved cases")
-      expandFilterSection("Case state", "Unresolved & resolved cases")
+      collapseFilterSection("Case state", "#unresolved-and-resolved")
+      expandFilterSection("Case state", "#unresolved-and-resolved")
     })
 
     it("Should display cases filtered by defendant name", () => {

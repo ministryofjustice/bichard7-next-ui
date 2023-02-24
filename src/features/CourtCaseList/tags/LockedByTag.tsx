@@ -1,4 +1,4 @@
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import { Tag } from "govuk-react"
 import Image from "next/image"
 import { createUseStyles } from "react-jss"
@@ -47,7 +47,7 @@ const LockedByTag: React.FC<{ lockedBy?: string | null; unlockPath?: string }> =
 }) => {
   const classes = useStyles()
   return (
-    <If condition={!!props.lockedBy}>
+    <ConditionalRender isRendered={!!props.lockedBy}>
       <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag ${classes.LockedByTag}`}>
         <div className={classes.LockedByTag}>
           <Image
@@ -66,7 +66,7 @@ const LockedByTag: React.FC<{ lockedBy?: string | null; unlockPath?: string }> =
           )}
         </div>
       </Tag>
-    </If>
+    </ConditionalRender>
   )
 }
 

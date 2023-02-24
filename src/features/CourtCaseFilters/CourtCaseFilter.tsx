@@ -257,12 +257,12 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Court date"}>
+            <ExpandingFilters filterName={"Court date"} hideChildren={true}>
               <CourtDateFilterOptions
                 dateRange={state.dateFilter.value}
                 dispatch={dispatch}
-                customDateFrom={customDateFrom}
-                customDateTo={customDateTo}
+                customDateFrom={state.customDateFrom.value ?? null}
+                customDateTo={state.customDateTo.value ?? null}
               />
             </ExpandingFilters>
           </div>
