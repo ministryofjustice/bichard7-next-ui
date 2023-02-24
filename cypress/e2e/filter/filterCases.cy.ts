@@ -176,8 +176,8 @@ describe("Case list", () => {
 
       cy.contains("Unresolved & resolved cases")
 
-      collapseFilterSection("Case state", "Unresolved & resolved cases")
-      expandFilterSection("Case state", "Unresolved & resolved cases")
+      collapseFilterSection("Case state", "#unresolved-and-resolved")
+      expandFilterSection("Case state", "#unresolved-and-resolved")
     })
 
     it("Should display cases filtered by defendant name", () => {
