@@ -39,6 +39,26 @@ interface Props {
   courtCase: CourtCase
   currentUser: User
 }
+
+export const getMostRecentNote = (userNotes: Note[]) => {
+  console.log(userNotes)
+  const createdAtDatesForAllNotes = userNotes.map((note) => note.createdAt)
+  const mostRecentNoteDate = createdAtDatesForAllNotes.sort().slice(-1)[0]
+  const mostRecentNote = userNotes.filter((note) => note.createdAt === mostRecentNoteDate)
+
+  return mostRecentNote
+}
+
+export const first100CharsOfMostRecentNote = (userNotes: Note[]) => {
+  const mostRecentNoteText = getMostRecentNote(userNotes)[0].noteText
+  return mostRecentNoteText.length > 100 ? `${mostRecentNoteText.slice(0, 101)}...` : mostRecentNoteText
+}
+
+export const validatedMostRecentNoteDate = (mostRecentNote: Note[]) => {
+  const mostRecentNoteDate = mostRecentNote[0].createdAt
+  const formattedDate = format(new Date(mostRecentNoteDate.toString().slice(0, 10)), displayedDateFormat)
+  return formattedDate
+}
 const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) => {
   const {
     errorId,
@@ -71,24 +91,6 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
 
   const [showPreview, setShowPreview] = useState(false)
   // TODO: add filter for system notes
-  const getMostRecentNote = (userNotes: Note[]) => {
-    const createdAtDatesForAllNotes = userNotes.map((note) => note.createdAt)
-    const mostRecentNoteDate = createdAtDatesForAllNotes.sort().slice(-1)[0]
-    const mostRecentNote = userNotes.filter((note) => note.createdAt === mostRecentNoteDate)
-
-    return mostRecentNote
-  }
-
-  const first100CharsOfMostRecentNote = (userNotes: Note[]) => {
-    const mostRecentNoteText = getMostRecentNote(userNotes)[0].noteText
-    return mostRecentNoteText.length > 100 ? `${mostRecentNoteText.slice(0, 101)}...` : mostRecentNoteText
-  }
-
-  const validatedMostRecentNoteDate = (mostRecentNote: Note[]) => {
-    const mostRecentNoteDate = mostRecentNote[0].createdAt
-    const formattedDate = format(new Date(mostRecentNoteDate.toString().slice(0, 10)), displayedDateFormat)
-    return formattedDate
-  }
 
   const triggerRow =
     triggers.length > 0 ? (
