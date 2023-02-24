@@ -1,12 +1,12 @@
 import MockDate from "mockdate"
+import insertNotes from "services/insertNotes"
+import { isError } from "services/mq/types/Result"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
+import Note from "../../src/services/entities/Note"
 import getDataSource from "../../src/services/getDataSource"
 import deleteFromTable from "../utils/deleteFromTable"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import Note from "../../src/services/entities/Note"
-import insertNotes from "services/insertNotes"
-import { isError } from "services/mq/types/Result"
 const courtCaseId = 0
 
 const insertRecords = async (
@@ -46,12 +46,9 @@ describe("insertNote", () => {
     await dataSource.destroy()
   })
 
-//  
-// when there is 1 note
-// when there is many notes
-
-
-
+  // when there are no notes
+  // when there is 1 note - note added
+  // when there is many notes - most recent note added
 
   it("should grab the most recent create note text", async () => {
     const note = {

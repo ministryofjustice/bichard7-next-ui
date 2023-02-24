@@ -8,6 +8,7 @@ import { encode } from "querystring"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
+import Note from "services/entities/Note"
 import User from "services/entities/User"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
@@ -69,13 +70,25 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
   const exceptions = groupErrorsFromReport(errorReport)
 
   const [showPreview, setShowPreview] = useState(false)
-  const createdAtDatesForAllNotes = notes.map((note) => note.createdAt)
-  const mostRecentNoteDate = createdAtDatesForAllNotes.sort().slice(-1)[0]
-  const mostRecentNote = notes.filter((note) => note.createdAt === mostRecentNoteDate)
-  const validatedMostRecentNoteDate = new Date(mostRecentNoteDate.toString().slice(0, 10))
-  const mostRecentNoteText = mostRecentNote[0].noteText
-  const first100CharsOfMostRecentNote =
-    mostRecentNoteText.length > 100 ? `${mostRecentNoteText.slice(0, 101)}...` : mostRecentNoteText
+  // TODO: add filter for system notes
+  const getMostRecentNote = (userNotes: Note[]) => {
+    const createdAtDatesForAllNotes = userNotes.map((note) => note.createdAt)
+    const mostRecentNoteDate = createdAtDatesForAllNotes.sort().slice(-1)[0]
+    const mostRecentNote = userNotes.filter((note) => note.createdAt === mostRecentNoteDate)
+
+    return mostRecentNote
+  }
+
+  const first100CharsOfMostRecentNote = (userNotes: Note[]) => {
+    const mostRecentNoteText = getMostRecentNote(userNotes)[0].noteText
+    return mostRecentNoteText.length > 100 ? `${mostRecentNoteText.slice(0, 101)}...` : mostRecentNoteText
+  }
+
+  const validatedMostRecentNoteDate = (mostRecentNote: Note[]) => {
+    const mostRecentNoteDate = mostRecentNote[0].createdAt
+    const formattedDate = format(new Date(mostRecentNoteDate.toString().slice(0, 10)), displayedDateFormat)
+    return formattedDate
+  }
 
   const triggerRow =
     triggers.length > 0 ? (
@@ -164,9 +177,8 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
           <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell style={{ paddingTop: "0px" }} colSpan={2}>
             <NotePreview
-              // TODO: add test for elispsis
-              latestNote={first100CharsOfMostRecentNote}
-              displayDate={format(validatedMostRecentNoteDate, displayedDateFormat)}
+              latestNote={first100CharsOfMostRecentNote(notes)}
+              displayDate={validatedMostRecentNoteDate(notes)}
               numberOfNotes={notes.length}
             />
           </Table.Cell>
