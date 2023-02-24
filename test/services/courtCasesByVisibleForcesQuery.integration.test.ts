@@ -2,9 +2,9 @@ import CourtCase from "services/entities/CourtCase"
 import getDataSource from "services/getDataSource"
 import { DataSource, Repository, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
 import { isError } from "types/Result"
-import deleteFromTable from "../../../test/utils/deleteFromTable"
-import { insertCourtCasesWithFields } from "../../../test/utils/insertCourtCases"
-import courtCasesByVisibleForcesQuery from "./courtCasesByVisibleForcesQuery"
+import deleteFromTable from "../utils/deleteFromTable"
+import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
+import courtCasesByVisibleForcesQuery from "../../src/services/queries/courtCasesByVisibleForcesQuery"
 
 const orgCodes = ["36", "36F", "36FP", "36FPA", "36FPA1", "36FQ", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC"]
 
