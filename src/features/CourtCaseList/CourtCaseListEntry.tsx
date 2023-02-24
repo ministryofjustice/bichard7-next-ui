@@ -38,7 +38,6 @@ interface Props {
   courtCase: CourtCase
   currentUser: User
 }
-// TODO- compare against old courtCaseList file and reorder helper functions
 const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) => {
   const {
     errorId,
@@ -55,26 +54,27 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
   } = courtCase
   const classes = useStyles()
   const { basePath, query } = useRouter()
-  const [showPreview, setShowPreview] = useState(false)
 
-  const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
-  const exceptions = groupErrorsFromReport(errorReport)
-  const canUnlockCase = (lockedUsername: string): boolean => {
-    return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
-  }
   let searchParams = new URLSearchParams(encode(query))
   searchParams = deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
-
+  const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
   const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
     searchParams.append(`unlock${reason}`, caseId)
     return `${basePath}/?${searchParams}`
   }
+  const canUnlockCase = (lockedUsername: string): boolean => {
+    return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
+  }
+
+  const exceptions = groupErrorsFromReport(errorReport)
+
+  const [showPreview, setShowPreview] = useState(false)
   const createdAtDatesForAllNotes = notes.map((note) => note.createdAt)
   const mostRecentNoteDate = createdAtDatesForAllNotes.sort().slice(-1)[0]
   const mostRecentNote = notes.filter((note) => note.createdAt === mostRecentNoteDate)
-
   const validatedMostRecentNoteDate = new Date(mostRecentNoteDate.toString().slice(0, 10))
   const mostRecentNoteText = mostRecentNote[0].noteText
+
   const triggerRow =
     triggers.length > 0 ? (
       <Table.Row className={classes.triggersRow}>
