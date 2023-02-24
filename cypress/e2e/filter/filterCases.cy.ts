@@ -12,12 +12,12 @@ function visitBasePathAndShowFilters() {
 
 function collapseFilterSection(sectionToBeCollapsed: string, optionToBeCollapsed: string) {
   cy.contains(exactMatch(sectionToBeCollapsed), { matchCase: true }).parent().parent().parent().find("button").click()
-  cy.contains(optionToBeCollapsed).should("not.exist")
+  cy.get(optionToBeCollapsed).should("not.exist")
 }
 
 function expandFilterSection(sectionToBeExpanded: string, optionToBeExpanded: string) {
   cy.contains(exactMatch(sectionToBeExpanded), { matchCase: true }).parent().parent().parent().find("button").click()
-  cy.contains(optionToBeExpanded).should("exist")
+  cy.get(optionToBeExpanded).should("exist")
 }
 
 function removeFilterTag(filterTag: string) {
