@@ -138,6 +138,18 @@ describe("Case list", () => {
       cy.get("#date-range-yesterday").should("not.be.checked")
     })
 
+    it.only("Should remove the selection of the custom date range when it's been changed to the date range", () => {
+      visitBasePathAndShowFilters()
+      cy.get("#custom-date-range").click()
+      cy.get("#date-from").type("2022-01-01")
+      cy.get("#date-to").type("2022-12-31")
+      cy.get("#custom-date-range").should("be.checked")
+      cy.get("#date-range").click()
+      cy.get("#date-range-yesterday").click()
+      cy.get("#date-range").should("be.checked")
+      cy.get("#date-range-yesterday").should("be.checked")
+    })
+
     it("Should only have the checked attribute for the selected date range ratio button", () => {
       visitBasePathAndShowFilters()
       // no selection, nothing is checked
