@@ -138,7 +138,7 @@ describe("Case list", () => {
       cy.get("#date-range-yesterday").should("not.be.checked")
     })
 
-    it.only("Should remove the selection of the custom date range when it's been changed to the date range", () => {
+    it("Should remove the selection of the custom date range when it's been changed to the date range", () => {
       visitBasePathAndShowFilters()
       cy.get("#custom-date-range").click()
       cy.get("#date-from").type("2022-01-01")
