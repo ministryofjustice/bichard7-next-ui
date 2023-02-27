@@ -9,7 +9,7 @@ export type FilterAction =
   | { method: FilterMethod; type: "date"; value: string }
   | { method: "add"; type: "customDateFrom"; value: Date }
   | { method: "add"; type: "customDateTo"; value: Date }
-  | { method: "remove"; type: "customDate"; value: Date }
+  | { method: "remove"; type: "customDate"; value: string }
   | { method: FilterMethod; type: "locked"; value: boolean }
   | { method: FilterMethod; type: "reason"; value: Reason }
   | { method: FilterMethod; type: "caseState"; value: CaseState }
