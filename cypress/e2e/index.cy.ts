@@ -233,7 +233,7 @@ describe("Case list", () => {
         cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
       })
 
-      it("Should display the correct number of user-created notes on cases", () => {
+      it.only("Should display the correct number of user-created notes on cases", () => {
         const caseNotes: { user: string; text: string }[][] = [
           [
             {
@@ -724,7 +724,6 @@ describe("Case list", () => {
 })
 describe("Note Preview in case list table", () => {
   describe("when there are no user notes to display", () => {
-    it.only("should not display any note preview when there are no user created notes", () => {})
     it.only("should not display any note preview even when there are system notes", () => {})
   })
   describe("when there are user notes to display", () => {

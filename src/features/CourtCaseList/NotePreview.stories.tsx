@@ -3,7 +3,7 @@
 // import { within } from "@storybook/testing-library"
 // import Note from "services/entities/Note"
 
-import NotePreviewButton from "./NotePreviewButton"
+import { NotePreviewButton } from "./NotePreviewButton"
 console.log(NotePreviewButton)
 
 // import NotePreview from "./NotePreview"
