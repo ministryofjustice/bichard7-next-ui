@@ -108,6 +108,21 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").contains("Last week").should("not.exist")
         cy.get(".moj-filter__tag").contains("This month").should("not.exist")
       })
+
+      it.only("Should remove the date range filter chip when custom date range is selected", () => {
+        cy.get("#filter-button").click()
+        cy.get("#date-range").click()
+        cy.get("#date-range-today").click()
+
+        cy.get("#custom-date-range").click()
+        cy.get("#date-from").click().type("2022-01-01")
+        cy.get("#date-to").click().type("2022-12-31")
+
+        cy.get(".govuk-heading-s").contains("Date range").should("not.exist")
+        cy.get(".moj-filter__tag").contains("Today").should("not.exist")
+        cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+        cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
+      })
     })
 
     describe("Custom Date range", () => {
@@ -123,6 +138,24 @@ describe("Case list", () => {
 
         cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
         confirmFiltersAppliedContains("01/01/2022 - 31/12/2022")
+      })
+
+      it.only("Should remove custom date range filter chip when custom date filter is selected", () => {
+        cy.get("button#filter-button").click()
+        cy.get("#custom-date-range").click()
+        cy.get("#date-from").click().type("2022-01-01")
+        cy.get("#date-to").click().type("2022-12-31")
+        cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
+        cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+        cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
+
+        cy.get("#date-range").click()
+        cy.get("#date-range-today").click()
+
+        cy.get(".govuk-heading-s").contains("Custom date range").should("not.exist")
+        cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("not.exist")
+        cy.get(".govuk-heading-s").contains("Date range").should("exist")
+        cy.get(".moj-filter__tag").contains("Today").should("exist")
       })
 
       it.skip("Should apply the 'Custom date filter' filter chips then remove this chips to the original state", () => {
