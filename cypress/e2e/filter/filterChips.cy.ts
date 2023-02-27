@@ -11,6 +11,12 @@ export function filterByDateRange(dateRangeId: string) {
   cy.get(dateRangeId).click()
 }
 
+function filterByCustomDateRange(dateFrom: string, dateTo: string) {
+  cy.get("#custom-date-range").click()
+  cy.get("#date-from").click().type(dateFrom)
+  cy.get("#date-to").click().type(dateTo)
+}
+
 describe("Case list", () => {
   context("When filters applied", () => {
     before(() => {
@@ -117,9 +123,7 @@ describe("Case list", () => {
         cy.get("#filter-button").click()
         filterByDateRange("#date-range-today")
 
-        cy.get("#custom-date-range").click()
-        cy.get("#date-from").click().type("2022-01-01")
-        cy.get("#date-to").click().type("2022-12-31")
+        filterByCustomDateRange("2022-01-01", "2022-12-31")
 
         cy.get(".govuk-heading-s").contains("Date range").should("not.exist")
         cy.get(".moj-filter__tag").contains("Today").should("not.exist")
@@ -131,9 +135,7 @@ describe("Case list", () => {
     describe("Custom Date range", () => {
       it("Should allow you to add custom date range filter chip", () => {
         cy.get("button#filter-button").click()
-        cy.get("#custom-date-range").click()
-        cy.get("#date-from").click().type("2022-01-01")
-        cy.get("#date-to").click().type("2022-12-31")
+        filterByCustomDateRange("2022-01-01", "2022-12-31")
         cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
         cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
@@ -145,9 +147,7 @@ describe("Case list", () => {
 
       it("Should remove custom date range filter chip when custom date filter is selected", () => {
         cy.get("button#filter-button").click()
-        cy.get("#custom-date-range").click()
-        cy.get("#date-from").click().type("2022-01-01")
-        cy.get("#date-to").click().type("2022-12-31")
+        filterByCustomDateRange("2022-01-01", "2022-12-31")
         cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
         cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
