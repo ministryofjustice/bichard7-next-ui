@@ -6,7 +6,7 @@ export function removeFilterChip() {
   cy.get(".moj-filter__tag").should("not.exist")
 }
 
-function filterByDateRange(dateRangeId: string) {
+export function filterByDateRange(dateRangeId: string) {
   cy.get("#date-range").click()
   cy.get(dateRangeId).click()
 }
