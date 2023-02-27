@@ -6,6 +6,11 @@ export function removeFilterChip() {
   cy.get(".moj-filter__tag").should("not.exist")
 }
 
+function filterByDateRange(dateRangeId: string) {
+  cy.get("#date-range").click()
+  cy.get(dateRangeId).click()
+}
+
 describe("Case list", () => {
   context("When filters applied", () => {
     before(() => {
@@ -97,8 +102,7 @@ describe("Case list", () => {
       it("Should allow you to add 'today' as the date range filter chip", () => {
         // Shows filters and clicks date range followed by today's date
         cy.get("#filter-button").click()
-        cy.get("#date-range").click()
-        cy.get("#date-range-today").click()
+        filterByDateRange("#date-range-today")
 
         // Shows the correct heading 'Today' and checks that the others are not visible
         cy.get(".govuk-heading-s").contains("Date range").should("exist")
@@ -111,8 +115,7 @@ describe("Case list", () => {
 
       it("Should remove the date range filter chip when custom date range is selected", () => {
         cy.get("#filter-button").click()
-        cy.get("#date-range").click()
-        cy.get("#date-range-today").click()
+        filterByDateRange("#date-range-today")
 
         cy.get("#custom-date-range").click()
         cy.get("#date-from").click().type("2022-01-01")
@@ -149,8 +152,7 @@ describe("Case list", () => {
         cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
 
-        cy.get("#date-range").click()
-        cy.get("#date-range-today").click()
+        filterByDateRange("#date-range-today")
 
         cy.get(".govuk-heading-s").contains("Custom date range").should("not.exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("not.exist")
@@ -297,8 +299,8 @@ describe("Case list", () => {
         // Open filters and build filter chip query
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
-        cy.get("#date-range").click()
-        cy.get("#date-range-last-week").click()
+
+        filterByDateRange("#date-range-last-week")
         cy.get("#non-urgent").click()
 
         // Check that relevant chips and headers are present on screen
