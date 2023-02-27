@@ -6,6 +6,7 @@ import type { FilterAction } from "types/CourtCaseFilter"
 import type { Dispatch } from "react"
 import DateInput from "components/CustomDateInput/DateInput"
 import { displayedDateFormat } from "utils/formattedDate"
+import getCustomDateRangeLabel from "utils/getCustomDateRangeLabel"
 
 interface Props {
   dateRange?: string | null
@@ -37,10 +38,6 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
     return ""
   }
 
-  const customDateRangeLabel = hasCustomDateRange
-    ? `${format(customDateFrom, displayedDateFormat)} - ${format(customDateTo, displayedDateFormat)}`
-    : ""
-
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
@@ -62,7 +59,11 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
                 value={namedDateRange}
                 label={labelForDateRange(namedDateRange)}
                 onChange={(event) => {
-                  dispatch({ method: "remove", type: "customDate", value: customDateRangeLabel })
+                  dispatch({
+                    method: "remove",
+                    type: "customDate",
+                    value: getCustomDateRangeLabel(customDateFrom, customDateTo)
+                  })
                   dispatch({ method: "add", type: "date", value: event.target.value })
                 }}
               />

@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import FilterChip from "components/FilterChip"
 import ConditionalRender from "components/ConditionalRender"
-import { format } from "date-fns"
 import { Dispatch } from "react"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
-import { displayedDateFormat } from "utils/formattedDate"
 import FilterChipRow from "./FilterChipRow"
+import getCustomDateRangeLabel from "utils/getCustomDateRangeLabel"
 
 interface Props {
   state: Filter
@@ -23,13 +22,7 @@ const FilterChipSection: React.FC<Props> = ({
   marginTop,
   placeholderMessage
 }: Props) => {
-  const customDateRangeLabel =
-    !!state.customDateFrom.value && !!state.customDateTo.value
-      ? `${format(state.customDateFrom.value, displayedDateFormat)} - ${format(
-          state.customDateTo.value,
-          displayedDateFormat
-        )}`
-      : ""
+  const customDateRangeLabel = getCustomDateRangeLabel(state.customDateFrom.value, state.customDateTo.value)
   return (
     <>
       <ConditionalRender isRendered={anyFilterChips(state, sectionState)}>
