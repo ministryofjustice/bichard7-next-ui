@@ -73,6 +73,9 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
   const exceptions = groupErrorsFromReport(errorReport)
   console.log(notes)
   const [showPreview, setShowPreview] = useState(false)
+  const userNotes = filterUserNotes(notes)
+  const numberOfNotes = filterUserNotes(notes).length
+
   // TODO: add filter for system notes
 
   const triggerRow =
@@ -131,7 +134,7 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
           <UrgentTag isUrgent={isUrgent} />
         </Table.Cell>
         <Table.Cell>
-          <NotePreviewButton previewState={showPreview} setShowPreview={setShowPreview} numberOfNotes={notes.length} />
+          <NotePreviewButton previewState={showPreview} setShowPreview={setShowPreview} numberOfNotes={numberOfNotes} />
         </Table.Cell>
         <Table.Cell>
           {Object.keys(exceptions).map((code, codeId) => (
@@ -162,9 +165,9 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
           <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell style={{ paddingTop: "0px" }} colSpan={2}>
             <NotePreview
-              latestNote={first100CharsOfMostRecentNote(notes)}
-              displayDate={validatedMostRecentNoteDate(notes)}
-              numberOfNotes={filterUserNotes(notes)}
+              latestNote={first100CharsOfMostRecentNote(userNotes)}
+              displayDate={validatedMostRecentNoteDate(userNotes)}
+              numberOfNotes={numberOfNotes}
             />
           </Table.Cell>
           <Table.Cell></Table.Cell>

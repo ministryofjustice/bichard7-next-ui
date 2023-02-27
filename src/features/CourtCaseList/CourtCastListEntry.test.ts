@@ -7,7 +7,7 @@ import {
 } from "./CourtCaseListEntryHelperFunction"
 
 describe("number of notes", () => {
-  it.only("should filter out all the system notes and only show user entered notes", () => {
+  it("should filter out all the system notes and only show user entered notes", () => {
     const caseNote = [
       {
         noteId: 1001,
@@ -31,7 +31,7 @@ describe("number of notes", () => {
         createdAt: "2020-01-01T12:00:00.000Z"
       }
     ] as unknown as Note[]
-    const result = filterUserNotes(caseNote)
+    const result = filterUserNotes(caseNote).length
     expect(result).toEqual(2)
   })
 })
@@ -121,7 +121,7 @@ describe("getMostRecentNote Test", () => {
     expect(recentNote[0].noteText).toBe("Latest note")
   })
 
-  it.only("should return the correct `createdAt` date associated with the most recent note", () => {
+  it("should return the correct `createdAt` date associated with the most recent note", () => {
     const caseNote = [
       {
         noteId: 1001,
