@@ -71,12 +71,9 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
   }
 
   const exceptions = groupErrorsFromReport(errorReport)
-  console.log(notes)
   const [showPreview, setShowPreview] = useState(false)
   const userNotes = filterUserNotes(notes)
   const numberOfNotes = filterUserNotes(notes).length
-
-  // TODO: add filter for system notes
 
   const triggerRow =
     triggers.length > 0 ? (
