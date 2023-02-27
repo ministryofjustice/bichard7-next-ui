@@ -37,6 +37,10 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
     return ""
   }
 
+  const customDateRangeLabel = hasCustomDateRange
+    ? `${format(customDateFrom, displayedDateFormat)} - ${format(customDateTo, displayedDateFormat)}`
+    : ""
+
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
@@ -57,7 +61,10 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
                 checked={dateRange === namedDateRange}
                 value={namedDateRange}
                 label={labelForDateRange(namedDateRange)}
-                onChange={(event) => dispatch({ method: "add", type: "date", value: event.target.value })}
+                onChange={(event) => {
+                  dispatch({ method: "remove", type: "customDate", value: customDateRangeLabel })
+                  dispatch({ method: "add", type: "date", value: event.target.value })
+                }}
               />
             ))}
           </div>
