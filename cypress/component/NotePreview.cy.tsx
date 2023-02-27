@@ -1,31 +1,15 @@
 /* eslint-disable cypress/no-async-tests */
-import { PreviewNotes } from "../../src/features/CourtCaseList/tags/NotePreview"
-import { DefaultUpChevron } from "../../src/components/icons/NotePreviewChevron"
-describe("default chevrons", () => {
+import { HideButton, PreviewButton } from "../../src/features/CourtCaseList/NotePreviewButton"
+describe("chevron icons check", () => {
   it("shows the default down chevron with the label 'preview'", () => {
-    cy.mount(<DefaultUpChevron />)
-    cy.get(".defaultUpChevron").should("exist")
-  })
-  it("shows the default down chevron with the label 'preview'", () => {
-    cy.mount(<PreviewNotes />)
-    cy.get(".defaultUpChevron").should("exist")
+    cy.mount(<PreviewButton />)
+    cy.get(".govuk-accordion-nav__chevron--down").should("exist")
   })
 
-  //   it("shows the default up chevron with the label 'hide", () => {
-  //     cy.mount(<NotePreview notes={[]} />)
-  //     cy.get(".defaultDownChevron").should("exist")
-  //   })
-  // })
-  // describe("hover chevrons", () => {
-  //   it("shows the hover down chevron with the label 'preview", () => {
-  //     cy.mount(<NotePreview notes={[]} />)
-  //     cy.get(".hoverDownChevron").should("exist")
-  //   })
-  //   it("shows the hover up chevron with the label 'hide", () => {
-  //     cy.mount(<NotePreview notes={[]} />)
-  //     cy.get(".hoverUpChevron").should("exist")
-  //   })
-  // })
+  it("shows the default up chevron with the label 'hide'", () => {
+    cy.mount(<HideButton />)
+    cy.get(".govuk-accordion-nav__chevron").should("exist")
+  })
 
   // describe("active chevrons", () => {
   //   it("shows the active down chevron with the label 'preview", () => {

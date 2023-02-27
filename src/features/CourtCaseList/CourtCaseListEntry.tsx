@@ -18,7 +18,7 @@ import {
   validatedMostRecentNoteDate
 } from "./CourtCaseListEntryHelperFunction"
 import LockedByTag from "./tags/LockedByTag"
-import NotePreviewButton, { NotePreview } from "./tags/NotePreviewButton"
+import { NotePreviewButton, NotePreview } from "./NotePreviewButton"
 import UrgentTag from "./tags/UrgentTag"
 
 const useStyles = createUseStyles({
