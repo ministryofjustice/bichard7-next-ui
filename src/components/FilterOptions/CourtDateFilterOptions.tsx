@@ -11,8 +11,8 @@ import getCustomDateRangeLabel from "utils/getCustomDateRangeLabel"
 interface Props {
   dateRange?: string | null
   dispatch: Dispatch<FilterAction>
-  customDateFrom: Date | null
-  customDateTo: Date | null
+  customDateFrom: Date | undefined
+  customDateTo: Date | undefined
 }
 
 const formatNamedDateRange = (namedDateRange: string): string => {
