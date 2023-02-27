@@ -13,7 +13,7 @@ export const getMostRecentNote = (userNotes: Note[]) => {
 
 export const first100CharsOfMostRecentNote = (userNotes: Note[]) => {
   const mostRecentNoteText = getMostRecentNote(userNotes)[0].noteText
-  return mostRecentNoteText.length > 100 ? `${mostRecentNoteText.slice(0, 101)}...` : mostRecentNoteText
+  return mostRecentNoteText.length > 100 ? `${mostRecentNoteText.slice(0, 100)}...` : mostRecentNoteText
 }
 
 export const validatedMostRecentNoteDate = (mostRecentNote: Note[]) => {

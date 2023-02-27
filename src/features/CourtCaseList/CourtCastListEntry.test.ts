@@ -88,8 +88,8 @@ describe("parsing note text", () => {
     expect(result).toContain(sampleNoteTextWith100Chars)
   })
   it.only("should truncate the text when it is greater than 100 characters", () => {
-    const sampleNoteTextMoreThan100Chars = "a".repeat(101)
-    const expectedResult = `${"a".repeat(101)}...`
+    const sampleNoteTextMoreThan100Chars = "a".repeat(150)
+    const expectedResult = `${"a".repeat(100)}...`
     const caseNote = [
       {
         noteId: 1255,
@@ -102,5 +102,6 @@ describe("parsing note text", () => {
     const result = first100CharsOfMostRecentNote(caseNote)
     expect(result).toStrictEqual(expectedResult)
     expect(result).toContain("...")
+    expect(result.length).toEqual(103)
   })
 })
