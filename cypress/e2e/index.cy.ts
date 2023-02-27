@@ -233,7 +233,7 @@ describe("Case list", () => {
         cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
       })
 
-      it.only("Should display the correct number of user-created notes on cases", () => {
+      it("Should display the correct number of user-created notes on cases", () => {
         const caseNotes: { user: string; text: string }[][] = [
           [
             {
@@ -279,6 +279,53 @@ describe("Case list", () => {
         cy.get("tr").not(":first").eq(0).get("td:nth-child(7)").should("be.empty")
         cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`1`).should("exist")
         cy.get("tr").not(":first").eq(2).get("td:nth-child(7)").contains(`3`).should("exist")
+      })
+
+      it.only("Should display a preview of the notes", () => {
+        const caseNotes: { user: string; text: string }[][] = [
+          [
+            {
+              user: "System",
+              text: "System note 1"
+            }
+          ],
+          [
+            {
+              user: "System",
+              text: "System note 2"
+            },
+            {
+              user: "bichard01",
+              text: "Test note 1"
+            },
+            {
+              user: "System",
+              text: "System note 3"
+            }
+          ],
+          [
+            {
+              user: "bichard01",
+              text: "Test note 2"
+            },
+            {
+              user: "bichard02",
+              text: "Test note 3"
+            },
+            {
+              user: "bichard01",
+              text: "Test note 4"
+            }
+          ]
+        ]
+        cy.task("insertCourtCasesWithNotes", { caseNotes: caseNotes, force: "01" })
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`Preview`).should("exist")
+        cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`Preview`).trigger("click")
+        cy.contains(`Test note 1`).should("exist")
       })
 
       it("Should display reason (errors and triggers) with correct formatting", () => {
@@ -720,18 +767,6 @@ describe("Case list", () => {
         cy.get(".moj-filter-tags a.moj-filter__tag").contains("Urgent").should("exist")
       })
     })
-  })
-})
-describe("Note Preview in case list table", () => {
-  describe("when there are no user notes to display", () => {
-    it.only("should not display any note preview even when there are system notes", () => {})
-  })
-  describe("when there are user notes to display", () => {
-    it.only("should be able to display number of user created notes", () => {})
-
-    it.only("should be able to expand and collapse using the note preview button and view note details", () => {})
-
-    it.only("should truncate notes greater than 100 characters down to 100 characters", () => {})
   })
 })
 
