@@ -109,7 +109,7 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").contains("This month").should("not.exist")
       })
 
-      it.only("Should remove the date range filter chip when custom date range is selected", () => {
+      it("Should remove the date range filter chip when custom date range is selected", () => {
         cy.get("#filter-button").click()
         cy.get("#date-range").click()
         cy.get("#date-range-today").click()
@@ -140,7 +140,7 @@ describe("Case list", () => {
         confirmFiltersAppliedContains("01/01/2022 - 31/12/2022")
       })
 
-      it.only("Should remove custom date range filter chip when custom date filter is selected", () => {
+      it("Should remove custom date range filter chip when custom date filter is selected", () => {
         cy.get("button#filter-button").click()
         cy.get("#custom-date-range").click()
         cy.get("#date-from").click().type("2022-01-01")
