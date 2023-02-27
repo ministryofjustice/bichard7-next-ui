@@ -1,8 +1,7 @@
 const nextConfig = {
   basePath: "/bichard",
   assetPrefix: "/bichard/",
-  // TODO - turn this to true when finished devving
-  reactStrictMode: false, 
+  reactStrictMode: true,
   transpilePackages: ["hex-rgb", "is-plain-obj"],
   async rewrites() {
     return [
