@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import FilterChip from "components/FilterChip"
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import { format } from "date-fns"
 import { Dispatch } from "react"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
@@ -32,7 +32,7 @@ const FilterChipSection: React.FC<Props> = ({
       : ""
   return (
     <>
-      <If condition={anyFilterChips(state, sectionState)}>
+      <ConditionalRender isRendered={anyFilterChips(state, sectionState)}>
         <h2
           className={"govuk-heading-m govuk-!-margin-bottom-0" + (marginTop ? " govuk-!-margin-top-2" : "")}
         >{`${sectionState} filters`}</h2>
@@ -80,20 +80,22 @@ const FilterChipSection: React.FC<Props> = ({
         />
 
         <FilterChipRow
-          chipLabel={state.reasonSearch.label!}
+          chipLabel={state.reasonCode.label!}
           condition={
-            state.reasonSearch.value !== undefined &&
-            state.reasonSearch.label !== undefined &&
-            state.reasonSearch.state === sectionState
+            state.reasonCode.value !== undefined &&
+            state.reasonCode.label !== undefined &&
+            state.reasonCode.state === sectionState
           }
           dispatch={dispatch}
-          type="reasonSearch"
-          label="Reason"
-          state={state.reasonSearch.state || sectionState}
-          value={state.reasonSearch.value!}
+          type="reasonCode"
+          label="Reason code"
+          state={state.reasonCode.state || sectionState}
+          value={state.reasonCode.value!}
         />
 
-        <If condition={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}>
+        <ConditionalRender
+          isRendered={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}
+        >
           <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
           <ul className="moj-filter-tags govuk-!-margin-bottom-0">
             {state.reasonFilter
@@ -110,7 +112,7 @@ const FilterChipSection: React.FC<Props> = ({
                 />
               ))}
           </ul>
-        </If>
+        </ConditionalRender>
 
         <FilterChipRow
           chipLabel={state.urgentFilter.label!}
@@ -196,13 +198,13 @@ const FilterChipSection: React.FC<Props> = ({
           state={state.myCasesFilter.state || sectionState}
           value={state.myCasesFilter.value!}
         />
-      </If>
-      <If condition={!anyFilterChips(state, sectionState) && placeholderMessage !== undefined}>
+      </ConditionalRender>
+      <ConditionalRender isRendered={!anyFilterChips(state, sectionState) && placeholderMessage !== undefined}>
         <h2
           className={"govuk-heading-m govuk-!-margin-bottom-0" + (marginTop ? " govuk-!-margin-top-2" : "")}
         >{`${sectionState} filters`}</h2>
         <p>{placeholderMessage}</p>
-      </If>
+      </ConditionalRender>
     </>
   )
 }

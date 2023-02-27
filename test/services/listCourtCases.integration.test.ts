@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import "reflect-metadata"
 import { DataSource } from "typeorm"
+import courtCasesByVisibleForcesQuery from "services/queries/courtCasesByVisibleForcesQuery"
 import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import deleteFromTable from "../utils/deleteFromTable"
@@ -18,9 +19,16 @@ import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 import Note from "services/entities/Note"
 import { ResolutionStatus } from "types/ResolutionStatus"
 
-jest.setTimeout(100000)
-const orgCodes = ["36", "36F", "36FP", "36FPA", "36FPA1", "36FQ", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC"]
+jest.mock(
+  "services/queries/courtCasesByVisibleForcesQuery",
+  jest.fn(() =>
+    jest.fn((query) => {
+      return query
+    })
+  )
+)
 
+jest.setTimeout(100000)
 describe("listCourtCases", () => {
   let dataSource: DataSource
 
@@ -38,6 +46,15 @@ describe("listCourtCases", () => {
     if (dataSource) {
       await dataSource.destroy()
     }
+  })
+
+  it("should call cases by visible forces query", async () => {
+    const forceCode = "dummyForceCode"
+
+    await listCourtCases(dataSource, { forces: [forceCode], maxPageItems: "1" })
+
+    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledTimes(1)
+    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [forceCode])
   })
 
   it("should return cases with notes correctly", async () => {
@@ -225,211 +242,6 @@ describe("listCourtCases", () => {
     expect(totalCases).toEqual(100)
   })
 
-  it("should return a list of cases when the force code length is 1", async () => {
-    const orgCodesForceCodeLen1 = [
-      "3",
-      "36",
-      "36F",
-      "36FP",
-      "36FPA",
-      "36FPA1",
-      "36FQ",
-      "37F",
-      "12LK",
-      "12G",
-      "12GHB",
-      "12GHA",
-      "12GHAB",
-      "12GHAC"
-    ]
-    await insertCourtCasesWithFields(orgCodesForceCodeLen1.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
-
-    const result = await listCourtCases(dataSource, { forces: ["3"], maxPageItems: "100" })
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
-
-    expect(cases).toHaveLength(8)
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual([
-      "3     ",
-      "36    ",
-      "36F   ",
-      "36FP  ",
-      "36FPA ",
-      "36FPA1",
-      "36FQ  ",
-      "37F   "
-    ])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([0, 1, 2, 3, 4, 5, 6, 7])
-    expect(totalCases).toEqual(8)
-  })
-
-  it("should return a list of cases when the force code length is 2", async () => {
-    await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
-
-    const result = await listCourtCases(dataSource, { forces: ["36"], maxPageItems: "10" })
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
-
-    expect(cases).toHaveLength(6)
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual([
-      "36    ",
-      "36F   ",
-      "36FP  ",
-      "36FPA ",
-      "36FPA1",
-      "36FQ  "
-    ])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([0, 1, 2, 3, 4, 5])
-    expect(totalCases).toEqual(6)
-  })
-
-  it("should return a list of cases when the force code length is 3", async () => {
-    await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
-
-    const result = await listCourtCases(dataSource, { forces: ["36F"], maxPageItems: "10" })
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
-
-    expect(cases).toHaveLength(5)
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual(["36F   ", "36FP  ", "36FPA ", "36FPA1", "36FQ  "])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([1, 2, 3, 4, 5])
-    expect(totalCases).toEqual(5)
-  })
-
-  it("should return a list of cases when the force code length is 4", async () => {
-    await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
-
-    const result = await listCourtCases(dataSource, { forces: ["36FP"], maxPageItems: "10" })
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
-
-    expect(cases).toHaveLength(3)
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual(["36FP  ", "36FPA ", "36FPA1"])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4])
-    expect(totalCases).toEqual(3)
-  })
-
-  it("a user with a visible force of length 5 can see cases for the 4-long prefix, and the exact match, and 6-long suffixes of the visible force", async () => {
-    const orgCodesForVisibleForceLen5 = ["12GH", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC", "13BR", "14AT"]
-    await insertCourtCasesWithFields(orgCodesForVisibleForceLen5.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
-
-    const result = await listCourtCases(dataSource, { forces: ["12GHA"], maxPageItems: "10" })
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
-
-    expect(cases).toHaveLength(4)
-
-    expect(cases[0].orgForPoliceFilter).toBe("12GH  ")
-    expect(cases[1].orgForPoliceFilter).toBe("12GHA ")
-    expect(cases[2].orgForPoliceFilter).toBe("12GHAB")
-    expect(cases[3].orgForPoliceFilter).toBe("12GHAC")
-    expect(totalCases).toEqual(4)
-  })
-
-  it("shouldn't return non-visible cases when the force code length is 6", async () => {
-    const orgCodesForNonVisibleCases = [
-      "36",
-      "36F",
-      "36FP",
-      "36FPA",
-      "36FPA1",
-      "36FPA2",
-      "36FQ",
-      "12LK",
-      "12G",
-      "12GHB",
-      "12GHA",
-      "12GHAB",
-      "12GHAC"
-    ]
-    await insertCourtCasesWithFields(orgCodesForNonVisibleCases.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
-
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10" })
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
-
-    expect(cases).toHaveLength(3)
-
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual(["36FP  ", "36FPA ", "36FPA1"])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4])
-    expect(totalCases).toEqual(3)
-  })
-
-  it("should show cases for all forces visible to a user", async () => {
-    const orgCodesForAllVisibleForces = [
-      "36",
-      "36F",
-      "36FP",
-      "36FPA",
-      "36FPA1",
-      "36FPA2",
-      "36FQ",
-      "12LK",
-      "12G",
-      "12GHB",
-      "12GHA",
-      "12GHAB",
-      "12GH",
-      "13GH",
-      "13GHA",
-      "13GHA1",
-      "13GHB",
-      "13GHBA"
-    ]
-
-    await insertCourtCasesWithFields(orgCodesForAllVisibleForces.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
-
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1", "13GH"], maxPageItems: "100" })
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
-
-    expect(cases).toHaveLength(8)
-
-    expect(cases.map((c) => c.orgForPoliceFilter)).toStrictEqual([
-      "36FP  ",
-      "36FPA ",
-      "36FPA1",
-      "13GH  ",
-      "13GHA ",
-      "13GHA1",
-      "13GHB ",
-      "13GHBA"
-    ])
-    expect(cases.map((c) => c.errorId)).toStrictEqual([2, 3, 4, 13, 14, 15, 16, 17])
-    expect(totalCases).toEqual(8)
-  })
-
-  it("should show no cases to a user with no visible forces", async () => {
-    const orgCodesForNoVisibleCases = [
-      "36",
-      "36F",
-      "36FP",
-      "36FPA",
-      "36FPA1",
-      "36FPA2",
-      "36FQ",
-      "12LK",
-      "12G",
-      "12GHB",
-      "12GHA",
-      "12GHAB",
-      "12GH",
-      "13GH",
-      "13GHA",
-      "13GHA1",
-      "13GHB",
-      "13GHBA"
-    ]
-    await insertCourtCasesWithFields(orgCodesForNoVisibleCases.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
-
-    const result = await listCourtCases(dataSource, { forces: [], maxPageItems: "100" })
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
-
-    expect(cases).toHaveLength(0)
-    expect(totalCases).toEqual(0)
-  })
-
   it("should order by court name", async () => {
     const orgCode = "36FPA1"
     await insertCourtCasesWithFields(
@@ -613,7 +425,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("filter by defendant name", () => {
+  describe("search by defendant name", () => {
     it("should list cases when there is a case insensitive match", async () => {
       const orgCode = "01FPA1"
       const defendantToInclude = "Bruce Wayne"
@@ -762,7 +574,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("filter by court name", () => {
+  describe("search by court name", () => {
     it("should list cases when there is a case insensitive match", async () => {
       const orgCode = "01FPA1"
       const courtNameToInclude = "Magistrates' Courts London Croydon"
@@ -800,7 +612,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("filter by ptiurn", () => {
+  describe("search by ptiurn", () => {
     it("should list cases when there is a case insensitive match", async () => {
       const orgCode = "01FPA1"
       const ptiurnToInclude = "01ZD0303908"
@@ -838,7 +650,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("filter by reason", () => {
+  describe("search by reason", () => {
     it("should list cases when there is a case insensitive match in triggers or exceptions", async () => {
       await insertCourtCasesWithFields(["01", "01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
@@ -877,7 +689,7 @@ describe("listCourtCases", () => {
       let result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: triggerToInclude.triggerCode
+        reasonCode: triggerToInclude.triggerCode
       })
 
       expect(isError(result)).toBe(false)
@@ -890,7 +702,7 @@ describe("listCourtCases", () => {
       result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: errorToInclude
+        reasonCode: errorToInclude
       })
 
       expect(isError(result)).toBe(false)
@@ -903,7 +715,7 @@ describe("listCourtCases", () => {
       result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: "2222"
+        reasonCode: "2222"
       })
 
       expect(isError(result)).toBe(false)
@@ -928,7 +740,7 @@ describe("listCourtCases", () => {
       let result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: errorToInclude
+        reasonCode: errorToInclude
       })
 
       expect(isError(result)).toBe(false)
@@ -942,7 +754,7 @@ describe("listCourtCases", () => {
       result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsSearch: anotherErrorToInclude
+        reasonCode: anotherErrorToInclude
       })
 
       expect(isError(result)).toBe(false)
@@ -955,22 +767,61 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("Filter cases having triggers/exceptions", () => {
-    it("Should filter by whether a case has triggers", async () => {
-      await insertCourtCasesWithFields(["01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+  describe("Filter cases having reason", () => {
+    const testTrigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0001",
+      status: "Unresolved",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
 
-      const trigger: TestTrigger = {
-        triggerId: 0,
-        triggerCode: "TRPR0001",
-        status: "Unresolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
-      }
-      await insertTriggers(0, [trigger])
+    const conditionalBailTrigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0010",
+      status: "Unresolved",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
+    const bailDirectionTrigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0019",
+      status: "Unresolved",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
+    const preChargeBailApplicationTrigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0019",
+      status: "Unresolved",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
+
+    it("Should filter by whether a case has triggers", async () => {
+      await insertCourtCasesWithFields(["01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+      await insertTriggers(0, [testTrigger])
+      await insertTriggers(1, [bailDirectionTrigger])
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsFilter: ["Triggers"]
+        reasons: ["Triggers"]
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].errorId).toBe(0)
+      expect(cases[1].errorId).toBe(1)
+    })
+
+    it("Should filter by whether a case has excecptions", async () => {
+      await insertCourtCasesWithFields(["01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+      await insertException(0, "HO100300")
+      await insertTriggers(1, [testTrigger])
+
+      const result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasons: ["Exceptions"]
       })
 
       expect(isError(result)).toBeFalsy()
@@ -980,21 +831,50 @@ describe("listCourtCases", () => {
       expect(cases[0].errorId).toBe(0)
     })
 
-    it("Should filter by whether a case has excecptions", async () => {
-      await insertCourtCasesWithFields(["01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+    it("Should filter cases that has bails", async () => {
+      await insertCourtCasesWithFields(
+        ["01", "01", "01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode }))
+      )
       await insertException(0, "HO100300")
+      await insertTriggers(1, [testTrigger])
+      await insertTriggers(2, [conditionalBailTrigger])
+      await insertTriggers(3, [bailDirectionTrigger])
+      await insertTriggers(4, [preChargeBailApplicationTrigger])
 
       const result = await listCourtCases(dataSource, {
         forces: ["01"],
         maxPageItems: "100",
-        reasonsFilter: ["Exceptions"]
+        reasons: ["Bails"]
       })
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(1)
+      expect(cases).toHaveLength(3)
+      expect(cases[0].errorId).toBe(2)
+      expect(cases[1].errorId).toBe(3)
+      expect(cases[2].errorId).toBe(4)
+    })
+
+    it("Should filter cases with all reasons", async () => {
+      await insertCourtCasesWithFields(["01", "01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+      await insertException(0, "HO100300")
+      await insertTriggers(1, [testTrigger])
+      await insertTriggers(2, [conditionalBailTrigger])
+
+      const result = await listCourtCases(dataSource, {
+        forces: ["01"],
+        maxPageItems: "100",
+        reasons: ["Exceptions", "Triggers", "Bails"]
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(3)
       expect(cases[0].errorId).toBe(0)
+      expect(cases[1].errorId).toBe(1)
+      expect(cases[2].errorId).toBe(2)
     })
   })
 

@@ -1,4 +1,4 @@
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import { Button, ErrorSummary, Paragraph } from "govuk-react"
 import { useRouter } from "next/router"
 import CourtCase from "services/entities/CourtCase"
@@ -19,13 +19,13 @@ const CourtCaseLock: React.FC<Props> = ({ courtCase, lockedByAnotherUser }) => {
 
   return (
     <>
-      <If condition={lockedByAnotherUser}>
+      <ConditionalRender isRendered={lockedByAnotherUser}>
         <ErrorSummary heading="Case locked by another user" />
-      </If>
-      <If condition={isLocked}>
+      </ConditionalRender>
+      <ConditionalRender isRendered={isLocked}>
         <Paragraph>{`Trigger locked by: ${courtCase.triggerLockedByUsername}`}</Paragraph>
         <Paragraph>{`Error locked by: ${courtCase.errorLockedByUsername}`}</Paragraph>
-      </If>
+      </ConditionalRender>
       <form method="POST" action={lockCourtCasePath}>
         <Button buttonColour="#1d70b8">{lockButtonTitle}</Button>
       </form>

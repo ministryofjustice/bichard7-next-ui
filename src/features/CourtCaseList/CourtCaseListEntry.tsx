@@ -1,5 +1,5 @@
+import ConditionalRender from "components/ConditionalRender"
 import DateTime from "components/DateTime"
-import If from "components/If"
 import { GridRow, Link, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
@@ -18,8 +18,8 @@ import {
   getMostRecentNote,
   validatedMostRecentNoteDate
 } from "./CourtCaseListEntryHelperFunction"
+import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
 import LockedByTag from "./tags/LockedByTag"
-import { NotePreviewButton, NotePreview } from "./NotePreviewButton"
 import UrgentTag from "./tags/UrgentTag"
 
 const useStyles = createUseStyles({
@@ -81,9 +81,9 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
     triggers.length > 0 ? (
       <Table.Row className={classes.triggersRow}>
         <Table.Cell>
-          <If condition={!!triggerLockedByUsername}>
+          <ConditionalRender isRendered={!!triggerLockedByUsername}>
             <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
-          </If>
+          </ConditionalRender>
         </Table.Cell>
         <Table.Cell />
         <Table.Cell />
@@ -115,9 +115,9 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
     <>
       <Table.Row className={classes.caseDetailsRow}>
         <Table.Cell>
-          <If condition={!!errorLockedByUsername}>
+          <ConditionalRender isRendered={!!errorLockedByUsername}>
             <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
-          </If>
+          </ConditionalRender>
         </Table.Cell>
         <Table.Cell>
           <Link href={caseDetailsPath(errorId)} id={`Case details for ${defendantName}`}>

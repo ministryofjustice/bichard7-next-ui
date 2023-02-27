@@ -1,4 +1,4 @@
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import { Button, FormGroup, Heading, TextArea } from "govuk-react"
 
 interface Props {
@@ -11,8 +11,8 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, error }: Props) => 
     <Heading as="h2" size="MEDIUM">
       {"Add Note"}
     </Heading>
-    <If condition={lockedByAnotherUser}>{"Case is locked by another user."}</If>
-    <If condition={!lockedByAnotherUser}>
+    <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
+    <ConditionalRender isRendered={!lockedByAnotherUser}>
       <form method="POST" action="#">
         <FormGroup>
           <TextArea
@@ -32,7 +32,7 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, error }: Props) => 
           {"Add"}
         </Button>
       </form>
-    </If>
+    </ConditionalRender>
   </>
 )
 

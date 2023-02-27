@@ -1,5 +1,5 @@
 import FilterTag from "components/FilterTag/FilterTag"
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import { format } from "date-fns"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
@@ -10,10 +10,10 @@ import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
   filters: {
-    courtCaseTypes?: Reason[]
+    reasons?: Reason[]
     keywords?: string[]
     courtName?: string | null
-    reasonSearch?: string | null
+    reasonCode?: string | null
     ptiurn?: string | null
     dateRange?: string | null
     customDateFrom?: Date | null
@@ -29,10 +29,10 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
   const { basePath, query } = useRouter()
 
   const hasAnyAppliedFilters = (): boolean =>
-    (filters.courtCaseTypes && filters.courtCaseTypes.length > 0) ||
+    (filters.reasons && filters.reasons.length > 0) ||
     (filters.keywords && filters.keywords.length > 0) ||
     !!filters.courtName ||
-    !!filters.reasonSearch ||
+    !!filters.reasonCode ||
     !!filters.ptiurn ||
     !!filters.urgency ||
     !!filters.dateRange ||
@@ -57,16 +57,16 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
 
   return (
     <div>
-      <If condition={hasAnyAppliedFilters()}>
+      <ConditionalRender isRendered={hasAnyAppliedFilters()}>
         <ul key={"applied-filters"} className="moj-filter-tags">
           <li>
             <p className="govuk-heading-s govuk-!-margin-bottom-0">{"Filters applied:"}</p>
           </li>
-          {filters.courtCaseTypes &&
-            filters.courtCaseTypes.map((courtCaseType) => {
+          {filters.reasons &&
+            filters.reasons.map((reason) => {
               return (
-                <li key={`${courtCaseType}`}>
-                  <FilterTag tag={courtCaseType} href={removeFilterFromPath({ type: courtCaseType })} />
+                <li key={`${reason}`}>
+                  <FilterTag tag={reason} href={removeFilterFromPath({ type: reason })} />
                 </li>
               )
             })}
@@ -78,36 +78,36 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
                 </li>
               )
             })}
-          <If condition={!!filters.courtName}>
+          <ConditionalRender isRendered={!!filters.courtName}>
             <li>
               <FilterTag
                 tag={filters.courtName ?? ""}
                 href={removeFilterFromPath({ courtName: filters.courtName ?? "" })}
               />
             </li>
-          </If>
-          <If condition={!!filters.reasonSearch}>
+          </ConditionalRender>
+          <ConditionalRender isRendered={!!filters.reasonCode}>
             <li>
               <FilterTag
-                tag={filters.reasonSearch ?? ""}
-                href={removeFilterFromPath({ reasonSearch: filters.reasonSearch ?? "" })}
+                tag={filters.reasonCode ?? ""}
+                href={removeFilterFromPath({ reasonCode: filters.reasonCode ?? "" })}
               />
             </li>
-          </If>
-          <If condition={!!filters.ptiurn}>
+          </ConditionalRender>
+          <ConditionalRender isRendered={!!filters.ptiurn}>
             <li>
               <FilterTag tag={filters.ptiurn ?? ""} href={removeFilterFromPath({ ptiurn: filters.ptiurn ?? "" })} />
             </li>
-          </If>
-          <If condition={!!filters.dateRange}>
+          </ConditionalRender>
+          <ConditionalRender isRendered={!!filters.dateRange}>
             <li>
               <FilterTag
                 tag={filters.dateRange ?? ""}
                 href={removeFilterFromPath({ dateRange: filters.dateRange ?? "" })}
               />
             </li>
-          </If>
-          <If condition={!!filters.customDateFrom && !!filters.customDateTo}>
+          </ConditionalRender>
+          <ConditionalRender isRendered={!!filters.customDateFrom && !!filters.customDateTo}>
             <li>
               <FilterTag
                 tag={
@@ -119,33 +119,33 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
                 href={removeQueryParamsByName(["from", "to", "pageNum"])}
               />
             </li>
-          </If>
-          <If condition={!!filters.urgency}>
+          </ConditionalRender>
+          <ConditionalRender isRendered={!!filters.urgency}>
             <li>
               <FilterTag tag={filters.urgency ?? ""} href={removeFilterFromPath({ urgency: filters.urgency ?? "" })} />
             </li>
-          </If>
-          <If condition={!!filters.myCases}>
+          </ConditionalRender>
+          <ConditionalRender isRendered={!!filters.myCases}>
             <li>
               <FilterTag
                 tag={"Cases locked to me" ?? ""}
                 href={removeFilterFromPath({ myCases: String(filters.myCases) })}
               />
             </li>
-          </If>
-          <If condition={!!filters.locked}>
+          </ConditionalRender>
+          <ConditionalRender isRendered={!!filters.locked}>
             <li>
               <FilterTag tag={filters.locked ?? ""} href={removeFilterFromPath({ locked: filters.locked ?? "" })} />
             </li>
-          </If>
-          <If condition={!!filters.caseState}>
+          </ConditionalRender>
+          <ConditionalRender isRendered={!!filters.caseState}>
             <li>
               <FilterTag
                 tag={caseStateLabels[String(filters.caseState)] ?? ""}
                 href={removeFilterFromPath({ state: filters.caseState ?? "" })}
               />
             </li>
-          </If>
+          </ConditionalRender>
           <li>
             <p className="moj-filter__heading-action" id="clear-filters-applied">
               <a className="govuk-link govuk-link--no-visited-state" href="/bichard">
@@ -154,7 +154,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
             </p>
           </li>
         </ul>
-      </If>
+      </ConditionalRender>
     </div>
   )
 }

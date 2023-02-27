@@ -1,4 +1,4 @@
-import If from "components/If"
+import ConditionalRender from "components/ConditionalRender"
 import { Dispatch, SetStateAction } from "react"
 import { createUseStyles } from "react-jss"
 
@@ -61,7 +61,7 @@ export const NotePreviewButton: React.FC<NotePreviewButtonProps> = (props: NoteP
 
   return (
     <>
-      <If condition={props.numberOfNotes > 0}>
+      <ConditionalRender isRendered={props.numberOfNotes > 0}>
         {props.numberOfNotes > 1 ? `${props.numberOfNotes} notes` : `${props.numberOfNotes} note`}
         <div className={classes.buttonContainer}>
           <button
@@ -73,7 +73,7 @@ export const NotePreviewButton: React.FC<NotePreviewButtonProps> = (props: NoteP
             {!props.previewState ? <PreviewButton /> : <HideButton />}
           </button>
         </div>
-      </If>
+      </ConditionalRender>
     </>
   )
 }

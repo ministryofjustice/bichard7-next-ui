@@ -1,4 +1,5 @@
 import hashedPassword from "../../fixtures/hashedPassword"
+import { confirmFiltersAppliedContains } from "../../support/helpers"
 
 export function removeFilterChip() {
   cy.get("li button.moj-filter__tag").trigger("click")
@@ -38,7 +39,7 @@ describe("Case list", () => {
       cy.get(".moj-filter__selected").should("exist").should("contain.text", "No filters selected")
     })
 
-    describe("Case type", () => {
+    describe("Reason", () => {
       it("Should display the Trigger filter chip when selected", () => {
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
@@ -121,7 +122,7 @@ describe("Case list", () => {
         cy.get("button#search").click()
 
         cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
-        cy.get(".moj-filter-tags a.moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
+        confirmFiltersAppliedContains("01/01/2022 - 31/12/2022")
       })
 
       it.skip("Should apply the 'Custom date filter' filter chips then remove this chips to the original state", () => {
@@ -232,12 +233,12 @@ describe("Case list", () => {
       })
     })
 
-    describe("Reason", () => {
+    describe("Reason code", () => {
       it("Should apply the 'Court name' filter chips then remove this chips to the original state", () => {
         cy.get("#filter-button").click()
-        cy.get("input[id=reason-search]").type("Bar")
+        cy.get("input[id=reason-code]").type("Bar")
 
-        cy.get(".govuk-heading-s").contains("Reason").should("exist")
+        cy.get(".govuk-heading-s").contains("Reason code").should("exist")
         cy.get(".moj-filter__tag").contains("Bar").should("exist")
 
         cy.get("li button.moj-filter__tag").contains("Bar").trigger("click")
@@ -268,7 +269,7 @@ describe("Case list", () => {
         cy.get("#non-urgent").click()
 
         // Check that relevant chips and headers are present on screen
-        // Reasons
+        // Reason
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
@@ -367,6 +368,7 @@ describe("Case list", () => {
       cy.get("#my-cases-filter").should("be.checked")
 
       // Clears filter chip and check the checkbox is deselected
+      cy.contains("Hide filter").click()
       cy.contains("Clear filters").click()
       cy.get("#filter-button").contains("Show filter").click()
       cy.get("#my-cases-filter").should("not.be.checked")
