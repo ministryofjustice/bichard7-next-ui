@@ -722,5 +722,18 @@ describe("Case list", () => {
     })
   })
 })
+describe("Note Preview in case list table", () => {
+  describe("when there are no user notes to display", () => {
+    it.only("should not display any note preview when there are no user created notes", () => {})
+    it.only("should not display any note preview even when there are system notes", () => {})
+  })
+  describe("when there are user notes to display", () => {
+    it.only("should be able to display number of user created notes", () => {})
+
+    it.only("should be able to expand and collapse using the note preview button and view note details", () => {})
+
+    it.only("should truncate notes greater than 100 characters down to 100 characters", () => {})
+  })
+})
 
 export {}
