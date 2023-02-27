@@ -21,3 +21,8 @@ export const validatedMostRecentNoteDate = (mostRecentNote: Note[]) => {
   const formattedDate = format(new Date(mostRecentNoteDate.toString().slice(0, 10)), displayedDateFormat)
   return formattedDate
 }
+
+export const filterUserNotes = (notes: Note[]) => {
+  const userNotes = notes.filter((note) => note.userId !== "System").length
+  return userNotes
+}

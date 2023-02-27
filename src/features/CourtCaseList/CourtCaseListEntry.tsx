@@ -12,7 +12,11 @@ import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { displayedDateFormat } from "utils/formattedDate"
-import { first100CharsOfMostRecentNote, validatedMostRecentNoteDate } from "./CourtCaseListEntryHelperFunction"
+import {
+  filterUserNotes,
+  first100CharsOfMostRecentNote,
+  validatedMostRecentNoteDate
+} from "./CourtCaseListEntryHelperFunction"
 import LockedByTag from "./tags/LockedByTag"
 import NotePreviewButton, { NotePreview } from "./tags/NotePreviewButton"
 import UrgentTag from "./tags/UrgentTag"
@@ -160,7 +164,7 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
             <NotePreview
               latestNote={first100CharsOfMostRecentNote(notes)}
               displayDate={validatedMostRecentNoteDate(notes)}
-              numberOfNotes={notes.length}
+              numberOfNotes={filterUserNotes(notes)}
             />
           </Table.Cell>
           <Table.Cell></Table.Cell>

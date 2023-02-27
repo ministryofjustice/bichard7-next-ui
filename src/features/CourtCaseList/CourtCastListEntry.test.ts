@@ -1,5 +1,40 @@
 import Note from "services/entities/Note"
-import { first100CharsOfMostRecentNote, getMostRecentNote } from "./CourtCaseListEntryHelperFunction"
+import {
+  filterUserNotes,
+  first100CharsOfMostRecentNote,
+  getMostRecentNote,
+  validatedMostRecentNoteDate
+} from "./CourtCaseListEntryHelperFunction"
+
+describe("number of notes", () => {
+  it.only("should filter out all the system notes and only show user entered notes", () => {
+    const caseNote = [
+      {
+        noteId: 1001,
+        noteText: "This is a note created by System",
+        errorId: 362,
+        userId: "System",
+        createdAt: "2019-12-30T13:00:00.000Z"
+      },
+      {
+        noteId: 1002,
+        noteText: "Second note",
+        errorId: 362,
+        userId: "coy.funk",
+        createdAt: "2020-01-01T08:00:00.000Z"
+      },
+      {
+        noteId: 1003,
+        noteText: "Latest note",
+        errorId: 362,
+        userId: "sonny.badger",
+        createdAt: "2020-01-01T12:00:00.000Z"
+      }
+    ] as unknown as Note[]
+    const result = filterUserNotes(caseNote)
+    expect(result).toEqual(2)
+  })
+})
 
 describe("getMostRecentNote Test", () => {
   it("should return an object that contains createdAt and noteText values", () => {
@@ -53,6 +88,70 @@ describe("getMostRecentNote Test", () => {
     expect(recentNote).toHaveLength(1)
     expect(recentNote[0].createdAt).toBe("2023-01-01T00:00:00.000Z")
   })
+
+  it("should return the most recent note based off time", () => {
+    const caseNote = [
+      {
+        noteId: 1001,
+        noteText: "First note",
+        errorId: 362,
+        userId: "gina.thiel",
+        createdAt: "2020-01-01T00:00:00.000Z"
+      },
+      {
+        noteId: 1002,
+        noteText: "Second note",
+        errorId: 362,
+        userId: "coy.funk",
+        createdAt: "2020-01-01T08:00:00.000Z"
+      },
+      {
+        noteId: 1003,
+        noteText: "Latest note",
+        errorId: 362,
+        userId: "sonny.badger",
+        createdAt: "2020-01-01T12:00:00.000Z"
+      }
+    ] as unknown as Note[]
+
+    const recentNote = getMostRecentNote(caseNote)
+    expect(recentNote).toBeInstanceOf(Array)
+    expect(recentNote).toHaveLength(1)
+    expect(recentNote[0].createdAt).toBe("2020-01-01T12:00:00.000Z")
+    expect(recentNote[0].noteText).toBe("Latest note")
+  })
+
+  it.only("should return the correct `createdAt` date associated with the most recent note", () => {
+    const caseNote = [
+      {
+        noteId: 1001,
+        noteText: "Old note",
+        errorId: 362,
+        userId: "gina.thiel",
+        createdAt: "2019-12-30T13:00:00.000Z"
+      },
+      {
+        noteId: 1002,
+        noteText: "Second note",
+        errorId: 362,
+        userId: "coy.funk",
+        createdAt: "2020-01-01T08:00:00.000Z"
+      },
+      {
+        noteId: 1003,
+        noteText: "Latest note",
+        errorId: 362,
+        userId: "sonny.badger",
+        createdAt: "2020-01-01T12:00:00.000Z"
+      }
+    ] as unknown as Note[]
+
+    const recentNote = getMostRecentNote(caseNote)
+    const recentNoteText = recentNote[0].noteText
+    const result = validatedMostRecentNoteDate(recentNote)
+    expect(recentNoteText).toBe("Latest note")
+    expect(result).toBe("01/01/2020")
+  })
 })
 
 describe("parsing note text", () => {
@@ -72,7 +171,7 @@ describe("parsing note text", () => {
     expect(result).toEqual(sampleNoteText)
   })
 
-  it.only("should display the whole text when it is 100 characters or less", () => {
+  it("should display the whole text when it is 100 characters or less", () => {
     const sampleNoteTextWith100Chars = "a".repeat(100)
     const caseNote = [
       {
@@ -87,7 +186,7 @@ describe("parsing note text", () => {
     expect(result).not.toContain("...")
     expect(result).toContain(sampleNoteTextWith100Chars)
   })
-  it.only("should truncate the text when it is greater than 100 characters", () => {
+  it("should truncate the text when it is greater than 100 characters", () => {
     const sampleNoteTextMoreThan100Chars = "a".repeat(150)
     const expectedResult = `${"a".repeat(100)}...`
     const caseNote = [
