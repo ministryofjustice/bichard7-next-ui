@@ -15,6 +15,7 @@ import { displayedDateFormat } from "utils/formattedDate"
 import {
   filterUserNotes,
   first100CharsOfMostRecentNote,
+  getMostRecentNote,
   validatedMostRecentNoteDate
 } from "./CourtCaseListEntryHelperFunction"
 import LockedByTag from "./tags/LockedByTag"
@@ -73,7 +74,8 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
   const exceptions = groupErrorsFromReport(errorReport)
   const [showPreview, setShowPreview] = useState(false)
   const userNotes = filterUserNotes(notes)
-  const numberOfNotes = filterUserNotes(notes).length
+  const numberOfNotes = userNotes.length
+  const mostRecentUserNote = getMostRecentNote(userNotes)
 
   const triggerRow =
     triggers.length > 0 ? (
@@ -152,7 +154,7 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
           )}
         </Table.Cell>
       </Table.Row>
-      <If condition={!!showPreview}>
+      {numberOfNotes != 0 && !!showPreview && (
         <Table.Row className={classes.notesRow}>
           <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
@@ -163,13 +165,13 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
           <Table.Cell style={{ paddingTop: "0px" }} colSpan={2}>
             <NotePreview
               latestNote={first100CharsOfMostRecentNote(userNotes)}
-              displayDate={validatedMostRecentNoteDate(userNotes)}
+              displayDate={validatedMostRecentNoteDate(mostRecentUserNote)}
               numberOfNotes={numberOfNotes}
             />
           </Table.Cell>
           <Table.Cell></Table.Cell>
         </Table.Row>
-      </If>
+      )}
       {triggerRow}
     </>
   )
