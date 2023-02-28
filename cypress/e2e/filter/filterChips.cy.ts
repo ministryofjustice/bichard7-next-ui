@@ -11,7 +11,7 @@ export function filterByDateRange(dateRangeId: string) {
   cy.get(dateRangeId).click()
 }
 
-function filterByCustomDateRange(dateFrom: string, dateTo: string) {
+const filterByCustomDateRange = (dateFrom: string, dateTo: string) => {
   cy.get("#custom-date-range").click()
   cy.get("#date-from").click().type(dateFrom)
   cy.get("#date-to").click().type(dateTo)
