@@ -1,4 +1,4 @@
-import ConditionalRender from "components/ConditionalRender"
+import ConditionalRender from "../../components/ConditionalRender"
 import { Dispatch, SetStateAction } from "react"
 import { createUseStyles } from "react-jss"
 
