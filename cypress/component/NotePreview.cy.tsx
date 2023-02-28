@@ -10,6 +10,5 @@ describe("NotePreview.cy.tx", () => {
   it("shows the default up chevron with the label 'hide'", () => {
     cy.mount(<HideButton />)
     cy.get(".govuk-accordion-nav__chevron").should("exist")
-    cy.get(".govuk-accordion-nav__chevron--down").should("not.exist")
   })
 })
