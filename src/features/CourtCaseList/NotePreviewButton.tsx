@@ -1,14 +1,14 @@
 import ConditionalRender from "../../components/ConditionalRender"
 import { Dispatch, SetStateAction } from "react"
 import { createUseStyles } from "react-jss"
+import { gdsLightGrey } from "utils/colours"
 
 const useStyles = createUseStyles({
   buttonContainer: {
-    color: "#1d70b8",
     width: "97px"
   },
   notePreviewContainer: {
-    backgroundColor: "#F3F2F1",
+    backgroundColor: gdsLightGrey,
     borderLeft: "5px solid #b1b4b6",
     padding: "15px 20px"
   }

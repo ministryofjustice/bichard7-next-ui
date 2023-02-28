@@ -186,7 +186,7 @@ describe("parsing note text", () => {
     expect(result).not.toContain("...")
     expect(result).toContain(sampleNoteTextWith100Chars)
   })
-  it("should truncate the text when it is greater than 100 characters", () => {
+  it("should truncate the text when it is longer than 100 characters", () => {
     const sampleNoteTextMoreThan100Chars = "a".repeat(150)
     const expectedResult = `${"a".repeat(100)}...`
     const caseNote = [

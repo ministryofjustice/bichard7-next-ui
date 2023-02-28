@@ -173,7 +173,7 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
               numberOfNotes={numberOfNotes}
             />
           </Table.Cell>
-          <Table.Cell></Table.Cell>
+          <Table.Cell />
         </Table.Row>
       )}
       {triggerRow}

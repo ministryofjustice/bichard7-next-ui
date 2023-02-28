@@ -344,11 +344,9 @@ describe("Case list", () => {
       ]
       cy.task("insertCourtCasesWithNotes", { caseNotes: caseNotes, force: "01" })
 
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard")
+      loginAndGoToUrl()
 
-      cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`Preview`).should("exist")
-      cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`Preview`).trigger("click")
+      cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`Preview`).should("exist").trigger("click")
       cy.contains(`Test note 1`).should("exist")
     })
 
