@@ -14,9 +14,9 @@ import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { displayedDateFormat } from "utils/formattedDate"
 import {
   filterUserNotes,
-  first100CharsOfMostRecentNote,
+  getFirst100CharsOfMostRecentNote,
   getMostRecentNote,
-  validatedMostRecentNoteDate
+  validateMostRecentNoteDate
 } from "./CourtCaseListEntryHelperFunction"
 import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
 import LockedByTag from "./tags/LockedByTag"
@@ -168,8 +168,8 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
           <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell style={{ paddingTop: "0px" }} colSpan={2}>
             <NotePreview
-              latestNote={first100CharsOfMostRecentNote(userNotes)}
-              displayDate={validatedMostRecentNoteDate(mostRecentUserNote)}
+              latestNote={getFirst100CharsOfMostRecentNote(userNotes)}
+              displayDate={validateMostRecentNoteDate(mostRecentUserNote)}
               numberOfNotes={numberOfNotes}
             />
           </Table.Cell>

@@ -1,9 +1,9 @@
 import Note from "services/entities/Note"
 import {
   filterUserNotes,
-  first100CharsOfMostRecentNote,
+  getFirst100CharsOfMostRecentNote,
   getMostRecentNote,
-  validatedMostRecentNoteDate
+  validateMostRecentNoteDate
 } from "./CourtCaseListEntryHelperFunction"
 
 describe("number of notes", () => {
@@ -148,7 +148,7 @@ describe("getMostRecentNote Test", () => {
 
     const recentNote = getMostRecentNote(caseNote)
     const recentNoteText = recentNote[0].noteText
-    const result = validatedMostRecentNoteDate(recentNote)
+    const result = validateMostRecentNoteDate(recentNote)
     expect(recentNoteText).toBe("Latest note")
     expect(result).toBe("01/01/2020")
   })
@@ -166,7 +166,7 @@ describe("parsing note text", () => {
         createdAt: "2022-01-01T00:00:00.000Z"
       }
     ] as unknown as Note[]
-    const result = first100CharsOfMostRecentNote(caseNote)
+    const result = getFirst100CharsOfMostRecentNote(caseNote)
     expect(typeof result).toEqual("string")
     expect(result).toEqual(sampleNoteText)
   })
@@ -182,7 +182,7 @@ describe("parsing note text", () => {
         createdAt: "2022-01-01T00:00:00.000Z"
       }
     ] as unknown as Note[]
-    const result = first100CharsOfMostRecentNote(caseNote)
+    const result = getFirst100CharsOfMostRecentNote(caseNote)
     expect(result).not.toContain("...")
     expect(result).toContain(sampleNoteTextWith100Chars)
   })
@@ -198,7 +198,7 @@ describe("parsing note text", () => {
         createdAt: "2022-01-01T00:00:00.000Z"
       }
     ] as unknown as Note[]
-    const result = first100CharsOfMostRecentNote(caseNote)
+    const result = getFirst100CharsOfMostRecentNote(caseNote)
     expect(result).toStrictEqual(expectedResult)
     expect(result).toContain("...")
     expect(result.length).toEqual(103)
