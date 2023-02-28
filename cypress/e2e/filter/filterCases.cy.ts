@@ -373,7 +373,7 @@ describe("Case list", () => {
       visitBasePathAndShowFilters()
 
       // Tests for "Today"
-      filterByDateRange("#date-range-yesterday")
+      filterByDateRange("#date-range-today")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
