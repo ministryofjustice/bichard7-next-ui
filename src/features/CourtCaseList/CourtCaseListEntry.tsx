@@ -20,6 +20,7 @@ import {
 } from "./CourtCaseListEntryHelperFunction"
 import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
 import LockedByTag from "./tags/LockedByTag"
+import ResolvedTag from "./tags/ResolvedTag"
 import UrgentTag from "./tags/UrgentTag"
 
 const useStyles = createUseStyles({
@@ -56,6 +57,7 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
     isUrgent,
     errorLockedByUsername,
     triggerLockedByUsername,
+    resolutionTimestamp,
     notes
   } = courtCase
   const classes = useStyles()
@@ -122,6 +124,8 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
         <Table.Cell>
           <Link href={caseDetailsPath(errorId)} id={`Case details for ${defendantName}`}>
             {defendantName}
+            <br />
+            <ResolvedTag isResolved={resolutionTimestamp !== null} />
           </Link>
         </Table.Cell>
         <Table.Cell>
