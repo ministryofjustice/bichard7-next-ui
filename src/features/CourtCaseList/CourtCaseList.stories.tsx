@@ -63,7 +63,7 @@ OneRecord.play = async ({ canvasElement }) => {
   expect(urgentTags).toHaveLength(2) // The column header also matches this
 
   expect(canvas.getByText("Notes")).toBeInTheDocument()
-  expect(canvas.getByText("2")).toBeInTheDocument()
+  expect(canvas.getByText("2 notes")).toBeInTheDocument()
 }
 OneRecord.parameters = {
   design: [
@@ -92,7 +92,7 @@ ManyRecords.play = async ({ canvasElement }) => {
   expect(urgentTags).toHaveLength(courtCases.length + 1) // The column header also matches this
 
   expect(canvas.getByText("Notes")).toBeInTheDocument()
-  const noteTags = await canvas.findAllByText("2")
+  const noteTags = await canvas.findAllByText("2 notes")
   expect(noteTags).toHaveLength(courtCases.length)
 }
 ManyRecords.parameters = {
@@ -157,7 +157,7 @@ MixedNotes.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
 
   expect(canvas.getByText("Notes")).toBeInTheDocument()
-  const noteTags = await canvas.findAllByText("2")
+  const noteTags = await canvas.findAllByText("2 notes")
   expect(noteTags).toHaveLength(mixedNotes.filter((c) => c.notes.length).length)
 }
 MixedNotes.parameters = {
@@ -213,9 +213,9 @@ CaseLockedToUser.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
 
   const expectedUnlockButtons = await canvas.findAllByRole("button")
-  expect(expectedUnlockButtons).toHaveLength(2)
-  expect(expectedUnlockButtons[0]).toHaveTextContent("Bugs Bunny")
+  expect(expectedUnlockButtons).toHaveLength(3)
   expect(expectedUnlockButtons[1]).toHaveTextContent("Bugs Bunny")
+  expect(expectedUnlockButtons[2]).toHaveTextContent("Bugs Bunny")
 }
 
 const superUser = {
@@ -231,7 +231,7 @@ CaseViewedBySupervisor.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
 
   const expectedUnlockButtons = await canvas.findAllByRole("button")
-  expect(expectedUnlockButtons).toHaveLength(2)
-  expect(expectedUnlockButtons[0]).toHaveTextContent("Bugs Bunny")
+  expect(expectedUnlockButtons).toHaveLength(3)
   expect(expectedUnlockButtons[1]).toHaveTextContent("Bugs Bunny")
+  expect(expectedUnlockButtons[2]).toHaveTextContent("Bugs Bunny")
 }
