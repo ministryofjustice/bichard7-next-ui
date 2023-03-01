@@ -287,7 +287,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").eq(2).get("td:nth-child(7)").contains(`3`).should("exist")
     })
 
-    it.only("should be able to navigate to the case details page and back", () => {
+    it("should be able to navigate to the case details page and back", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
       loginAndGoToUrl()
