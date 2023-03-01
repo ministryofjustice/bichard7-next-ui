@@ -300,7 +300,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                     }}
                   ></input>
                   <label className="govuk-label govuk-checkboxes__label" htmlFor="my-cases-filter">
-                    {"View cases allocated to me"}
+                    {"View cases locked to me"}
                   </label>
                 </div>
               </div>

@@ -417,6 +417,7 @@ describe("Case list", () => {
       cy.get("#filter-button").click()
       cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").click()
 
+      // Removal by clicking filter chip 
       cy.get(".govuk-heading-s").contains("My cases").should("exist")
       cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist").trigger("click")
 
