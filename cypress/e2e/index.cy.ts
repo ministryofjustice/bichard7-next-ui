@@ -74,7 +74,7 @@ describe("Case list", () => {
     })
   })
 
-  context("when there multiple cases", () => {
+  context("when there are multiple cases", () => {
     it("should be accessible", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
       loginAndGoToUrl()
@@ -84,6 +84,19 @@ describe("Case list", () => {
       cy.get("h1")
 
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
+    })
+
+    it("should display all the headings with sorting or not", () => {
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+      loginAndGoToUrl()
+      cy.get("#defendant-name-sort").contains("Defendant Name").should("have.attr", "href")
+      cy.get("#court-date-sort").contains("Court Date").should("have.attr", "href")
+      cy.get("#court-name-sort").contains("Court Name").should("have.attr", "href")
+      cy.get("#ptiurn-sort").contains("PTIURN").should("have.attr", "href")
+      cy.get("#is-urgent-sort").contains("Urgent").should("have.attr", "href")
+      cy.contains("Notes").should("not.have.attr", "href")
+      cy.contains("Reason").should("not.have.attr", "href")
+      cy.get("#locked-by-sort").contains("Locked By").should("have.attr", "href")
     })
 
     it("should display multiple cases", () => {
