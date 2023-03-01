@@ -4,6 +4,7 @@ import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
 import { confirmFiltersAppliedContains, exactMatch } from "../../support/helpers"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
+import { filterByDateRange } from "./filterChips.cy"
 
 function visitBasePathAndShowFilters() {
   cy.visit("/bichard")
@@ -130,8 +131,7 @@ describe("Case list", () => {
 
     it("Should remove the selection of the date range when it's been changed to the custom date range", () => {
       visitBasePathAndShowFilters()
-      cy.get("#date-range").click()
-      cy.get("#date-range-yesterday").click()
+      filterByDateRange("#date-range-yesterday")
       cy.get("#date-range-yesterday").should("be.checked")
       cy.get("#custom-date-range").click()
       cy.get("#date-range").click()
@@ -144,8 +144,7 @@ describe("Case list", () => {
       cy.get("#date-from").type("2022-01-01")
       cy.get("#date-to").type("2022-12-31")
       cy.get("#custom-date-range").should("be.checked")
-      cy.get("#date-range").click()
-      cy.get("#date-range-yesterday").click()
+      filterByDateRange("#date-range-yesterday")
       cy.get("#date-range").should("be.checked")
       cy.get("#date-range-yesterday").should("be.checked")
     })
@@ -156,8 +155,7 @@ describe("Case list", () => {
       cy.get("#date-range").should("not.be.checked")
       cy.get("#custom-date-range").should("not.be.checked")
       // #date-range-yesterday selected, #date-range is checked
-      cy.get("#date-range").click()
-      cy.get("#date-range-yesterday").click()
+      filterByDateRange("#date-range-yesterday")
       cy.get("#date-range").should("be.checked")
       cy.get("#custom-date-range").should("not.be.checked")
       // #custom-date-range, ##custom-date-range is checked
@@ -375,8 +373,7 @@ describe("Case list", () => {
       visitBasePathAndShowFilters()
 
       // Tests for "Today"
-      cy.get("#date-range").click()
-      cy.get("#date-range-today").click()
+      filterByDateRange("#date-range-today")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
@@ -392,8 +389,7 @@ describe("Case list", () => {
 
       // Tests for "yesterday"
       cy.get("button#filter-button").click()
-      cy.get("#date-range").click()
-      cy.get("#date-range-yesterday").click()
+      filterByDateRange("#date-range-yesterday")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
