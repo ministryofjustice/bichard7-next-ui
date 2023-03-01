@@ -14,7 +14,7 @@ if (process.env.DEPLOY_NAME !== "e2e-test") {
 const minCases = 500
 const maxCases = 1_000
 const forceId = process.env.FORCE_ID || "01"
-const maxCaseAge = 12 * 30
+const maxCaseAge = -12 * 30
 
 const numCasesRange = maxCases - minCases
 const numCases = Math.round(Math.random() * numCasesRange) + minCases
