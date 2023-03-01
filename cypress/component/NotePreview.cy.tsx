@@ -1,5 +1,5 @@
-/* eslint-disable cypress/no-async-tests */
 import { HideButton, PreviewButton } from "../../src/features/CourtCaseList/NotePreviewButton"
+
 describe("NotePreview.cy.tx", () => {
   it("shows the default down chevron with the label 'preview'", () => {
     cy.mount(<PreviewButton />)

@@ -1,7 +1,7 @@
 import ConditionalRender from "../../components/ConditionalRender"
 import { Dispatch, SetStateAction } from "react"
 import { createUseStyles } from "react-jss"
-import { gdsLightGrey } from "utils/colours"
+import { gdsLightGrey } from "../../utils/colours"
 
 const useStyles = createUseStyles({
   buttonContainer: {
