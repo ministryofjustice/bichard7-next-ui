@@ -80,8 +80,8 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
         />
         <div className="govuk-radios__conditional" id="conditional-custom-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-            <DateInput dateType="from" dispatch={dispatch} defaultValue={defaultDateValue(customDateFrom)} />
-            <DateInput dateType="to" dispatch={dispatch} defaultValue={defaultDateValue(customDateTo)} />
+            <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(customDateFrom)} />
+            <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(customDateTo)} />
           </div>
         </div>
       </div>
