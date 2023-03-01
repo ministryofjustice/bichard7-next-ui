@@ -1,32 +1,10 @@
-import DateTime from "components/DateTime"
-import ConditionalRender from "components/ConditionalRender"
 import ColumnOrderIcons from "features/CourtCaseFilters/ColumnOrderIcons"
-import { GridRow, Link, Paragraph, Table } from "govuk-react"
-import Image from "next/image"
+import { Link, Paragraph, Table } from "govuk-react"
 import { useRouter } from "next/router"
-import { encode } from "querystring"
-import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import type { QueryOrder } from "types/CaseListQueryParams"
-import { deleteQueryParamsByName } from "utils/deleteQueryParam"
-import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
-import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
-import { displayedDateFormat } from "utils/formattedDate"
-import LockedByTag from "./tags/LockedByTag"
-import NotesTag from "./tags/NotesTag"
-import ResolvedTag from "./tags/ResolvedTag"
-import UrgentTag from "./tags/UrgentTag"
-
-const useStyles = createUseStyles({
-  caseDetailsRow: {
-    verticalAlign: "top"
-  },
-  triggersRow: {
-    verticalAlign: "top",
-    backgroundColor: "#f3f2f1" // GDS light-grey color
-  }
-})
+import CourtCaseListEntry from "./CourtCaseListEntry"
 
 interface Props {
   courtCases: CourtCase[]
@@ -35,34 +13,19 @@ interface Props {
 }
 
 const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser }: Props) => {
-  const classes = useStyles()
   const { basePath, query } = useRouter()
-
-  let searchParams = new URLSearchParams(encode(query))
-  searchParams = deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
-
   const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
-  const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
-  const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
-    searchParams.append(`unlock${reason}`, caseId)
-    return `${basePath}/?${searchParams}`
-  }
-
-  const canUnlockCase = (lockedUsername: string): boolean => {
-    return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
-  }
-
   const tableHead = (
     <Table.Row>
       <Table.Cell></Table.Cell>
-      <Table.CellHeader>
+      <Table.CellHeader setWidth={"178px"}>
         <ColumnOrderIcons columnName={"defendantName"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("defendantName")} id="defendant-name-sort">
             {"Defendant Name"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>
+      <Table.CellHeader setWidth={"115px"}>
         <ColumnOrderIcons columnName={"courtDate"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("courtDate")} id="court-date-sort">
             {"Court Date"}
@@ -107,112 +70,18 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
       </Table.CellHeader>
     </Table.Row>
   )
-  const tableBody: JSX.Element[] = []
-  courtCases.forEach(
-    (
-      {
-        errorId,
-        courtDate,
-        ptiurn,
-        defendantName,
-        courtName,
-        triggers,
-        errorReport,
-        isUrgent,
-        notes,
-        errorLockedByUsername,
-        triggerLockedByUsername,
-        resolutionTimestamp
-      },
-      idx
-    ) => {
-      const exceptions = groupErrorsFromReport(errorReport)
-      tableBody.push(
-        <Table.Row key={`case-details-row-${idx}`} className={classes.caseDetailsRow}>
-          <Table.Cell>
-            <ConditionalRender isRendered={!!errorLockedByUsername}>
-              <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
-            </ConditionalRender>
-          </Table.Cell>
-          <Table.Cell>
-            <Link href={caseDetailsPath(courtCases[idx].errorId)} id={`Case details for ${defendantName}`}>
-              {defendantName}
-              <br />
-              <ResolvedTag isResolved={resolutionTimestamp !== null} />
-            </Link>
-          </Table.Cell>
-          <Table.Cell>
-            <DateTime date={courtDate} dateFormat={displayedDateFormat} />
-          </Table.Cell>
-          <Table.Cell>{courtName}</Table.Cell>
-          <Table.Cell>{ptiurn}</Table.Cell>
-          <Table.Cell>
-            <UrgentTag isUrgent={isUrgent} />
-          </Table.Cell>
-          <Table.Cell>
-            <NotesTag notes={notes} />
-          </Table.Cell>
-          <Table.Cell>
-            {Object.keys(exceptions).map((code, codeId) => (
-              <GridRow key={`exception_${codeId}`}>
-                {code}
-                <b>&nbsp;{exceptions[code] > 1 ? `(${exceptions[code]})` : ""}</b>
-              </GridRow>
-            ))}
-          </Table.Cell>
-          <Table.Cell>
-            {errorLockedByUsername && canUnlockCase(errorLockedByUsername) ? (
-              <LockedByTag
-                lockedBy={errorLockedByUsername}
-                unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
-              />
-            ) : (
-              <LockedByTag lockedBy={errorLockedByUsername} />
-            )}
-          </Table.Cell>
-        </Table.Row>
-      )
-
-      if (triggers.length > 0) {
-        tableBody.push(
-          <Table.Row key={`triggers-row-${idx}`} className={classes.triggersRow}>
-            <Table.Cell>
-              <ConditionalRender isRendered={!!triggerLockedByUsername}>
-                <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
-              </ConditionalRender>
-            </Table.Cell>
-            <Table.Cell />
-            <Table.Cell />
-            <Table.Cell />
-            <Table.Cell />
-            <Table.Cell />
-            <Table.Cell />
-            <Table.Cell>
-              {triggers?.map((trigger, triggerId) => (
-                <GridRow key={`trigger_${triggerId}`}>{getTriggerWithDescription(trigger.triggerCode)}</GridRow>
-              ))}
-            </Table.Cell>
-            <Table.Cell>
-              {triggerLockedByUsername && canUnlockCase(triggerLockedByUsername) ? (
-                <LockedByTag
-                  lockedBy={triggerLockedByUsername}
-                  unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
-                />
-              ) : (
-                <LockedByTag lockedBy={triggerLockedByUsername} />
-              )}
-            </Table.Cell>
-          </Table.Row>
-        )
-      }
-    }
-  )
 
   if (courtCases.length === 0) {
     return <Paragraph>{"There are no court cases to show"}</Paragraph>
   }
 
-  return <Table head={tableHead}>{tableBody}</Table>
+  return (
+    <Table head={tableHead}>
+      {courtCases.map((courtCase, idx) => (
+        <CourtCaseListEntry courtCase={courtCase} currentUser={currentUser} key={`court-case-${idx}`} />
+      ))}
+    </Table>
+  )
 }
 
 export default CourtCaseList

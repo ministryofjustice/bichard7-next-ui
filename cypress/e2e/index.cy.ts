@@ -208,37 +208,6 @@ describe("Case list", () => {
         })
     })
 
-    it("should be able to navigate to the case details page and back", () => {
-      cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
-
-      loginAndGoToUrl()
-
-      cy.findByText("Defendant Name 0").click()
-
-      cy.url().should("match", /\/court-cases\//)
-      cy.findByText("Case Details").should("exist")
-
-      cy.findByText("Cases").click()
-
-      cy.url().should("match", /\/bichard/)
-      cy.findByText("Court cases").should("exist")
-    })
-
-    it("Should display the urgent badge on cases marked as urgent", () => {
-      cy.task("insertCourtCasesWithFields", [
-        { isUrgent: true, orgForPoliceFilter: "01" },
-        { isUrgent: false, orgForPoliceFilter: "01" },
-        { isUrgent: true, orgForPoliceFilter: "01" }
-      ])
-
-      loginAndGoToUrl()
-
-      cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
-      cy.get("tr").not(":first").eq(0).contains(`Urgent`).should("exist")
-      cy.get("tr").not(":first").eq(1).contains(`Urgent`).should("not.exist")
-      cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
-    })
-
     it("Should display the resolved badge on cases marked as resolved", () => {
       cy.task("insertCourtCasesWithFields", [
         { resolutionTimestamp: new Date(), orgForPoliceFilter: "01" },
@@ -305,63 +274,6 @@ describe("Case list", () => {
       cy.get("tr").not(":first").eq(2).get("td:nth-child(7)").contains(`3`).should("exist")
     })
 
-    it("Should display reason (errors and triggers) with correct formatting", () => {
-      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "011111" }, { orgForPoliceFilter: "011111" }])
-
-      cy.task("insertException", {
-        caseId: 0,
-        exceptionCode: "HO100310",
-        errorReport: "HO100310||ds:OffenceReasonSequence"
-      })
-    })
-
-    it("should display cases for parent forces up to the second-level force", () => {
-      cy.task("insertCourtCasesWithFields", [
-        { orgForPoliceFilter: "01" },
-        { orgForPoliceFilter: "011" },
-        { orgForPoliceFilter: "0111" },
-        { orgForPoliceFilter: "01111" },
-        { orgForPoliceFilter: "011111" }
-      ])
-
-      loginAndGoToUrl("bichard011111@example.com")
-
-      cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00000").should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00001").should("not.exist")
-      cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00002")
-      cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00003")
-      cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00004")
-    })
-
-    it("can display cases ordered by court name", () => {
-      cy.task("insertCourtCasesWithFields", [
-        { courtName: "BBBB", orgForPoliceFilter: "011111" },
-        { courtName: "AAAA", orgForPoliceFilter: "011111" },
-        { courtName: "DDDD", orgForPoliceFilter: "011111" },
-        { courtName: "CCCC", orgForPoliceFilter: "011111" }
-      ])
-
-      loginAndGoToUrl()
-
-      cy.findByText("Court Name").click()
-
-      cy.get("tr")
-        .not(":first")
-        .each((row) => {
-          cy.wrap(row).get("td:nth-child(4)").first().contains("AAAA")
-          cy.wrap(row).get("td:nth-child(4)").last().contains("DDDD")
-        })
-
-      cy.findByText("Court Name").click()
-
-      cy.get("tr")
-        .not(":first")
-        .each((row) => {
-          cy.wrap(row).get("td:nth-child(4)").first().contains("DDDD")
-          cy.wrap(row).get("td:nth-child(4)").last().contains("AAAA")
-        })
-    })
-
     it("should be able to navigate to the case details page and back", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
@@ -393,26 +305,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
     })
 
-    it("Should display the resolved badge on cases marked as resolved", () => {
-      cy.task("insertCourtCasesWithFields", [
-        { resolutionTimestamp: new Date(), orgForPoliceFilter: "01" },
-        { resolutionTimestamp: null, orgForPoliceFilter: "01" },
-        { resolutionTimestamp: new Date(), orgForPoliceFilter: "01" }
-      ])
-
-      loginAndGoToUrl()
-
-      cy.get("#filter-button").contains("Show filter").click()
-      cy.get("#unresolved-and-resolved").click()
-      cy.get("#search").contains("Apply filters").click()
-
-      cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
-      cy.get("tr").not(":first").eq(0).contains(`Resolved`).should("exist")
-      cy.get("tr").not(":first").eq(1).contains(`Resolved`).should("not.exist")
-      cy.get("tr").not(":first").eq(2).contains(`Resolved`).should("exist")
-    })
-
-    it("Should display the correct number of user-created notes on cases", () => {
+    it("Should display a preview of the notes", () => {
       const caseNotes: { user: string; text: string }[][] = [
         [
           {
@@ -453,10 +346,8 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
-      cy.get("tr").not(":first").eq(0).get("td:nth-child(7)").should("be.empty")
-      cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`1`).should("exist")
-      cy.get("tr").not(":first").eq(2).get("td:nth-child(7)").contains(`3`).should("exist")
+      cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`Preview`).should("exist").trigger("click")
+      cy.contains(`Test note 1`).should("exist")
     })
 
     it("Should display reason (errors and triggers) with correct formatting", () => {
