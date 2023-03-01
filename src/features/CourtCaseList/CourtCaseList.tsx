@@ -54,13 +54,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
         </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>{"Notes"}</Table.CellHeader>
-      <Table.CellHeader>
-        <ColumnOrderIcons columnName={"reason"} currentOrder={query.order} orderBy={query.orderBy}>
-          <Link href={orderByParams("reason")} id="exceptions">
-            {"Reason"}
-          </Link>
-        </ColumnOrderIcons>
-      </Table.CellHeader>
+      <Table.CellHeader>{"Reason"}</Table.CellHeader>
       <Table.CellHeader>
         <ColumnOrderIcons columnName={"lockedBy"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("lockedBy")} id="locked-by-sort">
