@@ -158,6 +158,10 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("not.exist")
         cy.get(".govuk-heading-s").contains("Date range").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("exist")
+
+        cy.get("#custom-date-range").click()
+        cy.get("#date-from").invoke("val").should("be.empty")
+        cy.get("#date-to").invoke("val").should("be.empty")
       })
 
       it.skip("Should apply the 'Custom date filter' filter chips then remove this chips to the original state", () => {
