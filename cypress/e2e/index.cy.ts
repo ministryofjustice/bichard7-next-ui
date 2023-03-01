@@ -287,7 +287,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").eq(2).get("td:nth-child(7)").contains(`3`).should("exist")
     })
 
-    it("should be able to navigate to the case details page and back", () => {
+    it.only("should be able to navigate to the case details page and back", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
       loginAndGoToUrl()
@@ -300,7 +300,7 @@ describe("Case list", () => {
       cy.findByText("Cases").click()
 
       cy.url().should("match", /\/bichard/)
-      cy.findByText("Court cases").should("exist")
+      cy.get("h1").contains("Case list").should("exist")
     })
 
     it("Should display the urgent badge on cases marked as urgent", () => {

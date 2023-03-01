@@ -1,3 +1,4 @@
+import { Heading } from "govuk-react"
 import { useState } from "react"
 import { useCustomStyles } from "../../../styles/customStyles"
 
@@ -24,7 +25,9 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
         <div className="moj-filter-layout__filter">
           <div className={areAppliedFiltersShown ? "moj-filter" : "moj-filter moj-hidden"}>{filter}</div>
         </div>
-
+        <Heading as="h1" size="LARGE">
+          {"Case list"}
+        </Heading>
         <div className="moj-filter-layout__content">
           <div className="moj-button-menu">
             <div className="moj-action-bar">

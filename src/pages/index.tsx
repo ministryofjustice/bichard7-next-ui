@@ -4,7 +4,7 @@ import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
 import CourtCaseList from "features/CourtCaseList/CourtCaseList"
-import { Heading } from "govuk-react"
+import { Main } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
@@ -184,9 +184,7 @@ const Home: NextPage<Props> = ({
       <meta name="description" content="Case List | Bichard7" />
     </Head>
     <Layout user={user}>
-      <Heading as="h1" size="LARGE">
-        {"Court cases"}
-      </Heading>
+      <Main />
       <CourtCaseWrapper
         filter={
           <CourtCaseFilter
