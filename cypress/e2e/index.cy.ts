@@ -300,7 +300,7 @@ describe("Case list", () => {
       cy.findByText("Cases").click()
 
       cy.url().should("match", /\/bichard/)
-      cy.findByText("Court cases").should("exist")
+      cy.get("h1").contains("Case list").should("exist")
     })
 
     it("Should display the urgent badge on cases marked as urgent", () => {
