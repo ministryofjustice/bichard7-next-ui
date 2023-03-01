@@ -74,7 +74,7 @@ describe("Case list", () => {
     })
   })
 
-  context("when there multiple cases", () => {
+  context("when there are multiple cases", () => {
     it("should be accessible", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
       loginAndGoToUrl()
