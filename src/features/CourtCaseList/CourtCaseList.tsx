@@ -71,8 +71,8 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
 
   return (
     <Table head={tableHead}>
-      {courtCases.map((courtCase, idx) => (
-        <CourtCaseListEntry courtCase={courtCase} currentUser={currentUser} key={`court-case-${idx}`} />
+      {courtCases.map((courtCase) => (
+        <CourtCaseListEntry courtCase={courtCase} currentUser={currentUser} key={`court-case-${courtCase.ptiurn}`} />
       ))}
     </Table>
   )
