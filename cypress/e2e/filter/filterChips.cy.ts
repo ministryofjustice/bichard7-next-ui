@@ -392,9 +392,9 @@ describe("Case list", () => {
       })
     })
 
-    it("Should display the 'Locked to me' filter chip when selected", () => {
+    it.only("Should display the 'Locked to me' filter chip when selected", () => {
       cy.get("#filter-button").click()
-      cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").click()
+      cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
 
       // Check if the correct heading and filter label are applied
       cy.get(".govuk-heading-s").contains("My cases").should("exist")
@@ -413,15 +413,15 @@ describe("Case list", () => {
       cy.get("#my-cases-filter").should("not.be.checked")
     })
 
-    it("Should apply the 'Locked to me' filter chips then remove this chips to the original state", () => {
+    it.only("Should apply the 'Locked to me' filter chips then remove this chips to the original state", () => {
       cy.get("#filter-button").click()
-      cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").click()
+      cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
 
-      // Removal by clicking filter chip 
+      // Removal by clicking filter chip
       cy.get(".govuk-heading-s").contains("My cases").should("exist")
       cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist").trigger("click")
 
-      cy.get(".govuk-checkboxes__item").contains("View cases allocated to me").should("not.be.checked")
+      cy.get(".govuk-checkboxes__item").contains("View cases locked to me").should("not.be.checked")
     })
   })
 })
