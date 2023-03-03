@@ -392,7 +392,7 @@ describe("Case list", () => {
       })
     })
 
-    it.only("Should display the 'Locked to me' filter chip when selected", () => {
+    it("Should display the 'Locked to me' filter chip when selected", () => {
       cy.get("#filter-button").click()
       cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
 
@@ -402,18 +402,18 @@ describe("Case list", () => {
 
       // Check if the filter chip is applied to the "Filters applied" section at the top of the case list
       cy.contains("Apply filters").click()
-      cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist")
+      cy.get(".moj-filter-tags").children().contains("Cases locked to me").should("exist")
       cy.get("#filter-button").contains("Show filter").click()
       cy.get("#my-cases-filter").should("be.checked")
 
-      // Clears filter chip and check the checkbox is deselected
+      // Clears filter chip using `Clear filters` button and check the checkbox is deselected
       cy.contains("Hide filter").click()
       cy.contains("Clear filters").click()
       cy.get("#filter-button").contains("Show filter").click()
       cy.get("#my-cases-filter").should("not.be.checked")
     })
 
-    it.only("Should apply the 'Locked to me' filter chips then remove this chips to the original state", () => {
+    it("Should select the 'Locked to me' filter chip then remove this chip to the original state", () => {
       cy.get("#filter-button").click()
       cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
 
@@ -422,6 +422,17 @@ describe("Case list", () => {
       cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist").trigger("click")
 
       cy.get(".govuk-checkboxes__item").contains("View cases locked to me").should("not.be.checked")
+    })
+    it.only("should remove applied `Locked to me` filter by clicking the filter chips ", () => {
+      //removal through filter panel
+      cy.get("#filter-button").click()
+      cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
+      cy.contains("Apply filters").click()
+      cy.get("#filter-button").click()
+      cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist").trigger("click")
+      cy.contains("Apply filters").click()
+
+      cy.get(".moj-filter-tags").children().contains("Cases locked to me").should("not.exist")
     })
   })
 })
