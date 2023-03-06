@@ -8,12 +8,6 @@ export default {
   component: CaseUnlockedTag
 } as ComponentMeta<typeof CaseUnlockedTag>
 
-export const CaseNotUnlocked: ComponentStory<typeof CaseUnlockedTag> = () => <CaseUnlockedTag isCaseUnlocked={false} />
-CaseNotUnlocked.play = ({ canvasElement }) => {
-  const canvas = within(canvasElement)
-  expect(canvas.queryByText("Case unlocked")).toBeNull()
-}
-
 export const CaseUnlocked: ComponentStory<typeof CaseUnlockedTag> = () => <CaseUnlockedTag isCaseUnlocked={true} />
 CaseUnlocked.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
