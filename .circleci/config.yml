@@ -143,34 +143,6 @@ jobs:
           name: Run visual unit tests
           command: npm run test:ui:unit:ci
 
-  chromatic_publish:
-    docker:
-      - image: cimg/node:16.12.0
-    resource_class: medium
-    working_directory: ~
-    steps:
-      - checkout
-      - npm_install
-      - attach_workspace:
-          at: .
-      - run:
-          name: Run Chromatic
-          command: npm run chromatic:ci
-
-  chromatic_baseline_update:
-    docker:
-      - image: cimg/node:16.12.0
-    resource_class: medium
-    working_directory: ~
-    steps:
-      - checkout
-      - npm_install
-      - attach_workspace:
-          at: .
-      - run:
-          name: Update Chromatic baseline
-          command: npm run chromatic:ci:main
-
   build_and_cypress_test:
     machine:
       image: ubuntu-2004:2022.04.1
@@ -314,13 +286,5 @@ workflows:
       - unit_test
       - integration_test
       - ui_test
-      - chromatic_publish
       - build_and_cypress_test
       - e2e_test
-  chromatic_baseline_update:
-    jobs:
-      - chromatic_baseline_update:
-          filters:
-            branches:
-              only:
-                - main

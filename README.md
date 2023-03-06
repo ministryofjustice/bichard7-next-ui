@@ -85,23 +85,6 @@ For CI or otherwise, run (requires `npx playwright install` to be run first some
     npm run test:ui:unit:ci
 ```
 
-We are using [chromatic](https://www.chromatic.com/) to help document visual changes when we merge changes to main branch
-If you need to do any local storybook componets to chromatic (from your local branch) run
-
-```bash
-    npx chromatic --project-token <your-project-toke>
-```
-
-By logging into chromatic using the shared MoJ github account, under bichard-next-ui click on `Manage` tab and select `Configure` to find the project token
-
-This is a link to our [chromatic](https://www.chromatic.com/builds?appId=62ce99495ed8d3db63b60dab) dashboard
-
-### Visual Regression (Chromatic) Testing
-
-We run visual regression/snapshot testing against all of our visual components in storybook using Chromatic.
-
-If you have made changes to how components look on your branch, you will need to review these changes in the Chromatic UI and approve them in order to merge.
-
 ### Integration/E2e Testing
 
 #### Integration
