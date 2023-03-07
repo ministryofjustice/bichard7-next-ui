@@ -46,10 +46,24 @@ const UnlockConfirmation = () => {
     <>
       <p>{"Click the button to unlock the case"}</p>
       <div className="govuk-button-group">
-        <button className="govuk-button" data-module="govuk-button" id="unlock">
+        <button
+          className="govuk-button"
+          data-module="govuk-button"
+          id="unlock"
+          onClick={() => {
+            console.log("Unlock has been clicked")
+          }}
+        >
           {"Unlock"}
         </button>
-        <a className="govuk-link" href="/">
+        <a
+          className="govuk-link"
+          href="/"
+          onClick={(event) => {
+            event.preventDefault()
+            console.log("Cancel has been clicked")
+          }}
+        >
           {"Cancel"}
         </a>
       </div>
