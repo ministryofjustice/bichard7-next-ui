@@ -71,28 +71,30 @@ const UnlockConfirmation = () => {
   )
 }
 
-const LockedByTag: React.FC<{ lockedBy?: string | null; unlockPath?: string }> = (props: {
+interface LockedByTagProps {
   lockedBy?: string | null
   unlockPath?: string
-}) => {
+}
+
+const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
   const classes = useStyles()
   return (
-    <ConditionalRender isRendered={!!props.lockedBy}>
+    <ConditionalRender isRendered={!!lockedBy}>
       <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag ${classes.LockedByTag}`}>
         <div className={classes.LockedByTag}>
           <Image
             src={"/bichard/assets/images/lock.svg"}
             width={18}
             height={18}
-            className={props.unlockPath ? classes.LockedIcon : undefined}
+            className={unlockPath ? classes.LockedIcon : undefined}
             alt="Lock icon"
           />
-          {props.unlockPath ? (
-            <form method="POST" action={props.unlockPath}>
-              <button className={classes.LockedByURL}>{props.lockedBy}</button>
+          {unlockPath ? (
+            <form method="POST" action={unlockPath}>
+              <button className={classes.LockedByURL}>{lockedBy}</button>
             </form>
           ) : (
-            <span className={classes.LockedByText}>{props.lockedBy}</span>
+            <span className={classes.LockedByText}>{lockedBy}</span>
           )}
         </div>
       </Tag>
