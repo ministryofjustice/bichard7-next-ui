@@ -41,21 +41,20 @@ const useStyles = createUseStyles({
   }
 })
 
-const UnlockConfirmation = () => {
+interface UnlockConfirmationProps {
+  unlockPath?: string
+}
+
+const UnlockConfirmation = ({ unlockPath }: UnlockConfirmationProps) => {
   return (
     <>
       <p>{"Click the button to unlock the case"}</p>
       <div className="govuk-button-group">
-        <button
-          className="govuk-button"
-          data-module="govuk-button"
-          id="unlock"
-          onClick={() => {
-            console.log("Unlock has been clicked")
-          }}
-        >
-          {"Unlock"}
-        </button>
+        <form method="POST" action={unlockPath}>
+          <button className="govuk-button" data-module="govuk-button" id="unlock">
+            {"Unlock"}
+          </button>
+        </form>
         <a
           className="govuk-link"
           href="/"
@@ -90,15 +89,20 @@ const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
             alt="Lock icon"
           />
           {unlockPath ? (
-            <form method="POST" action={unlockPath}>
-              <button className={classes.LockedByURL}>{lockedBy}</button>
-            </form>
+            <button
+              className={classes.LockedByURL}
+              onClick={() => {
+                console.log("A tag has been clicked")
+              }}
+            >
+              {lockedBy}
+            </button>
           ) : (
             <span className={classes.LockedByText}>{lockedBy}</span>
           )}
         </div>
       </Tag>
-      <UnlockConfirmation />
+      {unlockPath && <UnlockConfirmation unlockPath={unlockPath} />}
     </ConditionalRender>
   )
 }
