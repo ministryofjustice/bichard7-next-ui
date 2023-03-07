@@ -41,6 +41,22 @@ const useStyles = createUseStyles({
   }
 })
 
+const UnlockConfirmation = () => {
+  return (
+    <>
+      <p>{"Click the button to unlock the case"}</p>
+      <div className="govuk-button-group">
+        <button className="govuk-button" data-module="govuk-button" id="unlock">
+          {"Unlock"}
+        </button>
+        <a className="govuk-link" href="/">
+          {"Cancel"}
+        </a>
+      </div>
+    </>
+  )
+}
+
 const LockedByTag: React.FC<{ lockedBy?: string | null; unlockPath?: string }> = (props: {
   lockedBy?: string | null
   unlockPath?: string
@@ -66,6 +82,7 @@ const LockedByTag: React.FC<{ lockedBy?: string | null; unlockPath?: string }> =
           )}
         </div>
       </Tag>
+      <UnlockConfirmation />
     </ConditionalRender>
   )
 }
