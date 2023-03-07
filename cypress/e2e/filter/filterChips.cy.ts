@@ -423,7 +423,7 @@ describe("Case list", () => {
 
       cy.get(".govuk-checkboxes__item").contains("View cases locked to me").should("not.be.checked")
     })
-    it.only("should remove applied `Locked to me` filter by clicking the filter chips ", () => {
+    it("should remove applied `Locked to me` filter by clicking the filter chips ", () => {
       //removal through filter panel
       cy.get("#filter-button").click()
       cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
@@ -432,7 +432,7 @@ describe("Case list", () => {
       cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist").trigger("click")
       cy.contains("Apply filters").click()
 
-      cy.get(".moj-filter-tags").children().contains("Cases locked to me").should("not.exist")
+      cy.contains("Cases locked to me").should("not.exist")
     })
   })
 })

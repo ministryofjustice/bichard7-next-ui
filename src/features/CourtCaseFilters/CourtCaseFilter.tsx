@@ -290,7 +290,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                     name="myCases"
                     type="checkbox"
                     value={"true"}
-                    checked={state.myCasesFilter.value}
+                    checked={!!state.myCasesFilter.value}
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
                       dispatch({
                         method: "add",
