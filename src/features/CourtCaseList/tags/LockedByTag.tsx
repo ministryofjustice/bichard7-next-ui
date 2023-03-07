@@ -1,6 +1,7 @@
 import ConditionalRender from "components/ConditionalRender"
 import { Tag } from "govuk-react"
 import Image from "next/image"
+import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import { tagBlue, textBlue } from "utils/colours"
 
@@ -42,10 +43,11 @@ const useStyles = createUseStyles({
 })
 
 interface UnlockConfirmationProps {
+  onCancel: () => void
   unlockPath?: string
 }
 
-const UnlockConfirmation = ({ unlockPath }: UnlockConfirmationProps) => {
+const UnlockConfirmation = ({ onCancel, unlockPath }: UnlockConfirmationProps) => {
   return (
     <>
       <p>{"Click the button to unlock the case"}</p>
@@ -60,7 +62,7 @@ const UnlockConfirmation = ({ unlockPath }: UnlockConfirmationProps) => {
           href="/"
           onClick={(event) => {
             event.preventDefault()
-            console.log("Cancel has been clicked")
+            onCancel()
           }}
         >
           {"Cancel"}
@@ -76,6 +78,7 @@ interface LockedByTagProps {
 }
 
 const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
+  const [showUnlockConfirmation, setShowUnlockConfirmation] = useState(false)
   const classes = useStyles()
   return (
     <ConditionalRender isRendered={!!lockedBy}>
@@ -92,7 +95,7 @@ const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
             <button
               className={classes.LockedByURL}
               onClick={() => {
-                console.log("A tag has been clicked")
+                setShowUnlockConfirmation(true)
               }}
             >
               {lockedBy}
@@ -102,7 +105,14 @@ const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
           )}
         </div>
       </Tag>
-      {unlockPath && <UnlockConfirmation unlockPath={unlockPath} />}
+      {showUnlockConfirmation && (
+        <UnlockConfirmation
+          onCancel={() => {
+            setShowUnlockConfirmation(false)
+          }}
+          unlockPath={unlockPath}
+        />
+      )}
     </ConditionalRender>
   )
 }
