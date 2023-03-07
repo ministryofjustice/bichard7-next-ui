@@ -4,6 +4,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import { tagBlue, textBlue } from "utils/colours"
+import { useCustomStyles } from "../../../../styles/customStyles"
 
 const useStyles = createUseStyles({
   LockedByTag: {
@@ -80,6 +81,7 @@ interface LockedByTagProps {
 const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
   const [showUnlockConfirmation, setShowUnlockConfirmation] = useState(false)
   const classes = useStyles()
+  const classes2 = useCustomStyles()
   return (
     <ConditionalRender isRendered={!!lockedBy}>
       <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag ${classes.LockedByTag}`}>
@@ -105,6 +107,16 @@ const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
           )}
         </div>
       </Tag>
+      <button className={classes2["govuk-button--tag"]}>
+        <Image
+          src={"/bichard/assets/images/lock.svg"}
+          width={18}
+          height={18}
+          className={unlockPath ? classes.LockedIcon : undefined}
+          alt="Lock icon"
+        />
+        {lockedBy}
+      </button>
       {showUnlockConfirmation && (
         <UnlockConfirmation
           onCancel={() => {

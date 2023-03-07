@@ -2,6 +2,27 @@ import { createUseStyles } from "react-jss"
 import { darkGrey } from "utils/colours"
 
 export const useCustomStyles = createUseStyles({
+  "govuk-button--tag": {
+    border: "none",
+    gap: "11px",
+    display: "inline-flex",
+    flexWrap: "nowrap",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingTop: "8px",
+    paddingRight: "18px",
+    paddingBottom: "8px",
+    paddingLeft: "8px",
+    backgroundColor: "#e9f1f8",
+    color: "#114e81",
+    fontSize: "16px",
+    cursor: "pointer",
+    textDecoration: "underline",
+    "&:hover": {
+      color: "white",
+      background: "#1D70B8"
+    }
+  },
   "max-width": {
     maxWidth: "100%",
     padding: "0 40px"
