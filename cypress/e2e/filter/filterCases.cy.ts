@@ -2,7 +2,12 @@ import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
-import { confirmFiltersAppliedContains, exactMatch } from "../../support/helpers"
+import {
+  confirmFiltersAppliedContains,
+  confirmMultipleFieldsDisplayed,
+  confirmMultipleFieldsNotDisplayed,
+  exactMatch
+} from "../../support/helpers"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 import { filterByDateRange } from "./filterChips.cy"
 
@@ -28,18 +33,6 @@ function removeFilterTag(filterTag: string) {
 function inputAndSearch(inputId: string, phrase: string) {
   cy.get(`input[id=${inputId}]`).type(phrase)
   cy.get("button[id=search]").click()
-}
-
-function confirmMultipleFieldsDisplayed(fields: string[]) {
-  fields.forEach((field) => {
-    cy.contains(field)
-  })
-}
-
-function confirmMultipleFieldsNotDisplayed(fields: string[]) {
-  fields.forEach((field) => {
-    cy.contains(field).should("not.exist")
-  })
 }
 
 describe("Case list", () => {

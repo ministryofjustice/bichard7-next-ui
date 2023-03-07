@@ -5,3 +5,15 @@ export function confirmFiltersAppliedContains(filterTag: string) {
 export const exactMatch = (keyword: string): RegExp => {
   return new RegExp("^" + keyword + "$")
 }
+
+export const confirmMultipleFieldsDisplayed = (fields: string[]) => {
+  fields.forEach((field) => {
+    cy.contains(field)
+  })
+}
+
+export const confirmMultipleFieldsNotDisplayed = (fields: string[]) => {
+  fields.forEach((field) => {
+    cy.contains(field).should("not.exist")
+  })
+}

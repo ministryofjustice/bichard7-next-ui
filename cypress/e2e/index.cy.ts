@@ -1,8 +1,14 @@
+import { subHours } from "date-fns"
+import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import { TestTrigger } from "../../test/utils/manageTriggers"
 import hashedPassword from "../fixtures/hashedPassword"
 import a11yConfig from "../support/a11yConfig"
-import { confirmFiltersAppliedContains } from "../support/helpers"
+import {
+  confirmFiltersAppliedContains,
+  confirmMultipleFieldsDisplayed,
+  confirmMultipleFieldsNotDisplayed
+} from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 
 const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard") => {
@@ -808,6 +814,117 @@ describe("Case list", () => {
 
       cy.get("li.moj-pagination__item").contains("Next").click()
       confirmFiltersAppliedContains("Urgent")
+    })
+
+    it("shows supervisors all resolved cases from their force", () => {
+      const casesConfig = [
+        {
+          force: "011111",
+          resolved: true,
+          id: 0
+        },
+        {
+          force: "011111",
+          resolved: true,
+          id: 1
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 2
+        },
+        {
+          force: "02",
+          resolved: true,
+          id: 3
+        },
+        {
+          force: "03",
+          resolved: false,
+          id: 4
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 5
+        }
+      ]
+      const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig) => {
+        const resolutionDate = subHours(new Date(), Math.random() * 100)
+        return {
+          errorId: caseConfig.id,
+          orgForPoliceFilter: caseConfig.force,
+          resolutionTimestamp: caseConfig.resolved ? resolutionDate : null
+        }
+      })
+      cy.task("insertCourtCasesWithFields", cases)
+
+      loginAndGoToUrl("supervisor@example.com")
+
+      cy.get("#filter-button").click()
+      cy.get("#resolved").click()
+      cy.get("#search").click()
+
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00001"])
+      confirmMultipleFieldsNotDisplayed(["Case00002", "Case00003", "Case00004", "Case00005"])
+    })
+
+    it("shows handlers only resolved cases that they resolved", () => {
+      const casesConfig = [
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Supervisor",
+          id: 0
+        },
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Bichard01",
+          id: 1
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 2
+        },
+        {
+          force: "02",
+          resolved: true,
+          resolvedBy: "Bichard02",
+          id: 3
+        },
+        {
+          force: "03",
+          resolved: false,
+          id: 4
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 5
+        }
+      ]
+      const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig) => {
+        const resolutionDate = subHours(new Date(), Math.random() * 100)
+        return {
+          errorId: caseConfig.id,
+          orgForPoliceFilter: caseConfig.force,
+          resolutionTimestamp: caseConfig.resolved ? resolutionDate : null,
+          errorResolvedBy: caseConfig.resolvedBy ?? null,
+          triggerResolvedBy: caseConfig.resolvedBy ?? null
+        }
+      })
+      cy.task("insertCourtCasesWithFields", cases)
+
+      loginAndGoToUrl()
+
+      cy.get("#filter-button").click()
+      cy.get("#resolved").click()
+      cy.get("#search").click()
+
+      confirmMultipleFieldsDisplayed(["Case00001"])
+      confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002", "Case00003", "Case00004", "Case00005"])
     })
   })
 })
