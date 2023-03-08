@@ -117,6 +117,29 @@ const LockedByButton = ({
   )
 }
 
+interface LockedByTextProps {
+  lockedBy?: string | null
+  unlockPath?: string
+}
+
+const LockedByText = ({ lockedBy, unlockPath }: LockedByTextProps) => {
+  const classes = useStyles()
+  return (
+    <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag ${classes.LockedByTag}`}>
+      <div className={classes.LockedByTag}>
+        <Image
+          src={"/bichard/assets/images/lock.svg"}
+          width={18}
+          height={18}
+          className={unlockPath ? classes.LockedIcon : undefined}
+          alt="Lock icon"
+        />
+        <span className={classes.LockedByText}>{lockedBy}</span>
+      </div>
+    </Tag>
+  )
+}
+
 interface LockedByTagProps {
   lockedBy?: string | null
   unlockPath?: string
@@ -124,7 +147,7 @@ interface LockedByTagProps {
 
 const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
   const [showUnlockConfirmation, setShowUnlockConfirmation] = useState(false)
-  const classes = useStyles()
+
   return (
     <ConditionalRender isRendered={!!lockedBy}>
       {unlockPath ? (
@@ -135,18 +158,7 @@ const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
           setShowUnlockConfirmation={setShowUnlockConfirmation}
         />
       ) : (
-        <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag ${classes.LockedByTag}`}>
-          <div className={classes.LockedByTag}>
-            <Image
-              src={"/bichard/assets/images/lock.svg"}
-              width={18}
-              height={18}
-              className={unlockPath ? classes.LockedIcon : undefined}
-              alt="Lock icon"
-            />
-            <span className={classes.LockedByText}>{lockedBy}</span>
-          </div>
-        </Tag>
+        <LockedByText lockedBy={lockedBy} unlockPath={unlockPath} />
       )}
     </ConditionalRender>
   )
