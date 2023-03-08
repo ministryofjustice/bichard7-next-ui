@@ -73,6 +73,50 @@ const UnlockConfirmation = ({ onCancel, unlockPath }: UnlockConfirmationProps) =
   )
 }
 
+interface LockedByButtonProps {
+  lockedBy?: string | null
+  unlockPath?: string
+  showUnlockConfirmation: boolean
+  setShowUnlockConfirmation: (value: boolean) => void
+}
+
+const LockedByButton = ({
+  lockedBy,
+  unlockPath,
+  showUnlockConfirmation,
+  setShowUnlockConfirmation
+}: LockedByButtonProps) => {
+  const classes = useStyles()
+  const lockedByButtonClasses = useCustomStyles()
+  return (
+    <>
+      <button
+        className={lockedByButtonClasses["button--tag"]}
+        onClick={() => {
+          setShowUnlockConfirmation(true)
+        }}
+      >
+        <Image
+          src={"/bichard/assets/images/lock.svg"}
+          width={18}
+          height={18}
+          className={unlockPath ? classes.LockedIcon : undefined}
+          alt="Lock icon"
+        />
+        {lockedBy}
+      </button>
+      {showUnlockConfirmation && (
+        <UnlockConfirmation
+          onCancel={() => {
+            setShowUnlockConfirmation(false)
+          }}
+          unlockPath={unlockPath}
+        />
+      )}
+    </>
+  )
+}
+
 interface LockedByTagProps {
   lockedBy?: string | null
   unlockPath?: string
@@ -81,7 +125,6 @@ interface LockedByTagProps {
 const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
   const [showUnlockConfirmation, setShowUnlockConfirmation] = useState(false)
   const classes = useStyles()
-  const classes2 = useCustomStyles()
   return (
     <ConditionalRender isRendered={!!lockedBy}>
       <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag ${classes.LockedByTag}`}>
@@ -107,24 +150,12 @@ const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
           )}
         </div>
       </Tag>
-      <button className={classes2["button--tag"]}>
-        <Image
-          src={"/bichard/assets/images/lock.svg"}
-          width={18}
-          height={18}
-          className={unlockPath ? classes.LockedIcon : undefined}
-          alt="Lock icon"
-        />
-        {lockedBy}
-      </button>
-      {showUnlockConfirmation && (
-        <UnlockConfirmation
-          onCancel={() => {
-            setShowUnlockConfirmation(false)
-          }}
-          unlockPath={unlockPath}
-        />
-      )}
+      <LockedByButton
+        lockedBy={lockedBy}
+        unlockPath={unlockPath}
+        showUnlockConfirmation={showUnlockConfirmation}
+        setShowUnlockConfirmation={setShowUnlockConfirmation}
+      />
     </ConditionalRender>
   )
 }
