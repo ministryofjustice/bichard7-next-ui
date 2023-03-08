@@ -1,33 +1,30 @@
 import { createUseStyles } from "react-jss"
-import { darkGrey } from "utils/colours"
+import { darkGrey, navy, tagBlue, textBlue, yellow } from "utils/colours"
 
 export const useCustomStyles = createUseStyles({
   "button--tag": {
-    border: "none",
-    gap: "11px",
     display: "inline-flex",
     flexWrap: "nowrap",
     alignItems: "center",
     flexDirection: "row",
-    paddingTop: "8px",
-    paddingRight: "18px",
-    paddingBottom: "8px",
-    paddingLeft: "8px",
-    backgroundColor: "#e9f1f8",
-    color: "#114e81",
+    padding: "8px 18px 8px 8px",
+    border: "none",
+    gap: "11px",
+    backgroundColor: tagBlue,
+    color: textBlue,
     fontSize: "16px",
-    cursor: "pointer",
     textDecoration: "underline",
+    cursor: "pointer",
     "&:hover": {
       color: "white",
-      background: "#1D70B8"
+      background: navy
     },
     "&:hover img": {
       filter: "invert(1)"
     },
     "&:focus": {
       color: "black",
-      background: "#FFDD00"
+      background: yellow
     },
     "&:focus img": {
       filter: "contrast(1)"
