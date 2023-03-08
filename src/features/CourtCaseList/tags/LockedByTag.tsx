@@ -107,7 +107,7 @@ const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
           )}
         </div>
       </Tag>
-      <button className={classes2["govuk-button--tag"]}>
+      <button className={classes2["button--tag"]}>
         <Image
           src={"/bichard/assets/images/lock.svg"}
           width={18}

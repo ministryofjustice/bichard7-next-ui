@@ -2,7 +2,7 @@ import { createUseStyles } from "react-jss"
 import { darkGrey } from "utils/colours"
 
 export const useCustomStyles = createUseStyles({
-  "govuk-button--tag": {
+  "button--tag": {
     border: "none",
     gap: "11px",
     display: "inline-flex",
