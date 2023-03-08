@@ -423,6 +423,7 @@ describe("Case list", () => {
 
       cy.get(".govuk-checkboxes__item").contains("View cases locked to me").should("not.be.checked")
     })
+
     it("should remove applied `Locked to me` filter by clicking the filter chips ", () => {
       //removal through filter panel
       cy.get("#filter-button").click()
@@ -436,5 +437,3 @@ describe("Case list", () => {
     })
   })
 })
-
-export {}

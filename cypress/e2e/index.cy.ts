@@ -64,6 +64,28 @@ describe("Case list", () => {
       cy.get("#bottom-pagination-bar").should("not.be.visible")
     })
 
+    it.only("should display 0 cases when there are no cases 'locked to me' and hide the bottom pagination bar ", () => {
+      const lockUsernames = ["Bichard02", "Bichard03", null, "A really really really long name"]
+      cy.task(
+        "insertCourtCasesWithFields",
+        lockUsernames.map((username) => ({
+          errorLockedByUsername: username,
+          triggerLockedByUsername: username,
+          orgForPoliceFilter: "011111"
+        }))
+      )
+
+      loginAndGoToUrl()
+
+      cy.get("#filter-button").click()
+      cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
+      cy.contains("Apply filters").click()
+
+      cy.findByText("Previous page").should("not.exist")
+      cy.findByText("Next page").should("not.exist")
+      cy.get("#bottom-pagination-bar").should("not.be.visible")
+    })
+
     it("should be accessible", () => {
       loginAndGoToUrl()
       cy.injectAxe()
