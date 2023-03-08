@@ -1,3 +1,4 @@
+import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import Pagination from "components/Pagination"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
@@ -15,7 +16,7 @@ import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CaseState, Reason, QueryOrder, Urgency } from "types/CaseListQueryParams"
+import { CaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
 import { isPost } from "utils/http"
@@ -223,7 +224,9 @@ const Home: NextPage<Props> = ({
         courtCaseList={<CourtCaseList courtCases={courtCases} order={order} currentUser={user} />}
         paginationTop={<Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />}
         paginationBottom={
-          <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
+          <ConditionalDisplay isDisplayed={courtCases.length > 0}>
+            <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
+          </ConditionalDisplay>
         }
       />
     </Layout>
