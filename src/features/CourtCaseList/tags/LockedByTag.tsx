@@ -127,35 +127,27 @@ const LockedByTag = ({ lockedBy, unlockPath }: LockedByTagProps) => {
   const classes = useStyles()
   return (
     <ConditionalRender isRendered={!!lockedBy}>
-      <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag ${classes.LockedByTag}`}>
-        <div className={classes.LockedByTag}>
-          <Image
-            src={"/bichard/assets/images/lock.svg"}
-            width={18}
-            height={18}
-            className={unlockPath ? classes.LockedIcon : undefined}
-            alt="Lock icon"
-          />
-          {unlockPath ? (
-            <button
-              className={classes.LockedByURL}
-              onClick={() => {
-                setShowUnlockConfirmation(true)
-              }}
-            >
-              {lockedBy}
-            </button>
-          ) : (
+      {unlockPath ? (
+        <LockedByButton
+          lockedBy={lockedBy}
+          unlockPath={unlockPath}
+          showUnlockConfirmation={showUnlockConfirmation}
+          setShowUnlockConfirmation={setShowUnlockConfirmation}
+        />
+      ) : (
+        <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag ${classes.LockedByTag}`}>
+          <div className={classes.LockedByTag}>
+            <Image
+              src={"/bichard/assets/images/lock.svg"}
+              width={18}
+              height={18}
+              className={unlockPath ? classes.LockedIcon : undefined}
+              alt="Lock icon"
+            />
             <span className={classes.LockedByText}>{lockedBy}</span>
-          )}
-        </div>
-      </Tag>
-      <LockedByButton
-        lockedBy={lockedBy}
-        unlockPath={unlockPath}
-        showUnlockConfirmation={showUnlockConfirmation}
-        setShowUnlockConfirmation={setShowUnlockConfirmation}
-      />
+          </div>
+        </Tag>
+      )}
     </ConditionalRender>
   )
 }
