@@ -1,7 +1,7 @@
 import { Tag } from "govuk-react"
 import Image from "next/image"
 import { createUseStyles } from "react-jss"
-import { tagBlue, textBlue } from "utils/colours"
+import { tagBlue, textBlue } from "../../../../utils/colours"
 
 const useStyles = createUseStyles({
   LockedByTag: {
