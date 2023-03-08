@@ -1,5 +1,5 @@
 import { createUseStyles } from "react-jss"
-import { darkGrey, navy, tagBlue, textBlue, yellow } from "utils/colours"
+import { darkGrey, navy, tagBlue, textBlue, yellow } from "../src/utils/colours"
 
 export const useCustomStyles = createUseStyles({
   "button--tag": {
