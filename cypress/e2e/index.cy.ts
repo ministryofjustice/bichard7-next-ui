@@ -870,7 +870,64 @@ describe("Case list", () => {
       confirmMultipleFieldsNotDisplayed(["Case00002", "Case00003", "Case00004", "Case00005"])
     })
 
-    it("shows handlers only resolved cases that they resolved", () => {
+    it("shows handlers resolved cases that only they resolved exceptions for", () => {
+      const casesConfig = [
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Supervisor",
+          id: 0
+        },
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Bichard01",
+          id: 1
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 2
+        },
+        {
+          force: "02",
+          resolved: true,
+          resolvedBy: "Bichard02",
+          id: 3
+        },
+        {
+          force: "03",
+          resolved: false,
+          id: 4
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 5
+        }
+      ]
+      const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig) => {
+        const resolutionDate = subHours(new Date(), Math.random() * 100)
+        return {
+          errorId: caseConfig.id,
+          orgForPoliceFilter: caseConfig.force,
+          resolutionTimestamp: caseConfig.resolved ? resolutionDate : null,
+          errorResolvedBy: caseConfig.resolvedBy ?? null
+        }
+      })
+      cy.task("insertCourtCasesWithFields", cases)
+
+      loginAndGoToUrl()
+
+      cy.get("#filter-button").click()
+      cy.get("#resolved").click()
+      cy.get("#search").click()
+
+      confirmMultipleFieldsDisplayed(["Case00001", "Case00006"])
+      confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002", "Case00003", "Case00004", "Case00005"])
+    })
+
+    it("shows handlers resolved cases that only they resolved triggers for", () => {
       const casesConfig = [
         {
           force: "011111",
@@ -908,7 +965,7 @@ describe("Case list", () => {
         {
           force: "011111",
           resolved: true,
-          resolvedBy: "Bichard02",
+          resolvedBy: "Bichard01",
           id: 6
         }
       ]
@@ -917,24 +974,28 @@ describe("Case list", () => {
         return {
           errorId: caseConfig.id,
           orgForPoliceFilter: caseConfig.force,
-          resolutionTimestamp: caseConfig.resolved ? resolutionDate : null,
-          errorResolvedBy: caseConfig.resolvedBy ?? null
+          resolutionTimestamp: caseConfig.resolved ? resolutionDate : null
         }
       })
       cy.task("insertCourtCasesWithFields", cases)
-      cy.task("insertTriggers", {
-        caseId: 6,
-        triggers: [
-          {
-            triggerId: 0,
-            triggerCode: "TRPR0010",
-            status: "Resolved",
-            createdAt: new Date("2023-03-07T10:22:34.000Z"),
-            resolvedBy: "Bichard01",
-            resolvedAt: new Date("2023-03-07T12:22:34.000Z")
-          }
-        ]
-      })
+
+      casesConfig
+        .filter((c) => !!c.resolvedBy)
+        .forEach((caseConfig, caseId) => {
+          cy.task("insertTriggers", {
+            caseId,
+            triggers: [
+              {
+                triggerId: caseId,
+                triggerCode: "TRPR0010",
+                status: "Resolved",
+                createdAt: new Date("2023-03-07T10:22:34.000Z"),
+                resolvedBy: caseConfig.resolvedBy,
+                resolvedAt: new Date("2023-03-07T12:22:34.000Z")
+              }
+            ]
+          })
+        })
 
       loginAndGoToUrl()
 

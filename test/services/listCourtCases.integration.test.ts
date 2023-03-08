@@ -1216,7 +1216,8 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        caseState: "Resolved"
+        caseState: "Resolved",
+        resolvedByUsername: thisUser
       })
 
       expect(isError(result)).toBeFalsy()
@@ -1231,11 +1232,24 @@ describe("listCourtCases", () => {
       const resolutionTimestamp = new Date()
       const thisUser = "Bichard01"
       const otherUser = "Bichard02"
-      const casesToInsert: Partial<CourtCase>[] = [otherUser, otherUser, otherUser].map((user) => ({
-        resolutionTimestamp: resolutionTimestamp,
-        orgForPoliceFilter: orgCode,
-        errorResolvedBy: user
-      }))
+      const casesToInsert: Partial<CourtCase>[] = [
+        {
+          resolutionTimestamp: resolutionTimestamp,
+          orgForPoliceFilter: orgCode,
+          errorResolvedBy: otherUser
+        },
+        {
+          resolutionTimestamp: resolutionTimestamp,
+          orgForPoliceFilter: orgCode,
+          errorResolvedBy: otherUser
+        },
+        {
+          resolutionTimestamp: resolutionTimestamp,
+          orgForPoliceFilter: orgCode,
+          errorResolvedBy: otherUser,
+          triggerResolvedBy: thisUser
+        }
+      ]
 
       await insertCourtCasesWithFields(casesToInsert)
 
@@ -1253,14 +1267,15 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        caseState: "Resolved"
+        caseState: "Resolved",
+        resolvedByUsername: thisUser
       })
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(2)
-      expect(cases.map((c) => c.errorId)).toStrictEqual([0])
+      expect(cases.map((c) => c.errorId)).toStrictEqual([0, 2])
     })
   })
 })
