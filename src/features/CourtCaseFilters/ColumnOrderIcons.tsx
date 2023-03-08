@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { ReactNode } from "react"
 import { createUseStyles } from "react-jss"
-import { navy } from "utils/colours"
+import { navy } from "../../utils/colours"
 
 const useStyles = createUseStyles({
   container: {

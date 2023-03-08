@@ -2,7 +2,7 @@ import ConditionalRender from "components/ConditionalRender"
 import { Button, ErrorSummary, Paragraph } from "govuk-react"
 import { useRouter } from "next/router"
 import CourtCase from "services/entities/CourtCase"
-import { navy } from "utils/colours"
+import { navy } from "../../utils/colours"
 
 interface Props {
   courtCase: CourtCase
