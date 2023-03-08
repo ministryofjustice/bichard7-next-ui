@@ -1,6 +1,5 @@
 import { subHours } from "date-fns"
 import CourtCase from "services/entities/CourtCase"
-import Trigger from "services/entities/Trigger"
 import User from "services/entities/User"
 import { TestTrigger } from "../../test/utils/manageTriggers"
 import hashedPassword from "../fixtures/hashedPassword"
@@ -816,7 +815,9 @@ describe("Case list", () => {
       cy.get("li.moj-pagination__item").contains("Next").click()
       confirmFiltersAppliedContains("Urgent")
     })
+  })
 
+  describe("Only shows relevant resolved cases to the user", () => {
     it("shows supervisors all resolved cases from their force", () => {
       const casesConfig = [
         {
@@ -904,6 +905,12 @@ describe("Case list", () => {
           force: "011111",
           resolved: false,
           id: 5
+        },
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Bichard01",
+          id: 6
         }
       ]
       const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig) => {
@@ -981,12 +988,12 @@ describe("Case list", () => {
 
       casesConfig
         .filter((c) => !!c.resolvedBy)
-        .forEach((caseConfig, caseId) => {
+        .forEach((caseConfig) => {
           cy.task("insertTriggers", {
-            caseId,
+            caseId: caseConfig.id,
             triggers: [
               {
-                triggerId: caseId,
+                triggerId: caseConfig.id,
                 triggerCode: "TRPR0010",
                 status: "Resolved",
                 createdAt: new Date("2023-03-07T10:22:34.000Z"),
