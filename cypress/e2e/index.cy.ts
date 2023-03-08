@@ -574,7 +574,7 @@ describe("Case list", () => {
       })
     })
 
-    it.only("should unlock a case that is locked to the user", () => {
+    it("should unlock a case that is locked to the user", () => {
       const lockUsernames = ["Bichard01", "Bichard02"]
       cy.task(
         "insertCourtCasesWithFields",
@@ -625,7 +625,7 @@ describe("Case list", () => {
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
     })
 
-    it.only("should unlock any case as a supervisor user", () => {
+    it("should unlock any case as a supervisor user", () => {
       const lockUsernames = ["Bichard01", "Bichard02"]
       cy.task(
         "insertCourtCasesWithFields",
