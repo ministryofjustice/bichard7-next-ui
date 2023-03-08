@@ -64,7 +64,7 @@ describe("Case list", () => {
       cy.get("#bottom-pagination-bar").should("not.be.visible")
     })
 
-    it.only("should display 0 cases when there are no cases 'locked to me' and hide the bottom pagination bar ", () => {
+    it("should display 0 cases when there are no cases 'locked to me' and hide the bottom pagination bar ", () => {
       const lockUsernames = ["Bichard02", "Bichard03", null, "A really really really long name"]
       cy.task(
         "insertCourtCasesWithFields",
