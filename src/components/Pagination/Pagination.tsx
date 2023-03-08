@@ -24,7 +24,7 @@ const Pagination: React.FC<Props> = ({ pageNum, casesPerPage, totalCases, name }
   const classes = useStyles()
 
   return (
-    <div className={classes["pagination-bar"]}>
+    <div id={`${name}-pagination-bar`} className={classes["pagination-bar"]}>
       <PaginationResults pageNum={pageNum} casesPerPage={casesPerPage} totalCases={totalCases} />
       <CasesPerPage pageNum={pageNum} casesPerPage={casesPerPage} options={[10, 25, 50, 100]} selected={casesPerPage} />
       <PaginationNavigation pageNum={pageNum} totalPages={Math.ceil(totalCases / casesPerPage)} name={name} />

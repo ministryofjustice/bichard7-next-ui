@@ -56,11 +56,12 @@ describe("Case list", () => {
       cy.findByText("There are no court cases to show").should("exist")
     })
 
-    it("should not show pagination buttons when there are 0 cases", () => {
+    it.only("should not show pagination buttons when there are 0 cases", () => {
       loginAndGoToUrl()
 
       cy.findByText("Previous page").should("not.exist")
       cy.findByText("Next page").should("not.exist")
+      cy.get("#bottom-pagination-bar").should("not.exist")
     })
 
     it("should be accessible", () => {
