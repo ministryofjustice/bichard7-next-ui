@@ -19,7 +19,7 @@ import {
   validateMostRecentNoteDate
 } from "./CourtCaseListEntryHelperFunction"
 import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
-import LockedByTag from "./tags/LockedByTag"
+import LockedByTag from "./tags/LockedByTag/LockedByTag"
 import ResolvedTag from "./tags/ResolvedTag"
 import UrgentTag from "./tags/UrgentTag"
 

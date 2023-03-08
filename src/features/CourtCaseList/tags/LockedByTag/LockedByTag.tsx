@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import { tagBlue, textBlue } from "utils/colours"
-import { useCustomStyles } from "../../../../styles/customStyles"
+import { useCustomStyles } from "../../../../../styles/customStyles"
 
 const useStyles = createUseStyles({
   LockedByTag: {
