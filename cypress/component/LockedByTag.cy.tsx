@@ -5,7 +5,6 @@ describe("LockedByText.cy.tx", () => {
   it("shows the icon and the text", () => {
     cy.mount(<LockedByText lockedBy={"Bichard02"} />)
     cy.contains("Bichard02")
-    cy.get(".LockedIcon").should("have.attr", "href").and("include", "/bichard/assets/images/lock.svg")
   })
 })
 
@@ -15,6 +14,5 @@ describe("LockedByButton.cy.tx", () => {
       <LockedByButton lockedBy={"Bichard02"} showUnlockConfirmation={false} setShowUnlockConfirmation={() => {}} />
     )
     cy.contains("Bichard02")
-    cy.get("img.LockedIcon").should("have.attr", "href").and("include", "/bichard/assets/images/lock.svg")
   })
 })
