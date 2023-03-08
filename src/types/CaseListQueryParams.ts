@@ -29,4 +29,5 @@ export type CaseListQueryParams = {
   caseState?: CaseState
   allocatedToUserName?: string
   reasonCode?: string
+  resolvedByUsername?: string
 }

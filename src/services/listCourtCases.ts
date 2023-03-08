@@ -34,7 +34,8 @@ const listCourtCases = async (
     locked,
     caseState,
     allocatedToUserName,
-    reasonCode
+    reasonCode,
+    resolvedByUsername
   }: CaseListQueryParams
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
@@ -129,6 +130,20 @@ const listCourtCases = async (
     query.andWhere({
       resolutionTimestamp: Not(IsNull())
     })
+
+    if (resolvedByUsername !== undefined) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where({
+            errorResolvedBy: resolvedByUsername
+          })
+            .orWhere({
+              triggerResolvedBy: resolvedByUsername
+            })
+            .orWhere("trigger.resolvedBy = :triggerResolver", { triggerResolver: resolvedByUsername })
+        })
+      )
+    }
   }
 
   if (allocatedToUserName) {
