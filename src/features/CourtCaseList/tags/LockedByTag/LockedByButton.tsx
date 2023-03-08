@@ -57,7 +57,7 @@ const LockedByButton = ({
   return (
     <>
       <button
-        className={lockedByButtonClasses["button--tag"]}
+        className={`locked-by-tag ${lockedByButtonClasses["button--tag"]}`}
         onClick={() => {
           setShowUnlockConfirmation(true)
         }}
