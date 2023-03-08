@@ -1,5 +1,6 @@
 import { subHours } from "date-fns"
 import CourtCase from "services/entities/CourtCase"
+import Trigger from "services/entities/Trigger"
 import User from "services/entities/User"
 import { TestTrigger } from "../../test/utils/manageTriggers"
 import hashedPassword from "../fixtures/hashedPassword"
@@ -903,6 +904,12 @@ describe("Case list", () => {
           force: "011111",
           resolved: false,
           id: 5
+        },
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Bichard02",
+          id: 6
         }
       ]
       const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig) => {
@@ -911,11 +918,23 @@ describe("Case list", () => {
           errorId: caseConfig.id,
           orgForPoliceFilter: caseConfig.force,
           resolutionTimestamp: caseConfig.resolved ? resolutionDate : null,
-          errorResolvedBy: caseConfig.resolvedBy ?? null,
-          triggerResolvedBy: caseConfig.resolvedBy ?? null
+          errorResolvedBy: caseConfig.resolvedBy ?? null
         }
       })
       cy.task("insertCourtCasesWithFields", cases)
+      cy.task("insertTriggers", {
+        caseId: 6,
+        triggers: [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0010",
+            status: "Resolved",
+            createdAt: new Date("2023-03-07T10:22:34.000Z"),
+            resolvedBy: "Bichard01",
+            resolvedAt: new Date("2023-03-07T12:22:34.000Z")
+          }
+        ]
+      })
 
       loginAndGoToUrl()
 
@@ -923,7 +942,7 @@ describe("Case list", () => {
       cy.get("#resolved").click()
       cy.get("#search").click()
 
-      confirmMultipleFieldsDisplayed(["Case00001"])
+      confirmMultipleFieldsDisplayed(["Case00001", "Case00006"])
       confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002", "Case00003", "Case00004", "Case00005"])
     })
   })
