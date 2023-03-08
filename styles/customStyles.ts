@@ -21,6 +21,16 @@ export const useCustomStyles = createUseStyles({
     "&:hover": {
       color: "white",
       background: "#1D70B8"
+    },
+    "&:hover img": {
+      filter: "invert(1)"
+    },
+    "&:focus": {
+      color: "black",
+      background: "#FFDD00"
+    },
+    "&:focus img": {
+      filter: "contrast(1)"
     }
   },
   "max-width": {
