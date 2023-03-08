@@ -1171,4 +1171,57 @@ describe("listCourtCases", () => {
       ])
     })
   })
+
+  describe("Filter cases by resolution status", () => {
+    it("Should show supervisors all resolved cases for their force", async () => {
+      const orgCode = "36FP"
+      const otherOrgCode = "07"
+      const resolutionTimestamp = new Date()
+      await insertCourtCasesWithFields(
+        [otherOrgCode, orgCode, orgCode, otherOrgCode].map((force) => ({
+          resolutionTimestamp: resolutionTimestamp,
+          errorResolvedTimestamp: resolutionTimestamp,
+          orgForPoliceFilter: force
+        }))
+      )
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        caseState: "Resolved"
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases.map((c) => c.orgForPoliceFilter)).toBe([orgCode, orgCode])
+    })
+
+    it("Should show handlers cases that they resolved", async () => {
+      const orgCode = "36FP"
+      const resolutionTimestamp = new Date()
+      const thisUser = "Bichard01"
+      const otherUser = "Bichard02"
+      await insertCourtCasesWithFields(
+        [thisUser, otherUser, thisUser, otherUser].map((user) => ({
+          resolutionTimestamp: resolutionTimestamp,
+          orgForPoliceFilter: orgCode,
+          errorResolvedBy: user
+        }))
+      )
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        caseState: "Resolved"
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases.map((c) => c.errorResolvedBy)).toBe([thisUser, thisUser])
+    })
+  })
 })
