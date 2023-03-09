@@ -1,5 +1,5 @@
 import { createUseStyles } from "react-jss"
-import { darkGrey, navy, tagBlue, textBlue, yellow } from "../src/utils/colours"
+import { darkGrey, blue, tagBlue, textBlue, yellow } from "../src/utils/colours"
 
 export const useCustomStyles = createUseStyles({
   "button--tag": {
@@ -17,7 +17,7 @@ export const useCustomStyles = createUseStyles({
     cursor: "pointer",
     "&:hover": {
       color: "white",
-      background: navy
+      background: blue
     },
     "&:hover img": {
       filter: "invert(1)"
