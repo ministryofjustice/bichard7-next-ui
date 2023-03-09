@@ -1,6 +1,6 @@
-import { subDays, subMonths, subWeeks } from "date-fns"
+import { subDays } from "date-fns"
 import MockDate from "mockdate"
-import { mapDateRange, validateNamedDateRange } from "./validateDateRanges"
+import { mapDateRange, validateSlaDateRange } from "./validateDateRanges"
 
 describe("mapDateRange", () => {
   afterEach(() => {
@@ -24,35 +24,24 @@ describe("mapDateRange", () => {
     expect(result).toEqual({ from: dateYesterday, to: dateYesterday })
   })
 
-  it("should return a date range for 'This week'", () => {
+  it("should return a date range for 'Day 2'", () => {
     const dateToday = new Date("2022-11-15T12:30")
-    const dateLastWeek = subWeeks(dateToday, 1)
+    const dateDay2 = subDays(dateToday, 2)
 
     MockDate.set(dateToday)
 
-    const result = mapDateRange("This week")
-    expect(result).toEqual({ from: dateLastWeek, to: dateToday })
+    const result = mapDateRange("Day 2")
+    expect(result).toEqual({ from: dateDay2, to: dateDay2 })
   })
 
-  it("should return a date range for 'Last week'", () => {
+  it("should return a date range for 'Day 3'", () => {
     const dateToday = new Date("2022-11-15T12:30")
-    const dateLastWeek = subWeeks(dateToday, 1)
-    const dateTwoWeeksAgo = subWeeks(dateToday, 2)
+    const dateDay3 = subDays(dateToday, 3)
 
     MockDate.set(dateToday)
 
-    const result = mapDateRange("Last week")
-    expect(result).toEqual({ from: dateTwoWeeksAgo, to: dateLastWeek })
-  })
-
-  it("should return a date range for 'This month'", () => {
-    const dateToday = new Date("2022-11-15T12:30")
-    const dateOneMonthAgo = subMonths(dateToday, 1)
-
-    MockDate.set(dateToday)
-
-    const result = mapDateRange("This month")
-    expect(result).toEqual({ from: dateOneMonthAgo, to: dateToday })
+    const result = mapDateRange("Day 3")
+    expect(result).toEqual({ from: dateDay3, to: dateDay3 })
   })
 
   it("should return undefined for an invalid key", () => {
@@ -64,11 +53,10 @@ describe("validateDateRange", () => {
   it.each([
     { input: "Today", expected: true },
     { input: "Yesterday", expected: true },
-    { input: "This week", expected: true },
-    { input: "Last week", expected: true },
-    { input: "This month", expected: true },
+    { input: "Day 2", expected: true },
+    { input: "Day 3", expected: true },
     { input: "Invalid Date Range", expected: false }
   ])("check whether '$input' is a valid date range", ({ input, expected }) => {
-    expect(validateNamedDateRange(input)).toBe(expected)
+    expect(validateSlaDateRange(input)).toBe(expected)
   })
 })

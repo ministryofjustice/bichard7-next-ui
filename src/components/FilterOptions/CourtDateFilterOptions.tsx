@@ -1,5 +1,5 @@
 import { format } from "date-fns"
-import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
+import { mapDateRange, validateSlaDateRange } from "utils/validators/validateDateRanges"
 import { NamedDateRangeOptions } from "utils/namedDateRange"
 import RadioButton from "components/RadioButton/RadioButton"
 import type { FilterAction } from "types/CourtCaseFilter"
@@ -45,7 +45,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
           name={"courtDate"}
           id={"date-range"}
           dataAriaControls={"conditional-date-range"}
-          defaultChecked={validateNamedDateRange(dateRange || "")}
+          defaultChecked={validateSlaDateRange(dateRange || "")}
           label={"Date range"}
         />
         <div className="govuk-radios__conditional" id="conditional-date-range">

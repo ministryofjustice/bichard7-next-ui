@@ -22,7 +22,7 @@ import caseStateFilters from "utils/caseStateFilters"
 import { isPost } from "utils/http"
 import { reasonOptions } from "utils/reasonOptions"
 import { validateCustomDateRange } from "utils/validators/validateCustomDateRange"
-import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
+import { mapDateRange, validateSlaDateRange } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
 
@@ -151,7 +151,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtName: validatedCourtName ? validatedCourtName : null,
         reasonCode: validatedreasonCode ? validatedreasonCode : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
-        dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
+        dateRange: validateQueryParams(dateRange) && validateSlaDateRange(dateRange) ? dateRange : null,
         customDateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
         customDateTo: validatedCustomDateRange?.to.toJSON() ?? null,
         urgent: validatedUrgent ? validatedUrgent : null,
