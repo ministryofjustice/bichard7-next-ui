@@ -523,26 +523,6 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 13)
     })
 
-    it.skip("Should ensure radio buttons are correctly selected for 'date range' and 'custom date range' filters", () => {
-      // TODO- BICAWS-2616 filter panel bug with court date radio buttons.
-      cy.visit("/bichard")
-      cy.get("button#filter-button").click()
-
-      cy.get("#date-range").click().should("be.checked")
-
-      cy.get("#date-range-yesterday").click().should("be.checked")
-
-      cy.get("#date-range").should("be.checked")
-      cy.get("#date-range-yesterday").should("be.checked")
-      cy.get("#custom-date-range").should("not.be.checked")
-
-      cy.get("#custom-date-range").click().should("be.checked")
-      cy.get("#date-range").should("not.be.checked")
-
-      cy.get("#date-range-yesterday").should("not.be.checked")
-      cy.get(".moj-filter__tag").contains("Yesterday").should("not.exist")
-    })
-
     it("Should update 'selected filter' chip when changing custom date range filter", () => {
       cy.visit("/bichard")
       cy.get("button#filter-button").click()
