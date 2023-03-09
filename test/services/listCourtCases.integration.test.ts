@@ -1173,7 +1173,7 @@ describe("listCourtCases", () => {
   })
 
   describe("Filter cases by resolution status", () => {
-    it("Should show supervisors all resolved cases for their force", async () => {
+    it("should show supervisors all resolved cases for their force", async () => {
       const orgCode = "36FP"
       const resolutionTimestamp = new Date()
       const casesToInsert: Partial<CourtCase>[] = [undefined, "Bichard01", "Supervisor", "Bichard02", undefined].map(
@@ -1200,7 +1200,7 @@ describe("listCourtCases", () => {
       expect(cases.map((c) => c.errorId)).toStrictEqual([1, 2, 3])
     })
 
-    it("Should show handlers cases that they resolved", async () => {
+    it("should show handlers cases that they resolved", async () => {
       const orgCode = "36FP"
       const resolutionTimestamp = new Date()
       const thisUser = "Bichard01"
@@ -1227,7 +1227,7 @@ describe("listCourtCases", () => {
       expect(cases.map((c) => c.errorId)).toStrictEqual([0, 2])
     })
 
-    it("Should show handlers cases that they resolved a trigger for", async () => {
+    it("should show handlers cases that they resolved a trigger for", async () => {
       const orgCode = "36FP"
       const resolutionTimestamp = new Date()
       const thisUser = "Bichard01"
