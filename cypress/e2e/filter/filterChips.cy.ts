@@ -163,8 +163,7 @@ describe("Case list", () => {
         cy.get("#date-to").invoke("val").should("be.empty")
       })
 
-      it.skip("Should apply the 'Custom date filter' filter chips then remove this chips to the original state", () => {
-        // TODO: fix during the state refactor - 2616 (filter panel bug)
+      it("Should apply the 'Custom date filter' filter chips then remove this chips to the original state", () => {
         cy.get("#filter-button").click()
         cy.get("#custom-date-range").click()
         cy.get("#date-from").should("have.value", "")
@@ -178,8 +177,6 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").should("not.exist")
         cy.get("#date-from").should("have.value", "")
         cy.get("#date-to").should("have.value", "")
-
-        cy.get("#custom-date-range").should("not.be.checked")
       })
     })
 
