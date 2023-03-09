@@ -713,9 +713,9 @@ describe("Case list", () => {
       const force = "011111"
       cy.task("insertCourtCasesWithFields", [
         { resolutionTimestamp: null, orgForPoliceFilter: force },
-        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force },
-        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force },
-        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force }
+        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force, errorResolvedBy: "Bichard01" },
+        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force, errorResolvedBy: "Bichard01" },
+        { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force, errorResolvedBy: "Bichard01" }
       ])
 
       visitBasePathAndShowFilters()
