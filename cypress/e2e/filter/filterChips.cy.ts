@@ -114,9 +114,8 @@ describe("Case list", () => {
         cy.get(".govuk-heading-s").contains("Date range").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("exist")
         cy.get(".moj-filter__tag").contains("Yesterday").should("not.exist")
-        cy.get(".moj-filter__tag").contains("This week").should("not.exist")
-        cy.get(".moj-filter__tag").contains("Last week").should("not.exist")
-        cy.get(".moj-filter__tag").contains("This month").should("not.exist")
+        cy.get(".moj-filter__tag").contains("Day 2").should("not.exist")
+        cy.get(".moj-filter__tag").contains("Day 3").should("not.exist")
       })
 
       it("Should remove the date range filter chip when custom date range is selected", () => {
@@ -304,7 +303,7 @@ describe("Case list", () => {
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
 
-        filterByDateRange("#date-range-last-week")
+        filterByDateRange("#date-range-day-2")
         cy.get("#non-urgent").click()
 
         // Check that relevant chips and headers are present on screen
@@ -318,17 +317,16 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").contains("Urgent").should("not.exist")
         // Date Range
         cy.get(".govuk-heading-s").contains("Date range").should("exist")
-        cy.get(".moj-filter__tag").contains("Last week").should("exist")
+        cy.get(".moj-filter__tag").contains("Day 2").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("not.exist")
         cy.get(".moj-filter__tag").contains("Yesterday").should("not.exist")
-        cy.get(".moj-filter__tag").contains("This week").should("not.exist")
-        cy.get(".moj-filter__tag").contains("This month").should("not.exist")
+        cy.get(".moj-filter__tag").contains("Day 3").should("not.exist")
 
         // submit query and display filter chips in filters applied section
         cy.get("#search").contains("Apply filters").click()
         cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Non-urgent").should("exist")
-        cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Last week").should("exist")
+        cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Day 2").should("exist")
       })
 
       it("Should allow a user to apply 'Trigger' and 'Urgent cases only' filter, under the Applied filters section. Then selecting 'Non urgent cases only' and see the previous urgent filter removed", () => {
