@@ -1171,4 +1171,111 @@ describe("listCourtCases", () => {
       ])
     })
   })
+
+  describe("Filter cases by resolution status", () => {
+    it("should show supervisors all resolved cases for their force", async () => {
+      const orgCode = "36FP"
+      const resolutionTimestamp = new Date()
+      const casesToInsert: Partial<CourtCase>[] = [undefined, "Bichard01", "Supervisor", "Bichard02", undefined].map(
+        (resolver) => ({
+          resolutionTimestamp: resolver !== undefined ? resolutionTimestamp : null,
+          errorResolvedTimestamp: resolver !== undefined ? resolutionTimestamp : null,
+          errorResolvedBy: resolver ?? null,
+          orgForPoliceFilter: orgCode
+        })
+      )
+
+      await insertCourtCasesWithFields(casesToInsert)
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        caseState: "Resolved"
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(3)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([1, 2, 3])
+    })
+
+    it("should show handlers cases that they resolved", async () => {
+      const orgCode = "36FP"
+      const resolutionTimestamp = new Date()
+      const thisUser = "Bichard01"
+      const otherUser = "Bichard02"
+      const casesToInsert: Partial<CourtCase>[] = [thisUser, otherUser, thisUser, otherUser].map((user) => ({
+        resolutionTimestamp: resolutionTimestamp,
+        orgForPoliceFilter: orgCode,
+        errorResolvedBy: user
+      }))
+
+      await insertCourtCasesWithFields(casesToInsert)
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        caseState: "Resolved",
+        resolvedByUsername: thisUser
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([0, 2])
+    })
+
+    it("should show handlers cases that they resolved a trigger for", async () => {
+      const orgCode = "36FP"
+      const resolutionTimestamp = new Date()
+      const thisUser = "Bichard01"
+      const otherUser = "Bichard02"
+      const casesToInsert: Partial<CourtCase>[] = [
+        {
+          resolutionTimestamp: resolutionTimestamp,
+          orgForPoliceFilter: orgCode,
+          errorResolvedBy: otherUser
+        },
+        {
+          resolutionTimestamp: resolutionTimestamp,
+          orgForPoliceFilter: orgCode,
+          errorResolvedBy: otherUser
+        },
+        {
+          resolutionTimestamp: resolutionTimestamp,
+          orgForPoliceFilter: orgCode,
+          errorResolvedBy: otherUser,
+          triggerResolvedBy: thisUser
+        }
+      ]
+
+      await insertCourtCasesWithFields(casesToInsert)
+
+      await insertTriggers(0, [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0010",
+          status: "Resolved",
+          createdAt: resolutionTimestamp,
+          resolvedAt: resolutionTimestamp,
+          resolvedBy: thisUser
+        }
+      ])
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        caseState: "Resolved",
+        resolvedByUsername: thisUser
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([0, 2])
+    })
+  })
 })

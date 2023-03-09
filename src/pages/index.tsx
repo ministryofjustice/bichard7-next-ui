@@ -110,6 +110,9 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
+    const resolvedByUsername =
+      validatedCaseState === "Resolved" && !currentUser.groups.includes("Supervisor") ? currentUser.username : undefined
+
     const courtCases = await listCourtCases(dataSource, {
       forces: currentUser.visibleForces,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
@@ -125,7 +128,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       courtDateRange: validatedDateRange || validatedCustomDateRange,
       locked: lockedFilter,
       caseState: validatedCaseState,
-      allocatedToUserName: validatedMyCases
+      allocatedToUserName: validatedMyCases,
+      resolvedByUsername
     })
 
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
