@@ -24,7 +24,7 @@ export type CaseListQueryParams = {
   forces: string[]
   pageNum?: string
   maxPageItems: string
-  courtDateRange?: CourtDateRange
+  courtDateRange?: CourtDateRange | CourtDateRange[]
   locked?: boolean
   caseState?: CaseState
   allocatedToUserName?: string
