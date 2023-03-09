@@ -3,7 +3,6 @@ import { Filter, FilterState } from "types/CourtCaseFilter"
 const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
   return (
     [
-      state.dateFilter,
       state.customDateFrom,
       state.customDateTo,
       state.lockedFilter,
@@ -23,7 +22,8 @@ const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
           : 0
       })
       .reduce((x, y) => x + y, 0) +
-      state.reasonFilter.filter((filter) => countOfState === undefined || filter.state === countOfState).length >
+      state.reasonFilter.filter((filter) => countOfState === undefined || filter.state === countOfState).length +
+      state.dateFilter.filter((filter) => countOfState === undefined || filter.state === countOfState).length >
     0
   )
 }

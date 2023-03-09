@@ -111,7 +111,7 @@ describe("Case list", () => {
         filterByDateRange("#date-range-today")
 
         // Shows the correct heading 'Today' and checks that the others are not visible
-        cy.get(".govuk-heading-s").contains("Date range").should("exist")
+        cy.get(".govuk-heading-s").contains("Case age (SLA)").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("exist")
         cy.get(".moj-filter__tag").contains("Yesterday").should("not.exist")
         cy.get(".moj-filter__tag").contains("Day 2").should("not.exist")
@@ -124,7 +124,7 @@ describe("Case list", () => {
 
         filterByCustomDateRange("2022-01-01", "2022-12-31")
 
-        cy.get(".govuk-heading-s").contains("Date range").should("not.exist")
+        cy.get(".govuk-heading-s").contains("Case age (SLA)").should("not.exist")
         cy.get(".moj-filter__tag").contains("Today").should("not.exist")
         cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
@@ -155,7 +155,7 @@ describe("Case list", () => {
 
         cy.get(".govuk-heading-s").contains("Custom date range").should("not.exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("not.exist")
-        cy.get(".govuk-heading-s").contains("Date range").should("exist")
+        cy.get(".govuk-heading-s").contains("Case age (SLA)").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("exist")
 
         cy.get("#custom-date-range").click()
@@ -312,8 +312,8 @@ describe("Case list", () => {
         cy.get(".govuk-heading-s").contains("Urgency").should("exist")
         cy.get(".moj-filter__tag").contains("Non-urgent").should("exist")
         cy.get(".moj-filter__tag").contains("Urgent").should("not.exist")
-        // Date Range
-        cy.get(".govuk-heading-s").contains("Date range").should("exist")
+        // Case Age (SLA)
+        cy.get(".govuk-heading-s").contains("Case age (SLA)").should("exist")
         cy.get(".moj-filter__tag").contains("Day 2").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("not.exist")
         cy.get(".moj-filter__tag").contains("Yesterday").should("not.exist")

@@ -5,7 +5,7 @@ import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import { CaseState, Reason } from "types/CaseListQueryParams"
+import { CaseState, NamedCourtDateRange, Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
@@ -19,7 +19,7 @@ interface Props {
   reasonCode: string | null
   ptiurn: string | null
   reasons: Reason[]
-  dateRange: string | null
+  dateRange: NamedCourtDateRange[]
   customDateFrom: Date | null
   customDateTo: Date | null
   urgency: string | null
@@ -36,9 +36,9 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.urgentFilter.label = action.value ? "Urgent" : "Non-urgent"
       newState.urgentFilter.state = "Selected"
     } else if (action.type === "date") {
-      newState.dateFilter.value = action.value
-      newState.dateFilter.label = action.value
-      newState.dateFilter.state = "Selected"
+      if (newState.dateFilter.filter((dateFilter) => dateFilter.value === action.value).length < 1) {
+        newState.dateFilter.push({ value: action.value as NamedCourtDateRange, state: "Selected" })
+      }
     } else if (action.type === "customDateFrom") {
       newState.customDateFrom.value = action.value
       newState.customDateFrom.state = "Selected"
@@ -85,8 +85,11 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.urgentFilter.value = undefined
       newState.urgentFilter.label = undefined
     } else if (action.type === "date") {
-      newState.dateFilter.value = undefined
-      newState.dateFilter.label = undefined
+      if (action.value) {
+        newState.dateFilter = newState.dateFilter.filter((dateFilter) => dateFilter.value !== action.value)
+      } else {
+        newState.dateFilter = []
+      }
     } else if (action.type === "customDate") {
       newState.customDateFrom.value = undefined
       newState.customDateTo.value = undefined
@@ -140,7 +143,9 @@ const CourtCaseFilter: React.FC<Props> = ({
 }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
-    dateFilter: dateRange !== null ? { value: dateRange, state: "Applied", label: dateRange } : {},
+    dateFilter: dateRange.map((slaDate) => {
+      return { value: slaDate, state: "Applied" }
+    }),
     customDateFrom: customDateFrom !== null ? { value: customDateFrom, state: "Applied" } : {},
     customDateTo: customDateTo !== null ? { value: customDateTo, state: "Applied" } : {},
     lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
@@ -259,7 +264,7 @@ const CourtCaseFilter: React.FC<Props> = ({
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"} hideChildren={true}>
               <CourtDateFilterOptions
-                dateRange={state.dateFilter.value}
+                dateRange={state.dateFilter.map((slaDate) => slaDate.value as NamedCourtDateRange)}
                 dispatch={dispatch}
                 customDateFrom={state.customDateFrom.value ?? undefined}
                 customDateTo={state.customDateTo.value ?? undefined}

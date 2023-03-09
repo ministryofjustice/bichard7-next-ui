@@ -16,13 +16,14 @@ import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
+import { CaseState, NamedCourtDateRange, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
 import { isPost } from "utils/http"
+import { NamedDateRangeOptions } from "utils/namedDateRange"
 import { reasonOptions } from "utils/reasonOptions"
 import { validateCustomDateRange } from "utils/validators/validateCustomDateRange"
-import { mapDateRange, validateSlaDateRange } from "utils/validators/validateDateRanges"
+import { mapDateRange } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
 
@@ -36,7 +37,7 @@ interface Props {
   courtName: string | null
   reasonCode: string | null
   urgent: string | null
-  dateRange: string | null
+  dateRange: NamedCourtDateRange[]
   customDateFrom: string | null
   customDateTo: string | null
   page: number
@@ -74,6 +75,11 @@ export const getServerSideProps = withMultipleServerSideProps(
       unlockTrigger
     } = query
     const reasons = [type].flat().filter((t) => reasonOptions.includes(String(t) as Reason)) as Reason[]
+    const dateRanges = [dateRange]
+      .flat()
+      .filter((t) =>
+        Object.keys(NamedDateRangeOptions).includes(String(t) as NamedCourtDateRange)
+      ) as NamedCourtDateRange[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
@@ -151,7 +157,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtName: validatedCourtName ? validatedCourtName : null,
         reasonCode: validatedreasonCode ? validatedreasonCode : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
-        dateRange: validateQueryParams(dateRange) && validateSlaDateRange(dateRange) ? dateRange : null,
+        dateRange: dateRanges,
         customDateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
         customDateTo: validatedCustomDateRange?.to.toJSON() ?? null,
         urgent: validatedUrgent ? validatedUrgent : null,

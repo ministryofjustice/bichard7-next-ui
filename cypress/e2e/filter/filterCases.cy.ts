@@ -1,4 +1,4 @@
-import { addDays, format, subDays, subMonths, subWeeks } from "date-fns"
+import { addDays, format, subDays } from "date-fns"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
@@ -328,39 +328,29 @@ describe("Case list", () => {
       confirmMultipleFieldsDisplayed(["Bruce Wayne"])
     })
 
-    // TODO: Update this test to use the SLA dates
-    it.skip("Should display cases filtered for a named date range", () => {
+    it("Should display cases filtered for an SLA date", () => {
       const force = "011111"
 
       const todayDate = new Date()
       const yesterdayDate = subDays(todayDate, 1)
-      const tomorrowDate = addDays(todayDate, 1)
-      const oneWeekAgoDate = subWeeks(todayDate, 1)
-      const oneWeekAndOneDayAgoDate = subDays(todayDate, 8)
-      const twoWeeksAgoDate = subWeeks(todayDate, 2)
-      const oneMonthAgoDate = subMonths(todayDate, 1)
+      const day2Date = subDays(todayDate, 2)
+      const day3Date = subDays(todayDate, 3)
       const aLongTimeAgoDate = new Date("2001-09-26")
 
       const dateFormatString = "dd/MM/yyyy"
       const todayDateString = format(todayDate, dateFormatString)
       const yesterdayDateString = format(yesterdayDate, dateFormatString)
-      const oneWeekAgoDateString = format(oneWeekAgoDate, dateFormatString)
-      const oneWeekAndOneDayAgoDateString = format(oneWeekAndOneDayAgoDate, dateFormatString)
-      const twoWeeksAgoDateString = format(twoWeeksAgoDate, dateFormatString)
-      const oneMonthAgoDateString = format(oneMonthAgoDate, dateFormatString)
-
-      const expectedThisWeekLabel = `This week (${oneWeekAgoDateString} - ${todayDateString})`
-      const expectedLastWeekLabel = `Last week (${twoWeeksAgoDateString} - ${oneWeekAgoDateString})`
-      const expectedThisMonthLabel = `This month (${oneMonthAgoDateString} - ${todayDateString})`
+      const day2DateString = format(day2Date, dateFormatString)
+      const day3DateString = format(day3Date, dateFormatString)
 
       cy.task("insertCourtCasesWithFields", [
         { courtDate: todayDate, orgForPoliceFilter: force },
         { courtDate: yesterdayDate, orgForPoliceFilter: force },
-        { courtDate: tomorrowDate, orgForPoliceFilter: force },
-        { courtDate: oneWeekAgoDate, orgForPoliceFilter: force },
-        { courtDate: oneWeekAndOneDayAgoDate, orgForPoliceFilter: force },
-        { courtDate: twoWeeksAgoDate, orgForPoliceFilter: force },
-        { courtDate: oneMonthAgoDate, orgForPoliceFilter: force },
+        { courtDate: yesterdayDate, orgForPoliceFilter: force },
+        { courtDate: day2Date, orgForPoliceFilter: force },
+        { courtDate: day3Date, orgForPoliceFilter: force },
+        { courtDate: day3Date, orgForPoliceFilter: force },
+        { courtDate: day3Date, orgForPoliceFilter: force },
         { courtDate: aLongTimeAgoDate, orgForPoliceFilter: force }
       ])
 
@@ -368,6 +358,7 @@ describe("Case list", () => {
 
       // Tests for "Today"
       filterByDateRange("#date-range-today")
+      // cy.get('label[for="date-range-today"]').should("have.text", "Today") // Todo fix labels
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
@@ -384,100 +375,147 @@ describe("Case list", () => {
       // Tests for "yesterday"
       cy.get("button#filter-button").click()
       filterByDateRange("#date-range-yesterday")
+      // cy.get('label[for="date-range-yesterday"]').should("have.text", "Yesterday") // Todo fix labels
+      cy.get("button#search").click()
+
+      cy.get("tr").not(":first").should("have.length", 2)
+      confirmMultipleFieldsDisplayed([yesterdayDateString, "Case00001", "Case00002"])
+      confirmMultipleFieldsNotDisplayed([
+        todayDateString,
+        day2DateString,
+        day3DateString,
+        "Case00000",
+        "Case00003",
+        "Case00004",
+        "Case00005",
+        "Case00006",
+        "Case00007"
+      ])
+
+      removeFilterTag("Yesterday")
+      cy.get("tr").not(":first").should("have.length", 8)
+
+      // Tests for "Day 2"
+      cy.get("button#filter-button").click()
+      filterByDateRange("#date-range-day-2")
+      // cy.get('label[for="date-range-day-2"]').should("have.text", "Day 2") // Todo fix labels
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
       cy.get("tr")
         .not(":first")
         .each((row) => {
-          cy.wrap(row).contains(yesterdayDateString).should("exist")
-          cy.wrap(row).contains("Case00001").should("exist")
+          cy.wrap(row).contains(day2DateString).should("exist")
+          cy.wrap(row).contains("Case00003").should("exist")
         })
 
-      removeFilterTag("Yesterday")
+      removeFilterTag("Day 2")
       cy.get("tr").not(":first").should("have.length", 8)
 
-      // Tests for "This week"
+      // Tests for "Day 3"
       cy.get("button#filter-button").click()
-      cy.get("#date-range").click()
-      cy.get('label[for="date-range-this-week"]').should("have.text", expectedThisWeekLabel)
-      cy.get("#date-range-this-week").click()
+      filterByDateRange("#date-range-day-3")
+      // cy.get('label[for="date-range-day-3"]').should("have.text", "Day 3") // Todo fix labels
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 3)
-      confirmMultipleFieldsDisplayed([
+      confirmMultipleFieldsDisplayed([day3DateString, "Case00004", "Case00005", "Case00006"])
+      confirmMultipleFieldsNotDisplayed([
         todayDateString,
         yesterdayDateString,
-        oneWeekAgoDateString,
+        day2DateString,
         "Case00000",
         "Case00001",
-        "Case00003"
-      ])
-
-      removeFilterTag("This week")
-      cy.get("tr").not(":first").should("have.length", 8)
-
-      // Tests for "Last week"
-      cy.get("button#filter-button").click()
-      cy.get("#date-range").click()
-      cy.get('label[for="date-range-last-week"]').should("have.text", expectedLastWeekLabel)
-      cy.get("#date-range-last-week").click()
-      cy.get("button#search").click()
-
-      cy.get("tr").not(":first").should("have.length", 3)
-      confirmMultipleFieldsDisplayed([
-        oneWeekAgoDateString,
-        oneWeekAndOneDayAgoDateString,
-        twoWeeksAgoDateString,
+        "Case00002",
         "Case00003",
-        "Case00004",
-        "Case00005"
+        "Case00007"
       ])
 
-      removeFilterTag("Last week")
+      removeFilterTag("Day 3")
       cy.get("tr").not(":first").should("have.length", 8)
 
-      // Tests for "This month"
-      cy.get("button#filter-button").click()
-      cy.get("#date-range").click()
-      cy.get('label[for="date-range-this-month"]').should("have.text", expectedThisMonthLabel)
-      cy.get("#date-range-this-month").click()
-      cy.get("button#search").click()
+      // Test for multiple SLA
 
-      cy.get("tr").not(":first").should("have.length", 6)
-      confirmMultipleFieldsDisplayed([
-        todayDateString,
-        yesterdayDateString,
-        oneWeekAgoDateString,
-        twoWeeksAgoDateString,
-        oneWeekAndOneDayAgoDateString,
-        oneMonthAgoDateString,
-        "Case00000",
-        "Case00001",
-        "Case00003",
-        "Case00004",
-        "Case00005",
-        "Case00006"
-      ])
+      // cy.get("button#filter-button").click()
+      // cy.get("#date-range").click()
+      // cy.get('label[for="date-range-day-2"]').should("have.text", "Day 2") // Todo fix labels
+      // cy.get("#date-range-this-week").click()
+      // cy.get("button#search").click()
 
-      confirmMultipleFieldsDisplayed([oneMonthAgoDateString, "Case00006"])
-      cy.get("tr").not(":first").should("have.length", 6)
-      cy.get("tr").not(":first").contains(todayDateString).should("exist")
-      cy.get("tr").not(":first").contains(yesterdayDateString).should("exist")
-      cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
-      cy.get("tr").not(":first").contains(twoWeeksAgoDateString).should("exist")
-      cy.get("tr").not(":first").contains(oneWeekAndOneDayAgoDateString).should("exist")
-      cy.get("tr").not(":first").contains(oneMonthAgoDateString).should("exist")
+      // cy.get("tr").not(":first").should("have.length", 3)
+      // confirmMultipleFieldsDisplayed([
+      //   todayDateString,
+      //   yesterdayDateString,
+      //   day3DateString,
+      //   "Case00000",
+      //   "Case00001",
+      //   "Case00003"
+      // ])
 
-      cy.get("tr").not(":first").contains("Case00000").should("exist")
-      cy.get("tr").not(":first").contains("Case00001").should("exist")
-      cy.get("tr").not(":first").contains("Case00003").should("exist")
-      cy.get("tr").not(":first").contains("Case00004").should("exist")
-      cy.get("tr").not(":first").contains("Case00005").should("exist")
-      cy.get("tr").not(":first").contains("Case00006").should("exist")
+      // removeFilterTag("This week")
+      // cy.get("tr").not(":first").should("have.length", 8)
 
-      removeFilterTag("This month")
-      cy.get("tr").not(":first").should("have.length", 8)
+      // // Tests for "Last week"
+      // cy.get("button#filter-button").click()
+      // cy.get("#date-range").click()
+      // cy.get('label[for="date-range-last-week"]').should("have.text", expectedLastWeekLabel)
+      // cy.get("#date-range-last-week").click()
+      // cy.get("button#search").click()
+
+      // cy.get("tr").not(":first").should("have.length", 3)
+      // confirmMultipleFieldsDisplayed([
+      //   oneWeekAgoDateString,
+      //   oneWeekAndOneDayAgoDateString,
+      //   twoWeeksAgoDateString,
+      //   "Case00003",
+      //   "Case00004",
+      //   "Case00005"
+      // ])
+
+      // removeFilterTag("Last week")
+      // cy.get("tr").not(":first").should("have.length", 8)
+
+      // // Tests for "This month"
+      // cy.get("button#filter-button").click()
+      // cy.get("#date-range").click()
+      // cy.get('label[for="date-range-this-month"]').should("have.text", expectedThisMonthLabel)
+      // cy.get("#date-range-this-month").click()
+      // cy.get("button#search").click()
+
+      // cy.get("tr").not(":first").should("have.length", 6)
+      // confirmMultipleFieldsDisplayed([
+      //   todayDateString,
+      //   yesterdayDateString,
+      //   oneWeekAgoDateString,
+      //   twoWeeksAgoDateString,
+      //   oneWeekAndOneDayAgoDateString,
+      //   oneMonthAgoDateString,
+      //   "Case00000",
+      //   "Case00001",
+      //   "Case00003",
+      //   "Case00004",
+      //   "Case00005",
+      //   "Case00006"
+      // ])
+
+      // confirmMultipleFieldsDisplayed([oneMonthAgoDateString, "Case00006"])
+      // cy.get("tr").not(":first").should("have.length", 6)
+      // cy.get("tr").not(":first").contains(todayDateString).should("exist")
+      // cy.get("tr").not(":first").contains(yesterdayDateString).should("exist")
+      // cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
+      // cy.get("tr").not(":first").contains(twoWeeksAgoDateString).should("exist")
+      // cy.get("tr").not(":first").contains(oneWeekAndOneDayAgoDateString).should("exist")
+      // cy.get("tr").not(":first").contains(oneMonthAgoDateString).should("exist")
+
+      // cy.get("tr").not(":first").contains("Case00000").should("exist")
+      // cy.get("tr").not(":first").contains("Case00001").should("exist")
+      // cy.get("tr").not(":first").contains("Case00003").should("exist")
+      // cy.get("tr").not(":first").contains("Case00004").should("exist")
+      // cy.get("tr").not(":first").contains("Case00005").should("exist")
+      // cy.get("tr").not(":first").contains("Case00006").should("exist")
+
+      // removeFilterTag("This month")
+      // cy.get("tr").not(":first").should("have.length", 8)
     })
 
     it("Should display cases filtered for a custom date range", () => {

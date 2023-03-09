@@ -121,19 +121,26 @@ const FilterChipSection: React.FC<Props> = ({
           value={state.urgentFilter.value!}
         />
 
-        <FilterChipRow
-          chipLabel={state.dateFilter.label!}
-          condition={
-            state.dateFilter.value !== undefined &&
-            state.dateFilter.label !== undefined &&
-            state.dateFilter.state === sectionState
-          }
-          dispatch={dispatch}
-          type="date"
-          label="Date range"
-          state={state.dateFilter.state || sectionState}
-          value={state.dateFilter.value!}
-        />
+        <ConditionalRender
+          isRendered={state.dateFilter.filter((dateFilter) => dateFilter.state === sectionState).length > 0}
+        >
+          <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Case age (SLA)"}</h3>
+          <ul className="moj-filter-tags govuk-!-margin-bottom-0">
+            {state.dateFilter
+              .filter((dateFilter) => dateFilter.state === sectionState)
+              .map((dateFilter) => (
+                <FilterChip
+                  key={dateFilter.value}
+                  chipLabel={dateFilter.value}
+                  dispatch={dispatch}
+                  removeAction={() => {
+                    return { method: "remove", type: "date", value: dateFilter.value }
+                  }}
+                  state={dateFilter.state}
+                />
+              ))}
+          </ul>
+        </ConditionalRender>
 
         <FilterChipRow
           chipLabel={customDateRangeLabel}

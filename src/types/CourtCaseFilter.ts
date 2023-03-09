@@ -1,4 +1,4 @@
-import { CaseState, Reason } from "./CaseListQueryParams"
+import { CaseState, NamedCourtDateRange, Reason } from "./CaseListQueryParams"
 
 export type FilterAction =
   | { method: FilterMethod; type: "defendantName"; value: string }
@@ -26,10 +26,9 @@ export type Filter = {
     label?: string
   }
   dateFilter: {
-    value?: string
-    state?: FilterState
-    label?: string
-  }
+    value: NamedCourtDateRange
+    state: FilterState
+  }[]
   customDateFrom: {
     value?: Date
     state?: FilterState
