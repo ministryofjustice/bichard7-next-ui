@@ -2,7 +2,7 @@ export type QueryOrder = "asc" | "desc" | undefined
 
 export type Reason = "Triggers" | "Exceptions" | "Bails"
 
-export type NamedCourtDateRange = "Today" | "Yesterday" | "Day 2" | "Day 3"
+export type CaseAge = "Today" | "Yesterday" | "Day 2" | "Day 3"
 
 export type CourtDateRange = {
   from: Date

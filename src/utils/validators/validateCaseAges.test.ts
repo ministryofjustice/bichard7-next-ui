@@ -1,8 +1,8 @@
 import { subDays } from "date-fns"
 import MockDate from "mockdate"
-import { mapDateRanges, validateCaseAgeKeys } from "./validateDateRanges"
+import { mapCaseAges, validateCaseAgeKeys } from "./validateCaseAges"
 
-describe("mapDateRanges", () => {
+describe("mapCaseAges", () => {
   afterEach(() => {
     MockDate.reset()
   })
@@ -11,7 +11,7 @@ describe("mapDateRanges", () => {
     const dateToday = new Date("2022-11-15T12:30")
     MockDate.set(dateToday)
 
-    const result = mapDateRanges("Today")
+    const result = mapCaseAges("Today")
     expect(result).toEqual({ from: dateToday, to: dateToday })
   })
 
@@ -20,7 +20,7 @@ describe("mapDateRanges", () => {
     const dateYesterday = subDays(dateToday, 1)
     MockDate.set(dateToday)
 
-    const result = mapDateRanges("Yesterday")
+    const result = mapCaseAges("Yesterday")
     expect(result).toEqual({ from: dateYesterday, to: dateYesterday })
   })
 
@@ -30,7 +30,7 @@ describe("mapDateRanges", () => {
 
     MockDate.set(dateToday)
 
-    const result = mapDateRanges("Day 2")
+    const result = mapCaseAges("Day 2")
     expect(result).toEqual({ from: dateDay2, to: dateDay2 })
   })
 
@@ -40,12 +40,12 @@ describe("mapDateRanges", () => {
 
     MockDate.set(dateToday)
 
-    const result = mapDateRanges("Day 3")
+    const result = mapCaseAges("Day 3")
     expect(result).toEqual({ from: dateDay3, to: dateDay3 })
   })
 
   it("should return undefined for an invalid key", () => {
-    expect(mapDateRanges("Invalid date range key")).toBeUndefined()
+    expect(mapCaseAges("Invalid date range key")).toBeUndefined()
   })
 
   it("should return a date range for multiple keys", () => {
@@ -54,7 +54,7 @@ describe("mapDateRanges", () => {
 
     MockDate.set(dateToday)
 
-    const result = mapDateRanges(["Today", "Day 2", "Should ignore invalid key"])
+    const result = mapCaseAges(["Today", "Day 2", "Should ignore invalid key"])
     expect(result).toEqual([
       { from: dateToday, to: dateToday },
       { from: dateDay2, to: dateDay2 }
@@ -62,8 +62,8 @@ describe("mapDateRanges", () => {
   })
 
   it("should return undefined for an invalid key", () => {
-    expect(mapDateRanges(["invalid key"])).toBeUndefined()
-    expect(mapDateRanges("invalid key")).toBeUndefined()
+    expect(mapCaseAges(["invalid key"])).toBeUndefined()
+    expect(mapCaseAges("invalid key")).toBeUndefined()
   })
 })
 

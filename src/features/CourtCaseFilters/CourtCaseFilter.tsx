@@ -5,7 +5,7 @@ import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import { CaseState, NamedCourtDateRange, Reason } from "types/CaseListQueryParams"
+import { CaseState, CaseAge, Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
@@ -20,7 +20,7 @@ interface Props {
   reasonCode: string | null
   ptiurn: string | null
   reasons: Reason[]
-  caseAge: NamedCourtDateRange[]
+  caseAge: CaseAge[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
   customDateFrom: Date | null
   customDateTo: Date | null
@@ -39,7 +39,7 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.urgentFilter.state = "Selected"
     } else if (action.type === "date") {
       if (newState.dateFilter.filter((dateFilter) => dateFilter.value === action.value).length < 1) {
-        newState.dateFilter.push({ value: action.value as NamedCourtDateRange, state: "Selected" })
+        newState.dateFilter.push({ value: action.value as CaseAge, state: "Selected" })
       }
     } else if (action.type === "customDateFrom") {
       newState.customDateFrom.value = action.value
@@ -267,7 +267,7 @@ const CourtCaseFilter: React.FC<Props> = ({
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"} hideChildren={true}>
               <CourtDateFilterOptions
-                caseAge={state.dateFilter.map((slaDate) => slaDate.value as NamedCourtDateRange)}
+                caseAge={state.dateFilter.map((slaDate) => slaDate.value as CaseAge)}
                 caseAgeCounts={caseAgeCounts}
                 dispatch={dispatch}
                 customDateFrom={state.customDateFrom.value ?? undefined}

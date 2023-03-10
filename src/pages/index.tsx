@@ -17,15 +17,15 @@ import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CaseState, NamedCourtDateRange, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
+import { CaseState, CaseAge, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
 import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
 import { isPost } from "utils/http"
-import { NamedDateRangeOptions } from "utils/namedDateRange"
+import { CaseAgeOptions } from "utils/caseAgeOptions"
 import { reasonOptions } from "utils/reasonOptions"
 import { validateCustomDateRange } from "utils/validators/validateCustomDateRange"
-import { mapDateRanges } from "utils/validators/validateDateRanges"
+import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
 
@@ -39,7 +39,7 @@ interface Props {
   courtName: string | null
   reasonCode: string | null
   urgent: string | null
-  caseAge: NamedCourtDateRange[]
+  caseAge: CaseAge[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
   customDateFrom: string | null
   customDateTo: string | null
@@ -80,14 +80,12 @@ export const getServerSideProps = withMultipleServerSideProps(
     const reasons = [type].flat().filter((t) => reasonOptions.includes(String(t) as Reason)) as Reason[]
     const caseAges = [caseAge]
       .flat()
-      .filter((t) =>
-        Object.keys(NamedDateRangeOptions).includes(String(t) as NamedCourtDateRange)
-      ) as NamedCourtDateRange[]
+      .filter((t) => Object.keys(CaseAgeOptions).includes(String(t) as CaseAge)) as CaseAge[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
-    const validatedDateRange = mapDateRanges(caseAge)
+    const validatedCaseAges = mapCaseAges(caseAge)
     const validatedCustomDateRange = validateCustomDateRange({
       from,
       to
@@ -140,7 +138,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
       order: validatedOrder,
-      courtDateRange: validatedDateRange || validatedCustomDateRange,
+      courtDateRange: validatedCaseAges || validatedCustomDateRange,
       locked: lockedFilter,
       caseState: validatedCaseState,
       allocatedToUserName: validatedMyCases,

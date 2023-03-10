@@ -1,34 +1,34 @@
 import { format } from "date-fns"
-import { NamedDateRangeOptions } from "utils/namedDateRange"
-import { mapDateRanges } from "utils/validators/validateDateRanges"
+import { CaseAgeOptions } from "utils/caseAgeOptions"
+import { mapCaseAges } from "utils/validators/validateCaseAges"
 import RadioButton from "components/RadioButton/RadioButton"
 import type { FilterAction } from "types/CourtCaseFilter"
 import type { Dispatch } from "react"
 import DateInput from "components/CustomDateInput/DateInput"
-import { NamedCourtDateRange } from "types/CaseListQueryParams"
+import { CaseAge } from "types/CaseListQueryParams"
 import getCustomDateRangeLabel from "utils/getCustomDateRangeLabel"
 import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
-  caseAge?: NamedCourtDateRange[]
+  caseAge?: CaseAge[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
   dispatch: Dispatch<FilterAction>
   customDateFrom: Date | undefined
   customDateTo: Date | undefined
 }
 
-const getCaseAgeWithFormattedDate = (namedDateRange: string): string => {
-  const caseAge = mapDateRanges(namedDateRange)
-  return caseAge ? `${namedDateRange} (${format([caseAge].flat()[0].from, displayedDateFormat)})` : namedDateRange
+const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
+  const caseAge = mapCaseAges(namedCaseAge)
+  return caseAge ? `${namedCaseAge} (${format([caseAge].flat()[0].from, displayedDateFormat)})` : namedCaseAge
 }
 
-const labelForCaseAge = (namedDateRange: string, caseAgeCounts: CountOfCasesByCaseAgeResult): string => {
-  const caseCount = `(${caseAgeCounts[namedDateRange as NamedCourtDateRange]})`
+const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: CountOfCasesByCaseAgeResult): string => {
+  const caseCount = `(${caseAgeCounts[namedCaseAge as CaseAge]})`
 
-  return ["Today", "Yesterday"].includes(namedDateRange)
-    ? `${namedDateRange} ${caseCount}`
-    : `${getCaseAgeWithFormattedDate(namedDateRange)} ${caseCount}`
+  return ["Today", "Yesterday"].includes(namedCaseAge)
+    ? `${namedCaseAge} ${caseCount}`
+    : `${getCaseAgeWithFormattedDate(namedCaseAge)} ${caseCount}`
 }
 
 const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase().replace(" ", "-")}`
@@ -74,15 +74,15 @@ const CourtDateFilterOptions: React.FC<Props> = ({
         />
         <div className="govuk-radios__conditional" id="conditional-case-age">
           <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-            {Object.keys(NamedDateRangeOptions).map((namedDateRange) => (
-              <div className="govuk-checkboxes__item" key={namedDateRange}>
+            {Object.keys(CaseAgeOptions).map((namedCaseAge) => (
+              <div className="govuk-checkboxes__item" key={namedCaseAge}>
                 <input
                   className="govuk-checkboxes__input"
-                  id={caseAgeId(namedDateRange)}
+                  id={caseAgeId(namedCaseAge)}
                   name="caseAge"
                   type="checkbox"
-                  value={namedDateRange}
-                  checked={caseAge?.includes(namedDateRange as NamedCourtDateRange)}
+                  value={namedCaseAge}
+                  checked={caseAge?.includes(namedCaseAge as CaseAge)}
                   onChange={(event) => {
                     dispatch({
                       method: "remove",
@@ -94,8 +94,8 @@ const CourtDateFilterOptions: React.FC<Props> = ({
                     dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "date", value })
                   }}
                 ></input>
-                <label className="govuk-label govuk-checkboxes__label" htmlFor={caseAgeId(namedDateRange)}>
-                  {labelForCaseAge(namedDateRange, caseAgeCounts)}
+                <label className="govuk-label govuk-checkboxes__label" htmlFor={caseAgeId(namedCaseAge)}>
+                  {labelForCaseAge(namedCaseAge, caseAgeCounts)}
                 </label>
               </div>
             ))}

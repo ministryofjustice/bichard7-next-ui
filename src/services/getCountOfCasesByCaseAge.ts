@@ -3,7 +3,7 @@ import { DataSource, SelectQueryBuilder } from "typeorm"
 import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
-import { NamedDateRangeOptions } from "utils/namedDateRange"
+import { CaseAgeOptions } from "utils/caseAgeOptions"
 import CourtCase from "./entities/CourtCase"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
@@ -15,9 +15,9 @@ const getCountOfCasesByCaseAge = async (
   let query = repository.createQueryBuilder()
   query = courtCasesByVisibleForcesQuery(query, forces) as SelectQueryBuilder<CourtCase>
 
-  Object.keys(NamedDateRangeOptions).forEach((slaDateRangeOption, i) => {
-    const key = slaDateRangeOption.toLowerCase().replace(" ", "")
-    const slaDateFrom = format(NamedDateRangeOptions[slaDateRangeOption]().from, "yyyy-MM-dd")
+  Object.keys(CaseAgeOptions).forEach((slaCaseAgeOption, i) => {
+    const key = slaCaseAgeOption.toLowerCase().replace(" ", "")
+    const slaDateFrom = format(CaseAgeOptions[slaCaseAgeOption]().from, "yyyy-MM-dd")
 
     const subQuery = repository
       .createQueryBuilder(key)
