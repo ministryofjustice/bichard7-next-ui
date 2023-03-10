@@ -53,10 +53,24 @@ const CourtDateFilterOptions: React.FC<Props> = ({
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
         <RadioButton
           name={"courtDate"}
+          id={"custom-date-range"}
+          dataAriaControls={"conditional-custom-date-range"}
+          defaultChecked={hasCustomDateRange}
+          label={"Date range"}
+          onChange={(event) => dispatch({ method: "remove", type: "date", value: event.target.value })}
+        />
+        <div className="govuk-radios__conditional" id="conditional-custom-date-range">
+          <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+            <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(customDateFrom)} />
+            <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(customDateTo)} />
+          </div>
+        </div>
+        <RadioButton
+          name={"courtDate"}
           id={"date-range"}
           dataAriaControls={"conditional-date-range"}
           defaultChecked={dateRange && dateRange.length > 0 ? true : false}
-          label={"Date range"}
+          label={"Case age (SLA)"}
         />
         <div className="govuk-radios__conditional" id="conditional-date-range">
           <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
@@ -85,20 +99,6 @@ const CourtDateFilterOptions: React.FC<Props> = ({
                 </label>
               </div>
             ))}
-          </div>
-        </div>
-        <RadioButton
-          name={"courtDate"}
-          id={"custom-date-range"}
-          dataAriaControls={"conditional-custom-date-range"}
-          defaultChecked={hasCustomDateRange}
-          label={"Custom date range"}
-          onChange={(event) => dispatch({ method: "remove", type: "date", value: event.target.value })}
-        />
-        <div className="govuk-radios__conditional" id="conditional-custom-date-range">
-          <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-            <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(customDateFrom)} />
-            <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(customDateTo)} />
           </div>
         </div>
       </div>

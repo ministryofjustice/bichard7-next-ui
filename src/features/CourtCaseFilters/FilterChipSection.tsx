@@ -121,6 +121,21 @@ const FilterChipSection: React.FC<Props> = ({
           value={state.urgentFilter.value!}
         />
 
+        <FilterChipRow
+          chipLabel={customDateRangeLabel}
+          condition={
+            state.customDateFrom.value !== undefined &&
+            state.customDateTo.value !== undefined &&
+            state.customDateFrom.state === sectionState &&
+            state.customDateTo.state === sectionState
+          }
+          dispatch={dispatch}
+          type="customDate"
+          label="Date range"
+          state={state.customDateFrom.state || sectionState}
+          value={customDateRangeLabel}
+        />
+
         <ConditionalRender
           isRendered={state.dateFilter.filter((dateFilter) => dateFilter.state === sectionState).length > 0}
         >
@@ -141,21 +156,6 @@ const FilterChipSection: React.FC<Props> = ({
               ))}
           </ul>
         </ConditionalRender>
-
-        <FilterChipRow
-          chipLabel={customDateRangeLabel}
-          condition={
-            state.customDateFrom.value !== undefined &&
-            state.customDateTo.value !== undefined &&
-            state.customDateFrom.state === sectionState &&
-            state.customDateTo.state === sectionState
-          }
-          dispatch={dispatch}
-          type="customDate"
-          label="Custom date range"
-          state={state.customDateFrom.state || sectionState}
-          value={customDateRangeLabel}
-        />
 
         <FilterChipRow
           chipLabel={state.caseStateFilter.label!}

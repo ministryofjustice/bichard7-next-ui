@@ -113,10 +113,10 @@ describe("Case list", () => {
       cy.get("#date-range").should("not.be.visible")
       expandFilterSection("Court date", "#date-range")
 
-      // Custom date range & date range are collapsed
+      // Date range & case ages are collapsed
       cy.get("#date-from").should("not.be.visible")
       cy.get("#date-range-yesterday").should("not.be.visible")
-      // Opening custom date range collapses date range & opens custom date range
+      // Opening date range collapses case age & opens date range
       cy.get("#custom-date-range").click()
       cy.get("#date-from").should("be.visible")
       cy.get("#date-range-yesterday").should("not.be.visible")
@@ -452,7 +452,7 @@ describe("Case list", () => {
       cy.get("#custom-date-range").click()
       cy.get("#date-from").type("2022-01-01")
       cy.get("#date-to").type("2022-12-31")
-      cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+      cy.get(".govuk-heading-s").contains("Date range").should("exist")
       cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
       cy.get("button#search").click()
 
@@ -477,7 +477,7 @@ describe("Case list", () => {
 
       cy.get("#date-from").type("1999-01-01")
       cy.get("#date-to").type("2000-12-31")
-      cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+      cy.get(".govuk-heading-s").contains("Date range").should("exist")
       cy.get(".moj-filter__tag").contains("01/01/1999 - 31/12/2000")
 
       cy.get("#date-from").type("2022-01-01")
