@@ -338,8 +338,6 @@ describe("Case list", () => {
       const aLongTimeAgoDate = new Date("2001-09-26")
 
       const dateFormatString = "dd/MM/yyyy"
-      const todayDateString = format(todayDate, dateFormatString)
-      const yesterdayDateString = format(yesterdayDate, dateFormatString)
       const day2DateString = format(day2Date, dateFormatString)
       const day3DateString = format(day3Date, dateFormatString)
 
@@ -365,7 +363,6 @@ describe("Case list", () => {
       cy.get("tr")
         .not(":first")
         .each((row) => {
-          cy.wrap(row).contains(todayDateString).should("exist")
           cy.wrap(row).contains("Case00000").should("exist")
         })
 
@@ -379,33 +376,22 @@ describe("Case list", () => {
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 2)
-      confirmMultipleFieldsDisplayed([yesterdayDateString, "Case00001", "Case00002"])
-      confirmMultipleFieldsNotDisplayed([
-        todayDateString,
-        day2DateString,
-        day3DateString,
-        "Case00000",
-        "Case00003",
-        "Case00004",
-        "Case00005",
-        "Case00006",
-        "Case00007"
-      ])
+      confirmMultipleFieldsDisplayed(["Case00001", "Case00002"])
+      confirmMultipleFieldsNotDisplayed(["Case00000", "Case00003", "Case00004", "Case00005", "Case00006", "Case00007"])
 
       removeFilterTag("Yesterday")
       cy.get("tr").not(":first").should("have.length", 8)
 
       // Tests for "Day 2"
       cy.get("button#filter-button").click()
+      cy.get('label[for="date-range-day-2"]').should("have.text", `Day 2 (${day2DateString}) (1)`)
       filterByDateRange("#date-range-day-2")
-      cy.get('label[for="date-range-day-2"]').should("have.text", "Day 2 (1)")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
       cy.get("tr")
         .not(":first")
         .each((row) => {
-          cy.wrap(row).contains(day2DateString).should("exist")
           cy.wrap(row).contains("Case00003").should("exist")
         })
 
@@ -414,22 +400,13 @@ describe("Case list", () => {
 
       // Tests for "Day 3"
       cy.get("button#filter-button").click()
+      cy.get('label[for="date-range-day-3"]').should("have.text", `Day 3 (${day3DateString}) (3)`)
       filterByDateRange("#date-range-day-3")
-      cy.get('label[for="date-range-day-3"]').should("have.text", "Day 3 (3)")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 3)
-      confirmMultipleFieldsDisplayed([day3DateString, "Case00004", "Case00005", "Case00006"])
-      confirmMultipleFieldsNotDisplayed([
-        todayDateString,
-        yesterdayDateString,
-        day2DateString,
-        "Case00000",
-        "Case00001",
-        "Case00002",
-        "Case00003",
-        "Case00007"
-      ])
+      confirmMultipleFieldsDisplayed(["Case00004", "Case00005", "Case00006"])
+      confirmMultipleFieldsNotDisplayed(["Case00000", "Case00001", "Case00002", "Case00003", "Case00007"])
 
       removeFilterTag("Day 3")
       cy.get("tr").not(":first").should("have.length", 8)
@@ -441,22 +418,8 @@ describe("Case list", () => {
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 4)
-      confirmMultipleFieldsDisplayed([
-        todayDateString,
-        "Case00000",
-        day3DateString,
-        "Case00004",
-        "Case00005",
-        "Case00006"
-      ])
-      confirmMultipleFieldsNotDisplayed([
-        yesterdayDateString,
-        day2DateString,
-        "Case00001",
-        "Case00002",
-        "Case00003",
-        "Case00007"
-      ])
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00004", "Case00005", "Case00006"])
+      confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002", "Case00003", "Case00007"])
 
       removeFilterTag("Day 3")
       cy.get("tr").not(":first").should("have.length", 1)

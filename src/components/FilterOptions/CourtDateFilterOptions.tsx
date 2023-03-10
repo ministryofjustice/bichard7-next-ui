@@ -1,5 +1,6 @@
 import { format } from "date-fns"
 import { NamedDateRangeOptions } from "utils/namedDateRange"
+import { mapDateRanges } from "utils/validators/validateDateRanges"
 import RadioButton from "components/RadioButton/RadioButton"
 import type { FilterAction } from "types/CourtCaseFilter"
 import type { Dispatch } from "react"
@@ -7,6 +8,7 @@ import DateInput from "components/CustomDateInput/DateInput"
 import { NamedCourtDateRange } from "types/CaseListQueryParams"
 import getCustomDateRangeLabel from "utils/getCustomDateRangeLabel"
 import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
+import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
   dateRange?: NamedCourtDateRange[]
@@ -16,8 +18,19 @@ interface Props {
   customDateTo: Date | undefined
 }
 
-const labelForDateRange = (namedDateRange: string, caseAgeCounts: CountOfCasesByCaseAgeResult): string =>
-  `${namedDateRange} (${caseAgeCounts[namedDateRange as NamedCourtDateRange]})`
+const getCaseAgeWithFormattedDate = (namedDateRange: string): string => {
+  const dateRange = mapDateRanges(namedDateRange)
+  return dateRange ? `${namedDateRange} (${format([dateRange].flat()[0].from, displayedDateFormat)})` : namedDateRange
+}
+
+const labelForCaseAge = (namedDateRange: string, caseAgeCounts: CountOfCasesByCaseAgeResult): string => {
+  const caseCount = `(${caseAgeCounts[namedDateRange as NamedCourtDateRange]})`
+
+  return ["Today", "Yesterday"].includes(namedDateRange)
+    ? `${namedDateRange} ${caseCount}`
+    : `${getCaseAgeWithFormattedDate(namedDateRange)} ${caseCount}`
+}
+
 const caseAgeId = (caseAge: string): string => `date-range-${caseAge.toLowerCase().replace(" ", "-")}`
 
 const CourtDateFilterOptions: React.FC<Props> = ({
@@ -68,7 +81,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({
                   }}
                 ></input>
                 <label className="govuk-label govuk-checkboxes__label" htmlFor={caseAgeId(namedDateRange)}>
-                  {labelForDateRange(namedDateRange, caseAgeCounts)}
+                  {labelForCaseAge(namedDateRange, caseAgeCounts)}
                 </label>
               </div>
             ))}
