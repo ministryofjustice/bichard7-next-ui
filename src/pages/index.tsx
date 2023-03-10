@@ -40,7 +40,7 @@ interface Props {
   reasonCode: string | null
   urgent: string | null
   dateRange: NamedCourtDateRange[]
-  courtCaseCounts: CountOfCasesByCaseAgeResult
+  caseAgeCounts: CountOfCasesByCaseAgeResult
   customDateFrom: string | null
   customDateTo: string | null
   page: number
@@ -122,10 +122,10 @@ export const getServerSideProps = withMultipleServerSideProps(
     const resolvedByUsername =
       validatedCaseState === "Resolved" && !currentUser.groups.includes("Supervisor") ? currentUser.username : undefined
 
-    const courtCaseCounts = await getCountOfCasesByCaseAge(dataSource, currentUser.visibleForces)
+    const caseAgeCounts = await getCountOfCasesByCaseAge(dataSource, currentUser.visibleForces)
 
-    if (isError(courtCaseCounts)) {
-      throw courtCaseCounts
+    if (isError(caseAgeCounts)) {
+      throw caseAgeCounts
     }
 
     const courtCases = await listCourtCases(dataSource, {
@@ -167,7 +167,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         reasonCode: validatedreasonCode ? validatedreasonCode : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
         dateRange: dateRanges,
-        courtCaseCounts: courtCaseCounts,
+        caseAgeCounts: caseAgeCounts,
         customDateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
         customDateTo: validatedCustomDateRange?.to.toJSON() ?? null,
         urgent: validatedUrgent ? validatedUrgent : null,
@@ -192,7 +192,7 @@ const Home: NextPage<Props> = ({
   reasonCode,
   ptiurn,
   dateRange,
-  courtCaseCounts,
+  caseAgeCounts,
   customDateFrom,
   customDateTo,
   urgent,
@@ -216,7 +216,7 @@ const Home: NextPage<Props> = ({
             reasonCode={reasonCode}
             ptiurn={ptiurn}
             dateRange={dateRange}
-            caseAgeCounts={courtCaseCounts}
+            caseAgeCounts={caseAgeCounts}
             customDateFrom={customDateFrom !== null ? new Date(customDateFrom) : null}
             customDateTo={customDateTo !== null ? new Date(customDateTo) : null}
             urgency={urgent}
