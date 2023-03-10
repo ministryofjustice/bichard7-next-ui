@@ -62,8 +62,8 @@ describe("Case list", () => {
     it("Should be accessible with conditional radio buttons opened", () => {
       visitBasePathAndShowFilters()
       cy.contains("Court date").parent().parent().parent().find("button").click()
-      cy.get("#date-range").should("not.be.visible")
-      expandFilterSection("Court date", "#date-range")
+      cy.get("#case-age").should("not.be.visible")
+      expandFilterSection("Court date", "#case-age")
 
       cy.injectAxe()
 
@@ -110,50 +110,50 @@ describe("Case list", () => {
       cy.contains("Date range")
 
       cy.contains("Court date").parent().parent().parent().find("button").click()
-      cy.get("#date-range").should("not.be.visible")
-      expandFilterSection("Court date", "#date-range")
+      cy.get("#case-age").should("not.be.visible")
+      expandFilterSection("Court date", "#case-age")
 
       // Date range & case ages are collapsed
       cy.get("#date-from").should("not.be.visible")
-      cy.get("#date-range-yesterday").should("not.be.visible")
+      cy.get("#case-age-yesterday").should("not.be.visible")
       // Opening date range collapses case age & opens date range
       cy.get("#custom-date-range").click()
       cy.get("#date-from").should("be.visible")
-      cy.get("#date-range-yesterday").should("not.be.visible")
+      cy.get("#case-age-yesterday").should("not.be.visible")
     })
 
-    it("Should remove the selection of the date range when it's been changed to the custom date range", () => {
+    it("Should remove the selection of the case age when it's been changed to the custom date range", () => {
       visitBasePathAndShowFilters()
-      filterByDateRange("#date-range-yesterday")
-      cy.get("#date-range-yesterday").should("be.checked")
+      filterByDateRange("#case-age-yesterday")
+      cy.get("#case-age-yesterday").should("be.checked")
       cy.get("#custom-date-range").click()
-      cy.get("#date-range").click()
-      cy.get("#date-range-yesterday").should("not.be.checked")
+      cy.get("#case-age").click()
+      cy.get("#case-age-yesterday").should("not.be.checked")
     })
 
-    it("Should remove the selection of the custom date range when it's been changed to the date range", () => {
+    it("Should remove the selection of the custom date range when it's been changed to the case age", () => {
       visitBasePathAndShowFilters()
       cy.get("#custom-date-range").click()
       cy.get("#date-from").type("2022-01-01")
       cy.get("#date-to").type("2022-12-31")
       cy.get("#custom-date-range").should("be.checked")
-      filterByDateRange("#date-range-yesterday")
-      cy.get("#date-range").should("be.checked")
-      cy.get("#date-range-yesterday").should("be.checked")
+      filterByDateRange("#case-age-yesterday")
+      cy.get("#case-age").should("be.checked")
+      cy.get("#case-age-yesterday").should("be.checked")
     })
 
-    it("Should only have the checked attribute for the selected date range ratio button", () => {
+    it("Should only have the checked attribute for the selected case age ratio button", () => {
       visitBasePathAndShowFilters()
       // no selection, nothing is checked
-      cy.get("#date-range").should("not.be.checked")
+      cy.get("#case-age").should("not.be.checked")
       cy.get("#custom-date-range").should("not.be.checked")
-      // #date-range-yesterday selected, #date-range is checked
-      filterByDateRange("#date-range-yesterday")
-      cy.get("#date-range").should("be.checked")
+      // #case-age-yesterday selected, #case-age is checked
+      filterByDateRange("#case-age-yesterday")
+      cy.get("#case-age").should("be.checked")
       cy.get("#custom-date-range").should("not.be.checked")
       // #custom-date-range, ##custom-date-range is checked
       cy.get("#custom-date-range").click()
-      cy.get("#date-range").should("not.be.checked")
+      cy.get("#case-age").should("not.be.checked")
       cy.get("#custom-date-range").should("be.checked")
     })
 
@@ -355,8 +355,8 @@ describe("Case list", () => {
       visitBasePathAndShowFilters()
 
       // Tests for "Today"
-      filterByDateRange("#date-range-today")
-      cy.get('label[for="date-range-today"]').should("have.text", "Today (1)")
+      filterByDateRange("#case-age-today")
+      cy.get('label[for="case-age-today"]').should("have.text", "Today (1)")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
@@ -371,8 +371,8 @@ describe("Case list", () => {
 
       // Tests for "yesterday"
       cy.get("button#filter-button").click()
-      filterByDateRange("#date-range-yesterday")
-      cy.get('label[for="date-range-yesterday"]').should("have.text", "Yesterday (2)")
+      filterByDateRange("#case-age-yesterday")
+      cy.get('label[for="case-age-yesterday"]').should("have.text", "Yesterday (2)")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 2)
@@ -384,8 +384,8 @@ describe("Case list", () => {
 
       // Tests for "Day 2"
       cy.get("button#filter-button").click()
-      cy.get('label[for="date-range-day-2"]').should("have.text", `Day 2 (${day2DateString}) (1)`)
-      filterByDateRange("#date-range-day-2")
+      cy.get('label[for="case-age-day-2"]').should("have.text", `Day 2 (${day2DateString}) (1)`)
+      filterByDateRange("#case-age-day-2")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
@@ -400,8 +400,8 @@ describe("Case list", () => {
 
       // Tests for "Day 3"
       cy.get("button#filter-button").click()
-      cy.get('label[for="date-range-day-3"]').should("have.text", `Day 3 (${day3DateString}) (3)`)
-      filterByDateRange("#date-range-day-3")
+      cy.get('label[for="case-age-day-3"]').should("have.text", `Day 3 (${day3DateString}) (3)`)
+      filterByDateRange("#case-age-day-3")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 3)
@@ -413,8 +413,8 @@ describe("Case list", () => {
 
       // Test for multiple SLA
       cy.get("button#filter-button").click()
-      filterByDateRange("#date-range-today")
-      filterByDateRange("#date-range-day-3")
+      filterByDateRange("#case-age-today")
+      filterByDateRange("#case-age-day-3")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 4)
@@ -457,7 +457,7 @@ describe("Case list", () => {
       cy.get("button#search").click()
 
       cy.get("button#filter-button").click()
-      cy.get("#date-range").click().should("be.checked")
+      cy.get("#case-age").click().should("be.checked")
       cy.get("#date-from").should("have.value", "2022-01-01")
       cy.get("#date-to").should("have.value", "2022-12-31")
 
@@ -485,7 +485,7 @@ describe("Case list", () => {
       cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
     })
 
-    it("Should not allow passing an invalid date range filter", () => {
+    it("Should not allow passing an invalid case age filter", () => {
       const force = "011111"
       cy.task("insertCourtCasesWithFields", [
         { courtDate: new Date(), orgForPoliceFilter: force },
@@ -493,7 +493,7 @@ describe("Case list", () => {
         { courtDate: addDays(new Date(), 1), orgForPoliceFilter: force }
       ])
 
-      cy.visit("/bichard?dateRange=invalid")
+      cy.visit("/bichard?caseAge=invalid")
       cy.get("tr").not(":first").should("have.length", 3)
     })
 

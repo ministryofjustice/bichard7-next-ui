@@ -39,7 +39,7 @@ interface Props {
   courtName: string | null
   reasonCode: string | null
   urgent: string | null
-  dateRange: NamedCourtDateRange[]
+  caseAge: NamedCourtDateRange[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
   customDateFrom: string | null
   customDateTo: string | null
@@ -68,7 +68,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       maxPageItems,
       order,
       urgency,
-      dateRange,
+      caseAge,
       from,
       to,
       locked,
@@ -78,7 +78,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       unlockTrigger
     } = query
     const reasons = [type].flat().filter((t) => reasonOptions.includes(String(t) as Reason)) as Reason[]
-    const dateRanges = [dateRange]
+    const caseAges = [caseAge]
       .flat()
       .filter((t) =>
         Object.keys(NamedDateRangeOptions).includes(String(t) as NamedCourtDateRange)
@@ -87,7 +87,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
-    const validatedDateRange = mapDateRanges(dateRange)
+    const validatedDateRange = mapDateRanges(caseAge)
     const validatedCustomDateRange = validateCustomDateRange({
       from,
       to
@@ -166,7 +166,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtName: validatedCourtName ? validatedCourtName : null,
         reasonCode: validatedreasonCode ? validatedreasonCode : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
-        dateRange: dateRanges,
+        caseAge: caseAges,
         caseAgeCounts: caseAgeCounts,
         customDateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
         customDateTo: validatedCustomDateRange?.to.toJSON() ?? null,
@@ -191,7 +191,7 @@ const Home: NextPage<Props> = ({
   courtName,
   reasonCode,
   ptiurn,
-  dateRange,
+  caseAge,
   caseAgeCounts,
   customDateFrom,
   customDateTo,
@@ -215,7 +215,7 @@ const Home: NextPage<Props> = ({
             courtName={courtName}
             reasonCode={reasonCode}
             ptiurn={ptiurn}
-            dateRange={dateRange}
+            caseAge={caseAge}
             caseAgeCounts={caseAgeCounts}
             customDateFrom={customDateFrom !== null ? new Date(customDateFrom) : null}
             customDateTo={customDateTo !== null ? new Date(customDateTo) : null}
@@ -233,7 +233,7 @@ const Home: NextPage<Props> = ({
               courtName,
               reasonCode,
               ptiurn,
-              dateRange,
+              caseAge,
               customDateFrom: customDateFrom !== null ? new Date(customDateFrom) : null,
               customDateTo: customDateTo !== null ? new Date(customDateTo) : null,
               urgency: urgent,

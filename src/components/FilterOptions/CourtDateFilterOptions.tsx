@@ -11,7 +11,7 @@ import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
-  dateRange?: NamedCourtDateRange[]
+  caseAge?: NamedCourtDateRange[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
   dispatch: Dispatch<FilterAction>
   customDateFrom: Date | undefined
@@ -19,8 +19,8 @@ interface Props {
 }
 
 const getCaseAgeWithFormattedDate = (namedDateRange: string): string => {
-  const dateRange = mapDateRanges(namedDateRange)
-  return dateRange ? `${namedDateRange} (${format([dateRange].flat()[0].from, displayedDateFormat)})` : namedDateRange
+  const caseAge = mapDateRanges(namedDateRange)
+  return caseAge ? `${namedDateRange} (${format([caseAge].flat()[0].from, displayedDateFormat)})` : namedDateRange
 }
 
 const labelForCaseAge = (namedDateRange: string, caseAgeCounts: CountOfCasesByCaseAgeResult): string => {
@@ -31,10 +31,10 @@ const labelForCaseAge = (namedDateRange: string, caseAgeCounts: CountOfCasesByCa
     : `${getCaseAgeWithFormattedDate(namedDateRange)} ${caseCount}`
 }
 
-const caseAgeId = (caseAge: string): string => `date-range-${caseAge.toLowerCase().replace(" ", "-")}`
+const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase().replace(" ", "-")}`
 
 const CourtDateFilterOptions: React.FC<Props> = ({
-  dateRange,
+  caseAge,
   caseAgeCounts,
   dispatch,
   customDateFrom,
@@ -67,22 +67,22 @@ const CourtDateFilterOptions: React.FC<Props> = ({
         </div>
         <RadioButton
           name={"courtDate"}
-          id={"date-range"}
-          dataAriaControls={"conditional-date-range"}
-          defaultChecked={dateRange && dateRange.length > 0 ? true : false}
+          id={"case-age"}
+          dataAriaControls={"conditional-case-age"}
+          defaultChecked={caseAge && caseAge.length > 0 ? true : false}
           label={"Case age (SLA)"}
         />
-        <div className="govuk-radios__conditional" id="conditional-date-range">
+        <div className="govuk-radios__conditional" id="conditional-case-age">
           <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
             {Object.keys(NamedDateRangeOptions).map((namedDateRange) => (
               <div className="govuk-checkboxes__item" key={namedDateRange}>
                 <input
                   className="govuk-checkboxes__input"
                   id={caseAgeId(namedDateRange)}
-                  name="dateRange"
+                  name="caseAge"
                   type="checkbox"
                   value={namedDateRange}
-                  checked={dateRange?.includes(namedDateRange as NamedCourtDateRange)}
+                  checked={caseAge?.includes(namedDateRange as NamedCourtDateRange)}
                   onChange={(event) => {
                     dispatch({
                       method: "remove",

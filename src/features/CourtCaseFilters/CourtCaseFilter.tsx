@@ -20,7 +20,7 @@ interface Props {
   reasonCode: string | null
   ptiurn: string | null
   reasons: Reason[]
-  dateRange: NamedCourtDateRange[]
+  caseAge: NamedCourtDateRange[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
   customDateFrom: Date | null
   customDateTo: Date | null
@@ -135,7 +135,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   ptiurn,
   courtName,
   reasonCode,
-  dateRange,
+  caseAge,
   caseAgeCounts,
   customDateFrom,
   customDateTo,
@@ -146,7 +146,7 @@ const CourtCaseFilter: React.FC<Props> = ({
 }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
-    dateFilter: dateRange.map((slaDate) => {
+    dateFilter: caseAge.map((slaDate) => {
       return { value: slaDate, state: "Applied" }
     }),
     customDateFrom: customDateFrom !== null ? { value: customDateFrom, state: "Applied" } : {},
@@ -267,7 +267,7 @@ const CourtCaseFilter: React.FC<Props> = ({
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"} hideChildren={true}>
               <CourtDateFilterOptions
-                dateRange={state.dateFilter.map((slaDate) => slaDate.value as NamedCourtDateRange)}
+                caseAge={state.dateFilter.map((slaDate) => slaDate.value as NamedCourtDateRange)}
                 caseAgeCounts={caseAgeCounts}
                 dispatch={dispatch}
                 customDateFrom={state.customDateFrom.value ?? undefined}

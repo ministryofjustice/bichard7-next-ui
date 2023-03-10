@@ -15,7 +15,7 @@ interface Props {
     courtName?: string | null
     reasonCode?: string | null
     ptiurn?: string | null
-    dateRange?: string[]
+    caseAge?: string[]
     customDateFrom?: Date | null
     customDateTo?: Date | null
     urgency?: string | null
@@ -31,7 +31,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
   const hasAnyAppliedFilters = (): boolean =>
     (filters.reasons && filters.reasons.length > 0) ||
     (filters.keywords && filters.keywords.length > 0) ||
-    (filters.dateRange && filters.dateRange.length > 0) ||
+    (filters.caseAge && filters.caseAge.length > 0) ||
     !!filters.courtName ||
     !!filters.reasonCode ||
     !!filters.ptiurn ||
@@ -99,11 +99,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               <FilterTag tag={filters.ptiurn ?? ""} href={removeFilterFromPath({ ptiurn: filters.ptiurn ?? "" })} />
             </li>
           </ConditionalRender>
-          {filters.dateRange &&
-            filters.dateRange.map((slaDate) => {
+          {filters.caseAge &&
+            filters.caseAge.map((slaDate) => {
               return (
                 <li key={`${slaDate}`}>
-                  <FilterTag tag={slaDate} href={removeFilterFromPath({ dateRange: slaDate })} />
+                  <FilterTag tag={slaDate} href={removeFilterFromPath({ caseAge: slaDate })} />
                 </li>
               )
             })}
