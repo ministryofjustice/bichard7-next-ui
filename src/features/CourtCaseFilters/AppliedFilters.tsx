@@ -16,8 +16,8 @@ interface Props {
     reasonCode?: string | null
     ptiurn?: string | null
     caseAge?: string[]
-    customDateFrom?: Date | null
-    customDateTo?: Date | null
+    dateFrom?: Date | null
+    dateTo?: Date | null
     urgency?: string | null
     locked?: string | null
     caseState?: string | null
@@ -36,8 +36,8 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.reasonCode ||
     !!filters.ptiurn ||
     !!filters.urgency ||
-    !!filters.customDateFrom ||
-    !!filters.customDateTo ||
+    !!filters.dateFrom ||
+    !!filters.dateTo ||
     !!filters.locked ||
     !!filters.caseState ||
     !!filters.myCases
@@ -107,12 +107,12 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
                 </li>
               )
             })}
-          <ConditionalRender isRendered={!!filters.customDateFrom && !!filters.customDateTo}>
+          <ConditionalRender isRendered={!!filters.dateFrom && !!filters.dateTo}>
             <li>
               <FilterTag
                 tag={
-                  `${format(filters.customDateFrom || new Date(), displayedDateFormat)} - ${format(
-                    filters.customDateTo || new Date(),
+                  `${format(filters.dateFrom || new Date(), displayedDateFormat)} - ${format(
+                    filters.dateTo || new Date(),
                     displayedDateFormat
                   )}` ?? ""
                 }

@@ -22,8 +22,8 @@ interface Props {
   reasons: Reason[]
   caseAge: CaseAge[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
-  customDateFrom: Date | null
-  customDateTo: Date | null
+  dateFrom: Date | null
+  dateTo: Date | null
   urgency: string | null
   locked: string | null
   caseState: CaseState | null
@@ -41,12 +41,12 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       if (newState.caseAgeFilter.filter((caseAgeFilter) => caseAgeFilter.value === action.value).length < 1) {
         newState.caseAgeFilter.push({ value: action.value as CaseAge, state: "Selected" })
       }
-    } else if (action.type === "customDateFrom") {
-      newState.customDateFrom.value = action.value
-      newState.customDateFrom.state = "Selected"
-    } else if (action.type === "customDateTo") {
-      newState.customDateTo.value = action.value
-      newState.customDateTo.state = "Selected"
+    } else if (action.type === "dateFrom") {
+      newState.dateFrom.value = action.value
+      newState.dateFrom.state = "Selected"
+    } else if (action.type === "dateTo") {
+      newState.dateTo.value = action.value
+      newState.dateTo.state = "Selected"
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = action.value
       newState.caseStateFilter.label = caseStateLabels[action.value ?? ""]
@@ -92,9 +92,9 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       } else {
         newState.caseAgeFilter = []
       }
-    } else if (action.type === "customDate") {
-      newState.customDateFrom.value = undefined
-      newState.customDateTo.value = undefined
+    } else if (action.type === "dateRange") {
+      newState.dateFrom.value = undefined
+      newState.dateTo.value = undefined
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = undefined
       newState.caseStateFilter.label = undefined
@@ -137,8 +137,8 @@ const CourtCaseFilter: React.FC<Props> = ({
   reasonCode,
   caseAge,
   caseAgeCounts,
-  customDateFrom,
-  customDateTo,
+  dateFrom,
+  dateTo,
   urgency,
   locked,
   caseState,
@@ -149,8 +149,8 @@ const CourtCaseFilter: React.FC<Props> = ({
     caseAgeFilter: caseAge.map((slaDate) => {
       return { value: slaDate, state: "Applied" }
     }),
-    customDateFrom: customDateFrom !== null ? { value: customDateFrom, state: "Applied" } : {},
-    customDateTo: customDateTo !== null ? { value: customDateTo, state: "Applied" } : {},
+    dateFrom: dateFrom !== null ? { value: dateFrom, state: "Applied" } : {},
+    dateTo: dateTo !== null ? { value: dateTo, state: "Applied" } : {},
     lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
@@ -270,8 +270,8 @@ const CourtCaseFilter: React.FC<Props> = ({
                 caseAge={state.caseAgeFilter.map((slaDate) => slaDate.value as CaseAge)}
                 caseAgeCounts={caseAgeCounts}
                 dispatch={dispatch}
-                customDateFrom={state.customDateFrom.value ?? undefined}
-                customDateTo={state.customDateTo.value ?? undefined}
+                dateFrom={state.dateFrom.value ?? undefined}
+                dateTo={state.dateTo.value ?? undefined}
               />
             </ExpandingFilters>
           </div>

@@ -41,8 +41,8 @@ interface Props {
   urgent: string | null
   caseAge: CaseAge[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
-  customDateFrom: string | null
-  customDateTo: string | null
+  dateFrom: string | null
+  dateTo: string | null
   page: number
   casesPerPage: number
   totalCases: number
@@ -166,8 +166,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
         caseAge: caseAges,
         caseAgeCounts: caseAgeCounts,
-        customDateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
-        customDateTo: validatedCustomDateRange?.to.toJSON() ?? null,
+        dateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
+        dateTo: validatedCustomDateRange?.to.toJSON() ?? null,
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null,
@@ -191,8 +191,8 @@ const Home: NextPage<Props> = ({
   ptiurn,
   caseAge,
   caseAgeCounts,
-  customDateFrom,
-  customDateTo,
+  dateFrom,
+  dateTo,
   urgent,
   locked,
   caseState,
@@ -215,8 +215,8 @@ const Home: NextPage<Props> = ({
             ptiurn={ptiurn}
             caseAge={caseAge}
             caseAgeCounts={caseAgeCounts}
-            customDateFrom={customDateFrom !== null ? new Date(customDateFrom) : null}
-            customDateTo={customDateTo !== null ? new Date(customDateTo) : null}
+            dateFrom={dateFrom !== null ? new Date(dateFrom) : null}
+            dateTo={dateTo !== null ? new Date(dateTo) : null}
             urgency={urgent}
             locked={locked}
             caseState={caseState}
@@ -232,8 +232,8 @@ const Home: NextPage<Props> = ({
               reasonCode,
               ptiurn,
               caseAge,
-              customDateFrom: customDateFrom !== null ? new Date(customDateFrom) : null,
-              customDateTo: customDateTo !== null ? new Date(customDateTo) : null,
+              dateFrom: dateFrom !== null ? new Date(dateFrom) : null,
+              dateTo: dateTo !== null ? new Date(dateTo) : null,
               urgency: urgent,
               locked: locked,
               caseState: caseState,

@@ -29,8 +29,8 @@ export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => 
       defendantName={null}
       ptiurn={null}
       reasonCode={null}
-      customDateFrom={null}
-      customDateTo={null}
+      dateFrom={null}
+      dateTo={null}
       myCases={false}
     />
   </div>
@@ -55,8 +55,8 @@ export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> 
     defendantName={"Wilma Flintstone"}
     ptiurn={"Case0000"}
     reasonCode={"HO200212"}
-    customDateFrom={new Date()}
-    customDateTo={new Date()}
+    dateFrom={new Date()}
+    dateTo={new Date()}
     myCases={true}
   />
 )

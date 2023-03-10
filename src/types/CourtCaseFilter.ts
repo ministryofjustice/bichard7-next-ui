@@ -7,15 +7,15 @@ export type FilterAction =
   | { method: FilterMethod; type: "ptiurn"; value: string }
   | { method: FilterMethod; type: "urgency"; value: boolean }
   | { method: FilterMethod; type: "caseAge"; value: CaseAge }
-  | { method: "add"; type: "customDateFrom"; value: Date }
-  | { method: "add"; type: "customDateTo"; value: Date }
-  | { method: "remove"; type: "customDate"; value: string }
+  | { method: "add"; type: "dateFrom"; value: Date }
+  | { method: "add"; type: "dateTo"; value: Date }
+  | { method: "remove"; type: "dateRange"; value: string }
   | { method: FilterMethod; type: "locked"; value: boolean }
   | { method: FilterMethod; type: "reason"; value: Reason }
   | { method: FilterMethod; type: "caseState"; value: CaseState }
   | { method: FilterMethod; type: "myCases"; value: boolean }
 
-export type FilterType = "urgency" | "date" | "locked" | "reason" | "customDateFrom" | "customDateTo"
+export type FilterType = "urgency" | "date" | "locked" | "reason" | "dateFrom" | "dateTo"
 export type FilterMethod = "add" | "remove"
 export type FilterValue = boolean | string | Reason
 export type FilterState = "Selected" | "Applied"
@@ -29,11 +29,11 @@ export type Filter = {
     value: CaseAge
     state: FilterState
   }[]
-  customDateFrom: {
+  dateFrom: {
     value?: Date
     state?: FilterState
   }
-  customDateTo: {
+  dateTo: {
     value?: Date
     state?: FilterState
   }

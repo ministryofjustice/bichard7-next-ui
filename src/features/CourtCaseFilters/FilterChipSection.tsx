@@ -22,7 +22,7 @@ const FilterChipSection: React.FC<Props> = ({
   marginTop,
   placeholderMessage
 }: Props) => {
-  const customDateRangeLabel = getCustomDateRangeLabel(state.customDateFrom.value, state.customDateTo.value)
+  const customDateRangeLabel = getCustomDateRangeLabel(state.dateFrom.value, state.dateTo.value)
   return (
     <>
       <ConditionalRender isRendered={anyFilterChips(state, sectionState)}>
@@ -124,15 +124,15 @@ const FilterChipSection: React.FC<Props> = ({
         <FilterChipRow
           chipLabel={customDateRangeLabel}
           condition={
-            state.customDateFrom.value !== undefined &&
-            state.customDateTo.value !== undefined &&
-            state.customDateFrom.state === sectionState &&
-            state.customDateTo.state === sectionState
+            state.dateFrom.value !== undefined &&
+            state.dateTo.value !== undefined &&
+            state.dateFrom.state === sectionState &&
+            state.dateTo.state === sectionState
           }
           dispatch={dispatch}
           type="customDate"
           label="Date range"
-          state={state.customDateFrom.state || sectionState}
+          state={state.dateFrom.state || sectionState}
           value={customDateRangeLabel}
         />
 

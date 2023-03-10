@@ -14,8 +14,8 @@ interface Props {
   caseAge?: CaseAge[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
   dispatch: Dispatch<FilterAction>
-  customDateFrom: Date | undefined
-  customDateTo: Date | undefined
+  dateFrom: Date | undefined
+  dateTo: Date | undefined
 }
 
 const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
@@ -33,14 +33,8 @@ const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: CountOfCasesByCase
 
 const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase().replace(" ", "-")}`
 
-const CourtDateFilterOptions: React.FC<Props> = ({
-  caseAge,
-  caseAgeCounts,
-  dispatch,
-  customDateFrom,
-  customDateTo
-}: Props) => {
-  const hasCustomDateRange = !!customDateFrom && !!customDateTo
+const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispatch, dateFrom, dateTo }: Props) => {
+  const hasCustomDateRange = !!dateFrom && !!dateTo
   const defaultDateValue = (date?: Date | null): string => {
     if (!!date) {
       return format(date, "yyyy-MM-dd")
@@ -61,8 +55,8 @@ const CourtDateFilterOptions: React.FC<Props> = ({
         />
         <div className="govuk-radios__conditional" id="conditional-custom-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-            <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(customDateFrom)} />
-            <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(customDateTo)} />
+            <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(dateFrom)} />
+            <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(dateTo)} />
           </div>
         </div>
         <RadioButton
@@ -86,8 +80,8 @@ const CourtDateFilterOptions: React.FC<Props> = ({
                   onChange={(event) => {
                     dispatch({
                       method: "remove",
-                      type: "customDate",
-                      value: getCustomDateRangeLabel(customDateFrom, customDateTo)
+                      type: "dateRange",
+                      value: getCustomDateRangeLabel(dateFrom, dateTo)
                     })
 
                     const value = event.currentTarget.value as CaseAge

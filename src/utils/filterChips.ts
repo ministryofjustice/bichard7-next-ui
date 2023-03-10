@@ -3,8 +3,8 @@ import { Filter, FilterState } from "types/CourtCaseFilter"
 const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
   return (
     [
-      state.customDateFrom,
-      state.customDateTo,
+      state.dateFrom,
+      state.dateTo,
       state.lockedFilter,
       state.urgentFilter,
       state.caseStateFilter,

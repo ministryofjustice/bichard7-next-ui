@@ -1,9 +1,9 @@
 import { displayedDateFormat } from "./formattedDate"
 import { format } from "date-fns"
 
-const getCustomDateRangeLabel = (customDateFromValue: Date | undefined, customDateToValue: Date | undefined) => {
-  return !!customDateFromValue && !!customDateToValue
-    ? `${format(customDateFromValue, displayedDateFormat)} - ${format(customDateToValue, displayedDateFormat)}`
+const getCustomDateRangeLabel = (dateFromValue: Date | undefined, dateToValue: Date | undefined) => {
+  return !!dateFromValue && !!dateToValue
+    ? `${format(dateFromValue, displayedDateFormat)} - ${format(dateToValue, displayedDateFormat)}`
     : ""
 }
 
