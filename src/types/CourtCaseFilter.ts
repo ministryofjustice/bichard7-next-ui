@@ -15,7 +15,21 @@ export type FilterAction =
   | { method: FilterMethod; type: "caseState"; value: CaseState }
   | { method: FilterMethod; type: "myCases"; value: boolean }
 
-export type FilterType = "urgency" | "date" | "locked" | "reason" | "dateFrom" | "dateTo"
+export type FilterType =
+  | "defendantName"
+  | "courtName"
+  | "reasonCode"
+  | "ptiurn"
+  | "urgency"
+  | "caseAge"
+  | "dateFrom"
+  | "dateTo"
+  | "dateRange"
+  | "locked"
+  | "reason"
+  | "caseState"
+  | "myCases"
+
 export type FilterMethod = "add" | "remove"
 export type FilterValue = boolean | string | Reason
 export type FilterState = "Selected" | "Applied"
