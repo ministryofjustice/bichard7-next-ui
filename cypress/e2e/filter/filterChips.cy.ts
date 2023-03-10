@@ -145,6 +145,39 @@ describe("Case list", () => {
         confirmFiltersAppliedContains("01/01/2022 - 31/12/2022")
       })
 
+      it.only("Should allow you to use the custom date pick and click 'Same 'date' to fill in the 'To' date field", () => {
+        cy.get("button#filter-button").click()
+
+        cy.get("#custom-date-range").click()
+
+        // Prompt should not be visible
+        cy.get("#same-day-prompt")
+          .contains(
+            "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
+          )
+          .should("not.exist")
+
+        // Click the same day button and Prompt will be visible
+        cy.get("#same-day").click()
+        cy.get("#same-day-prompt")
+          .contains(
+            "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
+          )
+          .should("exist")
+        // Input date then click Same day button
+        cy.get("#date-from").click().type("2023-03-17")
+        cy.get("#same-day").click()
+        cy.get("#date-to").contains("2023-03-17")
+
+        cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
+        cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+        cy.get(".moj-filter__tag").contains("17/03/2023 - 17/03/2023")
+        cy.get("button#search").click()
+
+        cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
+        confirmFiltersAppliedContains("17/03/2023 - 17/03/2023")
+      })
+
       it("Should remove custom date range filter chip when custom date filter is selected", () => {
         cy.get("button#filter-button").click()
         filterByCustomDateRange("2022-01-01", "2022-12-31")
