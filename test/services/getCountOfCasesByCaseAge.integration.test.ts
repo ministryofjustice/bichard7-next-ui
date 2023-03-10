@@ -7,9 +7,10 @@ import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import getNumberOfCasesBySla from "services/getNumberOfCasesBySla"
+import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import { subDays } from "date-fns"
 import courtCasesByVisibleForcesQuery from "services/queries/courtCasesByVisibleForcesQuery"
+import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 
 jest.mock(
   "services/queries/courtCasesByVisibleForcesQuery",
@@ -44,7 +45,7 @@ describe("listCourtCases", () => {
   })
 
   it("should call cases by visible forces query", async () => {
-    await getNumberOfCasesBySla(dataSource, [orgCode])
+    await getCountOfCasesByCaseAge(dataSource, [orgCode])
 
     expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledTimes(1)
     expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [orgCode])
@@ -70,26 +71,34 @@ describe("listCourtCases", () => {
       { courtDate: dateDay3, orgForPoliceFilter: orgCode }
     ])
 
-    const result = (await getNumberOfCasesBySla(dataSource, [orgCode])) as {
-      countToday: number
-      countYesterday: number
-      countDay2: number
-      countDay3: number
-    }
+    const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as CountOfCasesByCaseAgeResult
 
     expect(isError(result)).toBeFalsy()
 
-    expect(result.countToday).toEqual("4")
-    expect(result.countYesterday).toEqual("3")
-    expect(result.countDay2).toEqual("2")
-    expect(result.countDay3).toEqual("1")
+    expect(result.Today).toEqual("4")
+    expect(result.Yesterday).toEqual("3")
+    expect(result["Day 2"]).toEqual("2")
+    expect(result["Day 3"]).toEqual("1")
+  })
+
+  describe("When there are no cases", () => {
+    it("Should return 0 for each key", async () => {
+      const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as CountOfCasesByCaseAgeResult
+
+      expect(isError(result)).toBeFalsy()
+
+      expect(result.Today).toEqual("0")
+      expect(result.Yesterday).toEqual("0")
+      expect(result["Day 2"]).toEqual("0")
+      expect(result["Day 3"]).toEqual("0")
+    })
   })
 
   describe("When there is an error", () => {
     it("Should return the error when failed to unlock court case", async () => {
       jest.spyOn(SelectQueryBuilder.prototype, "getRawOne").mockRejectedValue(Error("Some error"))
 
-      const result = await getNumberOfCasesBySla(dataSource, [orgCode])
+      const result = await getCountOfCasesByCaseAge(dataSource, [orgCode])
       expect(isError(result)).toBe(true)
 
       const receivedError = result as Error

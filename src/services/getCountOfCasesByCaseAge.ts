@@ -1,15 +1,16 @@
 import { format } from "date-fns"
 import { DataSource, SelectQueryBuilder } from "typeorm"
+import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import { NamedDateRangeOptions } from "utils/namedDateRange"
 import CourtCase from "./entities/CourtCase"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
-const getNumberOfCasesBySla = async (
+const getCountOfCasesByCaseAge = async (
   connection: DataSource,
   forces: string[]
-): PromiseResult<{ countToday: number; countYesterday: number; countDay2: number; countDay3: number }> => {
+): PromiseResult<CountOfCasesByCaseAgeResult> => {
   const repository = connection.getRepository(CourtCase)
   let query = repository.createQueryBuilder()
   query = courtCasesByVisibleForcesQuery(query, forces) as SelectQueryBuilder<CourtCase>
@@ -37,11 +38,11 @@ const getNumberOfCasesBySla = async (
   return isError(response)
     ? response
     : {
-        countToday: response?.today,
-        countYesterday: response?.yesterday,
-        countDay2: response?.day2,
-        countDay3: response?.day3
+        Today: response?.today ?? "0",
+        Yesterday: response?.yesterday ?? "0",
+        "Day 2": response?.day2 ?? "0",
+        "Day 3": response?.day3 ?? "0"
       }
 }
 
-export default getNumberOfCasesBySla
+export default getCountOfCasesByCaseAge

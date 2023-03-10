@@ -6,17 +6,27 @@ import type { Dispatch } from "react"
 import DateInput from "components/CustomDateInput/DateInput"
 import { NamedCourtDateRange } from "types/CaseListQueryParams"
 import getCustomDateRangeLabel from "utils/getCustomDateRangeLabel"
+import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 
 interface Props {
   dateRange?: NamedCourtDateRange[]
+  caseAgeCounts: CountOfCasesByCaseAgeResult
   dispatch: Dispatch<FilterAction>
   customDateFrom: Date | undefined
   customDateTo: Date | undefined
 }
 
-const labelForDateRange = (namedDateRange: string): string => namedDateRange
+const labelForDateRange = (namedDateRange: string, caseAgeCounts: CountOfCasesByCaseAgeResult): string =>
+  `${namedDateRange} (${caseAgeCounts[namedDateRange as NamedCourtDateRange]})`
 const caseAgeId = (caseAge: string): string => `date-range-${caseAge.toLowerCase().replace(" ", "-")}`
-const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDateFrom, customDateTo }: Props) => {
+
+const CourtDateFilterOptions: React.FC<Props> = ({
+  dateRange,
+  caseAgeCounts,
+  dispatch,
+  customDateFrom,
+  customDateTo
+}: Props) => {
   const hasCustomDateRange = !!customDateFrom && !!customDateTo
   const defaultDateValue = (date?: Date | null): string => {
     if (!!date) {
@@ -58,7 +68,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
                   }}
                 ></input>
                 <label className="govuk-label govuk-checkboxes__label" htmlFor={caseAgeId(namedDateRange)}>
-                  {labelForDateRange(namedDateRange)}
+                  {labelForDateRange(namedDateRange, caseAgeCounts)}
                 </label>
               </div>
             ))}

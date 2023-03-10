@@ -12,6 +12,7 @@ import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
+import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 
 interface Props {
   defendantName: string | null
@@ -20,6 +21,7 @@ interface Props {
   ptiurn: string | null
   reasons: Reason[]
   dateRange: NamedCourtDateRange[]
+  caseAgeCounts: CountOfCasesByCaseAgeResult
   customDateFrom: Date | null
   customDateTo: Date | null
   urgency: string | null
@@ -134,6 +136,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   courtName,
   reasonCode,
   dateRange,
+  caseAgeCounts,
   customDateFrom,
   customDateTo,
   urgency,
@@ -265,6 +268,7 @@ const CourtCaseFilter: React.FC<Props> = ({
             <ExpandingFilters filterName={"Court date"} hideChildren={true}>
               <CourtDateFilterOptions
                 dateRange={state.dateFilter.map((slaDate) => slaDate.value as NamedCourtDateRange)}
+                caseAgeCounts={caseAgeCounts}
                 dispatch={dispatch}
                 customDateFrom={state.customDateFrom.value ?? undefined}
                 customDateTo={state.customDateTo.value ?? undefined}

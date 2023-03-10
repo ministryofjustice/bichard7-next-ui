@@ -9,11 +9,19 @@ export default {
   component: CourtCaseFilter
 } as ComponentMeta<typeof CourtCaseFilter>
 
+const dummyCaseAgeCounts = {
+  Today: 0,
+  Yesterday: 0,
+  "Day 2": 0,
+  "Day 3": 0
+}
+
 export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => (
   <div data-testid="filters">
     <CourtCaseFilter
       reasons={[]}
       dateRange={[]}
+      caseAgeCounts={dummyCaseAgeCounts}
       urgency={null}
       locked={null}
       caseState={null}
@@ -39,6 +47,7 @@ export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> 
   <CourtCaseFilter
     reasons={["Exceptions"]}
     dateRange={["Today"]}
+    caseAgeCounts={dummyCaseAgeCounts}
     urgency={"Urgent"}
     locked={"Locked"}
     caseState={"Resolved"}

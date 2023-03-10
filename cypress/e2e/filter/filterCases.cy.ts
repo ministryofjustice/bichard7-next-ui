@@ -358,7 +358,7 @@ describe("Case list", () => {
 
       // Tests for "Today"
       filterByDateRange("#date-range-today")
-      // cy.get('label[for="date-range-today"]').should("have.text", "Today") // Todo fix labels
+      cy.get('label[for="date-range-today"]').should("have.text", "Today (1)")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
@@ -375,7 +375,7 @@ describe("Case list", () => {
       // Tests for "yesterday"
       cy.get("button#filter-button").click()
       filterByDateRange("#date-range-yesterday")
-      // cy.get('label[for="date-range-yesterday"]').should("have.text", "Yesterday") // Todo fix labels
+      cy.get('label[for="date-range-yesterday"]').should("have.text", "Yesterday (2)")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 2)
@@ -398,7 +398,7 @@ describe("Case list", () => {
       // Tests for "Day 2"
       cy.get("button#filter-button").click()
       filterByDateRange("#date-range-day-2")
-      // cy.get('label[for="date-range-day-2"]').should("have.text", "Day 2") // Todo fix labels
+      cy.get('label[for="date-range-day-2"]').should("have.text", "Day 2 (1)")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 1)
@@ -415,7 +415,7 @@ describe("Case list", () => {
       // Tests for "Day 3"
       cy.get("button#filter-button").click()
       filterByDateRange("#date-range-day-3")
-      // cy.get('label[for="date-range-day-3"]').should("have.text", "Day 3") // Todo fix labels
+      cy.get('label[for="date-range-day-3"]').should("have.text", "Day 3 (3)")
       cy.get("button#search").click()
 
       cy.get("tr").not(":first").should("have.length", 3)

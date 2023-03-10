@@ -12,11 +12,13 @@ import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import type CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
+import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { CaseState, NamedCourtDateRange, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
+import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
 import { isPost } from "utils/http"
@@ -38,6 +40,7 @@ interface Props {
   reasonCode: string | null
   urgent: string | null
   dateRange: NamedCourtDateRange[]
+  courtCaseCounts: CountOfCasesByCaseAgeResult
   customDateFrom: string | null
   customDateTo: string | null
   page: number
@@ -119,6 +122,12 @@ export const getServerSideProps = withMultipleServerSideProps(
     const resolvedByUsername =
       validatedCaseState === "Resolved" && !currentUser.groups.includes("Supervisor") ? currentUser.username : undefined
 
+    const courtCaseCounts = await getCountOfCasesByCaseAge(dataSource, currentUser.visibleForces)
+
+    if (isError(courtCaseCounts)) {
+      throw courtCaseCounts
+    }
+
     const courtCases = await listCourtCases(dataSource, {
       forces: currentUser.visibleForces,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
@@ -158,6 +167,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         reasonCode: validatedreasonCode ? validatedreasonCode : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
         dateRange: dateRanges,
+        courtCaseCounts: courtCaseCounts,
         customDateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
         customDateTo: validatedCustomDateRange?.to.toJSON() ?? null,
         urgent: validatedUrgent ? validatedUrgent : null,
@@ -182,6 +192,7 @@ const Home: NextPage<Props> = ({
   reasonCode,
   ptiurn,
   dateRange,
+  courtCaseCounts,
   customDateFrom,
   customDateTo,
   urgent,
@@ -205,6 +216,7 @@ const Home: NextPage<Props> = ({
             reasonCode={reasonCode}
             ptiurn={ptiurn}
             dateRange={dateRange}
+            caseAgeCounts={courtCaseCounts}
             customDateFrom={customDateFrom !== null ? new Date(customDateFrom) : null}
             customDateTo={customDateTo !== null ? new Date(customDateTo) : null}
             urgency={urgent}
