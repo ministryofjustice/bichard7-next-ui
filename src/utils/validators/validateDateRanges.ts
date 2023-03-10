@@ -1,10 +1,13 @@
 import { CourtDateRange, NamedCourtDateRange } from "types/CaseListQueryParams"
 import { NamedDateRangeOptions } from "utils/namedDateRange"
 
-export const validateSlaDateRange = (dateRange: string | undefined): boolean =>
+export const validateCaseAgeKeys = (dateRange: string | undefined): boolean =>
   Object.keys(NamedDateRangeOptions).includes(String(dateRange))
 
-export const mapDateRange = (dateRange: string | string[] | undefined): CourtDateRange | undefined => {
-  const validatedDateRangeNames = [dateRange].flat().filter(validateSlaDateRange) as NamedCourtDateRange[]
-  return validatedDateRangeNames.map((range) => range && NamedDateRangeOptions[range]())[0]
+export const mapDateRanges = (
+  dateRange: string | string[] | undefined
+): CourtDateRange | CourtDateRange[] | undefined => {
+  const validatedDateRangeNames = [dateRange].flat().filter(validateCaseAgeKeys) as NamedCourtDateRange[]
+  const dateRanges = validatedDateRangeNames.map((range) => range && NamedDateRangeOptions[range]())
+  return dateRanges.length > 1 ? dateRanges : dateRanges[0]
 }

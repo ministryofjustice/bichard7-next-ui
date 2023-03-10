@@ -435,87 +435,33 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 8)
 
       // Test for multiple SLA
+      cy.get("button#filter-button").click()
+      filterByDateRange("#date-range-today")
+      filterByDateRange("#date-range-day-3")
+      cy.get("button#search").click()
 
-      // cy.get("button#filter-button").click()
-      // cy.get("#date-range").click()
-      // cy.get('label[for="date-range-day-2"]').should("have.text", "Day 2") // Todo fix labels
-      // cy.get("#date-range-this-week").click()
-      // cy.get("button#search").click()
+      cy.get("tr").not(":first").should("have.length", 4)
+      confirmMultipleFieldsDisplayed([
+        todayDateString,
+        "Case00000",
+        day3DateString,
+        "Case00004",
+        "Case00005",
+        "Case00006"
+      ])
+      confirmMultipleFieldsNotDisplayed([
+        yesterdayDateString,
+        day2DateString,
+        "Case00001",
+        "Case00002",
+        "Case00003",
+        "Case00007"
+      ])
 
-      // cy.get("tr").not(":first").should("have.length", 3)
-      // confirmMultipleFieldsDisplayed([
-      //   todayDateString,
-      //   yesterdayDateString,
-      //   day3DateString,
-      //   "Case00000",
-      //   "Case00001",
-      //   "Case00003"
-      // ])
-
-      // removeFilterTag("This week")
-      // cy.get("tr").not(":first").should("have.length", 8)
-
-      // // Tests for "Last week"
-      // cy.get("button#filter-button").click()
-      // cy.get("#date-range").click()
-      // cy.get('label[for="date-range-last-week"]').should("have.text", expectedLastWeekLabel)
-      // cy.get("#date-range-last-week").click()
-      // cy.get("button#search").click()
-
-      // cy.get("tr").not(":first").should("have.length", 3)
-      // confirmMultipleFieldsDisplayed([
-      //   oneWeekAgoDateString,
-      //   oneWeekAndOneDayAgoDateString,
-      //   twoWeeksAgoDateString,
-      //   "Case00003",
-      //   "Case00004",
-      //   "Case00005"
-      // ])
-
-      // removeFilterTag("Last week")
-      // cy.get("tr").not(":first").should("have.length", 8)
-
-      // // Tests for "This month"
-      // cy.get("button#filter-button").click()
-      // cy.get("#date-range").click()
-      // cy.get('label[for="date-range-this-month"]').should("have.text", expectedThisMonthLabel)
-      // cy.get("#date-range-this-month").click()
-      // cy.get("button#search").click()
-
-      // cy.get("tr").not(":first").should("have.length", 6)
-      // confirmMultipleFieldsDisplayed([
-      //   todayDateString,
-      //   yesterdayDateString,
-      //   oneWeekAgoDateString,
-      //   twoWeeksAgoDateString,
-      //   oneWeekAndOneDayAgoDateString,
-      //   oneMonthAgoDateString,
-      //   "Case00000",
-      //   "Case00001",
-      //   "Case00003",
-      //   "Case00004",
-      //   "Case00005",
-      //   "Case00006"
-      // ])
-
-      // confirmMultipleFieldsDisplayed([oneMonthAgoDateString, "Case00006"])
-      // cy.get("tr").not(":first").should("have.length", 6)
-      // cy.get("tr").not(":first").contains(todayDateString).should("exist")
-      // cy.get("tr").not(":first").contains(yesterdayDateString).should("exist")
-      // cy.get("tr").not(":first").contains(oneWeekAgoDateString).should("exist")
-      // cy.get("tr").not(":first").contains(twoWeeksAgoDateString).should("exist")
-      // cy.get("tr").not(":first").contains(oneWeekAndOneDayAgoDateString).should("exist")
-      // cy.get("tr").not(":first").contains(oneMonthAgoDateString).should("exist")
-
-      // cy.get("tr").not(":first").contains("Case00000").should("exist")
-      // cy.get("tr").not(":first").contains("Case00001").should("exist")
-      // cy.get("tr").not(":first").contains("Case00003").should("exist")
-      // cy.get("tr").not(":first").contains("Case00004").should("exist")
-      // cy.get("tr").not(":first").contains("Case00005").should("exist")
-      // cy.get("tr").not(":first").contains("Case00006").should("exist")
-
-      // removeFilterTag("This month")
-      // cy.get("tr").not(":first").should("have.length", 8)
+      removeFilterTag("Day 3")
+      cy.get("tr").not(":first").should("have.length", 1)
+      removeFilterTag("Today")
+      cy.get("tr").not(":first").should("have.length", 8)
     })
 
     it("Should display cases filtered for a custom date range", () => {

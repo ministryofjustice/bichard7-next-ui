@@ -23,7 +23,7 @@ import { isPost } from "utils/http"
 import { NamedDateRangeOptions } from "utils/namedDateRange"
 import { reasonOptions } from "utils/reasonOptions"
 import { validateCustomDateRange } from "utils/validators/validateCustomDateRange"
-import { mapDateRange } from "utils/validators/validateDateRanges"
+import { mapDateRanges } from "utils/validators/validateDateRanges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
 
@@ -84,7 +84,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
-    const validatedDateRange = mapDateRange(dateRange)
+    const validatedDateRange = mapDateRanges(dateRange)
     const validatedCustomDateRange = validateCustomDateRange({
       from,
       to
