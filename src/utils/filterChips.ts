@@ -23,7 +23,7 @@ const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
       })
       .reduce((x, y) => x + y, 0) +
       state.reasonFilter.filter((filter) => countOfState === undefined || filter.state === countOfState).length +
-      state.dateFilter.filter((filter) => countOfState === undefined || filter.state === countOfState).length >
+      state.caseAgeFilter.filter((filter) => countOfState === undefined || filter.state === countOfState).length >
     0
   )
 }

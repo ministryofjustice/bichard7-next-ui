@@ -6,7 +6,7 @@ export type FilterAction =
   | { method: FilterMethod; type: "reasonCode"; value: string }
   | { method: FilterMethod; type: "ptiurn"; value: string }
   | { method: FilterMethod; type: "urgency"; value: boolean }
-  | { method: FilterMethod; type: "date"; value: CaseAge }
+  | { method: FilterMethod; type: "caseAge"; value: CaseAge }
   | { method: "add"; type: "customDateFrom"; value: Date }
   | { method: "add"; type: "customDateTo"; value: Date }
   | { method: "remove"; type: "customDate"; value: string }
@@ -25,7 +25,7 @@ export type Filter = {
     state?: FilterState
     label?: string
   }
-  dateFilter: {
+  caseAgeFilter: {
     value: CaseAge
     state: FilterState
   }[]

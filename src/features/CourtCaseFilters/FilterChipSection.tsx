@@ -137,21 +137,21 @@ const FilterChipSection: React.FC<Props> = ({
         />
 
         <ConditionalRender
-          isRendered={state.dateFilter.filter((dateFilter) => dateFilter.state === sectionState).length > 0}
+          isRendered={state.caseAgeFilter.filter((caseAgeFilter) => caseAgeFilter.state === sectionState).length > 0}
         >
           <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Case age (SLA)"}</h3>
           <ul className="moj-filter-tags govuk-!-margin-bottom-0">
-            {state.dateFilter
-              .filter((dateFilter) => dateFilter.state === sectionState)
-              .map((dateFilter) => (
+            {state.caseAgeFilter
+              .filter((caseAgeFilter) => caseAgeFilter.state === sectionState)
+              .map((caseAgeFilter) => (
                 <FilterChip
-                  key={dateFilter.value}
-                  chipLabel={dateFilter.value}
+                  key={caseAgeFilter.value}
+                  chipLabel={caseAgeFilter.value}
                   dispatch={dispatch}
                   removeAction={() => {
-                    return { method: "remove", type: "date", value: dateFilter.value }
+                    return { method: "remove", type: "caseAge", value: caseAgeFilter.value }
                   }}
-                  state={dateFilter.state}
+                  state={caseAgeFilter.state}
                 />
               ))}
           </ul>

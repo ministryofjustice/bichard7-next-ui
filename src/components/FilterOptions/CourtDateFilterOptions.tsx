@@ -57,7 +57,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({
           dataAriaControls={"conditional-custom-date-range"}
           defaultChecked={hasCustomDateRange}
           label={"Date range"}
-          onChange={(event) => dispatch({ method: "remove", type: "date", value: event.target.value as CaseAge })}
+          onChange={(event) => dispatch({ method: "remove", type: "caseAge", value: event.target.value as CaseAge })}
         />
         <div className="govuk-radios__conditional" id="conditional-custom-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
@@ -91,7 +91,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({
                     })
 
                     const value = event.currentTarget.value as CaseAge
-                    dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "date", value })
+                    dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "caseAge", value })
                   }}
                 ></input>
                 <label className="govuk-label govuk-checkboxes__label" htmlFor={caseAgeId(namedCaseAge)}>
