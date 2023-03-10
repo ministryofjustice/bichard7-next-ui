@@ -24,7 +24,7 @@ import caseStateFilters from "utils/caseStateFilters"
 import { isPost } from "utils/http"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import { reasonOptions } from "utils/reasonOptions"
-import { validateCustomDateRange } from "utils/validators/validateCustomDateRange"
+import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
@@ -86,7 +86,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
     const validatedCaseAges = mapCaseAges(caseAge)
-    const validatedCustomDateRange = validateCustomDateRange({
+    const validatedDateRange = validateDateRange({
       from,
       to
     })
@@ -138,7 +138,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
       order: validatedOrder,
-      courtDateRange: validatedCaseAges || validatedCustomDateRange,
+      courtDateRange: validatedCaseAges || validatedDateRange,
       locked: lockedFilter,
       caseState: validatedCaseState,
       allocatedToUserName: validatedMyCases,
@@ -166,8 +166,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
         caseAge: caseAges,
         caseAgeCounts: caseAgeCounts,
-        dateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
-        dateTo: validatedCustomDateRange?.to.toJSON() ?? null,
+        dateFrom: validatedDateRange?.from.toJSON() ?? null,
+        dateTo: validatedDateRange?.to.toJSON() ?? null,
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null,

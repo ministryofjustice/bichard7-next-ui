@@ -2,7 +2,7 @@ import hashedPassword from "../../fixtures/hashedPassword"
 import {
   confirmFiltersAppliedContains,
   filterByCaseAge,
-  filterByCustomDateRange,
+  filterByDateRange,
   removeFilterChip
 } from "../../support/helpers"
 
@@ -107,11 +107,11 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").contains("Day 3").should("not.exist")
       })
 
-      it("Should remove the case age filter chip when custom date range is selected", () => {
+      it("Should remove the case age filter chip when date range is selected", () => {
         cy.get("#filter-button").click()
         filterByCaseAge("#case-age-today")
 
-        filterByCustomDateRange("2022-01-01", "2022-12-31")
+        filterByDateRange("2022-01-01", "2022-12-31")
 
         cy.get(".govuk-heading-s").contains("Case age (SLA)").should("not.exist")
         cy.get(".moj-filter__tag").contains("Today").should("not.exist")
@@ -121,9 +121,9 @@ describe("Case list", () => {
     })
 
     describe("Date range", () => {
-      it("Should allow you to add custom date range filter chip", () => {
+      it("Should allow you to add date range filter chip", () => {
         cy.get("button#filter-button").click()
-        filterByCustomDateRange("2022-01-01", "2022-12-31")
+        filterByDateRange("2022-01-01", "2022-12-31")
         cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
         cy.get(".govuk-heading-s").contains("Date range").should("exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
@@ -133,9 +133,9 @@ describe("Case list", () => {
         confirmFiltersAppliedContains("01/01/2022 - 31/12/2022")
       })
 
-      it("Should remove custom date range filter chip when case age filter is selected", () => {
+      it("Should remove date range filter chip when case age filter is selected", () => {
         cy.get("button#filter-button").click()
-        filterByCustomDateRange("2022-01-01", "2022-12-31")
+        filterByDateRange("2022-01-01", "2022-12-31")
         cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
         cy.get(".govuk-heading-s").contains("Date range").should("exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
@@ -147,14 +147,14 @@ describe("Case list", () => {
         cy.get(".govuk-heading-s").contains("Case age (SLA)").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("exist")
 
-        cy.get("#custom-date-range").click()
+        cy.get("#date-range").click()
         cy.get("#date-from").invoke("val").should("be.empty")
         cy.get("#date-to").invoke("val").should("be.empty")
       })
 
-      it("Should apply the 'Custom date filter' filter chips then remove this chips to the original state", () => {
+      it("Should apply the 'Date filter' filter chips then remove this chips to the original state", () => {
         cy.get("#filter-button").click()
-        cy.get("#custom-date-range").click()
+        cy.get("#date-range").click()
         cy.get("#date-from").should("have.value", "")
         cy.get("#date-to").should("have.value", "")
         cy.get("#date-from").type("2022-01-01")

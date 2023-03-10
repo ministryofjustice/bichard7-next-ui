@@ -5,7 +5,7 @@ import { Dispatch } from "react"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
 import FilterChipRow from "./FilterChipRow"
-import getCustomDateRangeLabel from "utils/getCustomDateRangeLabel"
+import getDateRangeLabel from "utils/getDateRangeLabel"
 
 interface Props {
   state: Filter
@@ -22,7 +22,7 @@ const FilterChipSection: React.FC<Props> = ({
   marginTop,
   placeholderMessage
 }: Props) => {
-  const customDateRangeLabel = getCustomDateRangeLabel(state.dateFrom.value, state.dateTo.value)
+  const dateRangeLabel = getDateRangeLabel(state.dateFrom.value, state.dateTo.value)
   return (
     <>
       <ConditionalRender isRendered={anyFilterChips(state, sectionState)}>
@@ -122,7 +122,7 @@ const FilterChipSection: React.FC<Props> = ({
         />
 
         <FilterChipRow
-          chipLabel={customDateRangeLabel}
+          chipLabel={dateRangeLabel}
           condition={
             state.dateFrom.value !== undefined &&
             state.dateTo.value !== undefined &&
@@ -130,10 +130,10 @@ const FilterChipSection: React.FC<Props> = ({
             state.dateTo.state === sectionState
           }
           dispatch={dispatch}
-          type="customDate"
+          type="dateRange"
           label="Date range"
           state={state.dateFrom.state || sectionState}
-          value={customDateRangeLabel}
+          value={dateRangeLabel}
         />
 
         <ConditionalRender

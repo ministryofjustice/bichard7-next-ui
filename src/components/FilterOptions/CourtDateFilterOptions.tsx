@@ -6,7 +6,7 @@ import type { FilterAction } from "types/CourtCaseFilter"
 import type { Dispatch } from "react"
 import DateInput from "components/CustomDateInput/DateInput"
 import { CaseAge } from "types/CaseListQueryParams"
-import getCustomDateRangeLabel from "utils/getCustomDateRangeLabel"
+import getDateRangeLabel from "utils/getDateRangeLabel"
 import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 import { displayedDateFormat } from "utils/formattedDate"
 
@@ -34,7 +34,7 @@ const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: CountOfCasesByCase
 const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase().replace(" ", "-")}`
 
 const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispatch, dateFrom, dateTo }: Props) => {
-  const hasCustomDateRange = !!dateFrom && !!dateTo
+  const hasDateRange = !!dateFrom && !!dateTo
   const defaultDateValue = (date?: Date | null): string => {
     if (!!date) {
       return format(date, "yyyy-MM-dd")
@@ -47,13 +47,13 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispa
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
         <RadioButton
           name={"courtDate"}
-          id={"custom-date-range"}
-          dataAriaControls={"conditional-custom-date-range"}
-          defaultChecked={hasCustomDateRange}
+          id={"date-range"}
+          dataAriaControls={"conditional-date-range"}
+          defaultChecked={hasDateRange}
           label={"Date range"}
           onChange={(event) => dispatch({ method: "remove", type: "caseAge", value: event.target.value as CaseAge })}
         />
-        <div className="govuk-radios__conditional" id="conditional-custom-date-range">
+        <div className="govuk-radios__conditional" id="conditional-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
             <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(dateFrom)} />
             <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(dateTo)} />
@@ -81,7 +81,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispa
                     dispatch({
                       method: "remove",
                       type: "dateRange",
-                      value: getCustomDateRangeLabel(dateFrom, dateTo)
+                      value: getDateRangeLabel(dateFrom, dateTo)
                     })
 
                     const value = event.currentTarget.value as CaseAge

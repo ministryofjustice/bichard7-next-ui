@@ -28,8 +28,8 @@ export const filterByCaseAge = (caseAgeId: string) => {
   cy.get(caseAgeId).click()
 }
 
-export const filterByCustomDateRange = (dateFrom: string, dateTo: string) => {
-  cy.get("#custom-date-range").click()
+export const filterByDateRange = (dateFrom: string, dateTo: string) => {
+  cy.get("#date-range").click()
   cy.get("#date-from").click().type(dateFrom)
   cy.get("#date-to").click().type(dateTo)
 }

@@ -117,26 +117,26 @@ describe("Case list", () => {
       cy.get("#date-from").should("not.be.visible")
       cy.get("#case-age-yesterday").should("not.be.visible")
       // Opening date range collapses case age & opens date range
-      cy.get("#custom-date-range").click()
+      cy.get("#date-range").click()
       cy.get("#date-from").should("be.visible")
       cy.get("#case-age-yesterday").should("not.be.visible")
     })
 
-    it("Should remove the selection of the case age when it's been changed to the custom date range", () => {
+    it("Should remove the selection of the case age when it's been changed to the date range", () => {
       visitBasePathAndShowFilters()
       filterByCaseAge("#case-age-yesterday")
       cy.get("#case-age-yesterday").should("be.checked")
-      cy.get("#custom-date-range").click()
+      cy.get("#date-range").click()
       cy.get("#case-age").click()
       cy.get("#case-age-yesterday").should("not.be.checked")
     })
 
-    it("Should remove the selection of the custom date range when it's been changed to the case age", () => {
+    it("Should remove the selection of the date range when it's been changed to the case age", () => {
       visitBasePathAndShowFilters()
-      cy.get("#custom-date-range").click()
+      cy.get("#date-range").click()
       cy.get("#date-from").type("2022-01-01")
       cy.get("#date-to").type("2022-12-31")
-      cy.get("#custom-date-range").should("be.checked")
+      cy.get("#date-range").should("be.checked")
       filterByCaseAge("#case-age-yesterday")
       cy.get("#case-age").should("be.checked")
       cy.get("#case-age-yesterday").should("be.checked")
@@ -146,15 +146,15 @@ describe("Case list", () => {
       visitBasePathAndShowFilters()
       // no selection, nothing is checked
       cy.get("#case-age").should("not.be.checked")
-      cy.get("#custom-date-range").should("not.be.checked")
+      cy.get("#date-range").should("not.be.checked")
       // #case-age-yesterday selected, #case-age is checked
       filterByCaseAge("#case-age-yesterday")
       cy.get("#case-age").should("be.checked")
-      cy.get("#custom-date-range").should("not.be.checked")
-      // #custom-date-range, ##custom-date-range is checked
-      cy.get("#custom-date-range").click()
+      cy.get("#date-range").should("not.be.checked")
+      // #date-range, ##date-range is checked
+      cy.get("#date-range").click()
       cy.get("#case-age").should("not.be.checked")
-      cy.get("#custom-date-range").should("be.checked")
+      cy.get("#date-range").should("be.checked")
     })
 
     it("Should expand and collapse urgency filter navigation", () => {
@@ -427,7 +427,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 8)
     })
 
-    it("Should display cases filtered for a custom date range", () => {
+    it("Should display cases filtered for a date range", () => {
       const force = "011111"
 
       cy.task("insertCourtCasesWithFields", [
@@ -449,7 +449,7 @@ describe("Case list", () => {
       cy.visit("/bichard")
 
       cy.get("button#filter-button").click()
-      cy.get("#custom-date-range").click()
+      cy.get("#date-range").click()
       cy.get("#date-from").type("2022-01-01")
       cy.get("#date-to").type("2022-12-31")
       cy.get(".govuk-heading-s").contains("Date range").should("exist")
@@ -470,10 +470,10 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 13)
     })
 
-    it("Should update 'selected filter' chip when changing custom date range filter", () => {
+    it("Should update 'selected filter' chip when changing date range filter", () => {
       cy.visit("/bichard")
       cy.get("button#filter-button").click()
-      cy.get("#custom-date-range").click()
+      cy.get("#date-range").click()
 
       cy.get("#date-from").type("1999-01-01")
       cy.get("#date-to").type("2000-12-31")
