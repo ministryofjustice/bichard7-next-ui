@@ -266,7 +266,7 @@ const CourtCaseFilter: React.FC<Props> = ({
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"} hideChildren={true}>
               <CourtDateFilterOptions
-                caseAge={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
+                caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
                 caseAgeCounts={caseAgeCounts}
                 dispatch={dispatch}
                 dateRange={

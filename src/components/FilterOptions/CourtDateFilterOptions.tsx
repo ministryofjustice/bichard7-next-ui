@@ -10,7 +10,7 @@ import { formatDisplayedDate } from "utils/formattedDate"
 import KeyValuePair from "types/KeyValuePair"
 
 interface Props {
-  caseAge?: string[]
+  caseAges?: string[]
   caseAgeCounts: KeyValuePair<string, number>
   dispatch: Dispatch<FilterAction>
   dateRange: SerializedCourtDateRange | undefined
@@ -31,7 +31,7 @@ const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: KeyValuePair<strin
 
 const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase().replace(" ", "-")}`
 
-const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispatch, dateRange }: Props) => {
+const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, dispatch, dateRange }: Props) => {
   const defaultDateValue = (dateString?: string | null): string =>
     !!dateString ? format(parse(dateString, "dd/MM/yyyy", new Date()), "yyyy-MM-dd") : ""
 
@@ -56,7 +56,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispa
           name={"courtDate"}
           id={"case-age"}
           dataAriaControls={"conditional-case-age"}
-          defaultChecked={caseAge && caseAge.length > 0 ? true : false}
+          defaultChecked={caseAges && caseAges.length > 0 ? true : false}
           label={"Case age (SLA)"}
         />
         <div className="govuk-radios__conditional" id="conditional-case-age">
@@ -69,7 +69,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispa
                   name="caseAge"
                   type="checkbox"
                   value={namedCaseAge}
-                  checked={caseAge?.includes(namedCaseAge as string)}
+                  checked={caseAges?.includes(namedCaseAge as string)}
                   onChange={(event) => {
                     dispatch({
                       method: "remove",
