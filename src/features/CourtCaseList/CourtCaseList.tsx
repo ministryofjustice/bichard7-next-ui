@@ -73,8 +73,6 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
     return <Paragraph>{"There are no court cases to show"}</Paragraph>
   }
 
-  console.log("courtCases", courtCases)
-
   return (
     <Table head={tableHead}>
       {courtCases.map((courtCase) => (

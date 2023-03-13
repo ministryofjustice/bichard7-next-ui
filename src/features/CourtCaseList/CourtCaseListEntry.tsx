@@ -70,10 +70,11 @@ const CourtCaseListEntry: React.FC<Props> = ({
   } = courtCase
   const classes = useStyles()
   const { basePath, query } = useRouter()
-  let searchParams = new URLSearchParams(encode(query))
-  searchParams = deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
+  const searchParams = new URLSearchParams(encode(query))
   const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
   const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
+    deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
+
     searchParams.append(`unlock${reason}`, caseId)
     return `${basePath}/?${searchParams}`
   }
@@ -115,13 +116,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
           ) : (
             <LockedByTag lockedBy={triggerLockedByUsername} />
           )}
-          {
-            <CaseUnlockedTag
-              isCaseUnlocked={
-                !exceptionHasBeenRecentlyUnlocked && triggerHasBeenRecentlyUnlocked && !errorLockedByUsername
-              }
-            />
-          }
+          {<CaseUnlockedTag isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !errorLockedByUsername} />}
         </Table.Cell>
       </Table.Row>
     ) : (
@@ -171,13 +166,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
           ) : (
             <LockedByTag lockedBy={errorLockedByUsername} />
           )}
-          {
-            <CaseUnlockedTag
-              isCaseUnlocked={
-                exceptionHasBeenRecentlyUnlocked && triggerHasBeenRecentlyUnlocked && !errorLockedByUsername
-              }
-            />
-          }
+          {<CaseUnlockedTag isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername} />}
         </Table.Cell>
       </Table.Row>
       {numberOfNotes != 0 && !!showPreview && (
