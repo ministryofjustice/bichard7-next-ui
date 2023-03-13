@@ -8,6 +8,7 @@ import DateInput from "components/CustomDateInput/DateInput"
 import { SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { formatDisplayedDate } from "utils/formattedDate"
 import KeyValuePair from "types/KeyValuePair"
+import { createUseStyles } from "react-jss"
 
 interface Props {
   caseAges?: string[]
@@ -15,6 +16,13 @@ interface Props {
   dispatch: Dispatch<FilterAction>
   dateRange: SerializedCourtDateRange | undefined
 }
+
+const useStyles = createUseStyles({
+  "scrollable-case-ages": {
+    height: "180px",
+    overflow: "auto"
+  }
+})
 
 const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
   const caseAge = mapCaseAges(namedCaseAge)
@@ -32,6 +40,7 @@ const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: KeyValuePair<strin
 const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase().replace(" ", "-")}`
 
 const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, dispatch, dateRange }: Props) => {
+  const classes = useStyles()
   const defaultDateValue = (dateString?: string | null): string =>
     !!dateString ? format(parse(dateString, "dd/MM/yyyy", new Date()), "yyyy-MM-dd") : ""
 
@@ -60,32 +69,34 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, disp
           label={"Case age (SLA)"}
         />
         <div className="govuk-radios__conditional" id="conditional-case-age">
-          <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-            {Object.keys(CaseAgeOptions).map((namedCaseAge) => (
-              <div className="govuk-checkboxes__item" key={namedCaseAge}>
-                <input
-                  className="govuk-checkboxes__input"
-                  id={caseAgeId(namedCaseAge)}
-                  name="caseAge"
-                  type="checkbox"
-                  value={namedCaseAge}
-                  checked={caseAges?.includes(namedCaseAge as string)}
-                  onChange={(event) => {
-                    dispatch({
-                      method: "remove",
-                      type: "dateRange",
-                      value: `${dateRange?.from} - ${dateRange?.to}`
-                    })
+          <div className={classes["scrollable-case-ages"]}>
+            <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+              {Object.keys(CaseAgeOptions).map((namedCaseAge) => (
+                <div className="govuk-checkboxes__item" key={namedCaseAge}>
+                  <input
+                    className="govuk-checkboxes__input"
+                    id={caseAgeId(namedCaseAge)}
+                    name="caseAge"
+                    type="checkbox"
+                    value={namedCaseAge}
+                    checked={caseAges?.includes(namedCaseAge as string)}
+                    onChange={(event) => {
+                      dispatch({
+                        method: "remove",
+                        type: "dateRange",
+                        value: `${dateRange?.from} - ${dateRange?.to}`
+                      })
 
-                    const value = event.currentTarget.value as string
-                    dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "caseAge", value })
-                  }}
-                ></input>
-                <label className="govuk-label govuk-checkboxes__label" htmlFor={caseAgeId(namedCaseAge)}>
-                  {labelForCaseAge(namedCaseAge, caseAgeCounts)}
-                </label>
-              </div>
-            ))}
+                      const value = event.currentTarget.value as string
+                      dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "caseAge", value })
+                    }}
+                  ></input>
+                  <label className="govuk-label govuk-checkboxes__label" htmlFor={caseAgeId(namedCaseAge)}>
+                    {labelForCaseAge(namedCaseAge, caseAgeCounts)}
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
