@@ -1,12 +1,10 @@
 import FilterTag from "components/FilterTag/FilterTag"
 import ConditionalRender from "components/ConditionalRender"
-import { format } from "date-fns"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
-import { Reason } from "types/CaseListQueryParams"
+import { Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
-import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
   filters: {
@@ -16,8 +14,7 @@ interface Props {
     reasonCode?: string | null
     ptiurn?: string | null
     caseAge?: string[]
-    dateFrom?: Date | null
-    dateTo?: Date | null
+    dateRange?: SerializedCourtDateRange | null
     urgency?: string | null
     locked?: string | null
     caseState?: string | null
@@ -36,8 +33,8 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.reasonCode ||
     !!filters.ptiurn ||
     !!filters.urgency ||
-    !!filters.dateFrom ||
-    !!filters.dateTo ||
+    !!filters.dateRange?.from ||
+    !!filters.dateRange?.to ||
     !!filters.locked ||
     !!filters.caseState ||
     !!filters.myCases
@@ -107,15 +104,10 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
                 </li>
               )
             })}
-          <ConditionalRender isRendered={!!filters.dateFrom && !!filters.dateTo}>
+          <ConditionalRender isRendered={!!filters.dateRange?.from && !!filters.dateRange.to}>
             <li>
               <FilterTag
-                tag={
-                  `${format(filters.dateFrom || new Date(), displayedDateFormat)} - ${format(
-                    filters.dateTo || new Date(),
-                    displayedDateFormat
-                  )}` ?? ""
-                }
+                tag={`${filters.dateRange?.from} - ${filters.dateRange?.to}`}
                 href={removeQueryParamsByName(["from", "to", "pageNum"])}
               />
             </li>

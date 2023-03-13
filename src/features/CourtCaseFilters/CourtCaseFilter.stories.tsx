@@ -29,8 +29,7 @@ export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => 
       defendantName={null}
       ptiurn={null}
       reasonCode={null}
-      dateFrom={null}
-      dateTo={null}
+      dateRange={null}
       myCases={false}
     />
   </div>
@@ -55,8 +54,7 @@ export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> 
     defendantName={"Wilma Flintstone"}
     ptiurn={"Case0000"}
     reasonCode={"HO200212"}
-    dateFrom={new Date()}
-    dateTo={new Date()}
+    dateRange={null}
     myCases={true}
   />
 )

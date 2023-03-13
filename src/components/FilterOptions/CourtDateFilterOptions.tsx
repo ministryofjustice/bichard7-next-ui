@@ -1,26 +1,24 @@
-import { format } from "date-fns"
+import { format, parse } from "date-fns"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
 import RadioButton from "components/RadioButton/RadioButton"
 import type { FilterAction } from "types/CourtCaseFilter"
 import type { Dispatch } from "react"
 import DateInput from "components/CustomDateInput/DateInput"
-import { CaseAge } from "types/CaseListQueryParams"
-import getDateRangeLabel from "utils/getDateRangeLabel"
+import { CaseAge, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
-import { displayedDateFormat } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/formattedDate"
 
 interface Props {
   caseAge?: CaseAge[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
   dispatch: Dispatch<FilterAction>
-  dateFrom: Date | undefined
-  dateTo: Date | undefined
+  dateRange: SerializedCourtDateRange | undefined
 }
 
 const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
   const caseAge = mapCaseAges(namedCaseAge)
-  return caseAge ? `${namedCaseAge} (${format([caseAge].flat()[0].from, displayedDateFormat)})` : namedCaseAge
+  return caseAge ? `${namedCaseAge} (${formatDisplayedDate([caseAge].flat()[0].from)})` : namedCaseAge
 }
 
 const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: CountOfCasesByCaseAgeResult): string => {
@@ -33,14 +31,9 @@ const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: CountOfCasesByCase
 
 const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase().replace(" ", "-")}`
 
-const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispatch, dateFrom, dateTo }: Props) => {
-  const hasDateRange = !!dateFrom && !!dateTo
-  const defaultDateValue = (date?: Date | null): string => {
-    if (!!date) {
-      return format(date, "yyyy-MM-dd")
-    }
-    return ""
-  }
+const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispatch, dateRange }: Props) => {
+  const defaultDateValue = (dateString?: string | null): string =>
+    !!dateString ? format(parse(dateString, "dd/MM/yyyy", new Date()), "yyyy-MM-dd") : ""
 
   return (
     <fieldset className="govuk-fieldset">
@@ -49,14 +42,14 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispa
           name={"courtDate"}
           id={"date-range"}
           dataAriaControls={"conditional-date-range"}
-          defaultChecked={hasDateRange}
+          defaultChecked={!!dateRange}
           label={"Date range"}
           onChange={(event) => dispatch({ method: "remove", type: "caseAge", value: event.target.value as CaseAge })}
         />
         <div className="govuk-radios__conditional" id="conditional-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-            <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(dateFrom)} />
-            <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(dateTo)} />
+            <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(dateRange?.from)} />
+            <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(dateRange?.to)} />
           </div>
         </div>
         <RadioButton
@@ -81,7 +74,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispa
                     dispatch({
                       method: "remove",
                       type: "dateRange",
-                      value: getDateRangeLabel(dateFrom, dateTo)
+                      value: `${dateRange?.from} - ${dateRange?.to}`
                     })
 
                     const value = event.currentTarget.value as CaseAge

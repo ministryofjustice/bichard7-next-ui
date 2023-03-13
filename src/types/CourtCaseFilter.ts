@@ -44,11 +44,11 @@ export type Filter = {
     state: FilterState
   }[]
   dateFrom: {
-    value?: Date
+    value?: string
     state?: FilterState
   }
   dateTo: {
-    value?: Date
+    value?: string
     state?: FilterState
   }
   lockedFilter: {

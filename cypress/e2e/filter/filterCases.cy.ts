@@ -457,7 +457,7 @@ describe("Case list", () => {
       cy.get("button#search").click()
 
       cy.get("button#filter-button").click()
-      cy.get("#case-age").click().should("be.checked")
+      cy.get("#date-range").click().should("be.checked")
       cy.get("#date-from").should("have.value", "2022-01-01")
       cy.get("#date-to").should("have.value", "2022-12-31")
 

@@ -1,6 +1,5 @@
-import { format } from "date-fns"
 import Note from "services/entities/Note"
-import { displayedDateFormat } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/formattedDate"
 
 export const filterUserNotes = (notes: Note[]) => {
   const userNotes = notes.filter((note) => note.userId !== "System")
@@ -21,6 +20,6 @@ export const getFirst100CharsOfMostRecentNote = (mostRecentNote: Note[]) => {
 
 export const validateMostRecentNoteDate = (mostRecentNote: Note[]) => {
   const mostRecentNoteDate = mostRecentNote[0].createdAt
-  const formattedDate = format(new Date(mostRecentNoteDate.toString().slice(0, 10)), displayedDateFormat)
+  const formattedDate = formatDisplayedDate(new Date(mostRecentNoteDate.toString().slice(0, 10)))
   return formattedDate
 }

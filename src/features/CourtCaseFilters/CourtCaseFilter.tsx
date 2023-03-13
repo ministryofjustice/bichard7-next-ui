@@ -5,7 +5,7 @@ import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import { CaseState, CaseAge, Reason } from "types/CaseListQueryParams"
+import { CaseState, CaseAge, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
@@ -13,6 +13,7 @@ import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilt
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
+import { formatDisplayedDate } from "utils/formattedDate"
 
 interface Props {
   defendantName: string | null
@@ -22,8 +23,7 @@ interface Props {
   reasons: Reason[]
   caseAge: CaseAge[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
-  dateFrom: Date | null
-  dateTo: Date | null
+  dateRange: SerializedCourtDateRange | null
   urgency: string | null
   locked: string | null
   caseState: CaseState | null
@@ -42,10 +42,10 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
         newState.caseAgeFilter.push({ value: action.value as CaseAge, state: "Selected" })
       }
     } else if (action.type === "dateFrom") {
-      newState.dateFrom.value = action.value
+      newState.dateFrom.value = formatDisplayedDate(action.value)
       newState.dateFrom.state = "Selected"
     } else if (action.type === "dateTo") {
-      newState.dateTo.value = action.value
+      newState.dateTo.value = formatDisplayedDate(action.value)
       newState.dateTo.state = "Selected"
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = action.value
@@ -137,8 +137,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   reasonCode,
   caseAge,
   caseAgeCounts,
-  dateFrom,
-  dateTo,
+  dateRange,
   urgency,
   locked,
   caseState,
@@ -149,8 +148,8 @@ const CourtCaseFilter: React.FC<Props> = ({
     caseAgeFilter: caseAge.map((slaDate) => {
       return { value: slaDate, state: "Applied" }
     }),
-    dateFrom: dateFrom !== null ? { value: dateFrom, state: "Applied" } : {},
-    dateTo: dateTo !== null ? { value: dateTo, state: "Applied" } : {},
+    dateFrom: dateRange !== null ? { value: dateRange.from, state: "Applied" } : {},
+    dateTo: dateRange !== null ? { value: dateRange.to, state: "Applied" } : {},
     lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
@@ -270,8 +269,11 @@ const CourtCaseFilter: React.FC<Props> = ({
                 caseAge={state.caseAgeFilter.map((slaDate) => slaDate.value as CaseAge)}
                 caseAgeCounts={caseAgeCounts}
                 dispatch={dispatch}
-                dateFrom={state.dateFrom.value ?? undefined}
-                dateTo={state.dateTo.value ?? undefined}
+                dateRange={
+                  state.dateFrom.value && state.dateTo.value
+                    ? { from: state.dateFrom.value, to: state.dateTo.value }
+                    : undefined
+                }
               />
             </ExpandingFilters>
           </div>

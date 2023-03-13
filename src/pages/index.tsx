@@ -17,7 +17,7 @@ import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CaseState, CaseAge, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
+import { CaseState, CaseAge, QueryOrder, Reason, Urgency, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
@@ -28,6 +28,7 @@ import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
+import { formatDisplayedDate } from "utils/formattedDate"
 
 interface Props {
   user: User
@@ -41,8 +42,7 @@ interface Props {
   urgent: string | null
   caseAge: CaseAge[]
   caseAgeCounts: CountOfCasesByCaseAgeResult
-  dateFrom: string | null
-  dateTo: string | null
+  dateRange: SerializedCourtDateRange | null
   page: number
   casesPerPage: number
   totalCases: number
@@ -165,9 +165,13 @@ export const getServerSideProps = withMultipleServerSideProps(
         reasonCode: validatedreasonCode ? validatedreasonCode : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
         caseAge: caseAges,
+        dateRange: validatedDateRange
+          ? {
+              from: formatDisplayedDate(validatedDateRange.from),
+              to: formatDisplayedDate(validatedDateRange.to)
+            }
+          : null,
         caseAgeCounts: caseAgeCounts,
-        dateFrom: validatedDateRange?.from.toJSON() ?? null,
-        dateTo: validatedDateRange?.to.toJSON() ?? null,
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null,
@@ -191,8 +195,7 @@ const Home: NextPage<Props> = ({
   ptiurn,
   caseAge,
   caseAgeCounts,
-  dateFrom,
-  dateTo,
+  dateRange,
   urgent,
   locked,
   caseState,
@@ -215,8 +218,7 @@ const Home: NextPage<Props> = ({
             ptiurn={ptiurn}
             caseAge={caseAge}
             caseAgeCounts={caseAgeCounts}
-            dateFrom={dateFrom !== null ? new Date(dateFrom) : null}
-            dateTo={dateTo !== null ? new Date(dateTo) : null}
+            dateRange={dateRange}
             urgency={urgent}
             locked={locked}
             caseState={caseState}
@@ -232,8 +234,7 @@ const Home: NextPage<Props> = ({
               reasonCode,
               ptiurn,
               caseAge,
-              dateFrom: dateFrom !== null ? new Date(dateFrom) : null,
-              dateTo: dateTo !== null ? new Date(dateTo) : null,
+              dateRange: dateRange,
               urgency: urgent,
               locked: locked,
               caseState: caseState,
