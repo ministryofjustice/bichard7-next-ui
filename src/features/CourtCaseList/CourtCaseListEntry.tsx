@@ -115,7 +115,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
           ) : (
             <LockedByTag lockedBy={triggerLockedByUsername} />
           )}
-          {<CaseUnlockedTag isCaseUnlocked={triggerHasBeenRecentlyUnlocked} />}
+          {<CaseUnlockedTag isCaseUnlocked={!exceptionHasBeenRecentlyUnlocked && triggerHasBeenRecentlyUnlocked} />}
         </Table.Cell>
       </Table.Row>
     ) : (
@@ -165,7 +165,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
           ) : (
             <LockedByTag lockedBy={errorLockedByUsername} />
           )}
-          {<CaseUnlockedTag isCaseUnlocked={exceptionHasBeenRecentlyUnlocked} />}
+          {<CaseUnlockedTag isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && triggerHasBeenRecentlyUnlocked} />}
         </Table.Cell>
       </Table.Row>
       {numberOfNotes != 0 && !!showPreview && (
