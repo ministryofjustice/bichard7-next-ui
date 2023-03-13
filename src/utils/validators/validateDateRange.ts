@@ -1,11 +1,11 @@
 import { CourtDateRange } from "types/CaseListQueryParams"
 
-export const validateCustomDateRange = (customDate: {
+export const validateDateRange = (dateRange: {
   from: string | string[] | undefined
   to: string | string[] | undefined
 }): CourtDateRange | undefined => {
-  const fromTimeStamp = Date.parse(`${customDate.from}`)
-  const toTimeStamp = Date.parse(`${customDate.to}`)
+  const fromTimeStamp = Date.parse(`${dateRange.from}`)
+  const toTimeStamp = Date.parse(`${dateRange.to}`)
 
   if (isNaN(fromTimeStamp) || isNaN(toTimeStamp)) {
     return undefined

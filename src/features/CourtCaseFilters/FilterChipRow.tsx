@@ -2,13 +2,13 @@
 import FilterChip from "components/FilterChip"
 import ConditionalRender from "components/ConditionalRender"
 import { Dispatch } from "react"
-import { FilterAction, FilterState } from "types/CourtCaseFilter"
+import { FilterAction, FilterState, FilterType } from "types/CourtCaseFilter"
 
 interface Props {
   chipLabel: string
   condition: boolean
   dispatch: Dispatch<FilterAction>
-  type: any
+  type: FilterType
   label: string
   state: FilterState
   value: string | boolean
@@ -23,7 +23,7 @@ const FilterChipRow: React.FC<Props> = ({ chipLabel, condition, dispatch, type, 
           chipLabel={chipLabel}
           dispatch={dispatch}
           removeAction={() => {
-            return { method: "remove", type: type, value: value }
+            return { method: "remove", type: type, value: value } as FilterAction
           }}
           state={state}
         />

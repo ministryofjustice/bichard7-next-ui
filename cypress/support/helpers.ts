@@ -17,3 +17,19 @@ export const confirmMultipleFieldsNotDisplayed = (fields: string[]) => {
     cy.contains(field).should("not.exist")
   })
 }
+
+export const removeFilterChip = () => {
+  cy.get("li button.moj-filter__tag").trigger("click")
+  cy.get(".moj-filter__tag").should("not.exist")
+}
+
+export const filterByCaseAge = (caseAgeId: string) => {
+  cy.get("#case-age").click()
+  cy.get(caseAgeId).click()
+}
+
+export const filterByDateRange = (dateFrom: string, dateTo: string) => {
+  cy.get("#date-range").click()
+  cy.get("#date-from").click().type(dateFrom)
+  cy.get("#date-to").click().type(dateTo)
+}

@@ -118,8 +118,25 @@ const listCourtCases = async (
   }
 
   if (courtDateRange) {
-    query.andWhere({ courtDate: MoreThanOrEqual(courtDateRange.from) })
-    query.andWhere({ courtDate: LessThanOrEqual(courtDateRange.to) })
+    if (Array.isArray(courtDateRange)) {
+      query.andWhere(
+        new Brackets((qb) => {
+          courtDateRange.forEach((dateRange) => {
+            qb.orWhere(
+              new Brackets((dateRangeQuery) => {
+                dateRangeQuery
+                  .andWhere({ courtDate: MoreThanOrEqual(dateRange.from) })
+                  .andWhere({ courtDate: LessThanOrEqual(dateRange.to) })
+              })
+            )
+          })
+        })
+      )
+    } else {
+      query
+        .andWhere({ courtDate: MoreThanOrEqual(courtDateRange.from) })
+        .andWhere({ courtDate: LessThanOrEqual(courtDateRange.to) })
+    }
   }
 
   if (!caseState) {

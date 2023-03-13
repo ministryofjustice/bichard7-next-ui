@@ -1,42 +1,48 @@
-import { format } from "date-fns"
-import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
-import { NamedDateRangeOptions } from "utils/namedDateRange"
+import { format, parse } from "date-fns"
+import { CaseAgeOptions } from "utils/caseAgeOptions"
+import { mapCaseAges } from "utils/validators/validateCaseAges"
 import RadioButton from "components/RadioButton/RadioButton"
 import type { FilterAction } from "types/CourtCaseFilter"
 import type { Dispatch } from "react"
 import DateInput from "components/CustomDateInput/DateInput"
-import { displayedDateFormat } from "utils/formattedDate"
-import getCustomDateRangeLabel from "utils/getCustomDateRangeLabel"
+import { SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { formatDisplayedDate } from "utils/formattedDate"
+import KeyValuePair from "types/KeyValuePair"
+import { createUseStyles } from "react-jss"
 
 interface Props {
-  dateRange?: string | null
+  caseAges?: string[]
+  caseAgeCounts: KeyValuePair<string, number>
   dispatch: Dispatch<FilterAction>
-  customDateFrom: Date | undefined
-  customDateTo: Date | undefined
+  dateRange: SerializedCourtDateRange | undefined
 }
 
-const formatNamedDateRange = (namedDateRange: string): string => {
-  const dateRange = mapDateRange(namedDateRange)
-  return dateRange
-    ? `${namedDateRange} (${format(dateRange.from, displayedDateFormat)} - ${format(
-        dateRange.to,
-        displayedDateFormat
-      )})`
-    : namedDateRange
-}
-
-const labelForDateRange = (namedDateRange: string): string =>
-  ["Today", "Yesterday"].includes(namedDateRange) ? namedDateRange : formatNamedDateRange(namedDateRange)
-
-// TODO- update radio button logic for nested radios. Move away from GOV UK condition classes and use "states" instead.
-const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDateFrom, customDateTo }: Props) => {
-  const hasCustomDateRange = !!customDateFrom && !!customDateTo
-  const defaultDateValue = (date?: Date | null): string => {
-    if (!!date) {
-      return format(date, "yyyy-MM-dd")
-    }
-    return ""
+const useStyles = createUseStyles({
+  "scrollable-case-ages": {
+    height: "180px",
+    overflow: "auto"
   }
+})
+
+const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
+  const caseAge = mapCaseAges(namedCaseAge)
+  return caseAge ? `${namedCaseAge} (${formatDisplayedDate([caseAge].flat()[0].from)})` : namedCaseAge
+}
+
+const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: KeyValuePair<string, number>): string => {
+  const caseCount = `(${caseAgeCounts[namedCaseAge as string]})`
+
+  return ["Today", "Yesterday"].includes(namedCaseAge)
+    ? `${namedCaseAge} ${caseCount}`
+    : `${getCaseAgeWithFormattedDate(namedCaseAge)} ${caseCount}`
+}
+
+const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase().replace(" ", "-")}`
+
+const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, dispatch, dateRange }: Props) => {
+  const classes = useStyles()
+  const defaultDateValue = (dateString?: string | null): string =>
+    !!dateString ? format(parse(dateString, "dd/MM/yyyy", new Date()), "yyyy-MM-dd") : ""
 
   return (
     <fieldset className="govuk-fieldset">
@@ -45,43 +51,52 @@ const CourtDateFilterOptions: React.FC<Props> = ({ dateRange, dispatch, customDa
           name={"courtDate"}
           id={"date-range"}
           dataAriaControls={"conditional-date-range"}
-          defaultChecked={validateNamedDateRange(dateRange || "")}
+          defaultChecked={!!dateRange}
           label={"Date range"}
+          onChange={(event) => dispatch({ method: "remove", type: "caseAge", value: event.target.value as string })}
         />
         <div className="govuk-radios__conditional" id="conditional-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-            {Object.keys(NamedDateRangeOptions).map((namedDateRange) => (
-              <RadioButton
-                name={"dateRange"}
-                key={namedDateRange.toLowerCase().replace(" ", "-")}
-                id={`date-range-${namedDateRange.toLowerCase().replace(" ", "-")}`}
-                checked={dateRange === namedDateRange}
-                value={namedDateRange}
-                label={labelForDateRange(namedDateRange)}
-                onChange={(event) => {
-                  dispatch({
-                    method: "remove",
-                    type: "customDate",
-                    value: getCustomDateRangeLabel(customDateFrom, customDateTo)
-                  })
-                  dispatch({ method: "add", type: "date", value: event.target.value })
-                }}
-              />
-            ))}
+            <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(dateRange?.from)} />
+            <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(dateRange?.to)} />
           </div>
         </div>
         <RadioButton
           name={"courtDate"}
-          id={"custom-date-range"}
-          dataAriaControls={"conditional-custom-date-range"}
-          defaultChecked={hasCustomDateRange}
-          label={"Custom date range"}
-          onChange={(event) => dispatch({ method: "remove", type: "date", value: event.target.value })}
+          id={"case-age"}
+          dataAriaControls={"conditional-case-age"}
+          defaultChecked={caseAges && caseAges.length > 0 ? true : false}
+          label={"Case age (SLA)"}
         />
-        <div className="govuk-radios__conditional" id="conditional-custom-date-range">
-          <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-            <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(customDateFrom)} />
-            <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(customDateTo)} />
+        <div className="govuk-radios__conditional" id="conditional-case-age">
+          <div className={classes["scrollable-case-ages"]}>
+            <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+              {Object.keys(CaseAgeOptions).map((namedCaseAge) => (
+                <div className="govuk-checkboxes__item" key={namedCaseAge}>
+                  <input
+                    className="govuk-checkboxes__input"
+                    id={caseAgeId(namedCaseAge)}
+                    name="caseAge"
+                    type="checkbox"
+                    value={namedCaseAge}
+                    checked={caseAges?.includes(namedCaseAge as string)}
+                    onChange={(event) => {
+                      dispatch({
+                        method: "remove",
+                        type: "dateRange",
+                        value: `${dateRange?.from} - ${dateRange?.to}`
+                      })
+
+                      const value = event.currentTarget.value as string
+                      dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "caseAge", value })
+                    }}
+                  ></input>
+                  <label className="govuk-label govuk-checkboxes__label" htmlFor={caseAgeId(namedCaseAge)}>
+                    {labelForCaseAge(namedCaseAge, caseAgeCounts)}
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

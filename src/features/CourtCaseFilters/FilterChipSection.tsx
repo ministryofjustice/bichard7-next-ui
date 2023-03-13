@@ -5,7 +5,6 @@ import { Dispatch } from "react"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
 import FilterChipRow from "./FilterChipRow"
-import getCustomDateRangeLabel from "utils/getCustomDateRangeLabel"
 
 interface Props {
   state: Filter
@@ -22,7 +21,7 @@ const FilterChipSection: React.FC<Props> = ({
   marginTop,
   placeholderMessage
 }: Props) => {
-  const customDateRangeLabel = getCustomDateRangeLabel(state.customDateFrom.value, state.customDateTo.value)
+  const dateRangeLabel = `${state.dateFrom.value} - ${state.dateTo.value}`
   return (
     <>
       <ConditionalRender isRendered={anyFilterChips(state, sectionState)}>
@@ -122,33 +121,40 @@ const FilterChipSection: React.FC<Props> = ({
         />
 
         <FilterChipRow
-          chipLabel={state.dateFilter.label!}
+          chipLabel={dateRangeLabel}
           condition={
-            state.dateFilter.value !== undefined &&
-            state.dateFilter.label !== undefined &&
-            state.dateFilter.state === sectionState
+            state.dateFrom.value !== undefined &&
+            state.dateTo.value !== undefined &&
+            state.dateFrom.state === sectionState &&
+            state.dateTo.state === sectionState
           }
           dispatch={dispatch}
-          type="date"
+          type="dateRange"
           label="Date range"
-          state={state.dateFilter.state || sectionState}
-          value={state.dateFilter.value!}
+          state={state.dateFrom.state || sectionState}
+          value={dateRangeLabel}
         />
 
-        <FilterChipRow
-          chipLabel={customDateRangeLabel}
-          condition={
-            state.customDateFrom.value !== undefined &&
-            state.customDateTo.value !== undefined &&
-            state.customDateFrom.state === sectionState &&
-            state.customDateTo.state === sectionState
-          }
-          dispatch={dispatch}
-          type="customDate"
-          label="Custom date range"
-          state={state.customDateFrom.state || sectionState}
-          value={customDateRangeLabel}
-        />
+        <ConditionalRender
+          isRendered={state.caseAgeFilter.filter((caseAgeFilter) => caseAgeFilter.state === sectionState).length > 0}
+        >
+          <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Case age (SLA)"}</h3>
+          <ul className="moj-filter-tags govuk-!-margin-bottom-0">
+            {state.caseAgeFilter
+              .filter((caseAgeFilter) => caseAgeFilter.state === sectionState)
+              .map((caseAgeFilter) => (
+                <FilterChip
+                  key={caseAgeFilter.value}
+                  chipLabel={caseAgeFilter.value}
+                  dispatch={dispatch}
+                  removeAction={() => {
+                    return { method: "remove", type: "caseAge", value: caseAgeFilter.value }
+                  }}
+                  state={caseAgeFilter.state}
+                />
+              ))}
+          </ul>
+        </ConditionalRender>
 
         <FilterChipRow
           chipLabel={state.caseStateFilter.label!}

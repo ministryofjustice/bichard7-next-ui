@@ -1,21 +1,10 @@
 import hashedPassword from "../../fixtures/hashedPassword"
-import { confirmFiltersAppliedContains } from "../../support/helpers"
-
-export function removeFilterChip() {
-  cy.get("li button.moj-filter__tag").trigger("click")
-  cy.get(".moj-filter__tag").should("not.exist")
-}
-
-export function filterByDateRange(dateRangeId: string) {
-  cy.get("#date-range").click()
-  cy.get(dateRangeId).click()
-}
-
-const filterByCustomDateRange = (dateFrom: string, dateTo: string) => {
-  cy.get("#custom-date-range").click()
-  cy.get("#date-from").click().type(dateFrom)
-  cy.get("#date-to").click().type(dateTo)
-}
+import {
+  confirmFiltersAppliedContains,
+  filterByCaseAge,
+  filterByDateRange,
+  removeFilterChip
+} from "../../support/helpers"
 
 describe("Case list", () => {
   context("When filters applied", () => {
@@ -104,40 +93,39 @@ describe("Case list", () => {
       })
     })
 
-    describe("Date range", () => {
-      it("Should allow you to add 'today' as the date range filter chip", () => {
-        // Shows filters and clicks date range followed by today's date
+    describe("Case age (SLA)", () => {
+      it("Should allow you to add 'today' as the case age filter chip", () => {
+        // Shows filters and clicks case age followed by today's date
         cy.get("#filter-button").click()
-        filterByDateRange("#date-range-today")
+        filterByCaseAge("#case-age-today")
 
         // Shows the correct heading 'Today' and checks that the others are not visible
-        cy.get(".govuk-heading-s").contains("Date range").should("exist")
+        cy.get(".govuk-heading-s").contains("Case age (SLA)").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("exist")
         cy.get(".moj-filter__tag").contains("Yesterday").should("not.exist")
-        cy.get(".moj-filter__tag").contains("This week").should("not.exist")
-        cy.get(".moj-filter__tag").contains("Last week").should("not.exist")
-        cy.get(".moj-filter__tag").contains("This month").should("not.exist")
+        cy.get(".moj-filter__tag").contains("Day 2").should("not.exist")
+        cy.get(".moj-filter__tag").contains("Day 3").should("not.exist")
       })
 
-      it("Should remove the date range filter chip when custom date range is selected", () => {
+      it("Should remove the case age filter chip when date range is selected", () => {
         cy.get("#filter-button").click()
-        filterByDateRange("#date-range-today")
+        filterByCaseAge("#case-age-today")
 
-        filterByCustomDateRange("2022-01-01", "2022-12-31")
+        filterByDateRange("2022-01-01", "2022-12-31")
 
-        cy.get(".govuk-heading-s").contains("Date range").should("not.exist")
+        cy.get(".govuk-heading-s").contains("Case age (SLA)").should("not.exist")
         cy.get(".moj-filter__tag").contains("Today").should("not.exist")
-        cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+        cy.get(".govuk-heading-s").contains("Date range").should("exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist")
       })
     })
 
-    describe("Custom Date range", () => {
-      it("Should allow you to add custom date range filter chip", () => {
+    describe("Date range", () => {
+      it("Should allow you to add date range filter chip", () => {
         cy.get("button#filter-button").click()
-        filterByCustomDateRange("2022-01-01", "2022-12-31")
+        filterByDateRange("2022-01-01", "2022-12-31")
         cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
-        cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+        cy.get(".govuk-heading-s").contains("Date range").should("exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
         cy.get("button#search").click()
 
@@ -145,42 +133,39 @@ describe("Case list", () => {
         confirmFiltersAppliedContains("01/01/2022 - 31/12/2022")
       })
 
-      it("Should remove custom date range filter chip when custom date filter is selected", () => {
+      it("Should remove date range filter chip when case age filter is selected", () => {
         cy.get("button#filter-button").click()
-        filterByCustomDateRange("2022-01-01", "2022-12-31")
+        filterByDateRange("2022-01-01", "2022-12-31")
         cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
-        cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+        cy.get(".govuk-heading-s").contains("Date range").should("exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
 
-        filterByDateRange("#date-range-today")
+        filterByCaseAge("#case-age-today")
 
-        cy.get(".govuk-heading-s").contains("Custom date range").should("not.exist")
+        cy.get(".govuk-heading-s").contains("Date range").should("not.exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("not.exist")
-        cy.get(".govuk-heading-s").contains("Date range").should("exist")
+        cy.get(".govuk-heading-s").contains("Case age (SLA)").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("exist")
 
-        cy.get("#custom-date-range").click()
+        cy.get("#date-range").click()
         cy.get("#date-from").invoke("val").should("be.empty")
         cy.get("#date-to").invoke("val").should("be.empty")
       })
 
-      it.skip("Should apply the 'Custom date filter' filter chips then remove this chips to the original state", () => {
-        // TODO: fix during the state refactor - 2616 (filter panel bug)
+      it("Should apply the 'Date filter' filter chips then remove this chips to the original state", () => {
         cy.get("#filter-button").click()
-        cy.get("#custom-date-range").click()
+        cy.get("#date-range").click()
         cy.get("#date-from").should("have.value", "")
         cy.get("#date-to").should("have.value", "")
         cy.get("#date-from").type("2022-01-01")
         cy.get("#date-to").type("2022-12-31")
 
         cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
-        cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+        cy.get(".govuk-heading-s").contains("Date range").should("exist")
         cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022").should("exist").trigger("click")
         cy.get(".moj-filter__tag").should("not.exist")
         cy.get("#date-from").should("have.value", "")
         cy.get("#date-to").should("have.value", "")
-
-        cy.get("#custom-date-range").should("not.be.checked")
       })
     })
 
@@ -304,7 +289,7 @@ describe("Case list", () => {
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
 
-        filterByDateRange("#date-range-last-week")
+        filterByCaseAge("#case-age-day-2")
         cy.get("#non-urgent").click()
 
         // Check that relevant chips and headers are present on screen
@@ -316,19 +301,18 @@ describe("Case list", () => {
         cy.get(".govuk-heading-s").contains("Urgency").should("exist")
         cy.get(".moj-filter__tag").contains("Non-urgent").should("exist")
         cy.get(".moj-filter__tag").contains("Urgent").should("not.exist")
-        // Date Range
-        cy.get(".govuk-heading-s").contains("Date range").should("exist")
-        cy.get(".moj-filter__tag").contains("Last week").should("exist")
+        // Case Age (SLA)
+        cy.get(".govuk-heading-s").contains("Case age (SLA)").should("exist")
+        cy.get(".moj-filter__tag").contains("Day 2").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("not.exist")
         cy.get(".moj-filter__tag").contains("Yesterday").should("not.exist")
-        cy.get(".moj-filter__tag").contains("This week").should("not.exist")
-        cy.get(".moj-filter__tag").contains("This month").should("not.exist")
+        cy.get(".moj-filter__tag").contains("Day 3").should("not.exist")
 
         // submit query and display filter chips in filters applied section
         cy.get("#search").contains("Apply filters").click()
         cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Non-urgent").should("exist")
-        cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Last week").should("exist")
+        cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Day 2").should("exist")
       })
 
       it("Should allow a user to apply 'Trigger' and 'Urgent cases only' filter, under the Applied filters section. Then selecting 'Non urgent cases only' and see the previous urgent filter removed", () => {

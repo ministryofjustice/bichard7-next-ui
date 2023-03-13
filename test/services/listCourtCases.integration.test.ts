@@ -971,7 +971,7 @@ describe("listCourtCases", () => {
       expect(cases.map((c) => c.errorId)).toStrictEqual([1, 2])
     })
 
-    it("Should filter cases that within a specific date", async () => {
+    it("Should filter cases by multiple date ranges", async () => {
       const orgCode = "36FPA1"
       const firstDate = new Date("2001-09-26")
       const secondDate = new Date("2008-01-26")
@@ -988,14 +988,18 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        courtDateRange: { from: new Date("2008-01-26"), to: new Date("2008-01-26") }
+        courtDateRange: [
+          { from: new Date("2008-01-26"), to: new Date("2008-01-26") },
+          { from: new Date("2008-03-26"), to: new Date("2008-03-26") },
+          { from: new Date("2013-10-16"), to: new Date("2013-10-16") }
+        ]
       })
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(1)
-      expect(cases.map((c) => c.errorId)).toStrictEqual([1])
+      expect(cases).toHaveLength(3)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([1, 2, 3])
     })
   })
 
