@@ -10,7 +10,7 @@ import getDataSource from "../../src/services/getDataSource"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import { subDays } from "date-fns"
 import courtCasesByVisibleForcesQuery from "services/queries/courtCasesByVisibleForcesQuery"
-import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
+import KeyValuePair from "types/KeyValuePair"
 
 jest.mock(
   "services/queries/courtCasesByVisibleForcesQuery",
@@ -71,7 +71,7 @@ describe("listCourtCases", () => {
       { courtDate: dateDay3, orgForPoliceFilter: orgCode }
     ])
 
-    const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as CountOfCasesByCaseAgeResult
+    const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as KeyValuePair<string, number>
 
     expect(isError(result)).toBeFalsy()
 
@@ -83,7 +83,7 @@ describe("listCourtCases", () => {
 
   describe("When there are no cases", () => {
     it("Should return 0 for each key", async () => {
-      const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as CountOfCasesByCaseAgeResult
+      const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as KeyValuePair<string, number>
 
       expect(isError(result)).toBeFalsy()
 

@@ -1,4 +1,4 @@
-import { CaseState, CaseAge, Reason } from "./CaseListQueryParams"
+import { CaseState, Reason } from "./CaseListQueryParams"
 
 export type FilterAction =
   | { method: FilterMethod; type: "defendantName"; value: string }
@@ -6,7 +6,7 @@ export type FilterAction =
   | { method: FilterMethod; type: "reasonCode"; value: string }
   | { method: FilterMethod; type: "ptiurn"; value: string }
   | { method: FilterMethod; type: "urgency"; value: boolean }
-  | { method: FilterMethod; type: "caseAge"; value: CaseAge }
+  | { method: FilterMethod; type: "caseAge"; value: string }
   | { method: "add"; type: "dateFrom"; value: Date }
   | { method: "add"; type: "dateTo"; value: Date }
   | { method: "remove"; type: "dateRange"; value: string }
@@ -40,7 +40,7 @@ export type Filter = {
     label?: string
   }
   caseAgeFilter: {
-    value: CaseAge
+    value: string
     state: FilterState
   }[]
   dateFrom: {

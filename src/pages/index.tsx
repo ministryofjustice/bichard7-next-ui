@@ -17,8 +17,7 @@ import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CaseState, CaseAge, QueryOrder, Reason, Urgency, SerializedCourtDateRange } from "types/CaseListQueryParams"
-import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
+import { CaseState, QueryOrder, Reason, Urgency, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
 import { isPost } from "utils/http"
@@ -29,6 +28,7 @@ import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
 import { formatDisplayedDate } from "utils/formattedDate"
+import KeyValuePair from "types/KeyValuePair"
 
 interface Props {
   user: User
@@ -40,8 +40,8 @@ interface Props {
   courtName: string | null
   reasonCode: string | null
   urgent: string | null
-  caseAge: CaseAge[]
-  caseAgeCounts: CountOfCasesByCaseAgeResult
+  caseAge: string[]
+  caseAgeCounts: KeyValuePair<string, number>
   dateRange: SerializedCourtDateRange | null
   page: number
   casesPerPage: number
@@ -80,7 +80,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const reasons = [type].flat().filter((t) => reasonOptions.includes(String(t) as Reason)) as Reason[]
     const caseAges = [caseAge]
       .flat()
-      .filter((t) => Object.keys(CaseAgeOptions).includes(String(t) as CaseAge)) as CaseAge[]
+      .filter((t) => Object.keys(CaseAgeOptions).includes(String(t) as string)) as string[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"

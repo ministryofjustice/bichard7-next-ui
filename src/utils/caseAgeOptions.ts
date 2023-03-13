@@ -14,5 +14,11 @@ export const CaseAgeOptions: KeyValuePair<string, () => CourtDateRange> = {
   },
   "Day 3": () => {
     return { from: subDays(new Date(), 3), to: subDays(new Date(), 3) }
+  },
+  "Day 4": () => {
+    return { from: subDays(new Date(), 4), to: subDays(new Date(), 4) }
+  },
+  "Day 5": () => {
+    return { from: subDays(new Date(), 5), to: subDays(new Date(), 5) }
   }
 }

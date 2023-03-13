@@ -5,15 +5,15 @@ import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import { CaseState, CaseAge, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
-import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
 import { formatDisplayedDate } from "utils/formattedDate"
+import KeyValuePair from "types/KeyValuePair"
 
 interface Props {
   defendantName: string | null
@@ -21,8 +21,8 @@ interface Props {
   reasonCode: string | null
   ptiurn: string | null
   reasons: Reason[]
-  caseAge: CaseAge[]
-  caseAgeCounts: CountOfCasesByCaseAgeResult
+  caseAge: string[]
+  caseAgeCounts: KeyValuePair<string, number>
   dateRange: SerializedCourtDateRange | null
   urgency: string | null
   locked: string | null
@@ -39,7 +39,7 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.urgentFilter.state = "Selected"
     } else if (action.type === "caseAge") {
       if (newState.caseAgeFilter.filter((caseAgeFilter) => caseAgeFilter.value === action.value).length < 1) {
-        newState.caseAgeFilter.push({ value: action.value as CaseAge, state: "Selected" })
+        newState.caseAgeFilter.push({ value: action.value as string, state: "Selected" })
       }
     } else if (action.type === "dateFrom") {
       newState.dateFrom.value = formatDisplayedDate(action.value)
@@ -266,7 +266,7 @@ const CourtCaseFilter: React.FC<Props> = ({
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"} hideChildren={true}>
               <CourtDateFilterOptions
-                caseAge={state.caseAgeFilter.map((slaDate) => slaDate.value as CaseAge)}
+                caseAge={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
                 caseAgeCounts={caseAgeCounts}
                 dispatch={dispatch}
                 dateRange={

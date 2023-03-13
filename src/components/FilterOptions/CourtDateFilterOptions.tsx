@@ -5,13 +5,13 @@ import RadioButton from "components/RadioButton/RadioButton"
 import type { FilterAction } from "types/CourtCaseFilter"
 import type { Dispatch } from "react"
 import DateInput from "components/CustomDateInput/DateInput"
-import { CaseAge, SerializedCourtDateRange } from "types/CaseListQueryParams"
-import { CountOfCasesByCaseAgeResult } from "types/CountOfCasesByCaseAgeResult"
+import { SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { formatDisplayedDate } from "utils/formattedDate"
+import KeyValuePair from "types/KeyValuePair"
 
 interface Props {
-  caseAge?: CaseAge[]
-  caseAgeCounts: CountOfCasesByCaseAgeResult
+  caseAge?: string[]
+  caseAgeCounts: KeyValuePair<string, number>
   dispatch: Dispatch<FilterAction>
   dateRange: SerializedCourtDateRange | undefined
 }
@@ -21,8 +21,8 @@ const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
   return caseAge ? `${namedCaseAge} (${formatDisplayedDate([caseAge].flat()[0].from)})` : namedCaseAge
 }
 
-const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: CountOfCasesByCaseAgeResult): string => {
-  const caseCount = `(${caseAgeCounts[namedCaseAge as CaseAge]})`
+const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: KeyValuePair<string, number>): string => {
+  const caseCount = `(${caseAgeCounts[namedCaseAge as string]})`
 
   return ["Today", "Yesterday"].includes(namedCaseAge)
     ? `${namedCaseAge} ${caseCount}`
@@ -44,7 +44,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispa
           dataAriaControls={"conditional-date-range"}
           defaultChecked={!!dateRange}
           label={"Date range"}
-          onChange={(event) => dispatch({ method: "remove", type: "caseAge", value: event.target.value as CaseAge })}
+          onChange={(event) => dispatch({ method: "remove", type: "caseAge", value: event.target.value as string })}
         />
         <div className="govuk-radios__conditional" id="conditional-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
@@ -69,7 +69,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispa
                   name="caseAge"
                   type="checkbox"
                   value={namedCaseAge}
-                  checked={caseAge?.includes(namedCaseAge as CaseAge)}
+                  checked={caseAge?.includes(namedCaseAge as string)}
                   onChange={(event) => {
                     dispatch({
                       method: "remove",
@@ -77,7 +77,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAge, caseAgeCounts, dispa
                       value: `${dateRange?.from} - ${dateRange?.to}`
                     })
 
-                    const value = event.currentTarget.value as CaseAge
+                    const value = event.currentTarget.value as string
                     dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "caseAge", value })
                   }}
                 ></input>
