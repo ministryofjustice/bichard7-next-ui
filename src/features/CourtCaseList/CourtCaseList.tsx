@@ -14,6 +14,10 @@ interface Props {
 
 const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser }: Props) => {
   const { basePath, query } = useRouter()
+
+  const recentlyUnlockedExceptionId = query.unlockException
+  const recentlyUnlockedTriggerId = query.unlockTrigger
+
   const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
   const tableHead = (
     <Table.Row>
@@ -69,10 +73,18 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
     return <Paragraph>{"There are no court cases to show"}</Paragraph>
   }
 
+  console.log("courtCases", courtCases)
+
   return (
     <Table head={tableHead}>
       {courtCases.map((courtCase) => (
-        <CourtCaseListEntry courtCase={courtCase} currentUser={currentUser} key={`court-case-${courtCase.ptiurn}`} />
+        <CourtCaseListEntry
+          courtCase={courtCase}
+          currentUser={currentUser}
+          exceptionHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedExceptionId}
+          triggerHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedTriggerId}
+          key={`court-case-${courtCase.ptiurn}`}
+        />
       ))}
     </Table>
   )

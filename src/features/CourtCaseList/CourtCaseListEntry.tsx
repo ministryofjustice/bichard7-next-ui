@@ -19,6 +19,7 @@ import {
   validateMostRecentNoteDate
 } from "./CourtCaseListEntryHelperFunction"
 import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
+import CaseUnlockedTag from "./tags/CaseUnlockedTag"
 import LockedByTag from "./tags/LockedByTag/LockedByTag"
 import ResolvedTag from "./tags/ResolvedTag"
 import UrgentTag from "./tags/UrgentTag"
@@ -43,9 +44,16 @@ const useStyles = createUseStyles({
 interface Props {
   courtCase: CourtCase
   currentUser: User
+  exceptionHasBeenRecentlyUnlocked: boolean
+  triggerHasBeenRecentlyUnlocked: boolean
 }
 
-const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) => {
+const CourtCaseListEntry: React.FC<Props> = ({
+  courtCase,
+  currentUser,
+  exceptionHasBeenRecentlyUnlocked,
+  triggerHasBeenRecentlyUnlocked
+}: Props) => {
   const {
     errorId,
     courtDate,
@@ -107,6 +115,7 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
           ) : (
             <LockedByTag lockedBy={triggerLockedByUsername} />
           )}
+          {<CaseUnlockedTag isCaseUnlocked={triggerHasBeenRecentlyUnlocked} />}
         </Table.Cell>
       </Table.Row>
     ) : (
@@ -156,6 +165,7 @@ const CourtCaseListEntry: React.FC<Props> = ({ courtCase, currentUser }: Props) 
           ) : (
             <LockedByTag lockedBy={errorLockedByUsername} />
           )}
+          {<CaseUnlockedTag isCaseUnlocked={exceptionHasBeenRecentlyUnlocked} />}
         </Table.Cell>
       </Table.Row>
       {numberOfNotes != 0 && !!showPreview && (
