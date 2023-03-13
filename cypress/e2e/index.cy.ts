@@ -16,6 +16,11 @@ const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard
   cy.visit(url)
 }
 
+const unlockCase = (caseToUnlockNumber: string, caseToUnlockText: string) => {
+  cy.get(`tbody tr:nth-child(${caseToUnlockNumber}) .locked-by-tag`).get("button").contains(caseToUnlockText).click()
+  cy.get("button").contains("Unlock").click()
+}
+
 describe("Case list", () => {
   const defaultUsers: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
     return {
@@ -604,7 +609,7 @@ describe("Case list", () => {
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
 
       // Unlock the exception assigned to the user
-      cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").click()
+      unlockCase("1", "Bichard01")
       cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
       cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
       cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
@@ -613,7 +618,7 @@ describe("Case list", () => {
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
 
       // Unlock the trigger assigned to the user
-      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").click()
+      unlockCase("2", "Bichard01")
       cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("not.exist")
       cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("not.exist")
       cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
@@ -652,9 +657,9 @@ describe("Case list", () => {
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
 
       // Unlock both cases
-      cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").click()
-      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").click()
-      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard02").click()
+      unlockCase("1", "Bichard01")
+      unlockCase("2", "Bichard01")
+      unlockCase("3", "Bichard02")
 
       cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
       cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")

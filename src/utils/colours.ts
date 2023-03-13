@@ -1,6 +1,10 @@
 const darkGrey = "#62696D"
-const tagBlue = "#e9f1f8"
-const textBlue = "#114e81"
 const gdsLightGrey = "#f3f2f1"
 
-export { darkGrey, tagBlue, textBlue, gdsLightGrey }
+const tagBlue = "#e9f1f8"
+const textBlue = "#114e81"
+const blue = "#1D70B8"
+
+const yellow = "#FFDD00"
+
+export { darkGrey, gdsLightGrey, blue, tagBlue, textBlue, yellow }
