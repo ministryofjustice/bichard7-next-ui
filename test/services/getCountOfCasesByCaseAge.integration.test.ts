@@ -91,6 +91,23 @@ describe("listCourtCases", () => {
     expect(result["Day 15 and older"]).toEqual("3")
   })
 
+  it("Should ignore resolved cases", async () => {
+    const dateToday = new Date("2001-09-26")
+    MockDate.set(dateToday)
+
+    await insertCourtCasesWithFields([
+      { courtDate: dateToday, orgForPoliceFilter: orgCode },
+      { courtDate: dateToday, orgForPoliceFilter: orgCode },
+      { courtDate: dateToday, orgForPoliceFilter: orgCode, resolutionTimestamp: new Date() }
+    ])
+
+    const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as KeyValuePair<string, number>
+
+    expect(isError(result)).toBeFalsy()
+
+    expect(result.Today).toEqual("2")
+  })
+
   describe("When there are no cases", () => {
     it("Should return 0 for each key", async () => {
       const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as KeyValuePair<string, number>

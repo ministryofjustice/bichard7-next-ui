@@ -1,5 +1,5 @@
 import { format } from "date-fns"
-import { DataSource, SelectQueryBuilder } from "typeorm"
+import { DataSource, IsNull, SelectQueryBuilder } from "typeorm"
 import KeyValuePair from "types/KeyValuePair"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
@@ -26,6 +26,9 @@ const getCountOfCasesByCaseAge = async (
       .createQueryBuilder(key)
       .select("COUNT(*)", key)
       .where(`${key}.courtDate >= '${slaDateFrom}' AND ${key}.courtDate <= '${slaDateTo}'`)
+      .andWhere({
+        resolutionTimestamp: IsNull()
+      })
       .getQuery()
 
     if (i === 0) {
