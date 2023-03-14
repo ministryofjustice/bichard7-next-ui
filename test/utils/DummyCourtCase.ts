@@ -4,7 +4,7 @@ const DummyCourtCase: Partial<CourtCase> = {
   courtName: "Magistrates' Courts Essex Basildon",
   courtDate: new Date("2008-09-26"),
   ptiurn: "42CY0300108",
-  defendantName: "Allocation Trigger",
+  defendantName: "NAME Defendant",
   errorReason: "",
   triggerReason: "",
   errorId: 79507,

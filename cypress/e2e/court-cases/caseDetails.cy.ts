@@ -93,7 +93,7 @@ describe("Case details", () => {
       cy.get("th")
         .contains("Defendant name")
         .then(($cell) => {
-          expect($cell.parent().find("td").text()).to.equal("Allocation Trigger")
+          expect($cell.parent().find("td").text()).to.equal("NAME Defendant")
         })
       cy.get("th")
         .contains("Trigger reason")

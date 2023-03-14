@@ -428,9 +428,9 @@ describe("listCourtCases", () => {
   describe("search by defendant name", () => {
     it("should list cases when there is a case insensitive match", async () => {
       const orgCode = "01FPA1"
-      const defendantToInclude = "Bruce Wayne"
-      const defendantToIncludeWithPartialMatch = "Bruce W. Ayne"
-      const defendantToNotInclude = "Barbara Gordon"
+      const defendantToInclude = "WAYNE Bruce"
+      const defendantToIncludeWithPartialMatch = "WAYNE Bill"
+      const defendantToNotInclude = "GORDON Barbara"
 
       await insertCourtCasesWithFields([
         { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
@@ -441,7 +441,7 @@ describe("listCourtCases", () => {
       let result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        defendantName: "Bruce Wayne"
+        defendantName: "WAYNE Bruce"
       })
       expect(isError(result)).toBe(false)
       let { result: cases } = result as ListCourtCaseResult
@@ -452,7 +452,7 @@ describe("listCourtCases", () => {
       result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        defendantName: "bruce w"
+        defendantName: "WAYNE B"
       })
       expect(isError(result)).toBe(false)
       cases = (result as ListCourtCaseResult).result

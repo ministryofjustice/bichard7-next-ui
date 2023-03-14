@@ -186,9 +186,9 @@ describe("Case list", () => {
 
     it("Should display cases filtered by defendant name", () => {
       cy.task("insertCourtCasesWithFields", [
-        { defendantName: "Bruce Wayne", orgForPoliceFilter: "011111" },
-        { defendantName: "Barbara Gordon", orgForPoliceFilter: "011111" },
-        { defendantName: "Alfred Pennyworth", orgForPoliceFilter: "011111" }
+        { defendantName: "WAYNE Bruce", orgForPoliceFilter: "011111" },
+        { defendantName: "GORDON Barbara", orgForPoliceFilter: "011111" },
+        { defendantName: "PENNYWORTH Alfred", orgForPoliceFilter: "011111" }
       ])
 
       visitBasePathAndShowFilters()
@@ -282,16 +282,16 @@ describe("Case list", () => {
 
     it("Should let users use all search fields", () => {
       cy.task("insertCourtCasesWithFields", [
-        { defendantName: "Bruce Wayne", courtName: "London Court", ptiurn: "Case00001", orgForPoliceFilter: "011111" },
-        { defendantName: "Bruce Gordon", courtName: "London Court", ptiurn: "Case00002", orgForPoliceFilter: "011111" },
+        { defendantName: "WAYNE Bruce", courtName: "London Court", ptiurn: "Case00001", orgForPoliceFilter: "011111" },
+        { defendantName: "GORDON Bruce", courtName: "London Court", ptiurn: "Case00002", orgForPoliceFilter: "011111" },
         {
-          defendantName: "Bruce Pennyworth",
+          defendantName: "PENNYWORTH Bruce",
           courtName: "Manchester Court",
           ptiurn: "Case00003",
           orgForPoliceFilter: "011111"
         },
         {
-          defendantName: "Alfred Pennyworth",
+          defendantName: "PENNYWORTH Alfred",
           courtName: "London Court",
           ptiurn: "Case00004",
           orgForPoliceFilter: "011111"
