@@ -20,11 +20,12 @@ const getCountOfCasesByCaseAge = async (
   Object.keys(CaseAgeOptions).forEach((slaCaseAgeOption, i) => {
     const key = asKey(slaCaseAgeOption)
     const slaDateFrom = format(CaseAgeOptions[slaCaseAgeOption]().from, "yyyy-MM-dd")
+    const slaDateTo = format(CaseAgeOptions[slaCaseAgeOption]().to, "yyyy-MM-dd")
 
     const subQuery = repository
       .createQueryBuilder(key)
       .select("COUNT(*)", key)
-      .where(`${key}.courtDate = '${slaDateFrom}'`)
+      .where(`${key}.courtDate >= '${slaDateFrom}' AND ${key}.courtDate <= '${slaDateTo}'`)
       .getQuery()
 
     if (i === 0) {
