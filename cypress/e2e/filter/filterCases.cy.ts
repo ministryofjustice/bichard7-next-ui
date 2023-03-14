@@ -193,14 +193,14 @@ describe("Case list", () => {
 
       visitBasePathAndShowFilters()
 
-      inputAndSearch("keywords", "Bruce Wayne")
-      cy.contains("Bruce Wayne")
-      confirmMultipleFieldsNotDisplayed(["Barbara Gordon", "Alfred Pennyworth"])
+      inputAndSearch("keywords", "WAYNE Bruce")
+      cy.contains("WAYNE Bruce")
+      confirmMultipleFieldsNotDisplayed(["GORDON Barbara", "PENNYWORTH Alfred"])
       cy.get("tr").should("have.length", 2)
-      confirmFiltersAppliedContains("Bruce Wayne")
+      confirmFiltersAppliedContains("WAYNE Bruce")
 
-      removeFilterTag("Bruce Wayne")
-      confirmMultipleFieldsDisplayed(["Bruce Wayne", "Barbara Gordon", "Alfred Pennyworth"])
+      removeFilterTag("WAYNE Bruce")
+      confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Barbara", "PENNYWORTH Alfred"])
     })
 
     it("Should display cases filtered by court name", () => {
@@ -304,28 +304,28 @@ describe("Case list", () => {
       visitBasePathAndShowFilters()
 
       inputAndSearch("keywords", "Bruce")
-      confirmMultipleFieldsNotDisplayed(["Alfred Pennyworth"])
+      confirmMultipleFieldsNotDisplayed(["PENNYWORTH Alfred"])
       cy.get("tr").should("have.length", 4)
-      confirmMultipleFieldsDisplayed(["Bruce Wayne", "Bruce Gordon", "Bruce Pennyworth"])
+      confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Bruce", "PENNYWORTH Bruce"])
 
       cy.get("button[id=filter-button]").click()
       inputAndSearch("court-name", "London Court")
-      confirmMultipleFieldsNotDisplayed(["Bruce Pennyworth", "Alfred Pennyworth"])
+      confirmMultipleFieldsNotDisplayed(["PENNYWORTH Bruce", "PENNYWORTH Alfred"])
       cy.get("tr").should("have.length", 3)
-      confirmMultipleFieldsDisplayed(["Bruce Wayne", "Bruce Gordon"])
+      confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Bruce"])
 
       cy.get("button[id=filter-button]").click()
       inputAndSearch("ptiurn", "Case0000")
-      confirmMultipleFieldsNotDisplayed(["Bruce Pennyworth", "Alfred Pennyworth"])
+      confirmMultipleFieldsNotDisplayed(["PENNYWORTH Bruce", "PENNYWORTH Alfred"])
       cy.get("tr").should("have.length", 3)
-      confirmMultipleFieldsDisplayed(["Bruce Wayne", "Bruce Gordon"])
+      confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Bruce"])
       removeFilterTag("Case0000")
 
       cy.get("button[id=filter-button]").click()
       inputAndSearch("reason-code", "HO200212")
-      confirmMultipleFieldsNotDisplayed(["Bruce Gordon", "Bruce Pennyworth", "Alfred Pennyworth"])
+      confirmMultipleFieldsNotDisplayed(["GORDON Bruce", "PENNYWORTH Bruce", "PENNYWORTH Alfred"])
       cy.get("tr").should("have.length", 2)
-      confirmMultipleFieldsDisplayed(["Bruce Wayne"])
+      confirmMultipleFieldsDisplayed(["WAYNE Bruce"])
     })
 
     it("Should display cases filtered for an SLA date", () => {
@@ -773,7 +773,7 @@ describe("Case list", () => {
     describe("Applied filter section", () => {
       it("Should show the applied filter section when the filter panel is hidden", () => {
         visitBasePathAndShowFilters()
-        inputAndSearch("keywords", "Bruce Wayne")
+        inputAndSearch("keywords", "WAYNE Bruce")
 
         cy.contains("Show filter")
         cy.contains("Hide filter").should("not.exist")
@@ -782,7 +782,7 @@ describe("Case list", () => {
       })
       it("Should hide the applied filter section when the filter panel is shown", () => {
         visitBasePathAndShowFilters()
-        inputAndSearch("keywords", "Bruce Wayne")
+        inputAndSearch("keywords", "WAYNE Bruce")
 
         cy.contains("Show filter")
         cy.contains("Show filter").click()
