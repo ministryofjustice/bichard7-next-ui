@@ -21,6 +21,9 @@ const useStyles = createUseStyles({
   "scrollable-case-ages": {
     height: "180px",
     overflow: "auto"
+  },
+  "case-age-option": {
+    padding: "0 0 0 10px"
   }
 })
 
@@ -80,28 +83,30 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, disp
           <div className={classes["scrollable-case-ages"]}>
             <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
               {Object.keys(CaseAgeOptions).map((namedCaseAge) => (
-                <div className="govuk-checkboxes__item" key={namedCaseAge}>
-                  <input
-                    className="govuk-checkboxes__input"
-                    id={caseAgeId(namedCaseAge)}
-                    name="caseAge"
-                    type="checkbox"
-                    value={namedCaseAge}
-                    checked={caseAges?.includes(namedCaseAge as string)}
-                    onChange={(event) => {
-                      dispatch({
-                        method: "remove",
-                        type: "dateRange",
-                        value: `${dateRange?.from} - ${dateRange?.to}`
-                      })
+                <div className={classes["case-age-option"]} key={namedCaseAge}>
+                  <div className="govuk-checkboxes__item">
+                    <input
+                      className="govuk-checkboxes__input"
+                      id={caseAgeId(namedCaseAge)}
+                      name="caseAge"
+                      type="checkbox"
+                      value={namedCaseAge}
+                      checked={caseAges?.includes(namedCaseAge as string)}
+                      onChange={(event) => {
+                        dispatch({
+                          method: "remove",
+                          type: "dateRange",
+                          value: `${dateRange?.from} - ${dateRange?.to}`
+                        })
 
-                      const value = event.currentTarget.value as string
-                      dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "caseAge", value })
-                    }}
-                  ></input>
-                  <label className="govuk-label govuk-checkboxes__label" htmlFor={caseAgeId(namedCaseAge)}>
-                    {labelForCaseAge(namedCaseAge, caseAgeCounts)}
-                  </label>
+                        const value = event.currentTarget.value as string
+                        dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "caseAge", value })
+                      }}
+                    ></input>
+                    <label className="govuk-label govuk-checkboxes__label" htmlFor={caseAgeId(namedCaseAge)}>
+                      {labelForCaseAge(namedCaseAge, caseAgeCounts)}
+                    </label>
+                  </div>
                 </div>
               ))}
             </div>
