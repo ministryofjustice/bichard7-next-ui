@@ -574,6 +574,37 @@ describe("Case list", () => {
       })
     })
 
+    it.only("should apply secondary sort of court date", () => {
+      const courtDates = [new Date("09/12/2021"), new Date("04/01/2022"), new Date("01/07/2020")]
+      cy.task("insertCourtCasesWithFields", [
+        ...courtDates.map((courtDate) => ({
+          courtDate: courtDate,
+          defendantName: "WAYNE Bruce",
+          orgForPoliceFilter: "011111"
+        })),
+        ...courtDates.map((courtDate) => ({
+          courtDate: courtDate,
+          defendantName: "PENNYWORTH Alfred",
+          orgForPoliceFilter: "011111"
+        }))
+      ])
+
+      loginAndGoToUrl()
+
+      // Default: sorted by court date
+      const caseIdOrder = [2, 5, 0, 3, 1, 4]
+      cy.get("tbody td:nth-child(5)").each((element, index) => {
+        cy.wrap(element).should("have.text", `Case0000${caseIdOrder[index]}`)
+      })
+
+      // Sort ascending by defendant name
+      cy.get("#defendant-name-sort").click()
+      const ascendingOrder = [5, 3, 4, 2, 0, 1]
+      cy.get("tbody td:nth-child(5)").each((element, index) => {
+        cy.wrap(element).should("have.text", `Case0000${ascendingOrder[index]}`)
+      })
+    })
+
     it("should unlock a case that is locked to the user", () => {
       const lockUsernames = ["Bichard01", "Bichard02"]
       cy.task(
