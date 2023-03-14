@@ -7,7 +7,7 @@ import { CaseAgeOptions } from "utils/caseAgeOptions"
 import CourtCase from "./entities/CourtCase"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
-const asKey = (caseAgeOption: string) => caseAgeOption.toLowerCase().replace(" ", "")
+const asKey = (caseAgeOption: string) => caseAgeOption.toLowerCase().replace(/ /g, "")
 
 const getCountOfCasesByCaseAge = async (
   connection: DataSource,

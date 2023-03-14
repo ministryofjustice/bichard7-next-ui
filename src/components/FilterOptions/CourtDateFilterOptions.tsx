@@ -26,7 +26,15 @@ const useStyles = createUseStyles({
 
 const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
   const caseAge = mapCaseAges(namedCaseAge)
-  return caseAge ? `${namedCaseAge} (${formatDisplayedDate([caseAge].flat()[0].from)})` : namedCaseAge
+  if (!caseAge) {
+    return namedCaseAge
+  }
+
+  const dateRange = [caseAge].flat()[0]
+
+  return namedCaseAge === "Day 15 and older"
+    ? `${namedCaseAge} (up to ${formatDisplayedDate(dateRange.to)})`
+    : `${namedCaseAge} (${formatDisplayedDate(dateRange.from)})`
 }
 
 const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: KeyValuePair<string, number>): string => {
@@ -37,7 +45,7 @@ const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: KeyValuePair<strin
     : `${getCaseAgeWithFormattedDate(namedCaseAge)} ${caseCount}`
 }
 
-const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase().replace(" ", "-")}`
+const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase().replace(/ /g, "-")}`
 
 const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, dispatch, dateRange }: Props) => {
   const classes = useStyles()

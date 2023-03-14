@@ -63,7 +63,7 @@ export const CaseAgeOptions: KeyValuePair<string, () => CourtDateRange> = {
     const day14 = subDays(new Date(), 14)
     return { from: day14, to: day14 }
   },
-  Other: () => {
+  "Day 15 and older": () => {
     const unixEpoch = new Date(0)
     const day15 = subDays(new Date(), 15)
     return { from: unixEpoch, to: day15 }

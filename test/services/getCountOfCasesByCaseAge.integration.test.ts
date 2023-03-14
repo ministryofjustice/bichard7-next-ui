@@ -81,7 +81,6 @@ describe("listCourtCases", () => {
 
     const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as KeyValuePair<string, number>
 
-    console.log(result)
     expect(isError(result)).toBeFalsy()
 
     expect(result.Today).toEqual("4")
@@ -89,7 +88,7 @@ describe("listCourtCases", () => {
     expect(result["Day 2"]).toEqual("2")
     expect(result["Day 3"]).toEqual("1")
     expect(result["Day 14"]).toEqual("1")
-    expect(result.Other).toEqual("3")
+    expect(result["Day 15 and older"]).toEqual("3")
   })
 
   describe("When there are no cases", () => {
@@ -103,7 +102,7 @@ describe("listCourtCases", () => {
       expect(result["Day 2"]).toEqual("0")
       expect(result["Day 3"]).toEqual("0")
       expect(result["Day 14"]).toEqual("0")
-      expect(result.Other).toEqual("0")
+      expect(result["Day 15 and older"]).toEqual("0")
     })
   })
 
