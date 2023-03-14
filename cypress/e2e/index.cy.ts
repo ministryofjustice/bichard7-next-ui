@@ -574,7 +574,7 @@ describe("Case list", () => {
       })
     })
 
-    it.only("should apply secondary sort of court date", () => {
+    it("should apply secondary sort of court date", () => {
       const courtDates = [new Date("09/12/2021"), new Date("04/01/2022"), new Date("01/07/2020")]
       cy.task("insertCourtCasesWithFields", [
         ...courtDates.map((courtDate) => ({
