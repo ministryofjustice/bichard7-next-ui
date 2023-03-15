@@ -1,5 +1,5 @@
 import { format } from "date-fns"
-import { DataSource, SelectQueryBuilder } from "typeorm"
+import { DataSource, IsNull, SelectQueryBuilder } from "typeorm"
 import KeyValuePair from "types/KeyValuePair"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
@@ -7,7 +7,7 @@ import { CaseAgeOptions } from "utils/caseAgeOptions"
 import CourtCase from "./entities/CourtCase"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
-const asKey = (caseAgeOption: string) => caseAgeOption.toLowerCase().replace(" ", "")
+const asKey = (caseAgeOption: string) => caseAgeOption.toLowerCase().replace(/ /g, "")
 
 const getCountOfCasesByCaseAge = async (
   connection: DataSource,
@@ -20,11 +20,15 @@ const getCountOfCasesByCaseAge = async (
   Object.keys(CaseAgeOptions).forEach((slaCaseAgeOption, i) => {
     const key = asKey(slaCaseAgeOption)
     const slaDateFrom = format(CaseAgeOptions[slaCaseAgeOption]().from, "yyyy-MM-dd")
+    const slaDateTo = format(CaseAgeOptions[slaCaseAgeOption]().to, "yyyy-MM-dd")
 
     const subQuery = repository
       .createQueryBuilder(key)
       .select("COUNT(*)", key)
-      .where(`${key}.courtDate = '${slaDateFrom}'`)
+      .where(`${key}.courtDate >= '${slaDateFrom}' AND ${key}.courtDate <= '${slaDateTo}'`)
+      .andWhere({
+        resolutionTimestamp: IsNull()
+      })
       .getQuery()
 
     if (i === 0) {

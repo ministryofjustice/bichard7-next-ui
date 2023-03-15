@@ -56,6 +56,10 @@ describe("listCourtCases", () => {
     const dateYesterday = subDays(dateToday, 1)
     const dateDay2 = subDays(dateToday, 2)
     const dateDay3 = subDays(dateToday, 3)
+    const dateDay14 = subDays(dateToday, 14)
+    const firstDateOlderThanDay14 = subDays(dateToday, 15)
+    const secondDateOlderThanDay14 = subDays(dateToday, 36)
+    const thirdDateOlderThanDay14 = subDays(dateToday, 400)
     MockDate.set(dateToday)
 
     await insertCourtCasesWithFields([
@@ -68,7 +72,11 @@ describe("listCourtCases", () => {
       { courtDate: dateYesterday, orgForPoliceFilter: orgCode },
       { courtDate: dateDay2, orgForPoliceFilter: orgCode },
       { courtDate: dateDay2, orgForPoliceFilter: orgCode },
-      { courtDate: dateDay3, orgForPoliceFilter: orgCode }
+      { courtDate: dateDay3, orgForPoliceFilter: orgCode },
+      { courtDate: dateDay14, orgForPoliceFilter: orgCode },
+      { courtDate: firstDateOlderThanDay14, orgForPoliceFilter: orgCode },
+      { courtDate: secondDateOlderThanDay14, orgForPoliceFilter: orgCode },
+      { courtDate: thirdDateOlderThanDay14, orgForPoliceFilter: orgCode }
     ])
 
     const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as KeyValuePair<string, number>
@@ -79,6 +87,25 @@ describe("listCourtCases", () => {
     expect(result.Yesterday).toEqual("3")
     expect(result["Day 2"]).toEqual("2")
     expect(result["Day 3"]).toEqual("1")
+    expect(result["Day 14"]).toEqual("1")
+    expect(result["Day 15 and older"]).toEqual("3")
+  })
+
+  it("Should ignore resolved cases", async () => {
+    const dateToday = new Date("2001-09-26")
+    MockDate.set(dateToday)
+
+    await insertCourtCasesWithFields([
+      { courtDate: dateToday, orgForPoliceFilter: orgCode },
+      { courtDate: dateToday, orgForPoliceFilter: orgCode },
+      { courtDate: dateToday, orgForPoliceFilter: orgCode, resolutionTimestamp: new Date() }
+    ])
+
+    const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as KeyValuePair<string, number>
+
+    expect(isError(result)).toBeFalsy()
+
+    expect(result.Today).toEqual("2")
   })
 
   describe("When there are no cases", () => {
@@ -91,6 +118,8 @@ describe("listCourtCases", () => {
       expect(result.Yesterday).toEqual("0")
       expect(result["Day 2"]).toEqual("0")
       expect(result["Day 3"]).toEqual("0")
+      expect(result["Day 14"]).toEqual("0")
+      expect(result["Day 15 and older"]).toEqual("0")
     })
   })
 

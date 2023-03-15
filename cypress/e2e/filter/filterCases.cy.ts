@@ -340,6 +340,7 @@ describe("Case list", () => {
       const dateFormatString = "dd/MM/yyyy"
       const day2DateString = format(day2Date, dateFormatString)
       const day3DateString = format(day3Date, dateFormatString)
+      const day15DateString = format(subDays(todayDate, 15), dateFormatString)
 
       cy.task("insertCourtCasesWithFields", [
         { courtDate: todayDate, orgForPoliceFilter: force },
@@ -409,6 +410,30 @@ describe("Case list", () => {
       confirmMultipleFieldsNotDisplayed(["Case00000", "Case00001", "Case00002", "Case00003", "Case00007"])
 
       removeFilterTag("Day 3")
+      cy.get("tr").not(":first").should("have.length", 8)
+
+      // Tests for "Day 15 and older"
+      cy.get("button#filter-button").click()
+      cy.get('label[for="case-age-day-15-and-older"]').should(
+        "have.text",
+        `Day 15 and older (up to ${day15DateString}) (1)`
+      )
+      filterByCaseAge("#case-age-day-15-and-older")
+      cy.get("button#search").click()
+
+      cy.get("tr").not(":first").should("have.length", 1)
+      confirmMultipleFieldsDisplayed(["Case00007"])
+      confirmMultipleFieldsNotDisplayed([
+        "Case00000",
+        "Case00001",
+        "Case00002",
+        "Case00003",
+        "Case00004",
+        "Case00005",
+        "Case00006"
+      ])
+
+      removeFilterTag("Day 15 and older")
       cy.get("tr").not(":first").should("have.length", 8)
 
       // Test for multiple SLA
