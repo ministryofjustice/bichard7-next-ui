@@ -19,10 +19,17 @@ const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard
 const unlockCase = (caseToUnlockNumber: string, caseToUnlockText: string) => {
   cy.get(`tbody tr:nth-child(${caseToUnlockNumber}) .locked-by-tag`).get("button").contains(caseToUnlockText).click()
   cy.get("button").contains("Unlock").click()
-  
+}
+
 const checkCasesOrder = (expectedOrder: number[]) => {
   cy.get("tbody td:nth-child(5)").each((element, index) => {
     cy.wrap(element).should("have.text", `Case0000${expectedOrder[index]}`)
+  })
+}
+
+const checkPtiurnOrder = (expectedOrder: string[]) => {
+  cy.get("tbody td:nth-child(5)").each((element, index) => {
+    cy.wrap(element).should("have.text", expectedOrder[index])
   })
 }
 
@@ -570,55 +577,6 @@ describe("Case list", () => {
       checkCasesOrder([2, 1, 0, 3])
     })
 
-    it("should apply secondary sort of court date", () => {
-      const courtDates = [new Date("09/12/2021"), new Date("04/01/2022"), new Date("01/07/2020")]
-      cy.task("insertCourtCasesWithFields", [
-        ...courtDates.map((courtDate) => ({
-          courtDate: courtDate,
-          defendantName: "WAYNE Bruce",
-          orgForPoliceFilter: "011111"
-        })),
-        ...courtDates.map((courtDate) => ({
-          courtDate: courtDate,
-          defendantName: "PENNYWORTH Alfred",
-          orgForPoliceFilter: "011111"
-        }))
-      ])
-
-      loginAndGoToUrl()
-
-      // Default: sorted by court date
-      checkCasesOrder([2, 5, 0, 3, 1, 4])
-
-      // Sort ascending by defendant name
-      cy.get("#defendant-name-sort").click()
-      checkCasesOrder([5, 3, 4, 2, 0, 1])
-    })
-
-    it("should apply secondary sort by court name", () => {
-      const courtNames = ["DDDD", "AAAA", "CCCC", "BBBB"]
-      cy.task(
-        "insertCourtCasesWithFields",
-        courtNames.map((courtName) => ({
-          courtName: courtName,
-          orgForPoliceFilter: "011111"
-        }))
-      )
-
-      loginAndGoToUrl()
-
-      // Default: sorted by court date
-      checkCasesOrder([0, 1, 2, 3])
-
-      // Sort ascending by court date
-      cy.get("#court-name-sort").click()
-      checkCasesOrder([1, 3, 2, 0])
-
-      // Sort descending by court date
-      cy.get("#court-name-sort").click()
-      checkCasesOrder([0, 2, 3, 1])
-    })
-
     it("should unlock a case that is locked to the user", () => {
       const lockUsernames = ["Bichard01", "Bichard02"]
       cy.task(
@@ -1064,6 +1022,91 @@ describe("Case list", () => {
       confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002", "Case00003", "Case00004", "Case00005"])
     })
   })
-})
 
-export {}
+  describe.only("Sorting cases", () => {
+    it("should default to sorting by court date", () => {
+      const courtDates = [new Date("09/12/2021"), new Date("04/01/2022"), new Date("01/07/2020")]
+      cy.task("insertCourtCasesWithFields", [
+        ...courtDates.map((courtDate) => ({
+          courtDate: courtDate,
+          defendantName: "WAYNE Bruce",
+          orgForPoliceFilter: "011111"
+        })),
+        ...courtDates.map((courtDate) => ({
+          courtDate: courtDate,
+          defendantName: "PENNYWORTH Alfred",
+          orgForPoliceFilter: "011111"
+        }))
+      ])
+
+      loginAndGoToUrl()
+
+      // Sorted by court date
+      checkCasesOrder([2, 5, 0, 3, 1, 4])
+    })
+
+    it("should use court date as a secondary sort when sorting by other fields", () => {
+      const courtDates = [new Date("09/12/2021"), new Date("04/01/2022"), new Date("01/07/2020")]
+      cy.task("insertCourtCasesWithFields", [
+        ...courtDates.map((courtDate) => ({
+          courtDate: courtDate,
+          defendantName: "WAYNE Bruce",
+          orgForPoliceFilter: "011111"
+        })),
+        ...courtDates.map((courtDate) => ({
+          courtDate: courtDate,
+          defendantName: "PENNYWORTH Alfred",
+          orgForPoliceFilter: "011111"
+        }))
+      ])
+
+      loginAndGoToUrl()
+      // Sort ascending by defendant name
+      cy.get("#defendant-name-sort").click()
+
+      checkCasesOrder([5, 3, 4, 2, 0, 1])
+    })
+
+    it("should sort by court name", () => {
+      const courtNames = ["DDDD", "AAAA", "CCCC", "BBBB"]
+      cy.task(
+        "insertCourtCasesWithFields",
+        courtNames.map((courtName) => ({
+          courtName: courtName,
+          orgForPoliceFilter: "011111"
+        }))
+      )
+
+      loginAndGoToUrl()
+
+      // Sort ascending by court date
+      cy.get("#court-name-sort").click()
+      checkCasesOrder([1, 3, 2, 0])
+
+      // Sort descending by court date
+      cy.get("#court-name-sort").click()
+      checkCasesOrder([0, 2, 3, 1])
+    })
+
+    it.only("should sort by PTIURN", () => {
+      const PTIURNs = ["01009940223", "05003737622", "03001976220", "04007638323"]
+      cy.task(
+        "insertCourtCasesWithFields",
+        PTIURNs.map((PTIURN) => ({
+          ptiurn: PTIURN,
+          orgForPoliceFilter: "011111"
+        }))
+      )
+
+      loginAndGoToUrl()
+
+      // Sort ascending by PTIURN
+      cy.get("#ptiurn-sort").click()
+      checkPtiurnOrder(PTIURNs.sort().reverse())
+
+      // Sort descending by PTIURN
+      cy.get("#ptiurn-sort").click()
+      checkPtiurnOrder(PTIURNs.sort())
+    })
+  })
+})
