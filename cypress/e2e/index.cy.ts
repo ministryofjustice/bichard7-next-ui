@@ -19,6 +19,11 @@ const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard
 const unlockCase = (caseToUnlockNumber: string, caseToUnlockText: string) => {
   cy.get(`tbody tr:nth-child(${caseToUnlockNumber}) .locked-by-tag`).get("button").contains(caseToUnlockText).click()
   cy.get("button").contains("Unlock").click()
+  
+const checkCasesOrder = (expectedOrder: number[]) => {
+  cy.get("tbody td:nth-child(5)").each((element, index) => {
+    cy.wrap(element).should("have.text", `Case0000${expectedOrder[index]}`)
+  })
 }
 
 describe("Case list", () => {
@@ -554,24 +559,15 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       // Default: sorted by case ID
-      const caseIdOrder = [0, 1, 2, 3]
-      cy.get("tbody td:nth-child(5)").each((element, index) => {
-        cy.wrap(element).should("have.text", `Case0000${caseIdOrder[index]}`)
-      })
+      checkCasesOrder([0, 1, 2, 3])
 
       // Sort ascending
       cy.get("#locked-by-sort").click()
-      const ascendingOrder = [3, 0, 1, 2]
-      cy.get("tbody td:nth-child(5)").each((element, index) => {
-        cy.wrap(element).should("have.text", `Case0000${ascendingOrder[index]}`)
-      })
+      checkCasesOrder([3, 0, 1, 2])
 
       // Sort descending
       cy.get("#locked-by-sort").click()
-      const descendingOrder = [2, 1, 0, 3]
-      cy.get("tbody td:nth-child(5)").each((element, index) => {
-        cy.wrap(element).should("have.text", `Case0000${descendingOrder[index]}`)
-      })
+      checkCasesOrder([2, 1, 0, 3])
     })
 
     it("should apply secondary sort of court date", () => {
@@ -592,17 +588,11 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       // Default: sorted by court date
-      const caseIdOrder = [2, 5, 0, 3, 1, 4]
-      cy.get("tbody td:nth-child(5)").each((element, index) => {
-        cy.wrap(element).should("have.text", `Case0000${caseIdOrder[index]}`)
-      })
+      checkCasesOrder([2, 5, 0, 3, 1, 4])
 
       // Sort ascending by defendant name
       cy.get("#defendant-name-sort").click()
-      const ascendingOrder = [5, 3, 4, 2, 0, 1]
-      cy.get("tbody td:nth-child(5)").each((element, index) => {
-        cy.wrap(element).should("have.text", `Case0000${ascendingOrder[index]}`)
-      })
+      checkCasesOrder([5, 3, 4, 2, 0, 1])
     })
 
     it("should apply secondary sort by court name", () => {
@@ -618,24 +608,15 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       // Default: sorted by court date
-      const caseIdOrder = [0, 1, 2, 3]
-      cy.get("tbody td:nth-child(5)").each((element, index) => {
-        cy.wrap(element).should("have.text", `Case0000${caseIdOrder[index]}`)
-      })
+      checkCasesOrder([0, 1, 2, 3])
 
       // Sort ascending by court date
       cy.get("#court-name-sort").click()
-      const ascendingOrder = [1, 3, 2, 0]
-      cy.get("tbody td:nth-child(5)").each((element, index) => {
-        cy.wrap(element).should("have.text", `Case0000${ascendingOrder[index]}`)
-      })
+      checkCasesOrder([1, 3, 2, 0])
 
       // Sort descending by court date
       cy.get("#court-name-sort").click()
-      const descendingOrder = [0, 2, 3, 1]
-      cy.get("tbody td:nth-child(5)").each((element, index) => {
-        cy.wrap(element).should("have.text", `Case0000${descendingOrder[index]}`)
-      })
+      checkCasesOrder([0, 2, 3, 1])
     })
 
     it("should unlock a case that is locked to the user", () => {
