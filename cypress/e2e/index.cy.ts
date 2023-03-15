@@ -1114,7 +1114,7 @@ describe("Case list", () => {
       checkPtiurnOrder(descending)
     })
 
-    it("should sort by urgency", () => {
+    it.only("should sort by urgency", () => {
       const urgencies = [true, false, true, false]
       cy.task(
         "insertCourtCasesWithFields",

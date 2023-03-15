@@ -56,11 +56,16 @@ const listCourtCases = async (
     query
       .orderBy("courtCase.errorLockedByUsername", sortOrder)
       .addOrderBy("courtCase.triggerLockedByUsername", sortOrder)
+  } else if (orderBy === "isUrgent") {
+    query.orderBy("courtCase.isUrgent", sortOrder === "ASC" ? "DESC" : "ASC")
   } else {
     const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
     query.orderBy(orderByQuery, sortOrder)
   }
-  query.addOrderBy("courtCase.courtDate")
+
+  if (orderBy !== "courtDate") {
+    query.addOrderBy("courtCase.courtDate")
+  }
 
   if (defendantName) {
     const defendantNameLike = { defendantName: ILike(`%${defendantName}%`) }
