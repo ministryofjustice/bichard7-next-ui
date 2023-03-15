@@ -1113,5 +1113,26 @@ describe("Case list", () => {
       cy.get("#ptiurn-sort").click()
       checkPtiurnOrder(descending)
     })
+
+    it("should sort by urgency", () => {
+      const urgencies = [true, false, true, false]
+      cy.task(
+        "insertCourtCasesWithFields",
+        urgencies.map((urgent) => ({
+          isUrgent: urgent,
+          orgForPoliceFilter: "011111"
+        }))
+      )
+
+      loginAndGoToUrl()
+
+      // Sort ascending by court date
+      cy.get("#is-urgent-sort").click()
+      checkCasesOrder([0, 2, 1, 3])
+
+      // Sort descending by court date
+      cy.get("#is-urgent-sort").click()
+      checkCasesOrder([1, 3, 0, 2])
+    })
   })
 })
