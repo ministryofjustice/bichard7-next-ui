@@ -1023,7 +1023,7 @@ describe("Case list", () => {
     })
   })
 
-  describe.only("Sorting cases", () => {
+  describe("Sorting cases", () => {
     it("should default to sorting by court date", () => {
       const courtDates = [new Date("09/12/2021"), new Date("04/01/2022"), new Date("01/07/2020")]
       cy.task("insertCourtCasesWithFields", [
@@ -1088,8 +1088,13 @@ describe("Case list", () => {
       checkCasesOrder([0, 2, 3, 1])
     })
 
-    it.only("should sort by PTIURN", () => {
+    it("should sort by PTIURN", () => {
       const PTIURNs = ["01009940223", "05003737622", "03001976220", "04007638323"]
+      const ascending = [...PTIURNs].sort()
+      const descending = [...PTIURNs].sort().reverse()
+
+      console.log(ascending)
+      console.log(descending)
       cy.task(
         "insertCourtCasesWithFields",
         PTIURNs.map((PTIURN) => ({
@@ -1102,11 +1107,11 @@ describe("Case list", () => {
 
       // Sort ascending by PTIURN
       cy.get("#ptiurn-sort").click()
-      checkPtiurnOrder(PTIURNs.sort().reverse())
+      checkPtiurnOrder(ascending)
 
       // Sort descending by PTIURN
       cy.get("#ptiurn-sort").click()
-      checkPtiurnOrder(PTIURNs.sort())
+      checkPtiurnOrder(descending)
     })
   })
 })
