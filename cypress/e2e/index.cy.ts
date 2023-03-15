@@ -605,6 +605,39 @@ describe("Case list", () => {
       })
     })
 
+    it("should apply secondary sort by court name", () => {
+      const courtNames = ["DDDD", "AAAA", "CCCC", "BBBB"]
+      cy.task(
+        "insertCourtCasesWithFields",
+        courtNames.map((courtName) => ({
+          courtName: courtName,
+          orgForPoliceFilter: "011111"
+        }))
+      )
+
+      loginAndGoToUrl()
+
+      // Default: sorted by court date
+      const caseIdOrder = [0, 1, 2, 3]
+      cy.get("tbody td:nth-child(5)").each((element, index) => {
+        cy.wrap(element).should("have.text", `Case0000${caseIdOrder[index]}`)
+      })
+
+      // Sort ascending by court date
+      cy.get("#court-name-sort").click()
+      const ascendingOrder = [1, 3, 2, 0]
+      cy.get("tbody td:nth-child(5)").each((element, index) => {
+        cy.wrap(element).should("have.text", `Case0000${ascendingOrder[index]}`)
+      })
+
+      // Sort descending by court date
+      cy.get("#court-name-sort").click()
+      const descendingOrder = [0, 2, 3, 1]
+      cy.get("tbody td:nth-child(5)").each((element, index) => {
+        cy.wrap(element).should("have.text", `Case0000${descendingOrder[index]}`)
+      })
+    })
+
     it("should unlock a case that is locked to the user", () => {
       const lockUsernames = ["Bichard01", "Bichard02"]
       cy.task(
