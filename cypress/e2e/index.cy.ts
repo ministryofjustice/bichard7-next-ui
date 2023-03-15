@@ -1114,7 +1114,7 @@ describe("Case list", () => {
       checkPtiurnOrder(descending)
     })
 
-    it.only("should sort by urgency", () => {
+    it("should sort by urgency", () => {
       const urgencies = [true, false, true, false]
       cy.task(
         "insertCourtCasesWithFields",
@@ -1126,13 +1126,34 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      // Sort ascending by court date
+      // Sort ascending by urgency
       cy.get("#is-urgent-sort").click()
       checkCasesOrder([0, 2, 1, 3])
 
-      // Sort descending by court date
+      // Sort descending by urgency
       cy.get("#is-urgent-sort").click()
       checkCasesOrder([1, 3, 0, 2])
+    })
+
+    it("should sort by who has a case locked", () => {
+      const usernames = ["alan.smith", "sarah.mcneil", "charlie.rhys", "bea.goddard"]
+      cy.task(
+        "insertCourtCasesWithFields",
+        usernames.map((username) => ({
+          errorLockedByUsername: username,
+          orgForPoliceFilter: "011111"
+        }))
+      )
+
+      loginAndGoToUrl()
+
+      // Sort ascending by lock holder
+      cy.get("#locked-by-sort").click()
+      checkCasesOrder([0, 3, 2, 1])
+
+      // Sort descending by lock holder
+      cy.get("#locked-by-sort").click()
+      checkCasesOrder([1, 2, 3, 0])
     })
   })
 })
