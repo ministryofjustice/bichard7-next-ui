@@ -1078,11 +1078,11 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      // Sort ascending by court date
+      // Sort ascending by court name
       cy.get("#court-name-sort").click()
       checkCasesOrder([1, 3, 2, 0])
 
-      // Sort descending by court date
+      // Sort descending by court name
       cy.get("#court-name-sort").click()
       checkCasesOrder([0, 2, 3, 1])
     })
