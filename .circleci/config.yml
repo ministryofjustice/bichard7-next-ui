@@ -272,7 +272,7 @@ jobs:
       - run:
           name: Run end-to-end tests
           working_directory: ~/bichard7-next
-          command: bash -c ". ./scripts/e2e-tests/e2e-tests-env.sh && docker-compose run --service-ports e2e-tests-record npm run test:nextUI"
+          command: make e2e-tests-new-ui
           environment:
             STACK_TYPE: next
             WORKSPACE: local-next
