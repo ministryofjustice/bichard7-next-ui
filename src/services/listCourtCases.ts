@@ -66,6 +66,7 @@ const listCourtCases = async (
   if (orderBy !== "courtDate") {
     query.addOrderBy("courtCase.courtDate")
   }
+  query.addOrderBy("courtCase.ptiurn")
 
   if (defendantName) {
     const defendantNameLike = { defendantName: ILike(`%${defendantName}%`) }
