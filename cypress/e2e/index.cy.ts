@@ -485,24 +485,23 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      cy.get(".cases-per-page").first().select("10")
-      cy.location("search").should("include", "maxPageItems=10")
       cy.get("#is-urgent-sort").click()
-
-      cy.get("tr")
-        .not(":first")
-        .each((row) => {
-          cy.wrap(row).contains(`Urgent`).should("not.exist")
-        })
-
       cy.get(".cases-per-page").first().select("10")
-      cy.location("search").should("include", "maxPageItems=10")
-      cy.get("#is-urgent-sort").click()
+      cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 10 of 20 cases")
 
       cy.get("tr")
         .not(":first")
         .each((row) => {
           cy.wrap(row).contains(`Urgent`).should("exist")
+        })
+
+      cy.get("#is-urgent-sort").click()
+      cy.get(".cases-per-page").first().select("10")
+      cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 10 of 20 cases")
+      cy.get("tr")
+        .not(":first")
+        .each((row) => {
+          cy.wrap(row).contains(`Urgent`).should("not.exist")
         })
     })
 
