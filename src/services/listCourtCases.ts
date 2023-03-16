@@ -50,15 +50,27 @@ const listCourtCases = async (
     .take(maxPageItemsValidated)
 
   const sortOrder = order === "desc" ? "DESC" : "ASC"
+
+  // Primary sorts
   if (orderBy === "reason") {
     query.orderBy("courtCase.errorReason", sortOrder).addOrderBy("courtCase.triggerReason", sortOrder)
   } else if (orderBy === "lockedBy") {
     query
       .orderBy("courtCase.errorLockedByUsername", sortOrder)
       .addOrderBy("courtCase.triggerLockedByUsername", sortOrder)
+  } else if (orderBy === "isUrgent") {
+    query.orderBy("courtCase.isUrgent", sortOrder === "ASC" ? "DESC" : "ASC")
   } else {
     const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
     query.orderBy(orderByQuery, sortOrder)
+  }
+
+  // Secondary sorts
+  if (orderBy !== "courtDate") {
+    query.addOrderBy("courtCase.courtDate")
+  }
+  if (orderBy !== "ptiurn") {
+    query.addOrderBy("courtCase.ptiurn")
   }
 
   if (defendantName) {
