@@ -1092,8 +1092,6 @@ describe("Case list", () => {
       const ascending = [...PTIURNs].sort()
       const descending = [...PTIURNs].sort().reverse()
 
-      console.log(ascending)
-      console.log(descending)
       cy.task(
         "insertCourtCasesWithFields",
         PTIURNs.map((PTIURN) => ({
