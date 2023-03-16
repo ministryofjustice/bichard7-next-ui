@@ -185,7 +185,7 @@ jobs:
       - run:
           name: Run MQ
           working_directory: ~/bichard7-next
-          command: docker-compose up -d activemq
+          command: COMPOSE_PROJECT_NAME="bichard7" docker-compose up -d activemq
           background: true
       - run:
           name: Run UI stack
