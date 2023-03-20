@@ -178,7 +178,7 @@ describe("Case list", () => {
           "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
         ).should("not.exist")
 
-        cy.get("#same-day").click()
+        cy.get("#apply-same-date-button").click()
         cy.contains(
           "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
         ).should("exist")

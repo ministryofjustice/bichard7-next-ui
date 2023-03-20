@@ -10,7 +10,11 @@ interface Props {
 const DateInput: React.FC<Props> = ({ dateType, dispatch, value }: Props) => {
   const actionType = dateType === "from" ? "dateFrom" : "dateTo"
   const renderSameDateButton = dateType == "to" ? true : false
-  const SameDateButton = <button type="button">{"Same date"}</button>
+  const SameDateButton = (
+    <button id={"apply-same-date-button"} type="button">
+      {"Same date"}
+    </button>
+  )
 
   return (
     <div className="govuk-form-group">
