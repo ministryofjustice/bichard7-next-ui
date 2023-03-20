@@ -51,7 +51,6 @@ const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase()
 
 const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, dispatch, dateRange }: Props) => {
   const classes = useStyles()
-  const defaultDateValue = (dateString?: string | null): string => (!!dateString ? dateString : "")
 
   return (
     <fieldset className="govuk-fieldset">
@@ -66,8 +65,8 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, disp
         />
         <div className="govuk-radios__conditional" id="conditional-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-            <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(dateRange?.from)} />
-            <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(dateRange?.to)} />
+            <DateInput dateType="from" dispatch={dispatch} value={dateRange?.from ?? ""} />
+            <DateInput dateType="to" dispatch={dispatch} value={dateRange?.to ?? ""} />
           </div>
         </div>
         <RadioButton
