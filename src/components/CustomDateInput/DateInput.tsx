@@ -9,11 +9,17 @@ interface Props {
 
 const DateInput: React.FC<Props> = ({ dateType, dispatch, value }: Props) => {
   const actionType = dateType === "from" ? "dateFrom" : "dateTo"
+  const renderSameDateButton = dateType == "to" ? true : false
+  const SameDateButton = <button type="button">{"Same date"}</button>
+
   return (
     <div className="govuk-form-group">
-      <label className="govuk-label govuk-label--m" htmlFor={`date-${dateType}`}>
-        {`Date ${dateType}:`}
-      </label>
+      <>
+        <label className="govuk-label govuk-label--m" htmlFor={`date-${dateType}`}>
+          {`Date ${dateType}:`}
+          {renderSameDateButton && SameDateButton}
+        </label>
+      </>
       <input
         className="govuk-input"
         type="date"
