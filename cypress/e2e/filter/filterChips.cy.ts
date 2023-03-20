@@ -168,25 +168,21 @@ describe("Case list", () => {
         cy.get("#date-to").should("have.value", "")
       })
 
-      it.only("Should allow you to use the date range and click 'Same date' to fill in the 'To' date field", () => {
+      it.only("Should be a `same date` button within the `Date range` filter options", () => {
         cy.get("button#filter-button").click()
+        cy.get("#date-range").click()
+        cy.get("#date-from").click()
+        cy.contains("Same date").should("exist")
 
-        cy.get("#custom-date-range").click()
+        cy.contains(
+          "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
+        ).should("not.exist")
 
-        // Prompt should not be visible
-        cy.get("#same-day-prompt")
-          .contains(
-            "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
-          )
-          .should("not.exist")
-
-        // Click the same day button and Prompt will be visible
         cy.get("#same-day").click()
-        cy.get("#same-day-prompt")
-          .contains(
-            "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
-          )
-          .should("exist")
+        cy.contains(
+          "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
+        ).should("exist")
+
         // Input date then click Same day button
         cy.get("#date-from").click().type("2023-03-17")
         cy.get("#same-day").click()
