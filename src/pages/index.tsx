@@ -27,8 +27,8 @@ import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
-import { formatDisplayedDate } from "utils/formattedDate"
 import KeyValuePair from "types/KeyValuePair"
+import { formatFormInputDateString } from "utils/formattedDate"
 
 interface Props {
   user: User
@@ -167,8 +167,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         caseAge: caseAges,
         dateRange: validatedDateRange
           ? {
-              from: formatDisplayedDate(validatedDateRange.from),
-              to: formatDisplayedDate(validatedDateRange.to)
+              from: formatFormInputDateString(validatedDateRange.from),
+              to: formatFormInputDateString(validatedDateRange.to)
             }
           : null,
         caseAgeCounts: caseAgeCounts,

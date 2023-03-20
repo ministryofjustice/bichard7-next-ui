@@ -12,7 +12,6 @@ import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
-import { formatDisplayedDate } from "utils/formattedDate"
 import KeyValuePair from "types/KeyValuePair"
 
 interface Props {
@@ -42,10 +41,10 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
         newState.caseAgeFilter.push({ value: action.value as string, state: "Selected" })
       }
     } else if (action.type === "dateFrom") {
-      newState.dateFrom.value = formatDisplayedDate(action.value)
+      newState.dateFrom.value = action.value
       newState.dateFrom.state = "Selected"
     } else if (action.type === "dateTo") {
-      newState.dateTo.value = formatDisplayedDate(action.value)
+      newState.dateTo.value = action.value
       newState.dateTo.state = "Selected"
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = action.value
@@ -269,11 +268,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                 caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
                 caseAgeCounts={caseAgeCounts}
                 dispatch={dispatch}
-                dateRange={
-                  state.dateFrom.value && state.dateTo.value
-                    ? { from: state.dateFrom.value, to: state.dateTo.value }
-                    : undefined
-                }
+                dateRange={{ from: state.dateFrom.value, to: state.dateTo.value }}
               />
             </ExpandingFilters>
           </div>

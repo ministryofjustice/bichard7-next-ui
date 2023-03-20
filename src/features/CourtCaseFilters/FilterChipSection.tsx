@@ -5,6 +5,7 @@ import { Dispatch } from "react"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
 import FilterChipRow from "./FilterChipRow"
+import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
 
 interface Props {
   state: Filter
@@ -21,7 +22,9 @@ const FilterChipSection: React.FC<Props> = ({
   marginTop,
   placeholderMessage
 }: Props) => {
-  const dateRangeLabel = `${state.dateFrom.value} - ${state.dateTo.value}`
+  const dateRangeLabel = `${formatStringDateAsDisplayedDate(state.dateFrom.value)} - ${formatStringDateAsDisplayedDate(
+    state.dateTo.value
+  )}`
   return (
     <>
       <ConditionalRender isRendered={anyFilterChips(state, sectionState)}>

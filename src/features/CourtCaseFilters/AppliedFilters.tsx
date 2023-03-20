@@ -5,6 +5,7 @@ import { encode } from "querystring"
 import { Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
+import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
 
 interface Props {
   filters: {
@@ -107,7 +108,9 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
           <ConditionalRender isRendered={!!filters.dateRange?.from && !!filters.dateRange.to}>
             <li>
               <FilterTag
-                tag={`${filters.dateRange?.from} - ${filters.dateRange?.to}`}
+                tag={`${formatStringDateAsDisplayedDate(filters.dateRange?.from)} - ${formatStringDateAsDisplayedDate(
+                  filters.dateRange?.to
+                )}`}
                 href={removeQueryParamsByName(["from", "to", "pageNum"])}
               />
             </li>

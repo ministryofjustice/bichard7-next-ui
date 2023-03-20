@@ -7,8 +7,8 @@ export type FilterAction =
   | { method: FilterMethod; type: "ptiurn"; value: string }
   | { method: FilterMethod; type: "urgency"; value: boolean }
   | { method: FilterMethod; type: "caseAge"; value: string }
-  | { method: "add"; type: "dateFrom"; value: Date }
-  | { method: "add"; type: "dateTo"; value: Date }
+  | { method: "add"; type: "dateFrom"; value: string }
+  | { method: "add"; type: "dateTo"; value: string }
   | { method: "remove"; type: "dateRange"; value: string }
   | { method: FilterMethod; type: "locked"; value: boolean }
   | { method: FilterMethod; type: "reason"; value: Reason }
