@@ -5,13 +5,15 @@ import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import { CaseState, Reason } from "types/CaseListQueryParams"
+import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
+import { formatDisplayedDate } from "utils/formattedDate"
+import KeyValuePair from "types/KeyValuePair"
 
 interface Props {
   defendantName: string | null
@@ -19,9 +21,9 @@ interface Props {
   reasonCode: string | null
   ptiurn: string | null
   reasons: Reason[]
-  dateRange: string | null
-  customDateFrom: Date | null
-  customDateTo: Date | null
+  caseAge: string[]
+  caseAgeCounts: KeyValuePair<string, number>
+  dateRange: SerializedCourtDateRange | null
   urgency: string | null
   locked: string | null
   caseState: CaseState | null
@@ -35,16 +37,16 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
       newState.urgentFilter.value = action.value
       newState.urgentFilter.label = action.value ? "Urgent" : "Non-urgent"
       newState.urgentFilter.state = "Selected"
-    } else if (action.type === "date") {
-      newState.dateFilter.value = action.value
-      newState.dateFilter.label = action.value
-      newState.dateFilter.state = "Selected"
-    } else if (action.type === "customDateFrom") {
-      newState.customDateFrom.value = action.value
-      newState.customDateFrom.state = "Selected"
-    } else if (action.type === "customDateTo") {
-      newState.customDateTo.value = action.value
-      newState.customDateTo.state = "Selected"
+    } else if (action.type === "caseAge") {
+      if (newState.caseAgeFilter.filter((caseAgeFilter) => caseAgeFilter.value === action.value).length < 1) {
+        newState.caseAgeFilter.push({ value: action.value as string, state: "Selected" })
+      }
+    } else if (action.type === "dateFrom") {
+      newState.dateFrom.value = formatDisplayedDate(action.value)
+      newState.dateFrom.state = "Selected"
+    } else if (action.type === "dateTo") {
+      newState.dateTo.value = formatDisplayedDate(action.value)
+      newState.dateTo.state = "Selected"
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = action.value
       newState.caseStateFilter.label = caseStateLabels[action.value ?? ""]
@@ -84,12 +86,15 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
     if (action.type === "urgency") {
       newState.urgentFilter.value = undefined
       newState.urgentFilter.label = undefined
-    } else if (action.type === "date") {
-      newState.dateFilter.value = undefined
-      newState.dateFilter.label = undefined
-    } else if (action.type === "customDate") {
-      newState.customDateFrom.value = undefined
-      newState.customDateTo.value = undefined
+    } else if (action.type === "caseAge") {
+      if (action.value) {
+        newState.caseAgeFilter = newState.caseAgeFilter.filter((caseAgeFilter) => caseAgeFilter.value !== action.value)
+      } else {
+        newState.caseAgeFilter = []
+      }
+    } else if (action.type === "dateRange") {
+      newState.dateFrom.value = undefined
+      newState.dateTo.value = undefined
     } else if (action.type === "caseState") {
       newState.caseStateFilter.value = undefined
       newState.caseStateFilter.label = undefined
@@ -130,9 +135,9 @@ const CourtCaseFilter: React.FC<Props> = ({
   ptiurn,
   courtName,
   reasonCode,
+  caseAge,
+  caseAgeCounts,
   dateRange,
-  customDateFrom,
-  customDateTo,
   urgency,
   locked,
   caseState,
@@ -140,9 +145,11 @@ const CourtCaseFilter: React.FC<Props> = ({
 }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
-    dateFilter: dateRange !== null ? { value: dateRange, state: "Applied", label: dateRange } : {},
-    customDateFrom: customDateFrom !== null ? { value: customDateFrom, state: "Applied" } : {},
-    customDateTo: customDateTo !== null ? { value: customDateTo, state: "Applied" } : {},
+    caseAgeFilter: caseAge.map((slaDate) => {
+      return { value: slaDate, state: "Applied" }
+    }),
+    dateFrom: dateRange !== null ? { value: dateRange.from, state: "Applied" } : {},
+    dateTo: dateRange !== null ? { value: dateRange.to, state: "Applied" } : {},
     lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
@@ -259,10 +266,14 @@ const CourtCaseFilter: React.FC<Props> = ({
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"} hideChildren={true}>
               <CourtDateFilterOptions
-                dateRange={state.dateFilter.value}
+                caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
+                caseAgeCounts={caseAgeCounts}
                 dispatch={dispatch}
-                customDateFrom={state.customDateFrom.value ?? undefined}
-                customDateTo={state.customDateTo.value ?? undefined}
+                dateRange={
+                  state.dateFrom.value && state.dateTo.value
+                    ? { from: state.dateFrom.value, to: state.dateTo.value }
+                    : undefined
+                }
               />
             </ExpandingFilters>
           </div>

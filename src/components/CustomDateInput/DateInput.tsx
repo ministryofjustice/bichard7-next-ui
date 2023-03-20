@@ -8,7 +8,7 @@ interface Props {
 }
 
 const DateInput: React.FC<Props> = ({ dateType, dispatch, value }: Props) => {
-  const actionType = dateType === "from" ? "customDateFrom" : "customDateTo"
+  const actionType = dateType === "from" ? "dateFrom" : "dateTo"
   return (
     <div className="govuk-form-group">
       <label className="govuk-label govuk-label--m" htmlFor={`date-${dateType}`}>

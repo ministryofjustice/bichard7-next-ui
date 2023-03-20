@@ -14,7 +14,12 @@ const FilterChip: React.FC<Props> = ({ chipLabel, dispatch, removeAction, state 
   const buttonClass = "moj-filter__tag " + (state === "Applied" ? classes["dark-grey-filter-tag"] : "")
   return (
     <li>
-      <button className={buttonClass} onClick={() => dispatch(removeAction())} style={{ cursor: "pointer" }}>
+      <button
+        type="button"
+        className={buttonClass}
+        onClick={() => dispatch(removeAction())}
+        style={{ cursor: "pointer" }}
+      >
         <span className="govuk-visually-hidden">{"Remove this filter"}</span>
         {chipLabel}
       </button>

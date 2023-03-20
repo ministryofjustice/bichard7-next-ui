@@ -34,7 +34,8 @@ const listCourtCases = async (
     locked,
     caseState,
     allocatedToUserName,
-    reasonCode
+    reasonCode,
+    resolvedByUsername
   }: CaseListQueryParams
 ): PromiseResult<ListCourtCaseResult> => {
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
@@ -49,15 +50,27 @@ const listCourtCases = async (
     .take(maxPageItemsValidated)
 
   const sortOrder = order === "desc" ? "DESC" : "ASC"
+
+  // Primary sorts
   if (orderBy === "reason") {
     query.orderBy("courtCase.errorReason", sortOrder).addOrderBy("courtCase.triggerReason", sortOrder)
   } else if (orderBy === "lockedBy") {
     query
       .orderBy("courtCase.errorLockedByUsername", sortOrder)
       .addOrderBy("courtCase.triggerLockedByUsername", sortOrder)
+  } else if (orderBy === "isUrgent") {
+    query.orderBy("courtCase.isUrgent", sortOrder === "ASC" ? "DESC" : "ASC")
   } else {
     const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
     query.orderBy(orderByQuery, sortOrder)
+  }
+
+  // Secondary sorts
+  if (orderBy !== "courtDate") {
+    query.addOrderBy("courtCase.courtDate")
+  }
+  if (orderBy !== "ptiurn") {
+    query.addOrderBy("courtCase.ptiurn")
   }
 
   if (defendantName) {
@@ -117,8 +130,25 @@ const listCourtCases = async (
   }
 
   if (courtDateRange) {
-    query.andWhere({ courtDate: MoreThanOrEqual(courtDateRange.from) })
-    query.andWhere({ courtDate: LessThanOrEqual(courtDateRange.to) })
+    if (Array.isArray(courtDateRange)) {
+      query.andWhere(
+        new Brackets((qb) => {
+          courtDateRange.forEach((dateRange) => {
+            qb.orWhere(
+              new Brackets((dateRangeQuery) => {
+                dateRangeQuery
+                  .andWhere({ courtDate: MoreThanOrEqual(dateRange.from) })
+                  .andWhere({ courtDate: LessThanOrEqual(dateRange.to) })
+              })
+            )
+          })
+        })
+      )
+    } else {
+      query
+        .andWhere({ courtDate: MoreThanOrEqual(courtDateRange.from) })
+        .andWhere({ courtDate: LessThanOrEqual(courtDateRange.to) })
+    }
   }
 
   if (!caseState) {
@@ -129,6 +159,20 @@ const listCourtCases = async (
     query.andWhere({
       resolutionTimestamp: Not(IsNull())
     })
+
+    if (resolvedByUsername !== undefined) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where({
+            errorResolvedBy: resolvedByUsername
+          })
+            .orWhere({
+              triggerResolvedBy: resolvedByUsername
+            })
+            .orWhere("trigger.resolvedBy = :triggerResolver", { triggerResolver: resolvedByUsername })
+        })
+      )
+    }
   }
 
   if (allocatedToUserName) {

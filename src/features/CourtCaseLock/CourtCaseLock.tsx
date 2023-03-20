@@ -2,6 +2,7 @@ import ConditionalRender from "components/ConditionalRender"
 import { Button, ErrorSummary, Paragraph } from "govuk-react"
 import { useRouter } from "next/router"
 import CourtCase from "services/entities/CourtCase"
+import { blue } from "../../utils/colours"
 
 interface Props {
   courtCase: CourtCase
@@ -27,7 +28,7 @@ const CourtCaseLock: React.FC<Props> = ({ courtCase, lockedByAnotherUser }) => {
         <Paragraph>{`Error locked by: ${courtCase.errorLockedByUsername}`}</Paragraph>
       </ConditionalRender>
       <form method="POST" action={lockCourtCasePath}>
-        <Button buttonColour="#1d70b8">{lockButtonTitle}</Button>
+        <Button buttonColour={blue}>{lockButtonTitle}</Button>
       </form>
     </>
   )

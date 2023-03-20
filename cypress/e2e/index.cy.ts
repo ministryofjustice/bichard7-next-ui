@@ -1,13 +1,36 @@
+import { subHours } from "date-fns"
+import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import { TestTrigger } from "../../test/utils/manageTriggers"
 import hashedPassword from "../fixtures/hashedPassword"
 import a11yConfig from "../support/a11yConfig"
-import { confirmFiltersAppliedContains } from "../support/helpers"
+import {
+  confirmFiltersAppliedContains,
+  confirmMultipleFieldsDisplayed,
+  confirmMultipleFieldsNotDisplayed
+} from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 
 const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard") => {
   cy.login(emailAddress, "password")
   cy.visit(url)
+}
+
+const unlockCase = (caseToUnlockNumber: string, caseToUnlockText: string) => {
+  cy.get(`tbody tr:nth-child(${caseToUnlockNumber}) .locked-by-tag`).get("button").contains(caseToUnlockText).click()
+  cy.get("button").contains("Unlock").click()
+}
+
+const checkCasesOrder = (expectedOrder: number[]) => {
+  cy.get("tbody td:nth-child(5)").each((element, index) => {
+    cy.wrap(element).should("have.text", `Case0000${expectedOrder[index]}`)
+  })
+}
+
+const checkPtiurnOrder = (expectedOrder: string[]) => {
+  cy.get("tbody td:nth-child(5)").each((element, index) => {
+    cy.wrap(element).should("have.text", expectedOrder[index])
+  })
 }
 
 describe("Case list", () => {
@@ -462,24 +485,23 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      cy.get(".cases-per-page").first().select("10")
-      cy.location("search").should("include", "maxPageItems=10")
       cy.get("#is-urgent-sort").click()
-
-      cy.get("tr")
-        .not(":first")
-        .each((row) => {
-          cy.wrap(row).contains(`Urgent`).should("not.exist")
-        })
-
       cy.get(".cases-per-page").first().select("10")
-      cy.location("search").should("include", "maxPageItems=10")
-      cy.get("#is-urgent-sort").click()
+      cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 10 of 20 cases")
 
       cy.get("tr")
         .not(":first")
         .each((row) => {
           cy.wrap(row).contains(`Urgent`).should("exist")
+        })
+
+      cy.get("#is-urgent-sort").click()
+      cy.get(".cases-per-page").first().select("10")
+      cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 10 of 20 cases")
+      cy.get("tr")
+        .not(":first")
+        .each((row) => {
+          cy.wrap(row).contains(`Urgent`).should("not.exist")
         })
     })
 
@@ -543,24 +565,15 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       // Default: sorted by case ID
-      const caseIdOrder = [0, 1, 2, 3]
-      cy.get("tbody td:nth-child(5)").each((element, index) => {
-        cy.wrap(element).should("have.text", `Case0000${caseIdOrder[index]}`)
-      })
+      checkCasesOrder([0, 1, 2, 3])
 
       // Sort ascending
       cy.get("#locked-by-sort").click()
-      const ascendingOrder = [3, 0, 1, 2]
-      cy.get("tbody td:nth-child(5)").each((element, index) => {
-        cy.wrap(element).should("have.text", `Case0000${ascendingOrder[index]}`)
-      })
+      checkCasesOrder([3, 0, 1, 2])
 
       // Sort descending
       cy.get("#locked-by-sort").click()
-      const descendingOrder = [2, 1, 0, 3]
-      cy.get("tbody td:nth-child(5)").each((element, index) => {
-        cy.wrap(element).should("have.text", `Case0000${descendingOrder[index]}`)
-      })
+      checkCasesOrder([2, 1, 0, 3])
     })
 
     it("should unlock a case that is locked to the user", () => {
@@ -598,7 +611,7 @@ describe("Case list", () => {
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
 
       // Unlock the exception assigned to the user
-      cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").click()
+      unlockCase("1", "Bichard01")
       cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
       cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
       cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
@@ -607,7 +620,7 @@ describe("Case list", () => {
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
 
       // Unlock the trigger assigned to the user
-      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").click()
+      unlockCase("2", "Bichard01")
       cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("not.exist")
       cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("not.exist")
       cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
@@ -646,9 +659,9 @@ describe("Case list", () => {
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
 
       // Unlock both cases
-      cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").click()
-      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").click()
-      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard02").click()
+      unlockCase("1", "Bichard01")
+      unlockCase("2", "Bichard01")
+      unlockCase("3", "Bichard02")
 
       cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
       cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
@@ -810,6 +823,334 @@ describe("Case list", () => {
       confirmFiltersAppliedContains("Urgent")
     })
   })
-})
 
-export {}
+  describe("Only shows relevant resolved cases to the user", () => {
+    it("shows supervisors all resolved cases from their force", () => {
+      const casesConfig = [
+        {
+          force: "011111",
+          resolved: true,
+          id: 0
+        },
+        {
+          force: "011111",
+          resolved: true,
+          id: 1
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 2
+        },
+        {
+          force: "02",
+          resolved: true,
+          id: 3
+        },
+        {
+          force: "03",
+          resolved: false,
+          id: 4
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 5
+        }
+      ]
+      const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig) => {
+        const resolutionDate = subHours(new Date(), Math.random() * 100)
+        return {
+          errorId: caseConfig.id,
+          orgForPoliceFilter: caseConfig.force,
+          resolutionTimestamp: caseConfig.resolved ? resolutionDate : null
+        }
+      })
+      cy.task("insertCourtCasesWithFields", cases)
+
+      loginAndGoToUrl("supervisor@example.com")
+
+      cy.get("#filter-button").click()
+      cy.get("#resolved").click()
+      cy.get("#search").click()
+
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00001"])
+      confirmMultipleFieldsNotDisplayed(["Case00002", "Case00003", "Case00004", "Case00005"])
+    })
+
+    it("shows handlers resolved cases that only they resolved exceptions for", () => {
+      const casesConfig = [
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Supervisor",
+          id: 0
+        },
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Bichard01",
+          id: 1
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 2
+        },
+        {
+          force: "02",
+          resolved: true,
+          resolvedBy: "Bichard02",
+          id: 3
+        },
+        {
+          force: "03",
+          resolved: false,
+          id: 4
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 5
+        },
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Bichard01",
+          id: 6
+        }
+      ]
+      const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig) => {
+        const resolutionDate = subHours(new Date(), Math.random() * 100)
+        return {
+          errorId: caseConfig.id,
+          orgForPoliceFilter: caseConfig.force,
+          resolutionTimestamp: caseConfig.resolved ? resolutionDate : null,
+          errorResolvedBy: caseConfig.resolvedBy ?? null
+        }
+      })
+      cy.task("insertCourtCasesWithFields", cases)
+
+      loginAndGoToUrl()
+
+      cy.get("#filter-button").click()
+      cy.get("#resolved").click()
+      cy.get("#search").click()
+
+      confirmMultipleFieldsDisplayed(["Case00001", "Case00006"])
+      confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002", "Case00003", "Case00004", "Case00005"])
+    })
+
+    it("shows handlers resolved cases that only they resolved triggers for", () => {
+      const casesConfig = [
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Supervisor",
+          id: 0
+        },
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Bichard01",
+          id: 1
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 2
+        },
+        {
+          force: "02",
+          resolved: true,
+          resolvedBy: "Bichard02",
+          id: 3
+        },
+        {
+          force: "03",
+          resolved: false,
+          id: 4
+        },
+        {
+          force: "011111",
+          resolved: false,
+          id: 5
+        },
+        {
+          force: "011111",
+          resolved: true,
+          resolvedBy: "Bichard01",
+          id: 6
+        }
+      ]
+      const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig) => {
+        const resolutionDate = subHours(new Date(), Math.random() * 100)
+        return {
+          errorId: caseConfig.id,
+          orgForPoliceFilter: caseConfig.force,
+          resolutionTimestamp: caseConfig.resolved ? resolutionDate : null
+        }
+      })
+      cy.task("insertCourtCasesWithFields", cases)
+
+      casesConfig
+        .filter((c) => !!c.resolvedBy)
+        .forEach((caseConfig) => {
+          cy.task("insertTriggers", {
+            caseId: caseConfig.id,
+            triggers: [
+              {
+                triggerId: caseConfig.id,
+                triggerCode: "TRPR0010",
+                status: "Resolved",
+                createdAt: new Date("2023-03-07T10:22:34.000Z"),
+                resolvedBy: caseConfig.resolvedBy,
+                resolvedAt: new Date("2023-03-07T12:22:34.000Z")
+              }
+            ]
+          })
+        })
+
+      loginAndGoToUrl()
+
+      cy.get("#filter-button").click()
+      cy.get("#resolved").click()
+      cy.get("#search").click()
+
+      confirmMultipleFieldsDisplayed(["Case00001", "Case00006"])
+      confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002", "Case00003", "Case00004", "Case00005"])
+    })
+  })
+
+  describe("Sorting cases", () => {
+    it("should default to sorting by court date", () => {
+      const courtDates = [new Date("09/12/2021"), new Date("04/01/2022"), new Date("01/07/2020")]
+      cy.task("insertCourtCasesWithFields", [
+        ...courtDates.map((courtDate) => ({
+          courtDate: courtDate,
+          defendantName: "WAYNE Bruce",
+          orgForPoliceFilter: "011111"
+        })),
+        ...courtDates.map((courtDate) => ({
+          courtDate: courtDate,
+          defendantName: "PENNYWORTH Alfred",
+          orgForPoliceFilter: "011111"
+        }))
+      ])
+
+      loginAndGoToUrl()
+
+      // Sorted by court date
+      checkCasesOrder([2, 5, 0, 3, 1, 4])
+    })
+
+    it("should use court date as a secondary sort when sorting by other fields", () => {
+      const courtDates = [new Date("09/12/2021"), new Date("04/01/2022"), new Date("01/07/2020")]
+      cy.task("insertCourtCasesWithFields", [
+        ...courtDates.map((courtDate) => ({
+          courtDate: courtDate,
+          defendantName: "WAYNE Bruce",
+          orgForPoliceFilter: "011111"
+        })),
+        ...courtDates.map((courtDate) => ({
+          courtDate: courtDate,
+          defendantName: "PENNYWORTH Alfred",
+          orgForPoliceFilter: "011111"
+        }))
+      ])
+
+      loginAndGoToUrl()
+      // Sort ascending by defendant name
+      cy.get("#defendant-name-sort").click()
+
+      checkCasesOrder([5, 3, 4, 2, 0, 1])
+    })
+
+    it("should sort by court name", () => {
+      const courtNames = ["DDDD", "AAAA", "CCCC", "BBBB"]
+      cy.task(
+        "insertCourtCasesWithFields",
+        courtNames.map((courtName) => ({
+          courtName: courtName,
+          orgForPoliceFilter: "011111"
+        }))
+      )
+
+      loginAndGoToUrl()
+
+      // Sort ascending by court name
+      cy.get("#court-name-sort").click()
+      checkCasesOrder([1, 3, 2, 0])
+
+      // Sort descending by court name
+      cy.get("#court-name-sort").click()
+      checkCasesOrder([0, 2, 3, 1])
+    })
+
+    it("should sort by PTIURN", () => {
+      const PTIURNs = ["01009940223", "05003737622", "03001976220", "04007638323"]
+      const ascending = [...PTIURNs].sort()
+      const descending = [...PTIURNs].sort().reverse()
+
+      cy.task(
+        "insertCourtCasesWithFields",
+        PTIURNs.map((PTIURN) => ({
+          ptiurn: PTIURN,
+          orgForPoliceFilter: "011111"
+        }))
+      )
+
+      loginAndGoToUrl()
+
+      // Sort ascending by PTIURN
+      cy.get("#ptiurn-sort").click()
+      checkPtiurnOrder(ascending)
+
+      // Sort descending by PTIURN
+      cy.get("#ptiurn-sort").click()
+      checkPtiurnOrder(descending)
+    })
+
+    it("should sort by urgency", () => {
+      const urgencies = [true, false, true, false]
+      cy.task(
+        "insertCourtCasesWithFields",
+        urgencies.map((urgent) => ({
+          isUrgent: urgent,
+          orgForPoliceFilter: "011111"
+        }))
+      )
+
+      loginAndGoToUrl()
+
+      // Sort ascending by urgency
+      cy.get("#is-urgent-sort").click()
+      checkCasesOrder([0, 2, 1, 3])
+
+      // Sort descending by urgency
+      cy.get("#is-urgent-sort").click()
+      checkCasesOrder([1, 3, 0, 2])
+    })
+
+    it("should sort by who has a case locked", () => {
+      const usernames = ["alan.smith", "sarah.mcneil", "charlie.rhys", "bea.goddard"]
+      cy.task(
+        "insertCourtCasesWithFields",
+        usernames.map((username) => ({
+          errorLockedByUsername: username,
+          orgForPoliceFilter: "011111"
+        }))
+      )
+
+      loginAndGoToUrl()
+
+      // Sort ascending by lock holder
+      cy.get("#locked-by-sort").click()
+      checkCasesOrder([0, 3, 2, 1])
+
+      // Sort descending by lock holder
+      cy.get("#locked-by-sort").click()
+      checkCasesOrder([1, 2, 3, 0])
+    })
+  })
+})

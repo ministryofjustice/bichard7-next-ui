@@ -9,11 +9,19 @@ export default {
   component: CourtCaseFilter
 } as ComponentMeta<typeof CourtCaseFilter>
 
+const dummyCaseAgeCounts = {
+  Today: 0,
+  Yesterday: 0,
+  "Day 2": 0,
+  "Day 3": 0
+}
+
 export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => (
   <div data-testid="filters">
     <CourtCaseFilter
       reasons={[]}
-      dateRange={null}
+      caseAge={[]}
+      caseAgeCounts={dummyCaseAgeCounts}
       urgency={null}
       locked={null}
       caseState={null}
@@ -21,8 +29,7 @@ export const ShouldBeAccessible: ComponentStory<typeof CourtCaseFilter> = () => 
       defendantName={null}
       ptiurn={null}
       reasonCode={null}
-      customDateFrom={null}
-      customDateTo={null}
+      dateRange={null}
       myCases={false}
     />
   </div>
@@ -38,16 +45,16 @@ ShouldBeAccessible.play = async ({ canvasElement }) => {
 export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> = () => (
   <CourtCaseFilter
     reasons={["Exceptions"]}
-    dateRange={"today"}
+    caseAge={["Today"]}
+    caseAgeCounts={dummyCaseAgeCounts}
     urgency={"Urgent"}
     locked={"Locked"}
     caseState={"Resolved"}
     courtName={"City of London Magistrates' Court"}
-    defendantName={"Wilma Flintstone"}
+    defendantName={"FLINTSTONE Wilma"}
     ptiurn={"Case0000"}
     reasonCode={"HO200212"}
-    customDateFrom={new Date()}
-    customDateTo={new Date()}
+    dateRange={null}
     myCases={true}
   />
 )

@@ -26,7 +26,7 @@ const systemNote = {
 
 const courtCase = {
   courtName: "Magistrates' Courts Essex Basildon",
-  defendantName: "Allocation Trigger",
+  defendantName: "NAME Defendant",
   errorId: 79057,
   errorReason: "HO100206",
   errorReport: "HO100206",

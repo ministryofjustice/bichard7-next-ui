@@ -428,9 +428,9 @@ describe("listCourtCases", () => {
   describe("search by defendant name", () => {
     it("should list cases when there is a case insensitive match", async () => {
       const orgCode = "01FPA1"
-      const defendantToInclude = "Bruce Wayne"
-      const defendantToIncludeWithPartialMatch = "Bruce W. Ayne"
-      const defendantToNotInclude = "Barbara Gordon"
+      const defendantToInclude = "WAYNE Bruce"
+      const defendantToIncludeWithPartialMatch = "WAYNE Bill"
+      const defendantToNotInclude = "GORDON Barbara"
 
       await insertCourtCasesWithFields([
         { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
@@ -441,7 +441,7 @@ describe("listCourtCases", () => {
       let result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        defendantName: "Bruce Wayne"
+        defendantName: "WAYNE Bruce"
       })
       expect(isError(result)).toBe(false)
       let { result: cases } = result as ListCourtCaseResult
@@ -452,7 +452,7 @@ describe("listCourtCases", () => {
       result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        defendantName: "bruce w"
+        defendantName: "WAYNE B"
       })
       expect(isError(result)).toBe(false)
       cases = (result as ListCourtCaseResult).result
@@ -971,7 +971,7 @@ describe("listCourtCases", () => {
       expect(cases.map((c) => c.errorId)).toStrictEqual([1, 2])
     })
 
-    it("Should filter cases that within a specific date", async () => {
+    it("Should filter cases by multiple date ranges", async () => {
       const orgCode = "36FPA1"
       const firstDate = new Date("2001-09-26")
       const secondDate = new Date("2008-01-26")
@@ -988,14 +988,18 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, {
         forces: [orgCode],
         maxPageItems: "100",
-        courtDateRange: { from: new Date("2008-01-26"), to: new Date("2008-01-26") }
+        courtDateRange: [
+          { from: new Date("2008-01-26"), to: new Date("2008-01-26") },
+          { from: new Date("2008-03-26"), to: new Date("2008-03-26") },
+          { from: new Date("2013-10-16"), to: new Date("2013-10-16") }
+        ]
       })
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(1)
-      expect(cases.map((c) => c.errorId)).toStrictEqual([1])
+      expect(cases).toHaveLength(3)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([1, 2, 3])
     })
   })
 
@@ -1169,6 +1173,113 @@ describe("listCourtCases", () => {
         resolutionTimestamp,
         resolutionTimestamp
       ])
+    })
+  })
+
+  describe("Filter cases by resolution status", () => {
+    it("should show supervisors all resolved cases for their force", async () => {
+      const orgCode = "36FP"
+      const resolutionTimestamp = new Date()
+      const casesToInsert: Partial<CourtCase>[] = [undefined, "Bichard01", "Supervisor", "Bichard02", undefined].map(
+        (resolver) => ({
+          resolutionTimestamp: resolver !== undefined ? resolutionTimestamp : null,
+          errorResolvedTimestamp: resolver !== undefined ? resolutionTimestamp : null,
+          errorResolvedBy: resolver ?? null,
+          orgForPoliceFilter: orgCode
+        })
+      )
+
+      await insertCourtCasesWithFields(casesToInsert)
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        caseState: "Resolved"
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(3)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([1, 2, 3])
+    })
+
+    it("should show handlers cases that they resolved", async () => {
+      const orgCode = "36FP"
+      const resolutionTimestamp = new Date()
+      const thisUser = "Bichard01"
+      const otherUser = "Bichard02"
+      const casesToInsert: Partial<CourtCase>[] = [thisUser, otherUser, thisUser, otherUser].map((user) => ({
+        resolutionTimestamp: resolutionTimestamp,
+        orgForPoliceFilter: orgCode,
+        errorResolvedBy: user
+      }))
+
+      await insertCourtCasesWithFields(casesToInsert)
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        caseState: "Resolved",
+        resolvedByUsername: thisUser
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([0, 2])
+    })
+
+    it("should show handlers cases that they resolved a trigger for", async () => {
+      const orgCode = "36FP"
+      const resolutionTimestamp = new Date()
+      const thisUser = "Bichard01"
+      const otherUser = "Bichard02"
+      const casesToInsert: Partial<CourtCase>[] = [
+        {
+          resolutionTimestamp: resolutionTimestamp,
+          orgForPoliceFilter: orgCode,
+          errorResolvedBy: otherUser
+        },
+        {
+          resolutionTimestamp: resolutionTimestamp,
+          orgForPoliceFilter: orgCode,
+          errorResolvedBy: otherUser
+        },
+        {
+          resolutionTimestamp: resolutionTimestamp,
+          orgForPoliceFilter: orgCode,
+          errorResolvedBy: otherUser,
+          triggerResolvedBy: thisUser
+        }
+      ]
+
+      await insertCourtCasesWithFields(casesToInsert)
+
+      await insertTriggers(0, [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0010",
+          status: "Resolved",
+          createdAt: resolutionTimestamp,
+          resolvedAt: resolutionTimestamp,
+          resolvedBy: thisUser
+        }
+      ])
+
+      const result = await listCourtCases(dataSource, {
+        forces: [orgCode],
+        maxPageItems: "100",
+        caseState: "Resolved",
+        resolvedByUsername: thisUser
+      })
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases.map((c) => c.errorId)).toStrictEqual([0, 2])
     })
   })
 })

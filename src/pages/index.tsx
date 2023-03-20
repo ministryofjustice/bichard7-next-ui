@@ -12,19 +12,23 @@ import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import type CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
+import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CaseState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
+import { CaseState, QueryOrder, Reason, Urgency, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { isError } from "types/Result"
 import caseStateFilters from "utils/caseStateFilters"
 import { isPost } from "utils/http"
+import { CaseAgeOptions } from "utils/caseAgeOptions"
 import { reasonOptions } from "utils/reasonOptions"
-import { validateCustomDateRange } from "utils/validators/validateCustomDateRange"
-import { mapDateRange, validateNamedDateRange } from "utils/validators/validateDateRanges"
+import { validateDateRange } from "utils/validators/validateDateRange"
+import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
+import { formatDisplayedDate } from "utils/formattedDate"
+import KeyValuePair from "types/KeyValuePair"
 
 interface Props {
   user: User
@@ -36,9 +40,9 @@ interface Props {
   courtName: string | null
   reasonCode: string | null
   urgent: string | null
-  dateRange: string | null
-  customDateFrom: string | null
-  customDateTo: string | null
+  caseAge: string[]
+  caseAgeCounts: KeyValuePair<string, number>
+  dateRange: SerializedCourtDateRange | null
   page: number
   casesPerPage: number
   totalCases: number
@@ -64,7 +68,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       maxPageItems,
       order,
       urgency,
-      dateRange,
+      caseAge,
       from,
       to,
       locked,
@@ -74,12 +78,15 @@ export const getServerSideProps = withMultipleServerSideProps(
       unlockTrigger
     } = query
     const reasons = [type].flat().filter((t) => reasonOptions.includes(String(t) as Reason)) as Reason[]
+    const caseAges = [caseAge]
+      .flat()
+      .filter((t) => Object.keys(CaseAgeOptions).includes(String(t) as string)) as string[]
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
     const validatedPageNum = validateQueryParams(page) ? page : "1"
-    const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "ptiurn"
+    const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "courtDate"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
-    const validatedDateRange = mapDateRange(dateRange)
-    const validatedCustomDateRange = validateCustomDateRange({
+    const validatedCaseAges = mapCaseAges(caseAge)
+    const validatedDateRange = validateDateRange({
       from,
       to
     })
@@ -110,6 +117,15 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
+    const resolvedByUsername =
+      validatedCaseState === "Resolved" && !currentUser.groups.includes("Supervisor") ? currentUser.username : undefined
+
+    const caseAgeCounts = await getCountOfCasesByCaseAge(dataSource, currentUser.visibleForces)
+
+    if (isError(caseAgeCounts)) {
+      throw caseAgeCounts
+    }
+
     const courtCases = await listCourtCases(dataSource, {
       forces: currentUser.visibleForces,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
@@ -122,10 +138,11 @@ export const getServerSideProps = withMultipleServerSideProps(
       pageNum: validatedPageNum,
       orderBy: validatedOrderBy,
       order: validatedOrder,
-      courtDateRange: validatedDateRange || validatedCustomDateRange,
+      courtDateRange: validatedCaseAges || validatedDateRange,
       locked: lockedFilter,
       caseState: validatedCaseState,
-      allocatedToUserName: validatedMyCases
+      allocatedToUserName: validatedMyCases,
+      resolvedByUsername
     })
 
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
@@ -147,9 +164,14 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtName: validatedCourtName ? validatedCourtName : null,
         reasonCode: validatedreasonCode ? validatedreasonCode : null,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
-        dateRange: validateQueryParams(dateRange) && validateNamedDateRange(dateRange) ? dateRange : null,
-        customDateFrom: validatedCustomDateRange?.from.toJSON() ?? null,
-        customDateTo: validatedCustomDateRange?.to.toJSON() ?? null,
+        caseAge: caseAges,
+        dateRange: validatedDateRange
+          ? {
+              from: formatDisplayedDate(validatedDateRange.from),
+              to: formatDisplayedDate(validatedDateRange.to)
+            }
+          : null,
+        caseAgeCounts: caseAgeCounts,
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null,
@@ -171,9 +193,9 @@ const Home: NextPage<Props> = ({
   courtName,
   reasonCode,
   ptiurn,
+  caseAge,
+  caseAgeCounts,
   dateRange,
-  customDateFrom,
-  customDateTo,
   urgent,
   locked,
   caseState,
@@ -194,9 +216,9 @@ const Home: NextPage<Props> = ({
             courtName={courtName}
             reasonCode={reasonCode}
             ptiurn={ptiurn}
+            caseAge={caseAge}
+            caseAgeCounts={caseAgeCounts}
             dateRange={dateRange}
-            customDateFrom={customDateFrom !== null ? new Date(customDateFrom) : null}
-            customDateTo={customDateTo !== null ? new Date(customDateTo) : null}
             urgency={urgent}
             locked={locked}
             caseState={caseState}
@@ -211,9 +233,8 @@ const Home: NextPage<Props> = ({
               courtName,
               reasonCode,
               ptiurn,
-              dateRange,
-              customDateFrom: customDateFrom !== null ? new Date(customDateFrom) : null,
-              customDateTo: customDateTo !== null ? new Date(customDateTo) : null,
+              caseAge,
+              dateRange: dateRange,
               urgency: urgent,
               locked: locked,
               caseState: caseState,

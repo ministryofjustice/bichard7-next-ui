@@ -4,10 +4,11 @@ import ConditionalDisplay from "components/ConditionalDisplay"
 import ConditionalRender from "components/ConditionalRender"
 import { ReactNode, useState } from "react"
 import { createUseStyles } from "react-jss"
+import { blue } from "../../utils/colours"
 
 const useStyles = createUseStyles({
   legendColour: {
-    color: "#1D70B8"
+    color: blue
   },
   legendContainer: {
     marginTop: "8px"

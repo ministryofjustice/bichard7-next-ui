@@ -1,12 +1,10 @@
 import FilterTag from "components/FilterTag/FilterTag"
 import ConditionalRender from "components/ConditionalRender"
-import { format } from "date-fns"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
-import { Reason } from "types/CaseListQueryParams"
+import { Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
-import { displayedDateFormat } from "utils/formattedDate"
 
 interface Props {
   filters: {
@@ -15,9 +13,8 @@ interface Props {
     courtName?: string | null
     reasonCode?: string | null
     ptiurn?: string | null
-    dateRange?: string | null
-    customDateFrom?: Date | null
-    customDateTo?: Date | null
+    caseAge?: string[]
+    dateRange?: SerializedCourtDateRange | null
     urgency?: string | null
     locked?: string | null
     caseState?: string | null
@@ -31,13 +28,13 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
   const hasAnyAppliedFilters = (): boolean =>
     (filters.reasons && filters.reasons.length > 0) ||
     (filters.keywords && filters.keywords.length > 0) ||
+    (filters.caseAge && filters.caseAge.length > 0) ||
     !!filters.courtName ||
     !!filters.reasonCode ||
     !!filters.ptiurn ||
     !!filters.urgency ||
-    !!filters.dateRange ||
-    !!filters.customDateFrom ||
-    !!filters.customDateTo ||
+    !!filters.dateRange?.from ||
+    !!filters.dateRange?.to ||
     !!filters.locked ||
     !!filters.caseState ||
     !!filters.myCases
@@ -99,23 +96,18 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               <FilterTag tag={filters.ptiurn ?? ""} href={removeFilterFromPath({ ptiurn: filters.ptiurn ?? "" })} />
             </li>
           </ConditionalRender>
-          <ConditionalRender isRendered={!!filters.dateRange}>
+          {filters.caseAge &&
+            filters.caseAge.map((slaDate) => {
+              return (
+                <li key={`${slaDate}`}>
+                  <FilterTag tag={slaDate} href={removeFilterFromPath({ caseAge: slaDate })} />
+                </li>
+              )
+            })}
+          <ConditionalRender isRendered={!!filters.dateRange?.from && !!filters.dateRange.to}>
             <li>
               <FilterTag
-                tag={filters.dateRange ?? ""}
-                href={removeFilterFromPath({ dateRange: filters.dateRange ?? "" })}
-              />
-            </li>
-          </ConditionalRender>
-          <ConditionalRender isRendered={!!filters.customDateFrom && !!filters.customDateTo}>
-            <li>
-              <FilterTag
-                tag={
-                  `${format(filters.customDateFrom || new Date(), displayedDateFormat)} - ${format(
-                    filters.customDateTo || new Date(),
-                    displayedDateFormat
-                  )}` ?? ""
-                }
+                tag={`${filters.dateRange?.from} - ${filters.dateRange?.to}`}
                 href={removeQueryParamsByName(["from", "to", "pageNum"])}
               />
             </li>

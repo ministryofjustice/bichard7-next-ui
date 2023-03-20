@@ -100,7 +100,7 @@ jobs:
 
   integration_test:
     machine:
-      image: ubuntu-2004:2022.04.1
+      image: ubuntu-2004:2022.07.1
       docker_layer_caching: true
     working_directory: ~
     steps:
@@ -145,7 +145,7 @@ jobs:
 
   build_and_cypress_test:
     machine:
-      image: ubuntu-2004:2022.04.1
+      image: ubuntu-2004:2022.07.1
       docker_layer_caching: true
     resource_class: medium
     working_directory: ~
@@ -185,7 +185,7 @@ jobs:
       - run:
           name: Run MQ
           working_directory: ~/bichard7-next
-          command: docker-compose up -d activemq
+          command: COMPOSE_PROJECT_NAME="bichard7" docker-compose up -d activemq
           background: true
       - run:
           name: Run UI stack
@@ -272,7 +272,7 @@ jobs:
       - run:
           name: Run end-to-end tests
           working_directory: ~/bichard7-next
-          command: bash -c ". ./scripts/e2e-tests/e2e-tests-env.sh && docker-compose run --service-ports e2e-tests-record npm run test:nextUI"
+          command: make e2e-tests-new-ui
           environment:
             STACK_TYPE: next
             WORKSPACE: local-next
