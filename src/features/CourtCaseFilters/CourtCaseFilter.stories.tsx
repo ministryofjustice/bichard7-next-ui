@@ -51,7 +51,7 @@ export const WhenThereAreFiltersApplied: ComponentStory<typeof CourtCaseFilter> 
     locked={"Locked"}
     caseState={"Resolved"}
     courtName={"City of London Magistrates' Court"}
-    defendantName={"FLINTSTONE Wilma"}
+    defendantName={"Wilma Flintstone"}
     ptiurn={"Case0000"}
     reasonCode={"HO200212"}
     dateRange={null}

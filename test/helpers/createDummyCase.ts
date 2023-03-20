@@ -16,7 +16,7 @@ const randomBoolean = (): boolean => sample([true, false]) ?? true
 
 const randomUsername = (): string => `${faker.name.firstName().toLowerCase()}.${faker.name.lastName().toLowerCase()}`
 
-const randomName = (): string => `${faker.name.lastName().toUpperCase()} ${faker.name.firstName()}`
+const randomName = (): string => `${faker.name.firstName()} ${faker.name.lastName()}`
 
 const randomDate = (from: Date, to: Date): Date => {
   const dateRangeDays = differenceInDays(from, to)

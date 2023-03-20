@@ -16,7 +16,7 @@ export default {
 
 const courtCase = {
   courtName: "Magistrates' Courts Essex Basildon",
-  defendantName: "NAME Defendant",
+  defendantName: "Allocation Trigger",
   errorId: 79057,
   errorReason: "HO100206",
   messageId: "cf60600b-52a0-4bc7-b117-3acfb851a7f5",
