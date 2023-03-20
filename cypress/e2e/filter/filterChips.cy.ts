@@ -167,6 +167,39 @@ describe("Case list", () => {
         cy.get("#date-from").should("have.value", "")
         cy.get("#date-to").should("have.value", "")
       })
+
+      it.only("Should allow you to use the date range and click 'Same date' to fill in the 'To' date field", () => {
+        cy.get("button#filter-button").click()
+
+        cy.get("#custom-date-range").click()
+
+        // Prompt should not be visible
+        cy.get("#same-day-prompt")
+          .contains(
+            "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
+          )
+          .should("not.exist")
+
+        // Click the same day button and Prompt will be visible
+        cy.get("#same-day").click()
+        cy.get("#same-day-prompt")
+          .contains(
+            "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
+          )
+          .should("exist")
+        // Input date then click Same day button
+        cy.get("#date-from").click().type("2023-03-17")
+        cy.get("#same-day").click()
+        cy.get("#date-to").contains("2023-03-17")
+
+        cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
+        cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
+        cy.get(".moj-filter__tag").contains("17/03/2023 - 17/03/2023")
+        cy.get("button#search").click()
+
+        cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
+        confirmFiltersAppliedContains("17/03/2023 - 17/03/2023")
+      })
     })
 
     describe("Urgency", () => {
