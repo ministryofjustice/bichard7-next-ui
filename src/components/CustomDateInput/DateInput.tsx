@@ -13,7 +13,7 @@ interface Props {
 const DateInput: React.FC<Props> = ({ dateType, dispatch, value, dateRange }: Props) => {
   const customStyle = useCustomStyles()
   const actionType = dateType === "from" ? "dateFrom" : "dateTo"
-  const renderSameDateButton = dateType == "to" && dateRange?.from !== undefined ? true : false
+  const renderSameDateButton = dateType === "to" && dateRange?.from
   const setSameDateValue = () => {
     if (dateRange?.from !== undefined) {
       dispatch({ method: "add", type: actionType, value: dateRange.from })
