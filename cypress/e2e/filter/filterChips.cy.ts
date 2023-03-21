@@ -168,7 +168,7 @@ describe("Case list", () => {
         cy.get("#date-to").should("have.value", "")
       })
 
-      it.only("should populate `date to` when `same date` button is clicked", () => {
+      it("should populate `date to` when `same date` button is clicked", () => {
         cy.get("button#filter-button").click()
         cy.get("#date-range").click()
         cy.contains("Same date").should("not.exist")
