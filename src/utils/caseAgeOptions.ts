@@ -1,6 +1,6 @@
 import { subDays } from "date-fns"
 import { CourtDateRange } from "types/CaseListQueryParams"
-import KeyValuePair from "types/KeyValuePair"
+import type { KeyValuePair } from "types/KeyValuePair"
 
 export const CaseAgeOptions: KeyValuePair<string, () => CourtDateRange> = {
   Today: () => {

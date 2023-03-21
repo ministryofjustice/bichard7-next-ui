@@ -1,6 +1,6 @@
 import ConditionalRender from "components/ConditionalRender"
 import { ReactNode } from "react"
-import KeyValuePair from "types/KeyValuePair"
+import type { KeyValuePair } from "types/KeyValuePair"
 
 interface Props {
   featureFlags: KeyValuePair<string, boolean> | undefined

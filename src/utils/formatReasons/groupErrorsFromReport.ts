@@ -1,4 +1,4 @@
-import KeyValuePair from "types/KeyValuePair"
+import type { KeyValuePair } from "types/KeyValuePair"
 
 const groupErrorsFromReport = (errorReport: string): KeyValuePair<string, number> => {
   const errorsCodes: KeyValuePair<string, number> = {}
