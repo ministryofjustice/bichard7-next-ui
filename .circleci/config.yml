@@ -53,6 +53,12 @@ commands:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm install
             nvm use
+  
+  checkout-tests:
+    steps:
+      - run:
+          name: Git clone e2e tests
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
 
   fetch_docker_image:
     parameters:
@@ -220,6 +226,7 @@ jobs:
     working_directory: ~
     steps:
       - checkout
+      - checkout-tests
       - npm_install
       - attach_workspace:
           at: .
@@ -233,14 +240,12 @@ jobs:
       - fetch_docker_image:
           image: nginx-auth-proxy
       - fetch_docker_image:
-          image: e2etests
-      - fetch_docker_image:
           image: pncemulator
       - fetch_docker_image:
           image: beanconnect
       - run:
           name: Wait for docker images
-          command: IMAGES=(ui user-service nginx-auth-proxy e2etests pncemulator beanconnect) && bash ./scripts/wait_for_images.sh "${IMAGES[@]}"
+          command: IMAGES=(ui user-service nginx-auth-proxy pncemulator beanconnect) && bash ./scripts/wait_for_images.sh "${IMAGES[@]}"
           no_output_timeout: 15m
       - run:
           name: Run full stack (excluding beanconnect and PNC emulator)
@@ -271,8 +276,8 @@ jobs:
           command: npx wait-on --config ./.circleci/config/wait-for-401.js https://localhost:4080/bichard
       - run:
           name: Run end-to-end tests
-          working_directory: ~/bichard7-next
-          command: make e2e-tests-new-ui
+          working_directory: ~/bichard7-next-tests
+          command: npm i && npm run test:nextUI
           environment:
             STACK_TYPE: next
             WORKSPACE: local-next
