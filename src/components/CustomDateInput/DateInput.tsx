@@ -1,15 +1,18 @@
 import { Dispatch } from "react"
+import { SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { FilterAction } from "types/CourtCaseFilter"
 
 interface Props {
   dateType: "from" | "to"
   dispatch: Dispatch<FilterAction>
   value: string
+  dateRange: SerializedCourtDateRange | undefined
 }
 
-const DateInput: React.FC<Props> = ({ dateType, dispatch, value }: Props) => {
+const DateInput: React.FC<Props> = ({ dateType, dispatch, value, dateRange }: Props) => {
   const actionType = dateType === "from" ? "dateFrom" : "dateTo"
-  const renderSameDateButton = dateType == "to" ? true : false
+  const renderSameDateButton = dateType == "to" && dateRange?.from !== undefined ? true : false
+  console.log(`${dateType} value: `, value)
   const SameDateButton = (
     <button id={"apply-same-date-button"} type="button">
       {"Same date"}
