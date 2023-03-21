@@ -27,7 +27,7 @@ import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
-import KeyValuePair from "types/KeyValuePair"
+import type { KeyValuePair } from "types/KeyValuePair"
 import { formatFormInputDateString } from "utils/formattedDate"
 
 interface Props {

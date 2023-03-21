@@ -1,7 +1,7 @@
 import RadioButton from "components/RadioButton/RadioButton"
 import type { ChangeEvent, Dispatch } from "react"
 import type { FilterAction } from "types/CourtCaseFilter"
-import KeyValuePair from "types/KeyValuePair"
+import type { KeyValuePair } from "types/KeyValuePair"
 import lockedFilters from "utils/lockedFilters"
 
 interface Props {

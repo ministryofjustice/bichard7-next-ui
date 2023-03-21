@@ -1,4 +1,4 @@
-import KeyValuePair from "../../../src/types/KeyValuePair"
+import type { KeyValuePair } from "../../../src/types/KeyValuePair"
 import { isError } from "../../../src/types/Result"
 import AuditLog from "../../../../bichard7-next-audit-logging/src/shared-types/src/AuditLog"
 import AuditLogEvent from "../../../../bichard7-next-audit-logging/src/shared-types/src/AuditLogEvent"

@@ -6,7 +6,7 @@ import type { Dispatch } from "react"
 import DateInput from "components/CustomDateInput/DateInput"
 import { SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { formatDisplayedDate } from "utils/formattedDate"
-import KeyValuePair from "types/KeyValuePair"
+import type { KeyValuePair } from "types/KeyValuePair"
 import { createUseStyles } from "react-jss"
 
 interface Props {
