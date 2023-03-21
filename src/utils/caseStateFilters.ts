@@ -1,4 +1,4 @@
-import KeyValuePair from "types/KeyValuePair"
+import type { KeyValuePair } from "types/KeyValuePair"
 
 export const caseStateLabels: KeyValuePair<string, string> = {
   "Unresolved and resolved": "Unresolved & resolved cases",

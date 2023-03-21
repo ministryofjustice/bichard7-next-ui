@@ -10,7 +10,7 @@ import getDataSource from "../../src/services/getDataSource"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import { subDays } from "date-fns"
 import courtCasesByVisibleForcesQuery from "services/queries/courtCasesByVisibleForcesQuery"
-import KeyValuePair from "types/KeyValuePair"
+import type { KeyValuePair } from "types/KeyValuePair"
 
 jest.mock(
   "services/queries/courtCasesByVisibleForcesQuery",

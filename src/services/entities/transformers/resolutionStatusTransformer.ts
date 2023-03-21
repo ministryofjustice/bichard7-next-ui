@@ -1,5 +1,5 @@
 import { FindOperator, ValueTransformer } from "typeorm"
-import KeyValuePair from "types/KeyValuePair"
+import type { KeyValuePair } from "types/KeyValuePair"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import resolveFindOperator from "./resolveFindOperator"
 

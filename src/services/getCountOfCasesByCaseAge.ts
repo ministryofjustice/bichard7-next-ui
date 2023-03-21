@@ -1,5 +1,5 @@
 import { DataSource, IsNull, SelectQueryBuilder } from "typeorm"
-import KeyValuePair from "types/KeyValuePair"
+import type { KeyValuePair } from "types/KeyValuePair"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
