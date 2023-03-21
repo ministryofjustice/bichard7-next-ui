@@ -12,9 +12,15 @@ interface Props {
 const DateInput: React.FC<Props> = ({ dateType, dispatch, value, dateRange }: Props) => {
   const actionType = dateType === "from" ? "dateFrom" : "dateTo"
   const renderSameDateButton = dateType == "to" && dateRange?.from !== undefined ? true : false
+  const setSameDateValue = () => {
+    if (dateRange?.from !== undefined) {
+      dispatch({ method: "add", type: actionType, value: dateRange.from })
+    }
+  }
+
   console.log(`${dateType} value: `, value)
   const SameDateButton = (
-    <button id={"apply-same-date-button"} type="button">
+    <button id={"apply-same-date-button"} type="button" onClick={setSameDateValue}>
       {"Same date"}
     </button>
   )
