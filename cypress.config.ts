@@ -40,7 +40,7 @@ export default defineConfig({
                   (SELECT id FROM br7own.users WHERE email=$2 LIMIT 1)
                 )
             `
-            await db.one(insertQuery, [params.groupName, params.emailAddress]).catch(console.error)
+            await db.none(insertQuery, [params.groupName, params.emailAddress]).catch(console.error)
           }
           await updateUserGroup()
 
