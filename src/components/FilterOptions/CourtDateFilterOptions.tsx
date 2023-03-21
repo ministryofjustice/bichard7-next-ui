@@ -1,4 +1,3 @@
-import { format, parse } from "date-fns"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
 import RadioButton from "components/RadioButton/RadioButton"
@@ -52,8 +51,6 @@ const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase()
 
 const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, dispatch, dateRange }: Props) => {
   const classes = useStyles()
-  const defaultDateValue = (dateString?: string | null): string =>
-    !!dateString ? format(parse(dateString, "dd/MM/yyyy", new Date()), "yyyy-MM-dd") : ""
 
   return (
     <fieldset className="govuk-fieldset">
@@ -62,14 +59,14 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, disp
           name={"courtDate"}
           id={"date-range"}
           dataAriaControls={"conditional-date-range"}
-          defaultChecked={!!dateRange}
+          defaultChecked={!!dateRange?.from && !!dateRange.to}
           label={"Date range"}
           onChange={(event) => dispatch({ method: "remove", type: "caseAge", value: event.target.value as string })}
         />
         <div className="govuk-radios__conditional" id="conditional-date-range">
           <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-            <DateInput dateType="from" dispatch={dispatch} value={defaultDateValue(dateRange?.from)} />
-            <DateInput dateType="to" dispatch={dispatch} value={defaultDateValue(dateRange?.to)} />
+            <DateInput dateType="from" dispatch={dispatch} value={dateRange?.from ?? ""} />
+            <DateInput dateType="to" dispatch={dispatch} value={dateRange?.to ?? ""} />
           </div>
         </div>
         <RadioButton

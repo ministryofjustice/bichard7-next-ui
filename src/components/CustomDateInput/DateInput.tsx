@@ -21,9 +21,7 @@ const DateInput: React.FC<Props> = ({ dateType, dispatch, value }: Props) => {
         name={dateType}
         value={value}
         onChange={(event) => {
-          if (Date.parse(event.target.value)) {
-            dispatch({ method: "add", type: actionType, value: new Date(Date.parse(event.target.value)) })
-          }
+          dispatch({ method: "add", type: actionType, value: event.target.value })
         }}
       />
     </div>

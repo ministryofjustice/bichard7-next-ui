@@ -8,8 +8,8 @@ export type CourtDateRange = {
 }
 
 export type SerializedCourtDateRange = {
-  from: string
-  to: string
+  from?: string
+  to?: string
 }
 
 export type CaseState = "Resolved" | "Unresolved and resolved" | undefined

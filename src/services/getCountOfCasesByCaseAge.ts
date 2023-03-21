@@ -1,9 +1,9 @@
-import { format } from "date-fns"
 import { DataSource, IsNull, SelectQueryBuilder } from "typeorm"
 import KeyValuePair from "types/KeyValuePair"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
+import { formatFormInputDateString } from "utils/formattedDate"
 import CourtCase from "./entities/CourtCase"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
@@ -19,8 +19,8 @@ const getCountOfCasesByCaseAge = async (
 
   Object.keys(CaseAgeOptions).forEach((slaCaseAgeOption, i) => {
     const key = asKey(slaCaseAgeOption)
-    const slaDateFrom = format(CaseAgeOptions[slaCaseAgeOption]().from, "yyyy-MM-dd")
-    const slaDateTo = format(CaseAgeOptions[slaCaseAgeOption]().to, "yyyy-MM-dd")
+    const slaDateFrom = formatFormInputDateString(CaseAgeOptions[slaCaseAgeOption]().from)
+    const slaDateTo = formatFormInputDateString(CaseAgeOptions[slaCaseAgeOption]().to)
 
     const subQuery = repository
       .createQueryBuilder(key)
