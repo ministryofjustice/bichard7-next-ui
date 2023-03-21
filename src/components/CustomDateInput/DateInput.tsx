@@ -22,7 +22,7 @@ const DateInput: React.FC<Props> = ({ dateType, dispatch, value, dateRange }: Pr
 
   const SameDateButton = (
     <button
-      style={{ marginLeft: "140px" }}
+      style={{ marginLeft: "160px" }}
       type="button"
       className={`${customStyle["small-button--tag"]}`}
       id={"apply-same-date-button"}
@@ -35,7 +35,7 @@ const DateInput: React.FC<Props> = ({ dateType, dispatch, value, dateRange }: Pr
   return (
     <div className="govuk-form-group">
       <>
-        <label className="govuk-label govuk-label--m" htmlFor={`date-${dateType}`}>
+        <label className="govuk-body" htmlFor={`date-${dateType}`}>
           {`Date ${dateType}:`}
           {renderSameDateButton && SameDateButton}
         </label>
