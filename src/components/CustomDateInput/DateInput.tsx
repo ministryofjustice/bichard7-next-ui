@@ -1,6 +1,7 @@
 import { Dispatch } from "react"
 import { SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { FilterAction } from "types/CourtCaseFilter"
+import { useCustomStyles } from "../../../styles/customStyles"
 
 interface Props {
   dateType: "from" | "to"
@@ -10,6 +11,7 @@ interface Props {
 }
 
 const DateInput: React.FC<Props> = ({ dateType, dispatch, value, dateRange }: Props) => {
+  const customStyle = useCustomStyles()
   const actionType = dateType === "from" ? "dateFrom" : "dateTo"
   const renderSameDateButton = dateType == "to" && dateRange?.from !== undefined ? true : false
   const setSameDateValue = () => {
@@ -19,7 +21,12 @@ const DateInput: React.FC<Props> = ({ dateType, dispatch, value, dateRange }: Pr
   }
 
   const SameDateButton = (
-    <button id={"apply-same-date-button"} type="button" onClick={setSameDateValue}>
+    <button
+      style={{ paddingLeft: "140px" }}
+      className={`${customStyle["small-button--tag"]}`}
+      id={"apply-same-date-button"}
+      onClick={setSameDateValue}
+    >
       {"Same date"}
     </button>
   )

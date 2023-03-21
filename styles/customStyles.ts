@@ -30,6 +30,34 @@ export const useCustomStyles = createUseStyles({
       filter: "contrast(1)"
     }
   },
+  "small-button--tag": {
+    display: "inline-flex",
+    flexWrap: "nowrap",
+    alignItems: "center",
+    flexDirection: "row",
+    padding: "0px",
+    border: "none",
+    backgroundColor: "white",
+    gap: "11px",
+    color: blue,
+    fontSize: "16px",
+    textDecoration: "underline",
+    cursor: "pointer",
+    "&:hover": {
+      color: "white",
+      background: blue
+    },
+    "&:hover img": {
+      filter: "invert(1)"
+    },
+    "&:focus": {
+      color: "black",
+      background: yellow
+    },
+    "&:focus img": {
+      filter: "contrast(1)"
+    }
+  },
   "max-width": {
     maxWidth: "100%",
     padding: "0 40px"
