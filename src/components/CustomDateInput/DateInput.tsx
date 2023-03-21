@@ -18,7 +18,6 @@ const DateInput: React.FC<Props> = ({ dateType, dispatch, value, dateRange }: Pr
     }
   }
 
-  console.log(`${dateType} value: `, value)
   const SameDateButton = (
     <button id={"apply-same-date-button"} type="button" onClick={setSameDateValue}>
       {"Same date"}
