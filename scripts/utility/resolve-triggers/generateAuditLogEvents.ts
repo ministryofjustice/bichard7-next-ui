@@ -1,4 +1,4 @@
-import KeyValuePair from "../../../src/types/KeyValuePair"
+import type { KeyValuePair } from "../../../src/types/KeyValuePair"
 import Trigger from "../../../src/services/entities/Trigger"
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { v4 as uuid } from "uuid"
