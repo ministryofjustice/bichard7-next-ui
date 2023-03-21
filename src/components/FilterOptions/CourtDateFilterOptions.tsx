@@ -51,7 +51,6 @@ const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase()
 
 const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, dispatch, dateRange }: Props) => {
   const classes = useStyles()
-  console.log("dateRange.from: ", dateRange?.from)
 
   return (
     <fieldset className="govuk-fieldset">
