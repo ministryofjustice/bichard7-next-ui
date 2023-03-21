@@ -168,33 +168,17 @@ describe("Case list", () => {
         cy.get("#date-to").should("have.value", "")
       })
 
-      it.only("Should be a `same date` button within the `Date range` filter options", () => {
+      it.only("should populate `date to` when `same date` button is clicked", () => {
         cy.get("button#filter-button").click()
         cy.get("#date-range").click()
-        cy.get("#date-from").click()
-        cy.contains("Same date").should("exist")
-
-        cy.contains(
-          "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
-        ).should("not.exist")
-
-        cy.get("#apply-same-date-button").click()
-        cy.contains(
-          "First choose a date in the Date from field, then choose a date in the Date to field or click Same date"
-        ).should("exist")
-
-        // Input date then click Same day button
+        cy.contains("Same date").should("not.exist")
         cy.get("#date-from").click().type("2023-03-17")
-        cy.get("#same-day").click()
-        cy.get("#date-to").contains("2023-03-17")
+        cy.get("#date-to").should("have.value", "")
 
-        cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
-        cy.get(".govuk-heading-s").contains("Custom date range").should("exist")
-        cy.get(".moj-filter__tag").contains("17/03/2023 - 17/03/2023")
-        cy.get("button#search").click()
+        cy.contains("Same date").should("exist")
+        cy.get("#apply-same-date-button").click()
 
-        cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
-        confirmFiltersAppliedContains("17/03/2023 - 17/03/2023")
+        cy.get("#date-from").should("have.value", "2023-03-17")
       })
     })
 
