@@ -1,4 +1,4 @@
-export type QueryOrder = "asc" | "desc" | undefined
+export type QueryOrder = "asc" | "desc"
 
 export type Reason = "Triggers" | "Exceptions" | "Bails"
 

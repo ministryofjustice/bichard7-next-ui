@@ -1041,7 +1041,7 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       // Sorted by court date
-      checkCasesOrder([2, 5, 0, 3, 1, 4])
+      checkCasesOrder([1, 4, 0, 3, 2, 5])
     })
 
     it("should use court date as a secondary sort when sorting by other fields", () => {
@@ -1063,7 +1063,7 @@ describe("Case list", () => {
       // Sort ascending by defendant name
       cy.get("#defendant-name-sort").click()
 
-      checkCasesOrder([5, 3, 4, 2, 0, 1])
+      checkCasesOrder([4, 3, 5, 1, 0, 2])
     })
 
     it("should sort by court name", () => {
