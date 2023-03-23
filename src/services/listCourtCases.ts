@@ -67,7 +67,7 @@ const listCourtCases = async (
 
   // Secondary sorts
   if (orderBy !== "courtDate") {
-    query.addOrderBy("courtCase.courtDate")
+    query.addOrderBy("courtCase.courtDate", "DESC")
   }
   if (orderBy !== "ptiurn") {
     query.addOrderBy("courtCase.ptiurn")

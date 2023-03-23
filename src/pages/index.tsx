@@ -51,7 +51,7 @@ interface Props {
   myCases: boolean
 }
 
-const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc" || param === undefined
+const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -84,7 +84,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "courtDate"
-    const validatedOrder: QueryOrder = validateOrder(order) ? order : "asc"
+    const validatedOrder: QueryOrder = validateOrder(order) ? order : "desc"
     const validatedCaseAges = mapCaseAges(caseAge)
     const validatedDateRange = validateDateRange({
       from,
