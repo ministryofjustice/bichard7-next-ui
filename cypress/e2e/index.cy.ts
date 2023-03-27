@@ -140,7 +140,7 @@ describe("Case list", () => {
       cy.get("#court-name-sort").contains("Court Name").should("have.attr", "href")
       cy.get("#ptiurn-sort").contains("PTIURN").should("have.attr", "href")
       cy.get("#is-urgent-sort").contains("Urgent").should("have.attr", "href")
-      cy.contains("Notes").should("not.have.attr", "href")
+      cy.get("#notes-sort").contains("Notes").should("have.attr", "href")
       cy.contains("Reason").should("not.have.attr", "href")
       cy.get("#locked-by-sort").contains("Locked By").should("have.attr", "href")
     })
