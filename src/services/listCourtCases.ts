@@ -61,8 +61,7 @@ const listCourtCases = async (
   } else if (orderBy === "isUrgent") {
     query.orderBy("courtCase.isUrgent", sortOrder === "ASC" ? "DESC" : "ASC")
   } else {
-    const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
-    query.orderBy(orderByQuery, sortOrder)
+    query.orderBy("courtCase.errorId", sortOrder)
   }
 
   // Secondary sorts
