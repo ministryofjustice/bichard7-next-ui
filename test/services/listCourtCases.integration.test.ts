@@ -378,6 +378,73 @@ describe("listCourtCases", () => {
     })
   })
 
+  it("should order by notes number", async () => {
+    const caseNotes: { user: string; text: string }[][] = [
+      [
+        {
+          user: "System",
+          text: "System note 1"
+        }
+      ],
+      [
+        {
+          user: "System",
+          text: "System note 2"
+        },
+        {
+          user: "bichard01",
+          text: "Test note 1"
+        },
+        {
+          user: "System",
+          text: "System note 3"
+        }
+      ],
+      [
+        {
+          user: "bichard01",
+          text: "Test note 2"
+        },
+        {
+          user: "bichard02",
+          text: "Test note 3"
+        },
+        {
+          user: "bichard01",
+          text: "Test note 2"
+        }
+      ]
+    ]
+
+    const orgCode = "36FPA1"
+    await insertDummyCourtCasesWithNotes(caseNotes, "01")
+
+    const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "notes" })
+    expect(isError(resultAsc)).toBe(false)
+    const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
+
+    expect(casesAsc).toHaveLength(3)
+    expect(casesAsc[0].notes).toHaveLength(1)
+    expect(casesAsc[1].notes).toHaveLength(3)
+    expect(casesAsc[2].notes).toHaveLength(3)
+    expect(totalCasesAsc).toEqual(3)
+
+    const resultDesc = await listCourtCases(dataSource, {
+      forces: [orgCode],
+      maxPageItems: "100",
+      orderBy: "notes",
+      order: "desc"
+    })
+    expect(isError(resultDesc)).toBe(false)
+    const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
+
+    expect(casesDesc).toHaveLength(3)
+    expect(casesAsc[0].notes).toHaveLength(3)
+    expect(casesAsc[1].notes).toHaveLength(3)
+    expect(casesAsc[2].notes).toHaveLength(1)
+    expect(totalCasesDesc).toEqual(3)
+  })
+
   describe("ordered by 'lockedBy' username", () => {
     it("should order by errorLockedByUsername as primary order and triggerLockedByUsername as secondary order", async () => {
       const orgCode = "36FPA1"
