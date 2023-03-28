@@ -60,6 +60,12 @@ const listCourtCases = async (
       .addOrderBy("courtCase.triggerLockedByUsername", sortOrder)
   } else if (orderBy === "isUrgent") {
     query.orderBy("courtCase.isUrgent", sortOrder === "ASC" ? "DESC" : "ASC")
+  } else if (orderBy === "notes") {
+    query.loadRelationCountAndMap("countCase.noteCount", "courtCase.notes")
+    const foo = await query.getMany()
+    console.log(foo)
+
+    query.orderBy("courtCase.noteCount", sortOrder === "ASC" ? "DESC" : "ASC")
   } else {
     query.orderBy("courtCase.errorId", sortOrder)
   }
@@ -200,7 +206,12 @@ const listCourtCases = async (
     }
   }
 
+  // console.log("Query", query.getQueryAndParameters())
+
   const result = await query.getManyAndCount().catch((error: Error) => error)
+
+  // console.log("Result", result)
+
   return isError(result)
     ? result
     : {

@@ -378,7 +378,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  it("should order by notes number", async () => {
+  it.only("should order by notes number", async () => {
     const caseNotes: { user: string; text: string }[][] = [
       [
         {
