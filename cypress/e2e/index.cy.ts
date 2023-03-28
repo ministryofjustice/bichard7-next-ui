@@ -332,7 +332,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`1`).should("exist")
       cy.get("tr").not(":first").eq(2).get("td:nth-child(7)").contains(`3`).should("exist")
 
-      cy.get("#is-urgent-sort").click()
+      cy.get("#notes-sort").click()
       cy.get("tr").not(":first").eq(2).get("td:nth-child(5)").contains(`Case00002`)
       cy.get("tr").not(":first").eq(1).get("td:nth-child(5)").contains(`Case00001`)
     })
