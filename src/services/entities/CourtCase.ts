@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { AfterLoad, Column, Entity, OneToMany, PrimaryColumn } from "typeorm"
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm"
 import type { Relation } from "typeorm"
 import BaseEntity from "./BaseEntity"
 import dateTransformer from "./transformers/dateTransformer"
@@ -125,14 +125,6 @@ export default class CourtCase extends BaseEntity {
 
   @Column({ name: "trigger_locked_by_id", type: "varchar", nullable: true })
   triggerLockedByUsername?: string | null
-
-  @Column({ type: "varchar", nullable: true })
-  notesCount?: number | null
-
-  @AfterLoad()
-  getNotesCount() {
-    this.notesCount = this.notes.length
-  }
 
   @OneToMany(() => Note, (note) => note.courtCase, { eager: true, cascade: ["insert", "update"] })
   notes!: Relation<Note>[]
