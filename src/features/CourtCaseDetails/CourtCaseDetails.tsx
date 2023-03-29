@@ -20,6 +20,14 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
     <Heading as="h2" size="LARGE">
       {"Case Details"}
     </Heading>
+    {courtCase.defendantName}
+    {courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}
+    {"PTIURN"} {courtCase.ptiurn}
+    {"ASN"} {courtCase.asn}
+    {"PNCID"} {"???"}
+    {"Court name"} {courtCase.courtName}
+    {"Court code (LJA)"} {courtCase.courtCode}
+    {"Court case reference"} {courtCase.courtReference}
     <Table>
       <Table.Row>
         <Table.CellHeader>{"PTIURN"}</Table.CellHeader>
