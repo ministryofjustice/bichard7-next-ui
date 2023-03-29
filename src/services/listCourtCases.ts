@@ -15,6 +15,7 @@ import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import { BailCodes } from "utils/bailCodes"
 import CourtCase from "./entities/CourtCase"
+import Note from "./entities/Note"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 
 const listCourtCases = async (
@@ -41,6 +42,11 @@ const listCourtCases = async (
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
   const maxPageItemsValidated = maxPageItems ? parseInt(maxPageItems, 10) : 25
   const repository = connection.getRepository(CourtCase)
+  const subquery = connection
+    .getRepository(Note)
+    .createQueryBuilder("notes")
+    .select("COUNT(note_id)")
+    .where("error_id = courtCase.errorId")
   let query = repository.createQueryBuilder("courtCase")
   query = courtCasesByVisibleForcesQuery(query, forces) as SelectQueryBuilder<CourtCase>
   query
@@ -61,11 +67,7 @@ const listCourtCases = async (
   } else if (orderBy === "isUrgent") {
     query.orderBy("courtCase.isUrgent", sortOrder === "ASC" ? "DESC" : "ASC")
   } else if (orderBy === "notes") {
-    query.loadRelationCountAndMap("countCase.noteCount", "courtCase.notes")
-    const foo = await query.getMany()
-    console.log(foo)
-
-    query.orderBy("courtCase.noteCount", sortOrder === "ASC" ? "DESC" : "ASC")
+    query.addSelect(`(${subquery.getQuery()})`, "noteCount").orderBy("noteCount", sortOrder === "ASC" ? "DESC" : "ASC")
   } else {
     query.orderBy("courtCase.errorId", sortOrder)
   }
