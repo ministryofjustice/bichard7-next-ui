@@ -11,13 +11,13 @@ import { createUseStyles } from "react-jss"
 import { gdsLightGrey } from "utils/colours"
 
 interface CourtCaseDetailsSummaryBoxFieldProps {
-  subtitle: string
+  label: string
   value: string | null
 }
 
-const CourtCaseDetailsSummaryBoxField = ({ subtitle, value }: CourtCaseDetailsSummaryBoxFieldProps) => (
+const CourtCaseDetailsSummaryBoxField = ({ label, value }: CourtCaseDetailsSummaryBoxFieldProps) => (
   <div>
-    <b className="subtitle">{subtitle}</b> {value}
+    <b className="label">{label}</b> {value}
   </div>
 )
 
@@ -33,7 +33,7 @@ const useStyles = createUseStyles({
       fontSize: "19px",
       lineHeight: "25px"
     },
-    "& .subtitle": {
+    "& .label": {
       paddingRight: "16px"
     }
   }
@@ -60,12 +60,12 @@ const CourtCaseDetailsSummaryBox = ({
 
   return (
     <div className={classes["court-case-details-summary-box"]}>
-      <CourtCaseDetailsSummaryBoxField subtitle="PTIURN" value={ptiurn} />
-      <CourtCaseDetailsSummaryBoxField subtitle="ASN" value={asn} />
-      <CourtCaseDetailsSummaryBoxField subtitle="PNCID" value={pnci} />
-      <CourtCaseDetailsSummaryBoxField subtitle="Court name" value={courtName} />
-      <CourtCaseDetailsSummaryBoxField subtitle="Court code (LJA)" value={courtCode} />
-      <CourtCaseDetailsSummaryBoxField subtitle="Court case reference" value={courtReference} />
+      <CourtCaseDetailsSummaryBoxField label="PTIURN" value={ptiurn} />
+      <CourtCaseDetailsSummaryBoxField label="ASN" value={asn} />
+      <CourtCaseDetailsSummaryBoxField label="PNCID" value={pnci} />
+      <CourtCaseDetailsSummaryBoxField label="Court name" value={courtName} />
+      <CourtCaseDetailsSummaryBoxField label="Court code (LJA)" value={courtCode} />
+      <CourtCaseDetailsSummaryBoxField label="Court case reference" value={courtReference} />
     </div>
   )
 }
