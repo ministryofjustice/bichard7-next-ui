@@ -10,6 +10,17 @@ import { displayedDateFormat } from "utils/formattedDate"
 import { createUseStyles } from "react-jss"
 import { gdsLightGrey } from "utils/colours"
 
+interface CourtCaseDetailsSummaryBoxFieldProps {
+  subtitle: string
+  value: string | null
+}
+
+const CourtCaseDetailsSummaryBoxField = ({ subtitle, value }: CourtCaseDetailsSummaryBoxFieldProps) => (
+  <div>
+    <b className="subtitle">{subtitle}</b> {value}
+  </div>
+)
+
 const useStyles = createUseStyles({
   "court-case-details-summary-box": {
     display: "grid",
@@ -31,7 +42,7 @@ const useStyles = createUseStyles({
 interface CourtCaseDetailsSummaryBoxProps {
   ptiurn: string
   asn: string
-  pnci: string
+  pnci: string | undefined
   courtName: string
   courtCode: string | null
   courtReference: string
@@ -49,24 +60,12 @@ const CourtCaseDetailsSummaryBox = ({
 
   return (
     <div className={classes["court-case-details-summary-box"]}>
-      <div>
-        <b className="subtitle">{"PTIURN"}</b> {ptiurn}
-      </div>
-      <div>
-        <b className="subtitle">{"ASN"}</b> {asn}
-      </div>
-      <div>
-        <b className="subtitle">{"PNCID"}</b> {pnci}
-      </div>
-      <div>
-        <b className="subtitle">{"Court name"}</b> {courtName}
-      </div>
-      <div>
-        <b className="subtitle">{"Court code (LJA)"}</b> {courtCode}
-      </div>
-      <div>
-        <b className="subtitle">{"Court case reference"}</b> {courtReference}
-      </div>
+      <CourtCaseDetailsSummaryBoxField subtitle="PTIURN" value={ptiurn} />
+      <CourtCaseDetailsSummaryBoxField subtitle="ASN" value={asn} />
+      <CourtCaseDetailsSummaryBoxField subtitle="PNCID" value={pnci} />
+      <CourtCaseDetailsSummaryBoxField subtitle="Court name" value={courtName} />
+      <CourtCaseDetailsSummaryBoxField subtitle="Court code (LJA)" value={courtCode} />
+      <CourtCaseDetailsSummaryBoxField subtitle="Court case reference" value={courtReference} />
     </div>
   )
 }
