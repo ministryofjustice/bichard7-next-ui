@@ -85,7 +85,9 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       </Heading>
       <Heading as="h2" size="MEDIUM" className="govuk-!-font-weight-regular">
         {courtCase.defendantName}
-        {courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}
+        {courtCase.isUrgent && (
+          <span className={"moj-badge moj-badge--red moj-badge--large govuk-!-static-margin-left-5"}>{"Urgent"}</span>
+        )}
       </Heading>
       <CourtCaseDetailsSummaryBox
         asn={courtCase.asn}
