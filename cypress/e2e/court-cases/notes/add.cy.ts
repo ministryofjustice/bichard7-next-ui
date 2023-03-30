@@ -74,7 +74,7 @@ describe("Case details", () => {
       cy.get("textarea").type("Dummy note")
       cy.get("button").contains("Add").click()
 
-      cy.get("H2").should("have.text", "Case Details")
+      cy.get("H2").should("have.text", "Case details")
       const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
       cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
       cy.get("table").eq(-1).find("tr").eq(0).find("td").last().should("have.text", "Dummy note")
