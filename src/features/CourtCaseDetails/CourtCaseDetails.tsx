@@ -12,7 +12,7 @@ import { gdsLightGrey } from "utils/colours"
 
 interface CourtCaseDetailsSummaryBoxFieldProps {
   label: string
-  value: string | null
+  value: string | null | undefined
 }
 
 const CourtCaseDetailsSummaryBoxField = ({ label, value }: CourtCaseDetailsSummaryBoxFieldProps) => (
