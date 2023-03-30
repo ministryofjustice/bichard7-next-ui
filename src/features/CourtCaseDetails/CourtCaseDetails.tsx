@@ -24,7 +24,10 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       </Heading>
       <Heading as="h2" size="MEDIUM" className="govuk-!-font-weight-regular">
         {courtCase.defendantName}
-        <UrgentBadge isUrgent={courtCase.isUrgent} className="govuk-!-static-margin-left-5" />
+        <UrgentBadge
+          isUrgent={courtCase.isUrgent}
+          className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular"
+        />
       </Heading>
       <CourtCaseDetailsSummaryBox
         asn={courtCase.asn}
