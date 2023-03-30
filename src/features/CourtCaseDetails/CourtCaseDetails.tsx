@@ -37,22 +37,22 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       {courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}
       <div className={classes["header-summarybox"]}>
         <div>
-          {"PTIURN"} {courtCase.ptiurn}
+          <b>{"PTIURN"}</b> {courtCase.ptiurn}
         </div>
         <div>
-          {"ASN"} {courtCase.asn}
+          <b>{"ASN"}</b> {courtCase.asn}
         </div>
         <div>
-          {"PNCID"} {"???"}
+          <b>{"PNCID"}</b> {"???"}
         </div>
         <div>
-          {"Court name"} {courtCase.courtName}
+          <b>{"Court name"}</b> {courtCase.courtName}
         </div>
         <div>
-          {"Court code (LJA)"} {courtCase.courtCode}
+          <b>{"Court code (LJA)"}</b> {courtCase.courtCode}
         </div>
         <div>
-          {"Court case reference"} {courtCase.courtReference}
+          <b>{"Court case reference"}</b> {courtCase.courtReference}
         </div>
       </div>
       <Table>
