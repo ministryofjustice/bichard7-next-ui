@@ -15,7 +15,10 @@ export default {
 } as ComponentMeta<typeof CourtCaseDetails>
 
 const courtCase = {
+  courtReference: "01NC8114723",
+  asn: "2301MB000OV",
   courtName: "Magistrates' Courts Essex Basildon",
+  courtCode: "B01OP54",
   defendantName: "NAME Defendant",
   errorId: 79057,
   errorReason: "HO100206",
