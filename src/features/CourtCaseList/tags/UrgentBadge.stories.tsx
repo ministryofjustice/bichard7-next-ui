@@ -8,8 +8,8 @@ export default {
   component: UrgentBadge
 } as ComponentMeta<typeof UrgentBadge>
 
-export const CaseUnlocked: ComponentStory<typeof UrgentBadge> = () => <UrgentBadge isUrgent={true} />
-CaseUnlocked.play = ({ canvasElement }) => {
+export const UrgentBadgeComponent: ComponentStory<typeof UrgentBadge> = () => <UrgentBadge isUrgent={true} />
+UrgentBadgeComponent.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
   expect(canvas.getByText("Urgent")).toBeInTheDocument()
 }
