@@ -40,21 +40,21 @@ const useStyles = createUseStyles({
 })
 
 interface CourtCaseDetailsSummaryBoxProps {
-  ptiurn: string
-  asn: string
-  pnci: string | undefined
-  courtName: string
+  asn: string | null
   courtCode: string | null
+  courtName: string
   courtReference: string
+  pnci: string | undefined
+  ptiurn: string
 }
 
 const CourtCaseDetailsSummaryBox = ({
-  ptiurn,
   asn,
-  pnci,
-  courtName,
   courtCode,
-  courtReference
+  courtName,
+  courtReference,
+  pnci,
+  ptiurn
 }: CourtCaseDetailsSummaryBoxProps) => {
   const classes = useStyles()
 
@@ -87,12 +87,12 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       {courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}
 
       <CourtCaseDetailsSummaryBox
-        ptiurn={courtCase.ptiurn}
         asn={courtCase.asn}
-        pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
-        courtName={courtCase.courtName}
         courtCode={courtCase.courtCode}
+        courtName={courtCase.courtName}
         courtReference={courtCase.courtReference}
+        pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
+        ptiurn={courtCase.ptiurn}
       />
       <Table>
         <Table.Row>
