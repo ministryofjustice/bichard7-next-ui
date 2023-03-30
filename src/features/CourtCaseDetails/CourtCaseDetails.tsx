@@ -18,7 +18,7 @@ interface CourtCaseDetailsSummaryBoxFieldProps {
 
 const CourtCaseDetailsSummaryBoxField = ({ label, value }: CourtCaseDetailsSummaryBoxFieldProps) => (
   <div>
-    <b className="label">{label}</b> {value}
+    <b className="govuk-!-static-padding-right-3">{label}</b> {value}
   </div>
 )
 
@@ -33,9 +33,6 @@ const useStyles = createUseStyles({
       padding: "10px",
       fontSize: "19px",
       lineHeight: "25px"
-    },
-    "& .label": {
-      paddingRight: "16px"
     }
   }
 })
