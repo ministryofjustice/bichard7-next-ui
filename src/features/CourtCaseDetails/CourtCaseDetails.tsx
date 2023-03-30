@@ -11,12 +11,9 @@ import { createUseStyles } from "react-jss"
 
 const useStyles = createUseStyles({
   "header-summarybox": {
-    display: "flex",
-    flexDirection: "column",
-    "& div": {
-      display: "flex",
-      justifyContent: "space-between"
-    }
+    display: "grid",
+    gridTemplateColumns: "auto auto auto",
+    "& div": {}
   }
 })
 
@@ -30,6 +27,7 @@ interface Props {
 const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser, triggersVisible }) => {
   const classes = useStyles()
 
+  console.log("courtCase", courtCase)
   return (
     <>
       <Heading as="h2" size="LARGE">
@@ -39,26 +37,22 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       {courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}
       <div className={classes["header-summarybox"]}>
         <div>
-          <div>
-            {"PTIURN"} {courtCase.ptiurn}
-          </div>
-          <div>
-            {"ASN"} {courtCase.asn}
-          </div>
-          <div>
-            {"PNCID"} {"???"}
-          </div>
+          {"PTIURN"} {courtCase.ptiurn}
         </div>
         <div>
-          <div>
-            {"Court name"} {courtCase.courtName}
-          </div>
-          <div>
-            {"Court code (LJA)"} {courtCase.courtCode}
-          </div>
-          <div>
-            {"Court case reference"} {courtCase.courtReference}
-          </div>
+          {"ASN"} {courtCase.asn}
+        </div>
+        <div>
+          {"PNCID"} {"???"}
+        </div>
+        <div>
+          {"Court name"} {courtCase.courtName}
+        </div>
+        <div>
+          {"Court code (LJA)"} {courtCase.courtCode}
+        </div>
+        <div>
+          {"Court case reference"} {courtCase.courtReference}
         </div>
       </div>
       <Table>
