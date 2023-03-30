@@ -9,6 +9,7 @@ import CourtCase from "services/entities/CourtCase"
 import { displayedDateFormat } from "utils/formattedDate"
 import { createUseStyles } from "react-jss"
 import { gdsLightGrey } from "utils/colours"
+import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
 
 interface CourtCaseDetailsSummaryBoxFieldProps {
   label: string
@@ -85,9 +86,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       </Heading>
       <Heading as="h2" size="MEDIUM" className="govuk-!-font-weight-regular">
         {courtCase.defendantName}
-        {courtCase.isUrgent && (
-          <span className={"moj-badge moj-badge--red moj-badge--large govuk-!-static-margin-left-5"}>{"Urgent"}</span>
-        )}
+        <UrgentBadge isUrgent={courtCase.isUrgent} className="govuk-!-static-margin-left-5" />
       </Heading>
       <CourtCaseDetailsSummaryBox
         asn={courtCase.asn}
