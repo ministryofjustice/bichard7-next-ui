@@ -22,7 +22,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       <Heading as="h2" size="LARGE" className="govuk-!-font-weight-regular">
         {"Case details"}
       </Heading>
-      <Heading as="h2" size="MEDIUM" className="govuk-!-font-weight-regular">
+      <Heading as="h3" size="MEDIUM" className="govuk-!-font-weight-regular">
         {courtCase.defendantName}
         <UrgentBadge
           isUrgent={courtCase.isUrgent}
