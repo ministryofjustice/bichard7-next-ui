@@ -8,6 +8,7 @@ import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
+import { gdsLightGrey } from "utils/colours"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
@@ -31,7 +32,7 @@ const useStyles = createUseStyles({
   },
   triggersRow: {
     verticalAlign: "top",
-    backgroundColor: "#f3f2f1" // GDS light-grey color
+    backgroundColor: gdsLightGrey
   },
   flexBox: {
     display: "flex"
