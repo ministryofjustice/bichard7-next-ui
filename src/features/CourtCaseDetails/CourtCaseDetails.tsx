@@ -8,14 +8,68 @@ import { Heading, Paragraph, Table, Tag } from "govuk-react"
 import CourtCase from "services/entities/CourtCase"
 import { displayedDateFormat } from "utils/formattedDate"
 import { createUseStyles } from "react-jss"
+import { gdsLightGrey } from "utils/colours"
 
 const useStyles = createUseStyles({
-  "header-summarybox": {
+  "court-case-details-summary-box": {
     display: "grid",
     gridTemplateColumns: "auto auto auto",
-    "& div": {}
+    backgroundColor: gdsLightGrey,
+    padding: "20px 0",
+    margin: "20px 0",
+    "& div": {
+      padding: "10px",
+      fontSize: "19px",
+      lineHeight: "25px"
+    },
+    "& .subtitle": {
+      paddingRight: "16px"
+    }
   }
 })
+
+interface CourtCaseDetailsSummaryBoxProps {
+  ptiurn: string
+  asn: string
+  pnci: string
+  courtName: string
+  courtCode: string | null
+  courtReference: string
+}
+
+const CourtCaseDetailsSummaryBox = ({
+  ptiurn,
+  asn,
+  pnci,
+  courtName,
+  courtCode,
+  courtReference
+}: CourtCaseDetailsSummaryBoxProps) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classes["court-case-details-summary-box"]}>
+      <div>
+        <b className="subtitle">{"PTIURN"}</b> {ptiurn}
+      </div>
+      <div>
+        <b className="subtitle">{"ASN"}</b> {asn}
+      </div>
+      <div>
+        <b className="subtitle">{"PNCID"}</b> {pnci}
+      </div>
+      <div>
+        <b className="subtitle">{"Court name"}</b> {courtName}
+      </div>
+      <div>
+        <b className="subtitle">{"Court code (LJA)"}</b> {courtCode}
+      </div>
+      <div>
+        <b className="subtitle">{"Court case reference"}</b> {courtReference}
+      </div>
+    </div>
+  )
+}
 
 interface Props {
   courtCase: CourtCase
@@ -25,9 +79,6 @@ interface Props {
 }
 
 const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser, triggersVisible }) => {
-  const classes = useStyles()
-
-  console.log("courtCase", courtCase)
   return (
     <>
       <Heading as="h2" size="LARGE">
@@ -35,26 +86,15 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       </Heading>
       {courtCase.defendantName}
       {courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}
-      <div className={classes["header-summarybox"]}>
-        <div>
-          <b>{"PTIURN"}</b> {courtCase.ptiurn}
-        </div>
-        <div>
-          <b>{"ASN"}</b> {courtCase.asn}
-        </div>
-        <div>
-          <b>{"PNCID"}</b> {"???"}
-        </div>
-        <div>
-          <b>{"Court name"}</b> {courtCase.courtName}
-        </div>
-        <div>
-          <b>{"Court code (LJA)"}</b> {courtCase.courtCode}
-        </div>
-        <div>
-          <b>{"Court case reference"}</b> {courtCase.courtReference}
-        </div>
-      </div>
+
+      <CourtCaseDetailsSummaryBox
+        ptiurn={courtCase.ptiurn}
+        asn={courtCase.asn}
+        pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
+        courtName={courtCase.courtName}
+        courtCode={courtCase.courtCode}
+        courtReference={courtCase.courtReference}
+      />
       <Table>
         <Table.Row>
           <Table.CellHeader>{"PTIURN"}</Table.CellHeader>
