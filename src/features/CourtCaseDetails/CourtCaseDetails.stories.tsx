@@ -40,17 +40,17 @@ export const DetailsNotLockedByAnotherUser: ComponentStory<typeof CourtCaseDetai
 
 DetailsNotLockedByAnotherUser.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
-  expect(canvas.getByText(courtCase.ptiurn)).toBeInTheDocument()
-  expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
+  expect(canvas.getAllByText(courtCase.ptiurn)).toHaveLength(2)
+  expect(canvas.getAllByText(courtCase.courtName)).toHaveLength(2)
   expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy"))).toBeInTheDocument()
-  expect(canvas.getByText(courtCase.defendantName!)).toBeInTheDocument()
+  expect(canvas.getAllByText(courtCase.defendantName!)).toHaveLength(2)
   expect(canvas.getByText(courtCase.triggerReason!)).toBeInTheDocument()
   expect(
     canvas.getAllByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
   ).toHaveLength(2)
   expect(canvas.queryByText("Resolve trigger")).toBeInTheDocument()
   expect(canvas.getByText("Add Note")).toBeInTheDocument()
-  expect(canvas.getByText("Urgent")).toBeInTheDocument()
+  expect(canvas.getAllByText("Urgent")).toHaveLength(2)
 }
 
 export const DetailsLockedByAnotherUser: ComponentStory<typeof CourtCaseDetails> = () => (
@@ -59,17 +59,17 @@ export const DetailsLockedByAnotherUser: ComponentStory<typeof CourtCaseDetails>
 
 DetailsLockedByAnotherUser.play = ({ canvasElement }) => {
   const canvas = within(canvasElement)
-  expect(canvas.getByText(courtCase.ptiurn)).toBeInTheDocument()
-  expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
+  expect(canvas.getAllByText(courtCase.ptiurn)).toHaveLength(2)
+  expect(canvas.getAllByText(courtCase.courtName)).toHaveLength(2)
   expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy"))).toBeInTheDocument()
-  expect(canvas.getByText(courtCase.defendantName!)).toBeInTheDocument()
+  expect(canvas.getAllByText(courtCase.defendantName!)).toHaveLength(2)
   expect(canvas.getByText(courtCase.triggerReason!)).toBeInTheDocument()
   expect(
     canvas.getAllByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
   ).toHaveLength(2)
   expect(canvas.queryByText("Resolve trigger")).toBeInTheDocument()
   expect(canvas.queryByText("Add Note")).not.toBeInTheDocument()
-  expect(canvas.getByText("Urgent")).toBeInTheDocument()
+  expect(canvas.getAllByText("Urgent")).toHaveLength(2)
 }
 
 export const TriggersNotVisibleToUser: ComponentStory<typeof CourtCaseDetails> = () => (
@@ -78,15 +78,15 @@ export const TriggersNotVisibleToUser: ComponentStory<typeof CourtCaseDetails> =
 
 TriggersNotVisibleToUser.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
-  expect(canvas.getByText(courtCase.ptiurn)).toBeInTheDocument()
-  expect(canvas.getByText(courtCase.courtName)).toBeInTheDocument()
+  expect(canvas.getAllByText(courtCase.ptiurn)).toHaveLength(2)
+  expect(canvas.getAllByText(courtCase.courtName)).toHaveLength(2)
   expect(canvas.getByText(format(courtCase.courtDate!, "dd/MM/yyyy"))).toBeInTheDocument()
-  expect(canvas.getByText(courtCase.defendantName!)).toBeInTheDocument()
+  expect(canvas.getAllByText(courtCase.defendantName!)).toHaveLength(2)
   expect(canvas.getByText(courtCase.triggerReason!)).toBeInTheDocument()
   expect(
     canvas.getAllByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
   ).toHaveLength(2)
   expect(canvas.queryByText("Resolve trigger")).not.toBeInTheDocument()
   expect(canvas.getByText("Add Note")).toBeInTheDocument()
-  expect(canvas.getByText("Urgent")).toBeInTheDocument()
+  expect(canvas.getAllByText("Urgent")).toHaveLength(2)
 }
