@@ -35,26 +35,10 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
     />
     <Table>
       <Table.Row>
-        <Table.CellHeader>{"PTIURN"}</Table.CellHeader>
-        <Table.Cell>{courtCase.ptiurn}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.CellHeader>{"Court name"}</Table.CellHeader>
-        <Table.Cell>{courtCase.courtName}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
         <Table.CellHeader>{"Court date"}</Table.CellHeader>
         <Table.Cell>
           <DateTime date={courtCase.courtDate} dateFormat={displayedDateFormat} />
         </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.CellHeader>{"Urgency"}</Table.CellHeader>
-        <Table.Cell>{courtCase.isUrgent && <Tag tint="RED">{"Urgent"}</Tag>}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.CellHeader>{"Defendant name"}</Table.CellHeader>
-        <Table.Cell>{courtCase.defendantName}</Table.Cell>
       </Table.Row>
       <Table.Row>
         <Table.CellHeader>{"Exception reason"}</Table.CellHeader>
