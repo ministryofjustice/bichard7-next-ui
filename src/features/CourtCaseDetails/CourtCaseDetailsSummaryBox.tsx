@@ -47,7 +47,7 @@ const CourtCaseDetailsSummaryBox = ({
   const classes = useStyles()
 
   return (
-    <div className={classes["court-case-details-summary-box"]}>
+    <div className={`${classes["court-case-details-summary-box"]} govuk-body`}>
       <CourtCaseDetailsSummaryBoxField label="PTIURN" value={ptiurn} />
       <CourtCaseDetailsSummaryBoxField label="ASN" value={asn} />
       <CourtCaseDetailsSummaryBoxField label="PNCID" value={pnci} />
