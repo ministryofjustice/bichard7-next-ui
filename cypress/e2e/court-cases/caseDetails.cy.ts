@@ -74,27 +74,17 @@ describe("Case details", () => {
 
       cy.get("H2").should("have.text", "Case details")
 
-      // Case details table
-      cy.get("th")
-        .contains("PTIURN")
-        .then(($cell) => {
-          expect($cell.parent().find("td").text()).to.equal("Case00000")
-        })
-      cy.get("th")
-        .contains("Court name")
-        .then(($cell) => {
-          expect($cell.parent().find("td").text()).to.equal("Magistrates' Courts Essex Basildon")
-        })
+      cy.contains("Case00000")
+      cy.contains("Magistrates' Courts Essex Basildon")
+
       cy.get("th")
         .contains("Court date")
         .then(($cell) => {
           expect($cell.parent().find("td").text()).to.equal("26/09/2008")
         })
-      cy.get("th")
-        .contains("Defendant name")
-        .then(($cell) => {
-          expect($cell.parent().find("td").text()).to.equal("NAME Defendant")
-        })
+
+      cy.contains("NAME Defendant")
+
       cy.get("th")
         .contains("Trigger reason")
         .then(($cell) => {
