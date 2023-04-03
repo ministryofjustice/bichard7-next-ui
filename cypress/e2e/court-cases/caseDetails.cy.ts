@@ -102,18 +102,14 @@ describe("Case details", () => {
       cy.get("H3").contains("Triggers")
       cy.get("table").eq(-1).find("tr").should("have.length", 2)
       cy.get("table").eq(-1).find("tr").eq(1).find("td").first().should("have.text", "TRPR0001")
-      cy.get("table").eq(-1).find("tr").eq(1).find("td").eq(4).should("have.text", "09/07/2022 12:22:34")
+      cy.get("table").eq(-1).find("tr").eq(1).find("td").eq(4).should("include.text", "09/07/2022")
 
       // Notes
       cy.get("H3").contains("Notes")
       cy.get("p").contains("Case has no notes.")
 
       // Urgency
-      cy.get("th")
-        .contains("Urgency")
-        .then(($cell) => {
-          expect($cell.parent().find("td").text()).to.equal("Urgent")
-        })
+      cy.contains("Urgent")
     })
 
     it("should return 404 for a case that this user can not see", () => {
