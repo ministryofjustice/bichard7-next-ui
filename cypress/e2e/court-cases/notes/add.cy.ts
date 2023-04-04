@@ -74,7 +74,7 @@ describe("Case details", () => {
       cy.get("textarea").type("Dummy note")
       cy.get("button").contains("Add").click()
 
-      cy.get("H2").should("have.text", "Case Details")
+      cy.get("H2").should("have.text", "Case details")
       const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
       cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
       cy.get("table").eq(-1).find("tr").eq(0).find("td").last().should("have.text", "Dummy note")
@@ -101,7 +101,7 @@ describe("Case details", () => {
       cy.get("textarea").type("A ".repeat(500) + "B ".repeat(500) + "C ".repeat(100), { delay: 0 })
       cy.get("button").contains("Add").click()
 
-      cy.get("H2").should("have.text", "Case Details")
+      cy.get("H2").should("have.text", "Case details")
       const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
       cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
       cy.get("table").eq(-1).find("tr").eq(0).find("td").last().should("have.text", "A ".repeat(500))
@@ -156,7 +156,7 @@ describe("Case details", () => {
       cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0").click()
 
       cy.url().should("match", /.*\/court-cases\/0/)
-      cy.get("H2").should("have.text", "Case Details")
+      cy.get("H2").should("have.text", "Case details")
       cy.findByText("Case has no notes.").should("exist")
     })
 

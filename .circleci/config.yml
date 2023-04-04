@@ -125,7 +125,7 @@ jobs:
   ui_test:
     docker:
       - image: cimg/node:16.12.0
-    resource_class: medium
+    resource_class: large
     working_directory: ~
     environment:
       TZ: "Europe/London"
