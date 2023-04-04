@@ -33,6 +33,42 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
       ptiurn={courtCase.ptiurn}
     />
+
+    <nav className="moj-sub-navigation" aria-label="Sub navigation">
+      <ul className="moj-sub-navigation__list">
+        <li className="moj-sub-navigation__item">
+          <a className="moj-sub-navigation__link" aria-current="page" href="/">
+            {"Defendant"}
+          </a>
+        </li>
+        <li className="moj-sub-navigation__item">
+          <a className="moj-sub-navigation__link" href="/">
+            {"Hearing"}
+          </a>
+        </li>
+        <li className="moj-sub-navigation__item">
+          <a className="moj-sub-navigation__link" href="/">
+            {"Case information"}
+          </a>
+        </li>
+        <li className="moj-sub-navigation__item">
+          <a className="moj-sub-navigation__link" href="/">
+            {"Offences"}
+          </a>
+        </li>
+        <li className="moj-sub-navigation__item">
+          <a className="moj-sub-navigation__link" href="/">
+            {"Notes"}
+          </a>
+        </li>
+        <li className="moj-sub-navigation__item">
+          <a className="moj-sub-navigation__link" href="/">
+            {"PNC errors"}
+          </a>
+        </li>
+      </ul>
+    </nav>
+
     <Table>
       <Table.Row>
         <Table.CellHeader>{"Court date"}</Table.CellHeader>
