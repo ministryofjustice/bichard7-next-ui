@@ -12,6 +12,19 @@ import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
 
 type Tabs = "Defendant" | "Hearing" | "Case information" | "Offences" | "PNC errors"
 
+interface CourtCaseDetailsSingleTabProps {
+  tab: Tabs
+  isActive: boolean
+}
+
+const CourtCaseDetailsSingleTab = ({ tab, isActive }: CourtCaseDetailsSingleTabProps) => (
+  <li className="moj-sub-navigation__item">
+    <a className="moj-sub-navigation__link" aria-current={isActive ? "page" : undefined} href="/">
+      {tab}
+    </a>
+  </li>
+)
+
 interface CourtCaseDetailsTabsProps {
   activeTab: Tabs
   tabs: Tabs[]
@@ -22,11 +35,7 @@ const CourtCaseDetailsTabs = ({ tabs, activeTab }: CourtCaseDetailsTabsProps) =>
     <nav className="moj-sub-navigation" aria-label="Sub navigation">
       <ul className="moj-sub-navigation__list">
         {tabs.map((tab) => (
-          <li className="moj-sub-navigation__item" key={tab}>
-            <a className="moj-sub-navigation__link" aria-current={tab === activeTab ? "page" : undefined} href="/">
-              {tab}
-            </a>
-          </li>
+          <CourtCaseDetailsSingleTab tab={tab} isActive={tab === activeTab} key={tab} />
         ))}
       </ul>
     </nav>
