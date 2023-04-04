@@ -9,6 +9,30 @@ import CourtCase from "services/entities/CourtCase"
 import { displayedDateFormat } from "utils/formattedDate"
 import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
+
+type Tabs = "Defendant" | "Hearing" | "Case information" | "Offences" | "PNC errors"
+
+interface CourtCaseDetailsTabsProps {
+  activeTab: Tabs
+  tabs: Tabs[]
+}
+
+const CourtCaseDetailsTabs = ({ tabs, activeTab }: CourtCaseDetailsTabsProps) => {
+  return (
+    <nav className="moj-sub-navigation" aria-label="Sub navigation">
+      <ul className="moj-sub-navigation__list">
+        {tabs.map((tab) => (
+          <li className="moj-sub-navigation__item" key={tab}>
+            <a className="moj-sub-navigation__link" aria-current={tab === activeTab ? "page" : undefined} href="/">
+              {tab}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
@@ -33,42 +57,10 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
       ptiurn={courtCase.ptiurn}
     />
-
-    <nav className="moj-sub-navigation" aria-label="Sub navigation">
-      <ul className="moj-sub-navigation__list">
-        <li className="moj-sub-navigation__item">
-          <a className="moj-sub-navigation__link" aria-current="page" href="/">
-            {"Defendant"}
-          </a>
-        </li>
-        <li className="moj-sub-navigation__item">
-          <a className="moj-sub-navigation__link" href="/">
-            {"Hearing"}
-          </a>
-        </li>
-        <li className="moj-sub-navigation__item">
-          <a className="moj-sub-navigation__link" href="/">
-            {"Case information"}
-          </a>
-        </li>
-        <li className="moj-sub-navigation__item">
-          <a className="moj-sub-navigation__link" href="/">
-            {"Offences"}
-          </a>
-        </li>
-        <li className="moj-sub-navigation__item">
-          <a className="moj-sub-navigation__link" href="/">
-            {"Notes"}
-          </a>
-        </li>
-        <li className="moj-sub-navigation__item">
-          <a className="moj-sub-navigation__link" href="/">
-            {"PNC errors"}
-          </a>
-        </li>
-      </ul>
-    </nav>
-
+    <CourtCaseDetailsTabs
+      activeTab={"Defendant"}
+      tabs={["Defendant", "Hearing", "Case information", "Offences", "PNC errors"]}
+    />
     <Table>
       <Table.Row>
         <Table.CellHeader>{"Court date"}</Table.CellHeader>
