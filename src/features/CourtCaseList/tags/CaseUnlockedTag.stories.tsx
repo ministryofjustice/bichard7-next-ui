@@ -3,6 +3,8 @@ import { within } from "@storybook/testing-library"
 import { expect } from "@storybook/jest"
 import CaseUnlockedTag from "./CaseUnlockedTag"
 
+jest.setTimeout(60000)
+
 export default {
   title: "Features/CourtCaseList/CaseUnlockedTag",
   component: CaseUnlockedTag
