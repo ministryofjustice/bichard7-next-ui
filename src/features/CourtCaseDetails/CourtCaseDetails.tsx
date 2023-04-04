@@ -16,7 +16,7 @@ type Tabs = "Defendant" | "Hearing" | "Case information" | "Offences" | "PNC err
 interface CourtCaseDetailsSingleTabProps {
   tab: Tabs
   isActive: boolean
-  onClick: any
+  onClick: (tab: Tabs) => void
 }
 
 const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick }: CourtCaseDetailsSingleTabProps) => (
@@ -38,7 +38,7 @@ const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick }: CourtCaseDetailsS
 interface CourtCaseDetailsTabsProps {
   activeTab: Tabs
   tabs: Tabs[]
-  onTabClick: any
+  onTabClick: (tab: Tabs) => void
 }
 
 const CourtCaseDetailsTabs = ({ tabs, activeTab, onTabClick }: CourtCaseDetailsTabsProps) => {
