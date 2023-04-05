@@ -1,4 +1,4 @@
-export type Tabs = "Defendant" | "Hearing" | "Case information" | "Offences" | "PNC errors"
+export type Tabs = "Defendant" | "Hearing" | "Case information" | "Offences" | "Notes" | "PNC errors"
 
 interface CourtCaseDetailsSingleTabProps {
   tab: Tabs
