@@ -9,24 +9,9 @@ import CourtCase from "services/entities/CourtCase"
 import { displayedDateFormat } from "utils/formattedDate"
 import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
-import { ReactNode, useState } from "react"
+import { useState } from "react"
 import { CourtCaseDetailsTabs, Tabs } from "./CourtCaseDetailsTabs"
-
-interface CourtCaseDetailsPanelProps {
-  children: ReactNode
-  heading: string
-}
-
-const CourtCaseDetailsPanel = ({ children, heading }: CourtCaseDetailsPanelProps) => {
-  return (
-    <>
-      <Heading as="h4" size="LARGE">
-        {heading}
-      </Heading>
-      {children}
-    </>
-  )
-}
+import { CourtCaseDetailsPanel } from "./CourtCaseDetailsPanels"
 
 interface Props {
   courtCase: CourtCase
@@ -37,10 +22,7 @@ interface Props {
 
 const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser, triggersVisible }) => {
   const [activeTab, setActiveTab] = useState<Tabs>("Defendant")
-  console.log(
-    "aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode",
-    aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode
-  )
+
   return (
     <>
       <Heading as="h2" size="LARGE" className="govuk-!-font-weight-regular">
