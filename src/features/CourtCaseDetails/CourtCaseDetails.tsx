@@ -10,8 +10,8 @@ import { displayedDateFormat } from "utils/formattedDate"
 import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
 import { useState } from "react"
-import { CourtCaseDetailsTabs, Tabs } from "./CourtCaseDetailsTabs"
-import { CourtCaseDetailsPanel } from "./CourtCaseDetailsPanels"
+import { CourtCaseDetailsTabs, Tabs } from "./Tabs/CourtCaseDetailsTabs"
+import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 
 interface Props {
   courtCase: CourtCase
