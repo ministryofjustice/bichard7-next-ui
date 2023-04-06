@@ -54,7 +54,88 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       </ConditionalRender>
 
       <ConditionalRender isRendered={activeTab === "Hearing"}>
-        <CourtCaseDetailsPanel heading={"Hearing details"}>{"Hearing details content"}</CourtCaseDetailsPanel>
+        <CourtCaseDetailsPanel heading={"Hearing details"}>
+          <Table>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Court location"}</b>
+              </Table.Cell>
+              <Table.Cell>
+                {aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode}
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Date of hearing"}</b>
+              </Table.Cell>
+              <Table.Cell>
+                {aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing instanceof Date
+                  ? aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString()
+                  : aho.AnnotatedHearingOutcome.HearingOutcome.Hearing?.DateOfHearing ?? ""}
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Time of hearing"}</b>
+              </Table.Cell>
+              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.TimeOfHearing}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Defendant present"}</b>
+              </Table.Cell>
+              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DefendantPresentAtHearing}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Source reference doc name"}</b>
+              </Table.Cell>
+              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.SourceReference.DocumentName}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Source reference Id"}</b>
+              </Table.Cell>
+              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.SourceReference.UniqueID}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Source reference doc type"}</b>
+              </Table.Cell>
+              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.SourceReference.DocumentType}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Court type"}</b>
+              </Table.Cell>
+              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtType}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Court house (LJA) code"}</b>
+              </Table.Cell>
+              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Court name"}</b>
+              </Table.Cell>
+              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseName}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Hearing language"}</b>
+              </Table.Cell>
+              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.HearingLanguage}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <b>{"Documentation language"}</b>
+              </Table.Cell>
+              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.HearingDocumentationLanguage}</Table.Cell>
+            </Table.Row>
+          </Table>
+        </CourtCaseDetailsPanel>
       </ConditionalRender>
 
       <ConditionalRender isRendered={activeTab === "Case information"}>
