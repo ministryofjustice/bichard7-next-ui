@@ -12,6 +12,7 @@ import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
 import { useState } from "react"
 import { CourtCaseDetailsTabs, Tabs } from "./Tabs/CourtCaseDetailsTabs"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
+import { format } from "date-fns"
 
 interface Props {
   courtCase: CourtCase
@@ -70,8 +71,11 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
               </Table.Cell>
               <Table.Cell>
                 {aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing instanceof Date
-                  ? aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString()
-                  : aho.AnnotatedHearingOutcome.HearingOutcome.Hearing?.DateOfHearing ?? ""}
+                  ? format(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing, "dd/MM/yyyy").toString()
+                  : format(
+                      new Date(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing?.DateOfHearing),
+                      "dd/MM/yyyy"
+                    ).toString() ?? ""}
               </Table.Cell>
             </Table.Row>
             <Table.Row>
