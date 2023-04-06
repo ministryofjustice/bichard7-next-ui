@@ -12,7 +12,8 @@ import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
 import { useState } from "react"
 import { CourtCaseDetailsTabs, Tabs } from "./Tabs/CourtCaseDetailsTabs"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
-import { format } from "date-fns"
+
+import { HearingDetailsTable } from "./Tabs/Panels/HearingDetailsTable"
 
 interface Props {
   courtCase: CourtCase
@@ -56,89 +57,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
 
       <ConditionalRender isRendered={activeTab === "Hearing"}>
         <CourtCaseDetailsPanel heading={"Hearing details"}>
-          <Table>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Court location"}</b>
-              </Table.Cell>
-              <Table.Cell>
-                {aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode}
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Date of hearing"}</b>
-              </Table.Cell>
-              <Table.Cell>
-                {aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing instanceof Date
-                  ? format(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing, "dd/MM/yyyy").toString()
-                  : format(
-                      new Date(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing?.DateOfHearing),
-                      "dd/MM/yyyy"
-                    ).toString() ?? ""}
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Time of hearing"}</b>
-              </Table.Cell>
-              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.TimeOfHearing}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Defendant present"}</b>
-              </Table.Cell>
-              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DefendantPresentAtHearing}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Source reference doc name"}</b>
-              </Table.Cell>
-              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.SourceReference.DocumentName}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Source reference Id"}</b>
-              </Table.Cell>
-              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.SourceReference.UniqueID}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Source reference doc type"}</b>
-              </Table.Cell>
-              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.SourceReference.DocumentType}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Court type"}</b>
-              </Table.Cell>
-              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtType}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Court house (LJA) code"}</b>
-              </Table.Cell>
-              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Court name"}</b>
-              </Table.Cell>
-              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseName}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Hearing language"}</b>
-              </Table.Cell>
-              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.HearingLanguage}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <b>{"Documentation language"}</b>
-              </Table.Cell>
-              <Table.Cell>{aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.HearingDocumentationLanguage}</Table.Cell>
-            </Table.Row>
-          </Table>
+          <HearingDetailsTable hearing={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing} />
         </CourtCaseDetailsPanel>
       </ConditionalRender>
 
