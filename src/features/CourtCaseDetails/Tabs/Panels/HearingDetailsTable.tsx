@@ -11,6 +11,9 @@ export const HearingDetailsTable = ({ hearing }: HearingDetailsTableProps) => {
     hearing.DateOfHearing instanceof Date
       ? format(hearing.DateOfHearing, "dd/MM/yyyy").toString()
       : format(new Date(hearing?.DateOfHearing), "dd/MM/yyyy").toString() ?? ""
+
+  const getLanguage = (language: string) => (language === "D" ? "D (Don't know)" : language)
+
   return (
     <Table>
       <Table.Row>
@@ -77,13 +80,13 @@ export const HearingDetailsTable = ({ hearing }: HearingDetailsTableProps) => {
         <Table.Cell>
           <b>{"Hearing language"}</b>
         </Table.Cell>
-        <Table.Cell>{hearing.HearingLanguage}</Table.Cell>
+        <Table.Cell>{getLanguage(hearing.HearingLanguage)}</Table.Cell>
       </Table.Row>
       <Table.Row>
         <Table.Cell>
           <b>{"Documentation language"}</b>
         </Table.Cell>
-        <Table.Cell>{hearing.HearingDocumentationLanguage}</Table.Cell>
+        <Table.Cell>{getLanguage(hearing.HearingDocumentationLanguage)}</Table.Cell>
       </Table.Row>
     </Table>
   )
