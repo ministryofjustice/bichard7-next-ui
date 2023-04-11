@@ -1,8 +1,9 @@
 import { DataSource, EntityManager, UpdateQueryBuilder, UpdateResult } from "typeorm/"
-import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity"
+import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
+import unlockCourtCase from "./unlockCourtCase"
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const DEFAULT_STATION_CODE = "YZ"
@@ -13,19 +14,32 @@ const reallocateCourtCaseToForce = async (
   user: User,
   forceCode: string
 ): Promise<UpdateResult | Error> => {
-  const { visibleForces } = user
+  const updateResult = await dataSource.transaction(
+    "SERIALIZABLE",
+    async (entityManager): Promise<UpdateResult | Error> => {
+      const { visibleForces } = user
 
-  const courtCaseRepository = dataSource.getRepository(CourtCase)
-  const setFields: QueryDeepPartialEntity<CourtCase> = {}
-  let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
+      const courtCaseRepository = entityManager.getRepository(CourtCase)
 
-  setFields.orgForPoliceFilter = `${forceCode}${DEFAULT_STATION_CODE}`
+      let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
+      query.set({ orgForPoliceFilter: `${forceCode}${DEFAULT_STATION_CODE}` })
+      query = courtCasesByVisibleForcesQuery(query, visibleForces) as UpdateQueryBuilder<CourtCase>
+      query.andWhere("error_id = :id", { id: courtCaseId })
 
-  query.set(setFields)
-  query = courtCasesByVisibleForcesQuery(query, visibleForces) as UpdateQueryBuilder<CourtCase>
-  query.andWhere("error_id = :id", { id: courtCaseId })
+      const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, user)
 
-  return query.execute()?.catch((error: Error) => error)
+      if (isError(unlockResult)) {
+        throw unlockResult
+      }
+
+      return query.execute()?.catch((error: Error) => error)
+    }
+  )
+  if (isError(updateResult)) {
+    throw updateResult
+  }
+
+  return updateResult
 }
 
 export default reallocateCourtCaseToForce

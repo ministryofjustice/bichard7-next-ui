@@ -28,29 +28,36 @@ describe("reallocate court case to another force", () => {
   })
 
   describe("when user can see the case", () => {
-    // 1 get a Force Code and update orgForPoliceFilter to that code appended with YZ -> 01YZ
-    // 2 Add system notes:
+    // TODO:
+    // - Add system notes:
     //    - Portal Action: Update Applied. Element: FORCEOWNER. New Value: 01
     //    - Bichard01: Case reallocated to new force owner : 01YZ00
-    // 3 Push messages to GENERAL_EVENT_QUEUE(audit log)
-    // 4 unlocks the case
+    // - Push messages to GENERAL_EVENT_QUEUE(audit log) -> add auditLog messages
     it("should reallocate the case to a new force, generate notes and unlock the case", async () => {
+      const courtCaseId = 1
       const courtCase = {
         orgForPoliceFilter: "36FPA ",
-        errorId: 1
+        errorId: courtCaseId,
+        errorLockedByUsername: "UserName",
+        triggerLockedByUsername: "UserName"
       }
       await insertCourtCasesWithFields([courtCase])
 
       const user = {
-        visibleForces: ["36FPA1"]
+        username: "UserName",
+        visibleForces: ["36FPA1"],
+        canLockExceptions: true,
+        canLockTriggers: true
       } as User
 
-      const result = await reallocateCourtCaseToForce(dataSource, 1, user, "04")
+      const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "04")
       expect(isError(result)).toBe(false)
 
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 1 } })
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.orgForPoliceFilter).toStrictEqual("04YZ  ")
+      expect(actualCourtCase.errorLockedByUsername).toBeNull()
+      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
     })
   })
 
