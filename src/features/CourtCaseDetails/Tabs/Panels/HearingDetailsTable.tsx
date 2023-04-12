@@ -6,88 +6,47 @@ interface HearingDetailsTableProps {
   hearing: Hearing
 }
 
+interface HearingDetailsTableRowProps {
+  header: string
+  value: string | null | undefined
+}
+
+const HearingDetailsTableRow = ({ header, value }: HearingDetailsTableRowProps) => (
+  <Table.Row>
+    <Table.Cell>
+      <b>{header}</b>
+    </Table.Cell>
+    <Table.Cell>{value}</Table.Cell>
+  </Table.Row>
+)
+
 export const HearingDetailsTable = ({ hearing }: HearingDetailsTableProps) => {
-  const dateOfHearing =
-    hearing.DateOfHearing instanceof Date
-      ? format(hearing.DateOfHearing, "dd/MM/yyyy").toString()
-      : format(new Date(hearing?.DateOfHearing), "dd/MM/yyyy").toString() ?? ""
+  const getFormatedDateOfHearing = (dateOfHearing: Date | string) =>
+    dateOfHearing instanceof Date
+      ? format(dateOfHearing, "dd/MM/yyyy").toString()
+      : format(new Date(dateOfHearing), "dd/MM/yyyy").toString() ?? ""
 
   const getLanguage = (language: string) => (language === "D" ? "D (Don't know)" : language)
 
+  const getCourtType = (courtType: string | null | undefined) => (courtType === "MCA" ? "MCA (MC adult)" : courtType)
+
   return (
     <Table>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"Court location"}</b>
-        </Table.Cell>
-        <Table.Cell>{hearing.CourtHearingLocation.OrganisationUnitCode}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"Date of hearing"}</b>
-        </Table.Cell>
-        <Table.Cell>{dateOfHearing}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"Time of hearing"}</b>
-        </Table.Cell>
-        <Table.Cell>{hearing.TimeOfHearing}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"Defendant present"}</b>
-        </Table.Cell>
-        <Table.Cell>{hearing.DefendantPresentAtHearing}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"Source reference doc name"}</b>
-        </Table.Cell>
-        <Table.Cell>{hearing.SourceReference.DocumentName}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"Source reference identification"}</b>
-        </Table.Cell>
-        <Table.Cell>{hearing.SourceReference.UniqueID}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"Source reference document type"}</b>
-        </Table.Cell>
-        <Table.Cell>{hearing.SourceReference.DocumentType}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"Court type"}</b>
-        </Table.Cell>
-        <Table.Cell>{hearing.CourtType}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"LJA code"}</b>
-        </Table.Cell>
-        <Table.Cell>{hearing.CourtHouseCode}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"Court name"}</b>
-        </Table.Cell>
-        <Table.Cell>{hearing.CourtHouseName}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"Hearing language"}</b>
-        </Table.Cell>
-        <Table.Cell>{getLanguage(hearing.HearingLanguage)}</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>
-          <b>{"Documentation language"}</b>
-        </Table.Cell>
-        <Table.Cell>{getLanguage(hearing.HearingDocumentationLanguage)}</Table.Cell>
-      </Table.Row>
+      <HearingDetailsTableRow header="Court location" value={hearing.CourtHearingLocation.OrganisationUnitCode} />
+      <HearingDetailsTableRow header="Date of hearing" value={getFormatedDateOfHearing(hearing.DateOfHearing)} />
+      <HearingDetailsTableRow header="Time of hearing" value={hearing.TimeOfHearing} />
+      <HearingDetailsTableRow header="Defendant present" value={hearing.DefendantPresentAtHearing} />
+      <HearingDetailsTableRow header="Source reference document name" value={hearing.SourceReference.DocumentName} />
+      <HearingDetailsTableRow header="Source reference identification" value={hearing.SourceReference.UniqueID} />
+      <HearingDetailsTableRow header="Source reference document type" value={hearing.SourceReference.DocumentType} />
+      <HearingDetailsTableRow header="Court type" value={getCourtType(hearing.CourtType)} />
+      <HearingDetailsTableRow header="LJA code" value={hearing.CourtHouseCode.toString()} />
+      <HearingDetailsTableRow header="Court name" value={hearing.CourtHouseName} />
+      <HearingDetailsTableRow header="Hearing language" value={getLanguage(hearing.HearingLanguage)} />
+      <HearingDetailsTableRow
+        header="Documentation language"
+        value={getLanguage(hearing.HearingDocumentationLanguage)}
+      />
     </Table>
   )
 }
