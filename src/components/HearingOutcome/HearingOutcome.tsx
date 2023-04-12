@@ -1,6 +1,5 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { Button } from "govuk-react"
-import HearingTable from "./HearingTable"
 import OffencesTable from "./OffencesTable"
 import CaseTable from "./CaseTable"
 import DefendantTable from "./DefendantTable"
@@ -45,7 +44,6 @@ const HearingOutcome: React.FC<Props> = ({ aho, courtCaseId }) => {
 
   return (
     <>
-      <HearingTable aho={aho} />
       <CaseTable aho={aho} amendFn={amendFn} />
       <DefendantTable aho={aho} amendFn={amendFn} />
       <OffencesTable aho={aho} amendFn={amendFn} />
