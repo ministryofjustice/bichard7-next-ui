@@ -23,7 +23,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { courtCaseId } = query as { courtCaseId: string }
 
     const dataSource = await getDataSource()
-    const courtCase = await getCourtCaseByVisibleForce(dataSource, +courtCaseId, currentUser.visibleForces)
+    const courtCase = await getCourtCaseByVisibleForce(dataSource, +courtCaseId, currentUser.visibleCases)
 
     if (!courtCase) {
       return {
