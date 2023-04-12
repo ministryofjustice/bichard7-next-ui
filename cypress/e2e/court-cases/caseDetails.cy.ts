@@ -105,7 +105,8 @@ describe("Case details", () => {
       cy.get("table").eq(-1).find("tr").eq(1).find("td").eq(4).should("include.text", "09/07/2022")
 
       // Notes
-      cy.get("H3").contains("Notes")
+      cy.contains("Notes").click()
+      cy.get("H4").contains("Notes")
       cy.get("p").contains("Case has no notes.")
 
       // Urgency
