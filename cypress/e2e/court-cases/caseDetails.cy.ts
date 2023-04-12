@@ -5,6 +5,12 @@ import logAccessibilityViolations from "../../support/logAccessibilityViolations
 import a11yConfig from "../../support/a11yConfig"
 import hashedPassword from "../../fixtures/hashedPassword"
 import resubmitCaseJson from "../../fixtures/expected_resubmit_01.json"
+import { Tabs } from "../../../src/features/CourtCaseDetails/Tabs/CourtCaseDetailsTabs"
+
+const clickTab = (tab: Tabs) => {
+  cy.contains(tab).click()
+  cy.get("H4").contains(tab)
+}
 
 describe("Case details", () => {
   context("720p resolution", () => {
@@ -109,6 +115,25 @@ describe("Case details", () => {
 
       // Urgency
       cy.contains("Urgent")
+    })
+
+    it("should allow to click through the tabs", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: null,
+          triggerLockedByUsername: null,
+          orgForPoliceFilter: "02"
+        }
+      ])
+      cy.login("bichard02@example.com", "password")
+      cy.visit("/bichard/court-cases/0")
+
+      clickTab("Defendant")
+      clickTab("Hearing")
+      clickTab("Case information")
+      clickTab("Offences")
+      clickTab("Notes")
+      clickTab("PNC errors")
     })
 
     it("should return 404 for a case that this user can not see", () => {
