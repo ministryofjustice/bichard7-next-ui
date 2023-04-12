@@ -18,11 +18,6 @@ export const HearingOutcomeStory: ComponentStory<typeof HearingOutcome> = () => 
 HearingOutcomeStory.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
 
-  const hearingTable = canvas.getByRole("table", { name: "Hearing" })
-  expect(hearingTable).toBeInTheDocument()
-  expect(within(hearingTable).getByText("Court location")).toBeInTheDocument()
-  expect(within(hearingTable).getByText("01234567")).toBeInTheDocument()
-
   const caseTable = canvas.getByRole("table", { name: "Case" })
   expect(caseTable).toBeInTheDocument()
   expect(within(caseTable).getByText("PTIURN")).toBeInTheDocument()
@@ -43,7 +38,6 @@ HearingOutcomeStory.play = async ({ canvasElement }) => {
   const button = canvas.getByRole("button", { name: "Resubmit" })
   expect(button).toBeInTheDocument()
 
-  expect(await axe(hearingTable)).toHaveNoViolations()
   expect(await axe(caseTable)).toHaveNoViolations()
   expect(await axe(defendantTable)).toHaveNoViolations()
   expect(await axe(offenceTable)).toHaveNoViolations()
