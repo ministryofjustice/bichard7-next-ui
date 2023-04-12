@@ -136,6 +136,31 @@ describe("Case details", () => {
       clickTab("PNC errors")
     })
 
+    it("should display the content of the Hearing tab", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: null,
+          triggerLockedByUsername: null,
+          orgForPoliceFilter: "02"
+        }
+      ])
+      cy.login("bichard02@example.com", "password")
+      cy.visit("/bichard/court-cases/0")
+
+      clickTab("Hearing")
+      cy.contains("B01EF01")
+      cy.contains("26/09/2011")
+      cy.contains("10:00")
+      cy.contains("A")
+      cy.contains("SPI TRPRFOUR SEXOFFENCE")
+      cy.contains("CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415")
+      cy.contains("SPI Case Result")
+      cy.contains("MCA (MC adult)")
+      cy.contains("2576")
+      cy.contains("London Croydon")
+      cy.contains("D (Don't know)")
+    })
+
     it("should return 404 for a case that this user can not see", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
       cy.login("bichard01@example.com", "password")
