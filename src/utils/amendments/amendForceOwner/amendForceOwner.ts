@@ -17,6 +17,9 @@ const amendForceOwner = (updatedValue: string, aho: AnnotatedHearingOutcome) => 
     }
   } else {
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner.OrganisationUnitCode = `${upperCaseUpdatedValue}${DEFAULT_STATION_CODE}00`
+    aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner.SecondLevelCode = upperCaseUpdatedValue
+    aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner.ThirdLevelCode = DEFAULT_STATION_CODE
+    aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner.BottomLevelCode = "00"
   }
 
   if (!aho.AnnotatedHearingOutcome.HearingOutcome.Case.ManualForceOwner) {
