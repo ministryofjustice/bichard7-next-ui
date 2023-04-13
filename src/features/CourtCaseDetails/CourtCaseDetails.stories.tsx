@@ -47,7 +47,7 @@ DetailsNotLockedByAnotherUser.play = ({ canvasElement }) => {
   expect(canvas.getByText(courtCase.triggerReason!)).toBeInTheDocument()
   expect(
     canvas.getAllByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
-  ).toHaveLength(2)
+  ).toHaveLength(1)
   expect(canvas.queryByText("Resolve trigger")).toBeInTheDocument()
   expect(canvas.getByText("Add Note")).toBeInTheDocument()
   expect(canvas.getByText("Urgent")).toBeInTheDocument()
@@ -69,7 +69,7 @@ DetailsLockedByAnotherUser.play = ({ canvasElement }) => {
   expect(canvas.getByText(courtCase.triggerReason!)).toBeInTheDocument()
   expect(
     canvas.getAllByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
-  ).toHaveLength(2)
+  ).toHaveLength(1)
   expect(canvas.queryByText("Resolve trigger")).toBeInTheDocument()
   expect(canvas.queryByText("Add Note")).not.toBeInTheDocument()
   expect(canvas.getByText("Urgent")).toBeInTheDocument()
@@ -91,7 +91,7 @@ TriggersNotVisibleToUser.play = async ({ canvasElement }) => {
   expect(canvas.getByText(courtCase.triggerReason!)).toBeInTheDocument()
   expect(
     canvas.getAllByText(aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHearingLocation.OrganisationUnitCode)
-  ).toHaveLength(2)
+  ).toHaveLength(1)
   expect(canvas.queryByText("Resolve trigger")).not.toBeInTheDocument()
   expect(canvas.getByText("Add Note")).toBeInTheDocument()
   expect(canvas.getByText("Urgent")).toBeInTheDocument()
