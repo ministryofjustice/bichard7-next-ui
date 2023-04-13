@@ -1,5 +1,6 @@
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import Note from "services/entities/Note"
 import User from "services/entities/User"
 import reallocateCourtCaseToForce from "services/reallocateCourtCaseToForce"
 import { DataSource } from "typeorm"
@@ -17,6 +18,7 @@ describe("reallocate court case to another force", () => {
   })
 
   beforeEach(async () => {
+    await deleteFromTable(Note)
     await deleteFromTable(CourtCase)
   })
 
@@ -31,27 +33,28 @@ describe("reallocate court case to another force", () => {
 
   describe("when user can see the case", () => {
     // TODO:
-    // - store updated message
     // - Add system notes:
     //    - Portal Action: Update Applied. Element: FORCEOWNER. New Value: 01
-    //    - Bichard01: Case reallocated to new force owner : 01YZ00
-    // - Push messages to GENERAL_EVENT_QUEUE(audit log) -> add auditLog messages
     it("should reallocate the case to a new force, generate notes and unlock the case", async () => {
       const courtCaseId = 1
       const courtCase = {
         orgForPoliceFilter: "01",
         errorId: courtCaseId
       }
+
+      const newForceCode = "04"
+      const expectedForceOwner = `${newForceCode}YZ00`
+      const userName = "UserName"
       await insertCourtCasesWithFields([courtCase])
 
       const user = {
-        username: "UserName",
+        username: userName,
         visibleForces: ["01"],
         canLockExceptions: true,
         canLockTriggers: true
       } as User
 
-      const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "04")
+      const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode)
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
@@ -66,11 +69,15 @@ describe("reallocate court case to another force", () => {
       const parsedCase = (parsedUpdatedHearingOutcome as AnnotatedHearingOutcome).AnnotatedHearingOutcome.HearingOutcome
         .Case
 
-      expect(parsedCase.ForceOwner?.OrganisationUnitCode).toEqual("04YZ00")
+      expect(parsedCase.ForceOwner?.OrganisationUnitCode).toEqual(expectedForceOwner)
       expect(parsedCase.ForceOwner?.BottomLevelCode).toEqual("00")
-      expect(parsedCase.ForceOwner?.SecondLevelCode).toEqual("04")
+      expect(parsedCase.ForceOwner?.SecondLevelCode).toEqual(newForceCode)
       expect(parsedCase.ForceOwner?.ThirdLevelCode).toEqual("YZ")
       expect(parsedCase.ManualForceOwner).toBe(true)
+      expect(actualCourtCase.notes).toHaveLength(1)
+      expect(actualCourtCase.notes[0].noteText).toEqual(
+        `${userName}: Case reallocated to new force owner: ${expectedForceOwner}`
+      )
     })
   })
 

@@ -4,6 +4,7 @@ import { DEFAULT_STATION_CODE } from "utils/amendments/amendForceOwner/defaultSt
 import amendCourtCase from "./amendCourtCase"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
+import insertNotes from "./insertNotes"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 import unlockCourtCase from "./unlockCourtCase"
 
@@ -21,7 +22,8 @@ const reallocateCourtCaseToForce = async (
       const courtCaseRepository = entityManager.getRepository(CourtCase)
 
       let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
-      query.set({ orgForPoliceFilter: `${forceCode}${DEFAULT_STATION_CODE}` })
+      const newForceCode = `${forceCode}${DEFAULT_STATION_CODE}`
+      query.set({ orgForPoliceFilter: newForceCode })
       query = courtCasesByVisibleForcesQuery(query, visibleForces) as UpdateQueryBuilder<CourtCase>
       query.andWhere("error_id = :id", { id: courtCaseId })
 
@@ -31,6 +33,19 @@ const reallocateCourtCaseToForce = async (
         throw amendResult
       }
 
+      const addNoteResult = await insertNotes(entityManager, [
+        {
+          noteText: `${user.username}: Case reallocated to new force owner: ${newForceCode}00`,
+          errorId: courtCaseId,
+          userId: "System"
+        }
+      ])
+
+      if (isError(addNoteResult)) {
+        throw addNoteResult
+      }
+
+      // TODO: Add audit log messages: Old bichard pushes messages to GENERAL_EVENT_QUEUE which goes into audit log
       const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, user)
 
       if (isError(unlockResult)) {
