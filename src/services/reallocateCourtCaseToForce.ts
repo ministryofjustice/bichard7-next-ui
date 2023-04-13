@@ -14,6 +14,7 @@ const reallocateCourtCaseToForce = async (
   user: User,
   forceCode: string
 ): Promise<UpdateResult | Error> => {
+  // TODO: Add audit log messages: Old bichard pushes messages to GENERAL_EVENT_QUEUE which goes into audit log
   const updateResult = await dataSource.transaction(
     "SERIALIZABLE",
     async (entityManager): Promise<UpdateResult | Error> => {
@@ -45,7 +46,6 @@ const reallocateCourtCaseToForce = async (
         throw addNoteResult
       }
 
-      // TODO: Add audit log messages: Old bichard pushes messages to GENERAL_EVENT_QUEUE which goes into audit log
       const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, user)
 
       if (isError(unlockResult)) {

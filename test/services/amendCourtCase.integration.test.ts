@@ -2,6 +2,7 @@ import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/p
 import fs from "fs"
 import amendCourtCase from "services/amendCourtCase"
 import CourtCase from "services/entities/CourtCase"
+import Note from "services/entities/Note"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import updateCourtCaseAho from "services/updateCourtCaseAho"
@@ -27,6 +28,7 @@ describe("amend court case", () => {
   })
 
   beforeEach(async () => {
+    await deleteFromEntity(Note)
     await deleteFromEntity(CourtCase)
     jest.resetAllMocks()
     jest.clearAllMocks()
@@ -92,6 +94,83 @@ describe("amend court case", () => {
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
     expect(retrievedCase?.hearingOutcome).toMatchSnapshot()
+  })
+
+  it("should generates system notes for each each amendments", async () => {
+    const inputCourtCase = await getDummyCourtCase({
+      errorLockedByUsername: null,
+      triggerLockedByUsername: null,
+      errorCount: 1,
+      errorStatus: "Unresolved",
+      triggerCount: 1,
+      phase: 1
+    })
+
+    await insertCourtCases(inputCourtCase)
+
+    const result = await amendCourtCase(
+      dataSource,
+      {
+        forceOwner: "03",
+        courtOffenceSequenceNumber: [
+          {
+            offenceIndex: 0,
+            updatedValue: 3333
+          },
+          {
+            offenceIndex: 1,
+            updatedValue: 1111
+          }
+        ]
+      },
+      inputCourtCase.errorId,
+      { username: userName } as User
+    )
+
+    expect(result).not.toBeInstanceOf(Error)
+
+    const retrievedCase = await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: inputCourtCase.errorId } })
+
+    expect(retrievedCase?.notes).toHaveLength(3)
+    expect(retrievedCase?.notes[0].userId).toEqual("System")
+    expect(retrievedCase?.notes[0].noteText).toEqual(
+      `${userName}: Portal Action: Update Applied. Element: forceOwner. New Value: 03`
+    )
+    expect(retrievedCase?.notes[1].userId).toEqual("System")
+    expect(retrievedCase?.notes[1].noteText).toEqual(
+      `${userName}: Portal Action: Update Applied. Element: courtOffenceSequenceNumber. New Value: 3333`
+    )
+    expect(retrievedCase?.notes[2].userId).toEqual("System")
+    expect(retrievedCase?.notes[2].noteText).toEqual(
+      `${userName}: Portal Action: Update Applied. Element: courtOffenceSequenceNumber. New Value: 1111`
+    )
+  })
+
+  it("should not generate system note when its a no update resubmit amendment", async () => {
+    const inputCourtCase = await getDummyCourtCase({
+      errorLockedByUsername: null,
+      triggerLockedByUsername: null,
+      errorCount: 1,
+      errorStatus: "Unresolved",
+      triggerCount: 1,
+      phase: 1
+    })
+
+    await insertCourtCases(inputCourtCase)
+
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
+      username: userName
+    } as User)
+
+    expect(result).not.toBeInstanceOf(Error)
+
+    const retrievedCase = await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: inputCourtCase.errorId } })
+
+    expect(retrievedCase?.notes).toHaveLength(0)
   })
 
   it("should not update the db if the case is locked by somebody else", async () => {

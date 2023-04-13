@@ -11,6 +11,8 @@ import applyAmendmentsToAho from "./applyAmendmentsToAho"
 
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import type User from "../entities/User"
+import insertNotes from "services/insertNotes"
+import getSystemNotes from "utils/amendments/getSystemNotes"
 
 const amendCourtCase = async (
   dataSource: DataSource | EntityManager,
@@ -63,8 +65,15 @@ const amendCourtCase = async (
         generatedXml,
         !amendments.noUpdatesResubmit
       )
+
       if (isError(updateResult)) {
         return updateResult
+      }
+
+      const addNoteResult = await insertNotes(dataSource, getSystemNotes(amendments, userDetails, courtCaseId))
+
+      if (isError(addNoteResult)) {
+        return addNoteResult
       }
     }
   } else {

@@ -7,7 +7,7 @@ import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import { isError } from "../../src/types/Result"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 
 describe("reallocate court case to another force", () => {
@@ -18,8 +18,8 @@ describe("reallocate court case to another force", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(Note)
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(Note)
+    await deleteFromEntity(CourtCase)
   })
 
   afterEach(() => {
@@ -32,9 +32,6 @@ describe("reallocate court case to another force", () => {
   })
 
   describe("when user can see the case", () => {
-    // TODO:
-    // - Add system notes:
-    //    - Portal Action: Update Applied. Element: FORCEOWNER. New Value: 01
     it("should reallocate the case to a new force, generate notes and unlock the case", async () => {
       const courtCaseId = 1
       const courtCase = {
@@ -74,8 +71,14 @@ describe("reallocate court case to another force", () => {
       expect(parsedCase.ForceOwner?.SecondLevelCode).toEqual(newForceCode)
       expect(parsedCase.ForceOwner?.ThirdLevelCode).toEqual("YZ")
       expect(parsedCase.ManualForceOwner).toBe(true)
-      expect(actualCourtCase.notes).toHaveLength(1)
+      expect(actualCourtCase.notes).toHaveLength(2)
+
+      expect(actualCourtCase.notes[0].userId).toEqual("System")
       expect(actualCourtCase.notes[0].noteText).toEqual(
+        `${userName}: Portal Action: Update Applied. Element: forceOwner. New Value: ${newForceCode}`
+      )
+      expect(actualCourtCase.notes[1].userId).toEqual("System")
+      expect(actualCourtCase.notes[1].noteText).toEqual(
         `${userName}: Case reallocated to new force owner: ${expectedForceOwner}`
       )
     })
