@@ -28,7 +28,28 @@ export const HearingDetailsTable = ({ hearing }: HearingDetailsTableProps) => {
 
   const getLanguage = (language: string) => (language === "D" ? "D (Don't know)" : language)
 
-  const getCourtType = (courtType: string | null | undefined) => (courtType === "MCA" ? "MCA (MC adult)" : courtType)
+  const getCourtType = (courtType: string | null | undefined) => {
+    switch (courtType) {
+      case "CC":
+        return `${courtType} (Crown Court)`
+      case "COA":
+        return `${courtType} (Court of Appeal)`
+      case "HC":
+        return `${courtType} (High Court)`
+      case "MCA":
+        return `${courtType} (MC adult)`
+      case "MCE":
+        return `${courtType} (MC enforcement)`
+      case "MCF":
+        return `${courtType} (MC family)`
+      case "MCL":
+        return `${courtType} (MC licensing)`
+      case "MCY":
+        return `${courtType} (MC youth)`
+      default:
+        return courtType
+    }
+  }
 
   return (
     <Table>
