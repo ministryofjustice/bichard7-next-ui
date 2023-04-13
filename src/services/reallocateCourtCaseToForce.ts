@@ -1,13 +1,11 @@
 import { DataSource, EntityManager, UpdateQueryBuilder, UpdateResult } from "typeorm/"
 import { isError } from "types/Result"
+import { DEFAULT_STATION_CODE } from "utils/amendments/amendForceOwner/defaultStationCode"
 import amendCourtCase from "./amendCourtCase"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 import unlockCourtCase from "./unlockCourtCase"
-
-// eslint-disable-next-line @typescript-eslint/naming-convention
-const DEFAULT_STATION_CODE = "YZ"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,
