@@ -159,7 +159,7 @@ describe("Case details", () => {
       cy.contains("MCA (MC adult)")
       cy.contains("2576")
       cy.contains("London Croydon")
-      cy.contains("D (Don't know)")
+      cy.contains("Don't know (D)")
     })
 
     it("should return 404 for a case that this user can not see", () => {

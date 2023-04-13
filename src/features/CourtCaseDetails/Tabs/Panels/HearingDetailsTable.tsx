@@ -26,7 +26,18 @@ export const HearingDetailsTable = ({ hearing }: HearingDetailsTableProps) => {
       ? format(dateOfHearing, "dd/MM/yyyy").toString()
       : format(new Date(dateOfHearing), "dd/MM/yyyy").toString() ?? ""
 
-  const getLanguage = (language: string) => (language === "D" ? "D (Don't know)" : language)
+  const getLanguage = (language: string) => {
+    switch (language) {
+      case "E":
+        return `English(${language})`
+      case "W":
+        return `Welsh (${language})`
+      case "D":
+        return `Don't know (${language})`
+      default:
+        return language
+    }
+  }
 
   const getCourtType = (courtType: string | null | undefined) => {
     switch (courtType) {
