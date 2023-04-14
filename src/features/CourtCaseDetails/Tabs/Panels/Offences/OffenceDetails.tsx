@@ -2,6 +2,7 @@ import { Offence } from "@moj-bichard7-developers/bichard7-next-core/build/src/t
 import { Heading, Table } from "govuk-react"
 import getOffenceCode from "utils/getOffenceCode"
 import { TableRow } from "../TableRow"
+import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 
 interface OffenceDetailsProps {
   offence: Offence
@@ -9,7 +10,16 @@ interface OffenceDetailsProps {
 }
 
 export const OffenceDetails = ({ offence, offencesCount }: OffenceDetailsProps) => {
-  console.log("offence", offence)
+  const getOffenceCategory = (offenceCode: string | undefined) => {
+    let offenceCategoryWithDescription = offenceCode
+    offenceCategory.forEach((category) => {
+      if (category.cjsCode === offenceCode) {
+        offenceCategoryWithDescription = `${offenceCode} (${category.description.toLowerCase()})`
+      }
+    })
+    return offenceCategoryWithDescription
+  }
+
   return (
     <>
       <Heading as="h4" size="MEDIUM">
@@ -18,12 +28,12 @@ export const OffenceDetails = ({ offence, offencesCount }: OffenceDetailsProps) 
       <Table>
         <TableRow header="Offence code" value={getOffenceCode(offence)} />
         <TableRow header="Title" value={offence.OffenceTitle} />
-        <TableRow header="Sequence number" value={"A"} />
-        <TableRow header="Category" value={offence.OffenceCategory} />
-        <TableRow header="Arrest date" value={offence.ArrestDate?.toString()} />
+        <TableRow header="Sequence number" value={"TO BE ADDED"} />
+        <TableRow header="Category" value={getOffenceCategory(offence.OffenceCategory)} />
+        <TableRow header="Arrest date" value={offence.ChargeDate?.toString()} />
         <TableRow header="Charge date" value={offence.ChargeDate?.toString()} />
         <TableRow header="Date code" value={offence.ActualOffenceDateCode} />
-        <TableRow header="Start date" value={offence.ActualOffenceStartDate?.StartDate.toString()} />
+        <TableRow header="Start date" value={offence.ActualOffenceStartDate?.StartDate?.toString()} />
         <TableRow header="Location" value={offence.LocationOfOffence} />
         <TableRow header="Wording" value={offence.ActualOffenceWording} />
         <TableRow header="Record on PNC" value={"A"} />
