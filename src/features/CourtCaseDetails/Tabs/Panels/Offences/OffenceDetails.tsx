@@ -31,6 +31,10 @@ export const OffenceDetails = ({ offence, offencesCount }: OffenceDetailsProps) 
     return CommitedOnBailWithDescription
   }
 
+  const getYesOrNo = (code: boolean | undefined) => {
+    return code === true ? "Y" : code === false ? "N" : undefined
+  }
+
   return (
     <>
       <Heading as="h4" size="MEDIUM">
@@ -47,8 +51,8 @@ export const OffenceDetails = ({ offence, offencesCount }: OffenceDetailsProps) 
         <TableRow header="Start date" value={offence.ActualOffenceStartDate?.StartDate?.toString()} />
         <TableRow header="Location" value={offence.LocationOfOffence} />
         <TableRow header="Wording" value={offence.ActualOffenceWording} />
-        <TableRow header="Record on PNC" value={"A"} />
-        <TableRow header="Notifiable to Home Office" value={"A"} />
+        <TableRow header="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
+        <TableRow header="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
         <TableRow header="Home Office classification" value={offence.HomeOfficeClassification} />
         <TableRow header="Conviction date" value={offence.ConvictionDate?.toString()} />
         <TableRow header="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
