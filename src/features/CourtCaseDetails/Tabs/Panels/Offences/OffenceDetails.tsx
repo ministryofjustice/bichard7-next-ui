@@ -3,6 +3,7 @@ import { Heading, Table } from "govuk-react"
 import getOffenceCode from "utils/getOffenceCode"
 import { TableRow } from "../TableRow"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
+import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
 
 interface OffenceDetailsProps {
   offence: Offence
@@ -18,6 +19,16 @@ export const OffenceDetails = ({ offence, offencesCount }: OffenceDetailsProps) 
       }
     })
     return offenceCategoryWithDescription
+  }
+
+  const getCommittedOnBail = (bailCode: string) => {
+    let CommitedOnBailWithDescription = bailCode
+    yesNo.forEach((answer) => {
+      if (answer.cjsCode === bailCode) {
+        CommitedOnBailWithDescription = `${bailCode} (${answer.description})`
+      }
+    })
+    return CommitedOnBailWithDescription
   }
 
   return (
@@ -42,7 +53,7 @@ export const OffenceDetails = ({ offence, offencesCount }: OffenceDetailsProps) 
         <TableRow header="Conviction date" value={offence.ConvictionDate?.toString()} />
         <TableRow header="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
         <TableRow header="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
-        <TableRow header="Committed on bail" value={offence.CommittedOnBail} />
+        <TableRow header="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
       </Table>
     </>
   )
