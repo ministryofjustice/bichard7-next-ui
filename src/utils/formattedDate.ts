@@ -13,3 +13,6 @@ export const formatStringDateAsDisplayedDate = (dateString?: string | null): str
   const dateStringAsDate = !!dateString && parse(dateString, formInputDateFormat, new Date())
   return dateStringAsDate && isValid(dateStringAsDate) ? formatDisplayedDate(dateStringAsDate) : ""
 }
+
+export const getDisplayDateFromDateOrString = (date: Date | string) =>
+  date instanceof Date ? formatDisplayedDate(date).toString() : formatDisplayedDate(new Date(date)).toString() ?? ""

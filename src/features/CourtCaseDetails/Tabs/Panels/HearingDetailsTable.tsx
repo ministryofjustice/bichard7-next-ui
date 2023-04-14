@@ -1,7 +1,8 @@
 import { Hearing } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
-import { format } from "date-fns"
+
 import { Table } from "govuk-react"
 import courtTypes from "@moj-bichard7-developers/bichard7-next-data/dist/data/court-type.json"
+import { getDisplayDateFromDateOrString } from "utils/formattedDate"
 
 interface HearingDetailsTableProps {
   hearing: Hearing
@@ -22,11 +23,6 @@ const HearingDetailsTableRow = ({ header, value }: HearingDetailsTableRowProps) 
 )
 
 export const HearingDetailsTable = ({ hearing }: HearingDetailsTableProps) => {
-  const getFormatedDateOfHearing = (dateOfHearing: Date | string) =>
-    dateOfHearing instanceof Date
-      ? format(dateOfHearing, "dd/MM/yyyy").toString()
-      : format(new Date(dateOfHearing), "dd/MM/yyyy").toString() ?? ""
-
   const getLanguage = (language: string) => {
     switch (language) {
       case "E":
@@ -53,7 +49,7 @@ export const HearingDetailsTable = ({ hearing }: HearingDetailsTableProps) => {
   return (
     <Table>
       <HearingDetailsTableRow header="Court location" value={hearing.CourtHearingLocation.OrganisationUnitCode} />
-      <HearingDetailsTableRow header="Date of hearing" value={getFormatedDateOfHearing(hearing.DateOfHearing)} />
+      <HearingDetailsTableRow header="Date of hearing" value={getDisplayDateFromDateOrString(hearing.DateOfHearing)} />
       <HearingDetailsTableRow header="Time of hearing" value={hearing.TimeOfHearing} />
       <HearingDetailsTableRow header="Defendant present" value={hearing.DefendantPresentAtHearing} />
       <HearingDetailsTableRow header="Source reference document name" value={hearing.SourceReference.DocumentName} />
