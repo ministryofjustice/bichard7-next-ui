@@ -2,13 +2,16 @@ import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/p
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import Note from "services/entities/Note"
 import User from "services/entities/User"
+import insertNotes from "services/insertNotes"
 import reallocateCourtCaseToForce from "services/reallocateCourtCaseToForce"
-import { DataSource, UpdateResult } from "typeorm"
+import { DataSource, UpdateQueryBuilder, UpdateResult } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
+
+jest.mock("services/insertNotes")
 
 describe("reallocate court case to another force", () => {
   const courtCaseId = 1
@@ -22,11 +25,9 @@ describe("reallocate court case to another force", () => {
   beforeEach(async () => {
     await deleteFromEntity(Note)
     await deleteFromEntity(CourtCase)
-  })
-
-  afterEach(() => {
     jest.resetAllMocks()
     jest.clearAllMocks()
+    ;(insertNotes as jest.Mock).mockImplementation(jest.requireActual("services/insertNotes").default)
   })
 
   afterAll(async () => {
@@ -152,6 +153,78 @@ describe("reallocate court case to another force", () => {
       expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(`${oldForceCode}    `)
       expect(actualCourtCase.errorLockedByUsername).toStrictEqual("Someone Else")
       expect(actualCourtCase.triggerLockedByUsername).toStrictEqual("Someone Else")
+      expect(actualCourtCase.updatedHearingOutcome).toBeNull()
+      expect(actualCourtCase.notes).toHaveLength(0)
+    })
+  })
+
+  describe("when there is an unexpected error", () => {
+    it("should return the error if fails to create notes", async () => {
+      const courtCase = {
+        orgForPoliceFilter: oldForceCode,
+        errorId: courtCaseId
+      }
+
+      await insertCourtCasesWithFields([courtCase])
+
+      const user = {
+        username: "Dummy User",
+        visibleForces: [oldForceCode],
+        canLockExceptions: true,
+        canLockTriggers: true
+      } as User
+
+      ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
+
+      let result: UpdateResult | Error
+      try {
+        result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06")
+      } catch (error) {
+        result = error as Error
+      }
+      expect(result).toEqual(Error(`Error while creating notes`))
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(`${oldForceCode}    `)
+      expect(actualCourtCase.errorLockedByUsername).toBeNull()
+      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
+      expect(actualCourtCase.updatedHearingOutcome).toBeNull()
+      expect(actualCourtCase.notes).toHaveLength(0)
+    })
+
+    it("should return the error when fails to update orgForPoliceFilter", async () => {
+      const courtCase = {
+        orgForPoliceFilter: oldForceCode,
+        errorId: courtCaseId
+      }
+
+      await insertCourtCasesWithFields([courtCase])
+
+      const user = {
+        username: "Dummy User",
+        visibleForces: [oldForceCode],
+        canLockExceptions: true,
+        canLockTriggers: true
+      } as User
+
+      jest
+        .spyOn(UpdateQueryBuilder.prototype, "execute")
+        .mockRejectedValue(Error("Failed to update record with some error"))
+
+      let result: UpdateResult | Error
+      try {
+        result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06")
+      } catch (error) {
+        result = error as Error
+      }
+      expect(result).toEqual(Error(`Failed to update record with some error`))
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(`${oldForceCode}    `)
+      expect(actualCourtCase.errorLockedByUsername).toBeNull()
+      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
       expect(actualCourtCase.updatedHearingOutcome).toBeNull()
       expect(actualCourtCase.notes).toHaveLength(0)
     })
