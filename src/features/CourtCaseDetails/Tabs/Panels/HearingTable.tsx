@@ -32,10 +32,16 @@ export const HearingTable = ({ hearing }: HearingTableProps) => {
     return courtTypeWithDescription
   }
 
+  const getFormatedDateOfHearing = (dateOfHearing: Date | string) => {
+    return dateOfHearing instanceof Date
+      ? formatDisplayedDate(dateOfHearing).toString()
+      : formatDisplayedDate(new Date(dateOfHearing)).toString() ?? ""
+  }
+
   return (
     <Table>
       <TableRow header="Court location" value={hearing.CourtHearingLocation.OrganisationUnitCode} />
-      <TableRow header="Date of hearing" value={formatDisplayedDate(hearing.DateOfHearing)} />
+      <TableRow header="Date of hearing" value={getFormatedDateOfHearing(hearing.DateOfHearing)} />
       <TableRow header="Time of hearing" value={hearing.TimeOfHearing} />
       <TableRow header="Defendant present" value={hearing.DefendantPresentAtHearing} />
       <TableRow header="Source reference document name" value={hearing.SourceReference.DocumentName} />
