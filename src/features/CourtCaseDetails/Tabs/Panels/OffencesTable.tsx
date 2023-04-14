@@ -1,5 +1,6 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { Table } from "govuk-react"
+import { getDisplayDateFromDateOrString } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
 
 interface OffencesTableProps {
@@ -22,7 +23,9 @@ export const OffencesTable = ({ offences }: OffencesTableProps) => {
         offences.map((offence, index) => (
           <Table.Row key={getOffenceCode(offence)}>
             <Table.Cell>{index + 1}</Table.Cell>
-            <Table.Cell>{offence.ActualOffenceStartDate.StartDate.toString()}</Table.Cell>
+            <Table.Cell>
+              {getDisplayDateFromDateOrString(offence.ActualOffenceStartDate.StartDate.toString())}
+            </Table.Cell>
             <Table.Cell>{getOffenceCode(offence)}</Table.Cell>
             <Table.Cell>{offence.OffenceTitle}</Table.Cell>
           </Table.Row>
