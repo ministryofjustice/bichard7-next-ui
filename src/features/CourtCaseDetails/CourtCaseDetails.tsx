@@ -12,8 +12,8 @@ import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
 import { useState } from "react"
 import { CourtCaseDetailsTabs, Tabs } from "./Tabs/CourtCaseDetailsTabs"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
-import { HearingDetailsTable } from "./Tabs/Panels/HearingDetailsTable"
 import { OffencesTable } from "./Tabs/Panels/OffencesTable"
+import { HearingDetailsTable } from "./Tabs/Panels/HearingDetailsTable"
 
 interface Props {
   courtCase: CourtCase
