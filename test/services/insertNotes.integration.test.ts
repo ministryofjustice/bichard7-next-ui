@@ -2,7 +2,7 @@ import MockDate from "mockdate"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import Note from "../../src/services/entities/Note"
 import insertNotes from "services/insertNotes"
@@ -35,7 +35,7 @@ describe("insertNote", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
   })
 
   afterEach(() => {

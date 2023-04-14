@@ -2,7 +2,7 @@ import { DataSource } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
 import getCourtCase from "../../src/services/getCourtCase"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 
@@ -16,7 +16,7 @@ describe("get court case", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
   })
 
   afterAll(async () => {

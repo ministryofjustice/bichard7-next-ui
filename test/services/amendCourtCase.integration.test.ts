@@ -8,7 +8,7 @@ import updateCourtCaseAho from "services/updateCourtCaseAho"
 import { DataSource } from "typeorm"
 import createForceOwner from "utils/createForceOwner"
 import getCourtCase from "../../src/services/getCourtCase"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 
 jest.mock("services/getCourtCase")
@@ -27,7 +27,7 @@ describe("amend court case", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
     jest.resetAllMocks()
     jest.clearAllMocks()
     ;(getCourtCase as jest.Mock).mockImplementation(jest.requireActual("services/getCourtCase").default)

@@ -6,7 +6,7 @@ import Trigger from "../../src/services/entities/Trigger"
 import getCourtCaseByVisibleForce from "../../src/services/getCourtCaseByVisibleForce"
 import getDataSource from "../../src/services/getDataSource"
 import resolveTrigger from "../../src/services/resolveTrigger"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 
@@ -20,7 +20,7 @@ describe("resolveTrigger", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
   })
 
   afterAll(async () => {

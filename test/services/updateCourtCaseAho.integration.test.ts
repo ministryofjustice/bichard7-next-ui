@@ -2,7 +2,7 @@ import { DataSource, UpdateResult } from "typeorm"
 import getDataSource from "../../src/services/getDataSource"
 import updateCourtCaseAho from "../../src/services/updateCourtCaseAho"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 
@@ -16,7 +16,7 @@ describe("update court case updated hearing outcome", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
   })
 
   afterAll(async () => {

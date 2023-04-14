@@ -1,7 +1,7 @@
 import { DataSource, UpdateResult } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import updateCourtCaseStatus from "services/updateCourtCaseStatus"
 import { isError } from "services/mq/types/Result"
@@ -52,7 +52,7 @@ describe("updateCourtCaseStatus", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
   })
 
   afterEach(() => {
