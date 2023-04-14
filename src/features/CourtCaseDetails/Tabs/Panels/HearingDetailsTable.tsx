@@ -1,6 +1,7 @@
 import { Hearing } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { format } from "date-fns"
 import { Table } from "govuk-react"
+import courtTypes from "@moj-bichard7-developers/bichard7-next-data/dist/data/court-type.json"
 
 interface HearingDetailsTableProps {
   hearing: Hearing
@@ -39,27 +40,14 @@ export const HearingDetailsTable = ({ hearing }: HearingDetailsTableProps) => {
     }
   }
 
-  const getCourtType = (courtType: string | null | undefined) => {
-    switch (courtType) {
-      case "CC":
-        return `${courtType} (Crown Court)`
-      case "COA":
-        return `${courtType} (Court of Appeal)`
-      case "HC":
-        return `${courtType} (High Court)`
-      case "MCA":
-        return `${courtType} (MC adult)`
-      case "MCE":
-        return `${courtType} (MC enforcement)`
-      case "MCF":
-        return `${courtType} (MC family)`
-      case "MCL":
-        return `${courtType} (MC licensing)`
-      case "MCY":
-        return `${courtType} (MC youth)`
-      default:
-        return courtType
-    }
+  const getCourtType = (courtCode: string | null | undefined) => {
+    let courtTypeWithDescription = courtCode
+    courtTypes.forEach((type) => {
+      if (type.cjsCode === courtCode) {
+        courtTypeWithDescription = `${courtCode} (${type.description})`
+      }
+    })
+    return courtTypeWithDescription
   }
 
   return (
