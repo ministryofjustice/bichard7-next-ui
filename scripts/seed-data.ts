@@ -24,12 +24,10 @@ console.log(`Seeding ${numCases} cases for force ID ${forceId}`)
 
 getDataSource().then(async (dataSource) => {
   const entitiesToClear = [CourtCase, Trigger, Note]
-  entitiesToClear.forEach((entity) => deleteFromEntity(entity))
+  await Promise.all(entitiesToClear.map((entity) => deleteFromEntity(entity)))
 
   const tablesToClear = ["team_membership", "team_supervision", "team"]
-  tablesToClear.forEach(async (table) => {
-    await deleteFromTable(table)
-  })
+  await Promise.all(tablesToClear.map((table) => deleteFromTable(table)))
 
   await Promise.all(
     new Array(numCases)
