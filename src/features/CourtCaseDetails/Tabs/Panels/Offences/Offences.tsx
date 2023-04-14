@@ -8,5 +8,5 @@ interface OffencesProps {
 
 export const Offences = ({ offences }: OffencesProps) => {
   const [detailedOffence, setDetailedOffence] = useState<Offence>()
-  return <OffencesTable offences={offences} />
+  return !!detailedOffence ? "OK" : <OffencesTable offences={offences} setDetailedOffence={setDetailedOffence} />
 }

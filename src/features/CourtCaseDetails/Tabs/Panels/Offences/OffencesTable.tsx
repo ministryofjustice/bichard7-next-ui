@@ -5,25 +5,35 @@ import getOffenceCode from "utils/getOffenceCode"
 
 interface OffencesTableProps {
   offences: Offence[]
+  setDetailedOffence: (offence: Offence) => void
 }
 
 interface HearingTableRowProps {
+  offence: Offence
   number: number
-  date: string
-  code: string
-  title: string | undefined
+  onClick: (offence: Offence) => void
 }
 
-const HearingTableRow = ({ number, date, code, title }: HearingTableRowProps) => (
+const HearingTableRow = ({ offence, onClick, number }: HearingTableRowProps) => (
   <Table.Row>
     <Table.Cell>{number}</Table.Cell>
-    <Table.Cell>{getDisplayDateFromDateOrString(date)}</Table.Cell>
-    <Table.Cell>{code}</Table.Cell>
-    <Table.Cell>{title}</Table.Cell>
+    <Table.Cell>{getDisplayDateFromDateOrString(offence.ActualOffenceStartDate.StartDate.toString())}</Table.Cell>
+    <Table.Cell>{getOffenceCode(offence)}</Table.Cell>
+    <Table.Cell>
+      <a
+        href="/"
+        onClick={(e) => {
+          e.preventDefault()
+          onClick(offence)
+        }}
+      >
+        {offence.OffenceTitle}
+      </a>
+    </Table.Cell>
   </Table.Row>
 )
 
-export const OffencesTable = ({ offences }: OffencesTableProps) => {
+export const OffencesTable = ({ offences, setDetailedOffence }: OffencesTableProps) => {
   return (
     <Table
       head={
@@ -39,10 +49,9 @@ export const OffencesTable = ({ offences }: OffencesTableProps) => {
         offences.map((offence, index) => (
           <HearingTableRow
             key={getOffenceCode(offence)}
+            offence={offence}
             number={index + 1}
-            date={offence.ActualOffenceStartDate.StartDate.toString()}
-            code={getOffenceCode(offence)}
-            title={offence.OffenceTitle}
+            onClick={setDetailedOffence}
           />
         ))}
     </Table>
