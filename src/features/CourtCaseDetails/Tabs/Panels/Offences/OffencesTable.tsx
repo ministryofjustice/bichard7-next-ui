@@ -1,6 +1,6 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { Table } from "govuk-react"
-import { getDisplayDateFromDateOrString } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
 
 interface OffencesTableProps {
@@ -17,7 +17,7 @@ interface HearingTableRowProps {
 const HearingTableRow = ({ offence, onClick, number }: HearingTableRowProps) => (
   <Table.Row>
     <Table.Cell>{number}</Table.Cell>
-    <Table.Cell>{getDisplayDateFromDateOrString(offence.ActualOffenceStartDate.StartDate.toString())}</Table.Cell>
+    <Table.Cell>{formatDisplayedDate(offence.ActualOffenceStartDate.StartDate)}</Table.Cell>
     <Table.Cell>{getOffenceCode(offence)}</Table.Cell>
     <Table.Cell>
       <a
