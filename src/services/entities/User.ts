@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from "typeorm"
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm"
 import type GroupName from "types/GroupName"
 import type { KeyValuePair } from "types/KeyValuePair"
 import BaseEntity from "./BaseEntity"
@@ -7,6 +7,9 @@ import featureFlagTransformer from "./transformers/featureFlagTransformer"
 
 @Entity({ name: "users" })
 export default class User extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id!: number
+
   @PrimaryColumn()
   username!: string
 
