@@ -7,6 +7,22 @@ interface OffencesTableProps {
   offences: Offence[]
 }
 
+interface HearingTableRowProps {
+  number: number
+  date: string
+  code: string
+  title: string | undefined
+}
+
+const HearingTableRow = ({ number, date, code, title }: HearingTableRowProps) => (
+  <Table.Row>
+    <Table.Cell>{number}</Table.Cell>
+    <Table.Cell>{getDisplayDateFromDateOrString(date)}</Table.Cell>
+    <Table.Cell>{code}</Table.Cell>
+    <Table.Cell>{title}</Table.Cell>
+  </Table.Row>
+)
+
 export const OffencesTable = ({ offences }: OffencesTableProps) => {
   return (
     <Table
@@ -21,14 +37,13 @@ export const OffencesTable = ({ offences }: OffencesTableProps) => {
     >
       {offences.length > 0 &&
         offences.map((offence, index) => (
-          <Table.Row key={getOffenceCode(offence)}>
-            <Table.Cell>{index + 1}</Table.Cell>
-            <Table.Cell>
-              {getDisplayDateFromDateOrString(offence.ActualOffenceStartDate.StartDate.toString())}
-            </Table.Cell>
-            <Table.Cell>{getOffenceCode(offence)}</Table.Cell>
-            <Table.Cell>{offence.OffenceTitle}</Table.Cell>
-          </Table.Row>
+          <HearingTableRow
+            key={getOffenceCode(offence)}
+            number={index + 1}
+            date={offence.ActualOffenceStartDate.StartDate.toString()}
+            code={getOffenceCode(offence)}
+            title={offence.OffenceTitle}
+          />
         ))}
     </Table>
   )
