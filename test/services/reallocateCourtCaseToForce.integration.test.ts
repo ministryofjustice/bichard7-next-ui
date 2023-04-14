@@ -3,7 +3,7 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import Note from "services/entities/Note"
 import User from "services/entities/User"
 import reallocateCourtCaseToForce from "services/reallocateCourtCaseToForce"
-import { DataSource } from "typeorm"
+import { DataSource, UpdateResult } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import { isError } from "../../src/types/Result"
@@ -11,6 +11,8 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 
 describe("reallocate court case to another force", () => {
+  const courtCaseId = 1
+  const oldForceCode = "01"
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -33,9 +35,8 @@ describe("reallocate court case to another force", () => {
 
   describe("when user can see the case", () => {
     it("should reallocate the case to a new force, generate notes and unlock the case", async () => {
-      const courtCaseId = 1
       const courtCase = {
-        orgForPoliceFilter: "01",
+        orgForPoliceFilter: oldForceCode,
         errorId: courtCaseId
       }
 
@@ -46,7 +47,7 @@ describe("reallocate court case to another force", () => {
 
       const user = {
         username: userName,
-        visibleForces: ["01"],
+        visibleForces: [oldForceCode],
         canLockExceptions: true,
         canLockTriggers: true
       } as User
@@ -84,9 +85,75 @@ describe("reallocate court case to another force", () => {
     })
   })
 
-  // TODO:
-  // cannot reallocate a case that is locked by another user
-  // cannot reallocate a case that is not visible for the user
-  // when there is an error
-  // should return the error when failed to reallocate court case
+  describe("when the case is not visible to the user", () => {
+    it("should return an error and not perform any of reallocation steps", async () => {
+      const anotherOrgCode = "02XX  "
+      const courtCase = {
+        orgForPoliceFilter: anotherOrgCode,
+        errorId: courtCaseId
+      }
+
+      await insertCourtCasesWithFields([courtCase])
+
+      const user = {
+        username: "Dummy User",
+        visibleForces: [oldForceCode],
+        canLockExceptions: true,
+        canLockTriggers: true
+      } as User
+
+      let result: UpdateResult | Error
+      try {
+        result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06")
+      } catch (error) {
+        result = error as Error
+      }
+      expect(result).toEqual(Error(`Failed to get court case`))
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(anotherOrgCode)
+      expect(actualCourtCase.errorLockedByUsername).toBeNull()
+      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
+      expect(actualCourtCase.updatedHearingOutcome).toBeNull()
+      expect(actualCourtCase.notes).toHaveLength(0)
+    })
+  })
+
+  describe("when the case is locked by another user", () => {
+    it("should return an error and not perform any of reallocation steps", async () => {
+      const anotherUser = "Someone Else"
+      const courtCase = {
+        orgForPoliceFilter: oldForceCode,
+        errorId: courtCaseId,
+        errorLockedByUsername: anotherUser,
+        triggerLockedByUsername: anotherUser
+      }
+
+      await insertCourtCasesWithFields([courtCase])
+
+      const user = {
+        username: "Dummy User",
+        visibleForces: [oldForceCode],
+        canLockExceptions: true,
+        canLockTriggers: true
+      } as User
+
+      let result: UpdateResult | Error
+      try {
+        result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06")
+      } catch (error) {
+        result = error as Error
+      }
+      expect(result).toEqual(Error(`Court case is locked by another user`))
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(`${oldForceCode}    `)
+      expect(actualCourtCase.errorLockedByUsername).toStrictEqual("Someone Else")
+      expect(actualCourtCase.triggerLockedByUsername).toStrictEqual("Someone Else")
+      expect(actualCourtCase.updatedHearingOutcome).toBeNull()
+      expect(actualCourtCase.notes).toHaveLength(0)
+    })
+  })
 })

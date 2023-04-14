@@ -14,14 +14,15 @@ const reallocateCourtCaseToForce = async (
   user: User,
   forceCode: string
 ): Promise<UpdateResult | Error> => {
-  // TODO: Add audit log messages: Old bichard pushes messages to GENERAL_EVENT_QUEUE which goes into audit log
+  // TODO:
+  // - Add audit log messages: Old bichard pushes messages to GENERAL_EVENT_QUEUE which goes into audit log
+  // - Generate TRPR0028 if necessary
   const updateResult = await dataSource.transaction(
     "SERIALIZABLE",
     async (entityManager): Promise<UpdateResult | Error> => {
       const { visibleForces } = user
 
       const courtCaseRepository = entityManager.getRepository(CourtCase)
-
       let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
       const newForceCode = `${forceCode}${DEFAULT_STATION_CODE}`
       query.set({ orgForPoliceFilter: newForceCode })
