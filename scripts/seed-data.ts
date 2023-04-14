@@ -4,6 +4,7 @@ import Trigger from "../src/services/entities/Trigger"
 import Note from "../src/services/entities/Trigger"
 import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
+import deleteFromEntity from "../test/utils/deleteFromEntity"
 import deleteFromTable from "../test/utils/deleteFromTable"
 
 if (process.env.DEPLOY_NAME !== "e2e-test") {
@@ -22,9 +23,13 @@ const numCases = Math.round(Math.random() * numCasesRange) + minCases
 console.log(`Seeding ${numCases} cases for force ID ${forceId}`)
 
 getDataSource().then(async (dataSource) => {
-  await deleteFromTable(CourtCase)
-  await deleteFromTable(Trigger)
-  await deleteFromTable(Note)
+  const entitiesToClear = [CourtCase, Trigger, Note]
+  entitiesToClear.forEach((entity) => deleteFromEntity(entity))
+
+  const tablesToClear = ["team_membership", "team_supervision", "team"]
+  tablesToClear.forEach(async (table) => {
+    await deleteFromTable(table)
+  })
 
   await Promise.all(
     new Array(numCases)

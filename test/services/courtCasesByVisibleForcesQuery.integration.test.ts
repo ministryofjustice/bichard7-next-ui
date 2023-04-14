@@ -2,7 +2,7 @@ import CourtCase from "services/entities/CourtCase"
 import getDataSource from "services/getDataSource"
 import { DataSource, Repository, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
 import { isError } from "types/Result"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import courtCasesByVisibleForcesQuery from "../../src/services/queries/courtCasesByVisibleForcesQuery"
 
@@ -18,7 +18,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
     repository = dataSource.getRepository(CourtCase)
     query = repository.createQueryBuilder("courtCase")
   })

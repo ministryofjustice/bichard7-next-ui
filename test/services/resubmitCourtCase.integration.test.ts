@@ -8,7 +8,7 @@ import sendToQueue from "services/mq/sendToQueue"
 import { resubmitCourtCase } from "services/resubmitCourtCase"
 import { DataSource } from "typeorm"
 import offenceSequenceException from "../test-data/HO100302_1.json"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 
 jest.mock("services/mq/sendToQueue")
@@ -25,7 +25,7 @@ describe("resubmit court case", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
     jest.resetAllMocks()
     jest.clearAllMocks()
   })
