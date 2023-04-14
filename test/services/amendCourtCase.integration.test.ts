@@ -21,6 +21,11 @@ jest.setTimeout(60 * 60 * 1000)
 
 describe("amend court case", () => {
   const userName = "Bichard01"
+  const orgCode = "36FPA1"
+  const user = {
+    username: userName,
+    visibleForces: [orgCode]
+  } as User
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -51,14 +56,15 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
     expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -77,14 +83,15 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
     expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -103,7 +110,8 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
@@ -124,7 +132,7 @@ describe("amend court case", () => {
         ]
       },
       inputCourtCase.errorId,
-      { username: userName } as User
+      user
     )
 
     expect(result).not.toBeInstanceOf(Error)
@@ -155,14 +163,13 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
-      username: userName
-    } as User)
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, user)
 
     expect(result).not.toBeInstanceOf(Error)
 
@@ -180,14 +187,15 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
     expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -209,12 +217,13 @@ describe("amend court case", () => {
       errorStatus: "Unresolved",
       triggerCount: 1,
       phase: 1,
-      hearingOutcome: inputXml
+      hearingOutcome: inputXml,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
 
     expect(createForceOwner).toHaveBeenCalledTimes(1)
     expect(updateCourtCaseAho).toHaveBeenCalledTimes(1)
@@ -230,24 +239,44 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
-    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
-      username: userName
-    } as User)
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, user)
 
     expect(result).toEqual(Error(`Failed to get court case`))
   })
 
+  it("return an error when the case is not visible to the user", async () => {
+    const anotherOrgCode = "012"
+    const inputCourtCase = await getDummyCourtCase({
+      errorLockedByUsername: null,
+      triggerLockedByUsername: null,
+      errorCount: 1,
+      errorStatus: "Unresolved",
+      triggerCount: 1,
+      phase: 1,
+      orgForPoliceFilter: anotherOrgCode
+    })
+
+    await insertCourtCases(inputCourtCase)
+
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
+
+    expect(result).toEqual(Error(`Failed to get court case`))
+
+    const retrievedCase = await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: inputCourtCase.errorId } })
+
+    expect(retrievedCase?.hearingOutcome).toEqual(inputCourtCase.hearingOutcome)
+  })
+
   it("should return an error if produce an error getting the court case", async () => {
     ;(getCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Failed to get court case`))
-    const result = await amendCourtCase(
-      dataSource,
-      { noUpdatesResubmit: true },
-      "random" as unknown as number,
-      { username: userName } as User
-    )
+    const dummyCourtCaseId = 999
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, dummyCourtCaseId, user)
     expect(result).toEqual(Error(`Failed to get court case`))
   })
 
@@ -260,14 +289,13 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
-      username: userName
-    } as User)
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, user)
     expect(result).toEqual(Error(`Failed to parse aho`))
   })
 
@@ -280,12 +308,13 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
 
     expect(result).toEqual(Error("Failed to update the database"))
   })
@@ -302,12 +331,13 @@ describe("amend court case", () => {
       errorStatus: "Unresolved",
       triggerCount: 1,
       phase: 1,
-      hearingOutcome: inputXml
+      hearingOutcome: inputXml,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
 
     expect(createForceOwner).toHaveBeenCalledTimes(1)
     expect(result).toEqual(Error("Failed to create organistaion unit codes"))

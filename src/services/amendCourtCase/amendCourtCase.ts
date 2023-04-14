@@ -6,13 +6,13 @@ import { DataSource, EntityManager } from "typeorm"
 import { Amendments } from "types/Amendments"
 import { isError } from "types/Result"
 import createForceOwner from "utils/createForceOwner"
-import getCourtCase from "../../services/getCourtCase"
 import applyAmendmentsToAho from "./applyAmendmentsToAho"
 
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import type User from "../entities/User"
 import insertNotes from "services/insertNotes"
 import getSystemNotes from "utils/amendments/getSystemNotes"
+import getCourtCaseByVisibleForce from "services/getCourtCaseByVisibleForce"
 
 const amendCourtCase = async (
   dataSource: DataSource | EntityManager,
@@ -22,7 +22,7 @@ const amendCourtCase = async (
 ): Promise<AnnotatedHearingOutcome | Error> => {
   // database call to retrieve the current court case
   // Check current court case exception and triggers are locked by current user
-  const courtCaseRow = await getCourtCase(dataSource, courtCaseId)
+  const courtCaseRow = await getCourtCaseByVisibleForce(dataSource, courtCaseId, userDetails.visibleForces)
 
   if (isError(courtCaseRow)) {
     return courtCaseRow
