@@ -7,7 +7,6 @@ import { Amendments } from "types/Amendments"
 import { isError } from "types/Result"
 import createForceOwner from "utils/createForceOwner"
 import applyAmendmentsToAho from "./applyAmendmentsToAho"
-
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import type User from "../entities/User"
 import insertNotes from "services/insertNotes"
@@ -20,8 +19,6 @@ const amendCourtCase = async (
   courtCaseId: number,
   userDetails: User
 ): Promise<AnnotatedHearingOutcome | Error> => {
-  // database call to retrieve the current court case
-  // Check current court case exception and triggers are locked by current user
   const courtCaseRow = await getCourtCaseByVisibleForce(dataSource, courtCaseId, userDetails.visibleForces)
 
   if (isError(courtCaseRow)) {
@@ -30,6 +27,13 @@ const amendCourtCase = async (
 
   if (!courtCaseRow) {
     return new Error("Failed to get court case")
+  }
+
+  if (
+    (courtCaseRow.errorLockedByUsername && courtCaseRow.errorLockedByUsername != userDetails.username) ||
+    (courtCaseRow.triggerLockedByUsername && courtCaseRow.triggerLockedByUsername != userDetails.username)
+  ) {
+    return new Error("Court case is locked by another user")
   }
 
   // we need to parse the annotated message due to being xml in db

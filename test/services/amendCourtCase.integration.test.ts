@@ -10,7 +10,7 @@ import { DataSource } from "typeorm"
 import createForceOwner from "utils/createForceOwner"
 import getCourtCase from "../../src/services/getCourtCase"
 import deleteFromEntity from "../utils/deleteFromEntity"
-import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
+import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
 
 jest.mock("services/getCourtCase")
 jest.mock("services/updateCourtCaseAho")
@@ -181,30 +181,50 @@ describe("amend court case", () => {
   })
 
   it("should not update the db if the case is locked by somebody else", async () => {
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: "Bichard02",
-      triggerLockedByUsername: null,
+    const triggerLockedBySomeoneElse = {
+      errorLockedByUsername: null,
+      triggerLockedByUsername: "Bichard02",
       errorCount: 1,
-      errorStatus: "Unresolved",
       triggerCount: 1,
       phase: 1,
-      orgForPoliceFilter: orgCode
-    })
+      orgForPoliceFilter: orgCode,
+      errorId: 0,
+      hearingOutcome: "Dummy"
+    }
 
-    await insertCourtCases(inputCourtCase)
+    const errorLockedBySomeoneElse = {
+      errorLockedByUsername: null,
+      triggerLockedByUsername: "Bichard02",
+      errorCount: 1,
+      triggerCount: 1,
+      phase: 1,
+      orgForPoliceFilter: orgCode,
+      errorId: 1,
+      hearingOutcome: "Dummy"
+    }
 
-    expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
+    await insertCourtCasesWithFields([triggerLockedBySomeoneElse, errorLockedBySomeoneElse])
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
+    const firstResult = await amendCourtCase(dataSource, { forceOwner: "04" }, triggerLockedBySomeoneElse.errorId, user)
+    expect(firstResult).toEqual(Error(`Court case is locked by another user`))
 
-    expect(result).not.toBeInstanceOf(Error)
-    expect(result).toMatchSnapshot()
-
-    const retrievedCase = await dataSource
+    const caseWithTriggerLock = await dataSource
       .getRepository(CourtCase)
-      .findOne({ where: { errorId: inputCourtCase.errorId } })
+      .findOne({ where: { errorId: triggerLockedBySomeoneElse.errorId } })
+    expect(caseWithTriggerLock?.hearingOutcome).toEqual(triggerLockedBySomeoneElse.hearingOutcome)
 
-    expect(retrievedCase?.hearingOutcome).toEqual(inputCourtCase.hearingOutcome)
+    const secondResult = await amendCourtCase(
+      dataSource,
+      { forceOwner: "04" },
+      triggerLockedBySomeoneElse.errorId,
+      user
+    )
+    expect(secondResult).toEqual(Error(`Court case is locked by another user`))
+
+    const caseWithErrorLock = await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: triggerLockedBySomeoneElse.errorId } })
+    expect(caseWithErrorLock?.hearingOutcome).toEqual(triggerLockedBySomeoneElse.hearingOutcome)
   })
 
   it("should create a force owner if the force owner is not present", async () => {
