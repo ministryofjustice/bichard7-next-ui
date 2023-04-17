@@ -41,7 +41,7 @@ getDataSource().then(async (dataSource) => {
       const parentId = group.parent ? groupRow[group.parent].id : null
       return dataSource.query(
         "INSERT INTO br7own.groups (id, name, friendly_name, parent_id) VALUES ($1, $2, $3, $4)",
-        [group.id, group.name, group.name, parentId]
+        [group.id, group.dbName, group.name, parentId]
       )
     })
   )

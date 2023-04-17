@@ -43,7 +43,7 @@ const groupRow: KeyValuePair<Group, GroupRow> = Object.assign(
       [groupName]: {
         name: groupName,
         id: idx,
-        dbName: `B7${groupName}_grp`,
+        dbName: `B7${groupName}`,
         parent: parenting[groupName]
       }
     }
