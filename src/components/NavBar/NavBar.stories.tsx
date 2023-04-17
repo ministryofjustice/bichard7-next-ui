@@ -10,16 +10,6 @@ export default {
 
 export const OnCaseList: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
 
-OnCaseList.parameters = {
-  design: [
-    {
-      name: "Design",
-      type: "figma",
-      url: "https://www.figma.com/file/gy3HppiITvQdHAOD2rpO42/05_-B7_22-Completed-initial-components-(for-devs)?node-id=43%3A10"
-    }
-  ]
-}
-
 OnCaseList.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText("Help")).toBeInTheDocument()
@@ -33,16 +23,6 @@ OnCaseList.play = async ({ canvasElement }) => {
 
 export const OnHelp: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
 
-OnHelp.parameters = {
-  design: [
-    {
-      name: "Design",
-      type: "figma",
-      url: "https://www.figma.com/file/gy3HppiITvQdHAOD2rpO42/05_-B7_22-Completed-initial-components-(for-devs)?node-id=43%3A10"
-    }
-  ]
-}
-
 OnHelp.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   await expect(canvas.getByText("Help")).toBeInTheDocument()
@@ -55,16 +35,6 @@ OnHelp.play = async ({ canvasElement }) => {
 
 export const FocusNavBar: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
 
-FocusNavBar.parameters = {
-  design: [
-    {
-      name: "Design",
-      type: "figma",
-      url: "https://www.figma.com/file/gy3HppiITvQdHAOD2rpO42/05_-B7_22-Completed-initial-components-(for-devs)?node-id=43%3A10"
-    }
-  ]
-}
-
 FocusNavBar.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   const highlightedNavitem = canvas.getByText("Help")
@@ -72,16 +42,6 @@ FocusNavBar.play = async ({ canvasElement }) => {
 }
 
 export const OnUserManagement: ComponentStory<typeof NavBar> = () => <NavBar groups={["UserManager"]} />
-
-OnUserManagement.parameters = {
-  design: [
-    {
-      name: "Design",
-      type: "figma",
-      url: "https://www.figma.com/file/gy3HppiITvQdHAOD2rpO42/05_-B7_22-Completed-initial-components-(for-devs)?node-id=43%3A10"
-    }
-  ]
-}
 
 OnUserManagement.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
