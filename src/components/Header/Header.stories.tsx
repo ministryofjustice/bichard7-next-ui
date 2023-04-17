@@ -11,13 +11,6 @@ export default {
 export const DisplaysHeader: ComponentStory<typeof Header> = () => (
   <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={"User01"} />
 )
-DisplaysHeader.story = {
-  parameters: {
-    nextRouter: {
-      basePath: "/bichard"
-    }
-  }
-}
 
 DisplaysHeader.parameters = {
   design: [

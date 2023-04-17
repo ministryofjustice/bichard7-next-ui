@@ -9,13 +9,6 @@ export default {
 } as ComponentMeta<typeof NavBar>
 
 export const OnCaseList: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
-OnCaseList.story = {
-  parameters: {
-    nextRouter: {
-      basePath: "/bichard"
-    }
-  }
-}
 
 OnCaseList.parameters = {
   design: [
@@ -39,13 +32,6 @@ OnCaseList.play = async ({ canvasElement }) => {
 }
 
 export const OnHelp: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
-OnHelp.story = {
-  parameters: {
-    nextRouter: {
-      basePath: "/help"
-    }
-  }
-}
 
 OnHelp.parameters = {
   design: [
@@ -68,13 +54,6 @@ OnHelp.play = async ({ canvasElement }) => {
 }
 
 export const FocusNavBar: ComponentStory<typeof NavBar> = () => <NavBar groups={["GeneralHandler"]} />
-FocusNavBar.story = {
-  parameters: {
-    nextRouter: {
-      basePath: "/bichard"
-    }
-  }
-}
 
 FocusNavBar.parameters = {
   design: [
@@ -93,13 +72,6 @@ FocusNavBar.play = async ({ canvasElement }) => {
 }
 
 export const OnUserManagement: ComponentStory<typeof NavBar> = () => <NavBar groups={["UserManager"]} />
-OnUserManagement.story = {
-  parameters: {
-    nextRouter: {
-      basePath: "/users/users"
-    }
-  }
-}
 
 OnUserManagement.parameters = {
   design: [
