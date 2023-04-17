@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
-import expect from "../../../test/utils/storybook/expect"
 import Header from "./Header"
+import { expect } from "@storybook/jest"
 
 export default {
   title: "Components/Header",

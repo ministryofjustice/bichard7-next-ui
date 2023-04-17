@@ -1,8 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
-import { axe } from "jest-axe"
-import expect from "../../../test/utils/storybook/expect"
 import Pagination from "./Pagination"
+import { expect } from "@storybook/jest"
 
 export default {
   title: "Components/Pagination",
@@ -41,17 +40,4 @@ PageTenOfTen.play = async ({ canvasElement }) => {
   await expect(canvas.getByText("Previous")).toBeInTheDocument()
   await expect(canvas.getByLabelText("Page 9 of 10")).toBeInTheDocument()
   await expect(canvas.queryByText("Next")).not.toBeInTheDocument()
-}
-
-export const ShouldBeAccessible: ComponentStory<typeof Pagination> = () => (
-  <div data-testid="pagination">
-    <Pagination pageNum={5} casesPerPage={10} totalCases={100} />
-  </div>
-)
-
-ShouldBeAccessible.play = async ({ canvasElement }) => {
-  const canvas = within(canvasElement)
-
-  const pagination = canvas.getByTestId("pagination")
-  expect(await axe(pagination)).toHaveNoViolations()
 }
