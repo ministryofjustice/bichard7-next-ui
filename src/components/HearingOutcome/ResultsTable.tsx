@@ -23,16 +23,6 @@ const ResultsTable: React.FC<{
             caption="Results"
           >
             <Table.Row>
-              <Table.Cell>{"CJS Code"}</Table.Cell>
-              <Table.Cell>
-                {
-                  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-                    resultIndex
-                  ].CJSresultCode
-                }
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
               <Table.Cell>{"Offence Remand Status"}</Table.Cell>
               <Table.Cell>
                 {
@@ -51,28 +41,6 @@ const ResultsTable: React.FC<{
                   ]?.ConvictingCourt
                 }
               </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>{"Result Hearing Type"}</Table.Cell>
-              <Table.Cell>
-                {
-                  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-                    resultIndex
-                  ].ResultHearingType
-                }
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>{"Result Hearing Date"}</Table.Cell>
-              <Table.Cell>
-                {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-                  resultIndex
-                ].ResultHearingDate?.toString()}
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>{"Next Hearing Location"}</Table.Cell>
-              <Table.Cell>{"There is no Next Hearing Location in Results aho"}</Table.Cell>
             </Table.Row>
             <Table.Row>
               <Table.Cell>{"Next Court Type"}</Table.Cell>
@@ -106,36 +74,6 @@ const ResultsTable: React.FC<{
               </Table.Cell>
             </Table.Row>
             <Table.Row>
-              <Table.Cell>{"Plea"}</Table.Cell>
-              <Table.Cell>
-                {
-                  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-                    resultIndex
-                  ].PleaStatus
-                }
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>{"Verdict"}</Table.Cell>
-              <Table.Cell>
-                {
-                  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-                    resultIndex
-                  ].Verdict
-                }
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>{"Mode of Trail Reason"}</Table.Cell>
-              <Table.Cell>
-                {
-                  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-                    resultIndex
-                  ].ModeOfTrialReason
-                }
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
               <Table.Cell>{"Text"}</Table.Cell>
               <Table.Cell>
                 <EditableField
@@ -144,26 +82,6 @@ const ResultsTable: React.FC<{
                   amendFn={amendFn("resultVariableText")}
                   relevantIndexes={{ offenceIndex, resultIndex }}
                 />
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>{"PNC Disposal Type"}</Table.Cell>
-              <Table.Cell>
-                {
-                  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-                    resultIndex
-                  ].PNCDisposalType
-                }
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>{"Result Class"}</Table.Cell>
-              <Table.Cell>
-                {
-                  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-                    resultIndex
-                  ].ResultClass
-                }
               </Table.Cell>
             </Table.Row>
             <Table.Row>
