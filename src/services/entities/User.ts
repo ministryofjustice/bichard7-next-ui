@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm"
-import type GroupName from "types/GroupName"
+import type Group from "types/Group"
 import type { KeyValuePair } from "types/KeyValuePair"
 import BaseEntity from "./BaseEntity"
 import delimitedPrefixedString from "./transformers/delimitedPrefixedString"
@@ -34,7 +34,7 @@ export default class User extends BaseEntity {
   @Column({ name: "feature_flags", transformer: featureFlagTransformer, type: "jsonb" })
   featureFlags!: KeyValuePair<string, boolean>
 
-  groups: GroupName[] = []
+  groups: Group[] = []
 
   get canLockTriggers() {
     return this.groups.some(

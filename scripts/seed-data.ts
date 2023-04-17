@@ -8,7 +8,7 @@ import deleteFromEntity from "../test/utils/deleteFromEntity"
 import deleteFromTable from "../test/utils/deleteFromTable"
 import User from "../src/services/entities/User"
 import createDummyUsers from "../test/helpers/createDummyUsers"
-import { GroupIds } from "../src/types/GroupName"
+import Group, { groupRow } from "../src/types/Group"
 
 if (process.env.DEPLOY_NAME !== "e2e-test") {
   console.error("Not running in e2e environment, bailing out. Set DEPLOY_NAME='e2e-test' if you're sure.")
@@ -26,7 +26,7 @@ const numCases = Math.round(Math.random() * numCasesRange) + minCases
 console.log(`Seeding ${numCases} cases for force ID ${forceId}`)
 
 getDataSource().then(async (dataSource) => {
-  const tablesToClear = ["team_membership", "team_supervision", "team", "users_groups"]
+  const tablesToClear = ["team_membership", "team_supervision", "team", "users_groups", "groups"]
   await Promise.all(tablesToClear.map((table) => deleteFromTable(table)))
 
   const entitiesToClear = [CourtCase, Trigger, Note, User]
@@ -35,9 +35,20 @@ getDataSource().then(async (dataSource) => {
   const users = createDummyUsers()
   await dataSource.getRepository(User).insert(users)
 
+  await Promise.all(
+    Object.keys(groupRow).map((groupName) => {
+      const group = groupRow[groupName as Group]
+      const parentId = group.parent ? groupRow[group.parent].id : null
+      return dataSource.query(
+        "INSERT INTO br7own.groups (id, name, friendly_name, parent_id) VALUES ($1, $2, $3, $4)",
+        [group.id, group.name, group.name, parentId]
+      )
+    })
+  )
+
   const userGroups = users.flatMap((user) =>
     user.groups.map((group) => {
-      return [user.id, GroupIds[group]]
+      return [user.id, groupRow[group].id]
     })
   )
 

@@ -1,5 +1,5 @@
 import { DataSource, EntityManager } from "typeorm"
-import GroupName from "types/GroupName"
+import Group from "types/Group"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import User from "./entities/User"
@@ -19,7 +19,7 @@ export default async (
   }
 
   if (user && groups && groups.length > 0) {
-    user.groups = groups.map((group) => group.replace("B7", "").replace("_grp", "")).map((group) => group as GroupName)
+    user.groups = groups.map((group) => group.replace("B7", "").replace("_grp", "")).map((group) => group as Group)
   }
 
   return user

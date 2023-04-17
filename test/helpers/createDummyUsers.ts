@@ -1,5 +1,5 @@
 import User from "../../src/services/entities/User"
-import type GroupName from "../../src/types/GroupName"
+import type Group from "../../src/types/Group"
 
 type UserRow = {
   username: string
@@ -13,11 +13,11 @@ type UserRow = {
   visible_courts: string
   visible_forces: string
   excluded_triggers: string
-  groups: GroupName[]
+  groups: Group[]
 }
 
 interface Groups {
-  groups: GroupName[]
+  groups: Group[]
 }
 
 type DummyUser = Partial<User> & Groups
