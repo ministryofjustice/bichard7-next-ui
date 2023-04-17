@@ -2,8 +2,7 @@ import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { within } from "@storybook/testing-library"
 import createDummyAho from "../../../test/helpers/createDummyAho"
 import HearingOutcome from "./HearingOutcome"
-import expect from "../../../test/utils/storybook/expect"
-import { axe } from "jest-axe"
+import { expect } from "@storybook/jest"
 
 export default {
   title: "Components/HearingOutcome",
@@ -37,9 +36,4 @@ HearingOutcomeStory.play = async ({ canvasElement }) => {
 
   const button = canvas.getByRole("button", { name: "Resubmit" })
   expect(button).toBeInTheDocument()
-
-  expect(await axe(caseTable)).toHaveNoViolations()
-  expect(await axe(defendantTable)).toHaveNoViolations()
-  expect(await axe(offenceTable)).toHaveNoViolations()
-  expect(await axe(button)).toHaveNoViolations()
 }

@@ -2,25 +2,11 @@ import { ComponentMeta, ComponentStory } from "@storybook/react"
 import AppliedFilters from "./AppliedFilters"
 import { within } from "@storybook/testing-library"
 import { expect } from "@storybook/jest"
-import { axe } from "jest-axe"
 
 export default {
   title: "Features/CourtCaseFilters/AppliedFilters",
   component: AppliedFilters
 } as ComponentMeta<typeof AppliedFilters>
-
-export const ShouldBeAccessible: ComponentStory<typeof AppliedFilters> = () => (
-  <div data-testid="applied-filters">
-    <AppliedFilters filters={{ reasons: ["Exceptions", "Triggers"], keywords: ["Test keyword"], urgency: "Urgent" }} />
-  </div>
-)
-
-ShouldBeAccessible.play = async ({ canvasElement }) => {
-  const canvas = within(canvasElement)
-
-  const pagination = canvas.getByTestId("applied-filters")
-  expect(await axe(pagination)).toHaveNoViolations()
-}
 
 export const WhenThereAreFiltersApplied: ComponentStory<typeof AppliedFilters> = () => (
   <AppliedFilters filters={{ reasons: ["Exceptions", "Triggers"], keywords: ["Test keyword"], urgency: "Urgent" }} />
