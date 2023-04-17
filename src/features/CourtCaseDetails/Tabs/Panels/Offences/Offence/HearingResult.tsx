@@ -1,6 +1,6 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { Table } from "govuk-react"
-import { TableRow } from "../TableRow"
+import { TableRow } from "../../TableRow"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined

@@ -1,7 +1,7 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { useState } from "react"
-import { OffenceDetails } from "./OffenceDetails"
-import { OffencesTable } from "./OffencesTable"
+import { OffenceDetails } from "./Offence/OffenceDetails"
+import { OffencesList } from "./OffencesList/OffencesList"
 
 interface OffencesProps {
   offences: Offence[]
@@ -18,6 +18,6 @@ export const Offences = ({ offences }: OffencesProps) => {
       />
     </>
   ) : (
-    <OffencesTable offences={offences} setDetailedOffence={setDetailedOffence} />
+    <OffencesList offences={offences} setDetailedOffence={setDetailedOffence} />
   )
 }

@@ -1,7 +1,7 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { Heading, Table } from "govuk-react"
 import getOffenceCode from "utils/getOffenceCode"
-import { TableRow } from "../TableRow"
+import { TableRow } from "../../TableRow"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
 import { getYesOrNo, HearingResult } from "./HearingResult"
