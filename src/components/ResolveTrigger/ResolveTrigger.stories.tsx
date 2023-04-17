@@ -24,13 +24,6 @@ const unresolvedTriggerEntity = {
 export const UnresolvedTrigger: ComponentStory<typeof ResolveTrigger> = () => (
   <ResolveTrigger trigger={unresolvedTriggerEntity} courtCase={courtCaseEntity} />
 )
-UnresolvedTrigger.story = {
-  parameters: {
-    nextRouter: {
-      basePath: "/bichard"
-    }
-  }
-}
 
 UnresolvedTrigger.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
@@ -47,13 +40,6 @@ const resolvedTriggerEntity = {
 export const ResolvedTrigger: ComponentStory<typeof ResolveTrigger> = () => (
   <ResolveTrigger trigger={resolvedTriggerEntity} courtCase={courtCaseEntity} />
 )
-ResolvedTrigger.story = {
-  parameters: {
-    nextRouter: {
-      basePath: "/bichard"
-    }
-  }
-}
 
 ResolvedTrigger.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)

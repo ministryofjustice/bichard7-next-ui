@@ -20,14 +20,6 @@ export const EditableFieldShowInput: ComponentStory<typeof EditableField> = () =
   />
 )
 
-EditableFieldShowInput.story = {
-  parameters: {
-    nextRouter: {
-      basePath: "/bichard"
-    }
-  }
-}
-
 EditableFieldShowInput.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
   expect(canvas.getByText("HO100302")).toBeInTheDocument()
@@ -41,14 +33,6 @@ export const EditableFieldShowValue: ComponentStory<typeof EditableField> = () =
     amendFn={() => console.log("amending")}
   />
 )
-
-EditableFieldShowInput.story = {
-  parameters: {
-    nextRouter: {
-      basePath: "/bichard"
-    }
-  }
-}
 
 EditableFieldShowValue.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement)
