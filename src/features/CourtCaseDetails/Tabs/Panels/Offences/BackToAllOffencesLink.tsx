@@ -6,7 +6,7 @@ interface BBackToAllOffencesLinkProps {
 
 export const BackToAllOffencesLink = ({ onClick }: BBackToAllOffencesLinkProps) => (
   <BackLink
-    href="/"
+    href="#"
     onClick={(e) => {
       e.preventDefault()
       onClick()

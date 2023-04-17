@@ -21,7 +21,7 @@ const HearingTableRow = ({ offence, onClick, number }: HearingTableRowProps) => 
     <Table.Cell>{getOffenceCode(offence)}</Table.Cell>
     <Table.Cell>
       <a
-        href="/"
+        href="#"
         onClick={(e) => {
           e.preventDefault()
           onClick(offence)
