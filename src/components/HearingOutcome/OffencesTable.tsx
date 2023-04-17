@@ -29,7 +29,7 @@ const OffencesTable: React.FC<{
           <Table.Row key={`offence-${index}`}>
             <Table.Cell>{index + 1}</Table.Cell>
             {/* TODO: check if this is the correct date for offence */}
-            <Table.Cell>{getDisplayDateFromDateOrString(offence.ActualOffenceStartDate.StartDate)}</Table.Cell>
+            <Table.Cell>{offence.ActualOffenceStartDate.StartDate.toString()}</Table.Cell>
             <Table.Cell>{getOffenceCode(offence)}</Table.Cell>
             <Table.Cell>{offence.OffenceTitle}</Table.Cell>
 
