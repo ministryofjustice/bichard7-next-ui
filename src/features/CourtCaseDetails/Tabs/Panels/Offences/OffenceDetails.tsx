@@ -22,13 +22,13 @@ export const OffenceDetails = ({ offence, offencesCount }: OffenceDetailsProps) 
   }
 
   const getCommittedOnBail = (bailCode: string) => {
-    let CommitedOnBailWithDescription = bailCode
+    let CommittedOnBailWithDescription = bailCode
     yesNo.forEach((answer) => {
       if (answer.cjsCode === bailCode) {
-        CommitedOnBailWithDescription = `${bailCode} (${answer.description})`
+        CommittedOnBailWithDescription = `${bailCode} (${answer.description})`
       }
     })
-    return CommitedOnBailWithDescription
+    return CommittedOnBailWithDescription
   }
 
   const getYesOrNo = (code: boolean | undefined) => {
