@@ -2,7 +2,6 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import EditableField from "components/EditableField"
 import { Table } from "govuk-react"
 import { IndividualAmendmentValues } from "types/Amendments"
-import getOffenceCode from "utils/getOffenceCode"
 
 const OffenceDetails: React.FC<{
   aho: AnnotatedHearingOutcome
