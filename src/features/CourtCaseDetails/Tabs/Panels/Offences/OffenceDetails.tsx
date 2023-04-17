@@ -5,13 +5,15 @@ import { TableRow } from "../TableRow"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
 import { getYesOrNo, HearingResult } from "./HearingResult"
+import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
 
 interface OffenceDetailsProps {
   offence: Offence
   offencesCount: number
+  onBackToAllOffences: () => void
 }
 
-export const OffenceDetails = ({ offence, offencesCount }: OffenceDetailsProps) => {
+export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: OffenceDetailsProps) => {
   const getOffenceCategory = (offenceCode: string | undefined) => {
     let offenceCategoryWithDescription = offenceCode
     offenceCategory.forEach((category) => {
@@ -34,6 +36,7 @@ export const OffenceDetails = ({ offence, offencesCount }: OffenceDetailsProps) 
 
   return (
     <>
+      <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
       <Heading as="h4" size="MEDIUM">
         {`Offence x of ${offencesCount}`}
       </Heading>
@@ -68,6 +71,7 @@ export const OffenceDetails = ({ offence, offencesCount }: OffenceDetailsProps) 
       <Table>
         <TableRow header="Code" value={"TO DO"} />
       </Table>
+      <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
     </>
   )
 }

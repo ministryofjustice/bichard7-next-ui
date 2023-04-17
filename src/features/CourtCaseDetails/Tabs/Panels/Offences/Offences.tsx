@@ -10,7 +10,13 @@ interface OffencesProps {
 export const Offences = ({ offences }: OffencesProps) => {
   const [detailedOffence, setDetailedOffence] = useState<Offence>()
   return !!detailedOffence ? (
-    <OffenceDetails offence={detailedOffence} offencesCount={offences.length} />
+    <>
+      <OffenceDetails
+        offence={detailedOffence}
+        offencesCount={offences.length}
+        onBackToAllOffences={() => setDetailedOffence(undefined)}
+      />
+    </>
   ) : (
     <OffencesTable offences={offences} setDetailedOffence={setDetailedOffence} />
   )
