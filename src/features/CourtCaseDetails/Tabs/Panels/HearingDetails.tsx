@@ -4,11 +4,11 @@ import courtTypes from "@moj-bichard7-developers/bichard7-next-data/dist/data/co
 import { formatDisplayedDate } from "utils/formattedDate"
 import { TableRow } from "./TableRow"
 
-interface HearingTableProps {
+interface HearingDetailsProps {
   hearing: Hearing
 }
 
-export const HearingTable = ({ hearing }: HearingTableProps) => {
+export const HearingDetails = ({ hearing }: HearingDetailsProps) => {
   const getLanguage = (language: string) => {
     switch (language) {
       case "E":
