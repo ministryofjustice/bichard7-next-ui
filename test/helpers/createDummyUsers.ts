@@ -10,7 +10,6 @@ type UserRow = {
   surname: string
   email: string
   password: string
-  visible_courts: string
   visible_forces: string
   excluded_triggers: string
   groups: Group[]
@@ -32,7 +31,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "bichard01@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "",
     visible_forces: "",
     excluded_triggers: "",
     groups: ["Allocator", "Audit", "ExceptionHandler", "Supervisor", "TriggerHandler"]
@@ -46,7 +44,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "allocator1@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B01,B41ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["Allocator"]
@@ -60,7 +57,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "audit1@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B01,B41ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["Audit"]
@@ -74,7 +70,6 @@ const userRows: UserRow[] = [
     surname: "exception",
     email: "exceptionhandler1@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B01,B41ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["ExceptionHandler"]
@@ -88,7 +83,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "generalhandler1@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B01,B41ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["GeneralHandler"]
@@ -102,7 +96,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "supervisor1@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B01,B41ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["Supervisor"]
@@ -116,7 +109,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "triggerhandler1@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B01,B41ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["TriggerHandler"]
@@ -130,7 +122,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "allocator2@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B40ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["Allocator"]
@@ -144,7 +135,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "audit2@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B40ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["Audit"]
@@ -158,7 +148,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "exceptionhandler2@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B40ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["Audit"]
@@ -172,7 +161,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "generalhandler2@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B40ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["GeneralHandler"]
@@ -186,7 +174,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "supervisor2@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B40ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["Supervisor"]
@@ -200,7 +187,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "triggerhandler2@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B40ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: ["TriggerHandler"]
@@ -214,7 +200,6 @@ const userRows: UserRow[] = [
     surname: "01",
     email: "nogroupsassigned@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B40ME00",
     visible_forces: "001,002,004,014,045",
     excluded_triggers: "",
     groups: []
@@ -228,7 +213,6 @@ const userRows: UserRow[] = [
     surname: "generalhandler",
     email: "generalhandler@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B01,B41ME00",
     visible_forces: "",
     excluded_triggers: "",
     groups: ["GeneralHandler"]
@@ -242,7 +226,6 @@ const userRows: UserRow[] = [
     surname: "supervisor",
     email: "supervisor@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B01,B41ME00",
     visible_forces: "",
     excluded_triggers: "",
     groups: ["Supervisor"]
@@ -256,7 +239,6 @@ const userRows: UserRow[] = [
     surname: "exceptionhandler",
     email: "exceptionhandler@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B01,B41ME00",
     visible_forces: "",
     excluded_triggers: "",
     groups: ["Supervisor"]
@@ -270,7 +252,6 @@ const userRows: UserRow[] = [
     surname: "triggerhandler",
     email: "triggerhandler@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B01,B41ME00",
     visible_forces: "",
     excluded_triggers: "",
     groups: ["TriggerHandler"]
@@ -284,7 +265,6 @@ const userRows: UserRow[] = [
     surname: "auditor",
     email: "auditor@example.com",
     password: "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw",
-    visible_courts: "B01,B41ME00",
     visible_forces: "",
     excluded_triggers: "",
     groups: ["Audit"]
@@ -301,8 +281,7 @@ export default (): DummyUser[] => {
       surname: user.surname,
       visibleForces: user.visible_forces.split(","),
       featureFlags: {},
-      groups: [...user.groups, "NewUI"],
-      visibleCourts: user.visible_courts.split(",")
+      groups: [...user.groups, "NewUI"]
     }
   })
 }
