@@ -1,7 +1,7 @@
 import ConditionalRender from "components/ConditionalRender"
 import { useRouter } from "next/router"
 import hasUserManagementAccess from "services/hasUserManagementAccess"
-import { default as GroupName } from "types/GroupName"
+import { default as Group } from "types/Group"
 import { useCustomStyles } from "../../../styles/customStyles"
 
 interface NavItemProps {
@@ -10,7 +10,7 @@ interface NavItemProps {
 }
 
 interface NavBarProps {
-  groups: GroupName[]
+  groups: Group[]
 }
 
 const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {

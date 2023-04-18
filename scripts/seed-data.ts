@@ -6,6 +6,9 @@ import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromEntity from "../test/utils/deleteFromEntity"
 import deleteFromTable from "../test/utils/deleteFromTable"
+import User from "../src/services/entities/User"
+import createDummyUsers from "../test/helpers/createDummyUsers"
+import Group, { groupRow } from "../src/types/Group"
 
 if (process.env.DEPLOY_NAME !== "e2e-test") {
   console.error("Not running in e2e environment, bailing out. Set DEPLOY_NAME='e2e-test' if you're sure.")
@@ -23,13 +26,37 @@ const numCases = Math.round(Math.random() * numCasesRange) + minCases
 console.log(`Seeding ${numCases} cases for force ID ${forceId}`)
 
 getDataSource().then(async (dataSource) => {
-  const entitiesToClear = [CourtCase, Trigger, Note]
-  entitiesToClear.forEach((entity) => deleteFromEntity(entity))
+  const tablesToClear = ["team_membership", "team_supervision", "team", "users_groups", "groups"]
+  await Promise.all(tablesToClear.map((table) => deleteFromTable(table)))
 
-  const tablesToClear = ["team_membership", "team_supervision", "team"]
-  tablesToClear.forEach(async (table) => {
-    await deleteFromTable(table)
-  })
+  const entitiesToClear = [CourtCase, Trigger, Note, User]
+  await Promise.all(entitiesToClear.map((entity) => deleteFromEntity(entity)))
+
+  const users = createDummyUsers()
+  await dataSource.getRepository(User).insert(users)
+
+  await Promise.all(
+    Object.keys(groupRow).map((groupName) => {
+      const group = groupRow[groupName as Group]
+      const parentId = group.parent ? groupRow[group.parent].id : null
+      return dataSource.query(
+        "INSERT INTO br7own.groups (id, name, friendly_name, parent_id) VALUES ($1, $2, $3, $4)",
+        [group.id, group.dbName, group.name, parentId]
+      )
+    })
+  )
+
+  const userGroups = users.flatMap((user) =>
+    user.groups.map((group) => {
+      return [user.id, groupRow[group].id]
+    })
+  )
+
+  await Promise.all(
+    userGroups.map((userGroup) =>
+      dataSource.query("INSERT INTO br7own.users_groups (user_id, group_id) VALUES ($1, $2);", userGroup)
+    )
+  )
 
   await Promise.all(
     new Array(numCases)
