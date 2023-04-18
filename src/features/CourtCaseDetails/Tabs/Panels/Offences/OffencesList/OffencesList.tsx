@@ -2,7 +2,7 @@ import { Offence } from "@moj-bichard7-developers/bichard7-next-core/build/src/t
 import { Table } from "govuk-react"
 
 import getOffenceCode from "utils/getOffenceCode"
-import { OffencesListRow } from "./OffencesListItem"
+import { OffencesListRow } from "./OffencesListRow"
 
 interface OffencesListProps {
   offences: Offence[]
