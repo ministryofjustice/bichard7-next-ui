@@ -34,7 +34,7 @@ describe("reallocate court case to another force", () => {
     await dataSource.destroy()
   })
 
-  describe("when user can see the case", () => {
+  describe("when a user can see the case", () => {
     it("should reallocate the case to a new force, generate notes and unlock the case", async () => {
       const courtCase = {
         orgForPoliceFilter: oldForceCode,

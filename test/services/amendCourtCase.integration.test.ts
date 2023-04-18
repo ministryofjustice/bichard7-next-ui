@@ -103,7 +103,7 @@ describe("amend court case", () => {
     expect(retrievedCase?.hearingOutcome).toMatchSnapshot()
   })
 
-  it("should generates system notes for each each amendments", async () => {
+  it("should generate system notes for each each amendments", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -156,7 +156,7 @@ describe("amend court case", () => {
     )
   })
 
-  it("should not generate system note when its a no update resubmit amendment", async () => {
+  it("should not generate a system note when its a no update resubmit amendment", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -268,7 +268,7 @@ describe("amend court case", () => {
     expect(result).toEqual(Error(`Failed to get court case`))
   })
 
-  it("return an error when the case is not visible to the user", async () => {
+  it("returns an error when the case is not visible to the user", async () => {
     const anotherOrgCode = "012"
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
