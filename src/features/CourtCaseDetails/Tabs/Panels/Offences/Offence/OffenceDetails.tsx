@@ -29,7 +29,9 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
     let CommittedOnBailWithDescription = bailCode
     yesNo.forEach((answer) => {
       if (answer.cjsCode === bailCode) {
-        CommittedOnBailWithDescription = `${bailCode} (${answer.description})`
+        const bailDescriptionFormatted =
+          answer.description.charAt(0).toUpperCase() + answer.description.slice(1).toLowerCase()
+        CommittedOnBailWithDescription = `${bailCode} (${bailDescriptionFormatted})`
       }
     })
     return CommittedOnBailWithDescription
