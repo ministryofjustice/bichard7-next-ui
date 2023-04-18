@@ -1,3 +1,5 @@
+import { textBlue } from "utils/colours"
+
 interface BBackToAllOffencesLinkProps {
   onClick: () => void
 }
@@ -5,6 +7,7 @@ interface BBackToAllOffencesLinkProps {
 export const BackToAllOffencesLink = ({ onClick }: BBackToAllOffencesLinkProps) => {
   return (
     <a
+      style={{ color: textBlue }}
       href="/"
       className="govuk-back-link"
       onClick={(e) => {
