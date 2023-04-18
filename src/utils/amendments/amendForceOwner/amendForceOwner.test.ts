@@ -11,7 +11,7 @@ describe("amend force owner", () => {
     testString = "04CA"
   })
 
-  it("amend force owner when force owner property exist", () => {
+  it("amends force owner when force owner property exist", () => {
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner = {
       SecondLevelCode: null,
       ThirdLevelCode: null,
@@ -30,7 +30,7 @@ describe("amend force owner", () => {
     expect(forceOwner?.TopLevelCode).toBeUndefined()
   })
 
-  it("amend force owner when force owner property doesn't exist", () => {
+  it("amends force owner when force owner property doesn't exist", () => {
     expect(aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner).toBe(undefined)
 
     amendForceOwner(testString, aho)
