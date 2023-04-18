@@ -49,7 +49,7 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
         <TableRow header="Title" value={offence.OffenceTitle} />
         <TableRow header="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
         <TableRow header="Category" value={getOffenceCategory(offence.OffenceCategory)} />
-        <TableRow header="Arrest date" value={offence.ChargeDate?.toString()} />
+        <TableRow header="Arrest date" value={offence.ArrestDate?.toString()} />
         <TableRow header="Charge date" value={offence.ChargeDate?.toString()} />
         <TableRow header="Date code" value={offence.ActualOffenceDateCode} />
         <TableRow header="Start date" value={offence.ActualOffenceStartDate?.StartDate?.toString()} />
