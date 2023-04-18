@@ -164,6 +164,7 @@ export default (): DummyUser[] => {
       forenames: user.forenames,
       surname: user.surname,
       visibleForces,
+      visibleCourts: [],
       featureFlags: {},
       groups: [...user.groups, "NewUI"]
     }
