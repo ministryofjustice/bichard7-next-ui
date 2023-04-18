@@ -120,14 +120,14 @@ export const getServerSideProps = withMultipleServerSideProps(
     const resolvedByUsername =
       validatedCaseState === "Resolved" && !currentUser.groups.includes("Supervisor") ? currentUser.username : undefined
 
-    const caseAgeCounts = await getCountOfCasesByCaseAge(dataSource, currentUser.visibleForces)
+    const caseAgeCounts = await getCountOfCasesByCaseAge(dataSource, currentUser.visibleCases)
 
     if (isError(caseAgeCounts)) {
       throw caseAgeCounts
     }
 
     const courtCases = await listCourtCases(dataSource, {
-      forces: currentUser.visibleForces,
+      forces: currentUser.visibleCases,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
       ...(validatedCourtName && { courtName: validatedCourtName }),
       ...(validatedreasonCode && { reasonCode: validatedreasonCode }),

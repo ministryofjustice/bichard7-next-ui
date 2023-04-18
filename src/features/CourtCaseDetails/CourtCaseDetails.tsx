@@ -160,6 +160,9 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       <ConditionalRender isRendered={!lockedByAnotherUser}>
         <LinkButton href="notes/add">{"Add Note"}</LinkButton>
       </ConditionalRender>
+      <ConditionalRender isRendered={!lockedByAnotherUser}>
+        <LinkButton href="reallocate">{"Reallocate Case"}</LinkButton>
+      </ConditionalRender>
     </>
   )
 }

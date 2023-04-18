@@ -6,15 +6,16 @@ import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { BackLink, Heading } from "govuk-react"
+import { BackLink, Button, FormGroup, Heading, Select } from "govuk-react"
 import { useRouter } from "next/router"
 import parseFormData from "utils/parseFormData"
 import { isPost } from "utils/http"
-import addNote from "services/addNote"
-import redirectTo from "utils/redirectTo"
-import AddNoteForm from "features/AddNoteForm/AddNoteForm"
 import getCourtCaseByVisibleForce from "services/getCourtCaseByVisibleForce"
 import { isError } from "types/Result"
+import ConditionalRender from "components/ConditionalRender"
+import reallocateCourtCaseToForce from "services/reallocateCourtCaseToForce"
+import redirectTo from "utils/redirectTo"
+import forces from "@moj-bichard7-developers/bichard7-next-data/dist/data/forces.json"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -43,22 +44,13 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     if (isPost(req)) {
-      const { noteText } = (await parseFormData(req)) as { noteText: string }
-      if (!noteText) {
-        return {
-          props: {
-            ...props,
-            noteTextError: "Required"
-          }
-        }
-      }
+      const { force } = (await parseFormData(req)) as { force: string }
+      const reallocateResult = await reallocateCourtCaseToForce(dataSource, courtCase.errorId, currentUser, force)
 
-      const addNoteResult = await addNote(dataSource, courtCase.errorId, currentUser.username, noteText)
-
-      if (addNoteResult.isSuccessful) {
-        return redirectTo(`/court-cases/${courtCaseId}`)
+      if (isError(reallocateResult)) {
+        throw reallocateResult
       } else {
-        throw Error(addNoteResult.ValidationException ?? "Unexpected error")
+        return redirectTo(`/`)
       }
     }
 
@@ -73,20 +65,43 @@ interface Props {
   noteTextError?: string
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser, noteTextError }: Props) => {
+const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser }: Props) => {
   const { basePath } = useRouter()
 
   return (
     <>
       <Layout user={user}>
-        <Heading as="h1" size="LARGE" aria-label="Add Note">
-          <title>{"Add Note | Bichard7"}</title>
-          <meta name="description" content="Add Note | Bichard7" />
+        <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
+          <title>{"Reallocate Case | Bichard7"}</title>
+          <meta name="description" content="Reallocate Case| Bichard7" />
         </Heading>
         <BackLink href={`${basePath}/court-cases/${courtCase.errorId}`} onClick={function noRefCheck() {}}>
           {"Case Details"}
         </BackLink>
-        <AddNoteForm lockedByAnotherUser={lockedByAnotherUser} error={noteTextError} />
+        <Heading as="h2" size="MEDIUM">
+          {"Reallocate Case"}
+        </Heading>
+        <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
+        <ConditionalRender isRendered={!lockedByAnotherUser}>
+          <form method="POST" action="#">
+            <FormGroup>
+              <Select
+                input={{
+                  name: "force"
+                }}
+                label="Select force"
+              >
+                {forces.map((force) => {
+                  return <option key={force.code} value={force.code}>{`${force.name}`}</option>
+                })}
+              </Select>
+            </FormGroup>
+
+            <Button id="Reallocate" type="submit">
+              {"Reallocate"}
+            </Button>
+          </form>
+        </ConditionalRender>
       </Layout>
     </>
   )

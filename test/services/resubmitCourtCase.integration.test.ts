@@ -69,7 +69,7 @@ describe("resubmit court case", () => {
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
     expect(sendToQueue).toHaveBeenCalledTimes(1)
-    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledTimes(2)
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
       { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
     ])
@@ -130,7 +130,7 @@ describe("resubmit court case", () => {
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
     expect(sendToQueue).toHaveBeenCalledTimes(1)
-    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledTimes(2)
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
       { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
     ])
@@ -211,7 +211,7 @@ describe("resubmit court case", () => {
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
     expect(sendToQueue).toHaveBeenCalledTimes(1)
-    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledTimes(2)
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
       { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
     ])

@@ -56,7 +56,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         +triggerToResolve,
         +courtCaseId,
         currentUser.username,
-        currentUser.visibleForces
+        currentUser.visibleCases
       )
 
       if (isError(updateTriggerResult)) {
@@ -83,7 +83,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const courtCase = await getCourtCaseByVisibleForce(dataSource, +courtCaseId, currentUser.visibleForces)
+    const courtCase = await getCourtCaseByVisibleForce(dataSource, +courtCaseId, currentUser.visibleCases)
 
     if (isError(courtCase)) {
       throw courtCase

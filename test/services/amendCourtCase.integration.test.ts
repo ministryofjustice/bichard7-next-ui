@@ -2,6 +2,7 @@ import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/p
 import fs from "fs"
 import amendCourtCase from "services/amendCourtCase"
 import CourtCase from "services/entities/CourtCase"
+import Note from "services/entities/Note"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import updateCourtCaseAho from "services/updateCourtCaseAho"
@@ -9,7 +10,7 @@ import { DataSource } from "typeorm"
 import createForceOwner from "utils/createForceOwner"
 import getCourtCase from "../../src/services/getCourtCase"
 import deleteFromEntity from "../utils/deleteFromEntity"
-import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
+import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
 
 jest.mock("services/getCourtCase")
 jest.mock("services/updateCourtCaseAho")
@@ -20,6 +21,11 @@ jest.setTimeout(60 * 60 * 1000)
 
 describe("amend court case", () => {
   const userName = "Bichard01"
+  const orgCode = "36FPA1"
+  const user = {
+    username: userName,
+    visibleForces: [orgCode]
+  } as User
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -27,6 +33,7 @@ describe("amend court case", () => {
   })
 
   beforeEach(async () => {
+    await deleteFromEntity(Note)
     await deleteFromEntity(CourtCase)
     jest.resetAllMocks()
     jest.clearAllMocks()
@@ -49,14 +56,15 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
     expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -75,14 +83,15 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
     expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -94,30 +103,128 @@ describe("amend court case", () => {
     expect(retrievedCase?.hearingOutcome).toMatchSnapshot()
   })
 
-  it("should not update the db if the case is locked by somebody else", async () => {
+  it("should generate system notes for each each amendments", async () => {
     const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: "Bichard02",
+      errorLockedByUsername: null,
       triggerLockedByUsername: null,
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
-    expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
-
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(
+      dataSource,
+      {
+        forceOwner: "03",
+        courtOffenceSequenceNumber: [
+          {
+            offenceIndex: 0,
+            updatedValue: 3333
+          },
+          {
+            offenceIndex: 1,
+            updatedValue: 1111
+          }
+        ]
+      },
+      inputCourtCase.errorId,
+      user
+    )
 
     expect(result).not.toBeInstanceOf(Error)
-    expect(result).toMatchSnapshot()
 
     const retrievedCase = await dataSource
       .getRepository(CourtCase)
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
-    expect(retrievedCase?.hearingOutcome).toEqual(inputCourtCase.hearingOutcome)
+    expect(retrievedCase?.notes).toHaveLength(3)
+    expect(retrievedCase?.notes[0].userId).toEqual("System")
+    expect(retrievedCase?.notes[0].noteText).toEqual(
+      `${userName}: Portal Action: Update Applied. Element: forceOwner. New Value: 03`
+    )
+    expect(retrievedCase?.notes[1].userId).toEqual("System")
+    expect(retrievedCase?.notes[1].noteText).toEqual(
+      `${userName}: Portal Action: Update Applied. Element: courtOffenceSequenceNumber. New Value: 3333`
+    )
+    expect(retrievedCase?.notes[2].userId).toEqual("System")
+    expect(retrievedCase?.notes[2].noteText).toEqual(
+      `${userName}: Portal Action: Update Applied. Element: courtOffenceSequenceNumber. New Value: 1111`
+    )
+  })
+
+  it("should not generate a system note when its a no update resubmit amendment", async () => {
+    const inputCourtCase = await getDummyCourtCase({
+      errorLockedByUsername: null,
+      triggerLockedByUsername: null,
+      errorCount: 1,
+      errorStatus: "Unresolved",
+      triggerCount: 1,
+      phase: 1,
+      orgForPoliceFilter: orgCode
+    })
+
+    await insertCourtCases(inputCourtCase)
+
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, user)
+
+    expect(result).not.toBeInstanceOf(Error)
+
+    const retrievedCase = await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: inputCourtCase.errorId } })
+
+    expect(retrievedCase?.notes).toHaveLength(0)
+  })
+
+  it("should not update the db if the case is locked by somebody else", async () => {
+    const triggerLockedBySomeoneElse = {
+      errorLockedByUsername: null,
+      triggerLockedByUsername: "Bichard02",
+      errorCount: 1,
+      triggerCount: 1,
+      phase: 1,
+      orgForPoliceFilter: orgCode,
+      errorId: 0,
+      hearingOutcome: "Dummy"
+    }
+
+    const errorLockedBySomeoneElse = {
+      errorLockedByUsername: null,
+      triggerLockedByUsername: "Bichard02",
+      errorCount: 1,
+      triggerCount: 1,
+      phase: 1,
+      orgForPoliceFilter: orgCode,
+      errorId: 1,
+      hearingOutcome: "Dummy"
+    }
+
+    await insertCourtCasesWithFields([triggerLockedBySomeoneElse, errorLockedBySomeoneElse])
+
+    const firstResult = await amendCourtCase(dataSource, { forceOwner: "04" }, triggerLockedBySomeoneElse.errorId, user)
+    expect(firstResult).toEqual(Error(`Court case is locked by another user`))
+
+    const caseWithTriggerLock = await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: triggerLockedBySomeoneElse.errorId } })
+    expect(caseWithTriggerLock?.hearingOutcome).toEqual(triggerLockedBySomeoneElse.hearingOutcome)
+
+    const secondResult = await amendCourtCase(
+      dataSource,
+      { forceOwner: "04" },
+      triggerLockedBySomeoneElse.errorId,
+      user
+    )
+    expect(secondResult).toEqual(Error(`Court case is locked by another user`))
+
+    const caseWithErrorLock = await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: triggerLockedBySomeoneElse.errorId } })
+    expect(caseWithErrorLock?.hearingOutcome).toEqual(triggerLockedBySomeoneElse.hearingOutcome)
   })
 
   it("should create a force owner if the force owner is not present", async () => {
@@ -130,12 +237,13 @@ describe("amend court case", () => {
       errorStatus: "Unresolved",
       triggerCount: 1,
       phase: 1,
-      hearingOutcome: inputXml
+      hearingOutcome: inputXml,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
 
     expect(createForceOwner).toHaveBeenCalledTimes(1)
     expect(updateCourtCaseAho).toHaveBeenCalledTimes(1)
@@ -151,24 +259,44 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
-    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
-      username: userName
-    } as User)
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, user)
 
     expect(result).toEqual(Error(`Failed to get court case`))
   })
 
+  it("returns an error when the case is not visible to the user", async () => {
+    const anotherOrgCode = "012"
+    const inputCourtCase = await getDummyCourtCase({
+      errorLockedByUsername: null,
+      triggerLockedByUsername: null,
+      errorCount: 1,
+      errorStatus: "Unresolved",
+      triggerCount: 1,
+      phase: 1,
+      orgForPoliceFilter: anotherOrgCode
+    })
+
+    await insertCourtCases(inputCourtCase)
+
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
+
+    expect(result).toEqual(Error(`Failed to get court case`))
+
+    const retrievedCase = await dataSource
+      .getRepository(CourtCase)
+      .findOne({ where: { errorId: inputCourtCase.errorId } })
+
+    expect(retrievedCase?.hearingOutcome).toEqual(inputCourtCase.hearingOutcome)
+  })
+
   it("should return an error if produce an error getting the court case", async () => {
     ;(getCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Failed to get court case`))
-    const result = await amendCourtCase(
-      dataSource,
-      { noUpdatesResubmit: true },
-      "random" as unknown as number,
-      { username: userName } as User
-    )
+    const dummyCourtCaseId = 999
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, dummyCourtCaseId, user)
     expect(result).toEqual(Error(`Failed to get court case`))
   })
 
@@ -181,14 +309,13 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
-      username: userName
-    } as User)
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, user)
     expect(result).toEqual(Error(`Failed to parse aho`))
   })
 
@@ -201,12 +328,13 @@ describe("amend court case", () => {
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
-      phase: 1
+      phase: 1,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
 
     expect(result).toEqual(Error("Failed to update the database"))
   })
@@ -223,12 +351,13 @@ describe("amend court case", () => {
       errorStatus: "Unresolved",
       triggerCount: 1,
       phase: 1,
-      hearingOutcome: inputXml
+      hearingOutcome: inputXml,
+      orgForPoliceFilter: orgCode
     })
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, { username: userName } as User)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
 
     expect(createForceOwner).toHaveBeenCalledTimes(1)
     expect(result).toEqual(Error("Failed to create organistaion unit codes"))
