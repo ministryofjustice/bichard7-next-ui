@@ -26,7 +26,12 @@ export const HearingResult = ({ result }: HearingResultProps) => (
       header="Result hearing date"
       value={result.ResultHearingDate && formatDisplayedDate(new Date(result.ResultHearingDate))}
     />
-    <TableRow header="Next hearing location" value={"TO DO"} />
+    <TableRow
+      header="Next hearing location"
+      value={
+        typeof result.NextResultSourceOrganisation === "string" ? result.NextResultSourceOrganisation : "Not entered"
+      }
+    />
     <TableRow
       header="Next hearing date"
       value={result.NextHearingDate ? formatDisplayedDate(new Date(result.NextHearingDate)) : "Not entered"}
