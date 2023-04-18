@@ -76,7 +76,6 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
           value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
         />
         <TableRow header="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
-        <TableRow header="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
         <TableRow header="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
       </Table>
       <Heading as="h4" size="MEDIUM">
