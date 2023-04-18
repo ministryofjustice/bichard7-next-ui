@@ -4,7 +4,7 @@ import getOffenceCode from "utils/getOffenceCode"
 import { TableRow } from "../../TableRow"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
-import { getYesOrNo, HearingResult } from "./HearingResult"
+import { capitaliseExpression, getYesOrNo, HearingResult } from "./HearingResult"
 import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
 import { formatDisplayedDate } from "utils/formattedDate"
 
@@ -29,9 +29,7 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
     let CommittedOnBailWithDescription = bailCode
     yesNo.forEach((answer) => {
       if (answer.cjsCode === bailCode) {
-        const bailDescriptionFormatted =
-          answer.description.charAt(0).toUpperCase() + answer.description.slice(1).toLowerCase()
-        CommittedOnBailWithDescription = `${bailCode} (${bailDescriptionFormatted})`
+        CommittedOnBailWithDescription = `${bailCode} (${capitaliseExpression(answer.description)})`
       }
     })
     return CommittedOnBailWithDescription

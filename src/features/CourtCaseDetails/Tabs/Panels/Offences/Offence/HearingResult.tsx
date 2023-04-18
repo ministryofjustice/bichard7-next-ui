@@ -7,6 +7,10 @@ export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
 }
 
+export const capitaliseExpression = (expression: string) => {
+  return expression.charAt(0).toUpperCase() + expression.slice(1).toLowerCase()
+}
+
 interface HearingResultProps {
   result: Result
 }
@@ -14,7 +18,10 @@ interface HearingResultProps {
 export const HearingResult = ({ result }: HearingResultProps) => (
   <Table>
     <TableRow header="CJS Code" value={result.CJSresultCode} />
-    <TableRow header="Result hearing type" value={result.ResultHearingType} />
+    <TableRow
+      header="Result hearing type"
+      value={result.ResultHearingType && capitaliseExpression(result.ResultHearingType)}
+    />
     <TableRow
       header="Result hearing date"
       value={result.ResultHearingDate && formatDisplayedDate(new Date(result.ResultHearingDate))}
