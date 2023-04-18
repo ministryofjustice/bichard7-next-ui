@@ -9,22 +9,25 @@ interface OffencesListRowProps {
   onClick: (offence: Offence) => void
 }
 
-export const OffencesListRow = ({ offence, onClick, number }: OffencesListRowProps) => (
-  <Table.Row>
-    <Table.Cell>{number}</Table.Cell>
-    <Table.Cell>{formatDisplayedDate(offence.ActualOffenceStartDate.StartDate)}</Table.Cell>
-    <Table.Cell>{getOffenceCode(offence)}</Table.Cell>
-    <Table.Cell>
-      <a
-        className="govuk-link"
-        href="/"
-        onClick={(e) => {
-          e.preventDefault()
-          onClick(offence)
-        }}
-      >
-        {offence.OffenceTitle}
-      </a>
-    </Table.Cell>
-  </Table.Row>
-)
+export const OffencesListRow = ({ offence, onClick, number }: OffencesListRowProps) => {
+
+  return (
+    <Table.Row>
+      <Table.Cell>{number}</Table.Cell>
+      <Table.Cell>{formatDisplayedDate(new Date(offence.ActualOffenceStartDate.StartDate)).toString()}</Table.Cell>
+      <Table.Cell>{getOffenceCode(offence)}</Table.Cell>
+      <Table.Cell>
+        <a
+          className="govuk-link"
+          href="/"
+          onClick={(e) => {
+            e.preventDefault()
+            onClick(offence)
+          }}
+        >
+          {offence.OffenceTitle}
+        </a>
+      </Table.Cell>
+    </Table.Row>
+  )
+}
