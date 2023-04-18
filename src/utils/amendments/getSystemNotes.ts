@@ -15,19 +15,19 @@ const getSystemNotes = (amendments: Partial<Amendments>, userDetails: User, cour
       continue
     }
 
+    const noteText = `${portalActionText} Element: ${key}. New Value: `
+
     if (Array.isArray(value)) {
       value.forEach((field) => {
         notes.push({
-          noteText: `${portalActionText} Element: ${key}. New Value: ${formatValueOfUpdatedElement(
-            field.updatedValue
-          )}`,
+          noteText: noteText + formatValueOfUpdatedElement(field.updatedValue),
           errorId: courtCaseId,
           userId: "System"
         })
       })
     } else {
       notes.push({
-        noteText: `${portalActionText} Element: ${key}. New Value: ${formatValueOfUpdatedElement(value)}`,
+        noteText: noteText + formatValueOfUpdatedElement(value),
         errorId: courtCaseId,
         userId: "System"
       })
