@@ -6,6 +6,7 @@ import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/da
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
 import { getYesOrNo, HearingResult } from "./HearingResult"
 import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
+import { formatDisplayedDate } from "utils/formattedDate"
 
 interface OffenceDetailsProps {
   offence: Offence
@@ -49,16 +50,31 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
         <TableRow header="Title" value={offence.OffenceTitle} />
         <TableRow header="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
         <TableRow header="Category" value={getOffenceCategory(offence.OffenceCategory)} />
-        <TableRow header="Arrest date" value={offence.ArrestDate?.toString()} />
-        <TableRow header="Charge date" value={offence.ChargeDate?.toString()} />
+        <TableRow
+          header="Arrest date"
+          value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))}
+        />
+        <TableRow
+          header="Charge date"
+          value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))}
+        />
         <TableRow header="Date code" value={offence.ActualOffenceDateCode} />
-        <TableRow header="Start date" value={offence.ActualOffenceStartDate?.StartDate?.toString()} />
+        <TableRow
+          header="Start date"
+          value={
+            offence.ActualOffenceStartDate.StartDate &&
+            formatDisplayedDate(new Date(offence.ActualOffenceStartDate.StartDate))
+          }
+        />
         <TableRow header="Location" value={offence.LocationOfOffence} />
         <TableRow header="Wording" value={offence.ActualOffenceWording} />
         <TableRow header="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
         <TableRow header="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
         <TableRow header="Home Office classification" value={offence.HomeOfficeClassification} />
-        <TableRow header="Conviction date" value={offence.ConvictionDate?.toString()} />
+        <TableRow
+          header="Conviction date"
+          value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
+        />
         <TableRow header="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
         <TableRow header="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
         <TableRow header="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
