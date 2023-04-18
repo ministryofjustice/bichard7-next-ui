@@ -34,6 +34,10 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
     return CommittedOnBailWithDescription
   }
 
+  const getFormattedSequenceNumber = (number: number) => {
+    return number.toLocaleString("en-UK", { minimumIntegerDigits: 3 })
+  }
+
   return (
     <>
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
@@ -43,7 +47,7 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
       <Table>
         <TableRow header="Offence code" value={getOffenceCode(offence)} />
         <TableRow header="Title" value={offence.OffenceTitle} />
-        <TableRow header="Sequence number" value={offence.CourtOffenceSequenceNumber} />
+        <TableRow header="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
         <TableRow header="Category" value={getOffenceCategory(offence.OffenceCategory)} />
         <TableRow header="Arrest date" value={offence.ChargeDate?.toString()} />
         <TableRow header="Charge date" value={offence.ChargeDate?.toString()} />
