@@ -1,25 +1,15 @@
-import Note from "services/entities/Note"
-import { formatDisplayedDate } from "utils/formattedDate"
+import Note from "../../services/entities/Note"
+import { formatDisplayedDate } from "../../utils/formattedDate"
 
 export const filterUserNotes = (notes: Note[]) => {
   const userNotes = notes.filter((note) => note.userId !== "System")
   return userNotes
 }
-export const getMostRecentNote = (userNotes: Note[]) => {
-  const createdAtDatesForAllNotes = userNotes.map((note) => note.createdAt)
-  const mostRecentNoteDate = createdAtDatesForAllNotes.sort().slice(-1)[0]
-  const mostRecentNote = userNotes.filter((note) => note.createdAt === mostRecentNoteDate)
+export const getMostRecentNote = (userNotes: Note[]) =>
+  userNotes.sort((noteA, noteB) => (noteA.createdAt > noteB.createdAt ? -1 : 1))[0]
 
-  return mostRecentNote
-}
-
-export const getFirst100CharsOfMostRecentNote = (mostRecentNote: Note[]) => {
-  const mostRecentNoteText = mostRecentNote[0].noteText
-  return mostRecentNoteText.length > 100 ? `${mostRecentNoteText.slice(0, 100)}...` : mostRecentNoteText
-}
-
-export const validateMostRecentNoteDate = (mostRecentNote: Note[]) => {
-  const mostRecentNoteDate = mostRecentNote[0].createdAt
+export const validateMostRecentNoteDate = (mostRecentNote: Note) => {
+  const mostRecentNoteDate = mostRecentNote.createdAt
   const formattedDate = formatDisplayedDate(new Date(mostRecentNoteDate.toString().slice(0, 10)))
   return formattedDate
 }
