@@ -58,7 +58,7 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
           header="Charge date"
           value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))}
         />
-        <TableRow header="Date code" value={offence.ActualOffenceDateCode} />
+        <TableRow header="Date code" value={`${offence.ActualOffenceDateCode} (on or in)`} />
         <TableRow
           header="Start date"
           value={
