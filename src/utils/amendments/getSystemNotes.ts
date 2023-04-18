@@ -3,7 +3,7 @@ import User from "services/entities/User"
 import { Amendments } from "types/Amendments"
 import { formatDisplayedDate } from "utils/formattedDate"
 
-const formatValue = (value: string | number | boolean | Date): string =>
+const formatValueOfUpdatedElement = (value: string | number | boolean | Date): string =>
   value instanceof Date ? formatDisplayedDate(value) : `${value}`
 
 const getSystemNotes = (amendments: Partial<Amendments>, userDetails: User, courtCaseId: number): Partial<Note>[] => {
@@ -18,14 +18,16 @@ const getSystemNotes = (amendments: Partial<Amendments>, userDetails: User, cour
     if (Array.isArray(value)) {
       value.forEach((field) => {
         notes.push({
-          noteText: `${portalActionText} Element: ${key}. New Value: ${formatValue(field.updatedValue)}`,
+          noteText: `${portalActionText} Element: ${key}. New Value: ${formatValueOfUpdatedElement(
+            field.updatedValue
+          )}`,
           errorId: courtCaseId,
           userId: "System"
         })
       })
     } else {
       notes.push({
-        noteText: `${portalActionText} Element: ${key}. New Value: ${formatValue(value)}`,
+        noteText: `${portalActionText} Element: ${key}. New Value: ${formatValueOfUpdatedElement(value)}`,
         errorId: courtCaseId,
         userId: "System"
       })
