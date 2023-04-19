@@ -1,8 +1,8 @@
 import { expect } from "@jest/globals"
 import User from "services/entities/User"
-import Group from "types/Group"
+import GroupName from "types/GroupName"
 
-const createUser = (...groups: Group[]) => {
+const createUser = (...groups: GroupName[]) => {
   const user = new User()
   user.groups = [...groups]
 
