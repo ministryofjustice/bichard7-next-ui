@@ -88,7 +88,7 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
         {"Qualifier"}
       </Heading>
       <Table>
-        <TableRow header="Code" value={"TO DO"} />
+        <TableRow header="Code" value={"TODO"} />
       </Table>
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
     </>
