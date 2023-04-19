@@ -13,12 +13,7 @@ import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { displayedDateFormat } from "utils/formattedDate"
-import {
-  filterUserNotes,
-  getFirst100CharsOfMostRecentNote,
-  getMostRecentNote,
-  validateMostRecentNoteDate
-} from "./CourtCaseListEntryHelperFunction"
+import { filterUserNotes, getMostRecentNote } from "./CourtCaseListEntryHelperFunction"
 import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
 import CaseUnlockedTag from "./tags/CaseUnlockedTag"
 import LockedByTag from "./tags/LockedByTag/LockedByTag"
@@ -179,11 +174,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
           <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell style={{ paddingTop: "0px" }} colSpan={2}>
-            <NotePreview
-              latestNote={getFirst100CharsOfMostRecentNote(userNotes)}
-              displayDate={validateMostRecentNoteDate(mostRecentUserNote)}
-              numberOfNotes={numberOfNotes}
-            />
+            <NotePreview latestNote={mostRecentUserNote} numberOfNotes={numberOfNotes} />
           </Table.Cell>
           <Table.Cell />
         </Table.Row>
