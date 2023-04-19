@@ -1,4 +1,5 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import ConditionalRender from "components/ConditionalRender"
 import { Table } from "govuk-react"
 import { formatDisplayedDate } from "utils/formattedDate"
 import { TableRow } from "../../TableRow"
@@ -26,16 +27,15 @@ export const HearingResult = ({ result }: HearingResultProps) => (
       header="Result hearing date"
       value={result.ResultHearingDate && formatDisplayedDate(new Date(result.ResultHearingDate))}
     />
-    <TableRow
-      header="Next hearing location"
-      value={
-        typeof result.NextResultSourceOrganisation === "string" ? result.NextResultSourceOrganisation : "Not entered"
-      }
-    />
-    <TableRow
-      header="Next hearing date"
-      value={result.NextHearingDate ? formatDisplayedDate(new Date(result.NextHearingDate)) : "Not entered"}
-    />
+    <ConditionalRender isRendered={typeof result.NextResultSourceOrganisation === "string"}>
+      <TableRow header="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
+    </ConditionalRender>
+    <ConditionalRender isRendered={!!result.NextHearingDate}>
+      <TableRow
+        header="Next hearing date"
+        value={result.NextHearingDate && formatDisplayedDate(new Date(result.NextHearingDate))}
+      />
+    </ConditionalRender>
     <TableRow header="Plea" value={result.PleaStatus} />
     <TableRow header="Verdict" value={result.Verdict} />
     <TableRow header="Mode of trail reason" value={result.ModeOfTrialReason} />
