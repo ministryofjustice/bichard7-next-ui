@@ -4,7 +4,7 @@ import { isError } from "../../src/types/Result"
 import User from "../../src/services/entities/User"
 import { deleteUsers, getDummyUser, insertUsers, runQuery } from "../utils/manageUsers"
 import getUser from "../../src/services/getUser"
-import Group from "types/Group"
+import GroupName from "types/GroupName"
 
 describe("getUser", () => {
   let dataSource: DataSource
@@ -27,7 +27,7 @@ describe("getUser", () => {
     const inputUser = await getDummyUser()
     await insertUsers(inputUser)
     const groups = ["B7Supervisor_grp", "B7GeneralHandler_grp"]
-    const expectedGroups: Group[] = ["Supervisor", "GeneralHandler"]
+    const expectedGroups: GroupName[] = ["Supervisor", "GeneralHandler"]
 
     const result = await getUser(dataSource, inputUser.username, groups)
     expect(isError(result)).toBe(false)

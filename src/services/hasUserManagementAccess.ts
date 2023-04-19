@@ -1,8 +1,8 @@
-import Group from "types/Group"
-import UserGroup from "types/Group"
+import GroupName from "types/GroupName"
+import UserGroup from "types/GroupName"
 
 export interface Props {
-  groups: Group[]
+  groups: GroupName[]
 }
 const hasUserManagementAccess = ({ groups }: Props): boolean => groups.includes("UserManager" as UserGroup)
 
