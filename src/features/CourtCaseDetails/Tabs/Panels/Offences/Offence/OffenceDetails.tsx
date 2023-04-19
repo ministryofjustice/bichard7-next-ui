@@ -26,13 +26,13 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
   }
 
   const getCommittedOnBail = (bailCode: string) => {
-    let CommittedOnBailWithDescription = bailCode
+    let committedOnBailWithDescription = bailCode
     yesNo.forEach((answer) => {
       if (answer.cjsCode === bailCode) {
-        CommittedOnBailWithDescription = `${bailCode} (${capitaliseExpression(answer.description)})`
+        committedOnBailWithDescription = `${bailCode} (${capitaliseExpression(answer.description)})`
       }
     })
-    return CommittedOnBailWithDescription
+    return committedOnBailWithDescription
   }
 
   const getFormattedSequenceNumber = (number: number) => {
