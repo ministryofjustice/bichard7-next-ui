@@ -66,9 +66,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       </ConditionalRender>
 
       <ConditionalRender isRendered={activeTab === "Offences"}>
-        <CourtCaseDetailsPanel heading={"Offences"}>
-          <Offences offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence} />
-        </CourtCaseDetailsPanel>
+        <Offences offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence} />
       </ConditionalRender>
 
       <ConditionalRender isRendered={activeTab === "Notes"}>
