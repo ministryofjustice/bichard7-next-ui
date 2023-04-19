@@ -1,0 +1,294 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model archive_error_list {
+  error_id                    Int                           @id
+  message_id                  String                        @db.VarChar(70)
+  phase                       Int
+  error_status                Int?
+  trigger_status              Int?
+  error_quality_checked       Int?
+  trigger_quality_checked     Int?
+  trigger_count               Int
+  error_locked_by_id          String?                       @db.VarChar(32)
+  trigger_locked_by_id        String?                       @db.VarChar(32)
+  is_urgent                   Int                           @db.SmallInt
+  asn                         String?                       @db.VarChar(21)
+  court_code                  String?                       @db.VarChar(7)
+  annotated_msg               String
+  updated_msg                 String?
+  error_report                String                        @db.VarChar(1000)
+  create_ts                   DateTime                      @db.Timestamp(6)
+  error_reason                String?                       @db.VarChar(350)
+  trigger_reason              String?                       @db.VarChar(350)
+  error_count                 Int
+  user_updated_flag           Int                           @db.SmallInt
+  court_date                  DateTime?                     @db.Date
+  ptiurn                      String?                       @db.VarChar(11)
+  court_name                  String?                       @db.VarChar(500)
+  resolution_ts               DateTime?                     @db.Timestamp(6)
+  msg_received_ts             DateTime                      @db.Timestamp(6)
+  error_resolved_by           String?                       @db.VarChar(32)
+  trigger_resolved_by         String?                       @db.VarChar(32)
+  error_resolved_ts           DateTime?                     @db.Timestamp(6)
+  trigger_resolved_ts         DateTime?                     @db.Timestamp(6)
+  defendant_name              String?                       @db.VarChar(500)
+  org_for_police_filter       String?                       @db.Char(6)
+  court_room                  String?                       @db.VarChar(2)
+  court_reference             String                        @db.VarChar(11)
+  error_insert_ts             DateTime?                     @db.Timestamp(6)
+  trigger_insert_ts           DateTime?                     @db.Timestamp(6)
+  pnc_update_enabled          String?                       @db.Char(1)
+  archive_log_id              Int?
+  audit_logged_at             DateTime?                     @db.Timestamp(6)
+  audit_log_attempts          Int                           @default(0)
+  archive_log                 archive_log?                  @relation(fields: [archive_log_id], references: [log_id], onDelete: Cascade, onUpdate: NoAction)
+  archive_error_list_notes    archive_error_list_notes[]    @ignore
+  archive_error_list_triggers archive_error_list_triggers[] @ignore
+
+  @@index([archive_log_id])
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model archive_error_list_notes {
+  note_id            Int?
+  error_id           Int?
+  note_text          String              @db.VarChar(1000)
+  user_id            String              @db.VarChar(32)
+  create_ts          DateTime            @db.Timestamp(6)
+  archive_error_list archive_error_list? @relation(fields: [error_id], references: [error_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model archive_error_list_triggers {
+  trigger_id            Int?
+  error_id              Int?
+  trigger_code          String              @db.VarChar(8)
+  trigger_item_identity String?             @db.VarChar(10)
+  status                Int
+  create_ts             DateTime            @db.Timestamp(6)
+  resolved_by           String?             @db.VarChar(32)
+  resolved_ts           DateTime?           @db.Timestamp(6)
+  archive_error_list    archive_error_list? @relation(fields: [error_id], references: [error_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@ignore
+}
+
+model archive_log {
+  log_id             Int                  @id @default(autoincrement())
+  archived_at        DateTime             @default(now()) @db.Timestamp(6)
+  archived_by        String?
+  audit_logged_at    DateTime?            @db.Timestamp(6)
+  archive_error_list archive_error_list[]
+
+  @@index([archived_at])
+  @@index([audit_logged_at])
+}
+
+model error_list {
+  error_id                         Int                   @id @default(autoincrement())
+  message_id                       String                @unique(map: "unique_message_id") @db.VarChar(70)
+  phase                            Int
+  error_status                     Int?
+  trigger_status                   Int?
+  error_quality_checked            Int?
+  trigger_quality_checked          Int?
+  trigger_count                    Int
+  error_locked_by_id               String?               @db.VarChar(32)
+  trigger_locked_by_id             String?               @db.VarChar(32)
+  is_urgent                        Int                   @db.SmallInt
+  asn                              String?               @db.VarChar(21)
+  court_code                       String?               @db.VarChar(7)
+  annotated_msg                    String
+  updated_msg                      String?
+  error_report                     String                @db.VarChar(1000)
+  create_ts                        DateTime              @db.Timestamp(6)
+  error_reason                     String?               @db.VarChar(350)
+  trigger_reason                   String?               @db.VarChar(350)
+  error_count                      Int
+  user_updated_flag                Int                   @db.SmallInt
+  court_date                       DateTime?             @db.Date
+  ptiurn                           String?               @db.VarChar(11)
+  court_name                       String?               @db.VarChar(500)
+  resolution_ts                    DateTime?             @db.Timestamp(6)
+  msg_received_ts                  DateTime              @db.Timestamp(6)
+  error_resolved_by                String?               @db.VarChar(32)
+  trigger_resolved_by              String?               @db.VarChar(32)
+  error_resolved_ts                DateTime?             @db.Timestamp(6)
+  trigger_resolved_ts              DateTime?             @db.Timestamp(6)
+  defendant_name                   String?               @db.VarChar(500)
+  org_for_police_filter            String?               @db.Char(6)
+  court_room                       String?               @db.VarChar(2)
+  court_reference                  String                @db.VarChar(11)
+  error_insert_ts                  DateTime?             @db.Timestamp(6)
+  trigger_insert_ts                DateTime?             @db.Timestamp(6)
+  pnc_update_enabled               String?               @db.Char(1)
+  defendant_name_upper             String?               @default(dbgenerated("upper((defendant_name)::text)")) @db.VarChar(200)
+  court_name_upper                 String?               @default(dbgenerated("upper((court_name)::text)")) @db.VarChar(200)
+  last_pnc_failure_resubmission_ts DateTime?             @db.Timestamp(6)
+  total_pnc_failure_resubmissions  Int                   @default(0)
+  error_list_notes                 error_list_notes[]    @ignore
+  error_list_triggers              error_list_triggers[] @ignore
+
+  @@index([error_locked_by_id], map: "err_locked_id_ix")
+  @@index([court_code], map: "err_lst_courtcd_ix")
+  @@index([court_name_upper], map: "err_lst_crtname_ix")
+  @@index([defendant_name_upper], map: "err_lst_defname_ix")
+  @@index([org_for_police_filter], map: "err_lst_orgpolf_ix")
+  @@index([trigger_locked_by_id], map: "trg_locked_id_ix")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model error_list_notes {
+  note_id    Int         @default(autoincrement())
+  error_id   Int?
+  note_text  String      @db.VarChar(1000)
+  user_id    String      @db.VarChar(32)
+  create_ts  DateTime    @db.Timestamp(6)
+  error_list error_list? @relation(fields: [error_id], references: [error_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([error_id], map: "err_lst_notes_ix")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model error_list_triggers {
+  trigger_id            Int         @default(autoincrement())
+  error_id              Int?
+  trigger_code          String      @db.VarChar(8)
+  trigger_item_identity String?     @db.VarChar(10)
+  status                Int
+  create_ts             DateTime    @db.Timestamp(6)
+  resolved_by           String?     @db.VarChar(32)
+  resolved_ts           DateTime?   @db.Timestamp(6)
+  error_list            error_list? @relation(fields: [error_id], references: [error_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([trigger_code, error_id], map: "err_lst_trg_tce_ix")
+  @@index([error_id], map: "err_lst_trgrs_ix")
+  @@ignore
+}
+
+model groups {
+  id            Int            @id @default(autoincrement())
+  name          String         @db.VarChar(64)
+  description   String?
+  friendly_name String         @db.VarChar(64)
+  parent_id     Int?
+  users_groups  users_groups[]
+}
+
+model password_history {
+  id            Int       @id @default(autoincrement())
+  user_id       Int?
+  password_hash String?   @db.VarChar(128)
+  last_used     DateTime? @default(now()) @db.Timestamp(6)
+  users         users?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_password_history_user_id")
+}
+
+model pnc_data_channel {
+  data_channel_id             Int                  @id
+  force_number                String               @db.VarChar(2)
+  nid                         Int
+  nid_range_start             Int
+  nid_range_end               Int
+  last_nid_reset              DateTime?            @db.Timestamp(6)
+  manual_nid_reset            Int                  @db.SmallInt
+  last_event_sequence_reset   DateTime?            @db.Timestamp(6)
+  manual_event_sequence_reset Int                  @db.SmallInt
+  channel_taken               DateTime?            @db.Timestamp(6)
+  pnc_event_sequence          pnc_event_sequence[]
+}
+
+model pnc_event_sequence {
+  event_sequence_id Int               @id @default(autoincrement())
+  event_code        String            @db.VarChar(6)
+  sequence_number   Int
+  data_channel_id   Int?
+  pnc_data_channel  pnc_data_channel? @relation(fields: [data_channel_id], references: [data_channel_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model service_messages {
+  id         Int       @id @default(autoincrement())
+  message    String?
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([created_at])
+}
+
+model team {
+  team_id          Int                @id @default(autoincrement())
+  team_name        String             @db.VarChar(32)
+  owner            String             @db.VarChar(32)
+  area             String?            @db.VarChar(2)
+  team_membership  team_membership[]
+  team_supervision team_supervision[]
+}
+
+model team_membership {
+  team_id Int
+  member  String @db.VarChar(32)
+  team    team   @relation(fields: [team_id], references: [team_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([team_id, member])
+}
+
+model team_supervision {
+  supervisor String @db.VarChar(32)
+  team_id    Int
+  team       team   @relation(fields: [team_id], references: [team_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([supervisor, team_id])
+}
+
+model users {
+  id                           Int                @id @default(autoincrement())
+  username                     String             @db.VarChar(64)
+  exclusion_list               String?
+  inclusion_list               String?
+  created_at                   DateTime           @default(now()) @db.Timestamp(6)
+  endorsed_by                  String?
+  last_logged_in               DateTime?          @db.Timestamp(6)
+  org_serves                   String?
+  forenames                    String?            @db.VarChar(128)
+  surname                      String?            @db.VarChar(64)
+  email                        String             @db.VarChar(128)
+  password                     String?            @db.VarChar(128)
+  last_login_attempt           DateTime?          @default(dbgenerated("'2020-01-01 00:00:00'::timestamp without time zone")) @db.Timestamp(6)
+  email_verification_code      String?            @db.VarChar(6)
+  email_verification_generated DateTime?          @default(dbgenerated("'2020-01-01 00:00:00'::timestamp without time zone")) @db.Timestamp(6)
+  deleted_at                   DateTime?          @db.Timestamp(6)
+  password_reset_code          String?            @db.VarChar(6)
+  migrated_password            String?            @db.VarChar
+  jwt_id                       String?            @db.VarChar(50)
+  jwt_generated_at             DateTime?          @db.Timestamp(6)
+  visible_courts               String?            @db.VarChar(256)
+  visible_forces               String?            @db.VarChar(256)
+  excluded_triggers            String?            @db.VarChar(512)
+  failed_password_attempts     Int?
+  feature_flags                Json?              @default("{}")
+  password_history             password_history[]
+  users_groups                 users_groups[]
+}
+
+model users_groups {
+  user_id  Int
+  group_id Int
+  groups   groups @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users    users  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, group_id])
+}
+
+model work_allocation_report {
+  area_code        String   @id @db.VarChar(2)
+  report           Bytes
+  report_timestamp DateTime @db.Timestamp(6)
+}
