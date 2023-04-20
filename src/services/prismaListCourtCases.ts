@@ -9,7 +9,8 @@ export const prismaListCourtCases = async (filterOptions?: { defendant_name: str
     filters = {
       where: {
         defendant_name: {
-          contains: filterOptions.defendant_name
+          contains: filterOptions.defendant_name,
+          mode: "insensitive"
         }
       }
     }

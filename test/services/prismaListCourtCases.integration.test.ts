@@ -62,5 +62,26 @@ describe("PRISMA-listCourtCases", () => {
       expect(result).toHaveLength(1)
       expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
     })
+
+    it.only("should list cases when there is a case partial and insensitive match", async () => {
+      const orgCode = "01FPA1"
+      const defendantToInclude = "WAYNE Bruce"
+      const defendantToIncludeWithPartialMatch = "WAYNE Bill"
+      const defendantToNotInclude = "GORDON Barbara"
+
+      await insertCourtCasesWithFields([
+        { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
+        { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
+        { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
+      ])
+
+      const result = await prismaListCourtCases({
+        defendant_name: "wayne b"
+      })
+      expect(isError(result)).toBe(false)
+      expect(result).toHaveLength(2)
+      expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
+      expect(result[1].defendant_name).toStrictEqual(defendantToIncludeWithPartialMatch)
+    })
   })
 })
