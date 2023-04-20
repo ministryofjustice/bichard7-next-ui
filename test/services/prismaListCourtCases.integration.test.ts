@@ -8,6 +8,7 @@ import Trigger from "../../src/services/entities/Trigger"
 import getDataSource from "../../src/services/getDataSource"
 import Note from "services/entities/Note"
 import { prismaListCourtCases } from "services/prismaListCourtCases"
+import { isError } from "types/Result"
 
 jest.mock(
   "services/queries/courtCasesByVisibleForcesQuery",
@@ -51,8 +52,15 @@ describe("PRISMA-listCourtCases", () => {
         { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
       ])
 
-      const result = await prismaListCourtCases()
+      let result = await prismaListCourtCases()
       expect(result.length).toBe(3)
+
+      result = await prismaListCourtCases({
+        defendant_name: "WAYNE Bruce"
+      })
+      expect(isError(result)).toBe(false)
+      expect(result).toHaveLength(1)
+      expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
     })
   })
 })
