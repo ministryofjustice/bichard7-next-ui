@@ -40,18 +40,18 @@ export const HearingDetails = ({ hearing }: HearingDetailsProps) => {
 
   return (
     <Table>
-      <TableRow header="Court location" value={hearing.CourtHearingLocation.OrganisationUnitCode} />
-      <TableRow header="Date of hearing" value={getFormatedDateOfHearing(hearing.DateOfHearing)} />
-      <TableRow header="Time of hearing" value={hearing.TimeOfHearing} />
-      <TableRow header="Defendant present" value={hearing.DefendantPresentAtHearing} />
-      <TableRow header="Source reference document name" value={hearing.SourceReference.DocumentName} />
-      <TableRow header="Source reference identification" value={hearing.SourceReference.UniqueID} />
-      <TableRow header="Source reference document type" value={hearing.SourceReference.DocumentType} />
-      <TableRow header="Court type" value={getCourtType(hearing.CourtType)} />
-      <TableRow header="LJA code" value={hearing.CourtHouseCode.toString()} />
-      <TableRow header="Court name" value={hearing.CourtHouseName} />
-      <TableRow header="Hearing language" value={getLanguage(hearing.HearingLanguage)} />
-      <TableRow header="Documentation language" value={getLanguage(hearing.HearingDocumentationLanguage)} />
+      <TableRow label="Court location" value={hearing.CourtHearingLocation.OrganisationUnitCode} />
+      <TableRow label="Date of hearing" value={getFormatedDateOfHearing(hearing.DateOfHearing)} />
+      <TableRow label="Time of hearing" value={hearing.TimeOfHearing} />
+      <TableRow label="Defendant present" value={hearing.DefendantPresentAtHearing} />
+      <TableRow label="Source reference document name" value={hearing.SourceReference.DocumentName} />
+      <TableRow label="Source reference identification" value={hearing.SourceReference.UniqueID} />
+      <TableRow label="Source reference document type" value={hearing.SourceReference.DocumentType} />
+      <TableRow label="Court type" value={getCourtType(hearing.CourtType)} />
+      <TableRow label="LJA code" value={hearing.CourtHouseCode.toString()} />
+      <TableRow label="Court name" value={hearing.CourtHouseName} />
+      <TableRow label="Hearing language" value={getLanguage(hearing.HearingLanguage)} />
+      <TableRow label="Documentation language" value={getLanguage(hearing.HearingDocumentationLanguage)} />
     </Table>
   )
 }

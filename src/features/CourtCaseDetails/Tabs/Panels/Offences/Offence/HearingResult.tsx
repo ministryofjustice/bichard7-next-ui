@@ -41,31 +41,31 @@ export const HearingResult = ({ result }: HearingResultProps) => {
 
   return (
     <Table>
-      <TableRow header="CJS Code" value={result.CJSresultCode} />
+      <TableRow label="CJS Code" value={result.CJSresultCode} />
       <TableRow
-        header="Result hearing type"
+        label="Result hearing type"
         value={result.ResultHearingType && capitaliseExpression(result.ResultHearingType)}
       />
       <TableRow
-        header="Result hearing date"
+        label="Result hearing date"
         value={result.ResultHearingDate && formatDisplayedDate(new Date(result.ResultHearingDate))}
       />
       <ConditionalRender isRendered={typeof result.NextResultSourceOrganisation === "string"}>
-        <TableRow header="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
+        <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
       </ConditionalRender>
       <ConditionalRender isRendered={result.NextHearingDate !== "false"}>
         <TableRow
-          header="Next hearing date"
+          label="Next hearing date"
           value={result.NextHearingDate && formatDisplayedDate(new Date(result.NextHearingDate))}
         />
       </ConditionalRender>
-      <TableRow header="Plea" value={getPleaStatus(result.PleaStatus)} />
-      <TableRow header="Verdict" value={getVerdict(result.Verdict)} />
-      <TableRow header="Mode of trail reason" value={result.ModeOfTrialReason} />
-      <TableRow header="Text" value={result.ResultVariableText} />
-      <TableRow header="PNC disposal type" value={result.PNCDisposalType} />
-      <TableRow header="Result class" value={result.ResultClass} />
-      <TableRow header="PNC adjudication exists" value={getYesOrNo(result.PNCAdjudicationExists)} />
+      <TableRow label="Plea" value={getPleaStatus(result.PleaStatus)} />
+      <TableRow label="Verdict" value={getVerdict(result.Verdict)} />
+      <TableRow label="Mode of trail reason" value={result.ModeOfTrialReason} />
+      <TableRow label="Text" value={result.ResultVariableText} />
+      <TableRow label="PNC disposal type" value={result.PNCDisposalType} />
+      <TableRow label="Result class" value={result.ResultClass} />
+      <TableRow label="PNC adjudication exists" value={getYesOrNo(result.PNCAdjudicationExists)} />
     </Table>
   )
 }

@@ -46,37 +46,31 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
         {`Offence ${offence.CourtOffenceSequenceNumber} of ${offencesCount}`}
       </Heading>
       <Table>
-        <TableRow header="Offence code" value={getOffenceCode(offence)} />
-        <TableRow header="Title" value={offence.OffenceTitle} />
-        <TableRow header="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
-        <TableRow header="Category" value={getOffenceCategory(offence.OffenceCategory)} />
+        <TableRow label="Offence code" value={getOffenceCode(offence)} />
+        <TableRow label="Title" value={offence.OffenceTitle} />
+        <TableRow label="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
+        <TableRow label="Category" value={getOffenceCategory(offence.OffenceCategory)} />
+        <TableRow label="Arrest date" value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))} />
+        <TableRow label="Charge date" value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))} />
+        <TableRow label="Date code" value={offence.ActualOffenceDateCode} />
         <TableRow
-          header="Arrest date"
-          value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))}
-        />
-        <TableRow
-          header="Charge date"
-          value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))}
-        />
-        <TableRow header="Date code" value={offence.ActualOffenceDateCode} />
-        <TableRow
-          header="Start date"
+          label="Start date"
           value={
             offence.ActualOffenceStartDate.StartDate &&
             formatDisplayedDate(new Date(offence.ActualOffenceStartDate.StartDate))
           }
         />
-        <TableRow header="Location" value={offence.LocationOfOffence} />
-        <TableRow header="Wording" value={offence.ActualOffenceWording} />
-        <TableRow header="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
-        <TableRow header="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
-        <TableRow header="Home Office classification" value={offence.HomeOfficeClassification} />
+        <TableRow label="Location" value={offence.LocationOfOffence} />
+        <TableRow label="Wording" value={offence.ActualOffenceWording} />
+        <TableRow label="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
+        <TableRow label="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
+        <TableRow label="Home Office classification" value={offence.HomeOfficeClassification} />
         <TableRow
-          header="Conviction date"
+          label="Conviction date"
           value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
         />
-        <TableRow header="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
-        <TableRow header="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
+        <TableRow label="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
+        <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
       </Table>
       <Heading as="h4" size="MEDIUM">
         {"Hearing result"}
@@ -88,7 +82,7 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
         {"Qualifier"}
       </Heading>
       <Table>
-        <TableRow header="Code" value={"TODO"} />
+        <TableRow label="Code" value={"TODO"} />
       </Table>
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
     </>

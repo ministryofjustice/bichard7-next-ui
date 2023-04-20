@@ -1,14 +1,14 @@
 import { Table } from "govuk-react"
 
 interface TableRowProps {
-  header: string
+  label: string
   value: string | number | null | undefined
 }
 
-export const TableRow = ({ header, value }: TableRowProps) => (
+export const TableRow = ({ label, value }: TableRowProps) => (
   <Table.Row>
     <Table.Cell>
-      <b>{header}</b>
+      <b>{label}</b>
     </Table.Cell>
     <Table.Cell>{value}</Table.Cell>
   </Table.Row>
