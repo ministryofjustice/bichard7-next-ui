@@ -53,7 +53,7 @@ export const HearingResult = ({ result }: HearingResultProps) => {
       <ConditionalRender isRendered={typeof result.NextResultSourceOrganisation === "string"}>
         <TableRow header="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
       </ConditionalRender>
-      <ConditionalRender isRendered={!!result.NextHearingDate}>
+      <ConditionalRender isRendered={result.NextHearingDate !== "false"}>
         <TableRow
           header="Next hearing date"
           value={result.NextHearingDate && formatDisplayedDate(new Date(result.NextHearingDate))}
