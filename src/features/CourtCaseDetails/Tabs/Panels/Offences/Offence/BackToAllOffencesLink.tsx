@@ -1,10 +1,10 @@
 import { textBlue } from "utils/colours"
 
-interface BBackToAllOffencesLinkProps {
+interface BackToAllOffencesLinkProps {
   onClick: () => void
 }
 
-export const BackToAllOffencesLink = ({ onClick }: BBackToAllOffencesLinkProps) => {
+export const BackToAllOffencesLink = ({ onClick }: BackToAllOffencesLinkProps) => {
   return (
     <a
       style={{ color: textBlue }}
