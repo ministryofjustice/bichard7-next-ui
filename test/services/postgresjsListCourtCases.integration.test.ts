@@ -73,20 +73,18 @@ describe("POSTGRESJS-listCourtCases", () => {
         { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
         { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
       ])
-      let result = await postgresjsListCourtCases(db)
-      console.log(result)
-
+      let result = await postgresjsListCourtCases(db, { defendantName: "wayne bruce" })
       expect(result).toHaveLength(1)
 
-      // expect(result[0].defendantName).toStrictEqual(defendantToInclude)
+      expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
 
       result = await postgresjsListCourtCases(db, {
         defendantName: "wayne b"
       })
 
       expect(result).toHaveLength(2)
-      // expect(result[0].defendantName).toStrictEqual(defendantToInclude)
-      // expect(result[1].defendantName).toStrictEqual(defendantToIncludeWithPartialMatch)
+      expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
+      expect(result[1].defendant_name).toStrictEqual(defendantToIncludeWithPartialMatch)
     })
   })
 })
