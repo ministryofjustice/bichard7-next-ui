@@ -10,7 +10,6 @@ interface OffencesListRowProps {
 }
 
 export const OffencesListRow = ({ offence, onClick, number }: OffencesListRowProps) => {
-
   return (
     <Table.Row>
       <Table.Cell>{number}</Table.Cell>
