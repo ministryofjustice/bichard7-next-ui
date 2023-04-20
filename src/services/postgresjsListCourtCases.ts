@@ -1,6 +1,9 @@
 import type { Sql } from "postgres"
 
-export const postgresjsListCourtCases = async (database: Sql, filterOptions?: { defendantName: string }) => {
+export const postgresjsListCourtCases = async (
+  database: Sql,
+  filterOptions?: { defendantName?: string; courtName?: string }
+) => {
   const courtCases = database`
   SELECT
    *
@@ -10,6 +13,7 @@ export const postgresjsListCourtCases = async (database: Sql, filterOptions?: { 
        ? database`where defendant_name ilike ${"%" + filterOptions?.defendantName + "%"}`
        : database``
    }
+   ${!!filterOptions?.courtName ? database`and court_name ilike ${"%" + filterOptions?.courtName + "%"}` : database``}
 `
   console.log(courtCases)
 

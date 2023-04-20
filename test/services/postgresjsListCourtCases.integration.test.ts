@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import type { Sql } from "postgres"
+import postgres from "postgres"
 import "reflect-metadata"
+import Note from "services/entities/Note"
+import { postgresjsListCourtCases } from "services/postgresjsListCourtCases"
 import { DataSource } from "typeorm"
-import deleteFromEntity from "../utils/deleteFromEntity"
-import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
+import { isError } from "types/Result"
+import createDbConfig from "utils/createDbConfig"
 import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
 import getDataSource from "../../src/services/getDataSource"
-import Note from "services/entities/Note"
-import { postgresjsListCourtCases } from "services/postgresjsListCourtCases"
-import createDbConfig from "utils/createDbConfig"
-import postgres from "postgres"
-import type { Sql } from "postgres"
+import deleteFromEntity from "../utils/deleteFromEntity"
+import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 
 const dbConfig = createDbConfig()
 
@@ -85,6 +86,62 @@ describe("POSTGRESJS-listCourtCases", () => {
       expect(result).toHaveLength(2)
       expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
       expect(result[1].defendant_name).toStrictEqual(defendantToIncludeWithPartialMatch)
+    })
+  })
+
+  describe("search by court name", () => {
+    it("should list cases when there is a case insensitive match", async () => {
+      const orgCode = "01FPA1"
+      const courtNameToInclude = "Magistrates' Courts London Croydon"
+      const courtNameToIncludeWithPartialMatch = "Magistrates' Courts London Something Else"
+      const courtNameToNotInclude = "Court Name not to include"
+
+      await insertCourtCasesWithFields([
+        { courtName: courtNameToInclude, orgForPoliceFilter: orgCode },
+        { courtName: courtNameToIncludeWithPartialMatch, orgForPoliceFilter: orgCode },
+        { courtName: courtNameToNotInclude, orgForPoliceFilter: orgCode }
+      ])
+
+      let result = await postgresjsListCourtCases(db, {
+        courtName: "Magistrates' Courts London Croydon"
+      })
+      expect(isError(result)).toBe(false)
+
+      expect(result).toHaveLength(1)
+      expect(result[0].court_name).toStrictEqual(courtNameToInclude)
+
+      result = await postgresjsListCourtCases(db, {
+        courtName: "magistrates' courts london"
+      })
+      expect(isError(result)).toBe(false)
+
+      expect(result).toHaveLength(2)
+      expect(result[0].court_name).toStrictEqual(courtNameToInclude)
+      expect(result[1].court_name).toStrictEqual(courtNameToIncludeWithPartialMatch)
+    })
+  })
+  describe("Using a combination of filters", () => {
+    it.only("Should filter Court name and defendant name", async () => {
+      const orgCode = "01FPA1"
+      const courtNameToInclude = "Magistrates' Courts London Croydon"
+      const defendantToInclude = "WAYNE Bruce"
+
+      await insertCourtCasesWithFields([
+        { courtName: courtNameToInclude, orgForPoliceFilter: orgCode },
+        { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
+        { orgForPoliceFilter: orgCode }
+      ])
+
+      const result = await postgresjsListCourtCases(db, {
+        defendantName: "WAYNE Bruce",
+        courtName: "Magistrates' Courts London Croydon"
+      })
+      console.log(result)
+      expect(isError(result)).toBe(false)
+
+      expect(result).toHaveLength(2)
+      expect(result[0].court_name).toStrictEqual(courtNameToInclude)
+      expect(result[1].defendant_name).toStrictEqual(defendantToInclude)
     })
   })
 })
