@@ -12,7 +12,7 @@ export const HearingDetails = ({ hearing }: HearingDetailsProps) => {
   const getLanguage = (language: string) => {
     switch (language) {
       case "E":
-        return `English(${language})`
+        return `English (${language})`
       case "W":
         return `Welsh (${language})`
       case "D":
