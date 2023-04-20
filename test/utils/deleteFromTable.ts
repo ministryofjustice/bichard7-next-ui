@@ -1,10 +1,8 @@
 import getDataSource from "../../src/services/getDataSource"
-import { EntityTarget, ObjectLiteral } from "typeorm"
 
-const deleteFromTable = async (entity: EntityTarget<ObjectLiteral>) => {
+const deleteFromTable = async (tableName: string) => {
   const dataSource = await getDataSource()
-
-  return dataSource.getRepository(entity).createQueryBuilder().delete().execute()
+  await dataSource.query(`TRUNCATE TABLE br7own.${tableName} CASCADE;`)
 }
 
 export default deleteFromTable

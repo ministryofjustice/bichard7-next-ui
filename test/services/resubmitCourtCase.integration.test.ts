@@ -8,7 +8,7 @@ import sendToQueue from "services/mq/sendToQueue"
 import { resubmitCourtCase } from "services/resubmitCourtCase"
 import { DataSource } from "typeorm"
 import offenceSequenceException from "../test-data/HO100302_1.json"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 
 jest.mock("services/mq/sendToQueue")
@@ -25,7 +25,7 @@ describe("resubmit court case", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
     jest.resetAllMocks()
     jest.clearAllMocks()
   })
@@ -69,7 +69,7 @@ describe("resubmit court case", () => {
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
     expect(sendToQueue).toHaveBeenCalledTimes(1)
-    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledTimes(2)
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
       { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
     ])
@@ -130,7 +130,7 @@ describe("resubmit court case", () => {
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
     expect(sendToQueue).toHaveBeenCalledTimes(1)
-    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledTimes(2)
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
       { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
     ])
@@ -211,7 +211,7 @@ describe("resubmit court case", () => {
       .findOne({ where: { errorId: inputCourtCase.errorId } })
 
     expect(sendToQueue).toHaveBeenCalledTimes(1)
-    expect(insertNotes).toHaveBeenCalledTimes(1)
+    expect(insertNotes).toHaveBeenCalledTimes(2)
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
       { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
     ])

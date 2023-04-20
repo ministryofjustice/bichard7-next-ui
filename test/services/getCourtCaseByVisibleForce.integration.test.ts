@@ -3,7 +3,7 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import getCourtCaseByVisibleForce from "../../src/services/getCourtCaseByVisibleForce"
 import { isError } from "../../src/types/Result"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 
 describe("getCourtCaseByVisibleForces", () => {
@@ -14,7 +14,7 @@ describe("getCourtCaseByVisibleForces", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
   })
 
   afterAll(async () => {

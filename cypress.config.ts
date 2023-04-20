@@ -2,7 +2,7 @@ import { defineConfig } from "cypress"
 import pgPromise from "pg-promise"
 import CourtCase from "./src/services/entities/CourtCase"
 import User from "./src/services/entities/User"
-import deleteFromTable from "./test/utils/deleteFromTable"
+import deleteFromEntity from "./test/utils/deleteFromEntity"
 import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import {
   insertCourtCasesWithFields,
@@ -60,7 +60,7 @@ export default defineConfig({
         },
 
         clearCourtCases() {
-          return deleteFromTable(CourtCase)
+          return deleteFromEntity(CourtCase)
         },
 
         insertUsers(params: { users: Partial<User>[]; userGroups?: string[] }) {

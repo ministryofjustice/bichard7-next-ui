@@ -57,25 +57,10 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
+    // prettier-ignore
     const {
-      orderBy,
-      page,
-      type,
-      keywords,
-      courtName,
-      reasonCode,
-      ptiurn,
-      maxPageItems,
-      order,
-      urgency,
-      caseAge,
-      from,
-      to,
-      locked,
-      state,
-      myCases,
-      unlockException,
-      unlockTrigger
+      orderBy, page, type, keywords, courtName, reasonCode, ptiurn, maxPageItems, order,
+      urgency, caseAge, from, to, locked, state, myCases, unlockException, unlockTrigger
     } = query
     const reasons = [type].flat().filter((t) => reasonOptions.includes(String(t) as Reason)) as Reason[]
     const caseAges = [caseAge]
@@ -120,14 +105,14 @@ export const getServerSideProps = withMultipleServerSideProps(
     const resolvedByUsername =
       validatedCaseState === "Resolved" && !currentUser.groups.includes("Supervisor") ? currentUser.username : undefined
 
-    const caseAgeCounts = await getCountOfCasesByCaseAge(dataSource, currentUser.visibleForces)
+    const caseAgeCounts = await getCountOfCasesByCaseAge(dataSource, currentUser.visibleCases)
 
     if (isError(caseAgeCounts)) {
       throw caseAgeCounts
     }
 
     const courtCases = await listCourtCases(dataSource, {
-      forces: currentUser.visibleForces,
+      forces: currentUser.visibleCases,
       ...(validatedDefendantName && { defendantName: validatedDefendantName }),
       ...(validatedCourtName && { courtName: validatedCourtName }),
       ...(validatedreasonCode && { reasonCode: validatedreasonCode }),
@@ -181,77 +166,66 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const Home: NextPage<Props> = ({
-  user,
-  courtCases,
-  order,
-  page,
-  casesPerPage,
-  totalCases,
-  reasons,
-  keywords,
-  courtName,
-  reasonCode,
-  ptiurn,
-  caseAge,
-  caseAgeCounts,
-  dateRange,
-  urgent,
-  locked,
-  caseState,
-  myCases
-}: Props) => (
-  <>
-    <Head>
-      <title>{"Case List | Bichard7"}</title>
-      <meta name="description" content="Case List | Bichard7" />
-    </Head>
-    <Layout user={user}>
-      <Main />
-      <CourtCaseWrapper
-        filter={
-          <CourtCaseFilter
-            reasons={reasons}
-            defendantName={keywords[0]}
-            courtName={courtName}
-            reasonCode={reasonCode}
-            ptiurn={ptiurn}
-            caseAge={caseAge}
-            caseAgeCounts={caseAgeCounts}
-            dateRange={dateRange}
-            urgency={urgent}
-            locked={locked}
-            caseState={caseState}
-            myCases={myCases}
-          />
-        }
-        appliedFilters={
-          <AppliedFilters
-            filters={{
-              reasons,
-              keywords,
-              courtName,
-              reasonCode,
-              ptiurn,
-              caseAge,
-              dateRange: dateRange,
-              urgency: urgent,
-              locked: locked,
-              caseState: caseState,
-              myCases
-            }}
-          />
-        }
-        courtCaseList={<CourtCaseList courtCases={courtCases} order={order} currentUser={user} />}
-        paginationTop={<Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />}
-        paginationBottom={
-          <ConditionalDisplay isDisplayed={courtCases.length > 0}>
-            <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
-          </ConditionalDisplay>
-        }
-      />
-    </Layout>
-  </>
-)
+const Home: NextPage<Props> = (query) => {
+  // prettier-ignore
+  const {
+    user, courtCases, order, page, casesPerPage, totalCases, reasons, keywords, courtName, reasonCode,
+    ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases
+  } = query
+
+  return (
+    <>
+      <Head>
+        <title>{"Case List | Bichard7"}</title>
+        <meta name="description" content="Case List | Bichard7" />
+      </Head>
+      <Layout user={user}>
+        <Main />
+        <CourtCaseWrapper
+          filter={
+            <CourtCaseFilter
+              reasons={reasons}
+              defendantName={keywords[0]}
+              courtName={courtName}
+              reasonCode={reasonCode}
+              ptiurn={ptiurn}
+              caseAge={caseAge}
+              caseAgeCounts={caseAgeCounts}
+              dateRange={dateRange}
+              urgency={urgent}
+              locked={locked}
+              caseState={caseState}
+              myCases={myCases}
+            />
+          }
+          appliedFilters={
+            <AppliedFilters
+              filters={{
+                reasons,
+                keywords,
+                courtName,
+                reasonCode,
+                ptiurn,
+                caseAge,
+                dateRange: dateRange,
+                urgency: urgent,
+                locked: locked,
+                caseState: caseState,
+                myCases
+              }}
+            />
+          }
+          courtCaseList={<CourtCaseList courtCases={courtCases} order={order} currentUser={user} />}
+          paginationTop={<Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />}
+          paginationBottom={
+            <ConditionalDisplay isDisplayed={courtCases.length > 0}>
+              <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
+            </ConditionalDisplay>
+          }
+        />
+      </Layout>
+    </>
+  )
+}
 
 export default Home

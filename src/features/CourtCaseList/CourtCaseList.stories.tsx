@@ -65,20 +65,6 @@ OneRecord.play = async ({ canvasElement }) => {
   expect(canvas.getByText("Notes")).toBeInTheDocument()
   expect(canvas.getByText("2 notes")).toBeInTheDocument()
 }
-OneRecord.parameters = {
-  design: [
-    {
-      name: "Table component",
-      type: "figma",
-      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=1%3A1170"
-    },
-    {
-      name: "Entire file",
-      type: "figma",
-      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=0%3A1"
-    }
-  ]
-}
 
 const courtCases = new Array(100).fill(courtCase)
 export const ManyRecords: ComponentStory<typeof CourtCaseList> = () => (
@@ -94,20 +80,6 @@ ManyRecords.play = async ({ canvasElement }) => {
   expect(canvas.getByText("Notes")).toBeInTheDocument()
   const noteTags = await canvas.findAllByText("2 notes")
   expect(noteTags).toHaveLength(courtCases.length)
-}
-ManyRecords.parameters = {
-  design: [
-    {
-      name: "Table component",
-      type: "figma",
-      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=1%3A1170"
-    },
-    {
-      name: "Entire file",
-      type: "figma",
-      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=0%3A1"
-    }
-  ]
 }
 
 const mixedUrgencies: CourtCase[] = new Array(10).fill(0).map((_, index) => {
@@ -127,20 +99,6 @@ MixedUrgencies.play = async ({ canvasElement }) => {
   const urgentTags = await canvas.findAllByText("Urgent")
   expect(urgentTags).toHaveLength(mixedUrgencies.filter((c) => c.isUrgent).length + 1) // The column header also matches this
 }
-MixedUrgencies.parameters = {
-  design: [
-    {
-      name: "Table component",
-      type: "figma",
-      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=1%3A1170"
-    },
-    {
-      name: "Entire file",
-      type: "figma",
-      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=0%3A1"
-    }
-  ]
-}
 
 const mixedNotes: CourtCase[] = new Array(10).fill(0).map((_, index) => {
   const notesCourtCase = Object.assign({}, courtCase)
@@ -159,20 +117,6 @@ MixedNotes.play = async ({ canvasElement }) => {
   expect(canvas.getByText("Notes")).toBeInTheDocument()
   const noteTags = await canvas.findAllByText("2 notes")
   expect(noteTags).toHaveLength(mixedNotes.filter((c) => c.notes.length).length)
-}
-MixedNotes.parameters = {
-  design: [
-    {
-      name: "Table component",
-      type: "figma",
-      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=1%3A1170"
-    },
-    {
-      name: "Entire file",
-      type: "figma",
-      url: "https://www.figma.com/file/HwIQgyZQtsCxxDxitpKvvI/B7?node-id=0%3A1"
-    }
-  ]
 }
 
 const expectedNameLocks = ["Homer Simpson", "Donald Duck", "Bugs Bunny"]

@@ -1,7 +1,10 @@
+import { truncate } from "lodash"
 import ConditionalRender from "../../components/ConditionalRender"
 import { Dispatch, SetStateAction } from "react"
 import { createUseStyles } from "react-jss"
 import { gdsLightGrey } from "../../utils/colours"
+import { validateMostRecentNoteDate } from "./CourtCaseListEntryHelperFunction"
+import type Note from "../../services/entities/Note"
 
 const useStyles = createUseStyles({
   buttonContainer: {
@@ -15,8 +18,7 @@ const useStyles = createUseStyles({
 })
 
 interface NotePreviewProps {
-  latestNote: string
-  displayDate: string
+  latestNote: Note
   numberOfNotes: number
 }
 
@@ -26,15 +28,16 @@ interface NotePreviewButtonProps {
   numberOfNotes: number
 }
 
-export const NotePreview = ({ latestNote, displayDate, numberOfNotes }: NotePreviewProps) => {
+export const NotePreview = ({ latestNote, numberOfNotes }: NotePreviewProps) => {
   const classes = useStyles()
+  const displayDate = validateMostRecentNoteDate(latestNote)
   return (
     <>
       <div className={classes.notePreviewContainer}>
         <p className="govuk-body govuk-!-font-weight-bold">
           {numberOfNotes > 1 ? `Most recent note added ${displayDate}` : `Note added ${displayDate}`}
         </p>
-        <p>{latestNote}</p>
+        <p>{truncate(latestNote?.noteText, { length: 103 })}</p>
       </div>
     </>
   )

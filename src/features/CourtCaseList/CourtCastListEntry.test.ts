@@ -1,10 +1,5 @@
 import Note from "services/entities/Note"
-import {
-  filterUserNotes,
-  getFirst100CharsOfMostRecentNote,
-  getMostRecentNote,
-  validateMostRecentNoteDate
-} from "./CourtCaseListEntryHelperFunction"
+import { filterUserNotes, getMostRecentNote, validateMostRecentNoteDate } from "./CourtCaseListEntryHelperFunction"
 
 describe("number of notes", () => {
   it("should filter out all the system notes and only show user entered notes", () => {
@@ -51,10 +46,8 @@ describe("getMostRecentNote Test", () => {
 
     const recentNote = getMostRecentNote(caseNote)
 
-    expect(recentNote).toBeInstanceOf(Array)
-    expect(recentNote).toHaveLength(1)
-    expect(recentNote[0]).toHaveProperty("createdAt")
-    expect(recentNote[0]).toHaveProperty("noteText")
+    expect(recentNote).toHaveProperty("createdAt")
+    expect(recentNote).toHaveProperty("noteText")
   })
 
   it("should return the most recently dated note Object from many objects", () => {
@@ -84,9 +77,7 @@ describe("getMostRecentNote Test", () => {
     ] as unknown as Note[]
 
     const recentNote = getMostRecentNote(caseNote)
-    expect(recentNote).toBeInstanceOf(Array)
-    expect(recentNote).toHaveLength(1)
-    expect(recentNote[0].createdAt).toBe("2023-01-01T00:00:00.000Z")
+    expect(recentNote.createdAt).toBe("2023-01-01T00:00:00.000Z")
   })
 
   it("should return the most recent note based off time", () => {
@@ -115,10 +106,8 @@ describe("getMostRecentNote Test", () => {
     ] as unknown as Note[]
 
     const recentNote = getMostRecentNote(caseNote)
-    expect(recentNote).toBeInstanceOf(Array)
-    expect(recentNote).toHaveLength(1)
-    expect(recentNote[0].createdAt).toBe("2020-01-01T12:00:00.000Z")
-    expect(recentNote[0].noteText).toBe("Latest note")
+    expect(recentNote.createdAt).toBe("2020-01-01T12:00:00.000Z")
+    expect(recentNote.noteText).toBe("Latest note")
   })
 
   it("should return the correct `createdAt` date associated with the most recent note", () => {
@@ -147,60 +136,9 @@ describe("getMostRecentNote Test", () => {
     ] as unknown as Note[]
 
     const recentNote = getMostRecentNote(caseNote)
-    const recentNoteText = recentNote[0].noteText
+    const recentNoteText = recentNote.noteText
     const result = validateMostRecentNoteDate(recentNote)
     expect(recentNoteText).toBe("Latest note")
     expect(result).toBe("01/01/2020")
-  })
-})
-
-describe("parsing note text", () => {
-  it("should return a string", () => {
-    const sampleNoteText = "Example note text"
-    const caseNote = [
-      {
-        noteId: 1255,
-        noteText: sampleNoteText,
-        errorId: 362,
-        userId: "gina.thiel",
-        createdAt: "2022-01-01T00:00:00.000Z"
-      }
-    ] as unknown as Note[]
-    const result = getFirst100CharsOfMostRecentNote(caseNote)
-    expect(typeof result).toEqual("string")
-    expect(result).toEqual(sampleNoteText)
-  })
-
-  it("should display the whole text when it is 100 characters or less", () => {
-    const sampleNoteTextWith100Chars = "a".repeat(100)
-    const caseNote = [
-      {
-        noteId: 1255,
-        noteText: sampleNoteTextWith100Chars,
-        errorId: 362,
-        userId: "gina.thiel",
-        createdAt: "2022-01-01T00:00:00.000Z"
-      }
-    ] as unknown as Note[]
-    const result = getFirst100CharsOfMostRecentNote(caseNote)
-    expect(result).not.toContain("...")
-    expect(result).toContain(sampleNoteTextWith100Chars)
-  })
-  it("should truncate the text when it is longer than 100 characters", () => {
-    const sampleNoteTextMoreThan100Chars = "a".repeat(150)
-    const expectedResult = `${"a".repeat(100)}...`
-    const caseNote = [
-      {
-        noteId: 1255,
-        noteText: sampleNoteTextMoreThan100Chars,
-        errorId: 362,
-        userId: "gina.thiel",
-        createdAt: "2022-01-01T00:00:00.000Z"
-      }
-    ] as unknown as Note[]
-    const result = getFirst100CharsOfMostRecentNote(caseNote)
-    expect(result).toStrictEqual(expectedResult)
-    expect(result).toContain("...")
-    expect(result.length).toEqual(103)
   })
 })
