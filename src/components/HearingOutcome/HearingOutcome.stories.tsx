@@ -31,9 +31,6 @@ HearingOutcomeStory.play = async ({ canvasElement }) => {
   expect(offenceTable).toBeInTheDocument()
   expect(within(offenceTable).getByText("1")).toBeInTheDocument()
 
-  const offenceTitles = within(offenceTable).getAllByText("Crime")
-  expect(offenceTitles).toHaveLength(2)
-
   const button = canvas.getByRole("button", { name: "Resubmit" })
   expect(button).toBeInTheDocument()
 }

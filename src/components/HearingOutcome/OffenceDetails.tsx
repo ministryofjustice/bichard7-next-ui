@@ -2,7 +2,6 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import EditableField from "components/EditableField"
 import { Table } from "govuk-react"
 import { IndividualAmendmentValues } from "types/Amendments"
-import getOffenceCode from "utils/getOffenceCode"
 
 const OffenceDetails: React.FC<{
   aho: AnnotatedHearingOutcome
@@ -21,86 +20,6 @@ const OffenceDetails: React.FC<{
       caption="Offence Details"
     >
       <Table.Row>
-        <Table.Cell>{"Offence Code"}</Table.Cell>
-        <Table.Cell>
-          {getOffenceCode(aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index])}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Title"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].OffenceTitle}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Category"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].OffenceCategory}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Arrest Date"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].ArrestDate?.toString()}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Charge Date"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].ChargeDate?.toString()}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Date Code"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].ActualOffenceDateCode}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Start Date"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
-            index
-          ].ActualOffenceStartDate?.StartDate.toString()}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Location"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].LocationOfOffence}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Wording"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].ActualOffenceWording}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Recordable on PNC"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].RecordableOnPNCindicator}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Notifiable to Home Office"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].NotifiableToHOindicator}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Home Office Classification"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].HomeOfficeClassification}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Conviction Date"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].ConvictionDate?.toString()}
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
         <Table.Cell>{"Court Offence Sequence Number"}</Table.Cell>
         <Table.Cell>
           <EditableField
@@ -109,12 +28,6 @@ const OffenceDetails: React.FC<{
             amendFn={amendFn("courtOffenceSequenceNumber")}
             relevantIndexes={{ offenceIndex: index }}
           />
-        </Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>{"Committed on Bail"}</Table.Cell>
-        <Table.Cell>
-          {aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[index].CommittedOnBail}
         </Table.Cell>
       </Table.Row>
       <Table.Row>

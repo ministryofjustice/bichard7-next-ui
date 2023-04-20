@@ -161,6 +161,53 @@ describe("Case details", () => {
     cy.contains("Don't know (D)")
   })
 
+  it("should display the content of the Offences tab", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "02"
+      }
+    ])
+    cy.login("bichard02@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    clickTab("Offences")
+
+    cy.contains("28/11/2010")
+    cy.contains("SX03001A")
+    cy.contains("Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003").click()
+    cy.contains("td", "Offence code").siblings().contains("SX03001A")
+    cy.contains("td", "Title").siblings().contains("Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003")
+    cy.contains("td", "Sequence number").siblings().contains("001")
+    cy.contains("td", "Category").siblings().contains("CI (indictable)")
+    cy.contains("td", "Arrest date").siblings().contains("01/12/2010")
+    cy.contains("td", "Charge date").siblings().contains("02/12/2010")
+    cy.contains("td", "Date code").siblings().contains("1")
+    cy.contains("td", "Start date").siblings().contains("28/11/2010")
+    cy.contains("td", "Location").siblings().contains("Kingston High Street")
+    cy.contains("td", "Wording")
+      .siblings()
+      .contains("Attempt to rape a girl aged 13 / 14 / 15 / years of age - SOA 2003.")
+    cy.contains("td", "Record on PNC").siblings().contains("Y")
+    cy.contains("td", "Notifiable to Home Office").siblings().contains("Y")
+    cy.contains("td", "Home Office classification").siblings().contains("019/11")
+    cy.contains("td", "Conviction date").siblings().contains("26/09/2011")
+    cy.contains("td", "Court Offence Sequence Number").siblings().contains("1")
+    cy.contains("td", "Committed on bail").siblings().contains("D (Don't know)")
+
+    cy.contains("td", "CJS Code").siblings().contains("3078")
+    cy.contains("td", "Result hearing type").siblings().contains("Other")
+    cy.contains("td", "Result hearing date").siblings().contains("26/09/2011")
+    cy.contains("td", "Plea").siblings().contains("NG (Not guilty)")
+    cy.contains("td", "Verdict").siblings().contains("G (Guilty)")
+    cy.contains("td", "Mode of trail reason").siblings().contains("SUM")
+    cy.contains("td", "Text").siblings().contains("Travel Restriction Order")
+    cy.contains("td", "PNC disposal type").siblings().contains("3078")
+    cy.contains("td", "Result class").siblings().contains("Judgement with final result")
+    cy.contains("td", "PNC adjudication exists").siblings().contains("N")
+  })
+
   it("should return 404 for a case that this user can not see", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
     cy.login("bichard01@example.com", "password")

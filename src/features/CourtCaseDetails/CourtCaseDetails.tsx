@@ -12,8 +12,8 @@ import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
 import { useState } from "react"
 import { CourtCaseDetailsTabs, Tabs } from "./Tabs/CourtCaseDetailsTabs"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
-
-import { HearingDetailsTable } from "./Tabs/Panels/HearingDetailsTable"
+import { Offences } from "./Tabs/Panels/Offences/Offences"
+import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 
 interface Props {
   courtCase: CourtCase
@@ -57,7 +57,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
 
       <ConditionalRender isRendered={activeTab === "Hearing"}>
         <CourtCaseDetailsPanel heading={"Hearing details"}>
-          <HearingDetailsTable hearing={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing} />
+          <HearingDetails hearing={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing} />
         </CourtCaseDetailsPanel>
       </ConditionalRender>
 
@@ -66,7 +66,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       </ConditionalRender>
 
       <ConditionalRender isRendered={activeTab === "Offences"}>
-        <CourtCaseDetailsPanel heading={"Offences"}>{""}</CourtCaseDetailsPanel>
+        <Offences offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence} />
       </ConditionalRender>
 
       <ConditionalRender isRendered={activeTab === "Notes"}>
