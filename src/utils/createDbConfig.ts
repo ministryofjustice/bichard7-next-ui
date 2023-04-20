@@ -14,7 +14,7 @@ const createDbConfig = (): DbConfig => ({
   username: process.env.DB_USER ?? "bichard",
   password: process.env.DB_PASSWORD ?? "password",
   max: 10,
-  idle_timeout: 20,
+  idle_timeout: 1,
   max_lifetime: 60 * 30
 })
 

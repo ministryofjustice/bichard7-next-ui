@@ -1,14 +1,11 @@
-import postgres from "postgres"
-import createDbConfig from "../utils/createDbConfig"
+import type { Sql } from "postgres"
 
-const dbConfig = createDbConfig()
-const sql = postgres({
-  ...dbConfig
-})
+export const postgresjsListCourtCases = async (database: Sql, filterOptions?: { defendantName: string }) => {
+  const courtCases = database`SELECT * FROM br7own.error_list`
+  console.log(courtCases)
 
-const errorListRecords = async () => {
-  const result = await sql`SELECT * FROM br7own.error_list`
-  console.log(result)
-  return result
+  if (filterOptions?.defendantName) {
+  }
+
+  return courtCases
 }
-errorListRecords()

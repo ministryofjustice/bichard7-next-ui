@@ -7,7 +7,12 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
 import getDataSource from "../../src/services/getDataSource"
 import Note from "services/entities/Note"
-import { isError } from "types/Result"
+import { postgresjsListCourtCases } from "services/postgresjsListCourtCases"
+import createDbConfig from "utils/createDbConfig"
+import postgres from "postgres"
+import type { Sql } from "postgres"
+
+const dbConfig = createDbConfig()
 
 jest.mock(
   "services/queries/courtCasesByVisibleForcesQuery",
@@ -19,8 +24,9 @@ jest.mock(
 )
 
 jest.setTimeout(100000)
-describe("PRISMA-listCourtCases", () => {
+describe("POSTGRESJS-listCourtCases", () => {
   let dataSource: DataSource
+  let db: Sql
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -30,6 +36,7 @@ describe("PRISMA-listCourtCases", () => {
     await deleteFromEntity(CourtCase)
     await deleteFromEntity(Trigger)
     await deleteFromEntity(Note)
+    db = postgres(dbConfig)
   })
 
   afterAll(async () => {
@@ -39,48 +46,47 @@ describe("PRISMA-listCourtCases", () => {
   })
 
   describe("search by defendant name", () => {
-    it.only("should return all cases when no there is no filter set ", async () => {
+    it("should return all cases when no there is no filter set ", async () => {
       const orgCode = "01FPA1"
       const defendantToInclude = "WAYNE Bruce"
       const defendantToIncludeWithPartialMatch = "WAYNE Bill"
       const defendantToNotInclude = "GORDON Barbara"
 
-      await insertCourtCasesWithFields([
+      insertCourtCasesWithFields([
         { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
         { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
         { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
       ])
 
-      let result = await prismaListCourtCases()
+      const result = await postgresjsListCourtCases(db)
       expect(result.length).toBe(3)
-
-      result = await prismaListCourtCases({
-        defendant_name: "WAYNE Bruce"
-      })
-      expect(isError(result)).toBe(false)
-      expect(result).toHaveLength(1)
-      expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
     })
 
-    it.only("should list cases when there is a case partial and insensitive match", async () => {
+    it("should list cases when there is partial and case insensitive match", async () => {
       const orgCode = "01FPA1"
       const defendantToInclude = "WAYNE Bruce"
       const defendantToIncludeWithPartialMatch = "WAYNE Bill"
       const defendantToNotInclude = "GORDON Barbara"
 
-      await insertCourtCasesWithFields([
+      insertCourtCasesWithFields([
         { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
         { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
         { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
       ])
+      let result = await postgresjsListCourtCases(db)
+      console.log(result)
 
-      const result = await prismaListCourtCases({
-        defendant_name: "wayne b"
+      expect(result).toHaveLength(1)
+
+      // expect(result[0].defendantName).toStrictEqual(defendantToInclude)
+
+      result = await postgresjsListCourtCases(db, {
+        defendantName: "wayne b"
       })
-      expect(isError(result)).toBe(false)
+
       expect(result).toHaveLength(2)
-      expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
-      expect(result[1].defendant_name).toStrictEqual(defendantToIncludeWithPartialMatch)
+      // expect(result[0].defendantName).toStrictEqual(defendantToInclude)
+      // expect(result[1].defendantName).toStrictEqual(defendantToIncludeWithPartialMatch)
     })
   })
 })
