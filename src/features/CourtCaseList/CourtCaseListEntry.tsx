@@ -1,6 +1,6 @@
 import ConditionalRender from "components/ConditionalRender"
 import DateTime from "components/DateTime"
-import { GridRow, Link, Table } from "govuk-react"
+import { Link, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
