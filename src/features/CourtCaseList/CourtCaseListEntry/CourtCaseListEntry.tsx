@@ -13,12 +13,12 @@ import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { displayedDateFormat } from "utils/formattedDate"
-import { filterUserNotes, getMostRecentNote } from "./CourtCaseListEntryHelperFunction"
-import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
-import CaseUnlockedTag from "./tags/CaseUnlockedTag"
-import LockedByTag from "./tags/LockedByTag/LockedByTag"
-import ResolvedTag from "./tags/ResolvedTag"
-import UrgentTag from "./tags/UrgentTag"
+import { filterUserNotes, getMostRecentNote } from "../CourtCaseListEntryHelperFunction"
+import { NotePreview, NotePreviewButton } from "../NotePreviewButton"
+import CaseUnlockedTag from "../tags/CaseUnlockedTag"
+import LockedByTag from "../tags/LockedByTag/LockedByTag"
+import ResolvedTag from "../tags/ResolvedTag"
+import UrgentTag from "../tags/UrgentTag"
 
 const useStyles = createUseStyles({
   caseDetailsRow: {
