@@ -5,11 +5,11 @@ import { pgListCourtCases } from "services/pgListCourtCases"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
-import getDataSource from "../../src/services/getDataSource"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { createPgConfig } from "utils/PostgresConfig"
 import { Client } from "pg"
+import getDataSource from "services/getDataSource"
 
 jest.mock(
   "services/queries/courtCasesByVisibleForcesQuery",
@@ -61,13 +61,14 @@ describe("POSTGRESJS-listCourtCases", () => {
       const defendantToIncludeWithPartialMatch = "WAYNE Bill"
       const defendantToNotInclude = "GORDON Barbara"
 
-      insertCourtCasesWithFields([
+      await insertCourtCasesWithFields([
         { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
         { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
         { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
       ])
 
       const result = await pgListCourtCases(db)
+      expect(result.rows.length).toBe(3)
       console.log(result)
       // if (!isError(result)) {
       //   expect(result).toBe(3)
