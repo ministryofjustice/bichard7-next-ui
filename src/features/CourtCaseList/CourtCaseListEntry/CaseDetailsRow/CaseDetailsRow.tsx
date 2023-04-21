@@ -15,6 +15,7 @@ import Note from "services/entities/Note"
 import { SingleException } from "./SingleException"
 import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
 import CaseUnlockedTag from "features/CourtCaseList/tags/CaseUnlockedTag"
+import { LOCKED_ICON_URL } from "features/CourtCaseList/tags/LockedByTag/LockedByText"
 
 interface CaseDetailsRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
@@ -77,7 +78,7 @@ export const CaseDetailsRow = ({
       <Table.Row className={classes.caseDetailsRow}>
         <Table.Cell>
           <ConditionalRender isRendered={!!errorLockedByUsername}>
-            <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
+            <Image src={LOCKED_ICON_URL} width={20} height={20} alt="Lock icon" />
           </ConditionalRender>
         </Table.Cell>
         <Table.Cell>

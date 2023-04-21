@@ -7,6 +7,7 @@ import { SingleTrigger } from "./SingleTrigger"
 import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
 import CaseUnlockedTag from "features/CourtCaseList/tags/CaseUnlockedTag"
 import Trigger from "services/entities/Trigger"
+import { LOCKED_ICON_URL } from "features/CourtCaseList/tags/LockedByTag/LockedByText"
 
 interface TriggersRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
@@ -35,7 +36,7 @@ export const TriggersRow = ({
     <Table.Row className={classes.triggersRow}>
       <Table.Cell>
         <ConditionalRender isRendered={!!triggerLockedByUsername}>
-          <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
+          <Image src={LOCKED_ICON_URL} width={20} height={20} alt="Lock icon" />
         </ConditionalRender>
       </Table.Cell>
       <Table.Cell />
