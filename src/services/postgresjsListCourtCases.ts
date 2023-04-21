@@ -1,19 +1,22 @@
 import type { Sql } from "postgres"
 
 export const postgresjsListCourtCases = async (
-  database: Sql,
+  sql: Sql,
   filterOptions?: { defendantName?: string; courtName?: string }
 ) => {
-  const courtCases = database`
+  const query = "select * from br7own.error_list"
+  sql.unsafe(query)
+
+  const courtCases = sql`
   SELECT
    *
   FROM br7own.error_list 
    ${
      !!filterOptions?.defendantName
-       ? database`where defendant_name ilike ${"%" + filterOptions?.defendantName + "%"}`
-       : database``
+       ? sql`where defendant_name ilike ${"%" + filterOptions?.defendantName + "%"}`
+       : sql``
    }
-   ${!!filterOptions?.courtName ? database`and court_name ilike ${"%" + filterOptions?.courtName + "%"}` : database``}
+   ${!!filterOptions?.courtName ? sql`and court_name ilike ${"%" + filterOptions?.courtName + "%"}` : sql``}
 `
   console.log(courtCases)
 
