@@ -100,7 +100,10 @@ const CourtCaseListEntry: React.FC<Props> = ({
         <Table.Cell />
         <Table.Cell>
           {triggers?.map((trigger, triggerId) => (
-            <GridRow key={`trigger_${triggerId}`}>{getTriggerWithDescription(trigger.triggerCode)}</GridRow>
+            <span key={`trigger_${triggerId}`}>
+              {getTriggerWithDescription(trigger.triggerCode)}
+              <br />
+            </span>
           ))}
         </Table.Cell>
         <Table.Cell>
