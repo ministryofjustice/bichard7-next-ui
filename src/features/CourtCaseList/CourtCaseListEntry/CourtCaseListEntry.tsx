@@ -20,18 +20,18 @@ const CourtCaseListEntry: React.FC<Props> = ({
   triggerHasBeenRecentlyUnlocked
 }: Props) => {
   const {
-    errorId,
     courtDate,
-    ptiurn,
-    defendantName,
     courtName,
-    triggers,
+    defendantName,
+    errorId,
+    errorLockedByUsername,
     errorReport,
     isUrgent,
-    errorLockedByUsername,
-    triggerLockedByUsername,
+    notes,
+    ptiurn,
     resolutionTimestamp,
-    notes
+    triggerLockedByUsername,
+    triggers
   } = courtCase
   const { basePath, query } = useRouter()
   const searchParams = new URLSearchParams(encode(query))
