@@ -1,37 +1,10 @@
-import ConditionalRender from "components/ConditionalRender"
-import DateTime from "components/DateTime"
-import { Link, Table } from "govuk-react"
-import Image from "next/image"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
-import { useState } from "react"
-import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
-import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
-import { displayedDateFormat } from "utils/formattedDate"
-import { filterUserNotes, getMostRecentNote } from "../CourtCaseListEntryHelperFunction"
-import { NotePreview, NotePreviewButton } from "../NotePreviewButton"
-import CaseUnlockedTag from "../tags/CaseUnlockedTag"
-import LockedByTag from "../tags/LockedByTag/LockedByTag"
-import ResolvedTag from "../tags/ResolvedTag"
-import UrgentTag from "../tags/UrgentTag"
-import { Exception } from "./CaseDetailsRow/SingleException"
+import { CaseDetailsRow } from "./CaseDetailsRow/CaseDetailsRow"
 import { TriggersRow } from "./TriggersRow/TriggersRow"
-
-const useStyles = createUseStyles({
-  caseDetailsRow: {
-    verticalAlign: "top",
-    borderColor: "unset"
-  },
-  flexBox: {
-    display: "flex"
-  },
-  notesRow: {
-    borderTop: "white solid"
-  }
-})
 
 interface Props {
   courtCase: CourtCase
@@ -60,10 +33,8 @@ const CourtCaseListEntry: React.FC<Props> = ({
     resolutionTimestamp,
     notes
   } = courtCase
-  const classes = useStyles()
   const { basePath, query } = useRouter()
   const searchParams = new URLSearchParams(encode(query))
-  const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
   const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
     deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
 
@@ -74,69 +45,23 @@ const CourtCaseListEntry: React.FC<Props> = ({
     return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
   }
 
-  const exceptions = groupErrorsFromReport(errorReport)
-  const [showPreview, setShowPreview] = useState(false)
-  const userNotes = filterUserNotes(notes)
-  const numberOfNotes = userNotes.length
-  const mostRecentUserNote = getMostRecentNote(userNotes)
-
   return (
     <>
-      <Table.Row className={classes.caseDetailsRow}>
-        <Table.Cell>
-          <ConditionalRender isRendered={!!errorLockedByUsername}>
-            <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
-          </ConditionalRender>
-        </Table.Cell>
-        <Table.Cell>
-          <Link href={caseDetailsPath(errorId)} id={`Case details for ${defendantName}`}>
-            {defendantName}
-            <br />
-            <ResolvedTag isResolved={resolutionTimestamp !== null} />
-          </Link>
-        </Table.Cell>
-        <Table.Cell>
-          <DateTime date={courtDate} dateFormat={displayedDateFormat} />
-        </Table.Cell>
-        <Table.Cell>{courtName}</Table.Cell>
-        <Table.Cell>{ptiurn}</Table.Cell>
-        <Table.Cell>
-          <UrgentTag isUrgent={isUrgent} />
-        </Table.Cell>
-        <Table.Cell>
-          <NotePreviewButton previewState={showPreview} setShowPreview={setShowPreview} numberOfNotes={numberOfNotes} />
-        </Table.Cell>
-        <Table.Cell>
-          {Object.keys(exceptions).map((exception, exceptionId) => {
-            return <Exception key={exceptionId} exception={exception} exceptionCounter={exceptions[exception]} />
-          })}
-        </Table.Cell>
-        <Table.Cell>
-          {errorLockedByUsername && canUnlockCase(errorLockedByUsername) ? (
-            <LockedByTag
-              lockedBy={errorLockedByUsername}
-              unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
-            />
-          ) : (
-            <LockedByTag lockedBy={errorLockedByUsername} />
-          )}
-          {<CaseUnlockedTag isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername} />}
-        </Table.Cell>
-      </Table.Row>
-      {numberOfNotes != 0 && !!showPreview && (
-        <Table.Row className={classes.notesRow}>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }} colSpan={2}>
-            <NotePreview latestNote={mostRecentUserNote} numberOfNotes={numberOfNotes} />
-          </Table.Cell>
-          <Table.Cell />
-        </Table.Row>
-      )}
+      <CaseDetailsRow
+        canCurrentUserUnlockCase={errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
+        courtDate={courtDate}
+        courtName={courtName}
+        defendantName={defendantName}
+        errorId={errorId}
+        errorLockedByUsername={errorLockedByUsername}
+        errorReport={errorReport}
+        isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername}
+        isResolved={resolutionTimestamp !== null}
+        isUrgent={isUrgent}
+        notes={notes}
+        ptiurn={ptiurn}
+        unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
+      />
       <TriggersRow
         canCurrentUserUnlockCase={triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
         isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !errorLockedByUsername}
