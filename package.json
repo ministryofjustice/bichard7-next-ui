@@ -91,6 +91,7 @@
     "@types/lodash.isobject": "^3.0.7",
     "@types/lodash.sample": "^4.2.7",
     "@types/node": "18.15.11",
+    "@types/pg": "^8.6.6",
     "@types/react": "18.0.35",
     "@types/react-dom": "18.0.11",
     "@types/stompit": "^0.26.3",
