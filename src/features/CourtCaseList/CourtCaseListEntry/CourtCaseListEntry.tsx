@@ -8,7 +8,6 @@ import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
-import { gdsLightGrey } from "utils/colours"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { displayedDateFormat } from "utils/formattedDate"
@@ -19,16 +18,12 @@ import LockedByTag from "../tags/LockedByTag/LockedByTag"
 import ResolvedTag from "../tags/ResolvedTag"
 import UrgentTag from "../tags/UrgentTag"
 import { Exception } from "./Exception"
-import { Trigger } from "./Trigger"
+import { TriggersRow } from "./TriggersRow/TriggersRow"
 
 const useStyles = createUseStyles({
   caseDetailsRow: {
     verticalAlign: "top",
     borderColor: "unset"
-  },
-  triggersRow: {
-    verticalAlign: "top",
-    backgroundColor: gdsLightGrey
   },
   flexBox: {
     display: "flex"
@@ -84,41 +79,6 @@ const CourtCaseListEntry: React.FC<Props> = ({
   const userNotes = filterUserNotes(notes)
   const numberOfNotes = userNotes.length
   const mostRecentUserNote = getMostRecentNote(userNotes)
-
-  const triggerRow =
-    triggers.length > 0 ? (
-      <Table.Row className={classes.triggersRow}>
-        <Table.Cell>
-          <ConditionalRender isRendered={!!triggerLockedByUsername}>
-            <Image src={"/bichard/assets/images/lock.svg"} width={20} height={20} alt="Lock icon" />
-          </ConditionalRender>
-        </Table.Cell>
-        <Table.Cell />
-        <Table.Cell />
-        <Table.Cell />
-        <Table.Cell />
-        <Table.Cell />
-        <Table.Cell />
-        <Table.Cell>
-          {triggers?.map((trigger, triggerId) => (
-            <Trigger key={`trigger_${triggerId}`} triggerCode={trigger.triggerCode} />
-          ))}
-        </Table.Cell>
-        <Table.Cell>
-          {triggerLockedByUsername && canUnlockCase(triggerLockedByUsername) ? (
-            <LockedByTag
-              lockedBy={triggerLockedByUsername}
-              unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
-            />
-          ) : (
-            <LockedByTag lockedBy={triggerLockedByUsername} />
-          )}
-          {<CaseUnlockedTag isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !errorLockedByUsername} />}
-        </Table.Cell>
-      </Table.Row>
-    ) : (
-      <></>
-    )
 
   return (
     <>
@@ -177,7 +137,13 @@ const CourtCaseListEntry: React.FC<Props> = ({
           <Table.Cell />
         </Table.Row>
       )}
-      {triggerRow}
+      <TriggersRow
+        canCurrentUserUnlockCase={triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
+        isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !errorLockedByUsername}
+        triggerLockedByUsername={triggerLockedByUsername}
+        triggers={triggers}
+        unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
+      />
     </>
   )
 }

@@ -1,10 +1,10 @@
 import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
 
-interface TriggerProps {
+interface SingleTriggerProps {
   triggerCode: string
 }
 
-export const Trigger = ({ triggerCode }: TriggerProps) => (
+export const SingleTrigger = ({ triggerCode }: SingleTriggerProps) => (
   <span>
     {getTriggerWithDescription(triggerCode)}
     <br />
