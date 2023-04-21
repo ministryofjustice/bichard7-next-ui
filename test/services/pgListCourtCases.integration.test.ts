@@ -54,21 +54,29 @@ describe("POSTGRESJS-listCourtCases", () => {
     }
   })
 
-  describe("search by defendant name", () => {
-    it("should return all cases when no there is no filter set ", async () => {
-      const orgCode = "01FPA1"
+  it("should return all cases when no there is no filter set ", async () => {
+    const orgCode = "01FPA1"
+    const defendantToInclude = "WAYNE Bruce"
+    const defendantToIncludeWithPartialMatch = "WAYNE Bill"
+    const defendantToNotInclude = "GORDON Barbara"
+
+    await insertCourtCasesWithFields([
+      { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
+      { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
+      { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
+    ])
+
+    const result = await pgListCourtCases(db)
+    expect(result.length).toBe(3)
+  })
+
+  describe("single filter tests", () => {
+    it("should filter by defendant name, exact match", async () => {
       const defendantToInclude = "WAYNE Bruce"
-      const defendantToIncludeWithPartialMatch = "WAYNE Bill"
-      const defendantToNotInclude = "GORDON Barbara"
+      await insertCourtCasesWithFields([{ defendantName: defendantToInclude }])
 
-      await insertCourtCasesWithFields([
-        { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
-        { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
-        { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
-      ])
-
-      const result = await pgListCourtCases(db)
-      expect(result.rows.length).toBe(3)
+      const courtCases = await pgListCourtCases(db, { defendantName: defendantToInclude })
+      expect(courtCases.length).toBe(1)
     })
 
     // it("should list cases when there is partial and case insensitive match", async () => {
@@ -76,7 +84,6 @@ describe("POSTGRESJS-listCourtCases", () => {
     //   const defendantToInclude = "WAYNE Bruce"
     //   const defendantToIncludeWithPartialMatch = "WAYNE Bill"
     //   const defendantToNotInclude = "GORDON Barbara"
-
     //   insertCourtCasesWithFields([
     //     { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
     //     { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
@@ -84,13 +91,10 @@ describe("POSTGRESJS-listCourtCases", () => {
     //   ])
     //   let result = await pgListCourtCases(db, { defendantName: "wayne bruce" })
     //   expect(result).toHaveLength(1)
-
     //   expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
-
     //   result = await pgListCourtCases(db, {
     //     defendantName: "wayne b"
     //   })
-
     //   expect(result).toHaveLength(2)
     //   expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
     //   expect(result[1].defendant_name).toStrictEqual(defendantToIncludeWithPartialMatch)
