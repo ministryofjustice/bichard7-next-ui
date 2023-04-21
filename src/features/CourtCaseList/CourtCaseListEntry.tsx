@@ -150,10 +150,11 @@ const CourtCaseListEntry: React.FC<Props> = ({
         </Table.Cell>
         <Table.Cell>
           {Object.keys(exceptions).map((code, codeId) => (
-            <GridRow key={`exception_${codeId}`}>
+            <span key={`exception_${codeId}`}>
               {code}
               <b>&nbsp;{exceptions[code] > 1 ? `(${exceptions[code]})` : ""}</b>
-            </GridRow>
+              <br />
+            </span>
           ))}
         </Table.Cell>
         <Table.Cell>
