@@ -18,6 +18,7 @@ import CaseUnlockedTag from "../tags/CaseUnlockedTag"
 import LockedByTag from "../tags/LockedByTag/LockedByTag"
 import ResolvedTag from "../tags/ResolvedTag"
 import UrgentTag from "../tags/UrgentTag"
+import { Exception } from "./Exception"
 import { Trigger } from "./Trigger"
 
 const useStyles = createUseStyles({
@@ -146,13 +147,9 @@ const CourtCaseListEntry: React.FC<Props> = ({
           <NotePreviewButton previewState={showPreview} setShowPreview={setShowPreview} numberOfNotes={numberOfNotes} />
         </Table.Cell>
         <Table.Cell>
-          {Object.keys(exceptions).map((code, codeId) => (
-            <span key={`exception_${codeId}`}>
-              {code}
-              <b>&nbsp;{exceptions[code] > 1 ? `(${exceptions[code]})` : ""}</b>
-              <br />
-            </span>
-          ))}
+          {Object.keys(exceptions).map((exception, exceptionId) => {
+            return <Exception key={exceptionId} exception={exception} exceptionCounter={exceptions[exception]} />
+          })}
         </Table.Cell>
         <Table.Cell>
           {errorLockedByUsername && canUnlockCase(errorLockedByUsername) ? (
