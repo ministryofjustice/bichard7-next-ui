@@ -72,90 +72,92 @@ describe("POSTGRESJS-listCourtCases", () => {
   })
 
   describe("single filter tests", () => {
-    it("should filter by defendant name, exact match", async () => {
-      const defendantToInclude = "WAYNE Bruce"
-      const wrongDefendantName = "Jim Bob"
-      await insertCourtCasesWithFields([{ defendantName: defendantToInclude }, { defendantName: wrongDefendantName }])
+    describe("search by defendant name", () => {
+      it("should filter by defendant name, exact match", async () => {
+        const defendantToInclude = "WAYNE Bruce"
+        const wrongDefendantName = "Jim Bob"
+        await insertCourtCasesWithFields([{ defendantName: defendantToInclude }, { defendantName: wrongDefendantName }])
 
-      const courtCases = await pgListCourtCases(db, { defendantName: defendantToInclude })
+        const courtCases = await pgListCourtCases(db, { defendantName: defendantToInclude })
 
-      expect(courtCases.length).toBe(1)
-      expect(courtCases[0].defendant_name).toBe(defendantToInclude)
+        expect(courtCases.length).toBe(1)
+        expect(courtCases[0].defendant_name).toBe(defendantToInclude)
+      })
+
+      it("should list cases when there is partial and case insensitive match", async () => {
+        const orgCode = "01FPA1"
+        const defendantToInclude = "WAYNE Bruce"
+        const defendantToIncludeWithPartialMatch = "WAYNE Bill"
+        const defendantToNotInclude = "GORDON Barbara"
+        await insertCourtCasesWithFields([
+          { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
+          { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
+          { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
+        ])
+        let result = await pgListCourtCases(db, { defendantName: "wayne bruce" })
+        expect(result).toHaveLength(1)
+        expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
+        result = await pgListCourtCases(db, {
+          defendantName: "wayne b"
+        })
+        expect(result).toHaveLength(2)
+        expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
+        expect(result[1].defendant_name).toStrictEqual(defendantToIncludeWithPartialMatch)
+      })
     })
 
-    it("should list cases when there is partial and case insensitive match", async () => {
-      const orgCode = "01FPA1"
-      const defendantToInclude = "WAYNE Bruce"
-      const defendantToIncludeWithPartialMatch = "WAYNE Bill"
-      const defendantToNotInclude = "GORDON Barbara"
-      await insertCourtCasesWithFields([
-        { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
-        { defendantName: defendantToNotInclude, orgForPoliceFilter: orgCode },
-        { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
-      ])
-      let result = await pgListCourtCases(db, { defendantName: "wayne bruce" })
-      expect(result).toHaveLength(1)
-      expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
-      result = await pgListCourtCases(db, {
-        defendantName: "wayne b"
+    describe("search by court name", () => {
+      it("should list cases when there is a case insensitive match", async () => {
+        const courtNameToInclude = "Magistrates Courts' London Croydon"
+        const courtNameToIncludeWithPartialMatch = "Magistrates Courts' London Something Else"
+        const courtNameToNotInclude = "Court Name not to include"
+
+        await insertCourtCasesWithFields([
+          { courtName: courtNameToInclude },
+          { courtName: courtNameToIncludeWithPartialMatch },
+          { courtName: courtNameToNotInclude }
+        ])
+
+        let result = await pgListCourtCases(db, {
+          courtName: courtNameToInclude
+        })
+
+        expect(result).toHaveLength(1)
+        expect(result[0].court_name).toStrictEqual(courtNameToInclude)
+
+        result = await pgListCourtCases(db, {
+          courtName: "magistrates courts' london"
+        })
+
+        expect(result).toHaveLength(2)
+        expect(result[0].court_name).toStrictEqual(courtNameToInclude)
+        expect(result[1].court_name).toStrictEqual(courtNameToIncludeWithPartialMatch)
       })
-      expect(result).toHaveLength(2)
-      expect(result[0].defendant_name).toStrictEqual(defendantToInclude)
-      expect(result[1].defendant_name).toStrictEqual(defendantToIncludeWithPartialMatch)
     })
   })
 
-  describe("search by court name", () => {
-    it.only("should list cases when there is a case insensitive match", async () => {
-      const courtNameToInclude = "Magistrates Courts' London Croydon"
-      const courtNameToIncludeWithPartialMatch = "Magistrates Courts' London Something Else"
-      const courtNameToNotInclude = "Court Name not to include"
+  describe("Using a combination of filters", () => {
+    it("Should filter Court name and defendant name", async () => {
+      const courtNameToInclude = "Magistrates' Courts London Croydon"
+      const wrongCourtName = "The incorrect Court"
+      const defendantToInclude = "WAYNE Bruce"
+      const wrongDefendantName = "Ruce Bane"
 
       await insertCourtCasesWithFields([
-        { courtName: courtNameToInclude },
-        { courtName: courtNameToIncludeWithPartialMatch },
-        { courtName: courtNameToNotInclude }
+        { courtName: courtNameToInclude, defendantName: wrongDefendantName },
+        { courtName: wrongCourtName, defendantName: defendantToInclude },
+        { courtName: courtNameToInclude, defendantName: defendantToInclude }
       ])
 
-      let result = await pgListCourtCases(db, {
-        courtName: courtNameToInclude
+      const filteredCases = await pgListCourtCases(db, {
+        defendantName: "WAYNE Bruce",
+        courtName: "Magistrates' Courts London Croydon"
       })
+      console.log(filteredCases)
 
-      expect(result).toHaveLength(1)
-      expect(result[0].court_name).toStrictEqual(courtNameToInclude)
-
-      result = await pgListCourtCases(db, {
-        courtName: "magistrates courts' london"
-      })
-
-      expect(result).toHaveLength(2)
-      expect(result[0].court_name).toStrictEqual(courtNameToInclude)
-      expect(result[1].court_name).toStrictEqual(courtNameToIncludeWithPartialMatch)
+      expect(filteredCases).toHaveLength(1)
+      expect(filteredCases[0].court_name).toStrictEqual(courtNameToInclude)
+      expect(filteredCases[0].defendant_name).toStrictEqual(defendantToInclude)
     })
   })
-  // describe("Using a combination of filters", () => {
-  //   it("Should filter Court name and defendant name", async () => {
-  //     const orgCode = "01FPA1"
-  //     const courtNameToInclude = "Magistrates' Courts London Croydon"
-  //     const wrongCourtName = "The incorrect Court"
-  //     const defendantToInclude = "WAYNE Bruce"
-  //     const wrongDefendantName = "Ruce Bane"
-
-  //     await insertCourtCasesWithFields([
-  //       { courtName: courtNameToInclude, defendantName: wrongDefendantName, orgForPoliceFilter: orgCode },
-  //       { courtName: wrongCourtName, defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
-  //       { courtName: courtNameToInclude, defendantName: defendantToInclude, orgForPoliceFilter: orgCode }
-  //     ])
-
-  //     const filteredCases = await pgListCourtCases(db, {
-  //       defendantName: "WAYNE Bruce",
-  //       courtName: "Magistrates' Courts London Croydon"
-  //     })
-  //     console.log(filteredCases)
-  //     expect(isError(filteredCases)).toBe(false)
-
-  //     expect(filteredCases).toHaveLength(1)
-  //     expect(filteredCases[0].court_name).toStrictEqual(courtNameToInclude)
-  //     expect(filteredCases[0].defendant_name).toStrictEqual(defendantToInclude)
-  //   })
 })
