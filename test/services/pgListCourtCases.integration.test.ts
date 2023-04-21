@@ -69,10 +69,6 @@ describe("POSTGRESJS-listCourtCases", () => {
 
       const result = await pgListCourtCases(db)
       expect(result.rows.length).toBe(3)
-      console.log(result)
-      // if (!isError(result)) {
-      //   expect(result).toBe(3)
-      // }
     })
 
     // it("should list cases when there is partial and case insensitive match", async () => {
