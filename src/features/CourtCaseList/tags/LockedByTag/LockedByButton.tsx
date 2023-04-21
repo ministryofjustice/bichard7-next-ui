@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { createUseStyles } from "react-jss"
 import { useCustomStyles } from "../../../../../styles/customStyles"
+import { LOCKED_ICON_URL } from "./LockedByText"
 
 const useStyles = createUseStyles({
   LockedIcon: {
@@ -63,7 +64,7 @@ const LockedByButton = ({
         }}
       >
         <Image
-          src={"/bichard/assets/images/lock.svg"}
+          src={LOCKED_ICON_URL}
           width={18}
           height={18}
           className={unlockPath ? classes.LockedIcon : undefined}
