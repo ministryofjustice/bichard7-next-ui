@@ -121,27 +121,29 @@ describe("POSTGRESJS-listCourtCases", () => {
     })
   })
   describe("Using a combination of filters", () => {
-    it.only("Should filter Court name and defendant name", async () => {
+    it("Should filter Court name and defendant name", async () => {
       const orgCode = "01FPA1"
       const courtNameToInclude = "Magistrates' Courts London Croydon"
+      const wrongCourtName = "The incorrect Court"
       const defendantToInclude = "WAYNE Bruce"
+      const wrongDefendantName = "Ruce Bane"
 
       await insertCourtCasesWithFields([
-        { courtName: courtNameToInclude, orgForPoliceFilter: orgCode },
-        { defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
-        { orgForPoliceFilter: orgCode }
+        { courtName: courtNameToInclude, defendantName: wrongDefendantName, orgForPoliceFilter: orgCode },
+        { courtName: wrongCourtName, defendantName: defendantToInclude, orgForPoliceFilter: orgCode },
+        { courtName: courtNameToInclude, defendantName: defendantToInclude, orgForPoliceFilter: orgCode }
       ])
 
-      const result = await postgresjsListCourtCases(db, {
+      const filteredCases = await postgresjsListCourtCases(db, {
         defendantName: "WAYNE Bruce",
         courtName: "Magistrates' Courts London Croydon"
       })
-      console.log(result)
-      expect(isError(result)).toBe(false)
+      console.log(filteredCases)
+      expect(isError(filteredCases)).toBe(false)
 
-      expect(result).toHaveLength(2)
-      expect(result[0].court_name).toStrictEqual(courtNameToInclude)
-      expect(result[1].defendant_name).toStrictEqual(defendantToInclude)
+      expect(filteredCases).toHaveLength(1)
+      expect(filteredCases[0].court_name).toStrictEqual(courtNameToInclude)
+      expect(filteredCases[0].defendant_name).toStrictEqual(defendantToInclude)
     })
   })
 })
