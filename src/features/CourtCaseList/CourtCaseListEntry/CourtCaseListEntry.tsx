@@ -10,7 +10,6 @@ import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import { gdsLightGrey } from "utils/colours"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
-import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { displayedDateFormat } from "utils/formattedDate"
 import { filterUserNotes, getMostRecentNote } from "../CourtCaseListEntryHelperFunction"
@@ -19,6 +18,7 @@ import CaseUnlockedTag from "../tags/CaseUnlockedTag"
 import LockedByTag from "../tags/LockedByTag/LockedByTag"
 import ResolvedTag from "../tags/ResolvedTag"
 import UrgentTag from "../tags/UrgentTag"
+import { Trigger } from "./Trigger"
 
 const useStyles = createUseStyles({
   caseDetailsRow: {
@@ -36,17 +36,6 @@ const useStyles = createUseStyles({
     borderTop: "white solid"
   }
 })
-
-interface TriggerProps {
-  triggerCode: string
-}
-
-const Trigger = ({ triggerCode }: TriggerProps) => (
-  <span>
-    {getTriggerWithDescription(triggerCode)}
-    <br />
-  </span>
-)
 
 interface Props {
   courtCase: CourtCase
