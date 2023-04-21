@@ -37,6 +37,17 @@ const useStyles = createUseStyles({
   }
 })
 
+interface TriggerProps {
+  triggerCode: string
+}
+
+const Trigger = ({ triggerCode }: TriggerProps) => (
+  <span>
+    {getTriggerWithDescription(triggerCode)}
+    <br />
+  </span>
+)
+
 interface Props {
   courtCase: CourtCase
   currentUser: User
@@ -100,10 +111,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
         <Table.Cell />
         <Table.Cell>
           {triggers?.map((trigger, triggerId) => (
-            <span key={`trigger_${triggerId}`}>
-              {getTriggerWithDescription(trigger.triggerCode)}
-              <br />
-            </span>
+            <Trigger key={`trigger_${triggerId}`} triggerCode={trigger.triggerCode} />
           ))}
         </Table.Cell>
         <Table.Cell>
