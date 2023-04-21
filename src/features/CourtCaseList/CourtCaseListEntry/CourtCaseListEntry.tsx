@@ -17,7 +17,7 @@ import CaseUnlockedTag from "../tags/CaseUnlockedTag"
 import LockedByTag from "../tags/LockedByTag/LockedByTag"
 import ResolvedTag from "../tags/ResolvedTag"
 import UrgentTag from "../tags/UrgentTag"
-import { Exception } from "./Exception"
+import { Exception } from "./CaseDetailsRow/SingleException"
 import { TriggersRow } from "./TriggersRow/TriggersRow"
 
 const useStyles = createUseStyles({
