@@ -7,7 +7,6 @@ import ResolvedTag from "features/CourtCaseList/tags/ResolvedTag"
 import DateTime from "components/DateTime"
 import { displayedDateFormat } from "utils/formattedDate"
 import UrgentTag from "features/CourtCaseList/tags/UrgentTag"
-import { NotePreview, NotePreviewButton } from "features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/NotePreviewButton"
 import { useState } from "react"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { filterUserNotes, getMostRecentNote } from "features/CourtCaseList/CourtCaseListEntryHelperFunction"
@@ -16,6 +15,7 @@ import { SingleException } from "./SingleException"
 import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
 import CaseUnlockedTag from "features/CourtCaseList/tags/CaseUnlockedTag"
 import { LOCKED_ICON_URL } from "features/CourtCaseList/tags/LockedByTag/LockedByText"
+import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
 
 interface CaseDetailsRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
