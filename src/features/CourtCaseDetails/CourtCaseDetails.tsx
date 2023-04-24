@@ -31,10 +31,10 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
 
   return (
     <>
-      <Heading as="h2" size="LARGE" className="govuk-!-font-weight-regular">
+      <Heading as="h1" size="LARGE" className="govuk-!-font-weight-regular">
         {"Case details"}
       </Heading>
-      <Heading as="h3" size="MEDIUM" className="govuk-!-font-weight-regular">
+      <Heading as="h2" size="MEDIUM" className="govuk-!-font-weight-regular">
         {courtCase.defendantName}
         <UrgentBadge
           isUrgent={courtCase.isUrgent}
@@ -113,7 +113,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
             </Table.Row>
           </Table>
           <ConditionalRender isRendered={triggersVisible && (courtCase?.triggers?.length ?? 0) > 0}>
-            <Heading as="h3" size="MEDIUM">
+            <Heading as="h2" size="MEDIUM">
               {"Triggers"}
             </Heading>
             <div id="Triggers_table">
@@ -146,7 +146,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           <ConditionalRender isRendered={(courtCase?.triggers?.length ?? 0) === 0}>
             <Paragraph>{"Case has no triggers."}</Paragraph>
           </ConditionalRender>
-          <Heading as="h3" size="MEDIUM">
+          <Heading as="h2" size="MEDIUM">
             {"Notes"}
           </Heading>
           <ConditionalRender isRendered={(courtCase?.notes?.length ?? 0) > 0}>
