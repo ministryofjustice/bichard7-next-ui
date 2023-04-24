@@ -9,7 +9,7 @@ import { Tabs } from "../../../src/features/CourtCaseDetails/Tabs/CourtCaseDetai
 
 const clickTab = (tab: Tabs) => {
   cy.contains(tab).click()
-  cy.get("H4").contains(tab)
+  cy.get("H3").contains(tab)
 }
 
 describe("Case details", () => {
@@ -77,7 +77,7 @@ describe("Case details", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("H2").should("have.text", "Case details")
+    cy.get("H1").should("have.text", "Case details")
 
     cy.contains("Case00000")
     cy.contains("Magistrates' Courts Essex Basildon")
@@ -104,13 +104,13 @@ describe("Case details", () => {
       })
 
     // Triggers table
-    cy.get("H3").contains("Triggers")
+    cy.get("H2").contains("Triggers")
     cy.get("table").eq(-1).find("tr").should("have.length", 2)
     cy.get("table").eq(-1).find("tr").eq(1).find("td").first().should("have.text", "TRPR0001")
     cy.get("table").eq(-1).find("tr").eq(1).find("td").eq(4).should("include.text", "09/07/2022")
 
     // Notes
-    cy.get("H3").contains("Notes")
+    cy.get("H2").contains("Notes")
     cy.get("p").contains("Case has no notes.")
 
     // Urgency
@@ -383,8 +383,8 @@ describe("Case details", () => {
     // need to make the updates and then check them in the db
     cy.get("input").first().type("2024-09-26")
 
+    cy.get("button").contains("Resubmit")
     cy.get("button")
-      .contains("Resubmit")
       .click()
       .then(() => {
         cy.task("getCourtCaseById", { caseId: 0 }).then((res) =>
