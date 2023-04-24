@@ -1,0 +1,96 @@
+import { GridCol, GridRow, Link } from "govuk-react"
+import CourtCase from "../../../services/entities/CourtCase"
+import { createUseStyles } from "react-jss"
+import Checkbox from "components/Checkbox"
+import ActionLink from "components/ActionLink"
+import { ChangeEvent, useState } from "react"
+import getTriggerInfo from "utils/getTriggerInfo"
+
+interface Props {
+  courtCase: CourtCase
+}
+
+const useStyles = createUseStyles({
+  selectAllRow: {
+    textAlign: "right",
+    "& .moj-action-link": {
+      cursor: "pointer",
+      fontSize: "16px",
+      marginRight: "10px",
+      marginBottom: "16px"
+    }
+  },
+  triggerRow: {
+    "& .trigger-details-column": {
+      "& .trigger-code": {
+        fontWeight: "bold"
+      }
+    },
+    "& .checkbox-column": {
+      textAlign: "right",
+      "& .moj-checkbox": {
+        marginRight: "9px"
+      }
+    }
+  }
+})
+
+const Triggers: React.FC<Props> = ({ courtCase }) => {
+  const classes = useStyles()
+  const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
+
+  const setTriggerSelection = (event: ChangeEvent) => {
+    const checkBox = event.target as HTMLInputElement
+    const triggerId = parseInt(checkBox.value, 10)
+    const isSelected = checkBox.checked
+    if (isSelected) {
+      setSelectedTriggerIds([...selectedTriggerIds, triggerId])
+    } else {
+      setSelectedTriggerIds(selectedTriggerIds.filter((id) => id !== triggerId))
+    }
+  }
+
+  const selectAll = () => {
+    setSelectedTriggerIds(courtCase.triggers.map((trigger) => trigger.triggerId))
+  }
+
+  return (
+    <>
+      <GridRow className={classes.selectAllRow}>
+        <GridCol>
+          <ActionLink onClick={selectAll}>{"Select all"}</ActionLink>
+        </GridCol>
+      </GridRow>
+      {courtCase.triggers.map((trigger) => {
+        const triggerInfo = getTriggerInfo(trigger.triggerCode)
+
+        return (
+          <GridRow key={trigger.triggerId} className={classes.triggerRow}>
+            <GridCol className="trigger-details-column">
+              <span className="trigger-code">{trigger.triggerCode}</span>
+              {trigger.triggerItemIdentity !== undefined && (
+                <>
+                  {" / "}
+                  <Link href="#">
+                    {"Offence "}
+                    {trigger.triggerItemIdentity}
+                  </Link>
+                </>
+              )}
+              <p>{triggerInfo?.description}</p>
+            </GridCol>
+            <GridCol setWidth="70px" className="checkbox-column">
+              <Checkbox
+                value={trigger.triggerId}
+                checked={selectedTriggerIds.includes(trigger.triggerId)}
+                onChange={(e) => setTriggerSelection(e)}
+              />
+            </GridCol>
+          </GridRow>
+        )
+      })}
+    </>
+  )
+}
+
+export default Triggers
