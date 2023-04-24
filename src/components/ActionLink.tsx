@@ -11,10 +11,11 @@ const useStyles = createUseStyles({
   button: {
     background: "none",
     border: "none",
-    padding: "0",
     color: "#1d70b8",
-    textDecoration: "underline",
-    cursor: "pointer"
+    cursor: "pointer",
+    padding: "0",
+    textAlign: "left",
+    textDecoration: "underline"
   }
 })
 
