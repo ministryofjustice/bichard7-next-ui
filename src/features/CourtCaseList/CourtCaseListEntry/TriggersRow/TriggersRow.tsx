@@ -1,7 +1,7 @@
 import ConditionalRender from "components/ConditionalRender"
 import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
-import { gdsLightGrey } from "utils/colours"
+import { lightGrey } from "utils/colours"
 import Image from "next/image"
 import { SingleTrigger } from "./SingleTrigger"
 import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
@@ -20,7 +20,7 @@ interface TriggersRowProps {
 const useStyles = createUseStyles({
   triggersRow: {
     verticalAlign: "top",
-    backgroundColor: gdsLightGrey
+    backgroundColor: lightGrey
   }
 })
 
