@@ -1,12 +1,11 @@
 import { GridCol, GridRow } from "govuk-react"
-import CourtCase from "../../../services/entities/CourtCase"
 import { createUseStyles } from "react-jss"
-import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import getExceptionInfo from "utils/getExceptionInfo"
 import ActionLink from "components/ActionLink"
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 
 interface Props {
-  courtCase: CourtCase
+  aho: AnnotatedHearingOutcome
 }
 
 const useStyles = createUseStyles({
@@ -24,28 +23,47 @@ const useStyles = createUseStyles({
   }
 })
 
-const Exceptions: React.FC<Props> = ({ courtCase }) => {
-  const exceptions = groupErrorsFromReport(courtCase.errorReport)
+const getExceptionTitle = (path: (string | number)[]) => {
+  const offenceIndex = path.findIndex((p) => p === "Offence")
+  let location = ""
+  if (offenceIndex > 0) {
+    const offenceOrderIndex = Number(path[offenceIndex + 1]) + 1
+    location = `Offence ${offenceOrderIndex}`
+  } else if (path.includes("Case information")) {
+    location = "Case"
+  } else if (path.includes("Hearing")) {
+    location = "Hearing"
+  }
+
+  const fieldName = String(path[path.length - 1])
+  const fieldNameWords = fieldName.match(/([A-Z]+[a-z]+)/g)
+  const formattedFieldName = fieldNameWords
+    ? fieldNameWords[0] + fieldNameWords.join(" ").slice(fieldNameWords[0].length).toLowerCase()
+    : fieldName
+
+  return `${formattedFieldName} (${location})`
+}
+
+const Exceptions: React.FC<Props> = ({ aho }) => {
   const classes = useStyles()
 
   return (
     <>
-      {Object.keys(exceptions).map((code, codeIndex) => {
+      {aho.Exceptions.length === 0 && "There is no exception for this case."}
+      {aho.Exceptions.map(({ code, path }, index) => {
         const exceptionInfo = getExceptionInfo(code)
 
-        return exceptions[code].fields.map((field) => {
-          return (
-            <GridRow key={`exception_${codeIndex}_${field}`} className={classes.exceptionRow}>
-              <GridCol className="exception-details-column">
-                <ActionLink className="exception-field">{field.displayName}</ActionLink>
-                <p className="exception-details">
-                  {code}
-                  {exceptionInfo?.title && ` - ${exceptionInfo.title}`}
-                </p>
-              </GridCol>
-            </GridRow>
-          )
-        })
+        return (
+          <GridRow key={`exception_${index}`} className={classes.exceptionRow}>
+            <GridCol className="exception-details-column">
+              <ActionLink className="exception-field">{getExceptionTitle(path)}</ActionLink>
+              <p className="exception-details">
+                {code}
+                {exceptionInfo?.title && ` - ${exceptionInfo.title}`}
+              </p>
+            </GridCol>
+          </GridRow>
+        )
       })}
     </>
   )
