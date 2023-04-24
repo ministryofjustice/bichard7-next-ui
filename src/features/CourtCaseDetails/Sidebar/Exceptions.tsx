@@ -25,12 +25,12 @@ const useStyles = createUseStyles({
 
 const getExceptionTitle = (path: (string | number)[]) => {
   const offenceIndex = path.findIndex((p) => p === "Offence")
-  let location = ""
+  let location: string | undefined
   if (offenceIndex > 0) {
     const offenceOrderIndex = Number(path[offenceIndex + 1]) + 1
     location = `Offence ${offenceOrderIndex}`
-  } else if (path.includes("Case information")) {
-    location = "Case"
+  } else if (path.includes("Case")) {
+    location = "Case information"
   } else if (path.includes("Hearing")) {
     location = "Hearing"
   }
@@ -41,7 +41,11 @@ const getExceptionTitle = (path: (string | number)[]) => {
     ? fieldNameWords[0] + fieldNameWords.join(" ").slice(fieldNameWords[0].length).toLowerCase()
     : fieldName
 
-  return `${formattedFieldName} (${location})`
+  if (location) {
+    location = ` (${location})`
+  }
+
+  return `${formattedFieldName}${location}`
 }
 
 const Exceptions = ({ aho }: Props) => {
