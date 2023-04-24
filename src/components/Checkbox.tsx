@@ -45,7 +45,7 @@ export default function Checkbox<TValue extends ValueType>({
       value={value}
       checked={checked}
       onChange={onChange}
-      className={[classes.Checkbox, className, "moj-checkbox"].join(" ")}
+      className={`${classes.Checkbox} ${className} moj-checkbox`}
     >
       {children}
     </GovUkCheckbox>
