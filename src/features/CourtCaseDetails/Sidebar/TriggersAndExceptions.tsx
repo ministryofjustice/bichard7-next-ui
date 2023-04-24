@@ -4,9 +4,11 @@ import { createUseStyles } from "react-jss"
 import CourtCase from "../../../services/entities/CourtCase"
 import Triggers from "./Triggers"
 import Exceptions from "./Exceptions"
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 
 interface Props {
   courtCase: CourtCase
+  aho: AnnotatedHearingOutcome
 }
 
 const useStyles = createUseStyles({
@@ -18,7 +20,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const TriggersAndExceptions: React.FC<Props> = ({ courtCase }) => {
+const TriggersAndExceptions: React.FC<Props> = ({ courtCase, aho }) => {
   const classes = useStyles()
   const [selectedTab, setSelectedTab] = useState("triggers")
 
@@ -43,7 +45,7 @@ const TriggersAndExceptions: React.FC<Props> = ({ courtCase }) => {
           <Triggers courtCase={courtCase} />
         </Tabs.Panel>
         <Tabs.Panel id="exceptions" selected={selectedTab === "exceptions"}>
-          <Exceptions courtCase={courtCase} />
+          <Exceptions aho={aho} />
         </Tabs.Panel>
       </Tabs>
     </div>

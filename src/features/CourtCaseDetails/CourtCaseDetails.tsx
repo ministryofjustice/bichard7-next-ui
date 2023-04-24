@@ -172,7 +172,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </ConditionalRender>
         </GridCol>
         <GridCol setWidth={sideBarWidth}>
-          <TriggersAndExceptions courtCase={courtCase} />
+          <TriggersAndExceptions courtCase={courtCase} aho={aho} />
         </GridCol>
       </GridRow>
     </>
