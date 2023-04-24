@@ -11,12 +11,12 @@ export const pgListCourtCases = async (
   const values = []
 
   if (!!filterOptions?.defendantName) {
-    queryString = queryString + ` where defendant_name ilike $1`
+    queryString = queryString + ` ${values.length > 0 ? `and` : `where`} defendant_name ilike $${values.length + 1}`
     values.push("%" + filterOptions?.defendantName + "%")
   }
 
   if (!!filterOptions?.courtName) {
-    queryString = queryString + ` where court_name ilike $2`
+    queryString = queryString + ` ${values.length > 0 ? `and` : `where`} court_name ilike $${values.length + 1}`
     values.push("%" + filterOptions?.courtName + "%")
   }
 
