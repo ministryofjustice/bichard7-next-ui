@@ -1,5 +1,5 @@
 import { Checkbox as GovUkCheckbox } from "govuk-react"
-import { ChangeEventHandler, ReactEventHandler } from "react"
+import { ChangeEventHandler } from "react"
 import { createUseStyles } from "react-jss"
 
 type ValueType = string | number | readonly string[] | undefined
@@ -9,7 +9,6 @@ interface Props<TValue> {
   className?: string
   value?: TValue
   checked?: boolean
-  onSelect?: ReactEventHandler
   onChange?: ChangeEventHandler | undefined
 }
 
@@ -34,7 +33,6 @@ export default function Checkbox<TValue extends ValueType>({
   className,
   value,
   checked,
-  onSelect,
   onChange
 }: Props<TValue>) {
   const classes = useStyles()
@@ -43,7 +41,6 @@ export default function Checkbox<TValue extends ValueType>({
     <GovUkCheckbox
       value={value}
       checked={checked}
-      onSelect={onSelect}
       onChange={onChange}
       className={[classes.Checkbox, className, "moj-checkbox"].join(" ")}
     >
