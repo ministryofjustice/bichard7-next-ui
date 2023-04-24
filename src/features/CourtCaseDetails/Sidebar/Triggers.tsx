@@ -70,7 +70,7 @@ const Triggers: React.FC<Props> = ({ courtCase }) => {
         return (
           <GridRow key={trigger.triggerId} className={classes.triggerRow}>
             <GridCol className="trigger-details-column">
-              <span className="trigger-code">{trigger.triggerCode}</span>
+              <span className="trigger-code">{trigger.shortTriggerCode}</span>
               {trigger.triggerItemIdentity !== undefined && (
                 <>
                   {" / "}

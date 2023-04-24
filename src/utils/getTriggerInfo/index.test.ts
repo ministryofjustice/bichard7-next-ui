@@ -2,7 +2,7 @@ import getTriggerInfo from "."
 
 describe("getTriggerInfo", () => {
   it("should return the trigger info when trigger code exists", () => {
-    const result = getTriggerInfo("PR01")
+    const result = getTriggerInfo("TRPR0001")
     expect(result).toStrictEqual({
       description: "Driver Disqualification",
       pncScreenToUpdate: "Driver Disqualificam2jtion",
@@ -12,7 +12,7 @@ describe("getTriggerInfo", () => {
   })
 
   it("should return undefined when trigger code exists", () => {
-    const result = getTriggerInfo("PR99")
+    const result = getTriggerInfo("TRPR9999")
     expect(result).toBeUndefined()
   })
 })

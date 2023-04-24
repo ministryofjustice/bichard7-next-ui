@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
+import { AfterLoad, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
 import type { Relation } from "typeorm"
 import BaseEntity from "./BaseEntity"
 // eslint-disable-next-line import/no-cycle
@@ -6,14 +6,14 @@ import CourtCase from "./CourtCase"
 import dateTransformer from "./transformers/dateTransformer"
 import type { ResolutionStatus } from "types/ResolutionStatus"
 import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
-import triggerCodeTransformer from "./transformers/triggerCodeTransformer"
+import getShortTriggerCode from "./transformers/getShortTriggerCode"
 
 @Entity({ name: "error_list_triggers" })
 export default class Trigger extends BaseEntity {
   @PrimaryColumn({ name: "trigger_id" })
   triggerId!: number
 
-  @Column({ name: "trigger_code", transformer: triggerCodeTransformer })
+  @Column({ name: "trigger_code" })
   triggerCode!: string
 
   @Column({ name: "error_id" })
@@ -37,4 +37,11 @@ export default class Trigger extends BaseEntity {
   @ManyToOne(() => CourtCase)
   @JoinColumn({ name: "error_id" })
   courtCase!: Relation<CourtCase>
+
+  public shortTriggerCode: string | null = null
+
+  @AfterLoad()
+  populateShortTriggerCode() {
+    this.shortTriggerCode = getShortTriggerCode(this.triggerCode)
+  }
 }
