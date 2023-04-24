@@ -439,9 +439,9 @@ describe("listCourtCases", () => {
     const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
 
     expect(casesDesc).toHaveLength(3)
-    expect(casesAsc[0].notes).toHaveLength(3)
-    expect(casesAsc[1].notes).toHaveLength(3)
-    expect(casesAsc[2].notes).toHaveLength(1)
+    expect(casesDesc[0].notes).toHaveLength(3)
+    expect(casesDesc[1].notes).toHaveLength(3)
+    expect(casesDesc[2].notes).toHaveLength(1)
     expect(totalCasesDesc).toEqual(3)
   })
 

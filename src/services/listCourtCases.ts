@@ -67,7 +67,9 @@ const listCourtCases = async (
   } else if (orderBy === "isUrgent") {
     query.orderBy("courtCase.isUrgent", sortOrder === "ASC" ? "DESC" : "ASC")
   } else if (orderBy === "notes") {
-    query.addSelect(`(${subquery.getQuery()})`, "noteCount").orderBy("noteCount", sortOrder === "ASC" ? "DESC" : "ASC")
+    query
+      .addSelect(`(${subquery.getQuery()})`, "note_count")
+      .orderBy("note_count", sortOrder === "ASC" ? "ASC" : "DESC")
   } else {
     query.orderBy("courtCase.errorId", sortOrder)
   }
