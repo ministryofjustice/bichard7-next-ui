@@ -40,10 +40,9 @@ const Triggers = ({ courtCase }: Props) => {
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
   const unresolvedTriggers = courtCase.triggers.filter((trigger) => !trigger.resolvedBy)
 
-  const setTriggerSelection = (event: ChangeEvent) => {
-    const checkBox = event.target as HTMLInputElement
-    const triggerId = parseInt(checkBox.value, 10)
-    const isSelected = checkBox.checked
+  const setTriggerSelection = ({ target: checkbox }: ChangeEvent<HTMLInputElement>) => {
+    const triggerId = parseInt(checkbox.value, 10)
+    const isSelected = checkbox.checked
     if (isSelected) {
       setSelectedTriggerIds([...selectedTriggerIds, triggerId])
     } else {
