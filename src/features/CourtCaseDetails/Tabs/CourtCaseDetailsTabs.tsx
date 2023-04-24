@@ -1,3 +1,5 @@
+import { createUseStyles } from "react-jss"
+
 export type Tabs = "Defendant" | "Hearing" | "Case information" | "Offences" | "Notes" | "PNC errors"
 
 interface CourtCaseDetailsSingleTabProps {
@@ -26,11 +28,20 @@ interface CourtCaseDetailsTabsProps {
   activeTab: Tabs
   tabs: Tabs[]
   onTabClick: (tab: Tabs) => void
+  width: string
 }
 
-export const CourtCaseDetailsTabs = ({ tabs, activeTab, onTabClick }: CourtCaseDetailsTabsProps) => {
+const useStyles = createUseStyles({
+  nav: ({ width }: { width: string }) => ({
+    width
+  })
+})
+
+export const CourtCaseDetailsTabs = ({ tabs, activeTab, onTabClick, width }: CourtCaseDetailsTabsProps) => {
+  const classes = useStyles({ width })
+
   return (
-    <nav className="moj-sub-navigation" aria-label="Sub navigation">
+    <nav className={`moj-sub-navigation ${classes.nav}`} aria-label="Sub navigation">
       <ul className="moj-sub-navigation__list">
         {tabs.map((tab) => (
           <CourtCaseDetailsSingleTab tab={tab} isActive={tab === activeTab} key={tab} onClick={onTabClick} />
