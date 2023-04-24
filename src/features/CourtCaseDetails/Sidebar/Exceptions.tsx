@@ -44,7 +44,7 @@ const getExceptionTitle = (path: (string | number)[]) => {
   return `${formattedFieldName} (${location})`
 }
 
-const Exceptions: React.FC<Props> = ({ aho }) => {
+const Exceptions = ({ aho }: Props) => {
   const classes = useStyles()
 
   return (

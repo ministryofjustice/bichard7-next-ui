@@ -35,7 +35,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const Triggers: React.FC<Props> = ({ courtCase }) => {
+const Triggers = ({ courtCase }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
   const unresolvedTriggers = courtCase.triggers.filter((trigger) => !trigger.resolvedBy)

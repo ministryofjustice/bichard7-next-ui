@@ -19,7 +19,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const ActionLink: React.FC<Props> = ({ children, className, onClick }) => {
+const ActionLink = ({ children, className, onClick }: Props) => {
   const classes = useStyles()
 
   return (

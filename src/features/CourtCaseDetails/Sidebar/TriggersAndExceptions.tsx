@@ -20,7 +20,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const TriggersAndExceptions: React.FC<Props> = ({ courtCase, aho }) => {
+const TriggersAndExceptions = ({ courtCase, aho }: Props) => {
   const classes = useStyles()
   const [selectedTab, setSelectedTab] = useState("triggers")
 
