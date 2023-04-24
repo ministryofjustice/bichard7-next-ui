@@ -66,11 +66,14 @@ const Triggers: React.FC<Props> = ({ courtCase }) => {
       {unresolvedTriggers.length === 0 && courtCase.triggers.length === 0 && "There is no trigger for this case."}
       {unresolvedTriggers.map((trigger) => {
         const triggerInfo = getTriggerInfo(trigger.triggerCode)
+        const checkBoxId = `trigger_${trigger.triggerId}`
 
         return (
           <GridRow key={trigger.triggerId} className={classes.triggerRow}>
             <GridCol className="trigger-details-column">
-              <span className="trigger-code">{trigger.shortTriggerCode}</span>
+              <label className="trigger-code" htmlFor={checkBoxId}>
+                {trigger.shortTriggerCode}
+              </label>
               {trigger.triggerItemIdentity !== undefined && (
                 <>
                   {" / "}
@@ -84,6 +87,7 @@ const Triggers: React.FC<Props> = ({ courtCase }) => {
             </GridCol>
             <GridCol setWidth="70px" className="checkbox-column">
               <Checkbox
+                id={checkBoxId}
                 value={trigger.triggerId}
                 checked={selectedTriggerIds.includes(trigger.triggerId)}
                 onChange={(e) => setTriggerSelection(e)}

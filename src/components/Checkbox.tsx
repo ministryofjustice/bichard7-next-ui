@@ -5,6 +5,7 @@ import { createUseStyles } from "react-jss"
 type ValueType = string | number | readonly string[] | undefined
 
 interface Props<TValue> {
+  id?: string
   children?: React.ReactNode
   className?: string
   value?: TValue
@@ -29,6 +30,7 @@ const useStyles = createUseStyles({
 })
 
 export default function Checkbox<TValue extends ValueType>({
+  id,
   children,
   className,
   value,
@@ -39,6 +41,7 @@ export default function Checkbox<TValue extends ValueType>({
 
   return (
     <GovUkCheckbox
+      id={id}
       value={value}
       checked={checked}
       onChange={onChange}
