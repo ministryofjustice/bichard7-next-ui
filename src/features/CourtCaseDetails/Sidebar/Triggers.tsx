@@ -38,6 +38,7 @@ const useStyles = createUseStyles({
 const Triggers: React.FC<Props> = ({ courtCase }) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
+  const unresolvedTriggers = courtCase.triggers.filter((trigger) => !trigger.resolvedBy)
 
   const setTriggerSelection = (event: ChangeEvent) => {
     const checkBox = event.target as HTMLInputElement
@@ -61,7 +62,9 @@ const Triggers: React.FC<Props> = ({ courtCase }) => {
           <ActionLink onClick={selectAll}>{"Select all"}</ActionLink>
         </GridCol>
       </GridRow>
-      {courtCase.triggers.map((trigger) => {
+      {unresolvedTriggers.length === 0 && courtCase.triggers.length > 0 && "All triggers have been resolved."}
+      {unresolvedTriggers.length === 0 && courtCase.triggers.length === 0 && "There is no trigger for this case."}
+      {unresolvedTriggers.map((trigger) => {
         const triggerInfo = getTriggerInfo(trigger.triggerCode)
 
         return (
@@ -73,7 +76,7 @@ const Triggers: React.FC<Props> = ({ courtCase }) => {
                   {" / "}
                   <Link href="#">
                     {"Offence "}
-                    {trigger.triggerItemIdentity}
+                    {trigger.triggerItemIdentity + 1}
                   </Link>
                 </>
               )}
