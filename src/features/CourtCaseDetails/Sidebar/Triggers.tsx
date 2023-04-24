@@ -57,13 +57,15 @@ const Triggers: React.FC<Props> = ({ courtCase }) => {
 
   return (
     <>
-      <GridRow className={classes.selectAllRow}>
-        <GridCol>
-          <ActionLink onClick={selectAll}>{"Select all"}</ActionLink>
-        </GridCol>
-      </GridRow>
       {unresolvedTriggers.length === 0 && courtCase.triggers.length > 0 && "All triggers have been resolved."}
       {unresolvedTriggers.length === 0 && courtCase.triggers.length === 0 && "There is no trigger for this case."}
+      {unresolvedTriggers.length > 0 && (
+        <GridRow className={classes.selectAllRow}>
+          <GridCol>
+            <ActionLink onClick={selectAll}>{"Select all"}</ActionLink>
+          </GridCol>
+        </GridRow>
+      )}
       {unresolvedTriggers.map((trigger) => {
         const triggerInfo = getTriggerInfo(trigger.triggerCode)
         const checkBoxId = `trigger_${trigger.triggerId}`
