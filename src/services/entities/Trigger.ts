@@ -6,13 +6,14 @@ import CourtCase from "./CourtCase"
 import dateTransformer from "./transformers/dateTransformer"
 import type { ResolutionStatus } from "types/ResolutionStatus"
 import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
+import triggerCodeTransformer from "./transformers/triggerCodeTransformer"
 
 @Entity({ name: "error_list_triggers" })
 export default class Trigger extends BaseEntity {
   @PrimaryColumn({ name: "trigger_id" })
   triggerId!: number
 
-  @Column({ name: "trigger_code" })
+  @Column({ name: "trigger_code", transformer: triggerCodeTransformer })
   triggerCode!: string
 
   @Column({ name: "error_id" })
