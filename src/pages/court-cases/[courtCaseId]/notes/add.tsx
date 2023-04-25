@@ -6,7 +6,7 @@ import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { BackLink, Heading } from "govuk-react"
+import { BackLink } from "govuk-react"
 import { useRouter } from "next/router"
 import parseFormData from "utils/parseFormData"
 import { isPost } from "utils/http"
@@ -15,6 +15,7 @@ import redirectTo from "utils/redirectTo"
 import AddNoteForm from "features/AddNoteForm/AddNoteForm"
 import getCourtCaseByVisibleForce from "services/getCourtCaseByVisibleForce"
 import { isError } from "types/Result"
+import Head from "next/head"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -78,11 +79,11 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
 
   return (
     <>
+      <Head>
+        <title>{"Add Note | Bichard7"}</title>
+        <meta name="description" content="Add Note | Bichard7" />
+      </Head>
       <Layout user={user}>
-        <Heading as="h1" size="LARGE" aria-label="Add Note">
-          <title>{"Add Note | Bichard7"}</title>
-          <meta name="description" content="Add Note | Bichard7" />
-        </Heading>
         <BackLink href={`${basePath}/court-cases/${courtCase.errorId}`} onClick={function noRefCheck() {}}>
           {"Case Details"}
         </BackLink>
