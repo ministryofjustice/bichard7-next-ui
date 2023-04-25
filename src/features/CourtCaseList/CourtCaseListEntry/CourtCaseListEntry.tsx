@@ -48,13 +48,15 @@ const CourtCaseListEntry: React.FC<Props> = ({
     return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
   }
 
+  const hasTriggers = triggers.length > 0
+
   const classes = useCustomStyles()
 
   return (
     <>
       <CaseDetailsRow
         canCurrentUserUnlockCase={errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
-        cellClassname={triggers.length > 0 ? classes["border-bottom-none"] : ""}
+        cellClassname={hasTriggers ? classes["border-bottom-none"] : ""}
         courtDate={courtDate}
         courtName={courtName}
         defendantName={defendantName}
@@ -66,12 +68,12 @@ const CourtCaseListEntry: React.FC<Props> = ({
         isUrgent={isUrgent}
         notes={notes}
         ptiurn={ptiurn}
-        rowClassname={entityClassname}
+        rowClassname={hasTriggers ? `${entityClassname} ${classes["limited-border-left"]}` : entityClassname}
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
       />
       <TriggersRow
         canCurrentUserUnlockCase={triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
-        classname={entityClassname}
+        classname={hasTriggers ? `${entityClassname} ${classes["limited-border-left"]}` : entityClassname}
         isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !errorLockedByUsername}
         triggerLockedByUsername={triggerLockedByUsername}
         triggers={triggers}
