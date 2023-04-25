@@ -57,7 +57,7 @@ const Triggers = ({ courtCase }: Props) => {
   return (
     <>
       {unresolvedTriggers.length === 0 && courtCase.triggers.length > 0 && "All triggers have been resolved."}
-      {unresolvedTriggers.length === 0 && courtCase.triggers.length === 0 && "There is no trigger for this case."}
+      {unresolvedTriggers.length === 0 && courtCase.triggers.length === 0 && "There are no triggers for this case."}
       {unresolvedTriggers.length > 0 && (
         <GridRow className={classes.selectAllRow}>
           <GridCol>
@@ -70,7 +70,7 @@ const Triggers = ({ courtCase }: Props) => {
         const checkBoxId = `trigger_${trigger.triggerId}`
 
         return (
-          <GridRow key={trigger.triggerId} className={classes.triggerRow}>
+          <GridRow key={trigger.triggerId} className={`${classes.triggerRow} moj-trigger-row`}>
             <GridCol className="trigger-details-column">
               <label className="trigger-code" htmlFor={checkBoxId}>
                 {trigger.shortTriggerCode}
