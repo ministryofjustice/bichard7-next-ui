@@ -19,7 +19,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
   courtCase,
   currentUser,
   exceptionHasBeenRecentlyUnlocked,
-  triggerHasBeenRecentlyUnlocked,
+  triggerHasBeenRecentlyUnlocked
 }: Props) => {
   const {
     courtDate,
