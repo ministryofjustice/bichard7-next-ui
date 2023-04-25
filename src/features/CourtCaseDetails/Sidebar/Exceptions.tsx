@@ -53,7 +53,7 @@ const Exceptions = ({ aho }: Props) => {
 
   return (
     <>
-      {aho.Exceptions.length === 0 && "There is no exception for this case."}
+      {aho.Exceptions.length === 0 && "There are no exceptions for this case."}
       {aho.Exceptions.map(({ code, path }, index) => {
         const exceptionInfo = getExceptionInfo(code)
 

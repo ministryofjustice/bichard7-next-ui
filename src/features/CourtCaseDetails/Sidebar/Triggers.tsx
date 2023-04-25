@@ -57,7 +57,7 @@ const Triggers = ({ courtCase }: Props) => {
   return (
     <>
       {unresolvedTriggers.length === 0 && courtCase.triggers.length > 0 && "All triggers have been resolved."}
-      {unresolvedTriggers.length === 0 && courtCase.triggers.length === 0 && "There is no trigger for this case."}
+      {unresolvedTriggers.length === 0 && courtCase.triggers.length === 0 && "There are no triggers for this case."}
       {unresolvedTriggers.length > 0 && (
         <GridRow className={classes.selectAllRow}>
           <GridCol>

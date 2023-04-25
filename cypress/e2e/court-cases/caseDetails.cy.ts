@@ -460,7 +460,7 @@ describe("Case details", () => {
     cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
 
     cy.get(".moj-tab-panel-triggers .moj-trigger-row").should("not.exist")
-    cy.get(".moj-tab-panel-triggers").contains("There is no trigger for this case.")
+    cy.get(".moj-tab-panel-triggers").contains("There are no triggers for this case.")
   })
 
   it("should display a message when all triggers are resolved", () => {
@@ -549,7 +549,7 @@ describe("Case details", () => {
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("HO100102 - Bad Date")
   })
 
-  it.only("display a message when there is no exception for the case", () => {
+  it.only("display a message when there are no exceptions for the case", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "01", hearingOutcome: DummyMultipleOffencesNoErrorAho.hearingOutcomeXml }
     ])
@@ -564,7 +564,7 @@ describe("Case details", () => {
     cy.get(".moj-tab-panel-exceptions").should("be.visible")
 
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").should("not.exist")
-    cy.get(".moj-tab-panel-exceptions").contains("There is no exception for this case.")
+    cy.get(".moj-tab-panel-exceptions").contains("There are no exceptions for this case.")
   })
 })
 
