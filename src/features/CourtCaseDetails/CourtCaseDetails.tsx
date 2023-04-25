@@ -15,6 +15,7 @@ import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
+import { createUseStyles } from "react-jss"
 
 interface Props {
   courtCase: CourtCase
@@ -23,11 +24,18 @@ interface Props {
   triggersVisible: boolean
 }
 
+const useStyles = createUseStyles({
+  content: {
+    zIndex: 100
+  }
+})
+
 const sideBarWidth = "364px"
 const contentWidth = `calc(100% - ${sideBarWidth})`
 
 const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser, triggersVisible }) => {
   const [activeTab, setActiveTab] = useState<Tabs>("Defendant")
+  const classes = useStyles()
 
   return (
     <>
@@ -57,7 +65,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       />
 
       <GridRow>
-        <GridCol setWidth={contentWidth}>
+        <GridCol setWidth={contentWidth} className={classes.content}>
           <ConditionalRender isRendered={activeTab === "Defendant"}>
             <CourtCaseDetailsPanel heading={"Defendant details"}>{""}</CourtCaseDetailsPanel>
           </ConditionalRender>

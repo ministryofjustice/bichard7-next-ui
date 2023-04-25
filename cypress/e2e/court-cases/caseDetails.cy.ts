@@ -31,7 +31,7 @@ describe("Case details", () => {
     cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
     cy.clearCookies()
-    cy.viewport(1280, 720)
+    cy.viewport(1800, 720)
   })
 
   beforeEach(() => {
@@ -362,7 +362,7 @@ describe("Case details", () => {
       expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
     })
 
-    cy.get("H2").should("have.text", "Case details")
+    cy.get("H1").should("have.text", "Case details")
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
     cy.get("table")
@@ -383,8 +383,8 @@ describe("Case details", () => {
     // need to make the updates and then check them in the db
     cy.get("input").first().type("2024-09-26")
 
-    cy.get("button").contains("Resubmit")
     cy.get("button")
+      .contains("Resubmit")
       .click()
       .then(() => {
         cy.task("getCourtCaseById", { caseId: 0 }).then((res) =>
@@ -395,7 +395,7 @@ describe("Case details", () => {
       expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
     })
 
-    cy.get("H2").should("have.text", "Case details")
+    cy.get("H1").should("have.text", "Case details")
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
     cy.get("table")
