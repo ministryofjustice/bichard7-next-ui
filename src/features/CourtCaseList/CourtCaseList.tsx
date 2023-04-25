@@ -21,11 +21,9 @@ const CourtCaseList = ({ courtCases, order = "asc", currentUser }: Props) => {
 
   const classes = useCustomStyles()
 
-  if (courtCases.length === 0) {
-    return <Paragraph>{"There are no court cases to show"}</Paragraph>
-  }
-
-  return (
+  return courtCases.length === 0 ? (
+    <Paragraph>{"There are no court cases to show"}</Paragraph>
+  ) : (
     <Table head={<CourtCaseListTableHeader order={order} />}>
       {courtCases.map((courtCase, index) => (
         <CourtCaseListEntry
