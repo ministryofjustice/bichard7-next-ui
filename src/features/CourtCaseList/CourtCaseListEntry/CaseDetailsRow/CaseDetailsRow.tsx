@@ -9,7 +9,10 @@ import { displayedDateFormat } from "utils/formattedDate"
 import UrgentTag from "features/CourtCaseList/tags/UrgentTag"
 import { useState } from "react"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
-import { filterUserNotes, getMostRecentNote } from "features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/CourtCaseListEntryHelperFunction"
+import {
+  filterUserNotes,
+  getMostRecentNote
+} from "features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/CourtCaseListEntryHelperFunction"
 import Note from "services/entities/Note"
 import { SingleException } from "./SingleException"
 import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
