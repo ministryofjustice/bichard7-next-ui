@@ -91,7 +91,7 @@ const Triggers = ({ courtCase }: Props) => {
                 id={checkBoxId}
                 value={trigger.triggerId}
                 checked={selectedTriggerIds.includes(trigger.triggerId)}
-                onChange={(e) => setTriggerSelection(e)}
+                onChange={setTriggerSelection}
               />
             </GridCol>
           </GridRow>
