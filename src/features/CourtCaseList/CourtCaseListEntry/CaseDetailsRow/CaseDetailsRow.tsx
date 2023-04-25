@@ -19,6 +19,7 @@ import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
 
 interface CaseDetailsRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
+  classname: string
   courtDate: Date | null
   courtName: string
   defendantName: string | null
@@ -48,6 +49,7 @@ const useStyles = createUseStyles({
 
 export const CaseDetailsRow = ({
   canCurrentUserUnlockCase,
+  classname,
   courtDate,
   courtName,
   defendantName,
@@ -75,7 +77,7 @@ export const CaseDetailsRow = ({
 
   return (
     <>
-      <Table.Row className={classes.caseDetailsRow}>
+      <Table.Row className={`${classes.caseDetailsRow} ${classname}`}>
         <Table.Cell>
           <ConditionalRender isRendered={!!errorLockedByUsername}>
             <Image src={LOCKED_ICON_URL} width={20} height={20} alt="Lock icon" />

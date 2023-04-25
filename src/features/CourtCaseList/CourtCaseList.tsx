@@ -4,6 +4,7 @@ import { useRouter } from "next/router"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import type { QueryOrder } from "types/CaseListQueryParams"
+import { useCustomStyles } from "../../../styles/customStyles"
 import CourtCaseListEntry from "./CourtCaseListEntry/CourtCaseListEntry"
 
 interface Props {
@@ -17,6 +18,8 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
 
   const recentlyUnlockedExceptionId = query.unlockException
   const recentlyUnlockedTriggerId = query.unlockTrigger
+
+  const classes = useCustomStyles()
 
   const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
   const tableHead = (
@@ -75,13 +78,14 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
 
   return (
     <Table head={tableHead}>
-      {courtCases.map((courtCase) => (
+      {courtCases.map((courtCase, index) => (
         <CourtCaseListEntry
           courtCase={courtCase}
           currentUser={currentUser}
           exceptionHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedExceptionId}
           triggerHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedTriggerId}
           key={`court-case-${courtCase.ptiurn}`}
+          rowsClassname={index % 2 == 1 ? classes["light-grey-background"] : ""}
         />
       ))}
     </Table>
