@@ -5,6 +5,7 @@ import { DataSource } from "typeorm"
 import { v4 as uuidv4 } from "uuid"
 import CourtCase from "../../src/services/entities/CourtCase"
 import dummyAHO from "../test-data/AnnotatedHO1.json"
+import dummyAHOWithOneError from "../test-data/AnnotatedHO2_OneError.json"
 import createDummyAsn from "./createDummyAsn"
 import createDummyCourtCode from "./createDummyCourtCode"
 import createDummyExceptions from "./createDummyExceptions"
@@ -55,7 +56,7 @@ export default async (
     isUrgent: randomBoolean(),
     asn: createDummyAsn(caseDate.getFullYear(), orgCode + faker.random.alpha(2).toUpperCase()),
     courtCode: createDummyCourtCode(orgCode),
-    hearingOutcome: dummyAHO.hearingOutcomeXml,
+    hearingOutcome: (errorReport ? dummyAHOWithOneError : dummyAHO).hearingOutcomeXml,
     errorReport: errorReport,
     createdTimestamp: caseDate,
     errorReason: errorReason,

@@ -42,7 +42,7 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
   return (
     <>
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
-      <Heading as="h4" size="MEDIUM">
+      <Heading as="h3" size="MEDIUM">
         {`Offence ${offence.CourtOffenceSequenceNumber} of ${offencesCount}`}
       </Heading>
       <Table>

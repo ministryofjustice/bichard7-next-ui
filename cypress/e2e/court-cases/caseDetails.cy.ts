@@ -9,7 +9,7 @@ import { Tabs } from "../../../src/features/CourtCaseDetails/Tabs/CourtCaseDetai
 
 const clickTab = (tab: Tabs) => {
   cy.contains(tab).click()
-  cy.get("H4").contains(tab)
+  cy.get("H3").contains(tab)
 }
 
 describe("Case details", () => {
@@ -31,7 +31,7 @@ describe("Case details", () => {
     cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
     cy.clearCookies()
-    cy.viewport(1280, 720)
+    cy.viewport(1800, 720)
   })
 
   beforeEach(() => {
@@ -77,7 +77,7 @@ describe("Case details", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("H2").should("have.text", "Case details")
+    cy.get("H1").should("have.text", "Case details")
 
     cy.contains("Case00000")
     cy.contains("Magistrates' Courts Essex Basildon")
@@ -104,13 +104,13 @@ describe("Case details", () => {
       })
 
     // Triggers table
-    cy.get("H3").contains("Triggers")
+    cy.get("H2").contains("Triggers")
     cy.get("table").eq(-1).find("tr").should("have.length", 2)
     cy.get("table").eq(-1).find("tr").eq(1).find("td").first().should("have.text", "TRPR0001")
     cy.get("table").eq(-1).find("tr").eq(1).find("td").eq(4).should("include.text", "09/07/2022")
 
     // Notes
-    cy.get("H3").contains("Notes")
+    cy.get("H2").contains("Notes")
     cy.get("p").contains("Case has no notes.")
 
     // Urgency
@@ -362,7 +362,7 @@ describe("Case details", () => {
       expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
     })
 
-    cy.get("H2").should("have.text", "Case details")
+    cy.get("H1").should("have.text", "Case details")
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
     cy.get("table")
@@ -395,7 +395,7 @@ describe("Case details", () => {
       expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
     })
 
-    cy.get("H2").should("have.text", "Case details")
+    cy.get("H1").should("have.text", "Case details")
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
     cy.get("table")
