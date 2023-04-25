@@ -1,5 +1,5 @@
 import Note from "services/entities/Note"
-import { filterUserNotes, getMostRecentNote, validateMostRecentNoteDate } from "../CourtCaseListEntryHelperFunction"
+import { filterUserNotes, getMostRecentNote, validateMostRecentNoteDate } from "./CaseDetailsRow/CourtCaseListEntryHelperFunction"
 
 describe("number of notes", () => {
   it("should filter out all the system notes and only show user entered notes", () => {

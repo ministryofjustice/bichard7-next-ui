@@ -1,5 +1,5 @@
-import Note from "../../services/entities/Note"
-import { formatDisplayedDate } from "../../utils/formattedDate"
+import Note from "../../../../services/entities/Note"
+import { formatDisplayedDate } from "../../../../utils/formattedDate"
 
 export const filterUserNotes = (notes: Note[]) => {
   const userNotes = notes.filter((note) => note.userId !== "System")

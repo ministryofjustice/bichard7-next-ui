@@ -3,7 +3,7 @@ import ConditionalRender from "../../../../components/ConditionalRender"
 import { Dispatch, SetStateAction } from "react"
 import { createUseStyles } from "react-jss"
 import { gdsLightGrey } from "../../../../utils/colours"
-import { validateMostRecentNoteDate } from "../../CourtCaseListEntryHelperFunction"
+import { validateMostRecentNoteDate } from "./CourtCaseListEntryHelperFunction"
 import type Note from "../../../../services/entities/Note"
 
 const useStyles = createUseStyles({
