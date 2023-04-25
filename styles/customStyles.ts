@@ -1,5 +1,5 @@
 import { createUseStyles } from "react-jss"
-import { darkGrey, blue, tagBlue, textBlue, yellow, lightGrey } from "../src/utils/colours"
+import { darkGrey, blue, tagBlue, textBlue, yellow, lightGrey, gdsGrey } from "../src/utils/colours"
 
 export const useCustomStyles = createUseStyles({
   "button--tag": {
@@ -93,5 +93,17 @@ export const useCustomStyles = createUseStyles({
   },
   "border-bottom-none": {
     borderBottom: "none"
+  },
+  "limited-border-left": {
+    position: "relative",
+    "&:before": {
+      content: " ",
+      position: "absolute",
+      top: "50%",
+      transform: "translateY(-50%)",
+      height: "calc(100% - 10px)",
+      width: "1px",
+      backgroundColor: gdsGrey
+    }
   }
 })
