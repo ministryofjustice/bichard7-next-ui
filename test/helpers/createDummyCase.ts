@@ -36,14 +36,16 @@ export default async (
   const resolutionStatus = isResolved ? "Resolved" : "Unresolved"
   const resolutionDate = isResolved ? randomDate(caseDate, dateTo || new Date()) : null
   const triggers = createDummyTriggers(dataSource, caseId, caseDate)
+  const hasTriggers = triggers.length > 0
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
   const { errorReport, errorReason, exceptionCount } = createDummyExceptions()
+  const hasExceptions = exceptionCount > 0
   const courtCase = await dataSource.getRepository(CourtCase).save({
     errorId: caseId,
     messageId: uuidv4(),
     orgForPoliceFilter: orgCode,
-    errorLockedByUsername: !isResolved && randomBoolean() ? randomUsername() : null,
-    triggerLockedByUsername: !isResolved && randomBoolean() ? randomUsername() : null,
+    errorLockedByUsername: !isResolved && hasExceptions && randomBoolean() ? randomUsername() : null,
+    triggerLockedByUsername: !isResolved && hasTriggers && randomBoolean() ? randomUsername() : null,
     phase: 1,
     errorStatus: resolutionStatus,
     triggerStatus: resolutionStatus,

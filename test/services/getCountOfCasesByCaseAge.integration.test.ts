@@ -2,7 +2,7 @@
 import "reflect-metadata"
 import { DataSource, SelectQueryBuilder } from "typeorm"
 import MockDate from "mockdate"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { isError } from "../../src/types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
@@ -31,7 +31,7 @@ describe("listCourtCases", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
   })
 
   afterAll(async () => {

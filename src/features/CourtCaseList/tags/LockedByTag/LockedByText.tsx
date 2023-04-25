@@ -3,6 +3,8 @@ import Image from "next/image"
 import { createUseStyles } from "react-jss"
 import { tagBlue, textBlue } from "../../../../utils/colours"
 
+export const LOCKED_ICON_URL = "/bichard/assets/images/lock.svg"
+
 const useStyles = createUseStyles({
   LockedByTag: {
     display: "inline-flex",
@@ -36,7 +38,7 @@ const LockedByText = ({ lockedBy, unlockPath }: LockedByTextProps) => {
     <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag ${classes.LockedByTag}`}>
       <div className={classes.LockedByTag}>
         <Image
-          src={"/bichard/assets/images/lock.svg"}
+          src={LOCKED_ICON_URL}
           width={18}
           height={18}
           className={unlockPath ? classes.LockedIcon : undefined}

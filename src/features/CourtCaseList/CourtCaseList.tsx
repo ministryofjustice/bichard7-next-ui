@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import type { QueryOrder } from "types/CaseListQueryParams"
-import CourtCaseListEntry from "./CourtCaseListEntry"
+import CourtCaseListEntry from "./CourtCaseListEntry/CourtCaseListEntry"
 
 interface Props {
   courtCases: CourtCase[]

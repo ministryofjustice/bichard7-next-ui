@@ -5,7 +5,7 @@ import getCourtCaseByVisibleForce from "../../src/services/getCourtCaseByVisible
 import getDataSource from "../../src/services/getDataSource"
 import tryToLockCourtCase from "../../src/services/tryToLockCourtCase"
 import { isError } from "../../src/types/Result"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 
 describe("lock court case", () => {
@@ -16,7 +16,7 @@ describe("lock court case", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
   })
 
   afterAll(async () => {

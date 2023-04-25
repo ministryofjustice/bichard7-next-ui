@@ -345,7 +345,7 @@ describe("Case list", () => {
       cy.findByText("Defendant Name 0").click()
 
       cy.url().should("match", /\/court-cases\//)
-      cy.findByText("Case Details").should("exist")
+      cy.findByText("Case details").should("exist")
 
       cy.findByText("Cases").click()
 

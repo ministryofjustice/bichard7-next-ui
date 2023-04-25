@@ -8,10 +8,10 @@ describe("amend force owner", () => {
 
   beforeEach(() => {
     aho = createDummyAho() as AnnotatedHearingOutcome
-    testString = "RANDOM_FORCE_OWNER_TEST_STRING"
+    testString = "04CA"
   })
 
-  it("amend force owner when force owner property exist", () => {
+  it("amends force owner when force owner property exist", () => {
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner = {
       SecondLevelCode: null,
       ThirdLevelCode: null,
@@ -21,12 +21,16 @@ describe("amend force owner", () => {
 
     amendForceOwner(testString, aho)
 
-    expect(aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner?.OrganisationUnitCode).toEqual(
-      `${testString.substring(0, 2)}YZ00`
-    )
+    const forceOwner = aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner
+
+    expect(forceOwner?.OrganisationUnitCode).toEqual(`${testString.substring(0, 2)}YZ00`)
+    expect(forceOwner?.SecondLevelCode).toEqual("04")
+    expect(forceOwner?.BottomLevelCode).toEqual("00")
+    expect(forceOwner?.ThirdLevelCode).toEqual("YZ")
+    expect(forceOwner?.TopLevelCode).toBeUndefined()
   })
 
-  it("amend force owner when force owner property doesn't exist", () => {
+  it("amends force owner when force owner property doesn't exist", () => {
     expect(aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner).toBe(undefined)
 
     amendForceOwner(testString, aho)

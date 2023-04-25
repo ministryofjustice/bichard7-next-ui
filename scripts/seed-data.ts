@@ -4,7 +4,7 @@ import Trigger from "../src/services/entities/Trigger"
 import Note from "../src/services/entities/Trigger"
 import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
-import deleteFromTable from "../test/utils/deleteFromTable"
+import deleteFromEntity from "../test/utils/deleteFromEntity"
 
 if (process.env.DEPLOY_NAME !== "e2e-test") {
   console.error("Not running in e2e environment, bailing out. Set DEPLOY_NAME='e2e-test' if you're sure.")
@@ -22,9 +22,8 @@ const numCases = Math.round(Math.random() * numCasesRange) + minCases
 console.log(`Seeding ${numCases} cases for force ID ${forceId}`)
 
 getDataSource().then(async (dataSource) => {
-  await deleteFromTable(CourtCase)
-  await deleteFromTable(Trigger)
-  await deleteFromTable(Note)
+  const entitiesToClear = [CourtCase, Trigger, Note]
+  await Promise.all(entitiesToClear.map((entity) => deleteFromEntity(entity)))
 
   await Promise.all(
     new Array(numCases)

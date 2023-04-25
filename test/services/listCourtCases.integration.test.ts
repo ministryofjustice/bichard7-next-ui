@@ -4,7 +4,7 @@ import { DataSource } from "typeorm"
 import courtCasesByVisibleForcesQuery from "services/queries/courtCasesByVisibleForcesQuery"
 import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import {
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
@@ -37,9 +37,9 @@ describe("listCourtCases", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
-    await deleteFromTable(Trigger)
-    await deleteFromTable(Note)
+    await deleteFromEntity(CourtCase)
+    await deleteFromEntity(Trigger)
+    await deleteFromEntity(Note)
   })
 
   afterAll(async () => {

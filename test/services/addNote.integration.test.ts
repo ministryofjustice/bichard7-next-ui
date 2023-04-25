@@ -3,7 +3,7 @@ import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import addNote from "../../src/services/addNote"
-import deleteFromTable from "../utils/deleteFromTable"
+import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import insertNotes from "services/insertNotes"
 
@@ -35,7 +35,7 @@ describe("addNote", () => {
   })
 
   beforeEach(async () => {
-    await deleteFromTable(CourtCase)
+    await deleteFromEntity(CourtCase)
     jest.resetAllMocks()
     jest.clearAllMocks()
   })
