@@ -140,7 +140,7 @@ describe("Case list", () => {
       cy.get("#court-name-sort").contains("Court Name").should("have.attr", "href")
       cy.get("#ptiurn-sort").contains("PTIURN").should("have.attr", "href")
       cy.get("#is-urgent-sort").contains("Urgent").should("have.attr", "href")
-      cy.contains("Notes").should("not.have.attr", "href")
+      cy.contains("Notes").should("have.attr", "href")
       cy.contains("Reason").should("not.have.attr", "href")
       cy.get("#locked-by-sort").contains("Locked By").should("have.attr", "href")
     })
@@ -286,7 +286,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").eq(2).contains(`Resolved`).should("exist")
     })
 
-    it("Should display the correct number of user-created notes on cases", () => {
+    it("Should display the correct number of user-created notes on cases & allow the sort by the number of notes", () => {
       const caseNotes: { user: string; text: string }[][] = [
         [
           {
@@ -331,6 +331,10 @@ describe("Case list", () => {
       cy.get("tr").not(":first").eq(0).get("td:nth-child(7)").should("be.empty")
       cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`1`).should("exist")
       cy.get("tr").not(":first").eq(2).get("td:nth-child(7)").contains(`3`).should("exist")
+
+      cy.get("#notes-sort").click()
+      cy.get("tr").not(":first").eq(2).get("td:nth-child(5)").contains(`Case00002`)
+      cy.get("tr").not(":first").eq(1).get("td:nth-child(5)").contains(`Case00001`)
     })
 
     it("should be able to navigate to the case details page and back", () => {
