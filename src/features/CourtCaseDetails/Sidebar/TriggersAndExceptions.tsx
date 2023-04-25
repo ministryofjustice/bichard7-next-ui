@@ -15,7 +15,7 @@ const useStyles = createUseStyles({
   pointer: {
     cursor: "pointer"
   },
-  sideBarMarginTop: {
+  sideBar: {
     marginTop: "-41px"
   }
 })
@@ -25,7 +25,7 @@ const TriggersAndExceptions = ({ courtCase, aho }: Props) => {
   const [selectedTab, setSelectedTab] = useState("triggers")
 
   return (
-    <div className={classes.sideBarMarginTop}>
+    <div className={`${classes.sideBar} triggers-and-exceptions-sidebar`}>
       <Tabs>
         <Tabs.List>
           <Tabs.Tab
@@ -41,10 +41,10 @@ const TriggersAndExceptions = ({ courtCase, aho }: Props) => {
             selected={selectedTab === "exceptions"}
           >{`Exceptions`}</Tabs.Tab>
         </Tabs.List>
-        <Tabs.Panel id="triggers" selected={selectedTab === "triggers"}>
+        <Tabs.Panel id="triggers" selected={selectedTab === "triggers"} className="moj-tab-panel-triggers">
           <Triggers courtCase={courtCase} />
         </Tabs.Panel>
-        <Tabs.Panel id="exceptions" selected={selectedTab === "exceptions"}>
+        <Tabs.Panel id="exceptions" selected={selectedTab === "exceptions"} className="moj-tab-panel-exceptions">
           <Exceptions aho={aho} />
         </Tabs.Panel>
       </Tabs>

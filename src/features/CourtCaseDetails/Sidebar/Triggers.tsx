@@ -70,7 +70,7 @@ const Triggers = ({ courtCase }: Props) => {
         const checkBoxId = `trigger_${trigger.triggerId}`
 
         return (
-          <GridRow key={trigger.triggerId} className={classes.triggerRow}>
+          <GridRow key={trigger.triggerId} className={`${classes.triggerRow} moj-trigger-row`}>
             <GridCol className="trigger-details-column">
               <label className="trigger-code" htmlFor={checkBoxId}>
                 {trigger.shortTriggerCode}

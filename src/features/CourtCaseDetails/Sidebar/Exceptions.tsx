@@ -58,7 +58,7 @@ const Exceptions = ({ aho }: Props) => {
         const exceptionInfo = getExceptionInfo(code)
 
         return (
-          <GridRow key={`exception_${index}`} className={classes.exceptionRow}>
+          <GridRow key={`exception_${index}`} className={`${classes.exceptionRow} moj-exception-row`}>
             <GridCol className="exception-details-column">
               <ActionLink className="exception-field">{getExceptionTitle(path)}</ActionLink>
               <p className="exception-details">
