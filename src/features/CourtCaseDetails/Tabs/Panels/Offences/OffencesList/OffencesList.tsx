@@ -12,7 +12,7 @@ interface OffencesListProps {
 export const OffencesList = ({ offences, setDetailedOffence }: OffencesListProps) => {
   return (
     <>
-      <Heading as="h4" size="MEDIUM">
+      <Heading as="h3" size="MEDIUM">
         {"Offences"}
       </Heading>
       <Table

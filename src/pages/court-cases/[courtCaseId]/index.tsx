@@ -20,9 +20,10 @@ import { UpdateResult } from "typeorm"
 import resolveTrigger from "services/resolveTrigger"
 import { resubmitCourtCase } from "services/resubmitCourtCase"
 import parseFormData from "utils/parseFormData"
-import { BackLink, Heading } from "govuk-react"
+import { BackLink } from "govuk-react"
 import { useRouter } from "next/router"
 import { isPncUpdateDataset } from "utils/isPncUpdateDataset"
+import Head from "next/head"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -145,11 +146,11 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   const { basePath } = useRouter()
   return (
     <>
+      <Head>
+        <title>{"Case Details | Bichard7"}</title>
+        <meta name="description" content="Case Details | Bichard7" />
+      </Head>
       <Layout user={user}>
-        <Heading as="h1" size="LARGE" aria-label="Case details">
-          <title>{"Case Details | Bichard7"}</title>
-          <meta name="description" content="Case Details | Bichard7" />
-        </Heading>
         <BackLink href={`${basePath}`} onClick={function noRefCheck() {}}>
           {"Cases"}
         </BackLink>
