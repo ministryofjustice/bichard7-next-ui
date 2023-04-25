@@ -34,7 +34,7 @@ const CourtCaseList = ({ courtCases, order = "asc", currentUser }: Props) => {
           exceptionHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedExceptionId}
           triggerHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedTriggerId}
           key={`court-case-${courtCase.ptiurn}`}
-          rowsClassname={index % 2 == 1 ? classes["light-grey-background"] : ""}
+          entityClassname={index % 2 == 1 ? classes["light-grey-background"] : ""}
         />
       ))}
     </Table>

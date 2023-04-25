@@ -11,11 +11,11 @@ interface Props {
   currentUser: User
   exceptionHasBeenRecentlyUnlocked: boolean
   triggerHasBeenRecentlyUnlocked: boolean
-  rowsClassname: string
+  entityClassname: string
 }
 
 const CourtCaseListEntry: React.FC<Props> = ({
-  rowsClassname,
+  entityClassname,
   courtCase,
   currentUser,
   exceptionHasBeenRecentlyUnlocked,
@@ -51,7 +51,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
     <>
       <CaseDetailsRow
         canCurrentUserUnlockCase={errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
-        classname={rowsClassname}
+        classname={entityClassname}
         courtDate={courtDate}
         courtName={courtName}
         defendantName={defendantName}
@@ -67,7 +67,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
       />
       <TriggersRow
         canCurrentUserUnlockCase={triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
-        classname={rowsClassname}
+        classname={entityClassname}
         isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !errorLockedByUsername}
         triggerLockedByUsername={triggerLockedByUsername}
         triggers={triggers}
