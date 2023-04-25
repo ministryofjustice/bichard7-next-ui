@@ -9,7 +9,7 @@
   "HO100200": {
     "title": "Invalid Organisation Unit Code",
     "description": "A court house code or a force/station code has not been recognised by Bichard 7.",
-    "cause": "The usual cause is that the user has manually entered the \"Next Hearing Location\" for a Remand in an incorrect format. This error can also occur in conjunction with HO100206 Bad ArrestSummonsNumber – if the Force/Station code parsed from the ASN is not valid – refer to HO100206 for the resolution.",
+    "cause": "The usual cause is that the user has manually entered the \"Next Hearing Location\" for a Remand in an incorrect format. This error can also occur in conjunction with HO100206 Bad ArrestSummonsNumber - if the Force/Station code parsed from the ASN is not valid - refer to HO100206 for the resolution.",
     "correctingThisError": "Enter the seven character code for the court (e.g. B01AF00) and resubmit.",
     "avoidingThisError": "Ensure court codes are entered in the correct format."
   },
@@ -182,7 +182,7 @@
     "avoidingThisError": "This is a legitimate error and can not be avoided."
   },
   "HO100331": {
-    "title": "Case has 100+ offences – refer to court register",
+    "title": "Case has 100+ offences - refer to court register",
     "description": "The case contains over 100 offences.",
     "cause": "Due to technical limitations of the interface used these cases cannot be automated. To avoid potential errors with storing excessively large cases the case will be truncated to a single offence within the portal.",
     "correctingThisError": "The resolution is for the user to consult the court register for the full list of offences and enter the result manually on PNC.",
@@ -217,42 +217,42 @@
     "avoidingThisError": "Please contact the helpdesk with details of the result and verdict so that the correct treatment can be ascertained with the PNC Names Working Group."
   },
   "HO100402 #2": {
-    "title": "PNC Update Error I0197 – THE COMBINATION OF DISPOSALS IS NOT ALLOWED",
+    "title": "PNC Update Error I0197 - THE COMBINATION OF DISPOSALS IS NOT ALLOWED",
     "description": "The disposals for an offence contain an incompatible mixture of results.",
     "cause": "The disposal results are considered incompatible by the PNC, e.g.{::nomarkdown}<ul><li>4027 Remand on conditional bail, and</li><li>3089 Interim notification order</li></ul>{:/}",
     "correctingThisError": "This result has to be put onto PNC manually.",
     "avoidingThisError": "The matter of interim results has been referred to PNC Names Working Group. Any other combination should be reported to the Helpdesk for investigation."
   },
   "HO100402 #3": {
-    "title": "PNC Update Error I0001 – DIS CONTAINS INVALID DISPOSAL QUANTITY / AMOUNT / DATE",
+    "title": "PNC Update Error I0001 - DIS CONTAINS INVALID DISPOSAL QUANTITY/AMOUNT/DATE",
     "description": "There is a date/duration/amount in the result which PNC is not expecting.",
     "cause": "There is an incompatibility between Libra and the PNC, e.g. for disposal 3131 Education Requirement the PNC only allows a date but Libra sends a duration.",
     "correctingThisError": "The user will have to result manually",
     "avoidingThisError": "If there has been a typing error then inform the courts of the case details so that it can be investigated. Otherwise the user should inform the helpdesk so that the cause can be investigated."
   },
   "HO100402 #4": {
-    "title": "PNC Update Error I0006 – REM ELEMENT AT BYTE 98 IS WRONG",
+    "title": "PNC Update Error I0006 - REM ELEMENT AT BYTE 98 IS WRONG",
     "description": "There is no next hearing location data available for the remand.",
     "cause": "One or more offences on the case do not contain a next hearing location. Typically this involves offences Adjourned Sine Die.",
     "correctingThisError": "The user will have to result manually.",
     "avoidingThisError": "A mechanism for handling cases adjourned sine die has been implemented and should no longer generate this error."
   },
   "HO100402 #5": {
-    "title": "PNC Update Error I0191 – COMBINATION OF ELEMENTS IN ADJ AND DIS IS INVALID",
+    "title": "PNC Update Error I0191 - COMBINATION OF ELEMENTS IN ADJ AND DIS IS INVALID",
     "description": "The combination of elements is inconsistent according to the PNC.",
-    "cause": "One example is a plea of \"indicated guilty\" – leading Bichard 7 to try and update the PNC with a guilty plea and verdict – together with a result of remanded to Crown Court for trial (implying there is no verdict yet).",
+    "cause": "One example is a plea of \"indicated guilty\" - leading Bichard 7 to try and update the PNC with a guilty plea and verdict - together with a result of remanded to Crown Court for trial (implying there is no verdict yet).",
     "correctingThisError": "The user will have to result manually.",
     "avoidingThisError": "The issue of how to capture \"indicated guilty\" pleas is being investigated."
   },
   "HO100402 #6": {
-    "title": "PNC Update Error I1036 – Error encountered processing update",
+    "title": "PNC Update Error I1036 - Error encountered processing update",
     "description": "PNC technical error when processing the result.",
     "cause": "Network failures, PNC downtime and other technical events will cause PNC to be unable to process the result.",
     "correctingThisError": "The result can be resubmitted but if unsuccessful after one attempt, should be resulted manually.",
     "avoidingThisError": "There is no way of avoiding this error."
   },
   "HO100402 #7": {
-    "title": "PNC Update Error I1008 – Gway – Enquiry Error no Suitable Disposal Groups",
+    "title": "PNC Update Error I1008 - Gway - Enquiry Error no Suitable Disposal Groups",
     "description": "PNC technical error when processing the result.",
     "cause": "This error can be caused when there is a Penalty Notice Hearing on PNC but there is a subsequent court appearance for this offence and an adjournment post judgement or a sentence result is received. This error can also be seen where a conditional caution is already present on PNC.",
     "correctingThisError": "Where a PENHRG hearing is present on PNC, adjournments post judgement and a subsequent sentence result cannot be handled by PNC, only adjournments with judgement can be automated. The case has to be updated manually.",
@@ -261,9 +261,9 @@
   "HO100403": {
     "title": "PNC Update returned a warning",
     "description": "The PNC has returned a warning message. Look at the PNC Errors tab for details (warnings are displayed on this tab alongside the errors).",
-    "cause": "If the PNC only returns warnings then the update has been successful and no exception is raised. This exception only occurs when a warning has been returned in conjunction with an error – the user should refer to the error on the PNC Errors tab and see HO100401 / HO100402 for further details.",
-    "correctingThisError": "See HO100401 / HO100402.",
-    "avoidingThisError": "See HO100401 / HO100402. This exception will be removed in a future release of Bichard 7 as it provides no additional information and the \"warning\" masks the underlying \"PNC error\" (Ref. RCD587)."
+    "cause": "If the PNC only returns warnings then the update has been successful and no exception is raised. This exception only occurs when a warning has been returned in conjunction with an error - the user should refer to the error on the PNC Errors tab and see HO100401/HO100402 for further details.",
+    "correctingThisError": "See HO100401/HO100402.",
+    "avoidingThisError": "See HO100401/HO100402. This exception will be removed in a future release of Bichard 7 as it provides no additional information and the \"warning\" masks the underlying \"PNC error\" (Ref. RCD587)."
   },
   "HO100404": {
     "title": "PNC Update failed (e.g. communications failure, timeout)",
@@ -317,7 +317,7 @@
   "HO200117": {
     "title": "Too many results present - review on PNC",
     "description": "The result record from Libra has too many results for Bichard 7 to update PNC.",
-    "cause": "For any one offence there is a technical limit of 10 results at any one time that can be updated on PNC. This error means that more than 10 results have been received for that offence. One example is where the courts have imposed multiple compensation results – effectively itemising the damage/loss.",
+    "cause": "For any one offence there is a technical limit of 10 results at any one time that can be updated on PNC. This error means that more than 10 results have been received for that offence. One example is where the courts have imposed multiple compensation results - effectively itemising the damage/loss.",
     "correctingThisError": "The results must be put on manually.",
     "avoidingThisError": "The question of whether Bichard 7 should consolidate multiple fine/cost results into a single entry is being raised with PNC Names Working Group."
   },

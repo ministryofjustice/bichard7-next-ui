@@ -53,12 +53,12 @@ const Exceptions = ({ aho }: Props) => {
 
   return (
     <>
-      {aho.Exceptions.length === 0 && "There is no exception for this case."}
+      {aho.Exceptions.length === 0 && "There are no exceptions for this case."}
       {aho.Exceptions.map(({ code, path }, index) => {
         const exceptionInfo = getExceptionInfo(code)
 
         return (
-          <GridRow key={`exception_${index}`} className={classes.exceptionRow}>
+          <GridRow key={`exception_${index}`} className={`${classes.exceptionRow} moj-exception-row`}>
             <GridCol className="exception-details-column">
               <ActionLink className="exception-field">{getExceptionTitle(path)}</ActionLink>
               <p className="exception-details">
