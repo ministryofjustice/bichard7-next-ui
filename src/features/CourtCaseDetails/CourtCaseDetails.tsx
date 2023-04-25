@@ -10,12 +10,14 @@ import { displayedDateFormat } from "utils/formattedDate"
 import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
 import { useState } from "react"
-import { CourtCaseDetailsTabs, Tabs } from "./Tabs/CourtCaseDetailsTabs"
+import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { createUseStyles } from "react-jss"
+import type NavigationHandler from "types/NavigationHandler"
+import type CaseDetailsTabs from "types/CaseDetailsTabs"
 
 interface Props {
   courtCase: CourtCase
@@ -34,8 +36,23 @@ const sideBarWidth = "33%"
 const contentWidth = "67%"
 
 const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser, triggersVisible }) => {
-  const [activeTab, setActiveTab] = useState<Tabs>("Defendant")
+  const [activeTab, setActiveTab] = useState<CaseDetailsTabs>("Defendant")
   const classes = useStyles()
+
+  const handleNavigation: NavigationHandler = ({ location, args }) => {
+    switch (location) {
+      case "Case Details > Case information":
+        setActiveTab("Case information")
+        break
+      case "Case Details > Hearing":
+        setActiveTab("Hearing")
+        break
+      case "Case Details > Offences":
+        setActiveTab("Offences")
+        console.log(args)
+        break
+    }
+  }
 
   return (
     <>
@@ -180,7 +197,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </ConditionalRender>
         </GridCol>
         <GridCol setWidth={sideBarWidth}>
-          <TriggersAndExceptions courtCase={courtCase} aho={aho} />
+          <TriggersAndExceptions courtCase={courtCase} aho={aho} onNavigate={handleNavigation} />
         </GridCol>
       </GridRow>
     </>
