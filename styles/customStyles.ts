@@ -90,5 +90,8 @@ export const useCustomStyles = createUseStyles({
   },
   "light-grey-background": {
     backgroundColor: lightGrey
+  },
+  "border-bottom-none": {
+    borderBottom: "none"
   }
 })
