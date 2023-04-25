@@ -25,13 +25,13 @@ interface Props {
 }
 
 const useStyles = createUseStyles({
-  content: {
-    zIndex: 100
+  contentColumn: {
+    overflowX: "scroll"
   }
 })
 
-const sideBarWidth = "364px"
-const contentWidth = `calc(100% - ${sideBarWidth})`
+const sideBarWidth = "33%"
+const contentWidth = "67%"
 
 const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser, triggersVisible }) => {
   const [activeTab, setActiveTab] = useState<Tabs>("Defendant")
@@ -65,7 +65,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       />
 
       <GridRow>
-        <GridCol setWidth={contentWidth} className={classes.content}>
+        <GridCol setWidth={contentWidth} className={classes.contentColumn}>
           <ConditionalRender isRendered={activeTab === "Defendant"}>
             <CourtCaseDetailsPanel heading={"Defendant details"}>{""}</CourtCaseDetailsPanel>
           </ConditionalRender>
