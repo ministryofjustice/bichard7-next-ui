@@ -22,7 +22,7 @@ import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
 
 interface CaseDetailsRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
-  classname: string
+  cellClassname: string
   courtDate: Date | null
   courtName: string
   defendantName: string | null
@@ -34,6 +34,7 @@ interface CaseDetailsRowProps {
   isUrgent: boolean
   notes: Note[]
   ptiurn: string
+  rowClassname: string
   unlockPath: string
 }
 
@@ -52,7 +53,7 @@ const useStyles = createUseStyles({
 
 export const CaseDetailsRow = ({
   canCurrentUserUnlockCase,
-  classname,
+  cellClassname,
   courtDate,
   courtName,
   defendantName,
@@ -64,6 +65,7 @@ export const CaseDetailsRow = ({
   isUrgent,
   notes,
   ptiurn,
+  rowClassname,
   unlockPath
 }: CaseDetailsRowProps) => {
   const [showPreview, setShowPreview] = useState(false)
@@ -80,36 +82,36 @@ export const CaseDetailsRow = ({
 
   return (
     <>
-      <Table.Row className={`${classes.caseDetailsRow} ${classname}`}>
-        <Table.Cell>
+      <Table.Row className={`${classes.caseDetailsRow} ${rowClassname}`}>
+        <Table.Cell className={cellClassname}>
           <ConditionalRender isRendered={!!errorLockedByUsername}>
             <Image src={LOCKED_ICON_URL} width={20} height={20} alt="Lock icon" />
           </ConditionalRender>
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell className={cellClassname}>
           <Link href={caseDetailsPath(errorId)} id={`Case details for ${defendantName}`}>
             {defendantName}
             <br />
             <ResolvedTag isResolved={isResolved} />
           </Link>
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell className={cellClassname}>
           <DateTime date={courtDate} dateFormat={displayedDateFormat} />
         </Table.Cell>
-        <Table.Cell>{courtName}</Table.Cell>
-        <Table.Cell>{ptiurn}</Table.Cell>
-        <Table.Cell>
+        <Table.Cell className={cellClassname}>{courtName}</Table.Cell>
+        <Table.Cell className={cellClassname}>{ptiurn}</Table.Cell>
+        <Table.Cell className={cellClassname}>
           <UrgentTag isUrgent={isUrgent} />
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell className={cellClassname}>
           <NotePreviewButton previewState={showPreview} setShowPreview={setShowPreview} numberOfNotes={numberOfNotes} />
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell className={cellClassname}>
           {Object.keys(exceptions).map((exception, exceptionId) => {
             return <SingleException key={exceptionId} exception={exception} exceptionCounter={exceptions[exception]} />
           })}
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell className={cellClassname}>
           {canCurrentUserUnlockCase ? (
             <LockedByTag lockedBy={errorLockedByUsername} unlockPath={unlockPath} />
           ) : (
@@ -120,13 +122,13 @@ export const CaseDetailsRow = ({
       </Table.Row>
       {numberOfNotes != 0 && !!showPreview && (
         <Table.Row className={classes.notesRow}>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell style={{ paddingTop: "0px" }} colSpan={2}>
+          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
+          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
+          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
+          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
+          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
+          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
+          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }} colSpan={2}>
             <NotePreview latestNote={mostRecentUserNote} numberOfNotes={numberOfNotes} />
           </Table.Cell>
           <Table.Cell />

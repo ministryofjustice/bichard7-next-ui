@@ -3,6 +3,7 @@ import { encode } from "querystring"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
+import { useCustomStyles } from "../../../../styles/customStyles"
 import { CaseDetailsRow } from "./CaseDetailsRow/CaseDetailsRow"
 import { TriggersRow } from "./TriggersRow/TriggersRow"
 
@@ -47,11 +48,13 @@ const CourtCaseListEntry: React.FC<Props> = ({
     return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
   }
 
+  const classes = useCustomStyles()
+
   return (
     <>
       <CaseDetailsRow
         canCurrentUserUnlockCase={errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
-        classname={entityClassname}
+        cellClassname={triggers.length > 0 ? classes["border-bottom-none"] : ""}
         courtDate={courtDate}
         courtName={courtName}
         defendantName={defendantName}
@@ -63,6 +66,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
         isUrgent={isUrgent}
         notes={notes}
         ptiurn={ptiurn}
+        rowClassname={entityClassname}
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
       />
       <TriggersRow
