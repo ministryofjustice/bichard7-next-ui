@@ -111,24 +111,27 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw caseAgeCounts
     }
 
-    const courtCases = await listCourtCases(dataSource, {
-      forces: currentUser.visibleCases,
-      ...(validatedDefendantName && { defendantName: validatedDefendantName }),
-      ...(validatedCourtName && { courtName: validatedCourtName }),
-      ...(validatedreasonCode && { reasonCode: validatedreasonCode }),
-      ...(validatedPtiurn && { ptiurn: validatedPtiurn }),
-      reasons: reasons,
-      urgent: validatedUrgent,
-      maxPageItems: validatedMaxPageItems,
-      pageNum: validatedPageNum,
-      orderBy: validatedOrderBy,
-      order: validatedOrder,
-      courtDateRange: validatedCaseAges || validatedDateRange,
-      locked: lockedFilter,
-      caseState: validatedCaseState,
-      allocatedToUserName: validatedMyCases,
-      resolvedByUsername
-    })
+    const courtCases = await listCourtCases(
+      dataSource,
+      {
+        ...(validatedDefendantName && { defendantName: validatedDefendantName }),
+        ...(validatedCourtName && { courtName: validatedCourtName }),
+        ...(validatedreasonCode && { reasonCode: validatedreasonCode }),
+        ...(validatedPtiurn && { ptiurn: validatedPtiurn }),
+        reasons: reasons,
+        urgent: validatedUrgent,
+        maxPageItems: validatedMaxPageItems,
+        pageNum: validatedPageNum,
+        orderBy: validatedOrderBy,
+        order: validatedOrder,
+        courtDateRange: validatedCaseAges || validatedDateRange,
+        locked: lockedFilter,
+        caseState: validatedCaseState,
+        allocatedToUserName: validatedMyCases,
+        resolvedByUsername
+      },
+      currentUser
+    )
 
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
 

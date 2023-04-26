@@ -1,11 +1,11 @@
 import CourtCase from "../entities/CourtCase"
-import { Brackets, In, Like, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
+import { Brackets, In, Like, SelectQueryBuilder, UpdateQueryBuilder, WhereExpressionBuilder } from "typeorm"
 
 const courtCasesByVisibleForcesQuery = (
-  query: SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase>,
+  query: SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> | WhereExpressionBuilder,
   forces: string[]
-): SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> => {
-  query.where(
+): SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> | WhereExpressionBuilder => {
+  query.orWhere(
     new Brackets((qb) => {
       if (forces.length < 1) {
         qb.where("FALSE") // prevent returning cases when there are no visible forces
