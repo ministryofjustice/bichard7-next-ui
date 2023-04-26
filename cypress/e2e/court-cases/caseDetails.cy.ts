@@ -5,10 +5,11 @@ import logAccessibilityViolations from "../../support/logAccessibilityViolations
 import a11yConfig from "../../support/a11yConfig"
 import hashedPassword from "../../fixtures/hashedPassword"
 import resubmitCaseJson from "../../fixtures/expected_resubmit_01.json"
-import { Tabs } from "../../../src/features/CourtCaseDetails/Tabs/CourtCaseDetailsTabs"
+import type CaseDetailsTab from "../../../src/types/CaseDetailsTab"
 import DummyMultipleOffencesNoErrorAho from "../../../test/test-data/AnnotatedHO1.json"
+import DummyHO100302Aho from "../../../test/test-data/HO100302_1.json"
 
-const clickTab = (tab: Tabs) => {
+const clickTab = (tab: CaseDetailsTab) => {
   cy.contains(tab).click()
   cy.get("H3").contains(tab)
 }
@@ -549,7 +550,7 @@ describe("Case details", () => {
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("HO100102 - Bad Date")
   })
 
-  it.only("display a message when there are no exceptions for the case", () => {
+  it("display a message when there are no exceptions for the case", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "01", hearingOutcome: DummyMultipleOffencesNoErrorAho.hearingOutcomeXml }
     ])
@@ -565,6 +566,68 @@ describe("Case details", () => {
 
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").should("not.exist")
     cy.get(".moj-tab-panel-exceptions").contains("There are no exceptions for this case.")
+  })
+
+  it("should take the user to the offence tab when trigger is clicked", () => {
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+    const triggers: TestTrigger[] = [
+      {
+        triggerId: 0,
+        triggerCode: "TRPR0010",
+        triggerItemIdentity: 0,
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      },
+      {
+        triggerId: 1,
+        triggerCode: "TRPR0015",
+        triggerItemIdentity: 1,
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+    cy.task("insertTriggers", { caseId: 0, triggers })
+
+    cy.login("bichard01@example.com", "password")
+
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("h3").should("not.have.text", "Offence 1 of 3")
+    cy.get(".moj-tab-panel-triggers .moj-trigger-row button").eq(0).contains("Offence 1").click()
+    cy.get("h3").should("have.text", "Offence 1 of 3")
+    cy.get(".moj-tab-panel-triggers .moj-trigger-row button").eq(1).contains("Offence 2").click()
+    cy.get("h3").should("have.text", "Offence 2 of 3")
+  })
+
+  it("should take the user to offence tab when exception is clicked", () => {
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+
+    cy.login("bichard01@example.com", "password")
+
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("h3").should("not.have.text", "Offence 1 of 3")
+    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Next hearing date (Offence 1)").click()
+    cy.get("h3").should("have.text", "Offence 1 of 3")
+  })
+
+  it("should take the user to case information tab when exception is clicked", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("h3").should("not.have.text", "Case information")
+    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".moj-tab-panel-exceptions .moj-exception-row")
+      .eq(0)
+      .contains("Arrest summons number (Case information)")
+      .click()
+    cy.get("h3").should("have.text", "Case information")
   })
 })
 

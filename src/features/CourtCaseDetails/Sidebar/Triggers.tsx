@@ -1,13 +1,15 @@
-import { GridCol, GridRow, Link } from "govuk-react"
+import { GridCol, GridRow } from "govuk-react"
 import CourtCase from "../../../services/entities/CourtCase"
 import { createUseStyles } from "react-jss"
 import Checkbox from "components/Checkbox"
 import ActionLink from "components/ActionLink"
 import { ChangeEvent, useState } from "react"
 import getTriggerInfo from "utils/getTriggerInfo"
+import type NavigationHandler from "types/NavigationHandler"
 
 interface Props {
   courtCase: CourtCase
+  onNavigate: NavigationHandler
 }
 
 const useStyles = createUseStyles({
@@ -35,7 +37,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const Triggers = ({ courtCase }: Props) => {
+const Triggers = ({ courtCase, onNavigate }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
   const unresolvedTriggers = courtCase.triggers.filter((trigger) => !trigger.resolvedBy)
@@ -52,6 +54,10 @@ const Triggers = ({ courtCase }: Props) => {
 
   const selectAll = () => {
     setSelectedTriggerIds(courtCase.triggers.map((trigger) => trigger.triggerId))
+  }
+
+  const handleClick = (offenceOrderIndex?: number) => {
+    onNavigate({ location: "Case Details > Offences", args: { offenceOrderIndex } })
   }
 
   return (
@@ -78,10 +84,10 @@ const Triggers = ({ courtCase }: Props) => {
               {trigger.triggerItemIdentity !== undefined && (
                 <>
                   {" / "}
-                  <Link href="#">
+                  <ActionLink onClick={() => handleClick(trigger.triggerItemIdentity)}>
                     {"Offence "}
                     {trigger.triggerItemIdentity + 1}
-                  </Link>
+                  </ActionLink>
                 </>
               )}
               <p>{triggerInfo?.description}</p>

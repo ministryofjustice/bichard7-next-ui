@@ -1,23 +1,23 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
-import { useState } from "react"
 import { OffenceDetails } from "./Offence/OffenceDetails"
 import { OffencesList } from "./OffencesList/OffencesList"
 
 interface OffencesProps {
   offences: Offence[]
+  onOffenceSelected: (offenceIndex?: number) => void
+  selectedOffenceIndex?: number
 }
 
-export const Offences = ({ offences }: OffencesProps) => {
-  const [detailedOffence, setDetailedOffence] = useState<Offence>()
-  return !!detailedOffence ? (
+export const Offences = ({ offences, onOffenceSelected, selectedOffenceIndex }: OffencesProps) => {
+  return selectedOffenceIndex !== undefined ? (
     <>
       <OffenceDetails
-        offence={detailedOffence}
+        offence={offences[selectedOffenceIndex]}
         offencesCount={offences.length}
-        onBackToAllOffences={() => setDetailedOffence(undefined)}
+        onBackToAllOffences={() => onOffenceSelected(undefined)}
       />
     </>
   ) : (
-    <OffencesList offences={offences} setDetailedOffence={setDetailedOffence} />
+    <OffencesList offences={offences} setDetailedOffenceIndex={onOffenceSelected} />
   )
 }

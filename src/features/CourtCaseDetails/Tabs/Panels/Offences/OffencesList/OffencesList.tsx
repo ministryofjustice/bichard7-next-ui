@@ -6,10 +6,10 @@ import { OffencesListRow } from "./OffencesListRow"
 
 interface OffencesListProps {
   offences: Offence[]
-  setDetailedOffence: (offence: Offence) => void
+  setDetailedOffenceIndex: (index: number) => void
 }
 
-export const OffencesList = ({ offences, setDetailedOffence }: OffencesListProps) => {
+export const OffencesList = ({ offences, setDetailedOffenceIndex }: OffencesListProps) => {
   return (
     <>
       <Heading as="h3" size="MEDIUM">
@@ -31,7 +31,7 @@ export const OffencesList = ({ offences, setDetailedOffence }: OffencesListProps
               key={getOffenceCode(offence)}
               offence={offence}
               number={index + 1}
-              onClick={setDetailedOffence}
+              onClick={() => setDetailedOffenceIndex(index)}
             />
           ))}
       </Table>

@@ -1,11 +1,9 @@
 import { createUseStyles } from "react-jss"
-
-export type Tabs = "Defendant" | "Hearing" | "Case information" | "Offences" | "Notes" | "PNC errors"
-
+import type CaseDetailsTab from "types/CaseDetailsTab"
 interface CourtCaseDetailsSingleTabProps {
-  tab: Tabs
+  tab: CaseDetailsTab
   isActive: boolean
-  onClick: (tab: Tabs) => void
+  onClick: (tab: CaseDetailsTab) => void
 }
 
 const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick }: CourtCaseDetailsSingleTabProps) => (
@@ -25,9 +23,9 @@ const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick }: CourtCaseDetailsS
 )
 
 interface CourtCaseDetailsTabsProps {
-  activeTab: Tabs
-  tabs: Tabs[]
-  onTabClick: (tab: Tabs) => void
+  activeTab: CaseDetailsTab
+  tabs: CaseDetailsTab[]
+  onTabClick: (tab: CaseDetailsTab) => void
   width: string
 }
 
