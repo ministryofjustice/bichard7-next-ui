@@ -8,7 +8,7 @@ const courtCasesByVisibleForcesQuery = (
   query.where(
     new Brackets((qb) => {
       if (forces.length < 1) {
-        qb.where(":numForces > 0", { numForces: forces.length })
+        qb.where("FALSE") // prevent returning cases when there are no visible forces
         return query
       }
 
