@@ -63,17 +63,19 @@ const CourtCaseListEntry: React.FC<Props> = ({
         errorId={errorId}
         errorLockedByUsername={errorLockedByUsername}
         errorReport={errorReport}
+        firstColumnClassname={hasTriggers ? classes["limited-border-left"] : ""}
         isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername}
         isResolved={resolutionTimestamp !== null}
         isUrgent={isUrgent}
         notes={notes}
         ptiurn={ptiurn}
-        rowClassname={hasTriggers ? `${entityClassname} ${classes["limited-border-left"]}` : entityClassname}
+        rowClassname={entityClassname}
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
       />
       <TriggersRow
         canCurrentUserUnlockCase={triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
-        classname={hasTriggers ? `${entityClassname} ${classes["limited-border-left"]}` : entityClassname}
+        classname={entityClassname}
+        firstColumnClassname={hasTriggers ? classes["limited-border-left"] : ""}
         isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !errorLockedByUsername}
         triggerLockedByUsername={triggerLockedByUsername}
         triggers={triggers}

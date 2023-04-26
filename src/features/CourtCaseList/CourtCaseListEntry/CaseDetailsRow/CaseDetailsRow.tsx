@@ -29,6 +29,7 @@ interface CaseDetailsRowProps {
   errorId: number
   errorLockedByUsername: string | null | undefined
   errorReport: string
+  firstColumnClassname: string
   isCaseUnlocked: boolean
   isResolved: boolean
   isUrgent: boolean
@@ -60,6 +61,7 @@ export const CaseDetailsRow = ({
   errorId,
   errorLockedByUsername,
   errorReport,
+  firstColumnClassname,
   isCaseUnlocked,
   isResolved,
   isUrgent,
@@ -83,7 +85,7 @@ export const CaseDetailsRow = ({
   return (
     <>
       <Table.Row className={`${classes.caseDetailsRow} ${rowClassname}`}>
-        <Table.Cell className={cellClassname}>
+        <Table.Cell className={`${cellClassname} ${firstColumnClassname}`}>
           <ConditionalRender isRendered={!!errorLockedByUsername}>
             <Image src={LOCKED_ICON_URL} width={20} height={20} alt="Lock icon" />
           </ConditionalRender>
@@ -122,7 +124,7 @@ export const CaseDetailsRow = ({
       </Table.Row>
       {numberOfNotes != 0 && !!showPreview && (
         <Table.Row className={classes.notesRow}>
-          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
+          <Table.Cell className={`${cellClassname} ${firstColumnClass}`} style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>

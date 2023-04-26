@@ -11,6 +11,7 @@ import { LOCKED_ICON_URL } from "features/CourtCaseList/tags/LockedByTag/LockedB
 interface TriggersRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
   classname: string
+  firstColumnClassname: string
   isCaseUnlocked: boolean
   triggerLockedByUsername: string | null | undefined
   triggers: Trigger[]
@@ -26,6 +27,7 @@ const useStyles = createUseStyles({
 export const TriggersRow = ({
   canCurrentUserUnlockCase,
   classname,
+  firstColumnClassname,
   isCaseUnlocked,
   triggerLockedByUsername,
   triggers,
@@ -34,7 +36,7 @@ export const TriggersRow = ({
   const classes = useStyles()
   return triggers.length > 0 ? (
     <Table.Row className={`${classes.triggersRow} ${classname}`}>
-      <Table.Cell>
+      <Table.Cell className={firstColumnClassname}>
         <ConditionalRender isRendered={!!triggerLockedByUsername}>
           <Image src={LOCKED_ICON_URL} width={20} height={20} alt="Lock icon" />
         </ConditionalRender>
