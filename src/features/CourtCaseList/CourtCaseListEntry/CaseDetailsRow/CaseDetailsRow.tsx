@@ -124,7 +124,7 @@ export const CaseDetailsRow = ({
       </Table.Row>
       {numberOfNotes != 0 && !!showPreview && (
         <Table.Row className={classes.notesRow}>
-          <Table.Cell className={`${cellClassname} ${firstColumnClass}`} style={{ paddingTop: "0px" }}></Table.Cell>
+          <Table.Cell className={`${cellClassname} ${firstColumnClassname}`} style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
           <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
