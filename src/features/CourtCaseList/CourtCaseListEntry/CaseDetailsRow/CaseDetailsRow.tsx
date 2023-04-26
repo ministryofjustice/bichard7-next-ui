@@ -19,6 +19,7 @@ import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
 import CaseUnlockedTag from "features/CourtCaseList/tags/CaseUnlockedTag"
 import { LOCKED_ICON_URL } from "features/CourtCaseList/tags/LockedByTag/LockedByText"
 import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
+import { useCustomStyles } from "../../../../../styles/customStyles"
 
 interface CaseDetailsRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
@@ -81,6 +82,7 @@ export const CaseDetailsRow = ({
   const numberOfNotes = userNotes.length
 
   const classes = useStyles()
+  const customClasses = useCustomStyles()
 
   return (
     <>
@@ -124,13 +126,15 @@ export const CaseDetailsRow = ({
       </Table.Row>
       {numberOfNotes != 0 && !!showPreview && (
         <Table.Row className={classes.notesRow}>
-          <Table.Cell className={`${cellClassname} ${firstColumnClassname}`} style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }}></Table.Cell>
-          <Table.Cell className={cellClassname} style={{ paddingTop: "0px" }} colSpan={2}>
+          <Table.Cell
+            className={`${cellClassname} ${firstColumnClassname} ${customClasses["top-padding-none"]}`}
+          ></Table.Cell>
+          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`}></Table.Cell>
+          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`}></Table.Cell>
+          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`}></Table.Cell>
+          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`}></Table.Cell>
+          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`}></Table.Cell>
+          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`} colSpan={2}>
             <NotePreview latestNote={mostRecentUserNote} numberOfNotes={numberOfNotes} />
           </Table.Cell>
           <Table.Cell />
