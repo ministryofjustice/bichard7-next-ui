@@ -37,6 +37,7 @@ const contentWidth = "67%"
 
 const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser, triggersVisible }) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTabs>("Defendant")
+  const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
 
   const handleNavigation: NavigationHandler = ({ location, args }) => {
@@ -44,12 +45,11 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       case "Case Details > Case information":
         setActiveTab("Case information")
         break
-      case "Case Details > Hearing":
-        setActiveTab("Hearing")
-        break
       case "Case Details > Offences":
+        if (typeof args?.offenceOrderIndex === "number") {
+          setSelectedOffenceIndex(+args.offenceOrderIndex)
+        }
         setActiveTab("Offences")
-        console.log(args)
         break
     }
   }
@@ -76,7 +76,10 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       />
       <CourtCaseDetailsTabs
         activeTab={activeTab}
-        onTabClick={setActiveTab}
+        onTabClick={(tab) => {
+          setSelectedOffenceIndex(undefined)
+          setActiveTab(tab)
+        }}
         tabs={["Defendant", "Hearing", "Case information", "Offences", "Notes", "PNC errors"]}
         width={contentWidth}
       />
@@ -98,7 +101,11 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Offences"}>
-            <Offences offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence} />
+            <Offences
+              offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
+              onOffenceSelected={setSelectedOffenceIndex}
+              selectedOffenceIndex={selectedOffenceIndex}
+            />
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Notes"}>

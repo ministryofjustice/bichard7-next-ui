@@ -32,14 +32,11 @@ const Exceptions = ({ aho, onNavigate }: Props) => {
 
   const handleClick = (tab?: CaseDetailsTabs, offenceOrderIndex?: number) => {
     switch (tab) {
-      case "Case information":
-        onNavigate({ location: "Case Details > Case information" })
-        break
-      case "Hearing":
-        onNavigate({ location: "Case Details > Hearing" })
-        break
       case "Offences":
         onNavigate({ location: "Case Details > Offences", args: { offenceOrderIndex } })
+        break
+      case "Case information":
+        onNavigate({ location: "Case Details > Case information" })
         break
     }
   }
