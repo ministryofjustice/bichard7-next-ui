@@ -15,8 +15,8 @@ import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import { BailCodes } from "utils/bailCodes"
 import CourtCase from "./entities/CourtCase"
-import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
 import Note from "./entities/Note"
+import courtCasesByOrganisationUnitFilterQuery from "./queries/courtCasesByOrganisationUnitFilterQuery"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -48,7 +48,7 @@ const listCourtCases = async (
     .select("COUNT(note_id)")
     .where("error_id = courtCase.errorId")
   let query = repository.createQueryBuilder("courtCase")
-  query = courtCasesByVisibleForcesQuery(query, forces) as SelectQueryBuilder<CourtCase>
+  query = courtCasesByOrganisationUnitFilterQuery(query, forces) as SelectQueryBuilder<CourtCase>
   query
     .leftJoinAndSelect("courtCase.triggers", "trigger")
     .leftJoinAndSelect("courtCase.notes", "note")

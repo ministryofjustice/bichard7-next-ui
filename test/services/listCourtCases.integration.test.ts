@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import courtCasesByVisibleForcesQuery from "services/queries/courtCasesByVisibleForcesQuery"
+import courtCasesByOrganisationUnitFilterQuery from "services/queries/courtCasesByOrganisationUnitFilterQuery"
 import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import deleteFromEntity from "../utils/deleteFromEntity"
@@ -20,7 +20,7 @@ import Note from "services/entities/Note"
 import { ResolutionStatus } from "types/ResolutionStatus"
 
 jest.mock(
-  "services/queries/courtCasesByVisibleForcesQuery",
+  "services/queries/courtCasesByOrganisationUnitFilterQuery",
   jest.fn(() =>
     jest.fn((query) => {
       return query
@@ -48,13 +48,13 @@ describe("listCourtCases", () => {
     }
   })
 
-  it("should call cases by visible forces query", async () => {
+  it("should call cases by organisation unit query", async () => {
     const forceCode = "dummyForceCode"
 
     await listCourtCases(dataSource, { forces: [forceCode], maxPageItems: "1" })
 
-    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledTimes(1)
-    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [forceCode])
+    expect(courtCasesByOrganisationUnitFilterQuery).toHaveBeenCalledTimes(1)
+    expect(courtCasesByOrganisationUnitFilterQuery).toHaveBeenCalledWith(expect.any(Object), [forceCode])
   })
 
   it("should return cases with notes correctly", async () => {
