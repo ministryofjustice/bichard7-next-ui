@@ -17,7 +17,7 @@ import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { createUseStyles } from "react-jss"
 import type NavigationHandler from "types/NavigationHandler"
-import type CaseDetailsTabs from "types/CaseDetailsTabs"
+import type CaseDetailsTab from "types/CaseDetailsTab"
 
 interface Props {
   courtCase: CourtCase
@@ -36,7 +36,7 @@ const sideBarWidth = "33%"
 const contentWidth = "67%"
 
 const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser, triggersVisible }) => {
-  const [activeTab, setActiveTab] = useState<CaseDetailsTabs>("Defendant")
+  const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
 

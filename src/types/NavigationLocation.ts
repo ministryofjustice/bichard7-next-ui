@@ -1,7 +1,7 @@
-type NavigationLocations =
+type NavigationLocation =
   | "Case Details > Hearing"
   | "Case Details > Offences"
   | "Case Details > Case information"
   | "Case Details > Defendant"
 
-export default NavigationLocations
+export default NavigationLocation

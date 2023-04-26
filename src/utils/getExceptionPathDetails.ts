@@ -1,16 +1,16 @@
-import type CaseDetailsTabs from "types/CaseDetailsTabs"
+import type CaseDetailsTab from "types/CaseDetailsTab"
 
 export interface ExceptionPathDetailsResult {
   field: string
   location?: string
   displayText: string
-  tab?: CaseDetailsTabs
+  tab?: CaseDetailsTab
   offenceOrderIndex?: number
 }
 
 const getExceptionPathDetails = (path: (string | number)[]): ExceptionPathDetailsResult => {
   const offenceIndex = path.findIndex((p) => p === "Offence")
-  let tab: CaseDetailsTabs | undefined
+  let tab: CaseDetailsTab | undefined
   let offenceOrderIndex: number | undefined
   let location: string | undefined
   if (offenceIndex > 0) {

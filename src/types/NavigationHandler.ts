@@ -1,12 +1,12 @@
 import type { KeyValuePair } from "./KeyValuePair"
-import type NavigationLocations from "./NavigationLocations"
+import type NavigationLocation from "./NavigationLocation"
 
 type NavigationOptions = {
-  location: NavigationLocations
+  location: NavigationLocation
   args?: KeyValuePair<string, unknown>
 }
 
 type NavigationHandler = (options: NavigationOptions) => void
 
-export { NavigationLocations }
+export { NavigationLocation }
 export default NavigationHandler

@@ -1,9 +1,9 @@
 import { createUseStyles } from "react-jss"
-import type CaseDetailsTabs from "types/CaseDetailsTabs"
+import type CaseDetailsTab from "types/CaseDetailsTab"
 interface CourtCaseDetailsSingleTabProps {
-  tab: CaseDetailsTabs
+  tab: CaseDetailsTab
   isActive: boolean
-  onClick: (tab: CaseDetailsTabs) => void
+  onClick: (tab: CaseDetailsTab) => void
 }
 
 const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick }: CourtCaseDetailsSingleTabProps) => (
@@ -23,9 +23,9 @@ const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick }: CourtCaseDetailsS
 )
 
 interface CourtCaseDetailsTabsProps {
-  activeTab: CaseDetailsTabs
-  tabs: CaseDetailsTabs[]
-  onTabClick: (tab: CaseDetailsTabs) => void
+  activeTab: CaseDetailsTab
+  tabs: CaseDetailsTab[]
+  onTabClick: (tab: CaseDetailsTab) => void
   width: string
 }
 

@@ -4,7 +4,7 @@ import getExceptionInfo from "utils/getExceptionInfo"
 import ActionLink from "components/ActionLink"
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import getExceptionPathDetails from "utils/getExceptionPathDetails"
-import CaseDetailsTabs from "types/CaseDetailsTabs"
+import CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
 
 interface Props {
@@ -30,7 +30,7 @@ const useStyles = createUseStyles({
 const Exceptions = ({ aho, onNavigate }: Props) => {
   const classes = useStyles()
 
-  const handleClick = (tab?: CaseDetailsTabs, offenceOrderIndex?: number) => {
+  const handleClick = (tab?: CaseDetailsTab, offenceOrderIndex?: number) => {
     switch (tab) {
       case "Offences":
         onNavigate({ location: "Case Details > Offences", args: { offenceOrderIndex } })
