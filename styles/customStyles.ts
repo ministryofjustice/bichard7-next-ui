@@ -69,6 +69,9 @@ export const useCustomStyles = createUseStyles({
   "top-padding": {
     paddingTop: "30px"
   },
+  "top-padding-none": {
+    paddingTop: "0px"
+  },
   "margin-top-bottom": {
     margin: "12px 0"
   },
