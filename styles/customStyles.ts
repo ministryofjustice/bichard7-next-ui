@@ -97,7 +97,7 @@ export const useCustomStyles = createUseStyles({
   "limited-border-left": {
     position: "relative",
     "&:before": {
-      content: " ",
+      content: '""',
       position: "absolute",
       top: "50%",
       transform: "translateY(-50%)",
