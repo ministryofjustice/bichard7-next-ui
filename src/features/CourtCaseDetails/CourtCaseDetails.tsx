@@ -10,12 +10,14 @@ import { displayedDateFormat } from "utils/formattedDate"
 import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
 import { useState } from "react"
-import { CourtCaseDetailsTabs, Tabs } from "./Tabs/CourtCaseDetailsTabs"
+import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { createUseStyles } from "react-jss"
+import type NavigationHandler from "types/NavigationHandler"
+import type CaseDetailsTab from "types/CaseDetailsTab"
 
 interface Props {
   courtCase: CourtCase
@@ -34,8 +36,23 @@ const sideBarWidth = "33%"
 const contentWidth = "67%"
 
 const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser, triggersVisible }) => {
-  const [activeTab, setActiveTab] = useState<Tabs>("Defendant")
+  const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
+  const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
+
+  const handleNavigation: NavigationHandler = ({ location, args }) => {
+    switch (location) {
+      case "Case Details > Case information":
+        setActiveTab("Case information")
+        break
+      case "Case Details > Offences":
+        if (typeof args?.offenceOrderIndex === "number") {
+          setSelectedOffenceIndex(+args.offenceOrderIndex)
+        }
+        setActiveTab("Offences")
+        break
+    }
+  }
 
   return (
     <>
@@ -59,7 +76,10 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       />
       <CourtCaseDetailsTabs
         activeTab={activeTab}
-        onTabClick={setActiveTab}
+        onTabClick={(tab) => {
+          setSelectedOffenceIndex(undefined)
+          setActiveTab(tab)
+        }}
         tabs={["Defendant", "Hearing", "Case information", "Offences", "Notes", "PNC errors"]}
         width={contentWidth}
       />
@@ -81,7 +101,11 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Offences"}>
-            <Offences offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence} />
+            <Offences
+              offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
+              onOffenceSelected={setSelectedOffenceIndex}
+              selectedOffenceIndex={selectedOffenceIndex}
+            />
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Notes"}>
@@ -180,7 +204,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </ConditionalRender>
         </GridCol>
         <GridCol setWidth={sideBarWidth}>
-          <TriggersAndExceptions courtCase={courtCase} aho={aho} />
+          <TriggersAndExceptions courtCase={courtCase} aho={aho} onNavigate={handleNavigation} />
         </GridCol>
       </GridRow>
     </>

@@ -3,9 +3,13 @@ import { createUseStyles } from "react-jss"
 import getExceptionInfo from "utils/getExceptionInfo"
 import ActionLink from "components/ActionLink"
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import getExceptionPathDetails from "utils/getExceptionPathDetails"
+import CaseDetailsTab from "types/CaseDetailsTab"
+import type NavigationHandler from "types/NavigationHandler"
 
 interface Props {
   aho: AnnotatedHearingOutcome
+  onNavigate: NavigationHandler
 }
 
 const useStyles = createUseStyles({
@@ -23,44 +27,33 @@ const useStyles = createUseStyles({
   }
 })
 
-const getExceptionTitle = (path: (string | number)[]) => {
-  const offenceIndex = path.findIndex((p) => p === "Offence")
-  let location: string | undefined
-  if (offenceIndex > 0) {
-    const offenceOrderIndex = Number(path[offenceIndex + 1]) + 1
-    location = `Offence ${offenceOrderIndex}`
-  } else if (path.includes("Case")) {
-    location = "Case information"
-  } else if (path.includes("Hearing")) {
-    location = "Hearing"
-  }
-
-  const fieldName = String(path[path.length - 1])
-  const fieldNameWords = fieldName.match(/([A-Z]+[a-z]+)/g)
-  const formattedFieldName = fieldNameWords
-    ? fieldNameWords[0] + fieldNameWords.join(" ").slice(fieldNameWords[0].length).toLowerCase()
-    : fieldName
-
-  if (location) {
-    location = ` (${location})`
-  }
-
-  return `${formattedFieldName}${location}`
-}
-
-const Exceptions = ({ aho }: Props) => {
+const Exceptions = ({ aho, onNavigate }: Props) => {
   const classes = useStyles()
+
+  const handleClick = (tab?: CaseDetailsTab, offenceOrderIndex?: number) => {
+    switch (tab) {
+      case "Offences":
+        onNavigate({ location: "Case Details > Offences", args: { offenceOrderIndex } })
+        break
+      case "Case information":
+        onNavigate({ location: "Case Details > Case information" })
+        break
+    }
+  }
 
   return (
     <>
       {aho.Exceptions.length === 0 && "There are no exceptions for this case."}
       {aho.Exceptions.map(({ code, path }, index) => {
         const exceptionInfo = getExceptionInfo(code)
+        const { tab, offenceOrderIndex, displayText } = getExceptionPathDetails(path)
 
         return (
           <GridRow key={`exception_${index}`} className={`${classes.exceptionRow} moj-exception-row`}>
             <GridCol className="exception-details-column">
-              <ActionLink className="exception-field">{getExceptionTitle(path)}</ActionLink>
+              <ActionLink onClick={() => handleClick(tab, offenceOrderIndex)} className="exception-field">
+                {displayText}
+              </ActionLink>
               <p className="exception-details">
                 {code}
                 {exceptionInfo?.title && ` - ${exceptionInfo.title}`}

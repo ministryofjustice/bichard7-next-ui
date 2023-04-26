@@ -5,10 +5,12 @@ import CourtCase from "../../../services/entities/CourtCase"
 import Triggers from "./Triggers"
 import Exceptions from "./Exceptions"
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import type NavigationHandler from "types/NavigationHandler"
 
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
+  onNavigate: NavigationHandler
 }
 
 const useStyles = createUseStyles({
@@ -20,7 +22,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const TriggersAndExceptions = ({ courtCase, aho }: Props) => {
+const TriggersAndExceptions = ({ courtCase, aho, onNavigate }: Props) => {
   const classes = useStyles()
   const [selectedTab, setSelectedTab] = useState("triggers")
 
@@ -42,10 +44,10 @@ const TriggersAndExceptions = ({ courtCase, aho }: Props) => {
           >{`Exceptions`}</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel id="triggers" selected={selectedTab === "triggers"} className="moj-tab-panel-triggers">
-          <Triggers courtCase={courtCase} />
+          <Triggers courtCase={courtCase} onNavigate={onNavigate} />
         </Tabs.Panel>
         <Tabs.Panel id="exceptions" selected={selectedTab === "exceptions"} className="moj-tab-panel-exceptions">
-          <Exceptions aho={aho} />
+          <Exceptions aho={aho} onNavigate={onNavigate} />
         </Tabs.Panel>
       </Tabs>
     </div>

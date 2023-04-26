@@ -15,7 +15,8 @@ const useStyles = createUseStyles({
     cursor: "pointer",
     padding: "0",
     textAlign: "left",
-    textDecoration: "underline"
+    textDecoration: "underline",
+    fontSize: "inherit"
   }
 })
 

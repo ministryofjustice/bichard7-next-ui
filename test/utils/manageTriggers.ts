@@ -7,6 +7,7 @@ type TestTrigger = {
   triggerId: number
   triggerCode: string
   status: ResolutionStatus
+  triggerItemIdentity?: number
   createdAt: Date
   resolvedBy?: string
   resolvedAt?: Date
