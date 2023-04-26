@@ -74,9 +74,9 @@ const CourtCaseListEntry: React.FC<Props> = ({
       />
       <TriggersRow
         canCurrentUserUnlockCase={triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
-        classname={entityClassname}
         firstColumnClassname={hasTriggers ? classes["limited-border-left"] : ""}
         isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !errorLockedByUsername}
+        rowClassname={entityClassname}
         triggerLockedByUsername={triggerLockedByUsername}
         triggers={triggers}
         unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
