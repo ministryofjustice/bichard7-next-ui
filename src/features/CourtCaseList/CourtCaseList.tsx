@@ -13,7 +13,7 @@ interface Props {
   currentUser: User
 }
 
-const CourtCaseList = ({ courtCases, order = "asc", currentUser }: Props) => {
+const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser }: Props) => {
   const { query } = useRouter()
 
   const recentlyUnlockedExceptionId = query.unlockException
