@@ -12,11 +12,11 @@ interface Props {
   currentUser: User
   exceptionHasBeenRecentlyUnlocked: boolean
   triggerHasBeenRecentlyUnlocked: boolean
-  entityClassname: string
+  entityClassName: string
 }
 
 const CourtCaseListEntry: React.FC<Props> = ({
-  entityClassname,
+  entityClassName,
   courtCase,
   currentUser,
   exceptionHasBeenRecentlyUnlocked,
@@ -56,27 +56,27 @@ const CourtCaseListEntry: React.FC<Props> = ({
     <>
       <CaseDetailsRow
         canCurrentUserUnlockCase={errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
-        cellClassname={hasTriggers ? classes["border-bottom-none"] : ""}
+        cellClassName={hasTriggers ? classes["border-bottom-none"] : ""}
         courtDate={courtDate}
         courtName={courtName}
         defendantName={defendantName}
         errorId={errorId}
         errorLockedByUsername={errorLockedByUsername}
         errorReport={errorReport}
-        firstColumnClassname={hasTriggers ? classes["limited-border-left"] : ""}
+        firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
         isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername}
         isResolved={resolutionTimestamp !== null}
         isUrgent={isUrgent}
         notes={notes}
         ptiurn={ptiurn}
-        rowClassname={entityClassname}
+        rowClassName={entityClassName}
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
       />
       <TriggersRow
         canCurrentUserUnlockCase={triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
-        firstColumnClassname={hasTriggers ? classes["limited-border-left"] : ""}
+        firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
         isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !errorLockedByUsername}
-        rowClassname={entityClassname}
+        rowClassName={entityClassName}
         triggerLockedByUsername={triggerLockedByUsername}
         triggers={triggers}
         unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}

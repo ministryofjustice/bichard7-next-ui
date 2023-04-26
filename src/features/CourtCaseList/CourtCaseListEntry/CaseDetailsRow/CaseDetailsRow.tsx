@@ -23,20 +23,20 @@ import { useCustomStyles } from "../../../../../styles/customStyles"
 
 interface CaseDetailsRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
-  cellClassname: string
+  cellClassName: string
   courtDate: Date | null
   courtName: string
   defendantName: string | null
   errorId: number
   errorLockedByUsername: string | null | undefined
   errorReport: string
-  firstColumnClassname: string
+  firstColumnClassName: string
   isCaseUnlocked: boolean
   isResolved: boolean
   isUrgent: boolean
   notes: Note[]
   ptiurn: string
-  rowClassname: string
+  rowClassName: string
   unlockPath: string
 }
 
@@ -55,20 +55,20 @@ const useStyles = createUseStyles({
 
 export const CaseDetailsRow = ({
   canCurrentUserUnlockCase,
-  cellClassname,
+  cellClassName,
   courtDate,
   courtName,
   defendantName,
   errorId,
   errorLockedByUsername,
   errorReport,
-  firstColumnClassname,
+  firstColumnClassName,
   isCaseUnlocked,
   isResolved,
   isUrgent,
   notes,
   ptiurn,
-  rowClassname,
+  rowClassName,
   unlockPath
 }: CaseDetailsRowProps) => {
   const [showPreview, setShowPreview] = useState(false)
@@ -86,36 +86,36 @@ export const CaseDetailsRow = ({
 
   return (
     <>
-      <Table.Row className={`${classes.caseDetailsRow} ${rowClassname}`}>
-        <Table.Cell className={`${cellClassname} ${firstColumnClassname}`}>
+      <Table.Row className={`${classes.caseDetailsRow} ${rowClassName}`}>
+        <Table.Cell className={`${cellClassName} ${firstColumnClassName}`}>
           <ConditionalRender isRendered={!!errorLockedByUsername}>
             <Image src={LOCKED_ICON_URL} width={20} height={20} alt="Lock icon" />
           </ConditionalRender>
         </Table.Cell>
-        <Table.Cell className={cellClassname}>
+        <Table.Cell className={cellClassName}>
           <Link href={caseDetailsPath(errorId)} id={`Case details for ${defendantName}`}>
             {defendantName}
             <br />
             <ResolvedTag isResolved={isResolved} />
           </Link>
         </Table.Cell>
-        <Table.Cell className={cellClassname}>
+        <Table.Cell className={cellClassName}>
           <DateTime date={courtDate} dateFormat={displayedDateFormat} />
         </Table.Cell>
-        <Table.Cell className={cellClassname}>{courtName}</Table.Cell>
-        <Table.Cell className={cellClassname}>{ptiurn}</Table.Cell>
-        <Table.Cell className={cellClassname}>
+        <Table.Cell className={cellClassName}>{courtName}</Table.Cell>
+        <Table.Cell className={cellClassName}>{ptiurn}</Table.Cell>
+        <Table.Cell className={cellClassName}>
           <UrgentTag isUrgent={isUrgent} />
         </Table.Cell>
-        <Table.Cell className={cellClassname}>
+        <Table.Cell className={cellClassName}>
           <NotePreviewButton previewState={showPreview} setShowPreview={setShowPreview} numberOfNotes={numberOfNotes} />
         </Table.Cell>
-        <Table.Cell className={cellClassname}>
+        <Table.Cell className={cellClassName}>
           {Object.keys(exceptions).map((exception, exceptionId) => {
             return <SingleException key={exceptionId} exception={exception} exceptionCounter={exceptions[exception]} />
           })}
         </Table.Cell>
-        <Table.Cell className={cellClassname}>
+        <Table.Cell className={cellClassName}>
           {canCurrentUserUnlockCase ? (
             <LockedByTag lockedBy={errorLockedByUsername} unlockPath={unlockPath} />
           ) : (
@@ -127,14 +127,14 @@ export const CaseDetailsRow = ({
       {numberOfNotes != 0 && !!showPreview && (
         <Table.Row className={classes.notesRow}>
           <Table.Cell
-            className={`${cellClassname} ${firstColumnClassname} ${customClasses["top-padding-none"]}`}
+            className={`${cellClassName} ${firstColumnClassName} ${customClasses["top-padding-none"]}`}
           ></Table.Cell>
-          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`}></Table.Cell>
-          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`}></Table.Cell>
-          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`}></Table.Cell>
-          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`}></Table.Cell>
-          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`}></Table.Cell>
-          <Table.Cell className={`${cellClassname} ${customClasses["top-padding-none"]}`} colSpan={2}>
+          <Table.Cell className={`${cellClassName} ${customClasses["top-padding-none"]}`}></Table.Cell>
+          <Table.Cell className={`${cellClassName} ${customClasses["top-padding-none"]}`}></Table.Cell>
+          <Table.Cell className={`${cellClassName} ${customClasses["top-padding-none"]}`}></Table.Cell>
+          <Table.Cell className={`${cellClassName} ${customClasses["top-padding-none"]}`}></Table.Cell>
+          <Table.Cell className={`${cellClassName} ${customClasses["top-padding-none"]}`}></Table.Cell>
+          <Table.Cell className={`${cellClassName} ${customClasses["top-padding-none"]}`} colSpan={2}>
             <NotePreview latestNote={mostRecentUserNote} numberOfNotes={numberOfNotes} />
           </Table.Cell>
           <Table.Cell />
