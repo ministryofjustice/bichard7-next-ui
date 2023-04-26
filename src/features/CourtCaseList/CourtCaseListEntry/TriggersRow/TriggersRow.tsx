@@ -1,7 +1,6 @@
 import ConditionalRender from "components/ConditionalRender"
 import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
-import { gdsLightGrey } from "utils/colours"
 import Image from "next/image"
 import { SingleTrigger } from "./SingleTrigger"
 import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
@@ -11,7 +10,9 @@ import { LOCKED_ICON_URL } from "features/CourtCaseList/tags/LockedByTag/LockedB
 
 interface TriggersRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
+  firstColumnClassName: string
   isCaseUnlocked: boolean
+  rowClassName: string
   triggerLockedByUsername: string | null | undefined
   triggers: Trigger[]
   unlockPath: string
@@ -19,22 +20,23 @@ interface TriggersRowProps {
 
 const useStyles = createUseStyles({
   triggersRow: {
-    verticalAlign: "top",
-    backgroundColor: gdsLightGrey
+    verticalAlign: "top"
   }
 })
 
 export const TriggersRow = ({
   canCurrentUserUnlockCase,
+  firstColumnClassName,
   isCaseUnlocked,
+  rowClassName,
   triggerLockedByUsername,
   triggers,
   unlockPath
 }: TriggersRowProps) => {
   const classes = useStyles()
   return triggers.length > 0 ? (
-    <Table.Row className={classes.triggersRow}>
-      <Table.Cell>
+    <Table.Row className={`${classes.triggersRow} ${rowClassName}`}>
+      <Table.Cell className={firstColumnClassName}>
         <ConditionalRender isRendered={!!triggerLockedByUsername}>
           <Image src={LOCKED_ICON_URL} width={20} height={20} alt="Lock icon" />
         </ConditionalRender>

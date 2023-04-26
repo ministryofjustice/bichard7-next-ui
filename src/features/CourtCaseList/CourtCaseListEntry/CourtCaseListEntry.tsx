@@ -3,6 +3,7 @@ import { encode } from "querystring"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
+import { useCustomStyles } from "../../../../styles/customStyles"
 import { CaseDetailsRow } from "./CaseDetailsRow/CaseDetailsRow"
 import { TriggersRow } from "./TriggersRow/TriggersRow"
 
@@ -11,9 +12,11 @@ interface Props {
   currentUser: User
   exceptionHasBeenRecentlyUnlocked: boolean
   triggerHasBeenRecentlyUnlocked: boolean
+  entityClassName: string
 }
 
 const CourtCaseListEntry: React.FC<Props> = ({
+  entityClassName,
   courtCase,
   currentUser,
   exceptionHasBeenRecentlyUnlocked,
@@ -45,26 +48,35 @@ const CourtCaseListEntry: React.FC<Props> = ({
     return currentUser.groups.includes("Supervisor") || currentUser.username === lockedUsername
   }
 
+  const hasTriggers = triggers.length > 0
+
+  const classes = useCustomStyles()
+
   return (
     <>
       <CaseDetailsRow
         canCurrentUserUnlockCase={errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
+        cellClassName={hasTriggers ? classes["border-bottom-none"] : ""}
         courtDate={courtDate}
         courtName={courtName}
         defendantName={defendantName}
         errorId={errorId}
         errorLockedByUsername={errorLockedByUsername}
         errorReport={errorReport}
+        firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
         isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername}
         isResolved={resolutionTimestamp !== null}
         isUrgent={isUrgent}
         notes={notes}
         ptiurn={ptiurn}
+        rowClassName={entityClassName}
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
       />
       <TriggersRow
         canCurrentUserUnlockCase={triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
+        firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
         isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !errorLockedByUsername}
+        rowClassName={entityClassName}
         triggerLockedByUsername={triggerLockedByUsername}
         triggers={triggers}
         unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
