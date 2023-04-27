@@ -38,7 +38,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const Triggers = ({ courtCase, onNavigate }: Props) => {
+const TriggersList = ({ courtCase, onNavigate }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
   const unresolvedTriggers = courtCase.triggers.filter((trigger) => !trigger.resolvedBy)
@@ -75,6 +75,7 @@ const Triggers = ({ courtCase, onNavigate }: Props) => {
       {unresolvedTriggers.map((trigger) => {
         const triggerDefinition = getTriggerDefinition(trigger.triggerCode)
         const checkBoxId = `trigger_${trigger.triggerId}`
+        // const [showHelpBox, setShowHelpBox] = useState(false)
 
         return (
           <div key={trigger.triggerId}>
@@ -113,4 +114,4 @@ const Triggers = ({ courtCase, onNavigate }: Props) => {
   )
 }
 
-export default Triggers
+export default TriggersList
