@@ -5,17 +5,18 @@ import { isError } from "types/Result"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import { formatFormInputDateString } from "utils/formattedDate"
 import CourtCase from "./entities/CourtCase"
-import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
+import User from "./entities/User"
+import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 
 const asKey = (caseAgeOption: string) => caseAgeOption.toLowerCase().replace(/ /g, "")
 
 const getCountOfCasesByCaseAge = async (
   connection: DataSource,
-  forces: string[]
+  user: User
 ): PromiseResult<KeyValuePair<string, number>> => {
   const repository = connection.getRepository(CourtCase)
   let query = repository.createQueryBuilder()
-  query = courtCasesByVisibleForcesQuery(query, forces) as SelectQueryBuilder<CourtCase>
+  query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
 
   Object.keys(CaseAgeOptions).forEach((slaCaseAgeOption, i) => {
     const key = asKey(slaCaseAgeOption)

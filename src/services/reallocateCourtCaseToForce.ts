@@ -5,7 +5,7 @@ import amendCourtCase from "./amendCourtCase"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import insertNotes from "./insertNotes"
-import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
+import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import unlockCourtCase from "./unlockCourtCase"
 
 const reallocateCourtCaseToForce = async (
@@ -20,13 +20,11 @@ const reallocateCourtCaseToForce = async (
   const updateResult = await dataSource.transaction(
     "SERIALIZABLE",
     async (entityManager): Promise<UpdateResult | Error> => {
-      const { visibleForces } = user
-
       const courtCaseRepository = entityManager.getRepository(CourtCase)
       let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
       const newForceCode = `${forceCode}${DEFAULT_STATION_CODE}`
       query.set({ orgForPoliceFilter: newForceCode })
-      query = courtCasesByVisibleForcesQuery(query, visibleForces) as UpdateQueryBuilder<CourtCase>
+      query = courtCasesByOrganisationUnitQuery(query, user) as UpdateQueryBuilder<CourtCase>
       query.andWhere("error_id = :id", { id: courtCaseId })
 
       const amendResult = await amendCourtCase(entityManager, { forceOwner: forceCode }, courtCaseId, user)

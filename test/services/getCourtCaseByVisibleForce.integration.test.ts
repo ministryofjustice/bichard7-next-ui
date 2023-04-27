@@ -5,9 +5,11 @@ import getCourtCaseByVisibleForce from "../../src/services/getCourtCaseByVisible
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
+import User from "services/entities/User"
 
 describe("getCourtCaseByVisibleForces", () => {
   let dataSource: DataSource
+  const orgCode = "36FPA1"
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -24,19 +26,24 @@ describe("getCourtCaseByVisibleForces", () => {
   })
 
   it("should return court case details when record exists and is visible to the specified forces", async () => {
-    const orgCode = "36FPA1"
     const inputCourtCase = await getDummyCourtCase({
       orgForPoliceFilter: orgCode.padEnd(6, " ")
     })
     await insertCourtCases(inputCourtCase)
 
-    let result = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, [orgCode])
+    let result = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, {
+      visibleForces: [orgCode],
+      visibleCourts: []
+    } as Partial<User> as User)
     expect(isError(result)).toBe(false)
 
     let actualCourtCase = result as CourtCase
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
 
-    result = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, [orgCode.substring(0, 2)])
+    result = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, {
+      visibleForces: [orgCode.substring(0, 2)],
+      visibleCourts: []
+    } as Partial<User> as User)
     expect(isError(result)).toBe(false)
 
     actualCourtCase = result as CourtCase
@@ -44,30 +51,37 @@ describe("getCourtCaseByVisibleForces", () => {
   })
 
   it("should return null if the court case doesn't exist", async () => {
-    const result = await getCourtCaseByVisibleForce(dataSource, 0, ["36FPA1"])
+    const result = await getCourtCaseByVisibleForce(dataSource, 0, {
+      visibleForces: [orgCode],
+      visibleCourts: []
+    } as Partial<User> as User)
 
     expect(result).toBeNull()
   })
 
   it("should return null when record exists and is not visible to the specified forces", async () => {
-    const orgCode = "36FPA1"
     const differentOrgCode = "36FPA3"
     const inputCourtCase = await getDummyCourtCase({
       orgForPoliceFilter: orgCode.padEnd(6, " ")
     })
     await insertCourtCases(inputCourtCase)
-    const result = await getCourtCaseByVisibleForce(dataSource, 0, [differentOrgCode])
+    const result = await getCourtCaseByVisibleForce(dataSource, 0, {
+      visibleForces: [differentOrgCode],
+      visibleCourts: []
+    } as Partial<User> as User)
 
     expect(result).toBeNull()
   })
 
   it("should return null when record exists and there is no visible forces", async () => {
-    const orgCode = "36FPA1"
     const inputCourtCase = await getDummyCourtCase({
       orgForPoliceFilter: orgCode.padEnd(6, " ")
     })
     await insertCourtCases(inputCourtCase)
-    const result = await getCourtCaseByVisibleForce(dataSource, 0, [])
+    const result = await getCourtCaseByVisibleForce(dataSource, 0, {
+      visibleForces: [],
+      visibleCourts: []
+    } as Partial<User> as User)
 
     expect(result).toBeNull()
   })

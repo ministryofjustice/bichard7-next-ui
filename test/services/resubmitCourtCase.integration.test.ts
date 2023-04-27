@@ -57,8 +57,9 @@ describe("resubmit court case", () => {
     const result = await resubmitCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
       username: userName,
       canLockExceptions: true,
-      visibleForces: ["1"]
-    } as User)
+      visibleForces: ["1"],
+      visibleCourts: []
+    } as Partial<User> as User)
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -117,8 +118,9 @@ describe("resubmit court case", () => {
       {
         username: userName,
         canLockExceptions: true,
-        visibleForces: ["1111"]
-      } as User
+        visibleForces: ["1111"],
+        visibleCourts: []
+      } as Partial<User> as User
     )
 
     expect(result).not.toBeInstanceOf(Error)
@@ -198,8 +200,9 @@ describe("resubmit court case", () => {
       {
         username: userName,
         canLockExceptions: true,
-        visibleForces: ["1111"]
-      } as User
+        visibleForces: ["1111"],
+        visibleCourts: []
+      } as Partial<User> as User
     )
 
     expect(result).not.toBeInstanceOf(Error)

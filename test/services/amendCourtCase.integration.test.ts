@@ -24,8 +24,9 @@ describe("amend court case", () => {
   const orgCode = "36FPA1"
   const user = {
     username: userName,
-    visibleForces: [orgCode]
-  } as User
+    visibleForces: [orgCode],
+    visibleCourts: []
+  } as Partial<User> as User
   let dataSource: DataSource
 
   beforeAll(async () => {

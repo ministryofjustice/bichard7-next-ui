@@ -52,13 +52,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     if (isPost(req) && !!triggerToResolve) {
-      const updateTriggerResult = await resolveTrigger(
-        dataSource,
-        +triggerToResolve,
-        +courtCaseId,
-        currentUser.username,
-        currentUser.visibleCases
-      )
+      const updateTriggerResult = await resolveTrigger(dataSource, +triggerToResolve, +courtCaseId, currentUser)
 
       if (isError(updateTriggerResult)) {
         throw updateTriggerResult
@@ -84,7 +78,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const courtCase = await getCourtCaseByVisibleForce(dataSource, +courtCaseId, currentUser.visibleCases)
+    const courtCase = await getCourtCaseByVisibleForce(dataSource, +courtCaseId, currentUser)
 
     if (isError(courtCase)) {
       throw courtCase

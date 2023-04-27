@@ -1,4 +1,5 @@
 import { differenceInMinutes } from "date-fns"
+import User from "services/entities/User"
 import { DataSource } from "typeorm"
 import { isError } from "types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
@@ -31,6 +32,11 @@ describe("resolveTrigger", () => {
     it("Should set the relevant columns when resolving a trigger", async () => {
       const resolverUsername = "triggerResolver01"
       const visibleForce = "36"
+      const user = {
+        visibleCourts: [],
+        visibleForces: [visibleForce],
+        username: resolverUsername
+      } as Partial<User> as User
 
       await insertCourtCasesWithFields([
         {
@@ -48,14 +54,14 @@ describe("resolveTrigger", () => {
       }
       await insertTriggers(0, [trigger])
 
-      const beforeCourtCaseResult = await getCourtCaseByVisibleForce(dataSource, 0, [visibleForce])
+      const beforeCourtCaseResult = await getCourtCaseByVisibleForce(dataSource, 0, user)
       expect(isError(beforeCourtCaseResult)).toBeFalsy()
       expect(beforeCourtCaseResult).not.toBeNull()
       const beforeCourtCase = beforeCourtCaseResult as CourtCase
       expect(beforeCourtCase.triggerResolvedBy).toBeNull()
       expect(beforeCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      const result = await resolveTrigger(dataSource, 0, 0, resolverUsername, [visibleForce])
+      const result = await resolveTrigger(dataSource, 0, 0, user)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeTruthy()
@@ -76,7 +82,7 @@ describe("resolveTrigger", () => {
       expect(updatedTrigger.resolvedBy).toStrictEqual(resolverUsername)
       expect(updatedTrigger.status).toStrictEqual("Resolved")
 
-      const afterCourtCaseResult = await getCourtCaseByVisibleForce(dataSource, 0, [visibleForce])
+      const afterCourtCaseResult = await getCourtCaseByVisibleForce(dataSource, 0, user)
       expect(isError(afterCourtCaseResult)).toBeFalsy()
       expect(afterCourtCaseResult).not.toBeNull()
       const afterCourtCase = afterCourtCaseResult as CourtCase
@@ -93,6 +99,16 @@ describe("resolveTrigger", () => {
       const resolverUsername = "triggerResolver01"
       const reResolverUsername = "triggerResolver02"
       const visibleForce = "36"
+      const resolverUser = {
+        visibleCourts: [],
+        visibleForces: [visibleForce],
+        username: resolverUsername
+      } as Partial<User> as User
+      const reResolverUser = {
+        visibleCourts: [],
+        visibleForces: [visibleForce],
+        username: reResolverUsername
+      } as Partial<User> as User
 
       await insertCourtCasesWithFields([
         {
@@ -111,12 +127,12 @@ describe("resolveTrigger", () => {
       await insertTriggers(0, [trigger])
 
       // Resolve trigger
-      const initialResolveResult = await resolveTrigger(dataSource, 0, 0, resolverUsername, [visibleForce])
+      const initialResolveResult = await resolveTrigger(dataSource, 0, 0, resolverUser)
       expect(isError(initialResolveResult)).toBeFalsy()
       expect(initialResolveResult as boolean).toBeTruthy()
 
       // Try to resolve again as a different user
-      const result = await resolveTrigger(dataSource, 0, 0, reResolverUsername, [visibleForce])
+      const result = await resolveTrigger(dataSource, 0, 0, reResolverUser)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeFalsy()
@@ -135,13 +151,13 @@ describe("resolveTrigger", () => {
     it("Shouldn't resolve a trigger locked by someone else", async () => {
       const resolverUsername = "triggerResolver01"
       const lockHolderUsername = "triggerResolver02"
-      const visibleForces = "36"
+      const visibleForce = "36"
 
       await insertCourtCasesWithFields([
         {
           errorLockedByUsername: lockHolderUsername,
           triggerLockedByUsername: lockHolderUsername,
-          orgForPoliceFilter: visibleForces
+          orgForPoliceFilter: visibleForce
         }
       ])
       const trigger: TestTrigger = {
@@ -153,7 +169,11 @@ describe("resolveTrigger", () => {
       await insertTriggers(0, [trigger])
 
       // Attempt to resolve trigger whilst not holding the lock
-      const resolveResult = await resolveTrigger(dataSource, 0, 0, resolverUsername, [visibleForces])
+      const resolveResult = await resolveTrigger(dataSource, 0, 0, {
+        visibleCourts: [],
+        visibleForces: [visibleForce],
+        username: resolverUsername
+      } as Partial<User> as User)
       expect(isError(resolveResult)).toBeFalsy()
       expect(resolveResult as boolean).toBeFalsy()
 
@@ -181,7 +201,11 @@ describe("resolveTrigger", () => {
       await insertTriggers(0, [trigger])
 
       // Attempt to resolve trigger whilst not holding the lock
-      const resolveResult = await resolveTrigger(dataSource, 0, 0, resolverUsername, visibleForces)
+      const resolveResult = await resolveTrigger(dataSource, 0, 0, {
+        visibleCourts: [],
+        visibleForces,
+        username: resolverUsername
+      } as Partial<User> as User)
       expect(isError(resolveResult)).toBeFalsy()
       expect(resolveResult as boolean).toBeFalsy()
 
@@ -198,13 +222,18 @@ describe("resolveTrigger", () => {
     it("Should only set the case trigger columns only when the last trigger is resolved", async () => {
       const resolverUsername = "triggerResolver01"
       const courtCaseId = 0
-      const visibleForces = "36"
+      const visibleForce = "36"
+      const user = {
+        visibleCourts: [],
+        visibleForces: [visibleForce],
+        username: resolverUsername
+      } as Partial<User> as User
 
       await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForces
+          orgForPoliceFilter: visibleForce
         }
       ])
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId) => {
@@ -219,7 +248,7 @@ describe("resolveTrigger", () => {
 
       const insertedTriggers = await dataSource.getRepository(Trigger).find({ relations: { courtCase: true } })
       expect(insertedTriggers).toHaveLength(3)
-      let retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, [visibleForces])
+      let retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, user)
       expect(retrievedCourtCase).not.toBeNull()
       let insertedCourtCase = retrievedCourtCase as CourtCase
 
@@ -228,11 +257,11 @@ describe("resolveTrigger", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      let triggerResolveResult = await resolveTrigger(dataSource, 0, courtCaseId, resolverUsername, [visibleForces])
+      let triggerResolveResult = await resolveTrigger(dataSource, 0, courtCaseId, user)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
-      retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, ["36"])
+      retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, user)
       expect(retrievedCourtCase).not.toBeNull()
       insertedCourtCase = retrievedCourtCase as CourtCase
       expect(insertedCourtCase.triggerStatus).not.toBeNull()
@@ -240,11 +269,11 @@ describe("resolveTrigger", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      triggerResolveResult = await resolveTrigger(dataSource, 1, courtCaseId, resolverUsername, [visibleForces])
+      triggerResolveResult = await resolveTrigger(dataSource, 1, courtCaseId, user)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
-      retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, ["36"])
+      retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, user)
       expect(retrievedCourtCase).not.toBeNull()
       insertedCourtCase = retrievedCourtCase as CourtCase
       expect(insertedCourtCase.triggerStatus).not.toBeNull()
@@ -252,11 +281,11 @@ describe("resolveTrigger", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      triggerResolveResult = await resolveTrigger(dataSource, 2, courtCaseId, resolverUsername, [visibleForces])
+      triggerResolveResult = await resolveTrigger(dataSource, 2, courtCaseId, user)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
-      retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, ["36"])
+      retrievedCourtCase = await getCourtCaseByVisibleForce(dataSource, courtCaseId, user)
       expect(retrievedCourtCase).not.toBeNull()
       insertedCourtCase = retrievedCourtCase as CourtCase
       expect(insertedCourtCase.triggerStatus).not.toBeNull()

@@ -19,7 +19,7 @@ const amendCourtCase = async (
   courtCaseId: number,
   userDetails: User
 ): Promise<AnnotatedHearingOutcome | Error> => {
-  const courtCaseRow = await getCourtCaseByVisibleForce(dataSource, courtCaseId, userDetails.visibleForces)
+  const courtCaseRow = await getCourtCaseByVisibleForce(dataSource, courtCaseId, userDetails)
 
   if (isError(courtCaseRow)) {
     return courtCaseRow

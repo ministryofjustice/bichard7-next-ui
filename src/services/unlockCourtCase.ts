@@ -2,7 +2,7 @@ import { DataSource, EntityManager, UpdateQueryBuilder, UpdateResult } from "typ
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
-import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
+import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 
 const unlockCourtCase = async (
   dataSource: DataSource | EntityManager,
@@ -10,7 +10,7 @@ const unlockCourtCase = async (
   user: User,
   unlockReason?: "Trigger" | "Exception"
 ): Promise<UpdateResult | Error> => {
-  const { canLockExceptions, canLockTriggers, isSupervisor, username, visibleForces } = user
+  const { canLockExceptions, canLockTriggers, isSupervisor, username } = user
   const shouldUnlockExceptions = canLockExceptions && (unlockReason === undefined || unlockReason === "Exception")
   const shouldUnlockTriggers = canLockTriggers && (unlockReason === undefined || unlockReason === "Trigger")
   if (!shouldUnlockExceptions && !shouldUnlockTriggers) {
@@ -29,7 +29,7 @@ const unlockCourtCase = async (
   }
 
   query.set(setFields)
-  query = courtCasesByVisibleForcesQuery(query, visibleForces) as UpdateQueryBuilder<CourtCase>
+  query = courtCasesByOrganisationUnitQuery(query, user) as UpdateQueryBuilder<CourtCase>
   query.andWhere("error_id = :id", { id: courtCaseId })
 
   if (!isSupervisor && shouldUnlockExceptions) {
