@@ -2,12 +2,12 @@ import { GridCol, GridRow } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Checkbox from "components/Checkbox"
 import ActionLink from "components/ActionLink"
-import getTriggerInfo from "utils/getTriggerInfo"
 import PreviewButton from "components/PreviewButton"
 import { default as TriggerEntity } from "services/entities/Trigger"
 import { ChangeEvent, useState } from "react"
 import ConditionalRender from "components/ConditionalRender"
 import { Preview } from "components/Preview"
+import getTriggerDefinition from "utils/getTriggerDefinition"
 
 interface Props {
   trigger: TriggerEntity
@@ -33,7 +33,7 @@ const useStyles = createUseStyles({
 })
 
 const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: Props) => {
-  const triggerInfo = getTriggerInfo(trigger.triggerCode)
+  const triggerDefinition = getTriggerDefinition(trigger.triggerCode)
   const checkBoxId = `trigger_${trigger.triggerId}`
   const [showHelpBox, setShowHelpBox] = useState(false)
 
@@ -55,7 +55,7 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
               </ActionLink>
             </>
           )}
-          <p>{triggerInfo?.description}</p>
+          <p>{triggerDefinition?.description}</p>
         </GridCol>
         <GridCol setWidth="70px" className="checkbox-column">
           <Checkbox
