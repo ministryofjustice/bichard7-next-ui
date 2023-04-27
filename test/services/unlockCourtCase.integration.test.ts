@@ -49,8 +49,9 @@ describe("lock court case", () => {
         canLockExceptions: true,
         canLockTriggers: true,
         username: lockedByName,
-        visibleForces: ["36FPA1"]
-      } as User
+        visibleForces: ["36FPA1"],
+        visibleCourts: []
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, 1, user)
       expect(isError(result)).toBe(false)
@@ -79,8 +80,9 @@ describe("lock court case", () => {
         canLockExceptions: true,
         canLockTriggers: false,
         username: lockedByName,
-        visibleForces: ["36FPA1"]
-      } as User
+        visibleForces: ["36FPA1"],
+        visibleCourts: []
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(false)
@@ -104,8 +106,9 @@ describe("lock court case", () => {
         canLockExceptions: false,
         canLockTriggers: true,
         username: lockedByName,
-        visibleForces: ["36FPA1"]
-      } as User
+        visibleForces: ["36FPA1"],
+        visibleCourts: []
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(false)
@@ -129,8 +132,9 @@ describe("lock court case", () => {
         canLockExceptions: true,
         canLockTriggers: true,
         username: lockedByName,
-        visibleForces: ["36FPA1"]
-      } as User
+        visibleForces: ["36FPA1"],
+        visibleCourts: []
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, "Exception")
       expect(isError(result)).toBe(false)
@@ -154,8 +158,9 @@ describe("lock court case", () => {
         canLockExceptions: true,
         canLockTriggers: true,
         username: lockedByName,
-        visibleForces: ["36FPA1"]
-      } as User
+        visibleForces: ["36FPA1"],
+        visibleCourts: []
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, "Trigger")
       expect(isError(result)).toBe(false)
@@ -178,8 +183,9 @@ describe("lock court case", () => {
         canLockExceptions: true,
         canLockTriggers: true,
         username: lockedByName,
-        visibleForces: ["36FPA1"]
-      } as User
+        visibleForces: ["36FPA1"],
+        visibleCourts: []
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, "Trigger")
       expect(isError(result)).toBe(false)
@@ -202,8 +208,9 @@ describe("lock court case", () => {
         canLockExceptions: true,
         canLockTriggers: true,
         username: lockedByName,
-        visibleForces: ["36FPA1"]
-      } as User
+        visibleForces: ["36FPA1"],
+        visibleCourts: []
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, "Exception")
       expect(isError(result)).toBe(false)
@@ -222,7 +229,7 @@ describe("lock court case", () => {
         canLockExceptions: false,
         canLockTriggers: false,
         username: "Dummy username"
-      } as User
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, dummyErrorId, user)
       expect(isError(result)).toBe(true)
@@ -238,7 +245,7 @@ describe("lock court case", () => {
         canLockExceptions: true,
         canLockTriggers: false,
         username: "Dummy username"
-      } as User
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, dummyErrorId, user, "Trigger")
       expect(isError(result)).toBe(true)
@@ -254,7 +261,7 @@ describe("lock court case", () => {
         canLockExceptions: false,
         canLockTriggers: true,
         username: "Dummy username"
-      } as User
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, dummyErrorId, user, "Exception")
       expect(isError(result)).toBe(true)
@@ -277,8 +284,9 @@ describe("lock court case", () => {
         canLockExceptions: true,
         canLockTriggers: true,
         username: "User with different name",
-        visibleForces: ["36FPA1"]
-      } as User
+        visibleForces: ["36FPA1"],
+        visibleCourts: []
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(false)
@@ -305,8 +313,9 @@ describe("lock court case", () => {
         canLockTriggers: true,
         isSupervisor: true,
         username: "Sup User",
-        visibleForces: ["36FPA1"]
-      } as User
+        visibleForces: ["36FPA1"],
+        visibleCourts: []
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(false)
@@ -331,8 +340,9 @@ describe("lock court case", () => {
         canLockTriggers: true,
         isSupervisor: true,
         username: "Sup User",
-        visibleForces: ["13GH"]
-      } as User
+        visibleForces: ["13GH"],
+        visibleCourts: []
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(false)
@@ -360,8 +370,9 @@ describe("lock court case", () => {
         canLockExceptions: true,
         canLockTriggers: false,
         username: "dummy username",
-        visibleForces: ["36FPA1"]
-      } as User
+        visibleForces: ["36FPA1"],
+        visibleCourts: []
+      } as Partial<User> as User
 
       const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(true)

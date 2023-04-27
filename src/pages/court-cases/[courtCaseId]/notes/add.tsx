@@ -13,7 +13,7 @@ import { isPost } from "utils/http"
 import addNote from "services/addNote"
 import redirectTo from "utils/redirectTo"
 import AddNoteForm from "features/AddNoteForm/AddNoteForm"
-import getCourtCaseByVisibleForce from "services/getCourtCaseByVisibleForce"
+import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import { isError } from "types/Result"
 import Head from "next/head"
 
@@ -24,7 +24,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { courtCaseId } = query as { courtCaseId: string }
 
     const dataSource = await getDataSource()
-    const courtCase = await getCourtCaseByVisibleForce(dataSource, +courtCaseId, currentUser.visibleCases)
+    const courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
 
     if (!courtCase) {
       return {

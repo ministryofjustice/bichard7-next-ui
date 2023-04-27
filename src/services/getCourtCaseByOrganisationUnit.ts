@@ -1,16 +1,17 @@
 import { DataSource, EntityManager, SelectQueryBuilder } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import PromiseResult from "../types/PromiseResult"
-import courtCasesByVisibleForcesQuery from "./queries/courtCasesByVisibleForcesQuery"
+import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
+import User from "./entities/User"
 
-const getCourtCaseByVisibleForce = (
+const getCourtCaseByOrganisationUnit = (
   dataSource: DataSource | EntityManager,
   courtCaseId: number,
-  forces: string[]
+  user: User
 ): PromiseResult<CourtCase | null> => {
   const courtCaseRepository = dataSource.getRepository(CourtCase)
   let query = courtCaseRepository.createQueryBuilder("courtCase")
-  query = courtCasesByVisibleForcesQuery(query, forces) as SelectQueryBuilder<CourtCase>
+  query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
   query
     .andWhere({ errorId: courtCaseId })
     .leftJoinAndSelect("courtCase.triggers", "trigger")
@@ -20,4 +21,4 @@ const getCourtCaseByVisibleForce = (
   return query.getOne().catch((error) => error)
 }
 
-export default getCourtCaseByVisibleForce
+export default getCourtCaseByOrganisationUnit

@@ -50,8 +50,4 @@ export default class User extends BaseEntity {
   get isSupervisor() {
     return this.groups.some((group) => group === "Supervisor")
   }
-
-  get visibleCases() {
-    return this.visibleForces.concat(this.visibleCourts)
-  }
 }

@@ -9,11 +9,12 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import { subDays } from "date-fns"
-import courtCasesByVisibleForcesQuery from "services/queries/courtCasesByVisibleForcesQuery"
+import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import type { KeyValuePair } from "types/KeyValuePair"
+import User from "services/entities/User"
 
 jest.mock(
-  "services/queries/courtCasesByVisibleForcesQuery",
+  "services/queries/courtCasesByOrganisationUnitQuery",
   jest.fn(() =>
     jest.fn((query) => {
       return query
@@ -45,10 +46,11 @@ describe("listCourtCases", () => {
   })
 
   it("should call cases by visible forces query", async () => {
-    await getCountOfCasesByCaseAge(dataSource, [orgCode])
+    const user = { visibleCourts: [], visibleForces: [orgCode] } as Partial<User> as User
+    await getCountOfCasesByCaseAge(dataSource, user)
 
-    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledTimes(1)
-    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [orgCode])
+    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
+    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
   })
 
   it("Should filter cases that within a specific date", async () => {
@@ -79,7 +81,10 @@ describe("listCourtCases", () => {
       { courtDate: thirdDateOlderThanDay14, orgForPoliceFilter: orgCode }
     ])
 
-    const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as KeyValuePair<string, number>
+    const result = (await getCountOfCasesByCaseAge(dataSource, {
+      visibleCourts: [],
+      visibleForces: [orgCode]
+    } as Partial<User> as User)) as KeyValuePair<string, number>
 
     expect(isError(result)).toBeFalsy()
 
@@ -101,7 +106,10 @@ describe("listCourtCases", () => {
       { courtDate: dateToday, orgForPoliceFilter: orgCode, resolutionTimestamp: new Date() }
     ])
 
-    const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as KeyValuePair<string, number>
+    const result = (await getCountOfCasesByCaseAge(dataSource, {
+      visibleCourts: [],
+      visibleForces: [orgCode]
+    } as Partial<User> as User)) as KeyValuePair<string, number>
 
     expect(isError(result)).toBeFalsy()
 
@@ -110,7 +118,10 @@ describe("listCourtCases", () => {
 
   describe("When there are no cases", () => {
     it("Should return 0 for each key", async () => {
-      const result = (await getCountOfCasesByCaseAge(dataSource, [orgCode])) as KeyValuePair<string, number>
+      const result = (await getCountOfCasesByCaseAge(dataSource, {
+        visibleCourts: [],
+        visibleForces: [orgCode]
+      } as Partial<User> as User)) as KeyValuePair<string, number>
 
       expect(isError(result)).toBeFalsy()
 
@@ -127,7 +138,10 @@ describe("listCourtCases", () => {
     it("Should return the error when failed to unlock court case", async () => {
       jest.spyOn(SelectQueryBuilder.prototype, "getRawOne").mockRejectedValue(Error("Some error"))
 
-      const result = await getCountOfCasesByCaseAge(dataSource, [orgCode])
+      const result = await getCountOfCasesByCaseAge(dataSource, {
+        visibleCourts: [],
+        visibleForces: [orgCode]
+      } as Partial<User> as User)
       expect(isError(result)).toBe(true)
 
       const receivedError = result as Error

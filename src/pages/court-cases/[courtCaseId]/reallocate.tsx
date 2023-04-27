@@ -10,7 +10,7 @@ import { BackLink, Button, FormGroup, Heading, Select } from "govuk-react"
 import { useRouter } from "next/router"
 import parseFormData from "utils/parseFormData"
 import { isPost } from "utils/http"
-import getCourtCaseByVisibleForce from "services/getCourtCaseByVisibleForce"
+import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import { isError } from "types/Result"
 import ConditionalRender from "components/ConditionalRender"
 import reallocateCourtCaseToForce from "services/reallocateCourtCaseToForce"
@@ -24,7 +24,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { courtCaseId } = query as { courtCaseId: string }
 
     const dataSource = await getDataSource()
-    const courtCase = await getCourtCaseByVisibleForce(dataSource, +courtCaseId, currentUser.visibleCases)
+    const courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
 
     if (!courtCase) {
       return {

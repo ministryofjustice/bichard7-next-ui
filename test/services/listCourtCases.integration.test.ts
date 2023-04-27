@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import courtCasesByVisibleForcesQuery from "services/queries/courtCasesByVisibleForcesQuery"
+import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import deleteFromEntity from "../utils/deleteFromEntity"
@@ -18,9 +18,10 @@ import getDataSource from "../../src/services/getDataSource"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 import Note from "services/entities/Note"
 import { ResolutionStatus } from "types/ResolutionStatus"
+import User from "services/entities/User"
 
 jest.mock(
-  "services/queries/courtCasesByVisibleForcesQuery",
+  "services/queries/courtCasesByOrganisationUnitQuery",
   jest.fn(() =>
     jest.fn((query) => {
       return query
@@ -31,6 +32,11 @@ jest.mock(
 jest.setTimeout(100000)
 describe("listCourtCases", () => {
   let dataSource: DataSource
+  const orgCode = "36FPA1"
+  const testUser = {
+    visibleForces: [orgCode],
+    visibleCourts: []
+  } as Partial<User> as User
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -48,13 +54,11 @@ describe("listCourtCases", () => {
     }
   })
 
-  it("should call cases by visible forces query", async () => {
-    const forceCode = "dummyForceCode"
+  it("should call cases by organisation unit query", async () => {
+    await listCourtCases(dataSource, { maxPageItems: "1" }, testUser)
 
-    await listCourtCases(dataSource, { forces: [forceCode], maxPageItems: "1" })
-
-    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledTimes(1)
-    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [forceCode])
+    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
+    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), testUser)
   })
 
   it("should return cases with notes correctly", async () => {
@@ -98,7 +102,10 @@ describe("listCourtCases", () => {
     const query = await insertDummyCourtCasesWithNotes(caseNotes, "01")
     expect(isError(query)).toBe(false)
 
-    const result = await listCourtCases(dataSource, { forces: ["01"], maxPageItems: "100" })
+    const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
+      visibleForces: ["01"],
+      visibleCourts: []
+    } as Partial<User> as User)
     expect(isError(result)).toBe(false)
     const { result: cases } = result as ListCourtCaseResult
 
@@ -112,7 +119,10 @@ describe("listCourtCases", () => {
   it("should return all the cases if they number less than or equal to the specified maxPageItems", async () => {
     await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "100" })
+    const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
+      visibleForces: ["36FPA1"],
+      visibleCourts: []
+    } as Partial<User> as User)
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -128,7 +138,10 @@ describe("listCourtCases", () => {
   it("shouldn't return more cases than the specified maxPageItems", async () => {
     await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10" })
+    const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
+      visibleForces: ["36FPA1"],
+      visibleCourts: []
+    } as Partial<User> as User)
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -161,7 +174,10 @@ describe("listCourtCases", () => {
 
     await insertDummyCourtCasesWithNotes(caseNotes, "01")
 
-    const result = await listCourtCases(dataSource, { forces: ["01"], maxPageItems: "10" })
+    const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
+      visibleForces: ["01"],
+      visibleCourts: []
+    } as Partial<User> as User)
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -189,7 +205,10 @@ describe("listCourtCases", () => {
 
     await insertDummyCourtCasesWithTriggers(caseTriggers, "01")
 
-    const result = await listCourtCases(dataSource, { forces: ["01"], maxPageItems: "10" })
+    const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
+      visibleForces: ["01"],
+      visibleCourts: []
+    } as Partial<User> as User)
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -202,7 +221,10 @@ describe("listCourtCases", () => {
   it("should return the next page of items", async () => {
     await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10", pageNum: "2" })
+    const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "2" }, {
+      visibleForces: ["36FPA1"],
+      visibleCourts: []
+    } as Partial<User> as User)
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -216,9 +238,9 @@ describe("listCourtCases", () => {
   })
 
   it("should return the last page of items correctly", async () => {
-    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
+    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10", pageNum: "10" })
+    const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "10" }, testUser)
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -232,9 +254,9 @@ describe("listCourtCases", () => {
   })
 
   it("shouldn't return any cases if the page number is greater than the total pages", async () => {
-    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
+    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await listCourtCases(dataSource, { forces: ["36FPA1"], maxPageItems: "10", pageNum: "11" })
+    const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "11" }, testUser)
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -243,12 +265,11 @@ describe("listCourtCases", () => {
   })
 
   it("should order by court name", async () => {
-    const orgCode = "36FPA1"
     await insertCourtCasesWithFields(
       ["BBBB", "CCCC", "AAAA"].map((courtName) => ({ courtName: courtName, orgForPoliceFilter: orgCode }))
     )
 
-    const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "courtName" })
+    const resultAsc = await listCourtCases(dataSource, { maxPageItems: "100", orderBy: "courtName" }, testUser)
     expect(isError(resultAsc)).toBe(false)
     const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
 
@@ -258,12 +279,15 @@ describe("listCourtCases", () => {
     expect(casesAsc[2].courtName).toStrictEqual("CCCC")
     expect(totalCasesAsc).toEqual(3)
 
-    const resultDesc = await listCourtCases(dataSource, {
-      forces: [orgCode],
-      maxPageItems: "100",
-      orderBy: "courtName",
-      order: "desc"
-    })
+    const resultDesc = await listCourtCases(
+      dataSource,
+      {
+        maxPageItems: "100",
+        orderBy: "courtName",
+        order: "desc"
+      },
+      testUser
+    )
     expect(isError(resultDesc)).toBe(false)
     const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
 
@@ -275,7 +299,6 @@ describe("listCourtCases", () => {
   })
 
   it("should order by court date", async () => {
-    const orgCode = "36FPA1"
     const firstDate = new Date("2001-09-26")
     const secondDate = new Date("2008-01-26")
     const thirdDate = new Date("2013-10-16")
@@ -286,7 +309,7 @@ describe("listCourtCases", () => {
       { courtDate: thirdDate, orgForPoliceFilter: orgCode }
     ])
 
-    const result = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "courtDate" })
+    const result = await listCourtCases(dataSource, { maxPageItems: "100", orderBy: "courtDate" }, testUser)
     expect(isError(result)).toBe(false)
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -296,12 +319,15 @@ describe("listCourtCases", () => {
     expect(cases[2].courtDate).toStrictEqual(new Date(thirdDate))
     expect(totalCases).toEqual(3)
 
-    const resultDesc = await listCourtCases(dataSource, {
-      forces: [orgCode],
-      maxPageItems: "100",
-      orderBy: "courtDate",
-      order: "desc"
-    })
+    const resultDesc = await listCourtCases(
+      dataSource,
+      {
+        maxPageItems: "100",
+        orderBy: "courtDate",
+        order: "desc"
+      },
+      testUser
+    )
     expect(isError(resultDesc)).toBe(false)
     const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
 
@@ -314,12 +340,14 @@ describe("listCourtCases", () => {
 
   describe("ordered by 'lockedBy' reason", () => {
     it("should order by error reason as primary order", async () => {
-      const orgCode = "36FPA1"
       await insertCourtCasesWithFields(
-        ["HO100100", "HO100101", "HO100102"].map((code) => ({ errorReason: code, orgForPoliceFilter: orgCode }))
+        ["HO100100", "HO100101", "HO100102"].map((code) => ({
+          errorReason: code,
+          orgForPoliceFilter: orgCode
+        }))
       )
 
-      const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "reason" })
+      const resultAsc = await listCourtCases(dataSource, { maxPageItems: "100", orderBy: "reason" }, testUser)
       expect(isError(resultAsc)).toBe(false)
       const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
 
@@ -329,12 +357,15 @@ describe("listCourtCases", () => {
       expect(casesAsc[2].errorReason).toStrictEqual("HO100102")
       expect(totalCasesAsc).toEqual(3)
 
-      const resultDesc = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        orderBy: "reason",
-        order: "desc"
-      })
+      const resultDesc = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          orderBy: "reason",
+          order: "desc"
+        },
+        testUser
+      )
       expect(isError(resultDesc)).toBe(false)
       const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
 
@@ -346,12 +377,14 @@ describe("listCourtCases", () => {
     })
 
     it("should order by trigger reason as secondary order", async () => {
-      const orgCode = "36FPA1"
       await insertCourtCasesWithFields(
-        ["TRPR0010", "TRPR0011", "TRPR0012"].map((code) => ({ triggerReason: code, orgForPoliceFilter: orgCode }))
+        ["TRPR0010", "TRPR0011", "TRPR0012"].map((code) => ({
+          triggerReason: code,
+          orgForPoliceFilter: orgCode
+        }))
       )
 
-      const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "reason" })
+      const resultAsc = await listCourtCases(dataSource, { maxPageItems: "100", orderBy: "reason" }, testUser)
       expect(isError(resultAsc)).toBe(false)
       const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
 
@@ -361,12 +394,15 @@ describe("listCourtCases", () => {
       expect(casesAsc[2].triggerReason).toStrictEqual("TRPR0012")
       expect(totalCasesAsc).toEqual(3)
 
-      const resultDesc = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        orderBy: "reason",
-        order: "desc"
-      })
+      const resultDesc = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          orderBy: "reason",
+          order: "desc"
+        },
+        testUser
+      )
       expect(isError(resultDesc)).toBe(false)
       const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
 
@@ -416,10 +452,9 @@ describe("listCourtCases", () => {
       ]
     ]
 
-    const orgCode = "36FPA1"
     await insertDummyCourtCasesWithNotes(caseNotes, "01")
 
-    const resultAsc = await listCourtCases(dataSource, { forces: [orgCode], maxPageItems: "100", orderBy: "notes" })
+    const resultAsc = await listCourtCases(dataSource, { maxPageItems: "100", orderBy: "notes" }, testUser)
     expect(isError(resultAsc)).toBe(false)
     const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
 
@@ -429,12 +464,15 @@ describe("listCourtCases", () => {
     expect(casesAsc[2].notes).toHaveLength(3)
     expect(totalCasesAsc).toEqual(3)
 
-    const resultDesc = await listCourtCases(dataSource, {
-      forces: [orgCode],
-      maxPageItems: "100",
-      orderBy: "notes",
-      order: "desc"
-    })
+    const resultDesc = await listCourtCases(
+      dataSource,
+      {
+        maxPageItems: "100",
+        orderBy: "notes",
+        order: "desc"
+      },
+      testUser
+    )
     expect(isError(resultDesc)).toBe(false)
     const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
 
@@ -446,19 +484,20 @@ describe("listCourtCases", () => {
   })
   describe("ordered by 'lockedBy' username", () => {
     it("should order by errorLockedByUsername as primary order and triggerLockedByUsername as secondary order", async () => {
-      const orgCode = "36FPA1"
-
       await insertCourtCasesWithFields([
         { errorLockedByUsername: "User1", triggerLockedByUsername: "User4", orgForPoliceFilter: orgCode },
         { errorLockedByUsername: "User1", triggerLockedByUsername: "User3", orgForPoliceFilter: orgCode },
         { errorLockedByUsername: "User2", triggerLockedByUsername: "User1", orgForPoliceFilter: orgCode }
       ])
 
-      const resultAsc = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        orderBy: "lockedBy"
-      })
+      const resultAsc = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          orderBy: "lockedBy"
+        },
+        testUser
+      )
       expect(isError(resultAsc)).toBe(false)
       const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
 
@@ -471,12 +510,15 @@ describe("listCourtCases", () => {
       expect(casesAsc[2].triggerLockedByUsername).toStrictEqual("User1")
       expect(totalCasesAsc).toEqual(3)
 
-      const resultDesc = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        orderBy: "lockedBy",
-        order: "desc"
-      })
+      const resultDesc = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          orderBy: "lockedBy",
+          order: "desc"
+        },
+        testUser
+      )
       expect(isError(resultDesc)).toBe(false)
       const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
 
@@ -493,7 +535,6 @@ describe("listCourtCases", () => {
 
   describe("search by defendant name", () => {
     it("should list cases when there is a case insensitive match", async () => {
-      const orgCode = "01FPA1"
       const defendantToInclude = "WAYNE Bruce"
       const defendantToIncludeWithPartialMatch = "WAYNE Bill"
       const defendantToNotInclude = "GORDON Barbara"
@@ -504,22 +545,28 @@ describe("listCourtCases", () => {
         { defendantName: defendantToIncludeWithPartialMatch, orgForPoliceFilter: orgCode }
       ])
 
-      let result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        defendantName: "WAYNE Bruce"
-      })
+      let result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          defendantName: "WAYNE Bruce"
+        },
+        testUser
+      )
       expect(isError(result)).toBe(false)
       let { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(1)
       expect(cases[0].defendantName).toStrictEqual(defendantToInclude)
 
-      result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        defendantName: "WAYNE B"
-      })
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          defendantName: "WAYNE B"
+        },
+        testUser
+      )
       expect(isError(result)).toBe(false)
       cases = (result as ListCourtCaseResult).result
 
@@ -531,18 +578,19 @@ describe("listCourtCases", () => {
 
   describe("filter by cases allocated to me", () => {
     it("should list cases that are locked to me", async () => {
-      const orgCode = "36FPA1"
-
       await insertCourtCasesWithFields([
         { errorLockedByUsername: "User1", triggerLockedByUsername: "User1", orgForPoliceFilter: orgCode },
         { errorLockedByUsername: "User2", triggerLockedByUsername: "User2", orgForPoliceFilter: orgCode },
         { errorLockedByUsername: "User3", triggerLockedByUsername: "User3", orgForPoliceFilter: orgCode }
       ])
 
-      const resultBefore = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100"
-      })
+      const resultBefore = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100"
+        },
+        testUser
+      )
       expect(isError(resultBefore)).toBe(false)
       const { result: casesBefore, totalCases: totalCasesBefore } = resultBefore as ListCourtCaseResult
 
@@ -555,11 +603,14 @@ describe("listCourtCases", () => {
       expect(casesBefore[2].triggerLockedByUsername).toStrictEqual("User3")
       expect(totalCasesBefore).toEqual(3)
 
-      const resultAfter = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        allocatedToUserName: "User1"
-      })
+      const resultAfter = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          allocatedToUserName: "User1"
+        },
+        testUser
+      )
       expect(isError(resultAfter)).toBe(false)
       const { result: casesAfter, totalCases: totalCasesAfter } = resultAfter as ListCourtCaseResult
 
@@ -570,18 +621,19 @@ describe("listCourtCases", () => {
     })
 
     it("should list cases that have triggers locked to me", async () => {
-      const orgCode = "36FPA1"
-
       await insertCourtCasesWithFields([
         { triggerLockedByUsername: "User1", orgForPoliceFilter: orgCode },
         { triggerLockedByUsername: "User2", orgForPoliceFilter: orgCode },
         { triggerLockedByUsername: "User3", orgForPoliceFilter: orgCode }
       ])
 
-      const resultBefore = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100"
-      })
+      const resultBefore = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100"
+        },
+        testUser
+      )
       expect(isError(resultBefore)).toBe(false)
       const { result: casesBefore, totalCases: totalCasesBefore } = resultBefore as ListCourtCaseResult
 
@@ -591,11 +643,14 @@ describe("listCourtCases", () => {
       expect(casesBefore[2].triggerLockedByUsername).toStrictEqual("User3")
       expect(totalCasesBefore).toEqual(3)
 
-      const resultAfter = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        allocatedToUserName: "User1"
-      })
+      const resultAfter = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          allocatedToUserName: "User1"
+        },
+        testUser
+      )
       expect(isError(resultAfter)).toBe(false)
       const { result: casesAfter, totalCases: totalCasesAfter } = resultAfter as ListCourtCaseResult
 
@@ -605,18 +660,19 @@ describe("listCourtCases", () => {
     })
 
     it("should list cases that have errors locked to me", async () => {
-      const orgCode = "36FPA1"
-
       await insertCourtCasesWithFields([
         { errorLockedByUsername: "User1", orgForPoliceFilter: orgCode },
         { errorLockedByUsername: "User2", orgForPoliceFilter: orgCode },
         { errorLockedByUsername: "User3", orgForPoliceFilter: orgCode }
       ])
 
-      const resultBefore = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100"
-      })
+      const resultBefore = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100"
+        },
+        testUser
+      )
       expect(isError(resultBefore)).toBe(false)
       const { result: casesBefore, totalCases: totalCasesBefore } = resultBefore as ListCourtCaseResult
 
@@ -626,11 +682,14 @@ describe("listCourtCases", () => {
       expect(casesBefore[2].errorLockedByUsername).toStrictEqual("User3")
       expect(totalCasesBefore).toEqual(3)
 
-      const resultAfter = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        allocatedToUserName: "User1"
-      })
+      const resultAfter = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          allocatedToUserName: "User1"
+        },
+        testUser
+      )
       expect(isError(resultAfter)).toBe(false)
       const { result: casesAfter, totalCases: totalCasesAfter } = resultAfter as ListCourtCaseResult
 
@@ -642,7 +701,6 @@ describe("listCourtCases", () => {
 
   describe("search by court name", () => {
     it("should list cases when there is a case insensitive match", async () => {
-      const orgCode = "01FPA1"
       const courtNameToInclude = "Magistrates' Courts London Croydon"
       const courtNameToIncludeWithPartialMatch = "Magistrates' Courts London Something Else"
       const courtNameToNotInclude = "Court Name not to include"
@@ -653,22 +711,28 @@ describe("listCourtCases", () => {
         { courtName: courtNameToNotInclude, orgForPoliceFilter: orgCode }
       ])
 
-      let result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        courtName: "Magistrates' Courts London Croydon"
-      })
+      let result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          courtName: "Magistrates' Courts London Croydon"
+        },
+        testUser
+      )
       expect(isError(result)).toBe(false)
       let { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(1)
       expect(cases[0].courtName).toStrictEqual(courtNameToInclude)
 
-      result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        courtName: "magistrates' courts london"
-      })
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          courtName: "magistrates' courts london"
+        },
+        testUser
+      )
       expect(isError(result)).toBe(false)
       cases = (result as ListCourtCaseResult).result
 
@@ -680,7 +744,6 @@ describe("listCourtCases", () => {
 
   describe("search by ptiurn", () => {
     it("should list cases when there is a case insensitive match", async () => {
-      const orgCode = "01FPA1"
       const ptiurnToInclude = "01ZD0303908"
       const ptiurnToIncludeWithPartialMatch = "01ZD0303909"
       const ptiurnToNotInclude = "00000000000"
@@ -691,22 +754,28 @@ describe("listCourtCases", () => {
         { ptiurn: ptiurnToNotInclude, orgForPoliceFilter: orgCode }
       ])
 
-      let result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        ptiurn: "01ZD0303908"
-      })
+      let result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          ptiurn: "01ZD0303908"
+        },
+        testUser
+      )
       expect(isError(result)).toBe(false)
       let { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(1)
       expect(cases[0].ptiurn).toStrictEqual(ptiurnToInclude)
 
-      result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        ptiurn: "01ZD030390"
-      })
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          ptiurn: "01ZD030390"
+        },
+        testUser
+      )
       expect(isError(result)).toBe(false)
       cases = (result as ListCourtCaseResult).result
 
@@ -718,7 +787,7 @@ describe("listCourtCases", () => {
 
   describe("search by reason", () => {
     it("should list cases when there is a case insensitive match in triggers or exceptions", async () => {
-      await insertCourtCasesWithFields(["01", "01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+      await insertCourtCasesWithFields(Array.from({ length: 4 }, () => ({ orgForPoliceFilter: orgCode })))
 
       const triggerToInclude: TestTrigger = {
         triggerId: 0,
@@ -752,11 +821,14 @@ describe("listCourtCases", () => {
       await insertTriggers(3, [triggerNotToInclude])
 
       // Searching for a full matched trigger code
-      let result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100",
-        reasonCode: triggerToInclude.triggerCode
-      })
+      let result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasonCode: triggerToInclude.triggerCode
+        },
+        testUser
+      )
 
       expect(isError(result)).toBe(false)
       let { result: cases } = result as ListCourtCaseResult
@@ -765,11 +837,14 @@ describe("listCourtCases", () => {
       expect(cases[0].triggers[0].triggerCode).toStrictEqual(triggerToInclude.triggerCode)
 
       // Searching for a full matched error code
-      result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100",
-        reasonCode: errorToInclude
-      })
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasonCode: errorToInclude
+        },
+        testUser
+      )
 
       expect(isError(result)).toBe(false)
       cases = (result as ListCourtCaseResult).result
@@ -778,11 +853,14 @@ describe("listCourtCases", () => {
       expect(cases[0].errorReason).toStrictEqual(errorToInclude)
 
       // Searching for a partial match error/trigger code
-      result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100",
-        reasonCode: "2222"
-      })
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasonCode: "2222"
+        },
+        testUser
+      )
 
       expect(isError(result)).toBe(false)
       cases = (result as ListCourtCaseResult).result
@@ -793,7 +871,7 @@ describe("listCourtCases", () => {
     })
 
     it("should list cases when there is a case insensitive match in any exceptions", async () => {
-      await insertCourtCasesWithFields(["01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+      await insertCourtCasesWithFields(Array.from({ length: 2 }, () => ({ orgForPoliceFilter: orgCode })))
 
       const errorToInclude = "HO100322"
       const anotherErrorToInclude = "HO100323"
@@ -803,11 +881,14 @@ describe("listCourtCases", () => {
       await insertException(0, anotherErrorToInclude, `${anotherErrorToInclude}||ds:NextHearingDate`)
       await insertException(1, errorNotToInclude, `${errorNotToInclude}||ds:XMLField`)
 
-      let result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100",
-        reasonCode: errorToInclude
-      })
+      let result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasonCode: errorToInclude
+        },
+        testUser
+      )
 
       expect(isError(result)).toBe(false)
       let { result: cases } = result as ListCourtCaseResult
@@ -817,11 +898,14 @@ describe("listCourtCases", () => {
         `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
       )
 
-      result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100",
-        reasonCode: anotherErrorToInclude
-      })
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasonCode: anotherErrorToInclude
+        },
+        testUser
+      )
 
       expect(isError(result)).toBe(false)
       cases = (result as ListCourtCaseResult).result
@@ -861,15 +945,18 @@ describe("listCourtCases", () => {
     }
 
     it("Should filter by whether a case has triggers", async () => {
-      await insertCourtCasesWithFields(["01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+      await insertCourtCasesWithFields(Array.from({ length: 3 }, () => ({ orgForPoliceFilter: orgCode })))
       await insertTriggers(0, [testTrigger])
       await insertTriggers(1, [bailDirectionTrigger])
 
-      const result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100",
-        reasons: ["Triggers"]
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasons: ["Triggers"]
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -880,15 +967,18 @@ describe("listCourtCases", () => {
     })
 
     it("Should filter by whether a case has excecptions", async () => {
-      await insertCourtCasesWithFields(["01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+      await insertCourtCasesWithFields(Array.from({ length: 2 }, () => ({ orgForPoliceFilter: orgCode })))
       await insertException(0, "HO100300")
       await insertTriggers(1, [testTrigger])
 
-      const result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100",
-        reasons: ["Exceptions"]
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasons: ["Exceptions"]
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -898,20 +988,21 @@ describe("listCourtCases", () => {
     })
 
     it("Should filter cases that has bails", async () => {
-      await insertCourtCasesWithFields(
-        ["01", "01", "01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode }))
-      )
+      await insertCourtCasesWithFields(Array.from({ length: 5 }, () => ({ orgForPoliceFilter: orgCode })))
       await insertException(0, "HO100300")
       await insertTriggers(1, [testTrigger])
       await insertTriggers(2, [conditionalBailTrigger])
       await insertTriggers(3, [bailDirectionTrigger])
       await insertTriggers(4, [preChargeBailApplicationTrigger])
 
-      const result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100",
-        reasons: ["Bails"]
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasons: ["Bails"]
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -923,16 +1014,19 @@ describe("listCourtCases", () => {
     })
 
     it("Should filter cases with all reasons", async () => {
-      await insertCourtCasesWithFields(["01", "01", "01", "01"].map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+      await insertCourtCasesWithFields(Array.from({ length: 4 }, () => ({ orgForPoliceFilter: orgCode })))
       await insertException(0, "HO100300")
       await insertTriggers(1, [testTrigger])
       await insertTriggers(2, [conditionalBailTrigger])
 
-      const result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100",
-        reasons: ["Exceptions", "Triggers", "Bails"]
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasons: ["Exceptions", "Triggers", "Bails"]
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -946,19 +1040,21 @@ describe("listCourtCases", () => {
 
   describe("Filter cases by urgency", () => {
     it("Should filter only urgent cases", async () => {
-      const forceCode = "01"
       await insertCourtCasesWithFields([
-        { isUrgent: false, orgForPoliceFilter: forceCode },
-        { isUrgent: true, orgForPoliceFilter: forceCode },
-        { isUrgent: false, orgForPoliceFilter: forceCode },
-        { isUrgent: true, orgForPoliceFilter: forceCode }
+        { isUrgent: false, orgForPoliceFilter: orgCode },
+        { isUrgent: true, orgForPoliceFilter: orgCode },
+        { isUrgent: false, orgForPoliceFilter: orgCode },
+        { isUrgent: true, orgForPoliceFilter: orgCode }
       ])
 
-      const result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100",
-        urgent: "Urgent"
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          urgent: "Urgent"
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -968,19 +1064,21 @@ describe("listCourtCases", () => {
     })
 
     it("Should filter non-urgent cases", async () => {
-      const forceCode = "01"
       await insertCourtCasesWithFields([
-        { isUrgent: false, orgForPoliceFilter: forceCode },
-        { isUrgent: true, orgForPoliceFilter: forceCode },
-        { isUrgent: false, orgForPoliceFilter: forceCode },
-        { isUrgent: false, orgForPoliceFilter: forceCode }
+        { isUrgent: false, orgForPoliceFilter: orgCode },
+        { isUrgent: true, orgForPoliceFilter: orgCode },
+        { isUrgent: false, orgForPoliceFilter: orgCode },
+        { isUrgent: false, orgForPoliceFilter: orgCode }
       ])
 
-      const result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100",
-        urgent: "Non-urgent"
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          urgent: "Non-urgent"
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -989,18 +1087,20 @@ describe("listCourtCases", () => {
     })
 
     it("Should not filter cases when the urgent filter is undefined", async () => {
-      const forceCode = "01"
       await insertCourtCasesWithFields([
-        { isUrgent: false, orgForPoliceFilter: forceCode },
-        { isUrgent: true, orgForPoliceFilter: forceCode },
-        { isUrgent: false, orgForPoliceFilter: forceCode },
-        { isUrgent: true, orgForPoliceFilter: forceCode }
+        { isUrgent: false, orgForPoliceFilter: orgCode },
+        { isUrgent: true, orgForPoliceFilter: orgCode },
+        { isUrgent: false, orgForPoliceFilter: orgCode },
+        { isUrgent: true, orgForPoliceFilter: orgCode }
       ])
 
-      const result = await listCourtCases(dataSource, {
-        forces: ["01"],
-        maxPageItems: "100"
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100"
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -1011,7 +1111,6 @@ describe("listCourtCases", () => {
 
   describe("Filter cases by court date", () => {
     it("Should filter cases that within a start and end date ", async () => {
-      const orgCode = "36FPA1"
       const firstDate = new Date("2001-09-26")
       const secondDate = new Date("2008-01-26")
       const thirdDate = new Date("2008-03-26")
@@ -1024,11 +1123,14 @@ describe("listCourtCases", () => {
         { courtDate: fourthDate, orgForPoliceFilter: orgCode }
       ])
 
-      const result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        courtDateRange: { from: new Date("2008-01-01"), to: new Date("2008-12-31") }
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          courtDateRange: { from: new Date("2008-01-01"), to: new Date("2008-12-31") }
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -1038,7 +1140,6 @@ describe("listCourtCases", () => {
     })
 
     it("Should filter cases by multiple date ranges", async () => {
-      const orgCode = "36FPA1"
       const firstDate = new Date("2001-09-26")
       const secondDate = new Date("2008-01-26")
       const thirdDate = new Date("2008-03-26")
@@ -1051,15 +1152,18 @@ describe("listCourtCases", () => {
         { courtDate: fourthDate, orgForPoliceFilter: orgCode }
       ])
 
-      const result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        courtDateRange: [
-          { from: new Date("2008-01-26"), to: new Date("2008-01-26") },
-          { from: new Date("2008-03-26"), to: new Date("2008-03-26") },
-          { from: new Date("2013-10-16"), to: new Date("2013-10-16") }
-        ]
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          courtDateRange: [
+            { from: new Date("2008-01-26"), to: new Date("2008-01-26") },
+            { from: new Date("2008-03-26"), to: new Date("2008-03-26") },
+            { from: new Date("2013-10-16"), to: new Date("2013-10-16") }
+          ]
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -1071,17 +1175,19 @@ describe("listCourtCases", () => {
 
   describe("Filter cases by locked status", () => {
     it("Should filter cases that are locked ", async () => {
-      const orgCode = "36FP"
       await insertCourtCasesWithFields([
         { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: orgCode },
         { orgForPoliceFilter: orgCode }
       ])
 
-      const result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        locked: true
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          locked: true
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -1091,7 +1197,6 @@ describe("listCourtCases", () => {
     })
 
     it("Should filter cases that are unlocked ", async () => {
-      const orgCode = "36FP"
       const lockedCase = {
         errorId: 0,
         errorLockedByUsername: "bichard01",
@@ -1105,11 +1210,14 @@ describe("listCourtCases", () => {
 
       await insertCourtCasesWithFields([lockedCase, unlockedCase])
 
-      const result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        locked: false
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          locked: false
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -1119,7 +1227,6 @@ describe("listCourtCases", () => {
     })
 
     it("Should treat cases with only one lock as locked.  ", async () => {
-      const orgCode = "36FP"
       await insertCourtCasesWithFields([
         {
           errorId: 0,
@@ -1137,11 +1244,14 @@ describe("listCourtCases", () => {
         }
       ])
 
-      const lockedResult = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        locked: true
-      })
+      const lockedResult = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          locked: true
+        },
+        testUser
+      )
 
       expect(isError(lockedResult)).toBeFalsy()
       const { result: lockedCases } = lockedResult as ListCourtCaseResult
@@ -1149,11 +1259,14 @@ describe("listCourtCases", () => {
       expect(lockedCases).toHaveLength(2)
       expect(lockedCases.map((c) => c.errorId)).toStrictEqual([0, 1])
 
-      const unlockedResult = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        locked: false
-      })
+      const unlockedResult = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          locked: false
+        },
+        testUser
+      )
 
       expect(isError(unlockedResult)).toBeFalsy()
       const { result: unlockedCases } = unlockedResult as ListCourtCaseResult
@@ -1165,7 +1278,6 @@ describe("listCourtCases", () => {
 
   describe("Filter cases by case state", () => {
     it("Should return unresolved cases if case state not set", async () => {
-      const orgCode = "36FP"
       const resolutionTimestamp = new Date()
       await insertCourtCasesWithFields(
         [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp].map((timeStamp) => ({
@@ -1174,10 +1286,13 @@ describe("listCourtCases", () => {
         }))
       )
 
-      const result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100"
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100"
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -1187,7 +1302,6 @@ describe("listCourtCases", () => {
     })
 
     it("Should filter cases that are resolved", async () => {
-      const orgCode = "36FP"
       const resolutionTimestamp = new Date()
       await insertCourtCasesWithFields(
         [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp].map((timeStamp) => ({
@@ -1196,11 +1310,14 @@ describe("listCourtCases", () => {
         }))
       )
 
-      const result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        caseState: "Resolved"
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          caseState: "Resolved"
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -1214,7 +1331,6 @@ describe("listCourtCases", () => {
     })
 
     it("Should return all cases if case state is 'Unresolved and resolved'", async () => {
-      const orgCode = "36FP"
       const resolutionTimestamp = new Date()
       await insertCourtCasesWithFields(
         [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp].map((timeStamp) => ({
@@ -1223,11 +1339,14 @@ describe("listCourtCases", () => {
         }))
       )
 
-      const result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        caseState: "Unresolved and resolved"
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          caseState: "Unresolved and resolved"
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -1244,7 +1363,6 @@ describe("listCourtCases", () => {
 
   describe("Filter cases by resolution status", () => {
     it("should show supervisors all resolved cases for their force", async () => {
-      const orgCode = "36FP"
       const resolutionTimestamp = new Date()
       const casesToInsert: Partial<CourtCase>[] = [undefined, "Bichard01", "Supervisor", "Bichard02", undefined].map(
         (resolver) => ({
@@ -1257,11 +1375,14 @@ describe("listCourtCases", () => {
 
       await insertCourtCasesWithFields(casesToInsert)
 
-      const result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        caseState: "Resolved"
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          caseState: "Resolved"
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -1271,7 +1392,6 @@ describe("listCourtCases", () => {
     })
 
     it("should show handlers cases that they resolved", async () => {
-      const orgCode = "36FP"
       const resolutionTimestamp = new Date()
       const thisUser = "Bichard01"
       const otherUser = "Bichard02"
@@ -1283,12 +1403,15 @@ describe("listCourtCases", () => {
 
       await insertCourtCasesWithFields(casesToInsert)
 
-      const result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        caseState: "Resolved",
-        resolvedByUsername: thisUser
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          caseState: "Resolved",
+          resolvedByUsername: thisUser
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
@@ -1298,7 +1421,6 @@ describe("listCourtCases", () => {
     })
 
     it("should show handlers cases that they resolved a trigger for", async () => {
-      const orgCode = "36FP"
       const resolutionTimestamp = new Date()
       const thisUser = "Bichard01"
       const otherUser = "Bichard02"
@@ -1334,12 +1456,15 @@ describe("listCourtCases", () => {
         }
       ])
 
-      const result = await listCourtCases(dataSource, {
-        forces: [orgCode],
-        maxPageItems: "100",
-        caseState: "Resolved",
-        resolvedByUsername: thisUser
-      })
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          caseState: "Resolved",
+          resolvedByUsername: thisUser
+        },
+        testUser
+      )
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult

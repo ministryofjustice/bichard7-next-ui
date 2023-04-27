@@ -49,9 +49,10 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: userName,
         visibleForces: [oldForceCode],
+        visibleCourts: [],
         canLockExceptions: true,
         canLockTriggers: true
-      } as User
+      } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode)
       expect(isError(result)).toBe(false)
@@ -99,9 +100,10 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
+        visibleCourts: [],
         canLockExceptions: true,
         canLockTriggers: true
-      } as User
+      } as Partial<User> as User
 
       let result: UpdateResult | Error
       try {
@@ -136,9 +138,10 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
+        visibleCourts: [],
         canLockExceptions: true,
         canLockTriggers: true
-      } as User
+      } as Partial<User> as User
 
       let result: UpdateResult | Error
       try {
@@ -170,9 +173,10 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
+        visibleCourts: [],
         canLockExceptions: true,
         canLockTriggers: true
-      } as User
+      } as Partial<User> as User
 
       ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
 
@@ -204,9 +208,10 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
+        visibleCourts: [],
         canLockExceptions: true,
         canLockTriggers: true
-      } as User
+      } as Partial<User> as User
 
       jest
         .spyOn(UpdateQueryBuilder.prototype, "execute")

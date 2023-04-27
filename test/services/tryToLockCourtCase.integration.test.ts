@@ -1,7 +1,7 @@
 import User from "services/entities/User"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
-import getCourtCaseByVisibleForce from "../../src/services/getCourtCaseByVisibleForce"
+import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
 import getDataSource from "../../src/services/getDataSource"
 import tryToLockCourtCase from "../../src/services/tryToLockCourtCase"
 import { isError } from "../../src/types/Result"
@@ -37,7 +37,13 @@ describe("lock court case", () => {
     })
     await insertCourtCases(inputCourtCase)
 
-    const user = { username, canLockExceptions: true, canLockTriggers: true } as User
+    const user = {
+      username,
+      canLockExceptions: true,
+      canLockTriggers: true,
+      visibleForces: ["36"],
+      visibleCourts: []
+    } as Partial<User> as User
 
     const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
     expect(isError(result)).toBe(false)
@@ -52,7 +58,7 @@ describe("lock court case", () => {
       triggerStatus: "Unresolved"
     })
 
-    const actualCourtCase = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, ["36"])
+    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
@@ -70,13 +76,19 @@ describe("lock court case", () => {
     })
     await insertCourtCases(inputCourtCase)
 
-    const user = { username, canLockExceptions: true, canLockTriggers: true } as User
+    const user = {
+      username,
+      canLockExceptions: true,
+      canLockTriggers: true,
+      visibleForces: ["36"],
+      visibleCourts: []
+    } as Partial<User> as User
 
     const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
     expect(isError(result)).toBe(false)
     expect(result).toBeTruthy()
 
-    const actualCourtCase = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, ["36"])
+    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
   })
 
@@ -94,7 +106,13 @@ describe("lock court case", () => {
     })
     await insertCourtCases(inputCourtCase)
 
-    const user = { username, canLockExceptions: false, canLockTriggers: true } as User
+    const user = {
+      username,
+      canLockExceptions: false,
+      canLockTriggers: true,
+      visibleForces: ["36"],
+      visibleCourts: []
+    } as Partial<User> as User
 
     const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
 
@@ -110,7 +128,7 @@ describe("lock court case", () => {
     expect(isError(result)).toBe(false)
     expect(result).toBeTruthy()
 
-    const actualCourtCase = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, ["36"])
+    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
@@ -128,7 +146,13 @@ describe("lock court case", () => {
     })
     await insertCourtCases(inputCourtCase)
 
-    const user = { username, canLockExceptions: true, canLockTriggers: false } as User
+    const user = {
+      username,
+      canLockExceptions: true,
+      canLockTriggers: false,
+      visibleForces: ["36"],
+      visibleCourts: []
+    } as Partial<User> as User
 
     const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
 
@@ -144,7 +168,7 @@ describe("lock court case", () => {
     expect(isError(result)).toBe(false)
     expect(result).toBeTruthy()
 
-    const actualCourtCase = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, ["36"])
+    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
@@ -160,7 +184,13 @@ describe("lock court case", () => {
     })
     await insertCourtCases(inputCourtCase)
 
-    const user = { username, canLockExceptions: false, canLockTriggers: true } as User
+    const user = {
+      username,
+      canLockExceptions: false,
+      canLockTriggers: true,
+      visibleForces: ["36"],
+      visibleCourts: []
+    } as Partial<User> as User
 
     const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
 
@@ -175,7 +205,7 @@ describe("lock court case", () => {
     expect(isError(result)).toBe(false)
     expect(result).toBeTruthy()
 
-    const actualCourtCase = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, ["36"])
+    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
@@ -191,7 +221,13 @@ describe("lock court case", () => {
     })
     await insertCourtCases(inputCourtCase)
 
-    const user = { username, canLockExceptions: true, canLockTriggers: false } as User
+    const user = {
+      username,
+      canLockExceptions: true,
+      canLockTriggers: false,
+      visibleForces: ["36"],
+      visibleCourts: []
+    } as Partial<User> as User
 
     const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
 
@@ -207,7 +243,7 @@ describe("lock court case", () => {
     expect(isError(result)).toBe(false)
     expect(result).toBeTruthy()
 
-    const actualCourtCase = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, ["36"])
+    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
@@ -224,13 +260,19 @@ describe("lock court case", () => {
     })
     await insertCourtCases(inputCourtCase)
 
-    const user = { username, canLockExceptions: false, canLockTriggers: false } as User
+    const user = {
+      username,
+      canLockExceptions: false,
+      canLockTriggers: false,
+      visibleCourts: [],
+      visibleForces: ["36"]
+    } as Partial<User> as User
 
     const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
     expect(isError(result)).toBe(true)
     expect(result).toEqual(new Error("update requires a lock (exception or trigger) to update"))
 
-    const actualCourtCase = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, ["36"])
+    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
   })
 })

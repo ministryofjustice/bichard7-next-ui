@@ -24,7 +24,6 @@ export type CaseListQueryParams = {
   courtName?: string
   ptiurn?: string
   urgent?: Urgency
-  forces: string[]
   pageNum?: string
   maxPageItems: string
   courtDateRange?: CourtDateRange | CourtDateRange[]
