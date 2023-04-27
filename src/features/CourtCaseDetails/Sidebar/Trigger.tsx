@@ -5,7 +5,8 @@ import ActionLink from "components/ActionLink"
 import getTriggerInfo from "utils/getTriggerInfo"
 import PreviewButton from "components/PreviewButton"
 import { default as TriggerEntity } from "services/entities/Trigger"
-import { ChangeEvent } from "react"
+import { ChangeEvent, useState } from "react"
+import ConditionalRender from "components/ConditionalRender"
 
 interface Props {
   trigger: TriggerEntity
@@ -33,7 +34,7 @@ const useStyles = createUseStyles({
 const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: Props) => {
   const triggerInfo = getTriggerInfo(trigger.triggerCode)
   const checkBoxId = `trigger_${trigger.triggerId}`
-  // const [showHelpBox, setShowHelpBox] = useState(false)
+  const [showHelpBox, setShowHelpBox] = useState(false)
 
   const classes = useStyles()
 
@@ -65,7 +66,14 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
         </GridCol>
       </GridRow>
       <GridRow>
-        <PreviewButton showPreview={true} previewLabel="More information" onClick={() => {}} />
+        <>
+          <PreviewButton
+            showPreview={!showHelpBox}
+            previewLabel="More information"
+            onClick={() => setShowHelpBox(!showHelpBox)}
+          />
+          <ConditionalRender isRendered={showHelpBox}></ConditionalRender>
+        </>
       </GridRow>
     </div>
   )
