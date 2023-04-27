@@ -4,7 +4,7 @@ import { createUseStyles } from "react-jss"
 import Checkbox from "components/Checkbox"
 import ActionLink from "components/ActionLink"
 import { ChangeEvent, useState } from "react"
-import getTriggerInfo from "utils/getTriggerInfo"
+import getTriggerDefinition from "utils/getTriggerDefinition"
 import type NavigationHandler from "types/NavigationHandler"
 
 interface Props {
@@ -72,7 +72,7 @@ const Triggers = ({ courtCase, onNavigate }: Props) => {
         </GridRow>
       )}
       {unresolvedTriggers.map((trigger) => {
-        const triggerInfo = getTriggerInfo(trigger.triggerCode)
+        const triggerDefinition = getTriggerDefinition(trigger.triggerCode)
         const checkBoxId = `trigger_${trigger.triggerId}`
 
         return (
@@ -90,7 +90,7 @@ const Triggers = ({ courtCase, onNavigate }: Props) => {
                   </ActionLink>
                 </>
               )}
-              <p>{triggerInfo?.description}</p>
+              <p>{triggerDefinition?.description}</p>
             </GridCol>
             <GridCol setWidth="70px" className="checkbox-column">
               <Checkbox
