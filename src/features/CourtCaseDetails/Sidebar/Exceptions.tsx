@@ -1,6 +1,6 @@
 import { GridCol, GridRow } from "govuk-react"
 import { createUseStyles } from "react-jss"
-import getExceptionInfo from "utils/getExceptionInfo"
+import getExceptionDefinition from "utils/getExceptionDefinition"
 import ActionLink from "components/ActionLink"
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import getExceptionPathDetails from "utils/getExceptionPathDetails"
@@ -45,7 +45,7 @@ const Exceptions = ({ aho, onNavigate }: Props) => {
     <>
       {aho.Exceptions.length === 0 && "There are no exceptions for this case."}
       {aho.Exceptions.map(({ code, path }, index) => {
-        const exceptionInfo = getExceptionInfo(code)
+        const exceptionDefinition = getExceptionDefinition(code)
         const { tab, offenceOrderIndex, displayText } = getExceptionPathDetails(path)
 
         return (
@@ -56,7 +56,7 @@ const Exceptions = ({ aho, onNavigate }: Props) => {
               </ActionLink>
               <p className="exception-details">
                 {code}
-                {exceptionInfo?.title && ` - ${exceptionInfo.title}`}
+                {exceptionDefinition?.shortDescription && ` - ${exceptionDefinition.shortDescription}`}
               </p>
             </GridCol>
           </GridRow>

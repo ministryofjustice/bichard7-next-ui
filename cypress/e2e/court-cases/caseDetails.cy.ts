@@ -442,7 +442,9 @@ describe("Case details", () => {
     cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
 
     cy.get(".moj-tab-panel-triggers .moj-trigger-row").eq(0).contains("PR10 / Offence 1")
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row").eq(0).contains("Bail conditions imposed/varied/cancelled")
+    cy.get(".moj-tab-panel-triggers .moj-trigger-row")
+      .eq(0)
+      .contains("Bail conditions imposed/varied/cancelled - update remand screen")
     cy.get(".moj-tab-panel-triggers .moj-trigger-row input[type=checkbox]").eq(0).should("not.be.checked")
 
     cy.get(".moj-tab-panel-triggers .moj-trigger-row").eq(1).contains("PR15 / Offence 1")
