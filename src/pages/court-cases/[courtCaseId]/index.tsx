@@ -13,7 +13,7 @@ import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/p
 import parseAnnotatedPNCUpdateDatasetXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAnnotatedPNCUpdateDatasetXml/parseAnnotatedPNCUpdateDatasetXml"
 import tryToLockCourtCase from "services/tryToLockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
-import getCourtCaseByVisibleForce from "services/getCourtCaseByVisibleForce"
+import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import { isError } from "types/Result"
 import { isPost } from "utils/http"
 import { UpdateResult } from "typeorm"
@@ -78,7 +78,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const courtCase = await getCourtCaseByVisibleForce(dataSource, +courtCaseId, currentUser)
+    const courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
 
     if (isError(courtCase)) {
       throw courtCase

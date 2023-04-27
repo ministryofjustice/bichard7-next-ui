@@ -4,7 +4,7 @@ import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
 import Trigger from "./entities/Trigger"
 import User from "./entities/User"
-import getCourtCaseByVisibleForce from "./getCourtCaseByVisibleForce"
+import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
 
 // Returns back whether the trigger was successfully unlocked
 const resolveTrigger = async (
@@ -17,7 +17,7 @@ const resolveTrigger = async (
 
   try {
     return await dataSource.transaction("SERIALIZABLE", async (entityManager) => {
-      const courtCase = await getCourtCaseByVisibleForce(entityManager, courtCaseId, user)
+      const courtCase = await getCourtCaseByOrganisationUnit(entityManager, courtCaseId, user)
 
       if (isError(courtCase)) {
         throw courtCase

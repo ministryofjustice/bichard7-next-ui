@@ -4,7 +4,7 @@ import PromiseResult from "../types/PromiseResult"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import User from "./entities/User"
 
-const getCourtCaseByVisibleForce = (
+const getCourtCaseByOrganisationUnit = (
   dataSource: DataSource | EntityManager,
   courtCaseId: number,
   user: User
@@ -21,4 +21,4 @@ const getCourtCaseByVisibleForce = (
   return query.getOne().catch((error) => error)
 }
 
-export default getCourtCaseByVisibleForce
+export default getCourtCaseByOrganisationUnit

@@ -1,13 +1,13 @@
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import getCourtCaseByVisibleForce from "../../src/services/getCourtCaseByVisibleForce"
+import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import User from "services/entities/User"
 
-describe("getCourtCaseByVisibleForces", () => {
+describe("getCourtCaseByOrganisationUnits", () => {
   let dataSource: DataSource
   const orgCode = "36FPA1"
 
@@ -31,7 +31,7 @@ describe("getCourtCaseByVisibleForces", () => {
     })
     await insertCourtCases(inputCourtCase)
 
-    let result = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, {
+    let result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
       visibleForces: [orgCode],
       visibleCourts: []
     } as Partial<User> as User)
@@ -40,7 +40,7 @@ describe("getCourtCaseByVisibleForces", () => {
     let actualCourtCase = result as CourtCase
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
 
-    result = await getCourtCaseByVisibleForce(dataSource, inputCourtCase.errorId, {
+    result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
       visibleForces: [orgCode.substring(0, 2)],
       visibleCourts: []
     } as Partial<User> as User)
@@ -51,7 +51,7 @@ describe("getCourtCaseByVisibleForces", () => {
   })
 
   it("should return null if the court case doesn't exist", async () => {
-    const result = await getCourtCaseByVisibleForce(dataSource, 0, {
+    const result = await getCourtCaseByOrganisationUnit(dataSource, 0, {
       visibleForces: [orgCode],
       visibleCourts: []
     } as Partial<User> as User)
@@ -65,7 +65,7 @@ describe("getCourtCaseByVisibleForces", () => {
       orgForPoliceFilter: orgCode.padEnd(6, " ")
     })
     await insertCourtCases(inputCourtCase)
-    const result = await getCourtCaseByVisibleForce(dataSource, 0, {
+    const result = await getCourtCaseByOrganisationUnit(dataSource, 0, {
       visibleForces: [differentOrgCode],
       visibleCourts: []
     } as Partial<User> as User)
@@ -78,7 +78,7 @@ describe("getCourtCaseByVisibleForces", () => {
       orgForPoliceFilter: orgCode.padEnd(6, " ")
     })
     await insertCourtCases(inputCourtCase)
-    const result = await getCourtCaseByVisibleForce(dataSource, 0, {
+    const result = await getCourtCaseByOrganisationUnit(dataSource, 0, {
       visibleForces: [],
       visibleCourts: []
     } as Partial<User> as User)

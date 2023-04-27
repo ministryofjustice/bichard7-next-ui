@@ -11,7 +11,7 @@ import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-
 import type User from "../entities/User"
 import insertNotes from "services/insertNotes"
 import getSystemNotes from "utils/amendments/getSystemNotes"
-import getCourtCaseByVisibleForce from "services/getCourtCaseByVisibleForce"
+import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 
 const amendCourtCase = async (
   dataSource: DataSource | EntityManager,
@@ -19,7 +19,7 @@ const amendCourtCase = async (
   courtCaseId: number,
   userDetails: User
 ): Promise<AnnotatedHearingOutcome | Error> => {
-  const courtCaseRow = await getCourtCaseByVisibleForce(dataSource, courtCaseId, userDetails)
+  const courtCaseRow = await getCourtCaseByOrganisationUnit(dataSource, courtCaseId, userDetails)
 
   if (isError(courtCaseRow)) {
     return courtCaseRow
