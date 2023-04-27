@@ -1,9 +1,6 @@
 import Note from "services/entities/Note"
-import {
-  HideButton,
-  PreviewButton,
-  NotePreview
-} from "../../src/features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/NotePreviewButton"
+import { NotePreview } from "../../src/features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/NotePreviewButton"
+import { HideButton, PreviewButton } from "../../src/components/PreviewButton"
 
 describe("NotePreviewButton", () => {
   it("shows the default down chevron with the label 'preview'", () => {

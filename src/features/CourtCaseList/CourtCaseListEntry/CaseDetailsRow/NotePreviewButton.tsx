@@ -5,6 +5,7 @@ import { createUseStyles } from "react-jss"
 import { gdsLightGrey } from "../../../../utils/colours"
 import { validateMostRecentNoteDate } from "./CourtCaseListEntryHelperFunction"
 import type Note from "../../../../services/entities/Note"
+import { HideButton, PreviewButton } from "../../../../components/PreviewButton"
 
 const useStyles = createUseStyles({
   buttonContainer: {
@@ -43,22 +44,7 @@ export const NotePreview = ({ latestNote, numberOfNotes }: NotePreviewProps) => 
   )
 }
 
-export const PreviewButton = () => {
-  return (
-    <>
-      <span className="govuk-accordion-nav__chevron govuk-accordion-nav__chevron--down"></span>
-      <span className="govuk-accordion__show-all-text">{"Preview"}</span>
-    </>
-  )
-}
-export const HideButton = () => {
-  return (
-    <>
-      <span className="govuk-accordion-nav__chevron"></span>
-      <span className="govuk-accordion__show-all-text">{"Hide"}</span>
-    </>
-  )
-}
+
 export const NotePreviewButton: React.FC<NotePreviewButtonProps> = (props: NotePreviewButtonProps) => {
   const classes = useStyles()
 
