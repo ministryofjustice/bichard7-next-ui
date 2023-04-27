@@ -1,16 +1,16 @@
 import Note from "services/entities/Note"
 import { NotePreview } from "../../src/features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/NotePreviewButton"
-import { HideButton, PreviewButton } from "../../src/components/PreviewButton"
+import PreviewButton from "../../src/components/PreviewButton"
 
 describe("NotePreviewButton", () => {
   it("shows the default down chevron with the label 'preview'", () => {
-    cy.mount(<PreviewButton />)
+    cy.mount(<PreviewButton previewLabel="Preview" onClick={() => {}} showPreview={true} />)
     cy.get(".govuk-accordion-nav__chevron--down").should("exist")
     cy.get(".govuk-accordion-nav__chevron").should("exist")
   })
 
   it("shows the default up chevron with the label 'hide'", () => {
-    cy.mount(<HideButton />)
+    cy.mount(<PreviewButton previewLabel="Preview" onClick={() => {}} showPreview={false} />)
     cy.get(".govuk-accordion-nav__chevron").should("exist")
   })
 })

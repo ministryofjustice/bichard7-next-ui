@@ -6,6 +6,7 @@ import ActionLink from "components/ActionLink"
 import { ChangeEvent, useState } from "react"
 import getTriggerDefinition from "utils/getTriggerDefinition"
 import type NavigationHandler from "types/NavigationHandler"
+import PreviewButton from "components/PreviewButton"
 
 interface Props {
   courtCase: CourtCase
@@ -76,31 +77,36 @@ const Triggers = ({ courtCase, onNavigate }: Props) => {
         const checkBoxId = `trigger_${trigger.triggerId}`
 
         return (
-          <GridRow key={trigger.triggerId} className={`${classes.triggerRow} moj-trigger-row`}>
-            <GridCol className="trigger-details-column">
-              <label className="trigger-code" htmlFor={checkBoxId}>
-                {trigger.shortTriggerCode}
-              </label>
-              {trigger.triggerItemIdentity !== undefined && (
-                <>
-                  {" / "}
-                  <ActionLink onClick={() => handleClick(trigger.triggerItemIdentity)}>
-                    {"Offence "}
-                    {trigger.triggerItemIdentity + 1}
-                  </ActionLink>
-                </>
-              )}
-              <p>{triggerDefinition?.description}</p>
-            </GridCol>
-            <GridCol setWidth="70px" className="checkbox-column">
-              <Checkbox
-                id={checkBoxId}
-                value={trigger.triggerId}
-                checked={selectedTriggerIds.includes(trigger.triggerId)}
-                onChange={setTriggerSelection}
-              />
-            </GridCol>
-          </GridRow>
+          <div key={trigger.triggerId}>
+            <GridRow className={`${classes.triggerRow} moj-trigger-row`}>
+              <GridCol className="trigger-details-column">
+                <label className="trigger-code" htmlFor={checkBoxId}>
+                  {trigger.shortTriggerCode}
+                </label>
+                {trigger.triggerItemIdentity !== undefined && (
+                  <>
+                    {" / "}
+                    <ActionLink onClick={() => handleClick(trigger.triggerItemIdentity)}>
+                      {"Offence "}
+                      {trigger.triggerItemIdentity + 1}
+                    </ActionLink>
+                  </>
+                )}
+                <p>{triggerInfo?.description}</p>
+              </GridCol>
+              <GridCol setWidth="70px" className="checkbox-column">
+                <Checkbox
+                  id={checkBoxId}
+                  value={trigger.triggerId}
+                  checked={selectedTriggerIds.includes(trigger.triggerId)}
+                  onChange={setTriggerSelection}
+                />
+              </GridCol>
+            </GridRow>
+            <GridRow>
+              <PreviewButton showPreview={true} previewLabel="More information" onClick={() => {}} />
+            </GridRow>
+          </div>
         )
       })}
     </>
