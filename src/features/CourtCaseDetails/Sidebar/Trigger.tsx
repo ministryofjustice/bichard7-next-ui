@@ -7,6 +7,7 @@ import PreviewButton from "components/PreviewButton"
 import { default as TriggerEntity } from "services/entities/Trigger"
 import { ChangeEvent, useState } from "react"
 import ConditionalRender from "components/ConditionalRender"
+import { Preview } from "components/Preview"
 
 interface Props {
   trigger: TriggerEntity
@@ -66,14 +67,16 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
         </GridCol>
       </GridRow>
       <GridRow>
-        <>
-          <PreviewButton
-            showPreview={!showHelpBox}
-            previewLabel="More information"
-            onClick={() => setShowHelpBox(!showHelpBox)}
-          />
-          <ConditionalRender isRendered={showHelpBox}></ConditionalRender>
-        </>
+        <PreviewButton
+          showPreview={!showHelpBox}
+          previewLabel="More information"
+          onClick={() => setShowHelpBox(!showHelpBox)}
+        />
+      </GridRow>
+      <GridRow>
+        <ConditionalRender isRendered={showHelpBox}>
+          <Preview>{"Details"}</Preview>
+        </ConditionalRender>
       </GridRow>
     </div>
   )
