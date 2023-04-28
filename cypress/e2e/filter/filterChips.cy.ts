@@ -383,7 +383,7 @@ describe("Case list", () => {
         cy.get(".moj-filter-tags").contains("Triggers").should("exist")
 
         // Clears filter chip and check the checkbox is deselected
-        cy.contains("Clear filters").click()
+        cy.get(".moj-filter-tags").contains("Clear filters").click()
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").should("not.be.checked")
       })
@@ -405,7 +405,7 @@ describe("Case list", () => {
 
       // Clears filter chip using `Clear filters` button and check the checkbox is deselected
       cy.contains("Hide filter").click()
-      cy.contains("Clear filters").click()
+      cy.get(".moj-filter-tags").contains("Clear filters").click()
       cy.get("#filter-button").contains("Show filter").click()
       cy.get("#my-cases-filter").should("not.be.checked")
     })
