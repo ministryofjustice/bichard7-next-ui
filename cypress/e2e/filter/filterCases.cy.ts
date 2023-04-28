@@ -792,7 +792,7 @@ describe("Case list", () => {
     })
 
     describe("Applied filter section", () => {
-      it.only("Should show the applied filter section when the filter panel is hidden", () => {
+      it("Should show the applied filter section when the filter panel is hidden", () => {
         visitBasePathAndShowFilters()
         inputAndSearch("keywords", "WAYNE Bruce")
 

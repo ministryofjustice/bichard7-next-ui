@@ -1,9 +1,8 @@
 import ConditionalRender from "components/ConditionalRender"
-import { Tag } from "govuk-react"
 
 const UrgentTag: React.FC<{ isUrgent: boolean }> = (props: { isUrgent: boolean }) => (
   <ConditionalRender isRendered={props.isUrgent}>
-    <Tag tint="RED">{"Urgent"}</Tag>
+    <span className={`moj-badge moj-badge--red`}>{"Urgent"}</span>
   </ConditionalRender>
 )
 
