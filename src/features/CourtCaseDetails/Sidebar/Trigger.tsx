@@ -71,28 +71,32 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
         </GridCol>
       </GridRow>
       <GridRow>
-        <PreviewButton
-          showPreview={!showHelpBox}
-          previewLabel="More information"
-          onClick={() => setShowHelpBox(!showHelpBox)}
-        />
+        <GridCol>
+          <PreviewButton
+            showPreview={!showHelpBox}
+            previewLabel="More information"
+            onClick={() => setShowHelpBox(!showHelpBox)}
+          />
+        </GridCol>
       </GridRow>
       <GridRow>
-        <ConditionalRender isRendered={showHelpBox}>
-          <Preview>
-            <Heading as="h3" size="SMALL">
-              {"PNC screen to update"}
-            </Heading>
-            <Paragraph supportingText={true}>{triggerDefinition?.pncScreenToUpdate ?? "Trigger not found"}</Paragraph>
-            <Heading as="h3" size="SMALL">
-              {"CJS result code"}
-            </Heading>
-            <div
-              className={classes.cjsResultCode}
-              dangerouslySetInnerHTML={{ __html: triggerDefinition?.cjsResultCode ?? "" }}
-            ></div>
-          </Preview>
-        </ConditionalRender>
+        <GridCol>
+          <ConditionalRender isRendered={showHelpBox}>
+            <Preview>
+              <Heading as="h3" size="SMALL">
+                {"PNC screen to update"}
+              </Heading>
+              <Paragraph supportingText={true}>{triggerDefinition?.pncScreenToUpdate ?? "Trigger not found"}</Paragraph>
+              <Heading as="h3" size="SMALL">
+                {"CJS result code"}
+              </Heading>
+              <div
+                className={classes.cjsResultCode}
+                dangerouslySetInnerHTML={{ __html: triggerDefinition?.cjsResultCode ?? "" }}
+              ></div>
+            </Preview>
+          </ConditionalRender>
+        </GridCol>
       </GridRow>
     </div>
   )
