@@ -1,4 +1,4 @@
-import { GridCol, GridRow } from "govuk-react"
+import { GridCol, GridRow, Heading, Paragraph } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Checkbox from "components/Checkbox"
 import ActionLink from "components/ActionLink"
@@ -29,6 +29,10 @@ const useStyles = createUseStyles({
         marginRight: "9px"
       }
     }
+  },
+  cjsResultCode: {
+    fontSize: "16px",
+    lineHeight: "1.25"
   }
 })
 
@@ -75,7 +79,19 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
       </GridRow>
       <GridRow>
         <ConditionalRender isRendered={showHelpBox}>
-          <Preview>{"Details"}</Preview>
+          <Preview>
+            <Heading as="h3" size="SMALL">
+              {"PNC screen to update"}
+            </Heading>
+            <Paragraph supportingText={true}>{triggerDefinition?.pncScreenToUpdate ?? "Trigger not found"}</Paragraph>
+            <Heading as="h3" size="SMALL">
+              {"CJS result code"}
+            </Heading>
+            <div
+              className={classes.cjsResultCode}
+              dangerouslySetInnerHTML={{ __html: triggerDefinition?.cjsResultCode ?? "" }}
+            ></div>
+          </Preview>
         </ConditionalRender>
       </GridRow>
     </div>
