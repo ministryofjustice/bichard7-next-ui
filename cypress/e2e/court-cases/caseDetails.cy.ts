@@ -631,6 +631,46 @@ describe("Case details", () => {
       .click()
     cy.get("h3").should("have.text", "Case information")
   })
+
+  it("should show contextual help for a trigger when the accordion button is clicked", () => {
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+    const trigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0001",
+      status: "Unresolved",
+      createdAt: new Date()
+    }
+    cy.task("insertTriggers", { caseId: 0, triggers: [trigger] })
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get(".triggers-help-preview").should("have.text", "More information")
+    cy.get(".triggers-help-preview").click()
+
+    cy.get(".triggers-help-preview").should("have.text", "Hide")
+    cy.get(".triggers-help h3").should("contain.text", "PNC screen to update")
+    cy.get(".triggers-help p").should("have.text", "Driver Disqualification")
+    cy.get(".triggers-help h3").should("contain.text", "CJS result code")
+    cy.get(".triggers-help li").should("contain.text", "3028 Disqualification limited to")
+    cy.get(".triggers-help li").should("contain.text", "3030 Driving license restored with effect from")
+    cy.get(".triggers-help li").should(
+      "contain.text",
+      "3050 Reduced Disqualification from Driving after Completing Course"
+    )
+    cy.get(".triggers-help li").should(
+      "contain.text",
+      "3051 Reduced Disqualification from Driving - special reasons or mitigating circumstances"
+    )
+    cy.get(".triggers-help li").should("contain.text", "3070 Disqualified from Driving - Obligatory")
+    cy.get(".triggers-help li").should("contain.text", "3071 Disqualified from Driving - Discretionary")
+    cy.get(".triggers-help li").should("contain.text", "3072 Disqualified from Driving - Points (Totting)")
+    cy.get(".triggers-help li").should("contain.text", "3073 Disqualified from Driving until Ordinary Test Passed")
+    cy.get(".triggers-help li").should("contain.text", "3074 Disqualified from Driving until Extended Test Passed")
+    cy.get(".triggers-help li").should("contain.text", "3094 Disqualified from Driving non motoring offence")
+    cy.get(".triggers-help li").should("contain.text", "3095 Disqualified from Driving - vehicle used in Crime")
+    cy.get(".triggers-help li").should("contain.text", "3096 Interim Disqualification from Driving")
+  })
 })
 
 export {}

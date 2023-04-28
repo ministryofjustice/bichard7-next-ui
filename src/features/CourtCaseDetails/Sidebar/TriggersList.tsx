@@ -1,11 +1,10 @@
 import { GridCol, GridRow } from "govuk-react"
 import CourtCase from "../../../services/entities/CourtCase"
 import { createUseStyles } from "react-jss"
-import Checkbox from "components/Checkbox"
 import ActionLink from "components/ActionLink"
 import { ChangeEvent, useState } from "react"
-import getTriggerDefinition from "utils/getTriggerDefinition"
 import type NavigationHandler from "types/NavigationHandler"
+import Trigger from "./Trigger"
 
 interface Props {
   courtCase: CourtCase
@@ -21,23 +20,10 @@ const useStyles = createUseStyles({
       marginRight: "10px",
       marginBottom: "16px"
     }
-  },
-  triggerRow: {
-    "& .trigger-details-column": {
-      "& .trigger-code": {
-        fontWeight: "bold"
-      }
-    },
-    "& .checkbox-column": {
-      textAlign: "right",
-      "& .moj-checkbox": {
-        marginRight: "9px"
-      }
-    }
   }
 })
 
-const Triggers = ({ courtCase, onNavigate }: Props) => {
+const TriggersList = ({ courtCase, onNavigate }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
   const unresolvedTriggers = courtCase.triggers.filter((trigger) => !trigger.resolvedBy)
@@ -71,40 +57,17 @@ const Triggers = ({ courtCase, onNavigate }: Props) => {
           </GridCol>
         </GridRow>
       )}
-      {unresolvedTriggers.map((trigger) => {
-        const triggerDefinition = getTriggerDefinition(trigger.triggerCode)
-        const checkBoxId = `trigger_${trigger.triggerId}`
-
-        return (
-          <GridRow key={trigger.triggerId} className={`${classes.triggerRow} moj-trigger-row`}>
-            <GridCol className="trigger-details-column">
-              <label className="trigger-code" htmlFor={checkBoxId}>
-                {trigger.shortTriggerCode}
-              </label>
-              {trigger.triggerItemIdentity !== undefined && (
-                <>
-                  {" / "}
-                  <ActionLink onClick={() => handleClick(trigger.triggerItemIdentity)}>
-                    {"Offence "}
-                    {trigger.triggerItemIdentity + 1}
-                  </ActionLink>
-                </>
-              )}
-              <p>{triggerDefinition?.description}</p>
-            </GridCol>
-            <GridCol setWidth="70px" className="checkbox-column">
-              <Checkbox
-                id={checkBoxId}
-                value={trigger.triggerId}
-                checked={selectedTriggerIds.includes(trigger.triggerId)}
-                onChange={setTriggerSelection}
-              />
-            </GridCol>
-          </GridRow>
-        )
-      })}
+      {unresolvedTriggers.map((trigger, index) => (
+        <Trigger
+          key={index}
+          trigger={trigger}
+          onClick={() => handleClick(trigger.triggerItemIdentity)}
+          selectedTriggerIds={selectedTriggerIds}
+          setTriggerSelection={setTriggerSelection}
+        />
+      ))}
     </>
   )
 }
 
-export default Triggers
+export default TriggersList

@@ -1,22 +1,5 @@
 import Note from "services/entities/Note"
-import {
-  HideButton,
-  PreviewButton,
-  NotePreview
-} from "../../src/features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/NotePreviewButton"
-
-describe("NotePreviewButton", () => {
-  it("shows the default down chevron with the label 'preview'", () => {
-    cy.mount(<PreviewButton />)
-    cy.get(".govuk-accordion-nav__chevron--down").should("exist")
-    cy.get(".govuk-accordion-nav__chevron").should("exist")
-  })
-
-  it("shows the default up chevron with the label 'hide'", () => {
-    cy.mount(<HideButton />)
-    cy.get(".govuk-accordion-nav__chevron").should("exist")
-  })
-})
+import { NotePreview } from "../../src/features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/NotePreviewButton"
 
 describe("NotePreview", () => {
   it("should show the full text when note length is 100 characters", () => {

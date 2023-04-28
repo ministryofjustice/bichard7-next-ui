@@ -2,7 +2,7 @@ import { Tabs } from "govuk-react"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import CourtCase from "../../../services/entities/CourtCase"
-import Triggers from "./Triggers"
+import TriggersList from "./TriggersList"
 import Exceptions from "./Exceptions"
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import type NavigationHandler from "types/NavigationHandler"
@@ -44,7 +44,7 @@ const TriggersAndExceptions = ({ courtCase, aho, onNavigate }: Props) => {
           >{`Exceptions`}</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel id="triggers" selected={selectedTab === "triggers"} className="moj-tab-panel-triggers">
-          <Triggers courtCase={courtCase} onNavigate={onNavigate} />
+          <TriggersList courtCase={courtCase} onNavigate={onNavigate} />
         </Tabs.Panel>
         <Tabs.Panel id="exceptions" selected={selectedTab === "exceptions"} className="moj-tab-panel-exceptions">
           <Exceptions aho={aho} onNavigate={onNavigate} />
