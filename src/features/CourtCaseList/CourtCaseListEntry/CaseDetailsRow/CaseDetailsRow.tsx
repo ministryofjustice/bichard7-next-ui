@@ -71,7 +71,7 @@ export const CaseDetailsRow = ({
   rowClassName,
   unlockPath
 }: CaseDetailsRowProps) => {
-  const [showPreview, setShowPreview] = useState(false)
+  const [showPreview, setShowPreview] = useState(true)
 
   const { basePath } = useRouter()
   const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
@@ -124,7 +124,7 @@ export const CaseDetailsRow = ({
           {<CaseUnlockedTag isCaseUnlocked={isCaseUnlocked} />}
         </Table.Cell>
       </Table.Row>
-      {numberOfNotes != 0 && !!showPreview && (
+      {numberOfNotes != 0 && !showPreview && (
         <Table.Row className={classes.notesRow}>
           <Table.Cell
             className={`${cellClassName} ${firstColumnClassName} ${customClasses["top-padding-none"]}`}
