@@ -125,6 +125,9 @@ const reducer = (state: Filter, action: FilterAction): Filter => {
 const useStyles = createUseStyles({
   "govuk-form-group": {
     marginBottom: "0"
+  },
+  selectedFiltersContainer: {
+    display: "block"
   }
 })
 
@@ -173,7 +176,7 @@ const CourtCaseFilter: React.FC<Props> = ({
       <div className="moj-filter__content">
         <div className="moj-filter__selected">
           <div className="moj-filter__selected-heading">
-            <div className="moj-filter__heading-title">
+            <div className={`moj-filter__heading-title ${classes.selectedFiltersContainer}`}>
               <FilterChipSection state={state} dispatch={dispatch} sectionState={"Applied"} marginTop={false} />
               <FilterChipSection
                 state={state}
