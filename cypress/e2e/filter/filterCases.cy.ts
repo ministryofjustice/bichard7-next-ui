@@ -728,7 +728,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").should("have.length", 2)
     })
 
-    it("Should clear filters", () => {
+    it("Should clear filters when clicked on the link outside of the filter panel", () => {
       visitBasePathAndShowFilters()
       cy.get("input[id=keywords]").type("Dummy")
       cy.get('[id="triggers-type"]').check()
@@ -739,7 +739,28 @@ describe("Case list", () => {
       cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
       cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
 
-      cy.get("#clear-filters-applied").click()
+      cy.get(".moj-filter-tags a").contains("Clear filters").click()
+
+      cy.get('*[class^="moj-filter-tags"]').should("not.exist")
+      cy.location().should((loc) => {
+        expect(loc.pathname).to.eq("/bichard")
+      })
+    })
+
+    it("Should clear filters when clicked on the link inside the filter panel", () => {
+      visitBasePathAndShowFilters()
+      cy.get("input[id=keywords]").type("Dummy")
+      cy.get('[id="triggers-type"]').check()
+      cy.get('[id="exceptions-type"]').check()
+      cy.get("button[id=search]").click()
+
+      cy.get('*[class^="moj-filter-tags"]').contains("Dummy")
+      cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
+      cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
+
+      cy.get("button[id=filter-button]").click()
+
+      cy.get(".moj-filter__heading-title a").contains("Clear filters").click()
 
       cy.get('*[class^="moj-filter-tags"]').should("not.exist")
       cy.location().should((loc) => {
@@ -777,9 +798,10 @@ describe("Case list", () => {
 
         cy.contains("Show filter")
         cy.contains("Hide filter").should("not.exist")
-        cy.contains("Filters applied")
-        cy.contains("Clear filters")
+        cy.get(".moj-filter-tags").contains("Filters applied")
+        cy.get(".moj-filter-tags").contains("Clear filters")
       })
+
       it("Should hide the applied filter section when the filter panel is shown", () => {
         visitBasePathAndShowFilters()
         inputAndSearch("keywords", "WAYNE Bruce")
@@ -789,7 +811,7 @@ describe("Case list", () => {
         cy.contains("Show filter").should("not.exist")
         cy.contains("Hide filter")
         cy.contains("Filters applied").should("not.exist")
-        cy.contains("Clear filters").should("not.exist")
+        cy.get(".moj-filter-tags").contains("Clear filters").should("not.exist")
         cy.contains("Applied filters")
       })
     })

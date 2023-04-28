@@ -6,6 +6,8 @@ import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
 import FilterChipRow from "./FilterChipRow"
 import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
+import { Link } from "govuk-react"
+import { createUseStyles } from "react-jss"
 
 interface Props {
   state: Filter
@@ -15,6 +17,17 @@ interface Props {
   placeholderMessage?: string
 }
 
+const useStyles = createUseStyles({
+  headerRow: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    "& div:nth-child(1)": {
+      flex: 1
+    }
+  }
+})
+
 const FilterChipSection: React.FC<Props> = ({
   state,
   dispatch,
@@ -22,15 +35,23 @@ const FilterChipSection: React.FC<Props> = ({
   marginTop,
   placeholderMessage
 }: Props) => {
+  const classes = useStyles()
   const dateRangeLabel = `${formatStringDateAsDisplayedDate(state.dateFrom.value)} - ${formatStringDateAsDisplayedDate(
     state.dateTo.value
   )}`
   return (
     <>
       <ConditionalRender isRendered={anyFilterChips(state, sectionState)}>
-        <h2
-          className={"govuk-heading-m govuk-!-margin-bottom-0" + (marginTop ? " govuk-!-margin-top-2" : "")}
-        >{`${sectionState} filters`}</h2>
+        <div className={classes.headerRow}>
+          <div>
+            <h2
+              className={"govuk-heading-m govuk-!-margin-bottom-0" + (marginTop ? " govuk-!-margin-top-2" : "")}
+            >{`${sectionState} filters`}</h2>
+          </div>
+          <div>
+            <Link href="/bichard">{"Clear filters"}</Link>
+          </div>
+        </div>
 
         <FilterChipRow
           chipLabel={state.defendantNameSearch.label!}
