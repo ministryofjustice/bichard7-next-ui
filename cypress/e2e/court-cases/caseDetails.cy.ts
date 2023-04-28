@@ -632,7 +632,7 @@ describe("Case details", () => {
     cy.get("h3").should("have.text", "Case information")
   })
 
-  it.only("should show contextual help for a trigger when the accordion button is clicked", () => {
+  it("should show contextual help for a trigger when the accordion button is clicked", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const trigger: TestTrigger = {
       triggerId: 0,
