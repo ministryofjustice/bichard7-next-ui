@@ -12,13 +12,14 @@ const useStyles = createUseStyles({
 
 interface PreviewProps {
   children: ReactNode
+  className?: string
 }
 
-export const Preview = ({ children }: PreviewProps) => {
+export const Preview = ({ children, className }: PreviewProps) => {
   const classes = useStyles()
   return (
     <>
-      <div className={classes.previewContainer}>{children}</div>
+      <div className={classes.previewContainer + (className ? ` ${className}` : "")}>{children}</div>
     </>
   )
 }

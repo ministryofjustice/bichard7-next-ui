@@ -73,6 +73,7 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
       <GridRow>
         <GridCol>
           <PreviewButton
+            className="triggers-help-preview"
             showPreview={!showHelpBox}
             previewLabel="More information"
             onClick={() => setShowHelpBox(!showHelpBox)}
@@ -82,7 +83,7 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
       <GridRow>
         <GridCol>
           <ConditionalRender isRendered={showHelpBox}>
-            <Preview>
+            <Preview className="triggers-help">
               <Heading as="h3" size="SMALL">
                 {"PNC screen to update"}
               </Heading>

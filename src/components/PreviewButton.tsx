@@ -22,13 +22,14 @@ interface PreviewButtonProps {
   showPreview: boolean
   onClick: Dispatch<SetStateAction<boolean>>
   previewLabel: string
+  className?: string
 }
 
-const PreviewButton = ({ showPreview, onClick, previewLabel }: PreviewButtonProps) => {
+const PreviewButton = ({ showPreview, onClick, previewLabel, className }: PreviewButtonProps) => {
   return (
     <button
       type="button"
-      className="govuk-accordion__show-all"
+      className={"govuk-accordion__show-all" + (className ? ` ${className}` : "")}
       style={{ marginBottom: "0px" }}
       onClick={() => {
         onClick(!showPreview)
