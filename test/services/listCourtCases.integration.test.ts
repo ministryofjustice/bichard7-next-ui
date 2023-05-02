@@ -2,6 +2,7 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
+import leftJoinAndSelectTriggersWithExclusionQuery from "services/queries/leftJoinAndSelectTriggersWithExclusionQuery"
 import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import deleteFromEntity from "../utils/deleteFromEntity"
@@ -20,14 +21,8 @@ import Note from "services/entities/Note"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import User from "services/entities/User"
 
-jest.mock(
-  "services/queries/courtCasesByOrganisationUnitQuery",
-  jest.fn(() =>
-    jest.fn((query) => {
-      return query
-    })
-  )
-)
+jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
+jest.mock("services/queries/leftJoinAndSelectTriggersWithExclusionQuery")
 
 jest.setTimeout(100000)
 describe("listCourtCases", () => {
@@ -46,6 +41,14 @@ describe("listCourtCases", () => {
     await deleteFromEntity(CourtCase)
     await deleteFromEntity(Trigger)
     await deleteFromEntity(Note)
+    jest.resetAllMocks()
+    jest.clearAllMocks()
+    ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
+      jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
+    )
+    ;(leftJoinAndSelectTriggersWithExclusionQuery as jest.Mock).mockImplementation(
+      jest.requireActual("services/queries/leftJoinAndSelectTriggersWithExclusionQuery").default
+    )
   })
 
   afterAll(async () => {
@@ -59,6 +62,20 @@ describe("listCourtCases", () => {
 
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), testUser)
+  })
+
+  it("should call leftJoinAndSelectTriggersQuery with the correct arguments", async () => {
+    const dummyCaseState = "Unresolved and resolved"
+    const dummyExcludedTriggers = ["TRPDUMMY"]
+    testUser.excludedTriggers = dummyExcludedTriggers
+    await listCourtCases(dataSource, { maxPageItems: "1", caseState: dummyCaseState }, testUser)
+
+    expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledTimes(1)
+    expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      dummyExcludedTriggers,
+      dummyCaseState
+    )
   })
 
   it("should return cases with notes correctly", async () => {
@@ -114,51 +131,6 @@ describe("listCourtCases", () => {
     expect(cases[0].notes).toHaveLength(1)
     expect(cases[1].notes).toHaveLength(3)
     expect(cases[2].notes).toHaveLength(3)
-  })
-
-  describe("excluded triggers", () => {
-    it("should return cases with triggers that are not excluded", async () => {
-      const excludedTriggerCodes = ["TRPR0001", "TRPR0003"]
-      const caseOneTriggers: { code: string; status: ResolutionStatus }[] = [
-        {
-          code: excludedTriggerCodes[0],
-          status: "Unresolved"
-        },
-        {
-          code: excludedTriggerCodes[1],
-          status: "Unresolved"
-        }
-      ]
-
-      const caseTwoTriggers: { code: string; status: ResolutionStatus }[] = [
-        {
-          code: excludedTriggerCodes[0],
-          status: "Unresolved"
-        },
-        {
-          code: "TRPR0002",
-          status: "Unresolved"
-        },
-        {
-          code: excludedTriggerCodes[1],
-          status: "Unresolved"
-        }
-      ]
-      await insertDummyCourtCasesWithTriggers([caseOneTriggers, caseTwoTriggers], "01")
-
-      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
-        visibleForces: ["01"],
-        visibleCourts: [],
-        excludedTriggers: excludedTriggerCodes
-      } as Partial<User> as User)
-      expect(isError(result)).toBe(false)
-      const { result: cases } = result as ListCourtCaseResult
-
-      expect(cases).toHaveLength(2)
-      expect(cases[0].triggers).toHaveLength(0)
-      expect(cases[1].triggers).toHaveLength(1)
-      expect(cases[1].triggers[0].triggerCode).toEqual("TRPR0002")
-    })
   })
 
   it("should return all the cases if they number less than or equal to the specified maxPageItems", async () => {
@@ -497,7 +469,7 @@ describe("listCourtCases", () => {
       ]
     ]
 
-    await insertDummyCourtCasesWithNotes(caseNotes, "01")
+    await insertDummyCourtCasesWithNotes(caseNotes, orgCode)
 
     const resultAsc = await listCourtCases(dataSource, { maxPageItems: "100", orderBy: "notes" }, testUser)
     expect(isError(resultAsc)).toBe(false)
