@@ -51,7 +51,9 @@ const listCourtCases = async (
   let query = repository.createQueryBuilder("courtCase")
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
   query
-    .leftJoinAndSelect("courtCase.triggers", "trigger")
+    .leftJoinAndSelect("courtCase.triggers", "trigger", "trigger.triggerCode NOT IN (:...triggerCodes)", {
+      triggerCodes: user.excludedTriggers ?? [""]
+    })
     .leftJoinAndSelect("courtCase.notes", "note")
     .skip(pageNumValidated * maxPageItemsValidated)
     .take(maxPageItemsValidated)

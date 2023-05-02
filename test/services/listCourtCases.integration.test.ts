@@ -116,6 +116,41 @@ describe("listCourtCases", () => {
     expect(cases[2].notes).toHaveLength(3)
   })
 
+  describe("excluded triggers", () => {
+    it("should return cases with triggers that are not excluded", async () => {
+      const caseOneTriggers: { code: string; status: ResolutionStatus }[] = [
+        {
+          code: "TRPR0001",
+          status: "Unresolved"
+        }
+      ]
+
+      const caseTwoTriggers: { code: string; status: ResolutionStatus }[] = [
+        {
+          code: "TRPR0001",
+          status: "Unresolved"
+        },
+        {
+          code: "TRPR0002",
+          status: "Unresolved"
+        }
+      ]
+      await insertDummyCourtCasesWithTriggers([caseOneTriggers, caseTwoTriggers], "01")
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
+        visibleForces: ["01"],
+        visibleCourts: [],
+        excludedTriggers: ["TRPR0001"]
+      } as Partial<User> as User)
+      expect(isError(result)).toBe(false)
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].triggers).toHaveLength(0)
+      expect(cases[1].triggers).toHaveLength(1)
+    })
+  })
+
   it("should return all the cases if they number less than or equal to the specified maxPageItems", async () => {
     await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
