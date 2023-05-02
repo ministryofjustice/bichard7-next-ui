@@ -6,6 +6,7 @@ const TemplateUser: Partial<User> = {
   username: `Bichard01`,
   visibleForces: [`01`],
   visibleCourts: [],
+  excludedTriggers: [],
   forenames: "Bichard Test User",
   password: "",
   surname: `01`,
