@@ -33,7 +33,7 @@ export const NotePreviewButton: React.FC<NotePreviewButtonProps> = (props: NoteP
   return (
     <>
       <ConditionalRender isRendered={props.numberOfNotes > 0}>
-        {props.numberOfNotes > 1 ? `${props.numberOfNotes} notes` : `${props.numberOfNotes} note`}
+        <div>{props.numberOfNotes > 1 ? `${props.numberOfNotes} notes` : `${props.numberOfNotes} note`}</div>
         <PreviewButton showPreview={props.previewState} onClick={props.setShowPreview} previewLabel="Preview" />
       </ConditionalRender>
     </>
