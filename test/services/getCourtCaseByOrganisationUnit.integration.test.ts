@@ -6,6 +6,8 @@ import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import User from "services/entities/User"
+import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
+import Trigger from "services/entities/Trigger"
 
 describe("getCourtCaseByOrganisationUnits", () => {
   let dataSource: DataSource
@@ -16,6 +18,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
   })
 
   beforeEach(async () => {
+    await deleteFromEntity(Trigger)
     await deleteFromEntity(CourtCase)
   })
 
@@ -48,6 +51,40 @@ describe("getCourtCaseByOrganisationUnits", () => {
 
     actualCourtCase = result as CourtCase
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
+  })
+
+  it("should exclude triggers that are excluded for the user", async () => {
+    const inputCourtCase = await getDummyCourtCase({
+      errorId: 0,
+      orgForPoliceFilter: orgCode.padEnd(6, " ")
+    })
+    await insertCourtCases(inputCourtCase)
+
+    const excludedTriggerCode = "TRPR0009"
+    const firstTrigger: TestTrigger = {
+      triggerId: 0,
+      status: "Unresolved",
+      triggerCode: "TRPR0002",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
+    const secondTrigger: TestTrigger = {
+      triggerId: 1,
+      status: "Unresolved",
+      triggerCode: "TRPR0009",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
+    await insertTriggers(0, [firstTrigger, secondTrigger])
+
+    const result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      excludedTriggers: [excludedTriggerCode]
+    } as Partial<User> as User)
+    expect(isError(result)).toBe(false)
+
+    const courtCase = result as CourtCase
+    expect(courtCase.triggers).toHaveLength(1)
+    expect(courtCase.triggers[0].triggerCode).toEqual("TRPR0002")
   })
 
   it("should return null if the court case doesn't exist", async () => {
