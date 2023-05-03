@@ -5,7 +5,7 @@ import { SelectQueryBuilder } from "typeorm"
 const getExcludedTriggers = (excludedTriggers?: string[]): string[] =>
   excludedTriggers && excludedTriggers.length > 0 ? excludedTriggers : [""]
 
-const leftJoinAndSelectTriggersWithExclusionQuery = (
+const leftJoinAndSelectTriggersQuery = (
   query: SelectQueryBuilder<CourtCase>,
   excludedTriggers?: string[],
   caseState?: CaseState
@@ -25,4 +25,4 @@ const leftJoinAndSelectTriggersWithExclusionQuery = (
   return query
 }
 
-export default leftJoinAndSelectTriggersWithExclusionQuery
+export default leftJoinAndSelectTriggersQuery

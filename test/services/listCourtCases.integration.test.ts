@@ -2,7 +2,7 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import leftJoinAndSelectTriggersWithExclusionQuery from "services/queries/leftJoinAndSelectTriggersWithExclusionQuery"
+import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import deleteFromEntity from "../utils/deleteFromEntity"
@@ -22,7 +22,7 @@ import { ResolutionStatus } from "types/ResolutionStatus"
 import User from "services/entities/User"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
-jest.mock("services/queries/leftJoinAndSelectTriggersWithExclusionQuery")
+jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
 
 jest.setTimeout(100000)
 describe("listCourtCases", () => {
@@ -46,8 +46,8 @@ describe("listCourtCases", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
-    ;(leftJoinAndSelectTriggersWithExclusionQuery as jest.Mock).mockImplementation(
-      jest.requireActual("services/queries/leftJoinAndSelectTriggersWithExclusionQuery").default
+    ;(leftJoinAndSelectTriggersQuery as jest.Mock).mockImplementation(
+      jest.requireActual("services/queries/leftJoinAndSelectTriggersQuery").default
     )
   })
 
@@ -70,8 +70,8 @@ describe("listCourtCases", () => {
     testUser.excludedTriggers = dummyExcludedTriggers
     await listCourtCases(dataSource, { maxPageItems: "1", caseState: dummyCaseState }, testUser)
 
-    expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledTimes(1)
-    expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledWith(
+    expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledTimes(1)
+    expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(
       expect.any(Object),
       dummyExcludedTriggers,
       dummyCaseState
@@ -1408,12 +1408,8 @@ describe("listCourtCases", () => {
       expect(cases[0].triggers).toHaveLength(1)
       expect(cases[1].triggers).toHaveLength(0)
 
-      expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledTimes(1)
-      expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledWith(
-        expect.any(Object),
-        undefined,
-        "Unresolved"
-      )
+      expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledTimes(1)
+      expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(expect.any(Object), undefined, "Unresolved")
     })
 
     it("should return 'unresolved' triggers when a case has resolutionTimestamp but there are unresolved triggers", async () => {

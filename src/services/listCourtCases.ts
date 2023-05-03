@@ -18,7 +18,7 @@ import CourtCase from "./entities/CourtCase"
 import Note from "./entities/Note"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
-import leftJoinAndSelectTriggersWithExclusionQuery from "./queries/leftJoinAndSelectTriggersWithExclusionQuery"
+import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -51,7 +51,7 @@ const listCourtCases = async (
     .where("error_id = courtCase.errorId")
   let query = repository.createQueryBuilder("courtCase")
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
-  leftJoinAndSelectTriggersWithExclusionQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
+  leftJoinAndSelectTriggersQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
     .leftJoinAndSelect("courtCase.notes", "note")
     .skip(pageNumValidated * maxPageItemsValidated)
     .take(maxPageItemsValidated)

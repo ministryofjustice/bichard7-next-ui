@@ -3,7 +3,7 @@ import CourtCase from "./entities/CourtCase"
 import PromiseResult from "../types/PromiseResult"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import User from "./entities/User"
-import leftJoinAndSelectTriggersWithExclusionQuery from "./queries/leftJoinAndSelectTriggersWithExclusionQuery"
+import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
 
 const getCourtCaseByOrganisationUnit = (
   dataSource: DataSource | EntityManager,
@@ -14,7 +14,7 @@ const getCourtCaseByOrganisationUnit = (
   let query = courtCaseRepository.createQueryBuilder("courtCase")
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
   query.andWhere({ errorId: courtCaseId })
-  leftJoinAndSelectTriggersWithExclusionQuery(query, user.excludedTriggers)
+  leftJoinAndSelectTriggersQuery(query, user.excludedTriggers)
     .leftJoinAndSelect("courtCase.notes", "note")
     .addOrderBy("note.createdAt", "ASC")
 

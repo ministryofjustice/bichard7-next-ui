@@ -7,9 +7,9 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import User from "services/entities/User"
 import Trigger from "services/entities/Trigger"
-import leftJoinAndSelectTriggersWithExclusionQuery from "services/queries/leftJoinAndSelectTriggersWithExclusionQuery"
+import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 
-jest.mock("services/queries/leftJoinAndSelectTriggersWithExclusionQuery")
+jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
 
 describe("getCourtCaseByOrganisationUnits", () => {
   let dataSource: DataSource
@@ -24,8 +24,8 @@ describe("getCourtCaseByOrganisationUnits", () => {
     await deleteFromEntity(CourtCase)
     jest.resetAllMocks()
     jest.clearAllMocks()
-    ;(leftJoinAndSelectTriggersWithExclusionQuery as jest.Mock).mockImplementation(
-      jest.requireActual("services/queries/leftJoinAndSelectTriggersWithExclusionQuery").default
+    ;(leftJoinAndSelectTriggersQuery as jest.Mock).mockImplementation(
+      jest.requireActual("services/queries/leftJoinAndSelectTriggersQuery").default
     )
   })
 
@@ -44,8 +44,8 @@ describe("getCourtCaseByOrganisationUnits", () => {
       excludedTriggers: dummyExcludedTriggers
     } as Partial<User> as User)
 
-    expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledTimes(1)
-    expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledWith(expect.any(Object), dummyExcludedTriggers)
+    expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledTimes(1)
+    expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(expect.any(Object), dummyExcludedTriggers)
   })
 
   it("should return court case details when record exists and is visible to the specified forces", async () => {
