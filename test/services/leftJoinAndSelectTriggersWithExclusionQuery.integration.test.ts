@@ -4,9 +4,10 @@ import leftJoinAndSelectTriggersWithExclusionQuery from "services/queries/leftJo
 import { DataSource, Repository, SelectQueryBuilder } from "typeorm"
 import { isError } from "types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
-import { insertDummyCourtCasesWithTriggers } from "../utils/insertCourtCases"
+import { insertCourtCasesWithFields, insertDummyCourtCasesWithTriggers } from "../utils/insertCourtCases"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import Trigger from "services/entities/Trigger"
+import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 
 describe("leftJoinAndSelectTriggersWithExclusionQuery", () => {
   let dataSource: DataSource
@@ -117,6 +118,153 @@ describe("leftJoinAndSelectTriggersWithExclusionQuery", () => {
       expect(cases[0].triggers).toHaveLength(0)
       expect(cases[1].triggers).toHaveLength(1)
       expect(cases[1].triggers[0].triggerCode).toEqual("TRPR0002")
+    })
+  })
+
+  describe("Select triggers by case state", () => {
+    it("should not include resolved triggers when caseState is set to 'Unresolved'", async () => {
+      const caseOneTriggers: { code: string; status: ResolutionStatus }[] = [
+        {
+          code: "TRPR0001",
+          status: "Unresolved"
+        }
+      ]
+
+      const caseTwoTriggers: { code: string; status: ResolutionStatus }[] = [
+        {
+          code: "TRPR0001",
+          status: "Resolved"
+        },
+        {
+          code: "TRPR0002",
+          status: "Resolved"
+        }
+      ]
+      await insertDummyCourtCasesWithTriggers([caseOneTriggers, caseTwoTriggers], dummyOrgCode)
+
+      const result = await (
+        leftJoinAndSelectTriggersWithExclusionQuery(query, [], "Unresolved") as SelectQueryBuilder<CourtCase>
+      )
+        .orderBy("courtCase.errorId")
+        .getMany()
+        .catch((error: Error) => error)
+
+      expect(isError(result)).toBe(false)
+      const cases = result as CourtCase[]
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].triggers).toHaveLength(1)
+      expect(cases[1].triggers).toHaveLength(0)
+    })
+
+    it("should only include resolved triggers when case state is 'Resolved'", async () => {
+      const resolvedTriggerCode = "TRPR0002"
+
+      const firstResolvedTrigger: TestTrigger = {
+        triggerId: 0,
+        status: "Resolved",
+        triggerCode: resolvedTriggerCode,
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      const secondResolvedTrigger: TestTrigger = {
+        triggerId: 1,
+        status: "Resolved",
+        triggerCode: resolvedTriggerCode,
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      const firstUnresolvedTrigger: TestTrigger = {
+        triggerId: 2,
+        status: "Unresolved",
+        triggerCode: "TRPR0009",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      const secondUnresolvedTrigger: TestTrigger = {
+        triggerId: 3,
+        status: "Unresolved",
+        triggerCode: "TRPR0009",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      await insertCourtCasesWithFields(Array.from({ length: 2 }, () => ({ orgForPoliceFilter: dummyOrgCode })))
+      await insertTriggers(0, [firstResolvedTrigger, firstUnresolvedTrigger])
+      await insertTriggers(1, [secondResolvedTrigger, secondUnresolvedTrigger])
+
+      const result = await (
+        leftJoinAndSelectTriggersWithExclusionQuery(query, [], "Resolved") as SelectQueryBuilder<CourtCase>
+      )
+        .orderBy("courtCase.errorId")
+        .getMany()
+        .catch((error: Error) => error)
+
+      expect(isError(result)).toBe(false)
+      const cases = result as CourtCase[]
+
+      cases.forEach((caseWithTrigger) => {
+        expect(caseWithTrigger.triggers).toHaveLength(1)
+        expect(caseWithTrigger.triggers[0].triggerCode).toEqual(resolvedTriggerCode)
+        expect(caseWithTrigger.triggers[0].status).toEqual("Resolved")
+      })
+    })
+
+    it("should include both resolved and unresolved triggers when case state is 'Unresolved and resolved'", async () => {
+      const triggers: { code: string; status: ResolutionStatus }[] = [
+        {
+          code: "TRPR0001",
+          status: "Unresolved"
+        },
+        {
+          code: "TRPR0002",
+          status: "Resolved"
+        }
+      ]
+      await insertDummyCourtCasesWithTriggers([triggers, triggers], dummyOrgCode)
+
+      const result = await (
+        leftJoinAndSelectTriggersWithExclusionQuery(
+          query,
+          [],
+          "Unresolved and resolved"
+        ) as SelectQueryBuilder<CourtCase>
+      )
+        .orderBy("courtCase.errorId")
+        .getMany()
+        .catch((error: Error) => error)
+
+      expect(isError(result)).toBe(false)
+      const cases = result as CourtCase[]
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].triggers).toHaveLength(2)
+      expect(cases[1].triggers).toHaveLength(2)
+    })
+
+    it("should include both resolved and unresolved triggers when case state is undefined", async () => {
+      const triggers: { code: string; status: ResolutionStatus }[] = [
+        {
+          code: "TRPR0001",
+          status: "Unresolved"
+        },
+        {
+          code: "TRPR0002",
+          status: "Resolved"
+        }
+      ]
+      await insertDummyCourtCasesWithTriggers([triggers, triggers], dummyOrgCode)
+
+      const result = await (leftJoinAndSelectTriggersWithExclusionQuery(query, []) as SelectQueryBuilder<CourtCase>)
+        .orderBy("courtCase.errorId")
+        .getMany()
+        .catch((error: Error) => error)
+
+      expect(isError(result)).toBe(false)
+      const cases = result as CourtCase[]
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].triggers).toHaveLength(2)
+      expect(cases[1].triggers).toHaveLength(2)
     })
   })
 })

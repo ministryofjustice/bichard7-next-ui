@@ -51,7 +51,7 @@ const listCourtCases = async (
     .where("error_id = courtCase.errorId")
   let query = repository.createQueryBuilder("courtCase")
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
-  leftJoinAndSelectTriggersWithExclusionQuery(query, user.excludedTriggers, caseState)
+  leftJoinAndSelectTriggersWithExclusionQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
     .leftJoinAndSelect("courtCase.notes", "note")
     .skip(pageNumValidated * maxPageItemsValidated)
     .take(maxPageItemsValidated)
@@ -162,10 +162,14 @@ const listCourtCases = async (
     }
   }
 
-  if (!caseState) {
-    query.andWhere({
-      resolutionTimestamp: IsNull()
-    })
+  if (!caseState || caseState === "Unresolved") {
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where({
+          resolutionTimestamp: IsNull()
+        }).orWhere("trigger.status = 1")
+      })
+    )
   } else if (caseState === "Resolved") {
     query.andWhere({
       resolutionTimestamp: Not(IsNull())

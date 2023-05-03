@@ -14,7 +14,9 @@ const leftJoinAndSelectTriggersWithExclusionQuery = (
     "courtCase.triggers",
     "trigger",
     "trigger.triggerCode NOT IN (:...excludedTriggers)" +
-      (caseState === "Unresolved and resolved" ? "" : " AND trigger.status = :triggerStatus"),
+      (caseState === undefined || caseState === "Unresolved and resolved"
+        ? ""
+        : " AND trigger.status = :triggerStatus"),
     {
       excludedTriggers: getExcludedTriggers(excludedTriggers),
       triggerStatus: caseState === "Resolved" ? "2" : "1"

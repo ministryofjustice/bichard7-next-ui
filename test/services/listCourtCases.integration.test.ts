@@ -1377,7 +1377,7 @@ describe("listCourtCases", () => {
       ])
     })
 
-    it("should not include resolved triggers when caseState is set to default 'unresolved'", async () => {
+    it("should only include 'Unresolved' triggers when caseState is not set", async () => {
       const caseOneTriggers: { code: string; status: ResolutionStatus }[] = [
         {
           code: "TRPR0001",
@@ -1407,83 +1407,47 @@ describe("listCourtCases", () => {
       expect(cases).toHaveLength(2)
       expect(cases[0].triggers).toHaveLength(1)
       expect(cases[1].triggers).toHaveLength(0)
+
+      expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledTimes(1)
+      expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledWith(
+        expect.any(Object),
+        undefined,
+        "Unresolved"
+      )
     })
 
-    it("should only include resolved triggers when case state is 'Resolved'", async () => {
-      const resolvedTriggerCode = "TRPR0002"
-
-      const firstResolvedTrigger: TestTrigger = {
-        triggerId: 0,
-        status: "Resolved",
-        triggerCode: resolvedTriggerCode,
+    it("should return 'unresolved' triggers when a case has resolutionTimestamp but there are unresolved triggers", async () => {
+      const unresolvedTriggerCode = "TRPR0001"
+      const unresolvedTrigger: TestTrigger = {
+        triggerId: 1,
+        status: "Unresolved",
+        triggerCode: unresolvedTriggerCode,
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
 
-      const secondResolvedTrigger: TestTrigger = {
+      const resolvedTrigger: TestTrigger = {
         triggerId: 1,
         status: "Resolved",
-        triggerCode: resolvedTriggerCode,
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
-      }
-
-      const firstUnresolvedTrigger: TestTrigger = {
-        triggerId: 2,
-        status: "Unresolved",
-        triggerCode: "TRPR0009",
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
-      }
-
-      const secondUnresolvedTrigger: TestTrigger = {
-        triggerId: 3,
-        status: "Unresolved",
-        triggerCode: "TRPR0009",
+        triggerCode: "TRPR0002",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
 
       await insertCourtCasesWithFields(
         Array.from({ length: 2 }, () => ({ orgForPoliceFilter: "01", resolutionTimestamp: new Date() }))
       )
-      await insertTriggers(0, [firstResolvedTrigger, firstUnresolvedTrigger])
-      await insertTriggers(1, [secondResolvedTrigger, secondUnresolvedTrigger])
+      await insertTriggers(0, [unresolvedTrigger, resolvedTrigger])
 
-      const result = await listCourtCases(dataSource, { maxPageItems: "100", caseState: "Resolved" }, {
+      const result = await listCourtCases(dataSource, { maxPageItems: "100", caseState: "Unresolved" }, {
         visibleForces: ["01"],
         visibleCourts: []
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases } = result as ListCourtCaseResult
 
-      expect(cases).toHaveLength(2)
-      cases.forEach((caseWithTrigger) => {
-        expect(caseWithTrigger.triggers).toHaveLength(1)
-        expect(caseWithTrigger.triggers[0].triggerCode).toEqual(resolvedTriggerCode)
-        expect(caseWithTrigger.triggers[0].status).toEqual("Resolved")
-      })
-    })
-
-    it("should include both resolved and unresolved triggers when case state is 'Unresolved and resolved'", async () => {
-      const triggers: { code: string; status: ResolutionStatus }[] = [
-        {
-          code: "TRPR0001",
-          status: "Unresolved"
-        },
-        {
-          code: "TRPR0002",
-          status: "Resolved"
-        }
-      ]
-      await insertDummyCourtCasesWithTriggers([triggers, triggers], "01")
-
-      const result = await listCourtCases(dataSource, { maxPageItems: "100", caseState: "Unresolved and resolved" }, {
-        visibleForces: ["01"],
-        visibleCourts: []
-      } as Partial<User> as User)
-      expect(isError(result)).toBe(false)
-      const { result: cases } = result as ListCourtCaseResult
-
-      expect(cases).toHaveLength(2)
-      expect(cases[0].triggers).toHaveLength(2)
-      expect(cases[1].triggers).toHaveLength(2)
+      expect(cases).toHaveLength(1)
+      expect(cases[0].triggers).toHaveLength(1)
+      expect(cases[0].triggers[0].status).toEqual("Unresolved")
+      expect(cases[0].triggers[0].triggerCode).toEqual(unresolvedTriggerCode)
     })
   })
 
