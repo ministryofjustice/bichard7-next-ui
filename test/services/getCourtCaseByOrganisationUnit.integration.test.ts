@@ -6,8 +6,10 @@ import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import User from "services/entities/User"
-import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 import Trigger from "services/entities/Trigger"
+import leftJoinAndSelectTriggersWithExclusionQuery from "services/queries/leftJoinAndSelectTriggersWithExclusionQuery"
+
+jest.mock("services/queries/leftJoinAndSelectTriggersWithExclusionQuery")
 
 describe("getCourtCaseByOrganisationUnits", () => {
   let dataSource: DataSource
@@ -20,12 +22,30 @@ describe("getCourtCaseByOrganisationUnits", () => {
   beforeEach(async () => {
     await deleteFromEntity(Trigger)
     await deleteFromEntity(CourtCase)
+    jest.resetAllMocks()
+    jest.clearAllMocks()
+    ;(leftJoinAndSelectTriggersWithExclusionQuery as jest.Mock).mockImplementation(
+      jest.requireActual("services/queries/leftJoinAndSelectTriggersWithExclusionQuery").default
+    )
   })
 
   afterAll(async () => {
     if (dataSource) {
       await dataSource.destroy()
     }
+  })
+
+  it("should call leftJoinAndSelectTriggersQuery with the correct arguments", async () => {
+    const dummyErrorId = 0
+    const dummyExcludedTriggers = ["TRPDUMMY"]
+    await getCourtCaseByOrganisationUnit(dataSource, dummyErrorId, {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      excludedTriggers: dummyExcludedTriggers
+    } as Partial<User> as User)
+
+    expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledTimes(1)
+    expect(leftJoinAndSelectTriggersWithExclusionQuery).toHaveBeenCalledWith(expect.any(Object), dummyExcludedTriggers)
   })
 
   it("should return court case details when record exists and is visible to the specified forces", async () => {
@@ -51,40 +71,6 @@ describe("getCourtCaseByOrganisationUnits", () => {
 
     actualCourtCase = result as CourtCase
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
-  })
-
-  it("should exclude triggers that are excluded for the user", async () => {
-    const inputCourtCase = await getDummyCourtCase({
-      errorId: 0,
-      orgForPoliceFilter: orgCode.padEnd(6, " ")
-    })
-    await insertCourtCases(inputCourtCase)
-
-    const excludedTriggerCode = "TRPR0009"
-    const firstTrigger: TestTrigger = {
-      triggerId: 0,
-      status: "Unresolved",
-      triggerCode: "TRPR0002",
-      createdAt: new Date("2022-07-09T10:22:34.000Z")
-    }
-    const secondTrigger: TestTrigger = {
-      triggerId: 1,
-      status: "Unresolved",
-      triggerCode: "TRPR0009",
-      createdAt: new Date("2022-07-09T10:22:34.000Z")
-    }
-    await insertTriggers(0, [firstTrigger, secondTrigger])
-
-    const result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
-      visibleForces: [orgCode],
-      visibleCourts: [],
-      excludedTriggers: [excludedTriggerCode]
-    } as Partial<User> as User)
-    expect(isError(result)).toBe(false)
-
-    const courtCase = result as CourtCase
-    expect(courtCase.triggers).toHaveLength(1)
-    expect(courtCase.triggers[0].triggerCode).toEqual("TRPR0002")
   })
 
   it("should return null if the court case doesn't exist", async () => {
