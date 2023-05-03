@@ -2,6 +2,7 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
+import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import listCourtCases from "../../src/services/listCourtCases"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import deleteFromEntity from "../utils/deleteFromEntity"
@@ -20,14 +21,8 @@ import Note from "services/entities/Note"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import User from "services/entities/User"
 
-jest.mock(
-  "services/queries/courtCasesByOrganisationUnitQuery",
-  jest.fn(() =>
-    jest.fn((query) => {
-      return query
-    })
-  )
-)
+jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
+jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
 
 jest.setTimeout(100000)
 describe("listCourtCases", () => {
@@ -46,6 +41,14 @@ describe("listCourtCases", () => {
     await deleteFromEntity(CourtCase)
     await deleteFromEntity(Trigger)
     await deleteFromEntity(Note)
+    jest.resetAllMocks()
+    jest.clearAllMocks()
+    ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
+      jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
+    )
+    ;(leftJoinAndSelectTriggersQuery as jest.Mock).mockImplementation(
+      jest.requireActual("services/queries/leftJoinAndSelectTriggersQuery").default
+    )
   })
 
   afterAll(async () => {
@@ -59,6 +62,20 @@ describe("listCourtCases", () => {
 
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), testUser)
+  })
+
+  it("should call leftJoinAndSelectTriggersQuery with the correct arguments", async () => {
+    const dummyCaseState = "Unresolved and resolved"
+    const dummyExcludedTriggers = ["TRPDUMMY"]
+    testUser.excludedTriggers = dummyExcludedTriggers
+    await listCourtCases(dataSource, { maxPageItems: "1", caseState: dummyCaseState }, testUser)
+
+    expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledTimes(1)
+    expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      dummyExcludedTriggers,
+      dummyCaseState
+    )
   })
 
   it("should return cases with notes correctly", async () => {
@@ -452,7 +469,7 @@ describe("listCourtCases", () => {
       ]
     ]
 
-    await insertDummyCourtCasesWithNotes(caseNotes, "01")
+    await insertDummyCourtCasesWithNotes(caseNotes, orgCode)
 
     const resultAsc = await listCourtCases(dataSource, { maxPageItems: "100", orderBy: "notes" }, testUser)
     expect(isError(resultAsc)).toBe(false)
@@ -1358,6 +1375,75 @@ describe("listCourtCases", () => {
         resolutionTimestamp,
         resolutionTimestamp
       ])
+    })
+
+    it("should only include 'Unresolved' triggers when caseState is not set", async () => {
+      const caseOneTriggers: { code: string; status: ResolutionStatus }[] = [
+        {
+          code: "TRPR0001",
+          status: "Unresolved"
+        }
+      ]
+
+      const caseTwoTriggers: { code: string; status: ResolutionStatus }[] = [
+        {
+          code: "TRPR0001",
+          status: "Resolved"
+        },
+        {
+          code: "TRPR0002",
+          status: "Resolved"
+        }
+      ]
+      await insertDummyCourtCasesWithTriggers([caseOneTriggers, caseTwoTriggers], "01")
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
+        visibleForces: ["01"],
+        visibleCourts: []
+      } as Partial<User> as User)
+      expect(isError(result)).toBe(false)
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].triggers).toHaveLength(1)
+      expect(cases[1].triggers).toHaveLength(0)
+
+      expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledTimes(1)
+      expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(expect.any(Object), undefined, "Unresolved")
+    })
+
+    it("should return 'unresolved' triggers when a case has resolutionTimestamp but there are unresolved triggers", async () => {
+      const unresolvedTriggerCode = "TRPR0001"
+      const unresolvedTrigger: TestTrigger = {
+        triggerId: 1,
+        status: "Unresolved",
+        triggerCode: unresolvedTriggerCode,
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      const resolvedTrigger: TestTrigger = {
+        triggerId: 1,
+        status: "Resolved",
+        triggerCode: "TRPR0002",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      await insertCourtCasesWithFields(
+        Array.from({ length: 2 }, () => ({ orgForPoliceFilter: "01", resolutionTimestamp: new Date() }))
+      )
+      await insertTriggers(0, [unresolvedTrigger, resolvedTrigger])
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100", caseState: "Unresolved" }, {
+        visibleForces: ["01"],
+        visibleCourts: []
+      } as Partial<User> as User)
+      expect(isError(result)).toBe(false)
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].triggers).toHaveLength(1)
+      expect(cases[0].triggers[0].status).toEqual("Unresolved")
+      expect(cases[0].triggers[0].triggerCode).toEqual(unresolvedTriggerCode)
     })
   })
 

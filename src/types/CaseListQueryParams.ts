@@ -12,7 +12,7 @@ export type SerializedCourtDateRange = {
   to?: string
 }
 
-export type CaseState = "Resolved" | "Unresolved and resolved" | undefined
+export type CaseState = "Resolved" | "Unresolved and resolved" | "Unresolved" | undefined
 
 export type Urgency = "Urgent" | "Non-urgent" | undefined
 

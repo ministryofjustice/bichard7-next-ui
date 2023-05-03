@@ -18,6 +18,7 @@ import CourtCase from "./entities/CourtCase"
 import Note from "./entities/Note"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
+import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -50,8 +51,7 @@ const listCourtCases = async (
     .where("error_id = courtCase.errorId")
   let query = repository.createQueryBuilder("courtCase")
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
-  query
-    .leftJoinAndSelect("courtCase.triggers", "trigger")
+  leftJoinAndSelectTriggersQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
     .leftJoinAndSelect("courtCase.notes", "note")
     .skip(pageNumValidated * maxPageItemsValidated)
     .take(maxPageItemsValidated)
@@ -162,10 +162,14 @@ const listCourtCases = async (
     }
   }
 
-  if (!caseState) {
-    query.andWhere({
-      resolutionTimestamp: IsNull()
-    })
+  if (!caseState || caseState === "Unresolved") {
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where({
+          resolutionTimestamp: IsNull()
+        }).orWhere("trigger.status = 1")
+      })
+    )
   } else if (caseState === "Resolved") {
     query.andWhere({
       resolutionTimestamp: Not(IsNull())
