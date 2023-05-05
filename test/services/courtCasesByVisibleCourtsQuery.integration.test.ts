@@ -28,8 +28,8 @@ describe("courtCasesByVisibleCourtsQuery", () => {
   })
 
   it("should return a list of cases when the court code is an exact match", async () => {
-    const orgCodes = ["3", "36", "36AAAA"]
-    await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+    const courtCodes = ["3", "36", "36AAAA"]
+    await insertCourtCasesWithFields(courtCodes.map((courtCode) => ({ courtCode: courtCode })))
 
     const result = await (courtCasesByVisibleCourtsQuery(query, ["36AAAA"]) as SelectQueryBuilder<CourtCase>)
       .getMany()
@@ -40,15 +40,15 @@ describe("courtCasesByVisibleCourtsQuery", () => {
 
     expect(cases).toHaveLength(1)
     expect(cases[0].errorId).toEqual(2)
-    expect(cases[0].orgForPoliceFilter).toEqual("36AAAA")
+    expect(cases[0].courtCode).toEqual("36AAAA")
   })
 
   it("should show cases for all courts visible to a user where the beginning of the code matches", async () => {
-    const orgCodesForVisibleCourts = ["36F   ", "36FP  ", "13GH  ", "13GHA "]
-    const otherOrgCodes = ["36", "13", "12LK"]
+    const courtCodesForVisibleCourts = ["36F   ", "36FP  ", "13GH  ", "13GHA "]
+    const otherCourtCodes = ["36", "13", "12LK"]
 
     await insertCourtCasesWithFields(
-      orgCodesForVisibleCourts.concat(otherOrgCodes).map((orgCode) => ({ orgForPoliceFilter: orgCode }))
+      courtCodesForVisibleCourts.concat(otherCourtCodes).map((courtCode) => ({ courtCode: courtCode }))
     )
 
     const result = await (courtCasesByVisibleCourtsQuery(query, ["36F", "13GH"]) as SelectQueryBuilder<CourtCase>)
@@ -60,13 +60,13 @@ describe("courtCasesByVisibleCourtsQuery", () => {
 
     expect(cases).toHaveLength(4)
 
-    expect(cases.map((c) => c.orgForPoliceFilter)).toEqual(expect.arrayContaining(orgCodesForVisibleCourts))
+    expect(cases.map((c) => c.courtCode)).toEqual(expect.arrayContaining(courtCodesForVisibleCourts))
     expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([0, 1, 2, 3]))
   })
 
   it("should show no cases to a user with no visible courts", async () => {
-    const orgCodesForNoVisibleCases = ["36", "36F", "36FP", "36FPA"]
-    await insertCourtCasesWithFields(orgCodesForNoVisibleCases.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+    const courtCodesForNoVisibleCases = ["36", "36F", "36FP", "36FPA"]
+    await insertCourtCasesWithFields(courtCodesForNoVisibleCases.map((courtCode) => ({ courtCode: courtCode })))
 
     const result = await (courtCasesByVisibleCourtsQuery(query, []) as SelectQueryBuilder<CourtCase>)
       .getMany()
@@ -79,8 +79,8 @@ describe("courtCasesByVisibleCourtsQuery", () => {
   })
 
   it("should update visible cases when its an update query", async () => {
-    const orgCodesForVisibleCourts = ["013", "013A", "013B", "014"]
-    await insertCourtCasesWithFields(orgCodesForVisibleCourts.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
+    const courtCodesForVisibleCourts = ["013", "013A", "013B", "014"]
+    await insertCourtCasesWithFields(courtCodesForVisibleCourts.map((courtCode) => ({ courtCode: courtCode })))
 
     const updateQuery = query.update(CourtCase)
 

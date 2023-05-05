@@ -65,7 +65,7 @@ describe("courtCasesByOrganisationUnitQuery", () => {
       visibleCourts: ["13BR", "14AT"]
     }
     await insertCourtCasesWithFields(
-      expectedOrgCodes.concat(otherOrgCodes).map((orgCode) => ({ orgForPoliceFilter: orgCode }))
+      expectedOrgCodes.concat(otherOrgCodes).map((orgCode) => ({ orgForPoliceFilter: orgCode, courtCode: orgCode }))
     )
 
     const result = await (courtCasesByOrganisationUnitQuery(query, user as User) as SelectQueryBuilder<CourtCase>)
@@ -76,6 +76,7 @@ describe("courtCasesByOrganisationUnitQuery", () => {
     const cases = result as CourtCase[]
     expect(cases).toHaveLength(4)
     expect(cases.map((c) => c.orgForPoliceFilter)).toEqual(expect.arrayContaining(expectedOrgCodes))
+    expect(cases.map((c) => c.courtCode)).toEqual(expect.arrayContaining(expectedOrgCodes))
   })
 
   it("should update visible cases when its an update query", async () => {
@@ -86,7 +87,7 @@ describe("courtCasesByOrganisationUnitQuery", () => {
       visibleCourts: ["13BR"]
     }
     await insertCourtCasesWithFields(
-      expectedOrgCodes.concat(otherOrgCodes).map((orgCode) => ({ orgForPoliceFilter: orgCode }))
+      expectedOrgCodes.concat(otherOrgCodes).map((orgCode) => ({ orgForPoliceFilter: orgCode, courtCode: orgCode }))
     )
 
     const updateQuery = query.update(CourtCase)
