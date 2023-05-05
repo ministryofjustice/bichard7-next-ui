@@ -13,7 +13,7 @@ const courtCasesByVisibleCourtsQuery = (
       }
 
       courts.forEach((code) => {
-        const condition = { orgForPoliceFilter: Like(`${code}%`) }
+        const condition = { courtCode: Like(`${code}%`) }
         qb.orWhere(condition)
       })
     })
