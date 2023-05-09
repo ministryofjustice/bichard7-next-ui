@@ -73,6 +73,40 @@ describe("getCourtCaseByOrganisationUnits", () => {
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
   })
 
+  // Old Bichard generates inclusion list from visibleForces and visibleCourts
+  // then checks these against both orgForPoliceFilter and courtCode
+  it("should return a case where the users' visibleForce matches the courtCode", async () => {
+    const inputCourtCase = await getDummyCourtCase({
+      courtCode: orgCode.padEnd(6, " "),
+      orgForPoliceFilter: null
+    })
+    await insertCourtCases(inputCourtCase)
+    const result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
+      visibleForces: [orgCode.substring(0, 2)],
+      visibleCourts: []
+    } as Partial<User> as User)
+    expect(isError(result)).toBe(false)
+
+    const actualCourtCase = result as CourtCase
+    expect(actualCourtCase).toStrictEqual(inputCourtCase)
+  })
+
+  it("should return a case where the users' visibleCourt matches the orgForPoliceFilter", async () => {
+    const inputCourtCase = await getDummyCourtCase({
+      courtCode: null,
+      orgForPoliceFilter: orgCode.padEnd(6, " ")
+    })
+    await insertCourtCases(inputCourtCase)
+    const result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
+      visibleForces: [],
+      visibleCourts: [orgCode.substring(0, 2)]
+    } as Partial<User> as User)
+    expect(isError(result)).toBe(false)
+
+    const actualCourtCase = result as CourtCase
+    expect(actualCourtCase).toStrictEqual(inputCourtCase)
+  })
+
   it("should return null if the court case doesn't exist", async () => {
     const result = await getCourtCaseByOrganisationUnit(dataSource, 0, {
       visibleForces: [orgCode],

@@ -51,10 +51,10 @@ describe("courtCasesByOrganisationUnitQuery", () => {
     courtCasesByOrganisationUnitQuery(query, user as User)
 
     expect(courtCasesByVisibleCourtsQuery).toHaveBeenCalledTimes(1)
-    expect(courtCasesByVisibleCourtsQuery).toHaveBeenCalledWith(expect.any(Object), [dummyCode])
+    expect(courtCasesByVisibleCourtsQuery).toHaveBeenCalledWith(expect.any(Object), [dummyCode, dummyCode])
 
     expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledTimes(1)
-    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [dummyCode])
+    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [dummyCode, dummyCode])
   })
 
   it("should select all visible cases when its a select query", async () => {
