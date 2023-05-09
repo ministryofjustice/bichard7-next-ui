@@ -29,7 +29,16 @@ const ReasonFilterOptions: React.FC<Props> = ({ reasons, dispatch }: Props) => {
             ></input>
             <label className="govuk-label govuk-checkboxes__label" htmlFor={`${reason.toLowerCase()}-type`}>
               {reason}{" "}
-              {reason === "Bails" && (
+            </label>
+            {reason === "Bails" && (
+              <a
+                className="govuk-link"
+                href="/"
+                onClick={(event) => {
+                  event.preventDefault()
+                  console.log("clicked!")
+                }}
+              >
                 <svg
                   fill={blue}
                   role="presentation"
@@ -41,11 +50,11 @@ const ReasonFilterOptions: React.FC<Props> = ({ reasons, dispatch }: Props) => {
                 >
                   <path
                     d="M13.7,18.5h-2.4v-2.4h2.4V18.5z M12.5,13.7c-0.7,0-1.2-0.5-1.2-1.2V7.7c0-0.7,0.5-1.2,1.2-1.2s1.2,0.5,1.2,1.2v4.8
-	C13.7,13.2,13.2,13.7,12.5,13.7z M12.5,0.5c-6.6,0-12,5.4-12,12s5.4,12,12,12s12-5.4,12-12S19.1,0.5,12.5,0.5z"
+    C13.7,13.2,13.2,13.7,12.5,13.7z M12.5,0.5c-6.6,0-12,5.4-12,12s5.4,12,12,12s12-5.4,12-12S19.1,0.5,12.5,0.5z"
                   />
                 </svg>
-              )}
-            </label>
+              </a>
+            )}
           </div>
         ))}
       </div>
