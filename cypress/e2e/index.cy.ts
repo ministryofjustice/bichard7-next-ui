@@ -37,7 +37,7 @@ describe("Case list", () => {
   const defaultUsers: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
-      visibleForces: [`0${idx}`],
+      visibleForces: [`00${idx}`],
       visibleCourts: [`${idx}C`],
       forenames: "Bichard Test User",
       surname: `0${idx}`,
@@ -47,7 +47,7 @@ describe("Case list", () => {
   })
   defaultUsers.push({
     username: `Bichard011111`,
-    visibleForces: [`011111`],
+    visibleForces: [`0011111`],
     forenames: "Bichard Test User",
     surname: `011111`,
     email: `bichard011111@example.com`,
@@ -55,7 +55,7 @@ describe("Case list", () => {
   })
   defaultUsers.push({
     username: `Supervisor`,
-    visibleForces: [`011111`],
+    visibleForces: [`0011111`],
     forenames: "Sup",
     surname: "User",
     email: "supervisor@example.com",
@@ -206,12 +206,26 @@ describe("Case list", () => {
 
     // Old Bichard generates an inclusion list from visible courts and visible forces
     // and checks all of the codes against both court codes and org police filter
-    it("should display a case that has court code that matches the users' visible force", () => {
-      const visibleForceCode = "02"
+    it("should display a case that has orgForPoliceFilter that matches the users' visible courts", () => {
+      const code = "02"
       const caseNotVisible = "NV01"
       cy.task("insertCourtCasesWithFields", [
-        { courtCode: visibleForceCode, ptiurn: "expected" },
+        { orgForPoliceFilter: code, ptiurn: "expected" },
         { orgForPoliceFilter: caseNotVisible, ptiurn: "NotExpected" }
+      ])
+
+      loginAndGoToUrl("bichard02@example.com")
+
+      confirmMultipleFieldsDisplayed(["expected"])
+      confirmMultipleFieldsNotDisplayed(["NotExpected"])
+    })
+
+    it("should display a case that has court code that matches the users' visible forces", () => {
+      const code = "002"
+      const caseNotVisible = "NV01"
+      cy.task("insertCourtCasesWithFields", [
+        { courtCode: code, ptiurn: "expected" },
+        { courtCode: caseNotVisible, ptiurn: "NotExpected" }
       ])
 
       loginAndGoToUrl("bichard02@example.com")

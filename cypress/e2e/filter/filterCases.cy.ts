@@ -43,7 +43,7 @@ describe("Case list", () => {
         users: [
           {
             username: "Bichard01",
-            visibleForces: ["011111"],
+            visibleForces: ["0011111"],
             forenames: "Bichard Test User",
             surname: "01",
             email: "bichard01@example.com",
