@@ -32,7 +32,7 @@ const BailInformationAccordion = () => {
         </svg>
       </a>
       <ConditionalRender isRendered={showBailInfo}>
-        <Preview>{"Lorem Ipslum"}</Preview>
+        <Preview className={"govuk-!-margin-top-2 govuk-!-margin-bottom-6"}>{"Lorem Ipslum"}</Preview>
       </ConditionalRender>
     </>
   )
