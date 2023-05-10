@@ -5,7 +5,7 @@ import ConditionalRender from "components/ConditionalRender"
 import { BailCodes } from "utils/bailCodes"
 
 const TriggersInformationAccordion = () => {
-  const [showBailInformation, setShowBailInformation] = useState(false)
+  const [showTriggersInformation, setShowTriggersInformation] = useState(false)
 
   const informationIcon = (
     <svg
@@ -31,12 +31,12 @@ C13.7,13.2,13.2,13.7,12.5,13.7z M12.5,0.5c-6.6,0-12,5.4-12,12s5.4,12,12,12s12-5.
         href="/"
         onClick={(event) => {
           event.preventDefault()
-          setShowBailInformation(!showBailInformation)
+          setShowTriggersInformation(!showTriggersInformation)
         }}
       >
         {informationIcon}
       </a>
-      <ConditionalRender isRendered={showBailInformation}>
+      <ConditionalRender isRendered={showTriggersInformation}>
         <Preview className={"govuk-!-margin-top-2 govuk-!-margin-bottom-6"}>
           <p>{"Included triggers:"}</p>
           {Object.entries(BailCodes).map(([bailCode, bailName]) => (
