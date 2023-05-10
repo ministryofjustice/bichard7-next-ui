@@ -14,6 +14,7 @@ const TriggersPreviewButton = ({ onClick }: TriggersPreviewButtonProps) => {
       viewBox="0 0 25 25"
       height="20"
       width="20"
+      style={{ position: "relative", top: "10px" }}
     >
       <path
         d="M13.7,18.5h-2.4v-2.4h2.4V18.5z M12.5,13.7c-0.7,0-1.2-0.5-1.2-1.2V7.7c0-0.7,0.5-1.2,1.2-1.2s1.2,0.5,1.2,1.2v4.8
