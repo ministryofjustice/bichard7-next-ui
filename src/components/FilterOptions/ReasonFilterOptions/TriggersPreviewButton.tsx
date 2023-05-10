@@ -5,7 +5,7 @@ interface TriggersPreviewButtonProps {
 }
 
 const TriggersPreviewButton = ({ onClick }: TriggersPreviewButtonProps) => {
-  const informationIcon = (
+  const warningIcon = (
     <svg
       fill={blue}
       role="presentation"
@@ -31,7 +31,7 @@ C13.7,13.2,13.2,13.7,12.5,13.7z M12.5,0.5c-6.6,0-12,5.4-12,12s5.4,12,12,12s12-5.
         onClick()
       }}
     >
-      {informationIcon}
+      {warningIcon}
     </a>
   )
 }
