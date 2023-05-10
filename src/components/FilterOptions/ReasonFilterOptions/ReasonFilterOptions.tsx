@@ -3,7 +3,7 @@ import { Reason } from "types/CaseListQueryParams"
 import type { FilterAction } from "types/CourtCaseFilter"
 import { reasonOptions } from "utils/reasonOptions"
 import ConditionalRender from "components/ConditionalRender"
-import TriggersAccordion from "./TriggersAccordion"
+import TriggersAccordion from "./TriggersAccordion/TriggersAccordion"
 
 interface Props {
   reasons?: Reason[]
