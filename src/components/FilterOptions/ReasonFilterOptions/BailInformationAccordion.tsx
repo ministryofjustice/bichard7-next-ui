@@ -2,6 +2,7 @@ import { Preview } from "components/Preview"
 import { blue } from "utils/colours"
 import { useState } from "react"
 import ConditionalRender from "components/ConditionalRender"
+import { BailCodes } from "utils/bailCodes"
 
 const BailInformationAccordion = () => {
   const [showBailInformation, setShowBailInformation] = useState(false)
@@ -36,7 +37,12 @@ C13.7,13.2,13.2,13.7,12.5,13.7z M12.5,0.5c-6.6,0-12,5.4-12,12s5.4,12,12,12s12-5.
         {informationIcon}
       </a>
       <ConditionalRender isRendered={showBailInformation}>
-        <Preview className={"govuk-!-margin-top-2 govuk-!-margin-bottom-6"}>{"Lorem Ipslum"}</Preview>
+        <Preview className={"govuk-!-margin-top-2 govuk-!-margin-bottom-6"}>
+          <p>{"Included triggers:"}</p>
+          {Object.entries(BailCodes).map(([bailCode, bailName]) => (
+            <li key={bailCode}>{`${bailCode} - ${bailName}`}</li>
+          ))}
+        </Preview>
       </ConditionalRender>
     </>
   )
