@@ -29,6 +29,21 @@ describe("courtCaseByVisibleForcesQuery", () => {
     }
   })
 
+  it("should remove a leading 0 from a the users visible force", async () => {
+    const expectedPtiurn = "0123"
+    await insertCourtCasesWithFields([{ orgForPoliceFilter: "93YZ", ptiurn: expectedPtiurn }])
+
+    const result = await (courtCasesByVisibleForcesQuery(query, ["093"]) as SelectQueryBuilder<CourtCase>)
+      .getMany()
+      .catch((error: Error) => error)
+
+    expect(isError(result)).toBe(false)
+    const cases = result as CourtCase[]
+
+    expect(cases).toHaveLength(1)
+    expect(cases[0].ptiurn).toEqual(expectedPtiurn)
+  })
+
   it("should return a list of cases when the force code length is 1", async () => {
     const orgCodesForceCodeLen1 = [
       "3",

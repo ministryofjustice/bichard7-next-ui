@@ -1,6 +1,9 @@
 import CourtCase from "../entities/CourtCase"
 import { Brackets, In, Like, SelectQueryBuilder, UpdateQueryBuilder, WhereExpressionBuilder } from "typeorm"
 
+const removeLeadingZeroes = (code: string): string =>
+  code.length > 2 && code.startsWith("0") ? code.substring(1) : code
+
 const courtCasesByVisibleForcesQuery = (
   query: SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> | WhereExpressionBuilder,
   forces: string[]
@@ -13,6 +16,7 @@ const courtCasesByVisibleForcesQuery = (
       }
 
       forces.forEach((force) => {
+        force = removeLeadingZeroes(force)
         if (force.length === 1) {
           const condition = { orgForPoliceFilter: Like(`${force}__%`) }
           qb.where(condition)

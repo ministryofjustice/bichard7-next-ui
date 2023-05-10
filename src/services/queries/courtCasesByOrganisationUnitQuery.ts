@@ -9,10 +9,11 @@ const courtCasesByOrganisationUnitQuery = (
   user: User
 ): SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> => {
   const { visibleForces, visibleCourts } = user
+  const inclusionList = visibleCourts.concat(visibleForces)
   query.where(
     new Brackets((qb) => {
-      courtCasesByVisibleCourtsQuery(qb, visibleCourts)
-      courtCasesByVisibleForcesQuery(qb, visibleForces)
+      courtCasesByVisibleCourtsQuery(qb, inclusionList)
+      courtCasesByVisibleForcesQuery(qb, inclusionList)
     })
   )
   return query

@@ -2,7 +2,6 @@ import { Column, Entity, PrimaryColumn } from "typeorm"
 import type GroupName from "types/GroupName"
 import type { KeyValuePair } from "types/KeyValuePair"
 import BaseEntity from "./BaseEntity"
-import delimitedPrefixedString from "./transformers/delimitedPrefixedString"
 import featureFlagTransformer from "./transformers/featureFlagTransformer"
 import delimitedString from "./transformers/delimitedString"
 
@@ -23,7 +22,7 @@ export default class User extends BaseEntity {
   @Column()
   surname?: string
 
-  @Column({ name: "visible_forces", transformer: delimitedPrefixedString(",", "0"), type: "varchar" })
+  @Column({ name: "visible_forces", transformer: delimitedString(","), type: "varchar" })
   visibleForces!: string[]
 
   @Column({ name: "visible_courts", transformer: delimitedString(","), type: "varchar" })
