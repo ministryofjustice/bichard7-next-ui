@@ -8,6 +8,7 @@ const TriggersPreviewButton = ({ onClick }: TriggersPreviewButtonProps) => {
   const warningIcon = (
     <svg
       fill={blue}
+      id="warningIcon"
       role="presentation"
       focusable="true"
       xmlns="http://www.w3.org/2000/svg"
