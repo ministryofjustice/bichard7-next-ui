@@ -3,7 +3,7 @@ import { Reason } from "types/CaseListQueryParams"
 import type { FilterAction } from "types/CourtCaseFilter"
 import { reasonOptions } from "utils/reasonOptions"
 import ConditionalRender from "components/ConditionalRender"
-import TriggersInformationAccordion from "./TriggersInformationAccordion"
+import TriggersAccordion from "./TriggersAccordion"
 
 interface Props {
   reasons?: Reason[]
@@ -32,7 +32,7 @@ const ReasonFilterOptions: React.FC<Props> = ({ reasons, dispatch }: Props) => {
               {reason}{" "}
             </label>
             <ConditionalRender isRendered={reason === "Bails"}>
-              <TriggersInformationAccordion />
+              <TriggersAccordion />
             </ConditionalRender>
           </div>
         ))}

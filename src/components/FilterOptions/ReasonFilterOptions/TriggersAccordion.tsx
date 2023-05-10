@@ -3,7 +3,7 @@ import ConditionalRender from "components/ConditionalRender"
 import TriggersPreviewButton from "./TriggersPreviewButton"
 import TriggersPreview from "./TriggersPreview"
 
-const TriggersInformationAccordion = () => {
+const TriggersAccordion = () => {
   const [showTriggersInformation, setShowTriggersInformation] = useState(false)
 
   return (
@@ -16,4 +16,4 @@ const TriggersInformationAccordion = () => {
   )
 }
 
-export default TriggersInformationAccordion
+export default TriggersAccordion
