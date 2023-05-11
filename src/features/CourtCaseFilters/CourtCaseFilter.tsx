@@ -1,5 +1,5 @@
 import CaseStateFilterOptions from "components/FilterOptions/CaseStateFilterOptions"
-import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions"
+import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions/ReasonFilterOptions"
 import UrgencyFilterOptions from "components/FilterOptions/UrgencyFilterOptions"
 import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import { LabelText } from "govuk-react"
