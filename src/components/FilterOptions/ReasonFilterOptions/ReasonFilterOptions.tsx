@@ -29,7 +29,7 @@ const ReasonFilterOptions: React.FC<Props> = ({ reasons, dispatch }: Props) => {
               }}
             ></input>
             <label className="govuk-label govuk-checkboxes__label" htmlFor={`${reason.toLowerCase()}-type`}>
-              {reason}{" "}
+              {reason}
             </label>
             <ConditionalRender isRendered={reason === "Bails"}>
               <TriggersAccordion />
