@@ -18,6 +18,7 @@ import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { createUseStyles } from "react-jss"
 import type NavigationHandler from "types/NavigationHandler"
 import type CaseDetailsTab from "types/CaseDetailsTab"
+import { Notes } from "./Tabs/Panels/Notes/Notes"
 
 interface Props {
   courtCase: CourtCase
@@ -109,35 +110,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Notes"}>
-            <CourtCaseDetailsPanel heading={"Notes"}>
-              <ConditionalRender isRendered={(courtCase?.notes?.length ?? 0) > 0}>
-                <Table
-                  head={
-                    <Table.Row>
-                      <Table.CellHeader>{"User"}</Table.CellHeader>
-                      <Table.CellHeader>{"Time"}</Table.CellHeader>
-                      <Table.CellHeader>{"Note"}</Table.CellHeader>
-                    </Table.Row>
-                  }
-                >
-                  {courtCase.notes.map((note, index) => (
-                    <Table.Row key={index}>
-                      <Table.Cell>{note.userId}</Table.Cell>
-                      <Table.Cell>
-                        <DateTime date={note.createdAt} />
-                      </Table.Cell>
-                      <Table.Cell>{note.noteText}</Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table>
-              </ConditionalRender>
-              <ConditionalRender isRendered={(courtCase?.notes?.length ?? 0) === 0}>
-                <Paragraph>{"Case has no notes."}</Paragraph>
-              </ConditionalRender>
-              <ConditionalRender isRendered={!lockedByAnotherUser}>
-                <LinkButton href="notes/add">{"Add Note"}</LinkButton>
-              </ConditionalRender>
-            </CourtCaseDetailsPanel>
+            <Notes notes={courtCase.notes} lockedByAnotherUser={lockedByAnotherUser} />
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "PNC errors"}>
