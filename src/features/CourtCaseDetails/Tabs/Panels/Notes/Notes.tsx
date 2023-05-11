@@ -36,7 +36,7 @@ export const Notes = ({ notes, lockedByAnotherUser }: NotesProps) => {
           ))}
         </Table>
       </ConditionalRender>
-      <ConditionalRender isRendered={hasNotes}>
+      <ConditionalRender isRendered={!hasNotes}>
         <Paragraph>{"Case has no notes."}</Paragraph>
       </ConditionalRender>
       <ConditionalRender isRendered={!lockedByAnotherUser}>
