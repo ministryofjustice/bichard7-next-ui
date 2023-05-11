@@ -30,6 +30,10 @@ import { validateQueryParams } from "utils/validators/validateQueryParams"
 import type { KeyValuePair } from "types/KeyValuePair"
 import { formatFormInputDateString } from "utils/formattedDate"
 
+const isParsedUrlQueryEmpty = (query: ParsedUrlQuery): boolean => {
+  return Object.values(query).every((value) => value === "")
+}
+
 interface Props {
   user: User
   courtCases: CourtCase[]
@@ -57,6 +61,22 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
+    if (isParsedUrlQueryEmpty(query)) {
+      const filterParamsFromCookies = req.headers.cookie?.replace(
+        /(?:(?:^|.*;\s*)filterParams\s*\=\s*([^;]*).*$)|^.*$/,
+        "$1"
+      )
+      if (filterParamsFromCookies) {
+        const redirectUrl = `/?${new URLSearchParams(filterParamsFromCookies)}`
+
+        return {
+          redirect: {
+            destination: redirectUrl,
+            permanent: false
+          }
+        }
+      }
+    }
     // prettier-ignore
     const {
       orderBy, page, type, keywords, courtName, reasonCode, ptiurn, maxPageItems, order,

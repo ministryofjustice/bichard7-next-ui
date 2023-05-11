@@ -6,6 +6,7 @@ import { Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
 import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
+import Cookies from "js-cookie"
 
 interface Props {
   filters: {
@@ -143,7 +144,9 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
           </ConditionalRender>
           <li>
             <p className="moj-filter__heading-action" id="clear-filters-applied">
-              <a className="govuk-link govuk-link--no-visited-state" href="/bichard">
+              <a className="govuk-link govuk-link--no-visited-state" href="/bichard" onClick={()=>{
+                Cookies.remove('filterParams');
+              }}>
                 {"Clear filters"}
               </a>
             </p>

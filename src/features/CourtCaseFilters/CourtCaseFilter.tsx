@@ -13,6 +13,7 @@ import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilt
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 import type { KeyValuePair } from "types/KeyValuePair"
+import Cookies from "js-cookie"
 
 interface Props {
   defendantName: string | null
@@ -189,7 +190,16 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
         </div>
         <div className="moj-filter__options">
-          <button className="govuk-button" data-module="govuk-button" id="search">
+          <button
+            className="govuk-button"
+            data-module="govuk-button"
+            id="search"
+            onClick={() => {
+              const keywords = (document.getElementById("keywords") as HTMLInputElement).value
+              const courtName = (document.getElementById("court-name") as HTMLInputElement).value
+              Cookies.set("filterParams", `keywords=${keywords}&courtName=${courtName}`)
+            }}
+          >
             {"Apply filters"}
           </button>
           <div className={classes["govuk-form-group"]}>
