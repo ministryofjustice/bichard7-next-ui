@@ -14,13 +14,11 @@ const TriggersPreview = () => {
   return (
     <Preview className={"govuk-!-margin-top-2 govuk-!-margin-bottom-6"}>
       <p>{"Included triggers:"}</p>
-            <ul>
+      <ul>
         {Object.entries(BailCodes).map(([bailCode, bailName]) => (
           <BailCodeLine key={bailCode} bailCode={bailCode} bailName={bailName} />
         ))}
       </ul>
-        <BailCodeLine key={bailCode} bailCode={bailCode} bailName={bailName} />
-      ))}
     </Preview>
   )
 }
