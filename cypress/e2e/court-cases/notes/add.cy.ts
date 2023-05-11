@@ -49,7 +49,6 @@ describe("Case details", () => {
     insertTriggers()
 
     loginAndGoToNotes()
-    cy.get("button").contains("Add Note").click()
 
     cy.injectAxe()
 
@@ -63,7 +62,6 @@ describe("Case details", () => {
     insertTriggers()
 
     loginAndGoToNotes()
-    cy.get("button").contains("Add Note").click()
     cy.get("H1").should("have.text", "Add Note")
     cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
 
@@ -79,7 +77,6 @@ describe("Case details", () => {
 
   it("should be able to add a long note", () => {
     insertTriggers()
-    loginAndGoToNotes()
     cy.get("button").contains("Add Note").click()
     cy.get("H1").should("have.text", "Add Note")
     cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
@@ -97,7 +94,6 @@ describe("Case details", () => {
   it("should show error message when note text is empty", () => {
     insertTriggers()
     loginAndGoToNotes()
-    cy.get("button").contains("Add Note").click()
     cy.get("H1").should("have.text", "Add Note")
     cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
 
@@ -111,7 +107,6 @@ describe("Case details", () => {
   it("Adding an empty note doesn't add a note, when the case is visible to the user and not locked by another user", () => {
     insertTriggers()
     loginAndGoToNotes()
-    cy.get("button").contains("Add Note").click()
     cy.get("H1").should("have.text", "Add Note")
 
     cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0").click()
