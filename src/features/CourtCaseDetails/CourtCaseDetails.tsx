@@ -109,7 +109,35 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Notes"}>
-            <CourtCaseDetailsPanel heading={"Notes"}>{""}</CourtCaseDetailsPanel>
+            <CourtCaseDetailsPanel heading={"Notes"}>
+              <ConditionalRender isRendered={(courtCase?.notes?.length ?? 0) > 0}>
+                <Table
+                  head={
+                    <Table.Row>
+                      <Table.CellHeader>{"User"}</Table.CellHeader>
+                      <Table.CellHeader>{"Time"}</Table.CellHeader>
+                      <Table.CellHeader>{"Note"}</Table.CellHeader>
+                    </Table.Row>
+                  }
+                >
+                  {courtCase.notes.map((note, index) => (
+                    <Table.Row key={index}>
+                      <Table.Cell>{note.userId}</Table.Cell>
+                      <Table.Cell>
+                        <DateTime date={note.createdAt} />
+                      </Table.Cell>
+                      <Table.Cell>{note.noteText}</Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table>
+              </ConditionalRender>
+              <ConditionalRender isRendered={(courtCase?.notes?.length ?? 0) === 0}>
+                <Paragraph>{"Case has no notes."}</Paragraph>
+              </ConditionalRender>
+              <ConditionalRender isRendered={!lockedByAnotherUser}>
+                <LinkButton href="notes/add">{"Add Note"}</LinkButton>
+              </ConditionalRender>
+            </CourtCaseDetailsPanel>
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "PNC errors"}>
@@ -177,27 +205,6 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </ConditionalRender>
           <ConditionalRender isRendered={(courtCase?.triggers?.length ?? 0) === 0}>
             <Paragraph>{"Case has no triggers."}</Paragraph>
-          </ConditionalRender>
-          <Heading as="h2" size="MEDIUM">
-            {"Notes"}
-          </Heading>
-          <ConditionalRender isRendered={(courtCase?.notes?.length ?? 0) > 0}>
-            <Table>
-              {courtCase.notes.map((note, index) => (
-                <Table.Row key={index}>
-                  <Table.Cell>
-                    <DateTime date={note.createdAt} />
-                  </Table.Cell>
-                  <Table.Cell>{note.noteText}</Table.Cell>
-                </Table.Row>
-              ))}
-            </Table>
-          </ConditionalRender>
-          <ConditionalRender isRendered={(courtCase?.notes?.length ?? 0) === 0}>
-            <Paragraph>{"Case has no notes."}</Paragraph>
-          </ConditionalRender>
-          <ConditionalRender isRendered={!lockedByAnotherUser}>
-            <LinkButton href="notes/add">{"Add Note"}</LinkButton>
           </ConditionalRender>
           <ConditionalRender isRendered={!lockedByAnotherUser}>
             <LinkButton href="reallocate">{"Reallocate Case"}</LinkButton>
