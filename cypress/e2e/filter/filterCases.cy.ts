@@ -10,6 +10,7 @@ import {
   filterByCaseAge
 } from "../../support/helpers"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
+import { BailCodes } from "../../../src/utils/bailCodes"
 
 function visitBasePathAndShowFilters() {
   cy.visit("/bichard")
@@ -95,13 +96,17 @@ describe("Case list", () => {
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
-    it("Should expand and collapse reason filter navigation", () => {
+    it("Should expand and collapse reason filter navigation & show the trigger info", () => {
       visitBasePathAndShowFilters()
 
       cy.contains("Exceptions")
 
       collapseFilterSection("Reason", "#exceptions-type")
       expandFilterSection("Reason", "#exceptions-type")
+
+      cy.get("#warningIcon").click()
+      cy.contains("Included triggers")
+      Object.entries(BailCodes).map(([bailCode, bailName]) => cy.contains(`${bailCode} - ${bailName}`))
     })
 
     it("Should expand and collapse court date filter navigation with the ratio conditional sections collapsed after the second expand", () => {

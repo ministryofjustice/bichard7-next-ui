@@ -2,6 +2,8 @@ import type { Dispatch } from "react"
 import { Reason } from "types/CaseListQueryParams"
 import type { FilterAction } from "types/CourtCaseFilter"
 import { reasonOptions } from "utils/reasonOptions"
+import ConditionalRender from "components/ConditionalRender"
+import TriggersAccordion from "./TriggersAccordion/TriggersAccordion"
 
 interface Props {
   reasons?: Reason[]
@@ -29,6 +31,9 @@ const ReasonFilterOptions: React.FC<Props> = ({ reasons, dispatch }: Props) => {
             <label className="govuk-label govuk-checkboxes__label" htmlFor={`${reason.toLowerCase()}-type`}>
               {reason}
             </label>
+            <ConditionalRender isRendered={reason === "Bails"}>
+              <TriggersAccordion />
+            </ConditionalRender>
           </div>
         ))}
       </div>
