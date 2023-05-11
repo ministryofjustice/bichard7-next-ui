@@ -14,7 +14,7 @@ const clickTab = (tab: CaseDetailsTab) => {
   cy.get("H3").contains(tab)
 }
 
-describe("Case details", () => {
+describe("Court case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
