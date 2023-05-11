@@ -42,6 +42,7 @@ describe("Case details", () => {
 
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
+      cy.contains("Notes").click()
       cy.get("button").contains("Add Note").click()
 
       cy.injectAxe()
@@ -67,6 +68,7 @@ describe("Case details", () => {
       cy.login("bichard01@example.com", "password")
 
       cy.visit("/bichard/court-cases/0")
+      cy.contains("Notes").click()
       cy.get("button").contains("Add Note").click()
       cy.get("H1").should("have.text", "Add Note")
       cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
@@ -75,9 +77,10 @@ describe("Case details", () => {
       cy.get("button").contains("Add").click()
 
       cy.get("H1").should("have.text", "Case details")
+      cy.contains("Notes").click()
       const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-      cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
-      cy.get("table").eq(-1).find("tr").eq(0).find("td").last().should("have.text", "Dummy note")
+      cy.contains(dateTimeRegex)
+      cy.contains("Dummy note")
     })
 
     it("should be able to add a long note", () => {
@@ -94,6 +97,7 @@ describe("Case details", () => {
       cy.login("bichard01@example.com", "password")
 
       cy.visit("/bichard/court-cases/0")
+      cy.contains("Notes").click()
       cy.get("button").contains("Add Note").click()
       cy.get("H1").should("have.text", "Add Note")
       cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
@@ -102,13 +106,10 @@ describe("Case details", () => {
       cy.get("button").contains("Add").click()
 
       cy.get("H1").should("have.text", "Case details")
-      const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-      cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
-      cy.get("table").eq(-1).find("tr").eq(0).find("td").last().should("have.text", "A ".repeat(500))
-      cy.get("table").eq(-1).find("tr").eq(1).find("td").first().contains(dateTimeRegex)
-      cy.get("table").eq(-1).find("tr").eq(1).find("td").last().should("have.text", "B ".repeat(500))
-      cy.get("table").eq(-1).find("tr").eq(2).find("td").first().contains(dateTimeRegex)
-      cy.get("table").eq(-1).find("tr").eq(2).find("td").last().should("have.text", "C ".repeat(100))
+      cy.contains("Notes").click()
+      cy.contains("A ".repeat(500))
+      cy.contains("B ".repeat(500))
+      cy.contains("C ".repeat(100))
     })
 
     it("should show error message when note text is empty", () => {
@@ -125,6 +126,7 @@ describe("Case details", () => {
       cy.login("bichard01@example.com", "password")
 
       cy.visit("/bichard/court-cases/0")
+      cy.contains("Notes").click()
       cy.get("button").contains("Add Note").click()
       cy.get("H1").should("have.text", "Add Note")
       cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
@@ -150,6 +152,7 @@ describe("Case details", () => {
       cy.login("bichard01@example.com", "password")
 
       cy.visit("/bichard/court-cases/0")
+      cy.contains("Notes").click()
       cy.get("button").contains("Add Note").click()
       cy.get("H1").should("have.text", "Add Note")
 
@@ -157,6 +160,7 @@ describe("Case details", () => {
 
       cy.url().should("match", /.*\/court-cases\/0/)
       cy.get("H1").should("have.text", "Case details")
+      cy.contains("Notes").click()
       cy.findByText("Case has no notes.").should("exist")
     })
 
