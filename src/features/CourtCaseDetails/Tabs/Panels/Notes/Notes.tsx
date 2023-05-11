@@ -11,9 +11,11 @@ interface NotesProps {
 }
 
 export const Notes = ({ notes, lockedByAnotherUser }: NotesProps) => {
+  const hasNotes = (notes.length ?? 0) > 0
+
   return (
     <CourtCaseDetailsPanel heading={"Notes"}>
-      <ConditionalRender isRendered={(notes.length ?? 0) > 0}>
+      <ConditionalRender isRendered={hasNotes}>
         <Table
           head={
             <Table.Row>
@@ -34,7 +36,7 @@ export const Notes = ({ notes, lockedByAnotherUser }: NotesProps) => {
           ))}
         </Table>
       </ConditionalRender>
-      <ConditionalRender isRendered={(notes.length ?? 0) === 0}>
+      <ConditionalRender isRendered={hasNotes}>
         <Paragraph>{"Case has no notes."}</Paragraph>
       </ConditionalRender>
       <ConditionalRender isRendered={!lockedByAnotherUser}>
