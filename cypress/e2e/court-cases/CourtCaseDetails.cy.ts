@@ -112,7 +112,8 @@ describe("Court case details", () => {
     cy.get("table").eq(-1).find("tr").eq(1).find("td").eq(4).should("include.text", "09/07/2022")
 
     // Notes
-    cy.get("H2").contains("Notes")
+    cy.contains("Notes").click()
+    cy.get("H3").contains("Notes")
     cy.get("p").contains("Case has no notes.")
 
     // Urgency
@@ -392,15 +393,10 @@ describe("Court case details", () => {
     })
 
     cy.get("H1").should("have.text", "Case details")
+    cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-    cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
-    cy.get("table")
-      .eq(-1)
-      .find("tr")
-      .eq(0)
-      .find("td")
-      .last()
-      .should("have.text", "Bichard02: Portal Action: Resubmitted Message.")
+    cy.contains(dateTimeRegex)
+    cy.contains("Bichard02: Portal Action: Resubmitted Message.")
   })
 
   it("should resubmit a case when updates are made and the resubmit button is clicked", () => {
@@ -425,22 +421,11 @@ describe("Court case details", () => {
     })
 
     cy.get("H1").should("have.text", "Case details")
+    cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-    cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
-    cy.get("table")
-      .eq(-1)
-      .find("tr")
-      .eq(0)
-      .find("td")
-      .last()
-      .should("have.text", "Bichard02: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-09-26")
-    cy.get("table")
-      .eq(-1)
-      .find("tr")
-      .eq(1)
-      .find("td")
-      .last()
-      .should("have.text", "Bichard02: Portal Action: Resubmitted Message.")
+    cy.contains(dateTimeRegex)
+    cy.contains("Bichard02: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-09-26")
+    cy.contains("Bichard02: Portal Action: Resubmitted Message.")
   })
 
   it("should show triggers tab by default when navigating to court case details page", () => {
