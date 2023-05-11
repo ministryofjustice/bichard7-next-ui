@@ -6,7 +6,7 @@ import hashedPassword from "../../../fixtures/hashedPassword"
 import { loginAndGoToUrl } from "../../index.cy"
 
 const loginAndGoToNotes = () => {
-  loginAndGoToUrl("/bichard/court-cases/0")
+  loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
   cy.contains("Notes").click()
 }
 
@@ -59,7 +59,7 @@ describe("Case details", () => {
     cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
   })
 
-  it("should be able to add a note when case is visible to the user and not locked by another user", () => {
+  it.only("should be able to add a note when case is visible to the user and not locked by another user", () => {
     insertTriggers()
 
     loginAndGoToNotes()
