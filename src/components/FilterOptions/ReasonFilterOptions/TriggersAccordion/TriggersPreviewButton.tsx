@@ -26,6 +26,7 @@ C13.7,13.2,13.2,13.7,12.5,13.7z M12.5,0.5c-6.6,0-12,5.4-12,12s5.4,12,12,12s12-5.
 
   return (
     <a
+      aria-label="Read more about triggers"
       className="govuk-link"
       href="/"
       onClick={(event) => {
