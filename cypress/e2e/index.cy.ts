@@ -11,7 +11,7 @@ import {
 } from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 
-const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard") => {
+export const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard") => {
   cy.login(emailAddress, "password")
   cy.visit(url)
 }
