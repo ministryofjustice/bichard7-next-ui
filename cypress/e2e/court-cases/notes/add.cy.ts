@@ -58,17 +58,15 @@ describe("Case details", () => {
     cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
   })
 
-  it.only("should be able to add a note when case is visible to the user and not locked by another user", () => {
+  it("should be able to add a note when case is visible to the user and not locked by another user", () => {
     insertTriggers()
 
     loginAndGoToNotes()
-    cy.get("H1").should("have.text", "Add Note")
-    cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
+    cy.get("button").contains("Add Note").click()
 
     cy.get("textarea").type("Dummy note")
     cy.get("button").contains("Add").click()
 
-    cy.get("H1").should("have.text", "Case details")
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
