@@ -3,7 +3,7 @@ import User from "services/entities/User"
 import a11yConfig from "../../../support/a11yConfig"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 import hashedPassword from "../../../fixtures/hashedPassword"
-import { loginAndGoToUrl } from "../../index.cy"
+import { loginAndGoToUrl } from "../../../support/helpers"
 
 const loginAndGoToNotes = () => {
   loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
