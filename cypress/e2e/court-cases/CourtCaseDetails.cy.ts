@@ -211,7 +211,7 @@ describe("Court case details", () => {
     cy.contains("td", "PNC adjudication exists").siblings().contains("N")
   })
 
-  it.only("should display the content of the Notes tab", () => {
+  it("should display the content of the Notes tab", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [
         [
