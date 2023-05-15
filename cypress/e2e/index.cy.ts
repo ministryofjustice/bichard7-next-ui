@@ -7,14 +7,10 @@ import a11yConfig from "../support/a11yConfig"
 import {
   confirmFiltersAppliedContains,
   confirmMultipleFieldsDisplayed,
-  confirmMultipleFieldsNotDisplayed
+  confirmMultipleFieldsNotDisplayed,
+  loginAndGoToUrl
 } from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
-
-const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard") => {
-  cy.login(emailAddress, "password")
-  cy.visit(url)
-}
 
 const unlockCase = (caseToUnlockNumber: string, caseToUnlockText: string) => {
   cy.get(`tbody tr:nth-child(${caseToUnlockNumber}) .locked-by-tag`).get("button").contains(caseToUnlockText).click()

@@ -33,3 +33,8 @@ export const filterByDateRange = (dateFrom: string, dateTo: string) => {
   cy.get("#date-from").click().type(dateFrom)
   cy.get("#date-to").click().type(dateTo)
 }
+
+export const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard") => {
+  cy.login(emailAddress, "password")
+  cy.visit(url)
+}

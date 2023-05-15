@@ -14,7 +14,7 @@ const clickTab = (tab: CaseDetailsTab) => {
   cy.get("H3").contains(tab)
 }
 
-describe("Case details", () => {
+describe("Court case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
@@ -112,7 +112,8 @@ describe("Case details", () => {
     cy.get("table").eq(-1).find("tr").eq(1).find("td").eq(4).should("include.text", "09/07/2022")
 
     // Notes
-    cy.get("H2").contains("Notes")
+    cy.contains("Notes").click()
+    cy.get("H3").contains("Notes")
     cy.get("p").contains("Case has no notes.")
 
     // Urgency
@@ -208,6 +209,33 @@ describe("Case details", () => {
     cy.contains("td", "PNC disposal type").siblings().contains("3078")
     cy.contains("td", "Result class").siblings().contains("Judgement with final result")
     cy.contains("td", "PNC adjudication exists").siblings().contains("N")
+  })
+
+  it.only("should display the content of the Notes tab", () => {
+    cy.task("insertCourtCasesWithNotes", {
+      caseNotes: [
+        [
+          {
+            user: "bichard01",
+            text: "Test note 1"
+          },
+          {
+            user: "bichard02",
+            text: "Test note 2"
+          }
+        ]
+      ],
+      force: "02"
+    })
+    cy.login("bichard02@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    clickTab("Notes")
+
+    cy.contains("bichard01")
+    cy.contains("Test note 1")
+    cy.contains("bichard02")
+    cy.contains("Test note 2")
   })
 
   it("should return 404 for a case that this user can not see", () => {
@@ -365,15 +393,10 @@ describe("Case details", () => {
     })
 
     cy.get("H1").should("have.text", "Case details")
+    cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-    cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
-    cy.get("table")
-      .eq(-1)
-      .find("tr")
-      .eq(0)
-      .find("td")
-      .last()
-      .should("have.text", "Bichard02: Portal Action: Resubmitted Message.")
+    cy.contains(dateTimeRegex)
+    cy.contains("Bichard02: Portal Action: Resubmitted Message.")
   })
 
   it("should resubmit a case when updates are made and the resubmit button is clicked", () => {
@@ -398,22 +421,11 @@ describe("Case details", () => {
     })
 
     cy.get("H1").should("have.text", "Case details")
+    cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-    cy.get("table").eq(-1).find("tr").eq(0).find("td").first().contains(dateTimeRegex)
-    cy.get("table")
-      .eq(-1)
-      .find("tr")
-      .eq(0)
-      .find("td")
-      .last()
-      .should("have.text", "Bichard02: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-09-26")
-    cy.get("table")
-      .eq(-1)
-      .find("tr")
-      .eq(1)
-      .find("td")
-      .last()
-      .should("have.text", "Bichard02: Portal Action: Resubmitted Message.")
+    cy.contains(dateTimeRegex)
+    cy.contains("Bichard02: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-09-26")
+    cy.contains("Bichard02: Portal Action: Resubmitted Message.")
   })
 
   it("should show triggers tab by default when navigating to court case details page", () => {
