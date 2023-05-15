@@ -1,4 +1,4 @@
-import { GridCol, GridRow } from "govuk-react"
+import { GridCol, GridRow, Link } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import getExceptionDefinition from "utils/getExceptionDefinition"
 import ActionLink from "components/ActionLink"
@@ -58,6 +58,9 @@ const Exceptions = ({ aho, onNavigate }: Props) => {
                 {code}
                 {exceptionDefinition?.shortDescription && ` - ${exceptionDefinition.shortDescription}`}
               </p>
+              <Link href={`/help/bichard-functionality/exceptions/resolution.html#${code}`} target="_blank">
+                {"More information"}
+              </Link>
             </GridCol>
           </GridRow>
         )
