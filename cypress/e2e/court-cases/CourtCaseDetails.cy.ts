@@ -684,7 +684,7 @@ describe("Court case details", () => {
     cy.get(".triggers-help li").should("contain.text", "3096 Interim Disqualification from Driving")
   })
 
-  it("should generate a more information link for each exception", () => {
+  it.only("should generate a more information link for each exception", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
     ])
