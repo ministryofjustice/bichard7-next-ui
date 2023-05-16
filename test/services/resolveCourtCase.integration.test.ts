@@ -97,6 +97,46 @@ describe("resolveCourtCase", () => {
       )
     })
 
+    it("Should only resolve the case that matches the case id", async () => {
+      const firstCaseId = 0
+      const secondCaseId = 1
+      await insertCourtCasesWithFields([
+        {
+          errorId: firstCaseId,
+          errorLockedByUsername: resolverUsername,
+          triggerLockedByUsername: resolverUsername,
+          orgForPoliceFilter: visibleForce
+        },
+        {
+          errorId: secondCaseId,
+          errorLockedByUsername: resolverUsername,
+          triggerLockedByUsername: resolverUsername,
+          orgForPoliceFilter: "37"
+        }
+      ])
+
+      const resolution: ManualResolution = {
+        reason: "NonRecordable"
+      }
+
+      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      expect(isError(result)).toBeFalsy()
+
+      const records = await dataSource
+        .getRepository(CourtCase)
+        .createQueryBuilder("courtCase")
+        .orderBy("courtCase.errorId")
+        .getMany()
+        .catch((error: Error) => error)
+      const courtCases = records as CourtCase[]
+
+      expect(courtCases[0].errorId).toEqual(firstCaseId)
+      expect(courtCases[0].errorStatus).toEqual("Resolved")
+
+      expect(courtCases[1].errorId).toEqual(secondCaseId)
+      expect(courtCases[1].errorStatus).toEqual("Unresolved")
+    })
+
     it("Should not resolve a case when the error is locked by another user", async () => {
       const anotherUser = "Another User"
       await insertCourtCasesWithFields([
