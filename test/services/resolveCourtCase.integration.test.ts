@@ -86,7 +86,8 @@ describe("resolveCourtCase", () => {
       ])
 
       const resolution: ManualResolution = {
-        reason: "NonRecordable"
+        reason: "NonRecordable",
+        reasonText: "Some description"
       }
 
       const beforeCourtCaseResult = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
@@ -229,6 +230,39 @@ describe("resolveCourtCase", () => {
       const afterCourtCase = afterCourtCaseResult as CourtCase
 
       expectToBeUnresolved(afterCourtCase)
+    })
+
+    it("Should return the error when the resolution reason is 'Reallocated' but reasonText is not provided", async () => {
+      await insertCourtCasesWithFields([
+        {
+          errorLockedByUsername: resolverUsername,
+          triggerLockedByUsername: resolverUsername,
+          orgForPoliceFilter: visibleForce
+        }
+      ])
+
+      let result = await resolveCourtCase(
+        dataSource,
+        0,
+        {
+          reason: "Reallocated",
+          reasonText: undefined
+        },
+        user
+      )
+      expect(isError(result)).toBeTruthy()
+      expect((result as Error).message).toEqual("Reason text is required")
+
+      result = await resolveCourtCase(
+        dataSource,
+        0,
+        {
+          reason: "Reallocated",
+          reasonText: "Text provided"
+        },
+        user
+      )
+      expect(isError(result)).toBeFalsy()
     })
   })
 

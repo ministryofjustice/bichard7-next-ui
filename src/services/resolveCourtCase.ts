@@ -7,6 +7,7 @@ import unlockCourtCase from "./unlockCourtCase"
 import insertNotes from "./insertNotes"
 import Trigger from "./entities/Trigger"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
+import { validateManualResolution } from "utils/validators/validateManualResolution"
 
 const resolveCourtCase = async (
   dataSource: DataSource,
@@ -15,6 +16,12 @@ const resolveCourtCase = async (
   user: User
 ): Promise<UpdateResult | Error> => {
   const updateResult = dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<UpdateResult | Error> => {
+    const resolutionError = validateManualResolution(resolution).error
+
+    if (resolutionError) {
+      return new Error(resolutionError)
+    }
+
     const courtCaseRepository = entityManager.getRepository(CourtCase)
     const triggersResolved =
       (
