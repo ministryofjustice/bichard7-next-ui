@@ -1,4 +1,4 @@
-type ResolutionReasonKeys =
+export type ResolutionReasonKey =
   | "UpdatedDisposal"
   | "UpdatedRemand"
   | "UpdatedDisposalAndRemand"
@@ -6,7 +6,7 @@ type ResolutionReasonKeys =
   | "NonRecordable"
   | "Reallocated"
 
-export const ResolutionReasons: Record<ResolutionReasonKeys, string> = {
+export const ResolutionReasons: Record<ResolutionReasonKey, string> = {
   UpdatedDisposal: "Updated disposal(s) manually on PNC",
   UpdatedRemand: "Updated remand(s) manually on PNC",
   UpdatedDisposalAndRemand: "Updated disposal(s) and remand(s) manually on PNC",
