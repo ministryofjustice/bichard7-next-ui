@@ -30,8 +30,12 @@ export const filterByCaseAge = (caseAgeId: string) => {
 
 export const filterByDateRange = (dateFrom: string, dateTo: string) => {
   cy.get("#date-range").click()
-  cy.get("#date-from").click().type(dateFrom)
-  cy.get("#date-to").click().type(dateTo)
+
+  cy.get("#date-from").click()
+  cy.get("#date-from").type(dateFrom)
+
+  cy.get("#date-to").click()
+  cy.get("#date-to").type(dateTo)
 }
 
 export const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard") => {

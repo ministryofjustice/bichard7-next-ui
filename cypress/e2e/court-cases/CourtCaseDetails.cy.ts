@@ -407,15 +407,10 @@ describe("Court case details", () => {
 
     // need to make the updates and then check them in the db
     cy.get("input").first().type("2024-09-26")
-
-    cy.get("button")
-      .contains("Resubmit")
-      .click()
-      .then(() => {
-        cy.task("getCourtCaseById", { caseId: 0 }).then((res) =>
-          expect(JSON.stringify(res)).to.eq(JSON.stringify(resubmitCaseJson))
-        )
-      })
+    cy.get("button").contains("Resubmit").click()
+    cy.task("getCourtCaseById", { caseId: 0 }).then((res) =>
+      expect(JSON.stringify(res)).to.eq(JSON.stringify(resubmitCaseJson))
+    )
     cy.location().should((loc) => {
       expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
     })
