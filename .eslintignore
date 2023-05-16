@@ -3,3 +3,4 @@ dist
 build
 .storybook
 storybook-static
+scripts/utility
