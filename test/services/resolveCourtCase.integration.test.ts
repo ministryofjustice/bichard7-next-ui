@@ -12,10 +12,12 @@ import { ManualResolution } from "types/ManualResolution"
 import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 import insertNotes from "services/insertNotes"
 import unlockCourtCase from "services/unlockCourtCase"
+import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
 jest.mock("services/unlockCourtCase")
+jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 
 const expectToBeUnresolved = (courtCase: CourtCase) => {
   expect(courtCase.errorStatus).toEqual("Unresolved")
@@ -46,6 +48,9 @@ describe("resolveCourtCase", () => {
     jest.clearAllMocks()
     ;(insertNotes as jest.Mock).mockImplementation(jest.requireActual("services/insertNotes").default)
     ;(unlockCourtCase as jest.Mock).mockImplementation(jest.requireActual("services/unlockCourtCase").default)
+    ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
+      jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
+    )
   })
 
   beforeEach(async () => {
@@ -57,6 +62,20 @@ describe("resolveCourtCase", () => {
   })
 
   describe("When there aren't any unresolved triggers", () => {
+    it("should call cases by organisation unit query", async () => {
+      await resolveCourtCase(
+        dataSource,
+        0,
+        {
+          reason: "NonRecordable"
+        },
+        user
+      )
+
+      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
+      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
+    })
+
     it("Should resolve a case and populate a resolutionTimestamp", async () => {
       await insertCourtCasesWithFields([
         {
@@ -130,7 +149,7 @@ describe("resolveCourtCase", () => {
           errorId: secondCaseId,
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: "37"
+          orgForPoliceFilter: visibleForce
         }
       ])
 
@@ -154,6 +173,36 @@ describe("resolveCourtCase", () => {
 
       expect(courtCases[1].errorId).toEqual(secondCaseId)
       expect(courtCases[1].errorStatus).toEqual("Unresolved")
+    })
+
+    it("Should only resolve the case that matches the organisation unit", async () => {
+      const caseId = 0
+      await insertCourtCasesWithFields([
+        {
+          errorId: caseId,
+          errorLockedByUsername: resolverUsername,
+          triggerLockedByUsername: resolverUsername,
+          orgForPoliceFilter: "3LSE"
+        }
+      ])
+
+      const resolution: ManualResolution = {
+        reason: "NonRecordable"
+      }
+
+      const result = await resolveCourtCase(dataSource, caseId, resolution, user)
+      expect((result as Error).message).toEqual("Failed to resolve case")
+
+      const records = await dataSource
+        .getRepository(CourtCase)
+        .createQueryBuilder("courtCase")
+        .getMany()
+        .catch((error: Error) => error)
+      const courtCases = records as CourtCase[]
+
+      expect(courtCases).toHaveLength(1)
+      expect(courtCases[0].errorId).toEqual(caseId)
+      expect(courtCases[0].errorStatus).toEqual("Unresolved")
     })
 
     it("Should not resolve a case when the error is locked by another user", async () => {
