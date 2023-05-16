@@ -15,6 +15,7 @@ const resolveCourtCase = async (
   resolution: ManualResolution,
   user: User
 ): Promise<UpdateResult | Error> => {
+  // TODO: Add audit log messages once the new UI integrates with the audit log API
   const updateResult = dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<UpdateResult | Error> => {
     const resolutionError = validateManualResolution(resolution).error
 
@@ -23,16 +24,6 @@ const resolveCourtCase = async (
     }
 
     const courtCaseRepository = entityManager.getRepository(CourtCase)
-    const triggersResolved =
-      (
-        await entityManager.getRepository(Trigger).find({
-          where: {
-            errorId: courtCaseId,
-            status: Not("Resolved")
-          }
-        })
-      ).length === 0
-
     const resolver = user.username
     const resolutionTimestamp = new Date()
     let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
@@ -43,6 +34,16 @@ const resolveCourtCase = async (
       errorResolvedBy: resolver,
       errorResolvedTimestamp: resolutionTimestamp
     }
+
+    const triggersResolved =
+      (
+        await entityManager.getRepository(Trigger).find({
+          where: {
+            errorId: courtCaseId,
+            status: Not("Resolved")
+          }
+        })
+      ).length === 0
 
     if (triggersResolved) {
       queryParams.resolutionTimestamp = resolutionTimestamp
