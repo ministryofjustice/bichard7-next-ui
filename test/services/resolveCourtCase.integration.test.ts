@@ -1,5 +1,5 @@
 import User from "services/entities/User"
-import { DataSource } from "typeorm"
+import { DataSource, UpdateQueryBuilder, UpdateResult } from "typeorm"
 import { isError } from "types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
@@ -10,8 +10,23 @@ import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { differenceInMilliseconds } from "date-fns"
 import { ManualResolution } from "types/ManualResolution"
 import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
+import insertNotes from "services/insertNotes"
+import unlockCourtCase from "services/unlockCourtCase"
 
 jest.setTimeout(100000)
+jest.mock("services/insertNotes")
+jest.mock("services/unlockCourtCase")
+
+const expectToBeUnresolved = (courtCase: CourtCase) => {
+  expect(courtCase.errorStatus).toEqual("Unresolved")
+  expect(courtCase.errorLockedByUsername).not.toBeNull()
+  expect(courtCase.triggerLockedByUsername).not.toBeNull()
+  expect(courtCase.errorResolvedBy).toBeNull()
+  expect(courtCase.errorResolvedTimestamp).toBeNull()
+  expect(courtCase.resolutionTimestamp).toBeNull()
+  expect(courtCase.errorResolvedTimestamp).toBeNull()
+  expect(courtCase.notes).toHaveLength(0)
+}
 
 describe("resolveCourtCase", () => {
   let dataSource: DataSource
@@ -27,6 +42,10 @@ describe("resolveCourtCase", () => {
 
   beforeAll(async () => {
     dataSource = await getDataSource()
+    jest.resetAllMocks()
+    jest.clearAllMocks()
+    ;(insertNotes as jest.Mock).mockImplementation(jest.requireActual("services/insertNotes").default)
+    ;(unlockCourtCase as jest.Mock).mockImplementation(jest.requireActual("services/unlockCourtCase").default)
   })
 
   beforeEach(async () => {
@@ -119,7 +138,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      const result = await resolveCourtCase(dataSource, firstCaseId, resolution, user)
       expect(isError(result)).toBeFalsy()
 
       const records = await dataSource
@@ -142,6 +161,7 @@ describe("resolveCourtCase", () => {
       await insertCourtCasesWithFields([
         {
           errorLockedByUsername: anotherUser,
+          triggerLockedByUsername: anotherUser,
           orgForPoliceFilter: visibleForce
         }
       ])
@@ -159,14 +179,7 @@ describe("resolveCourtCase", () => {
       expect(afterCourtCaseResult).not.toBeNull()
       const afterCourtCase = afterCourtCaseResult as CourtCase
 
-      expect(afterCourtCase.errorStatus).toEqual("Unresolved")
-      expect(afterCourtCase.errorLockedByUsername).toEqual(anotherUser)
-      expect(afterCourtCase.triggerLockedByUsername).toBeNull()
-      expect(afterCourtCase.errorResolvedBy).toBeNull()
-      expect(afterCourtCase.errorResolvedTimestamp).toBeNull()
-      expect(afterCourtCase.resolutionTimestamp).toBeNull()
-      expect(afterCourtCase.errorResolvedTimestamp).toBeNull()
-      expect(afterCourtCase.notes).toHaveLength(0)
+      expectToBeUnresolved(afterCourtCase)
     })
   })
 
@@ -215,6 +228,76 @@ describe("resolveCourtCase", () => {
       )
 
       expect(afterCourtCase.resolutionTimestamp).toBeNull()
+    })
+  })
+
+  describe("when there is an unexpected error", () => {
+    const resolution: ManualResolution = {
+      reason: "NonRecordable"
+    }
+
+    beforeEach(async () => {
+      await insertCourtCasesWithFields([
+        {
+          errorLockedByUsername: resolverUsername,
+          triggerLockedByUsername: resolverUsername,
+          orgForPoliceFilter: visibleForce
+        }
+      ])
+    })
+
+    it("should return the error if fails to create notes", async () => {
+      ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
+
+      let result: UpdateResult | Error
+      try {
+        result = await resolveCourtCase(dataSource, 0, resolution, user)
+      } catch (error) {
+        result = error as Error
+      }
+      expect(result).toEqual(Error(`Error while creating notes`))
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
+      const actualCourtCase = record as CourtCase
+
+      expectToBeUnresolved(actualCourtCase)
+    })
+
+    it("should return the error if fails to unlock the case", async () => {
+      ;(unlockCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Error while unlocking the case`))
+
+      let result: UpdateResult | Error
+      try {
+        result = await resolveCourtCase(dataSource, 0, resolution, user)
+      } catch (error) {
+        result = error as Error
+      }
+
+      expect(result).toEqual(Error(`Error while unlocking the case`))
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
+      const actualCourtCase = record as CourtCase
+
+      expectToBeUnresolved(actualCourtCase)
+    })
+
+    it("should return the error when fails to update the case", async () => {
+      jest
+        .spyOn(UpdateQueryBuilder.prototype, "execute")
+        .mockRejectedValue(Error("Failed to update record with some error"))
+
+      let result: UpdateResult | Error
+      try {
+        result = await resolveCourtCase(dataSource, 0, resolution, user)
+      } catch (error) {
+        result = error as Error
+      }
+      expect(result).toEqual(Error(`Failed to update record with some error`))
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
+      const actualCourtCase = record as CourtCase
+
+      expectToBeUnresolved(actualCourtCase)
     })
   })
 })
