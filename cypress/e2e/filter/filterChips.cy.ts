@@ -172,7 +172,8 @@ describe("Case list", () => {
         cy.get("button#filter-button").click()
         cy.get("#date-range").click()
         cy.contains("Same date").should("not.exist")
-        cy.get("#date-from").click().type("2023-03-17")
+        cy.get("#date-from").click()
+        cy.get("#date-from").type("2023-03-17")
         cy.get("#date-to").should("have.value", "")
 
         cy.contains("Same date").should("exist")
