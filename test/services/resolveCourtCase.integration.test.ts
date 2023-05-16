@@ -38,7 +38,7 @@ describe("resolveCourtCase", () => {
   })
 
   describe("When there aren't any unresolved triggers", () => {
-    beforeEach(async () => {
+    it("Should resolve a case and populate a resolutionTimestamp", async () => {
       await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
@@ -46,9 +46,7 @@ describe("resolveCourtCase", () => {
           orgForPoliceFilter: visibleForce
         }
       ])
-    })
 
-    it("Should resolve a case and populate a resolutionTimestamp", async () => {
       const resolution: ManualResolution = {
         reason: "NonRecordable"
       }
@@ -98,6 +96,38 @@ describe("resolveCourtCase", () => {
           ` Reason: ${resolution.reason}. Reason Text: ${resolution.reasonText}`
       )
     })
+
+    it("Should not resolve a case when the error is locked by another user", async () => {
+      const anotherUser = "Another User"
+      await insertCourtCasesWithFields([
+        {
+          errorLockedByUsername: anotherUser,
+          orgForPoliceFilter: visibleForce
+        }
+      ])
+
+      const resolution: ManualResolution = {
+        reason: "NonRecordable"
+      }
+
+      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      expect(isError(result)).toBeTruthy()
+      expect((result as Error).message).toEqual("Failed to resolve case")
+
+      const afterCourtCaseResult = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
+      expect(isError(afterCourtCaseResult)).toBeFalsy()
+      expect(afterCourtCaseResult).not.toBeNull()
+      const afterCourtCase = afterCourtCaseResult as CourtCase
+
+      expect(afterCourtCase.errorStatus).toEqual("Unresolved")
+      expect(afterCourtCase.errorLockedByUsername).toEqual(anotherUser)
+      expect(afterCourtCase.triggerLockedByUsername).toBeNull()
+      expect(afterCourtCase.errorResolvedBy).toBeNull()
+      expect(afterCourtCase.errorResolvedTimestamp).toBeNull()
+      expect(afterCourtCase.resolutionTimestamp).toBeNull()
+      expect(afterCourtCase.errorResolvedTimestamp).toBeNull()
+      expect(afterCourtCase.notes).toHaveLength(0)
+    })
   })
 
   describe("When there are unresolved triggers", () => {
@@ -119,7 +149,7 @@ describe("resolveCourtCase", () => {
       await insertTriggers(0, [trigger])
     })
 
-    it("Should resolve a case without a resolutionTimestamp", async () => {
+    it("Should resolve a case without setting a resolutionTimestamp", async () => {
       const resolution: ManualResolution = {
         reason: "NonRecordable"
       }

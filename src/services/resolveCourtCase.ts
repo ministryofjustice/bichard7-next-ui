@@ -39,6 +39,15 @@ const resolveCourtCase = async (
       queryParams.resolutionTimestamp = resolutionTimestamp
     }
 
+    query.set(queryParams)
+    query.where({ errorId: courtCaseId, errorLockedByUsername: resolver })
+
+    const queryResult = await query.execute()
+
+    if (queryResult.affected === 0) {
+      return new Error("Failed to resolve case")
+    }
+
     const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, user)
 
     if (isError(unlockResult)) {
@@ -59,10 +68,7 @@ const resolveCourtCase = async (
       throw addNoteResult
     }
 
-    query.set(queryParams)
-    query.where("error_id = :id", { id: courtCaseId })
-
-    return query.execute()?.catch((error: Error) => error)
+    return queryResult
   })
   if (isError(updateResult)) {
     throw updateResult
