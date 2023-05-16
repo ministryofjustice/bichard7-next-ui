@@ -211,7 +211,7 @@ describe("Court case details", () => {
     cy.contains("td", "PNC adjudication exists").siblings().contains("N")
   })
 
-  it.only("should display the content of the Notes tab", () => {
+  it("should display the content of the Notes tab", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [
         [
@@ -682,6 +682,23 @@ describe("Court case details", () => {
     cy.get(".triggers-help li").should("contain.text", "3094 Disqualified from Driving non motoring offence")
     cy.get(".triggers-help li").should("contain.text", "3095 Disqualified from Driving - vehicle used in Crime")
     cy.get(".triggers-help li").should("contain.text", "3096 Interim Disqualification from Driving")
+  })
+
+  it("should generate a more information link for each exception", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("h3").should("not.have.text", "Case information")
+    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".exception-details-column a")
+      .contains("More information")
+      .should("exist")
+      .should("have.attr", "href", "/help/bichard-functionality/exceptions/resolution.html#HO100302")
   })
 })
 
