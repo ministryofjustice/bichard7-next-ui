@@ -31,7 +31,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test-storybook": "test-storybook",
-    "seed-data": "ts-node ./scripts/seed-data.ts"
+    "seed-data": "ts-node ./scripts/seed-data.ts",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@govuk-react/select": "^0.10.5",
