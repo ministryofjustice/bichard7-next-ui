@@ -61,21 +61,21 @@ describe("resolveCourtCase", () => {
     await dataSource.destroy()
   })
 
+  it("should call cases by organisation unit query", async () => {
+    await resolveCourtCase(
+      dataSource,
+      0,
+      {
+        reason: "NonRecordable"
+      },
+      user
+    )
+
+    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
+    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
+  })
+
   describe("When there aren't any unresolved triggers", () => {
-    it("should call cases by organisation unit query", async () => {
-      await resolveCourtCase(
-        dataSource,
-        0,
-        {
-          reason: "NonRecordable"
-        },
-        user
-      )
-
-      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
-      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
-    })
-
     it("Should resolve a case and populate a resolutionTimestamp", async () => {
       await insertCourtCasesWithFields([
         {
