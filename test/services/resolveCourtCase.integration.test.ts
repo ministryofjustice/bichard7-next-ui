@@ -206,7 +206,7 @@ describe("resolveCourtCase", () => {
       expect(courtCases[0].errorStatus).toEqual("Unresolved")
     })
 
-    it("Should not resolve a case when the error is locked by another user", async () => {
+    it("Should not resolve a case when the case is locked by another user", async () => {
       const anotherUser = "Another User"
       await insertCourtCasesWithFields([
         {
