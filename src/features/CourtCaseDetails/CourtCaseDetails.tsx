@@ -182,6 +182,9 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           <ConditionalRender isRendered={!lockedByAnotherUser}>
             <LinkButton href="reallocate">{"Reallocate Case"}</LinkButton>
           </ConditionalRender>
+          <ConditionalRender isRendered={!lockedByAnotherUser}>
+            <LinkButton href="resolve">{"Mark As Manually Resolved"}</LinkButton>
+          </ConditionalRender>
         </GridCol>
         <GridCol setWidth={sideBarWidth}>
           <TriggersAndExceptions courtCase={courtCase} aho={aho} onNavigate={handleNavigation} />
