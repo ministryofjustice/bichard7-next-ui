@@ -1,4 +1,4 @@
-import { DataSource, Not, UpdateQueryBuilder, UpdateResult } from "typeorm"
+import { DataSource, MoreThan, Not, UpdateQueryBuilder, UpdateResult } from "typeorm"
 import { isError } from "types/Result"
 import User from "./entities/User"
 import { ManualResolution } from "types/ManualResolution"
@@ -50,7 +50,12 @@ const resolveCourtCase = async (
     }
 
     query.set(queryParams)
-    query.andWhere({ errorId: courtCaseId, errorLockedByUsername: resolver })
+    query.andWhere({
+      errorId: courtCaseId,
+      errorLockedByUsername: resolver,
+      errorCount: MoreThan(0),
+      errorStatus: "Unresolved"
+    })
 
     const queryResult = await query.execute()
 

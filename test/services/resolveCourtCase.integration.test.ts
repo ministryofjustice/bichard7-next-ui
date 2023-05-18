@@ -81,7 +81,9 @@ describe("resolveCourtCase", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce,
+          errorStatus: "Unresolved",
+          errorCount: 4
         }
       ])
 
@@ -144,13 +146,17 @@ describe("resolveCourtCase", () => {
           errorId: firstCaseId,
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce,
+          errorStatus: "Unresolved",
+          errorCount: 1
         },
         {
           errorId: secondCaseId,
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce,
+          errorStatus: "Unresolved",
+          errorCount: 1
         }
       ])
 
@@ -183,7 +189,9 @@ describe("resolveCourtCase", () => {
           errorId: caseId,
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: "3LSE"
+          orgForPoliceFilter: "3LSE",
+          errorStatus: "Unresolved",
+          errorCount: 1
         }
       ])
 
@@ -212,7 +220,9 @@ describe("resolveCourtCase", () => {
         {
           errorLockedByUsername: anotherUser,
           triggerLockedByUsername: anotherUser,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce,
+          errorStatus: "Unresolved",
+          errorCount: 1
         }
       ])
 
@@ -232,12 +242,41 @@ describe("resolveCourtCase", () => {
       expectToBeUnresolved(afterCourtCase)
     })
 
+    it("Should not resolve a case when the case is not locked", async () => {
+      await insertCourtCasesWithFields([
+        {
+          errorLockedByUsername: null,
+          triggerLockedByUsername: null,
+          orgForPoliceFilter: visibleForce,
+          errorStatus: "Unresolved",
+          errorCount: 1
+        }
+      ])
+
+      const resolution: ManualResolution = {
+        reason: "NonRecordable"
+      }
+
+      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      expect(isError(result)).toBeTruthy()
+      expect((result as Error).message).toEqual("Failed to resolve case")
+
+      const afterCourtCaseResult = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
+      expect(isError(afterCourtCaseResult)).toBeFalsy()
+      expect(afterCourtCaseResult).not.toBeNull()
+      const afterCourtCase = afterCourtCaseResult as CourtCase
+
+      expect(afterCourtCase.errorStatus).toEqual("Unresolved")
+    })
+
     it("Should return the error when the resolution reason is 'Reallocated' but reasonText is not provided", async () => {
       await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce,
+          errorStatus: "Unresolved",
+          errorCount: 1
         }
       ])
 
@@ -272,7 +311,9 @@ describe("resolveCourtCase", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce,
+          errorStatus: "Unresolved",
+          errorCount: 1
         }
       ])
 
@@ -314,6 +355,52 @@ describe("resolveCourtCase", () => {
     })
   })
 
+  describe("When there are triggers but no errors on a case", () => {
+    beforeEach(async () => {
+      await insertCourtCasesWithFields([
+        {
+          errorLockedByUsername: resolverUsername,
+          triggerLockedByUsername: resolverUsername,
+          errorStatus: null,
+          errorCount: 0,
+          orgForPoliceFilter: visibleForce
+        }
+      ])
+
+      const trigger: TestTrigger = {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-12T10:22:34.000Z")
+      }
+      await insertTriggers(0, [trigger])
+    })
+
+    it("Should not resolve the case", async () => {
+      const resolution: ManualResolution = {
+        reason: "NonRecordable"
+      }
+
+      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+
+      expect(isError(result)).toBeTruthy()
+
+      const afterCourtCaseResult = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
+      expect(isError(afterCourtCaseResult)).toBeFalsy()
+      expect(afterCourtCaseResult).not.toBeNull()
+      const afterCourtCase = afterCourtCaseResult as CourtCase
+
+      expect(afterCourtCase.errorStatus).toBeUndefined()
+      expect(afterCourtCase.errorLockedByUsername).toEqual(resolverUsername)
+      expect(afterCourtCase.triggerLockedByUsername).toEqual(resolverUsername)
+      expect(afterCourtCase.errorResolvedBy).toBeNull()
+      expect(afterCourtCase.errorResolvedTimestamp).toBeNull()
+      expect(afterCourtCase.resolutionTimestamp).toBeNull()
+      expect(afterCourtCase.errorResolvedTimestamp).toBeNull()
+      expect(afterCourtCase.notes).toHaveLength(0)
+    })
+  })
+
   describe("when there is an unexpected error", () => {
     const resolution: ManualResolution = {
       reason: "NonRecordable"
@@ -324,7 +411,9 @@ describe("resolveCourtCase", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce,
+          errorStatus: "Unresolved",
+          errorCount: 1
         }
       ])
     })
