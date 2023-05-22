@@ -15,9 +15,10 @@ import createDummyTriggers from "./createDummyTriggers"
 
 const randomBoolean = (): boolean => sample([true, false]) ?? true
 
-const randomUsername = (): string => `${faker.name.firstName().toLowerCase()}.${faker.name.lastName().toLowerCase()}`
+const randomUsername = (): string =>
+  `${faker.person.firstName().toLowerCase()}.${faker.person.lastName().toLowerCase()}`
 
-const randomName = (): string => `${faker.name.lastName().toUpperCase()} ${faker.name.firstName()}`
+const randomName = (): string => `${faker.person.lastName().toUpperCase()} ${faker.person.firstName()}`
 
 const randomDate = (from: Date, to: Date): Date => {
   const dateRangeDays = differenceInDays(from, to)
@@ -32,7 +33,7 @@ export default async (
   dateTo?: Date
 ): Promise<CourtCase> => {
   const caseDate = randomDate(dateFrom || subYears(new Date(), 1), dateTo || new Date())
-  const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgCode + faker.random.alpha(2).toUpperCase())
+  const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgCode + faker.string.alpha(2).toUpperCase())
   const isResolved = randomBoolean()
   const resolutionStatus = isResolved ? "Resolved" : "Unresolved"
   const resolutionDate = isResolved ? randomDate(caseDate, dateTo || new Date()) : null
@@ -54,7 +55,7 @@ export default async (
     triggerQualityChecked: 1,
     triggerCount: triggers.length,
     isUrgent: randomBoolean(),
-    asn: createDummyAsn(caseDate.getFullYear(), orgCode + faker.random.alpha(2).toUpperCase()),
+    asn: createDummyAsn(caseDate.getFullYear(), orgCode + faker.string.alpha(2).toUpperCase()),
     courtCode: createDummyCourtCode(orgCode),
     hearingOutcome: (errorReport ? dummyAHOWithOneError : dummyAHO).hearingOutcomeXml,
     errorReport: errorReport,
@@ -65,7 +66,7 @@ export default async (
     userUpdatedFlag: randomBoolean() ? 1 : 0,
     courtDate: caseDate,
     ptiurn: ptiurn,
-    courtName: faker.address.city(),
+    courtName: faker.location.city(),
     messageReceivedTimestamp: caseDate,
     defendantName: randomName(),
     courtRoom: Math.round(Math.random() * 15)
