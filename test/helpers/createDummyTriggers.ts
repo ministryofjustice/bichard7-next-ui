@@ -59,7 +59,9 @@ export default (dataSource: DataSource, errorId: number, creationDate: Date): Tr
       status: status,
       createdAt: creationDate,
       resolvedBy:
-        status === "Resolved" ? `${faker.name.firstName().toLowerCase()}.${faker.name.lastName().toLowerCase()}` : null,
+        status === "Resolved"
+          ? `${faker.person.firstName().toLowerCase()}.${faker.person.lastName().toLowerCase()}`
+          : null,
       triggerItemIdentity: idx
     })
   })

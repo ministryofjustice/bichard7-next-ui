@@ -17,7 +17,7 @@ export default (dataSource: DataSource, caseId: number, triggers: Trigger[], isR
     .filter((trigger) => trigger.resolvedAt !== null)
     .map(
       (trigger) =>
-        `${faker.name.firstName()}.${faker.name.lastName()}: Portal Action: Trigger Resolved. Code: ${
+        `${faker.person.firstName()}.${faker.person.lastName()}: Portal Action: Trigger Resolved. Code: ${
           trigger.triggerCode
         }`
     )
@@ -32,7 +32,7 @@ export default (dataSource: DataSource, caseId: number, triggers: Trigger[], isR
     ])
     const reasonText = Math.random() > 0.5 ? faker.lorem.sentence() : ""
     noteTexts.push(
-      `${faker.name.firstName()}.${faker.name.lastName()}: Portal Action: Record Manually Resolved. Reason: ${reason}. Reason Text:${reasonText}`
+      `${faker.person.firstName()}.${faker.person.lastName()}: Portal Action: Record Manually Resolved. Reason: ${reason}. Reason Text:${reasonText}`
     )
   }
 
@@ -40,7 +40,7 @@ export default (dataSource: DataSource, caseId: number, triggers: Trigger[], isR
     dataSource.getRepository(Note).create({
       noteText,
       errorId: caseId,
-      userId: `${faker.name.firstName().toLowerCase()}.${faker.name.lastName().toLowerCase()}`.slice(0, 31),
+      userId: `${faker.person.firstName().toLowerCase()}.${faker.person.lastName().toLowerCase()}`.slice(0, 31),
       createdAt: subSeconds(new Date(), Math.random() * 60 * 60 * 24 * 30)
     })
   )
