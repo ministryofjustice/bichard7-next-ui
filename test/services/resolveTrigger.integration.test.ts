@@ -40,7 +40,6 @@ describe("resolveTrigger", () => {
 
       await insertCourtCasesWithFields([
         {
-          errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
           orgForPoliceFilter: visibleForce
         }
@@ -112,7 +111,6 @@ describe("resolveTrigger", () => {
 
       await insertCourtCasesWithFields([
         {
-          errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
           orgForPoliceFilter: visibleForce
         }
@@ -155,7 +153,6 @@ describe("resolveTrigger", () => {
 
       await insertCourtCasesWithFields([
         {
-          errorLockedByUsername: lockHolderUsername,
           triggerLockedByUsername: lockHolderUsername,
           orgForPoliceFilter: visibleForce
         }
@@ -231,7 +228,6 @@ describe("resolveTrigger", () => {
 
       await insertCourtCasesWithFields([
         {
-          errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
           orgForPoliceFilter: visibleForce
         }

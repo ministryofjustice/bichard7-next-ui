@@ -27,7 +27,7 @@ const resolveTrigger = async (
         return false
       }
 
-      if (courtCase.isLockedByAnotherUser(resolver)) {
+      if (courtCase.triggersAreLockedByAnotherUser(resolver)) {
         return false
       }
 
