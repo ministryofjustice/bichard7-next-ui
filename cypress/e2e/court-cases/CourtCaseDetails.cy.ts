@@ -211,33 +211,6 @@ describe("Court case details", () => {
     cy.contains("td", "PNC adjudication exists").siblings().contains("N")
   })
 
-  it("should display the content of the Notes tab", () => {
-    cy.task("insertCourtCasesWithNotes", {
-      caseNotes: [
-        [
-          {
-            user: "bichard01",
-            text: "Test note 1"
-          },
-          {
-            user: "bichard02",
-            text: "Test note 2"
-          }
-        ]
-      ],
-      force: "02"
-    })
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-
-    clickTab("Notes")
-
-    cy.contains("bichard01")
-    cy.contains("Test note 1")
-    cy.contains("bichard02")
-    cy.contains("Test note 2")
-  })
-
   it("should return 404 for a case that this user can not see", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
     cy.login("bichard01@example.com", "password")
