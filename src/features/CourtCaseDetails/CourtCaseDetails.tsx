@@ -145,6 +145,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
               </Table.Cell>
             </Table.Row>
           </Table>
+
           <ConditionalRender isRendered={triggersVisible && (courtCase?.triggers?.length ?? 0) > 0}>
             <Heading as="h2" size="MEDIUM">
               {"Triggers"}

@@ -5,6 +5,7 @@ import ActionLink from "components/ActionLink"
 import { ChangeEvent, useState } from "react"
 import type NavigationHandler from "types/NavigationHandler"
 import Trigger from "./Trigger"
+import { sortBy } from "lodash"
 
 interface Props {
   courtCase: CourtCase
@@ -26,7 +27,7 @@ const useStyles = createUseStyles({
 const TriggersList = ({ courtCase, onNavigate }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
-  const unresolvedTriggers = courtCase.triggers.filter((trigger) => !trigger.resolvedBy)
+  const triggers = sortBy(courtCase.triggers, "triggerItemIdentity")
 
   const setTriggerSelection = ({ target: checkbox }: ChangeEvent<HTMLInputElement>) => {
     const triggerId = parseInt(checkbox.value, 10)
@@ -48,16 +49,15 @@ const TriggersList = ({ courtCase, onNavigate }: Props) => {
 
   return (
     <>
-      {unresolvedTriggers.length === 0 && courtCase.triggers.length > 0 && "All triggers have been resolved."}
-      {unresolvedTriggers.length === 0 && courtCase.triggers.length === 0 && "There are no triggers for this case."}
-      {unresolvedTriggers.length > 0 && (
+      {triggers.length === 0 && "There are no triggers for this case."}
+      {triggers.length > 0 && (
         <GridRow className={classes.selectAllRow}>
           <GridCol>
             <ActionLink onClick={selectAll}>{"Select all"}</ActionLink>
           </GridCol>
         </GridRow>
       )}
-      {unresolvedTriggers.map((trigger, index) => (
+      {triggers.map((trigger, index) => (
         <Trigger
           key={index}
           trigger={trigger}
