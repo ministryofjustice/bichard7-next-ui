@@ -17,37 +17,34 @@ interface Props {
 }
 
 const useStyles = createUseStyles({
-  triggerRow: {
-    "& .trigger-details-column": {
-      "& .trigger-code": {
-        fontWeight: "bold"
-      }
-    },
-    "& .checkbox-column": {
-      textAlign: "right",
-      "& .moj-checkbox": {
-        marginRight: "9px"
-      }
-    }
+  triggerCode: {
+    fontWeight: "bold"
   },
   cjsResultCode: {
     fontSize: "16px",
     lineHeight: "1.25"
+  },
+  triggerCheckbox: {
+    position: "absolute",
+    right: "22px"
   }
 })
 
+const TriggerCompleteBadge = () => <span className="moj-badge moj-badge--green">{"Complete"}</span>
+
 const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: Props) => {
   const triggerDefinition = getTriggerDefinition(trigger.triggerCode)
-  const checkBoxId = `trigger_${trigger.triggerId}`
   const [showHelpBox, setShowHelpBox] = useState(false)
-
   const classes = useStyles()
+
+  const checkBoxId = `trigger_${trigger.triggerId}`
+  const isResolved = trigger.status === "Resolved"
 
   return (
     <div key={trigger.triggerId}>
-      <GridRow className={`${classes.triggerRow} moj-trigger-row`}>
+      <GridRow className="moj-trigger-row">
         <GridCol className="trigger-details-column">
-          <label className="trigger-code" htmlFor={checkBoxId}>
+          <label className={`trigger-code ${classes.triggerCode}`} htmlFor={checkBoxId}>
             {trigger.shortTriggerCode}
           </label>
           {trigger.triggerItemIdentity !== undefined && (
@@ -61,13 +58,19 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
           )}
           <p>{triggerDefinition?.description}</p>
         </GridCol>
-        <GridCol setWidth="70px" className="checkbox-column">
-          <Checkbox
-            id={checkBoxId}
-            value={trigger.triggerId}
-            checked={selectedTriggerIds.includes(trigger.triggerId)}
-            onChange={setTriggerSelection}
-          />
+        <GridCol>
+          {isResolved ? (
+            <TriggerCompleteBadge />
+          ) : (
+            <div className={classes.triggerCheckbox}>
+              <Checkbox
+                id={checkBoxId}
+                value={trigger.triggerId}
+                checked={selectedTriggerIds.includes(trigger.triggerId)}
+                onChange={setTriggerSelection}
+              />
+            </div>
+          )}
         </GridCol>
       </GridRow>
       <GridRow>

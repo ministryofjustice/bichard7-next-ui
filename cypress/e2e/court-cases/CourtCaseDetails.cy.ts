@@ -446,39 +446,6 @@ describe("Court case details", () => {
     cy.get(".moj-tab-panel-triggers").contains("There are no triggers for this case.")
   })
 
-  it("should display a message when all triggers are resolved", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-    const triggers: TestTrigger[] = [
-      {
-        triggerId: 0,
-        triggerCode: "TRPR0010",
-        status: "Resolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z"),
-        resolvedAt: new Date("2022-07-09T12:22:34.000Z"),
-        resolvedBy: "Bichard01"
-      },
-      {
-        triggerId: 1,
-        triggerCode: "TRPR0015",
-        status: "Resolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z"),
-        resolvedAt: new Date("2022-07-09T12:22:34.000Z"),
-        resolvedBy: "Bichard01"
-      }
-    ]
-    cy.task("insertTriggers", { caseId: 0, triggers })
-
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
-
-    cy.get(".moj-tab-panel-triggers").should("be.visible")
-    cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
-
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row").should("not.exist")
-    cy.get(".moj-tab-panel-triggers").contains("All triggers have been resolved.")
-  })
-
   it("should select all triggers when select all link is clicked", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
@@ -667,6 +634,26 @@ describe("Court case details", () => {
       .contains("More information")
       .should("exist")
       .should("have.attr", "href", "/help/bichard-functionality/exceptions/resolution.html#HO100302")
+  })
+
+  it("should show a complete badge for triggers which have been resolved", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
+    ])
+    const trigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0001",
+      status: "Resolved",
+      createdAt: new Date(),
+      resolvedAt: new Date(),
+      resolvedBy: "Bichard01"
+    }
+    cy.task("insertTriggers", { caseId: 0, triggers: [trigger] })
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("#triggers span").contains("Complete").should("exist")
   })
 })
 

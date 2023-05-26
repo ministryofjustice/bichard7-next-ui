@@ -15,7 +15,6 @@ interface Props<TValue> {
 
 const useStyles = createUseStyles({
   Checkbox: {
-    display: "inline-block",
     "& span:before": {
       width: "30px",
       height: "30px"
@@ -45,7 +44,7 @@ export default function Checkbox<TValue extends ValueType>({
       value={value}
       checked={checked}
       onChange={onChange}
-      className={`${classes.Checkbox} ${className} moj-checkbox`}
+      className={`${classes.Checkbox} ${className} moj-checkbox govuk-!-display-inline-block`}
     >
       {children}
     </GovUkCheckbox>
