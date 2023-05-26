@@ -38,8 +38,10 @@ const useStyles = createUseStyles({
 
 const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: Props) => {
   const triggerDefinition = getTriggerDefinition(trigger.triggerCode)
-  const checkBoxId = `trigger_${trigger.triggerId}`
   const [showHelpBox, setShowHelpBox] = useState(false)
+
+  const checkBoxId = `trigger_${trigger.triggerId}`
+  const isResolved = trigger.status === "Resolved"
 
   const classes = useStyles()
 
@@ -62,12 +64,16 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
           <p>{triggerDefinition?.description}</p>
         </GridCol>
         <GridCol setWidth="70px" className="checkbox-column">
-          <Checkbox
-            id={checkBoxId}
-            value={trigger.triggerId}
-            checked={selectedTriggerIds.includes(trigger.triggerId)}
-            onChange={setTriggerSelection}
-          />
+          {isResolved ? (
+            <span className="moj-badge moj-badge--green">{"Complete"}</span>
+          ) : (
+            <Checkbox
+              id={checkBoxId}
+              value={trigger.triggerId}
+              checked={selectedTriggerIds.includes(trigger.triggerId)}
+              onChange={setTriggerSelection}
+            />
+          )}
         </GridCol>
       </GridRow>
       <GridRow>
