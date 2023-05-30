@@ -56,7 +56,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
     <>
       <CaseDetailsRow
         canCurrentUserUnlockCase={errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
-        cellClassName={hasTriggers ? classes["border-bottom-none"] : ""}
+        hasTriggers={hasTriggers}
         courtDate={courtDate}
         courtName={courtName}
         defendantName={defendantName}
