@@ -125,7 +125,7 @@ export const CaseDetailsRow = ({
         </Table.Cell>
       </Table.Row>
       {numberOfNotes != 0 && !showPreview && (
-        <Table.Row className={classes.notesRow}>
+        <Table.Row className={`${classes.notesRow} ${rowClassName}`}>
           <Table.Cell
             className={`${cellClassName} ${firstColumnClassName} ${customClasses["top-padding-none"]}`}
           ></Table.Cell>
