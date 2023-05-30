@@ -12,7 +12,7 @@ export const Offences = ({ offences, onOffenceSelected, selectedOffenceIndex }: 
   return selectedOffenceIndex !== undefined ? (
     <>
       <OffenceDetails
-        offence={offences[selectedOffenceIndex]}
+        offence={offences[selectedOffenceIndex - 1]}
         offencesCount={offences.length}
         onBackToAllOffences={() => onOffenceSelected(undefined)}
       />
