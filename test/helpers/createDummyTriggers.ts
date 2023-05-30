@@ -43,7 +43,7 @@ const triggerFrequency = {
 const totalFrequency = Object.values(triggerFrequency).reduce((a, b) => a + b, 0)
 const probs = Object.values(triggerFrequency).map((freq) => freq / totalFrequency)
 
-export default (dataSource: DataSource, errorId: number, creationDate: Date): Trigger[] => {
+export default (dataSource: DataSource, errorId: number, creationDate: Date, isResolved?: boolean): Trigger[] => {
   const numTriggers = Math.min(Math.round(exponential(2) * 2), 5) + 1
   const triggerCodes = sample(Object.keys(triggerFrequency), {
     size: numTriggers,
@@ -52,7 +52,7 @@ export default (dataSource: DataSource, errorId: number, creationDate: Date): Tr
   })
 
   return triggerCodes.map((triggerCode, idx) => {
-    const status = createResolutionStatus()
+    const status = isResolved ? "Resolved" : createResolutionStatus()
     return dataSource.getRepository(Trigger).create({
       errorId,
       triggerCode: triggerCode,

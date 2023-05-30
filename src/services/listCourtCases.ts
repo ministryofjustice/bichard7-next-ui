@@ -84,6 +84,7 @@ const listCourtCases = async (
     query.addOrderBy("courtCase.ptiurn")
   }
 
+  // Filters
   if (defendantName) {
     const defendantNameLike = { defendantName: ILike(`%${defendantName}%`) }
     query.andWhere(defendantNameLike)
