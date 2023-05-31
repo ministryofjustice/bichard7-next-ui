@@ -32,7 +32,8 @@ const useStyles = createUseStyles({
     overflowX: "scroll"
   },
   sideBarContainer: {
-    minWidth: "320px"
+    minWidth: "320px",
+    maxWidth: "430px"
   }
 })
 
