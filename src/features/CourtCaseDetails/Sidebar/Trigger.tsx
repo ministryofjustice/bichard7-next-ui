@@ -20,21 +20,28 @@ interface Props {
 const useStyles = createUseStyles({
   triggerContainer: {
     "&:not(:last-child)": {
-      marginBottom: "15px"
+      marginBottom: "30px"
     }
+  },
+  triggerHeaderRow: {
+    maxHeight: "25px"
   },
   triggerCode: {
     fontWeight: "bold"
   },
-  cjsResultCode: {
-    fontSize: "16px",
-    lineHeight: "1.25"
-  },
   triggerCheckbox: {
     position: "absolute",
     right: "22px"
+  },
+  cjsResultCode: {
+    fontSize: "16px",
+    lineHeight: "1.25"
   }
 })
+
+const TriggerDefinition = styled.div`
+  margin-top: 10px;
+`
 
 const TriggerStatus = styled.div`
   display: flex;
@@ -54,21 +61,20 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
 
   return (
     <div key={trigger.triggerId} className={classes.triggerContainer}>
-      <GridRow className="moj-trigger-row">
+      <GridRow className={`moj-trigger-row ${classes.triggerHeaderRow}`}>
         <GridCol className="trigger-details-column" setWidth="85%">
           <label className={`trigger-code ${classes.triggerCode}`} htmlFor={checkBoxId}>
             {trigger.shortTriggerCode}
+            {" / "}
           </label>
           {trigger.triggerItemIdentity !== undefined && (
             <>
-              {" / "}
               <ActionLink onClick={() => onClick(trigger.triggerItemIdentity)}>
                 {"Offence "}
                 {trigger.triggerItemIdentity + 1}
               </ActionLink>
             </>
           )}
-          <div>{triggerDefinition?.description}</div>
         </GridCol>
         <GridCol setWidth="15%">
           <TriggerStatus>
@@ -87,6 +93,7 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
       </GridRow>
       <GridRow>
         <GridCol>
+          <TriggerDefinition>{triggerDefinition?.description}</TriggerDefinition>
           <PreviewButton
             className="triggers-help-preview"
             showPreview={!showHelpBox}
