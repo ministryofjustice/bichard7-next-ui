@@ -30,6 +30,9 @@ interface Props {
 const useStyles = createUseStyles({
   contentColumn: {
     overflowX: "scroll"
+  },
+  sideBarContainer: {
+    minWidth: "320px"
   }
 })
 
@@ -187,7 +190,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
             <LinkButton href="resolve">{"Mark As Manually Resolved"}</LinkButton>
           </ConditionalRender>
         </GridCol>
-        <GridCol setWidth={sideBarWidth}>
+        <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
           <TriggersAndExceptions courtCase={courtCase} aho={aho} onNavigate={handleNavigation} />
         </GridCol>
       </GridRow>
