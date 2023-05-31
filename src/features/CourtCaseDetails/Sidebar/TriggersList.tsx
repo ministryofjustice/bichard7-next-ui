@@ -18,7 +18,6 @@ const useStyles = createUseStyles({
     "& .moj-action-link": {
       cursor: "pointer",
       fontSize: "16px",
-      marginRight: "10px",
       marginBottom: "16px"
     }
   }
