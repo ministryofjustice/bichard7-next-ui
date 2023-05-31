@@ -401,12 +401,14 @@ describe("Court case details", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
+        triggerItemIdentity: 0,
         triggerCode: "TRPR0010",
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       },
       {
         triggerId: 1,
+        triggerItemIdentity: 1,
         triggerCode: "TRPR0015",
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
@@ -421,7 +423,8 @@ describe("Court case details", () => {
     cy.get(".moj-tab-panel-triggers").should("be.visible")
     cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
 
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row").eq(0).contains("PR10 / Offence 1")
+    cy.get(".moj-tab-panel-triggers .moj-trigger-row").eq(0).contains("PR10")
+    cy.get(".moj-tab-panel-triggers .moj-trigger-row").eq(0).should("not.contain", "PR10 / Offence")
     cy.get(".moj-tab-panel-triggers .moj-trigger-row")
       .eq(0)
       .contains("Bail conditions imposed/varied/cancelled - update remand screen")
@@ -523,14 +526,14 @@ describe("Court case details", () => {
       {
         triggerId: 0,
         triggerCode: "TRPR0010",
-        triggerItemIdentity: 0,
+        triggerItemIdentity: 1,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       },
       {
         triggerId: 1,
         triggerCode: "TRPR0015",
-        triggerItemIdentity: 1,
+        triggerItemIdentity: 2,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }

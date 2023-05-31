@@ -14,8 +14,8 @@ const getExceptionPathDetails = (path: (string | number)[]): ExceptionPathDetail
   let offenceOrderIndex: number | undefined
   let location: string | undefined
   if (offenceIndex > 0) {
-    offenceOrderIndex = Number(path[offenceIndex + 1])
-    location = `Offence ${offenceOrderIndex + 1}`
+    offenceOrderIndex = Number(path[offenceIndex + 1]) + 1
+    location = `Offence ${offenceOrderIndex}`
     tab = "Offences"
   } else if (path.includes("Case")) {
     location = "Case information"
