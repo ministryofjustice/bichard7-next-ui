@@ -5,7 +5,7 @@ interface SingleExceptionProps {
   exceptionCounter: number
 }
 
-const SingleExceptionWrapper = styled.span`
+const SingleExceptionWrapper = styled.div`
   white-space: nowrap;
 `
 
