@@ -31,7 +31,7 @@ export const OffencesList = ({ offences, setDetailedOffenceIndex }: OffencesList
               key={getOffenceCode(offence)}
               offence={offence}
               number={index + 1}
-              onClick={() => setDetailedOffenceIndex(index)}
+              onClick={() => setDetailedOffenceIndex(index + 1)}
             />
           ))}
       </Table>

@@ -47,12 +47,12 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
           <label className={`trigger-code ${classes.triggerCode}`} htmlFor={checkBoxId}>
             {trigger.shortTriggerCode}
           </label>
-          {trigger.triggerItemIdentity !== undefined && (
+          {(trigger.triggerItemIdentity ?? 0) > 0 && (
             <>
               {" / "}
               <ActionLink onClick={() => onClick(trigger.triggerItemIdentity)}>
                 {"Offence "}
-                {trigger.triggerItemIdentity + 1}
+                {trigger.triggerItemIdentity}
               </ActionLink>
             </>
           )}
