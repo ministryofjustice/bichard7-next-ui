@@ -75,7 +75,7 @@ const TriggersList = ({ courtCase, onNavigate }: Props) => {
       <ConditionalRender isRendered={triggers.length > 0}>
         <GridRow>
           <GridCol className={classes.markCompleteContainer}>
-            <LinkButton href="" disabled id="mark-triggers-complete-button">
+            <LinkButton href="" disabled={selectedTriggerIds.length === 0} id="mark-triggers-complete-button">
               {"Mark trigger(s) as complete"}
             </LinkButton>
           </GridCol>

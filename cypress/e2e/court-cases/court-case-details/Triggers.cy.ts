@@ -108,5 +108,33 @@ describe("Triggers", () => {
       cy.get(".trigger-header input:checkbox").should("not.be.checked")
       cy.get("#mark-triggers-complete-button").should("exist").should("have.attr", "disabled")
     })
+
+    it("should be enabled if one or more triggers is selected", () => {
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0010",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        },
+        {
+          triggerId: 1,
+          triggerCode: "TRPR0010",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+
+      cy.visit(caseURL)
+
+      // Clicks all checkboxes
+      cy.get(".trigger-header input:checkbox").click({ multiple: true })
+      cy.get("#mark-triggers-complete-button").should("exist").should("not.have.attr", "disabled")
+
+      // Uncheck one checkbox
+      cy.get(".trigger-header input:checkbox").eq(0).click()
+      cy.get("#mark-triggers-complete-button").should("exist").should("not.have.attr", "disabled")
+    })
   })
 })
