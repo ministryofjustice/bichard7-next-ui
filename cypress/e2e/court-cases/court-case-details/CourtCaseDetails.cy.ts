@@ -569,9 +569,9 @@ describe("Court case details", () => {
     cy.visit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Offence 1 of 3")
-    cy.get(".moj-tab-panel-triggers .moj-trigger-header-row button").eq(0).contains("Offence 1").click()
+    cy.get(".moj-tab-panel-triggers .trigger-header button").eq(0).contains("Offence 1").click()
     cy.get("h3").should("have.text", "Offence 1 of 3")
-    cy.get(".moj-tab-panel-triggers .moj-trigger-header-row button").eq(1).contains("Offence 2").click()
+    cy.get(".moj-tab-panel-triggers .trigger-header button").eq(1).contains("Offence 2").click()
     cy.get("h3").should("have.text", "Offence 2 of 3")
   })
 

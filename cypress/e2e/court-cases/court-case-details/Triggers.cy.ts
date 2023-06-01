@@ -67,7 +67,7 @@ describe("Triggers", () => {
       cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
 
       cy.get(".moj-trigger-row").each((trigger) => {
-        cy.wrap(trigger).get(".moj-trigger-header-row").contains("Complete").should("exist")
+        cy.wrap(trigger).get(".trigger-header").contains("Complete").should("exist")
       })
     })
   })
@@ -90,6 +90,23 @@ describe("Triggers", () => {
       cy.get(".moj-tab-panel-triggers").should("be.visible")
 
       cy.get("#mark-triggers-complete-button").should("be.visible").should("have.attr", "disabled")
+    })
+
+    it("should be disabled if no triggers are selected", () => {
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0010",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+
+      cy.visit(caseURL)
+
+      cy.get(".trigger-header input:checkbox").should("not.be.checked")
+      cy.get("#mark-triggers-complete-button").should("exist").should("have.attr", "disabled")
     })
   })
 })
