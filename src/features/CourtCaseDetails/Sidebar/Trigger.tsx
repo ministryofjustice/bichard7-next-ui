@@ -65,13 +65,12 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
         <GridCol className="trigger-details-column" setWidth="85%">
           <label className={`trigger-code ${classes.triggerCode}`} htmlFor={checkBoxId}>
             {trigger.shortTriggerCode}
-            {" / "}
           </label>
           {trigger.triggerItemIdentity !== undefined && (
             <>
+              <b>{" / "}</b>
               <ActionLink onClick={() => onClick(trigger.triggerItemIdentity)}>
-                {"Offence "}
-                {trigger.triggerItemIdentity + 1}
+                {"Offence"} {trigger.triggerItemIdentity + 1}
               </ActionLink>
             </>
           )}
