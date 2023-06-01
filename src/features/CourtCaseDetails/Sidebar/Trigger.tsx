@@ -24,6 +24,9 @@ const useStyles = createUseStyles({
     fontSize: "16px",
     lineHeight: "1.25"
   },
+  triggerCheckboxColumn: {
+    textAlign: "right"
+  },
   triggerCheckbox: {
     position: "absolute",
     right: "22px"
@@ -58,7 +61,7 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
           )}
           <p>{triggerDefinition?.description}</p>
         </GridCol>
-        <GridCol>
+        <GridCol className={classes.triggerCheckboxColumn}>
           {isResolved ? (
             <TriggerCompleteBadge />
           ) : (
