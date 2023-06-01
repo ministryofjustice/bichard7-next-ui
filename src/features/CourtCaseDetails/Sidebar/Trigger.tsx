@@ -8,6 +8,7 @@ import { ChangeEvent, useState } from "react"
 import ConditionalRender from "components/ConditionalRender"
 import { Preview } from "components/Preview"
 import getTriggerDefinition from "utils/getTriggerDefinition"
+import styled from "styled-components"
 
 interface Props {
   trigger: TriggerEntity
@@ -17,18 +18,36 @@ interface Props {
 }
 
 const useStyles = createUseStyles({
+  triggerContainer: {
+    "&:not(:last-child)": {
+      marginBottom: "30px"
+    }
+  },
+  triggerHeaderRow: {
+    maxHeight: "25px"
+  },
   triggerCode: {
     fontWeight: "bold"
-  },
-  cjsResultCode: {
-    fontSize: "16px",
-    lineHeight: "1.25"
   },
   triggerCheckbox: {
     position: "absolute",
     right: "22px"
+  },
+  cjsResultCode: {
+    fontSize: "16px",
+    lineHeight: "1.25"
   }
 })
+
+const TriggerDefinition = styled.div`
+  margin-top: 10px;
+`
+
+const TriggerStatus = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+`
 
 const TriggerCompleteBadge = () => <span className="moj-badge moj-badge--green">{"Complete"}</span>
 
@@ -41,40 +60,39 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
   const isResolved = trigger.status === "Resolved"
 
   return (
-    <div key={trigger.triggerId}>
-      <GridRow className="moj-trigger-row">
-        <GridCol className="trigger-details-column">
+    <div key={trigger.triggerId} className={`moj-trigger-row ${classes.triggerContainer}`}>
+      <GridRow className={`moj-trigger-header-row ${classes.triggerHeaderRow}`}>
+        <GridCol className="trigger-details-column" setWidth="85%">
           <label className={`trigger-code ${classes.triggerCode}`} htmlFor={checkBoxId}>
             {trigger.shortTriggerCode}
           </label>
           {trigger.triggerItemIdentity !== undefined && (
             <>
-              {" / "}
+              <b>{" / "}</b>
               <ActionLink onClick={() => onClick(trigger.triggerItemIdentity)}>
-                {"Offence "}
-                {trigger.triggerItemIdentity + 1}
+                {"Offence"} {trigger.triggerItemIdentity + 1}
               </ActionLink>
             </>
           )}
-          <p>{triggerDefinition?.description}</p>
         </GridCol>
-        <GridCol>
-          {isResolved ? (
-            <TriggerCompleteBadge />
-          ) : (
-            <div className={classes.triggerCheckbox}>
+        <GridCol setWidth="15%">
+          <TriggerStatus>
+            {isResolved ? (
+              <TriggerCompleteBadge />
+            ) : (
               <Checkbox
                 id={checkBoxId}
                 value={trigger.triggerId}
                 checked={selectedTriggerIds.includes(trigger.triggerId)}
                 onChange={setTriggerSelection}
               />
-            </div>
-          )}
+            )}
+          </TriggerStatus>
         </GridCol>
       </GridRow>
       <GridRow>
         <GridCol>
+          <TriggerDefinition>{triggerDefinition?.description}</TriggerDefinition>
           <PreviewButton
             className="triggers-help-preview"
             showPreview={!showHelpBox}

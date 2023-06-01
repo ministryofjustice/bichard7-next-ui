@@ -24,7 +24,8 @@ const useStyles = createUseStyles({
       left: "6px",
       width: "14px",
       height: "6px"
-    }
+    },
+    padding: 0
   }
 })
 

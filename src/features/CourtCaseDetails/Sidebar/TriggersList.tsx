@@ -6,6 +6,7 @@ import { ChangeEvent, useState } from "react"
 import type NavigationHandler from "types/NavigationHandler"
 import Trigger from "./Trigger"
 import { sortBy } from "lodash"
+import LinkButton from "components/LinkButton"
 
 interface Props {
   courtCase: CourtCase
@@ -13,14 +14,17 @@ interface Props {
 }
 
 const useStyles = createUseStyles({
-  selectAllRow: {
+  selectAllContainer: {
     textAlign: "right",
     "& .moj-action-link": {
       cursor: "pointer",
       fontSize: "16px",
-      marginRight: "10px",
       marginBottom: "16px"
     }
+  },
+  markCompleteContainer: {
+    display: "flex",
+    justifyContent: "end"
   }
 })
 
@@ -51,7 +55,7 @@ const TriggersList = ({ courtCase, onNavigate }: Props) => {
     <>
       {triggers.length === 0 && "There are no triggers for this case."}
       {triggers.length > 0 && (
-        <GridRow className={classes.selectAllRow}>
+        <GridRow className={classes.selectAllContainer}>
           <GridCol>
             <ActionLink onClick={selectAll}>{"Select all"}</ActionLink>
           </GridCol>
@@ -66,6 +70,14 @@ const TriggersList = ({ courtCase, onNavigate }: Props) => {
           setTriggerSelection={setTriggerSelection}
         />
       ))}
+
+      <GridRow>
+        <GridCol className={classes.markCompleteContainer}>
+          <LinkButton href="" disabled>
+            {"Mark trigger(s) as complete"}
+          </LinkButton>
+        </GridCol>
+      </GridRow>
     </>
   )
 }
