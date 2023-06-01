@@ -60,8 +60,8 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
   const isResolved = trigger.status === "Resolved"
 
   return (
-    <div key={trigger.triggerId} className={classes.triggerContainer}>
-      <GridRow className={`moj-trigger-row ${classes.triggerHeaderRow}`}>
+    <div key={trigger.triggerId} className={`moj-trigger-row ${classes.triggerContainer}`}>
+      <GridRow className={`moj-trigger-header-row ${classes.triggerHeaderRow}`}>
         <GridCol className="trigger-details-column" setWidth="85%">
           <label className={`trigger-code ${classes.triggerCode}`} htmlFor={checkBoxId}>
             {trigger.shortTriggerCode}
