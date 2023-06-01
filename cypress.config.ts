@@ -10,7 +10,7 @@ import {
   insertMultipleDummyCourtCases
 } from "./test/utils/insertCourtCases"
 import insertException from "./test/utils/manageExceptions"
-import { insertTriggers } from "./test/utils/manageTriggers"
+import { deleteTriggers, insertTriggers } from "./test/utils/manageTriggers"
 import { deleteUsers, insertUsersWithOverrides } from "./test/utils/manageUsers"
 
 export default defineConfig({
@@ -73,6 +73,10 @@ export default defineConfig({
 
         insertTriggers(args) {
           return insertTriggers(args.caseId, args.triggers)
+        },
+
+        clearTriggers() {
+          return deleteTriggers().then(() => true)
         },
 
         insertException(params: { caseId: number; exceptionCode: string; errorReport?: string }) {
