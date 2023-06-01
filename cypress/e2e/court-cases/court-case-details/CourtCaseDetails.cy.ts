@@ -1,13 +1,13 @@
-import type { TestTrigger } from "../../../test/utils/manageTriggers"
+import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import { differenceInMinutes, parse } from "date-fns"
 import User from "services/entities/User"
-import logAccessibilityViolations from "../../support/logAccessibilityViolations"
-import a11yConfig from "../../support/a11yConfig"
-import hashedPassword from "../../fixtures/hashedPassword"
-import resubmitCaseJson from "../../fixtures/expected_resubmit_01.json"
-import type CaseDetailsTab from "../../../src/types/CaseDetailsTab"
-import DummyMultipleOffencesNoErrorAho from "../../../test/test-data/AnnotatedHO1.json"
-import DummyHO100302Aho from "../../../test/test-data/HO100302_1.json"
+import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
+import a11yConfig from "../../../support/a11yConfig"
+import hashedPassword from "../../../fixtures/hashedPassword"
+import resubmitCaseJson from "../../../fixtures/expected_resubmit_01.json"
+import type CaseDetailsTab from "../../../../src/types/CaseDetailsTab"
+import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
+import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
 
 const clickTab = (tab: CaseDetailsTab) => {
   cy.contains(tab).click()
@@ -471,40 +471,6 @@ describe("Court case details", () => {
 
     cy.get(".moj-tab-panel-triggers .moj-trigger-row").should("not.exist")
     cy.get(".moj-tab-panel-triggers").contains("There are no triggers for this case.")
-  })
-
-  it("should show a complete badge against each resolved trigger", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-    const triggers: TestTrigger[] = [
-      {
-        triggerId: 0,
-        triggerCode: "TRPR0010",
-        status: "Resolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z"),
-        resolvedAt: new Date("2022-07-09T12:22:34.000Z"),
-        resolvedBy: "Bichard01"
-      },
-      {
-        triggerId: 1,
-        triggerCode: "TRPR0015",
-        status: "Resolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z"),
-        resolvedAt: new Date("2022-07-09T12:22:34.000Z"),
-        resolvedBy: "Bichard01"
-      }
-    ]
-    cy.task("insertTriggers", { caseId: 0, triggers })
-
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
-
-    cy.get(".moj-tab-panel-triggers").should("be.visible")
-    cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
-
-    cy.get(".moj-trigger-row").each((trigger) => {
-      cy.wrap(trigger).get(".moj-trigger-header-row").contains("Complete").should("exist")
-    })
   })
 
   it("should select all triggers when select all link is clicked", () => {

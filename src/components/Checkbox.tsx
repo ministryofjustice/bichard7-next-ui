@@ -10,6 +10,7 @@ interface Props<TValue> {
   className?: string
   value?: TValue
   checked?: boolean
+  disabled?: boolean
   onChange?: ChangeEventHandler | undefined
 }
 
@@ -35,6 +36,7 @@ export default function Checkbox<TValue extends ValueType>({
   className,
   value,
   checked,
+  disabled,
   onChange
 }: Props<TValue>) {
   const classes = useStyles()
@@ -45,6 +47,7 @@ export default function Checkbox<TValue extends ValueType>({
       value={value}
       checked={checked}
       onChange={onChange}
+      disabled={disabled}
       className={`${classes.Checkbox} ${className} moj-checkbox govuk-!-display-inline-block`}
     >
       {children}

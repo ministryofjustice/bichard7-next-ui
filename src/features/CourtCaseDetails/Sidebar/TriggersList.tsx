@@ -7,6 +7,7 @@ import type NavigationHandler from "types/NavigationHandler"
 import Trigger from "./Trigger"
 import { sortBy } from "lodash"
 import LinkButton from "components/LinkButton"
+import ConditionalRender from "components/ConditionalRender"
 
 interface Props {
   courtCase: CourtCase
@@ -71,13 +72,15 @@ const TriggersList = ({ courtCase, onNavigate }: Props) => {
         />
       ))}
 
-      <GridRow>
-        <GridCol className={classes.markCompleteContainer}>
-          <LinkButton href="" disabled>
-            {"Mark trigger(s) as complete"}
-          </LinkButton>
-        </GridCol>
-      </GridRow>
+      <ConditionalRender isRendered={triggers.length > 0}>
+        <GridRow>
+          <GridCol className={classes.markCompleteContainer}>
+            <LinkButton href="" disabled id="mark-triggers-complete-button">
+              {"Mark trigger(s) as complete"}
+            </LinkButton>
+          </GridCol>
+        </GridRow>
+      </ConditionalRender>
     </>
   )
 }
