@@ -113,7 +113,6 @@ export const getServerSideProps = withMultipleServerSideProps(
     return {
       props: {
         user: currentUser.serialize(),
-        triggersVisible: currentUser.canLockTriggers,
         courtCase: courtCase.serialize(),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
@@ -127,16 +126,9 @@ interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
   lockedByAnotherUser: boolean
-  triggersVisible: boolean
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({
-  courtCase,
-  aho,
-  user,
-  lockedByAnotherUser,
-  triggersVisible
-}: Props) => {
+const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, aho, user, lockedByAnotherUser }: Props) => {
   const { basePath } = useRouter()
   return (
     <>
@@ -149,12 +141,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
           {"Cases"}
         </BackLink>
         <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
-        <CourtCaseDetails
-          courtCase={courtCase}
-          aho={aho}
-          lockedByAnotherUser={lockedByAnotherUser}
-          triggersVisible={triggersVisible}
-        />
+        <CourtCaseDetails courtCase={courtCase} aho={aho} lockedByAnotherUser={lockedByAnotherUser} />
       </Layout>
     </>
   )
