@@ -25,7 +25,10 @@ const useStyles = createUseStyles({
   },
   markCompleteContainer: {
     display: "flex",
-    justifyContent: "end"
+    justifyContent: "end",
+    "& #mark-triggers-complete-button": {
+      marginBottom: 0
+    }
   }
 })
 
