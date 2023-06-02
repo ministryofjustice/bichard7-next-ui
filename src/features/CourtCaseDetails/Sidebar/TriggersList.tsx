@@ -19,7 +19,7 @@ const useStyles = createUseStyles({
     textAlign: "right",
     "& .moj-action-link": {
       cursor: "pointer",
-      fontSize: "16px",
+      fontSize: "19px",
       marginBottom: "16px"
     }
   },
@@ -58,7 +58,9 @@ const TriggersList = ({ courtCase, onNavigate }: Props) => {
       {triggers.length > 0 && (
         <GridRow className={classes.selectAllContainer}>
           <GridCol>
-            <ActionLink onClick={selectAll}>{"Select all"}</ActionLink>
+            <ActionLink onClick={selectAll} className="select-all-action">
+              {"Select all"}
+            </ActionLink>
           </GridCol>
         </GridRow>
       )}
