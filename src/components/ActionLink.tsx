@@ -1,7 +1,7 @@
 import type { ReactEventHandler } from "react"
 import { createUseStyles } from "react-jss"
 
-interface Props {
+interface Props extends React.ComponentProps<"a"> {
   children: React.ReactNode
   className?: string
   onClick?: ReactEventHandler

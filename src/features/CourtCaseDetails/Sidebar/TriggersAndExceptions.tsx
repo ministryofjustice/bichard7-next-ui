@@ -19,6 +19,9 @@ const useStyles = createUseStyles({
   },
   sideBar: {
     marginTop: "-41px"
+  },
+  tabPanelTriggers: {
+    paddingTop: "10px"
   }
 })
 
@@ -43,7 +46,11 @@ const TriggersAndExceptions = ({ courtCase, aho, onNavigate }: Props) => {
             selected={selectedTab === "exceptions"}
           >{`Exceptions`}</Tabs.Tab>
         </Tabs.List>
-        <Tabs.Panel id="triggers" selected={selectedTab === "triggers"} className="moj-tab-panel-triggers">
+        <Tabs.Panel
+          id="triggers"
+          selected={selectedTab === "triggers"}
+          className={`moj-tab-panel-triggers ${classes.tabPanelTriggers}`}
+        >
           <TriggersList courtCase={courtCase} onNavigate={onNavigate} />
         </Tabs.Panel>
         <Tabs.Panel id="exceptions" selected={selectedTab === "exceptions"} className="moj-tab-panel-exceptions">

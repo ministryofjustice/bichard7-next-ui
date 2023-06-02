@@ -17,10 +17,10 @@ interface Props {
 const useStyles = createUseStyles({
   selectAllContainer: {
     textAlign: "right",
-    "& .moj-action-link": {
+    paddingBottom: "20px",
+    "#select-all-action": {
       cursor: "pointer",
-      fontSize: "19px",
-      marginBottom: "16px"
+      fontSize: "19px"
     }
   },
   markCompleteContainer: {
@@ -58,7 +58,7 @@ const TriggersList = ({ courtCase, onNavigate }: Props) => {
       {triggers.length > 0 && (
         <GridRow className={classes.selectAllContainer}>
           <GridCol>
-            <ActionLink onClick={selectAll} className="select-all-action">
+            <ActionLink onClick={selectAll} id="select-all-action">
               {"Select all"}
             </ActionLink>
           </GridCol>
