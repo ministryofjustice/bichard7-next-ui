@@ -6,7 +6,7 @@ import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { BackLink, Button, FormGroup, Heading, Select } from "govuk-react"
+import { Button, Fieldset, FormGroup, Heading, HintText, Label, Link, Select, TextArea } from "govuk-react"
 import { useRouter } from "next/router"
 import parseFormData from "utils/parseFormData"
 import { isPost } from "utils/http"
@@ -15,7 +15,11 @@ import { isError } from "types/Result"
 import ConditionalRender from "components/ConditionalRender"
 import reallocateCourtCaseToForce from "services/reallocateCourtCaseToForce"
 import redirectTo from "utils/redirectTo"
-import forces from "@moj-bichard7-developers/bichard7-next-data/dist/data/forces.json"
+import reallocationForces from "utils/reallocation-forces.json"
+import { forces } from "@moj-bichard7-developers/bichard7-next-data"
+import ButtonsGroup from "components/ButtonsGroup"
+import { FormEventHandler, useState } from "react"
+import { useCustomStyles } from "../../../../styles/customStyles"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -44,13 +48,13 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     if (isPost(req)) {
-      const { force } = (await parseFormData(req)) as { force: string }
-      const reallocateResult = await reallocateCourtCaseToForce(dataSource, courtCase.errorId, currentUser, force)
+      const { force, note } = (await parseFormData(req)) as { force: string; note?: string }
+      const reallocateResult = await reallocateCourtCaseToForce(dataSource, courtCase.errorId, currentUser, force, note)
 
       if (isError(reallocateResult)) {
         throw reallocateResult
       } else {
-        return redirectTo(`/`)
+        return redirectTo("/")
       }
     }
 
@@ -65,41 +69,62 @@ interface Props {
   noteTextError?: string
 }
 
+const MAX_NOTE_LENGTH = 1000
+
 const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser }: Props) => {
+  const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
+  const classes = useCustomStyles()
   const { basePath } = useRouter()
+  const currentForce = forces.find((force) => force.code === courtCase.orgForPoliceFilter?.substring(0, 2))
+  const filteredReallocationForces = reallocationForces.filter((force) => force.code !== currentForce?.code)
+  const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
+    setNoteRemainingLength(MAX_NOTE_LENGTH - event.currentTarget.value.length)
+  }
 
   return (
     <>
       <Layout user={user}>
         <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
-          <title>{"Reallocate Case | Bichard7"}</title>
-          <meta name="description" content="Reallocate Case| Bichard7" />
+          <title>{"Case Reallocation | Bichard7"}</title>
+          <meta name="description" content="Case Reallocation| Bichard7" />
         </Heading>
-        <BackLink href={`${basePath}/court-cases/${courtCase.errorId}`} onClick={function noRefCheck() {}}>
-          {"Case Details"}
-        </BackLink>
         <Heading as="h2" size="MEDIUM">
-          {"Reallocate Case"}
+          {"Case reallocation"}
         </Heading>
         <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
         <ConditionalRender isRendered={!lockedByAnotherUser}>
           <form method="POST" action="#">
-            <FormGroup>
-              <Select
-                input={{
-                  name: "force"
-                }}
-                label="Select force"
-              >
-                {forces.map((force) => {
-                  return <option key={force.code} value={force.code}>{`${force.name}`}</option>
-                })}
-              </Select>
-            </FormGroup>
+            <Fieldset>
+              <FormGroup>
+                <Label>{"Current force owner"}</Label>
+                <span>{`${currentForce?.code} - ${currentForce?.name}`}</span>
+              </FormGroup>
+              <FormGroup>
+                <Label>{"New force owner"}</Label>
+                <Select input={{ name: "force" }} label={""}>
+                  {filteredReallocationForces.map(({ code, name }) => (
+                    <option key={code} value={code}>
+                      {`${code} - ${name}`}
+                    </option>
+                  ))}
+                </Select>
+              </FormGroup>
+              <FormGroup>
+                <Label>{"Add a note (optional)"}</Label>
+                <HintText className={classes["no-margin-bottom"]}>{"Input reason for case reallocation"}</HintText>
+                <TextArea input={{ name: "note", rows: 5, maxLength: MAX_NOTE_LENGTH, onInput: handleOnNoteChange }}>
+                  {}
+                </TextArea>
+                <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
+              </FormGroup>
 
-            <Button id="Reallocate" type="submit">
-              {"Reallocate"}
-            </Button>
+              <ButtonsGroup>
+                <Button id="Reallocate" type="submit">
+                  {"Reallocate"}
+                </Button>
+                <Link href={`${basePath}/court-cases/${courtCase.errorId}`}>{"Cancel"}</Link>
+              </ButtonsGroup>
+            </Fieldset>
           </form>
         </ConditionalRender>
       </Layout>
