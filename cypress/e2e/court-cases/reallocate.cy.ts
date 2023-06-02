@@ -3,7 +3,7 @@ import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 
 describe("Case details", () => {
-  const defaultUsers: Partial<User>[] = Array.from(Array(2)).map((_value, idx) => {
+  const defaultUsers: Partial<User>[] = Array.from(Array(4)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
       visibleForces: [`0${idx}`],
@@ -42,19 +42,117 @@ describe("Case details", () => {
     cy.findByText("NAME Defendant").click()
 
     cy.get("button").contains("Reallocate Case").click()
-    cy.get("H2").should("have.text", "Reallocate Case")
-    cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
+    cy.get("H2").should("have.text", "Case reallocation")
 
-    cy.get('select[name="force"]').select("03")
+    cy.findByText("Cancel").should("have.attr", "href", "/bichard/court-cases/0")
+
+    cy.get('select[name="force"]').select("03 - Cumbria")
+    cy.get('textarea[name="note"]').type("This is a dummy note")
+    cy.get("span").should("contain", "You have 980 characters remaining")
     cy.get("button").contains("Reallocate").click()
 
     cy.get("H1").should("have.text", "Case list")
     cy.contains("NAME Defendant").should("not.exist")
 
-    // TODO find out why cypress is filing to login twice in one test
-    // cy.login("bichard03@example.com", "password")
-    // cy.visit("/bichard")
-    // cy.findByText("NAME Defendant").click()
+    cy.login("bichard03@example.com", "password")
+    cy.visit("/bichard")
+    cy.findByText("NAME Defendant").click()
+    cy.get(".moj-sub-navigation a").contains("Notes").click()
+    cy.get("table tbody tr").should("have.length", 3)
+    cy.get("table tbody tr").should(
+      "contain",
+      "Bichard01: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
+    )
+    cy.get("table tbody tr").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
+    cy.get("table tbody tr").should("contain", "This is a dummy note")
+  })
+
+  it("should be able to reallocate a case without note", () => {
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+    const triggers: TestTrigger[] = [
+      {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+    cy.task("insertTriggers", { caseId: 0, triggers })
+
+    cy.login("bichard01@example.com", "password")
+
+    cy.visit("/bichard")
+
+    cy.findByText("NAME Defendant").click()
+
+    cy.get("button").contains("Reallocate Case").click()
+    cy.get("H2").should("have.text", "Case reallocation")
+    cy.findByText("Cancel").should("have.attr", "href", "/bichard/court-cases/0")
+
+    cy.get('select[name="force"]').select("03 - Cumbria")
+    cy.get("span").should("contain", "You have 1000 characters remaining")
+    cy.get("button").contains("Reallocate").click()
+
+    cy.get("H1").should("have.text", "Case list")
+    cy.contains("NAME Defendant").should("not.exist")
+
+    cy.login("bichard03@example.com", "password")
+    cy.visit("/bichard")
+    cy.findByText("NAME Defendant").click()
+    cy.get(".moj-sub-navigation a").contains("Notes").click()
+    cy.get("table tbody tr").should("have.length", 2)
+    cy.get("table tbody tr").should(
+      "contain",
+      "Bichard01: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
+    )
+    cy.get("table tbody tr").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
+  })
+
+  it("should not accept more than 1000 characters in note text field", () => {
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+    const triggers: TestTrigger[] = [
+      {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+    cy.task("insertTriggers", { caseId: 0, triggers })
+
+    cy.login("bichard01@example.com", "password")
+
+    cy.visit("/bichard")
+
+    cy.findByText("NAME Defendant").click()
+
+    cy.get("button").contains("Reallocate Case").click()
+    cy.get("H2").should("have.text", "Case reallocation")
+    cy.findByText("Cancel").should("have.attr", "href", "/bichard/court-cases/0")
+
+    cy.get('select[name="force"]').select("03 - Cumbria")
+    cy.get('textarea[name="note"]').then((element) => {
+      element[0].textContent = "a".repeat(990)
+    })
+    cy.get('textarea[name="note"]').type("a".repeat(20))
+    cy.get("span").should("contain", "You have 0 characters remaining")
+    cy.get("button").contains("Reallocate").click()
+
+    cy.get("H1").should("have.text", "Case list")
+    cy.contains("NAME Defendant").should("not.exist")
+
+    cy.login("bichard03@example.com", "password")
+    cy.visit("/bichard")
+    cy.findByText("NAME Defendant").click()
+    cy.get(".moj-sub-navigation a").contains("Notes").click()
+    cy.get("table tbody tr").should("have.length", 3)
+    cy.get("table tbody tr").should(
+      "contain",
+      "Bichard01: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
+    )
+    cy.get("table tbody tr").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
+    cy.get("table tbody tr").should("not.contain", "a".repeat(1001))
+    cy.get("table tbody tr").should("contain", "a".repeat(1000))
   })
 
   it("should return 404 for a case that this user can not see", () => {
