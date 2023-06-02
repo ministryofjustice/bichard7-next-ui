@@ -15,11 +15,11 @@ import { isError } from "types/Result"
 import ConditionalRender from "components/ConditionalRender"
 import reallocateCourtCaseToForce from "services/reallocateCourtCaseToForce"
 import redirectTo from "utils/redirectTo"
-import reallocationForces from "utils/reallocation-forces.json"
 import { forces } from "@moj-bichard7-developers/bichard7-next-data"
 import ButtonsGroup from "components/ButtonsGroup"
 import { FormEventHandler, useState } from "react"
 import { useCustomStyles } from "../../../../styles/customStyles"
+import getForcesForReallocation from "services/getForcesForReallocation"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -76,7 +76,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
   const classes = useCustomStyles()
   const { basePath } = useRouter()
   const currentForce = forces.find((force) => force.code === courtCase.orgForPoliceFilter?.substring(0, 2))
-  const filteredReallocationForces = reallocationForces.filter((force) => force.code !== currentForce?.code)
+  const forcesForReallocation = getForcesForReallocation(currentForce?.code)
   const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
     setNoteRemainingLength(MAX_NOTE_LENGTH - event.currentTarget.value.length)
   }
@@ -102,7 +102,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
               <FormGroup>
                 <Label>{"New force owner"}</Label>
                 <Select input={{ name: "force" }} label={""}>
-                  {filteredReallocationForces.map(({ code, name }) => (
+                  {forcesForReallocation.map(({ code, name }) => (
                     <option key={code} value={code}>
                       {`${code} - ${name}`}
                     </option>
