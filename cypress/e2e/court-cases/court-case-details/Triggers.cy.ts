@@ -41,6 +41,12 @@ describe("Triggers", () => {
       ],
       userGroups: ["B7NewUI_grp"]
     })
+  })
+
+  beforeEach(() => {
+    cy.login("bichard01@example.com", "password")
+    cy.task("clearTriggers")
+    cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
@@ -48,11 +54,6 @@ describe("Triggers", () => {
         orgForPoliceFilter: "01"
       }
     ])
-  })
-
-  beforeEach(() => {
-    cy.login("bichard01@example.com", "password")
-    cy.task("clearTriggers")
   })
 
   describe("Trigger status", () => {
@@ -73,6 +74,20 @@ describe("Triggers", () => {
       cy.get(".moj-trigger-row").each((trigger) => {
         cy.wrap(trigger).get(".trigger-header").contains("Complete").should("exist")
       })
+    })
+
+    it("should disable checkboxes if somebody else has the triggers locked", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          triggerLockedByUsername: "anotherUser",
+          orgForPoliceFilter: "01"
+        }
+      ])
+      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
+      cy.visit(caseURL)
+      cy.get(".trigger-header input[type='checkbox']").should("not.be.enabled")
+      cy.get(".trigger-header input[type='checkbox']").should("not.be.checked")
     })
   })
 

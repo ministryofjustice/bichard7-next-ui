@@ -116,7 +116,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         triggersVisible: currentUser.canLockTriggers,
         courtCase: courtCase.serialize(),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
-        lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
+        errorLockedByAnotherUser: courtCase.errorIsLockedByAnotherUser(currentUser.username),
+        triggersLockedByAnotherUser: courtCase.triggersAreLockedByAnotherUser(currentUser.username)
       }
     }
   }
@@ -126,7 +127,8 @@ interface Props {
   user: User
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
-  lockedByAnotherUser: boolean
+  errorLockedByAnotherUser: boolean
+  triggersLockedByAnotherUser: boolean
   triggersVisible: boolean
 }
 
@@ -134,7 +136,8 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   courtCase,
   aho,
   user,
-  lockedByAnotherUser,
+  errorLockedByAnotherUser,
+  triggersLockedByAnotherUser,
   triggersVisible
 }: Props) => {
   const { basePath } = useRouter()
@@ -148,11 +151,12 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         <BackLink href={`${basePath}`} onClick={function noRefCheck() {}}>
           {"Cases"}
         </BackLink>
-        <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
+        <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={errorLockedByAnotherUser} />
         <CourtCaseDetails
           courtCase={courtCase}
           aho={aho}
-          lockedByAnotherUser={lockedByAnotherUser}
+          errorLockedByAnotherUser={errorLockedByAnotherUser}
+          triggersLockedByAnotherUser={triggersLockedByAnotherUser}
           triggersVisible={triggersVisible}
         />
       </Layout>

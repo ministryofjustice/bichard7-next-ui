@@ -15,6 +15,7 @@ interface Props {
   onClick: (index: number | undefined) => void
   selectedTriggerIds: number[]
   setTriggerSelection: (event: ChangeEvent<HTMLInputElement>) => void
+  disabled?: boolean
 }
 
 const useStyles = createUseStyles({
@@ -51,7 +52,7 @@ const TriggerStatus = styled.div`
 
 const TriggerCompleteBadge = () => <span className="moj-badge moj-badge--green">{"Complete"}</span>
 
-const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: Props) => {
+const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection, disabled }: Props) => {
   const triggerDefinition = getTriggerDefinition(trigger.triggerCode)
   const [showHelpBox, setShowHelpBox] = useState(false)
   const classes = useStyles()
@@ -85,6 +86,7 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
                 value={trigger.triggerId}
                 checked={selectedTriggerIds.includes(trigger.triggerId)}
                 onChange={setTriggerSelection}
+                disabled={disabled}
               />
             )}
           </TriggerStatus>

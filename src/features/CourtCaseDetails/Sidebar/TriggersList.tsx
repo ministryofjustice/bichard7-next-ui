@@ -11,6 +11,7 @@ import ConditionalRender from "components/ConditionalRender"
 
 interface Props {
   courtCase: CourtCase
+  triggersLockedByAnotherUser: boolean
   onNavigate: NavigationHandler
 }
 
@@ -32,7 +33,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const TriggersList = ({ courtCase, onNavigate }: Props) => {
+const TriggersList = ({ courtCase, triggersLockedByAnotherUser, onNavigate }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
   const triggers = sortBy(courtCase.triggers, "triggerItemIdentity")
@@ -71,6 +72,7 @@ const TriggersList = ({ courtCase, onNavigate }: Props) => {
         <Trigger
           key={index}
           trigger={trigger}
+          disabled={triggersLockedByAnotherUser}
           onClick={() => handleClick(trigger.triggerItemIdentity)}
           selectedTriggerIds={selectedTriggerIds}
           setTriggerSelection={setTriggerSelection}

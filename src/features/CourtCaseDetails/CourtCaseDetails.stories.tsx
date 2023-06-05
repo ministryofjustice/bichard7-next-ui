@@ -35,7 +35,7 @@ const courtCase = {
 const aho = parseAhoXml(CourtCaseAho.hearingOutcomeXml) as AnnotatedHearingOutcome
 
 export const DetailsNotLockedByAnotherUser: ComponentStory<typeof CourtCaseDetails> = () => (
-  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={false} aho={aho} triggersVisible={true} />
+  <CourtCaseDetails courtCase={courtCase} errorLockedByAnotherUser={false} aho={aho} triggersVisible={true} />
 )
 
 DetailsNotLockedByAnotherUser.play = ({ canvasElement }) => {
@@ -56,7 +56,7 @@ DetailsNotLockedByAnotherUser.play = ({ canvasElement }) => {
 }
 
 export const DetailsLockedByAnotherUser: ComponentStory<typeof CourtCaseDetails> = () => (
-  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={true} aho={aho} triggersVisible={true} />
+  <CourtCaseDetails courtCase={courtCase} errorLockedByAnotherUser={true} aho={aho} triggersVisible={true} />
 )
 
 DetailsLockedByAnotherUser.play = ({ canvasElement }) => {
@@ -77,7 +77,7 @@ DetailsLockedByAnotherUser.play = ({ canvasElement }) => {
 }
 
 export const TriggersNotVisibleToUser: ComponentStory<typeof CourtCaseDetails> = () => (
-  <CourtCaseDetails courtCase={courtCase} lockedByAnotherUser={false} aho={aho} triggersVisible={false} />
+  <CourtCaseDetails courtCase={courtCase} errorLockedByAnotherUser={false} aho={aho} triggersVisible={false} />
 )
 
 TriggersNotVisibleToUser.play = async ({ canvasElement }) => {

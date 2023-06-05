@@ -23,7 +23,8 @@ import { Notes } from "./Tabs/Panels/Notes/Notes"
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
-  lockedByAnotherUser: boolean
+  errorLockedByAnotherUser: boolean
+  triggersLockedByAnotherUser: boolean
   triggersVisible: boolean
 }
 
@@ -40,7 +41,13 @@ const useStyles = createUseStyles({
 const sideBarWidth = "33%"
 const contentWidth = "67%"
 
-const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser, triggersVisible }) => {
+const CourtCaseDetails: React.FC<Props> = ({
+  courtCase,
+  aho,
+  errorLockedByAnotherUser,
+  triggersLockedByAnotherUser,
+  triggersVisible
+}) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
@@ -114,7 +121,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Notes"}>
-            <Notes notes={courtCase.notes} lockedByAnotherUser={lockedByAnotherUser} />
+            <Notes notes={courtCase.notes} lockedByAnotherUser={errorLockedByAnotherUser} />
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "PNC errors"}>
@@ -184,15 +191,20 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           <ConditionalRender isRendered={(courtCase?.triggers?.length ?? 0) === 0}>
             <Paragraph>{"Case has no triggers."}</Paragraph>
           </ConditionalRender>
-          <ConditionalRender isRendered={!lockedByAnotherUser}>
+          <ConditionalRender isRendered={!errorLockedByAnotherUser}>
             <LinkButton href="reallocate">{"Reallocate Case"}</LinkButton>
           </ConditionalRender>
-          <ConditionalRender isRendered={!lockedByAnotherUser}>
+          <ConditionalRender isRendered={!errorLockedByAnotherUser}>
             <LinkButton href="resolve">{"Mark As Manually Resolved"}</LinkButton>
           </ConditionalRender>
         </GridCol>
         <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
-          <TriggersAndExceptions courtCase={courtCase} aho={aho} onNavigate={handleNavigation} />
+          <TriggersAndExceptions
+            courtCase={courtCase}
+            aho={aho}
+            triggersLockedByAnotherUser={triggersLockedByAnotherUser}
+            onNavigate={handleNavigation}
+          />
         </GridCol>
       </GridRow>
     </>
