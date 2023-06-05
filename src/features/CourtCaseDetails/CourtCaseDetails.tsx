@@ -112,10 +112,10 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
             <CourtCaseDetailsPanel heading={"PNC errors"}>{""}</CourtCaseDetailsPanel>
           </ConditionalRender>
 
-          <ConditionalRender isRendered={!lockedByAnotherUser}>
+          <ConditionalRender isRendered={!lockedByAnotherUser && activeTab !== "Notes"}>
             <LinkButton href="reallocate">{"Reallocate Case"}</LinkButton>
           </ConditionalRender>
-          <ConditionalRender isRendered={!lockedByAnotherUser}>
+          <ConditionalRender isRendered={!lockedByAnotherUser && activeTab !== "Notes"}>
             <LinkButton href="resolve">{"Mark As Manually Resolved"}</LinkButton>
           </ConditionalRender>
         </GridCol>
