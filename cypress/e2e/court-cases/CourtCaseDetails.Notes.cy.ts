@@ -1,13 +1,6 @@
-import type { TestTrigger } from "../../../test/utils/manageTriggers"
-import { differenceInMinutes, parse } from "date-fns"
 import User from "services/entities/User"
-import logAccessibilityViolations from "../../support/logAccessibilityViolations"
-import a11yConfig from "../../support/a11yConfig"
-import hashedPassword from "../../fixtures/hashedPassword"
-import resubmitCaseJson from "../../fixtures/expected_resubmit_01.json"
 import type CaseDetailsTab from "../../../src/types/CaseDetailsTab"
-import DummyMultipleOffencesNoErrorAho from "../../../test/test-data/AnnotatedHO1.json"
-import DummyHO100302Aho from "../../../test/test-data/HO100302_1.json"
+import hashedPassword from "../../fixtures/hashedPassword"
 
 const clickTab = (tab: CaseDetailsTab) => {
   cy.contains(tab).click()
@@ -99,6 +92,8 @@ describe("Court case details", () => {
     cy.should("not.contain", "Test note 2")
     cy.contains("bichard01")
     cy.contains("Test note 1")
+    cy.get("#reallocate").should("not.exist")
+    cy.get("#resolve").should("not.exist")
   })
 
   it("should display no user notes message", () => {
