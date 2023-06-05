@@ -11,7 +11,9 @@ const LinkButton: React.FC<Props> = ({ children, href }: Props) => {
   const { asPath, basePath } = useRouter()
   return (
     <form method="get" action={href.startsWith("/") ? href : `${basePath}${asPath}/${href}`}>
-      <Button>{children}</Button>
+      <div id={href}>
+        <Button>{children}</Button>
+      </div>
     </form>
   )
 }
