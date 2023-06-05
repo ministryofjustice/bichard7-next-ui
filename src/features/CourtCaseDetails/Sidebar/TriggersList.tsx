@@ -59,7 +59,7 @@ const TriggersList = ({ courtCase, onNavigate }: Props) => {
     <>
       {triggers.length === 0 && "There are no triggers for this case."}
       {triggers.length > 0 && (
-        <GridRow className={classes.selectAllContainer}>
+        <GridRow id={"select-all-triggers"} className={classes.selectAllContainer}>
           <GridCol>
             <ActionLink onClick={selectAll} id="select-all-action">
               {"Select all"}

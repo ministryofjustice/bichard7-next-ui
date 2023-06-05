@@ -3,6 +3,27 @@ import hashedPassword from "../../../fixtures/hashedPassword"
 
 const caseURL = "/bichard/court-cases/0"
 
+const unresolvedTriggers: TestTrigger[] = Array.from(Array(5)).map((_, idx) => {
+  return {
+    triggerId: idx,
+    triggerCode: `TRPR000${idx + 1}`,
+    status: "Unresolved",
+    createdAt: new Date("2022-07-09T10:22:34.000Z")
+  }
+})
+const unresolvedTrigger = unresolvedTriggers[0]
+const resolvedTriggers: TestTrigger[] = Array.from(Array(5)).map((_, idx) => {
+  const triggerId = unresolvedTriggers.length + idx
+  return {
+    triggerId,
+    triggerCode: `TRPR000${idx + 1}`,
+    status: "Resolved",
+    createdAt: new Date("2022-07-09T10:22:34.000Z")
+  }
+})
+const resolvedTrigger = resolvedTriggers[0]
+const mixedTriggers = [...resolvedTriggers, ...unresolvedTriggers]
+
 describe("Triggers", () => {
   before(() => {
     cy.task("clearCourtCases")
@@ -42,25 +63,7 @@ describe("Triggers", () => {
     })
 
     it("should show a complete badge against each resolved trigger", () => {
-      const triggers: TestTrigger[] = [
-        {
-          triggerId: 0,
-          triggerCode: "TRPR0010",
-          status: "Resolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z"),
-          resolvedAt: new Date("2022-07-09T12:22:34.000Z"),
-          resolvedBy: "Bichard01"
-        },
-        {
-          triggerId: 1,
-          triggerCode: "TRPR0015",
-          status: "Resolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z"),
-          resolvedAt: new Date("2022-07-09T12:22:34.000Z"),
-          resolvedBy: "Bichard01"
-        }
-      ]
-      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("insertTriggers", { caseId: 0, triggers: resolvedTriggers })
 
       cy.visit(caseURL)
 
@@ -75,17 +78,7 @@ describe("Triggers", () => {
 
   describe("Mark as complete button", () => {
     it("should be disabled if all triggers are resolved", () => {
-      const triggers: TestTrigger[] = [
-        {
-          triggerId: 0,
-          triggerCode: "TRPR0010",
-          status: "Resolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z"),
-          resolvedAt: new Date("2022-07-09T12:22:34.000Z"),
-          resolvedBy: "Bichard01"
-        }
-      ]
-      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("insertTriggers", { caseId: 0, triggers: [unresolvedTrigger] })
 
       cy.visit(caseURL)
       cy.get(".moj-tab-panel-triggers").should("be.visible")
@@ -94,15 +87,7 @@ describe("Triggers", () => {
     })
 
     it("should be disabled if no triggers are selected", () => {
-      const triggers: TestTrigger[] = [
-        {
-          triggerId: 0,
-          triggerCode: "TRPR0010",
-          status: "Unresolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z")
-        }
-      ]
-      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("insertTriggers", { caseId: 0, triggers: [unresolvedTrigger] })
 
       cy.visit(caseURL)
 
@@ -111,21 +96,7 @@ describe("Triggers", () => {
     })
 
     it("should be enabled when one or more triggers is selected", () => {
-      const triggers: TestTrigger[] = [
-        {
-          triggerId: 0,
-          triggerCode: "TRPR0010",
-          status: "Unresolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z")
-        },
-        {
-          triggerId: 1,
-          triggerCode: "TRPR0010",
-          status: "Unresolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z")
-        }
-      ]
-      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
 
       cy.visit(caseURL)
 
@@ -139,21 +110,7 @@ describe("Triggers", () => {
     })
 
     it("should be disabled when all the triggers are deselected", () => {
-      const triggers: TestTrigger[] = [
-        {
-          triggerId: 0,
-          triggerCode: "TRPR0010",
-          status: "Unresolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z")
-        },
-        {
-          triggerId: 1,
-          triggerCode: "TRPR0010",
-          status: "Unresolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z")
-        }
-      ]
-      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
 
       cy.visit(caseURL)
 
@@ -164,6 +121,53 @@ describe("Triggers", () => {
       // Uncheck all checkbox
       cy.get(".trigger-header input:checkbox").click({ multiple: true })
       cy.get("#mark-triggers-complete-button").should("exist").should("have.attr", "disabled")
+    })
+  })
+
+  describe("Select all", () => {
+    it("should be visible if there are multiple unresolved triggers", () => {
+      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
+      cy.visit(caseURL)
+      cy.get("#select-all-triggers").should("be.visible")
+    })
+
+    it("should be hidden if all triggers are resolved", () => {
+      cy.task("insertTriggers", { caseId: 0, triggers: resolvedTriggers })
+      cy.visit(caseURL)
+      cy.get("#select-all-triggers").should("not.be.visible")
+    })
+
+    it("should be visible if there is a single unresolved trigger", () => {
+      cy.task("insertTriggers", { caseId: 0, triggers: [unresolvedTrigger] })
+      cy.visit(caseURL)
+      cy.get("#select-all-triggers").should("be.visible")
+    })
+
+    it("should be hidden if there is a single resolved trigger", () => {
+      cy.task("insertTriggers", { caseId: 0, triggers: [resolvedTrigger] })
+      cy.visit(caseURL)
+      cy.get("#select-all-triggers").should("not.be.visible")
+    })
+
+    it("should be visible if there is a mix of resolved and unresolved triggers", () => {
+      cy.task("insertTriggers", { caseId: 0, triggers: mixedTriggers })
+      cy.visit(caseURL)
+      cy.get("#select-all-triggers").should("be.visible")
+    })
+
+    it("should select all triggers when pressed if there are only unresolved triggers", () => {
+      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
+      cy.visit(caseURL)
+      cy.get(".trigger-header input[type='checkbox']").should("not.be.checked")
+      cy.get("#select-all-triggers button").click()
+      cy.get(".trigger-header input[type='checkbox']").should("be.checked")
+    })
+
+    it("should select all triggers when pressed if there is a mix of resolved and unresolved triggers", () => {
+      cy.task("insertTriggers", { caseId: 0, triggers: mixedTriggers })
+      cy.visit(caseURL)
+      cy.get("#select-all-triggers button").click()
+      cy.get(".trigger-header input[type='checkbox']").should("be.checked")
     })
   })
 })
