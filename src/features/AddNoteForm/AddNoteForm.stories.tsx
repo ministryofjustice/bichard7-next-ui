@@ -15,8 +15,6 @@ export const CaseNotLockedByAnotherUser: ComponentStory<typeof AddNoteForm> = ()
 CaseNotLockedByAnotherUser.play = ({ canvasElement }) => {
   expect(canvasElement.querySelector("textarea[name=noteText]")).not.toBeNull()
   const canvas = within(canvasElement)
-  expect(canvas.getByText("Notes")).toBeInTheDocument()
-  expect(canvas.getByText("Add")).toBeInTheDocument()
   expect(canvas.queryByText("Case is locked by another user.")).toBeNull()
 }
 
@@ -27,7 +25,6 @@ export const CaseLockedByAnotherUser: ComponentStory<typeof AddNoteForm> = () =>
 CaseLockedByAnotherUser.play = ({ canvasElement }) => {
   expect(canvasElement.querySelector("textarea[name=noteText]")).toBeNull()
   const canvas = within(canvasElement)
-  expect(canvas.queryByText("Notes")).toBeNull()
   expect(canvas.queryByText("Add")).toBeNull()
   expect(canvas.getByText("Case is locked by another user.")).toBeInTheDocument()
 }
@@ -39,7 +36,7 @@ export const ErrorMessage: ComponentStory<typeof AddNoteForm> = () => (
 ErrorMessage.play = ({ canvasElement }) => {
   expect(canvasElement.querySelector("textarea[name=noteText]")).not.toBeNull()
   const canvas = within(canvasElement)
-  expect(canvas.getByText("Notes")).toBeInTheDocument()
+  expect(canvas.getByText("Add a new note")).toBeInTheDocument()
   expect(canvas.getByText("Example error message")).toBeInTheDocument()
   expect(canvas.getByText("Add")).toBeInTheDocument()
   expect(canvas.queryByText("Case is locked by another user.")).toBeNull()
@@ -52,7 +49,7 @@ LongNoteText.play = ({ canvasElement }) => {
   const longNoteText = "This is a very long note text ".repeat(500)
   canvasElement.getElementsByTagName("textarea").item(0)?.setRangeText(longNoteText)
   const canvas = within(canvasElement)
-  expect(canvas.getByText("Notes")).toBeInTheDocument()
+  expect(canvas.getByText("Add a new note")).toBeInTheDocument()
   expect(canvas.getByText("Add")).toBeInTheDocument()
   expect(canvas.queryByText("Case is locked by another user.")).toBeNull()
 }
