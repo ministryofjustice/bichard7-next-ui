@@ -8,8 +8,8 @@ interface Props {
 
 const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, error }: Props) => (
   <>
-    <Heading as="h1" size="MEDIUM">
-      {"Add Note"}
+    <Heading as="h3" size="MEDIUM">
+      {"Add a new note"}
     </Heading>
     <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
     <ConditionalRender isRendered={!lockedByAnotherUser}>
@@ -24,8 +24,9 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, error }: Props) => 
               touched: !!error
             }}
           >
-            {"Note text"}
+            {}
           </TextArea>
+          <p>{"You have 2000 characters remaining"}</p>
         </FormGroup>
 
         <Button id="Add Note" type="submit">
