@@ -29,6 +29,11 @@ import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
 import type { KeyValuePair } from "types/KeyValuePair"
 import { formatFormInputDateString } from "utils/formattedDate"
+import redirectTo from "utils/redirectTo"
+import { useRouter } from "next/router"
+import { useEffect } from "react"
+import { setCookie, getCookie } from "cookies-next"
+import hashString from "utils/hashString"
 
 interface Props {
   user: User
@@ -49,6 +54,7 @@ interface Props {
   locked: string | null
   caseState: CaseState | null
   myCases: boolean
+  queryStringCookieName: string
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc"
@@ -57,6 +63,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
+    const queryStringCookieName = `qs_cases_list_${hashString(currentUser.username)}`
     // prettier-ignore
     const {
       orderBy, page, type, keywords, courtName, reasonCode, ptiurn, maxPageItems, order,
@@ -99,6 +106,12 @@ export const getServerSideProps = withMultipleServerSideProps(
         if (isError(lockResult)) {
           throw lockResult
         }
+      }
+    } else if (!isPost(req) && req.url) {
+      const queryStringCookieValue = getCookie(queryStringCookieName, { req })
+      const [urlPath, urlQueryString] = (req.url ?? "").split("?")
+      if (urlPath === "/" && queryStringCookieValue && !urlQueryString) {
+        return redirectTo(`${urlPath}?${queryStringCookieValue}`)
       }
     }
 
@@ -163,18 +176,25 @@ export const getServerSideProps = withMultipleServerSideProps(
         urgent: validatedUrgent ? validatedUrgent : null,
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null,
-        myCases: !!validatedMyCases
+        myCases: !!validatedMyCases,
+        queryStringCookieName
       }
     }
   }
 )
 
 const Home: NextPage<Props> = (query) => {
+  const router = useRouter()
   // prettier-ignore
   const {
     user, courtCases, order, page, casesPerPage, totalCases, reasons, keywords, courtName, reasonCode,
-    ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases
+    ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases, queryStringCookieName
   } = query
+
+  useEffect(() => {
+    const [, queryString] = router.asPath.split("?")
+    setCookie(queryStringCookieName, queryString, { path: "/" })
+  }, [router, queryStringCookieName])
 
   return (
     <>
