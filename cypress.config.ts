@@ -7,11 +7,13 @@ import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import {
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
-  insertMultipleDummyCourtCases
+  insertMultipleDummyCourtCases,
+  insertDummyCourtCasesWithTriggers
 } from "./test/utils/insertCourtCases"
 import insertException from "./test/utils/manageExceptions"
 import { insertTriggers } from "./test/utils/manageTriggers"
 import { deleteUsers, insertUsersWithOverrides } from "./test/utils/manageUsers"
+import { ResolutionStatus } from "types/ResolutionStatus"
 
 export default defineConfig({
   e2e: {
@@ -49,6 +51,13 @@ export default defineConfig({
 
         insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
           return insertMultipleDummyCourtCases(params.numToInsert, params.force)
+        },
+
+        insertDummyCourtCasesWithTriggers(params: {
+          caseTriggers: { code: string; status: ResolutionStatus }[][]
+          orgCode: string
+        }) {
+          return insertDummyCourtCasesWithTriggers(params.caseTriggers, params.orgCode)
         },
 
         insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {

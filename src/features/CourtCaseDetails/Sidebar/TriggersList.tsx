@@ -1,4 +1,5 @@
 import { GridCol, GridRow } from "govuk-react"
+import ResolveTrigger from "components/ResolveTrigger"
 import CourtCase from "../../../services/entities/CourtCase"
 import { createUseStyles } from "react-jss"
 import ActionLink from "components/ActionLink"
@@ -58,13 +59,16 @@ const TriggersList = ({ courtCase, onNavigate }: Props) => {
         </GridRow>
       )}
       {triggers.map((trigger, index) => (
-        <Trigger
-          key={index}
-          trigger={trigger}
-          onClick={() => handleClick(trigger.triggerItemIdentity)}
-          selectedTriggerIds={selectedTriggerIds}
-          setTriggerSelection={setTriggerSelection}
-        />
+        <>
+          <Trigger
+            key={index}
+            trigger={trigger}
+            onClick={() => handleClick(trigger.triggerItemIdentity)}
+            selectedTriggerIds={selectedTriggerIds}
+            setTriggerSelection={setTriggerSelection}
+          />
+          <ResolveTrigger trigger={trigger} courtCase={courtCase} />
+        </>
       ))}
     </>
   )
