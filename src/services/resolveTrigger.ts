@@ -60,7 +60,12 @@ const resolveTrigger = async (
             triggerResolvedBy: IsNull(),
             triggerResolvedTimestamp: IsNull()
           },
-          { triggerResolvedBy: resolver, triggerResolvedTimestamp: new Date(), triggerStatus: "Resolved" }
+          {
+            triggerResolvedBy: resolver,
+            resolutionTimestamp: new Date(),
+            triggerResolvedTimestamp: new Date(),
+            triggerStatus: "Resolved"
+          }
         )
 
         return updateCaseResult.affected !== undefined && updateCaseResult.affected > 0
