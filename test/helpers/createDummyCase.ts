@@ -35,7 +35,6 @@ export default async (
   const caseDate = randomDate(dateFrom || subYears(new Date(), 1), dateTo || new Date())
   const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgCode + faker.string.alpha(2).toUpperCase())
   const isResolved = randomBoolean()
-  const resolutionStatus = isResolved ? "Resolved" : "Unresolved"
   const resolutionDate = isResolved ? randomDate(caseDate, dateTo || new Date()) : null
   const triggers = createDummyTriggers(dataSource, caseId, caseDate, isResolved)
   const hasTriggers = triggers.length > 0
@@ -49,8 +48,8 @@ export default async (
     errorLockedByUsername: !isResolved && hasExceptions && randomBoolean() ? randomUsername() : null,
     triggerLockedByUsername: !isResolved && hasTriggers && randomBoolean() ? randomUsername() : null,
     phase: 1,
-    errorStatus: resolutionStatus,
-    triggerStatus: resolutionStatus,
+    errorStatus: hasExceptions ? "Unresolved" : "Resolved",
+    triggerStatus: hasTriggers ? "Unresolved" : "Resolved",
     errorQualityChecked: 1,
     triggerQualityChecked: 1,
     triggerCount: triggers.length,
