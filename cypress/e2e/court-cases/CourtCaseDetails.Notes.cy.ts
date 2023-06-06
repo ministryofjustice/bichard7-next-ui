@@ -153,6 +153,31 @@ describe("Court case details", () => {
     clickTab("Notes")
     cy.contains("Case has no notes.")
   })
+
+  it("should not display the notes text area if the case is locked to another users", () => {
+    cy.task("insertCourtCasesWithNotesAndLock", {
+      caseNotes: [[]],
+      force: "02"
+    })
+    cy.login("bichard02@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    clickTab("Notes")
+    cy.contains("Case has no notes.")
+  })
+
+  it("should display the notes text area if the case is not locked to another users", () => {
+    cy.task("insertCourtCasesWithNotes", {
+      caseNotes: [[]],
+      force: "02"
+    })
+    cy.login("bichard02@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    clickTab("Notes")
+    cy.get("h3").contains("Add a new note")
+    cy.get("p").contains("You have 2000 characters remaining")
+  })
 })
 
 export {}
