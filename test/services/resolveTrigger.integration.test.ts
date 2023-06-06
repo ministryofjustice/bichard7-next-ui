@@ -129,6 +129,48 @@ describe("resolveTrigger", () => {
       const afterCourtCaseResult = result as CourtCase
       expect(afterCourtCaseResult.resolutionTimestamp).not.toBeNull()
     })
+    it("Should not set resolution_ts when there are other unresolved triggers or exceptions", async () => {
+      const resolverUsername = "triggerResolver01"
+      const visibleForce = "36"
+      const user = {
+        visibleCourts: [],
+        visibleForces: [visibleForce],
+        username: resolverUsername
+      } as Partial<User> as User
+
+      await insertCourtCasesWithFields([
+        {
+          errorLockedByUsername: resolverUsername,
+          triggerLockedByUsername: resolverUsername,
+          orgForPoliceFilter: visibleForce
+        }
+      ])
+
+      const trigger: TestTrigger = {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-12T10:22:34.000Z")
+      }
+      const trigger2: TestTrigger = {
+        triggerId: 1,
+        triggerCode: "TRPR0002",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-12T10:22:34.000Z")
+      }
+      await insertTriggers(0, [trigger, trigger2])
+
+      const beforeCourtCaseResult = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
+      const beforeCourtCase = beforeCourtCaseResult as CourtCase
+      expect(beforeCourtCase.resolutionTimestamp).toBeNull()
+      // expect(beforeCourtCase.triggerStatus).toBe("Unresolved")
+      // await resolveTrigger(dataSource, 0, 0, user)
+      // const result = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
+      // const afterCourtCaseResult = result as CourtCase
+      // expect(afterCourtCaseResult.resolutionTimestamp).not.toBeNull()
+    })
+    // TODO validate whether insert triggers is adding more than 1 trigger onto a case. check on UI
+    // continue test
 
     it("Shouldn't overwrite an already resolved trigger when attempting to resolve again", async () => {
       const resolverUsername = "triggerResolver01"
