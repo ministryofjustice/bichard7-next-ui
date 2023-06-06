@@ -63,7 +63,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
-    const queryStringCookieName = `qs_cases_list_${hashString(currentUser.username)}`
+    const queryStringCookieName = `qs_case_list_${hashString(currentUser.username)}`
     // prettier-ignore
     const {
       orderBy, page, type, keywords, courtName, reasonCode, ptiurn, maxPageItems, order,
