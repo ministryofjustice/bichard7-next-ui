@@ -30,7 +30,7 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, error }: Props) => 
         </FormGroup>
 
         <Button id="Add Note" type="submit">
-          {"Add"}
+          {"Add note"}
         </Button>
       </form>
     </ConditionalRender>

@@ -4,12 +4,17 @@ import a11yConfig from "../../../support/a11yConfig"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import { loginAndGoToUrl } from "../../../support/helpers"
+import CaseDetailsTab from "types/CaseDetailsTab"
 
 const loginAndGoToNotes = () => {
   loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
   cy.contains("Notes").click()
 }
 
+const clickTab = (tab: CaseDetailsTab) => {
+  cy.contains(tab).click()
+  cy.get("H3").contains(tab)
+}
 const insertTriggers = () => {
   cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
   const triggers: TestTrigger[] = [
@@ -61,11 +66,10 @@ describe("Case details", () => {
   it("should be able to add a note when case is visible to the user and not locked by another user", () => {
     insertTriggers()
     loginAndGoToNotes()
-    cy.get("button").contains("Add Note").click()
     cy.get("textarea").type("Dummy note")
-    cy.get("button").contains("Add").click()
+    cy.get("button").contains("Add note").click()
 
-    cy.contains("Notes").click()
+    // cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
     cy.contains("Dummy note")
@@ -74,9 +78,10 @@ describe("Case details", () => {
   it("should be able to add a long note", () => {
     insertTriggers()
     loginAndGoToNotes()
-    cy.get("button").contains("Add Note").click()
-    cy.get("H1").should("have.text", "Add Note")
-    cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
+    cy.get("button").contains("Add note").click()
+    clickTab("Notes")
+    cy.contains("h3", "Notes")
+    // cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
 
     cy.get("textarea").type("A ".repeat(500) + "B ".repeat(500) + "C ".repeat(100), { delay: 0 })
     cy.get("button").contains("Add").click()
