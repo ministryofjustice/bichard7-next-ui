@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import Note from "services/entities/Note"
+import Trigger from "services/entities/Trigger"
+import { ResolutionStatus } from "types/ResolutionStatus"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import DummyMultipleOffencesAho from "../test-data/HO100102_1.json"
 import DummyCourtCase from "./DummyCourtCase"
-import Note from "services/entities/Note"
-import { ResolutionStatus } from "types/ResolutionStatus"
-import Trigger from "services/entities/Trigger"
 
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
   (await getDataSource()).getRepository(CourtCase).create({
@@ -60,6 +60,28 @@ const insertDummyCourtCasesWithNotes = async (caseNotes: { user: string; text: s
   )
 }
 
+const insertDummyCourtCasesWithNotesAndLock = async (
+  caseNotes: { user: string; text: string }[][],
+  orgCode: string
+) => {
+  return insertCourtCasesWithFields(
+    caseNotes.map((notes, index) => ({
+      orgForPoliceFilter: orgCode,
+      errorLockedByUsername: "random user",
+      triggerLockedByUsername: "another random user",
+      notes: notes.map(
+        (note, _) =>
+          ({
+            createdAt: new Date(),
+            noteText: note.text,
+            userId: note.user,
+            errorId: index
+          } as unknown as Note)
+      )
+    }))
+  )
+}
+
 const insertDummyCourtCasesWithTriggers = async (
   caseTriggers: { code: string; status: ResolutionStatus }[][],
   orgCode: string
@@ -86,5 +108,6 @@ export {
   insertCourtCasesWithFields,
   insertMultipleDummyCourtCases,
   insertDummyCourtCasesWithNotes,
+  insertDummyCourtCasesWithNotesAndLock,
   insertDummyCourtCasesWithTriggers
 }
