@@ -129,7 +129,7 @@ describe("resolveTrigger", () => {
       const afterCourtCaseResult = result as CourtCase
       expect(afterCourtCaseResult.resolutionTimestamp).not.toBeNull()
     })
-    it("Should not set resolution_ts when there are other unresolved triggers or exceptions", async () => {
+    it("Should not set resolution_ts while there are other unresolved triggers or exceptions", async () => {
       const resolverUsername = "triggerResolver01"
       const visibleForce = "36"
       const user = {
@@ -163,14 +163,40 @@ describe("resolveTrigger", () => {
       const beforeCourtCaseResult = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
       const beforeCourtCase = beforeCourtCaseResult as CourtCase
       expect(beforeCourtCase.resolutionTimestamp).toBeNull()
-      // expect(beforeCourtCase.triggerStatus).toBe("Unresolved")
-      // await resolveTrigger(dataSource, 0, 0, user)
-      // const result = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
-      // const afterCourtCaseResult = result as CourtCase
-      // expect(afterCourtCaseResult.resolutionTimestamp).not.toBeNull()
+      expect(beforeCourtCase.triggerStatus).toBe("Unresolved")
+
+      await resolveTrigger(dataSource, 0, 0, user)
+
+      const midCourtCaseResult = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
+      const midCourtCase = midCourtCaseResult as CourtCase
+      expect(midCourtCase.resolutionTimestamp).toBeNull()
+      expect(midCourtCase.triggerStatus).toBe("Unresolved")
+
+      const retrievedTrigger = await dataSource
+        .getRepository(Trigger)
+        .findOne({ where: { triggerId: trigger.triggerId } })
+      expect(retrievedTrigger).not.toBeNull()
+      const updatedTrigger = retrievedTrigger as Trigger
+
+      expect(updatedTrigger.resolvedBy).not.toBeNull()
+      expect(updatedTrigger.resolvedAt).not.toBeNull()
+
+      await resolveTrigger(dataSource, 1, 0, user)
+
+      const afterCourtCaseResult = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
+      const afterCourtCase = afterCourtCaseResult as CourtCase
+      expect(afterCourtCase.resolutionTimestamp).not.toBeNull()
+      expect(afterCourtCase.triggerStatus).toBe("Resolved")
+
+      const retrievedTrigger2 = await dataSource
+        .getRepository(Trigger)
+        .findOne({ where: { triggerId: trigger2.triggerId } })
+      expect(retrievedTrigger).not.toBeNull()
+      const updatedTrigger2 = retrievedTrigger2 as Trigger
+
+      expect(updatedTrigger2.resolvedBy).not.toBeNull()
+      expect(updatedTrigger2.resolvedAt).not.toBeNull()
     })
-    // TODO validate whether insert triggers is adding more than 1 trigger onto a case. check on UI
-    // continue test
 
     it("Shouldn't overwrite an already resolved trigger when attempting to resolve again", async () => {
       const resolverUsername = "triggerResolver01"
