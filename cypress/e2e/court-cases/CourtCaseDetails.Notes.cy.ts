@@ -1,11 +1,6 @@
 import User from "services/entities/User"
-import type CaseDetailsTab from "../../../src/types/CaseDetailsTab"
 import hashedPassword from "../../fixtures/hashedPassword"
-
-const clickTab = (tab: CaseDetailsTab) => {
-  cy.contains(tab).click()
-  cy.get("H3").contains(tab)
-}
+import { clickTab } from "../../support/helpers"
 
 describe("Court case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
