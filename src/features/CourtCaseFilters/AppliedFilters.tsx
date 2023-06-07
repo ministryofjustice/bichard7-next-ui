@@ -143,7 +143,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
           </ConditionalRender>
           <li>
             <p className="moj-filter__heading-action" id="clear-filters-applied">
-              <a className="govuk-link govuk-link--no-visited-state" href="/bichard">
+              <a className="govuk-link govuk-link--no-visited-state" href="/bichard?keywords=">
                 {"Clear filters"}
               </a>
             </p>
