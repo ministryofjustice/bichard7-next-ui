@@ -137,6 +137,42 @@ describe("Triggers", () => {
       cy.get(".trigger-header input:checkbox").click({ multiple: true })
       cy.get("#mark-triggers-complete-button").should("exist").should("have.attr", "disabled")
     })
+
+    it("should not be present when somebody else has the trigger lock", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithLocks", {
+        cases: [
+          {
+            triggerLockedByUsername: "AnotherUser"
+          }
+        ],
+        orgForPoliceFilter: "01"
+      })
+      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
+      cy.visit(caseURL)
+      cy.get("#mark-triggers-complete-button").should("not.exist")
+    })
+  })
+
+  describe("Locked icon", () => {
+    it("should be shown if somebody else has the triggers locked", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          triggerLockedByUsername: "anotherUser",
+          orgForPoliceFilter: "01"
+        }
+      ])
+      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
+      cy.visit(caseURL)
+      cy.get("#triggers-locked").should("exist")
+    })
+
+    it("should not be shown if the visiting user holds the trigger lock", () => {
+      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
+      cy.visit(caseURL)
+      cy.get("#triggers-locked").should("not.exist")
+    })
   })
 
   describe("Select all", () => {
