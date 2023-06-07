@@ -107,9 +107,11 @@ export const getServerSideProps = withMultipleServerSideProps(
           throw lockResult
         }
       }
-    } else if (!isPost(req) && req.url) {
+    }
+
+    if (req.url) {
       const queryStringCookieValue = getCookie(queryStringCookieName, { req })
-      const [urlPath, urlQueryString] = (req.url ?? "").split("?")
+      const [urlPath, urlQueryString] = req.url.split("?")
       if (urlPath === "/" && queryStringCookieValue && !urlQueryString) {
         return redirectTo(`${urlPath}?${queryStringCookieValue}`)
       }
