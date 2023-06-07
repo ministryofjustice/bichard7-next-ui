@@ -49,7 +49,7 @@ const FilterChipSection: React.FC<Props> = ({
             >{`${sectionState} filters`}</h2>
           </div>
           <div>
-            <Link href="/bichard">{"Clear filters"}</Link>
+            <Link href="/bichard?keywords=">{"Clear filters"}</Link>
           </div>
         </div>
 

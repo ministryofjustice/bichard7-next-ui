@@ -1,12 +1,16 @@
+import styled from "styled-components"
+
 interface SingleExceptionProps {
   exception: string
   exceptionCounter: number
 }
 
+const SingleExceptionWrapper = styled.div`
+  white-space: nowrap;
+`
+
 export const SingleException = ({ exception, exceptionCounter }: SingleExceptionProps) => (
-  <span>
-    {exception}
-    <b>&nbsp;{exceptionCounter > 1 ? `(${exceptionCounter})` : ""}</b>
-    <br />
-  </span>
+  <SingleExceptionWrapper className="single-exception">
+    {exception} <b>{exceptionCounter > 1 ? `(${exceptionCounter})` : ""}</b>
+  </SingleExceptionWrapper>
 )

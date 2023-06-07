@@ -35,7 +35,7 @@ describe("reallocate court case to another force", () => {
   })
 
   describe("when a user can see the case", () => {
-    it("should reallocate the case to a new force, generate notes and unlock the case", async () => {
+    it("should reallocate the case to a new force, generate system notes and unlock the case", async () => {
       const courtCase = {
         orgForPoliceFilter: oldForceCode,
         errorId: courtCaseId
@@ -84,6 +84,60 @@ describe("reallocate court case to another force", () => {
       expect(actualCourtCase.notes[1].noteText).toEqual(
         `${userName}: Case reallocated to new force owner: ${expectedForceOwner}`
       )
+    })
+
+    it("should reallocate the case to a new force, generate system notes, user note, and unlock the case", async () => {
+      const courtCase = {
+        orgForPoliceFilter: oldForceCode,
+        errorId: courtCaseId
+      }
+
+      const newForceCode = "04"
+      const expectedForceOwner = `${newForceCode}YZ00`
+      const userName = "UserName"
+      await insertCourtCasesWithFields([courtCase])
+
+      const user = {
+        username: userName,
+        visibleForces: [oldForceCode],
+        visibleCourts: [],
+        canLockExceptions: true,
+        canLockTriggers: true
+      } as Partial<User> as User
+
+      const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode, "Dummy user note")
+      expect(isError(result)).toBe(false)
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
+      const actualCourtCase = record as CourtCase
+      expect(actualCourtCase.orgForPoliceFilter).toStrictEqual("04YZ  ")
+      expect(actualCourtCase.errorLockedByUsername).toBeNull()
+      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
+
+      const parsedUpdatedHearingOutcome = parseAhoXml(actualCourtCase.updatedHearingOutcome as string)
+      expect(parsedUpdatedHearingOutcome).not.toBeInstanceOf(Error)
+
+      const parsedCase = (parsedUpdatedHearingOutcome as AnnotatedHearingOutcome).AnnotatedHearingOutcome.HearingOutcome
+        .Case
+
+      expect(parsedCase.ForceOwner?.OrganisationUnitCode).toEqual(expectedForceOwner)
+      expect(parsedCase.ForceOwner?.BottomLevelCode).toEqual("00")
+      expect(parsedCase.ForceOwner?.SecondLevelCode).toEqual(newForceCode)
+      expect(parsedCase.ForceOwner?.ThirdLevelCode).toEqual("YZ")
+      expect(parsedCase.ManualForceOwner).toBe(true)
+      expect(actualCourtCase.notes).toHaveLength(3)
+
+      expect(actualCourtCase.notes[0].userId).toEqual("System")
+      expect(actualCourtCase.notes[0].noteText).toEqual(
+        `${userName}: Portal Action: Update Applied. Element: forceOwner. New Value: ${newForceCode}`
+      )
+      expect(actualCourtCase.notes[1].userId).toEqual("System")
+      expect(actualCourtCase.notes[1].noteText).toEqual(
+        `${userName}: Case reallocated to new force owner: ${expectedForceOwner}`
+      )
+
+      expect(actualCourtCase.notes[2].userId).toEqual(userName)
+      expect(actualCourtCase.notes[2].noteText).toEqual("Dummy user note")
     })
   })
 

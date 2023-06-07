@@ -37,6 +37,10 @@ const useStyles = createUseStyles({
   cjsResultCode: {
     fontSize: "16px",
     lineHeight: "1.25"
+  },
+  triggerCheckbox: {
+    position: "absolute",
+    right: "22px"
   }
 })
 
@@ -67,11 +71,11 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection, di
           <label className={`trigger-code ${classes.triggerCode}`} htmlFor={checkBoxId}>
             {trigger.shortTriggerCode}
           </label>
-          {trigger.triggerItemIdentity !== undefined && (
+          {(trigger.triggerItemIdentity ?? 0) > 0 && (
             <>
               <b>{" / "}</b>
               <ActionLink onClick={() => onClick(trigger.triggerItemIdentity)}>
-                {"Offence"} {trigger.triggerItemIdentity + 1}
+                {"Offence "} {trigger.triggerItemIdentity}
               </ActionLink>
             </>
           )}

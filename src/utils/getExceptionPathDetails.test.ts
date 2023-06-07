@@ -20,7 +20,7 @@ describe("getExceptionPathDetails", () => {
       displayText: "Organisation unit code (Offence 2)",
       field: "OrganisationUnitCode",
       location: "Offence 2",
-      offenceOrderIndex: 1,
+      offenceOrderIndex: 2,
       tab: "Offences"
     })
   })

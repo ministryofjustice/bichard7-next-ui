@@ -108,5 +108,8 @@ export const useCustomStyles = createUseStyles({
       width: "1px",
       backgroundColor: gdsGrey
     }
+  },
+  "no-margin-bottom": {
+    marginBottom: 0
   }
 })

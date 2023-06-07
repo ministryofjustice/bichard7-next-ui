@@ -32,7 +32,7 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
     .createQueryBuilder()
     .update(CourtCase)
     .set({
-      triggerCount: () => "trigger_count + 1",
+      triggerCount: () => `trigger_count + ${triggers.length}`,
       triggerReason: triggers[triggers.length - 1].triggerCode
     })
     .where("errorId = :id", { id: caseId })

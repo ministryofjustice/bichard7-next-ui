@@ -113,7 +113,6 @@ export const getServerSideProps = withMultipleServerSideProps(
     return {
       props: {
         user: currentUser.serialize(),
-        triggersVisible: currentUser.canLockTriggers,
         courtCase: courtCase.serialize(),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.errorIsLockedByAnotherUser(currentUser.username),
