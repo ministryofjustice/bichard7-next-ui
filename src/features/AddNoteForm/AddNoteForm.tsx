@@ -1,4 +1,5 @@
 import ConditionalRender from "components/ConditionalRender"
+import { MAX_NOTE_LENGTH } from "config"
 import { Button, FormGroup, Heading, HintText, TextArea } from "govuk-react"
 import { FormEventHandler, useState } from "react"
 
@@ -6,8 +7,6 @@ interface Props {
   lockedByAnotherUser: boolean
   error?: string
 }
-
-const MAX_NOTE_LENGTH = 1000
 
 const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, error }: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)

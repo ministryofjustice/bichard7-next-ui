@@ -20,6 +20,7 @@ import ButtonsGroup from "components/ButtonsGroup"
 import { FormEventHandler, useState } from "react"
 import { useCustomStyles } from "../../../../styles/customStyles"
 import getForcesForReallocation from "services/getForcesForReallocation"
+import { MAX_NOTE_LENGTH } from "config"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -68,8 +69,6 @@ interface Props {
   lockedByAnotherUser: boolean
   noteTextError?: string
 }
-
-const MAX_NOTE_LENGTH = 1000
 
 const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser }: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
