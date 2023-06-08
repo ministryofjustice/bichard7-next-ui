@@ -81,7 +81,7 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection, di
             <ConditionalRender isRendered={isResolved}>
               <TriggerCompleteBadge />
             </ConditionalRender>
-            <ConditionalRender isRendered={!disabled}>
+            <ConditionalRender isRendered={!disabled && !isResolved}>
               <Checkbox
                 id={checkBoxId}
                 value={trigger.triggerId}

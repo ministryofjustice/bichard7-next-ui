@@ -29,12 +29,12 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
-    const {
-      courtCaseId,
-      lock,
-      resolveTrigger: triggersToResolve,
-      resubmitCase
-    } = query as { courtCaseId: string; lock: string; resolveTrigger: string[]; resubmitCase: string }
+    const { courtCaseId, lock, resolveTrigger, resubmitCase } = query as {
+      courtCaseId: string
+      lock: string
+      resolveTrigger: string | string[] | undefined
+      resubmitCase: string
+    }
     const dataSource = await getDataSource()
 
     let lockResult: UpdateResult | Error | undefined
@@ -49,6 +49,17 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     if (isError(lockResult)) {
       throw lockResult
+    }
+
+    const triggersToResolve = []
+    if (typeof resolveTrigger === "string" && !Number.isNaN(+resolveTrigger)) {
+      triggersToResolve.push(+resolveTrigger)
+    } else if (Array.isArray(resolveTrigger)) {
+      resolveTrigger.map((triggerId) => {
+        if (!Number.isNaN(+triggerId)) {
+          triggersToResolve.push(+triggerId)
+        }
+      })
     }
 
     if (isPost(req) && triggersToResolve.length > 0) {
