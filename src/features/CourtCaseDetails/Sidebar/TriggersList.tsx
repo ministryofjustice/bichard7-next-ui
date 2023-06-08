@@ -39,7 +39,7 @@ const useStyles = createUseStyles({
 const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedByUser, onNavigate }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
-  const { basePath, asPath, query } = useRouter()
+  const { basePath, query } = useRouter()
 
   const triggers = sortBy(courtCase.triggers, "triggerItemIdentity")
   const hasTriggers = triggers.length > 0
@@ -70,7 +70,7 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
     // Delete the `courtCaseId` param, which comes from the URL dynamic router, not the query string
     const filteredQuery = Object.fromEntries(Object.entries(resolveQuery).filter(([key]) => key !== "courtCaseId"))
 
-    return `${basePath}${asPath}?${encode(filteredQuery)}`
+    return `${basePath}/court-cases/${courtCase.errorId}?${encode(filteredQuery)}`
   }
 
   return (

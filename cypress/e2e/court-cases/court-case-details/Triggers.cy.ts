@@ -63,7 +63,27 @@ describe("Triggers", () => {
       cy.get("#mark-triggers-complete-button").should("not.exist")
     })
 
-    it("should show a complete badge against each resolved trigger", () => {
+    it("should show a complete badge against each resolved trigger when the trigger lock is held", () => {
+      cy.task("insertTriggers", { caseId: 0, triggers: resolvedTriggers })
+
+      cy.visit(caseURL)
+
+      cy.get(".moj-tab-panel-triggers").should("be.visible")
+      cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
+
+      cy.get(".moj-trigger-row").each((trigger) => {
+        cy.wrap(trigger).get(".trigger-header").contains("Complete").should("exist")
+      })
+    })
+
+    it("should show a complete badge against each resolved trigger when the trigger lock is not held", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          triggerLockedByUsername: "anotherUser",
+          orgForPoliceFilter: "01"
+        }
+      ])
       cy.task("insertTriggers", { caseId: 0, triggers: resolvedTriggers })
 
       cy.visit(caseURL)

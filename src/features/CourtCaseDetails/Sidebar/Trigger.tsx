@@ -77,20 +77,19 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection, di
           )}
         </GridCol>
         <GridCol setWidth="15%">
-          <ConditionalRender isRendered={!disabled}>
-            <TriggerStatus>
-              {isResolved ? (
-                <TriggerCompleteBadge />
-              ) : (
-                <Checkbox
-                  id={checkBoxId}
-                  value={trigger.triggerId}
-                  checked={selectedTriggerIds.includes(trigger.triggerId)}
-                  onChange={setTriggerSelection}
-                />
-              )}
-            </TriggerStatus>
-          </ConditionalRender>
+          <TriggerStatus>
+            <ConditionalRender isRendered={isResolved}>
+              <TriggerCompleteBadge />
+            </ConditionalRender>
+            <ConditionalRender isRendered={!disabled}>
+              <Checkbox
+                id={checkBoxId}
+                value={trigger.triggerId}
+                checked={selectedTriggerIds.includes(trigger.triggerId)}
+                onChange={setTriggerSelection}
+              />
+            </ConditionalRender>
+          </TriggerStatus>
         </GridCol>
       </GridRow>
       <GridRow>
