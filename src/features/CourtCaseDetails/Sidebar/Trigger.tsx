@@ -37,10 +37,6 @@ const useStyles = createUseStyles({
   cjsResultCode: {
     fontSize: "16px",
     lineHeight: "1.25"
-  },
-  triggerCheckbox: {
-    position: "absolute",
-    right: "22px"
   }
 })
 
@@ -81,19 +77,20 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection, di
           )}
         </GridCol>
         <GridCol setWidth="15%">
-          <TriggerStatus>
-            {isResolved ? (
-              <TriggerCompleteBadge />
-            ) : (
-              <Checkbox
-                id={checkBoxId}
-                value={trigger.triggerId}
-                checked={selectedTriggerIds.includes(trigger.triggerId)}
-                onChange={setTriggerSelection}
-                disabled={disabled}
-              />
-            )}
-          </TriggerStatus>
+          <ConditionalRender isRendered={!disabled}>
+            <TriggerStatus>
+              {isResolved ? (
+                <TriggerCompleteBadge />
+              ) : (
+                <Checkbox
+                  id={checkBoxId}
+                  value={trigger.triggerId}
+                  checked={selectedTriggerIds.includes(trigger.triggerId)}
+                  onChange={setTriggerSelection}
+                />
+              )}
+            </TriggerStatus>
+          </ConditionalRender>
         </GridCol>
       </GridRow>
       <GridRow>

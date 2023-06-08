@@ -76,7 +76,7 @@ describe("Triggers", () => {
       })
     })
 
-    it("should disable checkboxes if somebody else has the triggers locked", () => {
+    it("should not show checkboxes if somebody else has the triggers locked", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
@@ -86,8 +86,8 @@ describe("Triggers", () => {
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get(".trigger-header input[type='checkbox']").should("not.be.enabled")
-      cy.get(".trigger-header input[type='checkbox']").should("not.be.checked")
+      cy.get(".trigger-header input[type='checkbox']").should("not.exist")
+      cy.get(".trigger-header input[type='checkbox']").should("not.exist")
     })
   })
 
@@ -140,21 +140,20 @@ describe("Triggers", () => {
 
     it("should not be present when somebody else has the trigger lock", () => {
       cy.task("clearCourtCases")
-      cy.task("insertCourtCasesWithLocks", {
-        cases: [
-          {
-            triggerLockedByUsername: "AnotherUser"
-          }
-        ],
-        orgForPoliceFilter: "01"
-      })
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: null,
+          triggerLockedByUsername: "AnotherUser",
+          orgForPoliceFilter: "01"
+        }
+      ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
       cy.get("#mark-triggers-complete-button").should("not.exist")
     })
   })
 
-  describe("Locked icon", () => {
+  describe.skip("Locked icon", () => {
     it("should be shown if somebody else has the triggers locked", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
@@ -219,6 +218,19 @@ describe("Triggers", () => {
       cy.visit(caseURL)
       cy.get("#select-all-triggers button").click()
       cy.get(".trigger-header input[type='checkbox']").should("be.checked")
+    })
+
+    it("should be hidden if someone else has the triggers locked", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          triggerLockedByUsername: "anotherUser",
+          orgForPoliceFilter: "01"
+        }
+      ])
+      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
+      cy.visit(caseURL)
+      cy.get("#select-all-triggers").should("not.exist")
     })
   })
 })

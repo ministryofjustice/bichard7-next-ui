@@ -136,8 +136,8 @@ export default class CourtCase extends BaseEntity {
     )
   }
 
-  triggersAreLockedByAnotherUser(username: string) {
-    return !!this.triggerLockedByUsername && this.triggerLockedByUsername !== username
+  triggersAreLockedByCurrentUser(username: string) {
+    return !!this.triggerLockedByUsername && this.triggerLockedByUsername === username
   }
 
   errorIsLockedByAnotherUser(username: string) {

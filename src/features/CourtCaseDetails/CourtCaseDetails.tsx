@@ -20,8 +20,8 @@ interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
-  triggersLockedByAnotherUser: boolean
-  triggersVisible: boolean
+  triggersLockedByCurrentUser: boolean
+  triggersLockedByUser: string | null
 }
 
 const useStyles = createUseStyles({
@@ -41,7 +41,8 @@ const CourtCaseDetails: React.FC<Props> = ({
   courtCase,
   aho,
   errorLockedByAnotherUser,
-  triggersLockedByAnotherUser
+  triggersLockedByCurrentUser,
+  triggersLockedByUser
 }) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
@@ -134,7 +135,8 @@ const CourtCaseDetails: React.FC<Props> = ({
           <TriggersAndExceptions
             courtCase={courtCase}
             aho={aho}
-            triggersLockedByAnotherUser={triggersLockedByAnotherUser}
+            triggersLockedByCurrentUser={triggersLockedByCurrentUser}
+            triggersLockedByUser={triggersLockedByUser}
             onNavigate={handleNavigation}
           />
         </GridCol>

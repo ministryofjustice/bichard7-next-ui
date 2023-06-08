@@ -10,7 +10,8 @@ import type NavigationHandler from "types/NavigationHandler"
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
-  triggersLockedByAnotherUser: boolean
+  triggersLockedByCurrentUser: boolean
+  triggersLockedByUser: string | null
   onNavigate: NavigationHandler
 }
 
@@ -26,7 +27,13 @@ const useStyles = createUseStyles({
   }
 })
 
-const TriggersAndExceptions = ({ courtCase, aho, triggersLockedByAnotherUser, onNavigate }: Props) => {
+const TriggersAndExceptions = ({
+  courtCase,
+  aho,
+  triggersLockedByCurrentUser,
+  triggersLockedByUser,
+  onNavigate
+}: Props) => {
   const classes = useStyles()
   const [selectedTab, setSelectedTab] = useState("triggers")
 
@@ -54,7 +61,8 @@ const TriggersAndExceptions = ({ courtCase, aho, triggersLockedByAnotherUser, on
         >
           <TriggersList
             courtCase={courtCase}
-            triggersLockedByAnotherUser={triggersLockedByAnotherUser}
+            triggersLockedByCurrentUser={triggersLockedByCurrentUser}
+            triggersLockedByUser={triggersLockedByUser}
             onNavigate={onNavigate}
           />
         </Tabs.Panel>

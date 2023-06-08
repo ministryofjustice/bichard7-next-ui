@@ -12,7 +12,8 @@ import ConditionalRender from "components/ConditionalRender"
 
 interface Props {
   courtCase: CourtCase
-  triggersLockedByAnotherUser: boolean
+  triggersLockedByCurrentUser: boolean
+  triggersLockedByUser: string | null
   onNavigate: NavigationHandler
 }
 
@@ -34,10 +35,11 @@ const useStyles = createUseStyles({
   }
 })
 
-const TriggersList = ({ courtCase, triggersLockedByAnotherUser, onNavigate }: Props) => {
+const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedByUser, onNavigate }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
   const triggers = sortBy(courtCase.triggers, "triggerItemIdentity")
+  const triggersLockedByAnotherUser = !!triggersLockedByUser && !triggersLockedByCurrentUser
 
   const setTriggerSelection = ({ target: checkbox }: ChangeEvent<HTMLInputElement>) => {
     const triggerId = parseInt(checkbox.value, 10)
@@ -60,7 +62,7 @@ const TriggersList = ({ courtCase, triggersLockedByAnotherUser, onNavigate }: Pr
   return (
     <>
       {triggers.length === 0 && "There are no triggers for this case."}
-      {triggers.length > 0 && (
+      <ConditionalRender isRendered={triggers.length > 0 && !triggersLockedByAnotherUser}>
         <GridRow id={"select-all-triggers"} className={classes.selectAllContainer}>
           <GridCol>
             <ActionLink onClick={selectAll} id="select-all-action">
@@ -68,7 +70,7 @@ const TriggersList = ({ courtCase, triggersLockedByAnotherUser, onNavigate }: Pr
             </ActionLink>
           </GridCol>
         </GridRow>
-      )}
+      </ConditionalRender>
       {triggers.map((trigger, index) => (
         <span key={index}>
           <Trigger
@@ -83,7 +85,7 @@ const TriggersList = ({ courtCase, triggersLockedByAnotherUser, onNavigate }: Pr
         </span>
       ))}
 
-      <ConditionalRender isRendered={triggers.length > 0}>
+      <ConditionalRender isRendered={triggers.length > 0 && !triggersLockedByAnotherUser}>
         <GridRow>
           <GridCol className={classes.markCompleteContainer}>
             <LinkButton href="" disabled={selectedTriggerIds.length === 0} id="mark-triggers-complete-button">
