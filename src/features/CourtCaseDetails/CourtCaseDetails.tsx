@@ -1,20 +1,20 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
-import { GridCol, GridRow, Heading } from "govuk-react"
-import CourtCase from "services/entities/CourtCase"
 import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
-import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
-import { useState } from "react"
-import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
-import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
-import { Offences } from "./Tabs/Panels/Offences/Offences"
-import { HearingDetails } from "./Tabs/Panels/HearingDetails"
-import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
+import { GridCol, GridRow, Heading } from "govuk-react"
+import { useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
-import type NavigationHandler from "types/NavigationHandler"
+import CourtCase from "services/entities/CourtCase"
 import type CaseDetailsTab from "types/CaseDetailsTab"
+import type NavigationHandler from "types/NavigationHandler"
+import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
+import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
+import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
+import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
+import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
+import { Offences } from "./Tabs/Panels/Offences/Offences"
 
 interface Props {
   courtCase: CourtCase
@@ -36,6 +36,14 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
 
+  useEffect(() => {
+    const tabFromQueryString = new URLSearchParams(window.location.search).get("tab")
+
+    if (tabFromQueryString) {
+      setActiveTab(tabFromQueryString as CaseDetailsTab)
+    }
+  }, [])
+
   const handleNavigation: NavigationHandler = ({ location, args }) => {
     switch (location) {
       case "Case Details > Case information":
@@ -48,6 +56,13 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         setActiveTab("Offences")
         break
     }
+  }
+
+  const updateQueryString = (tab: string) => {
+    const searchParams = new URLSearchParams(window.location.search)
+    searchParams.set("tab", tab)
+    const newRelativePathQuery = window.location.pathname + "?" + searchParams.toString()
+    history.pushState(null, "", newRelativePathQuery)
   }
 
   return (
@@ -75,6 +90,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         onTabClick={(tab) => {
           setSelectedOffenceIndex(undefined)
           setActiveTab(tab)
+          updateQueryString(tab)
         }}
         tabs={["Defendant", "Hearing", "Case information", "Offences", "Notes", "PNC errors"]}
         width={contentWidth}
