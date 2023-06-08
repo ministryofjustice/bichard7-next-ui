@@ -153,7 +153,7 @@ describe("Triggers", () => {
     })
   })
 
-  describe.skip("Locked icon", () => {
+  describe("Locked icon", () => {
     it("should be shown if somebody else has the triggers locked", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
@@ -164,13 +164,39 @@ describe("Triggers", () => {
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("#triggers-locked").should("exist")
+      cy.get("#triggers-locked-tag").should("exist")
     })
 
     it("should not be shown if the visiting user holds the trigger lock", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("#triggers-locked").should("not.exist")
+      cy.get("#triggers-locked-tag").should("not.exist")
+    })
+
+    it("should display a lock icon when someone else has the triggers locked", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          triggerLockedByUsername: "anotherUser",
+          orgForPoliceFilter: "01"
+        }
+      ])
+      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
+      cy.visit(caseURL)
+      cy.get("#triggers-locked-tag img").should("exist")
+    })
+
+    it("should display the lock holders username when someone else has the triggers locked", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          triggerLockedByUsername: "anotherUser",
+          orgForPoliceFilter: "01"
+        }
+      ])
+      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
+      cy.visit(caseURL)
+      cy.get("#triggers-locked-tag #triggers-locked-tag-lockee").should("contain.text", "anotherUser")
     })
   })
 

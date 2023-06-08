@@ -9,6 +9,7 @@ import Trigger from "./Trigger"
 import { sortBy } from "lodash"
 import LinkButton from "components/LinkButton"
 import ConditionalRender from "components/ConditionalRender"
+import LockedTag from "./LockedTag"
 
 interface Props {
   courtCase: CourtCase
@@ -38,7 +39,9 @@ const useStyles = createUseStyles({
 const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedByUser, onNavigate }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
+
   const triggers = sortBy(courtCase.triggers, "triggerItemIdentity")
+  const hasTriggers = triggers.length > 0
   const triggersLockedByAnotherUser = !!triggersLockedByUser && !triggersLockedByCurrentUser
 
   const setTriggerSelection = ({ target: checkbox }: ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +65,7 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
   return (
     <>
       {triggers.length === 0 && "There are no triggers for this case."}
-      <ConditionalRender isRendered={triggers.length > 0 && !triggersLockedByAnotherUser}>
+      <ConditionalRender isRendered={hasTriggers && !triggersLockedByAnotherUser}>
         <GridRow id={"select-all-triggers"} className={classes.selectAllContainer}>
           <GridCol>
             <ActionLink onClick={selectAll} id="select-all-action">
@@ -85,7 +88,7 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
         </span>
       ))}
 
-      <ConditionalRender isRendered={triggers.length > 0 && !triggersLockedByAnotherUser}>
+      <ConditionalRender isRendered={hasTriggers && !triggersLockedByAnotherUser}>
         <GridRow>
           <GridCol className={classes.markCompleteContainer}>
             <LinkButton href="" disabled={selectedTriggerIds.length === 0} id="mark-triggers-complete-button">
@@ -93,6 +96,9 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
             </LinkButton>
           </GridCol>
         </GridRow>
+      </ConditionalRender>
+      <ConditionalRender isRendered={hasTriggers && triggersLockedByAnotherUser}>
+        <LockedTag lockName="Triggers" lockedBy={triggersLockedByUser ?? "Another user"} />
       </ConditionalRender>
     </>
   )
