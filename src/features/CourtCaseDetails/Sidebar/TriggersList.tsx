@@ -56,8 +56,8 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
   }
 
   const selectAll = (event: SyntheticEvent) => {
-    setSelectedTriggerIds(courtCase.triggers.map((trigger) => trigger.triggerId))
     event.preventDefault()
+    setSelectedTriggerIds(courtCase.triggers.map((trigger) => trigger.triggerId))
   }
 
   const handleClick = (offenceOrderIndex?: number) => {
@@ -65,8 +65,12 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
   }
 
   const resolveTriggerUrl = (triggerIds: number[]) => {
-    const resolveQuery = { ...query, resolveTrigger: triggerIds.map((id) => id.toString()) }
-    return `${basePath}${asPath}?${encode(resolveQuery)}`
+    const resolveQuery = { ...query, resolveTrigger: triggerIds.map((id) => id.toString()), courtCaseId: undefined }
+
+    // Delete the `courtCaseId` param, which comes from the URL dynamic router, not the query string
+    const filteredQuery = Object.fromEntries(Object.entries(resolveQuery).filter(([key]) => key !== "courtCaseId"))
+
+    return `${basePath}${asPath}?${encode(filteredQuery)}`
   }
 
   return (
