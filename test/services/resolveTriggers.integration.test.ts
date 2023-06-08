@@ -94,7 +94,7 @@ describe("resolveTriggers", () => {
       expect(minsSinceCaseTriggersResolved).toBeLessThanOrEqual(5)
     })
 
-    it("Should set resolution_ts when there are no other unresolved triggers or exceptions", async () => {
+    it("Should mark the entire case as resolved when there are no other unresolved triggers or exceptions", async () => {
       const resolverUsername = "triggerResolver01"
       const visibleForce = "36"
       const user = {
@@ -128,7 +128,8 @@ describe("resolveTriggers", () => {
       const afterCourtCaseResult = result as CourtCase
       expect(afterCourtCaseResult.resolutionTimestamp).not.toBeNull()
     })
-    it("Should not set resolution_ts while there are other unresolved triggers or exceptions", async () => {
+
+    it("Should not set mark the entire case as resolved while there are other unresolved triggers or exceptions", async () => {
       const resolverUsername = "triggerResolver01"
       const visibleForce = "36"
       const user = {
@@ -391,6 +392,132 @@ describe("resolveTriggers", () => {
       expect(insertedCourtCase.triggerStatus).toStrictEqual("Resolved")
       expect(insertedCourtCase.triggerResolvedBy).toStrictEqual(resolverUsername)
       expect(insertedCourtCase.triggerResolvedTimestamp).not.toBeNull()
+    })
+
+    it("Should be able to resolve all triggers on a case at once", async () => {
+      const resolverUsername = "triggerResolver01"
+      const courtCaseId = 0
+      const visibleForce = "36"
+      const user = {
+        visibleCourts: [],
+        visibleForces: [visibleForce],
+        username: resolverUsername
+      } as Partial<User> as User
+
+      await insertCourtCasesWithFields([
+        {
+          triggerLockedByUsername: resolverUsername,
+          orgForPoliceFilter: visibleForce
+        }
+      ])
+      const triggers: TestTrigger[] = [0, 1, 2].map((triggerId) => {
+        return {
+          triggerId,
+          triggerCode: "TRPR0001",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-15T10:22:34.000Z")
+        }
+      })
+      await insertTriggers(courtCaseId, triggers)
+
+      const insertedTriggers = await dataSource.getRepository(Trigger).find({ relations: { courtCase: true } })
+      expect(insertedTriggers).toHaveLength(3)
+      let retrievedCourtCase = await getCourtCaseByOrganisationUnit(dataSource, courtCaseId, user)
+      expect(retrievedCourtCase).not.toBeNull()
+      const insertedCourtCase = retrievedCourtCase as CourtCase
+
+      expect(insertedCourtCase.triggerStatus).not.toBeNull()
+      expect(insertedCourtCase.triggerStatus).toStrictEqual("Unresolved")
+      expect(insertedCourtCase.triggerResolvedBy).toBeNull()
+      expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
+
+      const triggerResolveResult = await resolveTriggers(
+        dataSource,
+        triggers.map((trigger) => trigger.triggerId),
+        courtCaseId,
+        user
+      )
+      expect(isError(triggerResolveResult)).toBeFalsy()
+      expect(triggerResolveResult as boolean).toBeTruthy()
+
+      retrievedCourtCase = await getCourtCaseByOrganisationUnit(dataSource, courtCaseId, user)
+      const updatedCourtCase = retrievedCourtCase as CourtCase
+      expect(updatedCourtCase).not.toBeNull()
+      expect(updatedCourtCase.triggerStatus).toStrictEqual("Resolved")
+      expect(updatedCourtCase.triggerResolvedBy).toStrictEqual(resolverUsername)
+      expect(updatedCourtCase.triggerResolvedTimestamp).not.toBeNull()
+      expect(updatedCourtCase.triggers).toHaveLength(triggers.length)
+      updatedCourtCase.triggers.map((trigger) => {
+        expect(trigger.status).toStrictEqual("Resolved")
+        expect(trigger.resolvedBy).toStrictEqual(resolverUsername)
+        expect(trigger.resolvedAt).not.toBeNull()
+      })
+    })
+
+    it("Should be able to resolve some of the triggers on a case at once", async () => {
+      const resolverUsername = "triggerResolver01"
+      const courtCaseId = 0
+      const visibleForce = "36"
+      const user = {
+        visibleCourts: [],
+        visibleForces: [visibleForce],
+        username: resolverUsername
+      } as Partial<User> as User
+
+      await insertCourtCasesWithFields([
+        {
+          triggerLockedByUsername: resolverUsername,
+          orgForPoliceFilter: visibleForce
+        }
+      ])
+      const triggers: TestTrigger[] = [0, 1, 2, 3, 4].map((triggerId) => {
+        return {
+          triggerId,
+          triggerCode: "TRPR0001",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-15T10:22:34.000Z")
+        }
+      })
+      await insertTriggers(courtCaseId, triggers)
+
+      const insertedTriggers = await dataSource.getRepository(Trigger).find({ relations: { courtCase: true } })
+      expect(insertedTriggers).toHaveLength(triggers.length)
+      let retrievedCourtCase = await getCourtCaseByOrganisationUnit(dataSource, courtCaseId, user)
+      expect(retrievedCourtCase).not.toBeNull()
+      const insertedCourtCase = retrievedCourtCase as CourtCase
+
+      expect(insertedCourtCase.triggerStatus).not.toBeNull()
+      expect(insertedCourtCase.triggerStatus).toStrictEqual("Unresolved")
+      expect(insertedCourtCase.triggerResolvedBy).toBeNull()
+      expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
+
+      const triggerResolveResult = await resolveTriggers(
+        dataSource,
+        triggers.map((trigger) => trigger.triggerId).filter((x) => x % 2 === 0),
+        courtCaseId,
+        user
+      )
+      expect(isError(triggerResolveResult)).toBeFalsy()
+      expect(triggerResolveResult as boolean).toBeTruthy()
+
+      retrievedCourtCase = await getCourtCaseByOrganisationUnit(dataSource, courtCaseId, user)
+      const updatedCourtCase = retrievedCourtCase as CourtCase
+      expect(updatedCourtCase).not.toBeNull()
+      expect(updatedCourtCase.triggerStatus).toStrictEqual("Unresolved")
+      expect(updatedCourtCase.triggerResolvedBy).toBeNull()
+      expect(updatedCourtCase.triggerResolvedTimestamp).toBeNull()
+      expect(updatedCourtCase.triggers).toHaveLength(triggers.length)
+      updatedCourtCase.triggers.map((trigger) => {
+        if (trigger.triggerId % 2 === 0) {
+          expect(trigger.status).toStrictEqual("Resolved")
+          expect(trigger.resolvedBy).toStrictEqual(resolverUsername)
+          expect(trigger.resolvedAt).not.toBeNull()
+        } else {
+          expect(trigger.status).toStrictEqual("Unresolved")
+          expect(trigger.resolvedBy).toBeNull()
+          expect(trigger.resolvedAt).toBeNull()
+        }
+      })
     })
   })
 })
