@@ -2,7 +2,7 @@ import { Button, GridCol, GridRow } from "govuk-react"
 import CourtCase from "../../../services/entities/CourtCase"
 import { createUseStyles } from "react-jss"
 import ActionLink from "components/ActionLink"
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, SyntheticEvent, useState } from "react"
 import type NavigationHandler from "types/NavigationHandler"
 import Trigger from "./Trigger"
 import { sortBy } from "lodash"
@@ -55,8 +55,9 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
     }
   }
 
-  const selectAll = () => {
+  const selectAll = (event: SyntheticEvent) => {
     setSelectedTriggerIds(courtCase.triggers.map((trigger) => trigger.triggerId))
+    event.preventDefault()
   }
 
   const handleClick = (offenceOrderIndex?: number) => {
