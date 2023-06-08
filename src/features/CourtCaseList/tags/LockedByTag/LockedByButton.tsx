@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { createUseStyles } from "react-jss"
 import { useCustomStyles } from "../../../../../styles/customStyles"
-import { LOCKED_ICON_URL } from "./LockedByText"
+import { LOCKED_ICON_URL } from "utils/icons"
 
 const useStyles = createUseStyles({
   LockedIcon: {
