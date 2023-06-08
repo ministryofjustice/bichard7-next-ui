@@ -14,9 +14,11 @@ describe("Manually resolve a case", () => {
     }
   })
 
+  const caseURL = "/bichard/court-cases/0"
+
   before(() => {
     cy.task("clearUsers")
-    cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"] })
+    cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp", "B7TriggerHandler_grp"] })
   })
 
   beforeEach(() => {
@@ -33,15 +35,44 @@ describe("Manually resolve a case", () => {
       ]
     ]
 
-    cy.task("insertDummyCourtCasesWithTriggers", { caseTriggers, orgCode: "01" })
+    cy.task("insertDummyCourtCasesWithTriggers", { caseTriggers, orgCode: "01", triggersLockedByUsername: "Bichard01" })
     cy.login("bichard01@example.com", "password")
+    cy.visit(caseURL)
 
-    cy.visit("/bichard")
-
-    cy.findByText("NAME Defendant").click()
-
-    cy.get("button").contains("Resolve trigger").click()
+    cy.get(".trigger-header input[type='checkbox']").check()
+    cy.get("#mark-triggers-complete-button").click()
     cy.get("span.moj-badge--green").should("have.text", "Complete")
+  })
+
+  it("should be able to resolve all triggers on a case using 'select all' if all are unresolved", () => {
+    const caseTriggers: { code: string; status: ResolutionStatus }[][] = [
+      [
+        {
+          code: "TRPR0001",
+          status: "Unresolved"
+        },
+        {
+          code: "TRPR0002",
+          status: "Unresolved"
+        },
+        {
+          code: "TRPR0003",
+          status: "Unresolved"
+        },
+        {
+          code: "TRPR0004",
+          status: "Unresolved"
+        }
+      ]
+    ]
+
+    cy.task("insertDummyCourtCasesWithTriggers", { caseTriggers, orgCode: "01", triggersLockedByUsername: "Bichard01" })
+    cy.login("bichard01@example.com", "password")
+    cy.visit(caseURL)
+
+    cy.get("#select-all-triggers").click()
+    cy.get("#mark-triggers-complete-button").click()
+    cy.get("span.moj-badge--green").should("have.length", caseTriggers.length).should("have.text", "Complete")
   })
 })
 

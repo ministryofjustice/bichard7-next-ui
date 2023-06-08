@@ -1,5 +1,4 @@
-import { GridCol, GridRow } from "govuk-react"
-import ResolveTrigger from "components/ResolveTrigger"
+import { Button, GridCol, GridRow } from "govuk-react"
 import CourtCase from "../../../services/entities/CourtCase"
 import { createUseStyles } from "react-jss"
 import ActionLink from "components/ActionLink"
@@ -7,9 +6,10 @@ import { ChangeEvent, useState } from "react"
 import type NavigationHandler from "types/NavigationHandler"
 import Trigger from "./Trigger"
 import { sortBy } from "lodash"
-import LinkButton from "components/LinkButton"
 import ConditionalRender from "components/ConditionalRender"
 import LockedTag from "./LockedTag"
+import { useRouter } from "next/router"
+import { encode } from "querystring"
 
 interface Props {
   courtCase: CourtCase
@@ -39,6 +39,7 @@ const useStyles = createUseStyles({
 const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedByUser, onNavigate }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
+  const { basePath, asPath, query } = useRouter()
 
   const triggers = sortBy(courtCase.triggers, "triggerItemIdentity")
   const hasTriggers = triggers.length > 0
@@ -62,8 +63,13 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
     onNavigate({ location: "Case Details > Offences", args: { offenceOrderIndex } })
   }
 
+  const resolveTriggerUrl = (triggerIds: number[]) => {
+    const resolveQuery = { ...query, resolveTrigger: triggerIds.map((id) => id.toString()) }
+    return `${basePath}${asPath}?${encode(resolveQuery)}`
+  }
+
   return (
-    <>
+    <form method="post" action={resolveTriggerUrl(selectedTriggerIds)}>
       {triggers.length === 0 && "There are no triggers for this case."}
       <ConditionalRender isRendered={hasTriggers && !triggersLockedByAnotherUser}>
         <GridRow id={"select-all-triggers"} className={classes.selectAllContainer}>
@@ -84,23 +90,22 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
             selectedTriggerIds={selectedTriggerIds}
             setTriggerSelection={setTriggerSelection}
           />
-          <ResolveTrigger trigger={trigger} courtCase={courtCase} />
         </span>
       ))}
 
       <ConditionalRender isRendered={hasTriggers && !triggersLockedByAnotherUser}>
         <GridRow>
           <GridCol className={classes.markCompleteContainer}>
-            <LinkButton href="" disabled={selectedTriggerIds.length === 0} id="mark-triggers-complete-button">
+            <Button type="submit" disabled={selectedTriggerIds.length === 0} id="mark-triggers-complete-button">
               {"Mark trigger(s) as complete"}
-            </LinkButton>
+            </Button>
           </GridCol>
         </GridRow>
       </ConditionalRender>
       <ConditionalRender isRendered={hasTriggers && triggersLockedByAnotherUser}>
         <LockedTag lockName="Triggers" lockedBy={triggersLockedByUser ?? "Another user"} />
       </ConditionalRender>
-    </>
+    </form>
   )
 }
 

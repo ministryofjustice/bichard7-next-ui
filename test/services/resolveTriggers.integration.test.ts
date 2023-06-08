@@ -6,14 +6,14 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
 import getDataSource from "../../src/services/getDataSource"
-import resolveTrigger from "../../src/services/resolveTrigger"
+import resolveTriggers from "../../src/services/resolveTriggers"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 
 jest.setTimeout(100000)
 
-describe("resolveTrigger", () => {
+describe("resolveTriggers", () => {
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -60,7 +60,7 @@ describe("resolveTrigger", () => {
       expect(beforeCourtCase.triggerResolvedBy).toBeNull()
       expect(beforeCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      const result = await resolveTrigger(dataSource, 0, 0, user)
+      const result = await resolveTriggers(dataSource, [0], 0, user)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeTruthy()
@@ -123,7 +123,7 @@ describe("resolveTrigger", () => {
       const beforeCourtCase = beforeCourtCaseResult as CourtCase
       expect(beforeCourtCase.resolutionTimestamp).toBeNull()
       expect(beforeCourtCase.triggerStatus).toBe("Unresolved")
-      await resolveTrigger(dataSource, 0, 0, user)
+      await resolveTriggers(dataSource, [0], 0, user)
       const result = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
       const afterCourtCaseResult = result as CourtCase
       expect(afterCourtCaseResult.resolutionTimestamp).not.toBeNull()
@@ -164,7 +164,7 @@ describe("resolveTrigger", () => {
       expect(beforeCourtCase.resolutionTimestamp).toBeNull()
       expect(beforeCourtCase.triggerStatus).toBe("Unresolved")
 
-      await resolveTrigger(dataSource, 0, 0, user)
+      await resolveTriggers(dataSource, [0], 0, user)
 
       const midCourtCaseResult = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
       const midCourtCase = midCourtCaseResult as CourtCase
@@ -180,7 +180,7 @@ describe("resolveTrigger", () => {
       expect(updatedTrigger.resolvedBy).not.toBeNull()
       expect(updatedTrigger.resolvedAt).not.toBeNull()
 
-      await resolveTrigger(dataSource, 1, 0, user)
+      await resolveTriggers(dataSource, [1], 0, user)
 
       const afterCourtCaseResult = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
       const afterCourtCase = afterCourtCaseResult as CourtCase
@@ -228,12 +228,12 @@ describe("resolveTrigger", () => {
       await insertTriggers(0, [trigger])
 
       // Resolve trigger
-      const initialResolveResult = await resolveTrigger(dataSource, 0, 0, resolverUser)
+      const initialResolveResult = await resolveTriggers(dataSource, [0], 0, resolverUser)
       expect(isError(initialResolveResult)).toBeFalsy()
       expect(initialResolveResult as boolean).toBeTruthy()
 
       // Try to resolve again as a different user
-      const result = await resolveTrigger(dataSource, 0, 0, reResolverUser)
+      const result = await resolveTriggers(dataSource, [0], 0, reResolverUser)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeFalsy()
@@ -269,7 +269,7 @@ describe("resolveTrigger", () => {
       await insertTriggers(0, [trigger])
 
       // Attempt to resolve trigger whilst not holding the lock
-      const resolveResult = await resolveTrigger(dataSource, 0, 0, {
+      const resolveResult = await resolveTriggers(dataSource, [0], 0, {
         visibleCourts: [],
         visibleForces: [visibleForce],
         username: resolverUsername
@@ -301,7 +301,7 @@ describe("resolveTrigger", () => {
       await insertTriggers(0, [trigger])
 
       // Attempt to resolve trigger whilst not holding the lock
-      const resolveResult = await resolveTrigger(dataSource, 0, 0, {
+      const resolveResult = await resolveTriggers(dataSource, [0], 0, {
         visibleCourts: [],
         visibleForces,
         username: resolverUsername
@@ -319,7 +319,7 @@ describe("resolveTrigger", () => {
       expect(updatedTrigger.resolvedBy).toBeNull()
     })
 
-    it("Should only set the case trigger columns only when the last trigger is resolved", async () => {
+    it("Should set the case trigger columns only when the last trigger is resolved", async () => {
       const resolverUsername = "triggerResolver01"
       const courtCaseId = 0
       const visibleForce = "36"
@@ -356,7 +356,7 @@ describe("resolveTrigger", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      let triggerResolveResult = await resolveTrigger(dataSource, 0, courtCaseId, user)
+      let triggerResolveResult = await resolveTriggers(dataSource, [0], courtCaseId, user)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
@@ -368,7 +368,7 @@ describe("resolveTrigger", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      triggerResolveResult = await resolveTrigger(dataSource, 1, courtCaseId, user)
+      triggerResolveResult = await resolveTriggers(dataSource, [1], courtCaseId, user)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 
@@ -380,7 +380,7 @@ describe("resolveTrigger", () => {
       expect(insertedCourtCase.triggerResolvedBy).toBeNull()
       expect(insertedCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      triggerResolveResult = await resolveTrigger(dataSource, 2, courtCaseId, user)
+      triggerResolveResult = await resolveTriggers(dataSource, [2], courtCaseId, user)
       expect(isError(triggerResolveResult)).toBeFalsy()
       expect(triggerResolveResult as boolean).toBeTruthy()
 

@@ -56,8 +56,9 @@ export default defineConfig({
         insertDummyCourtCasesWithTriggers(params: {
           caseTriggers: { code: string; status: ResolutionStatus }[][]
           orgCode: string
+          triggersLockedByUsername?: string
         }) {
-          return insertDummyCourtCasesWithTriggers(params.caseTriggers, params.orgCode)
+          return insertDummyCourtCasesWithTriggers(params.caseTriggers, params.orgCode, params.triggersLockedByUsername)
         },
 
         insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {

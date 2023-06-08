@@ -17,7 +17,7 @@ import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationU
 import { isError } from "types/Result"
 import { isPost } from "utils/http"
 import { UpdateResult } from "typeorm"
-import resolveTrigger from "services/resolveTrigger"
+import resolveTriggers from "services/resolveTriggers"
 import { resubmitCourtCase } from "services/resubmitCourtCase"
 import parseFormData from "utils/parseFormData"
 import { BackLink } from "govuk-react"
@@ -32,9 +32,9 @@ export const getServerSideProps = withMultipleServerSideProps(
     const {
       courtCaseId,
       lock,
-      resolveTrigger: triggerToResolve,
+      resolveTrigger: triggersToResolve,
       resubmitCase
-    } = query as { courtCaseId: string; lock: string; resolveTrigger: string; resubmitCase: string }
+    } = query as { courtCaseId: string; lock: string; resolveTrigger: string[]; resubmitCase: string }
     const dataSource = await getDataSource()
 
     let lockResult: UpdateResult | Error | undefined
@@ -51,8 +51,13 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw lockResult
     }
 
-    if (isPost(req) && !!triggerToResolve) {
-      const updateTriggerResult = await resolveTrigger(dataSource, +triggerToResolve, +courtCaseId, currentUser)
+    if (isPost(req) && triggersToResolve.length > 0) {
+      const updateTriggerResult = await resolveTriggers(
+        dataSource,
+        triggersToResolve.map((triggerId) => +triggerId),
+        +courtCaseId,
+        currentUser
+      )
 
       if (isError(updateTriggerResult)) {
         throw updateTriggerResult
