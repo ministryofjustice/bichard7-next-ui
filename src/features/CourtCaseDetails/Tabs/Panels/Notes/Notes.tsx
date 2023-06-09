@@ -1,7 +1,7 @@
 import ConditionalRender from "components/ConditionalRender"
 import DateTime from "components/DateTime"
 import NotesFilterOptions from "components/NotesFilterOptions"
-import AddNoteForm from "features/AddNoteForm/AddNoteForm"
+import AddNoteForm from "./AddNoteForm"
 import { Paragraph, Table } from "govuk-react"
 import { useState } from "react"
 import Note from "services/entities/Note"
