@@ -15,6 +15,7 @@ import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
+import updateQueryString from "utils/updateQueryString"
 
 interface Props {
   courtCase: CourtCase
@@ -37,10 +38,16 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
   const classes = useStyles()
 
   useEffect(() => {
-    const tabFromQueryString = new URLSearchParams(window.location.search).get("tab")
+    const queryStringParams = new URLSearchParams(window.location.search)
 
-    if (tabFromQueryString) {
-      setActiveTab(tabFromQueryString as CaseDetailsTab)
+    const tabParam = queryStringParams.get("tab")
+    if (tabParam) {
+      setActiveTab(tabParam as CaseDetailsTab)
+    }
+
+    const offenceParam = queryStringParams.get("offence")
+    if (offenceParam) {
+      setSelectedOffenceIndex(+offenceParam)
     }
   }, [])
 
@@ -52,17 +59,11 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       case "Case Details > Offences":
         if (typeof args?.offenceOrderIndex === "number") {
           setSelectedOffenceIndex(+args.offenceOrderIndex)
+          updateQueryString({ offence: args.offenceOrderIndex })
         }
         setActiveTab("Offences")
         break
     }
-  }
-
-  const updateQueryString = (tab: string) => {
-    const searchParams = new URLSearchParams(window.location.search)
-    searchParams.set("tab", tab)
-    const newRelativePathQuery = window.location.pathname + "?" + searchParams.toString()
-    history.pushState(null, "", newRelativePathQuery)
   }
 
   return (
@@ -90,7 +91,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         onTabClick={(tab) => {
           setSelectedOffenceIndex(undefined)
           setActiveTab(tab)
-          updateQueryString(tab)
+          updateQueryString({ tab, offence: null })
         }}
         tabs={["Defendant", "Hearing", "Case information", "Offences", "Notes", "PNC errors"]}
         width={contentWidth}
@@ -115,7 +116,10 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           <ConditionalRender isRendered={activeTab === "Offences"}>
             <Offences
               offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
-              onOffenceSelected={setSelectedOffenceIndex}
+              onOffenceSelected={(offenceIndex) => {
+                setSelectedOffenceIndex(offenceIndex)
+                updateQueryString({ offence: offenceIndex })
+              }}
               selectedOffenceIndex={selectedOffenceIndex}
             />
           </ConditionalRender>
