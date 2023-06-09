@@ -219,7 +219,7 @@ describe("Case list", () => {
 
       it("Should apply the 'Resolved cases' radio button and cancel it when the 'X' is clicked", () => {
         cy.get("#filter-button").click()
-        cy.get(".b7-resolve-buttond").click()
+        cy.get("#resolved").click()
 
         cy.get(".govuk-heading-s").contains("Case state").should("exist")
         cy.get(".moj-filter__tag").contains("Resolved cases").should("exist")

@@ -692,7 +692,7 @@ describe("Case list", () => {
 
       // Filter for resolved cases
       cy.get("button[id=filter-button]").click()
-      cy.get(".b7-resolve-buttond").click()
+      cy.get("#resolved").click()
       cy.get("button[id=search]").click()
 
       cy.get("tr").not(":first").should("have.length", 3)
