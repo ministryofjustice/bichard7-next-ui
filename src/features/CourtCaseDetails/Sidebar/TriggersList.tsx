@@ -43,6 +43,7 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
 
   const triggers = sortBy(courtCase.triggers, "triggerItemIdentity")
   const hasTriggers = triggers.length > 0
+  const hasUnresolvedTriggers = triggers.filter((t) => t.status === "Unresolved").length > 0
   const triggersLockedByAnotherUser = !!triggersLockedByUser && !triggersLockedByCurrentUser
 
   const setTriggerSelection = ({ target: checkbox }: ChangeEvent<HTMLInputElement>) => {
@@ -76,7 +77,7 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
   return (
     <form method="post" action={resolveTriggerUrl(selectedTriggerIds)}>
       {triggers.length === 0 && "There are no triggers for this case."}
-      <ConditionalRender isRendered={hasTriggers && !triggersLockedByAnotherUser}>
+      <ConditionalRender isRendered={hasUnresolvedTriggers && !triggersLockedByAnotherUser}>
         <GridRow id={"select-all-triggers"} className={classes.selectAllContainer}>
           <GridCol>
             <ActionLink onClick={selectAll} id="select-all-action">

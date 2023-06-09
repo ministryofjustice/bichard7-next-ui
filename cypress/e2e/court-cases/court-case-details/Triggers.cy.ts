@@ -231,7 +231,7 @@ describe("Triggers", () => {
     it("should be hidden if all triggers are resolved", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: resolvedTriggers })
       cy.visit(caseURL)
-      cy.get("#select-all-triggers").should("not.be.visible")
+      cy.get("#select-all-triggers").should("not.exist")
     })
 
     it("should be visible if there is a single unresolved trigger", () => {
@@ -243,7 +243,7 @@ describe("Triggers", () => {
     it("should be hidden if there is a single resolved trigger", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: [resolvedTrigger] })
       cy.visit(caseURL)
-      cy.get("#select-all-triggers").should("not.be.visible")
+      cy.get("#select-all-triggers").should("not.exist")
     })
 
     it("should be visible if there is a mix of resolved and unresolved triggers", () => {
