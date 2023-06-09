@@ -30,11 +30,17 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser }: Props) => {
       <ConditionalRender isRendered={!lockedByAnotherUser}>
         <form method="POST" action="#" onSubmit={validateForm}>
           <FormGroup>
-            <Label className="govuk-heading-m b7-form-label-lg" htmlFor="noteText">
+            <Label className="govuk-heading-m b7-form-label-lg" htmlFor="note-text">
               {"Add a new note"}
             </Label>
             <TextArea
-              input={{ name: "noteText", rows: 5, maxLength: MAX_NOTE_LENGTH, onInput: handleOnNoteChange }}
+              input={{
+                id: "note-text",
+                name: "noteText",
+                rows: 5,
+                maxLength: MAX_NOTE_LENGTH,
+                onInput: handleOnNoteChange
+              }}
               meta={{
                 error: "Input message into text box",
                 touched: showError
