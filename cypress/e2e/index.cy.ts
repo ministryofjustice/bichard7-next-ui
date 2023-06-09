@@ -906,7 +906,7 @@ describe("Case list", () => {
       loginAndGoToUrl("supervisor@example.com")
 
       cy.get("#filter-button").click()
-      cy.get("#resolved").click()
+      cy.get(".b7-resolve-buttond").click()
       cy.get("#search").click()
 
       confirmMultipleFieldsDisplayed(["Case00000", "Case00001"])
@@ -969,7 +969,7 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       cy.get("#filter-button").click()
-      cy.get("#resolved").click()
+      cy.get(".b7-resolve-buttond").click()
       cy.get("#search").click()
 
       confirmMultipleFieldsDisplayed(["Case00001", "Case00006"])
@@ -1049,7 +1049,7 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       cy.get("#filter-button").click()
-      cy.get("#resolved").click()
+      cy.get(".b7-resolve-buttond").click()
       cy.get("#search").click()
 
       confirmMultipleFieldsDisplayed(["Case00001", "Case00006"])

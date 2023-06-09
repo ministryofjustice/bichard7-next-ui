@@ -5,15 +5,14 @@ import { ReactNode } from "react"
 interface Props {
   children: ReactNode
   href: string
+  className?: string
 }
 
-const LinkButton: React.FC<Props> = ({ children, href }: Props) => {
+const LinkButton: React.FC<Props> = ({ children, href, className }: Props) => {
   const { asPath, basePath } = useRouter()
   return (
     <form method="get" action={href.startsWith("/") ? href : `${basePath}${asPath}/${href}`}>
-      <div id={href}>
-        <Button>{children}</Button>
-      </div>
+      <Button className={className}>{children}</Button>
     </form>
   )
 }

@@ -121,8 +121,8 @@ describe("Court case details", () => {
     cy.should("not.contain", "Test note 2")
     cy.contains("bichard01")
     cy.contains("Test note 1")
-    cy.get("#reallocate").should("not.exist")
-    cy.get("#resolve").should("not.exist")
+    cy.get(".b7-reallocate-button").should("not.exist")
+    cy.get(".b7-resolve-button").should("not.exist")
   })
 
   it("should display no user notes message", () => {

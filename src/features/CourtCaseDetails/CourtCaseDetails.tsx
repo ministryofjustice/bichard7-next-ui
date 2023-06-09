@@ -129,10 +129,14 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </ConditionalRender>
 
           <ConditionalRender isRendered={!lockedByAnotherUser && activeTab !== "Notes"}>
-            <LinkButton href="reallocate">{"Reallocate Case"}</LinkButton>
+            <LinkButton href="reallocate" className="b7-reallocate-button">
+              {"Reallocate Case"}
+            </LinkButton>
           </ConditionalRender>
           <ConditionalRender isRendered={!lockedByAnotherUser && activeTab !== "Notes"}>
-            <LinkButton href="resolve">{"Mark As Manually Resolved"}</LinkButton>
+            <LinkButton href="resolve" className="b7-resolve-button">
+              {"Mark As Manually Resolved"}
+            </LinkButton>
           </ConditionalRender>
         </GridCol>
 
