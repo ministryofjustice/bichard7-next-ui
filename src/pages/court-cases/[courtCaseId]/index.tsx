@@ -8,7 +8,6 @@ import CourtCaseLock from "features/CourtCaseLock/CourtCaseLock"
 import { BackLink } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
-import Error from "next/error"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
@@ -26,6 +25,7 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import { isPost } from "utils/http"
 import { isPncUpdateDataset } from "utils/isPncUpdateDataset"
+import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
 
 export const getServerSideProps = withMultipleServerSideProps(
@@ -86,10 +86,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       if (noteText) {
         const addNoteResult = await addNote(dataSource, +courtCaseId, currentUser.username, noteText)
         if (!addNoteResult) {
-          return {
-            isSuccessful: false,
-            ValidationException: "Case is locked by another user"
-          }
+          return notSuccessful("Case is locked by another user")
         }
       }
     }
