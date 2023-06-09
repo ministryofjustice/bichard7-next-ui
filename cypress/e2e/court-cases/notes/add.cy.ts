@@ -75,10 +75,15 @@ describe("Case details", () => {
     insertTriggers()
     loginAndGoToNotes()
     cy.contains("h3", "Notes")
-    // cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
 
-    cy.get("textarea").type("A ".repeat(500) + "B ".repeat(500) + "C ".repeat(100), { delay: 0 })
-    cy.get("button").contains("Add").click()
+    cy.get("textarea").type("A ".repeat(500), { delay: 0 })
+    cy.get("button").contains("Add note").click()
+
+    cy.get("textarea").type("B ".repeat(500), { delay: 0 })
+    cy.get("button").contains("Add note").click()
+
+    cy.get("textarea").type("C ".repeat(100), { delay: 0 })
+    cy.get("button").contains("Add note").click()
 
     cy.get("H1").should("have.text", "Case details")
     clickTab("Notes")
