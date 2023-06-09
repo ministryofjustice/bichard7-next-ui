@@ -1,6 +1,6 @@
 import ConditionalRender from "components/ConditionalRender"
 import { MAX_NOTE_LENGTH } from "config"
-import { Button, FormGroup, Heading, HintText, TextArea } from "govuk-react"
+import { Button, FormGroup, HintText, Label, TextArea } from "govuk-react"
 import { FormEvent, FormEventHandler, useState } from "react"
 
 interface Props {
@@ -30,9 +30,9 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser }: Props) => {
       <ConditionalRender isRendered={!lockedByAnotherUser}>
         <form method="POST" action="#" onSubmit={validateForm}>
           <FormGroup>
-            <Heading as="h3" size="MEDIUM">
+            <Label className="govuk-heading-m b7-form-label-lg" htmlFor="noteText">
               {"Add a new note"}
-            </Heading>
+            </Label>
             <TextArea
               input={{ name: "noteText", rows: 5, maxLength: MAX_NOTE_LENGTH, onInput: handleOnNoteChange }}
               meta={{
