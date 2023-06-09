@@ -14,6 +14,15 @@ export const capitaliseExpression = (expression: string) => {
   return expression.charAt(0).toUpperCase() + expression.slice(1).toLowerCase()
 }
 
+export const getUrgentYesOrNo = (urgent: boolean | undefined): string => {
+  return urgent === true ? "Y" : "N"
+}
+
+export const getNumberOfHours = (hours: number | undefined): string | undefined => {
+  console.log(hours)
+  return hours ? `${hours} Hours` : undefined
+}
+
 interface HearingResultProps {
   result: Result
 }
@@ -66,6 +75,8 @@ export const HearingResult = ({ result }: HearingResultProps) => {
       <TableRow label="PNC disposal type" value={result.PNCDisposalType} />
       <TableRow label="Result class" value={result.ResultClass} />
       <TableRow label="PNC adjudication exists" value={getYesOrNo(result.PNCAdjudicationExists)} />
+      <TableRow label="Urgent" value={getUrgentYesOrNo(result.Urgent?.urgent)} />
+      <TableRow label="Urgency" value={getNumberOfHours(result.Urgent?.urgency)} />
     </Table>
   )
 }
