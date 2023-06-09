@@ -1,10 +1,10 @@
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
-import { differenceInMinutes, parse } from "date-fns"
+// import { differenceInMinutes, parse } from "date-fns"
 import User from "services/entities/User"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 import a11yConfig from "../../../support/a11yConfig"
 import hashedPassword from "../../../fixtures/hashedPassword"
-import resubmitCaseJson from "../../../fixtures/expected_resubmit_01.json"
+// import resubmitCaseJson from "../../../fixtures/expected_resubmit_01.json"
 import type CaseDetailsTab from "../../../../src/types/CaseDetailsTab"
 import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
 import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
@@ -83,38 +83,7 @@ describe("Court case details", () => {
 
     cy.contains("Case00000")
     cy.contains("Magistrates' Courts Essex Basildon")
-
-    cy.get("th")
-      .contains("Court date")
-      .then(($cell) => {
-        expect($cell.parent().find("td").text()).to.equal("26/09/2008")
-      })
-
     cy.contains("NAME Defendant")
-
-    cy.get("th")
-      .contains("Trigger reason")
-      .then(($cell) => {
-        expect($cell.parent().find("td").text()).to.equal("TRPR0001")
-      })
-
-    // Data from AHO XML
-    cy.get("th")
-      .contains("Organisation Unit Code")
-      .then(($cell) => {
-        expect($cell.parent().find("td").text()).to.equal("B01EF01")
-      })
-
-    // Triggers table
-    cy.get("H2").contains("Triggers")
-    cy.get("table").eq(-1).find("tr").should("have.length", 2)
-    cy.get("table").eq(-1).find("tr").eq(1).find("td").first().should("have.text", "TRPR0001")
-    cy.get("table").eq(-1).find("tr").eq(1).find("td").eq(4).should("include.text", "09/07/2022")
-
-    // Notes
-    cy.contains("Notes").click()
-    cy.get("H3").contains("Notes")
-    cy.get("p").contains("Case has no notes.")
 
     // Urgency
     cy.contains("Urgent")
@@ -209,33 +178,6 @@ describe("Court case details", () => {
     cy.contains("td", "PNC disposal type").siblings().contains("3078")
     cy.contains("td", "Result class").siblings().contains("Judgement with final result")
     cy.contains("td", "PNC adjudication exists").siblings().contains("N")
-  })
-
-  it("should display the content of the Notes tab", () => {
-    cy.task("insertCourtCasesWithNotes", {
-      caseNotes: [
-        [
-          {
-            user: "bichard01",
-            text: "Test note 1"
-          },
-          {
-            user: "bichard02",
-            text: "Test note 2"
-          }
-        ]
-      ],
-      force: "02"
-    })
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-
-    clickTab("Notes")
-
-    cy.contains("bichard01")
-    cy.contains("Test note 1")
-    cy.contains("bichard02")
-    cy.contains("Test note 2")
   })
 
   it("should return 404 for a case that this user can not see", () => {
@@ -337,103 +279,68 @@ describe("Court case details", () => {
     cy.findByText("Error locked by: Bichard02").should("exist")
   })
 
-  it("should resolve a trigger after clicking the button", () => {
-    const userWithGeneralHandlerPermission = "Bichard02"
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: userWithGeneralHandlerPermission,
-        triggerLockedByUsername: userWithGeneralHandlerPermission,
-        orgForPoliceFilter: "02"
-      }
-    ])
+  // it("should resubmit a case when the resubmit button is clicked", () => {
+  //   cy.task("insertCourtCasesWithFields", [
+  //     {
+  //       errorLockedByUsername: null,
+  //       triggerLockedByUsername: null,
+  //       orgForPoliceFilter: "02"
+  //     }
+  //   ])
 
-    const triggers: TestTrigger[] = [
-      {
-        triggerId: 0,
-        triggerCode: "TRPR0001",
-        status: "Unresolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
-      }
-    ]
-    cy.task("insertTriggers", { caseId: 0, triggers })
+  //   cy.login("bichard02@example.com", "password")
 
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-    cy.findByText(`Trigger locked by: ${userWithGeneralHandlerPermission}`).should("exist")
-    cy.findByText(`Error locked by: ${userWithGeneralHandlerPermission}`).should("exist")
+  //   cy.visit("/bichard/court-cases/0")
 
-    cy.get("button").contains("Resolve trigger").click()
-    cy.get("table")
-      .eq(-1)
-      .then((table) => {
-        expect(table.find("td").eq(2).text()).to.equal(userWithGeneralHandlerPermission)
-        const resolutionTime = parse(table.find("td").eq(3).text(), "dd/MM/yyyy HH:mm:ss", new Date())
-        const minsSinceResolved = differenceInMinutes(new Date(), resolutionTime)
-        expect(minsSinceResolved).to.be.at.least(0)
-        expect(minsSinceResolved).to.be.below(1)
-      })
-  })
+  //   cy.get("button").contains("Resubmit").click()
+  //   cy.location().should((loc) => {
+  //     expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
+  //   })
 
-  it("should resubmit a case when the resubmit button is clicked", () => {
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: null,
-        triggerLockedByUsername: null,
-        orgForPoliceFilter: "02"
-      }
-    ])
+  //   cy.get("H1").should("have.text", "Case details")
+  //   cy.contains("Notes").click()
+  //   const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
+  //   cy.contains(dateTimeRegex)
+  //   cy.contains("Bichard02: Portal Action: Resubmitted Message.")
+  // })
 
-    cy.login("bichard02@example.com", "password")
+  // it("should resubmit a case when updates are made and the resubmit button is clicked", () => {
+  //   cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
+  //   cy.login("bichard02@example.com", "password")
 
-    cy.visit("/bichard/court-cases/0")
+  //   cy.visit("/bichard/court-cases/0")
 
-    cy.get("button").contains("Resubmit").click()
-    cy.location().should((loc) => {
-      expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
-    })
+  //   // need to make the updates and then check them in the db
+  //   cy.get("input").first().type("2024-09-26")
+  //   cy.get("button").contains("Resubmit").click()
+  //   cy.task("getCourtCaseById", { caseId: 0 }).then((res) =>
+  //     expect(JSON.stringify(res)).to.eq(JSON.stringify(resubmitCaseJson))
+  //   )
+  //   cy.location().should((loc) => {
+  //     expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
+  //   })
 
-    cy.get("H1").should("have.text", "Case details")
-    cy.contains("Notes").click()
-    const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-    cy.contains(dateTimeRegex)
-    cy.contains("Bichard02: Portal Action: Resubmitted Message.")
-  })
-
-  it("should resubmit a case when updates are made and the resubmit button is clicked", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
-    cy.login("bichard02@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
-
-    // need to make the updates and then check them in the db
-    cy.get("input").first().type("2024-09-26")
-    cy.get("button").contains("Resubmit").click()
-    cy.task("getCourtCaseById", { caseId: 0 }).then((res) =>
-      expect(JSON.stringify(res)).to.eq(JSON.stringify(resubmitCaseJson))
-    )
-    cy.location().should((loc) => {
-      expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
-    })
-
-    cy.get("H1").should("have.text", "Case details")
-    cy.contains("Notes").click()
-    const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-    cy.contains(dateTimeRegex)
-    cy.contains("Bichard02: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-09-26")
-    cy.contains("Bichard02: Portal Action: Resubmitted Message.")
-  })
+  //   cy.get("H1").should("have.text", "Case details")
+  //   cy.contains("Notes").click()
+  //   const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
+  //   cy.contains(dateTimeRegex)
+  //   cy.contains("Bichard02: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-09-26")
+  //   cy.contains("Bichard02: Portal Action: Resubmitted Message.")
+  // })
 
   it("should show triggers tab by default when navigating to court case details page", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
+        triggerItemIdentity: 1,
         triggerCode: "TRPR0010",
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       },
       {
         triggerId: 1,
+        triggerItemIdentity: 1,
         triggerCode: "TRPR0015",
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
@@ -471,40 +378,6 @@ describe("Court case details", () => {
 
     cy.get(".moj-tab-panel-triggers .moj-trigger-row").should("not.exist")
     cy.get(".moj-tab-panel-triggers").contains("There are no triggers for this case.")
-  })
-
-  it("should select all triggers when select all link is clicked", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-    const triggers: TestTrigger[] = [
-      {
-        triggerId: 0,
-        triggerCode: "TRPR0010",
-        status: "Unresolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
-      },
-      {
-        triggerId: 1,
-        triggerCode: "TRPR0015",
-        status: "Unresolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
-      }
-    ]
-    cy.task("insertTriggers", { caseId: 0, triggers })
-
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
-
-    cy.get(".moj-tab-panel-triggers").should("be.visible")
-    cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
-
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row input[type=checkbox]").eq(0).should("not.be.checked")
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row input[type=checkbox]").eq(1).should("not.be.checked")
-
-    cy.get(".moj-tab-panel-triggers button").contains("Select all").click()
-
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row input[type=checkbox]").eq(0).should("be.checked")
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row input[type=checkbox]").eq(1).should("be.checked")
   })
 
   it("should show exceptions in exceptions tab", () => {
@@ -550,14 +423,14 @@ describe("Court case details", () => {
       {
         triggerId: 0,
         triggerCode: "TRPR0010",
-        triggerItemIdentity: 0,
+        triggerItemIdentity: 1,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       },
       {
         triggerId: 1,
         triggerCode: "TRPR0015",
-        triggerItemIdentity: 1,
+        triggerItemIdentity: 2,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }

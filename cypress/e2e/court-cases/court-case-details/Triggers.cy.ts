@@ -1,3 +1,4 @@
+import { ResolutionStatus } from "types/ResolutionStatus"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import hashedPassword from "../../../fixtures/hashedPassword"
 
@@ -277,6 +278,70 @@ describe("Triggers", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
       cy.get("#select-all-triggers").should("not.exist")
+    })
+  })
+
+  describe("Resolve triggers", () => {
+    it("should be able to resolve a trigger", () => {
+      const caseTriggers: { code: string; status: ResolutionStatus }[][] = [
+        [
+          {
+            code: "TRPR0001",
+            status: "Unresolved"
+          }
+        ]
+      ]
+
+      cy.task("clearCourtCases")
+      cy.task("insertDummyCourtCasesWithTriggers", {
+        caseTriggers,
+        orgCode: "01",
+        triggersLockedByUsername: "Bichard01"
+      })
+      cy.login("bichard01@example.com", "password")
+      cy.visit(caseURL)
+
+      cy.get(".trigger-header input[type='checkbox']").check()
+      cy.get("#mark-triggers-complete-button").click()
+      cy.get("span.moj-badge--green").should("have.text", "Complete")
+    })
+
+    it("should be able to resolve all triggers on a case using 'select all' if all are unresolved", () => {
+      const caseTriggers: { code: string; status: ResolutionStatus }[][] = [
+        [
+          {
+            code: "TRPR0001",
+            status: "Unresolved"
+          },
+          {
+            code: "TRPR0002",
+            status: "Unresolved"
+          },
+          {
+            code: "TRPR0003",
+            status: "Unresolved"
+          },
+          {
+            code: "TRPR0004",
+            status: "Unresolved"
+          }
+        ]
+      ]
+
+      cy.task("clearCourtCases")
+      cy.task("insertDummyCourtCasesWithTriggers", {
+        caseTriggers,
+        orgCode: "01",
+        triggersLockedByUsername: "Bichard01"
+      })
+      cy.login("bichard01@example.com", "password")
+      cy.visit(caseURL)
+
+      cy.get("#select-all-triggers button").click()
+      cy.get("#mark-triggers-complete-button").click()
+      cy.get("span.moj-badge--green")
+        .should("have.length", caseTriggers[0].length)
+        .each((el) => cy.wrap(el).should("have.text", "Complete"))
     })
   })
 })

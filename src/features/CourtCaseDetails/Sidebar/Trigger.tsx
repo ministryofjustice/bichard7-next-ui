@@ -4,7 +4,7 @@ import Checkbox from "components/Checkbox"
 import ActionLink from "components/ActionLink"
 import PreviewButton from "components/PreviewButton"
 import { default as TriggerEntity } from "services/entities/Trigger"
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, SyntheticEvent, useState } from "react"
 import ConditionalRender from "components/ConditionalRender"
 import { Preview } from "components/Preview"
 import getTriggerDefinition from "utils/getTriggerDefinition"
@@ -70,7 +70,12 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection, di
           {(trigger.triggerItemIdentity ?? 0) > 0 && (
             <>
               <b>{" / "}</b>
-              <ActionLink onClick={() => onClick(trigger.triggerItemIdentity)}>
+              <ActionLink
+                onClick={(event: SyntheticEvent) => {
+                  event.preventDefault()
+                  onClick(trigger.triggerItemIdentity)
+                }}
+              >
                 {"Offence "} {trigger.triggerItemIdentity}
               </ActionLink>
             </>
