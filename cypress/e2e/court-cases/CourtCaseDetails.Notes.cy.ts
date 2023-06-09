@@ -205,7 +205,8 @@ describe("Court case details", () => {
 
     clickTab("Notes")
     cy.get("h3").contains("Add a new note")
-    cy.get("p").contains("You have 1000 characters remaining")
+    cy.get("textarea").should("be.visible")
+    cy.get("span").contains("You have 1000 characters remaining")
   })
 
   it("should be able to add a note when case is visible to the user and not locked by another user", () => {
