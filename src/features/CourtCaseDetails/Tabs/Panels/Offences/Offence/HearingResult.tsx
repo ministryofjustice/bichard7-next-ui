@@ -19,7 +19,6 @@ export const getUrgentYesOrNo = (urgent: boolean | undefined): string => {
 }
 
 export const getNumberOfHours = (hours: number | undefined): string | undefined => {
-  console.log(hours)
   return hours ? `${hours} Hours` : undefined
 }
 
