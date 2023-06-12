@@ -17,8 +17,8 @@ describe("getExceptionPathDetails", () => {
     const result = getExceptionPathDetails(path)
 
     expect(result).toStrictEqual({
-      displayText: "Organisation unit code (Offence 2)",
       field: "OrganisationUnitCode",
+      formattedFieldName: "Organisation unit code",
       location: "Offence 2",
       offenceOrderIndex: 2,
       tab: "Offences"
@@ -30,8 +30,8 @@ describe("getExceptionPathDetails", () => {
     const result = getExceptionPathDetails(path)
 
     expect(result).toStrictEqual({
-      displayText: "Arrest summons number (Case information)",
       field: "ArrestSummonsNumber",
+      formattedFieldName: "Arrest summons number",
       location: "Case information",
       offenceOrderIndex: undefined,
       tab: "Case information"
@@ -43,8 +43,8 @@ describe("getExceptionPathDetails", () => {
     const result = getExceptionPathDetails(path)
 
     expect(result).toStrictEqual({
-      displayText: "Annotated hearing outcome",
       field: "AnnotatedHearingOutcome",
+      formattedFieldName: "Annotated hearing outcome",
       location: undefined,
       offenceOrderIndex: undefined,
       tab: undefined
