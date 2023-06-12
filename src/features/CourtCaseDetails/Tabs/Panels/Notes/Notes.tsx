@@ -66,9 +66,7 @@ export const Notes = ({ notes, lockedByAnotherUser }: NotesProps) => {
       <ConditionalRender isRendered={!hasFilteredNotes}>
         <Paragraph>{`Case has no ${noNoteText}.`}</Paragraph>
       </ConditionalRender>
-      <ConditionalRender isRendered={!lockedByAnotherUser}>
-        <AddNoteForm lockedByAnotherUser={lockedByAnotherUser} />
-      </ConditionalRender>
+      <AddNoteForm lockedByAnotherUser={lockedByAnotherUser} />
     </CourtCaseDetailsPanel>
   )
 }

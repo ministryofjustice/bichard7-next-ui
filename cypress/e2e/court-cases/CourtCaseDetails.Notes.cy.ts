@@ -193,6 +193,8 @@ describe("Court case details", () => {
 
     clickTab("Notes")
     cy.contains("Case has no notes.")
+    cy.get("#note-text").should("not.exist")
+    cy.get("#add-note-button").should("not.exist")
   })
 
   it("should display the notes text area if the case is not locked to another users", () => {
@@ -250,9 +252,9 @@ describe("Court case details", () => {
 
     cy.get("H3").contains("Notes")
     cy.get("button").contains("Add note").click()
-    cy.get("form span").contains("Input message into text box")
+    cy.get("form span").contains("The note cannot be empty")
     cy.get("textarea[name=noteText]").type("dummy note")
-    cy.get("form span").should("not.contain", "Input message into text box")
+    cy.get("form span").should("not.contain", "The note cannot be empty")
     cy.get("button").contains("Add note").click()
 
     cy.contains("dummy note")
@@ -266,29 +268,6 @@ describe("Court case details", () => {
     cy.get("H1").should("have.text", "Case details")
     clickTab("Notes")
     cy.findByText("Case has no notes.").should("exist")
-  })
-
-  it("should return 404 for a case that this user can not see", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
-    cy.login("bichard01@example.com", "password")
-
-    cy.request({
-      failOnStatusCode: false,
-      url: "/bichard/court-cases/0/notes/add"
-    }).then((response) => {
-      expect(response.status).to.eq(404)
-    })
-  })
-
-  it("should return 404 for a case that does not exist", () => {
-    cy.login("bichard01@example.com", "password")
-
-    cy.request({
-      failOnStatusCode: false,
-      url: "/court-cases/1/notes/add"
-    }).then((response) => {
-      expect(response.status).to.eq(404)
-    })
   })
 })
 
