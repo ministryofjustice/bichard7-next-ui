@@ -1,3 +1,5 @@
+import CaseDetailsTab from "types/CaseDetailsTab"
+
 export function confirmFiltersAppliedContains(filterTag: string) {
   cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag)
 }
@@ -41,4 +43,9 @@ export const filterByDateRange = (dateFrom: string, dateTo: string) => {
 export const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard") => {
   cy.login(emailAddress, "password")
   cy.visit(url)
+}
+
+export const clickTab = (tab: CaseDetailsTab) => {
+  cy.contains(tab).click()
+  cy.get("H3").contains(tab)
 }

@@ -5,14 +5,9 @@ import logAccessibilityViolations from "../../support/logAccessibilityViolations
 import a11yConfig from "../../support/a11yConfig"
 import hashedPassword from "../../fixtures/hashedPassword"
 // import resubmitCaseJson from "../../fixtures/expected_resubmit_01.json"
-import type CaseDetailsTab from "../../../src/types/CaseDetailsTab"
 import DummyMultipleOffencesNoErrorAho from "../../../test/test-data/AnnotatedHO1.json"
 import DummyHO100302Aho from "../../../test/test-data/HO100302_1.json"
-
-const clickTab = (tab: CaseDetailsTab) => {
-  cy.contains(tab).click()
-  cy.get("H3").contains(tab)
-}
+import { clickTab } from "../../support/helpers"
 
 describe("Court case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
