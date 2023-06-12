@@ -87,16 +87,14 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
         </GridRow>
       </ConditionalRender>
       {triggers.map((trigger, index) => (
-        <span key={index}>
-          <Trigger
-            key={index}
-            trigger={trigger}
-            disabled={triggersLockedByAnotherUser}
-            onClick={() => handleClick(trigger.triggerItemIdentity)}
-            selectedTriggerIds={selectedTriggerIds}
-            setTriggerSelection={setTriggerSelection}
-          />
-        </span>
+        <Trigger
+          key={index}
+          trigger={trigger}
+          disabled={triggersLockedByAnotherUser}
+          onClick={() => handleClick(trigger.triggerItemIdentity)}
+          selectedTriggerIds={selectedTriggerIds}
+          setTriggerSelection={setTriggerSelection}
+        />
       ))}
 
       <ConditionalRender isRendered={hasTriggers && !triggersLockedByAnotherUser}>

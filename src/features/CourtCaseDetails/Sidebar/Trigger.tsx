@@ -20,6 +20,9 @@ interface Props {
 
 const useStyles = createUseStyles({
   triggerContainer: {
+    "&:first-child": {
+      marginTop: "20px"
+    },
     "&:not(:last-child)": {
       marginBottom: "30px"
     }
