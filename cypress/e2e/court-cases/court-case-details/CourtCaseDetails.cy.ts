@@ -525,7 +525,7 @@ describe("Court case details", () => {
 
     cy.get("h3").should("not.have.text", "Case information")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
-    cy.get(".exception-details-column a")
+    cy.get(".exception-help a")
       .contains("More information")
       .should("exist")
       .should("have.attr", "href", "/help/bichard-functionality/exceptions/resolution.html#HO100302")
