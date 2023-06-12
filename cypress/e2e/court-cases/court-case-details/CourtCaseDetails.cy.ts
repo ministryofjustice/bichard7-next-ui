@@ -1,13 +1,13 @@
-import type { TestTrigger } from "../../../test/utils/manageTriggers"
+import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 // import { differenceInMinutes, parse } from "date-fns"
 import User from "services/entities/User"
-import logAccessibilityViolations from "../../support/logAccessibilityViolations"
-import a11yConfig from "../../support/a11yConfig"
-import hashedPassword from "../../fixtures/hashedPassword"
+import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
+import a11yConfig from "../../../support/a11yConfig"
+import hashedPassword from "../../../fixtures/hashedPassword"
 // import resubmitCaseJson from "../../fixtures/expected_resubmit_01.json"
-import DummyMultipleOffencesNoErrorAho from "../../../test/test-data/AnnotatedHO1.json"
-import DummyHO100302Aho from "../../../test/test-data/HO100302_1.json"
-import { clickTab } from "../../support/helpers"
+import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
+import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
+import { clickTab } from "../../../support/helpers"
 
 describe("Court case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
@@ -78,7 +78,6 @@ describe("Court case details", () => {
 
     cy.contains("Case00000")
     cy.contains("Magistrates' Courts Essex Basildon")
-
     cy.contains("NAME Defendant")
 
     // Urgency
@@ -329,7 +328,7 @@ describe("Court case details", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerItemIdentity: 0,
+        triggerItemIdentity: 1,
         triggerCode: "TRPR0010",
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
@@ -351,8 +350,7 @@ describe("Court case details", () => {
     cy.get(".moj-tab-panel-triggers").should("be.visible")
     cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
 
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row").eq(0).contains("PR10")
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row").eq(0).should("not.contain", "PR10 / Offence")
+    cy.get(".moj-tab-panel-triggers .moj-trigger-row").eq(0).contains("PR10 / Offence 1")
     cy.get(".moj-tab-panel-triggers .moj-trigger-row")
       .eq(0)
       .contains("Bail conditions imposed/varied/cancelled - update remand screen")
@@ -375,40 +373,6 @@ describe("Court case details", () => {
 
     cy.get(".moj-tab-panel-triggers .moj-trigger-row").should("not.exist")
     cy.get(".moj-tab-panel-triggers").contains("There are no triggers for this case.")
-  })
-
-  it("should select all triggers when select all link is clicked", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-    const triggers: TestTrigger[] = [
-      {
-        triggerId: 0,
-        triggerCode: "TRPR0010",
-        status: "Unresolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
-      },
-      {
-        triggerId: 1,
-        triggerCode: "TRPR0015",
-        status: "Unresolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
-      }
-    ]
-    cy.task("insertTriggers", { caseId: 0, triggers })
-
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
-
-    cy.get(".moj-tab-panel-triggers").should("be.visible")
-    cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
-
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row input[type=checkbox]").eq(0).should("not.be.checked")
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row input[type=checkbox]").eq(1).should("not.be.checked")
-
-    cy.get(".moj-tab-panel-triggers button").contains("Select all").click()
-
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row input[type=checkbox]").eq(0).should("be.checked")
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row input[type=checkbox]").eq(1).should("be.checked")
   })
 
   it("should show exceptions in exceptions tab", () => {
@@ -473,9 +437,9 @@ describe("Court case details", () => {
     cy.visit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Offence 1 of 3")
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row button").eq(0).contains("Offence 1").click()
+    cy.get(".moj-tab-panel-triggers .trigger-header button").eq(0).contains("Offence 1").click()
     cy.get("h3").should("have.text", "Offence 1 of 3")
-    cy.get(".moj-tab-panel-triggers .moj-trigger-row button").eq(1).contains("Offence 2").click()
+    cy.get(".moj-tab-panel-triggers .trigger-header button").eq(1).contains("Offence 2").click()
     cy.get("h3").should("have.text", "Offence 2 of 3")
   })
 
@@ -565,26 +529,6 @@ describe("Court case details", () => {
       .contains("More information")
       .should("exist")
       .should("have.attr", "href", "/help/bichard-functionality/exceptions/resolution.html#HO100302")
-  })
-
-  it("should show a complete badge for triggers which have been resolved", () => {
-    cy.task("insertCourtCasesWithFields", [
-      { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
-    ])
-    const trigger: TestTrigger = {
-      triggerId: 0,
-      triggerCode: "TRPR0001",
-      status: "Resolved",
-      createdAt: new Date(),
-      resolvedAt: new Date(),
-      resolvedBy: "Bichard01"
-    }
-    cy.task("insertTriggers", { caseId: 0, triggers: [trigger] })
-
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-
-    cy.get("#triggers span").contains("Complete").should("exist")
   })
 })
 

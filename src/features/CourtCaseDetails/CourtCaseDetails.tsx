@@ -20,19 +20,31 @@ import updateQueryString from "utils/updateQueryString"
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
-  lockedByAnotherUser: boolean
+  errorLockedByAnotherUser: boolean
+  triggersLockedByCurrentUser: boolean
+  triggersLockedByUser: string | null
 }
 
 const useStyles = createUseStyles({
   contentColumn: {
     overflowX: "scroll"
+  },
+  sideBarContainer: {
+    minWidth: "320px",
+    maxWidth: "430px"
   }
 })
 
 const sideBarWidth = "33%"
 const contentWidth = "67%"
 
-const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser }) => {
+const CourtCaseDetails: React.FC<Props> = ({
+  courtCase,
+  aho,
+  errorLockedByAnotherUser,
+  triggersLockedByCurrentUser,
+  triggersLockedByUser
+}) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
@@ -125,27 +137,32 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Notes"}>
-            <Notes notes={courtCase.notes} lockedByAnotherUser={lockedByAnotherUser} />
+            <Notes notes={courtCase.notes} lockedByAnotherUser={errorLockedByAnotherUser} />
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "PNC errors"}>
             <CourtCaseDetailsPanel heading={"PNC errors"}>{""}</CourtCaseDetailsPanel>
           </ConditionalRender>
 
-          <ConditionalRender isRendered={!lockedByAnotherUser && activeTab !== "Notes"}>
+          <ConditionalRender isRendered={!errorLockedByAnotherUser && activeTab !== "Notes"}>
             <LinkButton href="reallocate" className="b7-reallocate-button">
               {"Reallocate Case"}
             </LinkButton>
           </ConditionalRender>
-          <ConditionalRender isRendered={!lockedByAnotherUser && activeTab !== "Notes"}>
+          <ConditionalRender isRendered={!errorLockedByAnotherUser && activeTab !== "Notes"}>
             <LinkButton href="resolve" className="b7-resolve-button">
               {"Mark As Manually Resolved"}
             </LinkButton>
           </ConditionalRender>
         </GridCol>
-
-        <GridCol setWidth={sideBarWidth}>
-          <TriggersAndExceptions courtCase={courtCase} aho={aho} onNavigate={handleNavigation} />
+        <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
+          <TriggersAndExceptions
+            courtCase={courtCase}
+            aho={aho}
+            triggersLockedByCurrentUser={triggersLockedByCurrentUser}
+            triggersLockedByUser={triggersLockedByUser}
+            onNavigate={handleNavigation}
+          />
         </GridCol>
       </GridRow>
     </>

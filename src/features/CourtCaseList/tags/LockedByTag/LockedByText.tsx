@@ -2,8 +2,7 @@ import { Tag } from "govuk-react"
 import Image from "next/image"
 import { createUseStyles } from "react-jss"
 import { tagBlue, textBlue } from "../../../../utils/colours"
-
-export const LOCKED_ICON_URL = "/bichard/assets/images/lock.svg"
+import { LOCKED_ICON_URL } from "../../../../utils/icons"
 
 const useStyles = createUseStyles({
   LockedByTag: {

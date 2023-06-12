@@ -6,7 +6,7 @@ import { SingleTrigger } from "./SingleTrigger"
 import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
 import CaseUnlockedTag from "features/CourtCaseList/tags/CaseUnlockedTag"
 import Trigger from "services/entities/Trigger"
-import { LOCKED_ICON_URL } from "features/CourtCaseList/tags/LockedByTag/LockedByText"
+import { LOCKED_ICON_URL } from "utils/icons"
 
 interface TriggersRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined

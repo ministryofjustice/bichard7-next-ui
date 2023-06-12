@@ -12,7 +12,7 @@ import {
   insertDummyCourtCasesWithTriggers
 } from "./test/utils/insertCourtCases"
 import insertException from "./test/utils/manageExceptions"
-import { insertTriggers } from "./test/utils/manageTriggers"
+import { deleteTriggers, insertTriggers } from "./test/utils/manageTriggers"
 import { deleteUsers, insertUsersWithOverrides } from "./test/utils/manageUsers"
 import { ResolutionStatus } from "types/ResolutionStatus"
 
@@ -57,8 +57,9 @@ export default defineConfig({
         insertDummyCourtCasesWithTriggers(params: {
           caseTriggers: { code: string; status: ResolutionStatus }[][]
           orgCode: string
+          triggersLockedByUsername?: string
         }) {
-          return insertDummyCourtCasesWithTriggers(params.caseTriggers, params.orgCode)
+          return insertDummyCourtCasesWithTriggers(params.caseTriggers, params.orgCode, params.triggersLockedByUsername)
         },
 
         insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {
@@ -87,6 +88,10 @@ export default defineConfig({
 
         insertTriggers(args) {
           return insertTriggers(args.caseId, args.triggers)
+        },
+
+        clearTriggers() {
+          return deleteTriggers().then(() => true)
         },
 
         insertException(params: { caseId: number; exceptionCode: string; errorReport?: string }) {

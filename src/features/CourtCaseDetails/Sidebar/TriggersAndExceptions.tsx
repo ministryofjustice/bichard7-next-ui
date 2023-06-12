@@ -10,6 +10,8 @@ import type NavigationHandler from "types/NavigationHandler"
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
+  triggersLockedByCurrentUser: boolean
+  triggersLockedByUser: string | null
   onNavigate: NavigationHandler
 }
 
@@ -19,10 +21,19 @@ const useStyles = createUseStyles({
   },
   sideBar: {
     marginTop: "-41px"
+  },
+  tabPanelTriggers: {
+    paddingTop: "10px"
   }
 })
 
-const TriggersAndExceptions = ({ courtCase, aho, onNavigate }: Props) => {
+const TriggersAndExceptions = ({
+  courtCase,
+  aho,
+  triggersLockedByCurrentUser,
+  triggersLockedByUser,
+  onNavigate
+}: Props) => {
   const classes = useStyles()
   const [selectedTab, setSelectedTab] = useState("triggers")
 
@@ -43,8 +54,17 @@ const TriggersAndExceptions = ({ courtCase, aho, onNavigate }: Props) => {
             selected={selectedTab === "exceptions"}
           >{`Exceptions`}</Tabs.Tab>
         </Tabs.List>
-        <Tabs.Panel id="triggers" selected={selectedTab === "triggers"} className="moj-tab-panel-triggers">
-          <TriggersList courtCase={courtCase} onNavigate={onNavigate} />
+        <Tabs.Panel
+          id="triggers"
+          selected={selectedTab === "triggers"}
+          className={`moj-tab-panel-triggers ${classes.tabPanelTriggers}`}
+        >
+          <TriggersList
+            courtCase={courtCase}
+            triggersLockedByCurrentUser={triggersLockedByCurrentUser}
+            triggersLockedByUser={triggersLockedByUser}
+            onNavigate={onNavigate}
+          />
         </Tabs.Panel>
         <Tabs.Panel id="exceptions" selected={selectedTab === "exceptions"} className="moj-tab-panel-exceptions">
           <Exceptions aho={aho} onNavigate={onNavigate} />

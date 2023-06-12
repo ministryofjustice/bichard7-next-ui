@@ -17,9 +17,9 @@ import Note from "services/entities/Note"
 import { SingleException } from "./SingleException"
 import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
 import CaseUnlockedTag from "features/CourtCaseList/tags/CaseUnlockedTag"
-import { LOCKED_ICON_URL } from "features/CourtCaseList/tags/LockedByTag/LockedByText"
 import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
 import { useCustomStyles } from "../../../../../styles/customStyles"
+import { LOCKED_ICON_URL } from "utils/icons"
 
 interface CaseDetailsRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined

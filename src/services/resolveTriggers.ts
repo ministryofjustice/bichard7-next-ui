@@ -1,15 +1,16 @@
-import { DataSource, IsNull } from "typeorm"
+import { DataSource, In, IsNull } from "typeorm"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
 import Trigger from "./entities/Trigger"
 import User from "./entities/User"
 import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
+import { includes } from "lodash"
 
-// Returns back whether the trigger was successfully unlocked
-const resolveTrigger = async (
+// Returns back whether the triggers were successfully unlocked
+const resolveTriggers = async (
   dataSource: DataSource,
-  triggerId: number,
+  triggerIds: number[],
   courtCaseId: number,
   user: User
 ): PromiseResult<boolean> => {
@@ -27,17 +28,17 @@ const resolveTrigger = async (
         return false
       }
 
-      if (courtCase.isLockedByAnotherUser(resolver)) {
+      if (!courtCase.triggersAreLockedByCurrentUser(resolver)) {
         return false
       }
 
       const remainingUnresolvedTriggers = courtCase.triggers.filter(
-        (trigger) => !trigger.resolvedAt && !trigger.resolvedBy && trigger.triggerId !== triggerId
+        (trigger) => !trigger.resolvedAt && !trigger.resolvedBy && !includes(triggerIds, trigger.triggerId)
       ).length
 
-      const updateTriggerResult = await entityManager.getRepository(Trigger).update(
+      const updateTriggersResult = await entityManager.getRepository(Trigger).update(
         {
-          triggerId,
+          triggerId: In(triggerIds),
           resolvedAt: IsNull(),
           resolvedBy: IsNull()
         },
@@ -48,7 +49,8 @@ const resolveTrigger = async (
         }
       )
 
-      const updateTriggerSuccess = updateTriggerResult.affected !== undefined && updateTriggerResult.affected > 0
+      const updateTriggerSuccess =
+        updateTriggersResult.affected !== undefined && updateTriggersResult.affected === triggerIds.length
       if (!updateTriggerSuccess) {
         return updateTriggerSuccess
       }
@@ -76,8 +78,10 @@ const resolveTrigger = async (
   } catch (err) {
     return isError(err)
       ? err
-      : new Error(`Unspecified database error when marking trigger ${triggerId} as resolved by ${resolver}`)
+      : new Error(
+          `Unspecified database error when marking triggers ${triggerIds.join(", ")} as resolved by ${resolver}`
+        )
   }
 }
 
-export default resolveTrigger
+export default resolveTriggers

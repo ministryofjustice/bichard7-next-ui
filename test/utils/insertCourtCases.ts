@@ -84,11 +84,13 @@ const insertDummyCourtCasesWithNotesAndLock = async (
 
 const insertDummyCourtCasesWithTriggers = async (
   caseTriggers: { code: string; status: ResolutionStatus }[][],
-  orgCode: string
+  orgCode: string,
+  triggerLockedByUsername?: string
 ) => {
   return insertCourtCasesWithFields(
     caseTriggers.map((triggers, index) => ({
       orgForPoliceFilter: orgCode,
+      triggerLockedByUsername,
       triggers: triggers.map(
         (trigger, _) =>
           ({
