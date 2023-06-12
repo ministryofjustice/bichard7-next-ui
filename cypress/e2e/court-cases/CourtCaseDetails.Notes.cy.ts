@@ -204,7 +204,7 @@ describe("Court case details", () => {
     cy.visit("/bichard/court-cases/0")
 
     clickTab("Notes")
-    cy.get("h3").contains("Add a new note")
+    cy.get("label").contains("Add a new note")
     cy.get("textarea").should("be.visible")
     cy.get("span").contains("You have 1000 characters remaining")
   })
