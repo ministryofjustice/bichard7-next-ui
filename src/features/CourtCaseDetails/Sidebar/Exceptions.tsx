@@ -14,16 +14,13 @@ interface Props {
 
 const useStyles = createUseStyles({
   exceptionRow: {
-    "& .exception-details-column": {
-      "& .exception-field": {
-        display: "block",
-        fontSize: "19px",
-        fontWeight: "bold"
-      },
-      "& .exception-details": {
-        fontSize: "16px"
-      }
+    "&:not(:last-child)": {
+      marginBottom: "25px"
     }
+  },
+
+  exceptionHelp: {
+    marginTop: "10px"
   }
 })
 
@@ -46,23 +43,37 @@ const Exceptions = ({ aho, onNavigate }: Props) => {
       {aho.Exceptions.length === 0 && "There are no exceptions for this case."}
       {aho.Exceptions.map(({ code, path }, index) => {
         const exceptionDefinition = getExceptionDefinition(code)
-        const { tab, offenceOrderIndex, displayText } = getExceptionPathDetails(path)
+        const { tab, offenceOrderIndex, formattedFieldName, location } = getExceptionPathDetails(path)
 
         return (
-          <GridRow key={`exception_${index}`} className={`${classes.exceptionRow} moj-exception-row`}>
-            <GridCol className="exception-details-column">
-              <ActionLink onClick={() => handleClick(tab, offenceOrderIndex)} className="exception-field">
-                {displayText}
-              </ActionLink>
-              <p className="exception-details">
+          <div key={`exception_${index}`} className={`${classes.exceptionRow} moj-exception-row`}>
+            <GridRow className="exception-header">
+              <GridCol>
+                <b>
+                  {formattedFieldName}
+                  {" / "}
+                </b>
+                <ActionLink onClick={() => handleClick(tab, offenceOrderIndex)} className="exception-field">
+                  {location}
+                </ActionLink>
+              </GridCol>
+            </GridRow>
+
+            <GridRow className="exception-details">
+              <GridCol>
                 {code}
                 {exceptionDefinition?.shortDescription && ` - ${exceptionDefinition.shortDescription}`}
-              </p>
-              <Link href={`/help/bichard-functionality/exceptions/resolution.html#${code}`} target="_blank">
-                {"More information"}
-              </Link>
-            </GridCol>
-          </GridRow>
+              </GridCol>
+            </GridRow>
+
+            <GridRow className={`${classes.exceptionHelp} exception-help`}>
+              <GridCol>
+                <Link href={`/help/bichard-functionality/exceptions/resolution.html#${code}`} target="_blank">
+                  {"More information"}
+                </Link>
+              </GridCol>
+            </GridRow>
+          </div>
         )
       })}
     </>
