@@ -7,6 +7,7 @@ import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import {
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
+  insertDummyCourtCasesWithNotesAndLock,
   insertMultipleDummyCourtCases,
   insertDummyCourtCasesWithTriggers
 } from "./test/utils/insertCourtCases"
@@ -67,6 +68,10 @@ export default defineConfig({
 
         insertCourtCasesWithNotes(params: { caseNotes: { user: string; text: string }[][]; force: string }) {
           return insertDummyCourtCasesWithNotes(params.caseNotes, params.force)
+        },
+
+        insertCourtCasesWithNotesAndLock(params: { caseNotes: { user: string; text: string }[][]; force: string }) {
+          return insertDummyCourtCasesWithNotesAndLock(params.caseNotes, params.force)
         },
 
         clearCourtCases() {

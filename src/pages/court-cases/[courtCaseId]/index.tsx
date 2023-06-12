@@ -1,29 +1,32 @@
+/* eslint-disable @typescript-eslint/no-throw-literal */
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
+import parseAnnotatedPNCUpdateDatasetXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAnnotatedPNCUpdateDatasetXml/parseAnnotatedPNCUpdateDatasetXml"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import Layout from "components/Layout"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
 import CourtCaseLock from "features/CourtCaseLock/CourtCaseLock"
+import { BackLink } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
+import Head from "next/head"
+import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
+import addNote from "services/addNote"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
-import getDataSource from "services/getDataSource"
-import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
-import parseAnnotatedPNCUpdateDatasetXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAnnotatedPNCUpdateDatasetXml/parseAnnotatedPNCUpdateDatasetXml"
-import tryToLockCourtCase from "services/tryToLockCourtCase"
-import unlockCourtCase from "services/unlockCourtCase"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
-import { isError } from "types/Result"
-import { isPost } from "utils/http"
-import { UpdateResult } from "typeorm"
+import getDataSource from "services/getDataSource"
 import resolveTriggers from "services/resolveTriggers"
 import { resubmitCourtCase } from "services/resubmitCourtCase"
-import parseFormData from "utils/parseFormData"
-import { BackLink } from "govuk-react"
-import { useRouter } from "next/router"
+import tryToLockCourtCase from "services/tryToLockCourtCase"
+import unlockCourtCase from "services/unlockCourtCase"
+import { UpdateResult } from "typeorm"
+import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { isError } from "types/Result"
+import { isPost } from "utils/http"
 import { isPncUpdateDataset } from "utils/isPncUpdateDataset"
-import Head from "next/head"
+import notSuccessful from "utils/notSuccessful"
+import parseFormData from "utils/parseFormData"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -91,6 +94,16 @@ export const getServerSideProps = withMultipleServerSideProps(
 
       if (isError(amendedCase)) {
         throw amendedCase
+      }
+    }
+
+    if (isPost(req)) {
+      const { noteText } = (await parseFormData(req)) as { noteText: string }
+      if (noteText) {
+        const addNoteResult = await addNote(dataSource, +courtCaseId, currentUser.username, noteText)
+        if (!addNoteResult) {
+          return notSuccessful("Case is locked by another user")
+        }
       }
     }
 
