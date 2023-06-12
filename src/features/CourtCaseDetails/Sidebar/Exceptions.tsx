@@ -53,7 +53,7 @@ const Exceptions = ({ aho, onNavigate }: Props) => {
                   {formattedFieldName}
                   {" / "}
                 </b>
-                <ActionLink onClick={() => handleClick(tab, offenceOrderIndex)} className="exception-field">
+                <ActionLink onClick={() => handleClick(tab, offenceOrderIndex)} className="exception-location">
                   {location}
                 </ActionLink>
               </GridCol>
