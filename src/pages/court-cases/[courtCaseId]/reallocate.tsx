@@ -21,11 +21,12 @@ import { FormEventHandler, useState } from "react"
 import { useCustomStyles } from "../../../../styles/customStyles"
 import getForcesForReallocation from "services/getForcesForReallocation"
 import { MAX_NOTE_LENGTH } from "config"
+import forbidden from "utils/forbidden"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query, req } = context as AuthenticationServerSidePropsContext
+    const { currentUser, query, req, res } = context as AuthenticationServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
 
     const dataSource = await getDataSource()
@@ -40,6 +41,10 @@ export const getServerSideProps = withMultipleServerSideProps(
     if (isError(courtCase)) {
       console.error(courtCase)
       throw courtCase
+    }
+
+    if (!courtCase.canReallocate(currentUser.username)) {
+      return forbidden(res)
     }
 
     const props = {

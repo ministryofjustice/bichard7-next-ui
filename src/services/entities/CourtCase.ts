@@ -129,11 +129,28 @@ export default class CourtCase extends BaseEntity {
   @OneToMany(() => Note, (note) => note.courtCase, { eager: true, cascade: ["insert", "update"] })
   notes!: Relation<Note>[]
 
+  private isExceptionLockedByAnotherUser(username: string) {
+    return !!this.errorLockedByUsername && this.errorLockedByUsername !== username
+  }
+
+  private isTriggerLockedByAnotherUser(username: string) {
+    return !!this.triggerLockedByUsername && this.triggerLockedByUsername !== username
+  }
+
   isLockedByAnotherUser(username: string) {
-    return (
-      (!!this.errorLockedByUsername && this.errorLockedByUsername !== username) ||
-      (!!this.triggerLockedByUsername && this.triggerLockedByUsername !== username)
-    )
+    return this.isExceptionLockedByAnotherUser(username) || this.isTriggerLockedByAnotherUser(username)
+  }
+
+  canReallocate(username: string) {
+    const canReallocateAsExceptionHandler =
+      !this.isExceptionLockedByAnotherUser(username) && this.errorStatus === "Unresolved"
+    const canReallocateAsTriggerHandler =
+      !this.isTriggerLockedByAnotherUser(username) &&
+      this.triggerStatus === "Unresolved" &&
+      this.errorStatus !== "Unresolved" &&
+      this.errorStatus !== "Submitted"
+
+    return canReallocateAsExceptionHandler || canReallocateAsTriggerHandler
   }
 
   triggersAreLockedByCurrentUser(username: string) {
