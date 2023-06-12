@@ -1255,7 +1255,7 @@ describe("Case list", () => {
       cy.get(".moj-pagination__item--active").contains("1")
     })
 
-    it("should show case unlocked flag when exception handler unlocks the case", () => {
+    it("should show case unlocked badge when exception handler unlocks the case", () => {
       cy.task("insertCourtCasesWithFields", [
         {
           errorLockedByUsername: "ExceptionHandler",
@@ -1275,7 +1275,7 @@ describe("Case list", () => {
       cy.get("span.moj-badge").contains("Case unlocked").should("exist")
     })
 
-    it("should show case unlocked flag when trigger handler unlocks the case", () => {
+    it("should show case unlocked badge when trigger handler unlocks the case", () => {
       cy.task("insertCourtCasesWithFields", [
         {
           caseId: 0,
