@@ -58,7 +58,8 @@ export const TriggersRow = ({
         ) : (
           <LockedByTag lockedBy={triggerLockedByUsername} />
         )}
-        {<CaseUnlockedTag isCaseUnlocked={isCaseUnlocked} />}
+
+        <CaseUnlockedTag isCaseUnlocked={isCaseUnlocked} />
       </Table.Cell>
     </Table.Row>
   ) : (
