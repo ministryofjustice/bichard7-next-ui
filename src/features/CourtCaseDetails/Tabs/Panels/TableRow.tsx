@@ -2,7 +2,7 @@ import { Table } from "govuk-react"
 
 interface TableRowProps {
   label: string
-  value: string | number | null | undefined
+  value: string | number | null | undefined | React.ReactNode
 }
 
 export const TableRow = ({ label, value }: TableRowProps) => (

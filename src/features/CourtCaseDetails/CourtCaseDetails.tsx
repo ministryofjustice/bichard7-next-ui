@@ -15,6 +15,7 @@ import { createUseStyles } from "react-jss"
 import type NavigationHandler from "types/NavigationHandler"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
+import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 
 interface Props {
   courtCase: CourtCase
@@ -83,7 +84,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       <GridRow>
         <GridCol setWidth={contentWidth} className={classes.contentColumn}>
           <ConditionalRender isRendered={activeTab === "Defendant"}>
-            <CourtCaseDetailsPanel heading={"Defendant details"}>{""}</CourtCaseDetailsPanel>
+            <DefendantDetails defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant} />
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Hearing"}>
