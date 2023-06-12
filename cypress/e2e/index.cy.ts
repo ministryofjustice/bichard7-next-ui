@@ -50,6 +50,22 @@ describe("Case list", () => {
     password: hashedPassword
   })
   defaultUsers.push({
+    username: `TriggerHandler`,
+    visibleForces: [`0011111`],
+    forenames: "Trigger Handler User",
+    surname: `011111`,
+    email: `triggerhandler@example.com`,
+    password: hashedPassword
+  })
+  defaultUsers.push({
+    username: `ExceptionHandler`,
+    visibleForces: [`0011111`],
+    forenames: "Exception Handler User",
+    surname: `011111`,
+    email: `exceptionhandler@example.com`,
+    password: hashedPassword
+  })
+  defaultUsers.push({
     username: `Supervisor`,
     visibleForces: [`0011111`],
     forenames: "Sup",
@@ -62,6 +78,11 @@ describe("Case list", () => {
     cy.task("clearUsers")
     cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp"] })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
+    cy.task("insertIntoUserGroup", { emailAddress: "triggerhandler@example.com", groupName: "B7TriggerHandler_grp" })
+    cy.task("insertIntoUserGroup", {
+      emailAddress: "exceptionhandler@example.com",
+      groupName: "B7ExceptionHandler_grp"
+    })
     cy.task("insertIntoUserGroup", { emailAddress: "supervisor@example.com", groupName: "B7Supervisor_grp" })
   })
 
@@ -1232,6 +1253,56 @@ describe("Case list", () => {
       cy.get("#filter-button").click()
       cy.get("#keywords").should("not.have.value", "Defendant Name")
       cy.get(".moj-pagination__item--active").contains("1")
+    })
+
+    it("should show case unlocked flag when exception handler unlocks the case", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: "ExceptionHandler",
+          triggerLockedByUsername: null,
+          orgForPoliceFilter: "011111"
+        }
+      ])
+
+      loginAndGoToUrl("exceptionhandler@example.com")
+
+      cy.get("#filter-button").click()
+      cy.get("#keywords").type("NAME Defendant")
+      cy.contains("Apply filters").click()
+
+      cy.get("button.locked-by-tag").contains("ExceptionHandler").click()
+      cy.get("#unlock").click()
+      cy.get("span.moj-badge").contains("Case unlocked").should("exist")
+    })
+
+    it("should show case unlocked flag when trigger handler unlocks the case", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          caseId: 0,
+          errorLockedByUsername: null,
+          triggerLockedByUsername: "TriggerHandler",
+          orgForPoliceFilter: "011111"
+        }
+      ])
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+
+      loginAndGoToUrl("triggerhandler@example.com")
+
+      cy.get("#filter-button").click()
+      cy.get("#keywords").type("NAME Defendant")
+      cy.contains("Apply filters").click()
+
+      cy.get("button.locked-by-tag").contains("TriggerHandler").click()
+      cy.get("#unlock").click()
+      cy.get("span.moj-badge").contains("Case unlocked").should("exist")
     })
   })
 })
