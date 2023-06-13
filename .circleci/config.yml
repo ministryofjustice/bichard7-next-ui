@@ -149,12 +149,13 @@ jobs:
           name: Run visual unit tests
           command: npm run test:ui:unit:ci
 
-  build_and_cypress_test:
+  build_and_cypress_e2e_test:
     machine:
       image: ubuntu-2004:2022.07.1
       docker_layer_caching: false
     resource_class: medium
     working_directory: ~
+    parallelism: 5
     steps:
       - checkout
       - clone_bichard_repo
@@ -203,10 +204,50 @@ jobs:
           command: npx wait-on --config ./.circleci/config/wait-for-401.js https://localhost:4080/bichard
       - run:
           name: Run UI tests
-          command: npm run cypress:run:docker
+          command: TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX ./scripts/run-ui-tests-chunk.sh
           environment:
             UI_IS_HTTPS: true
             TZ: "Europe/London"
+      - store_artifacts:
+          path: ./cypress/videos
+      - store_artifacts:
+          path: ./cypress/screenshots
+
+  build_and_cypress_component_test:
+    machine:
+      image: ubuntu-2004:2022.07.1
+      docker_layer_caching: false
+    resource_class: medium
+    working_directory: ~
+    steps:
+      - checkout
+      - clone_bichard_repo
+      - fetch_docker_image:
+          image: user-service
+      - fetch_docker_image:
+          image: nginx-auth-proxy
+      - run:
+          name: Build the UI application in the background
+          command: ./.circleci/scripts/build-ui.sh
+          background: true
+      - run:
+          name: Install Cypress
+          command: ./.circleci/scripts/install-cypress.sh 2>&1
+          background: true
+      - use_nvm_version
+      - npm_install
+      - run:
+          name: Install GOV.UK Assets
+          command: npm run install:assets
+      - attach_workspace:
+          at: .
+      - run:
+          name: Wait for cypress install to finish
+          command: until [ -f cypressInstalled ]; do sleep 1; done
+          no_output_timeout: 10m
+      - run:
+          name: Retrying installing Cypress
+          command: ./.circleci/scripts/install-cypress.sh
       - run:
           name: Run UI component tests
           command: npm run cypress:run:component:docker
@@ -291,5 +332,6 @@ workflows:
       - unit_test
       - integration_test
       - ui_test
-      - build_and_cypress_test
+      - build_and_cypress_e2e_test
+      - build_and_cypress_component_test
       - e2e_test
