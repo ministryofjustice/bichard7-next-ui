@@ -20,7 +20,7 @@ const Layout = ({ children, user }: Props) => {
       <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={user.username} />
       <NavBar groups={user.groups} />
       <PageTemplate>
-        <PhaseBanner phase={"prototype"} />
+        <PhaseBanner phase={"beta"} />
         {children}
       </PageTemplate>
       <Footer
