@@ -1,3 +1,4 @@
+import type { CSSProperties } from "styled-components"
 import { Table } from "govuk-react"
 
 interface TableRowProps {
@@ -5,7 +6,7 @@ interface TableRowProps {
   value: string | number | null | undefined | React.ReactNode
 }
 
-const style = {
+const style: CSSProperties = {
   verticalAlign: "top"
 }
 
