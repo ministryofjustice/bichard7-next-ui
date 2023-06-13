@@ -8,60 +8,45 @@ interface DefendantDetailsProps {
   defendant: HearingDefendant
 }
 
+enum Gender {
+  "0(not known)" = 0,
+  "1(male)" = 1,
+  "2(female)" = 2,
+  "9(not specified)" = 9
+}
+
+type RemandCode = "CB" | "LA" | "NA" | "PB" | "PR" | "SA" | "UB"
+
+enum RemandStatus {
+  CB = "Conditional bail",
+  LA = "Care",
+  NA = "Not applicable",
+  PB = "Custody",
+  PR = "Custody",
+  SA = "Secure care",
+  UB = "Unconditional bail"
+}
+
 const getFormatedDateOfBirth = (dateOfBirth: Date | string) => {
   return dateOfBirth instanceof Date
     ? formatDisplayedDate(dateOfBirth).toString()
     : formatDisplayedDate(new Date(dateOfBirth)).toString() ?? ""
 }
 
-const getFormattedGender = (genderCode: number | undefined): string => {
-  switch (genderCode) {
-    case 0:
-      return "0(not known)"
-    case 1:
-      return "1(male)"
-    case 2:
-      return "1(female)"
-    case 9:
-      return "9(not specified)"
-    default:
-      return ""
-  }
-}
-
-const getFormattedRemandStatus = (bailCode: string | undefined): string => {
-  switch (bailCode) {
-    case "CB":
-      return "Conditional bail"
-    case "LA":
-      return "Care"
-    case "NA":
-      return "Not applicable"
-    case "PB":
-      return "Custody"
-    case "PR":
-      return "Custody"
-    case "SA":
-      return "Secure care"
-    case "UB":
-      return "Unconditional bail"
-    default:
-      return ""
-  }
-}
-
 export const DefendantDetails = ({ defendant }: DefendantDetailsProps) => {
+  const defendantGender = defendant.DefendantDetail ? Gender[defendant.DefendantDetail?.Gender] : ""
+
   return (
     <Table>
       <TableRow label="PNC Check name" value={defendant.PNCCheckname} />
       <TableRow label="Given name" value={defendant.DefendantDetail?.PersonName.GivenName?.join(", ")} />
       <TableRow label="Family name" value={defendant.DefendantDetail?.PersonName.FamilyName} />
       <TableRow label="Title" value={defendant.DefendantDetail?.PersonName.Title} />
-      <TableRow label="Date of birth" value={getFormatedDateOfBirth(defendant.DefendantDetail?.BirthDate || "")} />
-      <TableRow label="Gender" value={getFormattedGender(defendant.DefendantDetail?.Gender)} />
+      <TableRow label="Date of birth" value={getFormatedDateOfBirth(defendant.DefendantDetail?.BirthDate ?? "")} />
+      <TableRow label="Gender" value={defendantGender} />
       <TableRow label="Address" value={<AddressCell address={defendant.Address} />} />
       <TableRow label="PNC file name" value={defendant.DefendantDetail?.GeneratedPNCFilename} />
-      <TableRow label="Remand status" value={getFormattedRemandStatus(defendant.RemandStatus)} />
+      <TableRow label="Remand status" value={RemandStatus[defendant.RemandStatus as RemandCode]} />
     </Table>
   )
 }
