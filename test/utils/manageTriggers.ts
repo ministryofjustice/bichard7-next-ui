@@ -2,6 +2,7 @@ import { ResolutionStatus } from "types/ResolutionStatus"
 import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
 import getDataSource from "../../src/services/getDataSource"
+import deleteFromEntity from "./deleteFromEntity"
 
 type TestTrigger = {
   triggerId: number
@@ -40,5 +41,7 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
   return true
 }
 
+const deleteTriggers = async () => deleteFromEntity(Trigger)
+
 export type { TestTrigger }
-export { insertTriggers }
+export { insertTriggers, deleteTriggers }

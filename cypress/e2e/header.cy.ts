@@ -77,7 +77,7 @@ describe("Home", () => {
         cy.login("generalhandler2@example.com", "password")
         cy.visit("/bichard")
 
-        cy.contains("prototype")
+        cy.contains("beta")
       })
     })
   })

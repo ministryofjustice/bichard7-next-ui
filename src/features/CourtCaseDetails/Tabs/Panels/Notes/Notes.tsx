@@ -1,12 +1,12 @@
 import ConditionalRender from "components/ConditionalRender"
 import DateTime from "components/DateTime"
-import LinkButton from "components/LinkButton"
-import { Paragraph, Table } from "govuk-react"
-import Note from "services/entities/Note"
-import { CourtCaseDetailsPanel } from "../../CourtCaseDetailsPanels"
 import NotesFilterOptions from "components/NotesFilterOptions"
+import AddNoteForm from "./AddNoteForm"
+import { Paragraph, Table } from "govuk-react"
 import { useState } from "react"
+import Note from "services/entities/Note"
 import type NotesViewOption from "types/NotesViewOption"
+import { CourtCaseDetailsPanel } from "../../CourtCaseDetailsPanels"
 
 interface NotesProps {
   notes: Note[]
@@ -66,9 +66,7 @@ export const Notes = ({ notes, lockedByAnotherUser }: NotesProps) => {
       <ConditionalRender isRendered={!hasFilteredNotes}>
         <Paragraph>{`Case has no ${noNoteText}.`}</Paragraph>
       </ConditionalRender>
-      <ConditionalRender isRendered={!lockedByAnotherUser}>
-        <LinkButton href="notes/add">{"Add Note"}</LinkButton>
-      </ConditionalRender>
+      <AddNoteForm lockedByAnotherUser={lockedByAnotherUser} />
     </CourtCaseDetailsPanel>
   )
 }

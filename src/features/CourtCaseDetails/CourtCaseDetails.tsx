@@ -1,41 +1,68 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
-import { GridCol, GridRow, Heading } from "govuk-react"
-import CourtCase from "services/entities/CourtCase"
 import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
-import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
-import { useState } from "react"
-import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
-import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
-import { Offences } from "./Tabs/Panels/Offences/Offences"
-import { HearingDetails } from "./Tabs/Panels/HearingDetails"
-import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
+import { GridCol, GridRow, Heading } from "govuk-react"
+import { useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
-import type NavigationHandler from "types/NavigationHandler"
+import CourtCase from "services/entities/CourtCase"
 import type CaseDetailsTab from "types/CaseDetailsTab"
+import type NavigationHandler from "types/NavigationHandler"
+import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
+import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
+import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
+import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
+import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
+import { Offences } from "./Tabs/Panels/Offences/Offences"
+import updateQueryString from "utils/updateQueryString"
 
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
-  lockedByAnotherUser: boolean
+  errorLockedByAnotherUser: boolean
+  triggersLockedByCurrentUser: boolean
+  triggersLockedByUser: string | null
 }
 
 const useStyles = createUseStyles({
   contentColumn: {
     overflowX: "scroll"
+  },
+  sideBarContainer: {
+    minWidth: "320px",
+    maxWidth: "430px"
   }
 })
 
 const sideBarWidth = "33%"
 const contentWidth = "67%"
 
-const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser }) => {
+const CourtCaseDetails: React.FC<Props> = ({
+  courtCase,
+  aho,
+  errorLockedByAnotherUser,
+  triggersLockedByCurrentUser,
+  triggersLockedByUser
+}) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
+
+  useEffect(() => {
+    const queryStringParams = new URLSearchParams(window.location.search)
+
+    const tabParam = queryStringParams.get("tab")
+    if (tabParam) {
+      setActiveTab(tabParam as CaseDetailsTab)
+    }
+
+    const offenceParam = queryStringParams.get("offence")
+    if (offenceParam) {
+      setSelectedOffenceIndex(+offenceParam)
+    }
+  }, [])
 
   const handleNavigation: NavigationHandler = ({ location, args }) => {
     switch (location) {
@@ -45,6 +72,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
       case "Case Details > Offences":
         if (typeof args?.offenceOrderIndex === "number") {
           setSelectedOffenceIndex(+args.offenceOrderIndex)
+          updateQueryString({ offence: args.offenceOrderIndex })
         }
         setActiveTab("Offences")
         break
@@ -76,6 +104,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
         onTabClick={(tab) => {
           setSelectedOffenceIndex(undefined)
           setActiveTab(tab)
+          updateQueryString({ tab, offence: null })
         }}
         tabs={["Defendant", "Hearing", "Case information", "Offences", "Notes", "PNC errors"]}
         width={contentWidth}
@@ -100,29 +129,41 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, lockedByAnotherUser
           <ConditionalRender isRendered={activeTab === "Offences"}>
             <Offences
               offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
-              onOffenceSelected={setSelectedOffenceIndex}
+              onOffenceSelected={(offenceIndex) => {
+                setSelectedOffenceIndex(offenceIndex)
+                updateQueryString({ offence: offenceIndex })
+              }}
               selectedOffenceIndex={selectedOffenceIndex}
             />
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Notes"}>
-            <Notes notes={courtCase.notes} lockedByAnotherUser={lockedByAnotherUser} />
+            <Notes notes={courtCase.notes} lockedByAnotherUser={errorLockedByAnotherUser} />
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "PNC errors"}>
             <CourtCaseDetailsPanel heading={"PNC errors"}>{""}</CourtCaseDetailsPanel>
           </ConditionalRender>
 
-          <ConditionalRender isRendered={!lockedByAnotherUser}>
-            <LinkButton href="reallocate">{"Reallocate Case"}</LinkButton>
+          <ConditionalRender isRendered={!errorLockedByAnotherUser && activeTab !== "Notes"}>
+            <LinkButton href="reallocate" className="b7-reallocate-button">
+              {"Reallocate Case"}
+            </LinkButton>
           </ConditionalRender>
-          <ConditionalRender isRendered={!lockedByAnotherUser}>
-            <LinkButton href="resolve">{"Mark As Manually Resolved"}</LinkButton>
+          <ConditionalRender isRendered={!errorLockedByAnotherUser && activeTab !== "Notes"}>
+            <LinkButton href="resolve" className="b7-resolve-button">
+              {"Mark As Manually Resolved"}
+            </LinkButton>
           </ConditionalRender>
         </GridCol>
-
-        <GridCol setWidth={sideBarWidth}>
-          <TriggersAndExceptions courtCase={courtCase} aho={aho} onNavigate={handleNavigation} />
+        <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
+          <TriggersAndExceptions
+            courtCase={courtCase}
+            aho={aho}
+            triggersLockedByCurrentUser={triggersLockedByCurrentUser}
+            triggersLockedByUser={triggersLockedByUser}
+            onNavigate={handleNavigation}
+          />
         </GridCol>
       </GridRow>
     </>

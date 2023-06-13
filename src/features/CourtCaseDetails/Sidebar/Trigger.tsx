@@ -4,35 +4,58 @@ import Checkbox from "components/Checkbox"
 import ActionLink from "components/ActionLink"
 import PreviewButton from "components/PreviewButton"
 import { default as TriggerEntity } from "services/entities/Trigger"
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, SyntheticEvent, useState } from "react"
 import ConditionalRender from "components/ConditionalRender"
 import { Preview } from "components/Preview"
 import getTriggerDefinition from "utils/getTriggerDefinition"
+import styled from "styled-components"
 
 interface Props {
   trigger: TriggerEntity
   onClick: (index: number | undefined) => void
   selectedTriggerIds: number[]
   setTriggerSelection: (event: ChangeEvent<HTMLInputElement>) => void
+  disabled?: boolean
 }
 
 const useStyles = createUseStyles({
+  triggerContainer: {
+    "&:first-child": {
+      marginTop: "20px"
+    },
+    "&:not(:last-child)": {
+      marginBottom: "30px"
+    }
+  },
+  triggerHeaderRow: {
+    maxHeight: "25px"
+  },
   triggerCode: {
     fontWeight: "bold"
-  },
-  cjsResultCode: {
-    fontSize: "16px",
-    lineHeight: "1.25"
   },
   triggerCheckbox: {
     position: "absolute",
     right: "22px"
+  },
+  cjsResultCode: {
+    fontSize: "16px",
+    lineHeight: "1.25"
   }
 })
 
+const TriggerDefinition = styled.div`
+  margin-top: 10px;
+`
+
+const TriggerStatus = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+`
+
 const TriggerCompleteBadge = () => <span className="moj-badge moj-badge--green">{"Complete"}</span>
 
-const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: Props) => {
+const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection, disabled }: Props) => {
   const triggerDefinition = getTriggerDefinition(trigger.triggerCode)
   const [showHelpBox, setShowHelpBox] = useState(false)
   const classes = useStyles()
@@ -41,40 +64,45 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection }: 
   const isResolved = trigger.status === "Resolved"
 
   return (
-    <div key={trigger.triggerId}>
-      <GridRow className="moj-trigger-row">
-        <GridCol className="trigger-details-column">
+    <div key={trigger.triggerId} className={`moj-trigger-row ${classes.triggerContainer}`}>
+      <GridRow className={`trigger-header ${classes.triggerHeaderRow}`}>
+        <GridCol className="trigger-details-column" setWidth="85%">
           <label className={`trigger-code ${classes.triggerCode}`} htmlFor={checkBoxId}>
             {trigger.shortTriggerCode}
           </label>
           {(trigger.triggerItemIdentity ?? 0) > 0 && (
             <>
-              {" / "}
-              <ActionLink onClick={() => onClick(trigger.triggerItemIdentity)}>
-                {"Offence "}
-                {trigger.triggerItemIdentity}
+              <b>{" / "}</b>
+              <ActionLink
+                onClick={(event: SyntheticEvent) => {
+                  event.preventDefault()
+                  onClick(trigger.triggerItemIdentity)
+                }}
+              >
+                {"Offence "} {trigger.triggerItemIdentity}
               </ActionLink>
             </>
           )}
-          <p>{triggerDefinition?.description}</p>
         </GridCol>
-        <GridCol>
-          {isResolved ? (
-            <TriggerCompleteBadge />
-          ) : (
-            <div className={classes.triggerCheckbox}>
+        <GridCol setWidth="15%">
+          <TriggerStatus>
+            <ConditionalRender isRendered={isResolved}>
+              <TriggerCompleteBadge />
+            </ConditionalRender>
+            <ConditionalRender isRendered={!disabled && !isResolved}>
               <Checkbox
                 id={checkBoxId}
                 value={trigger.triggerId}
                 checked={selectedTriggerIds.includes(trigger.triggerId)}
                 onChange={setTriggerSelection}
               />
-            </div>
-          )}
+            </ConditionalRender>
+          </TriggerStatus>
         </GridCol>
       </GridRow>
       <GridRow>
         <GridCol>
+          <TriggerDefinition>{triggerDefinition?.description}</TriggerDefinition>
           <PreviewButton
             className="triggers-help-preview"
             showPreview={!showHelpBox}

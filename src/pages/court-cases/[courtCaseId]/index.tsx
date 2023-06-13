@@ -1,40 +1,43 @@
+/* eslint-disable @typescript-eslint/no-throw-literal */
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
+import parseAnnotatedPNCUpdateDatasetXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAnnotatedPNCUpdateDatasetXml/parseAnnotatedPNCUpdateDatasetXml"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import Layout from "components/Layout"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
 import CourtCaseLock from "features/CourtCaseLock/CourtCaseLock"
+import { BackLink } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
+import Head from "next/head"
+import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
+import addNote from "services/addNote"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
+import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
-import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
-import parseAnnotatedPNCUpdateDatasetXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAnnotatedPNCUpdateDatasetXml/parseAnnotatedPNCUpdateDatasetXml"
+import resolveTriggers from "services/resolveTriggers"
+import { resubmitCourtCase } from "services/resubmitCourtCase"
 import tryToLockCourtCase from "services/tryToLockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
-import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
+import { UpdateResult } from "typeorm"
+import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import { isPost } from "utils/http"
-import { UpdateResult } from "typeorm"
-import resolveTrigger from "services/resolveTrigger"
-import { resubmitCourtCase } from "services/resubmitCourtCase"
-import parseFormData from "utils/parseFormData"
-import { BackLink } from "govuk-react"
-import { useRouter } from "next/router"
 import { isPncUpdateDataset } from "utils/isPncUpdateDataset"
-import Head from "next/head"
+import notSuccessful from "utils/notSuccessful"
+import parseFormData from "utils/parseFormData"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
-    const {
-      courtCaseId,
-      lock,
-      resolveTrigger: triggerToResolve,
-      resubmitCase
-    } = query as { courtCaseId: string; lock: string; resolveTrigger: string; resubmitCase: string }
+    const { courtCaseId, lock, resolveTrigger, resubmitCase } = query as {
+      courtCaseId: string
+      lock: string
+      resolveTrigger: string | string[] | undefined
+      resubmitCase: string
+    }
     const dataSource = await getDataSource()
 
     let lockResult: UpdateResult | Error | undefined
@@ -51,8 +54,24 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw lockResult
     }
 
-    if (isPost(req) && !!triggerToResolve) {
-      const updateTriggerResult = await resolveTrigger(dataSource, +triggerToResolve, +courtCaseId, currentUser)
+    const triggersToResolve = []
+    if (typeof resolveTrigger === "string" && !Number.isNaN(+resolveTrigger)) {
+      triggersToResolve.push(+resolveTrigger)
+    } else if (Array.isArray(resolveTrigger)) {
+      resolveTrigger.map((triggerId) => {
+        if (!Number.isNaN(+triggerId)) {
+          triggersToResolve.push(+triggerId)
+        }
+      })
+    }
+
+    if (isPost(req) && triggersToResolve.length > 0) {
+      const updateTriggerResult = await resolveTriggers(
+        dataSource,
+        triggersToResolve.map((triggerId) => +triggerId),
+        +courtCaseId,
+        currentUser
+      )
 
       if (isError(updateTriggerResult)) {
         throw updateTriggerResult
@@ -75,6 +94,16 @@ export const getServerSideProps = withMultipleServerSideProps(
 
       if (isError(amendedCase)) {
         throw amendedCase
+      }
+    }
+
+    if (isPost(req)) {
+      const { noteText } = (await parseFormData(req)) as { noteText: string }
+      if (noteText) {
+        const addNoteResult = await addNote(dataSource, +courtCaseId, currentUser.username, noteText)
+        if (!addNoteResult) {
+          return notSuccessful("Case is locked by another user")
+        }
       }
     }
 
@@ -115,7 +144,9 @@ export const getServerSideProps = withMultipleServerSideProps(
         user: currentUser.serialize(),
         courtCase: courtCase.serialize(),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
-        lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
+        errorLockedByAnotherUser: courtCase.errorIsLockedByAnotherUser(currentUser.username),
+        triggersLockedByCurrentUser: courtCase.triggersAreLockedByCurrentUser(currentUser.username),
+        triggersLockedByUser: courtCase.triggerLockedByUsername ?? null
       }
     }
   }
@@ -125,10 +156,19 @@ interface Props {
   user: User
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
-  lockedByAnotherUser: boolean
+  errorLockedByAnotherUser: boolean
+  triggersLockedByCurrentUser: boolean
+  triggersLockedByUser: string | null
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, aho, user, lockedByAnotherUser }: Props) => {
+const CourtCaseDetailsPage: NextPage<Props> = ({
+  courtCase,
+  aho,
+  user,
+  errorLockedByAnotherUser,
+  triggersLockedByCurrentUser,
+  triggersLockedByUser
+}: Props) => {
   const { basePath } = useRouter()
   return (
     <>
@@ -140,8 +180,14 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, aho, user, lockedByA
         <BackLink href={`${basePath}`} onClick={function noRefCheck() {}}>
           {"Cases"}
         </BackLink>
-        <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={lockedByAnotherUser} />
-        <CourtCaseDetails courtCase={courtCase} aho={aho} lockedByAnotherUser={lockedByAnotherUser} />
+        <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={errorLockedByAnotherUser} />
+        <CourtCaseDetails
+          courtCase={courtCase}
+          aho={aho}
+          errorLockedByAnotherUser={errorLockedByAnotherUser}
+          triggersLockedByCurrentUser={triggersLockedByCurrentUser}
+          triggersLockedByUser={triggersLockedByUser}
+        />
       </Layout>
     </>
   )
