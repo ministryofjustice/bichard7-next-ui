@@ -728,6 +728,47 @@ describe("Case list", () => {
     })
   })
 
+  // Unresolved and user has permission to see them (e.g. not Exception Handlers)
+  describe("When I can see triggers on cases", () => {
+    const triggers = (code?: number) =>
+      Array.from(Array(5)).map((_, idx) => {
+        return {
+          triggerId: idx,
+          triggerCode: `TRPR000${code ?? idx + 1}`,
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      })
+
+    it("should display individual triggers without a count", () => {
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+      cy.task("insertTriggers", { caseId: 0, triggers: triggers() })
+      loginAndGoToUrl()
+
+      cy.get(".trigger-description")
+        .contains(/\(\d+\)/) // any number between parentheses
+        .should("not.exist")
+    })
+
+    it("should group duplicate triggers", () => {
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+      cy.task("insertTriggers", { caseId: 0, triggers: triggers(1) })
+      loginAndGoToUrl()
+
+      cy.get("table").find(".trigger-description").should("have.length", 1)
+    })
+
+    it("should include a count for grouped triggers", () => {
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+      cy.task("insertTriggers", { caseId: 0, triggers: triggers(2) })
+      loginAndGoToUrl()
+
+      cy.get(".trigger-description")
+        .contains(/\(\d+\)/) // any number between parentheses
+        .should("exist")
+    })
+  })
+
   describe("Pagination", () => {
     it("should be accessible", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
