@@ -27,12 +27,6 @@ export enum RemandStatus {
   UB = "Unconditional bail"
 }
 
-const getFormatedDateOfBirth = (dateOfBirth: Date | string) => {
-  return dateOfBirth instanceof Date
-    ? formatDisplayedDate(dateOfBirth).toString()
-    : formatDisplayedDate(new Date(dateOfBirth)).toString() ?? ""
-}
-
 export const DefendantDetails = ({ defendant }: DefendantDetailsProps) => {
   const defendantGender = defendant.DefendantDetail ? Gender[defendant.DefendantDetail?.Gender] : ""
 
@@ -42,7 +36,7 @@ export const DefendantDetails = ({ defendant }: DefendantDetailsProps) => {
       <TableRow label="Given name" value={defendant.DefendantDetail?.PersonName.GivenName?.join(", ")} />
       <TableRow label="Family name" value={defendant.DefendantDetail?.PersonName.FamilyName} />
       <TableRow label="Title" value={defendant.DefendantDetail?.PersonName.Title} />
-      <TableRow label="Date of birth" value={getFormatedDateOfBirth(defendant.DefendantDetail?.BirthDate ?? "")} />
+      <TableRow label="Date of birth" value={formatDisplayedDate(defendant.DefendantDetail?.BirthDate || "")} />
       <TableRow label="Gender" value={defendantGender} />
       <TableRow label="Address" value={<AddressCell address={defendant.Address} />} />
       <TableRow label="PNC file name" value={defendant.DefendantDetail?.GeneratedPNCFilename} />
