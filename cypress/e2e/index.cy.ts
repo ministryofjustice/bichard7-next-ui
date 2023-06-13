@@ -730,7 +730,7 @@ describe("Case list", () => {
 
   // Unresolved and user has permission to see them (e.g. not Exception Handlers)
   describe("When I can see triggers on cases", () => {
-    const triggers = (code?: number) =>
+    const makeTriggers = (code?: number) =>
       Array.from(Array(5)).map((_, idx) => {
         return {
           triggerId: idx,
@@ -742,7 +742,7 @@ describe("Case list", () => {
 
     it("should display individual triggers without a count", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-      cy.task("insertTriggers", { caseId: 0, triggers: triggers() })
+      cy.task("insertTriggers", { caseId: 0, triggers: makeTriggers() })
       loginAndGoToUrl()
 
       cy.get(".trigger-description")
@@ -752,7 +752,7 @@ describe("Case list", () => {
 
     it("should group duplicate triggers", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-      cy.task("insertTriggers", { caseId: 0, triggers: triggers(1) })
+      cy.task("insertTriggers", { caseId: 0, triggers: makeTriggers(1) })
       loginAndGoToUrl()
 
       cy.get("table").find(".trigger-description").should("have.length", 1)
@@ -760,12 +760,31 @@ describe("Case list", () => {
 
     it("should include a count for grouped triggers", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-      cy.task("insertTriggers", { caseId: 0, triggers: triggers(2) })
+      cy.task("insertTriggers", { caseId: 0, triggers: makeTriggers(2) })
       loginAndGoToUrl()
 
       cy.get(".trigger-description")
         .contains(/\(\d+\)/) // any number between parentheses
         .should("exist")
+    })
+
+    it("should display individual and grouped triggers together", () => {
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+      const triggers = [...makeTriggers(), ...makeTriggers(1)].map((t, i) => {
+        t.triggerId = i
+        return t
+      })
+
+      cy.task("insertTriggers", { caseId: 0, triggers })
+      loginAndGoToUrl()
+
+      cy.get(".trigger-description:contains('TRPR0001')")
+        .contains(/\(\d+\)/) // any number between parentheses
+        .should("exist")
+
+      cy.get(".trigger-description:not(:contains('TRPR0001'))")
+        .contains(/\(\d+\)/)
+        .should("not.exist")
     })
   })
 
