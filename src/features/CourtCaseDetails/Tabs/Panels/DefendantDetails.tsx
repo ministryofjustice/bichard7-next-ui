@@ -8,16 +8,16 @@ interface DefendantDetailsProps {
   defendant: HearingDefendant
 }
 
-enum Gender {
+export enum Gender {
   "0(not known)" = 0,
   "1(male)" = 1,
   "2(female)" = 2,
   "9(not specified)" = 9
 }
 
-type RemandCode = "CB" | "LA" | "NA" | "PB" | "PR" | "SA" | "UB"
+export type RemandCode = "CB" | "LA" | "NA" | "PB" | "PR" | "SA" | "UB"
 
-enum RemandStatus {
+export enum RemandStatus {
   CB = "Conditional bail",
   LA = "Care",
   NA = "Not applicable",

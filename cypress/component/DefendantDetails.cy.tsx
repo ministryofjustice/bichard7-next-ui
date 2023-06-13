@@ -1,6 +1,6 @@
 import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { format } from "date-fns"
-import { DefendantDetails } from "../../src/features/CourtCaseDetails/Tabs/Panels/DefendantDetails"
+import { DefendantDetails, Gender } from "../../src/features/CourtCaseDetails/Tabs/Panels/DefendantDetails"
 
 describe("Defendant Details", () => {
   it("displays all defendant details", () => {
@@ -23,7 +23,7 @@ describe("Defendant Details", () => {
           Title: "Title",
           FamilyName: "FamilyName"
         },
-        Gender: 1
+        Gender: Gender["1(male)"]
       }
     }
     cy.mount(<DefendantDetails defendant={data as HearingDefendant} />)
@@ -57,5 +57,24 @@ describe("Defendant Details", () => {
     cy.get("#table-row-remand-status")
       .should("include.text", "Remand status")
       .should("include.text", "Unconditional bail")
+  })
+
+  it("render multiple given names", () => {
+    const data: Partial<HearingDefendant> = {
+      Address: {
+        AddressLine1: "AddressLine1"
+      },
+      DefendantDetail: {
+        GeneratedPNCFilename: "FirstName/LastName",
+        PersonName: {
+          GivenName: ["FirstName", "MiddleName"],
+          FamilyName: "FamilyName"
+        },
+        Gender: Gender["1(male)"]
+      }
+    }
+    cy.mount(<DefendantDetails defendant={data as HearingDefendant} />)
+
+    cy.get("#table-row-given-name").should("include.text", "FirstName, MiddleName")
   })
 })
