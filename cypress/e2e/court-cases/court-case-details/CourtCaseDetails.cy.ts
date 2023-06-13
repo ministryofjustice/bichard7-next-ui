@@ -8,6 +8,7 @@ import hashedPassword from "../../../fixtures/hashedPassword"
 import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
 import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
 import { clickTab } from "../../../support/helpers"
+import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 
 describe("Court case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
@@ -550,81 +551,8 @@ describe("Court case details", () => {
     cy.get("#triggers span").contains("Complete").should("exist")
   })
 
-  const reallocateButtonNotExistTestData = [
-    {
-      triggers: "Resolved",
-      exceptions: "Resolved",
-      triggersLockedByAnotherUser: false,
-      exceptionLockedByAnotherUser: false
-    },
-    {
-      triggers: "Resolved",
-      exceptions: "Submitted",
-      triggersLockedByAnotherUser: false,
-      exceptionLockedByAnotherUser: false
-    },
-    {
-      triggers: "Resolved",
-      exceptions: "Unresolved",
-      triggersLockedByAnotherUser: false,
-      exceptionLockedByAnotherUser: true
-    },
-    {
-      triggers: "Unresolved",
-      exceptions: "Submitted",
-      triggersLockedByAnotherUser: true,
-      exceptionLockedByAnotherUser: false
-    }
-  ]
-
-  reallocateButtonNotExistTestData.forEach(
-    ({ triggers, exceptions, triggersLockedByAnotherUser, exceptionLockedByAnotherUser }) => {
-      it(`should not show Reallocate button when triggers are ${triggers} and ${
-        triggersLockedByAnotherUser ? "" : "NOT"
-      } locked by another user, and exceptions are ${exceptions} and ${
-        exceptionLockedByAnotherUser ? "" : "NOT"
-      } locked by another user`, () => {
-        cy.task("insertCourtCasesWithFields", [
-          {
-            orgForPoliceFilter: "01",
-            triggerStatus: triggers,
-            errorStatus: exceptions,
-            triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "Bichard03" : null,
-            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : null
-          }
-        ])
-
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard/court-cases/0")
-
-        cy.get("button.b7-reallocate-button").should("not.exist")
-      })
-    }
-  )
-
-  const reallocateButtonExistTestData = [
-    {
-      triggers: "Unresolved",
-      exceptions: "Unresolved",
-      triggersLockedByAnotherUser: false,
-      exceptionLockedByAnotherUser: false
-    },
-    {
-      triggers: "Unresolved",
-      exceptions: "Resolved",
-      triggersLockedByAnotherUser: false,
-      exceptionLockedByAnotherUser: true
-    },
-    {
-      triggers: "Resolved",
-      exceptions: "Unresolved",
-      triggersLockedByAnotherUser: true,
-      exceptionLockedByAnotherUser: false
-    }
-  ]
-
-  reallocateButtonExistTestData.forEach(
-    ({ triggers, exceptions, triggersLockedByAnotherUser, exceptionLockedByAnotherUser }) => {
+  canReallocateTestData.forEach(
+    ({ canReallocate, triggers, exceptions, triggersLockedByAnotherUser, exceptionLockedByAnotherUser }) => {
       it(`should show Reallocate button when triggers are ${triggers} and ${
         triggersLockedByAnotherUser ? "" : "NOT"
       } locked by another user, and exceptions are ${exceptions} and ${
@@ -643,7 +571,7 @@ describe("Court case details", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard/court-cases/0")
 
-        cy.get("button.b7-reallocate-button").should("exist")
+        cy.get("button.b7-reallocate-button").should(canReallocate ? "exist" : "not.exist")
       })
     }
   )

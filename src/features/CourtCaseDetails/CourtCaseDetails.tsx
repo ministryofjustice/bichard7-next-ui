@@ -22,7 +22,7 @@ interface Props {
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
   triggersLockedByCurrentUser: boolean
-  triggersLockedByUser: string | null
+  triggersLockedByUser?: string | null
   lockedByAnotherUser: boolean
   canReallocate: boolean
 }

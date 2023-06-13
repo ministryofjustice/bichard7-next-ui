@@ -14,7 +14,7 @@ import { encode } from "querystring"
 interface Props {
   courtCase: CourtCase
   triggersLockedByCurrentUser: boolean
-  triggersLockedByUser: string | null
+  triggersLockedByUser?: string | null
   onNavigate: NavigationHandler
 }
 

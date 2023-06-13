@@ -11,7 +11,7 @@ interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
   triggersLockedByCurrentUser: boolean
-  triggersLockedByUser: string | null
+  triggersLockedByUser?: string | null
   onNavigate: NavigationHandler
 }
 
