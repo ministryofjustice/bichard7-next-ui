@@ -19,7 +19,7 @@ const getExceptionPathDetails = (path: (string | number)[]): ExceptionPathDetail
     tab = "Offences"
   } else if (path.includes("Case")) {
     location = "Case information"
-    tab = "Case information"
+    tab = "Case"
   }
 
   const fieldName = String(path[path.length - 1])

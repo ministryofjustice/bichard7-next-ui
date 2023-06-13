@@ -1,3 +1,3 @@
-type CaseDetailsTab = "Defendant" | "Hearing" | "Case information" | "Offences" | "Notes" | "PNC errors"
+type CaseDetailsTab = "Defendant" | "Hearing" | "Case" | "Offences" | "Notes" | "PNC errors"
 
 export default CaseDetailsTab

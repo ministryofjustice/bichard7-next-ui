@@ -34,7 +34,7 @@ describe("getExceptionPathDetails", () => {
       formattedFieldName: "Arrest summons number",
       location: "Case information",
       offenceOrderIndex: undefined,
-      tab: "Case information"
+      tab: "Case"
     })
   })
 
