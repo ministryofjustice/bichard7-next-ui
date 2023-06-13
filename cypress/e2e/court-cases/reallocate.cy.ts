@@ -177,6 +177,112 @@ describe("Case details", () => {
       expect(response.status).to.eq(404)
     })
   })
+
+  const cannotReallocateTestData = [
+    {
+      triggers: "Resolved",
+      exceptions: "Resolved",
+      triggersLockedByAnotherUser: false,
+      exceptionLockedByAnotherUser: false
+    },
+    {
+      triggers: "Resolved",
+      exceptions: "Submitted",
+      triggersLockedByAnotherUser: false,
+      exceptionLockedByAnotherUser: false
+    },
+    {
+      triggers: "Resolved",
+      exceptions: "Unresolved",
+      triggersLockedByAnotherUser: false,
+      exceptionLockedByAnotherUser: true
+    },
+    {
+      triggers: "Unresolved",
+      exceptions: "Submitted",
+      triggersLockedByAnotherUser: true,
+      exceptionLockedByAnotherUser: false
+    }
+  ]
+
+  cannotReallocateTestData.forEach(
+    ({ triggers, exceptions, triggersLockedByAnotherUser, exceptionLockedByAnotherUser }) => {
+      it(`should return 403 when triggers are ${triggers} and ${
+        triggersLockedByAnotherUser ? "" : "NOT"
+      } locked by another user, and exceptions are ${exceptions} and ${
+        exceptionLockedByAnotherUser ? "" : "NOT"
+      } locked by another user`, () => {
+        cy.task("insertCourtCasesWithFields", [
+          {
+            orgForPoliceFilter: "01",
+            triggerStatus: triggers,
+            errorStatus: exceptions,
+            triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "Bichard03" : null,
+            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : null
+          }
+        ])
+
+        cy.login("bichard01@example.com", "password")
+
+        cy.request({
+          failOnStatusCode: false,
+          url: "/bichard/court-cases/0/reallocate"
+        }).then((response) => {
+          expect(response.status).to.eq(403)
+        })
+      })
+    }
+  )
+
+  const canReallocateTestData = [
+    {
+      triggers: "Unresolved",
+      exceptions: "Unresolved",
+      triggersLockedByAnotherUser: false,
+      exceptionLockedByAnotherUser: false
+    },
+    {
+      triggers: "Unresolved",
+      exceptions: "Resolved",
+      triggersLockedByAnotherUser: false,
+      exceptionLockedByAnotherUser: true
+    },
+    {
+      triggers: "Resolved",
+      exceptions: "Unresolved",
+      triggersLockedByAnotherUser: true,
+      exceptionLockedByAnotherUser: false
+    }
+  ]
+
+  canReallocateTestData.forEach(
+    ({ triggers, exceptions, triggersLockedByAnotherUser, exceptionLockedByAnotherUser }) => {
+      it(`should return 200 when triggers are ${triggers} and ${
+        triggersLockedByAnotherUser ? "" : "NOT"
+      } locked by another user, and exceptions are ${exceptions} and ${
+        exceptionLockedByAnotherUser ? "" : "NOT"
+      } locked by another user`, () => {
+        cy.task("insertCourtCasesWithFields", [
+          {
+            orgForPoliceFilter: "01",
+            triggerStatus: triggers,
+            errorStatus: exceptions,
+            triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "Bichard03" : null,
+            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : null
+          }
+        ])
+
+        cy.login("bichard01@example.com", "password")
+
+        cy.request({
+          failOnStatusCode: false,
+          url: "/bichard/court-cases/0/reallocate"
+        }).then((response) => {
+          expect(response.status).to.eq(200)
+        })
+      })
+    }
+  )
 })
 
 export {}
