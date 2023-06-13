@@ -390,7 +390,7 @@ describe("Court case details", () => {
     cy.get(".moj-tab-panel-triggers").should("not.be.visible")
     cy.get(".moj-tab-panel-exceptions").should("be.visible")
 
-    cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Next hearing date (Offence 1)")
+    cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Next hearing date / Offence 1")
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("HO100102 - Bad Date")
   })
 
@@ -452,7 +452,8 @@ describe("Court case details", () => {
 
     cy.get("h3").should("not.have.text", "Offence 1 of 3")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
-    cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Next hearing date (Offence 1)").click()
+    cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Next hearing date / Offence 1")
+    cy.get(".exception-header .exception-location").click()
     cy.get("h3").should("have.text", "Offence 1 of 3")
   })
 
@@ -467,10 +468,8 @@ describe("Court case details", () => {
 
     cy.get("h3").should("not.have.text", "Case information")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
-    cy.get(".moj-tab-panel-exceptions .moj-exception-row")
-      .eq(0)
-      .contains("Arrest summons number (Case information)")
-      .click()
+    cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Arrest summons number / Case information")
+    cy.get(".exception-header .exception-location").click()
     cy.get("h3").should("have.text", "Case information")
   })
 
@@ -525,7 +524,7 @@ describe("Court case details", () => {
 
     cy.get("h3").should("not.have.text", "Case information")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
-    cy.get(".exception-details-column a")
+    cy.get(".exception-help a")
       .contains("More information")
       .should("exist")
       .should("have.attr", "href", "/help/bichard-functionality/exceptions/resolution.html#HO100302")

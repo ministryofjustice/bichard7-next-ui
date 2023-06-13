@@ -2,8 +2,8 @@ import type CaseDetailsTab from "types/CaseDetailsTab"
 
 export interface ExceptionPathDetailsResult {
   field: string
+  formattedFieldName: string
   location?: string
-  displayText: string
   tab?: CaseDetailsTab
   offenceOrderIndex?: number
 }
@@ -30,8 +30,8 @@ const getExceptionPathDetails = (path: (string | number)[]): ExceptionPathDetail
 
   return {
     field: fieldName,
+    formattedFieldName,
     location,
-    displayText: `${formattedFieldName}${location ? ` (${location})` : ""}`,
     offenceOrderIndex,
     tab
   }
