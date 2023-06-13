@@ -11,7 +11,7 @@ const style: CSSProperties = {
 }
 
 export const TableRow = ({ label, value }: TableRowProps) => (
-  <Table.Row>
+  <Table.Row id={`table-row-${label.replaceAll(" ", "-").toLowerCase()}`}>
     <Table.Cell style={style}>
       <b>{label}</b>
     </Table.Cell>
