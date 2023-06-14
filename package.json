@@ -77,6 +77,7 @@
     "@types/lodash.isobject": "^3.0.7",
     "@types/lodash.sample": "^4.2.7",
     "@types/node": "20.3.0",
+    "@types/qs": "^6.9.7",
     "@types/react": "18.2.11",
     "@types/react-dom": "18.2.4",
     "@types/stompit": "^0.26.3",
