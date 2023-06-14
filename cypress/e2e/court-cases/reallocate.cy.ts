@@ -1,6 +1,7 @@
 import User from "services/entities/User"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
+import canReallocateTestData from "../../fixtures/canReallocateTestData.json"
 
 describe("Case details", () => {
   const defaultUsers: Partial<User>[] = Array.from(Array(4)).map((_value, idx) => {
@@ -177,6 +178,35 @@ describe("Case details", () => {
       expect(response.status).to.eq(404)
     })
   })
+
+  canReallocateTestData.forEach(
+    ({ canReallocate, triggers, exceptions, triggersLockedByAnotherUser, exceptionLockedByAnotherUser }) => {
+      it(`should return 200 when triggers are ${triggers} and ${
+        triggersLockedByAnotherUser ? "" : "NOT"
+      } locked by another user, and exceptions are ${exceptions} and ${
+        exceptionLockedByAnotherUser ? "" : "NOT"
+      } locked by another user`, () => {
+        cy.task("insertCourtCasesWithFields", [
+          {
+            orgForPoliceFilter: "01",
+            triggerStatus: triggers,
+            errorStatus: exceptions,
+            triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "Bichard03" : null,
+            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : null
+          }
+        ])
+
+        cy.login("bichard01@example.com", "password")
+
+        cy.request({
+          failOnStatusCode: false,
+          url: "/bichard/court-cases/0/reallocate"
+        }).then((response) => {
+          expect(response.status).to.eq(canReallocate ? 200 : 403)
+        })
+      })
+    }
+  )
 })
 
 export {}

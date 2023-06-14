@@ -23,7 +23,9 @@ interface Props {
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
   triggersLockedByCurrentUser: boolean
-  triggersLockedByUser: string | null
+  triggersLockedByUser?: string | null
+  lockedByAnotherUser: boolean
+  canReallocate: boolean
 }
 
 const useStyles = createUseStyles({
@@ -44,7 +46,9 @@ const CourtCaseDetails: React.FC<Props> = ({
   aho,
   errorLockedByAnotherUser,
   triggersLockedByCurrentUser,
-  triggersLockedByUser
+  triggersLockedByUser,
+  lockedByAnotherUser,
+  canReallocate
 }) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
@@ -147,12 +151,12 @@ const CourtCaseDetails: React.FC<Props> = ({
             <CourtCaseDetailsPanel heading={"PNC errors"}>{""}</CourtCaseDetailsPanel>
           </ConditionalRender>
 
-          <ConditionalRender isRendered={!errorLockedByAnotherUser && activeTab !== "Notes"}>
+          <ConditionalRender isRendered={canReallocate}>
             <LinkButton href="reallocate" className="b7-reallocate-button">
               {"Reallocate Case"}
             </LinkButton>
           </ConditionalRender>
-          <ConditionalRender isRendered={!errorLockedByAnotherUser && activeTab !== "Notes"}>
+          <ConditionalRender isRendered={!lockedByAnotherUser}>
             <LinkButton href="resolve" className="b7-resolve-button">
               {"Mark As Manually Resolved"}
             </LinkButton>

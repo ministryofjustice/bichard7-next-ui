@@ -1,9 +1,9 @@
 import User from "services/entities/User"
-import hashedPassword from "../../fixtures/hashedPassword"
-import { clickTab, loginAndGoToUrl } from "../../support/helpers"
-import a11yConfig from "../../support/a11yConfig"
-import logAccessibilityViolations from "../../support/logAccessibilityViolations"
-import type { TestTrigger } from "../../../test/utils/manageTriggers"
+import hashedPassword from "../../../fixtures/hashedPassword"
+import { clickTab, loginAndGoToUrl } from "../../../support/helpers"
+import a11yConfig from "../../../support/a11yConfig"
+import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
+import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 
 const loginAndGoToNotes = () => {
   loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
@@ -121,8 +121,6 @@ describe("Court case details", () => {
     cy.should("not.contain", "Test note 2")
     cy.contains("bichard01")
     cy.contains("Test note 1")
-    cy.get(".b7-reallocate-button").should("not.exist")
-    cy.get(".b7-resolve-button").should("not.exist")
   })
 
   it("should display no user notes message", () => {
