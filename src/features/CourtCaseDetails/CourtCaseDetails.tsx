@@ -16,7 +16,7 @@ import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
 import updateQueryString from "utils/updateQueryString"
-import { CaseDetails } from "./Tabs/Panels/CaseDetails"
+import { CaseInformation } from "./Tabs/Panels/CaseInformation"
 
 interface Props {
   courtCase: CourtCase
@@ -124,7 +124,7 @@ const CourtCaseDetails: React.FC<Props> = ({
 
           <ConditionalRender isRendered={activeTab === "Case"}>
             <CourtCaseDetailsPanel heading={"Case"}>
-              <CaseDetails caseDetails={aho.AnnotatedHearingOutcome.HearingOutcome.Case} />
+              <CaseInformation caseInformation={aho.AnnotatedHearingOutcome.HearingOutcome.Case} />
             </CourtCaseDetailsPanel>
           </ConditionalRender>
 
