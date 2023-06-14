@@ -8,6 +8,7 @@ import hashedPassword from "../../../fixtures/hashedPassword"
 import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
 import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
 import { clickTab } from "../../../support/helpers"
+import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 
 describe("Court case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
@@ -592,6 +593,51 @@ describe("Court case details", () => {
       .should("exist")
       .should("have.attr", "href", "/help/bichard-functionality/exceptions/resolution.html#HO100302")
   })
+
+  it("should show a complete badge for triggers which have been resolved", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
+    ])
+    const trigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: "TRPR0001",
+      status: "Resolved",
+      createdAt: new Date(),
+      resolvedAt: new Date(),
+      resolvedBy: "Bichard01"
+    }
+    cy.task("insertTriggers", { caseId: 0, triggers: [trigger] })
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("#triggers span").contains("Complete").should("exist")
+  })
+
+  canReallocateTestData.forEach(
+    ({ canReallocate, triggers, exceptions, triggersLockedByAnotherUser, exceptionLockedByAnotherUser }) => {
+      it(`should show Reallocate button when triggers are ${triggers} and ${
+        triggersLockedByAnotherUser ? "" : "NOT"
+      } locked by another user, and exceptions are ${exceptions} and ${
+        exceptionLockedByAnotherUser ? "" : "NOT"
+      } locked by another user`, () => {
+        cy.task("insertCourtCasesWithFields", [
+          {
+            orgForPoliceFilter: "01",
+            triggerStatus: triggers,
+            errorStatus: exceptions,
+            triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "Bichard03" : null,
+            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : null
+          }
+        ])
+
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard/court-cases/0")
+
+        cy.get("button.b7-reallocate-button").should(canReallocate ? "exist" : "not.exist")
+      })
+    }
+  )
 })
 
 export {}
