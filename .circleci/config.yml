@@ -152,7 +152,7 @@ jobs:
   build_and_cypress_e2e_test:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
+      docker_layer_caching: true
     resource_class: medium
     working_directory: ~
     parallelism: 5
@@ -165,7 +165,7 @@ jobs:
           image: nginx-auth-proxy
       - run:
           name: Build the UI application in the background
-          command: ./.circleci/scripts/build-ui.sh
+          command: (docker rmi ui || true) && ./.circleci/scripts/build-ui.sh
           background: true
       - run:
           name: Install Cypress
