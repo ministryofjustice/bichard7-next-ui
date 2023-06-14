@@ -29,6 +29,37 @@ export const CaseDetails = ({ caseDetails }: caseDetailsProps) => {
     })
   }
 
+  if (caseDetails.CourtCaseReferenceNumber !== undefined) {
+    rows.push({
+      label: "Court case reference",
+      value: caseDetails.CourtCaseReferenceNumber
+    })
+  }
+
+  if (caseDetails.CourtReference.CrownCourtReference !== undefined) {
+    rows.push(
+      { label: "Crown court reference", value: caseDetails.CourtReference.CrownCourtReference },
+      { label: "Magistrates court reference", value: caseDetails.CourtReference.MagistratesCourtReference }
+    )
+  } else {
+    rows.push({
+      label: "Court reference",
+      value: caseDetails.CourtReference.MagistratesCourtReference
+    })
+  }
+
+  if (caseDetails.RecordableOnPNCindicator !== undefined) {
+    rows.push({
+      label: "Notifiable to PNC",
+      value: caseDetails.RecordableOnPNCindicator ? "Yes" : "No"
+    })
+  }
+
+  rows.push({
+    label: "Pre decision ind",
+    value: caseDetails.PreChargeDecisionIndicator ? "Yes" : "No"
+  })
+
   return (
     <Table>
       {rows.map((row, idx) => (
