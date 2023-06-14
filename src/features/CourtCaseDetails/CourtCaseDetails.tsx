@@ -113,7 +113,9 @@ const CourtCaseDetails: React.FC<Props> = ({
       <GridRow>
         <GridCol setWidth={contentWidth} className={classes.contentColumn}>
           <ConditionalRender isRendered={activeTab === "Defendant"}>
-            <DefendantDetails defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant} />
+            <CourtCaseDetailsPanel heading={"Defendant details"}>
+              <DefendantDetails defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant} />
+            </CourtCaseDetailsPanel>
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Hearing"}>
