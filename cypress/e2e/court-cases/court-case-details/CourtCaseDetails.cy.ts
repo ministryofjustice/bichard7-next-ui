@@ -28,7 +28,6 @@ describe("Court case details", () => {
     cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
     cy.clearCookies()
-    cy.viewport(1800, 720)
   })
 
   beforeEach(() => {
@@ -99,8 +98,8 @@ describe("Court case details", () => {
     cy.get("H3").contains("Defendant details")
     clickTab("Hearing")
     cy.get("H3").contains("Hearing details")
-    clickTab("Case information")
-    cy.get("H3").contains("Case information")
+    clickTab("Case")
+    cy.get("H3").contains("Case")
     clickTab("Offences")
     cy.get("H3").contains("Offences")
     clickTab("Notes")
@@ -138,6 +137,32 @@ describe("Court case details", () => {
 
     cy.contains("td", "PNC file name").siblings().contains("SEXOFFENCE/TRPRFOUR")
     cy.contains("td", "Remand status").siblings().contains("Unconditional bail")
+  })
+
+  it("should display the content of the Case tab", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "02"
+      }
+    ])
+    cy.login("bichard02@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    clickTab("Case")
+    const expectedRows = [
+      ["PTIURN", "01ZD0303208"],
+      ["Force owner", "Metropolitan Police Service 01ZD00"],
+      ["Court case reference", "97/1626/008395Q"],
+      ["Court reference", "01ZD0303208"],
+      ["Notifiable to PNC", "Yes"],
+      ["Pre decision ind", "No"]
+    ]
+    expectedRows.map((row) => {
+      cy.get("tbody td").contains(row[0]).should("exist")
+      cy.get("tbody td").contains(row[0]).parent().next().should("contain.text", row[1])
+    })
   })
 
   it("should display the content of the Hearing tab", () => {
@@ -495,7 +520,7 @@ describe("Court case details", () => {
     cy.get("h3").should("have.text", "Offence 1 of 3")
   })
 
-  it("should take the user to case information tab when exception is clicked", () => {
+  it("should take the user to the case tab when exception is clicked", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
     ])
@@ -504,11 +529,11 @@ describe("Court case details", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("h3").should("not.have.text", "Case information")
+    cy.get("h3").should("not.have.text", "Case")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
-    cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Arrest summons number / Case information")
+    cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Arrest summons number / Case")
     cy.get(".exception-header .exception-location").click()
-    cy.get("h3").should("have.text", "Case information")
+    cy.get("h3").should("have.text", "Case")
   })
 
   it("should show contextual help for a trigger when the accordion button is clicked", () => {
@@ -560,7 +585,7 @@ describe("Court case details", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("h3").should("not.have.text", "Case information")
+    cy.get("h3").should("not.have.text", "Case")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
     cy.get(".exception-help a")
       .contains("More information")

@@ -17,6 +17,7 @@ import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
 import updateQueryString from "utils/updateQueryString"
+import { CaseInformation } from "./Tabs/Panels/CaseInformation"
 
 interface Props {
   courtCase: CourtCase
@@ -66,8 +67,8 @@ const CourtCaseDetails: React.FC<Props> = ({
 
   const handleNavigation: NavigationHandler = ({ location, args }) => {
     switch (location) {
-      case "Case Details > Case information":
-        setActiveTab("Case information")
+      case "Case Details > Case":
+        setActiveTab("Case")
         break
       case "Case Details > Offences":
         if (typeof args?.offenceOrderIndex === "number") {
@@ -106,7 +107,7 @@ const CourtCaseDetails: React.FC<Props> = ({
           setActiveTab(tab)
           updateQueryString({ tab, offence: null })
         }}
-        tabs={["Defendant", "Hearing", "Case information", "Offences", "Notes", "PNC errors"]}
+        tabs={["Defendant", "Hearing", "Case", "Offences", "Notes", "PNC errors"]}
         width={contentWidth}
       />
 
@@ -124,8 +125,10 @@ const CourtCaseDetails: React.FC<Props> = ({
             </CourtCaseDetailsPanel>
           </ConditionalRender>
 
-          <ConditionalRender isRendered={activeTab === "Case information"}>
-            <CourtCaseDetailsPanel heading={"Case information"}>{""}</CourtCaseDetailsPanel>
+          <ConditionalRender isRendered={activeTab === "Case"}>
+            <CourtCaseDetailsPanel heading={"Case"}>
+              <CaseInformation caseInformation={aho.AnnotatedHearingOutcome.HearingOutcome.Case} />
+            </CourtCaseDetailsPanel>
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Offences"}>

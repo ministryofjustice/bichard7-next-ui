@@ -46,5 +46,5 @@ export const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/
 }
 
 export const clickTab = (tab: CaseDetailsTab) => {
-  cy.contains(tab).click()
+  cy.get(".moj-sub-navigation a").contains(tab).click()
 }
