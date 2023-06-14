@@ -109,6 +109,37 @@ describe("Court case details", () => {
     cy.get("H3").contains("PNC errors")
   })
 
+  it("should display the content of the Defendant tab", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "02"
+      }
+    ])
+    cy.login("bichard02@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    clickTab("Defendant")
+    cy.contains("td", "PNC Check name").siblings().contains("SEXOFFENCE")
+    cy.contains("td", "Given name").siblings().contains("TRPRFOUR")
+    cy.contains("td", "Family name").siblings().contains("SEXOFFENCE")
+    cy.contains("td", "Title").siblings().contains("Mr")
+    cy.contains("td", "Date of birth").siblings().contains("11/11/1948")
+    cy.contains("td", "Gender").siblings().contains("1(male)")
+
+    cy.contains("td", "Address")
+      .siblings()
+      .contains("Scenario1 Address Line 1")
+      .siblings()
+      .contains("Scenario1 Address Line 2")
+      .siblings()
+      .contains("Scenario1 Address Line 3")
+
+    cy.contains("td", "PNC file name").siblings().contains("SEXOFFENCE/TRPRFOUR")
+    cy.contains("td", "Remand status").siblings().contains("Unconditional bail")
+  })
+
   it("should display the content of the Hearing tab", () => {
     cy.task("insertCourtCasesWithFields", [
       {
