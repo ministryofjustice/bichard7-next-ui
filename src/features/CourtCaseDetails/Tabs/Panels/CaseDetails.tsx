@@ -1,7 +1,7 @@
 import { Case } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import { TableRow } from "./TableRow"
 import { Table } from "govuk-react"
-import { forces } from "@moj-bichard7-developers/bichard7-next-data"
+import formatForce from "utils/formatForce"
 
 interface caseDetailsProps {
   caseDetails: Case
@@ -22,14 +22,13 @@ export const CaseDetails = ({ caseDetails }: caseDetailsProps) => {
 
   console.log(caseDetails.ForceOwner)
 
-  // TODO extract force owner => string into a helper function and unit test
   if (caseDetails.ForceOwner !== undefined) {
-    const forceName = forces.find((force) => force.code === caseDetails.ForceOwner?.SecondLevelCode)?.name
     rows.push({
       label: "Force owner",
-      value: `${forceName ? forceName + " " : ""}${caseDetails.ForceOwner.OrganisationUnitCode}`
+      value: formatForce(caseDetails.ForceOwner)
     })
   }
+
   return (
     <Table>
       {rows.map((row, idx) => (
