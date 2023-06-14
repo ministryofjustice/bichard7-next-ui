@@ -32,9 +32,9 @@ describe("getExceptionPathDetails", () => {
     expect(result).toStrictEqual({
       field: "ArrestSummonsNumber",
       formattedFieldName: "Arrest summons number",
-      location: "Case information",
+      location: "Case Details",
       offenceOrderIndex: undefined,
-      tab: "Case information"
+      tab: "Case"
     })
   })
 

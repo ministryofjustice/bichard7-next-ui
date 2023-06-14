@@ -2,7 +2,6 @@ import ConditionalRender from "components/ConditionalRender"
 import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Image from "next/image"
-import { SingleTrigger } from "./SingleTrigger"
 import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
 import CaseUnlockedTag from "features/CourtCaseList/tags/CaseUnlockedTag"
 import Trigger from "services/entities/Trigger"
@@ -24,6 +23,8 @@ const useStyles = createUseStyles({
   }
 })
 
+type TriggerWithCount = Partial<Trigger> & { count: number }
+
 export const TriggersRow = ({
   canCurrentUserUnlockCase,
   firstColumnClassName,
@@ -34,7 +35,25 @@ export const TriggersRow = ({
   unlockPath
 }: TriggersRowProps) => {
   const classes = useStyles()
-  return triggers.length > 0 ? (
+  if (!triggers.length) {
+    return <></>
+  }
+
+  const triggersWithCounts = Object.values(
+    triggers.reduce((counts, trigger) => {
+      let current = counts[trigger.triggerCode]
+      if (!current) {
+        current = { ...trigger, count: 1 }
+      } else {
+        current.count += 1
+      }
+
+      counts[trigger.triggerCode] = current
+      return counts
+    }, {} as { [key: string]: TriggerWithCount })
+  )
+
+  return (
     <Table.Row className={`${classes.triggersRow} ${rowClassName}`}>
       <Table.Cell className={firstColumnClassName}>
         <ConditionalRender isRendered={!!triggerLockedByUsername}>
@@ -48,8 +67,13 @@ export const TriggersRow = ({
       <Table.Cell />
       <Table.Cell />
       <Table.Cell>
-        {triggers?.map((trigger, triggerId) => (
-          <SingleTrigger key={`trigger_${triggerId}`} triggerCode={trigger.triggerCode} />
+        {triggersWithCounts?.map((trigger, triggerId) => (
+          <div key={`trigger_${triggerId}`} className={"trigger-description"}>
+            {trigger.description}
+            <ConditionalRender isRendered={trigger.count > 1}>
+              <b>{` (${trigger.count})`}</b>
+            </ConditionalRender>
+          </div>
         ))}
       </Table.Cell>
       <Table.Cell>
@@ -62,7 +86,5 @@ export const TriggersRow = ({
         <CaseUnlockedTag isCaseUnlocked={isCaseUnlocked} />
       </Table.Cell>
     </Table.Row>
-  ) : (
-    <></>
   )
 }
