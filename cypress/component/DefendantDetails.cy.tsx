@@ -23,7 +23,7 @@ describe("Defendant Details", () => {
           Title: "Title",
           FamilyName: "FamilyName"
         },
-        Gender: Gender["1(male)"]
+        Gender: Gender["1 (male)"]
       }
     }
     cy.mount(<DefendantDetails defendant={data as HearingDefendant} />)
@@ -35,7 +35,7 @@ describe("Defendant Details", () => {
     cy.contains("td", "Date of birth")
       .siblings()
       .should("include.text", format(data.DefendantDetail?.BirthDate as Date, "dd/MM/yyyy"))
-    cy.contains("td", "Gender").siblings().should("include.text", "1(male)")
+    cy.contains("td", "Gender").siblings().should("include.text", "1 (male)")
 
     cy.contains("td", "Address")
       .siblings()
@@ -60,7 +60,7 @@ describe("Defendant Details", () => {
           GivenName: ["FirstName", "MiddleName"],
           FamilyName: "FamilyName"
         },
-        Gender: Gender["1(male)"]
+        Gender: Gender["1 (male)"]
       }
     }
     cy.mount(<DefendantDetails defendant={data as HearingDefendant} />)

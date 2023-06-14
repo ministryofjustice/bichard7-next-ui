@@ -125,7 +125,7 @@ describe("Court case details", () => {
     cy.contains("td", "Family name").siblings().contains("SEXOFFENCE")
     cy.contains("td", "Title").siblings().contains("Mr")
     cy.contains("td", "Date of birth").siblings().contains("11/11/1948")
-    cy.contains("td", "Gender").siblings().contains("1(male)")
+    cy.contains("td", "Gender").siblings().contains("1 (male)")
 
     cy.contains("td", "Address")
       .siblings()
