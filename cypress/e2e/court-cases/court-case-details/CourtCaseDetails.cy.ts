@@ -28,7 +28,6 @@ describe("Court case details", () => {
     cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
     cy.clearCookies()
-    cy.viewport(1800, 720)
   })
 
   beforeEach(() => {
@@ -101,6 +100,32 @@ describe("Court case details", () => {
     clickTab("Offences")
     clickTab("Notes")
     clickTab("PNC errors")
+  })
+
+  it("should display the content of the Case tab", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "02"
+      }
+    ])
+    cy.login("bichard02@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    clickTab("Case")
+    const expectedRows = [
+      ["PTIURN", "01ZD0303208"],
+      ["Force owner", "Metropolitan Police Service 01ZD00"],
+      ["Court case reference", "97/1626/008395Q"],
+      ["Court reference", "01ZD0303208"],
+      ["Notifiable to PNC", "Yes"],
+      ["Pre decision ind", "No"]
+    ]
+    expectedRows.map((row) => {
+      cy.get("tbody td").contains(row[0]).should("exist")
+      cy.get("tbody td").contains(row[0]).parent().next().should("contain.text", row[1])
+    })
   })
 
   it("should display the content of the Hearing tab", () => {
