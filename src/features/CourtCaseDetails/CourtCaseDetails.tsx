@@ -14,6 +14,7 @@ import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
+import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
 import updateQueryString from "utils/updateQueryString"
 import { CaseInformation } from "./Tabs/Panels/CaseInformation"
@@ -117,7 +118,9 @@ const CourtCaseDetails: React.FC<Props> = ({
       <GridRow>
         <GridCol setWidth={contentWidth} className={classes.contentColumn}>
           <ConditionalRender isRendered={activeTab === "Defendant"}>
-            <CourtCaseDetailsPanel heading={"Defendant details"}>{""}</CourtCaseDetailsPanel>
+            <CourtCaseDetailsPanel heading={"Defendant details"}>
+              <DefendantDetails defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant} />
+            </CourtCaseDetailsPanel>
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Hearing"}>

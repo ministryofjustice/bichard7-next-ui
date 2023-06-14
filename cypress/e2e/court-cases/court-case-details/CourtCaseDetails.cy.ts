@@ -96,11 +96,48 @@ describe("Court case details", () => {
     cy.visit("/bichard/court-cases/0")
 
     clickTab("Defendant")
+    cy.get("H3").contains("Defendant details")
     clickTab("Hearing")
+    cy.get("H3").contains("Hearing details")
     clickTab("Case")
+    cy.get("H3").contains("Case")
     clickTab("Offences")
+    cy.get("H3").contains("Offences")
     clickTab("Notes")
+    cy.get("H3").contains("Notes")
     clickTab("PNC errors")
+    cy.get("H3").contains("PNC errors")
+  })
+
+  it("should display the content of the Defendant tab", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "02"
+      }
+    ])
+    cy.login("bichard02@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    clickTab("Defendant")
+    cy.contains("td", "PNC Check name").siblings().contains("SEXOFFENCE")
+    cy.contains("td", "Given name").siblings().contains("TRPRFOUR")
+    cy.contains("td", "Family name").siblings().contains("SEXOFFENCE")
+    cy.contains("td", "Title").siblings().contains("Mr")
+    cy.contains("td", "Date of birth").siblings().contains("11/11/1948")
+    cy.contains("td", "Gender").siblings().contains("1 (male)")
+
+    cy.contains("td", "Address")
+      .siblings()
+      .contains("Scenario1 Address Line 1")
+      .siblings()
+      .contains("Scenario1 Address Line 2")
+      .siblings()
+      .contains("Scenario1 Address Line 3")
+
+    cy.contains("td", "PNC file name").siblings().contains("SEXOFFENCE/TRPRFOUR")
+    cy.contains("td", "Remand status").siblings().contains("Unconditional bail")
   })
 
   it("should display the content of the Case tab", () => {
@@ -141,17 +178,18 @@ describe("Court case details", () => {
     cy.visit("/bichard/court-cases/0")
 
     clickTab("Hearing")
-    cy.contains("B01EF01")
-    cy.contains("26/09/2011")
-    cy.contains("10:00")
-    cy.contains("A")
-    cy.contains("SPI TRPRFOUR SEXOFFENCE")
-    cy.contains("CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415")
-    cy.contains("SPI Case Result")
-    cy.contains("MCA (MC adult)")
-    cy.contains("2576")
-    cy.contains("London Croydon")
-    cy.contains("Don't know (D)")
+    cy.contains("td", "Court location").siblings().contains("B01EF01")
+    cy.contains("td", "Date of hearing").siblings().contains("26/09/2011")
+    cy.contains("td", "Time of hearing").siblings().contains("10:00")
+    cy.contains("td", "Defendant present").siblings().contains("A")
+    cy.contains("td", "Source reference document name").siblings().contains("SPI TRPRFOUR SEXOFFENCE")
+    cy.contains("td", "Source reference identification").siblings().contains("CID-8bc6ee0a-46ac-4a0e-b9be-b03e3b041415")
+    cy.contains("td", "Source reference document type").siblings().contains("SPI Case Result")
+    cy.contains("td", "Court type").siblings().contains("MCA (MC adult)")
+    cy.contains("td", "LJA code").siblings().contains("2576")
+    cy.contains("td", "Court name").siblings().contains("London Croydon")
+    cy.contains("td", "Hearing language").siblings().contains("Don't know (D)")
+    cy.contains("td", "Documentation language").siblings().contains("Don't know (D)")
   })
 
   it("should display the content of the Offences tab", () => {
