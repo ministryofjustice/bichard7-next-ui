@@ -96,11 +96,17 @@ describe("Court case details", () => {
     cy.visit("/bichard/court-cases/0")
 
     clickTab("Defendant")
+    cy.get("H3").contains("Defendant details")
     clickTab("Hearing")
+    cy.get("H3").contains("Hearing details")
     clickTab("Case information")
+    cy.get("H3").contains("Case information")
     clickTab("Offences")
+    cy.get("H3").contains("Offences")
     clickTab("Notes")
+    cy.get("H3").contains("Notes")
     clickTab("PNC errors")
+    cy.get("H3").contains("PNC errors")
   })
 
   it("should display the content of the Hearing tab", () => {
