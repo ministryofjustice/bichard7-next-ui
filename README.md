@@ -63,28 +63,6 @@ To run code-based (non-visual, no components get rendered) unit tests, run
     npm run test:unit
 ```
 
-#### Visual
-
-We are using [Storybook](https://storybook.js.org/) to develop our UI components in isolation.
-
-If you're already running storybook (`npm run storybook`) locally, run in a seperate terminal
-
-```bash
-    npm run test:ui:unit:dev
-```
-
-or simply
-
-```bash
-    npm run test-storybook
-```
-
-For CI or otherwise, run (requires `npx playwright install` to be run first sometimes)
-
-```bash
-    npm run test:ui:unit:ci
-```
-
 ### Integration/E2e Testing
 
 #### Integration
