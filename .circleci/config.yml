@@ -139,9 +139,6 @@ jobs:
           command: ./.circleci/scripts/install-playwright.sh
           background: true
       - run:
-          name: Build Storybook
-          command: npm run build-storybook
-      - run:
           name: Wait for Playwright installation to finish
           command: until [ -f playwrightInstalled ]; do sleep 1; done
           no_output_timeout: 5m
