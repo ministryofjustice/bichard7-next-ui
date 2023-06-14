@@ -730,8 +730,8 @@ describe("Case list", () => {
 
   // Unresolved and user has permission to see them (e.g. not Exception Handlers)
   describe("When I can see triggers on cases", () => {
-    const makeTriggers = (code?: number) =>
-      Array.from(Array(5)).map((_, idx) => {
+    const makeTriggers = (code?: number, count = 5) =>
+      Array.from(Array(count ?? 5)).map((_, idx) => {
         return {
           triggerId: idx,
           triggerCode: `TRPR000${code ?? idx + 1}`,
@@ -785,6 +785,17 @@ describe("Case list", () => {
       cy.get(".trigger-description:not(:contains('TRPR0001'))")
         .contains(/\(\d+\)/)
         .should("not.exist")
+    })
+
+    it("should display the correct count for grouped triggers", () => {
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+      const triggers = makeTriggers(1, 12)
+      cy.task("insertTriggers", { caseId: 0, triggers })
+      loginAndGoToUrl()
+
+      cy.get(".trigger-description:contains('TRPR0001')")
+        .contains(/\(\d+\)/) // any number between parentheses
+        .should("include.text", "(12)")
     })
   })
 
