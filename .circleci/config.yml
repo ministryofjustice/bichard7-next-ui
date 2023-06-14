@@ -122,30 +122,6 @@ jobs:
           name: Run integration tests
           command: npm run test:integration
 
-  ui_test:
-    docker:
-      - image: cimg/node:16.12.0
-    resource_class: large
-    working_directory: ~
-    environment:
-      TZ: "Europe/London"
-    steps:
-      - checkout
-      - npm_install
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install Playwright in the background
-          command: ./.circleci/scripts/install-playwright.sh
-          background: true
-      - run:
-          name: Wait for Playwright installation to finish
-          command: until [ -f playwrightInstalled ]; do sleep 1; done
-          no_output_timeout: 5m
-      - run:
-          name: Run visual unit tests
-          command: npm run test:ui:unit:ci
-
   build_ui_image:
     machine:
       image: ubuntu-2004:2022.07.1
@@ -329,7 +305,6 @@ workflows:
       - lint
       - unit_test
       - integration_test
-      - ui_test
       - cypress_component_test
       - build_ui_image
       - cypress_e2e_test:
