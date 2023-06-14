@@ -32,8 +32,8 @@ const Exceptions = ({ aho, onNavigate }: Props) => {
       case "Offences":
         onNavigate({ location: "Case Details > Offences", args: { offenceOrderIndex } })
         break
-      case "Case information":
-        onNavigate({ location: "Case Details > Case information" })
+      case "Case":
+        onNavigate({ location: "Case Details > Case" })
         break
     }
   }
