@@ -12,7 +12,7 @@ WORKDIR /src/ui
 RUN yum install jq -y
 
 # Copy in package info so we don't have to re-install packages for every code change
-COPY package.json package-lock.json* .
+COPY package.json package-lock.json* ./
 COPY ./scripts/copy-govuk-frontend-assets.sh scripts/copy-govuk-frontend-assets.sh
 COPY ./scripts/copy-moj-frontend-assets.sh scripts/copy-moj-frontend-assets.sh
 
