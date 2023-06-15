@@ -169,7 +169,9 @@ jobs:
           command: ./.circleci/scripts/install-cypress.sh
       - run:
           name: Wait for docker images
-          command: IMAGES=(ui user-service nginx-auth-proxy) && bash ./scripts/wait_for_images.sh "${IMAGES[@]}"
+          command: |
+            IMAGES=(ui user-service nginx-auth-proxy) && bash ./scripts/wait_for_images.sh "${IMAGES[@]}" \
+              && while [ ! -f ui-image ]; do sleep 1; done
           no_output_timeout: 15m
       - run:
           name: Run MQ
