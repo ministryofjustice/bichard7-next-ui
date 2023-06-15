@@ -73,8 +73,14 @@ export const CaseDetailsRow = ({
 }: CaseDetailsRowProps) => {
   const [showPreview, setShowPreview] = useState(true)
 
-  const { basePath } = useRouter()
-  const caseDetailsPath = (id: number) => `${basePath}/court-cases/${id}`
+  const { basePath, query, push } = useRouter()
+
+  const getLockCourtCasePath = (courtCaseId: string, lock: string) =>
+    `${basePath}/court-cases/${courtCaseId}?${new URLSearchParams({ ...query, lock })}`
+
+  const lockCourtCasePath = getLockCourtCasePath(String(errorId), String(!isCaseUnlocked))
+
+  const caseDetailsPath = `/court-cases/${errorId}`
 
   const exceptions = groupErrorsFromReport(errorReport)
   const userNotes = filterUserNotes(notes)
@@ -96,7 +102,17 @@ export const CaseDetailsRow = ({
           </ConditionalRender>
         </Table.Cell>
         <Table.Cell className={caseDetailsCellClass}>
-          <Link href={caseDetailsPath(errorId)} id={`Case details for ${defendantName}`}>
+          <Link
+            onClick={async (event) => {
+              event.preventDefault()
+              if (!errorLockedByUsername) {
+                await fetch(lockCourtCasePath, { method: "POST" })
+              }
+              push(caseDetailsPath)
+            }}
+            href=""
+            id={`Case details for ${defendantName}`}
+          >
             {defendantName}
             <br />
             <ResolvedTag isResolved={isResolved} />
