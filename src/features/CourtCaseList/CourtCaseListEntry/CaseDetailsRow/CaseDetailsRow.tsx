@@ -93,6 +93,14 @@ export const CaseDetailsRow = ({
   const caseDetailsCellClass = !hasTriggers && showPreview ? "" : customClasses["border-bottom-none"]
   const notePreviewCellClass = !hasTriggers && !showPreview ? "" : customClasses["border-bottom-none"]
 
+  const lockAndOrViewCase = async (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    event.preventDefault()
+    if (!errorLockedByUsername) {
+      await fetch(lockCourtCasePath, { method: "POST" })
+    }
+    push(caseDetailsPath)
+  }
+
   return (
     <>
       <Table.Row className={`${classes.caseDetailsRow} ${rowClassName}`}>
@@ -103,14 +111,8 @@ export const CaseDetailsRow = ({
         </Table.Cell>
         <Table.Cell className={caseDetailsCellClass}>
           <Link
-            onClick={async (event) => {
-              event.preventDefault()
-              if (!errorLockedByUsername) {
-                await fetch(lockCourtCasePath, { method: "POST" })
-              }
-              push(caseDetailsPath)
-            }}
-            href=""
+            onClick={async (event) => lockAndOrViewCase(event)}
+            href="" // emply href enables expected mouseover behaviour
             id={`Case details for ${defendantName}`}
           >
             {defendantName}
