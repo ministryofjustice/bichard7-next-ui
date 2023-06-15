@@ -46,7 +46,7 @@ describe("Home", () => {
               password: hashedPassword
             }
           ],
-          userGroups: ["B7UserManager_grp"]
+          userGroups: ["B7UserManager_grp", "B7NewUI_grp"]
         })
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")

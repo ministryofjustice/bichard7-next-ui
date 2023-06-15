@@ -16,7 +16,8 @@ describe("GOV.UK Assets", () => {
           email: "bichard01@example.com",
           password: hashedPassword
         }
-      ]
+      ],
+      userGroups: ["B7NewUI_grp"]
     })
     cy.login("bichard01@example.com", "password")
   })
