@@ -149,7 +149,20 @@ jobs:
           name: Run visual unit tests
           command: npm run test:ui:unit:ci
 
-  build_and_cypress_e2e_test:
+  build_ui_image:
+    machine:
+      image: ubuntu-2004:2022.07.1
+      docker_layer_caching: true
+    resource_class: medium
+    working_directory: ~
+    steps:
+      - checkout
+      - clone_bichard_repo
+      - run:
+          name: Build the UI application
+          command: ./.circleci/scripts/build-ui.sh
+
+  cypress_e2e_test:
     machine:
       image: ubuntu-2004:2022.07.1
       docker_layer_caching: true
@@ -163,10 +176,6 @@ jobs:
           image: user-service
       - fetch_docker_image:
           image: nginx-auth-proxy
-      - run:
-          name: Build the UI application in the background
-          command: (docker rmi ui || true) && ./.circleci/scripts/build-ui.sh
-          background: true
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
@@ -213,7 +222,7 @@ jobs:
       - store_artifacts:
           path: ./cypress/screenshots
 
-  build_and_cypress_component_test:
+  cypress_component_test:
     machine:
       image: ubuntu-2004:2022.07.1
       docker_layer_caching: false
@@ -226,10 +235,6 @@ jobs:
           image: user-service
       - fetch_docker_image:
           image: nginx-auth-proxy
-      - run:
-          name: Build the UI application in the background
-          command: ./.circleci/scripts/build-ui.sh
-          background: true
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
@@ -262,7 +267,7 @@ jobs:
   e2e_test:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
+      docker_layer_caching: true
     resource_class: xlarge
     working_directory: ~
     steps:
@@ -271,10 +276,6 @@ jobs:
       - npm_install
       - attach_workspace:
           at: .
-      - run:
-          name: Build next UI docker image
-          command: make build
-          background: true
       - clone_bichard_repo
       - fetch_docker_image:
           image: user-service
@@ -332,6 +333,11 @@ workflows:
       - unit_test
       - integration_test
       - ui_test
-      - build_and_cypress_e2e_test
-      - build_and_cypress_component_test
-      - e2e_test
+      - cypress_component_test
+      - build_ui_image
+      - cypress_e2e_test:
+          requires:
+            - build_ui_image
+      - e2e_test:
+          requires:
+            - build_ui_image
