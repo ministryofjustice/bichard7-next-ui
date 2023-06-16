@@ -116,5 +116,7 @@ export default defineConfig({
       framework: "next",
       bundler: "webpack"
     }
-  }
+  },
+
+  retries: 1
 })
