@@ -118,5 +118,5 @@ export default defineConfig({
     }
   },
 
-  retries: 1
+  retries: 2
 })
