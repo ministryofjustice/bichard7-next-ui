@@ -7,7 +7,7 @@ import dateTransformer from "./transformers/dateTransformer"
 import type { ResolutionStatus } from "types/ResolutionStatus"
 import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
 import getShortTriggerCode from "./transformers/getShortTriggerCode"
-import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
+import getTriggerWithDescription from "../../utils/formatReasons/getTriggerWithDescription"
 
 @Entity({ name: "error_list_triggers" })
 export default class Trigger extends BaseEntity {
