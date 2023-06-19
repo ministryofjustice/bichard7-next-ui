@@ -4,7 +4,7 @@ import PromiseResult from "types/PromiseResult"
 
 export async function auditLoggingTransaction(
   dataSource: DataSource | EntityManager,
-  messageId: string,
+  _messageId: string,
   transaction: (events: AuditLogEvent[], entityManager: EntityManager) => Promise<void>
 ): PromiseResult<void> {
   const events: AuditLogEvent[] = []
