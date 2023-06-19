@@ -15,7 +15,7 @@ const ReasonFilterOptions: React.FC<Props> = ({ reasons, dispatch }: Props) => {
     <fieldset className="govuk-fieldset">
       <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
         {reasonOptions.map((reason) => (
-          <div className="govuk-checkboxes__item" key={reason}>
+          <div className={`govuk-checkboxes__item ${reason.toLowerCase()}`} key={reason}>
             <input
               className="govuk-checkboxes__input"
               id={`${reason.toLowerCase()}-type`}

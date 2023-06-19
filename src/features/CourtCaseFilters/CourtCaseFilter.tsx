@@ -13,6 +13,7 @@ import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilt
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 import type { KeyValuePair } from "types/KeyValuePair"
+import ConditionalRender from "components/ConditionalRender"
 
 interface Props {
   defendantName: string | null
@@ -249,14 +250,16 @@ const CourtCaseFilter: React.FC<Props> = ({
               </label>
             </div>
           </div>
-          <div className={classes["govuk-form-group"]}>
+          <div className={`${classes["govuk-form-group"]} reasons`}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Reason"}>
-              <ReasonFilterOptions
-                reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
-                dispatch={dispatch}
-              />
-            </ExpandingFilters>
+            <ConditionalRender isRendered={true}>
+              <ExpandingFilters filterName={"Reason"}>
+                <ReasonFilterOptions
+                  reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
+                  dispatch={dispatch}
+                />
+              </ExpandingFilters>
+            </ConditionalRender>
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
