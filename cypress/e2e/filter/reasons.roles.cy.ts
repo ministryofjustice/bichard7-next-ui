@@ -16,6 +16,9 @@ function setUpWithGroups(groups: Groups[]) {
     userGroups: [Groups.NewUI, ...groups]
   })
   cy.login("bichard01@example.com", "password")
+}
+
+function navigateAndShowFilters() {
   cy.visit("/bichard")
   cy.get("button[id=filter-button]").click()
 }
@@ -41,6 +44,7 @@ describe("Reasons filters", () => {
 
   it("should display all options for supervisors", () => {
     setUpWithGroups([Groups.Supervisor])
+    navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
     cy.get("#filter-panel .reasons .triggers").should("exist")
@@ -49,6 +53,7 @@ describe("Reasons filters", () => {
 
   it("should display all options for general handlers", () => {
     setUpWithGroups([Groups.GeneralHandler])
+    navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
     cy.get("#filter-panel .reasons .triggers").should("exist")
@@ -57,6 +62,7 @@ describe("Reasons filters", () => {
 
   it("should display 'Triggers' and 'Bails' for trigger handlers", () => {
     setUpWithGroups([Groups.TriggerHandler])
+    navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
     cy.get("#filter-panel .reasons .triggers").should("exist")
@@ -65,12 +71,14 @@ describe("Reasons filters", () => {
 
   it("should not render the reasons component for exception handlers", () => {
     setUpWithGroups([Groups.ExceptionHandler])
+    navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons").should("not.exist")
   })
 
   it("should render the reasons component if a user has conflicting groups", () => {
     setUpWithGroups([Groups.Supervisor, Groups.ExceptionHandler])
+    navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
     cy.get("#filter-panel .reasons .triggers").should("exist")
