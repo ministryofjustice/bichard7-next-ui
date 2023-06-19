@@ -58,17 +58,14 @@ export const getServerSideProps = withMultipleServerSideProps(
         }
       }
 
-      const reallocateResult = await resolveCourtCase(
+      await resolveCourtCase(
         dataSource,
         courtCase.errorId,
         { reason: reason as ResolutionReasonKey, reasonText: reasonText ?? "" },
         currentUser
       )
-      if (isError(reallocateResult)) {
-        throw reallocateResult
-      } else {
-        return redirectTo(`/court-cases/${courtCase.errorId}`)
-      }
+
+      return redirectTo(`/court-cases/${courtCase.errorId}`)
     }
 
     return { props }
