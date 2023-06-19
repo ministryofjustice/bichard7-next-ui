@@ -86,14 +86,6 @@
       }
     },
     {
-      "files": ["**/*.stories.*"],
-      "rules": {
-        "import/no-extraneous-dependencies": "off",
-        "import/prefer-default-export": "off",
-        "@typescript-eslint/no-non-null-assertion": "off"
-      }
-    },
-    {
       "files": ["cypress/**/*.ts", "cypress/**/*.tsx"],
       "extends": ["plugin:cypress/recommended"],
       "rules": {
