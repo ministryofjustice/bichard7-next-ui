@@ -1,4 +1,4 @@
-import { DataSource, MoreThan, Not, UpdateQueryBuilder, UpdateResult } from "typeorm"
+import { DataSource, EntityManager, MoreThan, Not, UpdateQueryBuilder } from "typeorm"
 import { isError } from "types/Result"
 import User from "./entities/User"
 import { ManualResolution } from "types/ManualResolution"
@@ -8,19 +8,21 @@ import insertNotes from "./insertNotes"
 import Trigger from "./entities/Trigger"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
+import { auditLoggingTransaction } from "./auditLoggingTransaction"
+import { TransactionResult } from "types/TransactionResult"
 
 const resolveCourtCase = async (
-  dataSource: DataSource,
+  dataSource: DataSource | EntityManager,
   courtCaseId: number,
   resolution: ManualResolution,
   user: User
-): Promise<UpdateResult | Error> => {
+): Promise<TransactionResult> => {
   // TODO: Add audit log messages once the new UI integrates with the audit log API
-  const updateResult = dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<UpdateResult | Error> => {
+  const updateResult = await auditLoggingTransaction(dataSource, async (_, entityManager) => {
     const resolutionError = validateManualResolution(resolution).error
 
     if (resolutionError) {
-      return new Error(resolutionError)
+      throw new Error(resolutionError)
     }
 
     const courtCaseRepository = entityManager.getRepository(CourtCase)
@@ -60,11 +62,10 @@ const resolveCourtCase = async (
     const queryResult = await query.execute()
 
     if (queryResult.affected === 0) {
-      return new Error("Failed to resolve case")
+      throw new Error("Failed to resolve case")
     }
 
     const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, user)
-
     if (isError(unlockResult)) {
       throw unlockResult
     }
@@ -85,9 +86,6 @@ const resolveCourtCase = async (
 
     return queryResult
   })
-  if (isError(updateResult)) {
-    throw updateResult
-  }
 
   return updateResult
 }

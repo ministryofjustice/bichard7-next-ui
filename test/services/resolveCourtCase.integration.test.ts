@@ -1,5 +1,5 @@
 import User from "services/entities/User"
-import { DataSource, UpdateQueryBuilder, UpdateResult } from "typeorm"
+import { DataSource, UpdateQueryBuilder } from "typeorm"
 import { isError } from "types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
@@ -13,6 +13,7 @@ import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 import insertNotes from "services/insertNotes"
 import unlockCourtCase from "services/unlockCourtCase"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
+import { TransactionResult } from "types/TransactionResult"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
@@ -69,7 +70,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       },
       user
-    )
+    ).catch((error) => error)
 
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
@@ -199,7 +200,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, caseId, resolution, user)
+      const result = await resolveCourtCase(dataSource, caseId, resolution, user).catch((error) => error)
       expect((result as Error).message).toEqual("Failed to resolve case")
 
       const records = await dataSource
@@ -230,7 +231,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      const result = await resolveCourtCase(dataSource, 0, resolution, user).catch((error) => error)
       expect(isError(result)).toBeTruthy()
       expect((result as Error).message).toEqual("Failed to resolve case")
 
@@ -257,7 +258,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      const result = await resolveCourtCase(dataSource, 0, resolution, user).catch((error) => error)
       expect(isError(result)).toBeTruthy()
       expect((result as Error).message).toEqual("Failed to resolve case")
 
@@ -288,7 +289,7 @@ describe("resolveCourtCase", () => {
           reasonText: undefined
         },
         user
-      )
+      ).catch((error) => error)
       expect(isError(result)).toBeTruthy()
       expect((result as Error).message).toEqual("Reason text is required")
 
@@ -381,7 +382,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      const result = await resolveCourtCase(dataSource, 0, resolution, user).catch((error) => error)
 
       expect(isError(result)).toBeTruthy()
 
@@ -421,7 +422,7 @@ describe("resolveCourtCase", () => {
     it("should return the error if fails to create notes", async () => {
       ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
 
-      let result: UpdateResult | Error
+      let result: TransactionResult
       try {
         result = await resolveCourtCase(dataSource, 0, resolution, user)
       } catch (error) {
@@ -438,7 +439,7 @@ describe("resolveCourtCase", () => {
     it("should return the error if fails to unlock the case", async () => {
       ;(unlockCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Error while unlocking the case`))
 
-      let result: UpdateResult | Error
+      let result: TransactionResult
       try {
         result = await resolveCourtCase(dataSource, 0, resolution, user)
       } catch (error) {
@@ -458,7 +459,7 @@ describe("resolveCourtCase", () => {
         .spyOn(UpdateQueryBuilder.prototype, "execute")
         .mockRejectedValue(Error("Failed to update record with some error"))
 
-      let result: UpdateResult | Error
+      let result: TransactionResult
       try {
         result = await resolveCourtCase(dataSource, 0, resolution, user)
       } catch (error) {
