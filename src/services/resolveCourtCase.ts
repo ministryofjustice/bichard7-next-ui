@@ -9,16 +9,19 @@ import Trigger from "./entities/Trigger"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
 import { auditLoggingTransaction } from "./auditLoggingTransaction"
-import { TransactionResult } from "types/TransactionResult"
 
 const resolveCourtCase = async (
   dataSource: DataSource | EntityManager,
   courtCaseId: number,
   resolution: ManualResolution,
   user: User
-): Promise<TransactionResult> => {
+): Promise<void> => {
   // TODO: Add audit log messages once the new UI integrates with the audit log API
-  const updateResult = await auditLoggingTransaction(dataSource, async (_, entityManager) => {
+  await auditLoggingTransaction(dataSource, "courtCase.messageId", async (_, entityManager) => {
+    // get court case from PG
+    // get messageId from court case
+    // pass it to auditLoggingTransaction somehow
+
     const resolutionError = validateManualResolution(resolution).error
 
     if (resolutionError) {
@@ -83,11 +86,7 @@ const resolveCourtCase = async (
     if (isError(addNoteResult)) {
       throw addNoteResult
     }
-
-    return queryResult
   })
-
-  return updateResult
 }
 
 export default resolveCourtCase
