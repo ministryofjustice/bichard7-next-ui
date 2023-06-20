@@ -128,7 +128,8 @@ jobs:
       - run:
           working_directory: ~/bichard7-next-audit-logging
           name: Run audit logging API
-          command: SKIP_PG=true SKIP_MQ=true npm run start-api
+          command: npm install && SKIP_PG=true SKIP_MQ=true npm run start-api
+          background: true
       - run:
           name: Run integration tests
           command: npm run test:integration
@@ -181,7 +182,8 @@ jobs:
       - run:
           working_directory: ~/bichard7-next-audit-logging
           name: Run audit logging API
-          command: SKIP_PG=true SKIP_MQ=true npm run start-api
+          command: npm install && SKIP_PG=true SKIP_MQ=true npm run start-api
+          background: true
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
