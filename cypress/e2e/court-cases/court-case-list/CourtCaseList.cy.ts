@@ -45,6 +45,27 @@ describe("Court case details", () => {
     cy.contains("p", "Trigger locked by: Bichard02").should("exist")
     cy.contains("p", "Error locked by: Bichard02").should("exist")
   })
+
+  it("should not a case that is already locked to another user", () => {
+    const existingUserLock = "Another name"
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: existingUserLock,
+        triggerLockedByUsername: existingUserLock,
+        orgForPoliceFilter: "01",
+        errorCount: 1,
+        triggerCount: 1
+      }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard")
+    cy.findByText("NAME Defendant").click()
+
+    cy.contains("h2", "Case locked by another user").should("exist")
+    cy.contains("p", "Trigger locked by: Another name").should("exist")
+    cy.contains("p", "Error locked by: Another name").should("exist")
+  })
 })
 
 export {}
