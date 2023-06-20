@@ -135,6 +135,15 @@ jobs:
           name: Build the UI application
           command: ./.circleci/scripts/build-ui.sh
 
+      - run:
+          name: Save UI docker image
+          command: docker save ui > ui.tar
+      
+      - save_cache:
+          name: Cache UI docker image
+          key: ui-image-$CIRCLE_WORKFLOW_ID
+          paths: ui.tar
+
   cypress_e2e_test:
     machine:
       image: ubuntu-2004:2022.07.1
@@ -149,9 +158,12 @@ jobs:
           image: user-service
       - fetch_docker_image:
           image: nginx-auth-proxy
+      - restore_cache:
+          name: Restore UI docker image from cache
+          keys: ui-image-$CIRCLE_WORKFLOW_ID
       - run:
-          name: Build the UI application in the background
-          command: (docker rmi ui || true) && ./.circleci/scripts/build-ui.sh
+          name: Load UI docker image
+          command: docker load < ui.tar
           background: true
       - run:
           name: Install Cypress
@@ -262,9 +274,12 @@ jobs:
           image: pncemulator
       - fetch_docker_image:
           image: beanconnect
+      - restore_cache:
+          name: Restore UI docker image from cache
+          keys: ui-image-$CIRCLE_WORKFLOW_ID
       - run:
-          name: Build the UI application in the background
-          command: (docker rmi ui || true) && ./.circleci/scripts/build-ui.sh
+          name: Load UI docker image
+          command: docker load < ui.tar
           background: true
       - run:
           name: Wait for docker images
@@ -314,6 +329,10 @@ workflows:
       - unit_test
       - integration_test
       - cypress_component_test
-      # - build_ui_image
-      - cypress_e2e_test
-      - e2e_test
+      - build_ui_image
+      - cypress_e2e_test:
+          requires:
+            - build_ui_image
+      - e2e_test:
+          requires:
+            - build_ui_image
