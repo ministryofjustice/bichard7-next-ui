@@ -139,9 +139,13 @@ jobs:
           name: Save UI docker image
           command: docker save ui > ui.tar
       
+      - run:
+          name: Generate cache key file
+          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
+
       - save_cache:
           name: Cache UI docker image
-          key: ui-image-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+          key: ui-image-{{ checksum "/tmp/circle_workflow_id" }}
           paths: ui.tar
 
   cypress_e2e_test:
@@ -158,9 +162,13 @@ jobs:
           image: user-service
       - fetch_docker_image:
           image: nginx-auth-proxy
+      - run:
+          name: Generate cache key file
+          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
       - restore_cache:
           name: Restore UI docker image from cache
-          keys: ui-image-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+          keys: 
+            - ui-image-{{ checksum "/tmp/circle_workflow_id" }}
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
@@ -274,9 +282,13 @@ jobs:
           image: pncemulator
       - fetch_docker_image:
           image: beanconnect
+      - run:
+          name: Generate cache key file
+          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
       - restore_cache:
           name: Restore UI docker image from cache
-          keys: ui-image-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+          keys: 
+            - ui-image-{{ checksum "/tmp/circle_workflow_id" }}
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
