@@ -16,12 +16,13 @@ const resolveCourtCase = async (
   resolution: ManualResolution,
   user: User
 ): Promise<void> => {
-  // TODO: Add audit log messages once the new UI integrates with the audit log API
-  await auditLoggingTransaction(dataSource, "courtCase.messageId", async (_, entityManager) => {
-    // get court case from PG
-    // get messageId from court case
-    // pass it to auditLoggingTransaction somehow
+  const courtCase = await dataSource.getRepository(CourtCase).findOneByOrFail({ errorId: courtCaseId })
 
+  if (!courtCase) {
+    throw new Error("Failed to resolve, case not found!")
+  }
+
+  await auditLoggingTransaction(dataSource, courtCase.messageId, async (_, entityManager) => {
     const resolutionError = validateManualResolution(resolution).error
 
     if (resolutionError) {
