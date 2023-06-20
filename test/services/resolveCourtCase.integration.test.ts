@@ -13,7 +13,6 @@ import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 import insertNotes from "services/insertNotes"
 import unlockCourtCase from "services/unlockCourtCase"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import { TransactionResult } from "types/TransactionResult"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
@@ -422,7 +421,7 @@ describe("resolveCourtCase", () => {
     it("should return the error if fails to create notes", async () => {
       ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
 
-      let result: TransactionResult
+      let result
       try {
         result = await resolveCourtCase(dataSource, 0, resolution, user)
       } catch (error) {
@@ -439,7 +438,7 @@ describe("resolveCourtCase", () => {
     it("should return the error if fails to unlock the case", async () => {
       ;(unlockCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Error while unlocking the case`))
 
-      let result: TransactionResult
+      let result
       try {
         result = await resolveCourtCase(dataSource, 0, resolution, user)
       } catch (error) {
@@ -459,7 +458,7 @@ describe("resolveCourtCase", () => {
         .spyOn(UpdateQueryBuilder.prototype, "execute")
         .mockRejectedValue(Error("Failed to update record with some error"))
 
-      let result: TransactionResult
+      let result
       try {
         result = await resolveCourtCase(dataSource, 0, resolution, user)
       } catch (error) {
