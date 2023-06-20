@@ -60,6 +60,12 @@ commands:
           name: Git clone e2e tests
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
 
+  checkout-audit-logging:
+    steps:
+      - run:
+          name: Git clone audit logging
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
+
   fetch_docker_image:
     parameters:
       image:
@@ -111,6 +117,7 @@ jobs:
     working_directory: ~
     steps:
       - checkout
+      - checkout-audit-logging
       - use_nvm_version
       - npm_install
       - attach_workspace:
@@ -118,6 +125,9 @@ jobs:
       - clone_bichard_repo
       - run_postgres
       - run_mq
+      - run:
+          name: Run audit logging API
+          command: cd bichard7-next-audit-logging && SKIP_PG=true SKIP_MQ=true npm run start-api
       - run:
           name: Run integration tests
           command: npm run test:integration
@@ -144,11 +154,15 @@ jobs:
     parallelism: 5
     steps:
       - checkout
+      - checkout-audit-logging
       - clone_bichard_repo
       - fetch_docker_image:
           image: user-service
       - fetch_docker_image:
           image: nginx-auth-proxy
+      - run:
+          name: Run audit logging API
+          command: cd bichard7-next-audit-logging && SKIP_PG=true SKIP_MQ=true npm run start-api
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
