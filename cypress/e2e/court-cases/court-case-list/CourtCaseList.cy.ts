@@ -40,10 +40,10 @@ describe("Court case details", () => {
     cy.login("bichard02@example.com", "password")
     cy.visit("/bichard")
 
-    cy.findByText("NAME Defendant").click()
+    cy.contains("a", "NAME Defendant").click()
     cy.findByText("Case locked by another user").should("not.exist")
-    cy.findByText("Trigger locked by: Bichard02").should("exist")
-    cy.findByText("Error locked by: Bichard02").should("exist")
+    cy.contains("p", "Trigger locked by: Bichard02").should("exist")
+    cy.contains("p", "Error locked by: Bichard02").should("exist")
   })
 })
 
