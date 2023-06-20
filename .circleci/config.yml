@@ -107,7 +107,7 @@ jobs:
   integration_test:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: true
+      docker_layer_caching: false
     working_directory: ~
     steps:
       - checkout
@@ -125,7 +125,7 @@ jobs:
   build_ui_image:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: true
+      docker_layer_caching: false
     resource_class: medium
     working_directory: ~
     steps:
