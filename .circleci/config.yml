@@ -126,8 +126,9 @@ jobs:
       - run_postgres
       - run_mq
       - run:
+          working_directory: ~/bichard7-next-audit-logging
           name: Run audit logging API
-          command: cd bichard7-next-audit-logging && SKIP_PG=true SKIP_MQ=true npm run start-api
+          command: SKIP_PG=true SKIP_MQ=true npm run start-api
       - run:
           name: Run integration tests
           command: npm run test:integration
@@ -178,8 +179,9 @@ jobs:
           command: docker load < ui.tar
           background: true
       - run:
+          working_directory: ~/bichard7-next-audit-logging
           name: Run audit logging API
-          command: cd bichard7-next-audit-logging && SKIP_PG=true SKIP_MQ=true npm run start-api
+          command: SKIP_PG=true SKIP_MQ=true npm run start-api
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
