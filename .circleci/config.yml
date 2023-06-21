@@ -107,7 +107,7 @@ jobs:
   integration_test:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: true
+      docker_layer_caching: false
     working_directory: ~
     steps:
       - checkout
@@ -125,7 +125,7 @@ jobs:
   build_ui_image:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: true
+      docker_layer_caching: false
     resource_class: medium
     working_directory: ~
     steps:
@@ -134,6 +134,19 @@ jobs:
       - run:
           name: Build the UI application
           command: ./.circleci/scripts/build-ui.sh
+
+      - run:
+          name: Save UI docker image
+          command: docker save ui > ui.tar
+      
+      - run:
+          name: Generate cache key file
+          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
+
+      - save_cache:
+          name: Cache UI docker image
+          key: ui-image-{{ checksum "/tmp/circle_workflow_id" }}
+          paths: ui.tar
 
   cypress_e2e_test:
     machine:
@@ -150,8 +163,15 @@ jobs:
       - fetch_docker_image:
           image: nginx-auth-proxy
       - run:
-          name: Build the UI application in the background
-          command: (docker rmi ui || true) && ./.circleci/scripts/build-ui.sh
+          name: Generate cache key file
+          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
+      - restore_cache:
+          name: Restore UI docker image from cache
+          keys: 
+            - ui-image-{{ checksum "/tmp/circle_workflow_id" }}
+      - run:
+          name: Load UI docker image
+          command: docker load < ui.tar
           background: true
       - run:
           name: Install Cypress
@@ -263,8 +283,15 @@ jobs:
       - fetch_docker_image:
           image: beanconnect
       - run:
-          name: Build the UI application in the background
-          command: (docker rmi ui || true) && ./.circleci/scripts/build-ui.sh
+          name: Generate cache key file
+          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
+      - restore_cache:
+          name: Restore UI docker image from cache
+          keys: 
+            - ui-image-{{ checksum "/tmp/circle_workflow_id" }}
+      - run:
+          name: Load UI docker image
+          command: docker load < ui.tar
           background: true
       - run:
           name: Wait for docker images
@@ -314,6 +341,10 @@ workflows:
       - unit_test
       - integration_test
       - cypress_component_test
-      # - build_ui_image
-      - cypress_e2e_test
-      - e2e_test
+      - build_ui_image
+      - cypress_e2e_test:
+          requires:
+            - build_ui_image
+      - e2e_test:
+          requires:
+            - build_ui_image
