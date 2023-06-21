@@ -27,7 +27,7 @@ describe("courtCasesByVisibleCourtsQuery", () => {
     }
   })
 
-  it("should return a list of cases when the court code is an exact match", async () => {
+  it("Should return a list of cases when the court code is an exact match", async () => {
     const courtCodes = ["3", "36", "36AAAA"]
     await insertCourtCasesWithFields(courtCodes.map((courtCode) => ({ courtCode: courtCode })))
 
@@ -43,7 +43,7 @@ describe("courtCasesByVisibleCourtsQuery", () => {
     expect(cases[0].courtCode).toEqual("36AAAA")
   })
 
-  it("should show cases for all courts visible to a user where the beginning of the code matches", async () => {
+  it("Should show cases for all courts visible to a user where the beginning of the code matches", async () => {
     const courtCodesForVisibleCourts = ["36F   ", "36FP  ", "13GH  ", "13GHA "]
     const otherCourtCodes = ["36", "13", "12LK"]
 
@@ -64,7 +64,7 @@ describe("courtCasesByVisibleCourtsQuery", () => {
     expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([0, 1, 2, 3]))
   })
 
-  it("should show no cases to a user with no visible courts", async () => {
+  it("Should show no cases to a user with no visible courts", async () => {
     const courtCodesForNoVisibleCases = ["36", "36F", "36FP", "36FPA"]
     await insertCourtCasesWithFields(courtCodesForNoVisibleCases.map((courtCode) => ({ courtCode: courtCode })))
 
@@ -78,7 +78,7 @@ describe("courtCasesByVisibleCourtsQuery", () => {
     expect(cases).toHaveLength(0)
   })
 
-  it("should update visible cases when its an update query", async () => {
+  it("Should update visible cases when its an update query", async () => {
     const courtCodesForVisibleCourts = ["013", "013A", "013B", "014"]
     await insertCourtCasesWithFields(courtCodesForVisibleCourts.map((courtCode) => ({ courtCode: courtCode })))
 

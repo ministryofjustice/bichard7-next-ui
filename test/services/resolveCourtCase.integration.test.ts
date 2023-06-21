@@ -62,7 +62,7 @@ describe("resolveCourtCase", () => {
     await dataSource.destroy()
   })
 
-  it("should call cases by organisation unit query", async () => {
+  it("Should call cases by organisation unit query", async () => {
     const [courtCase] = await insertCourtCasesWithFields([
       {
         errorLockedByUsername: resolverUsername,
@@ -433,7 +433,7 @@ describe("resolveCourtCase", () => {
       ])
     })
 
-    it("should return the error if fails to create notes", async () => {
+    it("Should return the error if fails to create notes", async () => {
       ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
 
       let result
@@ -450,7 +450,7 @@ describe("resolveCourtCase", () => {
       expectToBeUnresolved(actualCourtCase)
     })
 
-    it("should return the error if fails to unlock the case", async () => {
+    it("Should return the error if fails to unlock the case", async () => {
       ;(unlockCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Error while unlocking the case`))
 
       let result
@@ -468,7 +468,7 @@ describe("resolveCourtCase", () => {
       expectToBeUnresolved(actualCourtCase)
     })
 
-    it("should return the error when fails to update the case", async () => {
+    it("Should return the error when fails to update the case", async () => {
       jest
         .spyOn(UpdateQueryBuilder.prototype, "execute")
         .mockRejectedValue(Error("Failed to update record with some error"))

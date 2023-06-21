@@ -43,7 +43,7 @@ describe("court case reference", () => {
     ).toBe(true)
   })
 
-  it("should set court case reference to null if there is no value", () => {
+  it("Should set court case reference to null if there is no value", () => {
     amendCourtCaseReference(
       [
         {
@@ -59,7 +59,7 @@ describe("court case reference", () => {
     ).toEqual(null)
   })
 
-  it("should amend court case reference on multiple offences", () => {
+  it("Should amend court case reference on multiple offences", () => {
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
       cloneDeep(dummyOffence),
       cloneDeep(dummyOffence),

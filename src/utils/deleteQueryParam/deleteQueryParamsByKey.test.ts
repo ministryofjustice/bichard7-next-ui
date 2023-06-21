@@ -17,16 +17,16 @@ describe("deleteQueryParams", () => {
     expect(deleteQueryParamsByKey(["defendant"], query)).toStrictEqual(expectedQuery)
   })
 
-  it("should not modify query when deleting a parameter that does not exist", () => {
+  it("Should not modify query when deleting a parameter that does not exist", () => {
     expect(deleteQueryParamsByKey(["invalid key"], query)).toStrictEqual(query)
   })
 
-  it("should delete a named parameter with multiple values", () => {
+  it("Should delete a named parameter with multiple values", () => {
     expectedQuery.append("defendant", "Name")
     expect(deleteQueryParamsByKey(["type"], query)).toStrictEqual(expectedQuery)
   })
 
-  it("should delete multiple named parameters", () => {
+  it("Should delete multiple named parameters", () => {
     expect(deleteQueryParamsByKey(["type", "defendant"], query)).toStrictEqual(expectedQuery)
   })
 })

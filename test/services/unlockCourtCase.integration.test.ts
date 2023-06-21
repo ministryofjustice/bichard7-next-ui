@@ -28,7 +28,7 @@ describe("lock court case", () => {
   })
 
   describe("when user has permission to unlock a case", () => {
-    it("should unlock a locked court case", async () => {
+    it("Should unlock a locked court case", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = {
         errorLockedByUsername: lockedByName,
@@ -67,7 +67,7 @@ describe("lock court case", () => {
       expect(anotherCourtCase.triggerLockedByUsername).toEqual(lockedByName)
     })
 
-    it("should unlock exceptions lock of a court case", async () => {
+    it("Should unlock exceptions lock of a court case", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = await getDummyCourtCase({
         errorLockedByUsername: lockedByName,
@@ -93,7 +93,7 @@ describe("lock court case", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
     })
 
-    it("should unlock triggers lock of a court case", async () => {
+    it("Should unlock triggers lock of a court case", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = await getDummyCourtCase({
         errorLockedByUsername: lockedByName,
@@ -119,7 +119,7 @@ describe("lock court case", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
     })
 
-    it("should unlock exception only when 'reasonToUnlock' specified", async () => {
+    it("Should unlock exception only when 'reasonToUnlock' specified", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = await getDummyCourtCase({
         errorLockedByUsername: lockedByName,
@@ -145,7 +145,7 @@ describe("lock court case", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
     })
 
-    it("should unlock trigger only when 'reasonToUnlock' specified", async () => {
+    it("Should unlock trigger only when 'reasonToUnlock' specified", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = await getDummyCourtCase({
         errorLockedByUsername: lockedByName,
@@ -355,7 +355,7 @@ describe("lock court case", () => {
   })
 
   describe("when there is an error", () => {
-    it("should return the error when failed to unlock court case", async () => {
+    it("Should return the error when failed to unlock court case", async () => {
       jest
         .spyOn(UpdateQueryBuilder.prototype, "execute")
         .mockRejectedValue(Error("Failed to update record with some error"))
