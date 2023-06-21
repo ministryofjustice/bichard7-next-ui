@@ -183,7 +183,6 @@ jobs:
           image: user-service
       - fetch_docker_image:
           image: nginx-auth-proxy
-      - run_audit_logging
       - run:
           name: Generate cache key file
           command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
@@ -227,6 +226,7 @@ jobs:
           working_directory: ~/bichard7-next
           command: make run-ui
           background: true
+      - run_audit_logging
       - run:
           name: Wait for UI to start
           command: STATUS_CODE=401 npx wait-on --config ./.circleci/config/wait-for-status.js https://localhost:4080/bichard
