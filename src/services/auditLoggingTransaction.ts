@@ -3,16 +3,17 @@ import { DataSource, EntityManager } from "typeorm"
 import PromiseResult from "types/PromiseResult"
 import fetch from "node-fetch"
 import { AUDIT_LOG_API_URL } from "../config"
+import type TransactionalOperations from "types/TransactionalOperations"
 
 export async function auditLoggingTransaction(
   dataSource: DataSource | EntityManager,
   messageId: string,
-  transaction: (events: AuditLogEvent[], entityManager: EntityManager) => Promise<void>
+  transactionalOperations: TransactionalOperations
 ): PromiseResult<void> {
   const events: AuditLogEvent[] = []
 
   return dataSource.transaction("SERIALIZABLE", async (entityManager) => {
-    const result = await transaction(events, entityManager)
+    const result = await transactionalOperations(events, entityManager)
 
     if (events.length === 0) {
       return result
