@@ -60,7 +60,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
       await resolveCourtCase(
         dataSource,
-        courtCase.errorId,
+        courtCase,
         { reason: reason as ResolutionReasonKey, reasonText: reasonText ?? "" },
         currentUser
       )
