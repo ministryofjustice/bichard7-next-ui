@@ -8,12 +8,16 @@ import resolveCourtCase from "../../src/services/resolveCourtCase"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { differenceInMilliseconds } from "date-fns"
-import { ManualResolution } from "types/ManualResolution"
+import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 import insertNotes from "services/insertNotes"
 import unlockCourtCase from "services/unlockCourtCase"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import createAuditLog from "../helpers/createAuditLog"
+import { AUDIT_LOG_API_URL } from "../../src/config"
+import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import fetch from "node-fetch"
+import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
@@ -56,6 +60,8 @@ describe("resolveCourtCase", () => {
 
   beforeEach(async () => {
     await deleteFromEntity(CourtCase)
+    await deleteFromDynamoTable("auditLogTable", "messageId")
+    await deleteFromDynamoTable("auditLogEventsTable", "_id")
   })
 
   afterAll(async () => {
@@ -87,17 +93,16 @@ describe("resolveCourtCase", () => {
 
   describe("When there aren't any unresolved triggers", () => {
     it("Should resolve a case and populate a resolutionTimestamp", async () => {
-      const auditLog = await createAuditLog()
       const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
           orgForPoliceFilter: visibleForce,
           errorStatus: "Unresolved",
-          errorCount: 4,
-          messageId: auditLog.messageId
+          errorCount: 4
         }
       ])
+      await createAuditLog(courtCase.messageId)
 
       const resolution: ManualResolution = {
         reason: "NonRecordable",
@@ -148,6 +153,26 @@ describe("resolveCourtCase", () => {
         `${resolverUsername}: Portal Action: Record Manually Resolved.` +
           ` Reason: ${resolution.reason}. Reason Text: ${resolution.reasonText}`
       )
+
+      // Creates audit log events
+      const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${courtCase.messageId}`)
+      const [{ events }] = (await apiResult.json()) as [{ events: AuditLogEvent[] }]
+
+      expect(events).toStrictEqual([
+        {
+          attributes: {
+            auditLogVersion: 2,
+            resolutionReasonCode: ResolutionReasonCode[resolution.reason],
+            resolutionReasonText: resolution.reasonText
+          },
+          category: "information",
+          eventSource: "Bichard New UI",
+          eventType: "Exception marked as resolved by user",
+          eventCode: "exceptions.resolved",
+          user: resolverUsername,
+          timestamp: expect.anything()
+        }
+      ])
     })
 
     it("Should only resolve the case that matches the case id", async () => {
@@ -171,6 +196,8 @@ describe("resolveCourtCase", () => {
           errorCount: 1
         }
       ])
+
+      await createAuditLog(firstCourtCase.messageId)
 
       const resolution: ManualResolution = {
         reason: "NonRecordable"
@@ -292,6 +319,8 @@ describe("resolveCourtCase", () => {
         }
       ])
 
+      await createAuditLog(courtCase.messageId)
+
       let result = await resolveCourtCase(
         dataSource,
         courtCase,
@@ -318,9 +347,9 @@ describe("resolveCourtCase", () => {
   })
 
   describe("When there are unresolved triggers", () => {
-    let courtCases: CourtCase[] = []
+    let courtCase: CourtCase
     beforeEach(async () => {
-      courtCases = await insertCourtCasesWithFields([
+      ;[courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
@@ -337,6 +366,7 @@ describe("resolveCourtCase", () => {
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
       await insertTriggers(0, [trigger])
+      await createAuditLog(courtCase.messageId)
     })
 
     it("Should resolve a case without setting a resolutionTimestamp", async () => {
@@ -344,7 +374,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
+      const result = await resolveCourtCase(dataSource, courtCase, resolution, user)
 
       expect(isError(result)).toBeFalsy()
 
