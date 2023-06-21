@@ -6,6 +6,7 @@ import unlockCourtCase from "../../src/services/unlockCourtCase"
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
+import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 
 describe("lock court case", () => {
   let dataSource: DataSource
@@ -53,7 +54,8 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, 1, user)
+      const events: AuditLogEvent[] = []
+      const result = await unlockCourtCase(dataSource, 1, user, undefined, events)
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 1 } })
@@ -65,6 +67,19 @@ describe("lock court case", () => {
       const anotherCourtCase = anotherRecord as CourtCase
       expect(anotherCourtCase.errorLockedByUsername).toEqual(lockedByName)
       expect(anotherCourtCase.triggerLockedByUsername).toEqual(lockedByName)
+      expect(events).toStrictEqual([
+        {
+          category: "information",
+          eventSource: "Bichard New UI",
+          eventType: "Exception unlocked",
+          timestamp: expect.anything(),
+          attributes: {
+            user: user.username,
+            auditLogVersion: 2,
+            eventCode: "exceptions.unlocked"
+          }
+        } as AuditLogEvent
+      ])
     })
 
     it("Should unlock exceptions lock of a court case", async () => {
