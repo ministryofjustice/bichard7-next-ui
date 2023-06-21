@@ -29,7 +29,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     }
   })
 
-  it("should remove a leading 0 from a the users visible force", async () => {
+  it("Should remove a leading 0 from a the users visible force", async () => {
     const expectedPtiurn = "0123"
     await insertCourtCasesWithFields([{ orgForPoliceFilter: "93YZ", ptiurn: expectedPtiurn }])
 
@@ -44,7 +44,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     expect(cases[0].ptiurn).toEqual(expectedPtiurn)
   })
 
-  it("should return a list of cases when the force code length is 1", async () => {
+  it("Should return a list of cases when the force code length is 1", async () => {
     const orgCodesForceCodeLen1 = [
       "3",
       "36",
@@ -77,7 +77,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([0, 1, 2, 3, 4, 5, 6, 7]))
   })
 
-  it("should return a list of cases when the force code length is 2", async () => {
+  it("Should return a list of cases when the force code length is 2", async () => {
     await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
     const result = await (courtCasesByVisibleForcesQuery(query, ["36"]) as SelectQueryBuilder<CourtCase>)
@@ -94,7 +94,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([0, 1, 2, 3, 4, 5]))
   })
 
-  it("should return a list of cases when the force code length is 3", async () => {
+  it("Should return a list of cases when the force code length is 3", async () => {
     await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
     const result = await (courtCasesByVisibleForcesQuery(query, ["36F"]) as SelectQueryBuilder<CourtCase>)
@@ -111,7 +111,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([1, 2, 3, 4, 5]))
   })
 
-  it("should return a list of cases when the force code length is 4", async () => {
+  it("Should return a list of cases when the force code length is 4", async () => {
     await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
     const result = await (courtCasesByVisibleForcesQuery(query, ["36FP"]) as SelectQueryBuilder<CourtCase>)
@@ -176,7 +176,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([2, 3, 4]))
   })
 
-  it("should show cases for all forces visible to a user", async () => {
+  it("Should show cases for all forces visible to a user", async () => {
     const orgCodesForAllVisibleForces = [
       "36",
       "36F",
@@ -215,7 +215,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     expect(cases.map((c) => c.errorId)).toEqual(expect.arrayContaining([2, 3, 4, 13, 14, 15, 16, 17]))
   })
 
-  it("should show no cases to a user with no visible forces", async () => {
+  it("Should show no cases to a user with no visible forces", async () => {
     const orgCodesForNoVisibleCases = [
       "36",
       "36F",
@@ -248,7 +248,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     expect(cases).toHaveLength(0)
   })
 
-  it("should update visible cases when its an update query", async () => {
+  it("Should update visible cases when its an update query", async () => {
     const orgCodesForVisibleForceLen5 = ["12GH", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC", "13BR", "14AT"]
     await insertCourtCasesWithFields(orgCodesForVisibleForceLen5.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 

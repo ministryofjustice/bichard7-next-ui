@@ -45,7 +45,7 @@ describe("listCourtCases", () => {
     MockDate.reset()
   })
 
-  it("should call cases by visible forces query", async () => {
+  it("Should call cases by visible forces query", async () => {
     const user = { visibleCourts: [], visibleForces: [orgCode] } as Partial<User> as User
     await getCountOfCasesByCaseAge(dataSource, user)
 
