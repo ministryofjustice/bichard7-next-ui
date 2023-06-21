@@ -8,6 +8,7 @@ import fetch from "node-fetch"
 import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import createAuditLog from "../helpers/createAuditLog"
 import type TransactionalOperations from "types/TransactionalOperations"
+import { AUDIT_LOG_API_URL } from "../../src/config"
 
 const testTransactionalOperations =
   (expectedEvents: AuditLogEvent[], groupName?: string): TransactionalOperations =>
@@ -43,7 +44,7 @@ describe("auditLoggingTransaction", () => {
 
     expect(isError(result)).toBeFalsy()
 
-    const apiResult = await fetch(`http://localhost:3010/messages/${auditLog.messageId}`)
+    const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${auditLog.messageId}`)
     const [{ events }] = (await apiResult.json()) as [{ events: AuditLogEvent[] }]
 
     expect(events).toStrictEqual([
@@ -111,7 +112,7 @@ describe("auditLoggingTransaction", () => {
     expect(isError(result)).toBeTruthy()
     expect((result as Error).message).toBe("Dummy error")
 
-    const apiResult = await fetch(`http://localhost:3010/messages/${auditLog.messageId}`)
+    const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${auditLog.messageId}`)
     const [{ events }] = (await apiResult.json()) as [{ events: AuditLogEvent[] }]
 
     expect(events).toHaveLength(0)
