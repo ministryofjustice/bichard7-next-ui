@@ -2,6 +2,7 @@ import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src
 import { DataSource, EntityManager } from "typeorm"
 import PromiseResult from "types/PromiseResult"
 import fetch from "node-fetch"
+import { AUDIT_LOG_API_URL } from "../config"
 
 export async function auditLoggingTransaction(
   dataSource: DataSource | EntityManager,
@@ -13,7 +14,11 @@ export async function auditLoggingTransaction(
   return dataSource.transaction("SERIALIZABLE", async (entityManager) => {
     const result = await transaction(events, entityManager)
 
-    const response = await fetch(`http://localhost:3010/messages/${messageId}/events`, {
+    if (events.length === 0) {
+      return result
+    }
+
+    const response = await fetch(`${AUDIT_LOG_API_URL}/messages/${messageId}/events`, {
       method: "POST",
       body: JSON.stringify(events)
     })

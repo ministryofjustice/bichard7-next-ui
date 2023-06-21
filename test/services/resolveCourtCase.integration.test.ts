@@ -13,6 +13,7 @@ import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 import insertNotes from "services/insertNotes"
 import unlockCourtCase from "services/unlockCourtCase"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
+import createAuditLog from "../helpers/createAuditLog"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
@@ -62,28 +63,39 @@ describe("resolveCourtCase", () => {
   })
 
   it("should call cases by organisation unit query", async () => {
+    const [courtCase] = await insertCourtCasesWithFields([
+      {
+        errorLockedByUsername: resolverUsername,
+        triggerLockedByUsername: resolverUsername,
+        orgForPoliceFilter: visibleForce,
+        errorStatus: "Unresolved",
+        errorCount: 4
+      }
+    ])
     await resolveCourtCase(
       dataSource,
-      0,
+      courtCase,
       {
         reason: "NonRecordable"
       },
       user
     ).catch((error) => error)
 
-    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
+    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(2)
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
   })
 
   describe("When there aren't any unresolved triggers", () => {
     it("Should resolve a case and populate a resolutionTimestamp", async () => {
-      await insertCourtCasesWithFields([
+      const auditLog = await createAuditLog()
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
           orgForPoliceFilter: visibleForce,
           errorStatus: "Unresolved",
-          errorCount: 4
+          errorCount: 4,
+          messageId: auditLog.messageId
         }
       ])
 
@@ -103,7 +115,7 @@ describe("resolveCourtCase", () => {
       expect(beforeCourtCase.errorResolvedTimestamp).toBeNull()
       expect(beforeCourtCase.resolutionTimestamp).toBeNull()
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      const result = await resolveCourtCase(dataSource, courtCase, resolution, user)
 
       expect(isError(result)).toBeFalsy()
 
@@ -141,7 +153,7 @@ describe("resolveCourtCase", () => {
     it("Should only resolve the case that matches the case id", async () => {
       const firstCaseId = 0
       const secondCaseId = 1
-      await insertCourtCasesWithFields([
+      const [firstCourtCase] = await insertCourtCasesWithFields([
         {
           errorId: firstCaseId,
           errorLockedByUsername: resolverUsername,
@@ -164,7 +176,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, firstCaseId, resolution, user)
+      const result = await resolveCourtCase(dataSource, firstCourtCase, resolution, user)
       expect(isError(result)).toBeFalsy()
 
       const records = await dataSource
@@ -184,7 +196,7 @@ describe("resolveCourtCase", () => {
 
     it("Should only resolve the case that matches the organisation unit", async () => {
       const caseId = 0
-      await insertCourtCasesWithFields([
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           errorId: caseId,
           errorLockedByUsername: resolverUsername,
@@ -199,7 +211,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, caseId, resolution, user).catch((error) => error)
+      const result = await resolveCourtCase(dataSource, courtCase, resolution, user).catch((error) => error)
       expect((result as Error).message).toEqual("Failed to resolve case")
 
       const records = await dataSource
@@ -216,7 +228,7 @@ describe("resolveCourtCase", () => {
 
     it("Should not resolve a case when the case is locked by another user", async () => {
       const anotherUser = "Another User"
-      await insertCourtCasesWithFields([
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: anotherUser,
           triggerLockedByUsername: anotherUser,
@@ -230,7 +242,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user).catch((error) => error)
+      const result = await resolveCourtCase(dataSource, courtCase, resolution, user).catch((error) => error)
       expect(isError(result)).toBeTruthy()
       expect((result as Error).message).toEqual("Failed to resolve case")
 
@@ -243,7 +255,7 @@ describe("resolveCourtCase", () => {
     })
 
     it("Should not resolve a case when the case is not locked", async () => {
-      await insertCourtCasesWithFields([
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: null,
           triggerLockedByUsername: null,
@@ -257,7 +269,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user).catch((error) => error)
+      const result = await resolveCourtCase(dataSource, courtCase, resolution, user).catch((error) => error)
       expect(isError(result)).toBeTruthy()
       expect((result as Error).message).toEqual("Failed to resolve case")
 
@@ -270,7 +282,7 @@ describe("resolveCourtCase", () => {
     })
 
     it("Should return the error when the resolution reason is 'Reallocated' but reasonText is not provided", async () => {
-      await insertCourtCasesWithFields([
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
@@ -282,7 +294,7 @@ describe("resolveCourtCase", () => {
 
       let result = await resolveCourtCase(
         dataSource,
-        0,
+        courtCase,
         {
           reason: "Reallocated",
           reasonText: undefined
@@ -294,7 +306,7 @@ describe("resolveCourtCase", () => {
 
       result = await resolveCourtCase(
         dataSource,
-        0,
+        courtCase,
         {
           reason: "Reallocated",
           reasonText: "Text provided"
@@ -306,8 +318,9 @@ describe("resolveCourtCase", () => {
   })
 
   describe("When there are unresolved triggers", () => {
+    let courtCases: CourtCase[] = []
     beforeEach(async () => {
-      await insertCourtCasesWithFields([
+      courtCases = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
@@ -331,7 +344,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
 
       expect(isError(result)).toBeFalsy()
 
@@ -356,8 +369,9 @@ describe("resolveCourtCase", () => {
   })
 
   describe("When there are triggers but no errors on a case", () => {
+    let courtCases: CourtCase[] = []
     beforeEach(async () => {
-      await insertCourtCasesWithFields([
+      courtCases = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
@@ -381,7 +395,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user).catch((error) => error)
+      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch((error) => error)
 
       expect(isError(result)).toBeTruthy()
 
@@ -402,12 +416,13 @@ describe("resolveCourtCase", () => {
   })
 
   describe("when there is an unexpected error", () => {
+    let courtCases: CourtCase[] = []
     const resolution: ManualResolution = {
       reason: "NonRecordable"
     }
 
     beforeEach(async () => {
-      await insertCourtCasesWithFields([
+      courtCases = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
@@ -423,7 +438,7 @@ describe("resolveCourtCase", () => {
 
       let result
       try {
-        result = await resolveCourtCase(dataSource, 0, resolution, user)
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
       } catch (error) {
         result = error as Error
       }
@@ -440,7 +455,7 @@ describe("resolveCourtCase", () => {
 
       let result
       try {
-        result = await resolveCourtCase(dataSource, 0, resolution, user)
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
       } catch (error) {
         result = error as Error
       }
@@ -460,7 +475,7 @@ describe("resolveCourtCase", () => {
 
       let result
       try {
-        result = await resolveCourtCase(dataSource, 0, resolution, user)
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
       } catch (error) {
         result = error as Error
       }
