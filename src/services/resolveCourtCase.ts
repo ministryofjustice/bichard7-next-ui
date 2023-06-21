@@ -12,16 +12,10 @@ import { auditLoggingTransaction } from "./auditLoggingTransaction"
 
 const resolveCourtCase = async (
   dataSource: DataSource | EntityManager,
-  courtCaseId: number,
+  courtCase: CourtCase,
   resolution: ManualResolution,
   user: User
 ): Promise<void> => {
-  const courtCase = await dataSource.getRepository(CourtCase).findOneByOrFail({ errorId: courtCaseId })
-
-  if (!courtCase) {
-    throw new Error("Failed to resolve, case not found!")
-  }
-
   await auditLoggingTransaction(dataSource, courtCase.messageId, async (_, entityManager) => {
     const resolutionError = validateManualResolution(resolution).error
 
@@ -45,7 +39,7 @@ const resolveCourtCase = async (
       (
         await entityManager.getRepository(Trigger).find({
           where: {
-            errorId: courtCaseId,
+            errorId: courtCase.errorId,
             status: Not("Resolved")
           }
         })
@@ -57,7 +51,7 @@ const resolveCourtCase = async (
 
     query.set(queryParams)
     query.andWhere({
-      errorId: courtCaseId,
+      errorId: courtCase.errorId,
       errorLockedByUsername: resolver,
       errorCount: MoreThan(0),
       errorStatus: "Unresolved"
@@ -69,7 +63,7 @@ const resolveCourtCase = async (
       throw new Error("Failed to resolve case")
     }
 
-    const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, user)
+    const unlockResult = await unlockCourtCase(entityManager, courtCase.errorId, user)
     if (isError(unlockResult)) {
       throw unlockResult
     }
@@ -79,7 +73,7 @@ const resolveCourtCase = async (
         noteText:
           `${resolver}: Portal Action: Record Manually Resolved.` +
           ` Reason: ${resolution.reason}. Reason Text: ${resolution.reasonText}`,
-        errorId: courtCaseId,
+        errorId: courtCase.errorId,
         userId: "System"
       }
     ])
