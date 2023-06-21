@@ -1,7 +1,7 @@
 import { DataSource, EntityManager, MoreThan, Not, UpdateQueryBuilder } from "typeorm"
 import { isError } from "types/Result"
 import User from "./entities/User"
-import { ManualResolution } from "types/ManualResolution"
+import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import CourtCase from "./entities/CourtCase"
 import unlockCourtCase from "./unlockCourtCase"
 import insertNotes from "./insertNotes"
@@ -9,6 +9,7 @@ import Trigger from "./entities/Trigger"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
 import { auditLoggingTransaction } from "./auditLoggingTransaction"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 
 const resolveCourtCase = async (
   dataSource: DataSource | EntityManager,
@@ -16,7 +17,7 @@ const resolveCourtCase = async (
   resolution: ManualResolution,
   user: User
 ): Promise<void> => {
-  await auditLoggingTransaction(dataSource, courtCase.messageId, async (_, entityManager) => {
+  await auditLoggingTransaction(dataSource, courtCase.messageId, async (events, entityManager) => {
     const resolutionError = validateManualResolution(resolution).error
 
     if (resolutionError) {
@@ -81,6 +82,16 @@ const resolveCourtCase = async (
     if (isError(addNoteResult)) {
       throw addNoteResult
     }
+
+    events?.push(
+      getAuditLogEvent("information", "Exception marked as resolved by user", "Bichard New UI", {
+        user: user.username,
+        auditLogVersion: 2,
+        eventCode: "exceptions.resolved",
+        resolutionReasonCode: ResolutionReasonCode[resolution.reason],
+        resolutionReasonText: resolution.reasonText
+      })
+    )
   })
 }
 
