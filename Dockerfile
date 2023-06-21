@@ -49,9 +49,6 @@ COPY --from=app_builder /src/ui/.next/static ./.next/static
 COPY --from=app_builder \
         /src/ui/.next/standalone/node_modules/@moj-bichard7-developers/bichard7-next-data \ 
         ./node_modules/@moj-bichard7-developers/bichard7-next-core/node_modules/bichard7-next-data-latest
-COPY --from=app_builder \
-        /src/ui/.next/standalone/node_modules/@moj-bichard7-developers/bichard7-next-data \ 
-        ./node_modules/bichard7-next-data-latest
 
 COPY docker/conf/nginx.conf /etc/nginx/nginx.conf
 COPY docker/conf/supervisord.conf /etc/supervisord.conf
