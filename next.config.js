@@ -3,6 +3,7 @@ const nextConfig = {
   assetPrefix: "/bichard/",
   reactStrictMode: true,
   transpilePackages: ["hex-rgb", "is-plain-obj"],
+  output: "standalone",
   async rewrites() {
     return [
       {
