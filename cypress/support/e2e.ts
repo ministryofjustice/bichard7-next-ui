@@ -23,3 +23,9 @@ import "@testing-library/cypress/add-commands"
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+beforeEach(() => {
+  cy.intercept("POST", "http://localhost:3010/*", {
+    statusCode: 201
+  })
+})
