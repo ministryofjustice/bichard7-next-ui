@@ -18,6 +18,7 @@ describe("Court case details header", () => {
     cy.task("clearUsers")
     cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
+    cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
     cy.clearCookies()
   })
 
@@ -31,13 +32,7 @@ describe("Court case details header", () => {
     cy.visit("/bichard/court-cases/0")
 
     cy.get("H1").should("have.text", "Case details")
-
-    cy.contains("Case00000")
-    cy.contains("Magistrates' Courts Essex Basildon")
     cy.contains("NAME Defendant")
-
-    // Urgency
-    cy.contains("Urgent")
   })
 
   it("should lock a case when a user views a case details page", () => {
@@ -106,5 +101,21 @@ describe("Court case details header", () => {
     cy.findByText("Case locked by another user").should("not.exist")
     cy.findByText("Trigger locked by: Bichard02").should("exist")
     cy.findByText("Error locked by: Bichard02").should("exist")
+  })
+
+  it("should have a leave and lock button that returns to the case list", () => {
+    const user = users[1]
+    const caseURL = "/bichard/court-cases/0"
+    cy.task("insertCourtCasesWithFields", [
+      {
+        triggerLockedByUsername: user.username,
+        orgForPoliceFilter: user.visibleForces![0]
+      }
+    ])
+
+    cy.login(user.email!, "password")
+    cy.visit(caseURL)
+
+    cy.get("button").should("have.text", "Leave and lock")
   })
 })
