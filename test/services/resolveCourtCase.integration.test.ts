@@ -157,37 +157,38 @@ describe("resolveCourtCase", () => {
       const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${courtCase.messageId}`)
       const auditLogs = (await apiResult.json()) as [{ events: [{ timestamp: string; eventCode: string }] }]
       const events = auditLogs[0].events
+      const unlockedEvent = events.find((event) => event.eventCode === "exceptions.unlocked")
+      const resolvedEvent = events.find((event) => event.eventCode === "exceptions.resolved")
 
-      expect(events).toStrictEqual([
-        {
-          attributes: {
-            auditLogVersion: 2,
-            resolutionReasonCode: ResolutionReasonCode[resolution.reason],
-            resolutionReasonText: resolution.reasonText
-          },
-          category: "information",
-          eventSource: "Bichard New UI",
-          eventType: "Exception marked as resolved by user",
-          eventCode: "exceptions.resolved",
-          user: resolverUsername,
-          timestamp: expect.anything()
-        },
-        {
-          category: "information",
-          eventSource: "Bichard New UI",
-          eventType: "Exception unlocked",
-          timestamp: expect.anything(),
-          user: resolverUsername,
-          eventCode: "exceptions.unlocked",
-          attributes: {
-            auditLogVersion: 2
-          }
+      expect(unlockedEvent).toStrictEqual({
+        category: "information",
+        eventSource: "Bichard New UI",
+        eventType: "Exception unlocked",
+        timestamp: expect.anything(),
+        user: resolverUsername,
+        eventCode: "exceptions.unlocked",
+        attributes: {
+          auditLogVersion: 2
         }
-      ])
+      })
 
-      const unlockedEventDate = new Date(events.find((event) => event.eventCode === "exceptions.unlocked")!.timestamp)
-      const resolvedEventDate = new Date(events.find((event) => event.eventCode === "exceptions.resolved")!.timestamp)
-      expect(unlockedEventDate.getTime()).toBeGreaterThanOrEqual(resolvedEventDate.getTime())
+      expect(resolvedEvent).toStrictEqual({
+        attributes: {
+          auditLogVersion: 2,
+          resolutionReasonCode: ResolutionReasonCode[resolution.reason],
+          resolutionReasonText: resolution.reasonText
+        },
+        category: "information",
+        eventSource: "Bichard New UI",
+        eventType: "Exception marked as resolved by user",
+        eventCode: "exceptions.resolved",
+        user: resolverUsername,
+        timestamp: expect.anything()
+      })
+
+      expect(new Date(unlockedEvent!.timestamp).getTime()).toBeGreaterThanOrEqual(
+        new Date(resolvedEvent!.timestamp).getTime()
+      )
     })
 
     it("Should only resolve the case that matches the case id", async () => {
