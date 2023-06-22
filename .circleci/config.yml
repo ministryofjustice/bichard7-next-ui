@@ -219,13 +219,9 @@ jobs:
           working_directory: ~/bichard7-next
           command: make run-ui
           background: true
-      - run_audit_logging
       - run:
           name: Wait for UI to start
           command: STATUS_CODE=401 npx wait-on --config ./.circleci/config/wait-for-status.js https://localhost:4080/bichard
-      - run:
-          name: Wait for Audit logging API to start
-          command: STATUS_CODE=200 npx wait-on --config ./.circleci/config/wait-for-status.js http://localhost:3010/messages
       - run:
           name: Run UI tests
           command: TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX ./scripts/run-ui-tests-chunk.sh
