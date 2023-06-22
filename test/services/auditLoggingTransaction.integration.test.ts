@@ -8,7 +8,9 @@ import fetch from "node-fetch"
 import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import createAuditLog from "../helpers/createAuditLog"
 import type TransactionalOperations from "types/TransactionalOperations"
-import { AUDIT_LOG_API_URL } from "../../src/config"
+import { AUDIT_LOG_API_KEY, AUDIT_LOG_API_URL } from "../../src/config"
+
+jest.mock("node-fetch")
 
 const testTransactionalOperations =
   (expectedEvents: AuditLogEvent[], groupName?: string): TransactionalOperations =>
@@ -29,6 +31,12 @@ describe("auditLoggingTransaction", () => {
 
   afterAll(async () => {
     await dataSource.destroy()
+  })
+
+  beforeEach(() => {
+    jest.resetAllMocks()
+    jest.clearAllMocks()
+    ;(fetch as unknown as jest.Mock).mockImplementation(jest.requireActual("node-fetch").default)
   })
 
   it("Should update postgres and dynamoDB", async () => {
@@ -116,5 +124,25 @@ describe("auditLoggingTransaction", () => {
     const [{ events }] = (await apiResult.json()) as [{ events: AuditLogEvent[] }]
 
     expect(events).toHaveLength(0)
+  })
+
+  it("should pass through the api key as a header", async () => {
+    ;(fetch as unknown as jest.Mock).mockImplementation(() => {
+      return { ok: true }
+    })
+
+    const result = await auditLoggingTransaction(
+      dataSource,
+      "dummy_key",
+      testTransactionalOperations([{} as AuditLogEvent])
+    ).catch((error) => error)
+
+    expect(isError(result)).toBeFalsy()
+
+    expect(fetch).toBeCalledWith(`${AUDIT_LOG_API_URL}/messages/dummy_key/events`, {
+      body: "[{}]",
+      headers: { "X-API-Key": AUDIT_LOG_API_KEY },
+      method: "POST"
+    })
   })
 })
