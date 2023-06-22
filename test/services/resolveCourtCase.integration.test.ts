@@ -15,7 +15,6 @@ import unlockCourtCase from "services/unlockCourtCase"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import createAuditLog from "../helpers/createAuditLog"
 import { AUDIT_LOG_API_URL } from "../../src/config"
-import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import fetch from "node-fetch"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 
@@ -156,7 +155,8 @@ describe("resolveCourtCase", () => {
 
       // Creates audit log events
       const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${courtCase.messageId}`)
-      const [{ events }] = (await apiResult.json()) as [{ events: AuditLogEvent[] }]
+      const auditLogs = (await apiResult.json()) as [{ events: [{ timestamp: string; eventCode: string }] }]
+      const events = auditLogs[0].events
 
       expect(events).toStrictEqual([
         {
@@ -171,8 +171,23 @@ describe("resolveCourtCase", () => {
           eventCode: "exceptions.resolved",
           user: resolverUsername,
           timestamp: expect.anything()
+        },
+        {
+          category: "information",
+          eventSource: "Bichard New UI",
+          eventType: "Exception unlocked",
+          timestamp: expect.anything(),
+          user: resolverUsername,
+          eventCode: "exceptions.unlocked",
+          attributes: {
+            auditLogVersion: 2
+          }
         }
       ])
+
+      const unlockedEventDate = new Date(events.find((event) => event.eventCode === "exceptions.unlocked")!.timestamp)
+      const resolvedEventDate = new Date(events.find((event) => event.eventCode === "exceptions.resolved")!.timestamp)
+      expect(unlockedEventDate.getTime()).toBeGreaterThanOrEqual(resolvedEventDate.getTime())
     })
 
     it("Should only resolve the case that matches the case id", async () => {

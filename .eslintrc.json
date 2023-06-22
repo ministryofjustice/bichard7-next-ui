@@ -86,7 +86,7 @@
       }
     },
     {
-      "files": ["cypress/**/*.ts", "cypress/**/*.tsx"],
+      "files": ["cypress/**/*.ts", "cypress/**/*.tsx", "**/*.test.*"],
       "extends": ["plugin:cypress/recommended"],
       "rules": {
         "no-console": "off",

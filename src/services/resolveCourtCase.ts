@@ -64,7 +64,17 @@ const resolveCourtCase = async (
       throw new Error("Failed to resolve case")
     }
 
-    const unlockResult = await unlockCourtCase(entityManager, courtCase.errorId, user)
+    events?.push(
+      getAuditLogEvent("information", "Exception marked as resolved by user", "Bichard New UI", {
+        user: user.username,
+        auditLogVersion: 2,
+        eventCode: "exceptions.resolved",
+        resolutionReasonCode: ResolutionReasonCode[resolution.reason],
+        resolutionReasonText: resolution.reasonText
+      })
+    )
+
+    const unlockResult = await unlockCourtCase(entityManager, courtCase.errorId, user, undefined, events)
     if (isError(unlockResult)) {
       throw unlockResult
     }
@@ -82,16 +92,6 @@ const resolveCourtCase = async (
     if (isError(addNoteResult)) {
       throw addNoteResult
     }
-
-    events?.push(
-      getAuditLogEvent("information", "Exception marked as resolved by user", "Bichard New UI", {
-        user: user.username,
-        auditLogVersion: 2,
-        eventCode: "exceptions.resolved",
-        resolutionReasonCode: ResolutionReasonCode[resolution.reason],
-        resolutionReasonText: resolution.reasonText
-      })
-    )
   })
 }
 
