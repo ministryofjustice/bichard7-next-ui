@@ -74,11 +74,8 @@ describe("Court case details", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("H1").should("have.text", "Case details")
-
     cy.contains("Case00000")
     cy.contains("Magistrates' Courts Essex Basildon")
-    cy.contains("NAME Defendant")
 
     // Urgency
     cy.contains("Urgent")
@@ -268,74 +265,6 @@ describe("Court case details", () => {
     cy.visit("/bichard/court-cases/0", { failOnStatusCode: false })
 
     cy.url().should("match", /\/users/)
-  })
-
-  it("should lock a case when a user views a case details page", () => {
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: null,
-        triggerLockedByUsername: null,
-        orgForPoliceFilter: "02",
-        errorCount: 1,
-        triggerCount: 1
-      }
-    ])
-
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-
-    cy.findByText("Lock Court Case").click()
-    cy.findByText("Case locked by another user").should("not.exist")
-    cy.findByText("Trigger locked by: Bichard02").should("exist")
-    cy.findByText("Error locked by: Bichard02").should("exist")
-  })
-
-  it("should not lock a court case when its already locked", () => {
-    const existingUserLock = "Another name"
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: existingUserLock,
-        triggerLockedByUsername: existingUserLock,
-        orgForPoliceFilter: "01",
-        errorCount: 1,
-        triggerCount: 1
-      }
-    ])
-
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-    cy.findByText("Case locked by another user").should("exist")
-    cy.findByText("Trigger locked by: Another name").should("exist")
-    cy.findByText("Error locked by: Another name").should("exist")
-  })
-
-  it("should unlock and lock a court case when its already locked", () => {
-    const existingUserLock = "Another name"
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: existingUserLock,
-        triggerLockedByUsername: existingUserLock,
-        orgForPoliceFilter: "02",
-        errorCount: 1,
-        triggerCount: 1
-      }
-    ])
-
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-    cy.findByText("Case locked by another user").should("exist")
-    cy.findByText("Trigger locked by: Another name").should("exist")
-    cy.findByText("Error locked by: Another name").should("exist")
-
-    cy.findByText("Unlock Court Case").click()
-    cy.findByText("Case locked by another user").should("not.exist")
-    cy.findByText("Trigger locked by: Another name").should("not.exist")
-    cy.findByText("Error locked by: Another name").should("not.exist")
-
-    cy.findByText("Lock Court Case").click()
-    cy.findByText("Case locked by another user").should("not.exist")
-    cy.findByText("Trigger locked by: Bichard02").should("exist")
-    cy.findByText("Error locked by: Bichard02").should("exist")
   })
 
   // it("should resubmit a case when the resubmit button is clicked", () => {

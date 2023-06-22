@@ -12,7 +12,7 @@ interface Props {
 const CourtCaseLock: React.FC<Props> = ({ courtCase, lockedByAnotherUser }) => {
   const { basePath, query } = useRouter()
   const getLockCourtCasePath = (courtCaseId: string, lock: string) =>
-    `${basePath}/court-cases/${courtCaseId}?${new URLSearchParams({ ...query, lock })}`
+    `${basePath}/${new URLSearchParams({ ...query, lock })}`
 
   const isLocked = !!courtCase.errorLockedByUsername || !!courtCase.triggerLockedByUsername
   const lockCourtCasePath = getLockCourtCasePath(String(courtCase.errorId), String(!isLocked))
