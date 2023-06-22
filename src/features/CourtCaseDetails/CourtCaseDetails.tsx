@@ -1,8 +1,7 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
-import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
-import { GridCol, GridRow, Heading } from "govuk-react"
+import { GridCol, GridRow } from "govuk-react"
 import { useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
@@ -18,6 +17,7 @@ import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
 import updateQueryString from "utils/updateQueryString"
 import { CaseInformation } from "./Tabs/Panels/CaseInformation"
+import Header from "./Header"
 
 interface Props {
   courtCase: CourtCase
@@ -86,16 +86,7 @@ const CourtCaseDetails: React.FC<Props> = ({
 
   return (
     <>
-      <Heading as="h1" size="LARGE" className="govuk-!-font-weight-regular">
-        {"Case details"}
-      </Heading>
-      <Heading as="h2" size="MEDIUM" className="govuk-!-font-weight-regular">
-        {courtCase.defendantName}
-        <UrgentBadge
-          isUrgent={courtCase.isUrgent}
-          className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular"
-        />
-      </Heading>
+      <Header courtCase={courtCase} />
       <CourtCaseDetailsSummaryBox
         asn={courtCase.asn}
         courtCode={courtCase.courtCode}
