@@ -40,11 +40,15 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-COPY --from=app_builder /src/ui/node_modules ./node_modules
-COPY --from=app_builder /src/ui/package*.json ./
 COPY --from=app_builder /src/ui/next.config.js ./
+COPY --from=app_builder /src/ui/package*.json ./
 COPY --from=app_builder /src/ui/public ./public
-COPY --from=app_builder --chown=nextjs:nodejs /src/ui/.next ./.next
+COPY --from=app_builder /src/ui/.next/standalone .
+COPY --from=app_builder /src/ui/.next/static ./.next/static
+# Copy standing data package to Core repository as core dependency
+COPY --from=app_builder \
+        /src/ui/.next/standalone/node_modules/@moj-bichard7-developers/bichard7-next-data \ 
+        ./node_modules/@moj-bichard7-developers/bichard7-next-core/node_modules/bichard7-next-data-latest
 
 COPY docker/conf/nginx.conf /etc/nginx/nginx.conf
 COPY docker/conf/supervisord.conf /etc/supervisord.conf
