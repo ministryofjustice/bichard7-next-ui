@@ -1,5 +1,5 @@
 import ConditionalRender from "components/ConditionalRender"
-import { Link, Table } from "govuk-react"
+import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Image from "next/image"
 import { useRouter } from "next/router"
@@ -20,6 +20,7 @@ import CaseUnlockedTag from "features/CourtCaseList/tags/CaseUnlockedTag"
 import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
 import { useCustomStyles } from "../../../../../styles/customStyles"
 import { LOCKED_ICON_URL } from "utils/icons"
+import ActionLink from "components/ActionLink"
 
 interface CaseDetailsRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
@@ -93,8 +94,7 @@ export const CaseDetailsRow = ({
   const caseDetailsCellClass = !hasTriggers && showPreview ? "" : customClasses["border-bottom-none"]
   const notePreviewCellClass = !hasTriggers && !showPreview ? "" : customClasses["border-bottom-none"]
 
-  const lockAndOrViewCase = async (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    event.preventDefault()
+  const lockAndOrViewCase = async () => {
     if (!errorLockedByUsername) {
       await fetch(lockCourtCasePath, { method: "POST" })
     }
@@ -110,15 +110,11 @@ export const CaseDetailsRow = ({
           </ConditionalRender>
         </Table.Cell>
         <Table.Cell className={caseDetailsCellClass}>
-          <Link
-            onClick={async (event) => lockAndOrViewCase(event)}
-            href="" // emply href enables expected mouseover behaviour
-            id={`Case details for ${defendantName}`}
-          >
+          <ActionLink onClick={async () => lockAndOrViewCase()} id={`Case details for ${defendantName}`}>
             {defendantName}
             <br />
             <ResolvedTag isResolved={isResolved} />
-          </Link>
+          </ActionLink>
         </Table.Cell>
         <Table.Cell className={caseDetailsCellClass}>
           <DateTime date={courtDate} dateFormat={displayedDateFormat} />
