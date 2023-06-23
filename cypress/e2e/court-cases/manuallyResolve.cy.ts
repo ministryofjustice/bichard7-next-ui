@@ -23,7 +23,6 @@ describe("Manually resolve a case", () => {
   beforeEach(() => {
     cy.task("clearCourtCases")
     dummyMessageId = uuid()
-    cy.task("createAuditLog", dummyMessageId)
   })
 
   it("Should be able to resolve a case which is visible and locked by the user", () => {
