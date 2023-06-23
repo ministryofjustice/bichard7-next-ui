@@ -8,8 +8,9 @@ import insertNotes from "./insertNotes"
 import Trigger from "./entities/Trigger"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
-import { auditLoggingTransaction } from "./auditLoggingTransaction"
+import storeAuditLogEvents from "./storeAuditLogEvents"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 
 const resolveCourtCase = async (
   dataSource: DataSource | EntityManager,
@@ -17,7 +18,8 @@ const resolveCourtCase = async (
   resolution: ManualResolution,
   user: User
 ): Promise<void> => {
-  await auditLoggingTransaction(dataSource, courtCase.messageId, async (events, entityManager) => {
+  await dataSource.transaction("SERIALIZABLE", async (entityManager) => {
+    const events: AuditLogEvent[] = []
     const resolutionError = validateManualResolution(resolution).error
 
     if (resolutionError) {
@@ -92,6 +94,8 @@ const resolveCourtCase = async (
     if (isError(addNoteResult)) {
       throw addNoteResult
     }
+
+    await storeAuditLogEvents(courtCase.messageId, events)
   })
 }
 

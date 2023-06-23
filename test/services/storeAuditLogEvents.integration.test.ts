@@ -1,4 +1,3 @@
-import { auditLoggingTransaction } from "services/auditLoggingTransaction"
 import { DataSource } from "typeorm"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 import { v4 as uuid } from "uuid"
@@ -7,7 +6,6 @@ import getDataSource from "services/getDataSource"
 import fetch from "node-fetch"
 import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import createAuditLog from "../helpers/createAuditLog"
-import type TransactionalOperations from "types/TransactionalOperations"
 import { AUDIT_LOG_API_KEY, AUDIT_LOG_API_URL } from "../../src/config"
 
 jest.mock("node-fetch")
@@ -22,7 +20,7 @@ const testTransactionalOperations =
     expectedEvents.forEach((event) => events.push(event))
   }
 
-describe("auditLoggingTransaction", () => {
+describe("storeAuditLogEvents", () => {
   let dataSource: DataSource
 
   beforeAll(async () => {
