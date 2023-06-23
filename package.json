@@ -17,7 +17,7 @@
     "cypress:run:component:docker": "cypress run --component --config baseUrl='https://localhost:4443'",
     "cypress:run:file": "cypress run --spec",
     "cypress:run:docker:file": "cypress run --config baseUrl='https://localhost:4443' --spec",
-    "test": "npm run test:unit && npm run test:integration && npm run test:ui:unit:dev && npm run test:ui:e2e",
+    "test": "npm run test:unit && npm run test:integration && npm run test:ui:e2e",
     "test:unit": "jest --testPathIgnorePatterns=\"integration\" \"e2e\" --runInBand",
     "test:unit:update": "npm run test:unit -- -u",
     "test:integration": "jest --testPathPattern=\"integration\" --runInBand --testNamePattern=",
