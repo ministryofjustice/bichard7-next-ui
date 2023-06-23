@@ -95,7 +95,11 @@ const resolveCourtCase = async (
       throw addNoteResult
     }
 
-    await storeAuditLogEvents(courtCase.messageId, events)
+    const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
+
+    if (isError(storeAuditLogResponse)) {
+      throw storeAuditLogResponse
+    }
   })
 }
 
