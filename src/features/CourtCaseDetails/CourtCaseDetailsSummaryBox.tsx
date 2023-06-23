@@ -1,5 +1,6 @@
 import { createUseStyles } from "react-jss"
 import { gdsLightGrey } from "utils/colours"
+import { formatDisplayedDate } from "utils/formattedDate"
 
 interface CourtCaseDetailsSummaryBoxFieldProps {
   label: string
@@ -34,6 +35,8 @@ interface CourtCaseDetailsSummaryBoxProps {
   courtReference: string
   pnci: string | undefined
   ptiurn: string
+  dob: string | undefined
+  hearingDate: string | undefined
 }
 
 const CourtCaseDetailsSummaryBox = ({
@@ -42,7 +45,9 @@ const CourtCaseDetailsSummaryBox = ({
   courtName,
   courtReference,
   pnci,
-  ptiurn
+  ptiurn,
+  dob,
+  hearingDate
 }: CourtCaseDetailsSummaryBoxProps) => {
   const classes = useStyles()
 
@@ -51,9 +56,11 @@ const CourtCaseDetailsSummaryBox = ({
       <CourtCaseDetailsSummaryBoxField label="PTIURN" value={ptiurn} />
       <CourtCaseDetailsSummaryBoxField label="ASN" value={asn} />
       <CourtCaseDetailsSummaryBoxField label="PNCID" value={pnci} />
-      <CourtCaseDetailsSummaryBoxField label="Court name" value={courtName} />
+      <CourtCaseDetailsSummaryBoxField label="DOB" value={formatDisplayedDate(dob || "")} />
+      <CourtCaseDetailsSummaryBoxField label="Hearing date" value={formatDisplayedDate(hearingDate || "")} />
       <CourtCaseDetailsSummaryBoxField label="Court code (LJA)" value={courtCode} />
       <CourtCaseDetailsSummaryBoxField label="Court case reference" value={courtReference} />
+      <CourtCaseDetailsSummaryBoxField label="Court name" value={courtName} />
     </div>
   )
 }
