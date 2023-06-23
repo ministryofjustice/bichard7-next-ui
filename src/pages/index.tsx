@@ -93,19 +93,15 @@ export const getServerSideProps = withMultipleServerSideProps(
     const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
 
-    if (isPost(req) && !!unlockException) {
-      if (unlockException) {
-        const lockResult = await unlockCourtCase(dataSource, +unlockException, currentUser, "Exception")
-        if (isError(lockResult)) {
-          throw lockResult
-        }
+    if (isPost(req) && typeof unlockException === "string") {
+      const lockResult = await unlockCourtCase(dataSource, +unlockException, currentUser, "Exception")
+      if (isError(lockResult)) {
+        throw lockResult
       }
-    } else if (isPost(req) && !!unlockTrigger) {
-      if (unlockTrigger) {
-        const lockResult = await unlockCourtCase(dataSource, +unlockTrigger, currentUser, "Trigger")
-        if (isError(lockResult)) {
-          throw lockResult
-        }
+    } else if (isPost(req) && typeof unlockTrigger === "string") {
+      const lockResult = await unlockCourtCase(dataSource, +unlockTrigger, currentUser, "Trigger")
+      if (isError(lockResult)) {
+        throw lockResult
       }
     }
 

@@ -146,20 +146,40 @@ describe("Court case details header", () => {
 
   it("should have a leave and unlock button when you have the trigger locked", () => {
     const user = users[1]
-    const caseURL = "/bichard/court-cases/0"
     cy.task("insertCourtCasesWithFields", [
       {
         triggerLockedByUsername: user.username,
         orgForPoliceFilter: user.visibleForces![0]
       }
     ])
+    cy.task("insertTriggers", {
+      caseId: 0,
+      triggers: [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0010",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+    })
 
     cy.login(user.email!, "password")
-    cy.visit(caseURL)
+
+    cy.visit("/bichard")
+    cy.get(".locked-by-tag").should("have.text", "Bichard01")
+    cy.get("td a").contains("NAME Defendant").click()
+    cy.location("pathname").should("equal", "/bichard/court-cases/0")
 
     cy.get("button#leave-and-unlock").should("exist").should("have.text", "Leave and unlock")
     cy.get("button#leave-and-unlock")
-      .parent()
-      .should("have.attr", "href", "/bichard?unlockCaseId=0&unlockCaseAspect=Triggers")
+      .parent("form")
+      .should("exist")
+      .should("have.attr", "action", "/bichard?unlockTrigger=0")
+      .should("have.attr", "method", "post")
+
+    cy.get("button#leave-and-unlock").click()
+    cy.location("pathname").should("equal", "/bichard")
+    cy.get(".locked-by-tag").should("not.exist")
   })
 })

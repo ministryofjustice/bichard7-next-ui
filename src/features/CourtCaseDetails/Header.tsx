@@ -1,7 +1,6 @@
 import ConditionalRender from "components/ConditionalRender"
 import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
 import { Button, Heading } from "govuk-react"
-import Link from "next/link"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
@@ -31,6 +30,8 @@ const useStyles = createUseStyles({
 const Header: React.FC<Props> = ({ courtCase, user }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
+  const leaveAndUnlockParams = new URLSearchParams({ unlockTrigger: courtCase.errorId?.toString() })
+  const leaveAndUnlockUrl = `${basePath}?${leaveAndUnlockParams.toString()}`
 
   const hasCaseLock = isLockedByCurrentUser(courtCase, user.username)
   return (
@@ -52,11 +53,11 @@ const Header: React.FC<Props> = ({ courtCase, user }: Props) => {
               {"Leave and lock"}
             </Button>
           </a>
-          <Link href={{ pathname: "/", query: { unlockCaseId: courtCase.errorId, unlockCaseAspect: "Triggers" } }}>
-            <Button id="leave-and-unlock" className={classes.button}>
+          <form method="post" action={leaveAndUnlockUrl}>
+            <Button id="leave-and-unlock" className={classes.button} type="submit">
               {"Leave and unlock"}
             </Button>
-          </Link>
+          </form>
         </ConditionalRender>
         <ConditionalRender isRendered={!hasCaseLock}>
           <a href={basePath}>
