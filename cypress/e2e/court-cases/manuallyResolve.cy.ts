@@ -1,9 +1,7 @@
 import User from "services/entities/User"
 import hashedPassword from "../../fixtures/hashedPassword"
-import { v4 as uuid } from "uuid"
 
 describe("Manually resolve a case", () => {
-  let dummyMessageId: string
   const defaultUsers: Partial<User>[] = Array.from(Array(2)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
@@ -22,7 +20,6 @@ describe("Manually resolve a case", () => {
 
   beforeEach(() => {
     cy.task("clearCourtCases")
-    dummyMessageId = uuid()
   })
 
   it("Should be able to resolve a case which is visible and locked by the user", () => {
@@ -32,8 +29,7 @@ describe("Manually resolve a case", () => {
         errorCount: 1,
         triggerCount: 0,
         errorLockedByUsername: "Bichard01",
-        triggerLockedByUsername: "Bichard01",
-        messageId: dummyMessageId
+        triggerLockedByUsername: "Bichard01"
       }
     ])
 
@@ -65,8 +61,7 @@ describe("Manually resolve a case", () => {
         errorCount: 1,
         triggerCount: 0,
         errorLockedByUsername: "Bichard01",
-        triggerLockedByUsername: "Bichard01",
-        messageId: dummyMessageId
+        triggerLockedByUsername: "Bichard01"
       }
     ])
     cy.login("bichard01@example.com", "password")

@@ -177,7 +177,6 @@ jobs:
     parallelism: 5
     steps:
       - checkout
-      - checkout-audit-logging
       - clone_bichard_repo
       - fetch_docker_image:
           image: user-service
@@ -225,6 +224,10 @@ jobs:
           name: Run UI stack
           working_directory: ~/bichard7-next
           command: make run-ui
+          background: true
+      - run:
+          name: Run mock audit log API
+          command: node ./.circleci/scripts/mock-audit-log-api.js
           background: true
       - run:
           name: Wait for UI to start

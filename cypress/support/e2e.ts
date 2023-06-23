@@ -20,18 +20,3 @@ import "./commands"
 import "cypress-axe"
 // eslint-disable-next-line import/no-extraneous-dependencies
 import "@testing-library/cypress/add-commands"
-import http from "http"
-
-let server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>
-
-before(() => {
-  server = http.createServer(async (_, res) => {
-    res.writeHead(200, { "Content-Type": "application/json" })
-    res.end()
-  })
-  server.listen(3010)
-})
-
-after(() => {
-  server.close()
-})
