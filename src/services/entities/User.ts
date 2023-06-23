@@ -4,6 +4,7 @@ import type { KeyValuePair } from "types/KeyValuePair"
 import BaseEntity from "./BaseEntity"
 import featureFlagTransformer from "./transformers/featureFlagTransformer"
 import delimitedString from "./transformers/delimitedString"
+import { Groups } from "types/GroupName"
 
 @Entity({ name: "users" })
 export default class User extends BaseEntity {
@@ -51,6 +52,6 @@ export default class User extends BaseEntity {
   }
 
   get isSupervisor() {
-    return this.groups.some((group) => group === "Supervisor")
+    return this.groups.some((group) => group === Groups.Supervisor)
   }
 }

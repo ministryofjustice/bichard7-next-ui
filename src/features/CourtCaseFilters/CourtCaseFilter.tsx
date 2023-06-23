@@ -5,7 +5,7 @@ import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { CaseState, Reason, Reasons, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
@@ -13,6 +13,7 @@ import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilt
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 import type { KeyValuePair } from "types/KeyValuePair"
+import GroupName, { Groups } from "types/GroupName"
 import ConditionalRender from "components/ConditionalRender"
 
 interface Props {
@@ -253,9 +254,9 @@ const CourtCaseFilter: React.FC<Props> = ({
               </label>
             </div>
           </div>
-          <div className={`${classes["govuk-form-group"]} reasons`}>
-            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ConditionalRender isRendered={true}>
+          <ConditionalRender isRendered={!userGroups.length || userGroups.some((g) => g !== Groups.ExceptionHandler)}>
+            <div className={`${classes["govuk-form-group"]} reasons`}>
+              <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"}>
                 <ReasonFilterOptions
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
@@ -267,8 +268,8 @@ const CourtCaseFilter: React.FC<Props> = ({
                   dispatch={dispatch}
                 />
               </ExpandingFilters>
-            </ConditionalRender>
-          </div>
+            </div>
+          </ConditionalRender>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Urgency"}>

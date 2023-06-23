@@ -119,7 +119,9 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const resolvedByUsername =
-      validatedCaseState === "Resolved" && !currentUser.groups.includes("Supervisor") ? currentUser.username : undefined
+      validatedCaseState === "Resolved" && !currentUser.groups.includes(Groups.Supervisor)
+        ? currentUser.username
+        : undefined
 
     const caseAgeCounts = await getCountOfCasesByCaseAge(dataSource, currentUser)
 
