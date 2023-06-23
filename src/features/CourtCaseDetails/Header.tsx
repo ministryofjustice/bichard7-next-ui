@@ -2,8 +2,10 @@ import ConditionalRender from "components/ConditionalRender"
 import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
 import { Button, Heading } from "govuk-react"
 import { useRouter } from "next/router"
+import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
+import styled from "styled-components"
 import { isLockedByCurrentUser } from "utils/caseLocks"
 import { gdsLightGrey, textPrimary } from "utils/colours"
 
@@ -12,8 +14,21 @@ interface Props {
   user: User
 }
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+`
+
+const useStyles = createUseStyles({
+  button: {
+    marginBottom: 0
+  }
+})
+
 const Header: React.FC<Props> = ({ courtCase, user }: Props) => {
   const { basePath } = useRouter()
+  const classes = useStyles()
 
   const hasCaseLock = isLockedByCurrentUser(courtCase, user.username)
   return (
@@ -28,18 +43,27 @@ const Header: React.FC<Props> = ({ courtCase, user }: Props) => {
           className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular"
         />
       </Heading>
-      <ConditionalRender isRendered={hasCaseLock}>
-        <a href={basePath}>
-          <Button id={"leave-and-lock"}>{"Leave and lock"}</Button>
-        </a>
-      </ConditionalRender>
-      <ConditionalRender isRendered={!hasCaseLock}>
-        <a href={basePath}>
-          <Button buttonColour={gdsLightGrey} buttonTextColour={textPrimary} id={"return-to-case-list"}>
-            {"Return to case list"}
-          </Button>
-        </a>
-      </ConditionalRender>
+      <ButtonContainer>
+        <ConditionalRender isRendered={hasCaseLock}>
+          <a href={basePath}>
+            <Button id="leave-and-lock" className={classes.button}>
+              {"Leave and lock"}
+            </Button>
+          </a>
+        </ConditionalRender>
+        <ConditionalRender isRendered={!hasCaseLock}>
+          <a href={basePath}>
+            <Button
+              id="return-to-case-list"
+              className={classes.button}
+              buttonColour={gdsLightGrey}
+              buttonTextColour={textPrimary}
+            >
+              {"Return to case list"}
+            </Button>
+          </a>
+        </ConditionalRender>
+      </ButtonContainer>
     </>
   )
 }

@@ -19,7 +19,6 @@ const useStyles = createUseStyles({
     gridTemplateColumns: "auto auto auto",
     backgroundColor: gdsLightGrey,
     padding: "20px 0",
-    margin: "34px 0",
     "& div": {
       padding: "10px",
       fontSize: "19px",
