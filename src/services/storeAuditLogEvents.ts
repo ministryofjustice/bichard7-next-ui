@@ -1,6 +1,4 @@
 import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
-import { DataSource, EntityManager } from "typeorm"
-import PromiseResult from "types/PromiseResult"
 import fetch from "node-fetch"
 import { AUDIT_LOG_API_KEY, AUDIT_LOG_API_URL } from "../config"
 

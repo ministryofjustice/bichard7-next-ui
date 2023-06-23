@@ -12,6 +12,7 @@ import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 import insertNotes from "services/insertNotes"
 import unlockCourtCase from "services/unlockCourtCase"
+import storeAuditLogEvents from "services/storeAuditLogEvents"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import createAuditLog from "../helpers/createAuditLog"
 import { AUDIT_LOG_API_URL } from "../../src/config"
@@ -21,6 +22,7 @@ import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
 jest.mock("services/unlockCourtCase")
+jest.mock("services/storeAuditLogEvents")
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 
 const expectToBeUnresolved = (courtCase: CourtCase) => {
@@ -52,6 +54,7 @@ describe("resolveCourtCase", () => {
     jest.clearAllMocks()
     ;(insertNotes as jest.Mock).mockImplementation(jest.requireActual("services/insertNotes").default)
     ;(unlockCourtCase as jest.Mock).mockImplementation(jest.requireActual("services/unlockCourtCase").default)
+    ;(storeAuditLogEvents as jest.Mock).mockImplementation(jest.requireActual("services/storeAuditLogEvents").default)
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
@@ -507,6 +510,24 @@ describe("resolveCourtCase", () => {
       }
 
       expect(result).toEqual(Error(`Error while unlocking the case`))
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
+      const actualCourtCase = record as CourtCase
+
+      expectToBeUnresolved(actualCourtCase)
+    })
+
+    it("Should return the error if fails to store audit logs", async () => {
+      ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(`Error while calling audit log API`))
+
+      let result
+      try {
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
+      } catch (error) {
+        result = error as Error
+      }
+
+      expect(result).toEqual(Error(`Error while calling audit log API`))
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
       const actualCourtCase = record as CourtCase
