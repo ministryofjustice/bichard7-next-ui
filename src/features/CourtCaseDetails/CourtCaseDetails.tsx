@@ -18,10 +18,12 @@ import { Offences } from "./Tabs/Panels/Offences/Offences"
 import updateQueryString from "utils/updateQueryString"
 import { CaseInformation } from "./Tabs/Panels/CaseInformation"
 import Header from "./Header"
+import User from "services/entities/User"
 
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
+  user: User
   errorLockedByAnotherUser: boolean
   triggersLockedByCurrentUser: boolean
   triggersLockedByUser?: string | null
@@ -45,6 +47,7 @@ const contentWidth = "67%"
 const CourtCaseDetails: React.FC<Props> = ({
   courtCase,
   aho,
+  user,
   errorLockedByAnotherUser,
   triggersLockedByCurrentUser,
   triggersLockedByUser,
@@ -86,7 +89,7 @@ const CourtCaseDetails: React.FC<Props> = ({
 
   return (
     <>
-      <Header courtCase={courtCase} />
+      <Header courtCase={courtCase} user={user} />
       <CourtCaseDetailsSummaryBox
         asn={courtCase.asn}
         courtCode={courtCase.courtCode}

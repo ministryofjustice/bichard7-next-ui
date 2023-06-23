@@ -144,7 +144,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         user: currentUser.serialize(),
         courtCase: courtCase.serialize(),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
-        errorLockedByAnotherUser: courtCase.errorIsLockedByAnotherUser(currentUser.username),
+        errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
         triggersLockedByCurrentUser: courtCase.triggersAreLockedByCurrentUser(currentUser.username),
         lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username),
         canReallocate: courtCase.canReallocate(currentUser.username)
@@ -187,6 +187,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         <CourtCaseDetails
           courtCase={courtCase}
           aho={aho}
+          user={user}
           errorLockedByAnotherUser={errorLockedByAnotherUser}
           triggersLockedByCurrentUser={triggersLockedByCurrentUser}
           triggersLockedByUser={courtCase.triggerLockedByUsername}

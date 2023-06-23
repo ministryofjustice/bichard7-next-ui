@@ -103,7 +103,7 @@ describe("Court case details header", () => {
     cy.findByText("Error locked by: Bichard02").should("exist")
   })
 
-  it("should have a leave and lock button that returns to the case list", () => {
+  it("should have a leave and lock button that returns to the case list when the case is locked", () => {
     const user = users[1]
     const caseURL = "/bichard/court-cases/0"
     cy.task("insertCourtCasesWithFields", [
@@ -116,6 +116,31 @@ describe("Court case details header", () => {
     cy.login(user.email!, "password")
     cy.visit(caseURL)
 
-    cy.get("button").should("have.text", "Leave and lock")
+    cy.get("button#leave-and-lock")
+      .should("have.text", "Leave and lock")
+      .parent()
+      .should("have.attr", "href", "/bichard")
+    cy.get("button#leave-and-lock").click()
+    cy.location("pathname").should("equal", "/bichard")
+  })
+
+  it("should have a return to case list button that returns to the case list when the case isn't locked", () => {
+    const user = users[1]
+    const otherUser = users[2]
+    const caseURL = "/bichard/court-cases/0"
+    cy.task("insertCourtCasesWithFields", [
+      {
+        triggerLockedByUsername: otherUser.username,
+        orgForPoliceFilter: user.visibleForces![0]
+      }
+    ])
+
+    cy.login(user.email!, "password")
+    cy.visit(caseURL)
+
+    cy.get("button#leave-and-lock").should("not.exist")
+    cy.get("button#return-to-case-list").should("exist").should("have.text", "Return to case list")
+    cy.get("button#return-to-case-list").click()
+    cy.location("pathname").should("equal", "/bichard")
   })
 })
