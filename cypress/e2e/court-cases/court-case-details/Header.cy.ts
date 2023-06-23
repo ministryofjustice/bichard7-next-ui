@@ -143,4 +143,20 @@ describe("Court case details header", () => {
     cy.get("button#return-to-case-list").click()
     cy.location("pathname").should("equal", "/bichard")
   })
+
+  it("should have a leave and unlock button when you have the trigger locked", () => {
+    const user = users[1]
+    const caseURL = "/bichard/court-cases/0"
+    cy.task("insertCourtCasesWithFields", [
+      {
+        triggerLockedByUsername: user.username,
+        orgForPoliceFilter: user.visibleForces![0]
+      }
+    ])
+
+    cy.login(user.email!, "password")
+    cy.visit(caseURL)
+
+    cy.get("button#leave-and-unlock").should("exist").should("have.text", "Leave and unlock")
+  })
 })

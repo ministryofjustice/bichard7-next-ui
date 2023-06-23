@@ -18,6 +18,7 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-bottom: 24px;
+  gap: 12px;
 `
 
 const useStyles = createUseStyles({
@@ -48,6 +49,11 @@ const Header: React.FC<Props> = ({ courtCase, user }: Props) => {
           <a href={basePath}>
             <Button id="leave-and-lock" className={classes.button}>
               {"Leave and lock"}
+            </Button>
+          </a>
+          <a href={basePath}>
+            <Button id="leave-and-unlock" className={classes.button}>
+              {"Leave and unlock"}
             </Button>
           </a>
         </ConditionalRender>
