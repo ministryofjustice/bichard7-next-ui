@@ -158,5 +158,8 @@ describe("Court case details header", () => {
     cy.visit(caseURL)
 
     cy.get("button#leave-and-unlock").should("exist").should("have.text", "Leave and unlock")
+    cy.get("button#leave-and-unlock")
+      .parent()
+      .should("have.attr", "href", "/bichard?unlockCaseId=0&unlockCaseAspect=Triggers")
   })
 })

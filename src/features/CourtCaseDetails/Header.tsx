@@ -1,6 +1,7 @@
 import ConditionalRender from "components/ConditionalRender"
 import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
 import { Button, Heading } from "govuk-react"
+import Link from "next/link"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
@@ -51,11 +52,11 @@ const Header: React.FC<Props> = ({ courtCase, user }: Props) => {
               {"Leave and lock"}
             </Button>
           </a>
-          <a href={basePath}>
+          <Link href={{ pathname: "/", query: { unlockCaseId: courtCase.errorId, unlockCaseAspect: "Triggers" } }}>
             <Button id="leave-and-unlock" className={classes.button}>
               {"Leave and unlock"}
             </Button>
-          </a>
+          </Link>
         </ConditionalRender>
         <ConditionalRender isRendered={!hasCaseLock}>
           <a href={basePath}>
