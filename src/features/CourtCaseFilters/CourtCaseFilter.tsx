@@ -28,6 +28,7 @@ interface Props {
   locked: string | null
   caseState: CaseState | null
   myCases: boolean
+  userGroups: GroupName[]
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -144,7 +145,8 @@ const CourtCaseFilter: React.FC<Props> = ({
   urgency,
   locked,
   caseState,
-  myCases
+  myCases,
+  userGroups
 }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
@@ -166,6 +168,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   }
   const [state, dispatch] = useReducer(reducer, initialFilterState)
   const classes = useStyles()
+
   return (
     <form method={"get"} id="filter-panel">
       <div className="moj-filter__header">
@@ -256,6 +259,11 @@ const CourtCaseFilter: React.FC<Props> = ({
               <ExpandingFilters filterName={"Reason"}>
                 <ReasonFilterOptions
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
+                  reasonOptions={
+                    userGroups.length && userGroups.every((g) => g === Groups.TriggerHandler)
+                      ? [Reasons.Bails, Reasons.Triggers]
+                      : undefined
+                  }
                   dispatch={dispatch}
                 />
               </ExpandingFilters>

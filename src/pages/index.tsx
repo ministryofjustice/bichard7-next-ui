@@ -34,6 +34,7 @@ import { useRouter } from "next/router"
 import { useEffect } from "react"
 import { setCookie, getCookie } from "cookies-next"
 import hashString from "utils/hashString"
+import { Groups } from "types/GroupName"
 
 interface Props {
   user: User
@@ -221,6 +222,7 @@ const Home: NextPage<Props> = (query) => {
               locked={locked}
               caseState={caseState}
               myCases={myCases}
+              userGroups={user.groups.filter((g) => g !== Groups.NewUI)}
             />
           }
           appliedFilters={

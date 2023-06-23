@@ -1,15 +1,3 @@
-export type GroupName =
-  | "Allocator"
-  | "Audit"
-  | "ExceptionHandler"
-  | "GeneralHandler"
-  | "Supervisor"
-  | "TriggerHandler"
-  | "UserManager"
-  | "AuditLoggingManager"
-  | "SuperUserManager"
-  | "NewUI"
-
 export enum Groups {
   Allocator = "Allocator",
   Audit = "Audit",
@@ -23,4 +11,6 @@ export enum Groups {
   NewUI = "NewUI"
 }
 
+const GroupNames = [...Object.values(Groups)] as const
+export type GroupName = (typeof GroupNames)[number]
 export default GroupName
