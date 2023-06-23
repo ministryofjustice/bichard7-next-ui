@@ -327,11 +327,12 @@ jobs:
       - run:
           name: Run end-to-end tests
           working_directory: ~/bichard7-next-tests
-          command: npm i && npm run test:nextUI
+          command: npm i && npm run test:chunk
           environment:
             STACK_TYPE: next
             WORKSPACE: local-next
             AUTH_TYPE: user-service
+          parallelism: 10
 
 workflows:
   version: 2
