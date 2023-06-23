@@ -103,6 +103,8 @@ const CourtCaseDetails: React.FC<Props> = ({
         courtReference={courtCase.courtReference}
         pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
         ptiurn={courtCase.ptiurn}
+        dob={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString()}
+        hearingDate={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString()}
       />
       <CourtCaseDetailsTabs
         activeTab={activeTab}
