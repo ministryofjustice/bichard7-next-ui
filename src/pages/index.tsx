@@ -190,8 +190,13 @@ const Home: NextPage<Props> = (query) => {
   } = query
 
   useEffect(() => {
+    const nonSavedParams = ["unlockTrigger", "unlockException"]
     const [, queryString] = router.asPath.split("?")
-    setCookie(queryStringCookieName, queryString, { path: "/" })
+
+    const queryParams = new URLSearchParams(queryString)
+    nonSavedParams.map((param) => queryParams.delete(param))
+
+    setCookie(queryStringCookieName, queryParams.toString(), { path: "/" })
   }, [router, queryStringCookieName])
 
   return (
