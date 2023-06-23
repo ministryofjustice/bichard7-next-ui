@@ -138,10 +138,6 @@ jobs:
       - run:
           name: Save UI docker image
           command: docker save ui > ui.tar
-      
-      # - run:
-      #     name: Generate cache key file
-      #     command: echo $CIRCLE_SHA1 > /tmp/commit-hash
 
       - save_cache:
           name: Cache UI docker image
@@ -162,9 +158,6 @@ jobs:
           image: user-service
       - fetch_docker_image:
           image: nginx-auth-proxy
-      # - run:
-      #     name: Generate cache key file
-      #     command: echo $CIRCLE_SHA1 > /tmp/commit-hash
       - restore_cache:
           name: Restore UI docker image from cache
           keys: 
@@ -282,9 +275,6 @@ jobs:
           image: pncemulator
       - fetch_docker_image:
           image: beanconnect
-      # - run:
-      #     name: Generate cache key file
-      #     command: echo $CIRCLE_SHA1 > /tmp/commit-hash
       - restore_cache:
           name: Restore UI docker image from cache
           keys: 
