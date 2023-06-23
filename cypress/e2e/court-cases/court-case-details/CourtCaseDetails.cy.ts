@@ -76,8 +76,6 @@ describe("Court case details", () => {
 
     cy.contains("Case00000")
     cy.contains("Magistrates' Courts Essex Basildon")
-
-    // Urgency
     cy.contains("Urgent")
   })
 

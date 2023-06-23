@@ -26,15 +26,6 @@ describe("Court case details header", () => {
     cy.task("clearCourtCases")
   })
 
-  it("should load case details for the case that this user can see", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-
-    cy.get("H1").should("have.text", "Case details")
-    cy.contains("NAME Defendant")
-  })
-
   it("should lock a case when a user views a case details page", () => {
     cy.task("insertCourtCasesWithFields", [
       {
@@ -105,7 +96,6 @@ describe("Court case details header", () => {
 
   it("should have a leave and lock button that returns to the case list when the case is locked", () => {
     const user = users[1]
-    const caseURL = "/bichard/court-cases/0"
     cy.task("insertCourtCasesWithFields", [
       {
         triggerLockedByUsername: user.username,
@@ -114,7 +104,10 @@ describe("Court case details header", () => {
     ])
 
     cy.login(user.email!, "password")
-    cy.visit(caseURL)
+    cy.visit("/bichard")
+    cy.get(".locked-by-tag").should("have.text", "Bichard01")
+    cy.get("td a").contains("NAME Defendant").click()
+    cy.location("pathname").should("equal", "/bichard/court-cases/0")
 
     cy.get("button#leave-and-lock")
       .should("have.text", "Leave and lock")
@@ -122,6 +115,7 @@ describe("Court case details header", () => {
       .should("have.attr", "href", "/bichard")
     cy.get("button#leave-and-lock").click()
     cy.location("pathname").should("equal", "/bichard")
+    cy.get(".locked-by-tag").should("have.text", "Bichard01")
   })
 
   it("should have a return to case list button that returns to the case list when the case isn't locked", () => {
@@ -139,12 +133,13 @@ describe("Court case details header", () => {
     cy.visit(caseURL)
 
     cy.get("button#leave-and-lock").should("not.exist")
+    cy.get("button#leave-and-unlock").should("not.exist")
     cy.get("button#return-to-case-list").should("exist").should("have.text", "Return to case list")
     cy.get("button#return-to-case-list").click()
     cy.location("pathname").should("equal", "/bichard")
   })
 
-  it("should have a leave and unlock button when you have the trigger locked", () => {
+  it("should have a leave and unlock button that unlocks the triggers when you have the triggers locked", () => {
     const user = users[1]
     cy.task("insertCourtCasesWithFields", [
       {
