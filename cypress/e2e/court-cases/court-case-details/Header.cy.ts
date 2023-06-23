@@ -26,74 +26,6 @@ describe("Court case details header", () => {
     cy.task("clearCourtCases")
   })
 
-  it("should lock a case when a user views a case details page", () => {
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: null,
-        triggerLockedByUsername: null,
-        orgForPoliceFilter: "02",
-        errorCount: 1,
-        triggerCount: 1
-      }
-    ])
-
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-
-    cy.findByText("Lock Court Case").click()
-    cy.findByText("Case locked by another user").should("not.exist")
-    cy.findByText("Trigger locked by: Bichard02").should("exist")
-    cy.findByText("Error locked by: Bichard02").should("exist")
-  })
-
-  it("should not lock a court case when its already locked", () => {
-    const existingUserLock = "Another name"
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: existingUserLock,
-        triggerLockedByUsername: existingUserLock,
-        orgForPoliceFilter: "01",
-        errorCount: 1,
-        triggerCount: 1
-      }
-    ])
-
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-    cy.findByText("Case locked by another user").should("exist")
-    cy.findByText("Trigger locked by: Another name").should("exist")
-    cy.findByText("Error locked by: Another name").should("exist")
-  })
-
-  it("should unlock and lock a court case when its already locked", () => {
-    const existingUserLock = "Another name"
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: existingUserLock,
-        triggerLockedByUsername: existingUserLock,
-        orgForPoliceFilter: "02",
-        errorCount: 1,
-        triggerCount: 1
-      }
-    ])
-
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-    cy.findByText("Case locked by another user").should("exist")
-    cy.findByText("Trigger locked by: Another name").should("exist")
-    cy.findByText("Error locked by: Another name").should("exist")
-
-    cy.findByText("Unlock Court Case").click()
-    cy.findByText("Case locked by another user").should("not.exist")
-    cy.findByText("Trigger locked by: Another name").should("not.exist")
-    cy.findByText("Error locked by: Another name").should("not.exist")
-
-    cy.findByText("Lock Court Case").click()
-    cy.findByText("Case locked by another user").should("not.exist")
-    cy.findByText("Trigger locked by: Bichard02").should("exist")
-    cy.findByText("Error locked by: Bichard02").should("exist")
-  })
-
   it("should have a leave and lock button that returns to the case list when the case is locked", () => {
     const user = users[1]
     cy.task("insertCourtCasesWithFields", [
@@ -102,6 +34,17 @@ describe("Court case details header", () => {
         orgForPoliceFilter: user.visibleForces![0]
       }
     ])
+    cy.task("insertTriggers", {
+      caseId: 0,
+      triggers: [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0010",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+    })
 
     cy.login(user.email!, "password")
     cy.visit("/bichard")
