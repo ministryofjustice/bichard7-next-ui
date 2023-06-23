@@ -161,11 +161,11 @@ jobs:
       
       - run:
           name: Generate cache key file
-          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
+          command: echo $CIRCLE_SHA1 > /tmp/circle_commit_hash
 
       - save_cache:
           name: Cache UI docker image
-          key: ui-image-{{ checksum "/tmp/circle_workflow_id" }}
+          key: ui-image-{{ checksum "/tmp/circle_commit_hash" }}
           paths: ui.tar
 
   cypress_e2e_test:
@@ -184,11 +184,11 @@ jobs:
           image: nginx-auth-proxy
       - run:
           name: Generate cache key file
-          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
+          command: echo $CIRCLE_SHA1 > /tmp/circle_commit_hash
       - restore_cache:
           name: Restore UI docker image from cache
           keys: 
-            - ui-image-{{ checksum "/tmp/circle_workflow_id" }}
+            - ui-image-{{ checksum "/tmp/circle_commit_hash" }}
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
@@ -308,11 +308,11 @@ jobs:
           image: beanconnect
       - run:
           name: Generate cache key file
-          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
+          command: echo $CIRCLE_SHA1 > /tmp/circle_commit_hash
       - restore_cache:
           name: Restore UI docker image from cache
           keys: 
-            - ui-image-{{ checksum "/tmp/circle_workflow_id" }}
+            - ui-image-{{ checksum "/tmp/circle_commit_hash" }}
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
