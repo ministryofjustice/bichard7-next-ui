@@ -158,7 +158,6 @@ jobs:
       - run:
           name: Save UI docker image
           command: docker save ui > ui.tar
-
       - save_cache:
           name: Cache UI docker image
           key: ui-image-<<pipeline.git.revision>>
@@ -182,6 +181,7 @@ jobs:
           name: Restore UI docker image from cache
           keys: 
             - ui-image-<<pipeline.git.revision>>
+
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
@@ -303,6 +303,7 @@ jobs:
           name: Restore UI docker image from cache
           keys: 
             - ui-image-<<pipeline.git.revision>>
+
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
