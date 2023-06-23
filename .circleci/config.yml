@@ -225,6 +225,8 @@ jobs:
           working_directory: ~/bichard7-next
           command: make run-ui
           background: true
+          environment:
+            AUDIT_LOG_API_URL: http://172.17.0.1:3010
       - run:
           name: Run mock audit log API
           command: node ./.circleci/scripts/mock-audit-log-api.js
@@ -344,6 +346,8 @@ jobs:
           name: Run UI stack
           working_directory: ~/bichard7-next
           command: make run-ui
+          environment:
+            AUDIT_LOG_API_URL: http://172.17.0.1:3010
           background: true
       - run:
           name: Wait for UI to start
