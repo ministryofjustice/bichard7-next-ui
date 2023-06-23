@@ -1,7 +1,7 @@
 import User from "services/entities/User"
-import { TestTrigger } from "../../../test/utils/manageTriggers"
-import hashedPassword from "../../fixtures/hashedPassword"
-import canReallocateTestData from "../../fixtures/canReallocateTestData.json"
+import { TestTrigger } from "../../../../test/utils/manageTriggers"
+import hashedPassword from "../../../fixtures/hashedPassword"
+import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 
 describe("Case details", () => {
   const defaultUsers: Partial<User>[] = Array.from(Array(4)).map((_value, idx) => {

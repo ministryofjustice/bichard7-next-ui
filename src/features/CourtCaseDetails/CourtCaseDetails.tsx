@@ -89,7 +89,7 @@ const CourtCaseDetails: React.FC<Props> = ({
 
   return (
     <>
-      <Header courtCase={courtCase} user={user} />
+      <Header courtCase={courtCase} user={user} canReallocate={canReallocate} />
       <CourtCaseDetailsSummaryBox
         asn={courtCase.asn}
         courtCode={courtCase.courtCode}
@@ -150,11 +150,6 @@ const CourtCaseDetails: React.FC<Props> = ({
             <CourtCaseDetailsPanel heading={"PNC errors"}>{""}</CourtCaseDetailsPanel>
           </ConditionalRender>
 
-          <ConditionalRender isRendered={canReallocate}>
-            <LinkButton href="reallocate" className="b7-reallocate-button">
-              {"Reallocate Case"}
-            </LinkButton>
-          </ConditionalRender>
           <ConditionalRender isRendered={!lockedByAnotherUser}>
             <LinkButton href="resolve" className="b7-resolve-button">
               {"Mark As Manually Resolved"}

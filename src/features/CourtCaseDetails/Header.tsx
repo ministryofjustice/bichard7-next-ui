@@ -1,4 +1,5 @@
 import ConditionalRender from "components/ConditionalRender"
+import LinkButton from "components/LinkButton"
 import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
 import { Button, Heading } from "govuk-react"
 import { useRouter } from "next/router"
@@ -12,6 +13,7 @@ import { gdsLightGrey, textPrimary } from "utils/colours"
 interface Props {
   courtCase: CourtCase
   user: User
+  canReallocate: boolean
 }
 
 const ButtonContainer = styled.div`
@@ -27,7 +29,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const Header: React.FC<Props> = ({ courtCase, user }: Props) => {
+const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
   const leaveAndUnlockParams = new URLSearchParams({ unlockTrigger: courtCase.errorId?.toString() })
@@ -47,6 +49,16 @@ const Header: React.FC<Props> = ({ courtCase, user }: Props) => {
         />
       </Heading>
       <ButtonContainer>
+        <ConditionalRender isRendered={canReallocate}>
+          <LinkButton
+            href="reallocate"
+            className="b7-reallocate-button"
+            buttonColour={gdsLightGrey}
+            buttonTextColour={textPrimary}
+          >
+            {"Reallocate Case"}
+          </LinkButton>
+        </ConditionalRender>
         <ConditionalRender isRendered={hasCaseLock}>
           <a href={basePath}>
             <Button id="leave-and-lock" className={classes.button}>
