@@ -399,7 +399,7 @@ describe("Case list", () => {
       cy.url().should("match", /\/court-cases\//)
       cy.findByText("Case details").should("exist")
 
-      cy.findByText("Cases").click()
+      cy.get("#leave-and-lock, #return-to-case-list").click()
 
       cy.url().should("match", /\/bichard/)
       cy.get("h1").contains("Case list").should("exist")
