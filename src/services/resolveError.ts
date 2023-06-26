@@ -1,4 +1,4 @@
-import { EntityManager, MoreThan, Not, UpdateQueryBuilder, UpdateResult } from "typeorm/"
+import { EntityManager, MoreThan, Not, UpdateQueryBuilder, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
@@ -7,7 +7,7 @@ import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/
 import Trigger from "./entities/Trigger"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
 import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
-import { isError } from "lodash"
+import { isError } from "types/Result"
 
 const resolveError = async (
   entityManager: EntityManager,
