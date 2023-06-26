@@ -1,4 +1,4 @@
-export enum Groups {
+export enum UserGroup {
   Allocator = "Allocator",
   Audit = "Audit",
   ExceptionHandler = "ExceptionHandler",
@@ -10,7 +10,3 @@ export enum Groups {
   SuperUserManager = "SuperUserManager",
   NewUI = "NewUI"
 }
-
-const GroupNames = [...Object.values(Groups)] as const
-export type GroupName = (typeof GroupNames)[number]
-export default GroupName

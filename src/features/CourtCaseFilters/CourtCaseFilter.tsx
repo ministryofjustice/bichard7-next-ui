@@ -13,7 +13,7 @@ import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilt
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 import type { KeyValuePair } from "types/KeyValuePair"
-import GroupName, { Groups } from "types/GroupName"
+import { UserGroup } from "types/UserGroup"
 import ConditionalRender from "components/ConditionalRender"
 
 interface Props {
@@ -29,7 +29,7 @@ interface Props {
   locked: string | null
   caseState: CaseState | null
   myCases: boolean
-  userGroups: GroupName[]
+  userGroups: UserGroup[]
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -254,14 +254,16 @@ const CourtCaseFilter: React.FC<Props> = ({
               </label>
             </div>
           </div>
-          <ConditionalRender isRendered={!userGroups.length || userGroups.some((g) => g !== Groups.ExceptionHandler)}>
+          <ConditionalRender
+            isRendered={!userGroups.length || userGroups.some((g) => g !== UserGroup.ExceptionHandler)}
+          >
             <div className={`${classes["govuk-form-group"]} reasons`}>
               <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"}>
                 <ReasonFilterOptions
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
                   reasonOptions={
-                    userGroups.length && userGroups.every((g) => g === Groups.TriggerHandler)
+                    userGroups.length && userGroups.every((g) => g === UserGroup.TriggerHandler)
                       ? [Reason.Bails, Reason.Triggers]
                       : undefined
                   }

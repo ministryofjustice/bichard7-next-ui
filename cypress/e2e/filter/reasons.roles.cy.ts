@@ -1,7 +1,7 @@
 import hashedPassword from "../../fixtures/hashedPassword"
-import { Groups } from "types/GroupName"
+import { UserGroup } from "types/UserGroup"
 
-const newUserLoginWithGroups = (groups: Groups[]) => {
+const newUserLoginWithGroups = (groups: UserGroup[]) => {
   const user = groups.map((g) => g.toLowerCase()).join("") || "nogroups"
   const email = `${user}@example.com`
   cy.task("insertUsers", {
@@ -15,7 +15,7 @@ const newUserLoginWithGroups = (groups: Groups[]) => {
         password: hashedPassword
       }
     ],
-    userGroups: [Groups.NewUI, ...groups]
+    userGroups: [UserGroup.NewUI, ...groups]
   })
   cy.login(email, "password")
 }
@@ -44,7 +44,7 @@ describe("Reasons filters", () => {
   })
 
   it("should display all options for supervisors", () => {
-    newUserLoginWithGroups([Groups.Supervisor])
+    newUserLoginWithGroups([UserGroup.Supervisor])
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
@@ -53,7 +53,7 @@ describe("Reasons filters", () => {
   })
 
   it("should display all options for general handlers", () => {
-    newUserLoginWithGroups([Groups.GeneralHandler])
+    newUserLoginWithGroups([UserGroup.GeneralHandler])
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
@@ -62,7 +62,7 @@ describe("Reasons filters", () => {
   })
 
   it("should display 'Triggers' and 'Bails' for trigger handlers", () => {
-    newUserLoginWithGroups([Groups.TriggerHandler])
+    newUserLoginWithGroups([UserGroup.TriggerHandler])
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
@@ -70,21 +70,21 @@ describe("Reasons filters", () => {
   })
 
   it("should not display 'Exceptions' for trigger handlers", () => {
-    newUserLoginWithGroups([Groups.TriggerHandler])
+    newUserLoginWithGroups([UserGroup.TriggerHandler])
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .exceptions").should("not.exist")
   })
 
   it("should not render the reasons component for exception handlers", () => {
-    newUserLoginWithGroups([Groups.ExceptionHandler])
+    newUserLoginWithGroups([UserGroup.ExceptionHandler])
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons").should("not.exist")
   })
 
   it("should render the correct reasons if a user has conflicting groups", () => {
-    newUserLoginWithGroups([Groups.Supervisor, Groups.ExceptionHandler])
+    newUserLoginWithGroups([UserGroup.Supervisor, UserGroup.ExceptionHandler])
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")

@@ -34,7 +34,7 @@ import { useRouter } from "next/router"
 import { useEffect } from "react"
 import { setCookie, getCookie } from "cookies-next"
 import hashString from "utils/hashString"
-import { Groups } from "types/GroupName"
+import { UserGroup } from "types/UserGroup"
 
 interface Props {
   user: User
@@ -119,7 +119,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const resolvedByUsername =
-      validatedCaseState === "Resolved" && !currentUser.groups.includes(Groups.Supervisor)
+      validatedCaseState === "Resolved" && !currentUser.groups.includes(UserGroup.Supervisor)
         ? currentUser.username
         : undefined
 
@@ -224,7 +224,7 @@ const Home: NextPage<Props> = (query) => {
               locked={locked}
               caseState={caseState}
               myCases={myCases}
-              userGroups={user.groups.filter((g) => g !== Groups.NewUI)}
+              userGroups={user.groups.filter((g) => g !== UserGroup.NewUI)}
             />
           }
           appliedFilters={
