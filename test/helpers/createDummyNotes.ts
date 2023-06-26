@@ -1,11 +1,16 @@
 import { faker } from "@faker-js/faker"
 import { subSeconds } from "date-fns"
 import { countBy, sample } from "lodash"
-import { DataSource } from "typeorm"
+import { DataSource, EntityManager } from "typeorm"
 import Note from "../../src/services/entities/Note"
 import Trigger from "../../src/services/entities/Trigger"
 
-export default (dataSource: DataSource, caseId: number, triggers: Trigger[], isResolved: boolean): Note[] => {
+export default (
+  dataSource: DataSource | EntityManager,
+  caseId: number,
+  triggers: Trigger[],
+  isResolved: boolean
+): Note[] => {
   const triggerCounts = countBy(triggers, (trigger) => trigger.triggerCode)
   const triggerCountsNote =
     "Trigger codes: " +

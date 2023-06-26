@@ -1,70 +1,30 @@
-import { DataSource, MoreThan, Not, UpdateQueryBuilder, UpdateResult } from "typeorm"
+import { DataSource, EntityManager } from "typeorm"
 import { isError } from "types/Result"
 import User from "./entities/User"
 import { ManualResolution } from "types/ManualResolution"
 import CourtCase from "./entities/CourtCase"
 import unlockCourtCase from "./unlockCourtCase"
 import insertNotes from "./insertNotes"
-import Trigger from "./entities/Trigger"
-import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
-import { validateManualResolution } from "utils/validators/validateManualResolution"
+import storeAuditLogEvents from "./storeAuditLogEvents"
+import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import resolveError from "./resolveError"
 
 const resolveCourtCase = async (
-  dataSource: DataSource,
-  courtCaseId: number,
+  dataSource: DataSource | EntityManager,
+  courtCase: CourtCase,
   resolution: ManualResolution,
   user: User
-): Promise<UpdateResult | Error> => {
-  // TODO: Add audit log messages once the new UI integrates with the audit log API
-  const updateResult = dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<UpdateResult | Error> => {
-    const resolutionError = validateManualResolution(resolution).error
+): Promise<void> => {
+  await dataSource.transaction("SERIALIZABLE", async (entityManager) => {
+    const events: AuditLogEvent[] = []
 
-    if (resolutionError) {
-      return new Error(resolutionError)
+    const resolveErrorResult = await resolveError(entityManager, courtCase, user, resolution, events)
+
+    if (isError(resolveErrorResult)) {
+      throw resolveErrorResult
     }
 
-    const courtCaseRepository = entityManager.getRepository(CourtCase)
-    const resolver = user.username
-    const resolutionTimestamp = new Date()
-    let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
-    query = courtCasesByOrganisationUnitQuery(query, user) as UpdateQueryBuilder<CourtCase>
-
-    const queryParams: Record<string, unknown> = {
-      errorStatus: "Resolved",
-      errorResolvedBy: resolver,
-      errorResolvedTimestamp: resolutionTimestamp
-    }
-
-    const triggersResolved =
-      (
-        await entityManager.getRepository(Trigger).find({
-          where: {
-            errorId: courtCaseId,
-            status: Not("Resolved")
-          }
-        })
-      ).length === 0
-
-    if (triggersResolved) {
-      queryParams.resolutionTimestamp = resolutionTimestamp
-    }
-
-    query.set(queryParams)
-    query.andWhere({
-      errorId: courtCaseId,
-      errorLockedByUsername: resolver,
-      errorCount: MoreThan(0),
-      errorStatus: "Unresolved"
-    })
-
-    const queryResult = await query.execute()
-
-    if (queryResult.affected === 0) {
-      return new Error("Failed to resolve case")
-    }
-
-    const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, user)
-
+    const unlockResult = await unlockCourtCase(entityManager, courtCase.errorId, user, undefined, events)
     if (isError(unlockResult)) {
       throw unlockResult
     }
@@ -72,9 +32,9 @@ const resolveCourtCase = async (
     const addNoteResult = await insertNotes(entityManager, [
       {
         noteText:
-          `${resolver}: Portal Action: Record Manually Resolved.` +
+          `${user.username}: Portal Action: Record Manually Resolved.` +
           ` Reason: ${resolution.reason}. Reason Text: ${resolution.reasonText}`,
-        errorId: courtCaseId,
+        errorId: courtCase.errorId,
         userId: "System"
       }
     ])
@@ -83,13 +43,12 @@ const resolveCourtCase = async (
       throw addNoteResult
     }
 
-    return queryResult
-  })
-  if (isError(updateResult)) {
-    throw updateResult
-  }
+    const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
 
-  return updateResult
+    if (isError(storeAuditLogResponse)) {
+      throw storeAuditLogResponse
+    }
+  })
 }
 
 export default resolveCourtCase

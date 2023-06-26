@@ -37,7 +37,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
   })
 
   describe("When there aren't any excluded triggers", () => {
-    it("should return a list of cases with triggers are empty", async () => {
+    it("Should return a list of cases with triggers are empty", async () => {
       await insertDummyCourtCasesWithTriggers(
         [[testTrigger, testTrigger, testTrigger], [testTrigger, testTrigger], [testTrigger]],
         dummyOrgCode
@@ -57,7 +57,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
       expect(cases[2].triggers).toHaveLength(1)
     })
 
-    it("should return a list of cases with triggers are undefined", async () => {
+    it("Should return a list of cases with triggers are undefined", async () => {
       await insertDummyCourtCasesWithTriggers([[testTrigger, testTrigger]], dummyOrgCode)
 
       const result = await (leftJoinAndSelectTriggersQuery(query, undefined) as SelectQueryBuilder<CourtCase>)
@@ -73,7 +73,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
   })
 
   describe("When there are excluded triggers", () => {
-    it("should return cases with triggers that are not excluded", async () => {
+    it("Should return cases with triggers that are not excluded", async () => {
       const excludedTriggerCodes = ["TRPR0001", "TRPR0003"]
       const caseOneTriggers: { code: string; status: ResolutionStatus }[] = [
         {
@@ -120,7 +120,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
   })
 
   describe("Select triggers by case state", () => {
-    it("should not include resolved triggers when caseState is set to 'Unresolved'", async () => {
+    it("Should not include resolved triggers when caseState is set to 'Unresolved'", async () => {
       const caseOneTriggers: { code: string; status: ResolutionStatus }[] = [
         {
           code: "TRPR0001",
@@ -153,7 +153,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
       expect(cases[1].triggers).toHaveLength(0)
     })
 
-    it("should only include resolved triggers when case state is 'Resolved'", async () => {
+    it("Should only include resolved triggers when case state is 'Resolved'", async () => {
       const resolvedTriggerCode = "TRPR0002"
 
       const firstResolvedTrigger: TestTrigger = {
@@ -203,7 +203,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
       })
     })
 
-    it("should include both resolved and unresolved triggers when case state is 'Unresolved and resolved'", async () => {
+    it("Should include both resolved and unresolved triggers when case state is 'Unresolved and resolved'", async () => {
       const triggers: { code: string; status: ResolutionStatus }[] = [
         {
           code: "TRPR0001",
@@ -231,7 +231,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
       expect(cases[1].triggers).toHaveLength(2)
     })
 
-    it("should include both resolved and unresolved triggers when case state is undefined", async () => {
+    it("Should include both resolved and unresolved triggers when case state is undefined", async () => {
       const triggers: { code: string; status: ResolutionStatus }[] = [
         {
           code: "TRPR0001",

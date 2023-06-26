@@ -3,7 +3,7 @@ import CourtCase from "services/entities/CourtCase"
 import type { ResolutionStatus } from "types/ResolutionStatus"
 
 describe("CourtCase", () => {
-  it("should be locked by another user when error is locked by another user", () => {
+  it("Should be locked by another user when error is locked by another user", () => {
     const courtCase = new CourtCase()
     courtCase.errorLockedByUsername = "Another username"
     const result = courtCase.isLockedByAnotherUser("username")
@@ -11,7 +11,7 @@ describe("CourtCase", () => {
     expect(result).toBe(true)
   })
 
-  it("should be locked by another user when trigger is locked by another user", () => {
+  it("Should be locked by another user when trigger is locked by another user", () => {
     const courtCase = new CourtCase()
     courtCase.triggerLockedByUsername = "Another username"
     const result = courtCase.isLockedByAnotherUser("username")
@@ -19,7 +19,7 @@ describe("CourtCase", () => {
     expect(result).toBe(true)
   })
 
-  it("should not be locked by another user when error is locked by the user", () => {
+  it("Should not be locked by another user when error is locked by the user", () => {
     const courtCase = new CourtCase()
     courtCase.errorLockedByUsername = "username"
     const result = courtCase.isLockedByAnotherUser("username")
@@ -27,7 +27,7 @@ describe("CourtCase", () => {
     expect(result).toBe(false)
   })
 
-  it("should not be locked by another user when trigger is locked by the user", () => {
+  it("Should not be locked by another user when trigger is locked by the user", () => {
     const courtCase = new CourtCase()
     courtCase.triggerLockedByUsername = "username"
     const result = courtCase.isLockedByAnotherUser("username")
@@ -35,7 +35,7 @@ describe("CourtCase", () => {
     expect(result).toBe(false)
   })
 
-  it("should not be locked by another user when error and trigger are not locked by any user", () => {
+  it("Should not be locked by another user when error and trigger are not locked by any user", () => {
     const courtCase = new CourtCase()
     const result = courtCase.isLockedByAnotherUser("username")
 

@@ -73,7 +73,7 @@
       }
     },
     {
-      "files": ["**/_*.{ts,tsx}", "src/{emails,pages}/**/*.{ts,tsx}", "*.config.{js,ts}"],
+      "files": ["**/_*.{ts,tsx}", "src/{emails,pages}/**/*.{ts,tsx}", "*.config.{js,ts}", "test/helpers/**/*.ts", "cypress/**/*.ts"],
       "rules": {
         "filenames/match-exported": "off",
         "import/no-extraneous-dependencies": "off"
@@ -86,7 +86,7 @@
       }
     },
     {
-      "files": ["cypress/**/*.ts", "cypress/**/*.tsx"],
+      "files": ["cypress/**/*.ts", "cypress/**/*.tsx", "**/*.test.*"],
       "extends": ["plugin:cypress/recommended"],
       "rules": {
         "no-console": "off",

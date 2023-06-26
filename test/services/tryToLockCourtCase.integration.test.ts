@@ -25,7 +25,7 @@ describe("lock court case", () => {
     }
   })
 
-  it("should lock a unlocked court case when viewed", async () => {
+  it("Should lock a unlocked court case when viewed", async () => {
     const username = "Bichard01"
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
@@ -62,7 +62,7 @@ describe("lock court case", () => {
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
-  it("should not lock a court case when its already locked", async () => {
+  it("Should not lock a court case when its already locked", async () => {
     const username = "Bichard01"
     const anotherUser = "anotherUserName"
 
@@ -92,7 +92,7 @@ describe("lock court case", () => {
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
   })
 
-  it("should not lock a court case exception but it should lock a court case trigger", async () => {
+  it("Should not lock a court case exception but it should lock a court case trigger", async () => {
     const username = "Bichard01"
     const anotherUser = "anotherUserName"
 
@@ -132,7 +132,7 @@ describe("lock court case", () => {
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
-  it("should not lock a court case trigger but it should lock a court case exception", async () => {
+  it("Should not lock a court case trigger but it should lock a court case exception", async () => {
     const username = "Bichard01"
     const anotherUser = "anotherUserName"
 
@@ -172,7 +172,7 @@ describe("lock court case", () => {
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
-  it("should not lock court case trigger, when trigger resolution status is Submitted", async () => {
+  it("Should not lock court case trigger, when trigger resolution status is Submitted", async () => {
     const username = "Bichard01"
 
     const inputCourtCase = await getDummyCourtCase({
@@ -209,7 +209,7 @@ describe("lock court case", () => {
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
-  it("should not lock a court case exception, when exception resolution status is Submitted", async () => {
+  it("Should not lock a court case exception, when exception resolution status is Submitted", async () => {
     const username = "Bichard01"
 
     const inputCourtCase = await getDummyCourtCase({
@@ -247,7 +247,7 @@ describe("lock court case", () => {
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
   })
 
-  it("should return an error if we haven't got a specific lock to lock", async () => {
+  it("Should return an error if we haven't got a specific lock to lock", async () => {
     const username = "Bichard01"
 
     const inputCourtCase = await getDummyCourtCase({

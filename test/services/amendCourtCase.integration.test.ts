@@ -50,7 +50,7 @@ describe("amend court case", () => {
     await dataSource.destroy()
   })
 
-  it("should amend the court case", async () => {
+  it("Should amend the court case", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -77,7 +77,7 @@ describe("amend court case", () => {
     expect(retrievedCase?.hearingOutcome).toMatchSnapshot()
   })
 
-  it("should amend the court case when the lock is held by the current user", async () => {
+  it("Should amend the court case when the lock is held by the current user", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: "Bichard01",
       triggerLockedByUsername: null,
@@ -104,7 +104,7 @@ describe("amend court case", () => {
     expect(retrievedCase?.hearingOutcome).toMatchSnapshot()
   })
 
-  it("should generate system notes for each each amendments", async () => {
+  it("Should generate system notes for each each amendments", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -157,7 +157,7 @@ describe("amend court case", () => {
     )
   })
 
-  it("should not generate a system note when its a no update resubmit amendment", async () => {
+  it("Should not generate a system note when its a no update resubmit amendment", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -181,7 +181,7 @@ describe("amend court case", () => {
     expect(retrievedCase?.notes).toHaveLength(0)
   })
 
-  it("should not update the db if the case is locked by somebody else", async () => {
+  it("Should not update the db if the case is locked by somebody else", async () => {
     const triggerLockedBySomeoneElse = {
       errorLockedByUsername: null,
       triggerLockedByUsername: "Bichard02",
@@ -228,7 +228,7 @@ describe("amend court case", () => {
     expect(caseWithErrorLock?.hearingOutcome).toEqual(triggerLockedBySomeoneElse.hearingOutcome)
   })
 
-  it("should create a force owner if the force owner is not present", async () => {
+  it("Should create a force owner if the force owner is not present", async () => {
     const inputXml = fs.readFileSync("test/test-data/AnnotatedHONoForceOwner.xml").toString()
 
     const inputCourtCase = await getDummyCourtCase({
@@ -253,7 +253,7 @@ describe("amend court case", () => {
     expect(result).toMatchSnapshot()
   })
 
-  it("should return an error when the court case is not found", async () => {
+  it("Should return an error when the court case is not found", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -294,14 +294,14 @@ describe("amend court case", () => {
     expect(retrievedCase?.hearingOutcome).toEqual(inputCourtCase.hearingOutcome)
   })
 
-  it("should return an error if produce an error getting the court case", async () => {
+  it("Should return an error if produce an error getting the court case", async () => {
     ;(getCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Failed to get court case`))
     const dummyCourtCaseId = 999
     const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, dummyCourtCaseId, user)
     expect(result).toEqual(Error(`Failed to get court case`))
   })
 
-  it("should return an error if the xml is invalid", async () => {
+  it("Should return an error if the xml is invalid", async () => {
     ;(parseAhoXml as jest.Mock).mockImplementationOnce(() => new Error(`Failed to parse aho`))
 
     const inputCourtCase = await getDummyCourtCase({
@@ -320,7 +320,7 @@ describe("amend court case", () => {
     expect(result).toEqual(Error(`Failed to parse aho`))
   })
 
-  it("should return an error if it cannot update the db", async () => {
+  it("Should return an error if it cannot update the db", async () => {
     ;(updateCourtCaseAho as jest.Mock).mockImplementationOnce(() => new Error("Failed to update the database"))
 
     const inputCourtCase = await getDummyCourtCase({
@@ -340,7 +340,7 @@ describe("amend court case", () => {
     expect(result).toEqual(Error("Failed to update the database"))
   })
 
-  it("should return an error if the force owner organistaion unit codes are invalid", async () => {
+  it("Should return an error if the force owner organistaion unit codes are invalid", async () => {
     ;(createForceOwner as jest.Mock).mockImplementationOnce(() => new Error("Failed to create organistaion unit codes"))
 
     const inputXml = fs.readFileSync("test/test-data/AnnotatedHONoForceOwner.xml").toString()

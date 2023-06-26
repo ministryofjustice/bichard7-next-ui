@@ -41,7 +41,7 @@ describe("courtCasesByOrganisationUnitQuery", () => {
     }
   })
 
-  it("should call both visible courts and visible forces queries", async () => {
+  it("Should call both visible courts and visible forces queries", async () => {
     const dummyCode = "dummyForceCode"
     const user: Partial<User> = {
       visibleForces: [dummyCode],
@@ -57,7 +57,7 @@ describe("courtCasesByOrganisationUnitQuery", () => {
     expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [dummyCode, dummyCode])
   })
 
-  it("should select all visible cases when its a select query", async () => {
+  it("Should select all visible cases when its a select query", async () => {
     const expectedOrgCodes = ["12GHA ", "12GHAB", "13BR  ", "14AT  "]
     const otherOrgCodes = ["15AA", "16AA"]
     const user: Partial<User> = {
@@ -79,7 +79,7 @@ describe("courtCasesByOrganisationUnitQuery", () => {
     expect(cases.map((c) => c.courtCode)).toEqual(expect.arrayContaining(expectedOrgCodes))
   })
 
-  it("should update visible cases when its an update query", async () => {
+  it("Should update visible cases when its an update query", async () => {
     const expectedOrgCodes = ["12GHA ", "12GHAB", "13BR  "]
     const otherOrgCodes = ["14AT  ", "15AA", "16AA"]
     const user: Partial<User> = {
