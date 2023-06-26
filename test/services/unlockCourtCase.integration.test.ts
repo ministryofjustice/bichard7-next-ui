@@ -13,6 +13,7 @@ import fetch from "node-fetch"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
+import UnlockReason from "types/UnlockReason"
 
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
@@ -71,32 +72,43 @@ describe("lock court case", () => {
 
   describe("when a case is successfully unlocked", () => {
     it("Should call updateLockStatusToUnlocked, courtCasesByOrganisationUnitQuery and storeAuditLogEvents", async () => {
-      const expectedAuditLogEvent = {
-        attributes: { auditLogVersion: 2, eventCode: "exceptions.unlocked", user: lockedByName },
-        category: "information",
-        eventSource: "Bichard New UI",
-        eventType: "Exception unlocked",
-        timestamp: expect.anything()
-      }
+      const expectedAuditLogEvents = [
+        {
+          attributes: { auditLogVersion: 2, eventCode: "exceptions.unlocked", user: lockedByName },
+          category: "information",
+          eventSource: "Bichard New UI",
+          eventType: "Exception unlocked",
+          timestamp: expect.anything()
+        },
+        {
+          attributes: { auditLogVersion: 2, eventCode: "triggers.unlocked", user: lockedByName },
+          category: "information",
+          eventSource: "Bichard New UI",
+          eventType: "Trigger unlocked",
+          timestamp: expect.anything()
+        }
+      ]
 
-      await unlockCourtCase(dataSource.manager, lockedCourtCase.errorId, user).catch((error) => error)
+      await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, UnlockReason.TriggerAndException).catch(
+        (error) => error
+      )
 
       expect(updateLockStatusToUnlocked).toHaveBeenCalledTimes(1)
       expect(updateLockStatusToUnlocked).toHaveBeenCalledWith(
         expect.any(Object),
         lockedCourtCase.errorId,
         user,
-        undefined,
-        [expectedAuditLogEvent]
+        UnlockReason.TriggerAndException,
+        expectedAuditLogEvents
       )
       expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
       expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
       expect(storeAuditLogEvents).toHaveBeenCalledTimes(1)
-      expect(storeAuditLogEvents).toHaveBeenCalledWith(lockedCourtCase.messageId, [expectedAuditLogEvent])
+      expect(storeAuditLogEvents).toHaveBeenCalledWith(lockedCourtCase.messageId, expectedAuditLogEvents)
     })
 
     it("Should unlock the case and update the audit log events", async () => {
-      const result = await unlockCourtCase(dataSource.manager, lockedCourtCase.errorId, user)
+      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, UnlockReason.TriggerAndException)
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
@@ -108,15 +120,30 @@ describe("lock court case", () => {
       const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${lockedCourtCase.messageId}`)
       const auditLogs = (await apiResult.json()) as [{ events: [{ timestamp: string; eventCode: string }] }]
       const events = auditLogs[0].events
-      const unlockedEvent = events.find((event) => event.eventCode === "exceptions.unlocked")
+      expect(events).toHaveLength(2)
 
-      expect(unlockedEvent).toStrictEqual({
+      const unlockedExceptionEvent = events.find((event) => event.eventCode === "exceptions.unlocked")
+      const unlockedTriggerEvent = events.find((event) => event.eventCode === "triggers.unlocked")
+
+      expect(unlockedExceptionEvent).toStrictEqual({
         category: "information",
         eventSource: "Bichard New UI",
         eventType: "Exception unlocked",
         timestamp: expect.anything(),
         user: user.username,
         eventCode: "exceptions.unlocked",
+        attributes: {
+          auditLogVersion: 2
+        }
+      })
+
+      expect(unlockedTriggerEvent).toStrictEqual({
+        category: "information",
+        eventSource: "Bichard New UI",
+        eventType: "Trigger unlocked",
+        timestamp: expect.anything(),
+        user: user.username,
+        eventCode: "triggers.unlocked",
         attributes: {
           auditLogVersion: 2
         }
@@ -128,7 +155,12 @@ describe("lock court case", () => {
     it("Should return the error if fails to store audit logs", async () => {
       ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(`Error while calling audit log API`))
 
-      const result = await unlockCourtCase(dataSource.manager, lockedCourtCase.errorId, user).catch((error) => error)
+      const result = await unlockCourtCase(
+        dataSource,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.TriggerAndException
+      ).catch((error) => error)
 
       expect(result).toEqual(Error(`Error while calling audit log API`))
 
@@ -142,7 +174,12 @@ describe("lock court case", () => {
     it("Should not store audit log events if it fails to update the lock status", async () => {
       ;(updateLockStatusToUnlocked as jest.Mock).mockImplementationOnce(() => new Error(`Error while updating lock`))
 
-      const result = await unlockCourtCase(dataSource.manager, lockedCourtCase.errorId, user).catch((error) => error)
+      const result = await unlockCourtCase(
+        dataSource,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.TriggerAndException
+      ).catch((error) => error)
 
       expect(result).toEqual(Error(`Error while updating lock`))
 

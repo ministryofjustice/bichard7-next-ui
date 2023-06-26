@@ -7,9 +7,33 @@ import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import UnlockReason from "types/UnlockReason"
 
 describe("lock court case", () => {
   let dataSource: DataSource
+
+  const exceptionUnlockedEvent = (username = "some user") => ({
+    category: "information",
+    eventSource: "Bichard New UI",
+    eventType: "Exception unlocked",
+    timestamp: expect.anything(),
+    attributes: {
+      user: username,
+      auditLogVersion: 2,
+      eventCode: "exceptions.unlocked"
+    }
+  })
+  const triggerUnlockedEvent = (username = "some user") => ({
+    category: "information",
+    eventSource: "Bichard New UI",
+    eventType: "Trigger unlocked",
+    timestamp: expect.anything(),
+    attributes: {
+      user: username,
+      auditLogVersion: 2,
+      eventCode: "triggers.unlocked"
+    }
+  })
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -55,7 +79,13 @@ describe("lock court case", () => {
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(dataSource.manager, 1, user, undefined, events)
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        1,
+        user,
+        UnlockReason.TriggerAndException,
+        events
+      )
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 1 } })
@@ -67,22 +97,10 @@ describe("lock court case", () => {
       const anotherCourtCase = anotherRecord as CourtCase
       expect(anotherCourtCase.errorLockedByUsername).toEqual(lockedByName)
       expect(anotherCourtCase.triggerLockedByUsername).toEqual(lockedByName)
-      expect(events).toStrictEqual([
-        {
-          category: "information",
-          eventSource: "Bichard New UI",
-          eventType: "Exception unlocked",
-          timestamp: expect.anything(),
-          attributes: {
-            user: user.username,
-            auditLogVersion: 2,
-            eventCode: "exceptions.unlocked"
-          }
-        } as AuditLogEvent
-      ])
+      expect(events).toStrictEqual([exceptionUnlockedEvent(), triggerUnlockedEvent()])
     })
 
-    it("Should unlock exceptions lock of a court case", async () => {
+    it("Should only unlock exceptions when user is exception handler", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = await getDummyCourtCase({
         errorLockedByUsername: lockedByName,
@@ -99,16 +117,24 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.TriggerAndException,
+        events
+      )
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.errorLockedByUsername).toBeNull()
       expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
+      expect(events).toStrictEqual([exceptionUnlockedEvent()])
     })
 
-    it("Should unlock triggers lock of a court case", async () => {
+    it("Should only unlock triggers when user is trigger handler", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = await getDummyCourtCase({
         errorLockedByUsername: lockedByName,
@@ -125,13 +151,21 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.TriggerAndException,
+        events
+      )
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
+      expect(events).toStrictEqual([triggerUnlockedEvent()])
     })
 
     it("Should unlock exception only when 'reasonToUnlock' specified", async () => {
@@ -151,13 +185,21 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user, "Exception")
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.Exception,
+        events
+      )
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.errorLockedByUsername).toBeNull()
       expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
+      expect(events).toStrictEqual([exceptionUnlockedEvent()])
     })
 
     it("Should unlock trigger only when 'reasonToUnlock' specified", async () => {
@@ -177,13 +219,21 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user, "Trigger")
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.Trigger,
+        events
+      )
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
       expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
+      expect(events).toStrictEqual([triggerUnlockedEvent()])
     })
 
     it("can unlock trigger when exception is not locked", async () => {
@@ -202,13 +252,21 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user, "Trigger")
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.Trigger,
+        events
+      )
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
       expect(actualCourtCase.errorLockedByUsername).toBeNull()
+      expect(events).toStrictEqual([triggerUnlockedEvent()])
     })
 
     it("can unlock exception when trigger is not locked", async () => {
@@ -227,13 +285,21 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user, "Exception")
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.Exception,
+        events
+      )
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
       expect(actualCourtCase.errorLockedByUsername).toBeNull()
+      expect(events).toStrictEqual([exceptionUnlockedEvent()])
     })
   })
 
@@ -246,12 +312,20 @@ describe("lock court case", () => {
         username: "Dummy username"
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, dummyErrorId, user)
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        dummyErrorId,
+        user,
+        UnlockReason.TriggerAndException,
+        events
+      )
       expect(isError(result)).toBe(true)
 
       const receivedError = result as Error
 
       expect(receivedError.message).toEqual("User hasn't got permission to unlock the case")
+      expect(events).toHaveLength(0)
     })
 
     it("can handle missing permission gracefully when unlocking triggers", async () => {
@@ -262,12 +336,20 @@ describe("lock court case", () => {
         username: "Dummy username"
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, dummyErrorId, user, "Trigger")
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        dummyErrorId,
+        user,
+        UnlockReason.Trigger,
+        events
+      )
       expect(isError(result)).toBe(true)
 
       const receivedError = result as Error
 
       expect(receivedError.message).toEqual("User hasn't got permission to unlock the case")
+      expect(events).toHaveLength(0)
     })
 
     it("can handle missing permission gracefully when unlocking exceptions", async () => {
@@ -278,12 +360,20 @@ describe("lock court case", () => {
         username: "Dummy username"
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, dummyErrorId, user, "Exception")
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        dummyErrorId,
+        user,
+        UnlockReason.Exception,
+        events
+      )
       expect(isError(result)).toBe(true)
 
       const receivedError = result as Error
 
       expect(receivedError.message).toEqual("User hasn't got permission to unlock the case")
+      expect(events).toHaveLength(0)
     })
 
     it("is does not update the lock when the case locked by another user", async () => {
@@ -303,13 +393,21 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.TriggerAndException,
+        events
+      )
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.errorLockedByUsername).toEqual(lockedByName)
       expect(actualCourtCase.triggerLockedByUsername).toEqual(lockedByName)
+      expect(events).toHaveLength(0)
     })
   })
 
@@ -332,13 +430,21 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.TriggerAndException,
+        events
+      )
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.errorLockedByUsername).toBeNull()
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
+      expect(events).toStrictEqual([exceptionUnlockedEvent(user.username), triggerUnlockedEvent(user.username)])
     })
 
     it("cannot unlock a case that is not visible for them", async () => {
@@ -359,13 +465,21 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.TriggerAndException,
+        events
+      )
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.errorLockedByUsername).toEqual(lockedByName)
       expect(actualCourtCase.triggerLockedByUsername).toEqual(lockedByName)
+      expect(events).toHaveLength(0)
     })
   })
 
@@ -389,12 +503,20 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToUnlocked(
+        dataSource.manager,
+        lockedCourtCase.errorId,
+        user,
+        UnlockReason.TriggerAndException,
+        events
+      )
       expect(isError(result)).toBe(true)
 
       const receivedError = result as Error
 
       expect(receivedError.message).toEqual("Failed to update record with some error")
+      expect(events).toHaveLength(0)
     })
   })
 })

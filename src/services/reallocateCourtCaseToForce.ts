@@ -7,6 +7,7 @@ import User from "./entities/User"
 import insertNotes from "./insertNotes"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
+import UnlockReason from "types/UnlockReason"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,
@@ -60,7 +61,13 @@ const reallocateCourtCaseToForce = async (
         }
       }
 
-      const unlockResult = await updateLockStatusToUnlocked(entityManager, +courtCaseId, user)
+      const unlockResult = await updateLockStatusToUnlocked(
+        entityManager,
+        +courtCaseId,
+        user,
+        UnlockReason.TriggerAndException,
+        [] //TODO pass an actual audit log events array
+      )
 
       if (isError(unlockResult)) {
         throw unlockResult

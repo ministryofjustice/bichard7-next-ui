@@ -11,6 +11,7 @@ import type { Amendments } from "types/Amendments"
 import PromiseResult from "types/PromiseResult"
 import insertNotes from "services/insertNotes"
 import updateCourtCaseStatus from "services/updateCourtCaseStatus"
+import UnlockReason from "types/UnlockReason"
 
 const resubmitCourtCase = async (
   dataSource: DataSource,
@@ -52,7 +53,13 @@ const resubmitCourtCase = async (
           return statusResult
         }
 
-        const unlockResult = await updateLockStatusToUnlocked(entityManager, +courtCaseId, currentUser)
+        const unlockResult = await updateLockStatusToUnlocked(
+          entityManager,
+          +courtCaseId,
+          currentUser,
+          UnlockReason.TriggerAndException,
+          [] //TODO pass an actual audit log events array
+        )
 
         if (isError(unlockResult)) {
           throw unlockResult
