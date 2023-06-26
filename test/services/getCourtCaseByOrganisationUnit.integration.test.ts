@@ -35,7 +35,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
     }
   })
 
-  it("should call leftJoinAndSelectTriggersQuery with the correct arguments", async () => {
+  it("Should call leftJoinAndSelectTriggersQuery with the correct arguments", async () => {
     const dummyErrorId = 0
     const dummyExcludedTriggers = ["TRPDUMMY"]
     await getCourtCaseByOrganisationUnit(dataSource, dummyErrorId, {
@@ -48,7 +48,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
     expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(expect.any(Object), dummyExcludedTriggers)
   })
 
-  it("should return court case details when record exists and is visible to the specified forces", async () => {
+  it("Should return court case details when record exists and is visible to the specified forces", async () => {
     const inputCourtCase = await getDummyCourtCase({
       orgForPoliceFilter: orgCode.padEnd(6, " ")
     })
@@ -75,7 +75,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
 
   // Old Bichard generates inclusion list from visibleForces and visibleCourts
   // then checks these against both orgForPoliceFilter and courtCode
-  it("should return a case where the users' visibleForce matches the courtCode", async () => {
+  it("Should return a case where the users' visibleForce matches the courtCode", async () => {
     const inputCourtCase = await getDummyCourtCase({
       courtCode: orgCode.padEnd(6, " "),
       orgForPoliceFilter: null
@@ -91,7 +91,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
   })
 
-  it("should return a case where the users' visibleCourt matches the orgForPoliceFilter", async () => {
+  it("Should return a case where the users' visibleCourt matches the orgForPoliceFilter", async () => {
     const inputCourtCase = await getDummyCourtCase({
       courtCode: null,
       orgForPoliceFilter: orgCode.padEnd(6, " ")
@@ -107,7 +107,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
   })
 
-  it("should return null if the court case doesn't exist", async () => {
+  it("Should return null if the court case doesn't exist", async () => {
     const result = await getCourtCaseByOrganisationUnit(dataSource, 0, {
       visibleForces: [orgCode],
       visibleCourts: []
@@ -116,7 +116,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
     expect(result).toBeNull()
   })
 
-  it("should return null when record exists and is not visible to the specified forces", async () => {
+  it("Should return null when record exists and is not visible to the specified forces", async () => {
     const differentOrgCode = "36FPA3"
     const inputCourtCase = await getDummyCourtCase({
       orgForPoliceFilter: orgCode.padEnd(6, " ")
@@ -130,7 +130,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
     expect(result).toBeNull()
   })
 
-  it("should return null when record exists and there is no visible forces", async () => {
+  it("Should return null when record exists and there is no visible forces", async () => {
     const inputCourtCase = await getDummyCourtCase({
       orgForPoliceFilter: orgCode.padEnd(6, " ")
     })

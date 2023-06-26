@@ -1,7 +1,7 @@
 import getExceptionPathDetails from "./getExceptionPathDetails"
 
 describe("getExceptionPathDetails", () => {
-  it("should return path details for the offence", () => {
+  it("Should return path details for the offence", () => {
     const path = [
       "AnnotatedHearingOutcome",
       "HearingOutcome",
@@ -25,7 +25,7 @@ describe("getExceptionPathDetails", () => {
     })
   })
 
-  it("should return path details for the case", () => {
+  it("Should return path details for the case", () => {
     const path = ["AnnotatedHearingOutcome", "HearingOutcome", "Case", "HearingDefendant", "ArrestSummonsNumber"]
     const result = getExceptionPathDetails(path)
 
@@ -38,7 +38,7 @@ describe("getExceptionPathDetails", () => {
     })
   })
 
-  it("should return undefined location and tab when path is not supported", () => {
+  it("Should return undefined location and tab when path is not supported", () => {
     const path = ["AnnotatedHearingOutcome"]
     const result = getExceptionPathDetails(path)
 

@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker"
 import exponential from "@stdlib/random-base-exponential"
 import sample from "@stdlib/random-sample"
-import { DataSource } from "typeorm"
+import { DataSource, EntityManager } from "typeorm"
 import Trigger from "../../src/services/entities/Trigger"
 import createResolutionStatus from "./createResolutionStatus"
 
@@ -43,7 +43,12 @@ const triggerFrequency = {
 const totalFrequency = Object.values(triggerFrequency).reduce((a, b) => a + b, 0)
 const probs = Object.values(triggerFrequency).map((freq) => freq / totalFrequency)
 
-export default (dataSource: DataSource, errorId: number, creationDate: Date, isResolved?: boolean): Trigger[] => {
+export default (
+  dataSource: DataSource | EntityManager,
+  errorId: number,
+  creationDate: Date,
+  isResolved?: boolean
+): Trigger[] => {
   const numTriggers = Math.min(Math.round(exponential(2) * 2), 5) + 1
   const triggerCodes = sample(Object.keys(triggerFrequency), {
     size: numTriggers,

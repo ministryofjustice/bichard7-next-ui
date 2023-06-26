@@ -1,7 +1,7 @@
 import getTriggerDefinition from "./getTriggerDefinition"
 
 describe("getTriggerDefinition", () => {
-  it("should return the trigger definition when trigger code exists", () => {
+  it("Should return the trigger definition when trigger code exists", () => {
     const result = getTriggerDefinition("TRPR0001")
     expect(result).toStrictEqual({
       code: "TRPR0001",
@@ -13,7 +13,7 @@ describe("getTriggerDefinition", () => {
     })
   })
 
-  it("should return undefined when trigger code exists", () => {
+  it("Should return undefined when trigger code exists", () => {
     const result = getTriggerDefinition("TRPR9999")
     expect(result).toBeUndefined()
   })

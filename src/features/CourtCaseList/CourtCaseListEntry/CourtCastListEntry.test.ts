@@ -6,7 +6,7 @@ import {
 } from "./CaseDetailsRow/CourtCaseListEntryHelperFunction"
 
 describe("number of notes", () => {
-  it("should filter out all the system notes and only show user entered notes", () => {
+  it("Should filter out all the system notes and only show user entered notes", () => {
     const caseNote = [
       {
         noteId: 1001,
@@ -36,7 +36,7 @@ describe("number of notes", () => {
 })
 
 describe("getMostRecentNote Test", () => {
-  it("should return an object that contains createdAt and noteText values", () => {
+  it("Should return an object that contains createdAt and noteText values", () => {
     const caseNote = [
       {
         noteId: 1450,
@@ -54,7 +54,7 @@ describe("getMostRecentNote Test", () => {
     expect(recentNote).toHaveProperty("noteText")
   })
 
-  it("should return the most recently dated note Object from many objects", () => {
+  it("Should return the most recently dated note Object from many objects", () => {
     const caseNote = [
       {
         noteId: 1255,
@@ -84,7 +84,7 @@ describe("getMostRecentNote Test", () => {
     expect(recentNote.createdAt).toBe("2023-01-01T00:00:00.000Z")
   })
 
-  it("should return the most recent note based off time", () => {
+  it("Should return the most recent note based off time", () => {
     const caseNote = [
       {
         noteId: 1001,
@@ -114,7 +114,7 @@ describe("getMostRecentNote Test", () => {
     expect(recentNote.noteText).toBe("Latest note")
   })
 
-  it("should return the correct `createdAt` date associated with the most recent note", () => {
+  it("Should return the correct `createdAt` date associated with the most recent note", () => {
     const caseNote = [
       {
         noteId: 1001,

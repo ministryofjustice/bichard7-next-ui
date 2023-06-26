@@ -6,6 +6,7 @@ import unlockCourtCase from "../../src/services/unlockCourtCase"
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
+import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 
 describe("lock court case", () => {
   let dataSource: DataSource
@@ -28,7 +29,7 @@ describe("lock court case", () => {
   })
 
   describe("when user has permission to unlock a case", () => {
-    it("should unlock a locked court case", async () => {
+    it("Should unlock a locked court case", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = {
         errorLockedByUsername: lockedByName,
@@ -53,7 +54,8 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, 1, user)
+      const events: AuditLogEvent[] = []
+      const result = await unlockCourtCase(dataSource, 1, user, undefined, events)
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 1 } })
@@ -65,9 +67,22 @@ describe("lock court case", () => {
       const anotherCourtCase = anotherRecord as CourtCase
       expect(anotherCourtCase.errorLockedByUsername).toEqual(lockedByName)
       expect(anotherCourtCase.triggerLockedByUsername).toEqual(lockedByName)
+      expect(events).toStrictEqual([
+        {
+          category: "information",
+          eventSource: "Bichard New UI",
+          eventType: "Exception unlocked",
+          timestamp: expect.anything(),
+          attributes: {
+            user: user.username,
+            auditLogVersion: 2,
+            eventCode: "exceptions.unlocked"
+          }
+        } as AuditLogEvent
+      ])
     })
 
-    it("should unlock exceptions lock of a court case", async () => {
+    it("Should unlock exceptions lock of a court case", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = await getDummyCourtCase({
         errorLockedByUsername: lockedByName,
@@ -93,7 +108,7 @@ describe("lock court case", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
     })
 
-    it("should unlock triggers lock of a court case", async () => {
+    it("Should unlock triggers lock of a court case", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = await getDummyCourtCase({
         errorLockedByUsername: lockedByName,
@@ -119,7 +134,7 @@ describe("lock court case", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
     })
 
-    it("should unlock exception only when 'reasonToUnlock' specified", async () => {
+    it("Should unlock exception only when 'reasonToUnlock' specified", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = await getDummyCourtCase({
         errorLockedByUsername: lockedByName,
@@ -145,7 +160,7 @@ describe("lock court case", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
     })
 
-    it("should unlock trigger only when 'reasonToUnlock' specified", async () => {
+    it("Should unlock trigger only when 'reasonToUnlock' specified", async () => {
       const lockedByName = "some user"
       const lockedCourtCase = await getDummyCourtCase({
         errorLockedByUsername: lockedByName,
@@ -355,7 +370,7 @@ describe("lock court case", () => {
   })
 
   describe("when there is an error", () => {
-    it("should return the error when failed to unlock court case", async () => {
+    it("Should return the error when failed to unlock court case", async () => {
       jest
         .spyOn(UpdateQueryBuilder.prototype, "execute")
         .mockRejectedValue(Error("Failed to update record with some error"))

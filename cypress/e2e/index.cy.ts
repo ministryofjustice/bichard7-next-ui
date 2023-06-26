@@ -91,13 +91,13 @@ describe("Case list", () => {
   })
 
   context("when there are 0 cases", () => {
-    it("should display 0 cases and the user's username when no cases are added", () => {
+    it("Should display 0 cases and the user's username when no cases are added", () => {
       loginAndGoToUrl()
 
       cy.findByText("There are no court cases to show").should("exist")
     })
 
-    it("should not show pagination buttons when there are 0 cases", () => {
+    it("Should not show pagination buttons when there are 0 cases", () => {
       loginAndGoToUrl()
 
       cy.findByText("Previous page").should("not.exist")
@@ -105,7 +105,7 @@ describe("Case list", () => {
       cy.get("#bottom-pagination-bar").should("not.be.visible")
     })
 
-    it("should display 0 cases when there are no cases 'locked to me' and hide the bottom pagination bar ", () => {
+    it("Should display 0 cases when there are no cases 'locked to me' and hide the bottom pagination bar ", () => {
       const lockUsernames = ["Bichard02", "Bichard03", null, "A really really really long name"]
       cy.task(
         "insertCourtCasesWithFields",
@@ -127,7 +127,7 @@ describe("Case list", () => {
       cy.get("#bottom-pagination-bar").should("not.be.visible")
     })
 
-    it("should be accessible", () => {
+    it("Should be accessible", () => {
       loginAndGoToUrl()
       cy.injectAxe()
 
@@ -139,7 +139,7 @@ describe("Case list", () => {
   })
 
   context("when there are multiple cases", () => {
-    it("should be accessible", () => {
+    it("Should be accessible", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
       loginAndGoToUrl()
       cy.injectAxe()
@@ -150,7 +150,7 @@ describe("Case list", () => {
       cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
     })
 
-    it("should display all the headings with sorting or not", () => {
+    it("Should display all the headings with sorting or not", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       loginAndGoToUrl()
       cy.get("#defendant-name-sort").contains("Defendant Name").should("have.attr", "href")
@@ -163,7 +163,7 @@ describe("Case list", () => {
       cy.get("#locked-by-sort").contains("Locked By").should("have.attr", "href")
     })
 
-    it("should display multiple cases", () => {
+    it("Should display multiple cases", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
       loginAndGoToUrl()
 
@@ -173,20 +173,20 @@ describe("Case list", () => {
       cy.findByText(`Case00003`).should("exist")
       cy.findByText(`Case00004`).should("exist")
 
-      it("should not show pagination buttons when there are 0 cases", () => {
+      it("Should not show pagination buttons when there are 0 cases", () => {
         loginAndGoToUrl()
 
         cy.get(".moj-pagination__item").should("not.exist")
       })
 
-      it("should display appropriate pagination results when there are 0 cases", () => {
+      it("Should display appropriate pagination results when there are 0 cases", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard")
 
         cy.get("p.moj-pagination__results").should("contain.text", "Showing 0 cases")
       })
 
-      it("should be accessible", () => {
+      it("Should be accessible", () => {
         loginAndGoToUrl()
         cy.injectAxe()
 
@@ -197,14 +197,14 @@ describe("Case list", () => {
       })
     })
 
-    it("should display a case for the user's org", () => {
+    it("Should display a case for the user's org", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       loginAndGoToUrl()
 
       cy.get("tr").not(":first").get("td:nth-child(5)").contains(`Case00000`)
     })
 
-    it("should only display cases that are in to users visible forces or visible courts", () => {
+    it("Should only display cases that are in to users visible forces or visible courts", () => {
       const visibleForceCode = "02"
       const visibleCourtCode = "2C"
       const caseNotVisible = "NV01"
@@ -223,7 +223,7 @@ describe("Case list", () => {
 
     // Old Bichard generates an inclusion list from visible courts and visible forces
     // and checks all of the codes against both court codes and org police filter
-    it("should display a case that has orgForPoliceFilter that matches the users' visible courts", () => {
+    it("Should display a case that has orgForPoliceFilter that matches the users' visible courts", () => {
       const code = "02"
       const caseNotVisible = "NV01"
       cy.task("insertCourtCasesWithFields", [
@@ -237,7 +237,7 @@ describe("Case list", () => {
       confirmMultipleFieldsNotDisplayed(["NotExpected"])
     })
 
-    it("should display a case that has court code that matches the users' visible forces", () => {
+    it("Should display a case that has court code that matches the users' visible forces", () => {
       const code = "002"
       const caseNotVisible = "NV01"
       cy.task("insertCourtCasesWithFields", [
@@ -251,7 +251,7 @@ describe("Case list", () => {
       confirmMultipleFieldsNotDisplayed(["NotExpected"])
     })
 
-    it("should display cases for sub-forces", () => {
+    it("Should display cases for sub-forces", () => {
       cy.task("insertCourtCasesWithFields", [
         { orgForPoliceFilter: "01" },
         { orgForPoliceFilter: "011" },
@@ -268,7 +268,7 @@ describe("Case list", () => {
         })
     })
 
-    it("should display cases for parent forces up to the second-level force", () => {
+    it("Should display cases for parent forces up to the second-level force", () => {
       cy.task("insertCourtCasesWithFields", [
         { orgForPoliceFilter: "01" },
         { orgForPoliceFilter: "011" },
@@ -389,7 +389,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").eq(1).get("td:nth-child(5)").contains(`Case00001`)
     })
 
-    it("should be able to navigate to the case details page and back", () => {
+    it("Should be able to navigate to the case details page and back", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
       loginAndGoToUrl()
@@ -632,7 +632,7 @@ describe("Case list", () => {
       checkCasesOrder([2, 1, 0, 3])
     })
 
-    it("should unlock a case that is locked to the user", () => {
+    it("Should unlock a case that is locked to the user", () => {
       const lockUsernames = ["Bichard01", "Bichard02"]
       cy.task(
         "insertCourtCasesWithFields",
@@ -683,7 +683,7 @@ describe("Case list", () => {
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
     })
 
-    it("should unlock any case as a supervisor user", () => {
+    it("Should unlock any case as a supervisor user", () => {
       const lockUsernames = ["Bichard01", "Bichard02"]
       cy.task(
         "insertCourtCasesWithFields",
@@ -740,7 +740,7 @@ describe("Case list", () => {
         }
       })
 
-    it("should display individual triggers without a count", () => {
+    it("Should display individual triggers without a count", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       cy.task("insertTriggers", { caseId: 0, triggers: makeTriggers() })
       loginAndGoToUrl()
@@ -750,7 +750,7 @@ describe("Case list", () => {
         .should("not.exist")
     })
 
-    it("should group duplicate triggers", () => {
+    it("Should group duplicate triggers", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       cy.task("insertTriggers", { caseId: 0, triggers: makeTriggers(1) })
       loginAndGoToUrl()
@@ -758,7 +758,7 @@ describe("Case list", () => {
       cy.get("table").find(".trigger-description").should("have.length", 1)
     })
 
-    it("should include a count for grouped triggers", () => {
+    it("Should include a count for grouped triggers", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       cy.task("insertTriggers", { caseId: 0, triggers: makeTriggers(2) })
       loginAndGoToUrl()
@@ -768,7 +768,7 @@ describe("Case list", () => {
         .should("exist")
     })
 
-    it("should display individual and grouped triggers together", () => {
+    it("Should display individual and grouped triggers together", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       const triggers = [...makeTriggers(), ...makeTriggers(1)].map((t, i) => {
         t.triggerId = i
@@ -787,7 +787,7 @@ describe("Case list", () => {
         .should("not.exist")
     })
 
-    it("should display the correct count for grouped triggers", () => {
+    it("Should display the correct count for grouped triggers", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       const triggers = makeTriggers(1, 12)
       cy.task("insertTriggers", { caseId: 0, triggers })
@@ -800,7 +800,7 @@ describe("Case list", () => {
   })
 
   describe("Pagination", () => {
-    it("should be accessible", () => {
+    it("Should be accessible", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
       loginAndGoToUrl()
@@ -1150,7 +1150,7 @@ describe("Case list", () => {
   })
 
   describe("Sorting cases", () => {
-    it("should default to sorting by court date", () => {
+    it("Should default to sorting by court date", () => {
       const courtDates = [new Date("09/12/2021"), new Date("04/01/2022"), new Date("01/07/2020")]
       cy.task("insertCourtCasesWithFields", [
         ...courtDates.map((courtDate) => ({
@@ -1171,7 +1171,7 @@ describe("Case list", () => {
       checkCasesOrder([1, 4, 0, 3, 2, 5])
     })
 
-    it("should use court date as a secondary sort when sorting by other fields", () => {
+    it("Should use court date as a secondary sort when sorting by other fields", () => {
       const courtDates = [new Date("09/12/2021"), new Date("04/01/2022"), new Date("01/07/2020")]
       cy.task("insertCourtCasesWithFields", [
         ...courtDates.map((courtDate) => ({
@@ -1193,7 +1193,7 @@ describe("Case list", () => {
       checkCasesOrder([4, 3, 5, 1, 0, 2])
     })
 
-    it("should sort by court name", () => {
+    it("Should sort by court name", () => {
       const courtNames = ["DDDD", "AAAA", "CCCC", "BBBB"]
       cy.task(
         "insertCourtCasesWithFields",
@@ -1214,7 +1214,7 @@ describe("Case list", () => {
       checkCasesOrder([0, 2, 3, 1])
     })
 
-    it("should sort by PTIURN", () => {
+    it("Should sort by PTIURN", () => {
       const PTIURNs = ["01009940223", "05003737622", "03001976220", "04007638323"]
       const ascending = [...PTIURNs].sort()
       const descending = [...PTIURNs].sort().reverse()
@@ -1238,7 +1238,7 @@ describe("Case list", () => {
       checkPtiurnOrder(descending)
     })
 
-    it("should sort by urgency", () => {
+    it("Should sort by urgency", () => {
       const urgencies = [true, false, true, false]
       cy.task(
         "insertCourtCasesWithFields",
@@ -1259,7 +1259,7 @@ describe("Case list", () => {
       checkCasesOrder([1, 3, 0, 2])
     })
 
-    it("should sort by who has a case locked", () => {
+    it("Should sort by who has a case locked", () => {
       const usernames = ["alan.smith", "sarah.mcneil", "charlie.rhys", "bea.goddard"]
       cy.task(
         "insertCourtCasesWithFields",
@@ -1282,7 +1282,7 @@ describe("Case list", () => {
   })
 
   describe("Persist applied filters", () => {
-    it("should persist applied filters", () => {
+    it("Should persist applied filters", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
 
       loginAndGoToUrl()
@@ -1300,7 +1300,7 @@ describe("Case list", () => {
       cy.get(".moj-pagination__item--active").contains("2")
     })
 
-    it("should clear the applied filters", () => {
+    it("Should clear the applied filters", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
 
       loginAndGoToUrl()
@@ -1326,7 +1326,7 @@ describe("Case list", () => {
       cy.get(".moj-pagination__item--active").contains("1")
     })
 
-    it("should show case unlocked badge when exception handler unlocks the case", () => {
+    it("Should show case unlocked badge when exception handler unlocks the case", () => {
       cy.task("insertCourtCasesWithFields", [
         {
           errorLockedByUsername: "ExceptionHandler",
@@ -1346,7 +1346,7 @@ describe("Case list", () => {
       cy.get("span.moj-badge").contains("Case unlocked").should("exist")
     })
 
-    it("should show case unlocked badge when trigger handler unlocks the case", () => {
+    it("Should show case unlocked badge when trigger handler unlocks the case", () => {
       cy.task("insertCourtCasesWithFields", [
         {
           caseId: 0,

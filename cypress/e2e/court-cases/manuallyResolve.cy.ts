@@ -22,7 +22,7 @@ describe("Manually resolve a case", () => {
     cy.task("clearCourtCases")
   })
 
-  it("should be able to resolve a case which is visible and locked by the user", () => {
+  it("Should be able to resolve a case which is visible and locked by the user", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
@@ -32,6 +32,7 @@ describe("Manually resolve a case", () => {
         triggerLockedByUsername: "Bichard01"
       }
     ])
+
     cy.login("bichard01@example.com", "password")
 
     cy.visit("/bichard")
@@ -53,7 +54,7 @@ describe("Manually resolve a case", () => {
     cy.contains("Bichard01: Portal Action: Record Manually Resolved. Reason: PNCRecordIsAccurate. Reason Text:")
   })
 
-  it("should prompt the user to enter resolution details if the reason is Reallocated", () => {
+  it("Should prompt the user to enter resolution details if the reason is Reallocated", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
@@ -91,7 +92,7 @@ describe("Manually resolve a case", () => {
     )
   })
 
-  it("should return 404 for a case that this user can not see", () => {
+  it("Should return 404 for a case that this user can not see", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
     cy.login("bichard01@example.com", "password")
 
@@ -103,7 +104,7 @@ describe("Manually resolve a case", () => {
     })
   })
 
-  it("should return 404 for a case that does not exist", () => {
+  it("Should return 404 for a case that does not exist", () => {
     cy.login("bichard01@example.com", "password")
 
     cy.request({
