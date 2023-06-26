@@ -2,7 +2,7 @@ import User from "services/entities/User"
 import { DataSource, UpdateQueryBuilder } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import unlockCourtCase from "../../src/services/unlockCourtCase"
+import updateLockStatusToUnlocked from "../../src/services/updateLockStatusToUnlocked"
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
@@ -55,7 +55,7 @@ describe("lock court case", () => {
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
-      const result = await unlockCourtCase(dataSource, 1, user, undefined, events)
+      const result = await updateLockStatusToUnlocked(dataSource.manager, 1, user, undefined, events)
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 1 } })
@@ -99,7 +99,7 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
@@ -125,7 +125,7 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
@@ -151,7 +151,7 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, "Exception")
+      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user, "Exception")
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
@@ -177,7 +177,7 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, "Trigger")
+      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user, "Trigger")
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
@@ -202,7 +202,7 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, "Trigger")
+      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user, "Trigger")
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
@@ -227,7 +227,7 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, "Exception")
+      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user, "Exception")
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
@@ -246,7 +246,7 @@ describe("lock court case", () => {
         username: "Dummy username"
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, dummyErrorId, user)
+      const result = await updateLockStatusToUnlocked(dataSource.manager, dummyErrorId, user)
       expect(isError(result)).toBe(true)
 
       const receivedError = result as Error
@@ -262,7 +262,7 @@ describe("lock court case", () => {
         username: "Dummy username"
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, dummyErrorId, user, "Trigger")
+      const result = await updateLockStatusToUnlocked(dataSource.manager, dummyErrorId, user, "Trigger")
       expect(isError(result)).toBe(true)
 
       const receivedError = result as Error
@@ -278,7 +278,7 @@ describe("lock court case", () => {
         username: "Dummy username"
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, dummyErrorId, user, "Exception")
+      const result = await updateLockStatusToUnlocked(dataSource.manager, dummyErrorId, user, "Exception")
       expect(isError(result)).toBe(true)
 
       const receivedError = result as Error
@@ -303,7 +303,7 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
@@ -332,7 +332,7 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
@@ -359,7 +359,7 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
@@ -389,7 +389,7 @@ describe("lock court case", () => {
         visibleCourts: []
       } as Partial<User> as User
 
-      const result = await unlockCourtCase(dataSource, lockedCourtCase.errorId, user)
+      const result = await updateLockStatusToUnlocked(dataSource.manager, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(true)
 
       const receivedError = result as Error

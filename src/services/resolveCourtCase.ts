@@ -3,7 +3,7 @@ import { isError } from "types/Result"
 import User from "./entities/User"
 import { ManualResolution } from "types/ManualResolution"
 import CourtCase from "./entities/CourtCase"
-import unlockCourtCase from "./unlockCourtCase"
+import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 import insertNotes from "./insertNotes"
 import storeAuditLogEvents from "./storeAuditLogEvents"
 import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
@@ -24,7 +24,7 @@ const resolveCourtCase = async (
       throw resolveErrorResult
     }
 
-    const unlockResult = await unlockCourtCase(entityManager, courtCase.errorId, user, undefined, events)
+    const unlockResult = await updateLockStatusToUnlocked(entityManager, courtCase.errorId, user, undefined, events)
     if (isError(unlockResult)) {
       throw unlockResult
     }

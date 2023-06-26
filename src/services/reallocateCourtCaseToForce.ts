@@ -6,7 +6,7 @@ import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import insertNotes from "./insertNotes"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
-import unlockCourtCase from "./unlockCourtCase"
+import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,
@@ -60,7 +60,7 @@ const reallocateCourtCaseToForce = async (
         }
       }
 
-      const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, user)
+      const unlockResult = await updateLockStatusToUnlocked(entityManager, +courtCaseId, user)
 
       if (isError(unlockResult)) {
         throw unlockResult
