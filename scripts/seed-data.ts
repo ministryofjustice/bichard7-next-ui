@@ -5,6 +5,7 @@ import Note from "../src/services/entities/Trigger"
 import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromEntity from "../test/utils/deleteFromEntity"
+import createDummyUser from "../test/helpers/createDummyUser"
 
 if (process.env.DEPLOY_NAME !== "e2e-test") {
   console.error("Not running in e2e environment, bailing out. Set DEPLOY_NAME='e2e-test' if you're sure.")
@@ -25,11 +26,18 @@ getDataSource().then(async (dataSource) => {
   const entitiesToClear = [CourtCase, Trigger, Note]
   await Promise.all(entitiesToClear.map((entity) => deleteFromEntity(entity)))
 
-  await Promise.all(
+  const cases = await Promise.all(
     new Array(numCases)
       .fill(0)
       .map((_, idx) => createDummyCase(dataSource, idx, forceId, subDays(new Date(), maxCaseAge)))
   )
+
+  cases.forEach(async (courtCase) => {
+    const username = courtCase.errorLockedByUsername
+    if (username) {
+      await createDummyUser(dataSource, username)
+    }
+  })
 })
 
 export {}
