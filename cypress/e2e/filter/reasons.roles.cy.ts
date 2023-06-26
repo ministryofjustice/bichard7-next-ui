@@ -1,7 +1,7 @@
 import hashedPassword from "../../fixtures/hashedPassword"
 import { Groups } from "types/GroupName"
 
-function newUserLoginWithGroups(groups: Groups[]) {
+const newUserLoginWithGroups = (groups: Groups[]) => {
   const user = groups.map((g) => g.toLowerCase()).join("") || "nogroups"
   const email = `${user}@example.com`
   cy.task("insertUsers", {
@@ -20,7 +20,7 @@ function newUserLoginWithGroups(groups: Groups[]) {
   cy.login(email, "password")
 }
 
-function navigateAndShowFilters() {
+const navigateAndShowFilters = () => {
   cy.visit("/bichard")
   cy.get("button[id=filter-button]").click()
 }
