@@ -5,7 +5,7 @@ import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import { CaseState, Reason, Reasons, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
@@ -262,7 +262,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
                   reasonOptions={
                     userGroups.length && userGroups.every((g) => g === Groups.TriggerHandler)
-                      ? [Reasons.Bails, Reasons.Triggers]
+                      ? [Reason.Bails, Reason.Triggers]
                       : undefined
                   }
                   dispatch={dispatch}

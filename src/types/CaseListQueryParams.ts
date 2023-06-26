@@ -1,7 +1,6 @@
 export type QueryOrder = "asc" | "desc"
 
-export type Reason = Reasons
-export enum Reasons {
+export enum Reason {
   Bails = "Bails",
   Exceptions = "Exceptions",
   Triggers = "Triggers"

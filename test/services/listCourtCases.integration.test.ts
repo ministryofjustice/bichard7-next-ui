@@ -20,7 +20,7 @@ import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 import Note from "services/entities/Note"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import User from "services/entities/User"
-import { Reasons } from "types/CaseListQueryParams"
+import { Reason } from "types/CaseListQueryParams"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
@@ -971,7 +971,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasons: [Reasons.Triggers]
+          reasons: [Reason.Triggers]
         },
         testUser
       )
@@ -993,7 +993,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasons: [Reasons.Exceptions]
+          reasons: [Reason.Exceptions]
         },
         testUser
       )
@@ -1017,7 +1017,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasons: [Reasons.Bails]
+          reasons: [Reason.Bails]
         },
         testUser
       )
@@ -1041,7 +1041,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasons: Object.values(Reasons)
+          reasons: [Reason.Bails, Reason.Exceptions, Reason.Triggers]
         },
         testUser
       )
