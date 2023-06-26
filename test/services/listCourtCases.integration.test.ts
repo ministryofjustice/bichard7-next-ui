@@ -58,14 +58,14 @@ describe("listCourtCases", () => {
     }
   })
 
-  it("should call cases by organisation unit query", async () => {
+  it("Should call cases by organisation unit query", async () => {
     await listCourtCases(dataSource, { maxPageItems: "1" }, testUser)
 
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), testUser)
   })
 
-  it("should call leftJoinAndSelectTriggersQuery with the correct arguments", async () => {
+  it("Should call leftJoinAndSelectTriggersQuery with the correct arguments", async () => {
     const dummyCaseState = "Unresolved and resolved"
     const dummyExcludedTriggers = ["TRPDUMMY"]
     testUser.excludedTriggers = dummyExcludedTriggers
@@ -79,7 +79,7 @@ describe("listCourtCases", () => {
     )
   })
 
-  it("should return cases with notes correctly", async () => {
+  it("Should return cases with notes correctly", async () => {
     const caseNotes: { user: string; text: string }[][] = [
       [
         {
@@ -134,7 +134,7 @@ describe("listCourtCases", () => {
     expect(cases[2].notes).toHaveLength(3)
   })
 
-  it("should return all the cases if they number less than or equal to the specified maxPageItems", async () => {
+  it("Should return all the cases if they number less than or equal to the specified maxPageItems", async () => {
     await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
     const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
@@ -236,7 +236,7 @@ describe("listCourtCases", () => {
     expect(totalCases).toEqual(100)
   })
 
-  it("should return the next page of items", async () => {
+  it("Should return the next page of items", async () => {
     await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
     const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "2" }, {
@@ -255,7 +255,7 @@ describe("listCourtCases", () => {
     expect(totalCases).toEqual(100)
   })
 
-  it("should return the last page of items correctly", async () => {
+  it("Should return the last page of items correctly", async () => {
     await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: orgCode })))
 
     const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "10" }, testUser)
@@ -282,7 +282,7 @@ describe("listCourtCases", () => {
     expect(totalCases).toEqual(100)
   })
 
-  it("should order by court name", async () => {
+  it("Should order by court name", async () => {
     await insertCourtCasesWithFields(
       ["BBBB", "CCCC", "AAAA"].map((courtName) => ({ courtName: courtName, orgForPoliceFilter: orgCode }))
     )
@@ -316,7 +316,7 @@ describe("listCourtCases", () => {
     expect(totalCasesDesc).toEqual(3)
   })
 
-  it("should order by court date", async () => {
+  it("Should order by court date", async () => {
     const firstDate = new Date("2001-09-26")
     const secondDate = new Date("2008-01-26")
     const thirdDate = new Date("2013-10-16")
@@ -357,7 +357,7 @@ describe("listCourtCases", () => {
   })
 
   describe("ordered by 'lockedBy' reason", () => {
-    it("should order by error reason as primary order", async () => {
+    it("Should order by error reason as primary order", async () => {
       await insertCourtCasesWithFields(
         ["HO100100", "HO100101", "HO100102"].map((code) => ({
           errorReason: code,
@@ -394,7 +394,7 @@ describe("listCourtCases", () => {
       expect(totalCasesDesc).toEqual(3)
     })
 
-    it("should order by trigger reason as secondary order", async () => {
+    it("Should order by trigger reason as secondary order", async () => {
       await insertCourtCasesWithFields(
         ["TRPR0010", "TRPR0011", "TRPR0012"].map((code) => ({
           triggerReason: code,
@@ -432,7 +432,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  it("should order by notes number", async () => {
+  it("Should order by notes number", async () => {
     const caseNotes: { user: string; text: string }[][] = [
       [
         {
@@ -501,7 +501,7 @@ describe("listCourtCases", () => {
     expect(totalCasesDesc).toEqual(3)
   })
   describe("ordered by 'lockedBy' username", () => {
-    it("should order by errorLockedByUsername as primary order and triggerLockedByUsername as secondary order", async () => {
+    it("Should order by errorLockedByUsername as primary order and triggerLockedByUsername as secondary order", async () => {
       await insertCourtCasesWithFields([
         { errorLockedByUsername: "User1", triggerLockedByUsername: "User4", orgForPoliceFilter: orgCode },
         { errorLockedByUsername: "User1", triggerLockedByUsername: "User3", orgForPoliceFilter: orgCode },
@@ -552,7 +552,7 @@ describe("listCourtCases", () => {
   })
 
   describe("search by defendant name", () => {
-    it("should list cases when there is a case insensitive match", async () => {
+    it("Should list cases when there is a case insensitive match", async () => {
       const defendantToInclude = "WAYNE Bruce"
       const defendantToIncludeWithPartialMatch = "WAYNE Bill"
       const defendantToNotInclude = "GORDON Barbara"
@@ -595,7 +595,7 @@ describe("listCourtCases", () => {
   })
 
   describe("filter by cases allocated to me", () => {
-    it("should list cases that are locked to me", async () => {
+    it("Should list cases that are locked to me", async () => {
       await insertCourtCasesWithFields([
         { errorLockedByUsername: "User1", triggerLockedByUsername: "User1", orgForPoliceFilter: orgCode },
         { errorLockedByUsername: "User2", triggerLockedByUsername: "User2", orgForPoliceFilter: orgCode },
@@ -638,7 +638,7 @@ describe("listCourtCases", () => {
       expect(totalCasesAfter).toEqual(1)
     })
 
-    it("should list cases that have triggers locked to me", async () => {
+    it("Should list cases that have triggers locked to me", async () => {
       await insertCourtCasesWithFields([
         { triggerLockedByUsername: "User1", orgForPoliceFilter: orgCode },
         { triggerLockedByUsername: "User2", orgForPoliceFilter: orgCode },
@@ -677,7 +677,7 @@ describe("listCourtCases", () => {
       expect(totalCasesAfter).toEqual(1)
     })
 
-    it("should list cases that have errors locked to me", async () => {
+    it("Should list cases that have errors locked to me", async () => {
       await insertCourtCasesWithFields([
         { errorLockedByUsername: "User1", orgForPoliceFilter: orgCode },
         { errorLockedByUsername: "User2", orgForPoliceFilter: orgCode },
@@ -718,7 +718,7 @@ describe("listCourtCases", () => {
   })
 
   describe("search by court name", () => {
-    it("should list cases when there is a case insensitive match", async () => {
+    it("Should list cases when there is a case insensitive match", async () => {
       const courtNameToInclude = "Magistrates' Courts London Croydon"
       const courtNameToIncludeWithPartialMatch = "Magistrates' Courts London Something Else"
       const courtNameToNotInclude = "Court Name not to include"
@@ -761,7 +761,7 @@ describe("listCourtCases", () => {
   })
 
   describe("search by ptiurn", () => {
-    it("should list cases when there is a case insensitive match", async () => {
+    it("Should list cases when there is a case insensitive match", async () => {
       const ptiurnToInclude = "01ZD0303908"
       const ptiurnToIncludeWithPartialMatch = "01ZD0303909"
       const ptiurnToNotInclude = "00000000000"
@@ -804,7 +804,7 @@ describe("listCourtCases", () => {
   })
 
   describe("search by reason", () => {
-    it("should list cases when there is a case insensitive match in triggers or exceptions", async () => {
+    it("Should list cases when there is a case insensitive match in triggers or exceptions", async () => {
       await insertCourtCasesWithFields(Array.from({ length: 4 }, () => ({ orgForPoliceFilter: orgCode })))
 
       const triggerToInclude: TestTrigger = {
@@ -888,7 +888,7 @@ describe("listCourtCases", () => {
       expect(cases[1].errorReason).toStrictEqual(errorToIncludePartialMatch)
     })
 
-    it("should list cases when there is a case insensitive match in any exceptions", async () => {
+    it("Should list cases when there is a case insensitive match in any exceptions", async () => {
       await insertCourtCasesWithFields(Array.from({ length: 2 }, () => ({ orgForPoliceFilter: orgCode })))
 
       const errorToInclude = "HO100322"
@@ -1378,7 +1378,7 @@ describe("listCourtCases", () => {
       ])
     })
 
-    it("should only include 'Unresolved' triggers when caseState is not set", async () => {
+    it("Should only include 'Unresolved' triggers when caseState is not set", async () => {
       const caseOneTriggers: { code: string; status: ResolutionStatus }[] = [
         {
           code: "TRPR0001",
@@ -1413,7 +1413,7 @@ describe("listCourtCases", () => {
       expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(expect.any(Object), undefined, "Unresolved")
     })
 
-    it("should return 'unresolved' triggers when a case has resolutionTimestamp but there are unresolved triggers", async () => {
+    it("Should return 'unresolved' triggers when a case has resolutionTimestamp but there are unresolved triggers", async () => {
       const unresolvedTriggerCode = "TRPR0001"
       const unresolvedTrigger: TestTrigger = {
         triggerId: 1,
@@ -1449,7 +1449,7 @@ describe("listCourtCases", () => {
   })
 
   describe("Filter cases by resolution status", () => {
-    it("should show supervisors all resolved cases for their force", async () => {
+    it("Should show supervisors all resolved cases for their force", async () => {
       const resolutionTimestamp = new Date()
       const casesToInsert: Partial<CourtCase>[] = [undefined, "Bichard01", "Supervisor", "Bichard02", undefined].map(
         (resolver) => ({
@@ -1478,7 +1478,7 @@ describe("listCourtCases", () => {
       expect(cases.map((c) => c.errorId)).toStrictEqual([1, 2, 3])
     })
 
-    it("should show handlers cases that they resolved", async () => {
+    it("Should show handlers cases that they resolved", async () => {
       const resolutionTimestamp = new Date()
       const thisUser = "Bichard01"
       const otherUser = "Bichard02"
@@ -1507,7 +1507,7 @@ describe("listCourtCases", () => {
       expect(cases.map((c) => c.errorId)).toStrictEqual([0, 2])
     })
 
-    it("should show handlers cases that they resolved a trigger for", async () => {
+    it("Should show handlers cases that they resolved a trigger for", async () => {
       const resolutionTimestamp = new Date()
       const thisUser = "Bichard01"
       const otherUser = "Bichard02"

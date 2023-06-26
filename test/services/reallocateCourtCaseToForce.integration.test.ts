@@ -35,7 +35,7 @@ describe("reallocate court case to another force", () => {
   })
 
   describe("when a user can see the case", () => {
-    it("should reallocate the case to a new force, generate system notes and unlock the case", async () => {
+    it("Should reallocate the case to a new force, generate system notes and unlock the case", async () => {
       const courtCase = {
         orgForPoliceFilter: oldForceCode,
         errorId: courtCaseId
@@ -86,7 +86,7 @@ describe("reallocate court case to another force", () => {
       )
     })
 
-    it("should reallocate the case to a new force, generate system notes, user note, and unlock the case", async () => {
+    it("Should reallocate the case to a new force, generate system notes, user note, and unlock the case", async () => {
       const courtCase = {
         orgForPoliceFilter: oldForceCode,
         errorId: courtCaseId
@@ -142,7 +142,7 @@ describe("reallocate court case to another force", () => {
   })
 
   describe("when the case is not visible to the user", () => {
-    it("should return an error and not perform any of reallocation steps", async () => {
+    it("Should return an error and not perform any of reallocation steps", async () => {
       const anotherOrgCode = "02XX  "
       const courtCase = {
         orgForPoliceFilter: anotherOrgCode,
@@ -178,7 +178,7 @@ describe("reallocate court case to another force", () => {
   })
 
   describe("when the case is locked by another user", () => {
-    it("should return an error and not perform any of reallocation steps", async () => {
+    it("Should return an error and not perform any of reallocation steps", async () => {
       const anotherUser = "Someone Else"
       const courtCase = {
         orgForPoliceFilter: oldForceCode,
@@ -216,7 +216,7 @@ describe("reallocate court case to another force", () => {
   })
 
   describe("when there is an unexpected error", () => {
-    it("should return the error if fails to create notes", async () => {
+    it("Should return the error if fails to create notes", async () => {
       const courtCase = {
         orgForPoliceFilter: oldForceCode,
         errorId: courtCaseId
@@ -251,7 +251,7 @@ describe("reallocate court case to another force", () => {
       expect(actualCourtCase.notes).toHaveLength(0)
     })
 
-    it("should return the error when fails to update orgForPoliceFilter", async () => {
+    it("Should return the error when fails to update orgForPoliceFilter", async () => {
       const courtCase = {
         orgForPoliceFilter: oldForceCode,
         errorId: courtCaseId

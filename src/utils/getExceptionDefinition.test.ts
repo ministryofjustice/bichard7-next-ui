@@ -1,7 +1,7 @@
 import getExceptionDefinition from "./getExceptionDefinition"
 
 describe("getExceptionDefinition", () => {
-  it("should return the exception definition when exception code exists", () => {
+  it("Should return the exception definition when exception code exists", () => {
     const result = getExceptionDefinition("HO100301")
     expect(result).toStrictEqual({
       code: "HO100301",
@@ -17,7 +17,7 @@ describe("getExceptionDefinition", () => {
     })
   })
 
-  it("should return undefined when exception code exists", () => {
+  it("Should return undefined when exception code exists", () => {
     const result = getExceptionDefinition("HO900900")
     expect(result).toBeUndefined()
   })

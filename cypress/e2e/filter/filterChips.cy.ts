@@ -168,7 +168,7 @@ describe("Case list", () => {
         cy.get("#date-to").should("have.value", "")
       })
 
-      it("should populate `date to` when `same date` button is clicked", () => {
+      it("Should populate `date to` when `same date` button is clicked", () => {
         cy.get("button#filter-button").click()
         cy.get("#date-range").click()
         cy.contains("Same date").should("not.exist")
@@ -298,7 +298,7 @@ describe("Case list", () => {
     })
 
     describe("Selecting multiple filter chips", () => {
-      it("should allow you to select 'Trigger', 'Last week', 'non-urgent'. This should display relevant header for each filter chip", () => {
+      it("Should allow you to select 'Trigger', 'Last week', 'non-urgent'. This should display relevant header for each filter chip", () => {
         // Open filters and build filter chip query
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
@@ -422,7 +422,7 @@ describe("Case list", () => {
       cy.get(".govuk-checkboxes__item").contains("View cases locked to me").should("not.be.checked")
     })
 
-    it("should remove applied `Locked to me` filter by clicking the filter chips ", () => {
+    it("Should remove applied `Locked to me` filter by clicking the filter chips ", () => {
       //removal through filter panel
       cy.get("#filter-button").click()
       cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()

@@ -1,5 +1,5 @@
 import User from "services/entities/User"
-import { DataSource, UpdateQueryBuilder, UpdateResult } from "typeorm"
+import { DataSource, UpdateQueryBuilder } from "typeorm"
 import { isError } from "types/Result"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
@@ -8,15 +8,21 @@ import resolveCourtCase from "../../src/services/resolveCourtCase"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { differenceInMilliseconds } from "date-fns"
-import { ManualResolution } from "types/ManualResolution"
+import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 import insertNotes from "services/insertNotes"
 import unlockCourtCase from "services/unlockCourtCase"
+import storeAuditLogEvents from "services/storeAuditLogEvents"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
+import createAuditLog from "../helpers/createAuditLog"
+import { AUDIT_LOG_API_URL } from "../../src/config"
+import fetch from "node-fetch"
+import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
 jest.mock("services/unlockCourtCase")
+jest.mock("services/storeAuditLogEvents")
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 
 const expectToBeUnresolved = (courtCase: CourtCase) => {
@@ -48,6 +54,7 @@ describe("resolveCourtCase", () => {
     jest.clearAllMocks()
     ;(insertNotes as jest.Mock).mockImplementation(jest.requireActual("services/insertNotes").default)
     ;(unlockCourtCase as jest.Mock).mockImplementation(jest.requireActual("services/unlockCourtCase").default)
+    ;(storeAuditLogEvents as jest.Mock).mockImplementation(jest.requireActual("services/storeAuditLogEvents").default)
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
@@ -55,29 +62,40 @@ describe("resolveCourtCase", () => {
 
   beforeEach(async () => {
     await deleteFromEntity(CourtCase)
+    await deleteFromDynamoTable("auditLogTable", "messageId")
+    await deleteFromDynamoTable("auditLogEventsTable", "_id")
   })
 
   afterAll(async () => {
     await dataSource.destroy()
   })
 
-  it("should call cases by organisation unit query", async () => {
+  it("Should call cases by organisation unit query", async () => {
+    const [courtCase] = await insertCourtCasesWithFields([
+      {
+        errorLockedByUsername: resolverUsername,
+        triggerLockedByUsername: resolverUsername,
+        orgForPoliceFilter: visibleForce,
+        errorStatus: "Unresolved",
+        errorCount: 4
+      }
+    ])
     await resolveCourtCase(
       dataSource,
-      0,
+      courtCase,
       {
         reason: "NonRecordable"
       },
       user
-    )
+    ).catch((error) => error)
 
-    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
+    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(2)
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
   })
 
   describe("When there aren't any unresolved triggers", () => {
     it("Should resolve a case and populate a resolutionTimestamp", async () => {
-      await insertCourtCasesWithFields([
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
@@ -86,6 +104,7 @@ describe("resolveCourtCase", () => {
           errorCount: 4
         }
       ])
+      await createAuditLog(courtCase.messageId)
 
       const resolution: ManualResolution = {
         reason: "NonRecordable",
@@ -103,7 +122,7 @@ describe("resolveCourtCase", () => {
       expect(beforeCourtCase.errorResolvedTimestamp).toBeNull()
       expect(beforeCourtCase.resolutionTimestamp).toBeNull()
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      const result = await resolveCourtCase(dataSource, courtCase, resolution, user)
 
       expect(isError(result)).toBeFalsy()
 
@@ -136,12 +155,49 @@ describe("resolveCourtCase", () => {
         `${resolverUsername}: Portal Action: Record Manually Resolved.` +
           ` Reason: ${resolution.reason}. Reason Text: ${resolution.reasonText}`
       )
+
+      // Creates audit log events
+      const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${courtCase.messageId}`)
+      const auditLogs = (await apiResult.json()) as [{ events: [{ timestamp: string; eventCode: string }] }]
+      const events = auditLogs[0].events
+      const unlockedEvent = events.find((event) => event.eventCode === "exceptions.unlocked")
+      const resolvedEvent = events.find((event) => event.eventCode === "exceptions.resolved")
+
+      expect(unlockedEvent).toStrictEqual({
+        category: "information",
+        eventSource: "Bichard New UI",
+        eventType: "Exception unlocked",
+        timestamp: expect.anything(),
+        user: resolverUsername,
+        eventCode: "exceptions.unlocked",
+        attributes: {
+          auditLogVersion: 2
+        }
+      })
+
+      expect(resolvedEvent).toStrictEqual({
+        attributes: {
+          auditLogVersion: 2,
+          resolutionReasonCode: ResolutionReasonCode[resolution.reason],
+          resolutionReasonText: resolution.reasonText
+        },
+        category: "information",
+        eventSource: "Bichard New UI",
+        eventType: "Exception marked as resolved by user",
+        eventCode: "exceptions.resolved",
+        user: resolverUsername,
+        timestamp: expect.anything()
+      })
+
+      expect(new Date(unlockedEvent!.timestamp).getTime()).toBeGreaterThanOrEqual(
+        new Date(resolvedEvent!.timestamp).getTime()
+      )
     })
 
     it("Should only resolve the case that matches the case id", async () => {
       const firstCaseId = 0
       const secondCaseId = 1
-      await insertCourtCasesWithFields([
+      const [firstCourtCase] = await insertCourtCasesWithFields([
         {
           errorId: firstCaseId,
           errorLockedByUsername: resolverUsername,
@@ -160,11 +216,13 @@ describe("resolveCourtCase", () => {
         }
       ])
 
+      await createAuditLog(firstCourtCase.messageId)
+
       const resolution: ManualResolution = {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, firstCaseId, resolution, user)
+      const result = await resolveCourtCase(dataSource, firstCourtCase, resolution, user)
       expect(isError(result)).toBeFalsy()
 
       const records = await dataSource
@@ -184,7 +242,7 @@ describe("resolveCourtCase", () => {
 
     it("Should only resolve the case that matches the organisation unit", async () => {
       const caseId = 0
-      await insertCourtCasesWithFields([
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           errorId: caseId,
           errorLockedByUsername: resolverUsername,
@@ -199,7 +257,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, caseId, resolution, user)
+      const result = await resolveCourtCase(dataSource, courtCase, resolution, user).catch((error) => error)
       expect((result as Error).message).toEqual("Failed to resolve case")
 
       const records = await dataSource
@@ -216,7 +274,7 @@ describe("resolveCourtCase", () => {
 
     it("Should not resolve a case when the case is locked by another user", async () => {
       const anotherUser = "Another User"
-      await insertCourtCasesWithFields([
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: anotherUser,
           triggerLockedByUsername: anotherUser,
@@ -230,7 +288,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      const result = await resolveCourtCase(dataSource, courtCase, resolution, user).catch((error) => error)
       expect(isError(result)).toBeTruthy()
       expect((result as Error).message).toEqual("Failed to resolve case")
 
@@ -243,7 +301,7 @@ describe("resolveCourtCase", () => {
     })
 
     it("Should not resolve a case when the case is not locked", async () => {
-      await insertCourtCasesWithFields([
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: null,
           triggerLockedByUsername: null,
@@ -257,7 +315,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      const result = await resolveCourtCase(dataSource, courtCase, resolution, user).catch((error) => error)
       expect(isError(result)).toBeTruthy()
       expect((result as Error).message).toEqual("Failed to resolve case")
 
@@ -270,7 +328,7 @@ describe("resolveCourtCase", () => {
     })
 
     it("Should return the error when the resolution reason is 'Reallocated' but reasonText is not provided", async () => {
-      await insertCourtCasesWithFields([
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
@@ -280,21 +338,23 @@ describe("resolveCourtCase", () => {
         }
       ])
 
+      await createAuditLog(courtCase.messageId)
+
       let result = await resolveCourtCase(
         dataSource,
-        0,
+        courtCase,
         {
           reason: "Reallocated",
           reasonText: undefined
         },
         user
-      )
+      ).catch((error) => error)
       expect(isError(result)).toBeTruthy()
       expect((result as Error).message).toEqual("Reason text is required")
 
       result = await resolveCourtCase(
         dataSource,
-        0,
+        courtCase,
         {
           reason: "Reallocated",
           reasonText: "Text provided"
@@ -306,8 +366,9 @@ describe("resolveCourtCase", () => {
   })
 
   describe("When there are unresolved triggers", () => {
+    let courtCase: CourtCase
     beforeEach(async () => {
-      await insertCourtCasesWithFields([
+      ;[courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
@@ -324,6 +385,7 @@ describe("resolveCourtCase", () => {
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
       await insertTriggers(0, [trigger])
+      await createAuditLog(courtCase.messageId)
     })
 
     it("Should resolve a case without setting a resolutionTimestamp", async () => {
@@ -331,7 +393,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      const result = await resolveCourtCase(dataSource, courtCase, resolution, user)
 
       expect(isError(result)).toBeFalsy()
 
@@ -356,8 +418,9 @@ describe("resolveCourtCase", () => {
   })
 
   describe("When there are triggers but no errors on a case", () => {
+    let courtCases: CourtCase[] = []
     beforeEach(async () => {
-      await insertCourtCasesWithFields([
+      courtCases = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
@@ -381,7 +444,7 @@ describe("resolveCourtCase", () => {
         reason: "NonRecordable"
       }
 
-      const result = await resolveCourtCase(dataSource, 0, resolution, user)
+      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch((error) => error)
 
       expect(isError(result)).toBeTruthy()
 
@@ -402,12 +465,13 @@ describe("resolveCourtCase", () => {
   })
 
   describe("when there is an unexpected error", () => {
+    let courtCases: CourtCase[] = []
     const resolution: ManualResolution = {
       reason: "NonRecordable"
     }
 
     beforeEach(async () => {
-      await insertCourtCasesWithFields([
+      courtCases = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
@@ -418,12 +482,12 @@ describe("resolveCourtCase", () => {
       ])
     })
 
-    it("should return the error if fails to create notes", async () => {
+    it("Should return the error if fails to create notes", async () => {
       ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
 
-      let result: UpdateResult | Error
+      let result
       try {
-        result = await resolveCourtCase(dataSource, 0, resolution, user)
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
       } catch (error) {
         result = error as Error
       }
@@ -435,12 +499,12 @@ describe("resolveCourtCase", () => {
       expectToBeUnresolved(actualCourtCase)
     })
 
-    it("should return the error if fails to unlock the case", async () => {
+    it("Should return the error if fails to unlock the case", async () => {
       ;(unlockCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Error while unlocking the case`))
 
-      let result: UpdateResult | Error
+      let result
       try {
-        result = await resolveCourtCase(dataSource, 0, resolution, user)
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
       } catch (error) {
         result = error as Error
       }
@@ -453,14 +517,32 @@ describe("resolveCourtCase", () => {
       expectToBeUnresolved(actualCourtCase)
     })
 
-    it("should return the error when fails to update the case", async () => {
+    it("Should return the error if fails to store audit logs", async () => {
+      ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(`Error while calling audit log API`))
+
+      let result
+      try {
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
+      } catch (error) {
+        result = error as Error
+      }
+
+      expect(result).toEqual(Error(`Error while calling audit log API`))
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
+      const actualCourtCase = record as CourtCase
+
+      expectToBeUnresolved(actualCourtCase)
+    })
+
+    it("Should return the error when fails to update the case", async () => {
       jest
         .spyOn(UpdateQueryBuilder.prototype, "execute")
         .mockRejectedValue(Error("Failed to update record with some error"))
 
-      let result: UpdateResult | Error
+      let result
       try {
-        result = await resolveCourtCase(dataSource, 0, resolution, user)
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
       } catch (error) {
         result = error as Error
       }
