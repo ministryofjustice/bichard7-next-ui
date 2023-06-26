@@ -1,7 +1,7 @@
 import ConditionalRender from "components/ConditionalRender"
 import { useRouter } from "next/router"
 import hasUserManagementAccess from "services/hasUserManagementAccess"
-import { default as UserGroup } from "types/UserGroup"
+import { UserGroup } from "types/UserGroup"
 import { useCustomStyles } from "../../../styles/customStyles"
 
 interface NavItemProps {
