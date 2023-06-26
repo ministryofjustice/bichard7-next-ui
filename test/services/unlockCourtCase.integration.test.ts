@@ -20,6 +20,15 @@ jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 
 describe("lock court case", () => {
   let dataSource: DataSource
+  const lockedByName = "some user"
+  const user = {
+    canLockExceptions: true,
+    canLockTriggers: true,
+    username: lockedByName,
+    visibleForces: ["36FPA1"],
+    visibleCourts: []
+  } as Partial<User> as User
+  let lockedCourtCase: CourtCase
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -36,9 +45,22 @@ describe("lock court case", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
+
+    lockedCourtCase = (
+      (await insertCourtCasesWithFields([
+        {
+          errorLockedByUsername: lockedByName,
+          triggerLockedByUsername: lockedByName,
+          orgForPoliceFilter: "36FPA ",
+          errorId: 0
+        }
+      ])) as CourtCase[]
+    )[0]
+
+    await createAuditLog(lockedCourtCase.messageId)
   })
 
-  afterEach(() => {
+  afterEach(async () => {
     jest.resetAllMocks()
     jest.clearAllMocks()
   })
@@ -48,26 +70,7 @@ describe("lock court case", () => {
   })
 
   describe("when a case is successfully unlocked", () => {
-    const lockedByName = "some user"
-    const user = {
-      canLockExceptions: true,
-      canLockTriggers: true,
-      username: lockedByName,
-      visibleForces: ["36FPA1"],
-      visibleCourts: []
-    } as Partial<User> as User
-
     it("Should call updateLockStatusToUnlocked, courtCasesByOrganisationUnitQuery and storeAuditLogEvents", async () => {
-      const errorId = 0
-      const [lockedCourtCase] = await insertCourtCasesWithFields([
-        {
-          errorLockedByUsername: lockedByName,
-          triggerLockedByUsername: lockedByName,
-          orgForPoliceFilter: "36FPA ",
-          errorId: errorId
-        }
-      ])
-
       const expectedAuditLogEvent = {
         attributes: { auditLogVersion: 2, eventCode: "exceptions.unlocked", user: lockedByName },
         category: "information",
@@ -79,9 +82,13 @@ describe("lock court case", () => {
       await unlockCourtCase(dataSource.manager, lockedCourtCase.errorId, user).catch((error) => error)
 
       expect(updateLockStatusToUnlocked).toHaveBeenCalledTimes(1)
-      expect(updateLockStatusToUnlocked).toHaveBeenCalledWith(expect.any(Object), errorId, user, undefined, [
-        expectedAuditLogEvent
-      ])
+      expect(updateLockStatusToUnlocked).toHaveBeenCalledWith(
+        expect.any(Object),
+        lockedCourtCase.errorId,
+        user,
+        undefined,
+        [expectedAuditLogEvent]
+      )
       expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
       expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
       expect(storeAuditLogEvents).toHaveBeenCalledTimes(1)
@@ -89,20 +96,10 @@ describe("lock court case", () => {
     })
 
     it("Should unlock the case and update the audit log events", async () => {
-      const [lockedCourtCase] = await insertCourtCasesWithFields([
-        {
-          errorLockedByUsername: lockedByName,
-          triggerLockedByUsername: lockedByName,
-          orgForPoliceFilter: "36FPA ",
-          errorId: 1
-        }
-      ])
-
-      await createAuditLog(lockedCourtCase.messageId)
       const result = await unlockCourtCase(dataSource.manager, lockedCourtCase.errorId, user)
       expect(isError(result)).toBe(false)
 
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 1 } })
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.errorLockedByUsername).toBeNull()
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
@@ -124,6 +121,42 @@ describe("lock court case", () => {
           auditLogVersion: 2
         }
       })
+    })
+  })
+
+  describe("when there is an error", () => {
+    it("Should return the error if fails to store audit logs", async () => {
+      ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(`Error while calling audit log API`))
+
+      const result = await unlockCourtCase(dataSource.manager, lockedCourtCase.errorId, user).catch((error) => error)
+
+      expect(result).toEqual(Error(`Error while calling audit log API`))
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
+      const actualCourtCase = record as CourtCase
+
+      expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
+      expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
+    })
+
+    it("Should not store audit log events if it fails to update the lock status", async () => {
+      ;(updateLockStatusToUnlocked as jest.Mock).mockImplementationOnce(() => new Error(`Error while updating lock`))
+
+      const result = await unlockCourtCase(dataSource.manager, lockedCourtCase.errorId, user).catch((error) => error)
+
+      expect(result).toEqual(Error(`Error while updating lock`))
+
+      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
+      const actualCourtCase = record as CourtCase
+
+      expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
+      expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
+
+      const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${lockedCourtCase.messageId}`)
+      const auditLogs = (await apiResult.json()) as [{ events: [{ timestamp: string; eventCode: string }] }]
+      const events = auditLogs[0].events
+
+      expect(events).toHaveLength(0)
     })
   })
 })
