@@ -1,6 +1,5 @@
 import amendCourtCase from "services/amendCourtCase"
 import User from "services/entities/User"
-import lockCourtCase from "services/lockCourtCase"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import { DataSource } from "typeorm"
 import sendToQueue from "services/mq/sendToQueue"
@@ -12,6 +11,8 @@ import PromiseResult from "types/PromiseResult"
 import insertNotes from "services/insertNotes"
 import updateCourtCaseStatus from "services/updateCourtCaseStatus"
 import UnlockReason from "types/UnlockReason"
+import updateLockStatusToLocked from "services/updateLockStatusToLocked"
+import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 
 const resubmitCourtCase = async (
   dataSource: DataSource,
@@ -20,15 +21,15 @@ const resubmitCourtCase = async (
   currentUser: User
 ): PromiseResult<AnnotatedHearingOutcome | Error> => {
   try {
-    const lockResult = await lockCourtCase(dataSource, +courtCaseId, currentUser)
-
-    if (isError(lockResult)) {
-      throw lockResult
-    }
-
     const courtCase = await dataSource.transaction(
       "SERIALIZABLE",
       async (entityManager): Promise<AnnotatedHearingOutcome | Error> => {
+        const events: AuditLogEvent[] = []
+        const lockResult = await updateLockStatusToLocked(entityManager, +courtCaseId, currentUser, events)
+        if (isError(lockResult)) {
+          throw lockResult
+        }
+
         const amendedCourtCase = await amendCourtCase(entityManager, form, courtCaseId, currentUser)
 
         if (isError(amendedCourtCase)) {
