@@ -41,7 +41,7 @@ const TabList = styled(Tabs.List)`
     display: flex;
     border-bottom: 1px solid #bfc1c3;
 
-    & > a:only-child {
+    a {
       flex-grow: 1;
       margin-right: 0;
       cursor: default;
