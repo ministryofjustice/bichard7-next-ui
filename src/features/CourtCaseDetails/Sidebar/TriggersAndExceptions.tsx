@@ -1,5 +1,6 @@
 import { Tabs } from "govuk-react"
 import { useState } from "react"
+import styled from "styled-components"
 import { createUseStyles } from "react-jss"
 import CourtCase from "../../../services/entities/CourtCase"
 import TriggersList from "./TriggersList"
@@ -14,14 +15,15 @@ export enum Tab {
 }
 
 const useStyles = createUseStyles({
-  pointer: {
-    cursor: "pointer"
-  },
   sideBar: {
     marginTop: "-41px"
   },
   tabPanelTriggers: {
     paddingTop: "10px"
+  },
+  tab: {
+    cursor: "pointer",
+    fontWeight: "bold"
   }
 })
 
@@ -34,6 +36,20 @@ interface Props {
   onNavigate: NavigationHandler
 }
 
+const TabList = styled(Tabs.List)`
+  & > li:only-child {
+    display: flex;
+    border-bottom: 1px solid #bfc1c3;
+
+    & > a:only-child {
+      flex-grow: 1;
+      margin-right: 0;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+`
+
 const TriggersAndExceptions = ({
   courtCase,
   aho,
@@ -42,19 +58,19 @@ const TriggersAndExceptions = ({
   triggersLockedByUser,
   onNavigate
 }: Props) => {
-  const classes = useStyles()
   const [selectedTab, setSelectedTab] = useState("triggers")
+  const classes = useStyles()
 
   const exceptionsSelected = selectedTab === "exceptions" || renderedTab === Tab.Exceptions
 
   return (
     <div className={`${classes.sideBar} triggers-and-exceptions-sidebar`}>
       <Tabs>
-        <Tabs.List>
+        <TabList>
           <ConditionalRender isRendered={!renderedTab || renderedTab === Tab.Triggers}>
             <Tabs.Tab
               id="triggers-tab"
-              className={classes.pointer}
+              className={classes.tab}
               onClick={() => setSelectedTab("triggers")}
               selected={selectedTab === "triggers"}
             >
@@ -65,14 +81,14 @@ const TriggersAndExceptions = ({
           <ConditionalRender isRendered={!renderedTab || renderedTab === Tab.Exceptions}>
             <Tabs.Tab
               id="exceptions-tab"
-              className={classes.pointer}
+              className={classes.tab}
               onClick={() => setSelectedTab("exceptions")}
               selected={exceptionsSelected}
             >
               {`Exceptions`}
             </Tabs.Tab>
           </ConditionalRender>
-        </Tabs.List>
+        </TabList>
 
         <ConditionalRender isRendered={!renderedTab || renderedTab === Tab.Triggers}>
           <Tabs.Panel
