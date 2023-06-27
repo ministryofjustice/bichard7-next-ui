@@ -1,6 +1,10 @@
 export type QueryOrder = "asc" | "desc"
 
-export type Reason = "Triggers" | "Exceptions" | "Bails"
+export enum Reason {
+  Bails = "Bails",
+  Exceptions = "Exceptions",
+  Triggers = "Triggers"
+}
 
 export type CourtDateRange = {
   from: Date
