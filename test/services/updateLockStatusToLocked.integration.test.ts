@@ -3,10 +3,11 @@ import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
 import getDataSource from "../../src/services/getDataSource"
-import tryToLockCourtCase from "../../src/services/tryToLockCourtCase"
+import updateLockStatusToLocked from "../../src/services/updateLockStatusToLocked"
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
+import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 
 describe("lock court case", () => {
   let dataSource: DataSource
@@ -45,7 +46,8 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
     expect(isError(result)).toBe(false)
     expect(result).toBeTruthy()
 
@@ -84,7 +86,8 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
     expect(isError(result)).toBe(false)
     expect(result).toBeTruthy()
 
@@ -114,7 +117,8 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
 
     const expectedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: anotherUser,
@@ -154,7 +158,8 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
 
     const expectedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: username,
@@ -192,7 +197,8 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
 
     const expectedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
@@ -229,7 +235,8 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
 
     const expectedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
@@ -268,7 +275,8 @@ describe("lock court case", () => {
       visibleForces: ["36"]
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
     expect(isError(result)).toBe(true)
     expect(result).toEqual(new Error("update requires a lock (exception or trigger) to update"))
 

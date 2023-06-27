@@ -1,12 +1,14 @@
-import { DataSource, EntityManager, IsNull, MoreThan, Not, UpdateResult } from "typeorm"
+import { EntityManager, IsNull, MoreThan, Not, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import { ResolutionStatus } from "types/ResolutionStatus"
+import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 
-const tryToLockCourtCase = (
-  dataSource: DataSource | EntityManager,
+const updateLockStatusToLocked = (
+  dataSource: EntityManager,
   courtCaseId: number,
-  { canLockExceptions, canLockTriggers, username }: User
+  { canLockExceptions, canLockTriggers, username }: User,
+  _: AuditLogEvent[]
 ): Promise<UpdateResult | Error> | Error => {
   if (!canLockExceptions && !canLockTriggers) {
     return new Error("update requires a lock (exception or trigger) to update")
@@ -45,4 +47,4 @@ const tryToLockCourtCase = (
   return query.execute().catch((error) => error)
 }
 
-export default tryToLockCourtCase
+export default updateLockStatusToLocked

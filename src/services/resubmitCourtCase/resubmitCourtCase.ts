@@ -1,6 +1,6 @@
 import amendCourtCase from "services/amendCourtCase"
 import User from "services/entities/User"
-import tryToLockCourtCase from "services/tryToLockCourtCase"
+import lockCourtCase from "services/lockCourtCase"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import { DataSource } from "typeorm"
 import sendToQueue from "services/mq/sendToQueue"
@@ -20,7 +20,7 @@ const resubmitCourtCase = async (
   currentUser: User
 ): PromiseResult<AnnotatedHearingOutcome | Error> => {
   try {
-    const lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser)
+    const lockResult = await lockCourtCase(dataSource, +courtCaseId, currentUser)
 
     if (isError(lockResult)) {
       throw lockResult
