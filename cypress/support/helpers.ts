@@ -1,3 +1,5 @@
+import { UserGroup } from "types/UserGroup"
+import hashedPassword from "../fixtures/hashedPassword"
 import CaseDetailsTab from "types/CaseDetailsTab"
 
 export function confirmFiltersAppliedContains(filterTag: string) {
@@ -47,4 +49,23 @@ export const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/
 
 export const clickTab = (tab: CaseDetailsTab) => {
   cy.get(".moj-sub-navigation a").contains(tab).click()
+}
+
+export const newUserLogin = ({ user, groups }: { user?: string; groups?: UserGroup[] }) => {
+  user = user ?? (groups?.map((g) => g.toLowerCase()).join("") || "nogroups")
+  const email = `${user}@example.com`
+  cy.task("insertUsers", {
+    users: [
+      {
+        username: user,
+        visibleForces: ["01"],
+        forenames: "Bichard Test User",
+        surname: "01",
+        email: email,
+        password: hashedPassword
+      }
+    ],
+    userGroups: [UserGroup.NewUI, ...(groups ?? [])]
+  })
+  cy.login(email, "password")
 }
