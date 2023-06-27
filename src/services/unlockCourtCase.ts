@@ -3,12 +3,15 @@ import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
+import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 
 const unlockCourtCase = async (
   dataSource: DataSource | EntityManager,
   courtCaseId: number,
   user: User,
-  unlockReason?: "Trigger" | "Exception"
+  unlockReason?: "Trigger" | "Exception",
+  events?: AuditLogEvent[]
 ): Promise<UpdateResult | Error> => {
   const { canLockExceptions, canLockTriggers, isSupervisor, username } = user
   const shouldUnlockExceptions = canLockExceptions && (unlockReason === undefined || unlockReason === "Exception")
@@ -40,7 +43,16 @@ const unlockCourtCase = async (
     query.andWhere({ triggerLockedByUsername: username })
   }
 
-  return query.execute()?.catch((error: Error) => error)
+  const result = query.execute()?.catch((error: Error) => error)
+  events?.push(
+    getAuditLogEvent("information", "Exception unlocked", "Bichard New UI", {
+      user: username,
+      auditLogVersion: 2,
+      eventCode: "exceptions.unlocked"
+    })
+  )
+
+  return result
 }
 
 export default unlockCourtCase

@@ -49,7 +49,7 @@ describe("Court case details", () => {
     cy.task("clearCourtCases")
   })
 
-  it("should be accessible", () => {
+  it("Should be accessible", () => {
     insertTriggers()
 
     loginAndGoToNotes()
@@ -62,7 +62,7 @@ describe("Court case details", () => {
     cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
   })
 
-  it("should display all notes by default", () => {
+  it("Should display all notes by default", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [
         [
@@ -89,7 +89,7 @@ describe("Court case details", () => {
     cy.contains("Test note 2")
   })
 
-  it("should display system and user notes", () => {
+  it("Should display system and user notes", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [
         [
@@ -123,7 +123,7 @@ describe("Court case details", () => {
     cy.contains("Test note 1")
   })
 
-  it("should display no user notes message", () => {
+  it("Should display no user notes message", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [
         [
@@ -146,7 +146,7 @@ describe("Court case details", () => {
     cy.contains("Case has no user notes.")
   })
 
-  it("should display no system notes message", () => {
+  it("Should display no system notes message", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [
         [
@@ -169,7 +169,7 @@ describe("Court case details", () => {
     cy.contains("Case has no system notes.")
   })
 
-  it("should display no notes message", () => {
+  it("Should display no notes message", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [[]],
       force: "02"
@@ -181,7 +181,7 @@ describe("Court case details", () => {
     cy.contains("Case has no notes.")
   })
 
-  it("should not display the notes text area if the case is locked to another users", () => {
+  it("Should not display the notes text area if the case is locked to another users", () => {
     cy.task("insertCourtCasesWithNotesAndLock", {
       caseNotes: [[]],
       force: "02"
@@ -195,7 +195,7 @@ describe("Court case details", () => {
     cy.get("#add-note-button").should("not.exist")
   })
 
-  it("should display the notes text area if the case is not locked to another users", () => {
+  it("Should display the notes text area if the case is not locked to another users", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [[]],
       force: "02"
@@ -209,7 +209,7 @@ describe("Court case details", () => {
     cy.get("span").contains("You have 1000 characters remaining")
   })
 
-  it("should be able to add a note when case is visible to the user and not locked by another user", () => {
+  it("Should be able to add a note when case is visible to the user and not locked by another user", () => {
     insertTriggers()
     loginAndGoToNotes()
     cy.get("textarea").type("Dummy note")
@@ -222,7 +222,7 @@ describe("Court case details", () => {
     cy.contains("Dummy note")
   })
 
-  it("should be able to add a long note", () => {
+  it("Should be able to add a long note", () => {
     insertTriggers()
     loginAndGoToNotes()
     cy.contains("h3", "Notes")
@@ -244,7 +244,7 @@ describe("Court case details", () => {
     cy.contains("C ".repeat(100))
   })
 
-  it("should show error message when note text is empty", () => {
+  it("Should show error message when note text is empty", () => {
     insertTriggers()
     loginAndGoToNotes()
 

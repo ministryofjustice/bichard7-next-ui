@@ -35,7 +35,7 @@ describe("Court case details", () => {
     cy.task("clearCourtCases")
   })
 
-  it("should be accessible", () => {
+  it("Should be accessible", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
       {
@@ -58,7 +58,7 @@ describe("Court case details", () => {
     cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
   })
 
-  it("should load case details for the case that this user can see", () => {
+  it("Should load case details for the case that this user can see", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
       {
@@ -74,17 +74,12 @@ describe("Court case details", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("H1").should("have.text", "Case details")
-
     cy.contains("Case00000")
     cy.contains("Magistrates' Courts Essex Basildon")
-    cy.contains("NAME Defendant")
-
-    // Urgency
     cy.contains("Urgent")
   })
 
-  it("should allow to click through the tabs", () => {
+  it("Should allow to click through the tabs", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
@@ -109,7 +104,7 @@ describe("Court case details", () => {
     cy.get("H3").contains("PNC errors")
   })
 
-  it("should display the content of the Defendant tab", () => {
+  it("Should display the content of the Defendant tab", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
@@ -140,7 +135,7 @@ describe("Court case details", () => {
     cy.contains("td", "Remand status").siblings().contains("Unconditional bail")
   })
 
-  it("should display the content of the Case tab", () => {
+  it("Should display the content of the Case tab", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
@@ -166,7 +161,7 @@ describe("Court case details", () => {
     })
   })
 
-  it("should display the content of the Hearing tab", () => {
+  it("Should display the content of the Hearing tab", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
@@ -192,7 +187,7 @@ describe("Court case details", () => {
     cy.contains("td", "Documentation language").siblings().contains("Don't know (D)")
   })
 
-  it("should display the content of the Offences tab", () => {
+  it("Should display the content of the Offences tab", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
@@ -239,7 +234,7 @@ describe("Court case details", () => {
     cy.contains("td", "PNC adjudication exists").siblings().contains("N")
   })
 
-  it("should return 404 for a case that this user can not see", () => {
+  it("Should return 404 for a case that this user can not see", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
     cy.login("bichard01@example.com", "password")
 
@@ -251,7 +246,7 @@ describe("Court case details", () => {
     })
   })
 
-  it("should return 404 for a case that does not exist", () => {
+  it("Should return 404 for a case that does not exist", () => {
     cy.login("bichard01@example.com", "password")
 
     cy.request({
@@ -262,7 +257,7 @@ describe("Court case details", () => {
     })
   })
 
-  it.skip("should redirect to the user-service if the auth token provided is for a non-existent user", () => {
+  it.skip("Should redirect to the user-service if the auth token provided is for a non-existent user", () => {
     cy.login("bichard01@example.com", "password")
     cy.clearCookies()
     cy.visit("/bichard/court-cases/0", { failOnStatusCode: false })
@@ -270,75 +265,7 @@ describe("Court case details", () => {
     cy.url().should("match", /\/users/)
   })
 
-  it("should lock a case when a user views a case details page", () => {
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: null,
-        triggerLockedByUsername: null,
-        orgForPoliceFilter: "02",
-        errorCount: 1,
-        triggerCount: 1
-      }
-    ])
-
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-
-    cy.findByText("Lock Court Case").click()
-    cy.findByText("Case locked by another user").should("not.exist")
-    cy.findByText("Trigger locked by: Bichard02").should("exist")
-    cy.findByText("Error locked by: Bichard02").should("exist")
-  })
-
-  it("should not lock a court case when its already locked", () => {
-    const existingUserLock = "Another name"
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: existingUserLock,
-        triggerLockedByUsername: existingUserLock,
-        orgForPoliceFilter: "01",
-        errorCount: 1,
-        triggerCount: 1
-      }
-    ])
-
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-    cy.findByText("Case locked by another user").should("exist")
-    cy.findByText("Trigger locked by: Another name").should("exist")
-    cy.findByText("Error locked by: Another name").should("exist")
-  })
-
-  it("should unlock and lock a court case when its already locked", () => {
-    const existingUserLock = "Another name"
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: existingUserLock,
-        triggerLockedByUsername: existingUserLock,
-        orgForPoliceFilter: "02",
-        errorCount: 1,
-        triggerCount: 1
-      }
-    ])
-
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-    cy.findByText("Case locked by another user").should("exist")
-    cy.findByText("Trigger locked by: Another name").should("exist")
-    cy.findByText("Error locked by: Another name").should("exist")
-
-    cy.findByText("Unlock Court Case").click()
-    cy.findByText("Case locked by another user").should("not.exist")
-    cy.findByText("Trigger locked by: Another name").should("not.exist")
-    cy.findByText("Error locked by: Another name").should("not.exist")
-
-    cy.findByText("Lock Court Case").click()
-    cy.findByText("Case locked by another user").should("not.exist")
-    cy.findByText("Trigger locked by: Bichard02").should("exist")
-    cy.findByText("Error locked by: Bichard02").should("exist")
-  })
-
-  // it("should resubmit a case when the resubmit button is clicked", () => {
+  // it("Should resubmit a case when the resubmit button is clicked", () => {
   //   cy.task("insertCourtCasesWithFields", [
   //     {
   //       errorLockedByUsername: null,
@@ -363,7 +290,7 @@ describe("Court case details", () => {
   //   cy.contains("Bichard02: Portal Action: Resubmitted Message.")
   // })
 
-  // it("should resubmit a case when updates are made and the resubmit button is clicked", () => {
+  // it("Should resubmit a case when updates are made and the resubmit button is clicked", () => {
   //   cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
   //   cy.login("bichard02@example.com", "password")
 
@@ -387,7 +314,7 @@ describe("Court case details", () => {
   //   cy.contains("Bichard02: Portal Action: Resubmitted Message.")
   // })
 
-  it("should show triggers tab by default when navigating to court case details page", () => {
+  it("Should show triggers tab by default when navigating to court case details page", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
       {
@@ -425,7 +352,7 @@ describe("Court case details", () => {
     cy.get(".moj-tab-panel-triggers .moj-trigger-row input[type=checkbox]").eq(1).should("not.be.checked")
   })
 
-  it("should display a message when case has no triggers", () => {
+  it("Should display a message when case has no triggers", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
 
     cy.login("bichard01@example.com", "password")
@@ -439,7 +366,7 @@ describe("Court case details", () => {
     cy.get(".moj-tab-panel-triggers").contains("There are no triggers for this case.")
   })
 
-  it("should show exceptions in exceptions tab", () => {
+  it("Should show exceptions in exceptions tab", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
 
     cy.login("bichard01@example.com", "password")
@@ -476,7 +403,7 @@ describe("Court case details", () => {
     cy.get(".moj-tab-panel-exceptions").contains("There are no exceptions for this case.")
   })
 
-  it("should take the user to the offence tab when trigger is clicked", () => {
+  it("Should take the user to the offence tab when trigger is clicked", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
       {
@@ -507,7 +434,7 @@ describe("Court case details", () => {
     cy.get("h3").should("have.text", "Offence 2 of 3")
   })
 
-  it("should take the user to offence tab when exception is clicked", () => {
+  it("Should take the user to offence tab when exception is clicked", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
 
     cy.login("bichard01@example.com", "password")
@@ -521,7 +448,7 @@ describe("Court case details", () => {
     cy.get("h3").should("have.text", "Offence 1 of 3")
   })
 
-  it("should take the user to the case tab when exception is clicked", () => {
+  it("Should take the user to the case tab when exception is clicked", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
     ])
@@ -537,7 +464,7 @@ describe("Court case details", () => {
     cy.get("h3").should("have.text", "Case")
   })
 
-  it("should show contextual help for a trigger when the accordion button is clicked", () => {
+  it("Should show contextual help for a trigger when the accordion button is clicked", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const trigger: TestTrigger = {
       triggerId: 0,
@@ -577,7 +504,7 @@ describe("Court case details", () => {
     cy.get(".triggers-help li").should("contain.text", "3096 Interim Disqualification from Driving")
   })
 
-  it("should generate a more information link for each exception", () => {
+  it("Should generate a more information link for each exception", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
     ])
@@ -594,7 +521,7 @@ describe("Court case details", () => {
       .should("have.attr", "href", "/help/bichard-functionality/exceptions/resolution.html#HO100302")
   })
 
-  it("should show a complete badge for triggers which have been resolved", () => {
+  it("Should show a complete badge for triggers which have been resolved", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
     ])

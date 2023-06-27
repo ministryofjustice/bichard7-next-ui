@@ -17,7 +17,7 @@ import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/build
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 
 describe("isException", () => {
-  it("should return HO100302 when there is an ASN exception", () => {
+  it("Should return HO100302 when there is an ASN exception", () => {
     const dummyAho = parseAhoXml(HO100302_1.hearingOutcomeXml)
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -30,7 +30,7 @@ describe("isException", () => {
     expect(result).toBe(ExceptionCode.HO100302)
   })
 
-  it("should return HO100239 when there is an Offence Reason Sequence exception", () => {
+  it("Should return HO100239 when there is an Offence Reason Sequence exception", () => {
     const dummyAho = parseAhoXml(HO100239_1.hearingOutcomeXml)
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -43,7 +43,7 @@ describe("isException", () => {
     expect(result).toBe(ExceptionCode.HO100239)
   })
 
-  it("should correctly match paths when they access specific indexes in an array", () => {
+  it("Should correctly match paths when they access specific indexes in an array", () => {
     const dummyAho = parseAhoXml(HO100239_2.hearingOutcomeXml)
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -56,7 +56,7 @@ describe("isException", () => {
     expect(result).toBe(ExceptionCode.HO100239)
   })
 
-  it("should return HO100102 when there is an invalid Next Hearing Date", () => {
+  it("Should return HO100102 when there is an invalid Next Hearing Date", () => {
     const dummyAho = parseAhoXml(HO100102_1.hearingOutcomeXml) as AnnotatedHearingOutcome
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -69,7 +69,7 @@ describe("isException", () => {
     expect(result).toBe(ExceptionCode.HO100102)
   })
 
-  it("should return HO100239 when there is an invalid Court Offence Sequence Number", () => {
+  it("Should return HO100239 when there is an invalid Court Offence Sequence Number", () => {
     const dummyAho = parseAhoXml(HO100239_3.hearingOutcomeXml) as AnnotatedHearingOutcome
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -82,7 +82,7 @@ describe("isException", () => {
     expect(result).toBe(ExceptionCode.HO100239)
   })
 
-  it("should return HO100203 when there is an invalid Court Case Reference Number", () => {
+  it("Should return HO100203 when there is an invalid Court Case Reference Number", () => {
     const dummyAho = parseAhoXml(HO100203_1.hearingOutcomeXml) as AnnotatedHearingOutcome
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -95,7 +95,7 @@ describe("isException", () => {
     expect(result).toBe(ExceptionCode.HO100203)
   })
 
-  it("should return HO100200 when there is an invalid Force Owner", () => {
+  it("Should return HO100200 when there is an invalid Force Owner", () => {
     const dummyAho = parseAhoXml(HO100200_1.hearingOutcomeXml) as AnnotatedHearingOutcome
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -108,7 +108,7 @@ describe("isException", () => {
     expect(result).toBe(ExceptionCode.HO100200)
   })
 
-  it("should return HO100200 when there is an invalid Next Result Source Organisation", () => {
+  it("Should return HO100200 when there is an invalid Next Result Source Organisation", () => {
     const dummyAho = parseAhoXml(HO100200_2.hearingOutcomeXml) as AnnotatedHearingOutcome
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -121,7 +121,7 @@ describe("isException", () => {
     expect(result).toBe(ExceptionCode.HO100200)
   })
 
-  it("should return HO100209 when there is an invalid Court PNC Identifier", () => {
+  it("Should return HO100209 when there is an invalid Court PNC Identifier", () => {
     const dummyAho = parseAhoXml(HO100209_1.hearingOutcomeXml) as AnnotatedHearingOutcome
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -134,7 +134,7 @@ describe("isException", () => {
     expect(result).toBe(ExceptionCode.HO100209)
   })
 
-  it("should return HO100247 when there is an invalid Result Qualifier Code", () => {
+  it("Should return HO100247 when there is an invalid Result Qualifier Code", () => {
     const dummyAho = parseAhoXml(HO100247_1.hearingOutcomeXml) as AnnotatedHearingOutcome
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -147,7 +147,7 @@ describe("isException", () => {
     expect(result).toBe(ExceptionCode.HO100247)
   })
 
-  it("should return HO100309 when there is the lookup fails for Result Qualifier Code", () => {
+  it("Should return HO100309 when there is the lookup fails for Result Qualifier Code", () => {
     const dummyAho = parseAhoXml(HO100247_2.hearingOutcomeXml) as AnnotatedHearingOutcome
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -160,7 +160,7 @@ describe("isException", () => {
     expect(result).toBe(ExceptionCode.HO100309)
   })
 
-  it("should return null when object path is not in exceptions array", () => {
+  it("Should return null when object path is not in exceptions array", () => {
     const dummyAho = parseAhoXml(HO100302_1.hearingOutcomeXml)
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(1)
@@ -170,7 +170,7 @@ describe("isException", () => {
     expect(result).toBe(null)
   })
 
-  it("should return null when there are no exceptions", () => {
+  it("Should return null when there are no exceptions", () => {
     const dummyAho = parseAhoXml(validHO.hearingOutcomeXml)
 
     expect((dummyAho as AnnotatedHearingOutcome).Exceptions).toHaveLength(0)

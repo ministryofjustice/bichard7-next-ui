@@ -41,20 +41,35 @@ const runQuery = async (query: string) => {
   return dataSource.manager.query(query)
 }
 
+// DB names have pre and postfixes
+const sanitiseGroupName = (name: string) => {
+  if (name.match(/(?<=B7)(.*)(?=_grp)/)) {
+    return name
+  }
+
+  return `B7${name}_grp`
+}
+
 const insertUsers = async (users: User | User[], userGroups?: string[]): Promise<InsertResult> => {
   const dataSource = await getDataSource()
   const result = await dataSource.createQueryBuilder().insert().into(User).values(users).execute()
-  if (userGroups) {
-    userGroups.forEach(async (userGroup) => {
-      if (Array.isArray(users)) {
-        users.forEach(async (user) => {
-          await insertUserIntoGroup(user.email, userGroup)
-        })
-      } else {
-        await insertUserIntoGroup(users.email, userGroup)
-      }
-    })
+
+  if (!userGroups?.length) {
+    return result
   }
+
+  userGroups.forEach(async (userGroup) => {
+    const group = sanitiseGroupName(userGroup)
+
+    if (Array.isArray(users)) {
+      users.forEach(async (user) => {
+        await insertUserIntoGroup(user.email, group)
+      })
+    } else {
+      await insertUserIntoGroup(users.email, group)
+    }
+  })
+
   return result
 }
 

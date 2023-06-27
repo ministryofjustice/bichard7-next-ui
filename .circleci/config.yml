@@ -42,6 +42,15 @@ commands:
           working_directory: ~/bichard7-next
           command: make run-activemq
 
+  run_audit_logging:
+    description: Run audit logging
+    steps:
+      - run:
+          name: Run audit logging API
+          working_directory: ~/bichard7-next-audit-logging
+          command: npm install && SKIP_PG=true SKIP_MQ=true npm run start-api
+          background: true
+
   use_nvm_version:
     description: Install nvm and use configured node version
     steps:
@@ -59,6 +68,12 @@ commands:
       - run:
           name: Git clone e2e tests
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
+
+  checkout-audit-logging:
+    steps:
+      - run:
+          name: Git clone audit logging
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
 
   fetch_docker_image:
     parameters:
@@ -111,6 +126,7 @@ jobs:
     working_directory: ~
     steps:
       - checkout
+      - checkout-audit-logging
       - use_nvm_version
       - npm_install
       - attach_workspace:
@@ -118,6 +134,10 @@ jobs:
       - clone_bichard_repo
       - run_postgres
       - run_mq
+      - run_audit_logging
+      - run:
+          name: Wait for Audit logging API to start
+          command: STATUS_CODE=200 npx wait-on --config ./.circleci/config/wait-for-status.js http://localhost:3010/messages
       - run:
           name: Run integration tests
           command: npm run test:integration
@@ -138,14 +158,9 @@ jobs:
       - run:
           name: Save UI docker image
           command: docker save ui > ui.tar
-      
-      - run:
-          name: Generate cache key file
-          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
-
       - save_cache:
           name: Cache UI docker image
-          key: ui-image-{{ checksum "/tmp/circle_workflow_id" }}
+          key: ui-image-<<pipeline.git.revision>>
           paths: ui.tar
 
   cypress_e2e_test:
@@ -162,17 +177,15 @@ jobs:
           image: user-service
       - fetch_docker_image:
           image: nginx-auth-proxy
-      - run:
-          name: Generate cache key file
-          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
       - restore_cache:
           name: Restore UI docker image from cache
           keys: 
-            - ui-image-{{ checksum "/tmp/circle_workflow_id" }}
+            - ui-image-<<pipeline.git.revision>>
+
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
-          background: true
+      - run_audit_logging
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
@@ -205,9 +218,15 @@ jobs:
           working_directory: ~/bichard7-next
           command: make run-ui
           background: true
+          environment:
+            AUDIT_LOG_API_URL: http://172.17.0.1:3010
+      - run:
+          name: Run mock audit log API
+          command: node ./.circleci/scripts/mock-audit-log-api.js
+          background: true
       - run:
           name: Wait for UI to start
-          command: npx wait-on --config ./.circleci/config/wait-for-401.js https://localhost:4080/bichard
+          command: STATUS_CODE=401 npx wait-on --config ./.circleci/config/wait-for-status.js https://localhost:4080/bichard
       - run:
           name: Run UI tests
           command: TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX ./scripts/run-ui-tests-chunk.sh
@@ -282,13 +301,11 @@ jobs:
           image: pncemulator
       - fetch_docker_image:
           image: beanconnect
-      - run:
-          name: Generate cache key file
-          command: echo $CIRCLE_WORKFLOW_ID > /tmp/circle_workflow_id
       - restore_cache:
           name: Restore UI docker image from cache
           keys: 
-            - ui-image-{{ checksum "/tmp/circle_workflow_id" }}
+            - ui-image-<<pipeline.git.revision>>
+
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
@@ -320,10 +337,12 @@ jobs:
           name: Run UI stack
           working_directory: ~/bichard7-next
           command: make run-ui
+          environment:
+            AUDIT_LOG_API_URL: http://172.17.0.1:3010
           background: true
       - run:
           name: Wait for UI to start
-          command: npx wait-on --config ./.circleci/config/wait-for-401.js https://localhost:4080/bichard
+          command: STATUS_CODE=401 npx wait-on --config ./.circleci/config/wait-for-status.js https://localhost:4080/bichard
       - run:
           name: Run end-to-end tests
           working_directory: ~/bichard7-next-tests

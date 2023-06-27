@@ -44,7 +44,7 @@ describe("amend offence reason sequence", () => {
     ).toBe(true)
   })
 
-  it("should amend offence reason on multiple offences", () => {
+  it("Should amend offence reason on multiple offences", () => {
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
       cloneDeep(dummyOffence),
       cloneDeep(dummyOffence),

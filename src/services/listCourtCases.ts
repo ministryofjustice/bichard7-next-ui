@@ -9,7 +9,7 @@ import {
   Not,
   SelectQueryBuilder
 } from "typeorm"
-import { CaseListQueryParams } from "types/CaseListQueryParams"
+import { CaseListQueryParams, Reason } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
@@ -115,15 +115,15 @@ const listCourtCases = async (
   if (reasons) {
     query.andWhere(
       new Brackets((qb) => {
-        if (reasons?.includes("Triggers")) {
+        if (reasons?.includes(Reason.Triggers)) {
           qb.where({ triggerCount: MoreThan(0) })
         }
 
-        if (reasons?.includes("Exceptions")) {
+        if (reasons?.includes(Reason.Exceptions)) {
           qb.orWhere({ errorCount: MoreThan(0) })
         }
 
-        if (reasons?.includes("Bails")) {
+        if (reasons?.includes(Reason.Bails)) {
           Object.keys(BailCodes).forEach((triggerCode, i) => {
             const paramName = `bails${i}`
             qb.orWhere(`trigger.trigger_code ilike '%' || :${paramName} || '%'`, {

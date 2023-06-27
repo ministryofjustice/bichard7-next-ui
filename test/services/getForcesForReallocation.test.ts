@@ -1,7 +1,7 @@
 import getForcesForReallocation, { forceCodesForReallocation } from "services/getForcesForReallocation"
 
 describe("getForcesForReallocation", () => {
-  it("should return all forces for reallocation except the current force", () => {
+  it("Should return all forces for reallocation except the current force", () => {
     const currentForceCode = "67"
     const result = getForcesForReallocation(currentForceCode)
 
@@ -11,7 +11,7 @@ describe("getForcesForReallocation", () => {
     )
   })
 
-  it("should return all forces for reallocation when current force code is not in reallocation list", () => {
+  it("Should return all forces for reallocation when current force code is not in reallocation list", () => {
     const currentForceCode = "08"
     const result = getForcesForReallocation(currentForceCode)
 

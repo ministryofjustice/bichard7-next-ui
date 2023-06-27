@@ -22,7 +22,7 @@ describe("GOV.UK Assets", () => {
     cy.login("bichard01@example.com", "password")
   })
 
-  it("should provide copyright logo", () => {
+  it("Should provide copyright logo", () => {
     cy.visit("/bichard")
     cy.get(
       "a[href='https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/']"
@@ -31,7 +31,7 @@ describe("GOV.UK Assets", () => {
       .should("have.attr", "image", "[object Object]")
   })
 
-  it("should provide favicon icon that loads correctly", () => {
+  it("Should provide favicon icon that loads correctly", () => {
     cy.visit("/bichard")
     cy.get("link[rel='shortcut icon']")
       .should("have.attr", "href")

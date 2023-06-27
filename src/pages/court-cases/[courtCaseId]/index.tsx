@@ -5,11 +5,9 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import Layout from "components/Layout"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
 import CourtCaseLock from "features/CourtCaseLock/CourtCaseLock"
-import { BackLink } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
-import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import addNote from "services/addNote"
 import CourtCase from "services/entities/CourtCase"
@@ -144,7 +142,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         user: currentUser.serialize(),
         courtCase: courtCase.serialize(),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
-        errorLockedByAnotherUser: courtCase.errorIsLockedByAnotherUser(currentUser.username),
+        errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
         triggersLockedByCurrentUser: courtCase.triggersAreLockedByCurrentUser(currentUser.username),
         lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username),
         canReallocate: courtCase.canReallocate(currentUser.username)
@@ -172,7 +170,6 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   lockedByAnotherUser,
   canReallocate
 }: Props) => {
-  const { basePath } = useRouter()
   return (
     <>
       <Head>
@@ -180,13 +177,11 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         <meta name="description" content="Case Details | Bichard7" />
       </Head>
       <Layout user={user}>
-        <BackLink href={`${basePath}`} onClick={function noRefCheck() {}}>
-          {"Cases"}
-        </BackLink>
         <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={errorLockedByAnotherUser} />
         <CourtCaseDetails
           courtCase={courtCase}
           aho={aho}
+          user={user}
           errorLockedByAnotherUser={errorLockedByAnotherUser}
           triggersLockedByCurrentUser={triggersLockedByCurrentUser}
           triggersLockedByUser={courtCase.triggerLockedByUsername}
