@@ -185,7 +185,6 @@ jobs:
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
-      - run_audit_logging
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
