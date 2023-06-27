@@ -34,6 +34,7 @@ import { useRouter } from "next/router"
 import { useEffect } from "react"
 import { setCookie, getCookie } from "cookies-next"
 import hashString from "utils/hashString"
+import UnlockReason from "types/UnlockReason"
 import { UserGroup } from "types/UserGroup"
 
 interface Props {
@@ -95,12 +96,12 @@ export const getServerSideProps = withMultipleServerSideProps(
     const dataSource = await getDataSource()
 
     if (isPost(req) && typeof unlockException === "string") {
-      const lockResult = await unlockCourtCase(dataSource, +unlockException, currentUser, "Exception")
+      const lockResult = await unlockCourtCase(dataSource, +unlockException, currentUser, UnlockReason.Exception)
       if (isError(lockResult)) {
         throw lockResult
       }
     } else if (isPost(req) && typeof unlockTrigger === "string") {
-      const lockResult = await unlockCourtCase(dataSource, +unlockTrigger, currentUser, "Trigger")
+      const lockResult = await unlockCourtCase(dataSource, +unlockTrigger, currentUser, UnlockReason.Trigger)
       if (isError(lockResult)) {
         throw lockResult
       }

@@ -1,17 +1,17 @@
 import amendCourtCase from "services/amendCourtCase"
 import User from "services/entities/User"
 import tryToLockCourtCase from "services/tryToLockCourtCase"
-import unlockCourtCase from "services/unlockCourtCase"
+import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import { DataSource } from "typeorm"
 import sendToQueue from "services/mq/sendToQueue"
 import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/build/src/serialise/ahoXml/generate"
 import { isError } from "types/Result"
-
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import type { Amendments } from "types/Amendments"
 import PromiseResult from "types/PromiseResult"
 import insertNotes from "services/insertNotes"
 import updateCourtCaseStatus from "services/updateCourtCaseStatus"
+import UnlockReason from "types/UnlockReason"
 
 const resubmitCourtCase = async (
   dataSource: DataSource,
@@ -53,7 +53,13 @@ const resubmitCourtCase = async (
           return statusResult
         }
 
-        const unlockResult = await unlockCourtCase(entityManager, +courtCaseId, currentUser)
+        const unlockResult = await updateLockStatusToUnlocked(
+          entityManager,
+          +courtCaseId,
+          currentUser,
+          UnlockReason.TriggerAndException,
+          [] //TODO pass an actual audit log events array
+        )
 
         if (isError(unlockResult)) {
           throw unlockResult

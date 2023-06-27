@@ -21,6 +21,7 @@ import unlockCourtCase from "services/unlockCourtCase"
 import { UpdateResult } from "typeorm"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
+import UnlockReason from "types/UnlockReason"
 import { isPost } from "utils/http"
 import { isPncUpdateDataset } from "utils/isPncUpdateDataset"
 import notSuccessful from "utils/notSuccessful"
@@ -42,7 +43,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     if (isPost(req) && !!lock) {
       if (lock === "false") {
-        lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser)
+        lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser, UnlockReason.TriggerAndException)
       } else {
         lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser)
       }
