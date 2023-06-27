@@ -3,7 +3,7 @@ import type { KeyValuePair } from "types/KeyValuePair"
 import BaseEntity from "./BaseEntity"
 import featureFlagTransformer from "./transformers/featureFlagTransformer"
 import delimitedString from "./transformers/delimitedString"
-import { UserGroup } from "types/UserGroup"
+import { UserGroup } from "../../types/UserGroup"
 
 @Entity({ name: "users" })
 export default class User extends BaseEntity {
