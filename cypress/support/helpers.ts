@@ -54,6 +54,7 @@ export const clickTab = (tab: CaseDetailsTab) => {
 export const newUserLogin = ({ user, groups }: { user?: string; groups?: UserGroup[] }) => {
   user = user ?? (groups?.map((g) => g.toLowerCase()).join("") || "nogroups")
   const email = `${user}@example.com`
+
   cy.task("insertUsers", {
     users: [
       {
@@ -67,5 +68,6 @@ export const newUserLogin = ({ user, groups }: { user?: string; groups?: UserGro
     ],
     userGroups: [UserGroup.NewUI, ...(groups ?? [])]
   })
+
   cy.login(email, "password")
 }

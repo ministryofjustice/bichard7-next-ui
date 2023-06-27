@@ -3,16 +3,14 @@ import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import CourtCase from "../../../services/entities/CourtCase"
 import TriggersList from "./TriggersList"
-import Exceptions from "./Exceptions"
+import ExceptionsList from "./Exceptions"
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import type NavigationHandler from "types/NavigationHandler"
+import ConditionalRender from "components/ConditionalRender"
 
-interface Props {
-  courtCase: CourtCase
-  aho: AnnotatedHearingOutcome
-  triggersLockedByCurrentUser: boolean
-  triggersLockedByUser?: string | null
-  onNavigate: NavigationHandler
+export enum Tab {
+  Triggers = "triggers",
+  Exceptions = "exceptions"
 }
 
 const useStyles = createUseStyles({
@@ -27,9 +25,19 @@ const useStyles = createUseStyles({
   }
 })
 
+interface Props {
+  courtCase: CourtCase
+  aho: AnnotatedHearingOutcome
+  renderedTab?: Tab
+  triggersLockedByCurrentUser: boolean
+  triggersLockedByUser?: string | null
+  onNavigate: NavigationHandler
+}
+
 const TriggersAndExceptions = ({
   courtCase,
   aho,
+  renderedTab,
   triggersLockedByCurrentUser,
   triggersLockedByUser,
   onNavigate
@@ -37,38 +45,55 @@ const TriggersAndExceptions = ({
   const classes = useStyles()
   const [selectedTab, setSelectedTab] = useState("triggers")
 
+  const exceptionsSelected = selectedTab === "exceptions" || renderedTab === Tab.Exceptions
+
   return (
     <div className={`${classes.sideBar} triggers-and-exceptions-sidebar`}>
       <Tabs>
         <Tabs.List>
-          <Tabs.Tab
-            className={classes.pointer}
-            onClick={() => setSelectedTab("triggers")}
-            selected={selectedTab === "triggers"}
-          >
-            {`Triggers`}
-          </Tabs.Tab>
-          <Tabs.Tab
-            className={classes.pointer}
-            onClick={() => setSelectedTab("exceptions")}
-            selected={selectedTab === "exceptions"}
-          >{`Exceptions`}</Tabs.Tab>
+          <ConditionalRender isRendered={!renderedTab || renderedTab === Tab.Triggers}>
+            <Tabs.Tab
+              id="triggers-tab"
+              className={classes.pointer}
+              onClick={() => setSelectedTab("triggers")}
+              selected={selectedTab === "triggers"}
+            >
+              {`Triggers`}
+            </Tabs.Tab>
+          </ConditionalRender>
+
+          <ConditionalRender isRendered={!renderedTab || renderedTab === Tab.Exceptions}>
+            <Tabs.Tab
+              id="exceptions-tab"
+              className={classes.pointer}
+              onClick={() => setSelectedTab("exceptions")}
+              selected={exceptionsSelected}
+            >
+              {`Exceptions`}
+            </Tabs.Tab>
+          </ConditionalRender>
         </Tabs.List>
-        <Tabs.Panel
-          id="triggers"
-          selected={selectedTab === "triggers"}
-          className={`moj-tab-panel-triggers ${classes.tabPanelTriggers}`}
-        >
-          <TriggersList
-            courtCase={courtCase}
-            triggersLockedByCurrentUser={triggersLockedByCurrentUser}
-            triggersLockedByUser={triggersLockedByUser}
-            onNavigate={onNavigate}
-          />
-        </Tabs.Panel>
-        <Tabs.Panel id="exceptions" selected={selectedTab === "exceptions"} className="moj-tab-panel-exceptions">
-          <Exceptions aho={aho} onNavigate={onNavigate} />
-        </Tabs.Panel>
+
+        <ConditionalRender isRendered={!renderedTab || renderedTab === Tab.Triggers}>
+          <Tabs.Panel
+            id="triggers"
+            selected={selectedTab === "triggers"}
+            className={`moj-tab-panel-triggers ${classes.tabPanelTriggers}`}
+          >
+            <TriggersList
+              courtCase={courtCase}
+              triggersLockedByCurrentUser={triggersLockedByCurrentUser}
+              triggersLockedByUser={triggersLockedByUser}
+              onNavigate={onNavigate}
+            />
+          </Tabs.Panel>
+        </ConditionalRender>
+
+        <ConditionalRender isRendered={!renderedTab || renderedTab === Tab.Exceptions}>
+          <Tabs.Panel id="exceptions" selected={exceptionsSelected} className="moj-tab-panel-exceptions">
+            <ExceptionsList aho={aho} onNavigate={onNavigate} />
+          </Tabs.Panel>
+        </ConditionalRender>
       </Tabs>
     </div>
   )

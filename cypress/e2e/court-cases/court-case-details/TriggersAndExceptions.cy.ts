@@ -1,6 +1,8 @@
 import { ResolutionStatus } from "types/ResolutionStatus"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import hashedPassword from "../../../fixtures/hashedPassword"
+import { newUserLogin } from "../../../support/helpers"
+import { UserGroup } from "types/UserGroup"
 
 const caseURL = "/bichard/court-cases/0"
 
@@ -55,12 +57,6 @@ describe("Triggers and exceptions", () => {
         orgForPoliceFilter: "01"
       }
     ])
-  })
-
-  describe("Tabs", () => {
-    it("should only show triggers to Trigger Handlers", () => {})
-    it("should only show exceptions to Exception Handlers", () => {})
-    it("should show both triggers and exceptions by default", () => {})
   })
 
   describe("Trigger status", () => {
@@ -349,5 +345,59 @@ describe("Triggers and exceptions", () => {
         .should("have.length", caseTriggers[0].length)
         .each((el) => cy.wrap(el).should("have.text", "Complete"))
     })
+  })
+})
+
+// requires different login sessions, doesn't fit well above
+describe("Triggers and exceptions tabs", () => {
+  before(() => {
+    cy.task("clearTriggers")
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "01"
+      }
+    ])
+  })
+
+  beforeEach(() => {
+    cy.task("clearUsers")
+  })
+
+  it("should show both triggers and exceptions by default", () => {
+    newUserLogin({})
+    cy.visit(caseURL)
+
+    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
+
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
+  })
+
+  it("should only show triggers to Trigger Handlers", () => {
+    newUserLogin({ groups: [UserGroup.TriggerHandler] })
+    cy.visit(caseURL)
+
+    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("be.visible")
+
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("not.exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("not.exist")
+  })
+
+  it("should only show exceptions to Exception Handlers", () => {
+    newUserLogin({ groups: [UserGroup.ExceptionHandler] })
+    cy.visit(caseURL)
+
+    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("not.exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("not.exist")
+
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
   })
 })
