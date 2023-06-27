@@ -346,7 +346,7 @@ jobs:
       - run:
           name: Run end-to-end tests
           working_directory: ~/bichard7-next-tests
-          command: npm i && npm run test:chunk
+          command: npm i && npm run test:chunk:NextUI
           environment:
             STACK_TYPE: next
             WORKSPACE: local-next
