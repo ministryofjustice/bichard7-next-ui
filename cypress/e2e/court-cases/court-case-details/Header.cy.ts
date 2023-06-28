@@ -227,7 +227,7 @@ describe("Court case details header", () => {
     })
   })
 
-  describe.only("Case locks", () => {
+  describe("Case locks", () => {
     describe("General handler and supervisor view", () => {
       it("When we have both locks, it shows both lock components as locked to us", () => {
         const user = users[4]
@@ -291,6 +291,84 @@ describe("Court case details header", () => {
 
         cy.get("#triggers-locked-tag").should("exist")
         cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard01")
+      })
+    })
+
+    describe("Trigger handler view", () => {
+      it("When we have the triggers locked, it shows only the trigger lock", () => {
+        const user = users[1]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            triggerLockedByUsername: user.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("not.exist")
+        cy.get("#triggers-locked-tag").should("exist")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
+      })
+
+      it("When somebody else has the triggers locked, it shows only the trigger lock", () => {
+        const user = users[1]
+        const otherUser = users[4]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            triggerLockedByUsername: otherUser.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("not.exist")
+        cy.get("#triggers-locked-tag").should("exist")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard04")
+      })
+    })
+
+    describe("Exception handler view", () => {
+      it("When we have the exceptions locked, it shows only the exception lock", () => {
+        const user = users[3]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            errorLockedByUsername: user.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("exist")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
+        cy.get("#triggers-locked-tag").should("not.exist")
+      })
+
+      it("When somebody else has the exceptions locked, it shows only the exception lock", () => {
+        const user = users[3]
+        const otherUser = users[4]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            errorLockedByUsername: otherUser.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("exist")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Bichard04")
+        cy.get("#triggers-locked-tag").should("not.exist")
       })
     })
   })

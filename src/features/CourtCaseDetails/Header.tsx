@@ -8,6 +8,7 @@ import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import styled from "styled-components"
+import { UserGroup } from "types/UserGroup"
 import {
   exceptionsAreLockedByAnotherUser,
   isLockedByCurrentUser,
@@ -37,10 +38,22 @@ const useStyles = createUseStyles({
 const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
+
   const leaveAndUnlockParams = new URLSearchParams({ unlockTrigger: courtCase.errorId?.toString() })
   const leaveAndUnlockUrl = `${basePath}?${leaveAndUnlockParams.toString()}`
+
   const caseIsViewOnly = !isLockedByCurrentUser(courtCase, user.username)
   const hasCaseLock = isLockedByCurrentUser(courtCase, user.username)
+
+  const canSeeExceptions =
+    user.groups.includes(UserGroup.ExceptionHandler) ||
+    user.groups.includes(UserGroup.GeneralHandler) ||
+    user.groups.includes(UserGroup.Supervisor)
+
+  const canSeeTriggers =
+    user.groups.includes(UserGroup.TriggerHandler) ||
+    user.groups.includes(UserGroup.GeneralHandler) ||
+    user.groups.includes(UserGroup.Supervisor)
 
   const HeaderRow = styled.div`
     display: flex;
@@ -57,7 +70,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
         <Heading as="h1" size="LARGE" className="govuk-!-font-weight-regular">
           {"Case details"}
         </Heading>
-        <ConditionalRender isRendered={true}>
+        <ConditionalRender isRendered={canSeeExceptions}>
           <LockedTag
             lockName="Exceptions"
             lockedBy={
@@ -84,7 +97,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
             className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular view-only-badge"
           />
         </Heading>
-        <ConditionalRender isRendered={true}>
+        <ConditionalRender isRendered={canSeeTriggers}>
           <LockedTag
             lockName="Triggers"
             lockedBy={
