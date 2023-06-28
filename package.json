@@ -127,6 +127,6 @@
     "wait-on": "^7.0.1"
   },
   "lint-staged": {
-    "!(.circleci)/**/*.{js,ts,tsx}": "eslint --cache --fix --max-warnings 0"
+    "**/*.{js,ts,tsx}": "eslint --cache --fix --max-warnings 0"
   }
 }
