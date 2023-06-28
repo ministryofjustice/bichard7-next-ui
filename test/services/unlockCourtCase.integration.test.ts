@@ -19,7 +19,7 @@ jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 
-describe("lock court case", () => {
+describe("unlock court case", () => {
   let dataSource: DataSource
   const lockedByName = "some user"
   const user = {
