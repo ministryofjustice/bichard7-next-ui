@@ -137,11 +137,48 @@ describe("Court case details header", () => {
       cy.get("span.moj-badge").contains("Urgent").should("exist").should("be.visible")
     })
 
-    it("Should not showing an urgent badge on a non-urgent case", () => {
+    it("Should not show an urgent badge on a non-urgent case", () => {
       const caseURL = "/bichard/court-cases/0"
       const user = users[1]
       cy.task("insertCourtCasesWithFields", [
         {
+          isUrgent: false,
+          orgForPoliceFilter: user.visibleForces![0]
+        }
+      ])
+
+      cy.login(user.email!, "password")
+      cy.visit(caseURL)
+      cy.get("span.moj-badge").should("not.exist")
+    })
+  })
+
+  describe("View only badge", () => {
+    it("Should show a view only badge on a case that someone else has locked", () => {
+      const caseURL = "/bichard/court-cases/0"
+      const user = users[1]
+      const otherUser = users[2]
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: otherUser.username,
+          triggerLockedByUsername: otherUser.username,
+          isUrgent: false,
+          orgForPoliceFilter: user.visibleForces![0]
+        }
+      ])
+
+      cy.login(user.email!, "password")
+      cy.visit(caseURL)
+      cy.get("span.moj-badge").contains("View only").should("exist").should("be.visible")
+    })
+
+    it("Should not show a view only badge on a case we have locked", () => {
+      const caseURL = "/bichard/court-cases/0"
+      const user = users[1]
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: user.username,
+          triggerLockedByUsername: user.username,
           isUrgent: false,
           orgForPoliceFilter: user.visibleForces![0]
         }
