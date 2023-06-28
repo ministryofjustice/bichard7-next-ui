@@ -15,8 +15,8 @@ import User from "services/entities/User"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
 import resolveTriggers from "services/resolveTriggers"
-import { resubmitCourtCase } from "services/resubmitCourtCase"
-import tryToLockCourtCase from "services/tryToLockCourtCase"
+import resubmitCourtCase from "services/resubmitCourtCase"
+import lockCourtCase from "services/lockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
 import { UpdateResult } from "typeorm"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
@@ -45,7 +45,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       if (lock === "false") {
         lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser, UnlockReason.TriggerAndException)
       } else {
-        lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser)
+        lockResult = await lockCourtCase(dataSource, +courtCaseId, currentUser)
       }
     }
 
