@@ -9,7 +9,7 @@ const config: MqConfig = {
 }
 
 describe("deconstructServers()", () => {
-  it("should extract 1 server when there is only 1 failover URL", () => {
+  it("Should extract 1 server when there is only 1 failover URL", () => {
     const url = "failover:(stomp+ssl://host1:1111)"
     const servers = deconstructServers({
       ...config,
@@ -27,7 +27,7 @@ describe("deconstructServers()", () => {
     expect(tlsOptions.port).toBe(1111)
   })
 
-  it("should extract 2 servers when there are 2 failover URLs", () => {
+  it("Should extract 2 servers when there are 2 failover URLs", () => {
     const url = "failover:(stomp+ssl://host1:1111,stomp://host2:2222)"
     const servers = deconstructServers({
       ...config,

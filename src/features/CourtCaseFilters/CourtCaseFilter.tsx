@@ -13,6 +13,8 @@ import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilt
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 import type { KeyValuePair } from "types/KeyValuePair"
+import { UserGroup } from "types/UserGroup"
+import ConditionalRender from "components/ConditionalRender"
 
 interface Props {
   defendantName: string | null
@@ -27,6 +29,7 @@ interface Props {
   locked: string | null
   caseState: CaseState | null
   myCases: boolean
+  userGroups: UserGroup[]
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -143,7 +146,8 @@ const CourtCaseFilter: React.FC<Props> = ({
   urgency,
   locked,
   caseState,
-  myCases
+  myCases,
+  userGroups
 }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
@@ -165,6 +169,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   }
   const [state, dispatch] = useReducer(reducer, initialFilterState)
   const classes = useStyles()
+
   return (
     <form method={"get"} id="filter-panel">
       <div className="moj-filter__header">
@@ -249,15 +254,24 @@ const CourtCaseFilter: React.FC<Props> = ({
               </label>
             </div>
           </div>
-          <div className={classes["govuk-form-group"]}>
-            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Reason"}>
-              <ReasonFilterOptions
-                reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
-                dispatch={dispatch}
-              />
-            </ExpandingFilters>
-          </div>
+          <ConditionalRender
+            isRendered={!userGroups.length || userGroups.some((g) => g !== UserGroup.ExceptionHandler)}
+          >
+            <div className={`${classes["govuk-form-group"]} reasons`}>
+              <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
+              <ExpandingFilters filterName={"Reason"}>
+                <ReasonFilterOptions
+                  reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
+                  reasonOptions={
+                    userGroups.length && userGroups.every((g) => g === UserGroup.TriggerHandler)
+                      ? [Reason.Bails, Reason.Triggers]
+                      : undefined
+                  }
+                  dispatch={dispatch}
+                />
+              </ExpandingFilters>
+            </div>
+          </ConditionalRender>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Urgency"}>

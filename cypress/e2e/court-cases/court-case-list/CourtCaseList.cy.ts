@@ -46,7 +46,7 @@ describe("Court case details", () => {
     cy.contains("p", "Error locked by: Bichard02").should("exist")
   })
 
-  it("should not a case that is already locked to another user", () => {
+  it("should not lock a case that is already locked to another user", () => {
     const existingUserLock = "Another name"
     cy.task("insertCourtCasesWithFields", [
       {

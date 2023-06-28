@@ -23,7 +23,7 @@ describe("get court case", () => {
     await dataSource.destroy()
   })
 
-  it("should amend the court case", async () => {
+  it("Should amend the court case", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -43,7 +43,7 @@ describe("get court case", () => {
     expect(result).toStrictEqual(inputCourtCase)
   })
 
-  it("should return null if the court case doesn't exist", async () => {
+  it("Should return null if the court case doesn't exist", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,

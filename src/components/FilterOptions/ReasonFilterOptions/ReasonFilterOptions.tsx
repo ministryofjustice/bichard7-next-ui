@@ -1,21 +1,22 @@
 import type { Dispatch } from "react"
 import { Reason } from "types/CaseListQueryParams"
+import { reasonOptions as defaultReasonOptions } from "utils/reasonOptions"
 import type { FilterAction } from "types/CourtCaseFilter"
-import { reasonOptions } from "utils/reasonOptions"
 import ConditionalRender from "components/ConditionalRender"
 import TriggersAccordion from "./TriggersAccordion/TriggersAccordion"
 
 interface Props {
   reasons?: Reason[]
+  reasonOptions?: Reason[]
   dispatch: Dispatch<FilterAction>
 }
 
-const ReasonFilterOptions: React.FC<Props> = ({ reasons, dispatch }: Props) => {
+const ReasonFilterOptions: React.FC<Props> = ({ reasons, reasonOptions = defaultReasonOptions, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
         {reasonOptions.map((reason) => (
-          <div className="govuk-checkboxes__item" key={reason}>
+          <div className={`govuk-checkboxes__item ${reason.toLowerCase()}`} key={reason}>
             <input
               className="govuk-checkboxes__input"
               id={`${reason.toLowerCase()}-type`}

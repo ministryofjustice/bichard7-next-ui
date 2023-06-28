@@ -15,6 +15,15 @@ export const ResolutionReasons: Record<ResolutionReasonKey, string> = {
   Reallocated: "Passed to another force/area/prosecutor/dept (specify below)"
 }
 
+export const ResolutionReasonCode: Record<ResolutionReasonKey, number> = {
+  UpdatedDisposal: 2,
+  UpdatedRemand: 3,
+  UpdatedDisposalAndRemand: 4,
+  PNCRecordIsAccurate: 5,
+  NonRecordable: 9,
+  Reallocated: 10
+}
+
 export type ManualResolution = {
   reason: keyof typeof ResolutionReasons
   reasonText?: string

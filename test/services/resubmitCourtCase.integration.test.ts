@@ -5,7 +5,7 @@ import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import insertNotes from "services/insertNotes"
 import sendToQueue from "services/mq/sendToQueue"
-import { resubmitCourtCase } from "services/resubmitCourtCase"
+import resubmitCourtCase from "services/resubmitCourtCase"
 import { DataSource } from "typeorm"
 import offenceSequenceException from "../test-data/HO100302_1.json"
 import deleteFromEntity from "../utils/deleteFromEntity"
@@ -34,7 +34,7 @@ describe("resubmit court case", () => {
     await dataSource.destroy()
   })
 
-  it("should resubmit a court case with no updates", async () => {
+  it("Should resubmit a court case with no updates", async () => {
     // set up court case in the right format to insert into the db
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
@@ -81,7 +81,7 @@ describe("resubmit court case", () => {
     expect(retrievedCase?.errorStatus).toBe("Submitted")
   })
 
-  it("should resubmit a court case with updates to Court Offence Sequence Number", async () => {
+  it("Should resubmit a court case with updates to Court Offence Sequence Number", async () => {
     // set up court case in the right format to insert into the db
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
@@ -153,7 +153,7 @@ describe("resubmit court case", () => {
     expect(retrievedCase?.errorStatus).toBe("Submitted")
   })
 
-  it("should resubmit a court case with updates to multiple offences", async () => {
+  it("Should resubmit a court case with updates to multiple offences", async () => {
     const amendments = [
       { offenceIndex: 0, updatedValue: 1234 },
       { offenceIndex: 1, updatedValue: 1234 }

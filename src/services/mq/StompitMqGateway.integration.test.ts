@@ -21,7 +21,7 @@ describe("StompitMqGateway", () => {
     await testGateway.dispose()
   })
 
-  it("should create the queue and send the message", async () => {
+  it("Should create the queue and send the message", async () => {
     const expectedMessage = '<?xml version="1.0" ?><root><element>value</element></root>'
 
     const result = await gateway.execute(expectedMessage, queueName)

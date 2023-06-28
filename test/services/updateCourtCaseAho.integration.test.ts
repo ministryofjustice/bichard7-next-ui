@@ -23,7 +23,7 @@ describe("update court case updated hearing outcome", () => {
     await dataSource.destroy()
   })
 
-  it("should update the court case `updated_msg` field in the db", async () => {
+  it("Should update the court case `updated_msg` field in the db", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -45,7 +45,7 @@ describe("update court case updated hearing outcome", () => {
     expect(courtCaseRow.user_updated_flag).toBe(1)
   })
 
-  it("should not update the `user_updated_flag` field in the db", async () => {
+  it("Should not update the `user_updated_flag` field in the db", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -67,7 +67,7 @@ describe("update court case updated hearing outcome", () => {
     expect(courtCaseRow.user_updated_flag).toBe(0)
   })
 
-  it("should not update if the court case doesn't exist", async () => {
+  it("Should not update if the court case doesn't exist", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,

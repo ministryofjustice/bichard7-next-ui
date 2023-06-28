@@ -48,7 +48,7 @@ describe("addNote", () => {
     await dataSource.destroy()
   })
 
-  it("should add note when record is not locked by other user", async () => {
+  it("Should add note when record is not locked by other user", async () => {
     await insertRecords()
     const date = new Date()
     MockDate.set(date)
@@ -60,7 +60,7 @@ describe("addNote", () => {
     expect(result).toStrictEqual({ isSuccessful: true })
   })
 
-  it("should not add note when error is locked by other user", async () => {
+  it("Should not add note when error is locked by other user", async () => {
     await insertRecords("OtherUser")
     const date = new Date()
     MockDate.set(date)
@@ -74,7 +74,7 @@ describe("addNote", () => {
     expect(insertNotes).toHaveBeenCalledTimes(0)
   })
 
-  it("should not add note when trigger is locked by other user", async () => {
+  it("Should not add note when trigger is locked by other user", async () => {
     await insertRecords(null, "OtherUser")
     const date = new Date()
     MockDate.set(date)
@@ -87,7 +87,7 @@ describe("addNote", () => {
     expect(insertNotes).toHaveBeenCalledTimes(0)
   })
 
-  it("should not add note when case does not exist", async () => {
+  it("Should not add note when case does not exist", async () => {
     const result = await addNote(dataSource, 0, "username", note)
 
     expect(result).toStrictEqual({
@@ -98,7 +98,7 @@ describe("addNote", () => {
     expect(insertNotes).toHaveBeenCalledTimes(0)
   })
 
-  it("should add multiple notes when note text length is more than the 1000 characters", async () => {
+  it("Should add multiple notes when note text length is more than the 1000 characters", async () => {
     await insertRecords()
 
     const result = await addNote(dataSource, 0, "username", "A".repeat(2503))

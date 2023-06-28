@@ -7,7 +7,7 @@ describe("mapCaseAges", () => {
     MockDate.reset()
   })
 
-  it("should return a date range for 'Today'", () => {
+  it("Should return a date range for 'Today'", () => {
     const dateToday = new Date("2022-11-15T12:30")
     MockDate.set(dateToday)
 
@@ -15,7 +15,7 @@ describe("mapCaseAges", () => {
     expect(result).toEqual({ from: dateToday, to: dateToday })
   })
 
-  it("should return a date range for 'Yesterday'", () => {
+  it("Should return a date range for 'Yesterday'", () => {
     const dateToday = new Date("2022-11-15T12:30")
     const dateYesterday = subDays(dateToday, 1)
     MockDate.set(dateToday)
@@ -24,7 +24,7 @@ describe("mapCaseAges", () => {
     expect(result).toEqual({ from: dateYesterday, to: dateYesterday })
   })
 
-  it("should return a date range for 'Day 2'", () => {
+  it("Should return a date range for 'Day 2'", () => {
     const dateToday = new Date("2022-11-15T12:30")
     const dateDay2 = subDays(dateToday, 2)
 
@@ -34,7 +34,7 @@ describe("mapCaseAges", () => {
     expect(result).toEqual({ from: dateDay2, to: dateDay2 })
   })
 
-  it("should return a date range for 'Day 3'", () => {
+  it("Should return a date range for 'Day 3'", () => {
     const dateToday = new Date("2022-11-15T12:30")
     const dateDay3 = subDays(dateToday, 3)
 
@@ -44,11 +44,11 @@ describe("mapCaseAges", () => {
     expect(result).toEqual({ from: dateDay3, to: dateDay3 })
   })
 
-  it("should return undefined for an invalid key", () => {
+  it("Should return undefined for an invalid key", () => {
     expect(mapCaseAges("Invalid date range key")).toBeUndefined()
   })
 
-  it("should return a date range for multiple keys", () => {
+  it("Should return a date range for multiple keys", () => {
     const dateToday = new Date("2022-11-15T12:30")
     const dateDay2 = subDays(dateToday, 2)
 
@@ -61,7 +61,7 @@ describe("mapCaseAges", () => {
     ])
   })
 
-  it("should return undefined for an invalid key", () => {
+  it("Should return undefined for an invalid key", () => {
     expect(mapCaseAges(["invalid key"])).toBeUndefined()
     expect(mapCaseAges("invalid key")).toBeUndefined()
   })

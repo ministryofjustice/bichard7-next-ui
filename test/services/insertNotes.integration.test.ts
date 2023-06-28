@@ -46,7 +46,7 @@ describe("insertNote", () => {
     await dataSource.destroy()
   })
 
-  it("should insert a valid note", async () => {
+  it("Should insert a valid note", async () => {
     const note = {
       errorId: courtCaseId,
       userId: "System",
@@ -67,7 +67,7 @@ describe("insertNote", () => {
     expect(actualCourtCase.createdAt).toEqual(date)
   })
 
-  it("should return the error when the query fails", async () => {
+  it("Should return the error when the query fails", async () => {
     const invalidId = 9999
     const note = {
       errorId: invalidId,
