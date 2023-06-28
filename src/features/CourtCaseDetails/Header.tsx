@@ -64,22 +64,34 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
     }
   `
 
+  const CaseDetailsLockTag = ({
+    isRendered,
+    lockName,
+    lockCheckFn,
+    lockHolder
+  }: {
+    isRendered: boolean
+    lockName: string
+    lockCheckFn: (courtCase: CourtCase, user: string) => boolean
+    lockHolder: string
+  }) => (
+    <ConditionalRender isRendered={isRendered}>
+      <LockedTag lockName={lockName} lockedBy={lockCheckFn(courtCase, user.username) ? lockHolder : "Locked to you"} />
+    </ConditionalRender>
+  )
+
   return (
     <>
       <HeaderRow>
         <Heading as="h1" size="LARGE" className="govuk-!-font-weight-regular">
           {"Case details"}
         </Heading>
-        <ConditionalRender isRendered={canSeeExceptions}>
-          <LockedTag
-            lockName="Exceptions"
-            lockedBy={
-              exceptionsAreLockedByAnotherUser(courtCase, user.username)
-                ? courtCase.errorLockedByUsername ?? "Another user"
-                : "Locked to you"
-            }
-          />
-        </ConditionalRender>
+        <CaseDetailsLockTag
+          isRendered={canSeeExceptions}
+          lockName="Exceptions"
+          lockCheckFn={exceptionsAreLockedByAnotherUser}
+          lockHolder={courtCase.errorLockedByUsername ?? "Another user"}
+        />
       </HeaderRow>
       <HeaderRow>
         <Heading as="h2" size="MEDIUM" className="govuk-!-font-weight-regular">
@@ -97,16 +109,12 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
             className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular view-only-badge"
           />
         </Heading>
-        <ConditionalRender isRendered={canSeeTriggers}>
-          <LockedTag
-            lockName="Triggers"
-            lockedBy={
-              triggersAreLockedByAnotherUser(courtCase, user.username)
-                ? courtCase.triggerLockedByUsername ?? "Another user"
-                : "Locked to you"
-            }
-          />
-        </ConditionalRender>
+        <CaseDetailsLockTag
+          isRendered={canSeeTriggers}
+          lockName="Triggers"
+          lockCheckFn={triggersAreLockedByAnotherUser}
+          lockHolder={courtCase.triggerLockedByUsername ?? "Another user"}
+        />
       </HeaderRow>
       <ButtonContainer>
         <ConditionalRender isRendered={canReallocate}>
