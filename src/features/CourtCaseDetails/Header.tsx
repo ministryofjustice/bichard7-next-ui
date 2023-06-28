@@ -1,6 +1,6 @@
+import Badge from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
-import UrgentBadge from "features/CourtCaseList/tags/UrgentBadge"
 import { Button, Heading } from "govuk-react"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
@@ -34,8 +34,9 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
   const classes = useStyles()
   const leaveAndUnlockParams = new URLSearchParams({ unlockTrigger: courtCase.errorId?.toString() })
   const leaveAndUnlockUrl = `${basePath}?${leaveAndUnlockParams.toString()}`
-
+  const caseIsViewOnly = !isLockedByCurrentUser(courtCase, user.username)
   const hasCaseLock = isLockedByCurrentUser(courtCase, user.username)
+
   return (
     <>
       <Heading as="h1" size="LARGE" className="govuk-!-font-weight-regular">
@@ -43,8 +44,16 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
       </Heading>
       <Heading as="h2" size="MEDIUM" className="govuk-!-font-weight-regular">
         {courtCase.defendantName}
-        <UrgentBadge
-          isUrgent={courtCase.isUrgent}
+        <Badge
+          isRendered={courtCase.isUrgent}
+          label="Urgent"
+          colour="red"
+          className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular"
+        />
+        <Badge
+          isRendered={caseIsViewOnly}
+          label="View only"
+          colour="blue"
           className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular"
         />
       </Heading>
