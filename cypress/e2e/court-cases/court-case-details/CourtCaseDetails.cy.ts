@@ -76,7 +76,6 @@ describe("Court case details", () => {
 
     cy.contains("Case00000")
     cy.contains("Magistrates' Courts Essex Basildon")
-    cy.contains("Urgent")
   })
 
   it("Should allow to click through the tabs", () => {

@@ -120,4 +120,36 @@ describe("Court case details header", () => {
     cy.location("pathname").should("equal", "/bichard")
     cy.get(".locked-by-tag").should("not.exist")
   })
+
+  describe("Urgent badge", () => {
+    it("Should show an urgent badge on an urgent case", () => {
+      const caseURL = "/bichard/court-cases/0"
+      const user = users[1]
+      cy.task("insertCourtCasesWithFields", [
+        {
+          isUrgent: true,
+          orgForPoliceFilter: user.visibleForces![0]
+        }
+      ])
+
+      cy.login(user.email!, "password")
+      cy.visit(caseURL)
+      cy.get("span.moj-badge").contains("Urgent").should("exist").should("be.visible")
+    })
+
+    it("Should not showing an urgent badge on a non-urgent case", () => {
+      const caseURL = "/bichard/court-cases/0"
+      const user = users[1]
+      cy.task("insertCourtCasesWithFields", [
+        {
+          isUrgent: false,
+          orgForPoliceFilter: user.visibleForces![0]
+        }
+      ])
+
+      cy.login(user.email!, "password")
+      cy.visit(caseURL)
+      cy.get("span.moj-badge").should("not.exist")
+    })
+  })
 })
