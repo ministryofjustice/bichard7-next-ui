@@ -8,7 +8,7 @@ import CourtCase from "services/entities/CourtCase"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
-import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
+import TriggersAndExceptions, { Tab } from "./Sidebar/TriggersAndExceptions"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
@@ -19,6 +19,7 @@ import updateQueryString from "utils/updateQueryString"
 import { CaseInformation } from "./Tabs/Panels/CaseInformation"
 import Header from "./Header"
 import User from "services/entities/User"
+import { UserGroup } from "types/UserGroup"
 
 interface Props {
   courtCase: CourtCase
@@ -85,6 +86,14 @@ const CourtCaseDetails: React.FC<Props> = ({
         setActiveTab("Offences")
         break
     }
+  }
+
+  let tabToRender: Tab | undefined
+  const groups = user.groups.filter((g) => g !== UserGroup.NewUI)
+  if (groups.length && groups.every((g) => g === UserGroup.TriggerHandler)) {
+    tabToRender = Tab.Triggers
+  } else if (groups.length && groups.every((g) => g === UserGroup.ExceptionHandler)) {
+    tabToRender = Tab.Exceptions
   }
 
   return (
@@ -160,6 +169,7 @@ const CourtCaseDetails: React.FC<Props> = ({
           <TriggersAndExceptions
             courtCase={courtCase}
             aho={aho}
+            renderedTab={tabToRender}
             triggersLockedByCurrentUser={triggersLockedByCurrentUser}
             triggersLockedByUser={triggersLockedByUser}
             onNavigate={handleNavigation}
