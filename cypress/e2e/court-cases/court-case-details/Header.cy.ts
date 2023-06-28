@@ -227,25 +227,71 @@ describe("Court case details header", () => {
     })
   })
 
-  describe("Case locks", () => {
-    it("When we have both locks, it shows both lock components as locked to us", () => {
-      const user = users[4]
-      const caseURL = "/bichard/court-cases/0"
-      cy.task("insertCourtCasesWithFields", [
-        {
-          errorLockedByUsername: user.username,
-          triggerLockedByUsername: user.username,
-          orgForPoliceFilter: user.visibleForces![0]
-        }
-      ])
+  describe.only("Case locks", () => {
+    describe("General handler and supervisor view", () => {
+      it("When we have both locks, it shows both lock components as locked to us", () => {
+        const user = users[4]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            errorLockedByUsername: user.username,
+            triggerLockedByUsername: user.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
 
-      cy.login(user.email!, "password")
-      cy.visit(caseURL)
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
 
-      cy.get("#exceptions-locked-tag").should("exist")
-      cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
-      cy.get("#triggers-locked-tag").should("exist")
-      cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
+        cy.get("#exceptions-locked-tag").should("exist")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
+        cy.get("#triggers-locked-tag").should("exist")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
+      })
+
+      it("When we have one lock and someone else has the other, it shows both lock components correctly", () => {
+        const user = users[4]
+        const otherUser = users[1]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            errorLockedByUsername: user.username,
+            triggerLockedByUsername: otherUser.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("exist")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
+
+        cy.get("#triggers-locked-tag").should("exist")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard01")
+      })
+
+      it("When someone else has both locks, it shows both lock components correctly", () => {
+        const user = users[4]
+        const otherUser = users[1]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            errorLockedByUsername: otherUser.username,
+            triggerLockedByUsername: otherUser.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("exist")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Bichard01")
+
+        cy.get("#triggers-locked-tag").should("exist")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard01")
+      })
     })
   })
 })
