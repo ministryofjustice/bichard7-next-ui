@@ -347,12 +347,11 @@ jobs:
       - run:
           name: Run end-to-end tests
           working_directory: ~/bichard7-next-tests
-          command: npm i && TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX npm run test:chunk:nextUI
+          command: npm i && TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX npm run test:chunk
           environment:
             STACK_TYPE: next
             WORKSPACE: local-next
             AUTH_TYPE: user-service
-
 workflows:
   version: 2
   build-and-test:
