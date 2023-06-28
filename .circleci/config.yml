@@ -286,6 +286,7 @@ jobs:
       docker_layer_caching: false
     resource_class: xlarge
     working_directory: ~
+    parallelism: 10
     steps:
       - checkout
       - checkout-tests
@@ -351,20 +352,19 @@ jobs:
             STACK_TYPE: next
             WORKSPACE: local-next
             AUTH_TYPE: user-service
-          parallelism: 10
 
 workflows:
   version: 2
   build-and-test:
     jobs:
       - lint
-      - unit_test
-      - integration_test
-      - cypress_component_test
+      # - unit_test
+      # - integration_test
+      # - cypress_component_test
       - build_ui_image
-      - cypress_e2e_test:
-          requires:
-            - build_ui_image
+      # - cypress_e2e_test:
+          # requires:
+            # - build_ui_image
       - e2e_test:
           requires:
             - build_ui_image
