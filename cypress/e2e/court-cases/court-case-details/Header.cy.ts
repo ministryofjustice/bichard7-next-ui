@@ -19,6 +19,8 @@ describe("Court case details header", () => {
     cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
+    cy.task("insertIntoUserGroup", { emailAddress: "bichard03@example.com", groupName: "B7ExceptionHandler_grp" })
+    cy.task("insertIntoUserGroup", { emailAddress: "bichard04@example.com", groupName: "B7GeneralHandler_grp" })
     cy.clearCookies()
   })
 
@@ -134,7 +136,7 @@ describe("Court case details header", () => {
 
       cy.login(user.email!, "password")
       cy.visit(caseURL)
-      cy.get("span.moj-badge").contains("Urgent").should("exist").should("be.visible")
+      cy.get(".urgent-badge").contains("Urgent").should("exist").should("be.visible")
     })
 
     it("Should not show an urgent badge on a non-urgent case", () => {
@@ -149,7 +151,7 @@ describe("Court case details header", () => {
 
       cy.login(user.email!, "password")
       cy.visit(caseURL)
-      cy.get("span.moj-badge").should("not.exist")
+      cy.get(".urgent-badge").should("not.exist")
     })
   })
 
@@ -169,7 +171,7 @@ describe("Court case details header", () => {
 
       cy.login(user.email!, "password")
       cy.visit(caseURL)
-      cy.get("span.moj-badge").contains("View only").should("exist").should("be.visible")
+      cy.get(".view-only-badge").contains("View only").should("exist").should("be.visible")
     })
 
     it("Should not show a view only badge on a case where we have both locks", () => {
@@ -186,7 +188,7 @@ describe("Court case details header", () => {
 
       cy.login(user.email!, "password")
       cy.visit(caseURL)
-      cy.get("span.moj-badge").should("not.exist")
+      cy.get(".view-only-badge").should("not.exist")
     })
 
     it("Should not show a view only badge on a case where we have one lock and nobody holds the other lock", () => {
@@ -203,7 +205,7 @@ describe("Court case details header", () => {
 
       cy.login(user.email!, "password")
       cy.visit(caseURL)
-      cy.get("span.moj-badge").should("not.exist")
+      cy.get(".view-only-badge").should("not.exist")
     })
 
     it("Should not show a view only badge on a case where we have one lock and somebody else holds the other lock", () => {
@@ -221,7 +223,29 @@ describe("Court case details header", () => {
 
       cy.login(user.email!, "password")
       cy.visit(caseURL)
-      cy.get("span.moj-badge").should("not.exist")
+      cy.get(".view-only-badge").should("not.exist")
+    })
+  })
+
+  describe("Case locks", () => {
+    it("When we have both locks, it shows both lock components as locked to us", () => {
+      const user = users[4]
+      const caseURL = "/bichard/court-cases/0"
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: user.username,
+          triggerLockedByUsername: user.username,
+          orgForPoliceFilter: user.visibleForces![0]
+        }
+      ])
+
+      cy.login(user.email!, "password")
+      cy.visit(caseURL)
+
+      cy.get("#exceptions-locked-tag").should("exist")
+      cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
+      cy.get("#triggers-locked-tag").should("exist")
+      cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
     })
   })
 })

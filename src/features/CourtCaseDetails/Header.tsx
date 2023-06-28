@@ -1,13 +1,18 @@
 import Badge from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
+import LockedTag from "components/LockedTag"
 import { Button, Heading } from "govuk-react"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import styled from "styled-components"
-import { isLockedByCurrentUser } from "utils/caseLocks"
+import {
+  exceptionsAreLockedByAnotherUser,
+  isLockedByCurrentUser,
+  triggersAreLockedByAnotherUser
+} from "utils/caseLocks"
 import { gdsLightGrey, textPrimary } from "utils/colours"
 
 interface Props {
@@ -37,26 +42,59 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
   const caseIsViewOnly = !isLockedByCurrentUser(courtCase, user.username)
   const hasCaseLock = isLockedByCurrentUser(courtCase, user.username)
 
+  const HeaderRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    & > #exceptions-locked-tag {
+      padding-top: 10px;
+    }
+  `
+
   return (
     <>
-      <Heading as="h1" size="LARGE" className="govuk-!-font-weight-regular">
-        {"Case details"}
-      </Heading>
-      <Heading as="h2" size="MEDIUM" className="govuk-!-font-weight-regular">
-        {courtCase.defendantName}
-        <Badge
-          isRendered={courtCase.isUrgent}
-          label="Urgent"
-          colour="red"
-          className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular"
-        />
-        <Badge
-          isRendered={caseIsViewOnly}
-          label="View only"
-          colour="blue"
-          className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular"
-        />
-      </Heading>
+      <HeaderRow>
+        <Heading as="h1" size="LARGE" className="govuk-!-font-weight-regular">
+          {"Case details"}
+        </Heading>
+        <ConditionalRender isRendered={true}>
+          <LockedTag
+            lockName="Exceptions"
+            lockedBy={
+              exceptionsAreLockedByAnotherUser(courtCase, user.username)
+                ? courtCase.errorLockedByUsername ?? "Another user"
+                : "Locked to you"
+            }
+          />
+        </ConditionalRender>
+      </HeaderRow>
+      <HeaderRow>
+        <Heading as="h2" size="MEDIUM" className="govuk-!-font-weight-regular">
+          {courtCase.defendantName}
+          <Badge
+            isRendered={courtCase.isUrgent}
+            label="Urgent"
+            colour="red"
+            className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular urgent-badge"
+          />
+          <Badge
+            isRendered={caseIsViewOnly}
+            label="View only"
+            colour="blue"
+            className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular view-only-badge"
+          />
+        </Heading>
+        <ConditionalRender isRendered={true}>
+          <LockedTag
+            lockName="Triggers"
+            lockedBy={
+              triggersAreLockedByAnotherUser(courtCase, user.username)
+                ? courtCase.triggerLockedByUsername ?? "Another user"
+                : "Locked to you"
+            }
+          />
+        </ConditionalRender>
+      </HeaderRow>
       <ButtonContainer>
         <ConditionalRender isRendered={canReallocate}>
           <LinkButton
