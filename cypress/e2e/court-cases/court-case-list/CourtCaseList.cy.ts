@@ -41,9 +41,12 @@ describe("Court case details", () => {
     cy.visit("/bichard")
 
     cy.contains("a", "NAME Defendant").click()
-    cy.findByText("Case locked by another user").should("not.exist")
-    cy.contains("p", "Trigger locked by: Bichard02").should("exist")
-    cy.contains("p", "Error locked by: Bichard02").should("exist")
+
+    cy.get(".view-only-badge").should("not.exist")
+    cy.get("#triggers-locked-tag").should("exist")
+    cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
+    cy.get("#exceptions-locked-tag").should("exist")
+    cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
   })
 
   it("should not lock a case that is already locked to another user", () => {
