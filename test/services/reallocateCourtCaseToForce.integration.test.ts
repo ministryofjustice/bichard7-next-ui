@@ -10,8 +10,10 @@ import getDataSource from "../../src/services/getDataSource"
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
+import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
 
 jest.mock("services/insertNotes")
+jest.mock("utils/userPermissions")
 
 describe("reallocate court case to another force", () => {
   const courtCaseId = 1
@@ -28,6 +30,8 @@ describe("reallocate court case to another force", () => {
     jest.resetAllMocks()
     jest.clearAllMocks()
     ;(insertNotes as jest.Mock).mockImplementation(jest.requireActual("services/insertNotes").default)
+    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
+    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
   })
 
   afterAll(async () => {
@@ -49,9 +53,7 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: userName,
         visibleForces: [oldForceCode],
-        visibleCourts: [],
-        canLockExceptions: true,
-        canLockTriggers: true
+        visibleCourts: []
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode)
@@ -100,9 +102,7 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: userName,
         visibleForces: [oldForceCode],
-        visibleCourts: [],
-        canLockExceptions: true,
-        canLockTriggers: true
+        visibleCourts: []
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode, "Dummy user note")
@@ -154,9 +154,7 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
-        visibleCourts: [],
-        canLockExceptions: true,
-        canLockTriggers: true
+        visibleCourts: []
       } as Partial<User> as User
 
       let result: UpdateResult | Error
@@ -192,9 +190,7 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
-        visibleCourts: [],
-        canLockExceptions: true,
-        canLockTriggers: true
+        visibleCourts: []
       } as Partial<User> as User
 
       let result: UpdateResult | Error
@@ -227,9 +223,7 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
-        visibleCourts: [],
-        canLockExceptions: true,
-        canLockTriggers: true
+        visibleCourts: []
       } as Partial<User> as User
 
       ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
@@ -262,9 +256,7 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
-        visibleCourts: [],
-        canLockExceptions: true,
-        canLockTriggers: true
+        visibleCourts: []
       } as Partial<User> as User
 
       jest

@@ -1,4 +1,4 @@
-import User from "services/entities/User"
+import type User from "services/entities/User"
 import { UserGroup } from "types/UserGroup"
 
 const canLockTriggers = (user: User) => {

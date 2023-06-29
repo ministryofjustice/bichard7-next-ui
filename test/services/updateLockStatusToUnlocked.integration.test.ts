@@ -8,6 +8,9 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import UnlockReason from "types/UnlockReason"
+import { canLockTriggers, canLockExceptions, isSupervisor } from "utils/userPermissions"
+
+jest.mock("utils/userPermissions")
 
 describe("lock court case", () => {
   let dataSource: DataSource
@@ -41,6 +44,9 @@ describe("lock court case", () => {
 
   beforeEach(async () => {
     await deleteFromEntity(CourtCase)
+    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
+    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
+    ;(isSupervisor as jest.Mock).mockReturnValue(false)
   })
 
   afterEach(() => {
@@ -71,8 +77,6 @@ describe("lock court case", () => {
       await insertCourtCasesWithFields([lockedCourtCase, anotherLockedCourtCase])
 
       const user = {
-        canLockExceptions: true,
-        canLockTriggers: true,
         username: lockedByName,
         visibleForces: ["36FPA1"],
         visibleCourts: []
@@ -108,10 +112,9 @@ describe("lock court case", () => {
         orgForPoliceFilter: "36FPA "
       })
       await insertCourtCases(lockedCourtCase)
+      ;(canLockTriggers as jest.Mock).mockReturnValue(false)
 
       const user = {
-        canLockExceptions: true,
-        canLockTriggers: false,
         username: lockedByName,
         visibleForces: ["36FPA1"],
         visibleCourts: []
@@ -142,10 +145,9 @@ describe("lock court case", () => {
         orgForPoliceFilter: "36FPA "
       })
       await insertCourtCases(lockedCourtCase)
+      ;(canLockExceptions as jest.Mock).mockReturnValue(false)
 
       const user = {
-        canLockExceptions: false,
-        canLockTriggers: true,
         username: lockedByName,
         visibleForces: ["36FPA1"],
         visibleCourts: []
@@ -178,8 +180,6 @@ describe("lock court case", () => {
       await insertCourtCases(lockedCourtCase)
 
       const user = {
-        canLockExceptions: true,
-        canLockTriggers: true,
         username: lockedByName,
         visibleForces: ["36FPA1"],
         visibleCourts: []
@@ -212,8 +212,6 @@ describe("lock court case", () => {
       await insertCourtCases(lockedCourtCase)
 
       const user = {
-        canLockExceptions: true,
-        canLockTriggers: true,
         username: lockedByName,
         visibleForces: ["36FPA1"],
         visibleCourts: []
@@ -245,8 +243,6 @@ describe("lock court case", () => {
       await insertCourtCases(lockedCourtCase)
 
       const user = {
-        canLockExceptions: true,
-        canLockTriggers: true,
         username: lockedByName,
         visibleForces: ["36FPA1"],
         visibleCourts: []
@@ -278,8 +274,6 @@ describe("lock court case", () => {
       await insertCourtCases(lockedCourtCase)
 
       const user = {
-        canLockExceptions: true,
-        canLockTriggers: true,
         username: lockedByName,
         visibleForces: ["36FPA1"],
         visibleCourts: []
@@ -307,10 +301,10 @@ describe("lock court case", () => {
     it("can handle missing permission gracefully", async () => {
       const dummyErrorId = 0
       const user = {
-        canLockExceptions: false,
-        canLockTriggers: false,
         username: "Dummy username"
       } as Partial<User> as User
+      ;(canLockExceptions as jest.Mock).mockReturnValue(false)
+      ;(canLockTriggers as jest.Mock).mockReturnValue(false)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
@@ -331,10 +325,9 @@ describe("lock court case", () => {
     it("can handle missing permission gracefully when unlocking triggers", async () => {
       const dummyErrorId = 0
       const user = {
-        canLockExceptions: true,
-        canLockTriggers: false,
         username: "Dummy username"
       } as Partial<User> as User
+      ;(canLockTriggers as jest.Mock).mockReturnValue(false)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
@@ -355,10 +348,9 @@ describe("lock court case", () => {
     it("can handle missing permission gracefully when unlocking exceptions", async () => {
       const dummyErrorId = 0
       const user = {
-        canLockExceptions: false,
-        canLockTriggers: true,
         username: "Dummy username"
       } as Partial<User> as User
+      ;(canLockExceptions as jest.Mock).mockReturnValue(false)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
@@ -386,8 +378,6 @@ describe("lock court case", () => {
       await insertCourtCases(lockedCourtCase)
 
       const user = {
-        canLockExceptions: true,
-        canLockTriggers: true,
         username: "User with different name",
         visibleForces: ["36FPA1"],
         visibleCourts: []
@@ -422,13 +412,11 @@ describe("lock court case", () => {
       await insertCourtCases(lockedCourtCase)
 
       const user = {
-        canLockExceptions: true,
-        canLockTriggers: true,
-        isSupervisor: true,
         username: "Sup User",
         visibleForces: ["36FPA1"],
         visibleCourts: []
       } as Partial<User> as User
+      ;(isSupervisor as jest.Mock).mockReturnValue(true)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
@@ -457,13 +445,11 @@ describe("lock court case", () => {
       await insertCourtCases(lockedCourtCase)
 
       const user = {
-        canLockExceptions: true,
-        canLockTriggers: true,
-        isSupervisor: true,
         username: "Sup User",
         visibleForces: ["13GH"],
         visibleCourts: []
       } as Partial<User> as User
+      ;(isSupervisor as jest.Mock).mockReturnValue(true)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
@@ -496,12 +482,11 @@ describe("lock court case", () => {
       await insertCourtCases(lockedCourtCase)
 
       const user = {
-        canLockExceptions: true,
-        canLockTriggers: false,
         username: "dummy username",
         visibleForces: ["36FPA1"],
         visibleCourts: []
       } as Partial<User> as User
+      ;(canLockTriggers as jest.Mock).mockReturnValue(false)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
