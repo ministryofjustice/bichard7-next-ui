@@ -55,7 +55,7 @@ getDataSource().then(async (dataSource) => {
   )
 
   cases.forEach(async (courtCase) => {
-    const username = courtCase.errorLockedByUserName
+    const username = courtCase.errorLockedByUsername
     if (username) {
       await createDummyUser(dataSource, username)
     }
