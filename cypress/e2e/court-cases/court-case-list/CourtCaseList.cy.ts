@@ -55,19 +55,21 @@ describe("Court case details", () => {
       {
         errorLockedByUsername: existingUserLock,
         triggerLockedByUsername: existingUserLock,
-        orgForPoliceFilter: "01",
+        orgForPoliceFilter: "02",
         errorCount: 1,
         triggerCount: 1
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
+    cy.login("bichard02@example.com", "password")
     cy.visit("/bichard")
     cy.findByText("NAME Defendant").click()
 
-    cy.contains("h2", "Case locked by another user").should("exist")
-    cy.contains("p", "Trigger locked by: Another name").should("exist")
-    cy.contains("p", "Error locked by: Another name").should("exist")
+    cy.get(".view-only-badge").should("exist")
+    cy.get("#triggers-locked-tag").should("exist")
+    cy.get("#triggers-locked-tag-lockee").should("contain.text", "Another name")
+    cy.get("#exceptions-locked-tag").should("exist")
+    cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Another name")
   })
 })
 
