@@ -10,11 +10,52 @@ import resolveTriggers from "../../src/services/resolveTriggers"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
+import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
+import createAuditLog from "../helpers/createAuditLog"
+import { AUDIT_LOG_API_URL } from "../../src/config"
+import fetch from "node-fetch"
+import { KeyValuePair } from "types/KeyValuePair"
 
 jest.setTimeout(100000)
 
 describe("resolveTriggers", () => {
   let dataSource: DataSource
+
+  const createTriggersEvent = (
+    eventCode: string,
+    eventType: string,
+    triggers: string[],
+    username = "triggerResolver01"
+  ) => {
+    return {
+      category: "information",
+      eventSource: "Bichard New UI",
+      eventType,
+      timestamp: expect.anything(),
+      eventCode,
+      user: username,
+      attributes: {
+        auditLogVersion: 2,
+        "Number Of Triggers": triggers.length,
+        ...triggers.reduce((acc, trigger, index) => {
+          acc[`Trigger ${index + 1} Details`] = trigger
+          return acc
+        }, {} as KeyValuePair<string, unknown>)
+      }
+    }
+  }
+
+  const createTriggersResolved = (triggers: string[], username = "triggerResolver01") =>
+    createTriggersEvent("triggers.resolved", "Trigger marked as resolved by user", triggers, username)
+
+  const createAllTriggersResolved = (triggers: string[], username = "triggerResolver01") =>
+    createTriggersEvent("triggers.all-resolved", "All triggers marked as resolved", triggers, username)
+
+  const fetchEvents = async (messageId: string) => {
+    const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${messageId}`)
+    const auditLogs = (await apiResult.json()) as [{ events: [{ timestamp: string; eventCode: string }] }]
+    return auditLogs[0].events
+  }
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -22,6 +63,8 @@ describe("resolveTriggers", () => {
 
   beforeEach(async () => {
     await deleteFromEntity(CourtCase)
+    await deleteFromDynamoTable("auditLogTable", "messageId")
+    await deleteFromDynamoTable("auditLogEventsTable", "_id")
   })
 
   afterAll(async () => {
@@ -38,12 +81,13 @@ describe("resolveTriggers", () => {
         username: resolverUsername
       } as Partial<User> as User
 
-      await insertCourtCasesWithFields([
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: resolverUsername,
           orgForPoliceFilter: visibleForce
         }
       ])
+      await createAuditLog(courtCase.messageId)
 
       const trigger: TestTrigger = {
         triggerId: 0,
@@ -60,7 +104,7 @@ describe("resolveTriggers", () => {
       expect(beforeCourtCase.triggerResolvedBy).toBeNull()
       expect(beforeCourtCase.triggerResolvedTimestamp).toBeNull()
 
-      const result = await resolveTriggers(dataSource, [0], 0, user)
+      const result = await resolveTriggers(dataSource, [trigger.triggerId], courtCase.errorId, user)
 
       expect(isError(result)).toBeFalsy()
       expect(result as boolean).toBeTruthy()
@@ -92,9 +136,12 @@ describe("resolveTriggers", () => {
       const minsSinceCaseTriggersResolved = differenceInMinutes(new Date(), afterCourtCase.triggerResolvedTimestamp!)
       expect(minsSinceCaseTriggersResolved).toBeGreaterThanOrEqual(0)
       expect(minsSinceCaseTriggersResolved).toBeLessThanOrEqual(5)
+
+      const events = fetchEvents(courtCase.messageId)
+      expect(events).toStrictEqual([createTriggersResolved(["TRPR0001"]), createAllTriggersResolved(["TRPR0001"])])
     })
 
-    it("Should mark the entire case as resolved when there are no other unresolved triggers or exceptions", async () => {
+    it.only("Should mark the entire case as resolved when there are no other unresolved triggers or exceptions", async () => {
       const resolverUsername = "triggerResolver01"
       const visibleForce = "36"
       const user = {
@@ -103,17 +150,19 @@ describe("resolveTriggers", () => {
         username: resolverUsername
       } as Partial<User> as User
 
-      await insertCourtCasesWithFields([
+      const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
           orgForPoliceFilter: visibleForce
         }
       ])
+      await createAuditLog(courtCase.messageId)
 
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
+        triggerItemIdentity: 1,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
@@ -123,10 +172,19 @@ describe("resolveTriggers", () => {
       const beforeCourtCase = beforeCourtCaseResult as CourtCase
       expect(beforeCourtCase.resolutionTimestamp).toBeNull()
       expect(beforeCourtCase.triggerStatus).toBe("Unresolved")
-      await resolveTriggers(dataSource, [0], 0, user)
-      const result = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
-      const afterCourtCaseResult = result as CourtCase
+
+      const result = await resolveTriggers(dataSource, [0], 0, user)
+
+      expect(isError(result)).toBeFalsy()
+      const updatedCourtCase = await getCourtCaseByOrganisationUnit(dataSource, 0, user)
+      const afterCourtCaseResult = updatedCourtCase as CourtCase
       expect(afterCourtCaseResult.resolutionTimestamp).not.toBeNull()
+
+      const events = fetchEvents(courtCase.messageId)
+      expect(events).toStrictEqual([
+        createTriggersResolved(["TRPR0001 (1)"]),
+        createAllTriggersResolved(["TRPR0001 (1)"])
+      ])
     })
 
     it("Should not set mark the entire case as resolved while there are other unresolved triggers or exceptions", async () => {
