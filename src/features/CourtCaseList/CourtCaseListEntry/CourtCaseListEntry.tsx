@@ -27,13 +27,13 @@ const CourtCaseListEntry: React.FC<Props> = ({
     courtName,
     defendantName,
     errorId,
-    errorLockedByUsername,
+    errorLockedByUserFullName,
     errorReport,
     isUrgent,
     notes,
     ptiurn,
     resolutionTimestamp,
-    triggerLockedByUsername,
+    triggerLockedByUserFullName,
     triggers
   } = courtCase
   const { basePath, query } = useRouter()
@@ -55,16 +55,16 @@ const CourtCaseListEntry: React.FC<Props> = ({
   return (
     <>
       <CaseDetailsRow
-        canCurrentUserUnlockCase={errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
+        canCurrentUserUnlockCase={errorLockedByUserFullName && canUnlockCase(errorLockedByUserFullName)}
         hasTriggers={hasTriggers}
         courtDate={courtDate}
         courtName={courtName}
         defendantName={defendantName}
         errorId={errorId}
-        errorLockedByUsername={errorLockedByUsername}
+        errorLockedByUsername={errorLockedByUserFullName}
         errorReport={errorReport}
         firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
-        isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername}
+        isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUserFullName}
         isResolved={resolutionTimestamp !== null}
         isUrgent={isUrgent}
         notes={notes}
@@ -73,11 +73,11 @@ const CourtCaseListEntry: React.FC<Props> = ({
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
       />
       <TriggersRow
-        canCurrentUserUnlockCase={triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
+        canCurrentUserUnlockCase={triggerLockedByUserFullName && canUnlockCase(triggerLockedByUserFullName)}
         firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
-        isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !triggerLockedByUsername}
+        isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !triggerLockedByUserFullName}
         rowClassName={entityClassName}
-        triggerLockedByUsername={triggerLockedByUsername}
+        triggerLockedByUsername={triggerLockedByUserFullName}
         triggers={triggers}
         unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
       />

@@ -121,20 +121,24 @@ export default class CourtCase extends BaseEntity {
   triggers!: Relation<Trigger>[]
 
   @Column({ name: "error_locked_by_id", type: "varchar", nullable: true })
-  errorLockedByUsername?: string | null
+  errorLockedByUserName?: string | null
+
+  errorLockedByUserFullName?: string | null
 
   @Column({ name: "trigger_locked_by_id", type: "varchar", nullable: true })
-  triggerLockedByUsername?: string | null
+  triggerLockedByUserName?: string | null
+
+  triggerLockedByUserFullName?: string | null
 
   @OneToMany(() => Note, (note) => note.courtCase, { eager: true, cascade: ["insert", "update"] })
   notes!: Relation<Note>[]
 
   private isExceptionLockedByAnotherUser(username: string) {
-    return !!this.errorLockedByUsername && this.errorLockedByUsername !== username
+    return !!this.errorLockedByUserFullName && this.errorLockedByUserFullName !== username
   }
 
   private isTriggerLockedByAnotherUser(username: string) {
-    return !!this.triggerLockedByUsername && this.triggerLockedByUsername !== username
+    return !!this.triggerLockedByUserFullName && this.triggerLockedByUserFullName !== username
   }
 
   isLockedByAnotherUser(username: string) {
@@ -154,10 +158,10 @@ export default class CourtCase extends BaseEntity {
   }
 
   triggersAreLockedByCurrentUser(username: string) {
-    return !!this.triggerLockedByUsername && this.triggerLockedByUsername === username
+    return !!this.triggerLockedByUserFullName && this.triggerLockedByUserFullName === username
   }
 
   errorIsLockedByAnotherUser(username: string) {
-    return !!this.errorLockedByUsername && this.errorLockedByUsername !== username
+    return !!this.errorLockedByUserFullName && this.errorLockedByUserFullName !== username
   }
 }
