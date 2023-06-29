@@ -70,14 +70,10 @@ export const getServerSideProps = withMultipleServerSideProps(
         triggersToResolve.map((triggerId) => +triggerId),
         +courtCaseId,
         currentUser
-      )
+      ).catch((error) => error)
 
       if (isError(updateTriggerResult)) {
         throw updateTriggerResult
-      }
-
-      if (!updateTriggerResult) {
-        throw new Error("Failed to resolve trigger")
       }
     }
 

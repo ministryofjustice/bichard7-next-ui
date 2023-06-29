@@ -1,4 +1,4 @@
-import { DataSource, EntityManager, UpdateQueryBuilder, UpdateResult } from "typeorm/"
+import { DataSource, EntityManager, UpdateQueryBuilder } from "typeorm/"
 import { isError } from "types/Result"
 import { DEFAULT_STATION_CODE } from "utils/amendments/amendForceOwner/defaultStationCode"
 import amendCourtCase from "./amendCourtCase"
@@ -8,6 +8,10 @@ import insertNotes from "./insertNotes"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 import UnlockReason from "types/UnlockReason"
+import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import storeAuditLogEvents from "./storeAuditLogEvents"
+import getCourtCase from "./getCourtCase"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,
@@ -15,73 +19,99 @@ const reallocateCourtCaseToForce = async (
   user: User,
   forceCode: string,
   note?: string
-): Promise<UpdateResult | Error> => {
+): Promise<void> => {
   // TODO:
-  // - Add audit log messages: Old bichard pushes messages to GENERAL_EVENT_QUEUE which goes into audit log
   // - Generate TRPR0028 if necessary
-  const updateResult = await dataSource.transaction(
-    "SERIALIZABLE",
-    async (entityManager): Promise<UpdateResult | Error> => {
-      const courtCaseRepository = entityManager.getRepository(CourtCase)
-      let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
-      const newForceCode = `${forceCode}${DEFAULT_STATION_CODE}`
-      query.set({ orgForPoliceFilter: newForceCode })
-      query = courtCasesByOrganisationUnitQuery(query, user) as UpdateQueryBuilder<CourtCase>
-      query.andWhere("error_id = :id", { id: courtCaseId })
+  // - Reset triggers on reallocate
+  await dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<void> => {
+    const events: AuditLogEvent[] = []
 
-      const amendResult = await amendCourtCase(entityManager, { forceOwner: forceCode }, courtCaseId, user)
+    const courtCase = await getCourtCase(entityManager, courtCaseId)
 
-      if (isError(amendResult)) {
-        throw amendResult
+    if (isError(courtCase)) {
+      throw courtCase
+    }
+
+    if (!courtCase) {
+      throw new Error("Failed to unlock: Case not found")
+    }
+
+    const courtCaseRepository = entityManager.getRepository(CourtCase)
+    let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
+    const newForceCode = `${forceCode}${DEFAULT_STATION_CODE}`
+    query.set({ orgForPoliceFilter: newForceCode })
+    query = courtCasesByOrganisationUnitQuery(query, user) as UpdateQueryBuilder<CourtCase>
+    query.andWhere("error_id = :id", { id: courtCaseId })
+
+    const amendResult = await amendCourtCase(entityManager, { forceOwner: forceCode }, courtCaseId, user)
+
+    if (isError(amendResult)) {
+      throw amendResult
+    }
+
+    const addNoteResult = await insertNotes(entityManager, [
+      {
+        noteText: `${user.username}: Case reallocated to new force owner: ${newForceCode}00`,
+        errorId: courtCaseId,
+        userId: "System"
       }
+    ])
 
-      const addNoteResult = await insertNotes(entityManager, [
+    if (isError(addNoteResult)) {
+      throw addNoteResult
+    }
+
+    if (note) {
+      const addUserNoteResult = await insertNotes(entityManager, [
         {
-          noteText: `${user.username}: Case reallocated to new force owner: ${newForceCode}00`,
+          noteText: note,
           errorId: courtCaseId,
-          userId: "System"
+          userId: user.username
         }
       ])
 
-      if (isError(addNoteResult)) {
-        throw addNoteResult
+      if (isError(addUserNoteResult)) {
+        throw addUserNoteResult
       }
-
-      if (note) {
-        const addUserNoteResult = await insertNotes(entityManager, [
-          {
-            noteText: note,
-            errorId: courtCaseId,
-            userId: user.username
-          }
-        ])
-
-        if (isError(addUserNoteResult)) {
-          throw addUserNoteResult
-        }
-      }
-
-      const unlockResult = await updateLockStatusToUnlocked(
-        entityManager,
-        +courtCaseId,
-        user,
-        UnlockReason.TriggerAndException,
-        [] //TODO pass an actual audit log events array
-      )
-
-      if (isError(unlockResult)) {
-        throw unlockResult
-      }
-
-      return query.execute()?.catch((error: Error) => error)
     }
-  )
 
-  if (isError(updateResult)) {
-    throw updateResult
-  }
+    events.push(
+      getAuditLogEvent("information", "Hearing outcome reallocated by user", "Bichard New UI", {
+        user: user.username,
+        auditLogVersion: 2,
+        eventCode: "hearing-outcome.reallocated",
+        "New Force Owner": `${newForceCode}00`
+      })
+    )
 
-  return updateResult
+    const unlockResult = await updateLockStatusToUnlocked(
+      entityManager,
+      +courtCaseId,
+      user,
+      UnlockReason.TriggerAndException,
+      events
+    )
+
+    if (isError(unlockResult)) {
+      throw unlockResult
+    }
+
+    const queryResult = await query.execute()?.catch((error: Error) => error)
+
+    if (isError(queryResult)) {
+      throw queryResult
+    }
+
+    if (!queryResult.affected || queryResult.affected === 0) {
+      throw Error("Failed to reallocate case")
+    }
+
+    const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events).catch((error) => error)
+
+    if (isError(storeAuditLogResponse)) {
+      throw storeAuditLogResponse
+    }
+  })
 }
 
 export default reallocateCourtCaseToForce
