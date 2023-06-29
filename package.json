@@ -48,7 +48,7 @@
     "lodash.get": "^4.4.2",
     "lodash.isobject": "^3.0.2",
     "next": "13.4.7",
-    "node-fetch": "^3.3.1",
+    "node-fetch": "^2.6.11",
     "pg": "^8.11.1",
     "qs": "^6.11.2",
     "raw-body": "^2.5.2",
