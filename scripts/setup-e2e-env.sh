@@ -65,8 +65,7 @@ echo "export DB_HOST=\"${DB_HOST}\"" >> $TEST_ENV_FILE
 fetchParam "DB_PASSWORD" "/cjse-${WORKSPACE}-bichard-7/rds/db/password"
 echo "export DB_SSL=\"true\"" >> $TEST_ENV_FILE
 echo "export DB_SSL_MODE=\"require\"" >> $TEST_ENV_FILE
-echo "export AUDIT_LOG_API_URL=\"$AUDIT_LOGGING_API_URL\"" >> $TEST_ENV_FILE
-echo "export AUDIT_LOG_API_KEY=\"$AUDIT_LOGGING_API_KEY\"" >> $TEST_ENV_FILE
-
+echo "export AUDIT_LOG_API_URL=\"${AUDIT_LOG_API_URL}\"" >> $TEST_ENV_FILE
+echo "export AUDIT_LOG_API_KEY=\"${AUDIT_LOG_API_KEY}\"" >> $TEST_ENV_FILE
 
 echo 'Done'
