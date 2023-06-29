@@ -29,6 +29,10 @@ const ButtonContainer = styled.div`
   gap: 12px;
 `
 
+const HeaderContainer = styled.div`
+  margin-top: 30px;
+`
+
 const useStyles = createUseStyles({
   button: {
     marginBottom: 0
@@ -71,7 +75,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
   )
 
   return (
-    <>
+    <HeaderContainer>
       <HeaderRow>
         <Heading as="h1" size="LARGE" className="govuk-!-font-weight-regular">
           {"Case details"}
@@ -142,7 +146,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           </a>
         </ConditionalRender>
       </ButtonContainer>
-    </>
+    </HeaderContainer>
   )
 }
 
