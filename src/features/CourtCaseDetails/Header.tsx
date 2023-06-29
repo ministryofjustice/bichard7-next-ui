@@ -8,13 +8,13 @@ import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import styled from "styled-components"
-import { UserGroup } from "types/UserGroup"
 import {
   exceptionsAreLockedByAnotherUser,
   isLockedByCurrentUser,
   triggersAreLockedByAnotherUser
 } from "utils/caseLocks"
 import { gdsLightGrey, textPrimary } from "utils/colours"
+import { canLockExceptions, canLockTriggers } from "utils/userPermissions"
 
 interface Props {
   courtCase: CourtCase
@@ -44,16 +44,6 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
 
   const caseIsViewOnly = !isLockedByCurrentUser(courtCase, user.username)
   const hasCaseLock = isLockedByCurrentUser(courtCase, user.username)
-
-  const canSeeExceptions =
-    user.groups.includes(UserGroup.ExceptionHandler) ||
-    user.groups.includes(UserGroup.GeneralHandler) ||
-    user.groups.includes(UserGroup.Supervisor)
-
-  const canSeeTriggers =
-    user.groups.includes(UserGroup.TriggerHandler) ||
-    user.groups.includes(UserGroup.GeneralHandler) ||
-    user.groups.includes(UserGroup.Supervisor)
 
   const HeaderRow = styled.div`
     display: flex;
@@ -87,7 +77,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           {"Case details"}
         </Heading>
         <CaseDetailsLockTag
-          isRendered={canSeeExceptions}
+          isRendered={canLockExceptions(user)}
           lockName="Exceptions"
           lockCheckFn={exceptionsAreLockedByAnotherUser}
           lockHolder={courtCase.errorLockedByUsername ?? "Another user"}
@@ -110,7 +100,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           />
         </Heading>
         <CaseDetailsLockTag
-          isRendered={canSeeTriggers}
+          isRendered={canLockTriggers(user)}
           lockName="Triggers"
           lockCheckFn={triggersAreLockedByAnotherUser}
           lockHolder={courtCase.triggerLockedByUsername ?? "Another user"}

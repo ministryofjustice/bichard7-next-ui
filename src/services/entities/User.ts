@@ -39,14 +39,20 @@ export default class User extends BaseEntity {
   get canLockTriggers() {
     return this.groups.some(
       (group) =>
-        group === "TriggerHandler" || group === "GeneralHandler" || group === "Allocator" || group === "Supervisor"
+        group === UserGroup.TriggerHandler ||
+        group === UserGroup.GeneralHandler ||
+        group === UserGroup.Allocator ||
+        group === UserGroup.Supervisor
     )
   }
 
   get canLockExceptions() {
     return this.groups.some(
       (group) =>
-        group === "ExceptionHandler" || group === "GeneralHandler" || group === "Allocator" || group === "Supervisor"
+        group === UserGroup.ExceptionHandler ||
+        group === UserGroup.GeneralHandler ||
+        group === UserGroup.Allocator ||
+        group === UserGroup.Supervisor
     )
   }
 
