@@ -129,11 +129,11 @@ export default class CourtCase extends BaseEntity {
   @OneToMany(() => Note, (note) => note.courtCase, { eager: true, cascade: ["insert", "update"] })
   notes!: Relation<Note>[]
 
-  private exceptionsAreLockedByAnotherUser(username: string) {
+  exceptionsAreLockedByAnotherUser(username: string) {
     return !!this.errorLockedByUsername && this.errorLockedByUsername !== username
   }
 
-  private triggersAreLockedByAnotherUser(username: string) {
+  triggersAreLockedByAnotherUser(username: string) {
     return !!this.triggerLockedByUsername && this.triggerLockedByUsername !== username
   }
 
