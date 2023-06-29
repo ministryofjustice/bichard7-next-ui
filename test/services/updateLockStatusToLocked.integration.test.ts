@@ -3,13 +3,37 @@ import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
 import getDataSource from "../../src/services/getDataSource"
-import tryToLockCourtCase from "../../src/services/tryToLockCourtCase"
+import updateLockStatusToLocked from "../../src/services/updateLockStatusToLocked"
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
+import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 
-describe("lock court case", () => {
+describe("Update lock status to locked", () => {
   let dataSource: DataSource
+
+  const exceptionLockedEvent = (username = "Bichard01") => ({
+    category: "information",
+    eventSource: "Bichard New UI",
+    eventType: "Exception locked",
+    timestamp: expect.anything(),
+    attributes: {
+      user: username,
+      auditLogVersion: 2,
+      eventCode: "exceptions.locked"
+    }
+  })
+  const triggerLockedEvent = (username = "Bichard01") => ({
+    category: "information",
+    eventSource: "Bichard New UI",
+    eventType: "Trigger locked",
+    timestamp: expect.anything(),
+    attributes: {
+      user: username,
+      auditLogVersion: 2,
+      eventCode: "triggers.locked"
+    }
+  })
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -25,7 +49,7 @@ describe("lock court case", () => {
     }
   })
 
-  it("should lock a unlocked court case when viewed", async () => {
+  it("Should lock a unlocked court case when viewed", async () => {
     const username = "Bichard01"
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
@@ -45,7 +69,8 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
     expect(isError(result)).toBe(false)
     expect(result).toBeTruthy()
 
@@ -60,9 +85,10 @@ describe("lock court case", () => {
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
+    expect(events).toStrictEqual([exceptionLockedEvent(), triggerLockedEvent()])
   })
 
-  it("should not lock a court case when its already locked", async () => {
+  it("Should not lock a court case when its already locked", async () => {
     const username = "Bichard01"
     const anotherUser = "anotherUserName"
 
@@ -84,15 +110,17 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
     expect(isError(result)).toBe(false)
     expect(result).toBeTruthy()
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
+    expect(events).toHaveLength(0)
   })
 
-  it("should not lock a court case exception but it should lock a court case trigger", async () => {
+  it("Should not lock a court case exception but it should lock a court case trigger", async () => {
     const username = "Bichard01"
     const anotherUser = "anotherUserName"
 
@@ -114,7 +142,8 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
 
     const expectedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: anotherUser,
@@ -130,9 +159,10 @@ describe("lock court case", () => {
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
+    expect(events).toStrictEqual([triggerLockedEvent()])
   })
 
-  it("should not lock a court case trigger but it should lock a court case exception", async () => {
+  it("Should not lock a court case trigger but it should lock a court case exception", async () => {
     const username = "Bichard01"
     const anotherUser = "anotherUserName"
 
@@ -154,7 +184,8 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
 
     const expectedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: username,
@@ -170,9 +201,10 @@ describe("lock court case", () => {
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
+    expect(events).toStrictEqual([exceptionLockedEvent()])
   })
 
-  it("should not lock court case trigger, when trigger resolution status is Submitted", async () => {
+  it("Should not lock court case trigger, when trigger resolution status is Submitted", async () => {
     const username = "Bichard01"
 
     const inputCourtCase = await getDummyCourtCase({
@@ -192,7 +224,8 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
 
     const expectedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
@@ -207,9 +240,10 @@ describe("lock court case", () => {
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
+    expect(events).toHaveLength(0)
   })
 
-  it("should not lock a court case exception, when exception resolution status is Submitted", async () => {
+  it("Should not lock a court case exception, when exception resolution status is Submitted", async () => {
     const username = "Bichard01"
 
     const inputCourtCase = await getDummyCourtCase({
@@ -229,7 +263,8 @@ describe("lock court case", () => {
       visibleCourts: []
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
 
     const expectedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
@@ -245,9 +280,10 @@ describe("lock court case", () => {
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(expectedCourtCase)
+    expect(events).toHaveLength(0)
   })
 
-  it("should return an error if we haven't got a specific lock to lock", async () => {
+  it("Should return an error if we haven't got a specific lock to lock", async () => {
     const username = "Bichard01"
 
     const inputCourtCase = await getDummyCourtCase({
@@ -268,11 +304,13 @@ describe("lock court case", () => {
       visibleForces: ["36"]
     } as Partial<User> as User
 
-    const result = await tryToLockCourtCase(dataSource, inputCourtCase.errorId, user)
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
     expect(isError(result)).toBe(true)
     expect(result).toEqual(new Error("update requires a lock (exception or trigger) to update"))
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
+    expect(events).toHaveLength(0)
   })
 })

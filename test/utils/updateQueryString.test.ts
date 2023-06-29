@@ -1,7 +1,7 @@
 import updateQueryString from "utils/updateQueryString"
 
 describe("updateQueryString", () => {
-  it("should add, update, and delete query string parameters", () => {
+  it("Should add, update, and delete query string parameters", () => {
     const historyItems: string[] = []
 
     global.window = {

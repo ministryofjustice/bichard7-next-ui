@@ -1,6 +1,8 @@
 import { ResolutionStatus } from "types/ResolutionStatus"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import hashedPassword from "../../../fixtures/hashedPassword"
+import { newUserLogin } from "../../../support/helpers"
+import { UserGroup } from "types/UserGroup"
 
 const caseURL = "/bichard/court-cases/0"
 
@@ -25,7 +27,7 @@ const resolvedTriggers: TestTrigger[] = Array.from(Array(5)).map((_, idx) => {
 const resolvedTrigger = resolvedTriggers[0]
 const mixedTriggers = [...resolvedTriggers, ...unresolvedTriggers]
 
-describe("Triggers", () => {
+describe("Triggers and exceptions", () => {
   before(() => {
     cy.task("clearCourtCases")
     cy.task("clearUsers")
@@ -58,13 +60,13 @@ describe("Triggers", () => {
   })
 
   describe("Trigger status", () => {
-    it("should display a message and no button when there are no triggers on the case", () => {
+    it("Should display a message and no button when there are no triggers on the case", () => {
       cy.visit(caseURL)
       cy.get(".moj-tab-panel-triggers").should("contain.text", "There are no triggers for this case.")
       cy.get("#mark-triggers-complete-button").should("not.exist")
     })
 
-    it("should show a complete badge against each resolved trigger when the trigger lock is held", () => {
+    it("Should show a complete badge against each resolved trigger when the trigger lock is held", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: resolvedTriggers })
 
       cy.visit(caseURL)
@@ -77,7 +79,7 @@ describe("Triggers", () => {
       })
     })
 
-    it("should show a complete badge against each resolved trigger when the trigger lock is not held", () => {
+    it("Should show a complete badge against each resolved trigger when the trigger lock is not held", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
@@ -97,7 +99,7 @@ describe("Triggers", () => {
       })
     })
 
-    it("should not show checkboxes if somebody else has the triggers locked", () => {
+    it("Should not show checkboxes if somebody else has the triggers locked", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
@@ -113,7 +115,7 @@ describe("Triggers", () => {
   })
 
   describe("Mark as complete button", () => {
-    it("should be disabled if all triggers are resolved", () => {
+    it("Should be disabled if all triggers are resolved", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: [unresolvedTrigger] })
 
       cy.visit(caseURL)
@@ -122,7 +124,7 @@ describe("Triggers", () => {
       cy.get("#mark-triggers-complete-button").should("be.visible").should("have.attr", "disabled")
     })
 
-    it("should be disabled if no triggers are selected", () => {
+    it("Should be disabled if no triggers are selected", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: [unresolvedTrigger] })
 
       cy.visit(caseURL)
@@ -131,7 +133,7 @@ describe("Triggers", () => {
       cy.get("#mark-triggers-complete-button").should("exist").should("have.attr", "disabled")
     })
 
-    it("should be enabled when one or more triggers is selected", () => {
+    it("Should be enabled when one or more triggers is selected", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
 
       cy.visit(caseURL)
@@ -145,7 +147,7 @@ describe("Triggers", () => {
       cy.get("#mark-triggers-complete-button").should("exist").should("not.have.attr", "disabled")
     })
 
-    it("should be disabled when all the triggers are deselected", () => {
+    it("Should be disabled when all the triggers are deselected", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
 
       cy.visit(caseURL)
@@ -159,7 +161,7 @@ describe("Triggers", () => {
       cy.get("#mark-triggers-complete-button").should("exist").should("have.attr", "disabled")
     })
 
-    it("should not be present when somebody else has the trigger lock", () => {
+    it("Should not be present when somebody else has the trigger lock", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
@@ -175,7 +177,7 @@ describe("Triggers", () => {
   })
 
   describe("Locked icon", () => {
-    it("should be shown if somebody else has the triggers locked", () => {
+    it("Should be shown if somebody else has the triggers locked", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
@@ -188,13 +190,13 @@ describe("Triggers", () => {
       cy.get("#triggers-locked-tag").should("exist")
     })
 
-    it("should not be shown if the visiting user holds the trigger lock", () => {
+    it("Should not be shown if the visiting user holds the trigger lock", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
       cy.get("#triggers-locked-tag").should("not.exist")
     })
 
-    it("should display a lock icon when someone else has the triggers locked", () => {
+    it("Should display a lock icon when someone else has the triggers locked", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
@@ -207,7 +209,7 @@ describe("Triggers", () => {
       cy.get("#triggers-locked-tag img").should("exist")
     })
 
-    it("should display the lock holders username when someone else has the triggers locked", () => {
+    it("Should display the lock holders username when someone else has the triggers locked", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
@@ -222,37 +224,37 @@ describe("Triggers", () => {
   })
 
   describe("Select all", () => {
-    it("should be visible if there are multiple unresolved triggers", () => {
+    it("Should be visible if there are multiple unresolved triggers", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
       cy.get("#select-all-triggers").should("be.visible")
     })
 
-    it("should be hidden if all triggers are resolved", () => {
+    it("Should be hidden if all triggers are resolved", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: resolvedTriggers })
       cy.visit(caseURL)
       cy.get("#select-all-triggers").should("not.exist")
     })
 
-    it("should be visible if there is a single unresolved trigger", () => {
+    it("Should be visible if there is a single unresolved trigger", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: [unresolvedTrigger] })
       cy.visit(caseURL)
       cy.get("#select-all-triggers").should("be.visible")
     })
 
-    it("should be hidden if there is a single resolved trigger", () => {
+    it("Should be hidden if there is a single resolved trigger", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: [resolvedTrigger] })
       cy.visit(caseURL)
       cy.get("#select-all-triggers").should("not.exist")
     })
 
-    it("should be visible if there is a mix of resolved and unresolved triggers", () => {
+    it("Should be visible if there is a mix of resolved and unresolved triggers", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: mixedTriggers })
       cy.visit(caseURL)
       cy.get("#select-all-triggers").should("be.visible")
     })
 
-    it("should select all triggers when pressed if there are only unresolved triggers", () => {
+    it("Should select all triggers when pressed if there are only unresolved triggers", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
       cy.get(".trigger-header input[type='checkbox']").should("not.be.checked")
@@ -260,14 +262,14 @@ describe("Triggers", () => {
       cy.get(".trigger-header input[type='checkbox']").should("be.checked")
     })
 
-    it("should select all triggers when pressed if there is a mix of resolved and unresolved triggers", () => {
+    it("Should select all triggers when pressed if there is a mix of resolved and unresolved triggers", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: mixedTriggers })
       cy.visit(caseURL)
       cy.get("#select-all-triggers button").click()
       cy.get(".trigger-header input[type='checkbox']").should("be.checked")
     })
 
-    it("should be hidden if someone else has the triggers locked", () => {
+    it("Should be hidden if someone else has the triggers locked", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
@@ -282,7 +284,7 @@ describe("Triggers", () => {
   })
 
   describe("Resolve triggers", () => {
-    it("should be able to resolve a trigger", () => {
+    it("Should be able to resolve a trigger", () => {
       const caseTriggers: { code: string; status: ResolutionStatus }[][] = [
         [
           {
@@ -306,7 +308,7 @@ describe("Triggers", () => {
       cy.get("span.moj-badge--green").should("have.text", "Complete")
     })
 
-    it("should be able to resolve all triggers on a case using 'select all' if all are unresolved", () => {
+    it("Should be able to resolve all triggers on a case using 'select all' if all are unresolved", () => {
       const caseTriggers: { code: string; status: ResolutionStatus }[][] = [
         [
           {
@@ -343,5 +345,59 @@ describe("Triggers", () => {
         .should("have.length", caseTriggers[0].length)
         .each((el) => cy.wrap(el).should("have.text", "Complete"))
     })
+  })
+})
+
+// requires different login sessions, doesn't fit well above
+describe("Triggers and exceptions tabs", () => {
+  before(() => {
+    cy.task("clearTriggers")
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "01"
+      }
+    ])
+  })
+
+  beforeEach(() => {
+    cy.task("clearUsers")
+  })
+
+  it("should show both triggers and exceptions by default", () => {
+    newUserLogin({})
+    cy.visit(caseURL)
+
+    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
+
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
+  })
+
+  it("should only show triggers to Trigger Handlers", () => {
+    newUserLogin({ groups: [UserGroup.TriggerHandler] })
+    cy.visit(caseURL)
+
+    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("be.visible")
+
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("not.exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("not.exist")
+  })
+
+  it("should only show exceptions to Exception Handlers", () => {
+    newUserLogin({ groups: [UserGroup.ExceptionHandler] })
+    cy.visit(caseURL)
+
+    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("not.exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("not.exist")
+
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
   })
 })

@@ -1,46 +1,44 @@
-import { DataSource, EntityManager, UpdateQueryBuilder, UpdateResult } from "typeorm/"
-import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity"
-import CourtCase from "./entities/CourtCase"
+import { DataSource, UpdateResult } from "typeorm"
+import { isError } from "types/Result"
 import User from "./entities/User"
-import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
+import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
+import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import storeAuditLogEvents from "./storeAuditLogEvents"
+import CourtCase from "./entities/CourtCase"
+import getCourtCase from "./getCourtCase"
+import UnlockReason from "types/UnlockReason"
 
 const unlockCourtCase = async (
-  dataSource: DataSource | EntityManager,
+  dataSource: DataSource,
   courtCaseId: number,
   user: User,
-  unlockReason?: "Trigger" | "Exception"
+  unlockReason: UnlockReason
 ): Promise<UpdateResult | Error> => {
-  const { canLockExceptions, canLockTriggers, isSupervisor, username } = user
-  const shouldUnlockExceptions = canLockExceptions && (unlockReason === undefined || unlockReason === "Exception")
-  const shouldUnlockTriggers = canLockTriggers && (unlockReason === undefined || unlockReason === "Trigger")
-  if (!shouldUnlockExceptions && !shouldUnlockTriggers) {
-    return new Error("User hasn't got permission to unlock the case")
-  }
+  const updateResult = await dataSource.transaction("SERIALIZABLE", async (entityManager) => {
+    const events: AuditLogEvent[] = []
 
-  const courtCaseRepository = dataSource.getRepository(CourtCase)
-  const setFields: QueryDeepPartialEntity<CourtCase> = {}
-  let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
+    const courtCase = (await getCourtCase(entityManager, courtCaseId)) as CourtCase
 
-  if (shouldUnlockExceptions) {
-    setFields.errorLockedByUsername = null
-  }
-  if (shouldUnlockTriggers) {
-    setFields.triggerLockedByUsername = null
-  }
+    if (!courtCase) {
+      throw new Error("Failed to unlock: Case not found")
+    }
 
-  query.set(setFields)
-  query = courtCasesByOrganisationUnitQuery(query, user) as UpdateQueryBuilder<CourtCase>
-  query.andWhere("error_id = :id", { id: courtCaseId })
+    const unlockResult = await updateLockStatusToUnlocked(entityManager, courtCaseId, user, unlockReason, events)
 
-  if (!isSupervisor && shouldUnlockExceptions) {
-    query.andWhere({ errorLockedByUsername: username })
-  }
+    if (isError(unlockResult)) {
+      throw unlockResult
+    }
 
-  if (!isSupervisor && shouldUnlockTriggers) {
-    query.andWhere({ triggerLockedByUsername: username })
-  }
+    const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
 
-  return query.execute()?.catch((error: Error) => error)
+    if (isError(storeAuditLogResponse)) {
+      throw storeAuditLogResponse
+    }
+
+    return unlockResult
+  })
+
+  return updateResult
 }
 
 export default unlockCourtCase

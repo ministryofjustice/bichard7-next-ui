@@ -54,6 +54,10 @@ then
   exit 1
 fi
 
+AUDIT_LOG_API_ID=$(aws apigateway get-rest-apis --query "items[0].id" --output text)
+AUDIT_LOG_API_URL="https://${AUDIT_LOG_API_ID}.execute-api.eu-west-2.amazonaws.com/${WORKSPACE}"
+AUDIT_LOG_API_KEY=$(aws apigateway get-api-keys --include-values --query "items[0].value" --output text)
+
 mkdir -p workspaces
 rm -f $TEST_ENV_FILE
 
@@ -61,5 +65,7 @@ echo "export DB_HOST=\"${DB_HOST}\"" >> $TEST_ENV_FILE
 fetchParam "DB_PASSWORD" "/cjse-${WORKSPACE}-bichard-7/rds/db/password"
 echo "export DB_SSL=\"true\"" >> $TEST_ENV_FILE
 echo "export DB_SSL_MODE=\"require\"" >> $TEST_ENV_FILE
+echo "export AUDIT_LOG_API_URL=\"${AUDIT_LOG_API_URL}\"" >> $TEST_ENV_FILE
+echo "export AUDIT_LOG_API_KEY=\"${AUDIT_LOG_API_KEY}\"" >> $TEST_ENV_FILE
 
 echo 'Done'

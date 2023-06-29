@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker"
 import { differenceInDays, subDays, subYears } from "date-fns"
 import sample from "lodash.sample"
-import { DataSource } from "typeorm"
+import { DataSource, EntityManager } from "typeorm"
 import { v4 as uuidv4 } from "uuid"
 import CourtCase from "../../src/services/entities/CourtCase"
 import dummyAHO from "../test-data/AnnotatedHO1.json"
@@ -26,7 +26,7 @@ const randomDate = (from: Date, to: Date): Date => {
 }
 
 export default async (
-  dataSource: DataSource,
+  dataSource: DataSource | EntityManager,
   caseId: number,
   orgCode: string,
   dateFrom?: Date,

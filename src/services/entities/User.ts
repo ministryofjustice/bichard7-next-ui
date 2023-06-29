@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from "typeorm"
-import type GroupName from "types/GroupName"
 import type { KeyValuePair } from "types/KeyValuePair"
 import BaseEntity from "./BaseEntity"
 import featureFlagTransformer from "./transformers/featureFlagTransformer"
 import delimitedString from "./transformers/delimitedString"
+import { UserGroup } from "../../types/UserGroup"
 
 @Entity({ name: "users" })
 export default class User extends BaseEntity {
@@ -34,7 +34,7 @@ export default class User extends BaseEntity {
   @Column({ name: "feature_flags", transformer: featureFlagTransformer, type: "jsonb" })
   featureFlags!: KeyValuePair<string, boolean>
 
-  groups: GroupName[] = []
+  groups: UserGroup[] = []
 
   get canLockTriggers() {
     return this.groups.some(
@@ -51,6 +51,6 @@ export default class User extends BaseEntity {
   }
 
   get isSupervisor() {
-    return this.groups.some((group) => group === "Supervisor")
+    return this.groups.some((group) => group === UserGroup.Supervisor)
   }
 }

@@ -1,7 +1,7 @@
 import User from "services/entities/User"
-import { TestTrigger } from "../../../test/utils/manageTriggers"
-import hashedPassword from "../../fixtures/hashedPassword"
-import canReallocateTestData from "../../fixtures/canReallocateTestData.json"
+import { TestTrigger } from "../../../../test/utils/manageTriggers"
+import hashedPassword from "../../../fixtures/hashedPassword"
+import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 
 describe("Case details", () => {
   const defaultUsers: Partial<User>[] = Array.from(Array(4)).map((_value, idx) => {
@@ -24,7 +24,7 @@ describe("Case details", () => {
     cy.task("clearCourtCases")
   })
 
-  it("should be able to reallocate a case is visible to the user and not locked by another user", () => {
+  it("Should be able to reallocate a case is visible to the user and not locked by another user", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
       {
@@ -68,7 +68,7 @@ describe("Case details", () => {
     cy.get("table tbody tr").should("contain", "This is a dummy note")
   })
 
-  it("should be able to reallocate a case without note", () => {
+  it("Should be able to reallocate a case without note", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
       {
@@ -109,7 +109,7 @@ describe("Case details", () => {
     cy.get("table tbody tr").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
   })
 
-  it("should not accept more than 1000 characters in note text field", () => {
+  it("Should not accept more than 1000 characters in note text field", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
       {
@@ -156,7 +156,7 @@ describe("Case details", () => {
     cy.get("table tbody tr").should("contain", "a".repeat(1000))
   })
 
-  it("should return 404 for a case that this user can not see", () => {
+  it("Should return 404 for a case that this user can not see", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
     cy.login("bichard01@example.com", "password")
 
@@ -168,7 +168,7 @@ describe("Case details", () => {
     })
   })
 
-  it("should return 404 for a case that does not exist", () => {
+  it("Should return 404 for a case that does not exist", () => {
     cy.login("bichard01@example.com", "password")
 
     cy.request({

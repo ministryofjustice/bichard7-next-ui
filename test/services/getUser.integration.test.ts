@@ -4,7 +4,7 @@ import { isError } from "../../src/types/Result"
 import User from "../../src/services/entities/User"
 import { deleteUsers, getDummyUser, insertUsers, runQuery } from "../utils/manageUsers"
 import getUser from "../../src/services/getUser"
-import GroupName from "types/GroupName"
+import { UserGroup } from "types/UserGroup"
 
 describe("getUser", () => {
   let dataSource: DataSource
@@ -23,11 +23,11 @@ describe("getUser", () => {
     }
   })
 
-  it("should return the user when given a matching username", async () => {
+  it("Should return the user when given a matching username", async () => {
     const inputUser = await getDummyUser()
     await insertUsers(inputUser)
     const groups = ["B7Supervisor_grp", "B7GeneralHandler_grp"]
-    const expectedGroups: GroupName[] = ["Supervisor", "GeneralHandler"]
+    const expectedGroups: UserGroup[] = [UserGroup.Supervisor, UserGroup.GeneralHandler]
 
     const result = await getUser(dataSource, inputUser.username, groups)
     expect(isError(result)).toBe(false)
@@ -54,7 +54,7 @@ describe("getUser", () => {
     expect(result).toBeNull()
   })
 
-  it("should parse missing feature flags correctly", async () => {
+  it("Should parse missing feature flags correctly", async () => {
     const inputUser = await getDummyUser({
       featureFlags: {}
     })
@@ -67,7 +67,7 @@ describe("getUser", () => {
     expect(actualUser).toStrictEqual(inputUser)
   })
 
-  it("should fetch feature flags correctly when unescaped values are in the DB", async () => {
+  it("Should fetch feature flags correctly when unescaped values are in the DB", async () => {
     const inputUser = await getDummyUser()
     await insertUsers(inputUser)
     await runQuery(`UPDATE br7own.users SET feature_flags = '{"test_flag":true}' WHERE username = 'Bichard01';`)
