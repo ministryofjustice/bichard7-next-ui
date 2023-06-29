@@ -14,17 +14,17 @@ import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrga
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import UnlockReason from "types/UnlockReason"
+import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
 
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
+jest.mock("utils/userPermissions")
 
 describe("unlock court case", () => {
   let dataSource: DataSource
   const lockedByName = "some user"
   const user = {
-    canLockExceptions: true,
-    canLockTriggers: true,
     username: lockedByName,
     visibleForces: ["36FPA1"],
     visibleCourts: []
@@ -46,6 +46,8 @@ describe("unlock court case", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
+    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
+    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
 
     lockedCourtCase = (
       (await insertCourtCasesWithFields([

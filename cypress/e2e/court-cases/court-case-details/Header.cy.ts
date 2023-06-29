@@ -19,6 +19,8 @@ describe("Court case details header", () => {
     cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
+    cy.task("insertIntoUserGroup", { emailAddress: "bichard03@example.com", groupName: "B7ExceptionHandler_grp" })
+    cy.task("insertIntoUserGroup", { emailAddress: "bichard04@example.com", groupName: "B7GeneralHandler_grp" })
     cy.clearCookies()
   })
 
@@ -119,5 +121,255 @@ describe("Court case details header", () => {
     cy.get("button#leave-and-unlock").click()
     cy.location("pathname").should("equal", "/bichard")
     cy.get(".locked-by-tag").should("not.exist")
+  })
+
+  describe("Urgent badge", () => {
+    it("Should show an urgent badge on an urgent case", () => {
+      const caseURL = "/bichard/court-cases/0"
+      const user = users[1]
+      cy.task("insertCourtCasesWithFields", [
+        {
+          isUrgent: true,
+          orgForPoliceFilter: user.visibleForces![0]
+        }
+      ])
+
+      cy.login(user.email!, "password")
+      cy.visit(caseURL)
+      cy.get(".urgent-badge").contains("Urgent").should("exist").should("be.visible")
+    })
+
+    it("Should not show an urgent badge on a non-urgent case", () => {
+      const caseURL = "/bichard/court-cases/0"
+      const user = users[1]
+      cy.task("insertCourtCasesWithFields", [
+        {
+          isUrgent: false,
+          orgForPoliceFilter: user.visibleForces![0]
+        }
+      ])
+
+      cy.login(user.email!, "password")
+      cy.visit(caseURL)
+      cy.get(".urgent-badge").should("not.exist")
+    })
+  })
+
+  describe("View only badge", () => {
+    it("Should show a view only badge on a case that someone else has locked", () => {
+      const caseURL = "/bichard/court-cases/0"
+      const user = users[1]
+      const otherUser = users[2]
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: otherUser.username,
+          triggerLockedByUsername: otherUser.username,
+          isUrgent: false,
+          orgForPoliceFilter: user.visibleForces![0]
+        }
+      ])
+
+      cy.login(user.email!, "password")
+      cy.visit(caseURL)
+      cy.get(".view-only-badge").contains("View only").should("exist").should("be.visible")
+    })
+
+    it("Should not show a view only badge on a case where we have both locks", () => {
+      const caseURL = "/bichard/court-cases/0"
+      const user = users[1]
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: user.username,
+          triggerLockedByUsername: user.username,
+          isUrgent: false,
+          orgForPoliceFilter: user.visibleForces![0]
+        }
+      ])
+
+      cy.login(user.email!, "password")
+      cy.visit(caseURL)
+      cy.get(".view-only-badge").should("not.exist")
+    })
+
+    it("Should not show a view only badge on a case where we have one lock and nobody holds the other lock", () => {
+      const caseURL = "/bichard/court-cases/0"
+      const user = users[1]
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: null,
+          triggerLockedByUsername: user.username,
+          isUrgent: false,
+          orgForPoliceFilter: user.visibleForces![0]
+        }
+      ])
+
+      cy.login(user.email!, "password")
+      cy.visit(caseURL)
+      cy.get(".view-only-badge").should("not.exist")
+    })
+
+    it("Should not show a view only badge on a case where we have one lock and somebody else holds the other lock", () => {
+      const caseURL = "/bichard/court-cases/0"
+      const user = users[1]
+      const otherUser = users[2]
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorLockedByUsername: otherUser.username,
+          triggerLockedByUsername: user.username,
+          isUrgent: false,
+          orgForPoliceFilter: user.visibleForces![0]
+        }
+      ])
+
+      cy.login(user.email!, "password")
+      cy.visit(caseURL)
+      cy.get(".view-only-badge").should("not.exist")
+    })
+  })
+
+  describe("Case locks", () => {
+    describe("General handler and supervisor view", () => {
+      it("When we have both locks, it shows both lock components as locked to us", () => {
+        const user = users[4]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            errorLockedByUsername: user.username,
+            triggerLockedByUsername: user.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("exist")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
+        cy.get("#triggers-locked-tag").should("exist")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
+      })
+
+      it("When we have one lock and someone else has the other, it shows both lock components correctly", () => {
+        const user = users[4]
+        const otherUser = users[1]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            errorLockedByUsername: user.username,
+            triggerLockedByUsername: otherUser.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("exist")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
+
+        cy.get("#triggers-locked-tag").should("exist")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard01")
+      })
+
+      it("When someone else has both locks, it shows both lock components correctly", () => {
+        const user = users[4]
+        const otherUser = users[1]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            errorLockedByUsername: otherUser.username,
+            triggerLockedByUsername: otherUser.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("exist")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Bichard01")
+
+        cy.get("#triggers-locked-tag").should("exist")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard01")
+      })
+    })
+
+    describe("Trigger handler view", () => {
+      it("When we have the triggers locked, it shows only the trigger lock", () => {
+        const user = users[1]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            triggerLockedByUsername: user.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("not.exist")
+        cy.get("#triggers-locked-tag").should("exist")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
+      })
+
+      it("When somebody else has the triggers locked, it shows only the trigger lock", () => {
+        const user = users[1]
+        const otherUser = users[4]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            triggerLockedByUsername: otherUser.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("not.exist")
+        cy.get("#triggers-locked-tag").should("exist")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard04")
+      })
+    })
+
+    describe("Exception handler view", () => {
+      it("When we have the exceptions locked, it shows only the exception lock", () => {
+        const user = users[3]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            errorLockedByUsername: user.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("exist")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
+        cy.get("#triggers-locked-tag").should("not.exist")
+      })
+
+      it("When somebody else has the exceptions locked, it shows only the exception lock", () => {
+        const user = users[3]
+        const otherUser = users[4]
+        const caseURL = "/bichard/court-cases/0"
+        cy.task("insertCourtCasesWithFields", [
+          {
+            errorLockedByUsername: otherUser.username,
+            orgForPoliceFilter: user.visibleForces![0]
+          }
+        ])
+
+        cy.login(user.email!, "password")
+        cy.visit(caseURL)
+
+        cy.get("#exceptions-locked-tag").should("exist")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Bichard04")
+        cy.get("#triggers-locked-tag").should("not.exist")
+      })
+    })
   })
 })

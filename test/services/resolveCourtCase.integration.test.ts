@@ -18,12 +18,14 @@ import createAuditLog from "../helpers/createAuditLog"
 import { AUDIT_LOG_API_URL } from "../../src/config"
 import fetch from "node-fetch"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
+import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
+jest.mock("utils/userPermissions")
 
 const expectToBeUnresolved = (courtCase: CourtCase) => {
   expect(courtCase.errorStatus).toEqual("Unresolved")
@@ -43,9 +45,7 @@ describe("resolveCourtCase", () => {
   const user = {
     visibleCourts: [],
     visibleForces: [visibleForce],
-    username: resolverUsername,
-    canLockExceptions: true,
-    canLockTriggers: true
+    username: resolverUsername
   } as Partial<User> as User
 
   beforeAll(async () => {
@@ -60,6 +60,8 @@ describe("resolveCourtCase", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
+    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
+    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
   })
 
   beforeEach(async () => {
