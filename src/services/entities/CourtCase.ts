@@ -121,12 +121,12 @@ export default class CourtCase extends BaseEntity {
   triggers!: Relation<Trigger>[]
 
   @Column({ name: "error_locked_by_id", type: "varchar", nullable: true })
-  errorLockedByUserName?: string | null
+  errorLockedByUsername?: string | null
 
   errorLockedByUserFullName?: string | null
 
   @Column({ name: "trigger_locked_by_id", type: "varchar", nullable: true })
-  triggerLockedByUserName?: string | null
+  triggerLockedByUsername?: string | null
 
   triggerLockedByUserFullName?: string | null
 
@@ -162,7 +162,7 @@ export default class CourtCase extends BaseEntity {
   }
 
   exceptionsAreLockedByAnotherUser(username: string) {
-    return !!this.errorLockedByUserName && this.errorLockedByUserName !== username
+    return !!this.errorLockedByUsername && this.errorLockedByUsername !== username
   }
 
   isLockedByCurrentUser(username: string) {
