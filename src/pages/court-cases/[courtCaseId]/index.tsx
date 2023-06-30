@@ -4,7 +4,6 @@ import parseAnnotatedPNCUpdateDatasetXml from "@moj-bichard7-developers/bichard7
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import Layout from "components/Layout"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
-import CourtCaseLock from "features/CourtCaseLock/CourtCaseLock"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
@@ -15,12 +14,13 @@ import User from "services/entities/User"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
 import resolveTriggers from "services/resolveTriggers"
-import { resubmitCourtCase } from "services/resubmitCourtCase"
-import tryToLockCourtCase from "services/tryToLockCourtCase"
+import resubmitCourtCase from "services/resubmitCourtCase"
+import lockCourtCase from "services/lockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
 import { UpdateResult } from "typeorm"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
+import UnlockReason from "types/UnlockReason"
 import { isPost } from "utils/http"
 import { isPncUpdateDataset } from "utils/isPncUpdateDataset"
 import notSuccessful from "utils/notSuccessful"
@@ -42,9 +42,9 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     if (isPost(req) && !!lock) {
       if (lock === "false") {
-        lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser)
+        lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser, UnlockReason.TriggerAndException)
       } else {
-        lockResult = await tryToLockCourtCase(dataSource, +courtCaseId, currentUser)
+        lockResult = await lockCourtCase(dataSource, +courtCaseId, currentUser)
       }
     }
 
@@ -177,7 +177,6 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         <meta name="description" content="Case Details | Bichard7" />
       </Head>
       <Layout user={user}>
-        <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={errorLockedByAnotherUser} />
         <CourtCaseDetails
           courtCase={courtCase}
           aho={aho}

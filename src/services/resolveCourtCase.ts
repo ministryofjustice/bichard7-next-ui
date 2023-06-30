@@ -3,11 +3,12 @@ import { isError } from "types/Result"
 import User from "./entities/User"
 import { ManualResolution } from "types/ManualResolution"
 import CourtCase from "./entities/CourtCase"
-import unlockCourtCase from "./unlockCourtCase"
+import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 import insertNotes from "./insertNotes"
 import storeAuditLogEvents from "./storeAuditLogEvents"
 import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import resolveError from "./resolveError"
+import UnlockReason from "types/UnlockReason"
 
 const resolveCourtCase = async (
   dataSource: DataSource | EntityManager,
@@ -24,7 +25,13 @@ const resolveCourtCase = async (
       throw resolveErrorResult
     }
 
-    const unlockResult = await unlockCourtCase(entityManager, courtCase.errorId, user, undefined, events)
+    const unlockResult = await updateLockStatusToUnlocked(
+      entityManager,
+      courtCase.errorId,
+      user,
+      UnlockReason.TriggerAndException,
+      events
+    )
     if (isError(unlockResult)) {
       throw unlockResult
     }

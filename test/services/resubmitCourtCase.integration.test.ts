@@ -5,14 +5,16 @@ import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import insertNotes from "services/insertNotes"
 import sendToQueue from "services/mq/sendToQueue"
-import { resubmitCourtCase } from "services/resubmitCourtCase"
+import resubmitCourtCase from "services/resubmitCourtCase"
 import { DataSource } from "typeorm"
 import offenceSequenceException from "../test-data/HO100302_1.json"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
+import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
 
 jest.mock("services/mq/sendToQueue")
 jest.mock("services/insertNotes")
+jest.mock("utils/userPermissions")
 
 jest.setTimeout(60 * 60 * 1000)
 
@@ -28,6 +30,8 @@ describe("resubmit court case", () => {
     await deleteFromEntity(CourtCase)
     jest.resetAllMocks()
     jest.clearAllMocks()
+    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
+    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
   })
 
   afterAll(async () => {
@@ -56,7 +60,6 @@ describe("resubmit court case", () => {
 
     const result = await resubmitCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
       username: userName,
-      canLockExceptions: true,
       visibleForces: ["1"],
       visibleCourts: []
     } as Partial<User> as User)
@@ -117,7 +120,6 @@ describe("resubmit court case", () => {
       inputCourtCase.errorId,
       {
         username: userName,
-        canLockExceptions: true,
         visibleForces: ["1111"],
         visibleCourts: []
       } as Partial<User> as User
@@ -199,7 +201,6 @@ describe("resubmit court case", () => {
       inputCourtCase.errorId,
       {
         username: userName,
-        canLockExceptions: true,
         visibleForces: ["1111"],
         visibleCourts: []
       } as Partial<User> as User

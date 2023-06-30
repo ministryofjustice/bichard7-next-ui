@@ -8,19 +8,22 @@ interface CourtCaseDetailsSummaryBoxFieldProps {
 }
 
 const CourtCaseDetailsSummaryBoxField = ({ label, value }: CourtCaseDetailsSummaryBoxFieldProps) => (
-  <div>
-    <b className="govuk-!-static-padding-right-3">{label}</b> {value}
-  </div>
+  <>
+    <div>
+      <b className="govuk-!-static-padding-right-3">{label}</b>
+    </div>
+    <div>{value}</div>
+  </>
 )
 
 const useStyles = createUseStyles({
   "court-case-details-summary-box": {
     display: "grid",
-    gridTemplateColumns: "auto auto auto",
+    gridTemplateColumns: "repeat(3, max-content auto)",
     backgroundColor: gdsLightGrey,
-    padding: "20px 0",
+    rowGap: "12px",
+    padding: "30px",
     "& div": {
-      padding: "10px",
       fontSize: "19px",
       lineHeight: "25px"
     }

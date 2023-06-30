@@ -11,19 +11,21 @@ import { differenceInMilliseconds } from "date-fns"
 import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 import insertNotes from "services/insertNotes"
-import unlockCourtCase from "services/unlockCourtCase"
+import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import createAuditLog from "../helpers/createAuditLog"
 import { AUDIT_LOG_API_URL } from "../../src/config"
 import fetch from "node-fetch"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
+import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
-jest.mock("services/unlockCourtCase")
+jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
+jest.mock("utils/userPermissions")
 
 const expectToBeUnresolved = (courtCase: CourtCase) => {
   expect(courtCase.errorStatus).toEqual("Unresolved")
@@ -43,9 +45,7 @@ describe("resolveCourtCase", () => {
   const user = {
     visibleCourts: [],
     visibleForces: [visibleForce],
-    username: resolverUsername,
-    canLockExceptions: true,
-    canLockTriggers: true
+    username: resolverUsername
   } as Partial<User> as User
 
   beforeAll(async () => {
@@ -53,11 +53,15 @@ describe("resolveCourtCase", () => {
     jest.resetAllMocks()
     jest.clearAllMocks()
     ;(insertNotes as jest.Mock).mockImplementation(jest.requireActual("services/insertNotes").default)
-    ;(unlockCourtCase as jest.Mock).mockImplementation(jest.requireActual("services/unlockCourtCase").default)
+    ;(updateLockStatusToUnlocked as jest.Mock).mockImplementation(
+      jest.requireActual("services/updateLockStatusToUnlocked").default
+    )
     ;(storeAuditLogEvents as jest.Mock).mockImplementation(jest.requireActual("services/storeAuditLogEvents").default)
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
+    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
+    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
   })
 
   beforeEach(async () => {
@@ -500,7 +504,9 @@ describe("resolveCourtCase", () => {
     })
 
     it("Should return the error if fails to unlock the case", async () => {
-      ;(unlockCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Error while unlocking the case`))
+      ;(updateLockStatusToUnlocked as jest.Mock).mockImplementationOnce(
+        () => new Error(`Error while unlocking the case`)
+      )
 
       let result
       try {
