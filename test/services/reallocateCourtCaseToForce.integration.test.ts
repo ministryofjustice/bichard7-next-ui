@@ -194,12 +194,14 @@ describe("reallocate court case to another force", () => {
   describe("when the case is not visible to the user", () => {
     it("Should return an error and not perform any of reallocation steps", async () => {
       const anotherOrgCode = "02XX  "
-      const courtCase = {
-        orgForPoliceFilter: anotherOrgCode,
-        errorId: courtCaseId
-      }
 
-      await insertCourtCasesWithFields([courtCase])
+      const [courtCase] = await insertCourtCasesWithFields([
+        {
+          orgForPoliceFilter: anotherOrgCode,
+          errorId: courtCaseId
+        }
+      ])
+      await createAuditLog(courtCase.messageId)
 
       const user = {
         username: "Dummy User",
@@ -217,20 +219,24 @@ describe("reallocate court case to another force", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
       expect(actualCourtCase.updatedHearingOutcome).toBeNull()
       expect(actualCourtCase.notes).toHaveLength(0)
+
+      const events = await fetchAuditLogEvents(courtCase.messageId)
+      expect(events).toHaveLength(0)
     })
   })
 
   describe("when the case is locked by another user", () => {
     it("Should return an error and not perform any of reallocation steps", async () => {
       const anotherUser = "Someone Else"
-      const courtCase = {
-        orgForPoliceFilter: oldForceCode,
-        errorId: courtCaseId,
-        errorLockedByUsername: anotherUser,
-        triggerLockedByUsername: anotherUser
-      }
-
-      await insertCourtCasesWithFields([courtCase])
+      const [courtCase] = await insertCourtCasesWithFields([
+        {
+          orgForPoliceFilter: oldForceCode,
+          errorId: courtCaseId,
+          errorLockedByUsername: anotherUser,
+          triggerLockedByUsername: anotherUser
+        }
+      ])
+      await createAuditLog(courtCase.messageId)
 
       const user = {
         username: "Dummy User",
@@ -248,17 +254,21 @@ describe("reallocate court case to another force", () => {
       expect(actualCourtCase.triggerLockedByUsername).toStrictEqual("Someone Else")
       expect(actualCourtCase.updatedHearingOutcome).toBeNull()
       expect(actualCourtCase.notes).toHaveLength(0)
+
+      const events = await fetchAuditLogEvents(courtCase.messageId)
+      expect(events).toHaveLength(0)
     })
   })
 
   describe("when there is an unexpected error", () => {
     it("Should return the error if fails to create notes", async () => {
-      const courtCase = {
-        orgForPoliceFilter: oldForceCode,
-        errorId: courtCaseId
-      }
-
-      await insertCourtCasesWithFields([courtCase])
+      const [courtCase] = await insertCourtCasesWithFields([
+        {
+          orgForPoliceFilter: oldForceCode,
+          errorId: courtCaseId
+        }
+      ])
+      await createAuditLog(courtCase.messageId)
 
       const user = {
         username: "Dummy User",
@@ -278,15 +288,19 @@ describe("reallocate court case to another force", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
       expect(actualCourtCase.updatedHearingOutcome).toBeNull()
       expect(actualCourtCase.notes).toHaveLength(0)
+
+      const events = await fetchAuditLogEvents(courtCase.messageId)
+      expect(events).toHaveLength(0)
     })
 
     it("Should return the error when fails to update orgForPoliceFilter", async () => {
-      const courtCase = {
-        orgForPoliceFilter: oldForceCode,
-        errorId: courtCaseId
-      }
-
-      await insertCourtCasesWithFields([courtCase])
+      const [courtCase] = await insertCourtCasesWithFields([
+        {
+          orgForPoliceFilter: oldForceCode,
+          errorId: courtCaseId
+        }
+      ])
+      await createAuditLog(courtCase.messageId)
 
       const user = {
         username: "Dummy User",
@@ -308,6 +322,9 @@ describe("reallocate court case to another force", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
       expect(actualCourtCase.updatedHearingOutcome).toBeNull()
       expect(actualCourtCase.notes).toHaveLength(0)
+
+      const events = await fetchAuditLogEvents(courtCase.messageId)
+      expect(events).toHaveLength(0)
     })
   })
 })
