@@ -26,7 +26,7 @@
     "test:file": "jest --runInBand --testPathPattern",
     "test:ui:e2e": "concurrently --kill-others --success first \"npm run start\" \"npm run cypress:run\"",
     "install:hooks": "./scripts/install-git-hooks.sh",
-    "update-deps": "ncu --upgrade --reject node-fetch && npm install",
+    "update-deps": "ncu --upgrade --reject node-fetch styled-components && npm install",
     "seed-data": "ts-node ./scripts/seed-data.ts",
     "prepare": "husky install"
   },
