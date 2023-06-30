@@ -2,6 +2,7 @@ import { EventSubscriber, EntitySubscriberInterface, LoadEvent } from "typeorm"
 import CourtCase from "services/entities/CourtCase"
 import getUser from "services/getUser"
 import User from "services/entities/User"
+import { formatUserFullName } from "utils/formatUserFullName"
 
 @EventSubscriber()
 export class CourtCaseSubscriber implements EntitySubscriberInterface<CourtCase> {
@@ -16,7 +17,7 @@ export class CourtCaseSubscriber implements EntitySubscriberInterface<CourtCase>
       const user = await getUser(manager, courtCase.errorLockedByUsername)
 
       if (user instanceof User) {
-        courtCase.errorLockedByUserFullName = `${user?.forenames} ${user?.surname}`
+        courtCase.errorLockedByUserFullName = formatUserFullName(user.forenames, user.surname)
       }
     }
 
@@ -24,7 +25,7 @@ export class CourtCaseSubscriber implements EntitySubscriberInterface<CourtCase>
       const user = await getUser(manager, courtCase.triggerLockedByUsername)
 
       if (user instanceof User) {
-        courtCase.triggerLockedByUserFullName = `${user?.forenames} ${user?.surname}`
+        courtCase.triggerLockedByUserFullName = formatUserFullName(user.forenames, user.surname)
       }
     }
   }

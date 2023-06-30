@@ -29,11 +29,13 @@ const CourtCaseListEntry: React.FC<Props> = ({
     defendantName,
     errorId,
     errorLockedByUserFullName,
+    errorLockedByUsername,
     errorReport,
     isUrgent,
     notes,
     ptiurn,
     resolutionTimestamp,
+    triggerLockedByUsername,
     triggerLockedByUserFullName,
     triggers
   } = courtCase
@@ -56,7 +58,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
   return (
     <>
       <CaseDetailsRow
-        canCurrentUserUnlockCase={errorLockedByUserFullName && canUnlockCase(errorLockedByUserFullName)}
+        canCurrentUserUnlockCase={errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
         hasTriggers={hasTriggers}
         courtDate={courtDate}
         courtName={courtName}
@@ -65,7 +67,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
         errorLockedByUsername={errorLockedByUserFullName}
         errorReport={errorReport}
         firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
-        isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUserFullName}
+        isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername}
         isResolved={resolutionTimestamp !== null}
         isUrgent={isUrgent}
         notes={notes}
@@ -74,11 +76,12 @@ const CourtCaseListEntry: React.FC<Props> = ({
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
       />
       <TriggersRow
-        canCurrentUserUnlockCase={triggerLockedByUserFullName && canUnlockCase(triggerLockedByUserFullName)}
+        canCurrentUserUnlockCase={triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
         firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
         isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !triggerLockedByUserFullName}
         rowClassName={entityClassName}
         triggerLockedByUsername={triggerLockedByUserFullName}
+        triggerLockedByUserFullName={triggerLockedByUserFullName}
         triggers={triggers}
         unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
       />

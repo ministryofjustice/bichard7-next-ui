@@ -7,6 +7,7 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import DummyMultipleOffencesAho from "../test-data/HO100102_1.json"
 import DummyCourtCase from "./DummyCourtCase"
+import createDummyUser from "../helpers/createDummyUser"
 
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
   (await getDataSource()).getRepository(CourtCase).create({
@@ -15,8 +16,25 @@ const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtC
     ...overrides
   } as CourtCase)
 
-const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<CourtCase[]> =>
-  (await getDataSource()).getRepository(CourtCase).save(Array.isArray(courtCases) ? courtCases : [courtCases])
+const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<CourtCase[]> => {
+  const dataSource = await getDataSource()
+
+  const cases = await dataSource.getRepository(CourtCase).save(Array.isArray(courtCases) ? courtCases : [courtCases])
+
+  const lockedCases = cases.filter((courtCase) => courtCase.errorLockedByUsername || courtCase.triggerLockedByUsername)
+
+  lockedCases.forEach((lockedCase) => {
+    if (lockedCase.errorLockedByUsername) {
+      createDummyUser(dataSource, lockedCase.errorLockedByUsername)
+    }
+
+    if (lockedCase.triggerLockedByUsername) {
+      createDummyUser(dataSource, lockedCase.triggerLockedByUsername)
+    }
+  })
+
+  return cases
+}
 
 const insertCourtCasesWithFields = async (cases: Partial<CourtCase>[]) => {
   const existingCourtCases: CourtCase[] = []
