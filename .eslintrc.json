@@ -1,5 +1,4 @@
 {
-  // "extends": "plugin:@next/next/recommended",
   "env": {
     "es6": true
   },
