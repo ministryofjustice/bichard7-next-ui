@@ -304,7 +304,10 @@ jobs:
           name: Restore UI docker image from cache
           keys: 
             - ui-image-<<pipeline.git.revision>>
-
+      - run:
+          name: Run mock audit log API
+          command: node ./.circleci/scripts/mock-audit-log-api.js
+          background: true
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
