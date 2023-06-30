@@ -7,7 +7,7 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import DummyMultipleOffencesAho from "../test-data/HO100102_1.json"
 import DummyCourtCase from "./DummyCourtCase"
-import createDummyUser from "../helpers/createDummyUser"
+import { insertLockUsers } from "./insertLockUsers"
 
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
   (await getDataSource()).getRepository(CourtCase).create({
@@ -23,15 +23,7 @@ const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<Co
 
   const lockedCases = cases.filter((courtCase) => courtCase.errorLockedByUsername || courtCase.triggerLockedByUsername)
 
-  lockedCases.forEach((lockedCase) => {
-    if (lockedCase.errorLockedByUsername) {
-      createDummyUser(dataSource, lockedCase.errorLockedByUsername)
-    }
-
-    if (lockedCase.triggerLockedByUsername) {
-      createDummyUser(dataSource, lockedCase.triggerLockedByUsername)
-    }
-  })
+  lockedCases.forEach(insertLockUsers)
 
   return cases
 }

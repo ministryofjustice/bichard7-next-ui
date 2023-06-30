@@ -7,7 +7,7 @@ import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromEntity from "../test/utils/deleteFromEntity"
 import createAuditLog from "../test/helpers/createAuditLog"
 import { isError } from "../src/types/Result"
-import createDummyUser from "../test/helpers/createDummyUser"
+import { insertLockUsers } from "../test/utils/insertLockUsers"
 
 const MAX_AUDIT_LOG_API_RETRY = 100
 
@@ -54,12 +54,7 @@ getDataSource().then(async (dataSource) => {
     })
   )
 
-  cases.forEach(async (courtCase) => {
-    const username = courtCase.errorLockedByUsername
-    if (username) {
-      await createDummyUser(dataSource, username)
-    }
-  })
+  cases.forEach(insertLockUsers)
 })
 
 export {}
