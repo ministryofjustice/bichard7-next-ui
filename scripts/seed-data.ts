@@ -41,6 +41,7 @@ getDataSource().then(async (dataSource) => {
         }
 
         console.log(createAuditLogResult)
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
         await new Promise((resolve) => setTimeout(resolve, 500))
         attempt += 1
       }

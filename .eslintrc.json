@@ -1,5 +1,5 @@
 {
-  "extends": "plugin:@next/next/recommended",
+  // "extends": "plugin:@next/next/recommended",
   "env": {
     "es6": true
   },
@@ -23,7 +23,7 @@
       "files": ["**/*.ts", "**/*.tsx"],
       "extends": [
         "airbnb-typescript",
-        "next",
+        "plugin:@next/next/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:jsx-a11y/recommended",
         "plugin:prettier/recommended"
@@ -73,7 +73,13 @@
       }
     },
     {
-      "files": ["**/_*.{ts,tsx}", "src/{emails,pages}/**/*.{ts,tsx}", "*.config.{js,ts}", "test/helpers/**/*.ts", "cypress/**/*.ts"],
+      "files": [
+        "**/_*.{ts,tsx}",
+        "src/{emails,pages}/**/*.{ts,tsx}",
+        "*.config.{js,ts}",
+        "test/helpers/**/*.ts",
+        "cypress/**/*.ts"
+      ],
       "rules": {
         "filenames/match-exported": "off",
         "import/no-extraneous-dependencies": "off"
