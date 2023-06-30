@@ -5,10 +5,9 @@ import Note from "../src/services/entities/Trigger"
 import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromEntity from "../test/utils/deleteFromEntity"
-import createAuditLog from "../test/helpers/createAuditLog"
+import { KeyValuePair } from "../src/types/KeyValuePair"
+import insertAuditLogIntoDynamoTable from "../test/utils/insertAuditLogIntoDynamoTable"
 import { isError } from "../src/types/Result"
-
-const MAX_AUDIT_LOG_API_RETRY = 100
 
 if (process.env.DEPLOY_NAME !== "e2e-test") {
   console.error("Not running in e2e environment, bailing out. Set DEPLOY_NAME='e2e-test' if you're sure.")
@@ -25,32 +24,42 @@ const numCases = Math.round(Math.random() * numCasesRange) + minCases
 
 console.log(`Seeding ${numCases} cases for force ID ${forceId}`)
 
+const createAuditLogRecord = (courtCase: CourtCase) => ({
+  triggerStatus: courtCase.triggerCount ? "Generated" : "NoTriggers",
+  messageId: courtCase.messageId,
+  version: 2,
+  isSanitised: 0,
+  createdBy: "Seed data script",
+  externalCorrelationId: courtCase.messageId,
+  caseId: courtCase.messageId,
+  messageHash: courtCase.messageId,
+  pncStatus: "Processing",
+  eventsCount: 0,
+  receivedDate: courtCase.messageReceivedTimestamp.toISOString(),
+  _: "_",
+  status: "Processing"
+})
+
 getDataSource().then(async (dataSource) => {
   const entitiesToClear = [CourtCase, Trigger, Note]
+  const auditLogs: KeyValuePair<string, unknown>[] = []
   await Promise.all(entitiesToClear.map((entity) => deleteFromEntity(entity)))
 
   await Promise.all(
     new Array(numCases).fill(0).map(async (_, idx) => {
       const courtCase = await createDummyCase(dataSource, idx, forceId, subDays(new Date(), maxCaseAge))
-
-      let attempt = 0
-      while (attempt < MAX_AUDIT_LOG_API_RETRY) {
-        const createAuditLogResult = await createAuditLog(courtCase.messageId).catch((error) => error)
-        if (!isError(createAuditLogResult)) {
-          break
-        }
-
-        console.log(createAuditLogResult)
-        // eslint-disable-next-line @typescript-eslint/no-loop-func
-        await new Promise((resolve) => setTimeout(resolve, 500))
-        attempt += 1
-      }
-
-      if (attempt === MAX_AUDIT_LOG_API_RETRY) {
-        throw Error(`Reached the retry limit when creating audit log for message id ${courtCase.messageId}`)
-      }
+      auditLogs.push(createAuditLogRecord(courtCase))
     })
   )
+
+  while (auditLogs.length) {
+    const recordsToInsert = auditLogs.splice(0, 100)
+    const insertAuditLogResult = await insertAuditLogIntoDynamoTable(recordsToInsert)
+
+    if (isError(insertAuditLogResult)) {
+      throw insertAuditLogResult
+    }
+  }
 })
 
 export {}
