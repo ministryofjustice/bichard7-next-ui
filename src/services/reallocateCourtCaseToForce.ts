@@ -33,7 +33,7 @@ const reallocateCourtCaseToForce = async (
     }
 
     if (!courtCase) {
-      throw new Error("Failed to unlock: Case not found")
+      throw new Error("Failed to reallocate: Case not found")
     }
 
     const courtCaseRepository = entityManager.getRepository(CourtCase)
