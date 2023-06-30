@@ -59,7 +59,7 @@
     "sass-loader": "^13.3.2",
     "stompit": "^1.0.0",
     "styled-components": "^5.3.11",
-    "typeorm": "^0.3.16"
+    "typeorm": "^0.3.17"
   },
   "devDependencies": {
     "@babel/core": "^7.22.5",
