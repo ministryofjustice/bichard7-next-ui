@@ -134,11 +134,11 @@ export default class CourtCase extends BaseEntity {
   notes!: Relation<Note>[]
 
   private isExceptionLockedByAnotherUser(username: string) {
-    return !!this.errorLockedByUserFullName && this.errorLockedByUserFullName !== username
+    return !!this.errorLockedByUsername && this.errorLockedByUsername !== username
   }
 
   private isTriggerLockedByAnotherUser(username: string) {
-    return !!this.triggerLockedByUserFullName && this.triggerLockedByUserFullName !== username
+    return !!this.triggerLockedByUsername && this.triggerLockedByUsername !== username
   }
 
   isLockedByAnotherUser(username: string) {
