@@ -4,7 +4,6 @@ import parseAnnotatedPNCUpdateDatasetXml from "@moj-bichard7-developers/bichard7
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
 import Layout from "components/Layout"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
-import CourtCaseLock from "features/CourtCaseLock/CourtCaseLock"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
@@ -174,7 +173,6 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         <meta name="description" content="Case Details | Bichard7" />
       </Head>
       <Layout user={user}>
-        <CourtCaseLock courtCase={courtCase} lockedByAnotherUser={errorLockedByAnotherUser} />
         <CourtCaseDetails
           courtCase={courtCase}
           aho={aho}

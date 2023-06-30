@@ -3,7 +3,7 @@ import type { KeyValuePair } from "types/KeyValuePair"
 import BaseEntity from "./BaseEntity"
 import featureFlagTransformer from "./transformers/featureFlagTransformer"
 import delimitedString from "./transformers/delimitedString"
-import { UserGroup } from "../../types/UserGroup"
+import type { UserGroup } from "../../types/UserGroup"
 
 @Entity({ name: "users" })
 export default class User extends BaseEntity {
@@ -35,22 +35,4 @@ export default class User extends BaseEntity {
   featureFlags!: KeyValuePair<string, boolean>
 
   groups: UserGroup[] = []
-
-  get canLockTriggers() {
-    return this.groups.some(
-      (group) =>
-        group === "TriggerHandler" || group === "GeneralHandler" || group === "Allocator" || group === "Supervisor"
-    )
-  }
-
-  get canLockExceptions() {
-    return this.groups.some(
-      (group) =>
-        group === "ExceptionHandler" || group === "GeneralHandler" || group === "Allocator" || group === "Supervisor"
-    )
-  }
-
-  get isSupervisor() {
-    return this.groups.some((group) => group === UserGroup.Supervisor)
-  }
 }

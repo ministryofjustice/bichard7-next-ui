@@ -7,7 +7,7 @@ import type NavigationHandler from "types/NavigationHandler"
 import Trigger from "./Trigger"
 import { sortBy } from "lodash"
 import ConditionalRender from "components/ConditionalRender"
-import LockedTag from "./LockedTag"
+import LockedTag from "../../../components/LockedTag"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
 

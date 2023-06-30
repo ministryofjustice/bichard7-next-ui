@@ -44,6 +44,10 @@ getDataSource().then(async (dataSource) => {
         await new Promise((resolve) => setTimeout(resolve, 500))
         attempt += 1
       }
+
+      if (attempt === MAX_AUDIT_LOG_API_RETRY) {
+        throw Error(`Reached the retry limit when creating audit log for message id ${courtCase.messageId}`)
+      }
     })
   )
 })

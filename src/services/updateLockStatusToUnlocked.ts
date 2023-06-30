@@ -7,6 +7,7 @@ import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
+import { canLockExceptions, canLockTriggers, isSupervisor } from "utils/userPermissions"
 import getCourtCase from "./getCourtCase"
 
 const updateLockStatusToUnlocked = async (
@@ -16,11 +17,13 @@ const updateLockStatusToUnlocked = async (
   unlockReason: UnlockReason,
   events: AuditLogEvent[]
 ): Promise<UpdateResult | Error | undefined> => {
-  const { canLockExceptions, canLockTriggers, isSupervisor, username } = user
+  const { username } = user
   const shouldUnlockExceptions =
-    canLockExceptions && (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Exception)
+    canLockExceptions(user) &&
+    (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Exception)
   const shouldUnlockTriggers =
-    canLockTriggers && (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Trigger)
+    canLockTriggers(user) &&
+    (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Trigger)
 
   if (!shouldUnlockExceptions && !shouldUnlockTriggers) {
     return new Error("User hasn't got permission to unlock the case")
@@ -70,11 +73,11 @@ const updateLockStatusToUnlocked = async (
   query = courtCasesByOrganisationUnitQuery(query, user) as UpdateQueryBuilder<CourtCase>
   query.andWhere("error_id = :id", { id: courtCaseId })
 
-  if (!isSupervisor && shouldUnlockExceptions && !!courtCase.errorLockedByUsername) {
+  if (!isSupervisor(user) && shouldUnlockExceptions && !!courtCase.errorLockedByUsername) {
     query.andWhere({ errorLockedByUsername: username })
   }
 
-  if (!isSupervisor && shouldUnlockTriggers && !!courtCase.triggerLockedByUsername) {
+  if (!isSupervisor(user) && shouldUnlockTriggers && !!courtCase.triggerLockedByUsername) {
     query.andWhere({ triggerLockedByUsername: username })
   }
 
