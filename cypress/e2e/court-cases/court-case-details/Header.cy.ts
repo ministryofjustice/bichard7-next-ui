@@ -48,7 +48,7 @@ describe("Court case details header", () => {
 
     cy.login(user.email!, "password")
     cy.visit("/bichard")
-    cy.get(".locked-by-tag").should("have.text", "Bichard01")
+    cy.get(".locked-by-tag").should("have.text", "Bichard Test User 01")
     cy.get("td a").contains("NAME Defendant").click()
     cy.location("pathname").should("equal", "/bichard/court-cases/0")
 
@@ -58,7 +58,7 @@ describe("Court case details header", () => {
       .should("have.attr", "href", "/bichard")
     cy.get("button#leave-and-lock").click()
     cy.location("pathname").should("equal", "/bichard")
-    cy.get(".locked-by-tag").should("have.text", "Bichard01")
+    cy.get(".locked-by-tag").should("have.text", "Bichard Test User 01")
   })
 
   it("should have a return to case list button that returns to the case list when the case isn't locked", () => {
@@ -105,7 +105,7 @@ describe("Court case details header", () => {
     cy.login(user.email!, "password")
 
     cy.visit("/bichard")
-    cy.get(".locked-by-tag").should("have.text", "Bichard01")
+    cy.get(".locked-by-tag").should("have.text", "Bichard Test User 01")
     cy.get("td a").contains("NAME Defendant").click()
     cy.location("pathname").should("equal", "/bichard/court-cases/0")
 
