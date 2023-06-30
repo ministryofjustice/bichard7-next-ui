@@ -1,4 +1,5 @@
 {
+  "extends": ["plugin:@next/next/recommended"],
   "env": {
     "es6": true
   },
@@ -22,7 +23,6 @@
       "files": ["**/*.ts", "**/*.tsx"],
       "extends": [
         "airbnb-typescript",
-        "plugin:@next/next/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:jsx-a11y/recommended",
         "plugin:prettier/recommended"
