@@ -429,13 +429,13 @@ workflows:
   build-and-test:
     jobs:
       - lint
-      # - unit_test
-      # - integration_test
-      # - cypress_component_test
+      - unit_test
+      - integration_test
+      - cypress_component_test
       - build_ui_image
-      # - cypress_e2e_test:
-          # requires:
-            # - build_ui_image
+      - cypress_e2e_test:
+          requires:
+            - build_ui_image
       - e2e_test:
           requires:
             - build_ui_image
