@@ -4,7 +4,9 @@ import { DocumentClient } from "aws-sdk/clients/dynamodb"
 const deleteFromDynamoTable = async (tableName: string, keyName: string) => {
   const config = {
     endpoint: "http://localhost:8000",
-    region: "eu-west-2"
+    region: "eu-west-2",
+    accessKeyId: "S3RVER",
+    secretAccessKey: "S3RVER"
   }
 
   const dynamoDb = new DynamoDB(config)
