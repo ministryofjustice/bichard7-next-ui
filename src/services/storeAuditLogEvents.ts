@@ -1,23 +1,29 @@
 import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
-import fetch from "node-fetch"
 import { AUDIT_LOG_API_KEY, AUDIT_LOG_API_URL } from "../config"
+import axios from "axios"
+import { statusOk } from "../utils/http"
 
 const storeAuditLogEvents = async (messageId: string, events: AuditLogEvent[]) => {
   if (events.length === 0) {
     return
   }
 
-  const response = await fetch(`${AUDIT_LOG_API_URL}/messages/${messageId}/events`, {
+  return axios({
+    url: `${AUDIT_LOG_API_URL}/messages/${messageId}/events`,
     method: "POST",
-    body: JSON.stringify(events),
     headers: {
       "X-API-Key": AUDIT_LOG_API_KEY
-    }
+    },
+    data: JSON.stringify(events)
   })
-
-  if (!response.ok) {
-    throw Error(`Failed to create audit logs: ${await response.text()}`)
-  }
+    .then((response) => {
+      if (!statusOk(response.status)) {
+        throw Error(`Failed to create audit logs: ${response.data}`)
+      }
+    })
+    .catch((err) => {
+      throw Error(`Failed to create audit logs: ${err}`)
+    })
 }
 
 export default storeAuditLogEvents
