@@ -5,6 +5,8 @@ import { TestTrigger } from "../../test/utils/manageTriggers"
 import hashedPassword from "../fixtures/hashedPassword"
 import a11yConfig from "../support/a11yConfig"
 import {
+  confirmCaseDisplayed,
+  confirmCaseNotDisplayed,
   confirmFiltersAppliedContains,
   confirmMultipleFieldsDisplayed,
   confirmMultipleFieldsNotDisplayed,
@@ -66,11 +68,27 @@ describe("Case list", () => {
     password: hashedPassword
   })
   defaultUsers.push({
+    username: `GeneralHandler`,
+    visibleForces: [`0011111`],
+    forenames: "General Handler User",
+    surname: `011111`,
+    email: `generalhandler@example.com`,
+    password: hashedPassword
+  })
+  defaultUsers.push({
     username: `Supervisor`,
     visibleForces: [`0011111`],
     forenames: "Sup",
     surname: "User",
     email: "supervisor@example.com",
+    password: hashedPassword
+  })
+  defaultUsers.push({
+    username: `NoGroups`,
+    visibleForces: [`0011111`],
+    forenames: "No",
+    surname: "Groups",
+    email: "nogroups@example.com",
     password: hashedPassword
   })
 
@@ -86,6 +104,10 @@ describe("Case list", () => {
     cy.task("insertIntoUserGroup", {
       emailAddress: "exceptionhandler@example.com",
       groupName: "B7ExceptionHandler_grp"
+    })
+    cy.task("insertIntoUserGroup", {
+      emailAddress: "generalhandler@example.com",
+      groupName: "B7GeneralHandler_grp"
     })
     cy.task("insertIntoUserGroup", { emailAddress: "supervisor@example.com", groupName: "B7Supervisor_grp" })
   })
@@ -1382,6 +1404,84 @@ describe("Case list", () => {
       cy.get("button.locked-by-tag").contains("TriggerHandler").click()
       cy.get("#unlock").click()
       cy.get("span.moj-badge").contains("Case unlocked").should("exist")
+    })
+  })
+
+  describe("Shows only cases relevant to a user's role", () => {
+    const mixedReasonCases = [
+      {
+        orgForPoliceFilter: "011111",
+        errorId: 0,
+        errorCount: 0,
+        triggerCount: 0
+      },
+      {
+        orgForPoliceFilter: "011111",
+        errorId: 1,
+        errorCount: 3,
+        triggerCount: 0
+      },
+      {
+        orgForPoliceFilter: "011111",
+        errorId: 2,
+        errorCount: 0,
+        triggerCount: 5
+      },
+      {
+        orgForPoliceFilter: "011111",
+        errorId: 3,
+        errorCount: 2,
+        triggerCount: 2
+      }
+    ]
+
+    it("Shouldn't show cases to a user with no groups", () => {
+      cy.task("insertCourtCasesWithFields", mixedReasonCases)
+      loginAndGoToUrl("nogroups@example.com")
+
+      cy.findByText("There are no court cases to show").should("exist")
+    })
+
+    it("Should only show cases with triggers to a trigger handler", () => {
+      cy.task("insertCourtCasesWithFields", mixedReasonCases)
+      loginAndGoToUrl("triggerhandler@example.com")
+
+      confirmCaseDisplayed("Case00002")
+      confirmCaseDisplayed("Case00003")
+
+      confirmCaseNotDisplayed("Case00000")
+      confirmCaseNotDisplayed("Case00001")
+    })
+
+    it("Should only show cases with exceptions to an exception handler", () => {
+      cy.task("insertCourtCasesWithFields", mixedReasonCases)
+      loginAndGoToUrl("exceptionhandler@example.com")
+
+      confirmCaseDisplayed("Case00001")
+      confirmCaseDisplayed("Case00003")
+
+      confirmCaseNotDisplayed("Case00000")
+      confirmCaseNotDisplayed("Case00002")
+    })
+
+    it("Should show all cases to a general handler", () => {
+      cy.task("insertCourtCasesWithFields", mixedReasonCases)
+      loginAndGoToUrl("generalhandler@example.com")
+
+      confirmCaseDisplayed("Case00000")
+      confirmCaseDisplayed("Case00001")
+      confirmCaseDisplayed("Case00002")
+      confirmCaseDisplayed("Case00003")
+    })
+
+    it("Should show all cases to a supervisor", () => {
+      cy.task("insertCourtCasesWithFields", mixedReasonCases)
+      loginAndGoToUrl("supervisor@example.com")
+
+      confirmCaseDisplayed("Case00000")
+      confirmCaseDisplayed("Case00001")
+      confirmCaseDisplayed("Case00002")
+      confirmCaseDisplayed("Case00003")
     })
   })
 })
