@@ -137,7 +137,7 @@ jobs:
       - run_audit_logging
       - run:
           name: Wait for Audit logging API to start
-          command: STATUS_CODE=200 npx wait-on --config ./.circleci/config/wait-for-status.js http://localhost:3010/messages
+          command: STATUS_CODE=200 npx wait-on --config ./scripts/wait-for-status.js http://localhost:3010/messages
       - run:
           name: Run integration tests
           command: npm run test:integration
@@ -225,7 +225,7 @@ jobs:
           background: true
       - run:
           name: Wait for UI to start
-          command: STATUS_CODE=401 npx wait-on --config ./.circleci/config/wait-for-status.js https://localhost:4080/bichard
+          command: STATUS_CODE=401 npx wait-on --config ./scripts/wait-for-status.js https://localhost:4080/bichard
       - run:
           name: Run UI tests
           command: TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX ./scripts/run-ui-tests-chunk.sh
@@ -346,7 +346,7 @@ jobs:
           background: true
       - run:
           name: Wait for UI to start
-          command: STATUS_CODE=401 npx wait-on --config ./.circleci/config/wait-for-status.js https://localhost:4080/bichard
+          command: STATUS_CODE=401 npx wait-on --config ./scripts/wait-for-status.js https://localhost:4080/bichard
       - run:
           name: Run end-to-end tests against new UI
           working_directory: ~/bichard7-next-tests
