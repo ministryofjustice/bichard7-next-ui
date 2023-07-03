@@ -27,7 +27,7 @@ interface Props {
   user: User
   errorLockedByAnotherUser: boolean
   triggersLockedByCurrentUser: boolean
-  triggersLockedByUser?: string | null
+  triggersLockedByUserFullName?: string | null
   lockedByAnotherUser: boolean
   canReallocate: boolean
 }
@@ -51,7 +51,7 @@ const CourtCaseDetails: React.FC<Props> = ({
   user,
   errorLockedByAnotherUser,
   triggersLockedByCurrentUser,
-  triggersLockedByUser,
+  triggersLockedByUserFullName,
   lockedByAnotherUser,
   canReallocate
 }) => {
@@ -171,7 +171,7 @@ const CourtCaseDetails: React.FC<Props> = ({
             aho={aho}
             renderedTab={tabToRender}
             triggersLockedByCurrentUser={triggersLockedByCurrentUser}
-            triggersLockedByUser={triggersLockedByUser}
+            triggersLockedByUserFullName={triggersLockedByUserFullName}
             onNavigate={handleNavigation}
           />
         </GridCol>
