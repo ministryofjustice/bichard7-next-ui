@@ -3,7 +3,7 @@ import { UserGroup } from "types/UserGroup"
 
 const hasAccessToTriggers = (user: User) => {
   return (
-    user.groups &&
+    user.groups !== undefined &&
     user.groups.some(
       (group) =>
         group === UserGroup.TriggerHandler ||
@@ -16,7 +16,7 @@ const hasAccessToTriggers = (user: User) => {
 
 const hasAccessToExceptions = (user: User) => {
   return (
-    user.groups &&
+    user.groups !== undefined &&
     user.groups.some(
       (group) =>
         group === UserGroup.ExceptionHandler ||
@@ -28,7 +28,7 @@ const hasAccessToExceptions = (user: User) => {
 }
 
 const isSupervisor = (user: User) => {
-  return user.groups && user.groups.some((group) => group === UserGroup.Supervisor)
+  return user.groups !== undefined && user.groups.some((group) => group === UserGroup.Supervisor)
 }
 
 export { hasAccessToExceptions, hasAccessToTriggers, isSupervisor }

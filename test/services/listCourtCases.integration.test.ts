@@ -33,7 +33,8 @@ describe("listCourtCases", () => {
   const orgCode = "36FPA1"
   const testUser = {
     visibleForces: [orgCode],
-    visibleCourts: []
+    visibleCourts: [],
+    groups: [UserGroup.GeneralHandler]
   } as Partial<User> as User
 
   beforeAll(async () => {
@@ -124,7 +125,8 @@ describe("listCourtCases", () => {
 
     const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
       visibleForces: ["01"],
-      visibleCourts: []
+      visibleCourts: [],
+      groups: [UserGroup.GeneralHandler]
     } as Partial<User> as User)
     expect(isError(result)).toBe(false)
     const { result: cases } = result as ListCourtCaseResult
@@ -142,7 +144,8 @@ describe("listCourtCases", () => {
 
       const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
@@ -161,7 +164,8 @@ describe("listCourtCases", () => {
 
       const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
@@ -197,7 +201,8 @@ describe("listCourtCases", () => {
 
       const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
         visibleForces: ["01"],
-        visibleCourts: []
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
@@ -228,7 +233,8 @@ describe("listCourtCases", () => {
 
       const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
         visibleForces: ["01"],
-        visibleCourts: []
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
@@ -244,7 +250,8 @@ describe("listCourtCases", () => {
 
       const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "2" }, {
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
@@ -1404,7 +1411,8 @@ describe("listCourtCases", () => {
 
       const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
         visibleForces: ["01"],
-        visibleCourts: []
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases } = result as ListCourtCaseResult
@@ -1440,7 +1448,8 @@ describe("listCourtCases", () => {
 
       const result = await listCourtCases(dataSource, { maxPageItems: "100", caseState: "Unresolved" }, {
         visibleForces: ["01"],
-        visibleCourts: []
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases } = result as ListCourtCaseResult

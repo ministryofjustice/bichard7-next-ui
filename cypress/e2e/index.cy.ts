@@ -77,7 +77,11 @@ describe("Case list", () => {
   before(() => {
     cy.task("clearUsers")
     cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp"] })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
+    defaultUsers
+      .filter((u) => u.forenames === "Bichard Test User")
+      .map((user) => {
+        cy.task("insertIntoUserGroup", { emailAddress: user.email, groupName: "B7GeneralHandler_grp" })
+      })
     cy.task("insertIntoUserGroup", { emailAddress: "triggerhandler@example.com", groupName: "B7TriggerHandler_grp" })
     cy.task("insertIntoUserGroup", {
       emailAddress: "exceptionhandler@example.com",
@@ -1325,13 +1329,16 @@ describe("Case list", () => {
       cy.get("#keywords").should("not.have.value", "Defendant Name")
       cy.get(".moj-pagination__item--active").contains("1")
     })
+  })
 
+  describe("Case unlocked badge", () => {
     it("Should show case unlocked badge when exception handler unlocks the case", () => {
       cy.task("insertCourtCasesWithFields", [
         {
           errorLockedByUsername: "ExceptionHandler",
           triggerLockedByUsername: null,
-          orgForPoliceFilter: "011111"
+          orgForPoliceFilter: "011111",
+          errorCount: 1
         }
       ])
 
@@ -1352,7 +1359,8 @@ describe("Case list", () => {
           caseId: 0,
           errorLockedByUsername: null,
           triggerLockedByUsername: "TriggerHandler",
-          orgForPoliceFilter: "011111"
+          orgForPoliceFilter: "011111",
+          triggerCount: 1
         }
       ])
       const triggers: TestTrigger[] = [
