@@ -133,23 +133,23 @@ export default class CourtCase extends BaseEntity {
   @OneToMany(() => Note, (note) => note.courtCase, { eager: true, cascade: ["insert", "update"] })
   notes!: Relation<Note>[]
 
-  private isExceptionLockedByAnotherUser(username: string) {
+  exceptionsAreLockedByAnotherUser(username: string) {
     return !!this.errorLockedByUsername && this.errorLockedByUsername !== username
   }
 
-  private isTriggerLockedByAnotherUser(username: string) {
+  triggersAreLockedByAnotherUser(username: string) {
     return !!this.triggerLockedByUsername && this.triggerLockedByUsername !== username
   }
 
   isLockedByAnotherUser(username: string) {
-    return this.isExceptionLockedByAnotherUser(username) || this.isTriggerLockedByAnotherUser(username)
+    return this.exceptionsAreLockedByAnotherUser(username) || this.triggersAreLockedByAnotherUser(username)
   }
 
   canReallocate(username: string) {
     const canReallocateAsExceptionHandler =
-      !this.isExceptionLockedByAnotherUser(username) && this.errorStatus === "Unresolved"
+      !this.exceptionsAreLockedByAnotherUser(username) && this.errorStatus === "Unresolved"
     const canReallocateAsTriggerHandler =
-      !this.isTriggerLockedByAnotherUser(username) &&
+      !this.triggersAreLockedByAnotherUser(username) &&
       this.triggerStatus === "Unresolved" &&
       this.errorStatus !== "Unresolved" &&
       this.errorStatus !== "Submitted"
@@ -161,11 +161,11 @@ export default class CourtCase extends BaseEntity {
     return !!this.triggerLockedByUserFullName && this.triggerLockedByUserFullName === username
   }
 
-  exceptionsAreLockedByAnotherUser(username: string) {
-    return !!this.errorLockedByUsername && this.errorLockedByUsername !== username
+  exceptionsAreLockedByCurrentUser(username: string) {
+    return !!this.errorLockedByUsername && this.errorLockedByUsername === username
   }
 
   isLockedByCurrentUser(username: string) {
-    return this.triggersAreLockedByCurrentUser(username) || this.exceptionsAreLockedByAnotherUser(username)
+    return this.triggersAreLockedByCurrentUser(username) || this.exceptionsAreLockedByCurrentUser(username)
   }
 }

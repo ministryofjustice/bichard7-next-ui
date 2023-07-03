@@ -12,16 +12,16 @@ import createAuditLog from "../helpers/createAuditLog"
 import fetch from "node-fetch"
 import updateLockStatusToLocked from "services/updateLockStatusToLocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
+import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
 
 jest.mock("services/updateLockStatusToLocked")
 jest.mock("services/storeAuditLogEvents")
+jest.mock("utils/userPermissions")
 
 describe("lock court case", () => {
   let dataSource: DataSource
   const lockedByName = "some user"
   const user = {
-    canLockExceptions: true,
-    canLockTriggers: true,
     username: lockedByName,
     visibleForces: ["36FPA1"],
     visibleCourts: []
@@ -40,6 +40,8 @@ describe("lock court case", () => {
       jest.requireActual("services/updateLockStatusToLocked").default
     )
     ;(storeAuditLogEvents as jest.Mock).mockImplementation(jest.requireActual("services/storeAuditLogEvents").default)
+    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
+    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
     ;[unlockedCourtCase] = await insertCourtCasesWithFields([
       {
         errorLockedByUsername: null,
