@@ -1,7 +1,7 @@
 import type User from "services/entities/User"
 import { UserGroup } from "types/UserGroup"
 
-const canLockTriggers = (user: User) => {
+const hasAccessToTriggers = (user: User) => {
   return user.groups.some(
     (group) =>
       group === UserGroup.TriggerHandler ||
@@ -11,7 +11,7 @@ const canLockTriggers = (user: User) => {
   )
 }
 
-const canLockExceptions = (user: User) => {
+const hasAccessToExceptions = (user: User) => {
   return user.groups.some(
     (group) =>
       group === UserGroup.ExceptionHandler ||
@@ -25,4 +25,4 @@ const isSupervisor = (user: User) => {
   return user.groups.some((group) => group === UserGroup.Supervisor)
 }
 
-export { canLockExceptions, canLockTriggers, isSupervisor }
+export { hasAccessToExceptions, hasAccessToTriggers, isSupervisor }

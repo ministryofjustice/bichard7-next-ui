@@ -7,7 +7,7 @@ import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import { canLockExceptions, canLockTriggers, isSupervisor } from "utils/userPermissions"
+import { hasAccessToExceptions, hasAccessToTriggers, isSupervisor } from "utils/userPermissions"
 import getCourtCase from "./getCourtCase"
 
 const updateLockStatusToUnlocked = async (
@@ -19,10 +19,10 @@ const updateLockStatusToUnlocked = async (
 ): Promise<UpdateResult | Error | undefined> => {
   const { username } = user
   const shouldUnlockExceptions =
-    canLockExceptions(user) &&
+    hasAccessToExceptions(user) &&
     (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Exception)
   const shouldUnlockTriggers =
-    canLockTriggers(user) &&
+    hasAccessToTriggers(user) &&
     (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Trigger)
 
   if (!shouldUnlockExceptions && !shouldUnlockTriggers) {

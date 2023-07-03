@@ -8,7 +8,7 @@ import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
-import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
+import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.mock("utils/userPermissions")
 
@@ -44,8 +44,8 @@ describe("Update lock status to locked", () => {
 
   beforeEach(async () => {
     await deleteFromEntity(CourtCase)
-    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
   })
 
   afterAll(async () => {
@@ -134,7 +134,7 @@ describe("Update lock status to locked", () => {
       triggerStatus: "Unresolved"
     })
     await insertCourtCases(inputCourtCase)
-    ;(canLockExceptions as jest.Mock).mockReturnValue(false)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(false)
 
     const user = {
       username,
@@ -175,7 +175,7 @@ describe("Update lock status to locked", () => {
       triggerStatus: "Unresolved"
     })
     await insertCourtCases(inputCourtCase)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(false)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(false)
 
     const user = {
       username,
@@ -214,7 +214,7 @@ describe("Update lock status to locked", () => {
       triggerCount: 1
     })
     await insertCourtCases(inputCourtCase)
-    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
 
     const user = {
       username,
@@ -252,7 +252,7 @@ describe("Update lock status to locked", () => {
       triggerStatus: "Unresolved"
     })
     await insertCourtCases(inputCourtCase)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
 
     const user = {
       username,
@@ -292,8 +292,8 @@ describe("Update lock status to locked", () => {
       triggerStatus: "Unresolved"
     })
     await insertCourtCases(inputCourtCase)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(false)
-    ;(canLockExceptions as jest.Mock).mockReturnValue(false)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(false)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(false)
 
     const user = {
       username,

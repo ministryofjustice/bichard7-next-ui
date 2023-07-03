@@ -5,7 +5,7 @@ import { ResolutionStatus } from "types/ResolutionStatus"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
-import { canLockExceptions, canLockTriggers } from "utils/userPermissions"
+import { hasAccessToExceptions, hasAccessToTriggers } from "utils/userPermissions"
 
 const updateLockStatusToLocked = async (
   dataSource: EntityManager,
@@ -13,7 +13,7 @@ const updateLockStatusToLocked = async (
   user: User,
   events: AuditLogEvent[]
 ): Promise<UpdateResult | Error> => {
-  if (!canLockExceptions(user) && !canLockTriggers(user)) {
+  if (!hasAccessToExceptions(user) && !hasAccessToTriggers(user)) {
     return new Error("update requires a lock (exception or trigger) to update")
   }
 
@@ -24,14 +24,14 @@ const updateLockStatusToLocked = async (
     .createQueryBuilder()
     .update(CourtCase)
     .set({
-      ...(canLockExceptions(user) ? { errorLockedByUsername: user.username } : {}),
-      ...(canLockTriggers(user) ? { triggerLockedByUsername: user.username } : {})
+      ...(hasAccessToExceptions(user) ? { errorLockedByUsername: user.username } : {}),
+      ...(hasAccessToTriggers(user) ? { triggerLockedByUsername: user.username } : {})
     })
     .where({ errorId: courtCaseId })
 
   const submitted: ResolutionStatus = "Submitted"
 
-  if (canLockExceptions(user)) {
+  if (hasAccessToExceptions(user)) {
     query.andWhere({
       errorLockedByUsername: IsNull(),
       errorCount: MoreThan(0),
@@ -46,7 +46,7 @@ const updateLockStatusToLocked = async (
     )
   }
 
-  if (canLockTriggers(user)) {
+  if (hasAccessToTriggers(user)) {
     // we are checking the trigger status, this is not what legacy bichard does but we think that's a bug. Legacy bichard checks error_status (bichard-backend/src/main/java/uk/gov/ocjr/mtu/br7/errorlistmanager/data/ErrorDAO.java ln 1455)
     query.andWhere({
       triggerLockedByUsername: IsNull(),

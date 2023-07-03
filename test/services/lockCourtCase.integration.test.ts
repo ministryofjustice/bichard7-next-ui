@@ -12,7 +12,7 @@ import createAuditLog from "../helpers/createAuditLog"
 import axios from "axios"
 import updateLockStatusToLocked from "services/updateLockStatusToLocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
-import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
+import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.mock("services/updateLockStatusToLocked")
 jest.mock("services/storeAuditLogEvents")
@@ -40,8 +40,8 @@ describe("lock court case", () => {
       jest.requireActual("services/updateLockStatusToLocked").default
     )
     ;(storeAuditLogEvents as jest.Mock).mockImplementation(jest.requireActual("services/storeAuditLogEvents").default)
-    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
     ;[unlockedCourtCase] = await insertCourtCasesWithFields([
       {
         errorLockedByUsername: null,

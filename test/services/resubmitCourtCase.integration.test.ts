@@ -10,7 +10,7 @@ import { DataSource } from "typeorm"
 import offenceSequenceException from "../test-data/HO100302_1.json"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
+import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.mock("services/mq/sendToQueue")
 jest.mock("services/insertNotes")
@@ -30,8 +30,8 @@ describe("resubmit court case", () => {
     await deleteFromEntity(CourtCase)
     jest.resetAllMocks()
     jest.clearAllMocks()
-    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
   })
 
   afterAll(async () => {

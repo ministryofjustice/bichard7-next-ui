@@ -13,7 +13,7 @@ import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import createAuditLog from "../helpers/createAuditLog"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
-import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
+import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.mock("services/insertNotes")
 jest.mock("utils/userPermissions")
@@ -62,8 +62,8 @@ describe("reallocate court case to another force", () => {
     jest.resetAllMocks()
     jest.clearAllMocks()
     ;(insertNotes as jest.Mock).mockImplementation(jest.requireActual("services/insertNotes").default)
-    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
   })
 
   afterAll(async () => {
