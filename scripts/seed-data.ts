@@ -6,6 +6,8 @@ import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromEntity from "../test/utils/deleteFromEntity"
 import { KeyValuePair } from "../src/types/KeyValuePair"
+import insertAuditLogIntoDynamoTable from "../test/utils/insertAuditLogIntoDynamoTable"
+import { isError } from "../src/types/Result"
 import { insertLockUsers } from "../test/utils/insertLockUsers"
 
 if (process.env.DEPLOY_NAME !== "e2e-test") {
@@ -44,7 +46,7 @@ getDataSource().then(async (dataSource) => {
   const auditLogs: KeyValuePair<string, unknown>[] = []
   await Promise.all(entitiesToClear.map((entity) => deleteFromEntity(entity)))
 
-  const cases = await Promise.all(
+  const courtCases = await Promise.all(
     new Array(numCases).fill(0).map(async (_, idx) => {
       const courtCase = await createDummyCase(dataSource, idx, forceId, subDays(new Date(), maxCaseAge))
       auditLogs.push(createAuditLogRecord(courtCase))
@@ -52,7 +54,16 @@ getDataSource().then(async (dataSource) => {
     })
   )
 
-  cases.forEach(insertLockUsers)
+  courtCases.forEach(insertLockUsers)
+
+  while (auditLogs.length) {
+    const recordsToInsert = auditLogs.splice(0, 100)
+    const insertAuditLogResult = await insertAuditLogIntoDynamoTable(recordsToInsert)
+
+    if (isError(insertAuditLogResult)) {
+      throw insertAuditLogResult
+    }
+  }
 })
 
 export {}
