@@ -721,6 +721,7 @@ describe("Case list", () => {
           triggerCount: 1
         }))
       )
+
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
