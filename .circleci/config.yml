@@ -279,78 +279,6 @@ jobs:
       - store_artifacts:
           path: ./cypress/screenshots
 
-  e2e_test:
-    machine:
-      image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
-    resource_class: xlarge
-    working_directory: ~
-    parallelism: 10
-    steps:
-      - checkout
-      - checkout-tests
-      - npm_install
-      - attach_workspace:
-          at: .
-      - clone_bichard_repo
-      - fetch_docker_image:
-          image: user-service
-      - fetch_docker_image:
-          image: nginx-auth-proxy
-      - fetch_docker_image:
-          image: pncemulator
-      - fetch_docker_image:
-          image: beanconnect
-      - restore_cache:
-          name: Restore UI docker image from cache
-          keys: 
-            - ui-image-<<pipeline.git.revision>>
-
-      - run:
-          name: Load UI docker image
-          command: docker load < ui.tar
-          background: true
-      - run:
-          name: Wait for docker images
-          command: IMAGES=(ui user-service nginx-auth-proxy pncemulator beanconnect) && bash ./scripts/wait_for_images.sh "${IMAGES[@]}"
-          no_output_timeout: 15m
-      - run:
-          name: Run full stack (excluding beanconnect and PNC emulator)
-          working_directory: ~/bichard7-next
-          command: |
-            make build-ci
-            make run-all-no-bc -j 4
-      - run:
-          name: Run beanconnect and PNC emulator
-          working_directory: ~/bichard7-next
-          command: make run-beanconnect
-      - run:
-          name: Wait for Bichard
-          working_directory: ~/bichard7-next
-          command: bash ./scripts/wait_for_bichard.sh
-      - run:
-          name: Trying to run beanconnect and PNC emulator again
-          working_directory: ~/bichard7-next
-          command: make run-beanconnect && bash ./scripts/wait_for_bichard.sh
-          when: on_fail
-      - run:
-          name: Run UI stack
-          working_directory: ~/bichard7-next
-          command: make run-ui
-          environment:
-            AUDIT_LOG_API_URL: http://172.17.0.1:3010
-          background: true
-      - run:
-          name: Wait for UI to start
-          command: STATUS_CODE=401 npx wait-on --config ./.circleci/config/wait-for-status.js https://localhost:4080/bichard
-      - run:
-          name: Run end-to-end tests
-          working_directory: ~/bichard7-next-tests
-          command: npm i && TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX npm run test:chunk
-          environment:
-            STACK_TYPE: next
-            WORKSPACE: local-next
-            AUTH_TYPE: user-service
   new_UI_e2e_test:
     machine:
       image: ubuntu-2004:2022.07.1
@@ -378,6 +306,10 @@ jobs:
           keys: 
             - ui-image-<<pipeline.git.revision>>
 
+      - run:
+          name: Run mock audit log API
+          command: node ./.circleci/scripts/mock-audit-log-api.js
+          background: true
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
@@ -434,9 +366,6 @@ workflows:
       - cypress_component_test
       - build_ui_image
       - cypress_e2e_test:
-          requires:
-            - build_ui_image
-      - e2e_test:
           requires:
             - build_ui_image
       - new_UI_e2e_test:

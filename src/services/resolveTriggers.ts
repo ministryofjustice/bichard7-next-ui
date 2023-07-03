@@ -1,62 +1,95 @@
 import { DataSource, In, IsNull } from "typeorm"
-import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
 import Trigger from "./entities/Trigger"
 import User from "./entities/User"
 import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
-import { includes } from "lodash"
+import storeAuditLogEvents from "./storeAuditLogEvents"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import { KeyValuePair } from "types/KeyValuePair"
+import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 
-// Returns back whether the triggers were successfully unlocked
+const generateTriggersAttributes = (triggers: Trigger[]) =>
+  triggers.reduce((acc, trigger, index) => {
+    const offenceNumberText =
+      trigger.triggerItemIdentity && trigger.triggerItemIdentity > 0 ? ` (${trigger.triggerItemIdentity})` : ""
+    acc[`Trigger ${index + 1} Details`] = `${trigger.triggerCode}${offenceNumberText}`
+    return acc
+  }, {} as KeyValuePair<string, unknown>)
+
 const resolveTriggers = async (
   dataSource: DataSource,
   triggerIds: number[],
   courtCaseId: number,
   user: User
-): PromiseResult<boolean> => {
+): Promise<void> => {
   const resolver = user.username
 
-  try {
-    return await dataSource.transaction("SERIALIZABLE", async (entityManager) => {
-      const courtCase = await getCourtCaseByOrganisationUnit(entityManager, courtCaseId, user)
+  return dataSource.transaction("SERIALIZABLE", async (entityManager) => {
+    const courtCase = await getCourtCaseByOrganisationUnit(entityManager, courtCaseId, user)
 
-      if (isError(courtCase)) {
-        throw courtCase
+    if (isError(courtCase)) {
+      throw courtCase
+    }
+
+    if (!courtCase) {
+      throw Error("Court case not found")
+    }
+
+    const areAnyTriggersResolved =
+      courtCase.triggers.some((trigger) => triggerIds.includes(trigger.triggerId) && !!trigger.resolvedAt) ?? false
+    if (areAnyTriggersResolved) {
+      throw Error("One or more triggers are already resolved")
+    }
+
+    if (courtCase === null) {
+      throw Error("Could not find the court case")
+    }
+
+    if (!courtCase.triggersAreLockedByCurrentUser(resolver)) {
+      throw Error("Triggers are locked by another user")
+    }
+
+    const updateTriggersResult = await entityManager.getRepository(Trigger).update(
+      {
+        triggerId: In(triggerIds),
+        resolvedAt: IsNull(),
+        resolvedBy: IsNull()
+      },
+      {
+        resolvedAt: new Date(),
+        resolvedBy: resolver,
+        status: "Resolved"
       }
+    )
 
-      if (courtCase === null) {
-        return false
-      }
+    if (updateTriggersResult.affected && updateTriggersResult.affected !== triggerIds.length) {
+      throw Error("Failed to resolve triggers")
+    }
 
-      if (!courtCase.triggersAreLockedByCurrentUser(resolver)) {
-        return false
-      }
+    const events: AuditLogEvent[] = []
 
-      const remainingUnresolvedTriggers = courtCase.triggers.filter(
-        (trigger) => !trigger.resolvedAt && !trigger.resolvedBy && !includes(triggerIds, trigger.triggerId)
-      ).length
+    events.push(
+      getAuditLogEvent("information", "Trigger marked as resolved by user", "Bichard New UI", {
+        user: user.username,
+        auditLogVersion: 2,
+        eventCode: "triggers.resolved",
+        "Number Of Triggers": triggerIds.length,
+        ...generateTriggersAttributes(courtCase.triggers.filter((trigger) => triggerIds.includes(trigger.triggerId)))
+      })
+    )
 
-      const updateTriggersResult = await entityManager.getRepository(Trigger).update(
-        {
-          triggerId: In(triggerIds),
-          resolvedAt: IsNull(),
-          resolvedBy: IsNull()
-        },
-        {
-          resolvedAt: new Date(),
-          resolvedBy: resolver,
-          status: "Resolved"
-        }
-      )
+    const allTriggers = await entityManager.getRepository(Trigger).find({ where: { errorId: courtCaseId } })
+    if (isError(allTriggers)) {
+      throw allTriggers
+    }
 
-      const updateTriggerSuccess =
-        updateTriggersResult.affected !== undefined && updateTriggersResult.affected === triggerIds.length
-      if (!updateTriggerSuccess) {
-        return updateTriggerSuccess
-      }
+    const areAllTriggersResolved = allTriggers.filter((trigger) => trigger.resolvedAt).length === allTriggers.length
 
-      if (remainingUnresolvedTriggers === 0) {
-        const updateCaseResult = await entityManager.getRepository(CourtCase).update(
+    if (areAllTriggersResolved) {
+      const updateCaseResult = await entityManager
+        .getRepository(CourtCase)
+        .update(
           {
             errorId: courtCaseId,
             triggerResolvedBy: IsNull(),
@@ -69,19 +102,33 @@ const resolveTriggers = async (
             triggerStatus: "Resolved"
           }
         )
+        .catch((error) => error)
 
-        return updateCaseResult.affected !== undefined && updateCaseResult.affected > 0
-      } else {
-        return true
+      if (isError(updateCaseResult)) {
+        throw updateCaseResult
       }
-    })
-  } catch (err) {
-    return isError(err)
-      ? err
-      : new Error(
-          `Unspecified database error when marking triggers ${triggerIds.join(", ")} as resolved by ${resolver}`
-        )
-  }
+
+      if (!updateCaseResult.affected || updateCaseResult.affected === 0) {
+        throw Error("Failed to update court case")
+      }
+
+      events.push(
+        getAuditLogEvent("information", "All triggers marked as resolved", "Bichard New UI", {
+          user: user.username,
+          auditLogVersion: 2,
+          eventCode: "triggers.all-resolved",
+          "Number Of Triggers": allTriggers.length,
+          ...generateTriggersAttributes(allTriggers)
+        })
+      )
+    }
+
+    const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
+
+    if (isError(storeAuditLogResponse)) {
+      throw storeAuditLogResponse
+    }
+  })
 }
 
 export default resolveTriggers
