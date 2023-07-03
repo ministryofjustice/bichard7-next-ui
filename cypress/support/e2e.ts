@@ -20,3 +20,6 @@ import "./commands"
 import "cypress-axe"
 // eslint-disable-next-line import/no-extraneous-dependencies
 import "@testing-library/cypress/add-commands"
+import { exec } from "child_process"
+
+exec("npm run wait-for-auditlog-api")
