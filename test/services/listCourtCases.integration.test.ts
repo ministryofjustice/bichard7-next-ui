@@ -22,6 +22,7 @@ import Note from "services/entities/Note"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import User from "services/entities/User"
 import { Reason } from "types/CaseListQueryParams"
+import { UserGroup } from "types/UserGroup"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
@@ -1565,31 +1566,59 @@ describe("listCourtCases", () => {
   })
 
   describe("Filter cases by user role", () => {
+    const mixedReasonCases: Partial<CourtCase>[] = [
+      {
+        errorId: 0,
+        triggerCount: 2,
+        errorCount: 0
+      },
+      {
+        errorId: 1,
+        triggerCount: 0,
+        errorCount: 0
+      },
+      {
+        errorId: 2,
+        triggerCount: 0,
+        errorCount: 2
+      },
+      {
+        errorId: 3,
+        triggerCount: 5,
+        errorCount: 2
+      }
+    ]
+
     const noGroupsUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: []
     } as Partial<User> as User
-    // const triggerHandlerUser = {
-    //   visibleForces: [orgCode],
-    //   visibleCourts: [],
-    //   groups: [UserGroup.TriggerHandler]
-    // } as Partial<User> as User
-    // const exceptionHandlerUser = {
-    //   visibleForces: [orgCode],
-    //   visibleCourts: [],
-    //   groups: [UserGroup.ExceptionHandler]
-    // } as Partial<User> as User
-    // const triggerAndExceptionHandlerUser = {
-    //   visibleForces: [orgCode],
-    //   visibleCourts: [],
-    //   groups: [UserGroup.TriggerHandler, UserGroup.ExceptionHandler]
-    // } as Partial<User> as User
-    // const generalHandlerUser = {
-    //   visibleForces: [orgCode],
-    //   visibleCourts: [],
-    //   groups: [UserGroup.GeneralHandler]
-    // } as Partial<User> as User
+    const triggerHandlerUser = {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      groups: [UserGroup.TriggerHandler]
+    } as Partial<User> as User
+    const exceptionHandlerUser = {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      groups: [UserGroup.ExceptionHandler]
+    } as Partial<User> as User
+    const triggerAndExceptionHandlerUser = {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      groups: [UserGroup.TriggerHandler, UserGroup.ExceptionHandler]
+    } as Partial<User> as User
+    const generalHandlerUser = {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      groups: [UserGroup.GeneralHandler]
+    } as Partial<User> as User
+    const supervisorUser = {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      groups: [UserGroup.Supervisor]
+    } as Partial<User> as User
 
     it("Shouldn't show cases to a user with no permissions", async () => {
       await insertMultipleDummyCourtCases(10, orgCode)
@@ -1610,6 +1639,124 @@ describe("listCourtCases", () => {
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
       expect(cases).toHaveLength(0)
+    })
+
+    it("Should show only cases with triggers to a trigger handler", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, triggerHandlerUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases
+        .filter((c) => c.triggerCount! > 0)
+        .map((c) => c.errorId)
+        .sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should only show cases with both triggers and exceptions to a trigger handler when trying to filter for exceptions", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(
+        dataSource,
+        { maxPageItems: "100", reasons: [Reason.Exceptions] },
+        triggerHandlerUser
+      )
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases
+        .filter((c) => c.triggerCount! > 0 && c.errorCount! > 0)
+        .map((c) => c.errorId)
+        .sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should show only cases with exceptions to an exception handler", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, exceptionHandlerUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases
+        .filter((c) => c.errorCount! > 0)
+        .map((c) => c.errorId)
+        .sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should only show cases with both triggers and exceptions to an exception handler when trying to filter for triggers", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(
+        dataSource,
+        { maxPageItems: "100", reasons: [Reason.Triggers] },
+        exceptionHandlerUser
+      )
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases
+        .filter((c) => c.triggerCount! > 0 && c.errorCount! > 0)
+        .map((c) => c.errorId)
+        .sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should show all cases to a user with both trigger handler and general handler permissions", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, triggerAndExceptionHandlerUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases.map((c) => c.errorId).sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should show all cases to a general handler", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, generalHandlerUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases.map((c) => c.errorId).sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should show all cases to a supervisor", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, supervisorUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases.map((c) => c.errorId).sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
     })
   })
 })
