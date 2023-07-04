@@ -9,10 +9,10 @@ import lockCourtCase from "services/lockCourtCase"
 import { AUDIT_LOG_API_URL } from "../../src/config"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import createAuditLog from "../helpers/createAuditLog"
-import fetch from "node-fetch"
+import axios from "axios"
 import updateLockStatusToLocked from "services/updateLockStatusToLocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
-import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
+import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.mock("services/updateLockStatusToLocked")
 jest.mock("services/storeAuditLogEvents")
@@ -40,8 +40,8 @@ describe("lock court case", () => {
       jest.requireActual("services/updateLockStatusToLocked").default
     )
     ;(storeAuditLogEvents as jest.Mock).mockImplementation(jest.requireActual("services/storeAuditLogEvents").default)
-    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
     ;[unlockedCourtCase] = await insertCourtCasesWithFields([
       {
         errorLockedByUsername: null,
@@ -110,8 +110,8 @@ describe("lock court case", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBe(user.username)
 
       // Creates audit log events
-      const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${unlockedCourtCase.messageId}`)
-      const auditLogs = (await apiResult.json()) as [{ events: [{ timestamp: string; eventCode: string }] }]
+      const apiResult = await axios(`${AUDIT_LOG_API_URL}/messages/${unlockedCourtCase.messageId}`)
+      const auditLogs = (await apiResult.data) as [{ events: [{ timestamp: string; eventCode: string }] }]
       const events = auditLogs[0].events
       expect(events).toHaveLength(2)
 
@@ -172,8 +172,8 @@ describe("lock court case", () => {
       expect(actualCourtCase.errorLockedByUsername).toBeNull()
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
 
-      const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${unlockedCourtCase.messageId}`)
-      const auditLogs = (await apiResult.json()) as [{ events: [{ timestamp: string; eventCode: string }] }]
+      const apiResult = await axios(`${AUDIT_LOG_API_URL}/messages/${unlockedCourtCase.messageId}`)
+      const auditLogs = (await apiResult.data) as [{ events: [{ timestamp: string; eventCode: string }] }]
       const events = auditLogs[0].events
 
       expect(events).toHaveLength(0)

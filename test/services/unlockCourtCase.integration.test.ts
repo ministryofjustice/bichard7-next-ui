@@ -9,12 +9,12 @@ import unlockCourtCase from "services/unlockCourtCase"
 import { AUDIT_LOG_API_URL } from "../../src/config"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import createAuditLog from "../helpers/createAuditLog"
-import fetch from "node-fetch"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import UnlockReason from "types/UnlockReason"
-import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
+import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
+import axios from "axios"
 
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
@@ -46,8 +46,8 @@ describe("unlock court case", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
-    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
 
     lockedCourtCase = (
       (await insertCourtCasesWithFields([
@@ -119,8 +119,8 @@ describe("unlock court case", () => {
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
 
       // Creates audit log events
-      const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${lockedCourtCase.messageId}`)
-      const auditLogs = (await apiResult.json()) as [{ events: [{ timestamp: string; eventCode: string }] }]
+      const apiResult = await axios(`${AUDIT_LOG_API_URL}/messages/${lockedCourtCase.messageId}`)
+      const auditLogs = (await apiResult.data) as [{ events: [{ timestamp: string; eventCode: string }] }]
       const events = auditLogs[0].events
       expect(events).toHaveLength(2)
 
@@ -191,8 +191,8 @@ describe("unlock court case", () => {
       expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
       expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
 
-      const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${lockedCourtCase.messageId}`)
-      const auditLogs = (await apiResult.json()) as [{ events: [{ timestamp: string; eventCode: string }] }]
+      const apiResult = await axios(`${AUDIT_LOG_API_URL}/messages/${lockedCourtCase.messageId}`)
+      const auditLogs = (await apiResult.data) as [{ events: [{ timestamp: string; eventCode: string }] }]
       const events = auditLogs[0].events
 
       expect(events).toHaveLength(0)

@@ -1,6 +1,7 @@
 import { v4 as uuid } from "uuid"
-import fetch from "node-fetch"
 import { AUDIT_LOG_API_KEY, AUDIT_LOG_API_URL } from "../../src/config"
+import axios from "axios"
+import { statusOk } from "../../src/utils/http"
 
 export default async function createAuditLog(messageId?: string) {
   const auditLog = {
@@ -12,16 +13,16 @@ export default async function createAuditLog(messageId?: string) {
     messageHash: uuid()
   }
 
-  const response = await fetch(`${AUDIT_LOG_API_URL}/messages`, {
+  const response = await axios(`${AUDIT_LOG_API_URL}/messages`, {
     method: "POST",
     headers: {
       "X-API-KEY": AUDIT_LOG_API_KEY
     },
-    body: JSON.stringify(auditLog)
+    data: JSON.stringify(auditLog)
   })
 
-  if (!response.ok) {
-    throw Error(`Failed to create audit log for messageId ${messageId}. ${response.text()}`)
+  if (!statusOk(response.status)) {
+    throw Error(`Failed to create audit log for messageId ${messageId}. ${response.data}`)
   }
 
   return auditLog

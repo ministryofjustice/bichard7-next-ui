@@ -16,9 +16,9 @@ import storeAuditLogEvents from "services/storeAuditLogEvents"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import createAuditLog from "../helpers/createAuditLog"
 import { AUDIT_LOG_API_URL } from "../../src/config"
-import fetch from "node-fetch"
+import axios from "axios"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
+import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
@@ -60,8 +60,8 @@ describe("resolveCourtCase", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
-    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
   })
 
   beforeEach(async () => {
@@ -161,8 +161,8 @@ describe("resolveCourtCase", () => {
       )
 
       // Creates audit log events
-      const apiResult = await fetch(`${AUDIT_LOG_API_URL}/messages/${courtCase.messageId}`)
-      const auditLogs = (await apiResult.json()) as [{ events: [{ timestamp: string; eventCode: string }] }]
+      const apiResult = await axios(`${AUDIT_LOG_API_URL}/messages/${courtCase.messageId}`)
+      const auditLogs = (await apiResult.data) as [{ events: [{ timestamp: string; eventCode: string }] }]
       const events = auditLogs[0].events
       const unlockedEvent = events.find((event) => event.eventCode === "exceptions.unlocked")
       const resolvedEvent = events.find((event) => event.eventCode === "exceptions.resolved")

@@ -7,7 +7,8 @@ import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import { canLockExceptions, canLockTriggers, isSupervisor } from "utils/userPermissions"
+import { hasAccessToExceptions, hasAccessToTriggers, isSupervisor } from "utils/userPermissions"
+import getCourtCase from "./getCourtCase"
 
 const updateLockStatusToUnlocked = async (
   dataSource: EntityManager,
@@ -15,17 +16,31 @@ const updateLockStatusToUnlocked = async (
   user: User,
   unlockReason: UnlockReason,
   events: AuditLogEvent[]
-): Promise<UpdateResult | Error> => {
+): Promise<UpdateResult | Error | undefined> => {
   const { username } = user
   const shouldUnlockExceptions =
-    canLockExceptions(user) &&
+    hasAccessToExceptions(user) &&
     (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Exception)
   const shouldUnlockTriggers =
-    canLockTriggers(user) &&
+    hasAccessToTriggers(user) &&
     (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Trigger)
 
   if (!shouldUnlockExceptions && !shouldUnlockTriggers) {
     return new Error("User hasn't got permission to unlock the case")
+  }
+
+  const courtCase = await getCourtCase(dataSource, courtCaseId)
+
+  if (isError(courtCase)) {
+    throw courtCase
+  }
+
+  if (!courtCase) {
+    throw new Error("Failed to unlock: Case not found")
+  }
+
+  if (!courtCase.errorLockedByUsername && !courtCase.triggerLockedByUsername) {
+    return
   }
 
   const generatedEvents: AuditLogEvent[] = []
@@ -33,7 +48,7 @@ const updateLockStatusToUnlocked = async (
   const setFields: QueryDeepPartialEntity<CourtCase> = {}
   let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
 
-  if (shouldUnlockExceptions) {
+  if (shouldUnlockExceptions && !!courtCase.errorLockedByUsername) {
     setFields.errorLockedByUsername = null
     generatedEvents.push(
       getAuditLogEvent("information", "Exception unlocked", "Bichard New UI", {
@@ -43,7 +58,7 @@ const updateLockStatusToUnlocked = async (
       })
     )
   }
-  if (shouldUnlockTriggers) {
+  if (shouldUnlockTriggers && !!courtCase.triggerLockedByUsername) {
     setFields.triggerLockedByUsername = null
     generatedEvents.push(
       getAuditLogEvent("information", "Trigger unlocked", "Bichard New UI", {
@@ -58,11 +73,11 @@ const updateLockStatusToUnlocked = async (
   query = courtCasesByOrganisationUnitQuery(query, user) as UpdateQueryBuilder<CourtCase>
   query.andWhere("error_id = :id", { id: courtCaseId })
 
-  if (!isSupervisor(user) && shouldUnlockExceptions) {
+  if (!isSupervisor(user) && shouldUnlockExceptions && !!courtCase.errorLockedByUsername) {
     query.andWhere({ errorLockedByUsername: username })
   }
 
-  if (!isSupervisor(user) && shouldUnlockTriggers) {
+  if (!isSupervisor(user) && shouldUnlockTriggers && !!courtCase.triggerLockedByUsername) {
     query.andWhere({ triggerLockedByUsername: username })
   }
 
