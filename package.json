@@ -38,6 +38,8 @@
     "@types/lodash.clonedeep": "^4.5.7",
     "axios": "^1.4.0",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
+    "bichard7-next-data-2.0.95": "npm:@moj-bichard7-developers/bichard7-next-data@^2.0.95",
+    "bichard7-next-data-latest": "npm:@moj-bichard7-developers/bichard7-next-data@^2.0.95",
     "cookies-next": "^2.1.2",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
