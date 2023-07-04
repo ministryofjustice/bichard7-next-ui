@@ -154,7 +154,6 @@ jobs:
       - run:
           name: Build the UI application
           command: ./.circleci/scripts/build-ui.sh
-
       - run:
           name: Save UI docker image
           command: docker save ui > ui.tar
