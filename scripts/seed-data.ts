@@ -8,6 +8,7 @@ import deleteFromEntity from "../test/utils/deleteFromEntity"
 import { KeyValuePair } from "../src/types/KeyValuePair"
 import insertAuditLogIntoDynamoTable from "../test/utils/insertAuditLogIntoDynamoTable"
 import { isError } from "../src/types/Result"
+import { insertLockUser } from "../test/utils/insertLockUser"
 
 if (process.env.DEPLOY_NAME !== "e2e-test") {
   console.error("Not running in e2e environment, bailing out. Set DEPLOY_NAME='e2e-test' if you're sure.")
@@ -45,12 +46,15 @@ getDataSource().then(async (dataSource) => {
   const auditLogs: KeyValuePair<string, unknown>[] = []
   await Promise.all(entitiesToClear.map((entity) => deleteFromEntity(entity)))
 
-  await Promise.all(
+  const courtCases = await Promise.all(
     new Array(numCases).fill(0).map(async (_, idx) => {
       const courtCase = await createDummyCase(dataSource, idx, forceId, subDays(new Date(), maxCaseAge))
       auditLogs.push(createAuditLogRecord(courtCase))
+      return courtCase
     })
   )
+
+  await Promise.all(courtCases.map((courtCase) => insertLockUser(courtCase)))
 
   while (auditLogs.length) {
     const recordsToInsert = auditLogs.splice(0, 100)
