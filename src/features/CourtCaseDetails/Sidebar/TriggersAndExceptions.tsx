@@ -32,7 +32,7 @@ interface Props {
   aho: AnnotatedHearingOutcome
   renderedTab?: Tab
   triggersLockedByCurrentUser: boolean
-  triggersLockedByUserFullName?: string | null
+  triggersLockedByUser?: string | null
   onNavigate: NavigationHandler
 }
 
@@ -55,7 +55,7 @@ const TriggersAndExceptions = ({
   aho,
   renderedTab,
   triggersLockedByCurrentUser,
-  triggersLockedByUserFullName,
+  triggersLockedByUser,
   onNavigate
 }: Props) => {
   const [selectedTab, setSelectedTab] = useState("triggers")
@@ -99,7 +99,7 @@ const TriggersAndExceptions = ({
             <TriggersList
               courtCase={courtCase}
               triggersLockedByCurrentUser={triggersLockedByCurrentUser}
-              triggersLockedByUser={triggersLockedByUserFullName}
+              triggersLockedByUser={triggersLockedByUser}
               onNavigate={onNavigate}
             />
           </Tabs.Panel>

@@ -179,7 +179,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
           user={user}
           errorLockedByAnotherUser={errorLockedByAnotherUser}
           triggersLockedByCurrentUser={triggersLockedByCurrentUser}
-          triggersLockedByUserFullName={courtCase.triggerLockedByUserFullName}
+          triggersLockedByUser={courtCase.triggerLockedByUsername}
           lockedByAnotherUser={lockedByAnotherUser}
           canReallocate={canReallocate}
         />
