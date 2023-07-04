@@ -18,7 +18,8 @@ describe("Court case details", () => {
     cy.task("clearUsers")
     cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
+    cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7ExceptionHandler_grp" })
+    cy.task("insertIntoUserGroup", { emailAddress: "bichard03@example.com", groupName: "B7Supervisor_grp" })
     cy.clearCookies()
   })
 
@@ -31,13 +32,13 @@ describe("Court case details", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "02",
+        orgForPoliceFilter: "03",
         errorCount: 1,
         triggerCount: 1
       }
     ])
 
-    cy.login("bichard02@example.com", "password")
+    cy.login("bichard03@example.com", "password")
     cy.visit("/bichard")
 
     cy.contains("a", "NAME Defendant").click()
@@ -55,13 +56,13 @@ describe("Court case details", () => {
       {
         errorLockedByUsername: existingUserLock,
         triggerLockedByUsername: existingUserLock,
-        orgForPoliceFilter: "02",
+        orgForPoliceFilter: "03",
         errorCount: 1,
         triggerCount: 1
       }
     ])
 
-    cy.login("bichard02@example.com", "password")
+    cy.login("bichard03@example.com", "password")
     cy.visit("/bichard")
     cy.findByText("NAME Defendant").click()
 
