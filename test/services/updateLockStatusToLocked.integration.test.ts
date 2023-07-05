@@ -8,9 +8,6 @@ import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
-import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
-
-jest.mock("utils/userPermissions")
 
 describe("Update lock status to locked", () => {
   let dataSource: DataSource
@@ -44,8 +41,6 @@ describe("Update lock status to locked", () => {
 
   beforeEach(async () => {
     await deleteFromEntity(CourtCase)
-    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
-    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
   })
 
   afterAll(async () => {
@@ -69,7 +64,9 @@ describe("Update lock status to locked", () => {
     const user = {
       username,
       visibleForces: ["36"],
-      visibleCourts: []
+      visibleCourts: [],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: true
     } as Partial<User> as User
 
     const events: AuditLogEvent[] = []
@@ -108,7 +105,9 @@ describe("Update lock status to locked", () => {
     const user = {
       username,
       visibleForces: ["36"],
-      visibleCourts: []
+      visibleCourts: [],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: true
     } as Partial<User> as User
 
     const events: AuditLogEvent[] = []
@@ -134,12 +133,13 @@ describe("Update lock status to locked", () => {
       triggerStatus: "Unresolved"
     })
     await insertCourtCases(inputCourtCase)
-    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(false)
 
     const user = {
       username,
       visibleForces: ["36"],
-      visibleCourts: []
+      visibleCourts: [],
+      hasAccessToExceptions: false,
+      hasAccessToTriggers: true
     } as Partial<User> as User
 
     const events: AuditLogEvent[] = []
@@ -175,12 +175,13 @@ describe("Update lock status to locked", () => {
       triggerStatus: "Unresolved"
     })
     await insertCourtCases(inputCourtCase)
-    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(false)
 
     const user = {
       username,
       visibleForces: ["36"],
-      visibleCourts: []
+      visibleCourts: [],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: false
     } as Partial<User> as User
 
     const events: AuditLogEvent[] = []
@@ -214,12 +215,13 @@ describe("Update lock status to locked", () => {
       triggerCount: 1
     })
     await insertCourtCases(inputCourtCase)
-    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
 
     const user = {
       username,
       visibleForces: ["36"],
-      visibleCourts: []
+      visibleCourts: [],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: true
     } as Partial<User> as User
 
     const events: AuditLogEvent[] = []
@@ -252,12 +254,13 @@ describe("Update lock status to locked", () => {
       triggerStatus: "Unresolved"
     })
     await insertCourtCases(inputCourtCase)
-    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
 
     const user = {
       username,
       visibleForces: ["36"],
-      visibleCourts: []
+      visibleCourts: [],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: true
     } as Partial<User> as User
 
     const events: AuditLogEvent[] = []
@@ -292,13 +295,13 @@ describe("Update lock status to locked", () => {
       triggerStatus: "Unresolved"
     })
     await insertCourtCases(inputCourtCase)
-    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(false)
-    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(false)
 
     const user = {
       username,
       visibleCourts: [],
-      visibleForces: ["36"]
+      visibleForces: ["36"],
+      hasAccessToExceptions: false,
+      hasAccessToTriggers: false
     } as Partial<User> as User
 
     const events: AuditLogEvent[] = []

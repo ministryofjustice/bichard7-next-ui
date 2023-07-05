@@ -35,7 +35,6 @@ import { useEffect } from "react"
 import { setCookie, getCookie } from "cookies-next"
 import hashString from "utils/hashString"
 import UnlockReason from "types/UnlockReason"
-import { isSupervisor } from "utils/userPermissions"
 
 interface Props {
   user: User
@@ -116,7 +115,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const resolvedByUsername =
-      validatedCaseState === "Resolved" && !isSupervisor(currentUser) ? currentUser.username : undefined
+      validatedCaseState === "Resolved" && !currentUser.isSupervisor ? currentUser.username : undefined
 
     const caseAgeCounts = await getCountOfCasesByCaseAge(dataSource, currentUser)
 
@@ -200,6 +199,8 @@ const Home: NextPage<Props> = (query) => {
 
     setCookie(queryStringCookieName, queryParams.toString(), { path: "/" })
   }, [router, queryStringCookieName])
+
+  console.log(user)
 
   return (
     <>

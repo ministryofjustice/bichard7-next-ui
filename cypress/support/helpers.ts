@@ -51,7 +51,19 @@ export const clickTab = (tab: CaseDetailsTab) => {
   cy.get(".moj-sub-navigation a").contains(tab).click()
 }
 
-export const newUserLogin = ({ user, groups }: { user?: string; groups?: UserGroup[] }) => {
+export const newUserLogin = ({
+  user,
+  groups,
+  hasAccessToTriggers,
+  hasAccessToExceptions,
+  isSupervisor
+}: {
+  user?: string
+  groups?: UserGroup[]
+  hasAccessToTriggers?: boolean
+  hasAccessToExceptions?: boolean
+  isSupervisor?: boolean
+}) => {
   user = user ?? (groups?.map((g) => g.toLowerCase()).join("") || "nogroups")
   const email = `${user}@example.com`
 
@@ -63,7 +75,10 @@ export const newUserLogin = ({ user, groups }: { user?: string; groups?: UserGro
         forenames: "Bichard Test User",
         surname: "01",
         email: email,
-        password: hashedPassword
+        password: hashedPassword,
+        hasAccessToTriggers: hasAccessToTriggers ?? false,
+        hasAccessToExceptions: hasAccessToExceptions ?? false,
+        isSupervisor: isSupervisor ?? false
       }
     ],
     userGroups: [UserGroup.NewUI, ...(groups ?? [])]

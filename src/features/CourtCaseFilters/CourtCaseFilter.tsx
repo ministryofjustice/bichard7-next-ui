@@ -14,7 +14,6 @@ import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 import type { KeyValuePair } from "types/KeyValuePair"
 import ConditionalRender from "components/ConditionalRender"
-import { hasAccessToTriggers } from "utils/userPermissions"
 import User from "services/entities/User"
 
 interface Props {
@@ -255,13 +254,17 @@ const CourtCaseFilter: React.FC<Props> = ({
               </label>
             </div>
           </div>
-          <ConditionalRender isRendered={hasAccessToTriggers(user)}>
+          <ConditionalRender isRendered={user.hasAccessToTriggers}>
             <div className={`${classes["govuk-form-group"]} reasons`}>
               <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"}>
                 <ReasonFilterOptions
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
-                  reasonOptions={hasAccessToTriggers(user) ? [Reason.Bails, Reason.Triggers] : undefined}
+                  reasonOptions={
+                    user.hasAccessToTriggers && !user.hasAccessToExceptions
+                      ? [Reason.Bails, Reason.Triggers]
+                      : undefined
+                  }
                   dispatch={dispatch}
                 />
               </ExpandingFilters>

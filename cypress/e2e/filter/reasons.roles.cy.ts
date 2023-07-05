@@ -15,17 +15,20 @@ describe("Reasons filters", () => {
     cy.task("clearUsers")
   })
 
-  it("should display all options if no user group is specified", () => {
+  it("should not render the reasons component if no user group is specified", () => {
     newUserLogin({})
     navigateAndShowFilters()
 
-    cy.get("#filter-panel .reasons .bails").should("exist")
-    cy.get("#filter-panel .reasons .triggers").should("exist")
-    cy.get("#filter-panel .reasons .exceptions").should("exist")
+    cy.get("#filter-panel .reasons").should("not.exist")
   })
 
   it("should display all options for supervisors", () => {
-    newUserLogin({ groups: [UserGroup.Supervisor] })
+    newUserLogin({
+      groups: [UserGroup.Supervisor],
+      hasAccessToTriggers: true,
+      hasAccessToExceptions: true,
+      isSupervisor: true
+    })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
@@ -34,7 +37,7 @@ describe("Reasons filters", () => {
   })
 
   it("should display all options for general handlers", () => {
-    newUserLogin({ groups: [UserGroup.GeneralHandler] })
+    newUserLogin({ groups: [UserGroup.GeneralHandler], hasAccessToTriggers: true, hasAccessToExceptions: true })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
@@ -43,7 +46,7 @@ describe("Reasons filters", () => {
   })
 
   it("should display 'Triggers' and 'Bails' for trigger handlers", () => {
-    newUserLogin({ groups: [UserGroup.TriggerHandler] })
+    newUserLogin({ groups: [UserGroup.TriggerHandler], hasAccessToTriggers: true })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
@@ -51,21 +54,26 @@ describe("Reasons filters", () => {
   })
 
   it("should not display 'Exceptions' for trigger handlers", () => {
-    newUserLogin({ groups: [UserGroup.TriggerHandler] })
+    newUserLogin({ groups: [UserGroup.TriggerHandler], hasAccessToTriggers: true })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .exceptions").should("not.exist")
   })
 
   it("should not render the reasons component for exception handlers", () => {
-    newUserLogin({ groups: [UserGroup.ExceptionHandler] })
+    newUserLogin({ groups: [UserGroup.ExceptionHandler], hasAccessToExceptions: true })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons").should("not.exist")
   })
 
   it("should render the correct reasons if a user has conflicting groups", () => {
-    newUserLogin({ groups: [UserGroup.Supervisor, UserGroup.ExceptionHandler] })
+    newUserLogin({
+      groups: [UserGroup.Supervisor, UserGroup.ExceptionHandler],
+      hasAccessToTriggers: true,
+      hasAccessToExceptions: true,
+      isSupervisor: true
+    })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
