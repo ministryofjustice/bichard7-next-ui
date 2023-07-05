@@ -68,9 +68,9 @@ describe("Court case details", () => {
 
     cy.get(".view-only-badge").should("exist")
     cy.get("#triggers-locked-tag").should("exist")
-    cy.get("#triggers-locked-tag-lockee").should("contain.text", "Another name")
+    cy.get("#triggers-locked-tag-lockee").should("contain.text", "Another Name 01")
     cy.get("#exceptions-locked-tag").should("exist")
-    cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Another name")
+    cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Another Name 01")
   })
 })
 
