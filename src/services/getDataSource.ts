@@ -5,6 +5,7 @@ import User from "./entities/User"
 import Trigger from "./entities/Trigger"
 import Note from "./entities/Note"
 import { CourtCaseSubscriber } from "./subscribers/courtCaseSubscriber"
+import { NoteSubscriber } from "./subscribers/noteSubscriber"
 
 const databaseConfig: DatabaseConfig = {
   host: process.env.DB_HOST ?? process.env.DB_AUTH_HOST ?? "localhost",
@@ -28,7 +29,7 @@ const getDataSource = async (): Promise<DataSource> => {
     database: databaseConfig.database,
     synchronize: false, // It must be always false, otherwise it changes the database structure.
     entities: [CourtCase, User, Trigger, Note],
-    subscribers: [CourtCaseSubscriber],
+    subscribers: [CourtCaseSubscriber, NoteSubscriber],
     migrations: [],
     schema: databaseConfig.schema,
     ssl: databaseConfig.ssl ? { rejectUnauthorized: false } : false,
