@@ -24,8 +24,11 @@ export const insertLockUser = async (lockedCase: CourtCase): Promise<InsertResul
     const [forenames, surname] = username.split(".")
     const user = await getDummyUser({
       username,
-      forenames,
-      surname,
+      forenames: forenames
+        .split(" ")
+        .map((name) => name.charAt(0).toLocaleUpperCase() + name.slice(1))
+        .join(" "),
+      surname: surname.charAt(0).toLocaleUpperCase() + surname.slice(1),
       email: `${username}@example.com`
     })
     users.push(user)
