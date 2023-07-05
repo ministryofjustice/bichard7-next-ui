@@ -8,7 +8,6 @@ import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import { AUDIT_LOG_API_URL } from "../../src/config"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import createAuditLog from "../helpers/createAuditLog"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
@@ -59,8 +58,6 @@ describe("unlock court case", () => {
         }
       ])) as CourtCase[]
     )[0]
-
-    await createAuditLog(lockedCourtCase.messageId)
   })
 
   afterEach(async () => {

@@ -11,7 +11,6 @@ import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import createAuditLog from "../helpers/createAuditLog"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
 import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
@@ -83,7 +82,6 @@ describe("reallocate court case to another force", () => {
           triggerLockedByUsername: userName
         }
       ])
-      await createAuditLog(courtCase.messageId)
 
       const user = {
         username: userName,
@@ -141,7 +139,6 @@ describe("reallocate court case to another force", () => {
           triggerLockedByUsername: userName
         }
       ])
-      await createAuditLog(courtCase.messageId)
 
       const user = {
         username: userName,
@@ -201,7 +198,6 @@ describe("reallocate court case to another force", () => {
           errorId: courtCaseId
         }
       ])
-      await createAuditLog(courtCase.messageId)
 
       const user = {
         username: "Dummy User",
@@ -236,7 +232,6 @@ describe("reallocate court case to another force", () => {
           triggerLockedByUsername: anotherUser
         }
       ])
-      await createAuditLog(courtCase.messageId)
 
       const user = {
         username: "Dummy User",
@@ -268,7 +263,6 @@ describe("reallocate court case to another force", () => {
           errorId: courtCaseId
         }
       ])
-      await createAuditLog(courtCase.messageId)
 
       const user = {
         username: "Dummy User",
@@ -300,7 +294,6 @@ describe("reallocate court case to another force", () => {
           errorId: courtCaseId
         }
       ])
-      await createAuditLog(courtCase.messageId)
 
       const user = {
         username: "Dummy User",

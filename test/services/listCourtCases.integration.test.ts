@@ -154,8 +154,6 @@ describe("listCourtCases", () => {
 
       expect(cases[0].errorId).toBe(0)
       expect(cases[9].errorId).toBe(9)
-      expect(cases[0].messageId).toBe("xxxx0")
-      expect(cases[9].messageId).toBe("xxxx9")
       expect(totalCases).toEqual(100)
     })
 
@@ -174,8 +172,6 @@ describe("listCourtCases", () => {
 
       expect(cases[0].errorId).toBe(0)
       expect(cases[9].errorId).toBe(9)
-      expect(cases[0].messageId).toBe("xxxx0")
-      expect(cases[9].messageId).toBe("xxxx9")
       expect(totalCases).toEqual(100)
     })
 
@@ -260,8 +256,6 @@ describe("listCourtCases", () => {
 
       expect(cases[0].errorId).toBe(10)
       expect(cases[9].errorId).toBe(19)
-      expect(cases[0].messageId).toBe("xxx10")
-      expect(cases[9].messageId).toBe("xxx19")
       expect(totalCases).toEqual(100)
     })
 
@@ -276,8 +270,6 @@ describe("listCourtCases", () => {
 
       expect(cases[0].errorId).toBe(90)
       expect(cases[9].errorId).toBe(99)
-      expect(cases[0].messageId).toBe("xxx90")
-      expect(cases[9].messageId).toBe("xxx99")
       expect(totalCases).toEqual(100)
     })
 
@@ -1229,12 +1221,10 @@ describe("listCourtCases", () => {
       const lockedCase = {
         errorId: 0,
         errorLockedByUsername: "bichard01",
-        triggerLockedByUsername: "bichard01",
-        messageId: "0"
+        triggerLockedByUsername: "bichard01"
       }
       const unlockedCase = {
-        errorId: 1,
-        messageId: "1"
+        errorId: 1
       }
 
       await insertCourtCasesWithFields([lockedCase, unlockedCase])
@@ -1259,17 +1249,14 @@ describe("listCourtCases", () => {
       await insertCourtCasesWithFields([
         {
           errorId: 0,
-          errorLockedByUsername: "bichard01",
-          messageId: "0"
+          errorLockedByUsername: "bichard01"
         },
         {
           errorId: 1,
-          triggerLockedByUsername: "bichard01",
-          messageId: "1"
+          triggerLockedByUsername: "bichard01"
         },
         {
-          errorId: 2,
-          messageId: "2"
+          errorId: 2
         }
       ])
 

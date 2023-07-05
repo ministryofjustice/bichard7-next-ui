@@ -9,6 +9,9 @@ import DummyMultipleOffencesAho from "../test-data/HO100102_1.json"
 import DummyCourtCase from "./DummyCourtCase"
 import { insertLockUsers } from "./insertLockUsers"
 import { insertNoteUser } from "./insertNoteUser"
+import createAuditLogRecord from "../helpers/createAuditLogRecord"
+import { v4 as uuid } from "uuid"
+import insertManyIntoDynamoTable from "./insertManyIntoDynamoTable"
 
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
   (await getDataSource()).getRepository(CourtCase).create({
@@ -36,16 +39,19 @@ const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<Co
 
 const insertCourtCasesWithFields = async (cases: Partial<CourtCase>[]) => {
   const existingCourtCases: CourtCase[] = []
+
   for (let index = 0; index < cases.length; index++) {
     existingCourtCases.push(
       await getDummyCourtCase({
         errorId: index,
-        messageId: String(index).padStart(5, "x"),
+        messageId: uuid(),
         ptiurn: "Case" + String(index).padStart(5, "0"),
         ...cases[index]
       })
     )
   }
+
+  await insertManyIntoDynamoTable(existingCourtCases.map((courtCase) => createAuditLogRecord(courtCase)))
 
   return insertCourtCases(existingCourtCases)
 }
