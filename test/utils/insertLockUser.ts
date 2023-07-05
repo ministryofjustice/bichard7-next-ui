@@ -4,6 +4,25 @@ import User from "services/entities/User"
 import { getDummyUser } from "./manageUsers"
 import { insertUsersWithOverrides } from "./manageUsers"
 
+const formatForenames = (forenames: string) => {
+  if (forenames) {
+    return forenames
+      .split(" ")
+      .map((name) => name.charAt(0).toLocaleUpperCase() + name.slice(1))
+      .join(" ")
+  }
+
+  return forenames
+}
+
+const formatSurname = (surname: string) => {
+  if (surname) {
+    return surname.charAt(0).toLocaleUpperCase() + surname.slice(1)
+  }
+
+  return surname
+}
+
 export const insertLockUser = async (lockedCase: CourtCase): Promise<InsertResult> => {
   const users: User[] = []
 
@@ -12,8 +31,8 @@ export const insertLockUser = async (lockedCase: CourtCase): Promise<InsertResul
     const [forenames, surname] = username.split(".")
     const user = await getDummyUser({
       username,
-      forenames,
-      surname,
+      forenames: formatForenames(forenames),
+      surname: formatSurname(surname),
       email: `${username}@example.com`
     })
     users.push(user)
@@ -24,11 +43,8 @@ export const insertLockUser = async (lockedCase: CourtCase): Promise<InsertResul
     const [forenames, surname] = username.split(".")
     const user = await getDummyUser({
       username,
-      forenames: forenames
-        .split(" ")
-        .map((name) => name.charAt(0).toLocaleUpperCase() + name.slice(1))
-        .join(" "),
-      surname: surname.charAt(0).toLocaleUpperCase() + surname.slice(1),
+      forenames: formatForenames(forenames),
+      surname: formatSurname(surname),
       email: `${username}@example.com`
     })
     users.push(user)
