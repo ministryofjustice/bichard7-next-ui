@@ -6,7 +6,7 @@ import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import { useCustomStyles } from "../../../../styles/customStyles"
 import { CaseDetailsRow } from "./CaseDetailsRow/CaseDetailsRow"
 import { TriggersRow } from "./TriggersRow/TriggersRow"
-import { UserGroup } from "types/UserGroup"
+import { isSupervisor } from "utils/userPermissions"
 
 interface Props {
   courtCase: CourtCase
@@ -46,7 +46,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
     return `${basePath}/?${searchParams}`
   }
   const canUnlockCase = (lockedUsername: string): boolean => {
-    return currentUser.groups.includes(UserGroup.Supervisor) || currentUser.username === lockedUsername
+    return isSupervisor(currentUser) || currentUser.username === lockedUsername
   }
 
   const hasTriggers = triggers.length > 0

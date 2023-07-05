@@ -13,8 +13,9 @@ import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilt
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 import type { KeyValuePair } from "types/KeyValuePair"
-import { UserGroup } from "types/UserGroup"
 import ConditionalRender from "components/ConditionalRender"
+import { hasAccessToTriggers } from "utils/userPermissions"
+import User from "services/entities/User"
 
 interface Props {
   defendantName: string | null
@@ -29,7 +30,7 @@ interface Props {
   locked: string | null
   caseState: CaseState | null
   myCases: boolean
-  userGroups: UserGroup[]
+  user: User
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -147,7 +148,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   locked,
   caseState,
   myCases,
-  userGroups
+  user
 }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
@@ -254,19 +255,13 @@ const CourtCaseFilter: React.FC<Props> = ({
               </label>
             </div>
           </div>
-          <ConditionalRender
-            isRendered={!userGroups.length || userGroups.some((g) => g !== UserGroup.ExceptionHandler)}
-          >
+          <ConditionalRender isRendered={hasAccessToTriggers(user)}>
             <div className={`${classes["govuk-form-group"]} reasons`}>
               <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"}>
                 <ReasonFilterOptions
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
-                  reasonOptions={
-                    userGroups.length && userGroups.every((g) => g === UserGroup.TriggerHandler)
-                      ? [Reason.Bails, Reason.Triggers]
-                      : undefined
-                  }
+                  reasonOptions={hasAccessToTriggers(user) ? [Reason.Bails, Reason.Triggers] : undefined}
                   dispatch={dispatch}
                 />
               </ExpandingFilters>
