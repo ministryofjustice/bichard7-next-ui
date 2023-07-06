@@ -123,8 +123,12 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "error_locked_by_id", type: "varchar", nullable: true })
   errorLockedByUsername?: string | null
 
+  errorLockedByUserFullName?: string | null
+
   @Column({ name: "trigger_locked_by_id", type: "varchar", nullable: true })
   triggerLockedByUsername?: string | null
+
+  triggerLockedByUserFullName?: string | null
 
   @OneToMany(() => Note, (note) => note.courtCase, { eager: true, cascade: ["insert", "update"] })
   notes!: Relation<Note>[]

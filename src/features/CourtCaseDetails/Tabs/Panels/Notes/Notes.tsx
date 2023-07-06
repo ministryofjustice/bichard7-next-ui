@@ -54,7 +54,7 @@ export const Notes = ({ notes, lockedByAnotherUser }: NotesProps) => {
         >
           {filteredNotes.map((note, index) => (
             <Table.Row key={index}>
-              <Table.Cell>{note.userId}</Table.Cell>
+              <Table.Cell>{note.userFullName}</Table.Cell>
               <Table.Cell>
                 <DateTime date={note.createdAt} />
               </Table.Cell>

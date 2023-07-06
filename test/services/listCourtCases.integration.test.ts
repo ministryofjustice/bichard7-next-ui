@@ -9,7 +9,8 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 import {
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
-  insertCourtCasesWithFields
+  insertCourtCasesWithFields,
+  insertMultipleDummyCourtCases
 } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
 import { isError } from "../../src/types/Result"
@@ -21,6 +22,7 @@ import Note from "services/entities/Note"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import User from "services/entities/User"
 import { Reason } from "types/CaseListQueryParams"
+import { UserGroup } from "types/UserGroup"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
@@ -31,7 +33,8 @@ describe("listCourtCases", () => {
   const orgCode = "36FPA1"
   const testUser = {
     visibleForces: [orgCode],
-    visibleCourts: []
+    visibleCourts: [],
+    groups: [UserGroup.GeneralHandler]
   } as Partial<User> as User
 
   beforeAll(async () => {
@@ -122,7 +125,8 @@ describe("listCourtCases", () => {
 
     const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
       visibleForces: ["01"],
-      visibleCourts: []
+      visibleCourts: [],
+      groups: [UserGroup.GeneralHandler]
     } as Partial<User> as User)
     expect(isError(result)).toBe(false)
     const { result: cases } = result as ListCourtCaseResult
@@ -134,152 +138,151 @@ describe("listCourtCases", () => {
     expect(cases[2].notes).toHaveLength(3)
   })
 
-  it("Should return all the cases if they number less than or equal to the specified maxPageItems", async () => {
-    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
+  describe("Pagination", () => {
+    it("Should return all the cases if they number less than or equal to the specified maxPageItems", async () => {
+      await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
-    const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
-      visibleForces: ["36FPA1"],
-      visibleCourts: []
-    } as Partial<User> as User)
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
+        visibleForces: ["36FPA1"],
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
+      } as Partial<User> as User)
+      expect(isError(result)).toBe(false)
+      const { result: cases, totalCases } = result as ListCourtCaseResult
 
-    expect(cases).toHaveLength(100)
+      expect(cases).toHaveLength(100)
 
-    expect(cases[0].errorId).toBe(0)
-    expect(cases[9].errorId).toBe(9)
-    expect(cases[0].messageId).toBe("xxxx0")
-    expect(cases[9].messageId).toBe("xxxx9")
-    expect(totalCases).toEqual(100)
-  })
+      expect(cases[0].errorId).toBe(0)
+      expect(cases[9].errorId).toBe(9)
+      expect(totalCases).toEqual(100)
+    })
 
-  it("shouldn't return more cases than the specified maxPageItems", async () => {
-    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
+    it("shouldn't return more cases than the specified maxPageItems", async () => {
+      await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
-    const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
-      visibleForces: ["36FPA1"],
-      visibleCourts: []
-    } as Partial<User> as User)
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
+      const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
+        visibleForces: ["36FPA1"],
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
+      } as Partial<User> as User)
+      expect(isError(result)).toBe(false)
+      const { result: cases, totalCases } = result as ListCourtCaseResult
 
-    expect(cases).toHaveLength(10)
+      expect(cases).toHaveLength(10)
 
-    expect(cases[0].errorId).toBe(0)
-    expect(cases[9].errorId).toBe(9)
-    expect(cases[0].messageId).toBe("xxxx0")
-    expect(cases[9].messageId).toBe("xxxx9")
-    expect(totalCases).toEqual(100)
-  })
+      expect(cases[0].errorId).toBe(0)
+      expect(cases[9].errorId).toBe(9)
+      expect(totalCases).toEqual(100)
+    })
 
-  it("shouldn't return more cases than the specified maxPageItems when cases have notes", async () => {
-    const caseNote: { user: string; text: string }[] = [
-      {
-        user: "bichard01",
-        text: "Test note 2"
-      },
-      {
-        user: "bichard02",
-        text: "Test note 3"
-      },
-      {
-        user: "bichard01",
-        text: "Test note 2"
-      }
-    ]
+    it("shouldn't return more cases than the specified maxPageItems when cases have notes", async () => {
+      const caseNote: { user: string; text: string }[] = [
+        {
+          user: "bichard01",
+          text: "Test note 2"
+        },
+        {
+          user: "bichard02",
+          text: "Test note 3"
+        },
+        {
+          user: "bichard01",
+          text: "Test note 2"
+        }
+      ]
 
-    const caseNotes: { user: string; text: string }[][] = new Array(100).fill(caseNote)
+      const caseNotes: { user: string; text: string }[][] = new Array(100).fill(caseNote)
 
-    await insertDummyCourtCasesWithNotes(caseNotes, "01")
+      await insertDummyCourtCasesWithNotes(caseNotes, "01")
 
-    const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
-      visibleForces: ["01"],
-      visibleCourts: []
-    } as Partial<User> as User)
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
+      const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
+        visibleForces: ["01"],
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
+      } as Partial<User> as User)
+      expect(isError(result)).toBe(false)
+      const { result: cases, totalCases } = result as ListCourtCaseResult
 
-    expect(cases).toHaveLength(10)
-    expect(cases[0].notes[0].noteText).toBe("Test note 2")
-    expect(totalCases).toEqual(100)
-  })
+      expect(cases).toHaveLength(10)
+      expect(cases[0].notes[0].noteText).toBe("Test note 2")
+      expect(totalCases).toEqual(100)
+    })
 
-  it("shouldn't return more cases than the specified maxPageItems when cases have triggers", async () => {
-    const caseTrigger: { code: string; status: ResolutionStatus }[] = [
-      {
-        code: "TRPR0001",
-        status: "Unresolved"
-      },
-      {
-        code: "TRPR0002",
-        status: "Resolved"
-      },
-      {
-        code: "TRPR0003",
-        status: "Submitted"
-      }
-    ]
-    const caseTriggers: { code: string; status: ResolutionStatus }[][] = new Array(100).fill(caseTrigger)
+    it("shouldn't return more cases than the specified maxPageItems when cases have triggers", async () => {
+      const caseTrigger: { code: string; status: ResolutionStatus }[] = [
+        {
+          code: "TRPR0001",
+          status: "Unresolved"
+        },
+        {
+          code: "TRPR0002",
+          status: "Resolved"
+        },
+        {
+          code: "TRPR0003",
+          status: "Submitted"
+        }
+      ]
+      const caseTriggers: { code: string; status: ResolutionStatus }[][] = new Array(100).fill(caseTrigger)
 
-    await insertDummyCourtCasesWithTriggers(caseTriggers, "01")
+      await insertDummyCourtCasesWithTriggers(caseTriggers, "01")
 
-    const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
-      visibleForces: ["01"],
-      visibleCourts: []
-    } as Partial<User> as User)
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
+      const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
+        visibleForces: ["01"],
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
+      } as Partial<User> as User)
+      expect(isError(result)).toBe(false)
+      const { result: cases, totalCases } = result as ListCourtCaseResult
 
-    expect(cases).toHaveLength(10)
-    expect(cases[0].triggers[0].triggerCode).toBe("TRPR0001")
-    expect(cases[0].triggers[0].status).toBe("Unresolved")
-    expect(totalCases).toEqual(100)
-  })
+      expect(cases).toHaveLength(10)
+      expect(cases[0].triggers[0].triggerCode).toBe("TRPR0001")
+      expect(cases[0].triggers[0].status).toBe("Unresolved")
+      expect(totalCases).toEqual(100)
+    })
 
-  it("Should return the next page of items", async () => {
-    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
+    it("Should return the next page of items", async () => {
+      await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
-    const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "2" }, {
-      visibleForces: ["36FPA1"],
-      visibleCourts: []
-    } as Partial<User> as User)
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
+      const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "2" }, {
+        visibleForces: ["36FPA1"],
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
+      } as Partial<User> as User)
+      expect(isError(result)).toBe(false)
+      const { result: cases, totalCases } = result as ListCourtCaseResult
 
-    expect(cases).toHaveLength(10)
+      expect(cases).toHaveLength(10)
 
-    expect(cases[0].errorId).toBe(10)
-    expect(cases[9].errorId).toBe(19)
-    expect(cases[0].messageId).toBe("xxx10")
-    expect(cases[9].messageId).toBe("xxx19")
-    expect(totalCases).toEqual(100)
-  })
+      expect(cases[0].errorId).toBe(10)
+      expect(cases[9].errorId).toBe(19)
+      expect(totalCases).toEqual(100)
+    })
 
-  it("Should return the last page of items correctly", async () => {
-    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: orgCode })))
+    it("Should return the last page of items correctly", async () => {
+      await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "10" }, testUser)
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
+      const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "10" }, testUser)
+      expect(isError(result)).toBe(false)
+      const { result: cases, totalCases } = result as ListCourtCaseResult
 
-    expect(cases).toHaveLength(10)
+      expect(cases).toHaveLength(10)
 
-    expect(cases[0].errorId).toBe(90)
-    expect(cases[9].errorId).toBe(99)
-    expect(cases[0].messageId).toBe("xxx90")
-    expect(cases[9].messageId).toBe("xxx99")
-    expect(totalCases).toEqual(100)
-  })
+      expect(cases[0].errorId).toBe(90)
+      expect(cases[9].errorId).toBe(99)
+      expect(totalCases).toEqual(100)
+    })
 
-  it("shouldn't return any cases if the page number is greater than the total pages", async () => {
-    await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: orgCode })))
+    it("shouldn't return any cases if the page number is greater than the total pages", async () => {
+      await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "11" }, testUser)
-    expect(isError(result)).toBe(false)
-    const { result: cases, totalCases } = result as ListCourtCaseResult
+      const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "11" }, testUser)
+      expect(isError(result)).toBe(false)
+      const { result: cases, totalCases } = result as ListCourtCaseResult
 
-    expect(cases).toHaveLength(0)
-    expect(totalCases).toEqual(100)
+      expect(cases).toHaveLength(0)
+      expect(totalCases).toEqual(100)
+    })
   })
 
   it("Should order by court name", async () => {
@@ -500,6 +503,7 @@ describe("listCourtCases", () => {
     expect(casesDesc[2].notes).toHaveLength(1)
     expect(totalCasesDesc).toEqual(3)
   })
+
   describe("ordered by 'lockedBy' username", () => {
     it("Should order by errorLockedByUsername as primary order and triggerLockedByUsername as secondary order", async () => {
       await insertCourtCasesWithFields([
@@ -942,7 +946,6 @@ describe("listCourtCases", () => {
       status: "Unresolved",
       createdAt: new Date("2022-07-09T10:22:34.000Z")
     }
-
     const conditionalBailTrigger: TestTrigger = {
       triggerId: 0,
       triggerCode: "TRPR0010",
@@ -1218,12 +1221,10 @@ describe("listCourtCases", () => {
       const lockedCase = {
         errorId: 0,
         errorLockedByUsername: "bichard01",
-        triggerLockedByUsername: "bichard01",
-        messageId: "0"
+        triggerLockedByUsername: "bichard01"
       }
       const unlockedCase = {
-        errorId: 1,
-        messageId: "1"
+        errorId: 1
       }
 
       await insertCourtCasesWithFields([lockedCase, unlockedCase])
@@ -1248,17 +1249,14 @@ describe("listCourtCases", () => {
       await insertCourtCasesWithFields([
         {
           errorId: 0,
-          errorLockedByUsername: "bichard01",
-          messageId: "0"
+          errorLockedByUsername: "bichard01"
         },
         {
           errorId: 1,
-          triggerLockedByUsername: "bichard01",
-          messageId: "1"
+          triggerLockedByUsername: "bichard01"
         },
         {
-          errorId: 2,
-          messageId: "2"
+          errorId: 2
         }
       ])
 
@@ -1400,7 +1398,8 @@ describe("listCourtCases", () => {
 
       const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
         visibleForces: ["01"],
-        visibleCourts: []
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases } = result as ListCourtCaseResult
@@ -1436,7 +1435,8 @@ describe("listCourtCases", () => {
 
       const result = await listCourtCases(dataSource, { maxPageItems: "100", caseState: "Unresolved" }, {
         visibleForces: ["01"],
-        visibleCourts: []
+        visibleCourts: [],
+        groups: [UserGroup.GeneralHandler]
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases } = result as ListCourtCaseResult
@@ -1558,6 +1558,201 @@ describe("listCourtCases", () => {
 
       expect(cases).toHaveLength(2)
       expect(cases.map((c) => c.errorId)).toStrictEqual([0, 2])
+    })
+  })
+
+  describe("Filter cases by user role", () => {
+    const mixedReasonCases: Partial<CourtCase>[] = [
+      {
+        errorId: 0,
+        triggerCount: 2,
+        errorCount: 0
+      },
+      {
+        errorId: 1,
+        triggerCount: 0,
+        errorCount: 0
+      },
+      {
+        errorId: 2,
+        triggerCount: 0,
+        errorCount: 2
+      },
+      {
+        errorId: 3,
+        triggerCount: 5,
+        errorCount: 2
+      }
+    ]
+
+    const noGroupsUser = {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      groups: []
+    } as Partial<User> as User
+    const triggerHandlerUser = {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      groups: [UserGroup.TriggerHandler]
+    } as Partial<User> as User
+    const exceptionHandlerUser = {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      groups: [UserGroup.ExceptionHandler]
+    } as Partial<User> as User
+    const triggerAndExceptionHandlerUser = {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      groups: [UserGroup.TriggerHandler, UserGroup.ExceptionHandler]
+    } as Partial<User> as User
+    const generalHandlerUser = {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      groups: [UserGroup.GeneralHandler]
+    } as Partial<User> as User
+    const supervisorUser = {
+      visibleForces: [orgCode],
+      visibleCourts: [],
+      groups: [UserGroup.Supervisor]
+    } as Partial<User> as User
+
+    it("Shouldn't show cases to a user with no permissions", async () => {
+      await insertMultipleDummyCourtCases(10, orgCode)
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, noGroupsUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+      expect(cases).toHaveLength(0)
+    })
+
+    it("Shouldn't show cases to a user with no permissions when a reason filter is passed", async () => {
+      await insertMultipleDummyCourtCases(10, orgCode)
+      await insertTriggers(0, [{ triggerId: 0, triggerCode: "TRPR0010", status: "Unresolved", createdAt: new Date() }])
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100", reasons: [Reason.Triggers] }, noGroupsUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+      expect(cases).toHaveLength(0)
+    })
+
+    it("Should show only cases with triggers to a trigger handler", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, triggerHandlerUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases
+        .filter((c) => c.triggerCount! > 0)
+        .map((c) => c.errorId)
+        .sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should only show cases with both triggers and exceptions to a trigger handler when trying to filter for exceptions", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(
+        dataSource,
+        { maxPageItems: "100", reasons: [Reason.Exceptions] },
+        triggerHandlerUser
+      )
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases
+        .filter((c) => c.triggerCount! > 0 && c.errorCount! > 0)
+        .map((c) => c.errorId)
+        .sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should show only cases with exceptions to an exception handler", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, exceptionHandlerUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases
+        .filter((c) => c.errorCount! > 0)
+        .map((c) => c.errorId)
+        .sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should only show cases with both triggers and exceptions to an exception handler when trying to filter for triggers", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(
+        dataSource,
+        { maxPageItems: "100", reasons: [Reason.Triggers] },
+        exceptionHandlerUser
+      )
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases
+        .filter((c) => c.triggerCount! > 0 && c.errorCount! > 0)
+        .map((c) => c.errorId)
+        .sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should show all cases to a user with both trigger handler and general handler permissions", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, triggerAndExceptionHandlerUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases.map((c) => c.errorId).sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should show all cases to a general handler", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, generalHandlerUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases.map((c) => c.errorId).sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
+    })
+
+    it("Should show all cases to a supervisor", async () => {
+      await insertCourtCasesWithFields(mixedReasonCases)
+
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, supervisorUser)
+
+      expect(isError(result)).toBeFalsy()
+      const { result: cases } = result as ListCourtCaseResult
+
+      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
+      const expectedCaseIDs = mixedReasonCases.map((c) => c.errorId).sort()
+      expect(cases).toHaveLength(expectedCaseIDs.length)
+      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
     })
   })
 })

@@ -5,6 +5,8 @@ import { TestTrigger } from "../../test/utils/manageTriggers"
 import hashedPassword from "../fixtures/hashedPassword"
 import a11yConfig from "../support/a11yConfig"
 import {
+  confirmCaseDisplayed,
+  confirmCaseNotDisplayed,
   confirmFiltersAppliedContains,
   confirmMultipleFieldsDisplayed,
   confirmMultipleFieldsNotDisplayed,
@@ -66,6 +68,14 @@ describe("Case list", () => {
     password: hashedPassword
   })
   defaultUsers.push({
+    username: `GeneralHandler`,
+    visibleForces: [`0011111`],
+    forenames: "General Handler User",
+    surname: `011111`,
+    email: `generalhandler@example.com`,
+    password: hashedPassword
+  })
+  defaultUsers.push({
     username: `Supervisor`,
     visibleForces: [`0011111`],
     forenames: "Sup",
@@ -73,15 +83,31 @@ describe("Case list", () => {
     email: "supervisor@example.com",
     password: hashedPassword
   })
+  defaultUsers.push({
+    username: `NoGroups`,
+    visibleForces: [`0011111`],
+    forenames: "No",
+    surname: "Groups",
+    email: "nogroups@example.com",
+    password: hashedPassword
+  })
 
   before(() => {
     cy.task("clearUsers")
     cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp"] })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
+    defaultUsers
+      .filter((u) => u.forenames === "Bichard Test User")
+      .map((user) => {
+        cy.task("insertIntoUserGroup", { emailAddress: user.email, groupName: "B7GeneralHandler_grp" })
+      })
     cy.task("insertIntoUserGroup", { emailAddress: "triggerhandler@example.com", groupName: "B7TriggerHandler_grp" })
     cy.task("insertIntoUserGroup", {
       emailAddress: "exceptionhandler@example.com",
       groupName: "B7ExceptionHandler_grp"
+    })
+    cy.task("insertIntoUserGroup", {
+      emailAddress: "generalhandler@example.com",
+      groupName: "B7GeneralHandler_grp"
     })
     cy.task("insertIntoUserGroup", { emailAddress: "supervisor@example.com", groupName: "B7Supervisor_grp" })
   })
@@ -106,7 +132,7 @@ describe("Case list", () => {
     })
 
     it("Should display 0 cases when there are no cases 'locked to me' and hide the bottom pagination bar ", () => {
-      const lockUsernames = ["Bichard02", "Bichard03", null, "A really really really long name"]
+      const lockUsernames = ["Bichard02", "Bichard03", null, "A really really really long.name"]
       cy.task(
         "insertCourtCasesWithFields",
         lockUsernames.map((username) => ({
@@ -562,7 +588,7 @@ describe("Case list", () => {
     })
 
     it("shows who has locked a case in the 'locked by' column", () => {
-      const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long name"]
+      const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long.name"]
       cy.task(
         "insertCourtCasesWithFields",
         lockUsernames.map((username) => ({
@@ -587,28 +613,28 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       //Error locks
-      cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard01")
+      cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard Test User 01")
       cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
+      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard Test User 02")
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
       cy.get(`tbody tr:nth-child(5) .locked-by-tag`).should("not.exist")
       cy.get(`tbody tr:nth-child(5) img[alt="Lock icon"]`).should("not.exist")
-      cy.get(`tbody tr:nth-child(7) .locked-by-tag`).should("have.text", "A really really really long name")
+      cy.get(`tbody tr:nth-child(7) .locked-by-tag`).should("have.text", "A Really Really Really Long Name")
       cy.get(`tbody tr:nth-child(7) img[alt="Lock icon"]`).should("exist")
 
       //Trigger locks
-      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard01")
+      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard Test User 01")
       cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(4) .locked-by-tag`).should("have.text", "Bichard02")
+      cy.get(`tbody tr:nth-child(4) .locked-by-tag`).should("have.text", "Bichard Test User 02")
       cy.get(`tbody tr:nth-child(4) img[alt="Lock icon"]`).should("exist")
       cy.get(`tbody tr:nth-child(6) .locked-by-tag`).should("not.exist")
       cy.get(`tbody tr:nth-child(6) img[alt="Lock icon"]`).should("not.exist")
-      cy.get(`tbody tr:nth-child(8) .locked-by-tag`).should("have.text", "A really really really long name")
+      cy.get(`tbody tr:nth-child(8) .locked-by-tag`).should("have.text", "A Really Really Really Long Name")
       cy.get(`tbody tr:nth-child(8) img[alt="Lock icon"]`).should("exist")
     })
 
     it("can sort cases by who has locked it", () => {
-      const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long name"]
+      const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long.name"]
       cy.task(
         "insertCourtCasesWithFields",
         lockUsernames.map((username) => ({
@@ -657,29 +683,29 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       // Exception lock
-      cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+      cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard Test User 01").should("exist")
       cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
       // Trigger lock
-      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard Test User 01").should("exist")
       cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
       // User should not see unlock button when a case assigned to another user
-      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard02").should("not.exist")
+      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard Test User 02").should("not.exist")
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
 
       // Unlock the exception assigned to the user
-      unlockCase("1", "Bichard01")
+      unlockCase("1", "Bichard Test User 01")
       cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
       cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
-      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard Test User 01").should("exist")
       cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
+      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard Test User 02")
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
 
       // Unlock the trigger assigned to the user
-      unlockCase("2", "Bichard01")
+      unlockCase("2", "Bichard Test User 01")
       cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("not.exist")
       cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("not.exist")
-      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard02")
+      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard Test User 02")
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
     })
 
@@ -695,6 +721,7 @@ describe("Case list", () => {
           triggerCount: 1
         }))
       )
+
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
@@ -707,17 +734,17 @@ describe("Case list", () => {
 
       loginAndGoToUrl("supervisor@example.com")
 
-      cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+      cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard Test User 01").should("exist")
       cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard01").should("exist")
+      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard Test User 01").should("exist")
       cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard02").should("exist")
+      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard Test User 02").should("exist")
       cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
 
       // Unlock both cases
-      unlockCase("1", "Bichard01")
-      unlockCase("2", "Bichard01")
-      unlockCase("3", "Bichard02")
+      unlockCase("1", "Bichard Test User 01")
+      unlockCase("2", "Bichard Test User 01")
+      unlockCase("3", "Bichard Test User 02")
 
       cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
       cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
@@ -1325,13 +1352,16 @@ describe("Case list", () => {
       cy.get("#keywords").should("not.have.value", "Defendant Name")
       cy.get(".moj-pagination__item--active").contains("1")
     })
+  })
 
+  describe("Case unlocked badge", () => {
     it("Should show case unlocked badge when exception handler unlocks the case", () => {
       cy.task("insertCourtCasesWithFields", [
         {
           errorLockedByUsername: "ExceptionHandler",
           triggerLockedByUsername: null,
-          orgForPoliceFilter: "011111"
+          orgForPoliceFilter: "011111",
+          errorCount: 1
         }
       ])
 
@@ -1341,7 +1371,7 @@ describe("Case list", () => {
       cy.get("#keywords").type("NAME Defendant")
       cy.contains("Apply filters").click()
 
-      cy.get("button.locked-by-tag").contains("ExceptionHandler").click()
+      cy.get("button.locked-by-tag").contains("Exception Handler User 0111").click()
       cy.get("#unlock").click()
       cy.get("span.moj-badge").contains("Case unlocked").should("exist")
     })
@@ -1352,7 +1382,8 @@ describe("Case list", () => {
           caseId: 0,
           errorLockedByUsername: null,
           triggerLockedByUsername: "TriggerHandler",
-          orgForPoliceFilter: "011111"
+          orgForPoliceFilter: "011111",
+          triggerCount: 1
         }
       ])
       const triggers: TestTrigger[] = [
@@ -1371,9 +1402,87 @@ describe("Case list", () => {
       cy.get("#keywords").type("NAME Defendant")
       cy.contains("Apply filters").click()
 
-      cy.get("button.locked-by-tag").contains("TriggerHandler").click()
+      cy.get("button.locked-by-tag").contains("Trigger Handler User 0111").click()
       cy.get("#unlock").click()
       cy.get("span.moj-badge").contains("Case unlocked").should("exist")
+    })
+  })
+
+  describe("Shows only cases relevant to a user's role", () => {
+    const mixedReasonCases = [
+      {
+        orgForPoliceFilter: "011111",
+        errorId: 0,
+        errorCount: 0,
+        triggerCount: 0
+      },
+      {
+        orgForPoliceFilter: "011111",
+        errorId: 1,
+        errorCount: 3,
+        triggerCount: 0
+      },
+      {
+        orgForPoliceFilter: "011111",
+        errorId: 2,
+        errorCount: 0,
+        triggerCount: 5
+      },
+      {
+        orgForPoliceFilter: "011111",
+        errorId: 3,
+        errorCount: 2,
+        triggerCount: 2
+      }
+    ]
+
+    it("Shouldn't show cases to a user with no groups", () => {
+      cy.task("insertCourtCasesWithFields", mixedReasonCases)
+      loginAndGoToUrl("nogroups@example.com")
+
+      cy.findByText("There are no court cases to show").should("exist")
+    })
+
+    it("Should only show cases with triggers to a trigger handler", () => {
+      cy.task("insertCourtCasesWithFields", mixedReasonCases)
+      loginAndGoToUrl("triggerhandler@example.com")
+
+      confirmCaseDisplayed("Case00002")
+      confirmCaseDisplayed("Case00003")
+
+      confirmCaseNotDisplayed("Case00000")
+      confirmCaseNotDisplayed("Case00001")
+    })
+
+    it("Should only show cases with exceptions to an exception handler", () => {
+      cy.task("insertCourtCasesWithFields", mixedReasonCases)
+      loginAndGoToUrl("exceptionhandler@example.com")
+
+      confirmCaseDisplayed("Case00001")
+      confirmCaseDisplayed("Case00003")
+
+      confirmCaseNotDisplayed("Case00000")
+      confirmCaseNotDisplayed("Case00002")
+    })
+
+    it("Should show all cases to a general handler", () => {
+      cy.task("insertCourtCasesWithFields", mixedReasonCases)
+      loginAndGoToUrl("generalhandler@example.com")
+
+      confirmCaseDisplayed("Case00000")
+      confirmCaseDisplayed("Case00001")
+      confirmCaseDisplayed("Case00002")
+      confirmCaseDisplayed("Case00003")
+    })
+
+    it("Should show all cases to a supervisor", () => {
+      cy.task("insertCourtCasesWithFields", mixedReasonCases)
+      loginAndGoToUrl("supervisor@example.com")
+
+      confirmCaseDisplayed("Case00000")
+      confirmCaseDisplayed("Case00001")
+      confirmCaseDisplayed("Case00002")
+      confirmCaseDisplayed("Case00003")
     })
   })
 })

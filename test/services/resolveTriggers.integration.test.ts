@@ -11,7 +11,6 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import createAuditLog from "../helpers/createAuditLog"
 import { KeyValuePair } from "types/KeyValuePair"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
 
@@ -80,7 +79,6 @@ describe("resolveTriggers", () => {
           orgForPoliceFilter: visibleForce
         }
       ])
-      await createAuditLog(courtCase.messageId)
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
@@ -150,7 +148,6 @@ describe("resolveTriggers", () => {
           orgForPoliceFilter: visibleForce
         }
       ])
-      await createAuditLog(courtCase.messageId)
 
       const trigger: TestTrigger = {
         triggerId: 0,
@@ -196,7 +193,6 @@ describe("resolveTriggers", () => {
           orgForPoliceFilter: visibleForce
         }
       ])
-      await createAuditLog(courtCase.messageId)
 
       const triggerNotToBeResolved: TestTrigger = {
         triggerId: 0,
@@ -266,7 +262,6 @@ describe("resolveTriggers", () => {
           orgForPoliceFilter: visibleForce
         }
       ])
-      await createAuditLog(courtCase.messageId)
 
       const trigger: TestTrigger = {
         triggerId: 0,
@@ -319,7 +314,6 @@ describe("resolveTriggers", () => {
           orgForPoliceFilter: visibleForce
         }
       ])
-      await createAuditLog(courtCase.messageId)
 
       const trigger: TestTrigger = {
         triggerId: 0,
@@ -355,7 +349,6 @@ describe("resolveTriggers", () => {
       const visibleForces = ["36"]
 
       const [courtCase] = await insertCourtCasesWithFields([{ orgForPoliceFilter: "36" }])
-      await createAuditLog(courtCase.messageId)
       const trigger: TestTrigger = {
         triggerId: 0,
         triggerCode: "TRPR0001",
@@ -408,7 +401,6 @@ describe("resolveTriggers", () => {
           orgForPoliceFilter: visibleForce
         }
       ])
-      await createAuditLog(courtCase.messageId)
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId, index) => {
         return {
           triggerId,
@@ -482,7 +474,6 @@ describe("resolveTriggers", () => {
           orgForPoliceFilter: visibleForce
         }
       ])
-      await createAuditLog(courtCase.messageId)
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId, index) => {
         return {
           triggerId,
@@ -536,7 +527,6 @@ describe("resolveTriggers", () => {
           orgForPoliceFilter: visibleForce
         }
       ])
-      await createAuditLog(courtCase.messageId)
       const triggers: TestTrigger[] = [0, 1, 2, 3, 4].map((triggerId, index) => {
         return {
           triggerId,

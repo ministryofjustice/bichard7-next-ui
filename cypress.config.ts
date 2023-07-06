@@ -12,7 +12,6 @@ import {
   insertDummyCourtCasesWithTriggers
 } from "./test/utils/insertCourtCases"
 
-import createAuditLog from "./test/helpers/createAuditLog"
 import insertException from "./test/utils/manageExceptions"
 import { deleteTriggers, insertTriggers } from "./test/utils/manageTriggers"
 import { deleteUsers, insertUsersWithOverrides } from "./test/utils/manageUsers"
@@ -78,10 +77,6 @@ export default defineConfig({
 
         clearCourtCases() {
           return deleteFromEntity(CourtCase)
-        },
-
-        createAuditLog(messageId: string) {
-          return createAuditLog(messageId)
         },
 
         insertUsers(params: { users: Partial<User>[]; userGroups?: string[] }) {

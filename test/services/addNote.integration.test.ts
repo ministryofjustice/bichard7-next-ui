@@ -6,6 +6,7 @@ import addNote from "../../src/services/addNote"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import insertNotes from "services/insertNotes"
+import { v4 as uuid } from "uuid"
 
 jest.mock("services/insertNotes")
 
@@ -19,7 +20,7 @@ const insertRecords = async (
     courtDate: new Date("2008-09-25"),
     orgForPoliceFilter: "36FPA1".padEnd(6, " "),
     errorId: 0,
-    messageId: String(0).padStart(5, "x"),
+    messageId: uuid(),
     errorLockedByUsername: errorLockedByUsername,
     triggerLockedByUsername: triggerLockedByUsername
   }

@@ -14,11 +14,10 @@ import insertNotes from "services/insertNotes"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import createAuditLog from "../helpers/createAuditLog"
 import { AUDIT_LOG_API_URL } from "../../src/config"
 import axios from "axios"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
+import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
@@ -60,8 +59,8 @@ describe("resolveCourtCase", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
-    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
   })
 
   beforeEach(async () => {
@@ -108,7 +107,6 @@ describe("resolveCourtCase", () => {
           errorCount: 4
         }
       ])
-      await createAuditLog(courtCase.messageId)
 
       const resolution: ManualResolution = {
         reason: "NonRecordable",
@@ -219,8 +217,6 @@ describe("resolveCourtCase", () => {
           errorCount: 1
         }
       ])
-
-      await createAuditLog(firstCourtCase.messageId)
 
       const resolution: ManualResolution = {
         reason: "NonRecordable"
@@ -342,8 +338,6 @@ describe("resolveCourtCase", () => {
         }
       ])
 
-      await createAuditLog(courtCase.messageId)
-
       let result = await resolveCourtCase(
         dataSource,
         courtCase,
@@ -389,7 +383,6 @@ describe("resolveCourtCase", () => {
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
       await insertTriggers(0, [trigger])
-      await createAuditLog(courtCase.messageId)
     })
 
     it("Should resolve a case without setting a resolutionTimestamp", async () => {

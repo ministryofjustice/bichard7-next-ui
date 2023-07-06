@@ -137,7 +137,7 @@ jobs:
       - run_audit_logging
       - run:
           name: Wait for Audit logging API to start
-          command: STATUS_CODE=200 npx wait-on --config ./.circleci/config/wait-for-status.js http://localhost:3010/messages
+          command: STATUS_CODE=200 npx wait-on --config ./scripts/wait-for-status.js http://localhost:3010/messages
       - run:
           name: Run integration tests
           command: npm run test:integration
@@ -154,7 +154,6 @@ jobs:
       - run:
           name: Build the UI application
           command: ./.circleci/scripts/build-ui.sh
-
       - run:
           name: Save UI docker image
           command: docker save ui > ui.tar
@@ -172,6 +171,7 @@ jobs:
     parallelism: 5
     steps:
       - checkout
+      - checkout-audit-logging
       - clone_bichard_repo
       - fetch_docker_image:
           image: user-service
@@ -181,7 +181,6 @@ jobs:
           name: Restore UI docker image from cache
           keys: 
             - ui-image-<<pipeline.git.revision>>
-
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
@@ -212,6 +211,10 @@ jobs:
           working_directory: ~/bichard7-next
           command: COMPOSE_PROJECT_NAME="bichard7" docker-compose up -d activemq
           background: true
+      - run_audit_logging
+      - run:
+          name: Wait for Audit logging API to start
+          command: STATUS_CODE=200 npx wait-on --config ./scripts/wait-for-status.js http://localhost:3010/messages
       - run:
           name: Run UI stack
           working_directory: ~/bichard7-next
@@ -220,12 +223,8 @@ jobs:
           environment:
             AUDIT_LOG_API_URL: http://172.17.0.1:3010
       - run:
-          name: Run mock audit log API
-          command: node ./.circleci/scripts/mock-audit-log-api.js
-          background: true
-      - run:
           name: Wait for UI to start
-          command: STATUS_CODE=401 npx wait-on --config ./.circleci/config/wait-for-status.js https://localhost:4080/bichard
+          command: STATUS_CODE=401 npx wait-on --config ./scripts/wait-for-status.js https://localhost:4080/bichard
       - run:
           name: Run UI tests
           command: TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX ./scripts/run-ui-tests-chunk.sh
@@ -289,6 +288,7 @@ jobs:
     steps:
       - checkout
       - checkout-tests
+      - checkout-audit-logging
       - npm_install
       - attach_workspace:
           at: .
@@ -305,11 +305,10 @@ jobs:
           name: Restore UI docker image from cache
           keys: 
             - ui-image-<<pipeline.git.revision>>
-
+      - run_audit_logging
       - run:
-          name: Run mock audit log API
-          command: node ./.circleci/scripts/mock-audit-log-api.js
-          background: true
+          name: Wait for Audit logging API to start
+          command: STATUS_CODE=200 npx wait-on --config ./scripts/wait-for-status.js http://localhost:3010/messages
       - run:
           name: Load UI docker image
           command: docker load < ui.tar
@@ -346,7 +345,7 @@ jobs:
           background: true
       - run:
           name: Wait for UI to start
-          command: STATUS_CODE=401 npx wait-on --config ./.circleci/config/wait-for-status.js https://localhost:4080/bichard
+          command: STATUS_CODE=401 npx wait-on --config ./scripts/wait-for-status.js https://localhost:4080/bichard
       - run:
           name: Run end-to-end tests against new UI
           working_directory: ~/bichard7-next-tests

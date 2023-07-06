@@ -71,3 +71,11 @@ export const newUserLogin = ({ user, groups }: { user?: string; groups?: UserGro
 
   cy.login(email, "password")
 }
+
+export const confirmCaseDisplayed = (PTIURN: string) => {
+  cy.get("tr").not(":first").get("td:nth-child(5)").contains(PTIURN).should("exist")
+}
+
+export const confirmCaseNotDisplayed = (PTIURN: string) => {
+  cy.get("tr").not(":first").get("td:nth-child(5)").contains(PTIURN).should("not.exist")
+}

@@ -29,6 +29,7 @@ interface CaseDetailsRowProps {
   defendantName: string | null
   errorId: number
   errorLockedByUsername: string | null | undefined
+  errorLockedByUserFullName: string | null | undefined
   errorReport: string
   firstColumnClassName: string
   isCaseUnlocked: boolean
@@ -61,6 +62,7 @@ export const CaseDetailsRow = ({
   defendantName,
   errorId,
   errorLockedByUsername,
+  errorLockedByUserFullName,
   errorReport,
   firstColumnClassName,
   isCaseUnlocked,
@@ -138,9 +140,9 @@ export const CaseDetailsRow = ({
         </Table.Cell>
         <Table.Cell className={caseDetailsCellClass}>
           {canCurrentUserUnlockCase ? (
-            <LockedByTag lockedBy={errorLockedByUsername} unlockPath={unlockPath} />
+            <LockedByTag lockedBy={errorLockedByUserFullName} unlockPath={unlockPath} />
           ) : (
-            <LockedByTag lockedBy={errorLockedByUsername} />
+            <LockedByTag lockedBy={errorLockedByUserFullName} />
           )}
           {<CaseUnlockedTag isCaseUnlocked={isCaseUnlocked} />}
         </Table.Cell>

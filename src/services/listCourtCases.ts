@@ -19,6 +19,7 @@ import Note from "./entities/Note"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
+import { hasAccessToExceptions, hasAccessToTriggers } from "utils/userPermissions"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -215,6 +216,18 @@ const listCourtCases = async (
         })
       )
     }
+  }
+
+  if (!hasAccessToTriggers(user) && !hasAccessToExceptions(user)) {
+    query.andWhere("false")
+  }
+
+  if (!hasAccessToTriggers(user)) {
+    query.andWhere({ errorCount: MoreThan(0) })
+  }
+
+  if (!hasAccessToExceptions(user)) {
+    query.andWhere({ triggerCount: MoreThan(0) })
   }
 
   const result = await query.getManyAndCount().catch((error: Error) => error)

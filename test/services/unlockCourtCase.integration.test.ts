@@ -8,12 +8,11 @@ import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import { AUDIT_LOG_API_URL } from "../../src/config"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import createAuditLog from "../helpers/createAuditLog"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import UnlockReason from "types/UnlockReason"
-import { canLockTriggers, canLockExceptions } from "utils/userPermissions"
+import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 import axios from "axios"
 
 jest.mock("services/updateLockStatusToUnlocked")
@@ -46,8 +45,8 @@ describe("unlock court case", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
-    ;(canLockExceptions as jest.Mock).mockReturnValue(true)
-    ;(canLockTriggers as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
+    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
 
     lockedCourtCase = (
       (await insertCourtCasesWithFields([
@@ -59,8 +58,6 @@ describe("unlock court case", () => {
         }
       ])) as CourtCase[]
     )[0]
-
-    await createAuditLog(lockedCourtCase.messageId)
   })
 
   afterEach(async () => {

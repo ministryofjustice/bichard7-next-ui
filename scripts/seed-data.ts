@@ -6,8 +6,10 @@ import getDataSource from "../src/services/getDataSource"
 import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromEntity from "../test/utils/deleteFromEntity"
 import { KeyValuePair } from "../src/types/KeyValuePair"
-import insertAuditLogIntoDynamoTable from "../test/utils/insertAuditLogIntoDynamoTable"
-import { isError } from "../src/types/Result"
+import createAuditLogRecord from "../test/helpers/createAuditLogRecord"
+import insertManyIntoDynamoTable from "../test/utils/insertManyIntoDynamoTable"
+import { insertLockUsers } from "../test/utils/insertLockUsers"
+import { insertNoteUser } from "../test/utils/insertNoteUser"
 
 if (process.env.DEPLOY_NAME !== "e2e-test") {
   console.error("Not running in e2e environment, bailing out. Set DEPLOY_NAME='e2e-test' if you're sure.")
@@ -24,42 +26,28 @@ const numCases = Math.round(Math.random() * numCasesRange) + minCases
 
 console.log(`Seeding ${numCases} cases for force ID ${forceId}`)
 
-const createAuditLogRecord = (courtCase: CourtCase) => ({
-  triggerStatus: courtCase.triggerCount ? "Generated" : "NoTriggers",
-  messageId: courtCase.messageId,
-  version: 2,
-  isSanitised: 0,
-  createdBy: "Seed data script",
-  externalCorrelationId: courtCase.messageId,
-  caseId: courtCase.messageId,
-  messageHash: courtCase.messageId,
-  pncStatus: "Processing",
-  eventsCount: 0,
-  receivedDate: courtCase.messageReceivedTimestamp.toISOString(),
-  _: "_",
-  status: "Processing"
-})
-
 getDataSource().then(async (dataSource) => {
   const entitiesToClear = [CourtCase, Trigger, Note]
   const auditLogs: KeyValuePair<string, unknown>[] = []
   await Promise.all(entitiesToClear.map((entity) => deleteFromEntity(entity)))
 
-  await Promise.all(
+  const courtCases = await Promise.all(
     new Array(numCases).fill(0).map(async (_, idx) => {
       const courtCase = await createDummyCase(dataSource, idx, forceId, subDays(new Date(), maxCaseAge))
       auditLogs.push(createAuditLogRecord(courtCase))
+      return courtCase
     })
   )
 
-  while (auditLogs.length) {
-    const recordsToInsert = auditLogs.splice(0, 100)
-    const insertAuditLogResult = await insertAuditLogIntoDynamoTable(recordsToInsert)
+  const courtCaseNotes = courtCases
+    .filter((courtcase) => courtcase.notes.length > 0)
+    .map((courtCase) => courtCase.notes)
+    .flat()
 
-    if (isError(insertAuditLogResult)) {
-      throw insertAuditLogResult
-    }
-  }
+  await Promise.all(courtCases.map((courtCase) => insertLockUsers(courtCase)))
+  await Promise.all(courtCaseNotes.map((courtCaseNote) => insertNoteUser(courtCaseNote)))
+
+  await insertManyIntoDynamoTable(auditLogs)
 })
 
 export {}

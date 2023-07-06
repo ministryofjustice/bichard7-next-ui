@@ -5,7 +5,13 @@ const workspace = process.env.WORKSPACE
 const tableName = workspace ? `bichard-7-${workspace}-audit-log` : "auditLogTable"
 const config = {
   region: "eu-west-2",
-  ...(workspace ? {} : { endpoint: "http://localhost:8000" })
+  ...(workspace
+    ? {}
+    : {
+        endpoint: "http://localhost:8000",
+        accessKeyId: "S3RVER",
+        secretAccessKey: "S3RVER"
+      })
 }
 
 const insertAuditLogIntoDynamoTable = async <T>(records: T[]) => {
