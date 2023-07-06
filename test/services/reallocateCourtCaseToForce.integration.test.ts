@@ -13,6 +13,7 @@ import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
 import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
+import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 
 jest.mock("services/insertNotes")
 jest.mock("utils/userPermissions")
@@ -21,7 +22,7 @@ const createUnlockedEvent = (unlockReason: "Trigger" | "Exception", userName: st
   return {
     attributes: { auditLogVersion: 2 },
     category: "information",
-    eventSource: "Bichard New UI",
+    eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: `${unlockReason} unlocked`,
     timestamp: expect.anything(),
     eventCode: `${unlockReason.toLowerCase()}s.unlocked`,
@@ -37,7 +38,7 @@ const createReallocationEvent = (newForceOwner: string, userName: string) => {
     },
     eventCode: "hearing-outcome.reallocated",
     category: "information",
-    eventSource: "Bichard New UI",
+    eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: "Hearing outcome reallocated by user",
     timestamp: expect.anything(),
     user: userName

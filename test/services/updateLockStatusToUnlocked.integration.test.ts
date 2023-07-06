@@ -9,6 +9,7 @@ import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from 
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import UnlockReason from "types/UnlockReason"
 import { hasAccessToTriggers, hasAccessToExceptions, isSupervisor } from "utils/userPermissions"
+import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 
 jest.mock("utils/userPermissions")
 
@@ -17,7 +18,7 @@ describe("lock court case", () => {
 
   const exceptionUnlockedEvent = (username = "some user") => ({
     category: "information",
-    eventSource: "Bichard New UI",
+    eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: "Exception unlocked",
     timestamp: expect.anything(),
     attributes: {
@@ -28,7 +29,7 @@ describe("lock court case", () => {
   })
   const triggerUnlockedEvent = (username = "some user") => ({
     category: "information",
-    eventSource: "Bichard New UI",
+    eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: "Trigger unlocked",
     timestamp: expect.anything(),
     attributes: {

@@ -9,6 +9,7 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
+import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 
 jest.mock("utils/userPermissions")
 
@@ -17,7 +18,7 @@ describe("Update lock status to locked", () => {
 
   const exceptionLockedEvent = (username = "Bichard01") => ({
     category: "information",
-    eventSource: "Bichard New UI",
+    eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: "Exception locked",
     timestamp: expect.anything(),
     attributes: {
@@ -28,7 +29,7 @@ describe("Update lock status to locked", () => {
   })
   const triggerLockedEvent = (username = "Bichard01") => ({
     category: "information",
-    eventSource: "Bichard New UI",
+    eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: "Trigger locked",
     timestamp: expect.anything(),
     attributes: {

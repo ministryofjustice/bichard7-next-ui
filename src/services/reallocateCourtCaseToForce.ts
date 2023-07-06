@@ -12,6 +12,7 @@ import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src
 import storeAuditLogEvents from "./storeAuditLogEvents"
 import getCourtCase from "./getCourtCase"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,
@@ -76,7 +77,7 @@ const reallocateCourtCaseToForce = async (
     }
 
     events.push(
-      getAuditLogEvent("information", "Hearing outcome reallocated by user", "Bichard New UI", {
+      getAuditLogEvent("information", "Hearing outcome reallocated by user", AUDIT_LOG_EVENT_SOURCE, {
         user: user.username,
         auditLogVersion: 2,
         eventCode: "hearing-outcome.reallocated",

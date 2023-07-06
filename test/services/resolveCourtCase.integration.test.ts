@@ -14,7 +14,7 @@ import insertNotes from "services/insertNotes"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import { AUDIT_LOG_API_URL } from "../../src/config"
+import { AUDIT_LOG_API_URL, AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import axios from "axios"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
@@ -167,7 +167,7 @@ describe("resolveCourtCase", () => {
 
       expect(unlockedEvent).toStrictEqual({
         category: "information",
-        eventSource: "Bichard New UI",
+        eventSource: AUDIT_LOG_EVENT_SOURCE,
         eventType: "Exception unlocked",
         timestamp: expect.anything(),
         user: resolverUsername,
@@ -184,7 +184,7 @@ describe("resolveCourtCase", () => {
           resolutionReasonText: resolution.reasonText
         },
         category: "information",
-        eventSource: "Bichard New UI",
+        eventSource: AUDIT_LOG_EVENT_SOURCE,
         eventType: "Exception marked as resolved by user",
         eventCode: "exceptions.resolved",
         user: resolverUsername,

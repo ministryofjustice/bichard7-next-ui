@@ -9,6 +9,7 @@ import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
 import { hasAccessToExceptions, hasAccessToTriggers, isSupervisor } from "utils/userPermissions"
 import getCourtCase from "./getCourtCase"
+import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const updateLockStatusToUnlocked = async (
   dataSource: EntityManager,
@@ -51,7 +52,7 @@ const updateLockStatusToUnlocked = async (
   if (shouldUnlockExceptions && !!courtCase.errorLockedByUsername) {
     setFields.errorLockedByUsername = null
     generatedEvents.push(
-      getAuditLogEvent("information", "Exception unlocked", "Bichard New UI", {
+      getAuditLogEvent("information", "Exception unlocked", AUDIT_LOG_EVENT_SOURCE, {
         user: username,
         auditLogVersion: 2,
         eventCode: "exceptions.unlocked"
@@ -61,7 +62,7 @@ const updateLockStatusToUnlocked = async (
   if (shouldUnlockTriggers && !!courtCase.triggerLockedByUsername) {
     setFields.triggerLockedByUsername = null
     generatedEvents.push(
-      getAuditLogEvent("information", "Trigger unlocked", "Bichard New UI", {
+      getAuditLogEvent("information", "Trigger unlocked", AUDIT_LOG_EVENT_SOURCE, {
         user: username,
         auditLogVersion: 2,
         eventCode: "triggers.unlocked"

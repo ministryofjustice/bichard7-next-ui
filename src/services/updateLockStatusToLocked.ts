@@ -6,6 +6,7 @@ import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/buil
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
 import { hasAccessToExceptions, hasAccessToTriggers } from "utils/userPermissions"
+import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const updateLockStatusToLocked = async (
   dataSource: EntityManager,
@@ -38,7 +39,7 @@ const updateLockStatusToLocked = async (
       errorStatus: Not(submitted)
     })
     generatedEvents.push(
-      getAuditLogEvent("information", "Exception locked", "Bichard New UI", {
+      getAuditLogEvent("information", "Exception locked", AUDIT_LOG_EVENT_SOURCE, {
         user: user.username,
         auditLogVersion: 2,
         eventCode: "exceptions.locked"
@@ -54,7 +55,7 @@ const updateLockStatusToLocked = async (
       triggerStatus: Not(submitted)
     })
     generatedEvents.push(
-      getAuditLogEvent("information", "Trigger locked", "Bichard New UI", {
+      getAuditLogEvent("information", "Trigger locked", AUDIT_LOG_EVENT_SOURCE, {
         user: user.username,
         auditLogVersion: 2,
         eventCode: "triggers.locked"

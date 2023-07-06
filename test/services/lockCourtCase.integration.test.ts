@@ -6,7 +6,7 @@ import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import lockCourtCase from "services/lockCourtCase"
-import { AUDIT_LOG_API_URL } from "../../src/config"
+import { AUDIT_LOG_API_URL, AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import axios from "axios"
 import updateLockStatusToLocked from "services/updateLockStatusToLocked"
@@ -68,14 +68,14 @@ describe("lock court case", () => {
         {
           attributes: { auditLogVersion: 2, eventCode: "exceptions.locked", user: lockedByName },
           category: "information",
-          eventSource: "Bichard New UI",
+          eventSource: AUDIT_LOG_EVENT_SOURCE,
           eventType: "Exception locked",
           timestamp: expect.anything()
         },
         {
           attributes: { auditLogVersion: 2, eventCode: "triggers.locked", user: lockedByName },
           category: "information",
-          eventSource: "Bichard New UI",
+          eventSource: AUDIT_LOG_EVENT_SOURCE,
           eventType: "Trigger locked",
           timestamp: expect.anything()
         }
@@ -117,7 +117,7 @@ describe("lock court case", () => {
 
       expect(lockedExceptionEvent).toStrictEqual({
         category: "information",
-        eventSource: "Bichard New UI",
+        eventSource: AUDIT_LOG_EVENT_SOURCE,
         eventType: "Exception locked",
         timestamp: expect.anything(),
         user: user.username,
@@ -129,7 +129,7 @@ describe("lock court case", () => {
 
       expect(lockedTriggerEvent).toStrictEqual({
         category: "information",
-        eventSource: "Bichard New UI",
+        eventSource: AUDIT_LOG_EVENT_SOURCE,
         eventType: "Trigger locked",
         timestamp: expect.anything(),
         user: user.username,

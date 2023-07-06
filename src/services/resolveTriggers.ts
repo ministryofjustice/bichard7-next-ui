@@ -8,6 +8,7 @@ import storeAuditLogEvents from "./storeAuditLogEvents"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 import { KeyValuePair } from "types/KeyValuePair"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const generateTriggersAttributes = (triggers: Trigger[]) =>
   triggers.reduce((acc, trigger, index) => {
@@ -70,7 +71,7 @@ const resolveTriggers = async (
     const events: AuditLogEvent[] = []
 
     events.push(
-      getAuditLogEvent("information", "Trigger marked as resolved by user", "Bichard New UI", {
+      getAuditLogEvent("information", "Trigger marked as resolved by user", AUDIT_LOG_EVENT_SOURCE, {
         user: user.username,
         auditLogVersion: 2,
         eventCode: "triggers.resolved",
@@ -113,7 +114,7 @@ const resolveTriggers = async (
       }
 
       events.push(
-        getAuditLogEvent("information", "All triggers marked as resolved", "Bichard New UI", {
+        getAuditLogEvent("information", "All triggers marked as resolved", AUDIT_LOG_EVENT_SOURCE, {
           user: user.username,
           auditLogVersion: 2,
           eventCode: "triggers.all-resolved",
