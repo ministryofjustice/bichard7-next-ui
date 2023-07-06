@@ -50,7 +50,7 @@ describe("Court case details header", () => {
 
     cy.login(user.email!, "password")
     cy.visit("/bichard")
-    cy.get(".locked-by-tag").should("have.text", "Bichard01")
+    cy.get(".locked-by-tag").should("have.text", "Bichard Test User 01")
     cy.get("td a").contains("NAME Defendant").click()
     cy.location("pathname").should("equal", "/bichard/court-cases/0")
 
@@ -60,7 +60,7 @@ describe("Court case details header", () => {
       .should("have.attr", "href", "/bichard")
     cy.get("button#leave-and-lock").click()
     cy.location("pathname").should("equal", "/bichard")
-    cy.get(".locked-by-tag").should("have.text", "Bichard01")
+    cy.get(".locked-by-tag").should("have.text", "Bichard Test User 01")
   })
 
   it("should have a return to case list button that returns to the case list when the case isn't locked", () => {
@@ -107,7 +107,7 @@ describe("Court case details header", () => {
     cy.login(user.email!, "password")
 
     cy.visit("/bichard")
-    cy.get(".locked-by-tag").should("have.text", "Bichard01")
+    cy.get(".locked-by-tag").should("have.text", "Bichard Test User 01")
     cy.get("td a").contains("NAME Defendant").click()
     cy.location("pathname").should("equal", "/bichard/court-cases/0")
 
@@ -268,7 +268,7 @@ describe("Court case details header", () => {
         cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
 
         cy.get("#triggers-locked-tag").should("exist")
-        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard01")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard Test User 01")
       })
 
       it("When someone else has both locks, it shows both lock components correctly", () => {
@@ -287,10 +287,10 @@ describe("Court case details header", () => {
         cy.visit(caseURL)
 
         cy.get("#exceptions-locked-tag").should("exist")
-        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Bichard01")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Bichard Test User 01")
 
         cy.get("#triggers-locked-tag").should("exist")
-        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard01")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard Test User 01")
       })
     })
 
@@ -329,7 +329,7 @@ describe("Court case details header", () => {
 
         cy.get("#exceptions-locked-tag").should("not.exist")
         cy.get("#triggers-locked-tag").should("exist")
-        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard04")
+        cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard Test User 04")
       })
     })
 
@@ -367,7 +367,7 @@ describe("Court case details header", () => {
         cy.visit(caseURL)
 
         cy.get("#exceptions-locked-tag").should("exist")
-        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Bichard04")
+        cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Bichard Test User 04")
         cy.get("#triggers-locked-tag").should("not.exist")
       })
     })

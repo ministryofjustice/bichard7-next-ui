@@ -51,7 +51,7 @@ describe("Court case details", () => {
   })
 
   it("should not lock a case that is already locked to another user", () => {
-    const existingUserLock = "Another name"
+    const existingUserLock = "Another.name"
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: existingUserLock,
@@ -68,9 +68,9 @@ describe("Court case details", () => {
 
     cy.get(".view-only-badge").should("exist")
     cy.get("#triggers-locked-tag").should("exist")
-    cy.get("#triggers-locked-tag-lockee").should("contain.text", "Another name")
+    cy.get("#triggers-locked-tag-lockee").should("contain.text", "Another Name")
     cy.get("#exceptions-locked-tag").should("exist")
-    cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Another name")
+    cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Another Name")
   })
 })
 

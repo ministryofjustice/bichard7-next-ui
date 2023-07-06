@@ -1,7 +1,7 @@
 import { DataSource, EntityManager } from "typeorm"
-import { UserGroup } from "types/UserGroup"
-import PromiseResult from "types/PromiseResult"
-import { isError } from "types/Result"
+import { UserGroup } from "../types/UserGroup"
+import PromiseResult from "../types/PromiseResult"
+import { isError } from "../types/Result"
 import User from "./entities/User"
 
 export default async (
