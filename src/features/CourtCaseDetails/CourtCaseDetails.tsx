@@ -19,7 +19,6 @@ import updateQueryString from "utils/updateQueryString"
 import { CaseInformation } from "./Tabs/Panels/CaseInformation"
 import Header from "./Header"
 import User from "services/entities/User"
-import { UserGroup } from "types/UserGroup"
 
 interface Props {
   courtCase: CourtCase
@@ -89,10 +88,9 @@ const CourtCaseDetails: React.FC<Props> = ({
   }
 
   let tabToRender: Tab | undefined
-  const groups = user.groups.filter((g) => g !== UserGroup.NewUI)
-  if (groups.length && groups.every((g) => g === UserGroup.TriggerHandler)) {
+  if (user.hasAccessToTriggers && !user.hasAccessToExceptions) {
     tabToRender = Tab.Triggers
-  } else if (groups.length && groups.every((g) => g === UserGroup.ExceptionHandler)) {
+  } else if (user.hasAccessToExceptions && !user.hasAccessToTriggers) {
     tabToRender = Tab.Exceptions
   }
 

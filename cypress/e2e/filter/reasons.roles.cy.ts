@@ -15,17 +15,17 @@ describe("Reasons filters", () => {
     cy.task("clearUsers")
   })
 
-  it("should display all options if no user group is specified", () => {
+  it("should not render the reasons component if no user group is specified", () => {
     newUserLogin({})
     navigateAndShowFilters()
 
-    cy.get("#filter-panel .reasons .bails").should("exist")
-    cy.get("#filter-panel .reasons .triggers").should("exist")
-    cy.get("#filter-panel .reasons .exceptions").should("exist")
+    cy.get("#filter-panel .reasons").should("not.exist")
   })
 
   it("should display all options for supervisors", () => {
-    newUserLogin({ groups: [UserGroup.Supervisor] })
+    newUserLogin({
+      groups: [UserGroup.Supervisor]
+    })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
@@ -65,7 +65,9 @@ describe("Reasons filters", () => {
   })
 
   it("should render the correct reasons if a user has conflicting groups", () => {
-    newUserLogin({ groups: [UserGroup.Supervisor, UserGroup.ExceptionHandler] })
+    newUserLogin({
+      groups: [UserGroup.Supervisor, UserGroup.ExceptionHandler]
+    })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")

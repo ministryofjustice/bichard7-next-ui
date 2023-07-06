@@ -34,7 +34,8 @@ describe("listCourtCases", () => {
   const testUser = {
     visibleForces: [orgCode],
     visibleCourts: [],
-    groups: [UserGroup.GeneralHandler]
+    hasAccessToExceptions: true,
+    hasAccessToTriggers: true
   } as Partial<User> as User
 
   beforeAll(async () => {
@@ -69,17 +70,14 @@ describe("listCourtCases", () => {
   })
 
   it("Should call leftJoinAndSelectTriggersQuery with the correct arguments", async () => {
-    const dummyCaseState = "Unresolved and resolved"
-    const dummyExcludedTriggers = ["TRPDUMMY"]
-    testUser.excludedTriggers = dummyExcludedTriggers
-    await listCourtCases(dataSource, { maxPageItems: "1", caseState: dummyCaseState }, testUser)
+    const excludedTriggers = ["TRPDUMMY"]
+    const caseState = "Unresolved and resolved"
+    const excludedTriggersUser = Object.assign({ excludedTriggers: excludedTriggers }, testUser)
+
+    await listCourtCases(dataSource, { maxPageItems: "1", caseState: caseState }, excludedTriggersUser)
 
     expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledTimes(1)
-    expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(
-      expect.any(Object),
-      dummyExcludedTriggers,
-      dummyCaseState
-    )
+    expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(expect.any(Object), excludedTriggers, caseState)
   })
 
   it("Should return cases with notes correctly", async () => {
@@ -120,14 +118,10 @@ describe("listCourtCases", () => {
       ]
     ]
 
-    const query = await insertDummyCourtCasesWithNotes(caseNotes, "01")
+    const query = await insertDummyCourtCasesWithNotes(caseNotes, orgCode)
     expect(isError(query)).toBe(false)
 
-    const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
-      visibleForces: ["01"],
-      visibleCourts: [],
-      groups: [UserGroup.GeneralHandler]
-    } as Partial<User> as User)
+    const result = await listCourtCases(dataSource, { maxPageItems: "100" }, testUser)
     expect(isError(result)).toBe(false)
     const { result: cases } = result as ListCourtCaseResult
 
@@ -142,11 +136,7 @@ describe("listCourtCases", () => {
     it("Should return all the cases if they number less than or equal to the specified maxPageItems", async () => {
       await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
-      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
-        visibleForces: ["36FPA1"],
-        visibleCourts: [],
-        groups: [UserGroup.GeneralHandler]
-      } as Partial<User> as User)
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, testUser)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -160,11 +150,7 @@ describe("listCourtCases", () => {
     it("shouldn't return more cases than the specified maxPageItems", async () => {
       await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
-      const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
-        visibleForces: ["36FPA1"],
-        visibleCourts: [],
-        groups: [UserGroup.GeneralHandler]
-      } as Partial<User> as User)
+      const result = await listCourtCases(dataSource, { maxPageItems: "10" }, testUser)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
 
@@ -198,7 +184,8 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
         visibleForces: ["01"],
         visibleCourts: [],
-        groups: [UserGroup.GeneralHandler]
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
@@ -230,7 +217,8 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
         visibleForces: ["01"],
         visibleCourts: [],
-        groups: [UserGroup.GeneralHandler]
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
@@ -247,7 +235,8 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "2" }, {
         visibleForces: ["36FPA1"],
         visibleCourts: [],
-        groups: [UserGroup.GeneralHandler]
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
@@ -1394,13 +1383,9 @@ describe("listCourtCases", () => {
           status: "Resolved"
         }
       ]
-      await insertDummyCourtCasesWithTriggers([caseOneTriggers, caseTwoTriggers], "01")
+      await insertDummyCourtCasesWithTriggers([caseOneTriggers, caseTwoTriggers], orgCode)
 
-      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, {
-        visibleForces: ["01"],
-        visibleCourts: [],
-        groups: [UserGroup.GeneralHandler]
-      } as Partial<User> as User)
+      const result = await listCourtCases(dataSource, { maxPageItems: "100" }, testUser)
       expect(isError(result)).toBe(false)
       const { result: cases } = result as ListCourtCaseResult
 
@@ -1429,15 +1414,11 @@ describe("listCourtCases", () => {
       }
 
       await insertCourtCasesWithFields(
-        Array.from({ length: 2 }, () => ({ orgForPoliceFilter: "01", resolutionTimestamp: new Date() }))
+        Array.from({ length: 2 }, () => ({ orgForPoliceFilter: orgCode, resolutionTimestamp: new Date() }))
       )
       await insertTriggers(0, [unresolvedTrigger, resolvedTrigger])
 
-      const result = await listCourtCases(dataSource, { maxPageItems: "100", caseState: "Unresolved" }, {
-        visibleForces: ["01"],
-        visibleCourts: [],
-        groups: [UserGroup.GeneralHandler]
-      } as Partial<User> as User)
+      const result = await listCourtCases(dataSource, { maxPageItems: "100", caseState: "Unresolved" }, testUser)
       expect(isError(result)).toBe(false)
       const { result: cases } = result as ListCourtCaseResult
 
@@ -1588,32 +1569,44 @@ describe("listCourtCases", () => {
     const noGroupsUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
-      groups: []
+      groups: [],
+      hasAccessToExceptions: false,
+      hasAccessToTriggers: false
     } as Partial<User> as User
     const triggerHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
-      groups: [UserGroup.TriggerHandler]
+      groups: [UserGroup.TriggerHandler],
+      hasAccessToExceptions: false,
+      hasAccessToTriggers: true
     } as Partial<User> as User
     const exceptionHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
-      groups: [UserGroup.ExceptionHandler]
+      groups: [UserGroup.ExceptionHandler],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: false
     } as Partial<User> as User
     const triggerAndExceptionHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
-      groups: [UserGroup.TriggerHandler, UserGroup.ExceptionHandler]
+      groups: [UserGroup.TriggerHandler, UserGroup.ExceptionHandler],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: true
     } as Partial<User> as User
     const generalHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
-      groups: [UserGroup.GeneralHandler]
+      groups: [UserGroup.GeneralHandler],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: true
     } as Partial<User> as User
     const supervisorUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
-      groups: [UserGroup.Supervisor]
+      groups: [UserGroup.Supervisor],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: true
     } as Partial<User> as User
 
     it("Shouldn't show cases to a user with no permissions", async () => {

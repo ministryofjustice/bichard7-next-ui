@@ -1,7 +1,9 @@
-import type User from "services/entities/User"
 import { UserGroup } from "types/UserGroup"
 
-const hasAccessToTriggers = (user: User) => {
+// This type is used instead of the User entity to avoid dependency cycles
+type User = { groups: UserGroup[] }
+
+const hasAccessToTriggers = (user: User): boolean => {
   return (
     user.groups !== undefined &&
     user.groups.some(
@@ -14,7 +16,7 @@ const hasAccessToTriggers = (user: User) => {
   )
 }
 
-const hasAccessToExceptions = (user: User) => {
+const hasAccessToExceptions = (user: User): boolean => {
   return (
     user.groups !== undefined &&
     user.groups.some(
@@ -27,8 +29,8 @@ const hasAccessToExceptions = (user: User) => {
   )
 }
 
-const isSupervisor = (user: User) => {
+const isSupervisor = (user: User): boolean => {
   return user.groups !== undefined && user.groups.some((group) => group === UserGroup.Supervisor)
 }
 
-export { hasAccessToExceptions, hasAccessToTriggers, isSupervisor }
+export { hasAccessToTriggers, hasAccessToExceptions, isSupervisor }
