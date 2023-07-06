@@ -200,8 +200,6 @@ const Home: NextPage<Props> = (query) => {
     setCookie(queryStringCookieName, queryParams.toString(), { path: "/" })
   }, [router, queryStringCookieName])
 
-  console.log(user)
-
   return (
     <>
       <Head>
