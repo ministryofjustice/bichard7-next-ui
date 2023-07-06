@@ -20,8 +20,6 @@ export const CaseInformation = ({ caseInformation }: caseInformationProps) => {
     }
   ]
 
-  console.log(caseInformation.ForceOwner)
-
   if (caseInformation.ForceOwner !== undefined) {
     rows.push({
       label: "Force owner",

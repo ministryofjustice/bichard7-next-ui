@@ -14,7 +14,6 @@ import {
   triggersAreLockedByAnotherUser
 } from "utils/caseLocks"
 import { gdsLightGrey, textPrimary } from "utils/colours"
-import { hasAccessToExceptions, hasAccessToTriggers } from "utils/userPermissions"
 
 interface Props {
   courtCase: CourtCase
@@ -81,7 +80,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           {"Case details"}
         </Heading>
         <CaseDetailsLockTag
-          isRendered={hasAccessToExceptions(user)}
+          isRendered={user.hasAccessToExceptions}
           lockName="Exceptions"
           lockCheckFn={exceptionsAreLockedByAnotherUser}
           lockHolder={courtCase.errorLockedByUserFullName ?? "Another user"}
@@ -104,7 +103,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           />
         </Heading>
         <CaseDetailsLockTag
-          isRendered={hasAccessToTriggers(user)}
+          isRendered={user.hasAccessToTriggers}
           lockName="Triggers"
           lockCheckFn={triggersAreLockedByAnotherUser}
           lockHolder={courtCase.triggerLockedByUserFullName ?? "Another user"}

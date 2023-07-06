@@ -8,9 +8,6 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import UnlockReason from "types/UnlockReason"
-import { hasAccessToTriggers, hasAccessToExceptions, isSupervisor } from "utils/userPermissions"
-
-jest.mock("utils/userPermissions")
 
 describe("lock court case", () => {
   let dataSource: DataSource
@@ -44,9 +41,6 @@ describe("lock court case", () => {
 
   beforeEach(async () => {
     await deleteFromEntity(CourtCase)
-    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
-    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
-    ;(isSupervisor as jest.Mock).mockReturnValue(false)
   })
 
   afterEach(() => {
@@ -79,7 +73,9 @@ describe("lock court case", () => {
       const user = {
         username: lockedByName,
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
@@ -112,12 +108,13 @@ describe("lock court case", () => {
         orgForPoliceFilter: "36FPA "
       })
       await insertCourtCases(lockedCourtCase)
-      ;(hasAccessToTriggers as jest.Mock).mockReturnValue(false)
 
       const user = {
         username: lockedByName,
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: false
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
@@ -145,12 +142,13 @@ describe("lock court case", () => {
         orgForPoliceFilter: "36FPA "
       })
       await insertCourtCases(lockedCourtCase)
-      ;(hasAccessToExceptions as jest.Mock).mockReturnValue(false)
 
       const user = {
         username: lockedByName,
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: false,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
@@ -182,7 +180,9 @@ describe("lock court case", () => {
       const user = {
         username: lockedByName,
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
@@ -214,7 +214,9 @@ describe("lock court case", () => {
       const user = {
         username: lockedByName,
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
@@ -245,7 +247,9 @@ describe("lock court case", () => {
       const user = {
         username: lockedByName,
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
@@ -276,7 +280,9 @@ describe("lock court case", () => {
       const user = {
         username: lockedByName,
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
@@ -301,10 +307,10 @@ describe("lock court case", () => {
     it("can handle missing permission gracefully", async () => {
       const dummyErrorId = 0
       const user = {
-        username: "Dummy username"
+        username: "Dummy username",
+        hasAccessToExceptions: false,
+        hasAccessToTriggers: false
       } as Partial<User> as User
-      ;(hasAccessToExceptions as jest.Mock).mockReturnValue(false)
-      ;(hasAccessToTriggers as jest.Mock).mockReturnValue(false)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
@@ -325,9 +331,10 @@ describe("lock court case", () => {
     it("can handle missing permission gracefully when unlocking triggers", async () => {
       const dummyErrorId = 0
       const user = {
-        username: "Dummy username"
+        username: "Dummy username",
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: false
       } as Partial<User> as User
-      ;(hasAccessToTriggers as jest.Mock).mockReturnValue(false)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
@@ -348,9 +355,10 @@ describe("lock court case", () => {
     it("can handle missing permission gracefully when unlocking exceptions", async () => {
       const dummyErrorId = 0
       const user = {
-        username: "Dummy username"
+        username: "Dummy username",
+        hasAccessToExceptions: false,
+        hasAccessToTriggers: true
       } as Partial<User> as User
-      ;(hasAccessToExceptions as jest.Mock).mockReturnValue(false)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
@@ -380,7 +388,9 @@ describe("lock court case", () => {
       const user = {
         username: "User with different name",
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
@@ -414,9 +424,11 @@ describe("lock court case", () => {
       const user = {
         username: "Sup User",
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true,
+        isSupervisor: true
       } as Partial<User> as User
-      ;(isSupervisor as jest.Mock).mockReturnValue(true)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
@@ -447,9 +459,11 @@ describe("lock court case", () => {
       const user = {
         username: "Sup User",
         visibleForces: ["13GH"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true,
+        isSupervisor: true
       } as Partial<User> as User
-      ;(isSupervisor as jest.Mock).mockReturnValue(true)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
@@ -484,9 +498,10 @@ describe("lock court case", () => {
       const user = {
         username: "dummy username",
         visibleForces: ["36FPA1"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: false
       } as Partial<User> as User
-      ;(hasAccessToTriggers as jest.Mock).mockReturnValue(false)
 
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(

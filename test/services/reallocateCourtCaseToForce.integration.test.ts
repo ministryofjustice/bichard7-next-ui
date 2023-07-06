@@ -12,10 +12,8 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
-import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.mock("services/insertNotes")
-jest.mock("utils/userPermissions")
 
 const createUnlockedEvent = (unlockReason: "Trigger" | "Exception", userName: string) => {
   return {
@@ -61,8 +59,6 @@ describe("reallocate court case to another force", () => {
     jest.resetAllMocks()
     jest.clearAllMocks()
     ;(insertNotes as jest.Mock).mockImplementation(jest.requireActual("services/insertNotes").default)
-    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
-    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
   })
 
   afterAll(async () => {
@@ -86,7 +82,9 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: userName,
         visibleForces: [oldForceCode],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode)
@@ -143,7 +141,9 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: userName,
         visibleForces: [oldForceCode],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode, "Dummy user note")
@@ -202,7 +202,9 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06").catch((error) => error)
@@ -236,7 +238,9 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06").catch((error) => error)
@@ -267,7 +271,9 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
@@ -298,7 +304,9 @@ describe("reallocate court case to another force", () => {
       const user = {
         username: "Dummy User",
         visibleForces: [oldForceCode],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       jest
