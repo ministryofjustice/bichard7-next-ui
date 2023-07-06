@@ -19,6 +19,8 @@ export default class Note extends BaseEntity {
   @Column({ name: "user_id" })
   userId!: string
 
+  userFullName?: string
+
   @Column({ name: "create_ts", type: "timestamp", transformer: dateTransformer })
   createdAt!: Date
 

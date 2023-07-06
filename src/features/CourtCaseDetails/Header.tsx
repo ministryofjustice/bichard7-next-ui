@@ -83,7 +83,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           isRendered={user.hasAccessToExceptions}
           lockName="Exceptions"
           lockCheckFn={exceptionsAreLockedByAnotherUser}
-          lockHolder={courtCase.errorLockedByUsername ?? "Another user"}
+          lockHolder={courtCase.errorLockedByUserFullName ?? "Another user"}
         />
       </HeaderRow>
       <HeaderRow>
@@ -106,7 +106,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           isRendered={user.hasAccessToTriggers}
           lockName="Triggers"
           lockCheckFn={triggersAreLockedByAnotherUser}
-          lockHolder={courtCase.triggerLockedByUsername ?? "Another user"}
+          lockHolder={courtCase.triggerLockedByUserFullName ?? "Another user"}
         />
       </HeaderRow>
       <ButtonContainer>

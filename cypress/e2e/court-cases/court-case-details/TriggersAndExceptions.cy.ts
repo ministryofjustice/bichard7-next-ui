@@ -83,7 +83,7 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "anotherUser",
+          triggerLockedByUsername: "another.user",
           orgForPoliceFilter: "01"
         }
       ])
@@ -103,7 +103,7 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "anotherUser",
+          triggerLockedByUsername: "another.user",
           orgForPoliceFilter: "01"
         }
       ])
@@ -166,7 +166,7 @@ describe("Triggers and exceptions", () => {
       cy.task("insertCourtCasesWithFields", [
         {
           errorLockedByUsername: null,
-          triggerLockedByUsername: "AnotherUser",
+          triggerLockedByUsername: "another.user",
           orgForPoliceFilter: "01"
         }
       ])
@@ -181,7 +181,7 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "anotherUser",
+          triggerLockedByUsername: "another.user",
           orgForPoliceFilter: "01"
         }
       ])
@@ -200,7 +200,7 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "anotherUser",
+          triggerLockedByUsername: "another.user",
           orgForPoliceFilter: "01"
         }
       ])
@@ -213,13 +213,13 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "anotherUser",
+          triggerLockedByUsername: "another.user",
           orgForPoliceFilter: "01"
         }
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("#triggers-locked-tag #triggers-locked-tag-lockee").should("contain.text", "anotherUser")
+      cy.get("#triggers-locked-tag #triggers-locked-tag-lockee").should("contain.text", "Another User")
     })
   })
 
@@ -273,7 +273,7 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "anotherUser",
+          triggerLockedByUsername: "another.user",
           orgForPoliceFilter: "01"
         }
       ])

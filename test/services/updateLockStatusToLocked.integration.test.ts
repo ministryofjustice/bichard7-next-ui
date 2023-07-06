@@ -84,7 +84,7 @@ describe("Update lock status to locked", () => {
     })
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toStrictEqual(expectedCourtCase)
+    expect(actualCourtCase).toMatchObject(expectedCourtCase)
     expect(events).toStrictEqual([exceptionLockedEvent(), triggerLockedEvent()])
   })
 
@@ -116,7 +116,7 @@ describe("Update lock status to locked", () => {
     expect(result).toBeTruthy()
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toStrictEqual(inputCourtCase)
+    expect(actualCourtCase).toMatchObject(inputCourtCase)
     expect(events).toHaveLength(0)
   })
 
@@ -158,7 +158,7 @@ describe("Update lock status to locked", () => {
     expect(result).toBeTruthy()
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toStrictEqual(expectedCourtCase)
+    expect(actualCourtCase).toMatchObject(expectedCourtCase)
     expect(events).toStrictEqual([triggerLockedEvent()])
   })
 
@@ -200,7 +200,7 @@ describe("Update lock status to locked", () => {
     expect(result).toBeTruthy()
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toStrictEqual(expectedCourtCase)
+    expect(actualCourtCase).toMatchObject(expectedCourtCase)
     expect(events).toStrictEqual([exceptionLockedEvent()])
   })
 
@@ -239,7 +239,7 @@ describe("Update lock status to locked", () => {
     expect(result).toBeTruthy()
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toStrictEqual(expectedCourtCase)
+    expect(actualCourtCase).toMatchObject(expectedCourtCase)
     expect(events).toHaveLength(0)
   })
 
@@ -279,7 +279,7 @@ describe("Update lock status to locked", () => {
     expect(result).toBeTruthy()
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toStrictEqual(expectedCourtCase)
+    expect(actualCourtCase).toMatchObject(expectedCourtCase)
     expect(events).toHaveLength(0)
   })
 
@@ -310,7 +310,7 @@ describe("Update lock status to locked", () => {
     expect(result).toEqual(new Error("update requires a lock (exception or trigger) to update"))
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toStrictEqual(inputCourtCase)
+    expect(actualCourtCase).toMatchObject(inputCourtCase)
     expect(events).toHaveLength(0)
   })
 })

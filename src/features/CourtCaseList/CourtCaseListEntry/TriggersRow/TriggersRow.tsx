@@ -13,6 +13,7 @@ interface TriggersRowProps {
   isCaseUnlocked: boolean
   rowClassName: string
   triggerLockedByUsername: string | null | undefined
+  triggerLockedByUserFullName: string | null | undefined
   triggers: Trigger[]
   unlockPath: string
 }
@@ -31,6 +32,7 @@ export const TriggersRow = ({
   isCaseUnlocked,
   rowClassName,
   triggerLockedByUsername,
+  triggerLockedByUserFullName,
   triggers,
   unlockPath
 }: TriggersRowProps) => {
@@ -78,9 +80,9 @@ export const TriggersRow = ({
       </Table.Cell>
       <Table.Cell>
         {canCurrentUserUnlockCase ? (
-          <LockedByTag lockedBy={triggerLockedByUsername} unlockPath={unlockPath} />
+          <LockedByTag lockedBy={triggerLockedByUserFullName} unlockPath={unlockPath} />
         ) : (
-          <LockedByTag lockedBy={triggerLockedByUsername} />
+          <LockedByTag lockedBy={triggerLockedByUserFullName} />
         )}
 
         <CaseUnlockedTag isCaseUnlocked={isCaseUnlocked} />

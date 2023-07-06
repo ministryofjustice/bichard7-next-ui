@@ -28,12 +28,14 @@ const CourtCaseListEntry: React.FC<Props> = ({
     defendantName,
     errorId,
     errorLockedByUsername,
+    errorLockedByUserFullName,
     errorReport,
     isUrgent,
     notes,
     ptiurn,
     resolutionTimestamp,
     triggerLockedByUsername,
+    triggerLockedByUserFullName,
     triggers
   } = courtCase
   const { basePath, query } = useRouter()
@@ -62,6 +64,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
         defendantName={defendantName}
         errorId={errorId}
         errorLockedByUsername={errorLockedByUsername}
+        errorLockedByUserFullName={errorLockedByUserFullName}
         errorReport={errorReport}
         firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
         isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername}
@@ -78,6 +81,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
         isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !triggerLockedByUsername}
         rowClassName={entityClassName}
         triggerLockedByUsername={triggerLockedByUsername}
+        triggerLockedByUserFullName={triggerLockedByUserFullName}
         triggers={triggers}
         unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
       />

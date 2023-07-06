@@ -52,7 +52,7 @@ const sanitiseGroupName = (name: string) => {
 
 const insertUsers = async (users: User | User[], userGroups?: string[]): Promise<InsertResult> => {
   const dataSource = await getDataSource()
-  const result = await dataSource.createQueryBuilder().insert().into(User).values(users).execute()
+  const result = await dataSource.createQueryBuilder().insert().into(User).values(users).orIgnore().execute()
 
   if (!userGroups?.length) {
     return result

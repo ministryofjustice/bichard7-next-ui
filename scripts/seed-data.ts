@@ -8,6 +8,8 @@ import deleteFromEntity from "../test/utils/deleteFromEntity"
 import { KeyValuePair } from "../src/types/KeyValuePair"
 import createAuditLogRecord from "../test/helpers/createAuditLogRecord"
 import insertManyIntoDynamoTable from "../test/utils/insertManyIntoDynamoTable"
+import { insertLockUsers } from "../test/utils/insertLockUsers"
+import { insertNoteUser } from "../test/utils/insertNoteUser"
 
 if (process.env.DEPLOY_NAME !== "e2e-test") {
   console.error("Not running in e2e environment, bailing out. Set DEPLOY_NAME='e2e-test' if you're sure.")
@@ -29,12 +31,21 @@ getDataSource().then(async (dataSource) => {
   const auditLogs: KeyValuePair<string, unknown>[] = []
   await Promise.all(entitiesToClear.map((entity) => deleteFromEntity(entity)))
 
-  await Promise.all(
+  const courtCases = await Promise.all(
     new Array(numCases).fill(0).map(async (_, idx) => {
       const courtCase = await createDummyCase(dataSource, idx, forceId, subDays(new Date(), maxCaseAge))
-      auditLogs.push(createAuditLogRecord(courtCase, "Seed data script"))
+      auditLogs.push(createAuditLogRecord(courtCase))
+      return courtCase
     })
   )
+
+  const courtCaseNotes = courtCases
+    .filter((courtcase) => courtcase.notes.length > 0)
+    .map((courtCase) => courtCase.notes)
+    .flat()
+
+  await Promise.all(courtCases.map((courtCase) => insertLockUsers(courtCase)))
+  await Promise.all(courtCaseNotes.map((courtCaseNote) => insertNoteUser(courtCaseNote)))
 
   await insertManyIntoDynamoTable(auditLogs)
 })

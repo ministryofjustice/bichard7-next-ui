@@ -67,7 +67,7 @@ describe("Court case details", () => {
       caseNotes: [
         [
           {
-            user: "bichard01",
+            user: "another.user",
             text: "Test note 1"
           },
           {
@@ -83,7 +83,7 @@ describe("Court case details", () => {
 
     clickTab("Notes")
 
-    cy.contains("bichard01")
+    cy.contains("Another User")
     cy.contains("Test note 1")
     cy.contains("System")
     cy.contains("Test note 2")
@@ -94,7 +94,7 @@ describe("Court case details", () => {
       caseNotes: [
         [
           {
-            user: "bichard01",
+            user: "another.user",
             text: "Test note 1"
           },
           {
@@ -119,7 +119,7 @@ describe("Court case details", () => {
     cy.findByText("View user notes").click()
     cy.should("not.contain", "System")
     cy.should("not.contain", "Test note 2")
-    cy.contains("bichard01")
+    cy.contains("Another User")
     cy.contains("Test note 1")
   })
 
