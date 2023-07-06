@@ -4,6 +4,7 @@ import BaseEntity from "./BaseEntity"
 import featureFlagTransformer from "./transformers/featureFlagTransformer"
 import delimitedString from "./transformers/delimitedString"
 import { UserGroup } from "../../types/UserGroup"
+import { hasAccessToExceptions, hasAccessToTriggers, isSupervisor } from "utils/userPermissions"
 
 @Entity({ name: "users" })
 export default class User extends BaseEntity {
@@ -37,32 +38,14 @@ export default class User extends BaseEntity {
   groups: UserGroup[] = []
 
   get hasAccessToTriggers() {
-    return (
-      this.groups !== undefined &&
-      this.groups.some(
-        (group) =>
-          group === UserGroup.TriggerHandler ||
-          group === UserGroup.GeneralHandler ||
-          group === UserGroup.Allocator ||
-          group === UserGroup.Supervisor
-      )
-    )
+    return hasAccessToTriggers(this)
   }
 
   get hasAccessToExceptions() {
-    return (
-      this.groups !== undefined &&
-      this.groups.some(
-        (group) =>
-          group === UserGroup.ExceptionHandler ||
-          group === UserGroup.GeneralHandler ||
-          group === UserGroup.Allocator ||
-          group === UserGroup.Supervisor
-      )
-    )
+    return hasAccessToExceptions(this)
   }
 
   get isSupervisor() {
-    return this.groups !== undefined && this.groups.some((group) => group === UserGroup.Supervisor)
+    return isSupervisor(this)
   }
 }

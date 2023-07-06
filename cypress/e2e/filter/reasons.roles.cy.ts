@@ -24,10 +24,7 @@ describe("Reasons filters", () => {
 
   it("should display all options for supervisors", () => {
     newUserLogin({
-      groups: [UserGroup.Supervisor],
-      hasAccessToTriggers: true,
-      hasAccessToExceptions: true,
-      isSupervisor: true
+      groups: [UserGroup.Supervisor]
     })
     navigateAndShowFilters()
 
@@ -37,7 +34,7 @@ describe("Reasons filters", () => {
   })
 
   it("should display all options for general handlers", () => {
-    newUserLogin({ groups: [UserGroup.GeneralHandler], hasAccessToTriggers: true, hasAccessToExceptions: true })
+    newUserLogin({ groups: [UserGroup.GeneralHandler] })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
@@ -46,7 +43,7 @@ describe("Reasons filters", () => {
   })
 
   it("should display 'Triggers' and 'Bails' for trigger handlers", () => {
-    newUserLogin({ groups: [UserGroup.TriggerHandler], hasAccessToTriggers: true })
+    newUserLogin({ groups: [UserGroup.TriggerHandler] })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
@@ -54,14 +51,14 @@ describe("Reasons filters", () => {
   })
 
   it("should not display 'Exceptions' for trigger handlers", () => {
-    newUserLogin({ groups: [UserGroup.TriggerHandler], hasAccessToTriggers: true })
+    newUserLogin({ groups: [UserGroup.TriggerHandler] })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .exceptions").should("not.exist")
   })
 
   it("should not render the reasons component for exception handlers", () => {
-    newUserLogin({ groups: [UserGroup.ExceptionHandler], hasAccessToExceptions: true })
+    newUserLogin({ groups: [UserGroup.ExceptionHandler] })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons").should("not.exist")
@@ -69,10 +66,7 @@ describe("Reasons filters", () => {
 
   it("should render the correct reasons if a user has conflicting groups", () => {
     newUserLogin({
-      groups: [UserGroup.Supervisor, UserGroup.ExceptionHandler],
-      hasAccessToTriggers: true,
-      hasAccessToExceptions: true,
-      isSupervisor: true
+      groups: [UserGroup.Supervisor, UserGroup.ExceptionHandler]
     })
     navigateAndShowFilters()
 

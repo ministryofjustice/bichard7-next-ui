@@ -378,7 +378,7 @@ describe("Triggers and exceptions tabs", () => {
   })
 
   it("should only show triggers to Trigger Handlers", () => {
-    newUserLogin({ groups: [UserGroup.TriggerHandler], hasAccessToTriggers: true })
+    newUserLogin({ groups: [UserGroup.TriggerHandler] })
     cy.visit(caseURL)
 
     cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
@@ -390,7 +390,7 @@ describe("Triggers and exceptions tabs", () => {
   })
 
   it("should only show exceptions to Exception Handlers", () => {
-    newUserLogin({ groups: [UserGroup.ExceptionHandler], hasAccessToExceptions: true })
+    newUserLogin({ groups: [UserGroup.ExceptionHandler] })
     cy.visit(caseURL)
 
     cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("not.exist")
