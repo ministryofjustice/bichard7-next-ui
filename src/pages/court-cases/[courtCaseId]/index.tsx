@@ -94,9 +94,14 @@ export const getServerSideProps = withMultipleServerSideProps(
     if (isPost(req)) {
       const { noteText } = (await parseFormData(req)) as { noteText: string }
       if (noteText) {
-        const addNoteResult = await addNote(dataSource, +courtCaseId, currentUser.username, noteText)
-        if (!addNoteResult) {
-          return notSuccessful("Case is locked by another user")
+        const { isSuccessful, ValidationException, Exception } = await addNote(
+          dataSource,
+          +courtCaseId,
+          currentUser.username,
+          noteText
+        )
+        if (!isSuccessful) {
+          return notSuccessful(ValidationException || Exception?.message || "")
         }
       }
     }
