@@ -21,7 +21,7 @@ describe("Case list", () => {
             password: hashedPassword
           }
         ],
-        userGroups: ["B7NewUI_grp"]
+        userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
       })
     })
 

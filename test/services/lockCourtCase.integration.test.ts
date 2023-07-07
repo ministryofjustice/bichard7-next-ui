@@ -11,11 +11,9 @@ import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import axios from "axios"
 import updateLockStatusToLocked from "services/updateLockStatusToLocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
-import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.mock("services/updateLockStatusToLocked")
 jest.mock("services/storeAuditLogEvents")
-jest.mock("utils/userPermissions")
 
 describe("lock court case", () => {
   let dataSource: DataSource
@@ -23,7 +21,9 @@ describe("lock court case", () => {
   const user = {
     username: lockedByName,
     visibleForces: ["36FPA1"],
-    visibleCourts: []
+    visibleCourts: [],
+    hasAccessToExceptions: true,
+    hasAccessToTriggers: true
   } as Partial<User> as User
   let unlockedCourtCase: CourtCase
 
@@ -39,8 +39,6 @@ describe("lock court case", () => {
       jest.requireActual("services/updateLockStatusToLocked").default
     )
     ;(storeAuditLogEvents as jest.Mock).mockImplementation(jest.requireActual("services/storeAuditLogEvents").default)
-    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
-    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
     ;[unlockedCourtCase] = await insertCourtCasesWithFields([
       {
         errorLockedByUsername: null,

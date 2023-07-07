@@ -3,7 +3,8 @@ import type { KeyValuePair } from "types/KeyValuePair"
 import BaseEntity from "./BaseEntity"
 import featureFlagTransformer from "./transformers/featureFlagTransformer"
 import delimitedString from "./transformers/delimitedString"
-import type { UserGroup } from "../../types/UserGroup"
+import { UserGroup } from "../../types/UserGroup"
+import { hasAccessToExceptions, hasAccessToTriggers, isSupervisor } from "../../utils/userPermissions"
 
 @Entity({ name: "users" })
 export default class User extends BaseEntity {
@@ -35,4 +36,16 @@ export default class User extends BaseEntity {
   featureFlags!: KeyValuePair<string, boolean>
 
   groups: UserGroup[] = []
+
+  get hasAccessToTriggers() {
+    return hasAccessToTriggers(this)
+  }
+
+  get hasAccessToExceptions() {
+    return hasAccessToExceptions(this)
+  }
+
+  get isSupervisor() {
+    return isSupervisor(this)
+  }
 }

@@ -10,11 +10,9 @@ import { DataSource } from "typeorm"
 import offenceSequenceException from "../test-data/HO100302_1.json"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.mock("services/mq/sendToQueue")
 jest.mock("services/insertNotes")
-jest.mock("utils/userPermissions")
 
 jest.setTimeout(60 * 60 * 1000)
 
@@ -30,8 +28,6 @@ describe("resubmit court case", () => {
     await deleteFromEntity(CourtCase)
     jest.resetAllMocks()
     jest.clearAllMocks()
-    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
-    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
   })
 
   afterAll(async () => {
@@ -61,7 +57,9 @@ describe("resubmit court case", () => {
     const result = await resubmitCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
       username: userName,
       visibleForces: ["1"],
-      visibleCourts: []
+      visibleCourts: [],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: true
     } as Partial<User> as User)
 
     expect(result).not.toBeInstanceOf(Error)
@@ -121,7 +119,9 @@ describe("resubmit court case", () => {
       {
         username: userName,
         visibleForces: ["1111"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
     )
 
@@ -202,7 +202,9 @@ describe("resubmit court case", () => {
       {
         username: userName,
         visibleForces: ["1111"],
-        visibleCourts: []
+        visibleCourts: [],
+        hasAccessToExceptions: true,
+        hasAccessToTriggers: true
       } as Partial<User> as User
     )
 

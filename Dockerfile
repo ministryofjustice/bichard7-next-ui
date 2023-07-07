@@ -1,8 +1,6 @@
+#########################################################
 ARG BUILD_IMAGE="nginx-nodejs-supervisord"
-
-# Build UI app
-
-FROM ${BUILD_IMAGE} as app_builder
+FROM ${BUILD_IMAGE} as builder
 
 LABEL maintainer="CJSE"
 
@@ -24,10 +22,13 @@ COPY . ./
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Currently configured to run the standalone nextjs build
+#
+# next.config.js 
+#   output: standalone
 RUN npm run build
 
-# Run UI app
-
+#########################################################
 FROM ${BUILD_IMAGE} as runner
 
 RUN useradd nextjs && \
@@ -40,13 +41,22 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-COPY --from=app_builder /src/ui/next.config.js ./
-COPY --from=app_builder /src/ui/package*.json ./
-COPY --from=app_builder /src/ui/public ./public
-COPY --from=app_builder /src/ui/.next/standalone .
-COPY --from=app_builder /src/ui/.next/static ./.next/static
-# Copy standing data package to Core repository as core dependency
-COPY --from=app_builder \
+COPY --from=builder /src/ui/package*.json ./
+COPY --from=builder /src/ui/next.config.js ./
+
+# Copy assets from builder
+COPY --from=builder /src/ui/public ./public
+COPY --from=builder /src/ui/.next/static ./.next/static
+
+# Extract standalone build to working directory
+COPY --from=builder /src/ui/.next/standalone .
+
+# When next shakes the tree during the build, it doesn't find 
+# a direct require/import for the standing data package that 
+# core imports dynamically, so it removes the package entirely.
+#
+# Copy the standing data package back where it belongs
+COPY --from=builder \
         /src/ui/.next/standalone/node_modules/@moj-bichard7-developers/bichard7-next-data \ 
         ./node_modules/@moj-bichard7-developers/bichard7-next-core/node_modules/bichard7-next-data-latest
 
