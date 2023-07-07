@@ -114,7 +114,7 @@ const CourtCaseDetails: React.FC<Props> = ({
           setActiveTab(tab)
           updateQueryString({ tab, offence: null })
         }}
-        tabs={["Defendant", "Hearing", "Case", "Offences", "Notes", "PNC errors"]}
+        tabs={["Defendant", "Hearing", "Case", "Offences", "Notes"]}
         width={contentWidth}
       />
 
@@ -151,10 +151,6 @@ const CourtCaseDetails: React.FC<Props> = ({
 
           <ConditionalRender isRendered={activeTab === "Notes"}>
             <Notes notes={courtCase.notes} lockedByAnotherUser={errorLockedByAnotherUser} />
-          </ConditionalRender>
-
-          <ConditionalRender isRendered={activeTab === "PNC errors"}>
-            <CourtCaseDetailsPanel heading={"PNC errors"}>{""}</CourtCaseDetailsPanel>
           </ConditionalRender>
 
           <ConditionalRender isRendered={!lockedByAnotherUser}>
