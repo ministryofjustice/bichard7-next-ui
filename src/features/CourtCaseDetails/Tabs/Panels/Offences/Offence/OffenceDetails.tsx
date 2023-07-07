@@ -7,6 +7,7 @@ import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.
 import { capitaliseExpression, getYesOrNo, HearingResult } from "./HearingResult"
 import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
 import { formatDisplayedDate } from "utils/formattedDate"
+import { StartDate } from "./StartDate"
 
 interface OffenceDetailsProps {
   offence: Offence
@@ -52,14 +53,7 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
         <TableRow label="Category" value={getOffenceCategory(offence.OffenceCategory)} />
         <TableRow label="Arrest date" value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))} />
         <TableRow label="Charge date" value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))} />
-        <TableRow label="Date code" value={offence.ActualOffenceDateCode} />
-        <TableRow
-          label="Start date"
-          value={
-            offence.ActualOffenceStartDate.StartDate &&
-            formatDisplayedDate(new Date(offence.ActualOffenceStartDate.StartDate))
-          }
-        />
+        <TableRow label="Start date" value={<StartDate offence={offence} />} />
         <TableRow label="Location" value={offence.LocationOfOffence} />
         <TableRow label="Wording" value={offence.ActualOffenceWording} />
         <TableRow label="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
