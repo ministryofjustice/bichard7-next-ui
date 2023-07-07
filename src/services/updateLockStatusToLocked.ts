@@ -5,7 +5,6 @@ import { ResolutionStatus } from "types/ResolutionStatus"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
-import { hasAccessToExceptions, hasAccessToTriggers } from "utils/userPermissions"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const updateLockStatusToLocked = async (
@@ -14,7 +13,7 @@ const updateLockStatusToLocked = async (
   user: User,
   events: AuditLogEvent[]
 ): Promise<UpdateResult | Error> => {
-  if (!hasAccessToExceptions(user) && !hasAccessToTriggers(user)) {
+  if (!user.hasAccessToExceptions && !user.hasAccessToTriggers) {
     return new Error("update requires a lock (exception or trigger) to update")
   }
 
@@ -25,14 +24,14 @@ const updateLockStatusToLocked = async (
     .createQueryBuilder()
     .update(CourtCase)
     .set({
-      ...(hasAccessToExceptions(user) ? { errorLockedByUsername: user.username } : {}),
-      ...(hasAccessToTriggers(user) ? { triggerLockedByUsername: user.username } : {})
+      ...(user.hasAccessToExceptions ? { errorLockedByUsername: user.username } : {}),
+      ...(user.hasAccessToTriggers ? { triggerLockedByUsername: user.username } : {})
     })
     .where({ errorId: courtCaseId })
 
   const submitted: ResolutionStatus = "Submitted"
 
-  if (hasAccessToExceptions(user)) {
+  if (user.hasAccessToExceptions) {
     query.andWhere({
       errorLockedByUsername: IsNull(),
       errorCount: MoreThan(0),
@@ -47,7 +46,7 @@ const updateLockStatusToLocked = async (
     )
   }
 
-  if (hasAccessToTriggers(user)) {
+  if (user.hasAccessToTriggers) {
     // we are checking the trigger status, this is not what legacy bichard does but we think that's a bug. Legacy bichard checks error_status (bichard-backend/src/main/java/uk/gov/ocjr/mtu/br7/errorlistmanager/data/ErrorDAO.java ln 1455)
     query.andWhere({
       triggerLockedByUsername: IsNull(),

@@ -17,14 +17,12 @@ import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrga
 import { AUDIT_LOG_API_URL, AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import axios from "axios"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
-jest.mock("utils/userPermissions")
 
 const expectToBeUnresolved = (courtCase: CourtCase) => {
   expect(courtCase.errorStatus).toEqual("Unresolved")
@@ -44,7 +42,9 @@ describe("resolveCourtCase", () => {
   const user = {
     visibleCourts: [],
     visibleForces: [visibleForce],
-    username: resolverUsername
+    username: resolverUsername,
+    hasAccessToExceptions: true,
+    hasAccessToTriggers: true
   } as Partial<User> as User
 
   beforeAll(async () => {
@@ -59,8 +59,6 @@ describe("resolveCourtCase", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
-    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
-    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
   })
 
   beforeEach(async () => {

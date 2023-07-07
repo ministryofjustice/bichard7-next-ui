@@ -12,13 +12,11 @@ import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrga
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import UnlockReason from "types/UnlockReason"
-import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 import axios from "axios"
 
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
-jest.mock("utils/userPermissions")
 
 describe("unlock court case", () => {
   let dataSource: DataSource
@@ -26,7 +24,9 @@ describe("unlock court case", () => {
   const user = {
     username: lockedByName,
     visibleForces: ["36FPA1"],
-    visibleCourts: []
+    visibleCourts: [],
+    hasAccessToExceptions: true,
+    hasAccessToTriggers: true
   } as Partial<User> as User
   let lockedCourtCase: CourtCase
 
@@ -45,8 +45,6 @@ describe("unlock court case", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
-    ;(hasAccessToExceptions as jest.Mock).mockReturnValue(true)
-    ;(hasAccessToTriggers as jest.Mock).mockReturnValue(true)
 
     lockedCourtCase = (
       (await insertCourtCasesWithFields([

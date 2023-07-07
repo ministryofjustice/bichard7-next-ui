@@ -7,7 +7,6 @@ import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import { hasAccessToExceptions, hasAccessToTriggers, isSupervisor } from "utils/userPermissions"
 import getCourtCase from "./getCourtCase"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
@@ -20,10 +19,10 @@ const updateLockStatusToUnlocked = async (
 ): Promise<UpdateResult | Error | undefined> => {
   const { username } = user
   const shouldUnlockExceptions =
-    hasAccessToExceptions(user) &&
+    user.hasAccessToExceptions &&
     (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Exception)
   const shouldUnlockTriggers =
-    hasAccessToTriggers(user) &&
+    user.hasAccessToTriggers &&
     (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Trigger)
 
   if (!shouldUnlockExceptions && !shouldUnlockTriggers) {
@@ -74,11 +73,11 @@ const updateLockStatusToUnlocked = async (
   query = courtCasesByOrganisationUnitQuery(query, user) as UpdateQueryBuilder<CourtCase>
   query.andWhere("error_id = :id", { id: courtCaseId })
 
-  if (!isSupervisor(user) && shouldUnlockExceptions && !!courtCase.errorLockedByUsername) {
+  if (!user.isSupervisor && shouldUnlockExceptions && !!courtCase.errorLockedByUsername) {
     query.andWhere({ errorLockedByUsername: username })
   }
 
-  if (!isSupervisor(user) && shouldUnlockTriggers && !!courtCase.triggerLockedByUsername) {
+  if (!user.isSupervisor && shouldUnlockTriggers && !!courtCase.triggerLockedByUsername) {
     query.andWhere({ triggerLockedByUsername: username })
   }
 
