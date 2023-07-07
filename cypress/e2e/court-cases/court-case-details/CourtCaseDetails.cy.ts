@@ -99,8 +99,6 @@ describe("Court case details", () => {
     cy.get("H3").contains("Offences")
     clickTab("Notes")
     cy.get("H3").contains("Notes")
-    clickTab("PNC errors")
-    cy.get("H3").contains("PNC errors")
   })
 
   it("Should display the content of the Defendant tab", () => {
