@@ -16,7 +16,7 @@ const updateLockStatusToUnlocked = async (
   user: User,
   unlockReason: UnlockReason,
   events: AuditLogEvent[]
-): Promise<UpdateResult | Error | undefined> => {
+): Promise<UpdateResult | Error> => {
   const { username } = user
   const shouldUnlockExceptions =
     user.hasAccessToExceptions &&
@@ -40,7 +40,7 @@ const updateLockStatusToUnlocked = async (
   }
 
   if (!courtCase.errorLockedByUsername && !courtCase.triggerLockedByUsername) {
-    return
+    return new Error("User hasn't got permission to unlock the case")
   }
 
   const generatedEvents: AuditLogEvent[] = []
@@ -83,7 +83,11 @@ const updateLockStatusToUnlocked = async (
 
   const result = await query.execute().catch((error: Error) => error)
 
-  if (!isError(result) && result.affected && result.affected > 0) {
+  if (isError(result)) {
+    return result
+  }
+
+  if (result.affected && result.affected > 0) {
     generatedEvents.forEach((event) => events.push(event))
   }
 

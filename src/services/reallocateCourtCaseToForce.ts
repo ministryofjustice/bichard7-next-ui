@@ -1,4 +1,4 @@
-import { DataSource, EntityManager, UpdateQueryBuilder } from "typeorm/"
+import { DataSource, EntityManager, UpdateQueryBuilder, UpdateResult } from "typeorm/"
 import { isError } from "types/Result"
 import { DEFAULT_STATION_CODE } from "utils/amendments/amendForceOwner/defaultStationCode"
 import amendCourtCase from "./amendCourtCase"
@@ -20,11 +20,11 @@ const reallocateCourtCaseToForce = async (
   user: User,
   forceCode: string,
   note?: string
-): Promise<void> => {
+): Promise<UpdateResult | Error> => {
   // TODO:
   // - Generate TRPR0028 if necessary
   // - Reset triggers on reallocate
-  await dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<void> => {
+  return dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<UpdateResult | Error> => {
     const events: AuditLogEvent[] = []
 
     const courtCase = await getCourtCase(entityManager, courtCaseId)
@@ -112,6 +112,8 @@ const reallocateCourtCaseToForce = async (
     if (isError(storeAuditLogResponse)) {
       throw storeAuditLogResponse
     }
+
+    return queryResult
   })
 }
 

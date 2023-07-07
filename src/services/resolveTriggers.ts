@@ -1,4 +1,4 @@
-import { DataSource, In, IsNull } from "typeorm"
+import { DataSource, In, IsNull, UpdateResult } from "typeorm"
 import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
 import Trigger from "./entities/Trigger"
@@ -23,7 +23,7 @@ const resolveTriggers = async (
   triggerIds: number[],
   courtCaseId: number,
   user: User
-): Promise<void> => {
+): Promise<UpdateResult | Error> => {
   const resolver = user.username
 
   return dataSource.transaction("SERIALIZABLE", async (entityManager) => {
@@ -129,6 +129,8 @@ const resolveTriggers = async (
     if (isError(storeAuditLogResponse)) {
       throw storeAuditLogResponse
     }
+
+    return updateTriggersResult
   })
 }
 
