@@ -52,13 +52,16 @@ describe("Start Date", () => {
       ActualOffenceDateCode: "4",
       ActualOffenceStartDate: {
         StartDate: new Date("08/29/1997")
+      },
+      ActualOffenceEndDate: {
+        EndDate: new Date("07/25/2003")
       }
     }
 
     cy.mount(<StartDate offence={offence as Offence} />)
 
     cy.contains("Between")
-    cy.contains("29/08/1997")
+    cy.contains("29/08/1997 and 25/07/2003")
     cy.contains("Date code: 4")
   })
 
