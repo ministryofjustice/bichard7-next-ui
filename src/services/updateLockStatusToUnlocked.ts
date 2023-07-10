@@ -9,27 +9,27 @@ import UnlockReason from "types/UnlockReason"
 import getCourtCase from "./getCourtCase"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
-const updatedFieldName = {
-  Exception: "errorLockedByUsername",
-  Trigger: "triggerLockedByUsername"
-}
-
-const unlockOperation = async (
+const unlock = async (
   unlockReason: "Trigger" | "Exception",
   courtCaseRepository: Repository<CourtCase>,
   courtCaseId: number,
   user: User,
   events: AuditLogEvent[]
 ): Promise<UpdateResult | Error> => {
+  const updatedFieldName = {
+    Exception: "errorLockedByUsername",
+    Trigger: "triggerLockedByUsername"
+  }[unlockReason]
+
   const query = courtCasesByOrganisationUnitQuery(
     courtCaseRepository.createQueryBuilder().update(CourtCase),
     user
   ) as UpdateQueryBuilder<CourtCase>
-  query.set({ [updatedFieldName[unlockReason]]: null })
+  query.set({ [updatedFieldName]: null })
   query.andWhere("error_id = :id", { id: courtCaseId }) // .andWhere is required because .where overwrites courtCasesByOrganisationUnitQuery conditions
 
   if (!user.isSupervisor) {
-    query.andWhere({ [updatedFieldName[unlockReason]]: user.username })
+    query.andWhere({ [updatedFieldName]: user.username })
   }
 
   const result = await query.execute().catch((error: Error) => error)
@@ -90,11 +90,11 @@ const updateLockStatusToUnlocked = async (
   const courtCaseRepository = dataSource.getRepository(CourtCase)
 
   if (shouldUnlockExceptions && !!courtCase.errorLockedByUsername) {
-    result = await unlockOperation("Exception", courtCaseRepository, courtCaseId, user, events)
+    result = await unlock("Exception", courtCaseRepository, courtCaseId, user, events)
   }
 
   if (shouldUnlockTriggers && !!courtCase.triggerLockedByUsername) {
-    result = await unlockOperation("Trigger", courtCaseRepository, courtCaseId, user, events)
+    result = await unlock("Trigger", courtCaseRepository, courtCaseId, user, events)
   }
 
   return result ?? new Error("Failed to unlock case")
