@@ -90,7 +90,7 @@ describe("resolveCourtCase", () => {
       user
     ).catch((error) => error)
 
-    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(2)
+    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(3)
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
   })
 
