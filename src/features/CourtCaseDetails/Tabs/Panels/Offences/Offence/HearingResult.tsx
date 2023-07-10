@@ -58,6 +58,15 @@ export const HearingResult = ({ result }: HearingResultProps) => {
         label="Result hearing date"
         value={result.ResultHearingDate && formatDisplayedDate(new Date(result.ResultHearingDate))}
       />
+      <ConditionalRender isRendered={typeof result.Duration !== "undefined" && result.Duration?.length > 0}>
+        {result.Duration?.map((duration) => (
+          <TableRow
+            key={`duration-${duration.DurationLength}-${duration.DurationUnit}`}
+            label="Duration"
+            value={`${duration.DurationLength} ${duration.DurationUnit}`}
+          />
+        ))}
+      </ConditionalRender>
       <ConditionalRender isRendered={typeof result.NextResultSourceOrganisation === "string"}>
         <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
       </ConditionalRender>
