@@ -79,8 +79,8 @@ const updateLockStatusToUnlocked = async (
   }
 
   const anyLockUserHasPermissionToUnlock =
-    (!user.hasAccessToExceptions || courtCase.errorLockedByUsername) &&
-    (!user.hasAccessToTriggers || courtCase.triggerLockedByUsername)
+    (user.hasAccessToExceptions && courtCase.errorLockedByUsername) ||
+    (user.hasAccessToTriggers && courtCase.triggerLockedByUsername)
 
   if (!anyLockUserHasPermissionToUnlock) {
     return new Error("Case is not locked")
