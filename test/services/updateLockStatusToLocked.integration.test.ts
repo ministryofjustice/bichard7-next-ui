@@ -38,6 +38,8 @@ describe("Update lock status to locked", () => {
     }
   })
 
+  const username = "Bichard01"
+
   beforeAll(async () => {
     dataSource = await getDataSource()
   })
@@ -53,7 +55,6 @@ describe("Update lock status to locked", () => {
   })
 
   it("Should lock a unlocked court case when viewed", async () => {
-    const username = "Bichard01"
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -92,7 +93,6 @@ describe("Update lock status to locked", () => {
   })
 
   it("Should not lock a court case when its already locked", async () => {
-    const username = "Bichard01"
     const anotherUser = "anotherUserName"
 
     const inputCourtCase = await getDummyCourtCase({
@@ -124,7 +124,6 @@ describe("Update lock status to locked", () => {
   })
 
   it("Should not lock a court case exception but it should lock a court case trigger", async () => {
-    const username = "Bichard01"
     const anotherUser = "anotherUserName"
 
     const inputCourtCase = await getDummyCourtCase({
@@ -166,7 +165,6 @@ describe("Update lock status to locked", () => {
   })
 
   it("Should not lock a court case trigger but it should lock a court case exception", async () => {
-    const username = "Bichard01"
     const anotherUser = "anotherUserName"
 
     const inputCourtCase = await getDummyCourtCase({
@@ -208,8 +206,6 @@ describe("Update lock status to locked", () => {
   })
 
   it("Should not lock court case trigger, when trigger resolution status is Submitted", async () => {
-    const username = "Bichard01"
-
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -246,9 +242,83 @@ describe("Update lock status to locked", () => {
     expect(events).toHaveLength(0)
   })
 
-  it("Should not lock a court case exception, when exception resolution status is Submitted", async () => {
-    const username = "Bichard01"
+  it("Should lock the court case exception, when trigger resolution status is Submitted", async () => {
+    const inputCourtCase = await getDummyCourtCase({
+      errorLockedByUsername: null,
+      triggerLockedByUsername: null,
+      triggerStatus: "Submitted",
+      errorStatus: "Unresolved",
+      errorCount: 1
+    })
+    await insertCourtCases(inputCourtCase)
 
+    const user = {
+      username,
+      visibleForces: ["36"],
+      visibleCourts: [],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: true
+    } as Partial<User> as User
+
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
+
+    const expectedCourtCase = await getDummyCourtCase({
+      errorLockedByUsername: username,
+      triggerLockedByUsername: null,
+      triggerStatus: "Submitted",
+      errorStatus: "Unresolved",
+      errorCount: 1
+    })
+
+    expect(isError(result)).toBe(false)
+    expect(result).toBeTruthy()
+
+    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
+    expect(actualCourtCase).toMatchObject(expectedCourtCase)
+    expect(events).toHaveLength(1)
+    expect(events).toStrictEqual([exceptionLockedEvent()])
+  })
+
+  it("Should lock the court case trigger, when exception resolution status is Submitted", async () => {
+    const inputCourtCase = await getDummyCourtCase({
+      errorLockedByUsername: null,
+      triggerLockedByUsername: null,
+      triggerStatus: "Unresolved",
+      errorStatus: "Submitted",
+      triggerCount: 1
+    })
+    await insertCourtCases(inputCourtCase)
+
+    const user = {
+      username,
+      visibleForces: ["36"],
+      visibleCourts: [],
+      hasAccessToExceptions: true,
+      hasAccessToTriggers: true
+    } as Partial<User> as User
+
+    const events: AuditLogEvent[] = []
+    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
+
+    const expectedCourtCase = await getDummyCourtCase({
+      errorLockedByUsername: null,
+      triggerLockedByUsername: username,
+      triggerStatus: "Unresolved",
+      errorStatus: "Submitted",
+      triggerCount: 1
+    })
+
+    expect(isError(result)).toBe(false)
+    expect(result).toBeTruthy()
+
+    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
+    expect(actualCourtCase).toMatchObject(expectedCourtCase)
+    expect(events).toHaveLength(1)
+    expect(events).toStrictEqual([triggerLockedEvent()])
+  })
+
+  it("Should not lock a court case exception, when exception resolution status is Submitted", async () => {
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
@@ -271,7 +341,7 @@ describe("Update lock status to locked", () => {
 
     const expectedCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
-      triggerLockedByUsername: null,
+      triggerLockedByUsername: "Bichard01",
       triggerStatus: "Unresolved",
       errorCount: 0,
       errorStatus: "Submitted",
@@ -283,12 +353,10 @@ describe("Update lock status to locked", () => {
 
     const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
     expect(actualCourtCase).toMatchObject(expectedCourtCase)
-    expect(events).toHaveLength(0)
+    expect(events).toStrictEqual([triggerLockedEvent()])
   })
 
   it("Should return an error if we haven't got a specific lock to lock", async () => {
-    const username = "Bichard01"
-
     const inputCourtCase = await getDummyCourtCase({
       errorLockedByUsername: null,
       triggerLockedByUsername: null,
