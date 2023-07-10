@@ -11,7 +11,7 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import { KeyValuePair } from "types/KeyValuePair"
+import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
 
 jest.setTimeout(100000)

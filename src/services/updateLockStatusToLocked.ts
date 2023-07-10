@@ -2,9 +2,13 @@ import { EntityManager, IsNull, MoreThan, Not, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import { ResolutionStatus } from "types/ResolutionStatus"
-import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import {
+  AuditLogEventOptions,
+  type AuditLogEvent
+} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 
 const updateLockStatusToLocked = async (
   dataSource: EntityManager,
@@ -37,7 +41,7 @@ const updateLockStatusToLocked = async (
       errorStatus: Not(submitted)
     })
     generatedEvents.push(
-      getAuditLogEvent("information", "Exception locked", "Bichard New UI", {
+      getAuditLogEvent(AuditLogEventOptions.exceptionLocked, EventCategory.information, "Bichard New UI", {
         user: user.username,
         auditLogVersion: 2,
         eventCode: "exceptions.locked"
@@ -53,7 +57,7 @@ const updateLockStatusToLocked = async (
       triggerStatus: Not(submitted)
     })
     generatedEvents.push(
-      getAuditLogEvent("information", "Trigger locked", "Bichard New UI", {
+      getAuditLogEvent(AuditLogEventOptions.triggerLocked, EventCategory.information, "Bichard New UI", {
         user: user.username,
         auditLogVersion: 2,
         eventCode: "triggers.locked"

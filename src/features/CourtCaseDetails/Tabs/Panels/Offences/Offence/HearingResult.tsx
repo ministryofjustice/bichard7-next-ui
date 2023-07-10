@@ -1,4 +1,4 @@
-import { Result } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import { Result } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
 import { Table } from "govuk-react"
 import { formatDisplayedDate } from "utils/formattedDate"

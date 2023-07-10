@@ -6,7 +6,7 @@ import updateLockStatusToUnlocked from "../../src/services/updateLockStatusToUnl
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import UnlockReason from "types/UnlockReason"
 
 describe("lock court case", () => {

@@ -8,10 +8,14 @@ import insertNotes from "./insertNotes"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 import UnlockReason from "types/UnlockReason"
-import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import {
+  AuditLogEvent,
+  AuditLogEventOptions
+} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import storeAuditLogEvents from "./storeAuditLogEvents"
 import getCourtCase from "./getCourtCase"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,
@@ -76,7 +80,7 @@ const reallocateCourtCaseToForce = async (
     }
 
     events.push(
-      getAuditLogEvent("information", "Hearing outcome reallocated by user", "Bichard New UI", {
+      getAuditLogEvent(AuditLogEventOptions.hearingOutcomeReallocated, EventCategory.information, "Bichard New UI", {
         user: user.username,
         auditLogVersion: 2,
         eventCode: "hearing-outcome.reallocated",

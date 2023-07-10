@@ -2,12 +2,16 @@ import { EntityManager, MoreThan, Not, UpdateQueryBuilder, UpdateResult } from "
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
-import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import {
+  AuditLogEvent,
+  AuditLogEventOptions
+} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import Trigger from "./entities/Trigger"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
 import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { isError } from "types/Result"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 
 const resolveError = async (
   entityManager: EntityManager,
@@ -67,7 +71,7 @@ const resolveError = async (
   }
 
   events?.push(
-    getAuditLogEvent("information", "Exception marked as resolved by user", "Bichard New UI", {
+    getAuditLogEvent(AuditLogEventOptions.exceptionResolved, EventCategory.information, "Bichard New UI", {
       user: user.username,
       auditLogVersion: 2,
       eventCode: "exceptions.resolved",

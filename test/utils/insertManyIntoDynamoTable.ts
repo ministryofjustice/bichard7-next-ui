@@ -1,4 +1,4 @@
-import { KeyValuePair } from "../../src/types/KeyValuePair"
+import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import { isError } from "../../src/types/Result"
 import insertAuditLogIntoDynamoTable from "./insertAuditLogIntoDynamoTable"
 

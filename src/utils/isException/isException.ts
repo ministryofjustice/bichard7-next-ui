@@ -1,6 +1,6 @@
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/ExceptionCode"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/dist/types/ExceptionCode"
 
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 
 const buildExceptionsPath = (paths: string[]): string =>
   paths

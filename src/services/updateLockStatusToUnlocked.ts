@@ -3,11 +3,15 @@ import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
-import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import {
+  AuditLogEvent,
+  AuditLogEventOptions
+} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
 import getCourtCase from "./getCourtCase"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 
 const updateLockStatusToUnlocked = async (
   dataSource: EntityManager,
@@ -50,7 +54,7 @@ const updateLockStatusToUnlocked = async (
   if (shouldUnlockExceptions && !!courtCase.errorLockedByUsername) {
     setFields.errorLockedByUsername = null
     generatedEvents.push(
-      getAuditLogEvent("information", "Exception unlocked", "Bichard New UI", {
+      getAuditLogEvent(AuditLogEventOptions.exceptionLocked, EventCategory.information, "Bichard New UI", {
         user: username,
         auditLogVersion: 2,
         eventCode: "exceptions.unlocked"
@@ -60,7 +64,7 @@ const updateLockStatusToUnlocked = async (
   if (shouldUnlockTriggers && !!courtCase.triggerLockedByUsername) {
     setFields.triggerLockedByUsername = null
     generatedEvents.push(
-      getAuditLogEvent("information", "Trigger unlocked", "Bichard New UI", {
+      getAuditLogEvent(AuditLogEventOptions.triggerUnlocked, EventCategory.information, "Bichard New UI", {
         user: username,
         auditLogVersion: 2,
         eventCode: "triggers.unlocked"

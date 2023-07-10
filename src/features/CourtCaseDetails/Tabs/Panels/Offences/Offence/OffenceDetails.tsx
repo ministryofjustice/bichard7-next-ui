@@ -1,4 +1,4 @@
-import { Offence } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import { Offence } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import { Heading, Table } from "govuk-react"
 import getOffenceCode from "utils/getOffenceCode"
 import { TableRow } from "../../TableRow"

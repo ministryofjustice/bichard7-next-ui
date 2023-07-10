@@ -1,4 +1,4 @@
-import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import { format } from "date-fns"
 import { DefendantDetails, Gender } from "../../src/features/CourtCaseDetails/Tabs/Panels/DefendantDetails"
 

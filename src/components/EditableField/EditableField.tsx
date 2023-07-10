@@ -1,5 +1,5 @@
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/ExceptionCode"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/dist/types/ExceptionCode"
 import ResultVariableText from "components/ResultVariableText/ResultVariableText"
 import { InputField } from "govuk-react"
 import get from "lodash.get"

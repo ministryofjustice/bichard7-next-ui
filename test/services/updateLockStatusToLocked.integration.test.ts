@@ -7,7 +7,10 @@ import updateLockStatusToLocked from "../../src/services/updateLockStatusToLocke
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
+
+jest.mock("utils/userPermissions")
 
 describe("Update lock status to locked", () => {
   let dataSource: DataSource

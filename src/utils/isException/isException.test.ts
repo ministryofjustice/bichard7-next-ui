@@ -1,5 +1,5 @@
 import isException from "./isException"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/build/src/parse/parseAhoXml/parseAhoXml"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/dist/parse/parseAhoXml/parseAhoXml"
 import HO100302_1 from "../../../test/test-data/HO100302_1.json"
 import validHO from "../../../test/test-data/AnnotatedHO1.json"
 import HO100239_1 from "../../../test/test-data/HO100239_1.json"
@@ -12,9 +12,9 @@ import HO100209_1 from "../../../test/test-data/HO100209_1.json"
 import HO100200_2 from "../../../test/test-data/HO100200_2.json"
 import HO100247_1 from "../../../test/test-data/HO100247_1.json"
 import HO100247_2 from "../../../test/test-data/HO100247_2.json"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/ExceptionCode"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/dist/types/ExceptionCode"
 
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 
 describe("isException", () => {
   it("Should return HO100302 when there is an ASN exception", () => {

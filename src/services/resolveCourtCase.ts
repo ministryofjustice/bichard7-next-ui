@@ -6,7 +6,7 @@ import CourtCase from "./entities/CourtCase"
 import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 import insertNotes from "./insertNotes"
 import storeAuditLogEvents from "./storeAuditLogEvents"
-import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import resolveError from "./resolveError"
 import UnlockReason from "types/UnlockReason"
 

@@ -1,4 +1,4 @@
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import { UpdatedOffenceResult, ValidProperties } from "types/Amendments"
 import amendDefendantOrOffenceResult from "../amendDefendantOrOffenceResult"
 

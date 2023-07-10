@@ -1,4 +1,4 @@
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 
 const amendCourtReference = (updatedValue: string, aho: AnnotatedHearingOutcome) => {
   const courtReference = aho.AnnotatedHearingOutcome.HearingOutcome.Case.CourtReference
