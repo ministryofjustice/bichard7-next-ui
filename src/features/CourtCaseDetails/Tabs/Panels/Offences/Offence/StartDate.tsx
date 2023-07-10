@@ -16,11 +16,13 @@ interface StartDateProps {
 }
 
 export const StartDate = ({ offence }: StartDateProps) => {
+  const { ActualOffenceDateCode, ActualOffenceStartDate } = offence
+
   return (
     <>
-      <div>{DateCode[parseInt(offence.ActualOffenceDateCode)]}</div>
-      <div>{offence.ActualOffenceStartDate && formatDisplayedDate(offence.ActualOffenceStartDate.StartDate)}</div>
-      <div style={{ color: textSecondary }}>{`Date code: ${offence.ActualOffenceDateCode}`}</div>
+      <div>{DateCode[parseInt(ActualOffenceDateCode)]}</div>
+      <div>{ActualOffenceStartDate && formatDisplayedDate(ActualOffenceStartDate.StartDate)}</div>
+      <div style={{ color: textSecondary }}>{`Date code: ${ActualOffenceDateCode}`}</div>
     </>
   )
 }
