@@ -8,32 +8,422 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import UnlockReason from "types/UnlockReason"
+import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
+import { UserGroup } from "../../src/types/UserGroup"
 
-describe("lock court case", () => {
+jest.mock("utils/userPermissions")
+
+const exceptionUnlockedEvent = (username = "current user") => ({
+  category: "information",
+  eventSource: AUDIT_LOG_EVENT_SOURCE,
+  eventType: "Exception unlocked",
+  timestamp: expect.anything(),
+  attributes: {
+    user: username,
+    auditLogVersion: 2,
+    eventCode: "exceptions.unlocked"
+  }
+})
+
+const triggerUnlockedEvent = (username = "current user") => ({
+  category: "information",
+  eventSource: AUDIT_LOG_EVENT_SOURCE,
+  eventType: "Trigger unlocked",
+  timestamp: expect.anything(),
+  attributes: {
+    user: username,
+    auditLogVersion: 2,
+    eventCode: "triggers.unlocked"
+  }
+})
+
+const testCases = [
+  {
+    description: "Trigger handler can only unlock triggers when unlock reason is TriggerAndException",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "another user",
+    currentUserGroup: UserGroup.TriggerHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: "another user",
+    expectedEvents: [triggerUnlockedEvent()]
+  },
+  {
+    description: "Trigger handler can unlock triggers when unlock reason is Trigger",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "another user",
+    currentUserGroup: UserGroup.TriggerHandler,
+    unlockReason: UnlockReason.Trigger,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: "another user",
+    expectedEvents: [triggerUnlockedEvent()]
+  },
+  {
+    description:
+      "Trigger handler can unlock triggers when the exception is not locked and unlock reason is TriggerAndException",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: null,
+    currentUserGroup: UserGroup.TriggerHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [triggerUnlockedEvent()]
+  },
+  {
+    description: "Trigger handler cannot unlock the case when unlock reason is Exception",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "another user",
+    currentUserGroup: UserGroup.TriggerHandler,
+    unlockReason: UnlockReason.Exception,
+    expectTriggersToBeLockedBy: "current user",
+    expectExceptionsToBeLockedBy: "another user",
+    expectError: "User hasn't got permission to unlock the case",
+    expectedEvents: []
+  },
+  {
+    description: "Trigger handler cannot unlock the case when its locked by another user",
+    triggerLockedBy: "another user",
+    exceptionLockedBy: "another user",
+    currentUserGroup: UserGroup.TriggerHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: "another user",
+    expectedEvents: []
+  },
+  {
+    description: "Trigger handler cannot unlock a case that is not locked",
+    triggerLockedBy: null,
+    exceptionLockedBy: null,
+    currentUserGroup: UserGroup.TriggerHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectError: "Case is not locked",
+    expectedEvents: []
+  },
+  {
+    description: "Trigger handler cannot unlock a case that has lock on exceptions",
+    triggerLockedBy: null,
+    exceptionLockedBy: "other user",
+    currentUserGroup: UserGroup.TriggerHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: "other user",
+    expectError: "Case is not locked",
+    expectedEvents: []
+  },
+  {
+    description: "Trigger handler cannot unlock a case that is not visible for them",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "another user",
+    currentUserGroup: UserGroup.TriggerHandler,
+    visibleForce: "13GH",
+    unlockReason: UnlockReason.Trigger,
+    expectTriggersToBeLockedBy: "current user",
+    expectExceptionsToBeLockedBy: "another user",
+    expectedEvents: []
+  },
+  {
+    description: "Exception handler can unlock exception when unlock reason is TriggerAndException",
+    triggerLockedBy: "another user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.ExceptionHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent()]
+  },
+  {
+    description: "Exception handler can unlock exception when unlock reason is Exception",
+    triggerLockedBy: "another user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.ExceptionHandler,
+    unlockReason: UnlockReason.Exception,
+    expectTriggersToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent()]
+  },
+  {
+    description:
+      "Exception handler can unlock exception when the trigger is not locked and unlock reason is TriggerAndException",
+    triggerLockedBy: null,
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.ExceptionHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent()]
+  },
+  {
+    description: "Exception handler cannot unlock the case when unlock reason is Trigger",
+    triggerLockedBy: "another user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.ExceptionHandler,
+    unlockReason: UnlockReason.Trigger,
+    expectTriggersToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: "current user",
+    expectError: "User hasn't got permission to unlock the case",
+    expectedEvents: []
+  },
+  {
+    description: "Exception handler cannot unlock the case when its locked by another user",
+    triggerLockedBy: "another user",
+    exceptionLockedBy: "another user",
+    currentUserGroup: UserGroup.ExceptionHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: "another user",
+    expectedEvents: []
+  },
+  {
+    description: "Exception handler cannot unlock a case that is not locked",
+    triggerLockedBy: null,
+    exceptionLockedBy: null,
+    currentUserGroup: UserGroup.ExceptionHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectError: "Case is not locked",
+    expectedEvents: []
+  },
+  {
+    description: "Exception handler cannot unlock a case that has lock on triggers",
+    triggerLockedBy: "other user",
+    exceptionLockedBy: null,
+    currentUserGroup: UserGroup.ExceptionHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: "other user",
+    expectExceptionsToBeLockedBy: null,
+    expectError: "Case is not locked",
+    expectedEvents: []
+  },
+  {
+    description: "Exception handler cannot unlock a case that is not visible for them",
+    triggerLockedBy: "another user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.ExceptionHandler,
+    visibleForce: "13GH",
+    unlockReason: UnlockReason.Exception,
+    expectTriggersToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: "current user",
+    expectedEvents: []
+  },
+  {
+    description: "General handler can unlock both triggers and exception when unlock reason is TriggerAndException",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.GeneralHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent(), triggerUnlockedEvent()]
+  },
+  {
+    description: "General handler can unlock triggers when unlock reason is Trigger",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.GeneralHandler,
+    unlockReason: UnlockReason.Trigger,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: "current user",
+    expectedEvents: [triggerUnlockedEvent()]
+  },
+  {
+    description:
+      "General handler can unlock triggers when the exception is not locked and unlock reason is TriggerAndException",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: null,
+    currentUserGroup: UserGroup.GeneralHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [triggerUnlockedEvent()]
+  },
+  {
+    description:
+      "General handler can unlock exception when the trigger is not locked and unlock reason is TriggerAndException",
+    triggerLockedBy: null,
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.GeneralHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent()]
+  },
+  {
+    description: "General handler can unlock exception when unlock reason is Exception",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.GeneralHandler,
+    unlockReason: UnlockReason.Exception,
+    expectTriggersToBeLockedBy: "current user",
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent()]
+  },
+  {
+    description:
+      "General handler can only unlock exception when unlock reason is TriggerAndException and trigger is locked by another user",
+    triggerLockedBy: "another user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.GeneralHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent()]
+  },
+  {
+    description:
+      "General handler can only unlock trigger when unlock reason is TriggerAndException and exception is locked by another user",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "another user",
+    currentUserGroup: UserGroup.GeneralHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: "another user",
+    expectedEvents: [triggerUnlockedEvent()]
+  },
+  {
+    description: "General handler cannot unlock the case when its locked by another user",
+    triggerLockedBy: "another user",
+    exceptionLockedBy: "another user",
+    currentUserGroup: UserGroup.GeneralHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: "another user",
+    expectedEvents: []
+  },
+  {
+    description: "General handler cannot unlock a case that is not locked",
+    triggerLockedBy: null,
+    exceptionLockedBy: null,
+    currentUserGroup: UserGroup.GeneralHandler,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectError: "Case is not locked",
+    expectedEvents: []
+  },
+  {
+    description: "General handler cannot unlock a case that is not visible for them",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.GeneralHandler,
+    visibleForce: "13GH",
+    unlockReason: UnlockReason.Trigger,
+    expectTriggersToBeLockedBy: "current user",
+    expectExceptionsToBeLockedBy: "current user",
+    expectedEvents: []
+  },
+  {
+    description: "Supervisor can unlock both triggers and exception when unlock reason is TriggerAndException",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.Supervisor,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent(), triggerUnlockedEvent()]
+  },
+  {
+    description: "Supervisor can unlock triggers when unlock reason is Trigger",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.Supervisor,
+    unlockReason: UnlockReason.Trigger,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: "current user",
+    expectedEvents: [triggerUnlockedEvent()]
+  },
+  {
+    description: "Supervisor can unlock exception when unlock reason is Exception",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.Supervisor,
+    unlockReason: UnlockReason.Exception,
+    expectTriggersToBeLockedBy: "current user",
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent()]
+  },
+  {
+    description:
+      "Supervisor can unlock both triggers and exceptions when unlock reason is TriggerAndException and trigger is locked by another user",
+    triggerLockedBy: "another user",
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.Supervisor,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent(), triggerUnlockedEvent()]
+  },
+  {
+    description:
+      "Supervisor can unlock both triggers and exceptions when unlock reason is TriggerAndException and exception is locked by another user",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: "another user",
+    currentUserGroup: UserGroup.Supervisor,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent(), triggerUnlockedEvent()]
+  },
+  {
+    description: "Supervisor can unlock the case when its locked by another user",
+    triggerLockedBy: "another user",
+    exceptionLockedBy: "another user",
+    currentUserGroup: UserGroup.Supervisor,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent(), triggerUnlockedEvent()]
+  },
+  {
+    description:
+      "Supervisor can unlock triggers when the exception is not locked and unlock reason is TriggerAndException",
+    triggerLockedBy: "current user",
+    exceptionLockedBy: null,
+    currentUserGroup: UserGroup.Supervisor,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [triggerUnlockedEvent()]
+  },
+  {
+    description:
+      "Supervisor can unlock exception when the trigger is not locked and unlock reason is TriggerAndException",
+    triggerLockedBy: null,
+    exceptionLockedBy: "current user",
+    currentUserGroup: UserGroup.Supervisor,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectedEvents: [exceptionUnlockedEvent()]
+  },
+  {
+    description: "Supervisor cannot unlock a case that is not locked",
+    triggerLockedBy: null,
+    exceptionLockedBy: null,
+    currentUserGroup: UserGroup.Supervisor,
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
+    expectError: "Case is not locked",
+    expectedEvents: []
+  },
+  {
+    description: "Supervisor cannot unlock a case that is not visible for them",
+    triggerLockedBy: "another user",
+    exceptionLockedBy: "another user",
+    currentUserGroup: UserGroup.Supervisor,
+    visibleForce: "13GH",
+    unlockReason: UnlockReason.TriggerAndException,
+    expectTriggersToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: "another user",
+    expectedEvents: []
+  }
+]
+
+describe("Unlock court case", () => {
   let dataSource: DataSource
-
-  const exceptionUnlockedEvent = (username = "some user") => ({
-    category: "information",
-    eventSource: "Bichard New UI",
-    eventType: "Exception unlocked",
-    timestamp: expect.anything(),
-    attributes: {
-      user: username,
-      auditLogVersion: 2,
-      eventCode: "exceptions.unlocked"
-    }
-  })
-  const triggerUnlockedEvent = (username = "some user") => ({
-    category: "information",
-    eventSource: "Bichard New UI",
-    eventType: "Trigger unlocked",
-    timestamp: expect.anything(),
-    attributes: {
-      user: username,
-      auditLogVersion: 2,
-      eventCode: "triggers.unlocked"
-    }
-  })
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -52,436 +442,73 @@ describe("lock court case", () => {
     await dataSource.destroy()
   })
 
-  describe("when user has permission to unlock a case", () => {
-    it("Should unlock a locked court case", async () => {
-      const lockedByName = "some user"
-      const lockedCourtCase = {
-        errorLockedByUsername: lockedByName,
-        triggerLockedByUsername: lockedByName,
+  test.each(testCases)(
+    "$description",
+    async ({
+      triggerLockedBy,
+      exceptionLockedBy,
+      unlockReason,
+      currentUserGroup,
+      visibleForce,
+      expectTriggersToBeLockedBy,
+      expectExceptionsToBeLockedBy,
+      expectError,
+      expectedEvents
+    }) => {
+      const courtCase = {
+        errorLockedByUsername: exceptionLockedBy,
+        triggerLockedByUsername: triggerLockedBy,
         orgForPoliceFilter: "36FPA ",
         errorId: 1
       }
 
-      const anotherLockedCourtCase = {
-        errorLockedByUsername: lockedByName,
-        triggerLockedByUsername: lockedByName,
+      const anotherCourtCase = {
+        errorLockedByUsername: exceptionLockedBy,
+        triggerLockedByUsername: triggerLockedBy,
         orgForPoliceFilter: "36FPA ",
         errorId: 2
       }
-      await insertCourtCasesWithFields([lockedCourtCase, anotherLockedCourtCase])
+
+      await insertCourtCasesWithFields([courtCase, anotherCourtCase])
 
       const user = {
-        username: lockedByName,
-        visibleForces: ["36FPA1"],
+        username: "current user",
+        visibleForces: [visibleForce ?? "36FPA1"],
         visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
+        hasAccessToExceptions: [UserGroup.ExceptionHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
+          currentUserGroup
+        ),
+        hasAccessToTriggers: [UserGroup.TriggerHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
+          currentUserGroup
+        ),
+        isSupervisor: [UserGroup.Supervisor].includes(currentUserGroup)
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        1,
-        user,
-        UnlockReason.TriggerAndException,
-        events
-      )
-      expect(isError(result)).toBe(false)
+      const result = await updateLockStatusToUnlocked(dataSource.manager, courtCase.errorId, user, unlockReason, events)
 
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 1 } })
-      const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.errorLockedByUsername).toBeNull()
-      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
+      if (expectError) {
+        expect(isError(result)).toBe(true)
+        expect((result as Error).message).toEqual(expectError)
+      } else {
+        expect(isError(result)).toBe(false)
+      }
 
-      const anotherRecord = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 2 } })
-      const anotherCourtCase = anotherRecord as CourtCase
-      expect(anotherCourtCase.errorLockedByUsername).toEqual(lockedByName)
-      expect(anotherCourtCase.triggerLockedByUsername).toEqual(lockedByName)
-      expect(events).toStrictEqual([exceptionUnlockedEvent(), triggerUnlockedEvent()])
-    })
+      const actualCourtCase = (await dataSource
+        .getRepository(CourtCase)
+        .findOne({ where: { errorId: courtCase.errorId } })) as CourtCase
+      expect(actualCourtCase.errorLockedByUsername).toBe(expectExceptionsToBeLockedBy)
+      expect(actualCourtCase.triggerLockedByUsername).toBe(expectTriggersToBeLockedBy)
 
-    it("Should only unlock exceptions when user is exception handler", async () => {
-      const lockedByName = "some user"
-      const lockedCourtCase = await getDummyCourtCase({
-        errorLockedByUsername: lockedByName,
-        triggerLockedByUsername: lockedByName,
-        orgForPoliceFilter: "36FPA "
-      })
-      await insertCourtCases(lockedCourtCase)
+      const actualAnotherCourtCase = (await dataSource
+        .getRepository(CourtCase)
+        .findOne({ where: { errorId: anotherCourtCase.errorId } })) as CourtCase
+      expect(actualAnotherCourtCase.errorLockedByUsername).toEqual(exceptionLockedBy)
+      expect(actualAnotherCourtCase.triggerLockedByUsername).toEqual(triggerLockedBy)
 
-      const user = {
-        username: lockedByName,
-        visibleForces: ["36FPA1"],
-        visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: false
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        lockedCourtCase.errorId,
-        user,
-        UnlockReason.TriggerAndException,
-        events
-      )
-      expect(isError(result)).toBe(false)
-
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-      const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.errorLockedByUsername).toBeNull()
-      expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
-      expect(events).toStrictEqual([exceptionUnlockedEvent()])
-    })
-
-    it("Should only unlock triggers when user is trigger handler", async () => {
-      const lockedByName = "some user"
-      const lockedCourtCase = await getDummyCourtCase({
-        errorLockedByUsername: lockedByName,
-        triggerLockedByUsername: lockedByName,
-        orgForPoliceFilter: "36FPA "
-      })
-      await insertCourtCases(lockedCourtCase)
-
-      const user = {
-        username: lockedByName,
-        visibleForces: ["36FPA1"],
-        visibleCourts: [],
-        hasAccessToExceptions: false,
-        hasAccessToTriggers: true
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        lockedCourtCase.errorId,
-        user,
-        UnlockReason.TriggerAndException,
-        events
-      )
-      expect(isError(result)).toBe(false)
-
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-      const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
-      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
-      expect(events).toStrictEqual([triggerUnlockedEvent()])
-    })
-
-    it("Should unlock exception only when 'reasonToUnlock' specified", async () => {
-      const lockedByName = "some user"
-      const lockedCourtCase = await getDummyCourtCase({
-        errorLockedByUsername: lockedByName,
-        triggerLockedByUsername: lockedByName,
-        orgForPoliceFilter: "36FPA "
-      })
-      await insertCourtCases(lockedCourtCase)
-
-      const user = {
-        username: lockedByName,
-        visibleForces: ["36FPA1"],
-        visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        lockedCourtCase.errorId,
-        user,
-        UnlockReason.Exception,
-        events
-      )
-      expect(isError(result)).toBe(false)
-
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-      const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.errorLockedByUsername).toBeNull()
-      expect(actualCourtCase.triggerLockedByUsername).toBe(lockedByName)
-      expect(events).toStrictEqual([exceptionUnlockedEvent()])
-    })
-
-    it("Should unlock trigger only when 'reasonToUnlock' specified", async () => {
-      const lockedByName = "some user"
-      const lockedCourtCase = await getDummyCourtCase({
-        errorLockedByUsername: lockedByName,
-        triggerLockedByUsername: lockedByName,
-        orgForPoliceFilter: "36FPA "
-      })
-      await insertCourtCases(lockedCourtCase)
-
-      const user = {
-        username: lockedByName,
-        visibleForces: ["36FPA1"],
-        visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        lockedCourtCase.errorId,
-        user,
-        UnlockReason.Trigger,
-        events
-      )
-      expect(isError(result)).toBe(false)
-
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-      const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
-      expect(actualCourtCase.errorLockedByUsername).toBe(lockedByName)
-      expect(events).toStrictEqual([triggerUnlockedEvent()])
-    })
-
-    it("can unlock trigger when exception is not locked", async () => {
-      const lockedByName = "some user"
-      const lockedCourtCase = await getDummyCourtCase({
-        triggerLockedByUsername: lockedByName,
-        orgForPoliceFilter: "36FPA "
-      })
-      await insertCourtCases(lockedCourtCase)
-
-      const user = {
-        username: lockedByName,
-        visibleForces: ["36FPA1"],
-        visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        lockedCourtCase.errorId,
-        user,
-        UnlockReason.Trigger,
-        events
-      )
-      expect(isError(result)).toBe(false)
-
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-      const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
-      expect(actualCourtCase.errorLockedByUsername).toBeNull()
-      expect(events).toStrictEqual([triggerUnlockedEvent()])
-    })
-
-    it("can unlock exception when trigger is not locked", async () => {
-      const lockedByName = "some user"
-      const lockedCourtCase = await getDummyCourtCase({
-        errorLockedByUsername: lockedByName,
-        orgForPoliceFilter: "36FPA "
-      })
-      await insertCourtCases(lockedCourtCase)
-
-      const user = {
-        username: lockedByName,
-        visibleForces: ["36FPA1"],
-        visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        lockedCourtCase.errorId,
-        user,
-        UnlockReason.Exception,
-        events
-      )
-      expect(isError(result)).toBe(false)
-
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-      const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
-      expect(actualCourtCase.errorLockedByUsername).toBeNull()
-      expect(events).toStrictEqual([exceptionUnlockedEvent()])
-    })
-  })
-
-  describe("when user doesn't have permission to unlock a case", () => {
-    it("can handle missing permission gracefully", async () => {
-      const dummyErrorId = 0
-      const user = {
-        username: "Dummy username",
-        hasAccessToExceptions: false,
-        hasAccessToTriggers: false
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        dummyErrorId,
-        user,
-        UnlockReason.TriggerAndException,
-        events
-      )
-      expect(isError(result)).toBe(true)
-
-      const receivedError = result as Error
-
-      expect(receivedError.message).toEqual("User hasn't got permission to unlock the case")
-      expect(events).toHaveLength(0)
-    })
-
-    it("can handle missing permission gracefully when unlocking triggers", async () => {
-      const dummyErrorId = 0
-      const user = {
-        username: "Dummy username",
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: false
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        dummyErrorId,
-        user,
-        UnlockReason.Trigger,
-        events
-      )
-      expect(isError(result)).toBe(true)
-
-      const receivedError = result as Error
-
-      expect(receivedError.message).toEqual("User hasn't got permission to unlock the case")
-      expect(events).toHaveLength(0)
-    })
-
-    it("can handle missing permission gracefully when unlocking exceptions", async () => {
-      const dummyErrorId = 0
-      const user = {
-        username: "Dummy username",
-        hasAccessToExceptions: false,
-        hasAccessToTriggers: true
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        dummyErrorId,
-        user,
-        UnlockReason.Exception,
-        events
-      )
-      expect(isError(result)).toBe(true)
-
-      const receivedError = result as Error
-
-      expect(receivedError.message).toEqual("User hasn't got permission to unlock the case")
-      expect(events).toHaveLength(0)
-    })
-
-    it("is does not update the lock when the case locked by another user", async () => {
-      const lockedByName = "another user"
-      const lockedCourtCase = await getDummyCourtCase({
-        errorLockedByUsername: lockedByName,
-        triggerLockedByUsername: lockedByName,
-        orgForPoliceFilter: "36FPA "
-      })
-      await insertCourtCases(lockedCourtCase)
-
-      const user = {
-        username: "User with different name",
-        visibleForces: ["36FPA1"],
-        visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        lockedCourtCase.errorId,
-        user,
-        UnlockReason.TriggerAndException,
-        events
-      )
-      expect(isError(result)).toBe(false)
-
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-      const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.errorLockedByUsername).toEqual(lockedByName)
-      expect(actualCourtCase.triggerLockedByUsername).toEqual(lockedByName)
-      expect(events).toHaveLength(0)
-    })
-  })
-
-  describe("when user is a supervisor", () => {
-    it("can unlock a case that is locked by another user", async () => {
-      const lockedByName = "another user"
-      const lockedCourtCase = await getDummyCourtCase({
-        errorLockedByUsername: lockedByName,
-        triggerLockedByUsername: lockedByName,
-        orgForPoliceFilter: "36FPA "
-      })
-      await insertCourtCases(lockedCourtCase)
-
-      const user = {
-        username: "Sup User",
-        visibleForces: ["36FPA1"],
-        visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true,
-        isSupervisor: true
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        lockedCourtCase.errorId,
-        user,
-        UnlockReason.TriggerAndException,
-        events
-      )
-      expect(isError(result)).toBe(false)
-
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-      const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.errorLockedByUsername).toBeNull()
-      expect(actualCourtCase.triggerLockedByUsername).toBeNull()
-      expect(events).toStrictEqual([exceptionUnlockedEvent(user.username), triggerUnlockedEvent(user.username)])
-    })
-
-    it("cannot unlock a case that is not visible for them", async () => {
-      const lockedByName = "another user"
-      const lockedCourtCase = await getDummyCourtCase({
-        errorLockedByUsername: lockedByName,
-        triggerLockedByUsername: lockedByName,
-        orgForPoliceFilter: "36FPA1"
-      })
-      await insertCourtCases(lockedCourtCase)
-
-      const user = {
-        username: "Sup User",
-        visibleForces: ["13GH"],
-        visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true,
-        isSupervisor: true
-      } as Partial<User> as User
-
-      const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(
-        dataSource.manager,
-        lockedCourtCase.errorId,
-        user,
-        UnlockReason.TriggerAndException,
-        events
-      )
-      expect(isError(result)).toBe(false)
-
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: lockedCourtCase.errorId } })
-      const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.errorLockedByUsername).toEqual(lockedByName)
-      expect(actualCourtCase.triggerLockedByUsername).toEqual(lockedByName)
-      expect(events).toHaveLength(0)
-    })
-  })
+      expect(events).toEqual(expectedEvents)
+    }
+  )
 
   describe("when there is an error", () => {
     it("Should return the error when failed to unlock court case", async () => {

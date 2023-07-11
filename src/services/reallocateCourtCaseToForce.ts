@@ -1,4 +1,4 @@
-import { DataSource, EntityManager, UpdateQueryBuilder } from "typeorm/"
+import { DataSource, EntityManager, UpdateQueryBuilder, UpdateResult } from "typeorm/"
 import { isError } from "types/Result"
 import { DEFAULT_STATION_CODE } from "utils/amendments/amendForceOwner/defaultStationCode"
 import amendCourtCase from "./amendCourtCase"
@@ -12,6 +12,7 @@ import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src
 import storeAuditLogEvents from "./storeAuditLogEvents"
 import getCourtCase from "./getCourtCase"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,
@@ -19,11 +20,11 @@ const reallocateCourtCaseToForce = async (
   user: User,
   forceCode: string,
   note?: string
-): Promise<void> => {
+): Promise<UpdateResult | Error> => {
   // TODO:
   // - Generate TRPR0028 if necessary
   // - Reset triggers on reallocate
-  await dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<void> => {
+  return dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<UpdateResult | Error> => {
     const events: AuditLogEvent[] = []
 
     const courtCase = await getCourtCase(entityManager, courtCaseId)
@@ -76,7 +77,7 @@ const reallocateCourtCaseToForce = async (
     }
 
     events.push(
-      getAuditLogEvent("information", "Hearing outcome reallocated by user", "Bichard New UI", {
+      getAuditLogEvent("information", "Hearing outcome reallocated by user", AUDIT_LOG_EVENT_SOURCE, {
         user: user.username,
         auditLogVersion: 2,
         eventCode: "hearing-outcome.reallocated",
@@ -111,6 +112,8 @@ const reallocateCourtCaseToForce = async (
     if (isError(storeAuditLogResponse)) {
       throw storeAuditLogResponse
     }
+
+    return queryResult
   })
 }
 

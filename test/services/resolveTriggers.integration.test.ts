@@ -13,6 +13,7 @@ import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import { KeyValuePair } from "types/KeyValuePair"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
+import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 
 jest.setTimeout(100000)
 
@@ -27,7 +28,7 @@ describe("resolveTriggers", () => {
   ) => {
     return {
       category: "information",
-      eventSource: "Bichard New UI",
+      eventSource: AUDIT_LOG_EVENT_SOURCE,
       eventType,
       timestamp: expect.anything(),
       eventCode,

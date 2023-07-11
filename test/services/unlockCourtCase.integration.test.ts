@@ -6,7 +6,7 @@ import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
-import { AUDIT_LOG_API_URL } from "../../src/config"
+import { AUDIT_LOG_API_URL, AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
@@ -73,14 +73,14 @@ describe("unlock court case", () => {
         {
           attributes: { auditLogVersion: 2, eventCode: "exceptions.unlocked", user: lockedByName },
           category: "information",
-          eventSource: "Bichard New UI",
+          eventSource: AUDIT_LOG_EVENT_SOURCE,
           eventType: "Exception unlocked",
           timestamp: expect.anything()
         },
         {
           attributes: { auditLogVersion: 2, eventCode: "triggers.unlocked", user: lockedByName },
           category: "information",
-          eventSource: "Bichard New UI",
+          eventSource: AUDIT_LOG_EVENT_SOURCE,
           eventType: "Trigger unlocked",
           timestamp: expect.anything()
         }
@@ -98,7 +98,7 @@ describe("unlock court case", () => {
         UnlockReason.TriggerAndException,
         expectedAuditLogEvents
       )
-      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
+      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(2)
       expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
       expect(storeAuditLogEvents).toHaveBeenCalledTimes(1)
       expect(storeAuditLogEvents).toHaveBeenCalledWith(lockedCourtCase.messageId, expectedAuditLogEvents)
@@ -124,7 +124,7 @@ describe("unlock court case", () => {
 
       expect(unlockedExceptionEvent).toStrictEqual({
         category: "information",
-        eventSource: "Bichard New UI",
+        eventSource: AUDIT_LOG_EVENT_SOURCE,
         eventType: "Exception unlocked",
         timestamp: expect.anything(),
         user: user.username,
@@ -136,7 +136,7 @@ describe("unlock court case", () => {
 
       expect(unlockedTriggerEvent).toStrictEqual({
         category: "information",
-        eventSource: "Bichard New UI",
+        eventSource: AUDIT_LOG_EVENT_SOURCE,
         eventType: "Trigger unlocked",
         timestamp: expect.anything(),
         user: user.username,
