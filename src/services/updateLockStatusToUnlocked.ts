@@ -54,10 +54,9 @@ const updateLockStatusToUnlocked = async (
   if (shouldUnlockExceptions && !!courtCase.errorLockedByUsername) {
     setFields.errorLockedByUsername = null
     generatedEvents.push(
-      getAuditLogEvent(AuditLogEventOptions.exceptionLocked, EventCategory.information, "Bichard New UI", {
+      getAuditLogEvent(AuditLogEventOptions.exceptionUnlocked, EventCategory.information, "Bichard New UI", {
         user: username,
-        auditLogVersion: 2,
-        eventCode: "exceptions.unlocked"
+        auditLogVersion: 2
       })
     )
   }
@@ -66,8 +65,7 @@ const updateLockStatusToUnlocked = async (
     generatedEvents.push(
       getAuditLogEvent(AuditLogEventOptions.triggerUnlocked, EventCategory.information, "Bichard New UI", {
         user: username,
-        auditLogVersion: 2,
-        eventCode: "triggers.unlocked"
+        auditLogVersion: 2
       })
     )
   }

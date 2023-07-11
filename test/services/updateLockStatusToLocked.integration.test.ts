@@ -8,7 +8,6 @@ import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
-import { hasAccessToTriggers, hasAccessToExceptions } from "utils/userPermissions"
 
 jest.mock("utils/userPermissions")
 
@@ -19,22 +18,22 @@ describe("Update lock status to locked", () => {
     category: "information",
     eventSource: "Bichard New UI",
     eventType: "Exception locked",
+    eventCode: "exceptions.locked",
     timestamp: expect.anything(),
     attributes: {
       user: username,
-      auditLogVersion: 2,
-      eventCode: "exceptions.locked"
+      auditLogVersion: 2
     }
   })
   const triggerLockedEvent = (username = "Bichard01") => ({
     category: "information",
     eventSource: "Bichard New UI",
     eventType: "Trigger locked",
+    eventCode: "triggers.locked",
     timestamp: expect.anything(),
     attributes: {
       user: username,
-      auditLogVersion: 2,
-      eventCode: "triggers.locked"
+      auditLogVersion: 2
     }
   })
 

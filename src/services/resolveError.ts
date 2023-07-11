@@ -74,7 +74,6 @@ const resolveError = async (
     getAuditLogEvent(AuditLogEventOptions.exceptionResolved, EventCategory.information, "Bichard New UI", {
       user: user.username,
       auditLogVersion: 2,
-      eventCode: "exceptions.resolved",
       resolutionReasonCode: ResolutionReasonCode[resolution.reason],
       resolutionReasonText: resolution.reasonText
     })

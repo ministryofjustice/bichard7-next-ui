@@ -77,7 +77,6 @@ const resolveTriggers = async (
       getAuditLogEvent(AuditLogEventOptions.triggerResolved, EventCategory.information, "Bichard New UI", {
         user: user.username,
         auditLogVersion: 2,
-        eventCode: "triggers.resolved",
         "Number Of Triggers": triggerIds.length,
         ...generateTriggersAttributes(courtCase.triggers.filter((trigger) => triggerIds.includes(trigger.triggerId)))
       })
@@ -120,7 +119,6 @@ const resolveTriggers = async (
         getAuditLogEvent(AuditLogEventOptions.allTriggersResolved, EventCategory.information, "Bichard New UI", {
           user: user.username,
           auditLogVersion: 2,
-          eventCode: "triggers.all-resolved",
           "Number Of Triggers": allTriggers.length,
           ...generateTriggersAttributes(allTriggers)
         })

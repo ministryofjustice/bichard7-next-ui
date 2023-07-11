@@ -64,16 +64,18 @@ describe("lock court case", () => {
     it("Should call updateLockStatusToLocked and storeAuditLogEvents", async () => {
       const expectedAuditLogEvents = [
         {
-          attributes: { auditLogVersion: 2, eventCode: "exceptions.locked", user: lockedByName },
+          attributes: { auditLogVersion: 2, user: lockedByName },
           category: "information",
           eventSource: "Bichard New UI",
+          eventCode: "exceptions.locked",
           eventType: "Exception locked",
           timestamp: expect.anything()
         },
         {
-          attributes: { auditLogVersion: 2, eventCode: "triggers.locked", user: lockedByName },
+          attributes: { auditLogVersion: 2, user: lockedByName },
           category: "information",
           eventSource: "Bichard New UI",
+          eventCode: "triggers.locked",
           eventType: "Trigger locked",
           timestamp: expect.anything()
         }

@@ -55,6 +55,7 @@ describe("storeAuditLogEvents", () => {
         attributes: { key1: "value1" },
         category: "information",
         eventSource: "dummyEventSource",
+        eventCode: "report-run",
         eventType: AuditLogEventOptions.reportRun.type,
         timestamp: expect.anything()
       }

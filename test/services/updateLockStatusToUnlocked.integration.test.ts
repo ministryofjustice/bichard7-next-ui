@@ -17,21 +17,21 @@ describe("lock court case", () => {
     eventSource: "Bichard New UI",
     eventType: "Exception unlocked",
     timestamp: expect.anything(),
+    eventCode: "exceptions.unlocked",
     attributes: {
       user: username,
-      auditLogVersion: 2,
-      eventCode: "exceptions.unlocked"
+      auditLogVersion: 2
     }
   })
   const triggerUnlockedEvent = (username = "some user") => ({
     category: "information",
     eventSource: "Bichard New UI",
     eventType: "Trigger unlocked",
+    eventCode: "triggers.unlocked",
     timestamp: expect.anything(),
     attributes: {
       user: username,
-      auditLogVersion: 2,
-      eventCode: "triggers.unlocked"
+      auditLogVersion: 2
     }
   })
 

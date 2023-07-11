@@ -83,7 +83,6 @@ const reallocateCourtCaseToForce = async (
       getAuditLogEvent(AuditLogEventOptions.hearingOutcomeReallocated, EventCategory.information, "Bichard New UI", {
         user: user.username,
         auditLogVersion: 2,
-        eventCode: "hearing-outcome.reallocated",
         "New Force Owner": `${newForceCode}00`
       })
     )

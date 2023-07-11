@@ -14,7 +14,7 @@ import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from 
 
 jest.mock("services/getCourtCase")
 jest.mock("services/updateCourtCaseAho")
-jest.mock("@moj-bichard7-developers/bichard7-next-core/src/parse/parseAhoXml/parseAhoXml")
+jest.mock("@moj-bichard7-developers/bichard7-next-core/dist/parse/parseAhoXml/parseAhoXml")
 jest.mock("utils/createForceOwner")
 
 jest.setTimeout(60 * 60 * 1000)
@@ -40,7 +40,7 @@ describe("amend court case", () => {
     jest.clearAllMocks()
     ;(getCourtCase as jest.Mock).mockImplementation(jest.requireActual("services/getCourtCase").default)
     ;(parseAhoXml as jest.Mock).mockImplementation(
-      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/src/parse/parseAhoXml/parseAhoXml").default
+      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/dist/parse/parseAhoXml/parseAhoXml").default
     )
     ;(updateCourtCaseAho as jest.Mock).mockImplementation(jest.requireActual("services/updateCourtCaseAho").default)
     ;(createForceOwner as jest.Mock).mockImplementation(jest.requireActual("utils/createForceOwner").default)

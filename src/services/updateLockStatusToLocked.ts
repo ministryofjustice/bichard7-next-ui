@@ -43,8 +43,7 @@ const updateLockStatusToLocked = async (
     generatedEvents.push(
       getAuditLogEvent(AuditLogEventOptions.exceptionLocked, EventCategory.information, "Bichard New UI", {
         user: user.username,
-        auditLogVersion: 2,
-        eventCode: "exceptions.locked"
+        auditLogVersion: 2
       })
     )
   }
@@ -59,8 +58,7 @@ const updateLockStatusToLocked = async (
     generatedEvents.push(
       getAuditLogEvent(AuditLogEventOptions.triggerLocked, EventCategory.information, "Bichard New UI", {
         user: user.username,
-        auditLogVersion: 2,
-        eventCode: "triggers.locked"
+        auditLogVersion: 2
       })
     )
   }

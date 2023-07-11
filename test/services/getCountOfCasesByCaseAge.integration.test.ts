@@ -10,8 +10,8 @@ import getDataSource from "../../src/services/getDataSource"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import { subDays } from "date-fns"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import type { KeyValuePair } from "types/KeyValuePair"
 import User from "services/entities/User"
+import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 
 jest.mock(
   "services/queries/courtCasesByOrganisationUnitQuery",
