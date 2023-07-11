@@ -1,7 +1,6 @@
 import User from "services/entities/User"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
-import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
 import getDataSource from "../../src/services/getDataSource"
 import updateLockStatusToLocked from "../../src/services/updateLockStatusToLocked"
 import { isError } from "../../src/types/Result"
@@ -9,13 +8,16 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
+import { UserGroup } from "../../src/types/UserGroup"
+import getCourtCase from "../../src/services/getCourtCase"
+import { ResolutionStatus } from "../../src/types/ResolutionStatus"
 
 jest.mock("utils/userPermissions")
 
 describe("Update lock status to locked", () => {
   let dataSource: DataSource
 
-  const exceptionLockedEvent = (username = "Bichard01") => ({
+  const exceptionLockedEvent = (username = "current user") => ({
     category: "information",
     eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: "Exception locked",
@@ -26,7 +28,7 @@ describe("Update lock status to locked", () => {
       eventCode: "exceptions.locked"
     }
   })
-  const triggerLockedEvent = (username = "Bichard01") => ({
+  const triggerLockedEvent = (username = "current user") => ({
     category: "information",
     eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: "Trigger locked",
@@ -38,7 +40,169 @@ describe("Update lock status to locked", () => {
     }
   })
 
-  const username = "Bichard01"
+  const testCases = [
+    {
+      description: "General handler can lock a case that is not locked",
+      triggerLockedBy: null,
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.GeneralHandler,
+      expectTriggersToBeLockedBy: "current user",
+      expectExceptionsToBeLockedBy: "current user",
+      expectedEvents: [exceptionLockedEvent(), triggerLockedEvent()]
+    },
+    {
+      description: "General handler can lock the exception when the trigger is already locked ",
+      triggerLockedBy: "another user",
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.GeneralHandler,
+      expectTriggersToBeLockedBy: "another user",
+      expectExceptionsToBeLockedBy: "current user",
+      expectedEvents: [exceptionLockedEvent()]
+    },
+    {
+      description: "General handler can lock the exception when the trigger status is submitted ",
+      triggerLockedBy: null,
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.GeneralHandler,
+      expectTriggersToBeLockedBy: null,
+      expectExceptionsToBeLockedBy: "current user",
+      triggerStatus: "Submitted" as ResolutionStatus,
+      expectedEvents: [exceptionLockedEvent()]
+    },
+    {
+      description: "General handler can lock the trigger when the exception is already locked ",
+      triggerLockedBy: null,
+      exceptionLockedBy: "another user",
+      currentUserGroup: UserGroup.GeneralHandler,
+      expectTriggersToBeLockedBy: "current user",
+      expectExceptionsToBeLockedBy: "another user",
+      expectedEvents: [triggerLockedEvent()]
+    },
+    {
+      description: "General handler can lock the trigger when the error status is submitted",
+      triggerLockedBy: null,
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.GeneralHandler,
+      expectTriggersToBeLockedBy: "current user",
+      errorStatus: "Submitted" as ResolutionStatus,
+      expectExceptionsToBeLockedBy: null,
+      expectedEvents: [triggerLockedEvent()]
+    },
+    {
+      description: "General handler cannot lock a case that is already locked",
+      triggerLockedBy: "another user",
+      exceptionLockedBy: "another user",
+      currentUserGroup: UserGroup.GeneralHandler,
+      expectTriggersToBeLockedBy: "another user",
+      expectExceptionsToBeLockedBy: "another user",
+      expectedEvents: []
+    },
+    {
+      description: "General handler cannot lock a case that is not visible to them",
+      triggerLockedBy: null,
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.GeneralHandler,
+      expectTriggersToBeLockedBy: null,
+      expectExceptionsToBeLockedBy: null,
+      expectedEvents: [],
+      visibleForce: "WR0N6"
+    },
+    {
+      description: "General handler cannot lock a case when the error status and trigger status is submitted",
+      triggerLockedBy: null,
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.GeneralHandler,
+      expectTriggersToBeLockedBy: null,
+      expectExceptionsToBeLockedBy: null,
+      errorStatus: "Submitted" as ResolutionStatus,
+      triggerStatus: "Submitted" as ResolutionStatus,
+      expectedEvents: []
+    },
+    {
+      description: "Trigger handler can lock the trigger when the exception is already locked ",
+      triggerLockedBy: null,
+      exceptionLockedBy: "another user",
+      currentUserGroup: UserGroup.TriggerHandler,
+      expectTriggersToBeLockedBy: "current user",
+      expectExceptionsToBeLockedBy: "another user",
+      expectedEvents: [triggerLockedEvent()]
+    },
+    {
+      description: "Trigger handler can lock the trigger when the exception is not locked ",
+      triggerLockedBy: null,
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.TriggerHandler,
+      expectTriggersToBeLockedBy: "current user",
+      expectExceptionsToBeLockedBy: null,
+      expectedEvents: [triggerLockedEvent()]
+    },
+    {
+      description: "Trigger handler cannot lock a case that is already locked",
+      triggerLockedBy: "another user",
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.TriggerHandler,
+      expectTriggersToBeLockedBy: "another user",
+      expectExceptionsToBeLockedBy: null,
+      expectedEvents: []
+    },
+    {
+      description: "Trigger handler cannot lock a case when the trigger status is submitted",
+      triggerLockedBy: null,
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.TriggerHandler,
+      expectTriggersToBeLockedBy: null,
+      expectExceptionsToBeLockedBy: null,
+      triggerStatus: "Submitted" as ResolutionStatus,
+      expectedEvents: []
+    },
+    {
+      description: "Exception handler can lock the exception when the trigger is already locked ",
+      triggerLockedBy: "another user",
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.ExceptionHandler,
+      expectTriggersToBeLockedBy: "another user",
+      expectExceptionsToBeLockedBy: "current user",
+      expectedEvents: [exceptionLockedEvent()]
+    },
+    {
+      description: "Exception handler can lock the trigger when the exception is not locked ",
+      triggerLockedBy: null,
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.ExceptionHandler,
+      expectTriggersToBeLockedBy: null,
+      expectExceptionsToBeLockedBy: "current user",
+      expectedEvents: [exceptionLockedEvent()]
+    },
+    {
+      description: "Exception handler cannot lock a case that is already locked",
+      triggerLockedBy: null,
+      exceptionLockedBy: "another user",
+      currentUserGroup: UserGroup.ExceptionHandler,
+      expectTriggersToBeLockedBy: null,
+      expectExceptionsToBeLockedBy: "another user",
+      expectedEvents: []
+    },
+    {
+      description: "Exception handler cannot lock a case when the error status is submitted",
+      triggerLockedBy: null,
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.ExceptionHandler,
+      expectTriggersToBeLockedBy: null,
+      expectExceptionsToBeLockedBy: null,
+      errorStatus: "Submitted" as ResolutionStatus,
+      expectedEvents: []
+    },
+    {
+      description: "Auditor cannot lock a case",
+      triggerLockedBy: null,
+      exceptionLockedBy: null,
+      currentUserGroup: UserGroup.Audit,
+      expectTriggersToBeLockedBy: null,
+      expectExceptionsToBeLockedBy: null,
+      expectError: "update requires a lock (exception or trigger) to update",
+      expectedEvents: []
+    }
+  ]
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -54,334 +218,66 @@ describe("Update lock status to locked", () => {
     }
   })
 
-  it("Should lock a unlocked court case when viewed", async () => {
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: null,
-      errorCount: 1,
-      errorStatus: "Unresolved",
-      triggerCount: 1,
-      triggerStatus: "Unresolved"
-    })
-    await insertCourtCases(inputCourtCase)
+  describe.only("only", () => {
+    test.each(testCases)(
+      "$description",
+      async ({
+        triggerLockedBy,
+        exceptionLockedBy,
+        currentUserGroup,
+        visibleForce,
+        errorStatus,
+        triggerStatus,
+        expectTriggersToBeLockedBy,
+        expectExceptionsToBeLockedBy,
+        expectError,
+        expectedEvents
+      }) => {
+        const inputCourtCase = await getDummyCourtCase({
+          errorLockedByUsername: exceptionLockedBy,
+          triggerLockedByUsername: triggerLockedBy,
+          errorCount: 1,
+          errorStatus: errorStatus ?? "Unresolved",
+          triggerCount: 1,
+          triggerStatus: triggerStatus ?? "Unresolved"
+        })
+        await insertCourtCases(inputCourtCase)
 
-    const user = {
-      username,
-      visibleForces: ["36"],
-      visibleCourts: [],
-      hasAccessToExceptions: true,
-      hasAccessToTriggers: true
-    } as Partial<User> as User
+        const user = {
+          username: "current user",
+          visibleForces: [visibleForce ?? "36"],
+          visibleCourts: [],
+          hasAccessToExceptions: [UserGroup.ExceptionHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
+            currentUserGroup
+          ),
+          hasAccessToTriggers: [UserGroup.TriggerHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
+            currentUserGroup
+          )
+        } as Partial<User> as User
 
-    const events: AuditLogEvent[] = []
-    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
-    expect(isError(result)).toBe(false)
-    expect(result).toBeTruthy()
+        const events: AuditLogEvent[] = []
+        const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
 
-    const expectedCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: username,
-      triggerLockedByUsername: username,
-      errorCount: 1,
-      errorStatus: "Unresolved",
-      triggerCount: 1,
-      triggerStatus: "Unresolved"
-    })
+        if (expectError) {
+          expect(isError(result)).toBe(true)
+          expect((result as Error).message).toEqual(expectError)
+        } else {
+          expect(isError(result)).toBe(false)
+        }
 
-    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toMatchObject(expectedCourtCase)
-    expect(events).toStrictEqual([exceptionLockedEvent(), triggerLockedEvent()])
-  })
+        const expectedCourtCase = await getDummyCourtCase({
+          errorLockedByUsername: expectExceptionsToBeLockedBy,
+          triggerLockedByUsername: expectTriggersToBeLockedBy,
+          errorCount: 1,
+          errorStatus: errorStatus ?? "Unresolved",
+          triggerCount: 1,
+          triggerStatus: triggerStatus ?? "Unresolved"
+        })
 
-  it("Should not lock a court case when its already locked", async () => {
-    const anotherUser = "anotherUserName"
-
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: anotherUser,
-      triggerLockedByUsername: anotherUser,
-      errorCount: 1,
-      errorStatus: "Unresolved",
-      triggerCount: 1,
-      triggerStatus: "Unresolved"
-    })
-    await insertCourtCases(inputCourtCase)
-
-    const user = {
-      username,
-      visibleForces: ["36"],
-      visibleCourts: [],
-      hasAccessToExceptions: true,
-      hasAccessToTriggers: true
-    } as Partial<User> as User
-
-    const events: AuditLogEvent[] = []
-    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
-    expect(isError(result)).toBe(false)
-    expect(result).toBeTruthy()
-
-    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toMatchObject(inputCourtCase)
-    expect(events).toHaveLength(0)
-  })
-
-  it("Should not lock a court case exception but it should lock a court case trigger", async () => {
-    const anotherUser = "anotherUserName"
-
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: anotherUser,
-      triggerLockedByUsername: null,
-      errorCount: 1,
-      errorStatus: "Unresolved",
-      triggerCount: 1,
-      triggerStatus: "Unresolved"
-    })
-    await insertCourtCases(inputCourtCase)
-
-    const user = {
-      username,
-      visibleForces: ["36"],
-      visibleCourts: [],
-      hasAccessToExceptions: false,
-      hasAccessToTriggers: true
-    } as Partial<User> as User
-
-    const events: AuditLogEvent[] = []
-    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
-
-    const expectedCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: anotherUser,
-      triggerLockedByUsername: username,
-      errorCount: 1,
-      errorStatus: "Unresolved",
-      triggerCount: 1,
-      triggerStatus: "Unresolved"
-    })
-
-    expect(isError(result)).toBe(false)
-    expect(result).toBeTruthy()
-
-    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toMatchObject(expectedCourtCase)
-    expect(events).toStrictEqual([triggerLockedEvent()])
-  })
-
-  it("Should not lock a court case trigger but it should lock a court case exception", async () => {
-    const anotherUser = "anotherUserName"
-
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: anotherUser,
-      errorCount: 1,
-      errorStatus: "Unresolved",
-      triggerCount: 1,
-      triggerStatus: "Unresolved"
-    })
-    await insertCourtCases(inputCourtCase)
-
-    const user = {
-      username,
-      visibleForces: ["36"],
-      visibleCourts: [],
-      hasAccessToExceptions: true,
-      hasAccessToTriggers: false
-    } as Partial<User> as User
-
-    const events: AuditLogEvent[] = []
-    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
-
-    const expectedCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: username,
-      triggerLockedByUsername: anotherUser,
-      errorCount: 1,
-      errorStatus: "Unresolved",
-      triggerCount: 1,
-      triggerStatus: "Unresolved"
-    })
-
-    expect(isError(result)).toBe(false)
-    expect(result).toBeTruthy()
-
-    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toMatchObject(expectedCourtCase)
-    expect(events).toStrictEqual([exceptionLockedEvent()])
-  })
-
-  it("Should not lock court case trigger, when trigger resolution status is Submitted", async () => {
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: null,
-      triggerStatus: "Submitted",
-      errorStatus: "Unresolved",
-      triggerCount: 1
-    })
-    await insertCourtCases(inputCourtCase)
-
-    const user = {
-      username,
-      visibleForces: ["36"],
-      visibleCourts: [],
-      hasAccessToExceptions: true,
-      hasAccessToTriggers: true
-    } as Partial<User> as User
-
-    const events: AuditLogEvent[] = []
-    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
-
-    const expectedCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: null,
-      triggerStatus: "Submitted",
-      errorStatus: "Unresolved",
-      triggerCount: 1
-    })
-
-    expect(isError(result)).toBe(false)
-    expect(result).toBeTruthy()
-
-    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toMatchObject(expectedCourtCase)
-    expect(events).toHaveLength(0)
-  })
-
-  it("Should lock the court case exception, when trigger resolution status is Submitted", async () => {
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: null,
-      triggerStatus: "Submitted",
-      errorStatus: "Unresolved",
-      errorCount: 1
-    })
-    await insertCourtCases(inputCourtCase)
-
-    const user = {
-      username,
-      visibleForces: ["36"],
-      visibleCourts: [],
-      hasAccessToExceptions: true,
-      hasAccessToTriggers: true
-    } as Partial<User> as User
-
-    const events: AuditLogEvent[] = []
-    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
-
-    const expectedCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: username,
-      triggerLockedByUsername: null,
-      triggerStatus: "Submitted",
-      errorStatus: "Unresolved",
-      errorCount: 1
-    })
-
-    expect(isError(result)).toBe(false)
-    expect(result).toBeTruthy()
-
-    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toMatchObject(expectedCourtCase)
-    expect(events).toHaveLength(1)
-    expect(events).toStrictEqual([exceptionLockedEvent()])
-  })
-
-  it("Should lock the court case trigger, when exception resolution status is Submitted", async () => {
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: null,
-      triggerStatus: "Unresolved",
-      errorStatus: "Submitted",
-      triggerCount: 1
-    })
-    await insertCourtCases(inputCourtCase)
-
-    const user = {
-      username,
-      visibleForces: ["36"],
-      visibleCourts: [],
-      hasAccessToExceptions: true,
-      hasAccessToTriggers: true
-    } as Partial<User> as User
-
-    const events: AuditLogEvent[] = []
-    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
-
-    const expectedCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: username,
-      triggerStatus: "Unresolved",
-      errorStatus: "Submitted",
-      triggerCount: 1
-    })
-
-    expect(isError(result)).toBe(false)
-    expect(result).toBeTruthy()
-
-    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toMatchObject(expectedCourtCase)
-    expect(events).toHaveLength(1)
-    expect(events).toStrictEqual([triggerLockedEvent()])
-  })
-
-  it("Should not lock a court case exception, when exception resolution status is Submitted", async () => {
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: null,
-      errorStatus: "Submitted",
-      triggerCount: 1,
-      triggerStatus: "Unresolved"
-    })
-    await insertCourtCases(inputCourtCase)
-
-    const user = {
-      username,
-      visibleForces: ["36"],
-      visibleCourts: [],
-      hasAccessToExceptions: true,
-      hasAccessToTriggers: true
-    } as Partial<User> as User
-
-    const events: AuditLogEvent[] = []
-    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
-
-    const expectedCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: "Bichard01",
-      triggerStatus: "Unresolved",
-      errorCount: 0,
-      errorStatus: "Submitted",
-      triggerCount: 1
-    })
-
-    expect(isError(result)).toBe(false)
-    expect(result).toBeTruthy()
-
-    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toMatchObject(expectedCourtCase)
-    expect(events).toStrictEqual([triggerLockedEvent()])
-  })
-
-  it("Should return an error if we haven't got a specific lock to lock", async () => {
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: null,
-      errorCount: 1,
-      errorStatus: "Unresolved",
-      triggerCount: 1,
-      triggerStatus: "Unresolved"
-    })
-    await insertCourtCases(inputCourtCase)
-
-    const user = {
-      username,
-      visibleCourts: [],
-      visibleForces: ["36"],
-      hasAccessToExceptions: false,
-      hasAccessToTriggers: false
-    } as Partial<User> as User
-
-    const events: AuditLogEvent[] = []
-    const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
-    expect(isError(result)).toBe(true)
-    expect(result).toEqual(new Error("update requires a lock (exception or trigger) to update"))
-
-    const actualCourtCase = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, user)
-    expect(actualCourtCase).toMatchObject(inputCourtCase)
-    expect(events).toHaveLength(0)
+        const actualCourtCase = await getCourtCase(dataSource, inputCourtCase.errorId)
+        expect(actualCourtCase).toMatchObject(expectedCourtCase)
+        expect(events).toStrictEqual(expectedEvents)
+      }
+    )
   })
 })

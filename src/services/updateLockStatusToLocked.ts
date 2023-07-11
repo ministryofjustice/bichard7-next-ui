@@ -1,10 +1,11 @@
-import { EntityManager, IsNull, MoreThan, Not, Repository, UpdateResult } from "typeorm"
+import { EntityManager, IsNull, MoreThan, Not, Repository, UpdateQueryBuilder, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
+import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 
 const lock = async (
   unlockReason: "Trigger" | "Exception",
@@ -13,18 +14,21 @@ const lock = async (
   user: User,
   events: AuditLogEvent[]
 ): Promise<UpdateResult | Error> => {
-  const query = courtCaseRepository
-    .createQueryBuilder()
-    .update(CourtCase)
+  const result = await (
+    courtCasesByOrganisationUnitQuery(
+      courtCaseRepository.createQueryBuilder().update(CourtCase),
+      user
+    ) as UpdateQueryBuilder<CourtCase>
+  )
     .set({ [unlockReason === "Exception" ? "errorLockedByUsername" : "triggerLockedByUsername"]: user.username })
-    .where({
+    .andWhere({
       errorId: courtCaseId,
       [unlockReason === "Exception" ? "errorLockedByUsername" : "triggerLockedByUsername"]: IsNull(),
       [unlockReason === "Exception" ? "errorCount" : "triggerCount"]: MoreThan(0),
       [unlockReason === "Exception" ? "errorStatus" : "triggerStatus"]: Not("Submitted")
     })
-
-  const result = await query.execute().catch((error) => error)
+    .execute()
+    .catch((error) => error)
 
   if (!result) {
     return new Error(`Failed to lock ${unlockReason}`)
