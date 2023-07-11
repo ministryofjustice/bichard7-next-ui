@@ -218,66 +218,64 @@ describe("Update lock status to locked", () => {
     }
   })
 
-  describe.only("only", () => {
-    test.each(testCases)(
-      "$description",
-      async ({
-        triggerLockedBy,
-        exceptionLockedBy,
-        currentUserGroup,
-        visibleForce,
-        errorStatus,
-        triggerStatus,
-        expectTriggersToBeLockedBy,
-        expectExceptionsToBeLockedBy,
-        expectError,
-        expectedEvents
-      }) => {
-        const inputCourtCase = await getDummyCourtCase({
-          errorLockedByUsername: exceptionLockedBy,
-          triggerLockedByUsername: triggerLockedBy,
-          errorCount: 1,
-          errorStatus: errorStatus ?? "Unresolved",
-          triggerCount: 1,
-          triggerStatus: triggerStatus ?? "Unresolved"
-        })
-        await insertCourtCases(inputCourtCase)
+  test.each(testCases)(
+    "$description",
+    async ({
+      triggerLockedBy,
+      exceptionLockedBy,
+      currentUserGroup,
+      visibleForce,
+      errorStatus,
+      triggerStatus,
+      expectTriggersToBeLockedBy,
+      expectExceptionsToBeLockedBy,
+      expectError,
+      expectedEvents
+    }) => {
+      const inputCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: exceptionLockedBy,
+        triggerLockedByUsername: triggerLockedBy,
+        errorCount: 1,
+        errorStatus: errorStatus ?? "Unresolved",
+        triggerCount: 1,
+        triggerStatus: triggerStatus ?? "Unresolved"
+      })
+      await insertCourtCases(inputCourtCase)
 
-        const user = {
-          username: "current user",
-          visibleForces: [visibleForce ?? "36"],
-          visibleCourts: [],
-          hasAccessToExceptions: [UserGroup.ExceptionHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
-            currentUserGroup
-          ),
-          hasAccessToTriggers: [UserGroup.TriggerHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
-            currentUserGroup
-          )
-        } as Partial<User> as User
+      const user = {
+        username: "current user",
+        visibleForces: [visibleForce ?? "36"],
+        visibleCourts: [],
+        hasAccessToExceptions: [UserGroup.ExceptionHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
+          currentUserGroup
+        ),
+        hasAccessToTriggers: [UserGroup.TriggerHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
+          currentUserGroup
+        )
+      } as Partial<User> as User
 
-        const events: AuditLogEvent[] = []
-        const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
+      const events: AuditLogEvent[] = []
+      const result = await updateLockStatusToLocked(dataSource.manager, inputCourtCase.errorId, user, events)
 
-        if (expectError) {
-          expect(isError(result)).toBe(true)
-          expect((result as Error).message).toEqual(expectError)
-        } else {
-          expect(isError(result)).toBe(false)
-        }
-
-        const expectedCourtCase = await getDummyCourtCase({
-          errorLockedByUsername: expectExceptionsToBeLockedBy,
-          triggerLockedByUsername: expectTriggersToBeLockedBy,
-          errorCount: 1,
-          errorStatus: errorStatus ?? "Unresolved",
-          triggerCount: 1,
-          triggerStatus: triggerStatus ?? "Unresolved"
-        })
-
-        const actualCourtCase = await getCourtCase(dataSource, inputCourtCase.errorId)
-        expect(actualCourtCase).toMatchObject(expectedCourtCase)
-        expect(events).toStrictEqual(expectedEvents)
+      if (expectError) {
+        expect(isError(result)).toBe(true)
+        expect((result as Error).message).toEqual(expectError)
+      } else {
+        expect(isError(result)).toBe(false)
       }
-    )
-  })
+
+      const expectedCourtCase = await getDummyCourtCase({
+        errorLockedByUsername: expectExceptionsToBeLockedBy,
+        triggerLockedByUsername: expectTriggersToBeLockedBy,
+        errorCount: 1,
+        errorStatus: errorStatus ?? "Unresolved",
+        triggerCount: 1,
+        triggerStatus: triggerStatus ?? "Unresolved"
+      })
+
+      const actualCourtCase = await getCourtCase(dataSource, inputCourtCase.errorId)
+      expect(actualCourtCase).toMatchObject(expectedCourtCase)
+      expect(events).toStrictEqual(expectedEvents)
+    }
+  )
 })
