@@ -8,6 +8,7 @@ import Trigger from "./entities/Trigger"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
 import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { isError } from "types/Result"
+import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const resolveError = async (
   entityManager: EntityManager,
@@ -67,7 +68,7 @@ const resolveError = async (
   }
 
   events?.push(
-    getAuditLogEvent("information", "Exception marked as resolved by user", "Bichard New UI", {
+    getAuditLogEvent("information", "Exception marked as resolved by user", AUDIT_LOG_EVENT_SOURCE, {
       user: user.username,
       auditLogVersion: 2,
       eventCode: "exceptions.resolved",

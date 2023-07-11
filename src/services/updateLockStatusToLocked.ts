@@ -1,10 +1,55 @@
-import { EntityManager, IsNull, MoreThan, Not, UpdateResult } from "typeorm"
+import { EntityManager, IsNull, MoreThan, Not, Repository, UpdateQueryBuilder, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
-import { ResolutionStatus } from "types/ResolutionStatus"
 import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
+import { AUDIT_LOG_EVENT_SOURCE } from "../config"
+import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
+
+const lock = async (
+  unlockReason: "Trigger" | "Exception",
+  courtCaseRepository: Repository<CourtCase>,
+  courtCaseId: number,
+  user: User,
+  events: AuditLogEvent[]
+): Promise<UpdateResult | Error> => {
+  const result = await (
+    courtCasesByOrganisationUnitQuery(
+      courtCaseRepository.createQueryBuilder().update(CourtCase),
+      user
+    ) as UpdateQueryBuilder<CourtCase>
+  )
+    .set({ [unlockReason === "Exception" ? "errorLockedByUsername" : "triggerLockedByUsername"]: user.username })
+    .andWhere({
+      errorId: courtCaseId,
+      [unlockReason === "Exception" ? "errorLockedByUsername" : "triggerLockedByUsername"]: IsNull(),
+      [unlockReason === "Exception" ? "errorCount" : "triggerCount"]: MoreThan(0),
+      [unlockReason === "Exception" ? "errorStatus" : "triggerStatus"]: Not("Submitted")
+    })
+    .execute()
+    .catch((error) => error)
+
+  if (!result) {
+    return new Error(`Failed to lock ${unlockReason}`)
+  }
+
+  if (isError(result)) {
+    return result
+  }
+
+  if (result.affected && result.affected > 0) {
+    events.push(
+      getAuditLogEvent("information", `${unlockReason} locked`, AUDIT_LOG_EVENT_SOURCE, {
+        user: user.username,
+        auditLogVersion: 2,
+        eventCode: `${unlockReason.toLowerCase()}s.locked`
+      })
+    )
+  }
+
+  return result
+}
 
 const updateLockStatusToLocked = async (
   dataSource: EntityManager,
@@ -12,62 +57,18 @@ const updateLockStatusToLocked = async (
   user: User,
   events: AuditLogEvent[]
 ): Promise<UpdateResult | Error> => {
-  if (!user.hasAccessToExceptions && !user.hasAccessToTriggers) {
-    return new Error("update requires a lock (exception or trigger) to update")
-  }
-
-  const generatedEvents: AuditLogEvent[] = []
   const courtCaseRepository = dataSource.getRepository(CourtCase)
-
-  const query = courtCaseRepository
-    .createQueryBuilder()
-    .update(CourtCase)
-    .set({
-      ...(user.hasAccessToExceptions ? { errorLockedByUsername: user.username } : {}),
-      ...(user.hasAccessToTriggers ? { triggerLockedByUsername: user.username } : {})
-    })
-    .where({ errorId: courtCaseId })
-
-  const submitted: ResolutionStatus = "Submitted"
+  let result: UpdateResult | Error | undefined
 
   if (user.hasAccessToExceptions) {
-    query.andWhere({
-      errorLockedByUsername: IsNull(),
-      errorCount: MoreThan(0),
-      errorStatus: Not(submitted)
-    })
-    generatedEvents.push(
-      getAuditLogEvent("information", "Exception locked", "Bichard New UI", {
-        user: user.username,
-        auditLogVersion: 2,
-        eventCode: "exceptions.locked"
-      })
-    )
+    result = await lock("Exception", courtCaseRepository, courtCaseId, user, events)
   }
 
   if (user.hasAccessToTriggers) {
-    // we are checking the trigger status, this is not what legacy bichard does but we think that's a bug. Legacy bichard checks error_status (bichard-backend/src/main/java/uk/gov/ocjr/mtu/br7/errorlistmanager/data/ErrorDAO.java ln 1455)
-    query.andWhere({
-      triggerLockedByUsername: IsNull(),
-      triggerCount: MoreThan(0),
-      triggerStatus: Not(submitted)
-    })
-    generatedEvents.push(
-      getAuditLogEvent("information", "Trigger locked", "Bichard New UI", {
-        user: user.username,
-        auditLogVersion: 2,
-        eventCode: "triggers.locked"
-      })
-    )
+    result = await lock("Trigger", courtCaseRepository, courtCaseId, user, events)
   }
 
-  const result = await query.execute().catch((error) => error)
-
-  if (!isError(result) && result.affected && result.affected > 0) {
-    generatedEvents.forEach((event) => events.push(event))
-  }
-
-  return result
+  return result ?? new Error("update requires a lock (exception or trigger) to update")
 }
 
 export default updateLockStatusToLocked
