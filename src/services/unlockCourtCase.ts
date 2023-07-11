@@ -12,7 +12,7 @@ const unlockCourtCase = async (
   courtCaseId: number,
   user: User,
   unlockReason: UnlockReason
-): Promise<UpdateResult | Error | undefined> => {
+): Promise<UpdateResult | Error> => {
   const updateResult = await dataSource.transaction("SERIALIZABLE", async (entityManager) => {
     const events: AuditLogEvent[] = []
 

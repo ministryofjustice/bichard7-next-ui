@@ -1,4 +1,4 @@
-import { DataSource, EntityManager, UpdateQueryBuilder } from "typeorm/"
+import { DataSource, EntityManager, UpdateQueryBuilder, UpdateResult } from "typeorm/"
 import { isError } from "types/Result"
 import { DEFAULT_STATION_CODE } from "utils/amendments/amendForceOwner/defaultStationCode"
 import amendCourtCase from "./amendCourtCase"
@@ -16,6 +16,7 @@ import storeAuditLogEvents from "./storeAuditLogEvents"
 import getCourtCase from "./getCourtCase"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,
@@ -23,11 +24,11 @@ const reallocateCourtCaseToForce = async (
   user: User,
   forceCode: string,
   note?: string
-): Promise<void> => {
+): Promise<UpdateResult | Error> => {
   // TODO:
   // - Generate TRPR0028 if necessary
   // - Reset triggers on reallocate
-  await dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<void> => {
+  return dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<UpdateResult | Error> => {
     const events: AuditLogEvent[] = []
 
     const courtCase = await getCourtCase(entityManager, courtCaseId)
@@ -80,11 +81,16 @@ const reallocateCourtCaseToForce = async (
     }
 
     events.push(
-      getAuditLogEvent(AuditLogEventOptions.hearingOutcomeReallocated, EventCategory.information, "Bichard New UI", {
-        user: user.username,
-        auditLogVersion: 2,
-        "New Force Owner": `${newForceCode}00`
-      })
+      getAuditLogEvent(
+        AuditLogEventOptions.hearingOutcomeReallocated,
+        EventCategory.information,
+        AUDIT_LOG_EVENT_SOURCE,
+        {
+          user: user.username,
+          auditLogVersion: 2,
+          "New Force Owner": `${newForceCode}00`
+        }
+      )
     )
 
     const unlockResult = await updateLockStatusToUnlocked(
@@ -114,6 +120,8 @@ const reallocateCourtCaseToForce = async (
     if (isError(storeAuditLogResponse)) {
       throw storeAuditLogResponse
     }
+
+    return queryResult
   })
 }
 

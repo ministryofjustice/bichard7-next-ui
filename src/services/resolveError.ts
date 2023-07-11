@@ -12,6 +12,7 @@ import { validateManualResolution } from "utils/validators/validateManualResolut
 import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { isError } from "types/Result"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const resolveError = async (
   entityManager: EntityManager,
@@ -71,7 +72,7 @@ const resolveError = async (
   }
 
   events?.push(
-    getAuditLogEvent(AuditLogEventOptions.exceptionResolved, EventCategory.information, "Bichard New UI", {
+    getAuditLogEvent(AuditLogEventOptions.exceptionResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
       user: user.username,
       auditLogVersion: 2,
       resolutionReasonCode: ResolutionReasonCode[resolution.reason],

@@ -1,4 +1,4 @@
-import { DataSource, EntityManager } from "typeorm"
+import { DataSource, EntityManager, UpdateResult } from "typeorm"
 import { isError } from "types/Result"
 import User from "./entities/User"
 import { ManualResolution } from "types/ManualResolution"
@@ -15,8 +15,8 @@ const resolveCourtCase = async (
   courtCase: CourtCase,
   resolution: ManualResolution,
   user: User
-): Promise<void> => {
-  await dataSource.transaction("SERIALIZABLE", async (entityManager) => {
+): Promise<UpdateResult | Error> => {
+  return dataSource.transaction("SERIALIZABLE", async (entityManager) => {
     const events: AuditLogEvent[] = []
 
     const resolveErrorResult = await resolveError(entityManager, courtCase, user, resolution, events)
@@ -55,6 +55,8 @@ const resolveCourtCase = async (
     if (isError(storeAuditLogResponse)) {
       throw storeAuditLogResponse
     }
+
+    return resolveErrorResult
   })
 }
 

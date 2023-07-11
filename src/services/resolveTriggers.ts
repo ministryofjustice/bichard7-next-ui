@@ -1,4 +1,4 @@
-import { DataSource, In, IsNull } from "typeorm"
+import { DataSource, In, IsNull, UpdateResult } from "typeorm"
 import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
 import Trigger from "./entities/Trigger"
@@ -12,6 +12,7 @@ import {
   type AuditLogEvent
 } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const generateTriggersAttributes = (triggers: Trigger[]) =>
   triggers.reduce((acc, trigger, index) => {
@@ -26,7 +27,7 @@ const resolveTriggers = async (
   triggerIds: number[],
   courtCaseId: number,
   user: User
-): Promise<void> => {
+): Promise<UpdateResult | Error> => {
   const resolver = user.username
 
   return dataSource.transaction("SERIALIZABLE", async (entityManager) => {
@@ -74,7 +75,7 @@ const resolveTriggers = async (
     const events: AuditLogEvent[] = []
 
     events.push(
-      getAuditLogEvent(AuditLogEventOptions.triggerResolved, EventCategory.information, "Bichard New UI", {
+      getAuditLogEvent(AuditLogEventOptions.triggerResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
         user: user.username,
         auditLogVersion: 2,
         "Number Of Triggers": triggerIds.length,
@@ -116,7 +117,7 @@ const resolveTriggers = async (
       }
 
       events.push(
-        getAuditLogEvent(AuditLogEventOptions.allTriggersResolved, EventCategory.information, "Bichard New UI", {
+        getAuditLogEvent(AuditLogEventOptions.allTriggersResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
           user: user.username,
           auditLogVersion: 2,
           "Number Of Triggers": allTriggers.length,
@@ -130,6 +131,8 @@ const resolveTriggers = async (
     if (isError(storeAuditLogResponse)) {
       throw storeAuditLogResponse
     }
+
+    return updateTriggersResult
   })
 }
 
