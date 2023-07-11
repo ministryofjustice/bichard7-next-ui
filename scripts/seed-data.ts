@@ -7,7 +7,7 @@ import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromEntity from "../test/utils/deleteFromEntity"
 import createAuditLogRecord from "../test/helpers/createAuditLogRecord"
 import insertManyIntoDynamoTable from "../test/utils/insertManyIntoDynamoTable"
-import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
+import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import { insertLockUsers } from "../test/utils/insertLockUsers"
 import { insertNoteUser } from "../test/utils/insertNoteUser"
 

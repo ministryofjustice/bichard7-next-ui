@@ -1,5 +1,5 @@
+import type { default as KeyValuePair } from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import { Column, Entity, PrimaryColumn } from "typeorm"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import BaseEntity from "./BaseEntity"
 import featureFlagTransformer from "./transformers/featureFlagTransformer"
 import delimitedString from "./transformers/delimitedString"
