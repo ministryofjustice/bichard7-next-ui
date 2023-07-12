@@ -13,7 +13,7 @@ enum DurationUnit {
   M = "months",
   S = "sessions",
   W = "weeks",
-  y = "years"
+  Y = "years"
 }
 type DurationCode = keyof typeof DurationUnit
 
@@ -74,13 +74,18 @@ export const HearingResult = ({ result }: HearingResultProps) => {
         value={result.ResultHearingDate && formatDisplayedDate(new Date(result.ResultHearingDate))}
       />
       <ConditionalRender isRendered={typeof result.Duration !== "undefined" && result.Duration?.length > 0}>
-        {result.Duration?.map((duration) => (
-          <TableRow
-            key={`duration-${duration.DurationLength}-${duration.DurationUnit}`}
-            label="Duration"
-            value={formatDuration(duration.DurationLength, duration.DurationUnit)}
-          />
-        ))}
+        <TableRow
+          label="Duration"
+          value={
+            <>
+              {result.Duration?.map((duration) => (
+                <div key={`duration-${duration.DurationLength}-${duration.DurationUnit}`}>
+                  {formatDuration(duration.DurationLength, duration.DurationUnit)}
+                </div>
+              ))}
+            </>
+          }
+        />
       </ConditionalRender>
       <ConditionalRender isRendered={typeof result.NextResultSourceOrganisation === "string"}>
         <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />

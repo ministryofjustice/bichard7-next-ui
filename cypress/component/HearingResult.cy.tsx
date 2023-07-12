@@ -57,4 +57,26 @@ describe("Hearing Result", () => {
 
     cy.contains("td", "Duration").should("not.exist")
   })
+
+  it("displays multiple durations", () => {
+    const result = {
+      Duration: [
+        {
+          DurationLength: 3,
+          DurationType: "",
+          DurationUnit: "Y"
+        },
+        {
+          DurationLength: 28,
+          DurationType: "",
+          DurationUnit: "D"
+        }
+      ]
+    } as Result
+
+    cy.mount(<HearingResult result={result} />)
+
+    cy.contains("td", "Duration").siblings().should("include.text", "3 years")
+    cy.contains("td", "Duration").siblings().should("include.text", "28 days")
+  })
 })
