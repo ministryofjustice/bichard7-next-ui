@@ -1,14 +1,18 @@
 import { DataSource } from "typeorm"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import { v4 as uuid } from "uuid"
 import { isError } from "types/Result"
 import getDataSource from "services/getDataSource"
 import axios from "axios"
-import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import {
+  AuditLogEvent,
+  AuditLogEventOptions
+} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import createAuditLog from "../helpers/createAuditLog"
 import { AUDIT_LOG_API_KEY, AUDIT_LOG_API_URL } from "../../src/config"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 
 jest.mock("axios")
 
@@ -32,7 +36,12 @@ describe("storeAuditLogEvents", () => {
   })
 
   it("Should store audit log events in dynamoDB", async () => {
-    const expectedEvent = getAuditLogEvent("information", "dummyEventType", "dummyEventSource", { key1: "value1" })
+    const expectedEvent = getAuditLogEvent(
+      AuditLogEventOptions.reportRun,
+      EventCategory.information,
+      "dummyEventSource",
+      { key1: "value1" }
+    )
     const auditLog = await createAuditLog()
 
     const result = await storeAuditLogEvents(auditLog.messageId, [expectedEvent]).catch((error) => error)
@@ -46,7 +55,8 @@ describe("storeAuditLogEvents", () => {
         attributes: { key1: "value1" },
         category: "information",
         eventSource: "dummyEventSource",
-        eventType: "dummyEventType",
+        eventCode: "report-run",
+        eventType: AuditLogEventOptions.reportRun.type,
         timestamp: expect.anything()
       }
     ])

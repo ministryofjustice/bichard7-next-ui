@@ -5,9 +5,13 @@ import Trigger from "./entities/Trigger"
 import User from "./entities/User"
 import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
 import storeAuditLogEvents from "./storeAuditLogEvents"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
-import { KeyValuePair } from "types/KeyValuePair"
-import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
+import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
+import {
+  AuditLogEventOptions,
+  type AuditLogEvent
+} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const generateTriggersAttributes = (triggers: Trigger[]) =>
@@ -71,10 +75,9 @@ const resolveTriggers = async (
     const events: AuditLogEvent[] = []
 
     events.push(
-      getAuditLogEvent("information", "Trigger marked as resolved by user", AUDIT_LOG_EVENT_SOURCE, {
+      getAuditLogEvent(AuditLogEventOptions.triggerResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
         user: user.username,
         auditLogVersion: 2,
-        eventCode: "triggers.resolved",
         "Number Of Triggers": triggerIds.length,
         ...generateTriggersAttributes(courtCase.triggers.filter((trigger) => triggerIds.includes(trigger.triggerId)))
       })
@@ -114,10 +117,9 @@ const resolveTriggers = async (
       }
 
       events.push(
-        getAuditLogEvent("information", "All triggers marked as resolved", AUDIT_LOG_EVENT_SOURCE, {
+        getAuditLogEvent(AuditLogEventOptions.allTriggersResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
           user: user.username,
           auditLogVersion: 2,
-          eventCode: "triggers.all-resolved",
           "Number Of Triggers": allTriggers.length,
           ...generateTriggersAttributes(allTriggers)
         })

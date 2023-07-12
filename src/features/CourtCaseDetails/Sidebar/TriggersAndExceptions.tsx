@@ -5,7 +5,7 @@ import { createUseStyles } from "react-jss"
 import CourtCase from "../../../services/entities/CourtCase"
 import TriggersList from "./TriggersList"
 import ExceptionsList from "./Exceptions"
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import type NavigationHandler from "types/NavigationHandler"
 import ConditionalRender from "components/ConditionalRender"
 

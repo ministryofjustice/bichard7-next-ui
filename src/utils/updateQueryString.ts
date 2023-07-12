@@ -1,4 +1,4 @@
-import type { KeyValuePair } from "types/KeyValuePair"
+import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 
 const updateQueryString = (params: KeyValuePair<string, unknown>) => {
   const searchParams = new URLSearchParams(window.location.search)

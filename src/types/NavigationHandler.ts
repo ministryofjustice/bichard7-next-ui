@@ -1,4 +1,4 @@
-import type { KeyValuePair } from "./KeyValuePair"
+import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import type NavigationLocation from "./NavigationLocation"
 
 type NavigationOptions = {

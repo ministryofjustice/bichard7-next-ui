@@ -1,7 +1,7 @@
 import RadioButton from "components/RadioButton/RadioButton"
 import type { Dispatch } from "react"
 import type { FilterAction } from "types/CourtCaseFilter"
-import type { KeyValuePair } from "types/KeyValuePair"
+import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 
 interface Props {
   urgency?: boolean

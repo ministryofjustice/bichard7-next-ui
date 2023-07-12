@@ -2,12 +2,16 @@ import { EntityManager, Repository, UpdateQueryBuilder, UpdateResult } from "typ
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
-import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import {
+  AuditLogEvent,
+  AuditLogEventOptions
+} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
 import getCourtCase from "./getCourtCase"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 
 const unlock = async (
   unlockReason: "Trigger" | "Exception",
@@ -40,11 +44,15 @@ const unlock = async (
 
   if (result.affected && result.affected > 0) {
     events.push(
-      getAuditLogEvent("information", `${unlockReason} unlocked`, AUDIT_LOG_EVENT_SOURCE, {
-        user: user.username,
-        auditLogVersion: 2,
-        eventCode: `${unlockReason.toLowerCase()}s.unlocked`
-      })
+      getAuditLogEvent(
+        unlockReason === "Exception" ? AuditLogEventOptions.exceptionUnlocked : AuditLogEventOptions.triggerUnlocked,
+        EventCategory.information,
+        AUDIT_LOG_EVENT_SOURCE,
+        {
+          user: user.username,
+          auditLogVersion: 2
+        }
+      )
     )
   }
   return result
