@@ -40,7 +40,7 @@ describe("Hearing Result", () => {
         {
           DurationLength: 6,
           DurationType: "",
-          DurationUnit: "months"
+          DurationUnit: "M"
         }
       ]
     } as Result

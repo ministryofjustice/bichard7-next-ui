@@ -6,6 +6,17 @@ import { TableRow } from "../../TableRow"
 import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/plea-status.json"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 
+enum DurationUnit {
+  D = "days",
+  H = "hours",
+  L = "life",
+  M = "months",
+  S = "sessions",
+  W = "weeks",
+  y = "years"
+}
+type DurationCode = keyof typeof DurationUnit
+
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
 }
@@ -20,6 +31,10 @@ export const getUrgentYesOrNo = (urgent: boolean | undefined): string => {
 
 export const getNumberOfHours = (hours: number | undefined): string | undefined => {
   return hours ? `${hours} Hours` : undefined
+}
+
+export const formatDuration = (durationLength: number, durationUnit: string): string => {
+  return `${durationLength} ${DurationUnit[durationUnit as DurationCode]}`
 }
 
 interface HearingResultProps {
@@ -63,7 +78,7 @@ export const HearingResult = ({ result }: HearingResultProps) => {
           <TableRow
             key={`duration-${duration.DurationLength}-${duration.DurationUnit}`}
             label="Duration"
-            value={`${duration.DurationLength} ${duration.DurationUnit}`}
+            value={formatDuration(duration.DurationLength, duration.DurationUnit)}
           />
         ))}
       </ConditionalRender>
