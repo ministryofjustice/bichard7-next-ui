@@ -1,4 +1,4 @@
-import type { KeyValuePair } from "types/KeyValuePair"
+import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 
 const groupErrorsFromReport = (errorReport: string): KeyValuePair<string, number> => {
   const errorsCodes: KeyValuePair<string, number> = {}

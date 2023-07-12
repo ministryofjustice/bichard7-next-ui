@@ -8,10 +8,14 @@ import insertNotes from "./insertNotes"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 import UnlockReason from "types/UnlockReason"
-import AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import {
+  AuditLogEvent,
+  AuditLogEventOptions
+} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import storeAuditLogEvents from "./storeAuditLogEvents"
 import getCourtCase from "./getCourtCase"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const reallocateCourtCaseToForce = async (
@@ -77,12 +81,16 @@ const reallocateCourtCaseToForce = async (
     }
 
     events.push(
-      getAuditLogEvent("information", "Hearing outcome reallocated by user", AUDIT_LOG_EVENT_SOURCE, {
-        user: user.username,
-        auditLogVersion: 2,
-        eventCode: "hearing-outcome.reallocated",
-        "New Force Owner": `${newForceCode}00`
-      })
+      getAuditLogEvent(
+        AuditLogEventOptions.hearingOutcomeReallocated,
+        EventCategory.information,
+        AUDIT_LOG_EVENT_SOURCE,
+        {
+          user: user.username,
+          auditLogVersion: 2,
+          "New Force Owner": `${newForceCode}00`
+        }
+      )
     )
 
     const unlockResult = await updateLockStatusToUnlocked(

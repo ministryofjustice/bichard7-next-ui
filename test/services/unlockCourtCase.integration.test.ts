@@ -71,16 +71,18 @@ describe("unlock court case", () => {
     it("Should call updateLockStatusToUnlocked, courtCasesByOrganisationUnitQuery and storeAuditLogEvents", async () => {
       const expectedAuditLogEvents = [
         {
-          attributes: { auditLogVersion: 2, eventCode: "exceptions.unlocked", user: lockedByName },
+          attributes: { auditLogVersion: 2, user: lockedByName },
           category: "information",
           eventSource: AUDIT_LOG_EVENT_SOURCE,
+          eventCode: "exceptions.unlocked",
           eventType: "Exception unlocked",
           timestamp: expect.anything()
         },
         {
-          attributes: { auditLogVersion: 2, eventCode: "triggers.unlocked", user: lockedByName },
+          attributes: { auditLogVersion: 2, user: lockedByName },
           category: "information",
           eventSource: AUDIT_LOG_EVENT_SOURCE,
+          eventCode: "triggers.unlocked",
           eventType: "Trigger unlocked",
           timestamp: expect.anything()
         }

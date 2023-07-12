@@ -6,7 +6,7 @@ import updateLockStatusToUnlocked from "../../src/services/updateLockStatusToUnl
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import UnlockReason from "types/UnlockReason"
 import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import { UserGroup } from "../../src/types/UserGroup"
@@ -17,11 +17,11 @@ const exceptionUnlockedEvent = (username = "current user") => ({
   category: "information",
   eventSource: AUDIT_LOG_EVENT_SOURCE,
   eventType: "Exception unlocked",
+  eventCode: "exceptions.unlocked",
   timestamp: expect.anything(),
   attributes: {
     user: username,
-    auditLogVersion: 2,
-    eventCode: "exceptions.unlocked"
+    auditLogVersion: 2
   }
 })
 
@@ -29,11 +29,11 @@ const triggerUnlockedEvent = (username = "current user") => ({
   category: "information",
   eventSource: AUDIT_LOG_EVENT_SOURCE,
   eventType: "Trigger unlocked",
+  eventCode: "triggers.unlocked",
   timestamp: expect.anything(),
   attributes: {
     user: username,
-    auditLogVersion: 2,
-    eventCode: "triggers.unlocked"
+    auditLogVersion: 2
   }
 })
 

@@ -1,4 +1,4 @@
-import { Hearing } from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AnnotatedHearingOutcome"
+import { Hearing } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import { Table } from "govuk-react"
 import courtTypes from "@moj-bichard7-developers/bichard7-next-data/dist/data/court-type.json"
 import { formatDisplayedDate } from "utils/formattedDate"

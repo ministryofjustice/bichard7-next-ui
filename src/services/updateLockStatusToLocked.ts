@@ -1,11 +1,15 @@
 import { EntityManager, IsNull, MoreThan, Not, Repository, UpdateQueryBuilder, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
-import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/lib/auditLog/getAuditLogEvent"
+import {
+  AuditLogEventOptions,
+  type AuditLogEvent
+} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 
 const lock = async (
   unlockReason: "Trigger" | "Exception",
@@ -40,11 +44,15 @@ const lock = async (
 
   if (result.affected && result.affected > 0) {
     events.push(
-      getAuditLogEvent("information", `${unlockReason} locked`, AUDIT_LOG_EVENT_SOURCE, {
-        user: user.username,
-        auditLogVersion: 2,
-        eventCode: `${unlockReason.toLowerCase()}s.locked`
-      })
+      getAuditLogEvent(
+        unlockReason === "Exception" ? AuditLogEventOptions.exceptionLocked : AuditLogEventOptions.triggerLocked,
+        EventCategory.information,
+        AUDIT_LOG_EVENT_SOURCE,
+        {
+          user: user.username,
+          auditLogVersion: 2
+        }
+      )
     )
   }
 

@@ -6,7 +6,7 @@ import updateLockStatusToLocked from "../../src/services/updateLockStatusToLocke
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import type AuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/build/src/types/AuditLogEvent"
+import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import { UserGroup } from "../../src/types/UserGroup"
 import getCourtCase from "../../src/services/getCourtCase"
@@ -21,22 +21,22 @@ describe("Update lock status to locked", () => {
     category: "information",
     eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: "Exception locked",
+    eventCode: "exceptions.locked",
     timestamp: expect.anything(),
     attributes: {
       user: username,
-      auditLogVersion: 2,
-      eventCode: "exceptions.locked"
+      auditLogVersion: 2
     }
   })
   const triggerLockedEvent = (username = "current user") => ({
     category: "information",
     eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: "Trigger locked",
+    eventCode: "triggers.locked",
     timestamp: expect.anything(),
     attributes: {
       user: username,
-      auditLogVersion: 2,
-      eventCode: "triggers.locked"
+      auditLogVersion: 2
     }
   })
 

@@ -1,7 +1,7 @@
-import type { KeyValuePair } from "../../../src/types/KeyValuePair"
 import { isError } from "../../../src/types/Result"
 import AuditLog from "../../../../bichard7-next-audit-logging/src/shared-types/src/AuditLog"
 import AuditLogEvent from "../../../../bichard7-next-audit-logging/src/shared-types/src/AuditLogEvent"
+import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 
 export default async function updateAuditLogRecord(
   dynamoDbClient: AWS.DynamoDB.DocumentClient,
