@@ -42,17 +42,20 @@ export const TriggersRow = ({
   }
 
   const triggersWithCounts = Object.values(
-    triggers.reduce((counts, trigger) => {
-      let current = counts[trigger.triggerCode]
-      if (!current) {
-        current = { ...trigger, count: 1 }
-      } else {
-        current.count += 1
-      }
+    triggers.reduce(
+      (counts, trigger) => {
+        let current = counts[trigger.triggerCode]
+        if (!current) {
+          current = { ...trigger, count: 1 }
+        } else {
+          current.count += 1
+        }
 
-      counts[trigger.triggerCode] = current
-      return counts
-    }, {} as { [key: string]: TriggerWithCount })
+        counts[trigger.triggerCode] = current
+        return counts
+      },
+      {} as { [key: string]: TriggerWithCount }
+    )
   )
 
   return (

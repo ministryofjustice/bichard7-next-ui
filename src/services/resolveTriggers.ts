@@ -15,12 +15,15 @@ import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/type
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 
 const generateTriggersAttributes = (triggers: Trigger[]) =>
-  triggers.reduce((acc, trigger, index) => {
-    const offenceNumberText =
-      trigger.triggerItemIdentity && trigger.triggerItemIdentity > 0 ? ` (${trigger.triggerItemIdentity})` : ""
-    acc[`Trigger ${index + 1} Details`] = `${trigger.triggerCode}${offenceNumberText}`
-    return acc
-  }, {} as KeyValuePair<string, unknown>)
+  triggers.reduce(
+    (acc, trigger, index) => {
+      const offenceNumberText =
+        trigger.triggerItemIdentity && trigger.triggerItemIdentity > 0 ? ` (${trigger.triggerItemIdentity})` : ""
+      acc[`Trigger ${index + 1} Details`] = `${trigger.triggerCode}${offenceNumberText}`
+      return acc
+    },
+    {} as KeyValuePair<string, unknown>
+  )
 
 const resolveTriggers = async (
   dataSource: DataSource,

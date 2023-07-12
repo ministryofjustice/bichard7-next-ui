@@ -36,10 +36,13 @@ describe("resolveTriggers", () => {
       attributes: {
         auditLogVersion: 2,
         "Number Of Triggers": triggers.length,
-        ...triggers.reduce((acc, trigger, index) => {
-          acc[`Trigger ${index + 1} Details`] = trigger
-          return acc
-        }, {} as KeyValuePair<string, unknown>)
+        ...triggers.reduce(
+          (acc, trigger, index) => {
+            acc[`Trigger ${index + 1} Details`] = trigger
+            return acc
+          },
+          {} as KeyValuePair<string, unknown>
+        )
       }
     }
   }

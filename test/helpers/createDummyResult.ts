@@ -6,6 +6,6 @@ import {
 export const dummyResultQualifierVariable = [{ Code: "00XX" }] as ResultQualifierVariable[]
 
 const createDummyResult = (): Result =>
-  ({ CJSresultCode: 999, ResultQualifierVariable: dummyResultQualifierVariable } as Result)
+  ({ CJSresultCode: 999, ResultQualifierVariable: dummyResultQualifierVariable }) as Result
 
 export default createDummyResult
