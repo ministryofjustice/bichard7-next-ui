@@ -60,7 +60,7 @@ const resubmitCourtCase = async (
           throw addNoteResult
         }
 
-        const statusResult = await updateCourtCaseStatus(entityManager, +courtCaseId, "Error", "Submitted", user)
+        const statusResult = await updateCourtCaseStatus(entityManager, courtCase, "Error", "Submitted", user)
 
         if (isError(statusResult)) {
           return statusResult
