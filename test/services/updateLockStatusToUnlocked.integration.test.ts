@@ -455,21 +455,20 @@ describe("Unlock court case", () => {
       expectError,
       expectedEvents
     }) => {
-      const courtCase = {
-        errorLockedByUsername: exceptionLockedBy,
-        triggerLockedByUsername: triggerLockedBy,
-        orgForPoliceFilter: "36FPA ",
-        errorId: 1
-      }
-
-      const anotherCourtCase = {
-        errorLockedByUsername: exceptionLockedBy,
-        triggerLockedByUsername: triggerLockedBy,
-        orgForPoliceFilter: "36FPA ",
-        errorId: 2
-      }
-
-      await insertCourtCasesWithFields([courtCase, anotherCourtCase])
+      const [courtCase, anotherCourtCase] = await insertCourtCasesWithFields([
+        {
+          errorLockedByUsername: exceptionLockedBy,
+          triggerLockedByUsername: triggerLockedBy,
+          orgForPoliceFilter: "36FPA ",
+          errorId: 1
+        },
+        {
+          errorLockedByUsername: exceptionLockedBy,
+          triggerLockedByUsername: triggerLockedBy,
+          orgForPoliceFilter: "36FPA ",
+          errorId: 2
+        }
+      ])
 
       const user = {
         username: "current user",
@@ -485,7 +484,7 @@ describe("Unlock court case", () => {
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
-      const result = await updateLockStatusToUnlocked(dataSource.manager, courtCase.errorId, user, unlockReason, events)
+      const result = await updateLockStatusToUnlocked(dataSource.manager, courtCase, user, unlockReason, events)
 
       if (expectError) {
         expect(isError(result)).toBe(true)
@@ -516,11 +515,12 @@ describe("Unlock court case", () => {
         .spyOn(UpdateQueryBuilder.prototype, "execute")
         .mockRejectedValue(Error("Failed to update record with some error"))
 
-      const lockedCourtCase = await getDummyCourtCase({
-        errorLockedByUsername: "dummy",
-        triggerLockedByUsername: "dummy"
-      })
-      await insertCourtCases(lockedCourtCase)
+      const [lockedCourtCase] = await insertCourtCases(
+        await getDummyCourtCase({
+          errorLockedByUsername: "dummy",
+          triggerLockedByUsername: "dummy"
+        })
+      )
 
       const user = {
         username: "dummy username",
@@ -533,7 +533,7 @@ describe("Unlock court case", () => {
       const events: AuditLogEvent[] = []
       const result = await updateLockStatusToUnlocked(
         dataSource.manager,
-        lockedCourtCase.errorId,
+        lockedCourtCase,
         user,
         UnlockReason.TriggerAndException,
         events

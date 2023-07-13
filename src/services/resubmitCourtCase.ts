@@ -13,6 +13,7 @@ import updateCourtCaseStatus from "services/updateCourtCaseStatus"
 import UnlockReason from "types/UnlockReason"
 import updateLockStatusToLocked from "services/updateLockStatusToLocked"
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import getCourtCase from "./getCourtCase"
 
 const resubmitCourtCase = async (
   dataSource: DataSource,
@@ -21,10 +22,21 @@ const resubmitCourtCase = async (
   currentUser: User
 ): PromiseResult<AnnotatedHearingOutcome | Error> => {
   try {
-    const courtCase = await dataSource.transaction(
+    const resultAho = await dataSource.transaction(
       "SERIALIZABLE",
       async (entityManager): Promise<AnnotatedHearingOutcome | Error> => {
         const events: AuditLogEvent[] = []
+
+        const courtCase = await getCourtCase(entityManager, courtCaseId)
+
+        if (isError(courtCase)) {
+          throw courtCase
+        }
+
+        if (!courtCase) {
+          throw new Error("Failed to resubmit: Case not found")
+        }
+
         const lockResult = await updateLockStatusToLocked(entityManager, +courtCaseId, currentUser, events)
         if (isError(lockResult)) {
           throw lockResult
@@ -56,7 +68,7 @@ const resubmitCourtCase = async (
 
         const unlockResult = await updateLockStatusToUnlocked(
           entityManager,
-          +courtCaseId,
+          courtCase,
           currentUser,
           UnlockReason.TriggerAndException,
           [] //TODO pass an actual audit log events array
@@ -70,18 +82,18 @@ const resubmitCourtCase = async (
       }
     )
 
-    if (isError(courtCase)) {
-      throw courtCase
+    if (isError(resultAho)) {
+      throw resultAho
     }
 
-    const generatedXml = convertAhoToXml(courtCase, false)
+    const generatedXml = convertAhoToXml(resultAho, false)
     const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: "HEARING_OUTCOME_INPUT_QUEUE" })
 
     if (isError(queueResult)) {
       return queueResult
     }
 
-    return courtCase
+    return resultAho
   } catch (err) {
     return isError(err)
       ? err

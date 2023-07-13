@@ -95,7 +95,7 @@ const reallocateCourtCaseToForce = async (
 
     const unlockResult = await updateLockStatusToUnlocked(
       entityManager,
-      +courtCaseId,
+      courtCase,
       user,
       UnlockReason.TriggerAndException,
       events
