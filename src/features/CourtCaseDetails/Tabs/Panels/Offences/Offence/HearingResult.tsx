@@ -6,6 +6,17 @@ import { TableRow } from "../../TableRow"
 import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/plea-status.json"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 
+enum DurationUnit {
+  D = "days",
+  H = "hours",
+  L = "life",
+  M = "months",
+  S = "sessions",
+  W = "weeks",
+  Y = "years"
+}
+type DurationCode = keyof typeof DurationUnit
+
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
 }
@@ -20,6 +31,10 @@ export const getUrgentYesOrNo = (urgent: boolean | undefined): string => {
 
 export const getNumberOfHours = (hours: number | undefined): string | undefined => {
   return hours ? `${hours} Hours` : undefined
+}
+
+export const formatDuration = (durationLength: number, durationUnit: string): string => {
+  return `${durationLength} ${DurationUnit[durationUnit as DurationCode]}`
 }
 
 interface HearingResultProps {
@@ -58,6 +73,20 @@ export const HearingResult = ({ result }: HearingResultProps) => {
         label="Result hearing date"
         value={result.ResultHearingDate && formatDisplayedDate(new Date(result.ResultHearingDate))}
       />
+      <ConditionalRender isRendered={typeof result.Duration !== "undefined" && result.Duration?.length > 0}>
+        <TableRow
+          label="Duration"
+          value={
+            <>
+              {result.Duration?.map((duration) => (
+                <div key={`duration-${duration.DurationLength}-${duration.DurationUnit}`}>
+                  {formatDuration(duration.DurationLength, duration.DurationUnit)}
+                </div>
+              ))}
+            </>
+          }
+        />
+      </ConditionalRender>
       <ConditionalRender isRendered={typeof result.NextResultSourceOrganisation === "string"}>
         <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
       </ConditionalRender>
@@ -69,7 +98,7 @@ export const HearingResult = ({ result }: HearingResultProps) => {
       </ConditionalRender>
       <TableRow label="Plea" value={getPleaStatus(result.PleaStatus)} />
       <TableRow label="Verdict" value={getVerdict(result.Verdict)} />
-      <TableRow label="Mode of trail reason" value={result.ModeOfTrialReason} />
+      <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
       <TableRow label="Text" value={result.ResultVariableText} />
       <TableRow label="PNC disposal type" value={result.PNCDisposalType} />
       <TableRow label="Result class" value={result.ResultClass} />

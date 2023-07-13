@@ -15,8 +15,6 @@ export enum Gender {
   "9 (not specified)" = 9
 }
 
-export type RemandCode = "CB" | "LA" | "NA" | "PB" | "PR" | "SA" | "UB"
-
 export enum RemandStatus {
   CB = "Conditional bail",
   LA = "Care",
@@ -26,6 +24,7 @@ export enum RemandStatus {
   SA = "Secure care",
   UB = "Unconditional bail"
 }
+export type RemandCode = keyof typeof RemandStatus
 
 export const DefendantDetails = ({ defendant }: DefendantDetailsProps) => {
   const defendantGender = defendant.DefendantDetail ? Gender[defendant.DefendantDetail?.Gender] : ""
