@@ -13,10 +13,10 @@ import {
   AuditLogEventOptions
 } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import storeAuditLogEvents from "./storeAuditLogEvents"
-import getCourtCase from "./getCourtCase"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
+import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,
@@ -31,7 +31,7 @@ const reallocateCourtCaseToForce = async (
   return dataSource.transaction("SERIALIZABLE", async (entityManager): Promise<UpdateResult | Error> => {
     const events: AuditLogEvent[] = []
 
-    const courtCase = await getCourtCase(entityManager, courtCaseId)
+    const courtCase = await getCourtCaseByOrganisationUnit(entityManager, courtCaseId, user)
 
     if (isError(courtCase)) {
       throw courtCase
@@ -48,7 +48,7 @@ const reallocateCourtCaseToForce = async (
     query = courtCasesByOrganisationUnitQuery(query, user) as UpdateQueryBuilder<CourtCase>
     query.andWhere("error_id = :id", { id: courtCaseId })
 
-    const amendResult = await amendCourtCase(entityManager, { forceOwner: forceCode }, courtCaseId, user)
+    const amendResult = await amendCourtCase(entityManager, { forceOwner: forceCode }, courtCase, user)
 
     if (isError(amendResult)) {
       throw amendResult

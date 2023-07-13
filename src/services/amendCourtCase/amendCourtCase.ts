@@ -11,33 +11,23 @@ import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-
 import type User from "../entities/User"
 import insertNotes from "services/insertNotes"
 import getSystemNotes from "utils/amendments/getSystemNotes"
-import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
+import CourtCase from "../entities/CourtCase"
 
 const amendCourtCase = async (
   dataSource: DataSource | EntityManager,
   amendments: Partial<Amendments>,
-  courtCaseId: number,
+  courtCase: CourtCase,
   userDetails: User
 ): Promise<AnnotatedHearingOutcome | Error> => {
-  const courtCaseRow = await getCourtCaseByOrganisationUnit(dataSource, courtCaseId, userDetails)
-
-  if (isError(courtCaseRow)) {
-    return courtCaseRow
-  }
-
-  if (!courtCaseRow) {
-    return new Error("Failed to get court case")
-  }
-
   if (
-    (courtCaseRow.errorLockedByUsername && courtCaseRow.errorLockedByUsername != userDetails.username) ||
-    (courtCaseRow.triggerLockedByUsername && courtCaseRow.triggerLockedByUsername != userDetails.username)
+    (courtCase.errorLockedByUsername && courtCase.errorLockedByUsername != userDetails.username) ||
+    (courtCase.triggerLockedByUsername && courtCase.triggerLockedByUsername != userDetails.username)
   ) {
     return new Error("Court case is locked by another user")
   }
 
   // we need to parse the annotated message due to being xml in db
-  const aho = parseAhoXml(courtCaseRow.updatedHearingOutcome ?? courtCaseRow.hearingOutcome)
+  const aho = parseAhoXml(courtCase.updatedHearingOutcome ?? courtCase.hearingOutcome)
 
   if (isError(aho)) {
     return aho
@@ -45,7 +35,7 @@ const amendCourtCase = async (
 
   const ahoForceOwner = aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner
   if (ahoForceOwner === undefined || !ahoForceOwner.OrganisationUnitCode) {
-    const organisationUnitCodes = createForceOwner(courtCaseRow.orgForPoliceFilter || "")
+    const organisationUnitCodes = createForceOwner(courtCase.orgForPoliceFilter || "")
 
     if (isError(organisationUnitCodes)) {
       return organisationUnitCodes
@@ -61,11 +51,11 @@ const amendCourtCase = async (
   const generatedXml = convertAhoToXml(updatedAho, false)
 
   // Depending on the phase, treat the update as either hoUpdate or pncUpdate
-  if (courtCaseRow.phase === Phase.HEARING_OUTCOME) {
-    if (courtCaseRow.errorLockedByUsername === userDetails.username || courtCaseRow.errorLockedByUsername === null) {
+  if (courtCase.phase === Phase.HEARING_OUTCOME) {
+    if (courtCase.errorLockedByUsername === userDetails.username || courtCase.errorLockedByUsername === null) {
       const updateResult = await updateCourtCaseAho(
         dataSource,
-        courtCaseId,
+        courtCase.errorId,
         generatedXml,
         !amendments.noUpdatesResubmit
       )
@@ -74,7 +64,7 @@ const amendCourtCase = async (
         return updateResult
       }
 
-      const addNoteResult = await insertNotes(dataSource, getSystemNotes(amendments, userDetails, courtCaseId))
+      const addNoteResult = await insertNotes(dataSource, getSystemNotes(amendments, userDetails, courtCase.errorId))
 
       if (isError(addNoteResult)) {
         return addNoteResult

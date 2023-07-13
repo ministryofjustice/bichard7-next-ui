@@ -209,7 +209,7 @@ describe("reallocate court case to another force", () => {
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06").catch((error) => error)
-      expect(result).toEqual(Error(`Failed to get court case`))
+      expect(result).toEqual(Error(`Failed to reallocate: Case not found`))
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
       const actualCourtCase = record as CourtCase

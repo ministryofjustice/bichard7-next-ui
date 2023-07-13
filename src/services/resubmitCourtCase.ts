@@ -13,13 +13,13 @@ import updateCourtCaseStatus from "services/updateCourtCaseStatus"
 import UnlockReason from "types/UnlockReason"
 import updateLockStatusToLocked from "services/updateLockStatusToLocked"
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
-import getCourtCase from "./getCourtCase"
+import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
 
 const resubmitCourtCase = async (
   dataSource: DataSource,
   form: Partial<Amendments>,
   courtCaseId: number,
-  currentUser: User
+  user: User
 ): PromiseResult<AnnotatedHearingOutcome | Error> => {
   try {
     const resultAho = await dataSource.transaction(
@@ -27,7 +27,7 @@ const resubmitCourtCase = async (
       async (entityManager): Promise<AnnotatedHearingOutcome | Error> => {
         const events: AuditLogEvent[] = []
 
-        const courtCase = await getCourtCase(entityManager, courtCaseId)
+        const courtCase = await getCourtCaseByOrganisationUnit(entityManager, courtCaseId, user)
 
         if (isError(courtCase)) {
           throw courtCase
@@ -37,12 +37,12 @@ const resubmitCourtCase = async (
           throw new Error("Failed to resubmit: Case not found")
         }
 
-        const lockResult = await updateLockStatusToLocked(entityManager, +courtCaseId, currentUser, events)
+        const lockResult = await updateLockStatusToLocked(entityManager, +courtCaseId, user, events)
         if (isError(lockResult)) {
           throw lockResult
         }
 
-        const amendedCourtCase = await amendCourtCase(entityManager, form, courtCaseId, currentUser)
+        const amendedCourtCase = await amendCourtCase(entityManager, form, courtCase, user)
 
         if (isError(amendedCourtCase)) {
           throw amendedCourtCase
@@ -50,7 +50,7 @@ const resubmitCourtCase = async (
 
         const addNoteResult = await insertNotes(entityManager, [
           {
-            noteText: `${currentUser.username}: Portal Action: Resubmitted Message.`,
+            noteText: `${user.username}: Portal Action: Resubmitted Message.`,
             errorId: courtCaseId,
             userId: "System"
           }
@@ -60,7 +60,7 @@ const resubmitCourtCase = async (
           throw addNoteResult
         }
 
-        const statusResult = await updateCourtCaseStatus(entityManager, +courtCaseId, "Error", "Submitted", currentUser)
+        const statusResult = await updateCourtCaseStatus(entityManager, +courtCaseId, "Error", "Submitted", user)
 
         if (isError(statusResult)) {
           return statusResult
@@ -69,7 +69,7 @@ const resubmitCourtCase = async (
         const unlockResult = await updateLockStatusToUnlocked(
           entityManager,
           courtCase,
-          currentUser,
+          user,
           UnlockReason.TriggerAndException,
           [] //TODO pass an actual audit log events array
         )
