@@ -27,7 +27,7 @@ const resolveCourtCase = async (
 
     const unlockResult = await updateLockStatusToUnlocked(
       entityManager,
-      courtCase.errorId,
+      courtCase,
       user,
       UnlockReason.TriggerAndException,
       events

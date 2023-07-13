@@ -26,7 +26,7 @@ const unlockCourtCase = async (
       throw new Error("Failed to unlock: Case not found")
     }
 
-    const unlockResult = await updateLockStatusToUnlocked(entityManager, courtCaseId, user, unlockReason, events)
+    const unlockResult = await updateLockStatusToUnlocked(entityManager, courtCase, user, unlockReason, events)
 
     if (isError(unlockResult)) {
       throw unlockResult

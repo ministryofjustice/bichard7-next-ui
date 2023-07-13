@@ -9,7 +9,6 @@ import {
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import getCourtCase from "./getCourtCase"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 
@@ -60,7 +59,7 @@ const unlock = async (
 
 const updateLockStatusToUnlocked = async (
   dataSource: EntityManager,
-  courtCaseId: number,
+  courtCase: CourtCase,
   user: User,
   unlockReason: UnlockReason,
   events: AuditLogEvent[]
@@ -74,12 +73,6 @@ const updateLockStatusToUnlocked = async (
 
   if (!shouldUnlockExceptions && !shouldUnlockTriggers) {
     return new Error("User hasn't got permission to unlock the case")
-  }
-
-  const courtCase = await getCourtCase(dataSource, courtCaseId)
-
-  if (isError(courtCase)) {
-    throw courtCase
   }
 
   if (!courtCase) {
@@ -98,11 +91,11 @@ const updateLockStatusToUnlocked = async (
   const courtCaseRepository = dataSource.getRepository(CourtCase)
 
   if (shouldUnlockExceptions && !!courtCase.errorLockedByUsername) {
-    result = await unlock("Exception", courtCaseRepository, courtCaseId, user, events)
+    result = await unlock("Exception", courtCaseRepository, courtCase.errorId, user, events)
   }
 
   if (shouldUnlockTriggers && !!courtCase.triggerLockedByUsername) {
-    result = await unlock("Trigger", courtCaseRepository, courtCaseId, user, events)
+    result = await unlock("Trigger", courtCaseRepository, courtCase.errorId, user, events)
   }
 
   return result ?? new Error("Failed to unlock case")

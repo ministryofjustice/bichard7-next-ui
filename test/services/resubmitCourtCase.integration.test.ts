@@ -37,8 +37,8 @@ describe("resubmit court case", () => {
   it("Should resubmit a court case with no updates", async () => {
     // set up court case in the right format to insert into the db
     const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: null,
+      errorLockedByUsername: userName,
+      triggerLockedByUsername: userName,
       errorCount: 1,
       errorStatus: "Unresolved",
       triggerCount: 1,
@@ -85,7 +85,7 @@ describe("resubmit court case", () => {
   it("Should resubmit a court case with updates to Court Offence Sequence Number", async () => {
     // set up court case in the right format to insert into the db
     const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
+      errorLockedByUsername: userName,
       triggerLockedByUsername: null,
       errorCount: 1,
       errorStatus: "Unresolved",
@@ -163,7 +163,7 @@ describe("resubmit court case", () => {
 
     // set up court case in the right format to insert into the db
     const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
+      errorLockedByUsername: userName,
       triggerLockedByUsername: null,
       errorCount: 1,
       errorStatus: "Unresolved",
