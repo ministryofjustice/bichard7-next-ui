@@ -6,11 +6,30 @@ import Header from "./Header"
 import NavBar from "./NavBar"
 import PhaseBanner from "./PhaseBanner"
 import PageTemplate from "./PageTemplate"
+import styled from "styled-components"
+import LinkButton from "./LinkButton"
 
 interface Props {
   children: ReactNode
   user: User
 }
+
+const Banner = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #b1b4b6;
+`
+
+const PhaseWrapper = styled.div`
+  > .govuk-phase-banner {
+    border: none;
+  }
+`
+
+const OldBichardLink = styled(LinkButton)`
+  margin-bottom: 0;
+`
 
 const Layout = ({ children, user }: Props) => {
   const { basePath } = useRouter()
@@ -20,7 +39,13 @@ const Layout = ({ children, user }: Props) => {
       <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={user.username} />
       <NavBar groups={user.groups} />
       <PageTemplate>
-        <PhaseBanner phase={"beta"} />
+        <Banner>
+          <PhaseWrapper>
+            <PhaseBanner phase={"beta"} />
+          </PhaseWrapper>
+
+          <OldBichardLink href="/bichard-ui/InitialRefreshList">{"Switch to old Bichard"}</OldBichardLink>
+        </Banner>
         {children}
       </PageTemplate>
       <Footer
