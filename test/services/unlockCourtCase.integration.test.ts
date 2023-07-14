@@ -13,6 +13,7 @@ import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import UnlockReason from "types/UnlockReason"
 import axios from "axios"
+import getCourtCase from "../../src/services/getCourtCase"
 
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
@@ -88,6 +89,8 @@ describe("unlock court case", () => {
         }
       ]
 
+      const expectedToCallWithCourtCase = await getCourtCase(dataSource, lockedCourtCase.errorId)
+
       await unlockCourtCase(dataSource, lockedCourtCase.errorId, user, UnlockReason.TriggerAndException).catch(
         (error) => error
       )
@@ -95,7 +98,7 @@ describe("unlock court case", () => {
       expect(updateLockStatusToUnlocked).toHaveBeenCalledTimes(1)
       expect(updateLockStatusToUnlocked).toHaveBeenCalledWith(
         expect.any(Object),
-        lockedCourtCase.errorId,
+        expectedToCallWithCourtCase,
         user,
         UnlockReason.TriggerAndException,
         expectedAuditLogEvents

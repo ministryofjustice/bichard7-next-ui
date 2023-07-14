@@ -42,7 +42,7 @@ describe("Triggers and exceptions", () => {
           password: hashedPassword
         }
       ],
-      userGroups: ["B7NewUI_grp"]
+      userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
     })
   })
 
@@ -187,13 +187,13 @@ describe("Triggers and exceptions", () => {
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("#triggers-locked-tag").should("exist")
+      cy.get("section#triggers").find("#triggers-locked-tag").should("exist")
     })
 
     it("Should not be shown if the visiting user holds the trigger lock", () => {
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("#triggers-locked-tag").should("not.exist")
+      cy.get("section#triggers").find("#triggers-locked-tag").should("not.exist")
     })
 
     it("Should display a lock icon when someone else has the triggers locked", () => {

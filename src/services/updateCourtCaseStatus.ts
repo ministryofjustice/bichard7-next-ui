@@ -1,7 +1,6 @@
 import { Brackets, DataSource, EntityManager, UpdateResult } from "typeorm"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { RecordType } from "types/RecordType"
-import { isError } from "types/Result"
 import { UpdateResolutionStatus } from "types/UpdateResolutionStatus"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
@@ -11,7 +10,7 @@ const isResolved = (resolutionStatus: ResolutionStatus) => resolutionStatus === 
 
 const updateCourtCaseStatus = async (
   dataSource: DataSource | EntityManager,
-  courtCaseId: number,
+  courtCase: CourtCase,
   recordType: RecordType,
   resolutionStatus: ResolutionStatus,
   { username }: User
@@ -20,21 +19,13 @@ const updateCourtCaseStatus = async (
   let updateResolutionStatus: UpdateResolutionStatus
   let updatedField: string
   const courtCaseRepository = dataSource.getRepository(CourtCase)
-  const courtCase = await courtCaseRepository
-    .createQueryBuilder("courtCase")
-    .andWhere({ errorId: courtCaseId })
-    .getOne()
-
-  if (isError(courtCase)) {
-    return courtCase
-  }
 
   if (isErrorUpdate(recordType)) {
     updateResolutionStatus = {
       errorStatus: resolutionStatus,
       errorResolvedBy: username,
       ...(isResolved(resolutionStatus) && { errorResolvedTimestamp: timestamp }),
-      ...(((isResolved(resolutionStatus) && courtCase?.triggerStatus === undefined) ||
+      ...(((isResolved(resolutionStatus) && !courtCase?.triggerStatus) ||
         (courtCase && courtCase.triggerStatus && isResolved(courtCase.triggerStatus))) && {
         resolutionTimestamp: timestamp
       })
@@ -45,7 +36,7 @@ const updateCourtCaseStatus = async (
       triggerStatus: resolutionStatus,
       triggerResolvedBy: username,
       ...(isResolved(resolutionStatus) && { triggerResolvedTimestamp: timestamp }),
-      ...(((isResolved(resolutionStatus) && courtCase?.errorStatus === undefined) ||
+      ...(((isResolved(resolutionStatus) && !courtCase?.errorStatus) ||
         (courtCase && courtCase.errorStatus && isResolved(courtCase.errorStatus))) && {
         resolutionTimestamp: timestamp
       })
@@ -58,7 +49,7 @@ const updateCourtCaseStatus = async (
       .createQueryBuilder()
       .update(CourtCase)
       .set(updateResolutionStatus)
-      .where("error_id = :id", { id: courtCaseId })
+      .where("error_id = :id", { id: courtCase.errorId })
       .andWhere(`${updatedField}_status is NOT NULL`)
       .andWhere(
         new Brackets((qb) => {

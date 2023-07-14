@@ -41,7 +41,7 @@ const insertRecord = async (
     })
   ]
 
-  await insertCourtCases(existingCourtCasesDbObjects)
+  return insertCourtCases(existingCourtCasesDbObjects)
 }
 
 describe("updateCourtCaseStatus", () => {
@@ -63,20 +63,12 @@ describe("updateCourtCaseStatus", () => {
     await dataSource.destroy()
   })
 
-  it("Should not update if the case doesn't exist", async () => {
-    const nonExistentCase = 9999
-    const result = await updateCourtCaseStatus(dataSource, nonExistentCase, "Error", "Submitted", testUser)
-
-    expect((result as UpdateResult).raw).toHaveLength(0)
-    expect((result as UpdateResult).affected).toBe(0)
-  })
-
   describe("Updating error status", () => {
     it("Should not update the case if its locked by another user", async () => {
       const errorLockedByUsername = "Another User"
-      await insertRecord(errorLockedByUsername)
+      const [courtCase] = await insertRecord(errorLockedByUsername)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Submitted", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Error", "Submitted", testUser)
 
       expect((result as UpdateResult).raw).toHaveLength(0)
       expect((result as UpdateResult).affected).toBe(0)
@@ -85,9 +77,9 @@ describe("updateCourtCaseStatus", () => {
     it("Should not update the case if the current error status is not set", async () => {
       const errorLockedByUsername = testUser.username
       const triggerLockedByUsername = testUser.username
-      await insertRecord(errorLockedByUsername, triggerLockedByUsername, null, null)
+      const [courtCase] = await insertRecord(errorLockedByUsername, triggerLockedByUsername, null, null)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Submitted", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Error", "Submitted", testUser)
 
       expect((result as UpdateResult).raw).toHaveLength(0)
       expect((result as UpdateResult).affected).toBe(0)
@@ -95,9 +87,9 @@ describe("updateCourtCaseStatus", () => {
 
     it("can updates the case when its not locked and error status is not null", async () => {
       const errorStatus = "Unresolved"
-      await insertRecord(null, null, errorStatus, null)
+      const [courtCase] = await insertRecord(null, null, errorStatus, null)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Submitted", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Error", "Submitted", testUser)
       expect(isError(result)).toBe(false)
 
       const updateResult = result as UpdateResult
@@ -116,9 +108,9 @@ describe("updateCourtCaseStatus", () => {
     it("Should update the case when its locked by the user and error status is not null", async () => {
       const errorLockedByUsername = testUser.username
       const errorStatus = "Unresolved"
-      await insertRecord(errorLockedByUsername, null, errorStatus, null)
+      const [courtCase] = await insertRecord(errorLockedByUsername, null, errorStatus, null)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Submitted", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Error", "Submitted", testUser)
       expect(isError(result)).toBe(false)
 
       const updateResult = result as UpdateResult
@@ -137,9 +129,9 @@ describe("updateCourtCaseStatus", () => {
       const errorLockedByUsername = testUser.username
       const errorStatus = "Unresolved"
       const triggerStatus = "Unresolved"
-      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+      const [courtCase] = await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Resolved", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Error", "Resolved", testUser)
       expect(isError(result)).toBe(false)
 
       const updateResult = result as UpdateResult
@@ -158,9 +150,9 @@ describe("updateCourtCaseStatus", () => {
       const errorLockedByUsername = testUser.username
       const errorStatus = "Unresolved"
       const triggerStatus = null
-      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+      const [courtCase] = await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Resolved", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Error", "Resolved", testUser)
       expect(isError(result)).toBe(false)
 
       const updateResult = result as UpdateResult
@@ -179,9 +171,9 @@ describe("updateCourtCaseStatus", () => {
       const errorLockedByUsername = testUser.username
       const errorStatus = "Unresolved"
       const triggerStatus = "Resolved"
-      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+      const [courtCase] = await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Error", "Resolved", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Error", "Resolved", testUser)
       expect(isError(result)).toBe(false)
 
       const updateResult = result as UpdateResult
@@ -199,9 +191,9 @@ describe("updateCourtCaseStatus", () => {
     it("Should not update the case if the current trigger status is not set", async () => {
       const errorLockedByUsername = testUser.username
       const triggerLockedByUsername = testUser.username
-      await insertRecord(errorLockedByUsername, triggerLockedByUsername, null, null)
+      const [courtCase] = await insertRecord(errorLockedByUsername, triggerLockedByUsername, null, null)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Submitted", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Trigger", "Submitted", testUser)
 
       expect((result as UpdateResult).raw).toHaveLength(0)
       expect((result as UpdateResult).affected).toBe(0)
@@ -209,9 +201,9 @@ describe("updateCourtCaseStatus", () => {
 
     it("Should update trigger status when its not locked and trigger status is not null", async () => {
       const triggerStatus = "Unresolved"
-      await insertRecord(null, null, null, triggerStatus)
+      const [courtCase] = await insertRecord(null, null, null, triggerStatus)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Submitted", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Trigger", "Submitted", testUser)
       expect(isError(result)).toBe(false)
 
       const updateResult = result as UpdateResult
@@ -229,9 +221,9 @@ describe("updateCourtCaseStatus", () => {
       const triggerLockedByUsername = testUser.username
       const triggerStatus = "Unresolved"
 
-      await insertRecord(null, triggerLockedByUsername, null, triggerStatus)
+      const [courtCase] = await insertRecord(null, triggerLockedByUsername, null, triggerStatus)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Submitted", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Trigger", "Submitted", testUser)
       expect(isError(result)).toBe(false)
 
       const updateResult = result as UpdateResult
@@ -251,9 +243,9 @@ describe("updateCourtCaseStatus", () => {
       const errorLockedByUsername = testUser.username
       const errorStatus = "Unresolved"
       const triggerStatus = "Unresolved"
-      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+      const [courtCase] = await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Resolved", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Trigger", "Resolved", testUser)
       expect(isError(result)).toBe(false)
 
       const updateResult = result as UpdateResult
@@ -273,9 +265,9 @@ describe("updateCourtCaseStatus", () => {
       const errorLockedByUsername = testUser.username
       const errorStatus = null
       const triggerStatus = "Unresolved"
-      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+      const [courtCase] = await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Resolved", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Trigger", "Resolved", testUser)
       expect(isError(result)).toBe(false)
 
       const updateResult = result as UpdateResult
@@ -296,9 +288,9 @@ describe("updateCourtCaseStatus", () => {
       const errorLockedByUsername = testUser.username
       const errorStatus = "Resolved"
       const triggerStatus = "Unresolved"
-      await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
+      const [courtCase] = await insertRecord(errorLockedByUsername, null, errorStatus, triggerStatus)
 
-      const result = await updateCourtCaseStatus(dataSource, 0, "Trigger", "Resolved", testUser)
+      const result = await updateCourtCaseStatus(dataSource, courtCase, "Trigger", "Resolved", testUser)
       expect(isError(result)).toBe(false)
 
       const updateResult = result as UpdateResult
