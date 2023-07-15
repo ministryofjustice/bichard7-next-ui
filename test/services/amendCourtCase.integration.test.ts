@@ -65,7 +65,7 @@ describe("amend court case", () => {
 
     expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase, user)
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -92,7 +92,7 @@ describe("amend court case", () => {
 
     expect(inputCourtCase.hearingOutcome).toMatchSnapshot()
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase, user)
 
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
@@ -132,7 +132,7 @@ describe("amend court case", () => {
           }
         ]
       },
-      inputCourtCase.errorId,
+      inputCourtCase,
       user
     )
 
@@ -170,7 +170,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, user)
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase, user)
 
     expect(result).not.toBeInstanceOf(Error)
 
@@ -182,31 +182,30 @@ describe("amend court case", () => {
   })
 
   it("Should not update the db if the case is locked by somebody else", async () => {
-    const triggerLockedBySomeoneElse = {
-      errorLockedByUsername: null,
-      triggerLockedByUsername: "Bichard02",
-      errorCount: 1,
-      triggerCount: 1,
-      phase: 1,
-      orgForPoliceFilter: orgCode,
-      errorId: 0,
-      hearingOutcome: "Dummy"
-    }
+    const [triggerLockedBySomeoneElse] = await insertCourtCasesWithFields([
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: "Bichard02",
+        errorCount: 1,
+        triggerCount: 1,
+        phase: 1,
+        orgForPoliceFilter: orgCode,
+        errorId: 0,
+        hearingOutcome: "Dummy"
+      },
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: "Bichard02",
+        errorCount: 1,
+        triggerCount: 1,
+        phase: 1,
+        orgForPoliceFilter: orgCode,
+        errorId: 1,
+        hearingOutcome: "Dummy"
+      }
+    ])
 
-    const errorLockedBySomeoneElse = {
-      errorLockedByUsername: null,
-      triggerLockedByUsername: "Bichard02",
-      errorCount: 1,
-      triggerCount: 1,
-      phase: 1,
-      orgForPoliceFilter: orgCode,
-      errorId: 1,
-      hearingOutcome: "Dummy"
-    }
-
-    await insertCourtCasesWithFields([triggerLockedBySomeoneElse, errorLockedBySomeoneElse])
-
-    const firstResult = await amendCourtCase(dataSource, { forceOwner: "04" }, triggerLockedBySomeoneElse.errorId, user)
+    const firstResult = await amendCourtCase(dataSource, { forceOwner: "04" }, triggerLockedBySomeoneElse, user)
     expect(firstResult).toEqual(Error(`Court case is locked by another user`))
 
     const caseWithTriggerLock = await dataSource
@@ -214,12 +213,7 @@ describe("amend court case", () => {
       .findOne({ where: { errorId: triggerLockedBySomeoneElse.errorId } })
     expect(caseWithTriggerLock?.hearingOutcome).toEqual(triggerLockedBySomeoneElse.hearingOutcome)
 
-    const secondResult = await amendCourtCase(
-      dataSource,
-      { forceOwner: "04" },
-      triggerLockedBySomeoneElse.errorId,
-      user
-    )
+    const secondResult = await amendCourtCase(dataSource, { forceOwner: "04" }, triggerLockedBySomeoneElse, user)
     expect(secondResult).toEqual(Error(`Court case is locked by another user`))
 
     const caseWithErrorLock = await dataSource
@@ -244,61 +238,13 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase, user)
 
     expect(createForceOwner).toHaveBeenCalledTimes(1)
     expect(updateCourtCaseAho).toHaveBeenCalledTimes(1)
     expect(createForceOwner).toHaveBeenCalledWith(inputCourtCase.orgForPoliceFilter)
     expect(result).not.toBeInstanceOf(Error)
     expect(result).toMatchSnapshot()
-  })
-
-  it("Should return an error when the court case is not found", async () => {
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: null,
-      errorCount: 1,
-      errorStatus: "Unresolved",
-      triggerCount: 1,
-      phase: 1,
-      orgForPoliceFilter: orgCode
-    })
-
-    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, user)
-
-    expect(result).toEqual(Error(`Failed to get court case`))
-  })
-
-  it("returns an error when the case is not visible to the user", async () => {
-    const anotherOrgCode = "012"
-    const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: null,
-      triggerLockedByUsername: null,
-      errorCount: 1,
-      errorStatus: "Unresolved",
-      triggerCount: 1,
-      phase: 1,
-      orgForPoliceFilter: anotherOrgCode
-    })
-
-    await insertCourtCases(inputCourtCase)
-
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
-
-    expect(result).toEqual(Error(`Failed to get court case`))
-
-    const retrievedCase = await dataSource
-      .getRepository(CourtCase)
-      .findOne({ where: { errorId: inputCourtCase.errorId } })
-
-    expect(retrievedCase?.hearingOutcome).toEqual(inputCourtCase.hearingOutcome)
-  })
-
-  it("Should return an error if produce an error getting the court case", async () => {
-    ;(getCourtCase as jest.Mock).mockImplementationOnce(() => new Error(`Failed to get court case`))
-    const dummyCourtCaseId = 999
-    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, dummyCourtCaseId, user)
-    expect(result).toEqual(Error(`Failed to get court case`))
   })
 
   it("Should return an error if the xml is invalid", async () => {
@@ -316,7 +262,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, user)
+    const result = await amendCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase, user)
     expect(result).toEqual(Error(`Failed to parse aho`))
   })
 
@@ -335,7 +281,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase, user)
 
     expect(result).toEqual(Error("Failed to update the database"))
   })
@@ -358,7 +304,7 @@ describe("amend court case", () => {
 
     await insertCourtCases(inputCourtCase)
 
-    const result = await amendCourtCase(dataSource, {}, inputCourtCase.errorId, user)
+    const result = await amendCourtCase(dataSource, {}, inputCourtCase, user)
 
     expect(createForceOwner).toHaveBeenCalledTimes(1)
     expect(result).toEqual(Error("Failed to create organistaion unit codes"))

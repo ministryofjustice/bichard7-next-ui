@@ -36,10 +36,13 @@ describe("resolveTriggers", () => {
       attributes: {
         auditLogVersion: 2,
         "Number Of Triggers": triggers.length,
-        ...triggers.reduce((acc, trigger, index) => {
-          acc[`Trigger ${index + 1} Details`] = trigger
-          return acc
-        }, {} as KeyValuePair<string, unknown>)
+        ...triggers.reduce(
+          (acc, trigger, index) => {
+            acc[`Trigger ${index + 1} Details`] = trigger
+            return acc
+          },
+          {} as KeyValuePair<string, unknown>
+        )
       }
     }
   }
@@ -49,6 +52,18 @@ describe("resolveTriggers", () => {
 
   const createAllTriggersResolvedEvent = (triggers: string[], username = "triggerResolver01") =>
     createTriggersEvent("triggers.all-resolved", "All triggers marked as resolved", triggers, username)
+
+  const triggerUnlockedEvent = {
+    category: "information",
+    eventSource: AUDIT_LOG_EVENT_SOURCE,
+    eventType: "Trigger unlocked",
+    timestamp: expect.anything(),
+    user: "triggerResolver01",
+    eventCode: "triggers.unlocked",
+    attributes: {
+      auditLogVersion: 2
+    }
+  }
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -65,15 +80,16 @@ describe("resolveTriggers", () => {
   })
 
   describe("Mark trigger as resolved", () => {
-    it("Should set the relevant columns when resolving a trigger", async () => {
-      const resolverUsername = "triggerResolver01"
-      const visibleForce = "36"
-      const user = {
-        visibleCourts: [],
-        visibleForces: [visibleForce],
-        username: resolverUsername
-      } as Partial<User> as User
+    const resolverUsername = "triggerResolver01"
+    const visibleForce = "36"
+    const user = {
+      visibleCourts: [],
+      visibleForces: [visibleForce],
+      username: resolverUsername,
+      hasAccessToTriggers: true
+    } as Partial<User> as User
 
+    it("Should set the relevant columns when resolving a trigger", async () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: resolverUsername,
@@ -129,19 +145,12 @@ describe("resolveTriggers", () => {
       const events = await fetchAuditLogEvents(courtCase.messageId)
       expect(events).toStrictEqual([
         createTriggersResolvedEvent(["TRPR0001"]),
-        createAllTriggersResolvedEvent(["TRPR0001"])
+        createAllTriggersResolvedEvent(["TRPR0001"]),
+        triggerUnlockedEvent
       ])
     })
 
     it("Should mark the entire case as resolved when there are no other unresolved triggers or exceptions", async () => {
-      const resolverUsername = "triggerResolver01"
-      const visibleForce = "36"
-      const user = {
-        visibleCourts: [],
-        visibleForces: [visibleForce],
-        username: resolverUsername
-      } as Partial<User> as User
-
       const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
@@ -174,19 +183,12 @@ describe("resolveTriggers", () => {
       const events = await fetchAuditLogEvents(courtCase.messageId)
       expect(events).toStrictEqual([
         createTriggersResolvedEvent(["TRPR0001 (1)"]),
-        createAllTriggersResolvedEvent(["TRPR0001 (1)"])
+        createAllTriggersResolvedEvent(["TRPR0001 (1)"]),
+        triggerUnlockedEvent
       ])
     })
 
     it("Should not set the case trigger status as resolved while there are other unresolved triggers or exceptions", async () => {
-      const resolverUsername = "triggerResolver01"
-      const visibleForce = "36"
-      const user = {
-        visibleCourts: [],
-        visibleForces: [visibleForce],
-        username: resolverUsername
-      } as Partial<User> as User
-
       const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: resolverUsername,
@@ -245,21 +247,16 @@ describe("resolveTriggers", () => {
     })
 
     it("Shouldn't overwrite an already resolved trigger when attempting to resolve again", async () => {
-      const visibleForce = "36"
-      const resolverUser = {
-        visibleCourts: [],
-        visibleForces: [visibleForce],
-        username: "triggerResolver01"
-      } as Partial<User> as User
       const reResolverUser = {
         visibleCourts: [],
         visibleForces: [visibleForce],
-        username: "triggerResolver02"
+        username: "triggerResolver02",
+        hasAccessToTriggers: true
       } as Partial<User> as User
 
       const [courtCase] = await insertCourtCasesWithFields([
         {
-          triggerLockedByUsername: resolverUser.username,
+          triggerLockedByUsername: user.username,
           orgForPoliceFilter: visibleForce
         }
       ])
@@ -274,12 +271,9 @@ describe("resolveTriggers", () => {
       await insertTriggers(courtCase.errorId, [trigger])
 
       // Resolve trigger
-      let resolvedResult = await resolveTriggers(
-        dataSource,
-        [trigger.triggerId],
-        courtCase.errorId,
-        resolverUser
-      ).catch((error) => error)
+      let resolvedResult = await resolveTriggers(dataSource, [trigger.triggerId], courtCase.errorId, user).catch(
+        (error) => error
+      )
       expect(isError(resolvedResult)).toBeFalsy()
 
       // Try to resolve again as a different user
@@ -295,20 +289,18 @@ describe("resolveTriggers", () => {
         .findOne({ where: { triggerId: trigger.triggerId } })) as Trigger
       expect(updatedTrigger).not.toBeNull()
       expect(updatedTrigger.resolvedAt).not.toBeNull()
-      expect(updatedTrigger.resolvedBy).toBe(resolverUser.username)
+      expect(updatedTrigger.resolvedBy).toBe(user.username)
 
       const events = await fetchAuditLogEvents(courtCase.messageId)
       expect(events).toStrictEqual([
         createTriggersResolvedEvent(["TRPR0001"]),
-        createAllTriggersResolvedEvent(["TRPR0001"])
+        createAllTriggersResolvedEvent(["TRPR0001"]),
+        triggerUnlockedEvent
       ])
     })
 
     it("Shouldn't resolve a trigger locked by someone else", async () => {
-      const resolverUsername = "triggerResolver01"
       const lockHolderUsername = "triggerResolver02"
-      const visibleForce = "36"
-
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: lockHolderUsername,
@@ -325,13 +317,11 @@ describe("resolveTriggers", () => {
       await insertTriggers(0, [trigger])
 
       // Attempt to resolve trigger whilst not holding the lock
-      const resolveResult = await resolveTriggers(dataSource, [trigger.triggerId], courtCase.errorId, {
-        visibleCourts: [],
-        visibleForces: [visibleForce],
-        username: resolverUsername
-      } as Partial<User> as User).catch((error) => error)
+      const resolveResult = await resolveTriggers(dataSource, [trigger.triggerId], courtCase.errorId, user).catch(
+        (error) => error
+      )
       expect(isError(resolveResult)).toBeTruthy()
-      expect((resolveResult as Error).message).toBe("Triggers are locked by another user")
+      expect((resolveResult as Error).message).toBe("Triggers are not locked by the user")
 
       const retrievedTrigger = await dataSource
         .getRepository(Trigger)
@@ -347,8 +337,6 @@ describe("resolveTriggers", () => {
     })
 
     it("Shouldn't resolve a trigger which is not locked", async () => {
-      const visibleForces = ["36"]
-
       const [courtCase] = await insertCourtCasesWithFields([{ orgForPoliceFilter: "36" }])
       const trigger: TestTrigger = {
         triggerId: 0,
@@ -358,21 +346,12 @@ describe("resolveTriggers", () => {
       }
       await insertTriggers(courtCase.errorId, [trigger])
 
-      const resolverUser = {
-        visibleCourts: [],
-        visibleForces,
-        username: "triggerResolver01"
-      } as Partial<User> as User
-
       // Attempt to resolve trigger whilst not holding the lock
-      const resolveResult = await resolveTriggers(
-        dataSource,
-        [trigger.triggerId],
-        courtCase.errorId,
-        resolverUser
-      ).catch((error) => error)
+      const resolveResult = await resolveTriggers(dataSource, [trigger.triggerId], courtCase.errorId, user).catch(
+        (error) => error
+      )
       expect(isError(resolveResult)).toBeTruthy()
-      expect((resolveResult as Error).message).toBe("Triggers are locked by another user")
+      expect((resolveResult as Error).message).toBe("Triggers are not locked by the user")
 
       const retrievedTrigger = await dataSource
         .getRepository(Trigger)
@@ -387,15 +366,7 @@ describe("resolveTriggers", () => {
       expect(events).toHaveLength(0)
     })
 
-    it("Should set the case trigger columns only when the last trigger is resolved", async () => {
-      const resolverUsername = "triggerResolver01"
-      const visibleForce = "36"
-      const user = {
-        visibleCourts: [],
-        visibleForces: [visibleForce],
-        username: resolverUsername
-      } as Partial<User> as User
-
+    it("Should set the case trigger columns and unlock the case only when the last trigger is resolved", async () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: resolverUsername,
@@ -421,6 +392,7 @@ describe("resolveTriggers", () => {
       expect(updatedCourtCase.triggerStatus).toStrictEqual("Unresolved")
       expect(updatedCourtCase.triggerResolvedBy).toBeNull()
       expect(updatedCourtCase.triggerResolvedTimestamp).toBeNull()
+      expect(updatedCourtCase.triggerLockedByUsername).toEqual(resolverUsername)
 
       let events = await fetchAuditLogEvents(courtCase.messageId)
       expect(events).toStrictEqual([createTriggersResolvedEvent(["TRPR0001"])])
@@ -434,6 +406,7 @@ describe("resolveTriggers", () => {
       expect(updatedCourtCase.triggerStatus).toStrictEqual("Unresolved")
       expect(updatedCourtCase.triggerResolvedBy).toBeNull()
       expect(updatedCourtCase.triggerResolvedTimestamp).toBeNull()
+      expect(updatedCourtCase.triggerLockedByUsername).toEqual(resolverUsername)
 
       events = await fetchAuditLogEvents(courtCase.messageId)
       expect(events).toStrictEqual([
@@ -450,25 +423,29 @@ describe("resolveTriggers", () => {
       expect(updatedCourtCase.triggerStatus).toStrictEqual("Resolved")
       expect(updatedCourtCase.triggerResolvedBy).toStrictEqual(resolverUsername)
       expect(updatedCourtCase.triggerResolvedTimestamp).not.toBeNull()
+      expect(updatedCourtCase.triggerLockedByUsername).toBeNull()
 
       events = await fetchAuditLogEvents(courtCase.messageId)
       expect(events).toStrictEqual([
         createTriggersResolvedEvent(["TRPR0001"]),
         createTriggersResolvedEvent(["TRPR0002"]),
         createTriggersResolvedEvent(["TRPR0003"]),
-        createAllTriggersResolvedEvent(["TRPR0001", "TRPR0002", "TRPR0003"])
+        createAllTriggersResolvedEvent(["TRPR0001", "TRPR0002", "TRPR0003"]),
+        {
+          category: "information",
+          eventSource: AUDIT_LOG_EVENT_SOURCE,
+          eventType: "Trigger unlocked",
+          timestamp: expect.anything(),
+          user: user.username,
+          eventCode: "triggers.unlocked",
+          attributes: {
+            auditLogVersion: 2
+          }
+        }
       ])
     })
 
     it("Should be able to resolve all triggers on a case at once", async () => {
-      const resolverUsername = "triggerResolver01"
-      const visibleForce = "36"
-      const user = {
-        visibleCourts: [],
-        visibleForces: [visibleForce],
-        username: resolverUsername
-      } as Partial<User> as User
-
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: resolverUsername,
@@ -509,19 +486,12 @@ describe("resolveTriggers", () => {
       const events = await fetchAuditLogEvents(courtCase.messageId)
       expect(events).toStrictEqual([
         createTriggersResolvedEvent(["TRPR0001", "TRPR0002", "TRPR0003"]),
-        createAllTriggersResolvedEvent(["TRPR0001", "TRPR0002", "TRPR0003"])
+        createAllTriggersResolvedEvent(["TRPR0001", "TRPR0002", "TRPR0003"]),
+        triggerUnlockedEvent
       ])
     })
 
     it("Should be able to resolve some of the triggers on a case at once", async () => {
-      const resolverUsername = "triggerResolver01"
-      const visibleForce = "36"
-      const user = {
-        visibleCourts: [],
-        visibleForces: [visibleForce],
-        username: resolverUsername
-      } as Partial<User> as User
-
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: resolverUsername,

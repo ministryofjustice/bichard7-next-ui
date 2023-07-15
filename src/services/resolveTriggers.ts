@@ -13,14 +13,19 @@ import {
 } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
+import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
+import UnlockReason from "../types/UnlockReason"
 
 const generateTriggersAttributes = (triggers: Trigger[]) =>
-  triggers.reduce((acc, trigger, index) => {
-    const offenceNumberText =
-      trigger.triggerItemIdentity && trigger.triggerItemIdentity > 0 ? ` (${trigger.triggerItemIdentity})` : ""
-    acc[`Trigger ${index + 1} Details`] = `${trigger.triggerCode}${offenceNumberText}`
-    return acc
-  }, {} as KeyValuePair<string, unknown>)
+  triggers.reduce(
+    (acc, trigger, index) => {
+      const offenceNumberText =
+        trigger.triggerItemIdentity && trigger.triggerItemIdentity > 0 ? ` (${trigger.triggerItemIdentity})` : ""
+      acc[`Trigger ${index + 1} Details`] = `${trigger.triggerCode}${offenceNumberText}`
+      return acc
+    },
+    {} as KeyValuePair<string, unknown>
+  )
 
 const resolveTriggers = async (
   dataSource: DataSource,
@@ -52,7 +57,7 @@ const resolveTriggers = async (
     }
 
     if (!courtCase.triggersAreLockedByCurrentUser(resolver)) {
-      throw Error("Triggers are locked by another user")
+      throw Error("Triggers are not locked by the user")
     }
 
     const updateTriggersResult = await entityManager.getRepository(Trigger).update(
@@ -124,6 +129,18 @@ const resolveTriggers = async (
           ...generateTriggersAttributes(allTriggers)
         })
       )
+
+      const unlockResult = await updateLockStatusToUnlocked(
+        entityManager,
+        courtCase,
+        user,
+        UnlockReason.Trigger,
+        events
+      )
+
+      if (isError(unlockResult)) {
+        throw unlockResult
+      }
     }
 
     const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
