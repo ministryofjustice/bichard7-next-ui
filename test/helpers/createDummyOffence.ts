@@ -16,6 +16,6 @@ const createDummyOffence = (): Offence =>
     OffenceTitle: "Crime",
 
     Result: [cloneDeep(createDummyResult()), cloneDeep(createDummyResult())]
-  } as Offence)
+  }) as Offence
 
 export default createDummyOffence

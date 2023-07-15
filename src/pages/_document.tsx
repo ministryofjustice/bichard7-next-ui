@@ -65,12 +65,11 @@ class GovUkDocument extends Document<DocumentProps> {
     try {
       ctx.renderPage = () => {
         return originalRenderPage({
-          enhanceApp: (App) => (props) =>
-            (
-              <JssProvider registry={registry} generateId={generateId}>
-                {sheet.collectStyles(<App {...props} />)}
-              </JssProvider>
-            )
+          enhanceApp: (App) => (props) => (
+            <JssProvider registry={registry} generateId={generateId}>
+              {sheet.collectStyles(<App {...props} />)}
+            </JssProvider>
+          )
         })
       }
 

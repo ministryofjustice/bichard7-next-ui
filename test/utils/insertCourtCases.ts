@@ -76,7 +76,7 @@ const insertDummyCourtCasesWithNotes = async (caseNotes: { user: string; text: s
             noteText: note.text,
             userId: note.user,
             errorId: index
-          } as unknown as Note)
+          }) as unknown as Note
       )
     }))
   )
@@ -98,7 +98,7 @@ const insertDummyCourtCasesWithNotesAndLock = async (
             noteText: note.text,
             userId: note.user,
             errorId: index
-          } as unknown as Note)
+          }) as unknown as Note
       )
     }))
   )
@@ -120,7 +120,7 @@ const insertDummyCourtCasesWithTriggers = async (
             triggerCode: trigger.code,
             errorId: index,
             status: trigger.status
-          } as unknown as Trigger)
+          }) as unknown as Trigger
       )
     }))
   )
