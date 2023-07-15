@@ -7,12 +7,8 @@ import NavBar from "./NavBar"
 import PhaseBanner from "./PhaseBanner"
 import PageTemplate from "./PageTemplate"
 import styled from "styled-components"
+import ConditionalRender from "./ConditionalRender"
 import LinkButton from "./LinkButton"
-
-interface Props {
-  children: ReactNode
-  user: User
-}
 
 const Banner = styled.div`
   display: flex;
@@ -27,11 +23,16 @@ const PhaseWrapper = styled.div`
   }
 `
 
-const OldBichardLink = styled(LinkButton)`
+const BichardSwitch = styled(LinkButton)`
   margin-bottom: 0;
 `
+interface Props {
+  children: ReactNode
+  user: User
+  bichardSwitch?: { display: boolean; href?: string }
+}
 
-const Layout = ({ children, user }: Props) => {
+const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) => {
   const { basePath } = useRouter()
 
   return (
@@ -44,7 +45,11 @@ const Layout = ({ children, user }: Props) => {
             <PhaseBanner phase={"beta"} />
           </PhaseWrapper>
 
-          <OldBichardLink href="/bichard-ui/InitialRefreshList">{"Switch to old Bichard"}</OldBichardLink>
+          <ConditionalRender isRendered={bichardSwitch.display}>
+            <BichardSwitch href={bichardSwitch.href ?? "/bichard-ui/InitialRefreshList"}>
+              {"Switch to old Bichard"}
+            </BichardSwitch>
+          </ConditionalRender>
         </Banner>
         {children}
       </PageTemplate>
