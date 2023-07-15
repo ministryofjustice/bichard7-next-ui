@@ -12,11 +12,11 @@ interface Props extends React.ComponentProps<"button"> {
 const LinkButton: React.FC<Props> = ({ children, href, buttonColour, buttonTextColour, ...buttonProps }: Props) => {
   const { asPath, basePath } = useRouter()
   return (
-    <form method="get" action={href.startsWith("/") ? href : `${basePath}${asPath}/${href}`}>
+    <a href={href.startsWith("/") ? href : `${basePath}${asPath}/${href}`}>
       <Button buttonColour={buttonColour} buttonTextColour={buttonTextColour} {...buttonProps}>
         {children}
       </Button>
-    </form>
+    </a>
   )
 }
 
