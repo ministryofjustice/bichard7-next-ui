@@ -42,7 +42,7 @@ const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) =
           <PhaseBanner phase={"beta"} />
 
           <ConditionalRender isRendered={bichardSwitch.display}>
-            <BichardSwitch href={bichardSwitch.href ?? "/bichard-ui/InitialRefreshList"}>
+            <BichardSwitch href={bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"}>
               {"Switch to old Bichard"}
             </BichardSwitch>
           </ConditionalRender>
