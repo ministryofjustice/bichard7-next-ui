@@ -8,7 +8,7 @@
   - @typescript-eslint/parser@5
     - eslint-config-airbnb-typescript@17 requires these two packages @5
 */
-const pinned = ["styled-components", "@typescript-eslint/eslint-plugin", "@typescript-eslint/parser"]
+const pinned = ["styled-components"]
 
 module.exports = {
   target: (dependencyName) => {
