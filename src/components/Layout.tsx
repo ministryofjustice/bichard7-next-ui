@@ -17,7 +17,7 @@ const Banner = styled.div`
   border-bottom: 1px solid #b1b4b6;
 `
 
-const PhaseWrapper = styled.div`
+const StyledPhaseBanner = styled.div`
   > .govuk-phase-banner {
     border: none;
   }
@@ -41,9 +41,9 @@ const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) =
       <NavBar groups={user.groups} />
       <PageTemplate>
         <Banner>
-          <PhaseWrapper>
+          <StyledPhaseBanner>
             <PhaseBanner phase={"beta"} />
-          </PhaseWrapper>
+          </StyledPhaseBanner>
 
           <ConditionalRender isRendered={bichardSwitch.display}>
             <BichardSwitch href={bichardSwitch.href ?? "/bichard-ui/InitialRefreshList"}>
