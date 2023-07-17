@@ -20,6 +20,7 @@ export enum RemandStatus {
   LA = "Care",
   NA = "Not applicable",
   PB = "Custody",
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   PR = "Custody",
   SA = "Secure care",
   UB = "Unconditional bail"
