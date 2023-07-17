@@ -1,21 +1,12 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
+import { Duration } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
+import { Durations } from "@moj-bichard7-developers/bichard7-next-data/dist/types/Duration"
 import { Table } from "govuk-react"
 import { formatDisplayedDate } from "utils/formattedDate"
 import { TableRow } from "../../TableRow"
 import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/plea-status.json"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
-
-enum DurationUnit {
-  D = "days",
-  H = "hours",
-  L = "life",
-  M = "months",
-  S = "sessions",
-  W = "weeks",
-  Y = "years"
-}
-type DurationCode = keyof typeof DurationUnit
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -34,7 +25,7 @@ export const getNumberOfHours = (hours: number | undefined): string | undefined 
 }
 
 export const formatDuration = (durationLength: number, durationUnit: string): string => {
-  return `${durationLength} ${DurationUnit[durationUnit as DurationCode]}`
+  return `${durationLength} ${Durations[durationUnit as Duration]}`
 }
 
 interface HearingResultProps {

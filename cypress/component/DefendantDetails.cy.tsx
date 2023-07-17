@@ -1,6 +1,7 @@
 import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import { format } from "date-fns"
-import { DefendantDetails, Gender } from "../../src/features/CourtCaseDetails/Tabs/Panels/DefendantDetails"
+import { GenderCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/GenderCode"
+import { DefendantDetails } from "../../src/features/CourtCaseDetails/Tabs/Panels/DefendantDetails"
 
 describe("Defendant Details", () => {
   it("displays all defendant details", () => {
@@ -23,21 +24,15 @@ describe("Defendant Details", () => {
           Title: "Title",
           FamilyName: "FamilyName"
         },
-        Gender: Gender["1 (male)"]
+        Gender: GenderCode.MALE
       }
     }
     cy.mount(<DefendantDetails defendant={data as HearingDefendant} />)
 
     cy.contains("td", "PNC Check name").siblings().should("include.text", data.PNCCheckname)
-    cy.contains("td", "Given name")
-      .siblings()
-      .should("include.text", data.DefendantDetail?.PersonName.GivenName)
-    cy.contains("td", "Family name")
-      .siblings()
-      .should("include.text", data.DefendantDetail?.PersonName.FamilyName)
-    cy.contains("td", "Title")
-      .siblings()
-      .should("include.text", data.DefendantDetail?.PersonName.Title)
+    cy.contains("td", "Given name").siblings().should("include.text", data.DefendantDetail?.PersonName.GivenName)
+    cy.contains("td", "Family name").siblings().should("include.text", data.DefendantDetail?.PersonName.FamilyName)
+    cy.contains("td", "Title").siblings().should("include.text", data.DefendantDetail?.PersonName.Title)
     cy.contains("td", "Date of birth")
       .siblings()
       .should("include.text", format(data.DefendantDetail?.BirthDate as Date, "dd/MM/yyyy"))
@@ -51,9 +46,7 @@ describe("Defendant Details", () => {
       .should("include.text", data.Address?.AddressLine4)
       .should("include.text", data.Address?.AddressLine5)
 
-    cy.contains("td", "PNC file name")
-      .siblings()
-      .should("include.text", data.DefendantDetail?.GeneratedPNCFilename)
+    cy.contains("td", "PNC file name").siblings().should("include.text", data.DefendantDetail?.GeneratedPNCFilename)
     cy.contains("td", "Remand status").siblings().contains("Unconditional bail")
   })
 
@@ -68,7 +61,7 @@ describe("Defendant Details", () => {
           GivenName: ["FirstName", "MiddleName"],
           FamilyName: "FamilyName"
         },
-        Gender: Gender["1 (male)"]
+        Gender: GenderCode.MALE
       }
     }
     cy.mount(<DefendantDetails defendant={data as HearingDefendant} />)

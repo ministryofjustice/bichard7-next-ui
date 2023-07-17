@@ -1,15 +1,9 @@
 import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import { DateCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
+import { DateCodes } from "@moj-bichard7-developers/bichard7-next-data/dist/types/DateCode"
 import { textSecondary } from "utils/colours"
 import { formatDisplayedDate } from "utils/formattedDate"
-
-export enum DateCode {
-  "On or in" = 1,
-  "Before" = 2,
-  "After" = 3,
-  "Between" = 4,
-  "On or about" = 5,
-  "On or before" = 6
-}
+import { capitalizeString } from "utils/capitaliseString"
 
 interface StartDateProps {
   offence: Offence
@@ -24,7 +18,7 @@ export const StartDate = ({ offence }: StartDateProps) => {
 
   return (
     <>
-      <div>{DateCode[parseInt(ActualOffenceDateCode)]}</div>
+      <div>{capitalizeString(DateCodes[parseInt(ActualOffenceDateCode) as DateCode])}</div>
       <div>{dateField}</div>
       <div style={{ color: textSecondary }}>{`Date code: ${ActualOffenceDateCode}`}</div>
     </>
