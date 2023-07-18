@@ -99,7 +99,9 @@ export const getServerSideProps = withMultipleServerSideProps(
       if (isError(lockResult)) {
         throw lockResult
       }
-    } else if (isPost(req) && typeof unlockTrigger === "string") {
+    }
+
+    if (isPost(req) && typeof unlockTrigger === "string") {
       const lockResult = await unlockCourtCase(dataSource, +unlockTrigger, currentUser, UnlockReason.Trigger)
       if (isError(lockResult)) {
         throw lockResult
@@ -206,7 +208,7 @@ const Home: NextPage<Props> = (query) => {
         <title>{"Case List | Bichard7"}</title>
         <meta name="description" content="Case List | Bichard7" />
       </Head>
-      <Layout user={user}>
+      <Layout user={user} bichardSwitch={{ display: true }}>
         <Main />
         <CourtCaseWrapper
           filter={
