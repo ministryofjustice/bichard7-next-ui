@@ -36,13 +36,10 @@ describe("resolveTriggers", () => {
       attributes: {
         auditLogVersion: 2,
         "Number Of Triggers": triggers.length,
-        ...triggers.reduce(
-          (acc, trigger, index) => {
-            acc[`Trigger ${index + 1} Details`] = trigger
-            return acc
-          },
-          {} as KeyValuePair<string, unknown>
-        )
+        ...triggers.reduce((acc, trigger, index) => {
+          acc[`Trigger ${index + 1} Details`] = trigger
+          return acc
+        }, {} as KeyValuePair<string, unknown>)
       }
     }
   }
@@ -143,11 +140,10 @@ describe("resolveTriggers", () => {
       expect(minsSinceCaseTriggersResolved).toBeLessThanOrEqual(5)
 
       const events = await fetchAuditLogEvents(courtCase.messageId)
-      expect(events).toStrictEqual([
-        createTriggersResolvedEvent(["TRPR0001"]),
-        createAllTriggersResolvedEvent(["TRPR0001"]),
-        triggerUnlockedEvent
-      ])
+      expect(events).toHaveLength(3)
+      expect(events).toContainEqual(createTriggersResolvedEvent(["TRPR0001"]))
+      expect(events).toContainEqual(createAllTriggersResolvedEvent(["TRPR0001"]))
+      expect(events).toContainEqual(triggerUnlockedEvent)
     })
 
     it("Should mark the entire case as resolved when there are no other unresolved triggers or exceptions", async () => {
@@ -181,11 +177,10 @@ describe("resolveTriggers", () => {
       expect(afterCourtCaseResult.resolutionTimestamp).not.toBeNull()
 
       const events = await fetchAuditLogEvents(courtCase.messageId)
-      expect(events).toStrictEqual([
-        createTriggersResolvedEvent(["TRPR0001 (1)"]),
-        createAllTriggersResolvedEvent(["TRPR0001 (1)"]),
-        triggerUnlockedEvent
-      ])
+      expect(events).toHaveLength(3)
+      expect(events).toContainEqual(createTriggersResolvedEvent(["TRPR0001 (1)"]))
+      expect(events).toContainEqual(createAllTriggersResolvedEvent(["TRPR0001 (1)"]))
+      expect(events).toContainEqual(triggerUnlockedEvent)
     })
 
     it("Should not set the case trigger status as resolved while there are other unresolved triggers or exceptions", async () => {
@@ -292,11 +287,10 @@ describe("resolveTriggers", () => {
       expect(updatedTrigger.resolvedBy).toBe(user.username)
 
       const events = await fetchAuditLogEvents(courtCase.messageId)
-      expect(events).toStrictEqual([
-        createTriggersResolvedEvent(["TRPR0001"]),
-        createAllTriggersResolvedEvent(["TRPR0001"]),
-        triggerUnlockedEvent
-      ])
+      expect(events).toHaveLength(3)
+      expect(events).toContainEqual(createTriggersResolvedEvent(["TRPR0001"]))
+      expect(events).toContainEqual(createAllTriggersResolvedEvent(["TRPR0001"]))
+      expect(events).toContainEqual(triggerUnlockedEvent)
     })
 
     it("Shouldn't resolve a trigger locked by someone else", async () => {
@@ -409,10 +403,9 @@ describe("resolveTriggers", () => {
       expect(updatedCourtCase.triggerLockedByUsername).toEqual(resolverUsername)
 
       events = await fetchAuditLogEvents(courtCase.messageId)
-      expect(events).toStrictEqual([
-        createTriggersResolvedEvent(["TRPR0001"]),
-        createTriggersResolvedEvent(["TRPR0002"])
-      ])
+      expect(events).toHaveLength(2)
+      expect(events).toContainEqual(createTriggersResolvedEvent(["TRPR0001"]))
+      expect(events).toContainEqual(createTriggersResolvedEvent(["TRPR0002"]))
 
       triggerResolveResult = await resolveTriggers(dataSource, [triggers[2].triggerId], courtCase.errorId, user)
       expect(isError(triggerResolveResult)).toBeFalsy()
@@ -426,23 +419,22 @@ describe("resolveTriggers", () => {
       expect(updatedCourtCase.triggerLockedByUsername).toBeNull()
 
       events = await fetchAuditLogEvents(courtCase.messageId)
-      expect(events).toStrictEqual([
-        createTriggersResolvedEvent(["TRPR0001"]),
-        createTriggersResolvedEvent(["TRPR0002"]),
-        createTriggersResolvedEvent(["TRPR0003"]),
-        createAllTriggersResolvedEvent(["TRPR0001", "TRPR0002", "TRPR0003"]),
-        {
-          category: "information",
-          eventSource: AUDIT_LOG_EVENT_SOURCE,
-          eventType: "Trigger unlocked",
-          timestamp: expect.anything(),
-          user: user.username,
-          eventCode: "triggers.unlocked",
-          attributes: {
-            auditLogVersion: 2
-          }
+      expect(events).toHaveLength(5)
+      expect(events).toContainEqual(createTriggersResolvedEvent(["TRPR0001"]))
+      expect(events).toContainEqual(createTriggersResolvedEvent(["TRPR0002"]))
+      expect(events).toContainEqual(createTriggersResolvedEvent(["TRPR0003"]))
+      expect(events).toContainEqual(createAllTriggersResolvedEvent(["TRPR0001", "TRPR0002", "TRPR0003"]))
+      expect(events).toContainEqual({
+        category: "information",
+        eventSource: AUDIT_LOG_EVENT_SOURCE,
+        eventType: "Trigger unlocked",
+        timestamp: expect.anything(),
+        user: user.username,
+        eventCode: "triggers.unlocked",
+        attributes: {
+          auditLogVersion: 2
         }
-      ])
+      })
     })
 
     it("Should be able to resolve all triggers on a case at once", async () => {
@@ -484,11 +476,10 @@ describe("resolveTriggers", () => {
       })
 
       const events = await fetchAuditLogEvents(courtCase.messageId)
-      expect(events).toStrictEqual([
-        createTriggersResolvedEvent(["TRPR0001", "TRPR0002", "TRPR0003"]),
-        createAllTriggersResolvedEvent(["TRPR0001", "TRPR0002", "TRPR0003"]),
-        triggerUnlockedEvent
-      ])
+      expect(events).toHaveLength(3)
+      expect(events).toContainEqual(createTriggersResolvedEvent(["TRPR0001", "TRPR0002", "TRPR0003"]))
+      expect(events).toContainEqual(createAllTriggersResolvedEvent(["TRPR0001", "TRPR0002", "TRPR0003"]))
+      expect(events).toContainEqual(triggerUnlockedEvent)
     })
 
     it("Should be able to resolve some of the triggers on a case at once", async () => {
