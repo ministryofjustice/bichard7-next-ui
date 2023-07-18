@@ -1,6 +1,7 @@
 import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import { format } from "date-fns"
-import { DefendantDetails, Gender } from "../../src/features/CourtCaseDetails/Tabs/Panels/DefendantDetails"
+import { GenderCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/GenderCode"
+import { DefendantDetails } from "../../src/features/CourtCaseDetails/Tabs/Panels/DefendantDetails"
 
 describe("Defendant Details", () => {
   it("displays all defendant details", () => {
@@ -23,7 +24,7 @@ describe("Defendant Details", () => {
           Title: "Title",
           FamilyName: "FamilyName"
         },
-        Gender: Gender["1 (male)"]
+        Gender: GenderCode.MALE
       }
     }
     cy.mount(<DefendantDetails defendant={data as HearingDefendant} />)
@@ -68,7 +69,7 @@ describe("Defendant Details", () => {
           GivenName: ["FirstName", "MiddleName"],
           FamilyName: "FamilyName"
         },
-        Gender: Gender["1 (male)"]
+        Gender: GenderCode.MALE
       }
     }
     cy.mount(<DefendantDetails defendant={data as HearingDefendant} />)

@@ -34,7 +34,7 @@
     "@govuk-react/select": "^0.10.5",
     "@ministryofjustice/frontend": "^1.8.0",
     "@moj-bichard7-developers/bichard7-next-core": "^1.2.1",
-    "@moj-bichard7-developers/bichard7-next-data": "^2.0.100",
+    "@moj-bichard7-developers/bichard7-next-data": "^2.0.101",
     "@types/lodash.clonedeep": "^4.5.7",
     "axios": "^1.4.0",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
