@@ -38,11 +38,22 @@ const useStyles = createUseStyles({
   }
 })
 
+const getUnlockPath = (courtCase: CourtCase): URLSearchParams => {
+  const params = new URLSearchParams()
+  if (courtCase.errorLockedByUsername) {
+    params.set("unlockException", courtCase.errorId?.toString())
+  }
+  if (courtCase.triggerLockedByUsername) {
+    params.set("unlockTrigger", courtCase.errorId?.toString())
+  }
+  return params
+}
+
 const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
 
-  const leaveAndUnlockParams = new URLSearchParams({ unlockTrigger: courtCase.errorId?.toString() })
+  const leaveAndUnlockParams = getUnlockPath(courtCase)
   const leaveAndUnlockUrl = `${basePath}?${leaveAndUnlockParams.toString()}`
 
   const caseIsViewOnly = !isLockedByCurrentUser(courtCase, user.username)

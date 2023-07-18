@@ -99,7 +99,9 @@ export const getServerSideProps = withMultipleServerSideProps(
       if (isError(lockResult)) {
         throw lockResult
       }
-    } else if (isPost(req) && typeof unlockTrigger === "string") {
+    }
+
+    if (isPost(req) && typeof unlockTrigger === "string") {
       const lockResult = await unlockCourtCase(dataSource, +unlockTrigger, currentUser, UnlockReason.Trigger)
       if (isError(lockResult)) {
         throw lockResult
