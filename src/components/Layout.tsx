@@ -6,13 +6,31 @@ import Header from "./Header"
 import NavBar from "./NavBar"
 import PhaseBanner from "./PhaseBanner"
 import PageTemplate from "./PageTemplate"
+import styled from "styled-components"
+import ConditionalRender from "./ConditionalRender"
+import LinkButton from "./LinkButton"
 
+const Banner = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #b1b4b6;
+
+  > .govuk-phase-banner {
+    border: none;
+  }
+`
+
+const BichardSwitch = styled(LinkButton)`
+  margin-bottom: 0;
+`
 interface Props {
   children: ReactNode
   user: User
+  bichardSwitch?: { display: boolean; href?: string }
 }
 
-const Layout = ({ children, user }: Props) => {
+const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) => {
   const { basePath } = useRouter()
 
   return (
@@ -20,7 +38,15 @@ const Layout = ({ children, user }: Props) => {
       <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={user.username} />
       <NavBar groups={user.groups} />
       <PageTemplate>
-        <PhaseBanner phase={"beta"} />
+        <Banner>
+          <PhaseBanner phase={"beta"} />
+
+          <ConditionalRender isRendered={bichardSwitch.display}>
+            <BichardSwitch href={bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"}>
+              {"Switch to old Bichard"}
+            </BichardSwitch>
+          </ConditionalRender>
+        </Banner>
         {children}
       </PageTemplate>
       <Footer

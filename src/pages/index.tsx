@@ -208,7 +208,7 @@ const Home: NextPage<Props> = (query) => {
         <title>{"Case List | Bichard7"}</title>
         <meta name="description" content="Case List | Bichard7" />
       </Head>
-      <Layout user={user}>
+      <Layout user={user} bichardSwitch={{ display: true }}>
         <Main />
         <CourtCaseWrapper
           filter={
