@@ -104,13 +104,13 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
             isRendered={courtCase.isUrgent}
             label="Urgent"
             colour="red"
-            className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular urgent-badge"
+            className="govuk-!-static-margin-left-5 urgent-badge"
           />
           <Badge
             isRendered={caseIsViewOnly}
             label="View only"
             colour="blue"
-            className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular view-only-badge"
+            className="govuk-!-static-margin-left-5 view-only-badge"
           />
         </Heading>
         <CaseDetailsLockTag
