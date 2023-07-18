@@ -177,7 +177,10 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         <title>{"Case Details | Bichard7"}</title>
         <meta name="description" content="Case Details | Bichard7" />
       </Head>
-      <Layout user={user}>
+      <Layout
+        user={user}
+        bichardSwitch={{ display: true, href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}` }}
+      >
         <CourtCaseDetails
           courtCase={courtCase}
           aho={aho}
