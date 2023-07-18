@@ -9,9 +9,9 @@ import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import styled from "styled-components"
 import {
-  exceptionsAreLockedByAnotherUser,
+  exceptionsAreLockedByCurrentUser,
   isLockedByCurrentUser,
-  triggersAreLockedByAnotherUser
+  triggersAreLockedByCurrentUser
 } from "utils/caseLocks"
 import { gdsLightGrey, textPrimary } from "utils/colours"
 
@@ -20,6 +20,8 @@ interface Props {
   user: User
   canReallocate: boolean
 }
+
+type lockCheckFn = (courtCase: CourtCase, username: string) => boolean
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -68,19 +70,31 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
     }
   `
 
+  const getLockHolder = (
+    username: string,
+    lockholder: string | null | undefined,
+    lockedByCurrentUserFn: lockCheckFn
+  ): string => {
+    const lockedByCurrentUser = lockedByCurrentUserFn(courtCase, username)
+
+    if (lockedByCurrentUser) {
+      return "Locked to you"
+    }
+
+    return lockholder || ""
+  }
+
   const CaseDetailsLockTag = ({
     isRendered,
     lockName,
-    lockCheckFn,
-    lockHolder
+    getLockHolderFn
   }: {
     isRendered: boolean
     lockName: string
-    lockCheckFn: (courtCase: CourtCase, user: string) => boolean
-    lockHolder: string
+    getLockHolderFn: () => string
   }) => (
     <ConditionalRender isRendered={isRendered}>
-      <LockedTag lockName={lockName} lockedBy={lockCheckFn(courtCase, user.username) ? lockHolder : "Locked to you"} />
+      <LockedTag lockName={lockName} lockedBy={getLockHolderFn()} />
     </ConditionalRender>
   )
 
@@ -93,8 +107,9 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
         <CaseDetailsLockTag
           isRendered={user.hasAccessToExceptions}
           lockName="Exceptions"
-          lockCheckFn={exceptionsAreLockedByAnotherUser}
-          lockHolder={courtCase.errorLockedByUserFullName ?? "Another user"}
+          getLockHolderFn={() =>
+            getLockHolder(user.username, courtCase.errorLockedByUserFullName, exceptionsAreLockedByCurrentUser)
+          }
         />
       </HeaderRow>
       <HeaderRow>
@@ -116,8 +131,9 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
         <CaseDetailsLockTag
           isRendered={user.hasAccessToTriggers}
           lockName="Triggers"
-          lockCheckFn={triggersAreLockedByAnotherUser}
-          lockHolder={courtCase.triggerLockedByUserFullName ?? "Another user"}
+          getLockHolderFn={() =>
+            getLockHolder(user.username, courtCase.triggerLockedByUserFullName, triggersAreLockedByCurrentUser)
+          }
         />
       </HeaderRow>
       <ButtonContainer>
