@@ -144,8 +144,6 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCase: courtCase.serialize(),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
-        triggersLockedByCurrentUser: courtCase.triggersAreLockedByCurrentUser(currentUser.username),
-        lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username),
         canReallocate: courtCase.canReallocate(currentUser.username)
       }
     }
@@ -157,8 +155,6 @@ interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
-  triggersLockedByCurrentUser: boolean
-  lockedByAnotherUser: boolean
   canReallocate: boolean
 }
 
@@ -167,8 +163,6 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   aho,
   user,
   errorLockedByAnotherUser,
-  triggersLockedByCurrentUser,
-  lockedByAnotherUser,
   canReallocate
 }: Props) => {
   return (
@@ -186,9 +180,6 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
           aho={aho}
           user={user}
           errorLockedByAnotherUser={errorLockedByAnotherUser}
-          triggersLockedByCurrentUser={triggersLockedByCurrentUser}
-          triggersLockedByUser={courtCase.triggerLockedByUserFullName}
-          lockedByAnotherUser={lockedByAnotherUser}
           canReallocate={canReallocate}
         />
       </Layout>

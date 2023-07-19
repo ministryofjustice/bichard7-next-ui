@@ -10,11 +10,12 @@ import ConditionalRender from "components/ConditionalRender"
 import LockedTag from "../../../components/LockedTag"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
+import { triggersAreLockedByAnotherUser } from "utils/caseLocks"
+import User from "services/entities/User"
 
 interface Props {
   courtCase: CourtCase
-  triggersLockedByCurrentUser: boolean
-  triggersLockedByUser?: string | null
+  user: User
   onNavigate: NavigationHandler
 }
 
@@ -36,7 +37,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedByUser, onNavigate }: Props) => {
+const TriggersList = ({ courtCase, user, onNavigate }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
   const { basePath, query } = useRouter()
@@ -44,7 +45,7 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
   const triggers = sortBy(courtCase.triggers, "triggerItemIdentity")
   const hasTriggers = triggers.length > 0
   const hasUnresolvedTriggers = triggers.filter((t) => t.status === "Unresolved").length > 0
-  const triggersLockedByAnotherUser = !!triggersLockedByUser && !triggersLockedByCurrentUser
+  const triggersLockedByAnotherUser = triggersAreLockedByAnotherUser(courtCase, user.username)
 
   const setTriggerSelection = ({ target: checkbox }: ChangeEvent<HTMLInputElement>) => {
     const triggerId = parseInt(checkbox.value, 10)
@@ -107,7 +108,7 @@ const TriggersList = ({ courtCase, triggersLockedByCurrentUser, triggersLockedBy
         </GridRow>
       </ConditionalRender>
       <ConditionalRender isRendered={hasTriggers && triggersLockedByAnotherUser}>
-        <LockedTag lockName="Triggers" lockedBy={triggersLockedByUser ?? "Another user"} />
+        <LockedTag lockName="Triggers" lockedBy={courtCase.errorLockedByUserFullName ?? "Another user"} />
       </ConditionalRender>
     </form>
   )
