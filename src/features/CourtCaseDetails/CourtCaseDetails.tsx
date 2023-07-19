@@ -22,11 +22,8 @@ import User from "services/entities/User"
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
-  user: User
   errorLockedByAnotherUser: boolean
-  triggersLockedByCurrentUser: boolean
-  triggersLockedByUser?: string | null
-  lockedByAnotherUser: boolean
+  user: User
   canReallocate: boolean
 }
 
@@ -43,16 +40,7 @@ const useStyles = createUseStyles({
 const sideBarWidth = "33%"
 const contentWidth = "67%"
 
-const CourtCaseDetails: React.FC<Props> = ({
-  courtCase,
-  aho,
-  user,
-  errorLockedByAnotherUser,
-  triggersLockedByCurrentUser,
-  triggersLockedByUser,
-  lockedByAnotherUser,
-  canReallocate
-}) => {
+const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, user, errorLockedByAnotherUser, canReallocate }) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
