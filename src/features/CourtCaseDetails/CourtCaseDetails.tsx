@@ -1,6 +1,5 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
-import LinkButton from "components/LinkButton"
 import { GridCol, GridRow } from "govuk-react"
 import { useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
@@ -152,20 +151,14 @@ const CourtCaseDetails: React.FC<Props> = ({
           <ConditionalRender isRendered={activeTab === "Notes"}>
             <Notes notes={courtCase.notes} lockedByAnotherUser={errorLockedByAnotherUser} />
           </ConditionalRender>
-
-          <ConditionalRender isRendered={!lockedByAnotherUser}>
-            <LinkButton href="resolve" className="b7-resolve-button">
-              {"Mark As Manually Resolved"}
-            </LinkButton>
-          </ConditionalRender>
         </GridCol>
+
         <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
           <TriggersAndExceptions
             courtCase={courtCase}
             aho={aho}
             renderedTab={tabToRender}
-            triggersLockedByCurrentUser={triggersLockedByCurrentUser}
-            triggersLockedByUser={triggersLockedByUser}
+            user={user}
             onNavigate={handleNavigation}
           />
         </GridCol>

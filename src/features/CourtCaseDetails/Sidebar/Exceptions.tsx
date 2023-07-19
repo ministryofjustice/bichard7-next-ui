@@ -6,9 +6,16 @@ import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-
 import getExceptionPathDetails from "utils/getExceptionPathDetails"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
+import CourtCase from "services/entities/CourtCase"
+import User from "services/entities/User"
+import ConditionalRender from "components/ConditionalRender"
+import { exceptionsAreLockedByCurrentUser } from "utils/caseLocks"
+import LinkButton from "components/LinkButton"
 
 interface Props {
+  courtCase: CourtCase
   aho: AnnotatedHearingOutcome
+  user: User
   onNavigate: NavigationHandler
 }
 
@@ -24,7 +31,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const Exceptions = ({ aho, onNavigate }: Props) => {
+const Exceptions = ({ courtCase, aho, user, onNavigate }: Props) => {
   const classes = useStyles()
 
   const handleClick = (tab?: CaseDetailsTab, offenceOrderIndex?: number) => {
@@ -72,6 +79,12 @@ const Exceptions = ({ aho, onNavigate }: Props) => {
                   {"More information"}
                 </Link>
               </GridCol>
+            </GridRow>
+
+            <GridRow>
+              <ConditionalRender isRendered={exceptionsAreLockedByCurrentUser(courtCase, user.username)}>
+                <LinkButton href="resolve">{"Mark As Manually Resolved"}</LinkButton>
+              </ConditionalRender>
             </GridRow>
           </div>
         )
