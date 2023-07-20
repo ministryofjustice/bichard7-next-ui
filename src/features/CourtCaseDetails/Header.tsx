@@ -101,7 +101,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
   return (
     <HeaderContainer>
       <HeaderRow>
-        <Heading as="h1" size="LARGE" className="govuk-!-font-weight-regular">
+        <Heading as="h1" size="LARGE">
           {"Case details"}
         </Heading>
         <CaseDetailsLockTag
@@ -113,19 +113,19 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
         />
       </HeaderRow>
       <HeaderRow>
-        <Heading as="h2" size="MEDIUM" className="govuk-!-font-weight-regular">
+        <Heading as="h2" size="MEDIUM">
           {courtCase.defendantName}
           <Badge
             isRendered={courtCase.isUrgent}
             label="Urgent"
             colour="red"
-            className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular urgent-badge"
+            className="govuk-!-static-margin-left-5 urgent-badge"
           />
           <Badge
             isRendered={caseIsViewOnly}
             label="View only"
             colour="blue"
-            className="govuk-!-static-margin-left-5 govuk-!-font-weight-regular view-only-badge"
+            className="govuk-!-static-margin-left-5 view-only-badge"
           />
         </Heading>
         <CaseDetailsLockTag
