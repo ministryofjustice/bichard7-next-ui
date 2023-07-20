@@ -8,6 +8,7 @@ import ExceptionsList from "./Exceptions"
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import type NavigationHandler from "types/NavigationHandler"
 import ConditionalRender from "components/ConditionalRender"
+import User from "services/entities/User"
 
 export enum Tab {
   Triggers = "triggers",
@@ -31,8 +32,7 @@ interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
   renderedTab?: Tab
-  triggersLockedByCurrentUser: boolean
-  triggersLockedByUser?: string | null
+  user: User
   onNavigate: NavigationHandler
 }
 
@@ -50,14 +50,7 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const TriggersAndExceptions = ({
-  courtCase,
-  aho,
-  renderedTab,
-  triggersLockedByCurrentUser,
-  triggersLockedByUser,
-  onNavigate
-}: Props) => {
+const TriggersAndExceptions = ({ courtCase, aho, renderedTab, user, onNavigate }: Props) => {
   const [selectedTab, setSelectedTab] = useState("triggers")
   const classes = useStyles()
 
@@ -96,18 +89,13 @@ const TriggersAndExceptions = ({
             selected={selectedTab === "triggers"}
             className={`moj-tab-panel-triggers ${classes.tabPanelTriggers}`}
           >
-            <TriggersList
-              courtCase={courtCase}
-              triggersLockedByCurrentUser={triggersLockedByCurrentUser}
-              triggersLockedByUser={triggersLockedByUser}
-              onNavigate={onNavigate}
-            />
+            <TriggersList courtCase={courtCase} user={user} onNavigate={onNavigate} />
           </Tabs.Panel>
         </ConditionalRender>
 
         <ConditionalRender isRendered={!renderedTab || renderedTab === Tab.Exceptions}>
           <Tabs.Panel id="exceptions" selected={exceptionsSelected} className="moj-tab-panel-exceptions">
-            <ExceptionsList aho={aho} onNavigate={onNavigate} />
+            <ExceptionsList courtCase={courtCase} aho={aho} user={user} onNavigate={onNavigate} />
           </Tabs.Panel>
         </ConditionalRender>
       </Tabs>

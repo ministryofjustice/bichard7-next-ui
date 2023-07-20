@@ -39,6 +39,7 @@ describe("Manually resolve a case", () => {
 
     cy.findByText("NAME Defendant").click()
 
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
     cy.get("button").contains("Mark As Manually Resolved").click()
     cy.get("H2").should("have.text", "Resolve Case")
     cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
@@ -70,6 +71,7 @@ describe("Manually resolve a case", () => {
 
     cy.findByText("NAME Defendant").click()
 
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
     cy.get("button").contains("Mark As Manually Resolved").click()
     cy.get("H2").should("have.text", "Resolve Case")
     cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")

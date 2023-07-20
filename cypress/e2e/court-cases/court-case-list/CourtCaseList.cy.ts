@@ -1,5 +1,7 @@
 import User from "services/entities/User"
 import hashedPassword from "../../../fixtures/hashedPassword"
+import { UserGroup } from "types/UserGroup"
+import { newUserLogin } from "../../../support/helpers"
 
 describe("Court case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
@@ -71,6 +73,23 @@ describe("Court case details", () => {
     cy.get("#triggers-locked-tag-lockee").should("contain.text", "Another Name")
     cy.get("#exceptions-locked-tag").should("exist")
     cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Another Name")
+  })
+
+  it("should not lock exceptions when a trigger handler clicks into a case", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        errorCount: 1,
+        triggerCount: 1
+      }
+    ])
+
+    newUserLogin({ user: "trigger-handler-user", groups: [UserGroup.ExceptionHandler] })
+
+    cy.visit("/bichard")
+    cy.findByText("NAME Defendant").click()
+
+    cy.get("#exceptions-locked-tag").should("not.exist")
   })
 })
 

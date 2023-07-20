@@ -1,6 +1,5 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
-import LinkButton from "components/LinkButton"
 import { GridCol, GridRow } from "govuk-react"
 import { useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
@@ -23,11 +22,8 @@ import User from "services/entities/User"
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
-  user: User
   errorLockedByAnotherUser: boolean
-  triggersLockedByCurrentUser: boolean
-  triggersLockedByUser?: string | null
-  lockedByAnotherUser: boolean
+  user: User
   canReallocate: boolean
 }
 
@@ -44,16 +40,7 @@ const useStyles = createUseStyles({
 const sideBarWidth = "33%"
 const contentWidth = "67%"
 
-const CourtCaseDetails: React.FC<Props> = ({
-  courtCase,
-  aho,
-  user,
-  errorLockedByAnotherUser,
-  triggersLockedByCurrentUser,
-  triggersLockedByUser,
-  lockedByAnotherUser,
-  canReallocate
-}) => {
+const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, user, errorLockedByAnotherUser, canReallocate }) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
@@ -152,20 +139,14 @@ const CourtCaseDetails: React.FC<Props> = ({
           <ConditionalRender isRendered={activeTab === "Notes"}>
             <Notes notes={courtCase.notes} lockedByAnotherUser={errorLockedByAnotherUser} />
           </ConditionalRender>
-
-          <ConditionalRender isRendered={!lockedByAnotherUser}>
-            <LinkButton href="resolve" className="b7-resolve-button">
-              {"Mark As Manually Resolved"}
-            </LinkButton>
-          </ConditionalRender>
         </GridCol>
+
         <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
           <TriggersAndExceptions
             courtCase={courtCase}
             aho={aho}
             renderedTab={tabToRender}
-            triggersLockedByCurrentUser={triggersLockedByCurrentUser}
-            triggersLockedByUser={triggersLockedByUser}
+            user={user}
             onNavigate={handleNavigation}
           />
         </GridCol>
