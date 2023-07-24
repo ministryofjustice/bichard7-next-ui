@@ -2,6 +2,7 @@ import ConditionalRender from "components/ConditionalRender"
 import { MAX_NOTE_LENGTH } from "config"
 import { Button, FormGroup, HintText, Label, TextArea } from "govuk-react"
 import { FormEvent, FormEventHandler, useState } from "react"
+import { useLeavePageConfirmation } from "hooks/useLeavePageConfimation"
 
 interface Props {
   lockedByAnotherUser: boolean
@@ -11,6 +12,8 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser }: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
   const [isFormValid, setIsFormValid] = useState(true)
   const showError = !isFormValid && noteRemainingLength === MAX_NOTE_LENGTH
+
+  useLeavePageConfirmation(noteRemainingLength !== MAX_NOTE_LENGTH)
 
   const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
     setNoteRemainingLength(MAX_NOTE_LENGTH - event.currentTarget.value.length)
