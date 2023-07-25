@@ -1,7 +1,6 @@
-import { EntityManager, Repository, UpdateQueryBuilder, UpdateResult } from "typeorm"
+import { EntityManager, Repository, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
-import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import {
   AuditLogEvent,
   AuditLogEventOptions
@@ -24,12 +23,11 @@ const unlock = async (
     Trigger: "triggerLockedByUsername"
   }[unlockReason]
 
-  const query = courtCasesByOrganisationUnitQuery(
-    courtCaseRepository.createQueryBuilder().update(CourtCase),
-    user
-  ) as UpdateQueryBuilder<CourtCase>
-  query.set({ [updatedFieldName]: null })
-  query.andWhere("error_id = :id", { id: courtCaseId }) // .andWhere is required because .where overwrites courtCasesByOrganisationUnitQuery conditions
+  const query = courtCaseRepository
+    .createQueryBuilder()
+    .update(CourtCase)
+    .set({ [updatedFieldName]: null })
+    .where("error_id = :id", { id: courtCaseId })
 
   if (!user.isSupervisor) {
     query.andWhere({ [updatedFieldName]: user.username })

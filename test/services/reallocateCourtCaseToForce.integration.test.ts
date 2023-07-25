@@ -168,18 +168,17 @@ describe("reallocate court case to another force", () => {
       expect(parsedCase.ForceOwner?.ThirdLevelCode).toEqual("YZ")
       expect(parsedCase.ManualForceOwner).toBe(true)
       expect(actualCourtCase.notes).toHaveLength(3)
+      const notes = actualCourtCase.notes.sort((noteA, noteB) => (noteA.createdAt > noteB.createdAt ? 1 : -1))
 
-      expect(actualCourtCase.notes[0].userId).toEqual("System")
-      expect(actualCourtCase.notes[0].noteText).toEqual(
+      expect(notes[0].userId).toEqual("System")
+      expect(notes[0].noteText).toEqual(
         `${userName}: Portal Action: Update Applied. Element: forceOwner. New Value: ${newForceCode}`
       )
-      expect(actualCourtCase.notes[1].userId).toEqual("System")
-      expect(actualCourtCase.notes[1].noteText).toEqual(
-        `${userName}: Case reallocated to new force owner: ${expectedForceOwner}`
-      )
+      expect(notes[1].userId).toEqual("System")
+      expect(notes[1].noteText).toEqual(`${userName}: Case reallocated to new force owner: ${expectedForceOwner}`)
 
-      expect(actualCourtCase.notes[2].userId).toEqual(userName)
-      expect(actualCourtCase.notes[2].noteText).toEqual("Dummy user note")
+      expect(notes[2].userId).toEqual(userName)
+      expect(notes[2].noteText).toEqual("Dummy user note")
 
       const events = await fetchAuditLogEvents(courtCase.messageId)
       expect(events).toHaveLength(3)

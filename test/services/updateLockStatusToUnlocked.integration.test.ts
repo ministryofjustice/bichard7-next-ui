@@ -113,13 +113,13 @@ const testCases = [
     expectedEvents: []
   },
   {
-    description: "Trigger handler cannot unlock a case that is not visible for them",
+    description: "Trigger handler can unlock a case that is not visible for them",
     triggerLockedBy: "current user",
     exceptionLockedBy: "another user",
     currentUserGroup: UserGroup.TriggerHandler,
     visibleForce: "13GH",
     unlockReason: UnlockReason.Trigger,
-    expectTriggersToBeLockedBy: "current user",
+    expectTriggersToBeLockedBy: null,
     expectExceptionsToBeLockedBy: "another user",
     expectedEvents: []
   },
@@ -198,14 +198,14 @@ const testCases = [
     expectedEvents: []
   },
   {
-    description: "Exception handler cannot unlock a case that is not visible for them",
+    description: "Exception handler can unlock a case that is not visible for them",
     triggerLockedBy: "another user",
     exceptionLockedBy: "current user",
     currentUserGroup: UserGroup.ExceptionHandler,
     visibleForce: "13GH",
     unlockReason: UnlockReason.Exception,
     expectTriggersToBeLockedBy: "another user",
-    expectExceptionsToBeLockedBy: "current user",
+    expectExceptionsToBeLockedBy: null,
     expectedEvents: []
   },
   {
@@ -304,14 +304,14 @@ const testCases = [
     expectedEvents: []
   },
   {
-    description: "General handler cannot unlock a case that is not visible for them",
+    description: "General handler can unlock a case that is not visible for them",
     triggerLockedBy: "current user",
     exceptionLockedBy: "current user",
     currentUserGroup: UserGroup.GeneralHandler,
     visibleForce: "13GH",
     unlockReason: UnlockReason.Trigger,
-    expectTriggersToBeLockedBy: "current user",
-    expectExceptionsToBeLockedBy: "current user",
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
     expectedEvents: []
   },
   {
@@ -410,14 +410,14 @@ const testCases = [
     expectedEvents: []
   },
   {
-    description: "Supervisor cannot unlock a case that is not visible for them",
+    description: "Supervisor can unlock a case that is not visible for them",
     triggerLockedBy: "another user",
     exceptionLockedBy: "another user",
     currentUserGroup: UserGroup.Supervisor,
     visibleForce: "13GH",
     unlockReason: UnlockReason.TriggerAndException,
-    expectTriggersToBeLockedBy: "another user",
-    expectExceptionsToBeLockedBy: "another user",
+    expectTriggersToBeLockedBy: null,
+    expectExceptionsToBeLockedBy: null,
     expectedEvents: []
   }
 ]
