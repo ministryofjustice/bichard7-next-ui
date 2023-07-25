@@ -1,4 +1,4 @@
-import { DataSource, EntityManager, UpdateResult } from "typeorm/"
+import { DataSource, EntityManager, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 
 const updateCourtCaseAho = async (

@@ -1,4 +1,4 @@
-import { EntityManager, Repository, UpdateQueryBuilder, UpdateResult } from "typeorm/"
+import { EntityManager, Repository, UpdateQueryBuilder, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
