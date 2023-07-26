@@ -3,7 +3,7 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import Note from "services/entities/Note"
 import User from "services/entities/User"
 import insertNotes from "services/insertNotes"
-import reallocateCourtCaseToForce from "services/reallocateCourtCaseToForce"
+import reallocateCourtCaseToForce from "services/reallocateCourtCase/reallocateCourtCaseToForce"
 import { DataSource, UpdateQueryBuilder } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"

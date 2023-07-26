@@ -88,7 +88,6 @@ describe("lock court case", () => {
 
       const result = await lockCourtCase(dataSource, unlockedCourtCase.errorId, user).catch((error) => error)
 
-      console.log(result)
       expect(isError(result)).toBeFalsy()
       expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
       expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
