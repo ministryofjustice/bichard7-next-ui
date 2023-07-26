@@ -11,9 +11,11 @@ import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import axios from "axios"
 import updateLockStatusToLocked from "services/updateLockStatusToLocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
+import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 
 jest.mock("services/updateLockStatusToLocked")
 jest.mock("services/storeAuditLogEvents")
+jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 
 describe("lock court case", () => {
   let dataSource: DataSource
@@ -49,6 +51,9 @@ describe("lock court case", () => {
         errorId: 0
       }
     ])
+    ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
+      jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
+    )
   })
 
   afterEach(async () => {
@@ -61,7 +66,7 @@ describe("lock court case", () => {
   })
 
   describe("when a case is successfully locked", () => {
-    it("Should call updateLockStatusToLocked and storeAuditLogEvents", async () => {
+    it("Should call courtCasesByOrganisationUnitQuery, updateLockStatusToLocked and storeAuditLogEvents", async () => {
       const expectedAuditLogEvents = [
         {
           attributes: { auditLogVersion: 2, user: lockedByName },
@@ -83,7 +88,10 @@ describe("lock court case", () => {
 
       const result = await lockCourtCase(dataSource, unlockedCourtCase.errorId, user).catch((error) => error)
 
+      console.log(result)
       expect(isError(result)).toBeFalsy()
+      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
+      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
       expect(updateLockStatusToLocked).toHaveBeenCalledTimes(1)
       expect(updateLockStatusToLocked).toHaveBeenCalledWith(
         expect.any(Object),
