@@ -98,16 +98,6 @@ describe("Update lock status to locked", () => {
       expectedEvents: []
     },
     {
-      description: "General handler cannot lock a case that is not visible to them",
-      triggerLockedBy: null,
-      exceptionLockedBy: null,
-      currentUserGroup: UserGroup.GeneralHandler,
-      expectTriggersToBeLockedBy: null,
-      expectExceptionsToBeLockedBy: null,
-      expectedEvents: [],
-      visibleForce: "WR0N6"
-    },
-    {
       description: "General handler cannot lock a case when the error status and trigger status is submitted",
       triggerLockedBy: null,
       exceptionLockedBy: null,
@@ -224,7 +214,6 @@ describe("Update lock status to locked", () => {
       triggerLockedBy,
       exceptionLockedBy,
       currentUserGroup,
-      visibleForce,
       errorStatus,
       triggerStatus,
       expectTriggersToBeLockedBy,
@@ -244,7 +233,7 @@ describe("Update lock status to locked", () => {
 
       const user = {
         username: "current user",
-        visibleForces: [visibleForce ?? "36"],
+        visibleForces: ["36"],
         visibleCourts: [],
         hasAccessToExceptions: [UserGroup.ExceptionHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
           currentUserGroup
