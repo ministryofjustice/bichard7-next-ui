@@ -88,8 +88,7 @@ const reallocateCourtCaseToForce = async (
         entityManager,
         courtCase,
         amendResult,
-        triggersToAdd,
-        triggersToDelete
+        triggersToAdd.length > 0 || triggersToDelete.length > 0
       )
 
       if (isError(updateCourtCaseResult)) {

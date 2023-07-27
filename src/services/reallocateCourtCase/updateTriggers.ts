@@ -1,21 +1,21 @@
 import { EntityManager, IsNull } from "typeorm"
-import TriggerOutcome from "../../types/TriggerOutcome"
 import CourtCase from "../entities/CourtCase"
 import { isError } from "../../types/Result"
-import Trigger from "../entities/Trigger"
+import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
+import { default as TriggerEntity } from "../entities/Trigger"
 
 const updateTriggers = async (
-  triggersToAdd: TriggerOutcome[],
+  triggersToAdd: Trigger[],
   entityManager: EntityManager,
   courtCase: CourtCase,
-  triggersToDelete: TriggerOutcome[]
+  triggersToDelete: Trigger[]
 ): Promise<Error | void> => {
   if (triggersToAdd.length > 0) {
     const addTriggersResult = await entityManager
-      .getRepository(Trigger)
+      .getRepository(TriggerEntity)
       .insert(
         triggersToAdd.map((triggerToAdd) => ({
-          triggerCode: triggerToAdd.triggerCode,
+          triggerCode: triggerToAdd.code,
           triggerItemIdentity: triggerToAdd.offenceSequenceNumber,
           status: "Unresolved",
           createdAt: new Date(),
@@ -31,9 +31,9 @@ const updateTriggers = async (
 
   return Promise.all(
     triggersToDelete.map((triggerToDelete) =>
-      entityManager.getRepository(Trigger).delete({
+      entityManager.getRepository(TriggerEntity).delete({
         errorId: courtCase.errorId,
-        triggerCode: triggerToDelete.triggerCode,
+        triggerCode: triggerToDelete.code,
         status: "Unresolved",
         triggerItemIdentity: triggerToDelete.offenceSequenceNumber ?? IsNull()
       })

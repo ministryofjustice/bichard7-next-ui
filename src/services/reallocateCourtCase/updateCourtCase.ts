@@ -2,15 +2,13 @@ import { EntityManager } from "typeorm"
 import { isError } from "../../types/Result"
 import CourtCase from "../entities/CourtCase"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
-import TriggerOutcome from "../../types/TriggerOutcome"
 import Trigger from "../entities/Trigger"
 
 const updateCourtCase = async (
   entityManager: EntityManager,
   courtCase: CourtCase,
   aho: AnnotatedHearingOutcome,
-  addedTriggers: TriggerOutcome[],
-  deletedTriggers: TriggerOutcome[]
+  hasAddedOrDeletedTriggers: boolean
 ): Promise<Pick<CourtCase, "orgForPoliceFilter"> | Error> => {
   const triggerTimestamp = new Date()
   const triggers = await entityManager
@@ -34,7 +32,7 @@ const updateCourtCase = async (
     orgForPoliceFilter
   })
 
-  if (addedTriggers.length > 0 || deletedTriggers.length > 0) {
+  if (hasAddedOrDeletedTriggers) {
     if (triggers.length === 0) {
       courtCaseUpdateQuery.set({
         ...(!courtCase.errorStatus || courtCase.errorStatus === "Resolved" ? { resolutionTimestamp: new Date() } : {}),
