@@ -148,6 +148,28 @@ describe("recalculateTriggers", () => {
       newTriggers: [getTrigger(TriggerCode.TRPR0001), getTrigger(TriggerCode.TRPR0002)],
       expectedTriggerToAdd: [],
       expectedTriggersToDelete: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE)]
+    },
+    {
+      description: "It deletes an unresolved REALLOCATE trigger when the case has a new trigger",
+      existingTriggers: [
+        getCaseTrigger(REALLOCATE_CASE_TRIGGER_CODE, "Unresolved"),
+        getCaseTrigger(TriggerCode.TRPR0001, "Unresolved")
+      ],
+      newTriggers: [
+        getTrigger(REALLOCATE_CASE_TRIGGER_CODE),
+        getTrigger(TriggerCode.TRPR0002),
+      ],
+      expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0002)],
+      expectedTriggersToDelete: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)]
+    },
+    {
+      description:
+        "It does not add REALLOCATE trigger when the existing unresolved trigger is deleted " +
+        "but there is a new trigger besides REALLOCATE trigger",
+      existingTriggers: [getCaseTrigger(TriggerCode.TRPR0001, "Unresolved")],
+      newTriggers: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE), getTrigger(TriggerCode.TRPR0002)],
+      expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0002)],
+      expectedTriggersToDelete: [getTrigger(TriggerCode.TRPR0001)]
     }
   ]
 

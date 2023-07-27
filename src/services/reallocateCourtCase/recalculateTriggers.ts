@@ -79,7 +79,7 @@ const recalculateTriggers = (
   if (totalUnresolvedTriggers <= 0 && reallocatedTrigger && triggersToAdd.length === 0) {
     if (foundUnresolvedReallocatedTrigger) {
       triggersToDelete = triggersToDelete.filter(
-        (triggerToDelete) => !(triggerToDelete.code === REALLOCATE_CASE_TRIGGER_CODE)
+        (triggerToDelete) => triggerToDelete.code !== REALLOCATE_CASE_TRIGGER_CODE
       )
     } else {
       triggersToAdd.push(reallocatedTrigger)
@@ -104,7 +104,7 @@ const recalculateTriggers = (
       reallocatedTrigger &&
       triggersToAdd.some((triggerToAdd) => triggerToAdd.code === reallocatedTrigger.code)
     ) {
-      triggersToAdd = triggersToAdd.filter((trigger) => trigger.code === REALLOCATE_CASE_TRIGGER_CODE)
+      triggersToAdd = triggersToAdd.filter((trigger) => trigger.code !== REALLOCATE_CASE_TRIGGER_CODE)
     }
   }
 
