@@ -17,9 +17,15 @@ const recalculateTriggers = (
   )
   const newReallocatedTrigger = triggers.find((trigger) => trigger.code === REALLOCATE_CASE_TRIGGER_CODE)
   const reallocatedTrigger: Trigger | undefined = existingReallocatedTrigger
-    ? ({ code: existingReallocatedTrigger.triggerCode } as Trigger)
+    ? ({
+        code: existingReallocatedTrigger.triggerCode,
+        offenceSequenceNumber: existingReallocatedTrigger.triggerItemIdentity
+      } as Trigger)
     : newReallocatedTrigger
-    ? ({ code: newReallocatedTrigger.code.toString() } as Trigger)
+    ? ({
+        code: newReallocatedTrigger.code.toString(),
+        offenceSequenceNumber: newReallocatedTrigger.offenceSequenceNumber
+      } as Trigger)
     : undefined
 
   const foundUnresolvedOutOfAreaTrigger = existingTriggers.some(
@@ -70,10 +76,10 @@ const recalculateTriggers = (
       triggers.some((trigger) => trigger.code === existingTrigger.triggerCode)
     ).length
 
-  if (totalUnresolvedTriggers === 0 && reallocatedTrigger && triggersToAdd.length === 0) {
+  if (totalUnresolvedTriggers <= 0 && reallocatedTrigger && triggersToAdd.length === 0) {
     if (foundUnresolvedReallocatedTrigger) {
       triggersToDelete = triggersToDelete.filter(
-        (triggerToDelete) => triggerToDelete.code === REALLOCATE_CASE_TRIGGER_CODE
+        (triggerToDelete) => !(triggerToDelete.code === REALLOCATE_CASE_TRIGGER_CODE)
       )
     } else {
       triggersToAdd.push(reallocatedTrigger)
