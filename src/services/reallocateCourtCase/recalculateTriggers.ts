@@ -1,6 +1,20 @@
 import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
 import CourtCase from "../entities/CourtCase"
 import { OUT_OF_AREA_TRIGGER_CODE, REALLOCATE_CASE_TRIGGER_CODE } from "../../config"
+import { default as TriggerEntity } from "../entities/Trigger"
+
+const hasTrigger = (triggers: Trigger[] | TriggerEntity[], trigger: Trigger | TriggerEntity): boolean => {
+  const code = "code" in trigger ? trigger.code : trigger.triggerCode
+  const offenceSequenceNumber =
+    ("code" in trigger ? trigger.offenceSequenceNumber : trigger.triggerItemIdentity) || undefined
+
+  return triggers.some((existingTrigger) =>
+    "triggerCode" in existingTrigger
+      ? existingTrigger.triggerCode === code &&
+        (existingTrigger.triggerItemIdentity || undefined) === offenceSequenceNumber
+      : existingTrigger.code === code && (existingTrigger.offenceSequenceNumber || undefined) === offenceSequenceNumber
+  )
+}
 
 const recalculateTriggers = (
   courtCase: CourtCase,
@@ -40,13 +54,11 @@ const recalculateTriggers = (
     : undefined
 
   const resolvedTriggers = existingTriggers.filter((trigger) => trigger.status === "Resolved")
-  const foundResolvedOutOfAreaTrigger = resolvedTriggers.some(
-    (trigger) => trigger.triggerCode === OUT_OF_AREA_TRIGGER_CODE
-  )
+  const foundResolvedOutOfAreaTrigger = hasTrigger(resolvedTriggers, { code: OUT_OF_AREA_TRIGGER_CODE })
   totalUnresolvedTriggers -= existingTriggers.filter((existingTrigger) => existingTrigger.status === "Resolved").length
 
   let triggersToDelete: Trigger[] = existingTriggers
-    .filter((existingTrigger) => !triggers.some((trigger) => trigger.code === existingTrigger.triggerCode))
+    .filter((existingTrigger) => !hasTrigger(triggers, existingTrigger))
     .map(
       (trigger) =>
         ({
@@ -63,7 +75,7 @@ const recalculateTriggers = (
             (trigger.code === OUT_OF_AREA_TRIGGER_CODE &&
               foundResolvedOutOfAreaTrigger &&
               !foundUnresolvedOutOfAreaTrigger) ||
-            !existingTriggers.some((existingTrigger) => existingTrigger.triggerCode === trigger.code)
+            !hasTrigger(existingTriggers, trigger)
         )
   ).map((trigger) => ({
     code: trigger.code,
@@ -71,10 +83,7 @@ const recalculateTriggers = (
   }))
 
   totalUnresolvedTriggers -=
-    triggersToDelete.length +
-    existingTriggers.filter((existingTrigger) =>
-      triggers.some((trigger) => trigger.code === existingTrigger.triggerCode)
-    ).length
+    triggersToDelete.length + existingTriggers.filter((existingTrigger) => hasTrigger(triggers, existingTrigger)).length
 
   if (totalUnresolvedTriggers <= 0 && reallocatedTrigger && triggersToAdd.length === 0) {
     if (foundUnresolvedReallocatedTrigger) {
@@ -92,32 +101,26 @@ const recalculateTriggers = (
   ) {
     if (
       reallocatedTrigger &&
-      existingTriggers.some(
-        (existingTrigger) =>
-          existingTrigger.triggerCode === reallocatedTrigger.code &&
-          existingTrigger.triggerItemIdentity === reallocatedTrigger.offenceSequenceNumber
-      ) &&
-      !triggersToDelete.some((triggerToDelete) => triggerToDelete.code === reallocatedTrigger?.code)
+      hasTrigger(existingTriggers, reallocatedTrigger) &&
+      !hasTrigger(triggersToDelete, reallocatedTrigger)
     ) {
+      console.log("Delete reallocated")
       triggersToDelete.push(reallocatedTrigger)
-    } else if (
-      reallocatedTrigger &&
-      triggersToAdd.some((triggerToAdd) => triggerToAdd.code === reallocatedTrigger.code)
-    ) {
+    } else if (reallocatedTrigger && hasTrigger(triggersToAdd, reallocatedTrigger)) {
       triggersToAdd = triggersToAdd.filter((trigger) => trigger.code !== REALLOCATE_CASE_TRIGGER_CODE)
     }
   }
 
   if (triggersToAdd.length > 0 && totalUnresolvedTriggers == 2 && outOfAreaTrigger && reallocatedTrigger) {
-    if (triggersToAdd.some((triggerToAdd) => triggerToAdd.code === outOfAreaTrigger.code)) {
+    if (hasTrigger(triggersToAdd, outOfAreaTrigger)) {
       triggersToAdd = triggersToAdd.filter((triggerToAdd) => triggerToAdd.code === OUT_OF_AREA_TRIGGER_CODE)
     } else {
       triggersToDelete.push(outOfAreaTrigger)
     }
 
     if (
-      existingTriggers.some((existingTrigger) => existingTrigger.triggerCode === REALLOCATE_CASE_TRIGGER_CODE) &&
-      !triggersToDelete.some((triggerToDelete) => triggerToDelete.code === REALLOCATE_CASE_TRIGGER_CODE)
+      hasTrigger(existingTriggers, { code: REALLOCATE_CASE_TRIGGER_CODE }) &&
+      !hasTrigger(triggersToDelete, { code: REALLOCATE_CASE_TRIGGER_CODE })
     ) {
       triggersToDelete = triggersToDelete.filter((trigger) => trigger.code === REALLOCATE_CASE_TRIGGER_CODE)
     }
