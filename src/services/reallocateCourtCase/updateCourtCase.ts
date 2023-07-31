@@ -24,17 +24,17 @@ const updateCourtCase = async (
   const ptiurnSize = 11
   const { SecondLevelCode, ThirdLevelCode } = aho.AnnotatedHearingOutcome.HearingOutcome.Case.ForceOwner ?? {}
   const orgForPoliceFilter = `${SecondLevelCode}${ThirdLevelCode !== "00" ? ThirdLevelCode : ""}`
-  const courtCaseUpdateQuery = entityManager.createQueryBuilder().update<CourtCase>(CourtCase)
-  courtCaseUpdateQuery.set({
+  const updateParameters: Partial<CourtCase> = {
     triggerCount: triggers.length,
     asn: aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber.substring(0, asnSize),
     ptiurn: aho.AnnotatedHearingOutcome.HearingOutcome.Case.PTIURN.substring(0, ptiurnSize),
     orgForPoliceFilter
-  })
+  }
 
+  let triggerParameters: Partial<CourtCase> = {}
   if (hasAddedOrDeletedTriggers) {
     if (triggers.length === 0) {
-      courtCaseUpdateQuery.set({
+      triggerParameters = {
         ...(!courtCase.errorStatus || courtCase.errorStatus === "Resolved" ? { resolutionTimestamp: new Date() } : {}),
         triggerReason: null,
         triggerStatus: null,
@@ -42,18 +42,18 @@ const updateCourtCase = async (
         triggerResolvedTimestamp: null,
         triggerQualityChecked: null,
         triggerInsertedTimestamp: null
-      })
+      }
     } else if (triggers.every((trigger) => trigger.status === "Resolved")) {
-      courtCaseUpdateQuery.set({
+      triggerParameters = {
         ...(!courtCase.errorStatus || courtCase.errorStatus === "Resolved" ? { resolutionTimestamp: new Date() } : {}),
         triggerReason: triggers.filter((trigger) => trigger.status === "Resolved")[0].triggerCode,
         triggerStatus: "Resolved",
         triggerResolvedBy: "System",
         triggerResolvedTimestamp: triggerTimestamp,
         triggerQualityChecked: 1 //Unchecked - TODO: Refactor to use enum/type
-      })
+      }
     } else if (triggers.some((trigger) => trigger.status === "Resolved")) {
-      courtCaseUpdateQuery.set({
+      triggerParameters = {
         resolutionTimestamp: null,
         triggerReason: triggers.filter((trigger) => trigger.status === "Resolved")[0].triggerCode,
         triggerStatus: "Unresolved",
@@ -61,11 +61,18 @@ const updateCourtCase = async (
         triggerResolvedTimestamp: null,
         triggerQualityChecked: 1, //Unchecked - TODO: Refactor to use enum/type
         triggerInsertedTimestamp: triggerTimestamp
-      })
+      }
     }
   }
 
-  const updateResult = await courtCaseUpdateQuery.execute().catch((error) => error as Error)
+  const updateResult = await entityManager
+    .createQueryBuilder()
+    .update<CourtCase>(CourtCase)
+    .set({ ...updateParameters, ...triggerParameters })
+    .where({ errorId: courtCase.errorId })
+    .execute()
+    .catch((error) => error as Error)
+
   if (isError(updateResult)) {
     return updateResult
   }
