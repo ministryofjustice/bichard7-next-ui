@@ -78,10 +78,10 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "court_name" })
   courtName!: string
 
-  @Column({ name: "resolution_ts", type: "timestamptz", nullable: true })
+  @Column({ name: "resolution_ts", type: "timestamptz", nullable: true, transformer: dateTransformer })
   resolutionTimestamp!: Date | null
 
-  @Column({ name: "msg_received_ts", type: "timestamptz" })
+  @Column({ name: "msg_received_ts", type: "timestamptz", transformer: dateTransformer })
   messageReceivedTimestamp!: Date
 
   @Column({ name: "error_resolved_by", type: "varchar", nullable: true })
@@ -90,10 +90,10 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "trigger_resolved_by", type: "varchar", nullable: true })
   triggerResolvedBy!: string | null
 
-  @Column({ name: "error_resolved_ts", type: "timestamptz", nullable: true })
+  @Column({ name: "error_resolved_ts", type: "timestamptz", nullable: true, transformer: dateTransformer })
   errorResolvedTimestamp!: Date | null
 
-  @Column({ name: "trigger_resolved_ts", type: "timestamptz", nullable: true })
+  @Column({ name: "trigger_resolved_ts", type: "timestamptz", nullable: true, transformer: dateTransformer })
   triggerResolvedTimestamp!: Date | null
 
   @Column({ name: "defendant_name", type: "varchar", nullable: true })
@@ -108,10 +108,10 @@ export default class CourtCase extends BaseEntity {
   @Column({ name: "court_reference" })
   courtReference!: string
 
-  @Column({ name: "error_insert_ts", type: "timestamptz", nullable: true })
+  @Column({ name: "error_insert_ts", type: "timestamptz", nullable: true, transformer: dateTransformer })
   errorInsertedTimestamp!: Date | null
 
-  @Column({ name: "trigger_insert_ts", type: "timestamptz", nullable: true })
+  @Column({ name: "trigger_insert_ts", type: "timestamptz", nullable: true, transformer: dateTransformer })
   triggerInsertedTimestamp!: Date | null
 
   @Column({ name: "pnc_update_enabled", type: "varchar", nullable: true })
