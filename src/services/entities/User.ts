@@ -4,7 +4,8 @@ import BaseEntity from "./BaseEntity"
 import featureFlagTransformer from "./transformers/featureFlagTransformer"
 import delimitedString from "./transformers/delimitedString"
 import { UserGroup } from "../../types/UserGroup"
-import { hasAccessToExceptions, hasAccessToTriggers, isSupervisor } from "../../utils/userPermissions"
+import { isSupervisor, userAccess } from "../../utils/userPermissions"
+import Feature from "types/Feature"
 
 @Entity({ name: "users" })
 export default class User extends BaseEntity {
@@ -37,12 +38,8 @@ export default class User extends BaseEntity {
 
   groups: UserGroup[] = []
 
-  get hasAccessToTriggers() {
-    return hasAccessToTriggers(this)
-  }
-
-  get hasAccessToExceptions() {
-    return hasAccessToExceptions(this)
+  get hasAccessTo(): { [key in Feature]: boolean } {
+    return userAccess(this)
   }
 
   get isSupervisor() {

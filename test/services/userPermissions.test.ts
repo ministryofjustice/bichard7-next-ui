@@ -1,5 +1,6 @@
 import { expect } from "@jest/globals"
 import User from "services/entities/User"
+import Feature from "types/Feature"
 import { UserGroup } from "types/UserGroup"
 
 const createUser = (...groups: UserGroup[]) => {
@@ -10,42 +11,42 @@ const createUser = (...groups: UserGroup[]) => {
 }
 
 describe("user permissions", () => {
-  test("hasAccessToExceptions should be true and hasAccessToTriggers should be false when user is in Exception Handler group", () => {
+  test("User in only exception handler group", () => {
     const user = createUser(UserGroup.ExceptionHandler)
 
-    expect(user.hasAccessToExceptions).toBe(true)
-    expect(user.hasAccessToTriggers).toBe(false)
+    expect(user.hasAccessTo[Feature.Exceptions]).toBe(true)
+    expect(user.hasAccessTo[Feature.Triggers]).toBe(false)
   })
 
-  test("hasAccessToExceptions should be false and hasAccessToTriggers should be true when user is in Trigger Handler group", () => {
+  test("User in only trigger handler group", () => {
     const user = createUser(UserGroup.TriggerHandler)
 
-    expect(user.hasAccessToExceptions).toBe(false)
-    expect(user.hasAccessToTriggers).toBe(true)
+    expect(user.hasAccessTo[Feature.Exceptions]).toBe(false)
+    expect(user.hasAccessTo[Feature.Triggers]).toBe(true)
   })
 
-  test("hasAccessToExceptions and hasAccessToTriggers should be true when user is in General Handler group", () => {
+  test("User in only general handler group", () => {
     const user = createUser(UserGroup.GeneralHandler)
 
-    expect(user.hasAccessToExceptions).toBe(true)
-    expect(user.hasAccessToTriggers).toBe(true)
+    expect(user.hasAccessTo[Feature.Exceptions]).toBe(true)
+    expect(user.hasAccessTo[Feature.Triggers]).toBe(true)
   })
 
-  test("hasAccessToExceptions and hasAccessToTriggers should return true when user is in Allocator group", () => {
+  test("User in only allocator group", () => {
     const user = createUser(UserGroup.Allocator)
 
-    expect(user.hasAccessToExceptions).toBe(true)
-    expect(user.hasAccessToTriggers).toBe(true)
+    expect(user.hasAccessTo[Feature.Exceptions]).toBe(true)
+    expect(user.hasAccessTo[Feature.Triggers]).toBe(true)
   })
 
-  test("hasAccessToExceptions and hasAccessToTriggers should be true when user is in Supervisor group", () => {
+  test("User in only supervisor group", () => {
     const user = createUser(UserGroup.Supervisor)
 
-    expect(user.hasAccessToExceptions).toBe(true)
-    expect(user.hasAccessToTriggers).toBe(true)
+    expect(user.hasAccessTo[Feature.Exceptions]).toBe(true)
+    expect(user.hasAccessTo[Feature.Triggers]).toBe(true)
   })
 
-  test("hasAccessToExceptions and hasAccessToTriggers should be false when user is in any other groups", () => {
+  test("User in all non-handler groups", () => {
     const user = createUser(
       UserGroup.Audit,
       UserGroup.AuditLoggingManager,
@@ -54,7 +55,14 @@ describe("user permissions", () => {
       UserGroup.UserManager
     )
 
-    expect(user.hasAccessToExceptions).toBe(false)
-    expect(user.hasAccessToTriggers).toBe(false)
+    expect(user.hasAccessTo[Feature.Exceptions]).toBe(false)
+    expect(user.hasAccessTo[Feature.Triggers]).toBe(false)
+  })
+
+  test("User with no groups", () => {
+    const user = createUser()
+
+    expect(user.hasAccessTo[Feature.Exceptions]).toBe(false)
+    expect(user.hasAccessTo[Feature.Triggers]).toBe(false)
   })
 })

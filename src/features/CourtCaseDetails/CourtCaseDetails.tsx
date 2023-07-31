@@ -18,6 +18,7 @@ import updateQueryString from "utils/updateQueryString"
 import { CaseInformation } from "./Tabs/Panels/CaseInformation"
 import Header from "./Header"
 import User from "services/entities/User"
+import Feature from "types/Feature"
 
 interface Props {
   courtCase: CourtCase
@@ -75,9 +76,9 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, user, errorLockedBy
   }
 
   let tabToRender: Tab | undefined
-  if (user.hasAccessToTriggers && !user.hasAccessToExceptions) {
+  if (user.hasAccessTo[Feature.Triggers] && !user.hasAccessTo[Feature.Exceptions]) {
     tabToRender = Tab.Triggers
-  } else if (user.hasAccessToExceptions && !user.hasAccessToTriggers) {
+  } else if (user.hasAccessTo[Feature.Exceptions] && !user.hasAccessTo[Feature.Triggers]) {
     tabToRender = Tab.Exceptions
   }
 

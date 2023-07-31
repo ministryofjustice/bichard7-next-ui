@@ -68,11 +68,11 @@ const updateLockStatusToLocked = async (
   const courtCaseRepository = dataSource.getRepository(CourtCase)
   let result: UpdateResult | Error | undefined
 
-  if (user.hasAccessToExceptions) {
+  if (user.hasAccessTo[Feature.Exceptions]) {
     result = await lock("Exception", courtCaseRepository, courtCaseId, user, events)
   }
 
-  if (user.hasAccessToTriggers) {
+  if (user.hasAccessTo[Feature.Triggers]) {
     result = await lock("Trigger", courtCaseRepository, courtCaseId, user, events)
   }
 

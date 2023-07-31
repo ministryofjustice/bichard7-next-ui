@@ -105,7 +105,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           {"Case details"}
         </Heading>
         <CaseDetailsLockTag
-          isRendered={user.hasAccessToExceptions}
+          isRendered={user.hasAccessTo[Feature.Exceptions]}
           lockName="Exceptions"
           getLockHolderFn={() =>
             getLockHolder(user.username, courtCase.errorLockedByUserFullName, exceptionsAreLockedByCurrentUser)
@@ -129,7 +129,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           />
         </Heading>
         <CaseDetailsLockTag
-          isRendered={user.hasAccessToTriggers}
+          isRendered={user.hasAccessTo[Feature.Triggers]}
           lockName="Triggers"
           getLockHolderFn={() =>
             getLockHolder(user.username, courtCase.triggerLockedByUserFullName, triggersAreLockedByCurrentUser)

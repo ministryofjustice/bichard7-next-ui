@@ -217,15 +217,15 @@ const listCourtCases = async (
     }
   }
 
-  if (!user.hasAccessToTriggers && !user.hasAccessToExceptions) {
+  if (!user.hasAccessTo[Feature.Triggers] && !user.hasAccessTo[Feature.Exceptions]) {
     query.andWhere("false")
   }
 
-  if (!user.hasAccessToTriggers) {
+  if (!user.hasAccessTo[Feature.Triggers]) {
     query.andWhere({ errorCount: MoreThan(0) })
   }
 
-  if (!user.hasAccessToExceptions) {
+  if (!user.hasAccessTo[Feature.Exceptions]) {
     query.andWhere({ triggerCount: MoreThan(0) })
   }
 

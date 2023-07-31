@@ -1,3 +1,4 @@
+import Feature from "types/Feature"
 import { UserGroup } from "../types/UserGroup"
 
 // This type is used instead of the User entity to avoid dependency cycles
@@ -33,4 +34,12 @@ const isSupervisor = (user: User): boolean => {
   return user.groups !== undefined && user.groups.some((group) => group === UserGroup.Supervisor)
 }
 
-export { hasAccessToTriggers, hasAccessToExceptions, isSupervisor }
+const userAccess = (user: User): { [key in Feature]: boolean } => {
+  return {
+    [Feature.Triggers]: hasAccessToTriggers(user),
+    [Feature.Exceptions]: hasAccessToExceptions(user),
+    [Feature.CaseDetailsSidebar]: hasAccessToTriggers(user) || hasAccessToExceptions(user)
+  }
+}
+
+export { hasAccessToTriggers, hasAccessToExceptions, isSupervisor, userAccess }

@@ -1,7 +1,7 @@
 import { UserGroup } from "types/UserGroup"
 import hashedPassword from "../fixtures/hashedPassword"
 import CaseDetailsTab from "types/CaseDetailsTab"
-import { hasAccessToExceptions, hasAccessToTriggers, isSupervisor } from "utils/userPermissions"
+import { isSupervisor, userAccess } from "utils/userPermissions"
 
 export function confirmFiltersAppliedContains(filterTag: string) {
   cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag)
@@ -56,8 +56,6 @@ export const newUserLogin = ({ user, groups }: { user?: string; groups?: UserGro
   user = user ?? (groups?.map((g) => g.toLowerCase()).join("") || "nogroups")
   const email = `${user}@example.com`
 
-  const userHasAccessToTriggers = hasAccessToTriggers({ groups: groups ?? [] })
-  const userHasAccessToExceptions = hasAccessToExceptions({ groups: groups ?? [] })
   const userIsSupervisor = isSupervisor({ groups: groups ?? [] })
 
   cy.task("insertUsers", {
@@ -69,8 +67,7 @@ export const newUserLogin = ({ user, groups }: { user?: string; groups?: UserGro
         surname: "01",
         email: email,
         password: hashedPassword,
-        hasAccessToTriggers: userHasAccessToTriggers,
-        hasAccessToExceptions: userHasAccessToExceptions,
+        hasAccessTo: userAccess({ groups: groups ?? [] }),
         isSupervisor: userIsSupervisor
       }
     ],
