@@ -11,6 +11,7 @@ import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import axios from "axios"
 import updateLockStatusToLocked from "services/updateLockStatusToLocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
+import Feature from "types/Feature"
 
 jest.mock("services/updateLockStatusToLocked")
 jest.mock("services/storeAuditLogEvents")
@@ -22,8 +23,11 @@ describe("lock court case", () => {
     username: lockedByName,
     visibleForces: ["36FPA1"],
     visibleCourts: [],
-    hasAccessToExceptions: true,
-    hasAccessToTriggers: true
+    hasAccessTo: {
+      [Feature.Triggers]: true,
+      [Feature.Exceptions]: true,
+      [Feature.CaseDetailsSidebar]: true
+    }
   } as Partial<User> as User
   let unlockedCourtCase: CourtCase
 

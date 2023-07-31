@@ -10,8 +10,8 @@ import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/
 import UnlockReason from "types/UnlockReason"
 import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import { UserGroup } from "../../src/types/UserGroup"
-
-jest.mock("utils/userPermissions")
+import { userAccess } from "utils/userPermissions"
+import Feature from "types/Feature"
 
 const exceptionUnlockedEvent = (username = "current user") => ({
   category: "information",
@@ -474,12 +474,7 @@ describe("Unlock court case", () => {
         username: "current user",
         visibleForces: [visibleForce ?? "36FPA1"],
         visibleCourts: [],
-        hasAccessToExceptions: [UserGroup.ExceptionHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
-          currentUserGroup
-        ),
-        hasAccessToTriggers: [UserGroup.TriggerHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
-          currentUserGroup
-        ),
+        hasAccessTo: userAccess({ groups: [currentUserGroup] }),
         isSupervisor: [UserGroup.Supervisor].includes(currentUserGroup)
       } as Partial<User> as User
 
@@ -526,8 +521,11 @@ describe("Unlock court case", () => {
         username: "dummy username",
         visibleForces: ["36FPA1"],
         visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: false
+        hasAccessTo: {
+          [Feature.Triggers]: false,
+          [Feature.Exceptions]: true,
+          [Feature.CaseDetailsSidebar]: true
+        }
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
