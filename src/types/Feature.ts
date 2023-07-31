@@ -1,7 +1,7 @@
 enum Feature {
-  CaseDetailsSidebar,
-  Exceptions,
-  Triggers
+  CaseDetailsSidebar = "Case details sidebar",
+  Exceptions = "Exceptions",
+  Triggers = "Triggers"
 }
 
 export default Feature
