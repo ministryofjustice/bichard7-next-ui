@@ -8,6 +8,7 @@ import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import styled from "styled-components"
+import Feature from "types/Feature"
 import {
   exceptionsAreLockedByCurrentUser,
   isLockedByCurrentUser,

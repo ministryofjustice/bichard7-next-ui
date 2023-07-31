@@ -11,6 +11,7 @@ import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import Feature from "types/Feature"
 
 const unlock = async (
   unlockReason: "Trigger" | "Exception",

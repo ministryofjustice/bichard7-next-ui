@@ -15,6 +15,7 @@ import FilterChipSection from "./FilterChipSection"
 import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import ConditionalRender from "components/ConditionalRender"
 import User from "services/entities/User"
+import Feature from "types/Feature"
 
 interface Props {
   defendantName: string | null

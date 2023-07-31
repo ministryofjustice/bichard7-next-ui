@@ -7,7 +7,7 @@ import CourtCase from "services/entities/CourtCase"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
-import TriggersAndExceptions, { Tab } from "./Sidebar/TriggersAndExceptions"
+import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
@@ -18,7 +18,6 @@ import updateQueryString from "utils/updateQueryString"
 import { CaseInformation } from "./Tabs/Panels/CaseInformation"
 import Header from "./Header"
 import User from "services/entities/User"
-import Feature from "types/Feature"
 
 interface Props {
   courtCase: CourtCase
@@ -73,13 +72,6 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, user, errorLockedBy
         setActiveTab("Offences")
         break
     }
-  }
-
-  let tabToRender: Tab | undefined
-  if (user.hasAccessTo[Feature.Triggers] && !user.hasAccessTo[Feature.Exceptions]) {
-    tabToRender = Tab.Triggers
-  } else if (user.hasAccessTo[Feature.Exceptions] && !user.hasAccessTo[Feature.Triggers]) {
-    tabToRender = Tab.Exceptions
   }
 
   return (
@@ -143,13 +135,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, user, errorLockedBy
         </GridCol>
 
         <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
-          <TriggersAndExceptions
-            courtCase={courtCase}
-            aho={aho}
-            renderedTab={tabToRender}
-            user={user}
-            onNavigate={handleNavigation}
-          />
+          <TriggersAndExceptions courtCase={courtCase} aho={aho} user={user} onNavigate={handleNavigation} />
         </GridCol>
       </GridRow>
     </>

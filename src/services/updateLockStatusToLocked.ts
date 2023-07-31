@@ -10,6 +10,7 @@ import { isError } from "types/Result"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import Feature from "types/Feature"
 
 const lock = async (
   unlockReason: "Trigger" | "Exception",

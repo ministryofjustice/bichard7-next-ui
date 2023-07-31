@@ -19,6 +19,7 @@ import Note from "./entities/Note"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
+import Feature from "types/Feature"
 
 const listCourtCases = async (
   connection: DataSource,
