@@ -5,9 +5,9 @@ import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/
 import { default as TriggerEntity } from "../entities/Trigger"
 
 const updateTriggers = async (
-  triggersToAdd: Trigger[],
   entityManager: EntityManager,
   courtCase: CourtCase,
+  triggersToAdd: Trigger[],
   triggersToDelete: Trigger[]
 ): Promise<Error | void> => {
   if (triggersToAdd.length > 0) {
