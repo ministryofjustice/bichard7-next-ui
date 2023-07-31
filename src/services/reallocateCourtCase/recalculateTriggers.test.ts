@@ -1,4 +1,4 @@
-import { REALLOCATE_CASE_TRIGGER_CODE } from "../../config"
+import { OUT_OF_AREA_TRIGGER_CODE, REALLOCATE_CASE_TRIGGER_CODE } from "../../config"
 import CourtCase from "../entities/CourtCase"
 import recalculateTriggers from "./recalculateTriggers"
 import { default as TriggerEntity } from "../entities/Trigger"
@@ -8,12 +8,11 @@ import { ResolutionStatus } from "../../types/ResolutionStatus"
 
 describe("recalculateTriggers", () => {
   const dummyId = 0
-  const dummyItemIdentity = 1111111
 
   const getCaseTrigger = (code: TriggerCode, status: ResolutionStatus, triggerItemIdentity?: number): TriggerEntity => {
     return {
       triggerId: dummyId,
-      triggerItemIdentity: triggerItemIdentity ?? dummyItemIdentity,
+      triggerItemIdentity,
       triggerCode: code,
       status: status
     } as Partial<TriggerEntity> as TriggerEntity
@@ -21,7 +20,7 @@ describe("recalculateTriggers", () => {
 
   const getTrigger = (code: TriggerCode, offenceSequenceNumber?: number): Trigger => {
     return {
-      offenceSequenceNumber: offenceSequenceNumber ?? dummyItemIdentity,
+      offenceSequenceNumber,
       code: code
     }
   }
@@ -83,7 +82,8 @@ describe("recalculateTriggers", () => {
       expectedTriggersToDelete: []
     },
     {
-      description: "It does not add a new reallocate trigger when there is an unresolved reallocate trigger in both existing and new trigger list",
+      description:
+        "It does not add a new reallocate trigger when there is an unresolved reallocate trigger in both existing and new trigger list",
       existingTriggers: [getCaseTrigger(REALLOCATE_CASE_TRIGGER_CODE, "Unresolved")],
       newTriggers: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
       expectedTriggerToAdd: [],
@@ -240,6 +240,24 @@ describe("recalculateTriggers", () => {
       newTriggers: [getTrigger(TriggerCode.TRPR0001, 2)],
       expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0001, 2)],
       expectedTriggersToDelete: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE), getTrigger(TriggerCode.TRPR0001, 1)]
+    },
+    {
+      description:
+        "It adds an out of area trigger when the existing out of area trigger is resolved " +
+        "and new triggers include out of are trigger",
+      existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Resolved")],
+      newTriggers: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)],
+      expectedTriggerToAdd: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)],
+      expectedTriggersToDelete: []
+    },
+    {
+      description:
+        "It doesn't add an out of area trigger when the existing out of area trigger is unresolved " +
+        "and new triggers include out of are trigger",
+      existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Unresolved")],
+      newTriggers: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)],
+      expectedTriggerToAdd: [],
+      expectedTriggersToDelete: []
     }
   ]
 
