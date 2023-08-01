@@ -300,7 +300,7 @@ describe("recalculateTriggers", () => {
       const result = recalculateTriggers(courtCase, newTriggers)
 
       expect(result.triggersToAdd).toEqual(expectedTriggerToAdd)
-      expect(result.triggersToDelete).toEqual(expectedTriggersToDelete)
+      expect(result.triggersDeleted).toEqual(expectedTriggersToDelete)
     }
   )
 })
