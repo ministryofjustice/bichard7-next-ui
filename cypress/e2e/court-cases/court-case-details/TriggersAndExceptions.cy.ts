@@ -366,15 +366,15 @@ describe("Triggers and exceptions tabs", () => {
     cy.task("clearUsers")
   })
 
-  it("should show both triggers and exceptions by default", () => {
+  it("should show neither triggers nor exceptions to a user with no groups", () => {
     newUserLogin({})
     cy.visit(caseURL)
 
-    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("not.exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("not.exist")
 
-    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
-    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("not.exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("not.exist")
   })
 
   it("should only show triggers to Trigger Handlers", () => {

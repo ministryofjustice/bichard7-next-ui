@@ -15,6 +15,7 @@ import fetchAuditLogEvents from "../../helpers/fetchAuditLogEvents"
 import { AUDIT_LOG_EVENT_SOURCE } from "../../../src/config"
 import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
+import { hasAccessToAll } from "../../helpers/hasAccessTo"
 
 jest.mock("services/insertNotes")
 
@@ -108,8 +109,7 @@ describe("reallocate court case to another force", () => {
         username: userName,
         visibleForces: [oldForceCode],
         visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode)
@@ -174,8 +174,7 @@ describe("reallocate court case to another force", () => {
         username: userName,
         visibleForces: [oldForceCode],
         visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode, "Dummy user note")
@@ -241,8 +240,7 @@ describe("reallocate court case to another force", () => {
         username: "Dummy User",
         visibleForces: [oldForceCode],
         visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06").catch((error) => error)
@@ -277,8 +275,7 @@ describe("reallocate court case to another force", () => {
         username: "Dummy User",
         visibleForces: [oldForceCode],
         visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06").catch((error) => error)
@@ -310,8 +307,7 @@ describe("reallocate court case to another force", () => {
         username: "Dummy User",
         visibleForces: [oldForceCode],
         visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User
 
       ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
@@ -343,8 +339,7 @@ describe("reallocate court case to another force", () => {
         username: "Dummy User",
         visibleForces: [oldForceCode],
         visibleCourts: [],
-        hasAccessToExceptions: true,
-        hasAccessToTriggers: true
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User
 
       jest

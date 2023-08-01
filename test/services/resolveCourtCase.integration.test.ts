@@ -17,6 +17,7 @@ import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrga
 import { AUDIT_LOG_API_URL, AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import axios from "axios"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
@@ -43,8 +44,7 @@ describe("resolveCourtCase", () => {
     visibleCourts: [],
     visibleForces: [visibleForce],
     username: resolverUsername,
-    hasAccessToExceptions: true,
-    hasAccessToTriggers: true
+    hasAccessTo: hasAccessToAll
   } as Partial<User> as User
 
   beforeAll(async () => {

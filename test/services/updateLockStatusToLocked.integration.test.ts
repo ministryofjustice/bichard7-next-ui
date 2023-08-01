@@ -11,8 +11,7 @@ import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import { UserGroup } from "../../src/types/UserGroup"
 import getCourtCase from "../../src/services/getCourtCase"
 import { ResolutionStatus } from "../../src/types/ResolutionStatus"
-
-jest.mock("utils/userPermissions")
+import { userAccess } from "utils/userPermissions"
 
 describe("Update lock status to locked", () => {
   let dataSource: DataSource
@@ -235,12 +234,7 @@ describe("Update lock status to locked", () => {
         username: "current user",
         visibleForces: ["36"],
         visibleCourts: [],
-        hasAccessToExceptions: [UserGroup.ExceptionHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
-          currentUserGroup
-        ),
-        hasAccessToTriggers: [UserGroup.TriggerHandler, UserGroup.Supervisor, UserGroup.GeneralHandler].includes(
-          currentUserGroup
-        )
+        hasAccessTo: userAccess({ groups: [currentUserGroup] })
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
