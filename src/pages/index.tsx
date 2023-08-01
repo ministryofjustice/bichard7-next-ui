@@ -118,7 +118,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const resolvedByUsername =
-      validatedCaseState === "Resolved" && !currentUser.hasAccessTo[Feature.UnlockOtherUsersCases]
+      validatedCaseState === "Resolved" && !currentUser.hasAccessTo[Feature.ListAllCases]
         ? currentUser.username
         : undefined
 

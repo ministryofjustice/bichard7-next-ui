@@ -39,7 +39,8 @@ const userAccess = (user: User): { [key in Feature]: boolean } => {
     [Feature.Triggers]: hasAccessToTriggers(user),
     [Feature.Exceptions]: hasAccessToExceptions(user),
     [Feature.CaseDetailsSidebar]: hasAccessToTriggers(user) || hasAccessToExceptions(user),
-    [Feature.UnlockOtherUsersCases]: isSupervisor(user)
+    [Feature.UnlockOtherUsersCases]: isSupervisor(user),
+    [Feature.ListAllCases]: isSupervisor(user)
   }
 }
 
