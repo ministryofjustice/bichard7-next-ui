@@ -14,7 +14,7 @@ import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
 import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
-import Feature from "types/Feature"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
 
 jest.setTimeout(100000)
 
@@ -87,11 +87,7 @@ describe("resolveTriggers", () => {
       visibleCourts: [],
       visibleForces: [visibleForce],
       username: resolverUsername,
-      hasAccessTo: {
-        [Feature.Triggers]: true,
-        [Feature.Exceptions]: true,
-        [Feature.CaseDetailsSidebar]: true
-      }
+      hasAccessTo: hasAccessToAll
     } as Partial<User> as User
 
     it("Should set the relevant columns when resolving a trigger", async () => {
@@ -254,11 +250,7 @@ describe("resolveTriggers", () => {
         visibleCourts: [],
         visibleForces: [visibleForce],
         username: "triggerResolver02",
-        hasAccessTo: {
-          [Feature.Triggers]: true,
-          [Feature.Exceptions]: true,
-          [Feature.CaseDetailsSidebar]: true
-        }
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User
 
       const [courtCase] = await insertCourtCasesWithFields([

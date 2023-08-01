@@ -32,7 +32,7 @@ const unlock = async (
   query.set({ [updatedFieldName]: null })
   query.andWhere("error_id = :id", { id: courtCaseId }) // .andWhere is required because .where overwrites courtCasesByOrganisationUnitQuery conditions
 
-  if (!user.isSupervisor) {
+  if (!user.hasAccessTo[Feature.UnlockOtherUsersCases]) {
     query.andWhere({ [updatedFieldName]: user.username })
   }
 

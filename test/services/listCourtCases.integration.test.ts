@@ -23,7 +23,8 @@ import { ResolutionStatus } from "types/ResolutionStatus"
 import User from "services/entities/User"
 import { Reason } from "types/CaseListQueryParams"
 import { UserGroup } from "types/UserGroup"
-import Feature from "types/Feature"
+import { userAccess } from "utils/userPermissions"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
@@ -35,11 +36,7 @@ describe("listCourtCases", () => {
   const testUser = {
     visibleForces: [orgCode],
     visibleCourts: [],
-    hasAccessTo: {
-      [Feature.Triggers]: true,
-      [Feature.Exceptions]: true,
-      [Feature.CaseDetailsSidebar]: true
-    }
+    hasAccessTo: hasAccessToAll
   } as Partial<User> as User
 
   beforeAll(async () => {
@@ -188,11 +185,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
         visibleForces: ["01"],
         visibleCourts: [],
-        hasAccessTo: {
-          [Feature.Triggers]: true,
-          [Feature.Exceptions]: true,
-          [Feature.CaseDetailsSidebar]: true
-        }
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
@@ -224,11 +217,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
         visibleForces: ["01"],
         visibleCourts: [],
-        hasAccessTo: {
-          [Feature.Triggers]: true,
-          [Feature.Exceptions]: true,
-          [Feature.CaseDetailsSidebar]: true
-        }
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
@@ -245,11 +234,7 @@ describe("listCourtCases", () => {
       const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "2" }, {
         visibleForces: ["36FPA1"],
         visibleCourts: [],
-        hasAccessTo: {
-          [Feature.Triggers]: true,
-          [Feature.Exceptions]: true,
-          [Feature.CaseDetailsSidebar]: true
-        }
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User)
       expect(isError(result)).toBe(false)
       const { result: cases, totalCases } = result as ListCourtCaseResult
@@ -1583,61 +1568,37 @@ describe("listCourtCases", () => {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [],
-      hasAccessTo: {
-        [Feature.Triggers]: false,
-        [Feature.Exceptions]: false,
-        [Feature.CaseDetailsSidebar]: false
-      }
+      hasAccessTo: userAccess({ groups: [] })
     } as Partial<User> as User
     const triggerHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [UserGroup.TriggerHandler],
-      hasAccessTo: {
-        [Feature.Triggers]: true,
-        [Feature.Exceptions]: false,
-        [Feature.CaseDetailsSidebar]: true
-      }
+      hasAccessTo: userAccess({ groups: [UserGroup.TriggerHandler] })
     } as Partial<User> as User
     const exceptionHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [UserGroup.ExceptionHandler],
-      hasAccessTo: {
-        [Feature.Triggers]: false,
-        [Feature.Exceptions]: true,
-        [Feature.CaseDetailsSidebar]: true
-      }
+      hasAccessTo: userAccess({ groups: [UserGroup.ExceptionHandler] })
     } as Partial<User> as User
     const triggerAndExceptionHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [UserGroup.TriggerHandler, UserGroup.ExceptionHandler],
-      hasAccessTo: {
-        [Feature.Triggers]: true,
-        [Feature.Exceptions]: true,
-        [Feature.CaseDetailsSidebar]: true
-      }
+      hasAccessTo: userAccess({ groups: [UserGroup.TriggerHandler, UserGroup.ExceptionHandler] })
     } as Partial<User> as User
     const generalHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [UserGroup.GeneralHandler],
-      hasAccessTo: {
-        [Feature.Triggers]: true,
-        [Feature.Exceptions]: true,
-        [Feature.CaseDetailsSidebar]: true
-      }
+      hasAccessTo: userAccess({ groups: [UserGroup.GeneralHandler] })
     } as Partial<User> as User
     const supervisorUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [UserGroup.Supervisor],
-      hasAccessTo: {
-        [Feature.Triggers]: true,
-        [Feature.Exceptions]: true,
-        [Feature.CaseDetailsSidebar]: true
-      }
+      hasAccessTo: userAccess({ groups: [UserGroup.Supervisor] })
     } as Partial<User> as User
 
     it("Shouldn't show cases to a user with no permissions", async () => {

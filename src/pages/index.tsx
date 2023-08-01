@@ -35,6 +35,7 @@ import { useEffect } from "react"
 import { setCookie, getCookie } from "cookies-next"
 import hashString from "utils/hashString"
 import UnlockReason from "types/UnlockReason"
+import Feature from "types/Feature"
 
 interface Props {
   user: User
@@ -117,7 +118,9 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const resolvedByUsername =
-      validatedCaseState === "Resolved" && !currentUser.isSupervisor ? currentUser.username : undefined
+      validatedCaseState === "Resolved" && !currentUser.hasAccessTo[Feature.UnlockOtherUsersCases]
+        ? currentUser.username
+        : undefined
 
     const caseAgeCounts = await getCountOfCasesByCaseAge(dataSource, currentUser)
 

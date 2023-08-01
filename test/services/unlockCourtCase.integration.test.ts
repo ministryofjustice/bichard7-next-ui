@@ -14,7 +14,7 @@ import storeAuditLogEvents from "services/storeAuditLogEvents"
 import UnlockReason from "types/UnlockReason"
 import axios from "axios"
 import getCourtCase from "../../src/services/getCourtCase"
-import Feature from "types/Feature"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
 
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
@@ -27,11 +27,7 @@ describe("unlock court case", () => {
     username: lockedByName,
     visibleForces: ["36FPA1"],
     visibleCourts: [],
-    hasAccessTo: {
-      [Feature.Triggers]: true,
-      [Feature.Exceptions]: true,
-      [Feature.CaseDetailsSidebar]: true
-    }
+    hasAccessTo: hasAccessToAll
   } as Partial<User> as User
   let lockedCourtCase: CourtCase
 

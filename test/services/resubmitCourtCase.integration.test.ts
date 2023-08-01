@@ -10,7 +10,7 @@ import { DataSource } from "typeorm"
 import offenceSequenceException from "../test-data/HO100302_1.json"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import Feature from "types/Feature"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
 
 jest.mock("services/mq/sendToQueue")
 jest.mock("services/insertNotes")
@@ -59,11 +59,7 @@ describe("resubmit court case", () => {
       username: userName,
       visibleForces: ["1"],
       visibleCourts: [],
-      hasAccessTo: {
-        [Feature.Triggers]: true,
-        [Feature.Exceptions]: true,
-        [Feature.CaseDetailsSidebar]: true
-      }
+      hasAccessTo: hasAccessToAll
     } as Partial<User> as User)
 
     expect(result).not.toBeInstanceOf(Error)
@@ -124,11 +120,7 @@ describe("resubmit court case", () => {
         username: userName,
         visibleForces: ["1111"],
         visibleCourts: [],
-        hasAccessTo: {
-          [Feature.Triggers]: true,
-          [Feature.Exceptions]: true,
-          [Feature.CaseDetailsSidebar]: true
-        }
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User
     )
 
@@ -210,11 +202,7 @@ describe("resubmit court case", () => {
         username: userName,
         visibleForces: ["1111"],
         visibleCourts: [],
-        hasAccessTo: {
-          [Feature.Triggers]: true,
-          [Feature.Exceptions]: true,
-          [Feature.CaseDetailsSidebar]: true
-        }
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User
     )
 

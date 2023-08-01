@@ -11,7 +11,7 @@ import UnlockReason from "types/UnlockReason"
 import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import { UserGroup } from "../../src/types/UserGroup"
 import { userAccess } from "utils/userPermissions"
-import Feature from "types/Feature"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
 
 const exceptionUnlockedEvent = (username = "current user") => ({
   category: "information",
@@ -474,8 +474,7 @@ describe("Unlock court case", () => {
         username: "current user",
         visibleForces: [visibleForce ?? "36FPA1"],
         visibleCourts: [],
-        hasAccessTo: userAccess({ groups: [currentUserGroup] }),
-        isSupervisor: [UserGroup.Supervisor].includes(currentUserGroup)
+        hasAccessTo: userAccess({ groups: [currentUserGroup] })
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
@@ -521,11 +520,7 @@ describe("Unlock court case", () => {
         username: "dummy username",
         visibleForces: ["36FPA1"],
         visibleCourts: [],
-        hasAccessTo: {
-          [Feature.Triggers]: false,
-          [Feature.Exceptions]: true,
-          [Feature.CaseDetailsSidebar]: true
-        }
+        hasAccessTo: hasAccessToAll
       } as Partial<User> as User
 
       const events: AuditLogEvent[] = []
