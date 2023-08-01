@@ -23,8 +23,15 @@ import { ResolutionStatus } from "types/ResolutionStatus"
 import User from "services/entities/User"
 import { Reason } from "types/CaseListQueryParams"
 import { UserGroup } from "types/UserGroup"
-import { userAccess } from "utils/userPermissions"
-import { hasAccessToAll } from "../helpers/hasAccessTo"
+import {
+  exceptionHandlerHasAccessTo,
+  generalHandlerHasAccessTo,
+  hasAccessToAll,
+  hasAccessToNone,
+  supervisorHasAccessTo,
+  triggerAndExceptionHandlerHasAccessTo,
+  triggerHandlerHasAccessTo
+} from "../helpers/hasAccessTo"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
@@ -1568,37 +1575,37 @@ describe("listCourtCases", () => {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [],
-      hasAccessTo: userAccess({ groups: [] })
+      hasAccessTo: hasAccessToNone
     } as Partial<User> as User
     const triggerHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [UserGroup.TriggerHandler],
-      hasAccessTo: userAccess({ groups: [UserGroup.TriggerHandler] })
+      hasAccessTo: triggerHandlerHasAccessTo
     } as Partial<User> as User
     const exceptionHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [UserGroup.ExceptionHandler],
-      hasAccessTo: userAccess({ groups: [UserGroup.ExceptionHandler] })
+      hasAccessTo: exceptionHandlerHasAccessTo
     } as Partial<User> as User
     const triggerAndExceptionHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [UserGroup.TriggerHandler, UserGroup.ExceptionHandler],
-      hasAccessTo: userAccess({ groups: [UserGroup.TriggerHandler, UserGroup.ExceptionHandler] })
+      hasAccessTo: triggerAndExceptionHandlerHasAccessTo
     } as Partial<User> as User
     const generalHandlerUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [UserGroup.GeneralHandler],
-      hasAccessTo: userAccess({ groups: [UserGroup.GeneralHandler] })
+      hasAccessTo: generalHandlerHasAccessTo
     } as Partial<User> as User
     const supervisorUser = {
       visibleForces: [orgCode],
       visibleCourts: [],
       groups: [UserGroup.Supervisor],
-      hasAccessTo: userAccess({ groups: [UserGroup.Supervisor] })
+      hasAccessTo: supervisorHasAccessTo
     } as Partial<User> as User
 
     it("Shouldn't show cases to a user with no permissions", async () => {
