@@ -1,4 +1,4 @@
-import Feature from "types/Feature"
+import Feature from "../types/Feature"
 import { UserGroup } from "../types/UserGroup"
 
 // This type is used instead of the User entity to avoid dependency cycles
