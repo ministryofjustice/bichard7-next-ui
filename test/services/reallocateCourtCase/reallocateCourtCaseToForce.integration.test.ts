@@ -5,14 +5,16 @@ import User from "services/entities/User"
 import insertNotes from "services/insertNotes"
 import reallocateCourtCaseToForce from "services/reallocateCourtCase/reallocateCourtCaseToForce"
 import { DataSource, UpdateQueryBuilder } from "typeorm"
-import CourtCase from "../../src/services/entities/CourtCase"
-import getDataSource from "../../src/services/getDataSource"
-import { isError } from "../../src/types/Result"
-import deleteFromEntity from "../utils/deleteFromEntity"
-import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
-import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
+import CourtCase from "../../../src/services/entities/CourtCase"
+import getDataSource from "../../../src/services/getDataSource"
+import { isError } from "../../../src/types/Result"
+import deleteFromEntity from "../../utils/deleteFromEntity"
+import { insertCourtCasesWithFields } from "../../utils/insertCourtCases"
+import deleteFromDynamoTable from "../../utils/deleteFromDynamoTable"
+import fetchAuditLogEvents from "../../helpers/fetchAuditLogEvents"
+import { AUDIT_LOG_EVENT_SOURCE } from "../../../src/config"
+import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 
 jest.mock("services/insertNotes")
 
@@ -38,6 +40,28 @@ const createReallocationEvent = (newForceOwner: string, userName: string) => {
     category: "information",
     eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: "Hearing outcome reallocated by user",
+    timestamp: expect.anything(),
+    user: userName
+  }
+}
+
+const createTriggersGeneratedEvent = (triggers: string[], hasUnresolvedExceptions: boolean, userName: string) => {
+  const triggersDetails = triggers.reduce((acc: KeyValuePair<string, unknown>, triggerCode, index) => {
+    acc[`Trigger ${index + 1} Details`] = triggerCode
+    return acc
+  }, {})
+
+  return {
+    attributes: {
+      auditLogVersion: 2,
+      "Trigger and Exception Flag": hasUnresolvedExceptions,
+      "Number of Triggers": triggers.length,
+      ...triggersDetails
+    },
+    eventCode: "triggers.generated",
+    category: "information",
+    eventSource: AUDIT_LOG_EVENT_SOURCE,
+    eventType: "Triggers generated",
     timestamp: expect.anything(),
     user: userName
   }
@@ -120,10 +144,17 @@ describe("reallocate court case to another force", () => {
       )
 
       const events = await fetchAuditLogEvents(courtCase.messageId)
-      expect(events).toHaveLength(3)
+      expect(events).toHaveLength(4)
       expect(events).toContainEqual(createReallocationEvent(expectedForceOwner, user.username))
       expect(events).toContainEqual(createUnlockedEvent("Exception", user.username))
       expect(events).toContainEqual(createUnlockedEvent("Trigger", user.username))
+      expect(events).toContainEqual(
+        createTriggersGeneratedEvent(
+          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004],
+          true,
+          user.username
+        )
+      )
     })
 
     it("Should reallocate the case to a new force, generate system notes, user note, and unlock the case", async () => {
@@ -181,10 +212,17 @@ describe("reallocate court case to another force", () => {
       expect(notes[2].noteText).toEqual("Dummy user note")
 
       const events = await fetchAuditLogEvents(courtCase.messageId)
-      expect(events).toHaveLength(3)
+      expect(events).toHaveLength(4)
       expect(events).toContainEqual(createReallocationEvent(expectedForceOwner, user.username))
       expect(events).toContainEqual(createUnlockedEvent("Exception", user.username))
       expect(events).toContainEqual(createUnlockedEvent("Trigger", user.username))
+      expect(events).toContainEqual(
+        createTriggersGeneratedEvent(
+          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004],
+          true,
+          user.username
+        )
+      )
     })
   })
 

@@ -70,7 +70,15 @@ const reallocateCourtCaseToForce = async (
 
       const { triggersToAdd, triggersToDelete } = recalculateTriggers(courtCase, triggers)
 
-      const updateTriggersResult = await updateTriggers(entityManager, courtCase, triggersToAdd, triggersToDelete)
+      const updateTriggersResult = await updateTriggers(
+        entityManager,
+        courtCase,
+        triggersToAdd,
+        triggersToDelete,
+        courtCase.errorStatus === "Unresolved",
+        user,
+        events
+      )
 
       if (isError(updateTriggersResult)) {
         throw updateTriggersResult
