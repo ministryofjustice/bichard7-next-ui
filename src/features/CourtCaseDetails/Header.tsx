@@ -8,6 +8,7 @@ import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import styled from "styled-components"
+import Feature from "types/Feature"
 import {
   exceptionsAreLockedByCurrentUser,
   isLockedByCurrentUser,
@@ -105,7 +106,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           {"Case details"}
         </Heading>
         <CaseDetailsLockTag
-          isRendered={user.hasAccessToExceptions}
+          isRendered={user.hasAccessTo[Feature.Exceptions]}
           lockName="Exceptions"
           getLockHolderFn={() =>
             getLockHolder(user.username, courtCase.errorLockedByUserFullName, exceptionsAreLockedByCurrentUser)
@@ -129,7 +130,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           />
         </Heading>
         <CaseDetailsLockTag
-          isRendered={user.hasAccessToTriggers}
+          isRendered={user.hasAccessTo[Feature.Triggers]}
           lockName="Triggers"
           getLockHolderFn={() =>
             getLockHolder(user.username, courtCase.triggerLockedByUserFullName, triggersAreLockedByCurrentUser)

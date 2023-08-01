@@ -7,7 +7,7 @@ import CourtCase from "services/entities/CourtCase"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
-import TriggersAndExceptions, { Tab } from "./Sidebar/TriggersAndExceptions"
+import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
@@ -74,13 +74,6 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, user, errorLockedBy
     }
   }
 
-  let tabToRender: Tab | undefined
-  if (user.hasAccessToTriggers && !user.hasAccessToExceptions) {
-    tabToRender = Tab.Triggers
-  } else if (user.hasAccessToExceptions && !user.hasAccessToTriggers) {
-    tabToRender = Tab.Exceptions
-  }
-
   return (
     <>
       <Header courtCase={courtCase} user={user} canReallocate={canReallocate} />
@@ -142,13 +135,7 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, user, errorLockedBy
         </GridCol>
 
         <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
-          <TriggersAndExceptions
-            courtCase={courtCase}
-            aho={aho}
-            renderedTab={tabToRender}
-            user={user}
-            onNavigate={handleNavigation}
-          />
+          <TriggersAndExceptions courtCase={courtCase} aho={aho} user={user} onNavigate={handleNavigation} />
         </GridCol>
       </GridRow>
     </>

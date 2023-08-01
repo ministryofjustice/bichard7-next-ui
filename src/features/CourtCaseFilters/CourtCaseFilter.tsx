@@ -15,6 +15,7 @@ import FilterChipSection from "./FilterChipSection"
 import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import ConditionalRender from "components/ConditionalRender"
 import User from "services/entities/User"
+import Feature from "types/Feature"
 
 interface Props {
   defendantName: string | null
@@ -254,14 +255,14 @@ const CourtCaseFilter: React.FC<Props> = ({
               </label>
             </div>
           </div>
-          <ConditionalRender isRendered={user.hasAccessToTriggers}>
+          <ConditionalRender isRendered={user.hasAccessTo[Feature.Triggers]}>
             <div className={`${classes["govuk-form-group"]} reasons`}>
               <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"}>
                 <ReasonFilterOptions
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
                   reasonOptions={
-                    user.hasAccessToTriggers && !user.hasAccessToExceptions
+                    user.hasAccessTo[Feature.Triggers] && !user.hasAccessTo[Feature.Exceptions]
                       ? [Reason.Bails, Reason.Triggers]
                       : undefined
                   }

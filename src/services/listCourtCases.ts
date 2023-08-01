@@ -19,6 +19,7 @@ import Note from "./entities/Note"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
+import Feature from "types/Feature"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -217,15 +218,15 @@ const listCourtCases = async (
     }
   }
 
-  if (!user.hasAccessToTriggers && !user.hasAccessToExceptions) {
+  if (!user.hasAccessTo[Feature.Triggers] && !user.hasAccessTo[Feature.Exceptions]) {
     query.andWhere("false")
   }
 
-  if (!user.hasAccessToTriggers) {
+  if (!user.hasAccessTo[Feature.Triggers]) {
     query.andWhere({ errorCount: MoreThan(0) })
   }
 
-  if (!user.hasAccessToExceptions) {
+  if (!user.hasAccessTo[Feature.Exceptions]) {
     query.andWhere({ triggerCount: MoreThan(0) })
   }
 
