@@ -85,6 +85,12 @@ commands:
           working_directory: ~/bichard7-next
           command: bash scripts/fetch_docker_image.sh <<parameters.image>>
           background: true
+  
+  run_seed_data:
+    steps:
+      - run:
+          name: Run the seed-data script
+          command: DEPLOY_NAME=e2e-test npm run seed-data
 
 jobs:
   lint:
@@ -278,6 +284,23 @@ jobs:
       - store_artifacts:
           path: ./cypress/screenshots
 
+  seed_data:
+    machine:
+      image: ubuntu-2004:2022.07.1
+      docker_layer_caching: false
+    working_directory: ~
+    steps:
+      - checkout
+      - checkout-audit-logging
+      - use_nvm_version
+      - npm_install
+      - attach_workspace:
+          at: .
+      - run_audit_logging
+      - clone_bichard_repo
+      - run_postgres
+      - run_seed_data
+
   new_UI_e2e_test:
     machine:
       image: ubuntu-2004:2022.07.1
@@ -370,3 +393,4 @@ workflows:
       - new_UI_e2e_test:
           requires:
             - build_ui_image
+      - seed_data
