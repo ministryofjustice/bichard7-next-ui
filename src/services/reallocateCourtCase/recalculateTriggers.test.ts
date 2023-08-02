@@ -322,6 +322,19 @@ describe("recalculateTriggers", () => {
       newTriggers: [getTrigger(OUT_OF_AREA_TRIGGER_CODE), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
       expectedTriggerToAdd: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
       expectedTriggersToDelete: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)]
+    },
+    {
+      description:
+        "It deletes an existing unresolved out of area trigger and adds reallocate trigger " +
+        "when the new triggers include reallocate trigger and out of area trigger" +
+        "and the existing triggers include both resolved and unresolved out of area triggers",
+      existingTriggers: [
+        getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Resolved"),
+        getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Unresolved")
+      ],
+      newTriggers: [getTrigger(OUT_OF_AREA_TRIGGER_CODE), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
+      expectedTriggerToAdd: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
+      expectedTriggersToDelete: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)]
     }
   ]
 
