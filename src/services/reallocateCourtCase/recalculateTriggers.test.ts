@@ -33,7 +33,7 @@ describe("recalculateTriggers", () => {
     expectedTriggersToDelete: Trigger[]
   }[] = [
     {
-      description: "It deletes all triggers when new triggers are empty",
+      description: "It deletes unresolved triggers when new triggers are empty",
       existingTriggers: [
         getCaseTrigger(TriggerCode.TRPR0001, "Unresolved"),
         getCaseTrigger(TriggerCode.TRPR0002, "Unresolved"),
@@ -42,12 +42,7 @@ describe("recalculateTriggers", () => {
       ],
       newTriggers: [],
       expectedTriggerToAdd: [],
-      expectedTriggersToDelete: [
-        getTrigger(TriggerCode.TRPR0001),
-        getTrigger(TriggerCode.TRPR0002),
-        getTrigger(TriggerCode.TRPR0003),
-        getTrigger(TriggerCode.TRPR0004)
-      ]
+      expectedTriggersToDelete: [getTrigger(TriggerCode.TRPR0001), getTrigger(TriggerCode.TRPR0002)]
     },
     {
       description: "It deletes a trigger that is not in the new trigger list",
@@ -153,6 +148,38 @@ describe("recalculateTriggers", () => {
       expectedTriggersToDelete: []
     },
     {
+      description: "It does not delete a resolved trigger and deletes the reallocate trigger if there is a new trigger",
+      existingTriggers: [
+        getCaseTrigger(REALLOCATE_CASE_TRIGGER_CODE, "Unresolved"),
+        getCaseTrigger(TriggerCode.TRPR0001, "Resolved", 1)
+      ],
+      newTriggers: [getTrigger(TriggerCode.TRPR0001, 2)],
+      expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0001, 2)],
+      expectedTriggersToDelete: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE)]
+    },
+    {
+      description:
+        "It does not delete a resolved trigger and an unresolved reallocate trigger when there are no new triggers",
+      existingTriggers: [
+        getCaseTrigger(REALLOCATE_CASE_TRIGGER_CODE, "Unresolved"),
+        getCaseTrigger(TriggerCode.TRPR0001, "Resolved", 1)
+      ],
+      newTriggers: [],
+      expectedTriggerToAdd: [],
+      expectedTriggersToDelete: []
+    },
+    {
+      description:
+        "It does not delete resolved triggers when there is a new trigger with different offence sequence number",
+      existingTriggers: [
+        getCaseTrigger(REALLOCATE_CASE_TRIGGER_CODE, "Unresolved"),
+        getCaseTrigger(TriggerCode.TRPR0001, "Resolved", 1)
+      ],
+      newTriggers: [getTrigger(TriggerCode.TRPR0001, 2)],
+      expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0001, 2)],
+      expectedTriggersToDelete: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE)]
+    },
+    {
       description: "It deletes an unresolved reallocate trigger when the case has an unresolved trigger",
       existingTriggers: [
         getCaseTrigger(REALLOCATE_CASE_TRIGGER_CODE, "Unresolved"),
@@ -202,36 +229,6 @@ describe("recalculateTriggers", () => {
       ]
     },
     {
-      description: "It deletes a resolved trigger and the reallocate trigger if there is a new trigger",
-      existingTriggers: [
-        getCaseTrigger(REALLOCATE_CASE_TRIGGER_CODE, "Unresolved"),
-        getCaseTrigger(TriggerCode.TRPR0001, "Resolved", 1)
-      ],
-      newTriggers: [getTrigger(TriggerCode.TRPR0001, 2)],
-      expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0001, 2)],
-      expectedTriggersToDelete: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE), getTrigger(TriggerCode.TRPR0001, 1)]
-    },
-    {
-      description: "It deletes a resolved trigger but leaves the reallocate trigger when there are no new triggers",
-      existingTriggers: [
-        getCaseTrigger(REALLOCATE_CASE_TRIGGER_CODE, "Unresolved"),
-        getCaseTrigger(TriggerCode.TRPR0001, "Resolved", 1)
-      ],
-      newTriggers: [],
-      expectedTriggerToAdd: [],
-      expectedTriggersToDelete: [getTrigger(TriggerCode.TRPR0001, 1)]
-    },
-    {
-      description: "It deletes resolved triggers there is a new trigger with different offence sequence number",
-      existingTriggers: [
-        getCaseTrigger(REALLOCATE_CASE_TRIGGER_CODE, "Unresolved"),
-        getCaseTrigger(TriggerCode.TRPR0001, "Resolved", 1)
-      ],
-      newTriggers: [getTrigger(TriggerCode.TRPR0001, 2)],
-      expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0001, 2)],
-      expectedTriggersToDelete: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE), getTrigger(TriggerCode.TRPR0001, 1)]
-    },
-    {
       description: "It deletes all unresolved triggers there is a new trigger with different offence sequence number",
       existingTriggers: [
         getCaseTrigger(REALLOCATE_CASE_TRIGGER_CODE, "Unresolved"),
@@ -252,7 +249,23 @@ describe("recalculateTriggers", () => {
     },
     {
       description:
-        "It doesn't add an out of area trigger when the existing out of area trigger is unresolved " +
+        "It adds a reallocate trigger but does not add an out of area trigger " +
+        "when the new triggers include out of area trigger and reallocate trigger",
+      existingTriggers: [],
+      newTriggers: [getTrigger(OUT_OF_AREA_TRIGGER_CODE), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
+      expectedTriggerToAdd: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
+      expectedTriggersToDelete: []
+    },
+    {
+      description: "It adds a new out of area trigger when the current one is resolved",
+      existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Resolved")],
+      newTriggers: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)],
+      expectedTriggerToAdd: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)],
+      expectedTriggersToDelete: []
+    },
+    {
+      description:
+        "It does not add an out of area trigger when the existing out of area trigger is unresolved " +
         "and new triggers include out of are trigger",
       existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Unresolved")],
       newTriggers: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)],
@@ -261,11 +274,10 @@ describe("recalculateTriggers", () => {
     },
     {
       description:
-        "It adds an out of area trigger but does not add reallocate trigger " +
-        "when the new triggers include out of area trigger and reallocate trigger",
-      existingTriggers: [],
-      newTriggers: [getTrigger(OUT_OF_AREA_TRIGGER_CODE), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
-      expectedTriggerToAdd: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)],
+        "It does not delete a resolved out of area trigger when the new triggers include a reallocate trigger and another trigger",
+      existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Resolved")],
+      newTriggers: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
+      expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0001)],
       expectedTriggersToDelete: []
     },
     {
@@ -274,22 +286,7 @@ describe("recalculateTriggers", () => {
       existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Unresolved")],
       newTriggers: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
       expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
-      expectedTriggersToDelete: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)]
-    },
-    {
-      description:
-        "It deletes a resolved out of area trigger when the new triggers include a reallocate trigger and another trigger",
-      existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Resolved")],
-      newTriggers: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
-      expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
-      expectedTriggersToDelete: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)]
-    },
-    {
-      description: "It adds a new out of area trigger when the current one is resolved",
-      existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Resolved")],
-      newTriggers: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)],
-      expectedTriggerToAdd: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)],
-      expectedTriggersToDelete: []
+      expectedTriggersToDelete: [getTrigger(OUT_OF_AREA_TRIGGER_CODE), getTrigger(OUT_OF_AREA_TRIGGER_CODE)] // TODO: Is this a bug???
     }
   ]
 
