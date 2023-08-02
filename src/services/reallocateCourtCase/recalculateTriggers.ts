@@ -3,8 +3,8 @@ import { OUT_OF_AREA_TRIGGER_CODE, REALLOCATE_CASE_TRIGGER_CODE } from "../../co
 import { TriggersOutcome } from "../../types/TriggersOutcome"
 import { default as TriggerEntity } from "../entities/Trigger"
 
-const containsTrigger = (triggers: Trigger[], trigger: Trigger | null): boolean => {
-  if (trigger === null) {
+const containsTrigger = (triggers: Trigger[], trigger?: Trigger): boolean => {
+  if (!trigger) {
     return false
   }
   return triggers.some((t) => t.code === trigger.code && t.offenceSequenceNumber === trigger.offenceSequenceNumber)
@@ -19,22 +19,21 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
   const existingTriggersDetails: Trigger[] = []
   const resolvedTriggers = []
 
-  let reallocatedTrigger: Trigger | null = null
-  let outOfAreaTrigger: Trigger | null = null
+  let reallocatedTrigger: Trigger | undefined
+  let outOfAreaTrigger: Trigger | undefined
 
   let outOfAreaTriggerFoundResolved = false
   let outOfAreaTriggerFoundUnresolved = false
-
   let reallocatedTriggerFoundUnresolved = false
 
   let totalUnresolvedTriggers = existingTriggers.length + triggers.length
 
-  if (!(existingTriggers.length === 0)) {
+  if (existingTriggers.length !== 0) {
     existingTriggers.forEach((existingTrigger) => {
-      const triggerCode = existingTrigger.triggerCode
-      const triggerID = existingTrigger.triggerItemIdentity
-
-      const existingTriggerDetails = { code: triggerCode, offenceSequenceNumber: triggerID } as Trigger
+      const existingTriggerDetails = {
+        code: existingTrigger.triggerCode,
+        offenceSequenceNumber: existingTrigger.triggerItemIdentity
+      } as Trigger
       existingTriggersDetails.push(existingTriggerDetails)
 
       if (existingTrigger.status === "Unresolved") {
@@ -88,7 +87,7 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
     })
   }
 
-  if (totalUnresolvedTriggers == 0 && reallocatedTrigger != null && triggersOutcome.triggersToAdd.length === 0) {
+  if (totalUnresolvedTriggers == 0 && reallocatedTrigger && triggersOutcome.triggersToAdd.length === 0) {
     if (reallocatedTriggerFoundUnresolved) {
       triggersOutcome.triggersToDelete = triggersOutcome.triggersToDelete.filter(
         (deletedTrigger) => deletedTrigger.code !== reallocatedTrigger?.code
@@ -99,10 +98,7 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
   }
 
   if (triggersOutcome.triggersToAdd.length !== 0) {
-    if (
-      totalUnresolvedTriggers > 2 ||
-      (totalUnresolvedTriggers == 2 && outOfAreaTrigger === null && reallocatedTrigger !== null)
-    ) {
+    if (totalUnresolvedTriggers > 2 || (totalUnresolvedTriggers == 2 && !outOfAreaTrigger && reallocatedTrigger)) {
       if (
         containsTrigger(existingTriggersDetails, reallocatedTrigger) &&
         !containsTrigger(triggersOutcome.triggersToDelete, reallocatedTrigger)
@@ -113,10 +109,10 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
           (triggerToAdd) => triggerToAdd.code !== reallocatedTrigger?.code
         )
       }
-      reallocatedTrigger = null
+      reallocatedTrigger = undefined
     }
 
-    if (totalUnresolvedTriggers == 2 && outOfAreaTrigger != null && reallocatedTrigger != null) {
+    if (totalUnresolvedTriggers == 2 && outOfAreaTrigger && reallocatedTrigger) {
       if (containsTrigger(triggersOutcome.triggersToAdd, outOfAreaTrigger)) {
         triggersOutcome.triggersToAdd = triggersOutcome.triggersToAdd.filter(
           (triggerToAdd) => triggerToAdd.code !== outOfAreaTrigger?.code
