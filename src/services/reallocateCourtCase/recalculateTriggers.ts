@@ -28,64 +28,60 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
 
   let totalUnresolvedTriggers = existingTriggers.length + triggers.length
 
-  if (existingTriggers.length !== 0) {
-    existingTriggers.forEach((existingTrigger) => {
-      const existingTriggerDetails = {
-        code: existingTrigger.triggerCode,
-        offenceSequenceNumber: existingTrigger.triggerItemIdentity
-      } as Trigger
-      existingTriggersDetails.push(existingTriggerDetails)
+  existingTriggers.forEach((existingTrigger) => {
+    const existingTriggerDetails = {
+      code: existingTrigger.triggerCode,
+      offenceSequenceNumber: existingTrigger.triggerItemIdentity
+    } as Trigger
+    existingTriggersDetails.push(existingTriggerDetails)
 
-      if (existingTrigger.status === "Unresolved") {
-        if (existingTriggerDetails.code === REALLOCATE_CASE_TRIGGER_CODE) {
-          reallocatedTrigger = existingTriggerDetails
-          reallocatedTriggerFoundUnresolved = true
-        }
-
-        if (existingTriggerDetails.code === OUT_OF_AREA_TRIGGER_CODE) {
-          outOfAreaTrigger = existingTriggerDetails
-          outOfAreaTriggerFoundUnresolved = true
-        }
-
-        if (triggers.length === 0 || (triggers.length !== 0 && !containsTrigger(triggers, existingTriggerDetails))) {
-          triggersOutcome.triggersToDelete.push(existingTriggerDetails)
-
-          totalUnresolvedTriggers--
-        }
+    if (existingTrigger.status === "Unresolved") {
+      if (existingTriggerDetails.code === REALLOCATE_CASE_TRIGGER_CODE) {
+        reallocatedTrigger = existingTriggerDetails
+        reallocatedTriggerFoundUnresolved = true
       }
 
-      if (existingTrigger.status === "Resolved") {
-        if (existingTriggerDetails.code === OUT_OF_AREA_TRIGGER_CODE) {
-          outOfAreaTriggerFoundResolved = true
-        }
+      if (existingTriggerDetails.code === OUT_OF_AREA_TRIGGER_CODE) {
+        outOfAreaTrigger = existingTriggerDetails
+        outOfAreaTriggerFoundUnresolved = true
+      }
 
-        resolvedTriggers.push(existingTriggerDetails)
+      if (triggers.length === 0 || (triggers.length !== 0 && !containsTrigger(triggers, existingTriggerDetails))) {
+        triggersOutcome.triggersToDelete.push(existingTriggerDetails)
 
         totalUnresolvedTriggers--
       }
-    })
-  }
+    }
 
-  if (triggers.length !== 0) {
-    triggers.forEach((newTrigger) => {
-      if (newTrigger.code === REALLOCATE_CASE_TRIGGER_CODE) {
-        reallocatedTrigger = newTrigger
-      } else if (newTrigger.code === OUT_OF_AREA_TRIGGER_CODE) {
-        outOfAreaTrigger = newTrigger
+    if (existingTrigger.status === "Resolved") {
+      if (existingTriggerDetails.code === OUT_OF_AREA_TRIGGER_CODE) {
+        outOfAreaTriggerFoundResolved = true
       }
-      if (
-        existingTriggers.length === 0 ||
-        (newTrigger.code === OUT_OF_AREA_TRIGGER_CODE &&
-          outOfAreaTriggerFoundResolved &&
-          !outOfAreaTriggerFoundUnresolved) ||
-        (existingTriggers.length !== 0 && !containsTrigger(existingTriggersDetails, newTrigger))
-      ) {
-        triggersOutcome.triggersToAdd.push(newTrigger)
-      } else if (containsTrigger(existingTriggersDetails, newTrigger)) {
-        totalUnresolvedTriggers--
-      }
-    })
-  }
+
+      resolvedTriggers.push(existingTriggerDetails)
+
+      totalUnresolvedTriggers--
+    }
+  })
+
+  triggers.forEach((newTrigger) => {
+    if (newTrigger.code === REALLOCATE_CASE_TRIGGER_CODE) {
+      reallocatedTrigger = newTrigger
+    } else if (newTrigger.code === OUT_OF_AREA_TRIGGER_CODE) {
+      outOfAreaTrigger = newTrigger
+    }
+    if (
+      existingTriggers.length === 0 ||
+      (newTrigger.code === OUT_OF_AREA_TRIGGER_CODE &&
+        outOfAreaTriggerFoundResolved &&
+        !outOfAreaTriggerFoundUnresolved) ||
+      (existingTriggers.length !== 0 && !containsTrigger(existingTriggersDetails, newTrigger))
+    ) {
+      triggersOutcome.triggersToAdd.push(newTrigger)
+    } else if (containsTrigger(existingTriggersDetails, newTrigger)) {
+      totalUnresolvedTriggers--
+    }
+  })
 
   if (totalUnresolvedTriggers == 0 && reallocatedTrigger && triggersOutcome.triggersToAdd.length === 0) {
     if (reallocatedTriggerFoundUnresolved) {
