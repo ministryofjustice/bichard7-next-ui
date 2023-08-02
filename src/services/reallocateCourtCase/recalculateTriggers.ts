@@ -2,6 +2,7 @@ import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/
 import { OUT_OF_AREA_TRIGGER_CODE, REALLOCATE_CASE_TRIGGER_CODE } from "../../config"
 import { TriggersOutcome } from "../../types/TriggersOutcome"
 import { default as TriggerEntity } from "../entities/Trigger"
+import { isEmpty } from "lodash"
 
 const containsTrigger = (triggers: Trigger[], trigger?: Trigger): boolean => {
   if (!trigger) {
@@ -46,7 +47,7 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
         outOfAreaTriggerFoundUnresolved = true
       }
 
-      if (triggers.length === 0 || (triggers.length !== 0 && !containsTrigger(triggers, existingTriggerDetails))) {
+      if (isEmpty(triggers) || (!isEmpty(triggers) && !containsTrigger(triggers, existingTriggerDetails))) {
         triggersOutcome.triggersToDelete.push(existingTriggerDetails)
 
         totalUnresolvedTriggers--
@@ -71,11 +72,11 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
       outOfAreaTrigger = newTrigger
     }
     if (
-      existingTriggers.length === 0 ||
+      isEmpty(existingTriggers) ||
       (newTrigger.code === OUT_OF_AREA_TRIGGER_CODE &&
         outOfAreaTriggerFoundResolved &&
         !outOfAreaTriggerFoundUnresolved) ||
-      (existingTriggers.length !== 0 && !containsTrigger(existingTriggersDetails, newTrigger))
+      (!isEmpty(existingTriggers) && !containsTrigger(existingTriggersDetails, newTrigger))
     ) {
       triggersOutcome.triggersToAdd.push(newTrigger)
     } else if (containsTrigger(existingTriggersDetails, newTrigger)) {
@@ -83,7 +84,7 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
     }
   })
 
-  if (totalUnresolvedTriggers == 0 && reallocatedTrigger && triggersOutcome.triggersToAdd.length === 0) {
+  if (totalUnresolvedTriggers == 0 && reallocatedTrigger && isEmpty(triggersOutcome.triggersToAdd)) {
     if (reallocatedTriggerFoundUnresolved) {
       triggersOutcome.triggersToDelete = triggersOutcome.triggersToDelete.filter(
         (deletedTrigger) => deletedTrigger.code !== reallocatedTrigger?.code
@@ -93,7 +94,7 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
     }
   }
 
-  if (triggersOutcome.triggersToAdd.length !== 0) {
+  if (!isEmpty(triggersOutcome.triggersToAdd)) {
     if (totalUnresolvedTriggers > 2 || (totalUnresolvedTriggers == 2 && !outOfAreaTrigger && reallocatedTrigger)) {
       if (
         containsTrigger(existingTriggersDetails, reallocatedTrigger) &&
