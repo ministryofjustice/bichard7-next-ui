@@ -68,7 +68,7 @@ const reallocateCourtCaseToForce = async (
         triggers = filterExcludedTriggers(aho, [...triggers, { code: REALLOCATE_CASE_TRIGGER_CODE }])
       }
 
-      const { triggersToAdd, triggersToDelete } = recalculateTriggers(courtCase, triggers)
+      const { triggersToAdd, triggersToDelete } = recalculateTriggers(courtCase.triggers, triggers)
 
       const updateTriggersResult = await updateTriggers(
         entityManager,

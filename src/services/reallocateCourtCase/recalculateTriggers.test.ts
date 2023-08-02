@@ -1,5 +1,4 @@
 import { OUT_OF_AREA_TRIGGER_CODE, REALLOCATE_CASE_TRIGGER_CODE } from "../../config"
-import CourtCase from "../entities/CourtCase"
 import recalculateTriggers from "./recalculateTriggers"
 import { default as TriggerEntity } from "../entities/Trigger"
 import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
@@ -302,8 +301,7 @@ describe("recalculateTriggers", () => {
   test.each(testCases)(
     "$description",
     ({ existingTriggers, newTriggers, expectedTriggerToAdd, expectedTriggersToDelete }) => {
-      const courtCase = { triggers: existingTriggers } as unknown as CourtCase
-      const result = recalculateTriggers(courtCase, newTriggers)
+      const result = recalculateTriggers(existingTriggers, newTriggers)
 
       expect(result.triggersToAdd).toEqual(expectedTriggerToAdd)
       expect(result.triggersToDelete).toEqual(expectedTriggersToDelete)
