@@ -274,6 +274,15 @@ describe("recalculateTriggers", () => {
     },
     {
       description:
+        "It does not add an out of area trigger when the new triggers include a reallocate" +
+        "trigger and out of area trigger but there is an existing unresolved reallocate case trigger",
+      existingTriggers: [getCaseTrigger(REALLOCATE_CASE_TRIGGER_CODE, "Unresolved")],
+      newTriggers: [getTrigger(OUT_OF_AREA_TRIGGER_CODE), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
+      expectedTriggerToAdd: [],
+      expectedTriggersToDelete: []
+    },
+    {
+      description:
         "It does not delete a resolved out of area trigger when the new triggers include a reallocate trigger and another trigger",
       existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Resolved")],
       newTriggers: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
@@ -297,7 +306,7 @@ describe("recalculateTriggers", () => {
       const result = recalculateTriggers(courtCase, newTriggers)
 
       expect(result.triggersToAdd).toEqual(expectedTriggerToAdd)
-      expect(result.triggersDeleted).toEqual(expectedTriggersToDelete)
+      expect(result.triggersToDelete).toEqual(expectedTriggersToDelete)
     }
   )
 })

@@ -12,10 +12,10 @@ const containsTrigger = (triggers: Trigger[], trigger: Trigger | null): boolean 
 const recalculateTriggers = (
   courtCase: CourtCase,
   triggers: Trigger[]
-): { triggersToAdd: Trigger[]; triggersDeleted: Trigger[] } => {
-  const triggersOutcome: { triggersToAdd: Trigger[]; triggersDeleted: Trigger[] } = {
+): { triggersToAdd: Trigger[]; triggersToDelete: Trigger[] } => {
+  const triggersOutcome: { triggersToAdd: Trigger[]; triggersToDelete: Trigger[] } = {
     triggersToAdd: [],
-    triggersDeleted: []
+    triggersToDelete: []
   }
   const existingTriggers = courtCase.triggers
   const existingTriggersDetails: Trigger[] = []
@@ -51,7 +51,7 @@ const recalculateTriggers = (
         }
 
         if (triggers.length === 0 || (triggers.length !== 0 && !containsTrigger(triggers, existingTriggerDetails))) {
-          triggersOutcome.triggersDeleted.push(existingTriggerDetails)
+          triggersOutcome.triggersToDelete.push(existingTriggerDetails)
 
           totalUnresolvedTriggers--
         }
@@ -92,7 +92,7 @@ const recalculateTriggers = (
 
   if (totalUnresolvedTriggers == 0 && reallocatedTrigger != null && triggersOutcome.triggersToAdd.length === 0) {
     if (reallocatedTriggerFoundUnresolved) {
-      triggersOutcome.triggersDeleted = triggersOutcome.triggersDeleted.filter(
+      triggersOutcome.triggersToDelete = triggersOutcome.triggersToDelete.filter(
         (deletedTrigger) => deletedTrigger.code !== reallocatedTrigger?.code
       )
     } else {
@@ -107,9 +107,9 @@ const recalculateTriggers = (
     ) {
       if (
         containsTrigger(existingTriggersDetails, reallocatedTrigger) &&
-        !containsTrigger(triggersOutcome.triggersDeleted, reallocatedTrigger)
+        !containsTrigger(triggersOutcome.triggersToDelete, reallocatedTrigger)
       ) {
-        triggersOutcome.triggersDeleted.push(reallocatedTrigger!)
+        triggersOutcome.triggersToDelete.push(reallocatedTrigger!)
       } else if (containsTrigger(triggersOutcome.triggersToAdd, reallocatedTrigger)) {
         triggersOutcome.triggersToAdd = triggersOutcome.triggersToAdd.filter(
           (triggerToAdd) => triggerToAdd.code !== reallocatedTrigger?.code
@@ -124,15 +124,14 @@ const recalculateTriggers = (
           (triggerToAdd) => triggerToAdd.code !== outOfAreaTrigger?.code
         )
       } else {
-        triggersOutcome.triggersDeleted.push(outOfAreaTrigger)
+        triggersOutcome.triggersToDelete.push(outOfAreaTrigger)
       }
-
       if (
         containsTrigger(existingTriggersDetails, reallocatedTrigger) &&
-        !containsTrigger(triggersOutcome.triggersDeleted, reallocatedTrigger)
+        !containsTrigger(triggersOutcome.triggersToDelete, reallocatedTrigger)
       ) {
-        triggersOutcome.triggersDeleted = triggersOutcome.triggersDeleted.filter(
-          (triggerDeleted) => triggerDeleted.code !== reallocatedTrigger?.code
+        triggersOutcome.triggersToDelete = triggersOutcome.triggersToDelete.filter(
+          (triggerDeleted) => triggerDeleted.code !== reallocatedTrigger?.code //TODO: This code does not do anything!
         )
       }
     }
