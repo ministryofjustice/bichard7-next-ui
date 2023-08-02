@@ -1,6 +1,7 @@
 import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
 import CourtCase from "../entities/CourtCase"
 import { OUT_OF_AREA_TRIGGER_CODE, REALLOCATE_CASE_TRIGGER_CODE } from "../../config"
+import { TriggersOutcome } from "../../types/TriggersOutcome"
 
 const containsTrigger = (triggers: Trigger[], trigger: Trigger | null): boolean => {
   if (trigger === null) {
@@ -9,11 +10,8 @@ const containsTrigger = (triggers: Trigger[], trigger: Trigger | null): boolean 
   return triggers.some((t) => t.code === trigger.code && t.offenceSequenceNumber === trigger.offenceSequenceNumber)
 }
 
-const recalculateTriggers = (
-  courtCase: CourtCase,
-  triggers: Trigger[]
-): { triggersToAdd: Trigger[]; triggersToDelete: Trigger[] } => {
-  const triggersOutcome: { triggersToAdd: Trigger[]; triggersToDelete: Trigger[] } = {
+const recalculateTriggers = (courtCase: CourtCase, triggers: Trigger[]): TriggersOutcome => {
+  const triggersOutcome: TriggersOutcome = {
     triggersToAdd: [],
     triggersToDelete: []
   }
