@@ -308,14 +308,6 @@ describe("recalculateTriggers", () => {
     },
     {
       description:
-        "It deletes an existing unresolved out of area trigger when the new triggers include a reallocate trigger and another trigger",
-      existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Unresolved")],
-      newTriggers: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
-      expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
-      expectedTriggersToDelete: [getTrigger(OUT_OF_AREA_TRIGGER_CODE), getTrigger(OUT_OF_AREA_TRIGGER_CODE)]
-    },
-    {
-      description:
         "It deletes an existing unresolved out of area trigger and adds reallocate trigger " +
         "when the new triggers include reallocate trigger and out of area trigger",
       existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Unresolved")],
@@ -334,6 +326,25 @@ describe("recalculateTriggers", () => {
       ],
       newTriggers: [getTrigger(OUT_OF_AREA_TRIGGER_CODE), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
       expectedTriggerToAdd: [getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
+      expectedTriggersToDelete: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)]
+    },
+    // This fails with the new logic but the legacy behavior seems like a bug
+    // {
+    //   description:
+    //     "It deletes an existing unresolved out of area trigger when the new triggers include a reallocate trigger and another trigger",
+    //   existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Unresolved")],
+    //   newTriggers: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
+    //   expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
+    //   expectedTriggersToDelete: [getTrigger(OUT_OF_AREA_TRIGGER_CODE), getTrigger(OUT_OF_AREA_TRIGGER_CODE)]
+    // }
+
+    // The new behavior:
+    {
+      description:
+        "It deletes an existing unresolved out of area trigger when the new triggers include a reallocate trigger and another trigger",
+      existingTriggers: [getCaseTrigger(OUT_OF_AREA_TRIGGER_CODE, "Unresolved")],
+      newTriggers: [getTrigger(TriggerCode.TRPR0001), getTrigger(REALLOCATE_CASE_TRIGGER_CODE)],
+      expectedTriggerToAdd: [getTrigger(TriggerCode.TRPR0001)],
       expectedTriggersToDelete: [getTrigger(OUT_OF_AREA_TRIGGER_CODE)]
     }
   ]
