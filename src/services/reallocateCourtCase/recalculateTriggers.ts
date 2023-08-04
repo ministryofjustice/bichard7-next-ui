@@ -15,10 +15,6 @@ const containsTrigger = (triggers: Trigger[], trigger?: Trigger): boolean => {
   return triggers.some((t) => t.code === trigger.code && t.offenceSequenceNumber === trigger.offenceSequenceNumber)
 }
 
-const findTriggerCode = (triggers: TriggerEntity[], code: TriggerCode) => {
-  return triggers.find((trigger) => trigger.triggerCode === code)
-}
-
 const asTrigger = (triggerEntity: TriggerEntity): Trigger => {
   return {
     code: triggerEntity.triggerCode,
@@ -117,28 +113,36 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
     return { triggersToAdd: [], triggersToDelete: [] }
   }
 
-  const existingTriggersDetails = existingTriggers.map((existingTrigger) => asTrigger(existingTrigger))
   const existingUnresolvedTriggers = existingTriggers.filter(
     (existingTrigger) => existingTrigger.status === "Unresolved"
   )
-  const existingResolvedTriggers = existingTriggers.filter((existingTrigger) => existingTrigger.status === "Resolved")
-  const existingUnresolvedOutOfAreaTrigger = findTriggerCode(existingUnresolvedTriggers, OUT_OF_AREA_TRIGGER_CODE)
+
+  const hasExistingResolvedOutOfAreaTrigger = existingTriggers.some(
+    (existingTrigger) =>
+      existingTrigger.status === "Resolved" && existingTrigger.triggerCode === OUT_OF_AREA_TRIGGER_CODE
+  )
+  const hasExistingUnresolvedOutOfAreaTrigger = existingUnresolvedTriggers.find(
+    (trigger) => trigger.triggerCode === OUT_OF_AREA_TRIGGER_CODE
+  )
+
+  const existingTriggersDetails = existingTriggers.map((existingTrigger) => asTrigger(existingTrigger))
+  const newTriggersThatAreNotOnTheCase = triggers.filter(
+    (newTrigger) => isEmpty(existingTriggers) || !containsTrigger(existingTriggersDetails, newTrigger)
+  )
+
+  const newOutOfAreaTriggers = triggers.filter(
+    (newTrigger) =>
+      newTrigger.code === OUT_OF_AREA_TRIGGER_CODE &&
+      hasExistingResolvedOutOfAreaTrigger &&
+      !hasExistingUnresolvedOutOfAreaTrigger
+  )
+
   const newUnresolvedTriggersAlreadyOnCase = existingUnresolvedTriggers
     .filter((unresolvedTrigger) => !containsTrigger(triggers, asTrigger(unresolvedTrigger)))
     .map(
       (triggerEntity) =>
         ({ code: triggerEntity.triggerCode, offenceSequenceNumber: triggerEntity.triggerItemIdentity }) as Trigger
     )
-  const newTriggersThatAreNotOnTheCase = triggers.filter(
-    (newTrigger) =>
-      isEmpty(existingTriggers) || (!isEmpty(existingTriggers) && !containsTrigger(existingTriggersDetails, newTrigger))
-  )
-  const newOutOfAreaTriggers = triggers.filter(
-    (newTrigger) =>
-      newTrigger.code === OUT_OF_AREA_TRIGGER_CODE &&
-      !!findTriggerCode(existingResolvedTriggers, OUT_OF_AREA_TRIGGER_CODE) &&
-      !existingUnresolvedOutOfAreaTrigger
-  )
 
   const triggersOutcome: TriggersOutcome = {
     triggersToAdd: newTriggersThatAreNotOnTheCase.concat(newOutOfAreaTriggers),
