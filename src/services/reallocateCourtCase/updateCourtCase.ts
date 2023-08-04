@@ -3,6 +3,7 @@ import { isError } from "../../types/Result"
 import CourtCase from "../entities/CourtCase"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import Trigger from "../entities/Trigger"
+import { TriggerQualityCheckStatus } from "../../utils/triggerQualityCheckStatus"
 
 const updateCourtCase = async (
   entityManager: EntityManager,
@@ -50,7 +51,7 @@ const updateCourtCase = async (
         triggerStatus: "Resolved",
         triggerResolvedBy: "System",
         triggerResolvedTimestamp: triggerTimestamp,
-        triggerQualityChecked: 1 //Unchecked - TODO: Refactor to use enum/type
+        triggerQualityChecked: TriggerQualityCheckStatus.Unchecked
       }
     } else if (triggers.some((trigger) => trigger.status === "Resolved")) {
       triggerParameters = {
@@ -59,7 +60,7 @@ const updateCourtCase = async (
         triggerStatus: "Unresolved",
         triggerResolvedBy: null,
         triggerResolvedTimestamp: null,
-        triggerQualityChecked: 1, //Unchecked - TODO: Refactor to use enum/type
+        triggerQualityChecked: TriggerQualityCheckStatus.Unchecked,
         triggerInsertedTimestamp: triggerTimestamp
       }
     }
