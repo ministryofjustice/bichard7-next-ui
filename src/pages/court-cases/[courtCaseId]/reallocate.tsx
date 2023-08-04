@@ -13,7 +13,7 @@ import { isPost } from "utils/http"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import { isError } from "types/Result"
 import ConditionalRender from "components/ConditionalRender"
-import reallocateCourtCaseToForce from "services/reallocateCourtCase/reallocateCourtCaseToForce"
+import reallocateCourtCase from "services/reallocateCourtCase"
 import redirectTo from "utils/redirectTo"
 import { forces } from "@moj-bichard7-developers/bichard7-next-data"
 import ButtonsGroup from "components/ButtonsGroup"
@@ -55,7 +55,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     if (isPost(req)) {
       const { force, note } = (await parseFormData(req)) as { force: string; note?: string }
-      const reallocateResult = await reallocateCourtCaseToForce(dataSource, courtCase.errorId, currentUser, force, note)
+      const reallocateResult = await reallocateCourtCase(dataSource, courtCase.errorId, currentUser, force, note)
 
       if (isError(reallocateResult)) {
         throw reallocateResult
