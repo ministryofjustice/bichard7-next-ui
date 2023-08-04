@@ -198,7 +198,7 @@ describe("reallocate court case to another force", () => {
       expect(parsedCase.ForceOwner?.ThirdLevelCode).toEqual("YZ")
       expect(parsedCase.ManualForceOwner).toBe(true)
       expect(actualCourtCase.notes).toHaveLength(3)
-      const notes = actualCourtCase.notes.sort((noteA, noteB) => (noteA.createdAt > noteB.createdAt ? 1 : -1))
+      const notes = actualCourtCase.notes.sort((noteA, noteB) => (noteA.noteId > noteB.noteId ? 1 : -1))
 
       expect(notes[0].userId).toEqual("System")
       expect(notes[0].noteText).toEqual(
