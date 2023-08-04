@@ -21,7 +21,6 @@ import amendCourtCase from "../../../src/services/amendCourtCase"
 import updateTriggers from "../../../src/services/reallocateCourtCase/updateTriggers"
 import recalculateTriggers from "../../../src/services/reallocateCourtCase/recalculateTriggers"
 import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate"
-import filterExcludedTriggers from "@moj-bichard7-developers/bichard7-next-core/dist/triggers/filterExcludedTriggers"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/dist/types/Phase"
 
 jest.mock("services/insertNotes")
@@ -30,7 +29,6 @@ jest.mock("services/reallocateCourtCase/updateTriggers")
 jest.mock("services/reallocateCourtCase/updateCourtCase")
 jest.mock("services/amendCourtCase")
 jest.mock("@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate")
-jest.mock("@moj-bichard7-developers/bichard7-next-core/dist/triggers/filterExcludedTriggers")
 
 const createUnlockedEvent = (unlockReason: "Trigger" | "Exception", userName: string) => {
   return {
@@ -110,9 +108,6 @@ describe("reallocate court case to another force", () => {
     ;(amendCourtCase as jest.Mock).mockImplementation(jest.requireActual("services/amendCourtCase").default)
     ;(generateTriggers as jest.Mock).mockImplementation(
       jest.requireActual("@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate").default
-    )
-    ;(filterExcludedTriggers as jest.Mock).mockImplementation(
-      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/dist/triggers/filterExcludedTriggers").default
     )
   })
 
@@ -284,18 +279,12 @@ describe("reallocate court case to another force", () => {
     expect(updateCourtCase).toHaveBeenCalledTimes(1)
     const functionCallOrders = [
       generateTriggers,
-      filterExcludedTriggers,
       recalculateTriggers,
       updateTriggers,
       amendCourtCase,
       updateCourtCase
     ].map((fn: any) => fn.mock.invocationCallOrder.slice(-1)[0])
     expect(functionCallOrders).toStrictEqual([...functionCallOrders].sort((a, b) => (a > b ? 1 : -1)))
-
-    expect(filterExcludedTriggers).toHaveBeenLastCalledWith(
-      expect.anything(),
-      expect.arrayContaining([{ code: REALLOCATE_CASE_TRIGGER_CODE }])
-    )
   })
 
   it("Should not add reallocation trigger (TRPR0028) when case has unresolved exceptions", async () => {
@@ -321,7 +310,7 @@ describe("reallocate court case to another force", () => {
     const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode)
     expect(isError(result)).toBe(false)
 
-    expect(filterExcludedTriggers).toHaveBeenLastCalledWith(
+    expect(recalculateTriggers).toHaveBeenLastCalledWith(
       expect.anything(),
       expect.not.arrayContaining([{ code: REALLOCATE_CASE_TRIGGER_CODE }])
     )

@@ -18,7 +18,6 @@ import { parseAhoXml } from "@moj-bichard7-developers/bichard7-next-core/dist/pa
 import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate"
 import type { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/dist/types/Phase"
-import filterExcludedTriggers from "@moj-bichard7-developers/bichard7-next-core/dist/triggers/filterExcludedTriggers"
 import recalculateTriggers from "./recalculateTriggers"
 import updateCourtCase from "./updateCourtCase"
 import updateTriggers from "./updateTriggers"
@@ -62,10 +61,10 @@ const reallocateCourtCaseToForce = async (
         throw Error("Logic to generate post update triggers is not implemented")
       }
 
-      let triggers = preUpdateTrigger.concat(postUpdateTriggers)
+      const triggers = preUpdateTrigger.concat(postUpdateTriggers)
 
       if (!courtCase.errorStatus || courtCase.errorStatus === "Resolved") {
-        triggers = filterExcludedTriggers(aho, [...triggers, { code: REALLOCATE_CASE_TRIGGER_CODE }])
+        triggers.push({ code: REALLOCATE_CASE_TRIGGER_CODE })
       }
 
       const { triggersToAdd, triggersToDelete } = recalculateTriggers(courtCase.triggers, triggers)
