@@ -78,6 +78,40 @@ const updateOutOfAreaTriggers = (triggersOutcome: TriggersOutcome, existingTrigg
   }
 }
 
+const updateReallocateTriggers = (triggersOutcome: TriggersOutcome, existingTriggers: TriggerEntity[]) => {
+  const sumOfTriggers = existingTriggers
+    .concat(triggersOutcome.triggersToAdd.map((triggerToAdd) => asTriggerEntity(triggerToAdd)))
+    .filter((trigger) => !containsTrigger(triggersOutcome.triggersToDelete, asTrigger(trigger)))
+
+  const existingReallocateTriggerIsResolved =
+    sumOfTriggers.length === 1 &&
+    sumOfTriggers.some(
+      (trigger) => trigger.triggerCode === REALLOCATE_CASE_TRIGGER_CODE && trigger.status === "Resolved"
+    )
+  const unresolvedTriggers = sumOfTriggers.filter((trigger) => trigger.status === "Unresolved")
+
+  if (existingReallocateTriggerIsResolved) {
+    triggersOutcome.triggersToAdd.push(reallocateCaseTrigger)
+  } else if (
+    (sumOfTriggers.length > 1 &&
+      hasUnresolvedTrigger(existingTriggers, REALLOCATE_CASE_TRIGGER_CODE) &&
+      containsTrigger(triggersOutcome.triggersToAdd, reallocateCaseTrigger)) ||
+    (unresolvedTriggers.length > 1 && containsTrigger(triggersOutcome.triggersToAdd, reallocateCaseTrigger))
+  ) {
+    triggersOutcome.triggersToAdd = removeTrigger(triggersOutcome.triggersToAdd, REALLOCATE_CASE_TRIGGER_CODE)
+  }
+
+  if (isEmpty(unresolvedTriggers) && containsTrigger(triggersOutcome.triggersToDelete, reallocateCaseTrigger)) {
+    triggersOutcome.triggersToDelete = removeTrigger(triggersOutcome.triggersToDelete, REALLOCATE_CASE_TRIGGER_CODE)
+  } else if (
+    unresolvedTriggers.length > 1 &&
+    hasUnresolvedTrigger(existingTriggers, REALLOCATE_CASE_TRIGGER_CODE) &&
+    !containsTrigger(triggersOutcome.triggersToDelete, reallocateCaseTrigger)
+  ) {
+    triggersOutcome.triggersToDelete.push(reallocateCaseTrigger)
+  }
+}
+
 const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigger[]): TriggersOutcome => {
   if (sameTriggers(existingTriggers, triggers)) {
     return { triggersToAdd: [], triggersToDelete: [] }
@@ -112,37 +146,7 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
   }
 
   updateOutOfAreaTriggers(triggersOutcome, existingTriggers)
-
-  const sumOfTriggers = existingTriggers
-    .concat(triggersOutcome.triggersToAdd.map((triggerToAdd) => asTriggerEntity(triggerToAdd)))
-    .filter((trigger) => !containsTrigger(triggersOutcome.triggersToDelete, asTrigger(trigger)))
-
-  const resolvedReallocatedTrigger = sumOfTriggers.find(
-    (trigger) => trigger.triggerCode === REALLOCATE_CASE_TRIGGER_CODE && trigger.status === "Resolved"
-  )
-  const unresolvedTriggers = sumOfTriggers.filter((trigger) => trigger.status === "Unresolved")
-
-  if (sumOfTriggers.length === 1 && resolvedReallocatedTrigger) {
-    triggersOutcome.triggersToAdd.push(reallocateCaseTrigger)
-  } else if (
-    (sumOfTriggers.length > 1 &&
-      hasUnresolvedTrigger(existingTriggers, REALLOCATE_CASE_TRIGGER_CODE) &&
-      !hasUnresolvedTrigger(existingTriggers, OUT_OF_AREA_TRIGGER_CODE) &&
-      containsTrigger(triggersOutcome.triggersToAdd, reallocateCaseTrigger)) ||
-    (unresolvedTriggers.length > 1 && containsTrigger(triggersOutcome.triggersToAdd, reallocateCaseTrigger))
-  ) {
-    triggersOutcome.triggersToAdd = removeTrigger(triggersOutcome.triggersToAdd, REALLOCATE_CASE_TRIGGER_CODE)
-  }
-
-  if (isEmpty(unresolvedTriggers) && containsTrigger(triggersOutcome.triggersToDelete, reallocateCaseTrigger)) {
-    triggersOutcome.triggersToDelete = removeTrigger(triggersOutcome.triggersToDelete, REALLOCATE_CASE_TRIGGER_CODE)
-  } else if (
-    unresolvedTriggers.length > 1 &&
-    hasUnresolvedTrigger(existingTriggers, REALLOCATE_CASE_TRIGGER_CODE) &&
-    !containsTrigger(triggersOutcome.triggersToDelete, reallocateCaseTrigger)
-  ) {
-    triggersOutcome.triggersToDelete.push(reallocateCaseTrigger)
-  }
+  updateReallocateTriggers(triggersOutcome, existingTriggers)
 
   return triggersOutcome
 }
