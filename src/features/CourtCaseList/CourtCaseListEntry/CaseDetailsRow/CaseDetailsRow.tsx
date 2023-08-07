@@ -89,7 +89,7 @@ export const CaseDetailsRow = ({
           </ConditionalRender>
         </Table.Cell>
         <Table.Cell className={caseDetailsCellClass}>
-          <Link href={`${basePath}/court-cases/${errorId}`} id={`Case details for ${defendantName}`}>
+          <Link href={`${basePath}/court-cases/${errorId}`}>
             {defendantName}
             <br />
             <ResolvedTag isResolved={isResolved} />
