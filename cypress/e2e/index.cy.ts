@@ -422,9 +422,13 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
+      cy.findByText("Defendant Name 0")
+        .should("have.attr", "href")
+        .and("match", /\/court-cases\/\d+/)
+
       cy.findByText("Defendant Name 0").click()
 
-      cy.url().should("match", /\/court-cases\//)
+      cy.url().should("match", /\/court-cases\/\d+/)
       cy.findByText("Case details").should("exist")
 
       cy.get("#leave-and-lock, #return-to-case-list").click()
