@@ -23,6 +23,7 @@ import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
+import Feature from "../../../types/Feature"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -36,11 +37,23 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
     const dataSource = await getDataSource()
 
+    let courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
+
+    if (isError(courtCase)) {
+      throw courtCase
+    }
+
+    if (!courtCase) {
+      return {
+        notFound: true
+      }
+    }
+
     let lockResult: UpdateResult | Error | undefined
 
     if (isPost(req) && lock === "false") {
       lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser, UnlockReason.TriggerAndException)
-    } else {
+    } else if (currentUser.hasAccessTo[Feature.Exceptions] || currentUser.hasAccessTo[Feature.Triggers]) {
       lockResult = await lockCourtCase(dataSource, +courtCaseId, currentUser)
     }
 
@@ -102,7 +115,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
+    // Fetch the record from the database after updates
+    courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
 
     if (isError(courtCase)) {
       throw courtCase

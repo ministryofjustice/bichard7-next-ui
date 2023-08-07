@@ -29,7 +29,7 @@ const lock = async (
       [lockReason === "Exception" ? "errorStatus" : "triggerStatus"]: Not("Submitted")
     })
     .execute()
-    .catch((error) => error)
+    .catch((error) => error as Error)
 
   if (!result) {
     return new Error(`Failed to lock ${lockReason}`)
