@@ -37,7 +37,7 @@ export default async (
   const isResolved = randomBoolean()
   const resolutionDate = isResolved ? randomDate(caseDate, dateTo || new Date()) : null
   const triggers = createDummyTriggers(dataSource, caseId, caseDate, isResolved)
-  const hasTriggers = triggers.length > 0
+  const hasTriggers = triggers.filter((trigger) => trigger.status === "Unresolved").length > 0
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
   const { errorReport, errorReason, exceptionCount } = createDummyExceptions(isResolved, hasTriggers)
   const hasExceptions = exceptionCount > 0
