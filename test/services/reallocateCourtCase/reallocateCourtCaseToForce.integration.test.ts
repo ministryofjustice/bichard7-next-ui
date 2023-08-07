@@ -3,19 +3,32 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import Note from "services/entities/Note"
 import User from "services/entities/User"
 import insertNotes from "services/insertNotes"
-import reallocateCourtCaseToForce from "services/reallocateCourtCaseToForce"
+import reallocateCourtCaseToForce from "services/reallocateCourtCase/reallocateCourtCaseToForce"
 import { DataSource, UpdateQueryBuilder } from "typeorm"
-import CourtCase from "../../src/services/entities/CourtCase"
-import getDataSource from "../../src/services/getDataSource"
-import { isError } from "../../src/types/Result"
-import deleteFromEntity from "../utils/deleteFromEntity"
-import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
-import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
-import { hasAccessToAll } from "../helpers/hasAccessTo"
+import CourtCase from "../../../src/services/entities/CourtCase"
+import getDataSource from "../../../src/services/getDataSource"
+import { isError } from "../../../src/types/Result"
+import deleteFromEntity from "../../utils/deleteFromEntity"
+import { insertCourtCasesWithFields } from "../../utils/insertCourtCases"
+import deleteFromDynamoTable from "../../utils/deleteFromDynamoTable"
+import fetchAuditLogEvents from "../../helpers/fetchAuditLogEvents"
+import { AUDIT_LOG_EVENT_SOURCE, REALLOCATE_CASE_TRIGGER_CODE } from "../../../src/config"
+import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
+import { hasAccessToAll } from "../../helpers/hasAccessTo"
+import updateCourtCase from "../../../src/services/reallocateCourtCase/updateCourtCase"
+import amendCourtCase from "../../../src/services/amendCourtCase"
+import updateTriggers from "../../../src/services/reallocateCourtCase/updateTriggers"
+import recalculateTriggers from "../../../src/services/reallocateCourtCase/recalculateTriggers"
+import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate"
+import Phase from "@moj-bichard7-developers/bichard7-next-core/dist/types/Phase"
 
 jest.mock("services/insertNotes")
+jest.mock("services/reallocateCourtCase/recalculateTriggers")
+jest.mock("services/reallocateCourtCase/updateTriggers")
+jest.mock("services/reallocateCourtCase/updateCourtCase")
+jest.mock("services/amendCourtCase")
+jest.mock("@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate")
 
 const createUnlockedEvent = (unlockReason: "Trigger" | "Exception", userName: string) => {
   return {
@@ -44,6 +57,28 @@ const createReallocationEvent = (newForceOwner: string, userName: string) => {
   }
 }
 
+const createTriggersGeneratedEvent = (triggers: string[], hasUnresolvedExceptions: boolean, userName: string) => {
+  const triggersDetails = triggers.reduce((acc: KeyValuePair<string, unknown>, triggerCode, index) => {
+    acc[`Trigger ${index + 1} Details`] = triggerCode
+    return acc
+  }, {})
+
+  return {
+    attributes: {
+      auditLogVersion: 2,
+      "Trigger and Exception Flag": hasUnresolvedExceptions,
+      "Number of Triggers": triggers.length,
+      ...triggersDetails
+    },
+    eventCode: "triggers.generated",
+    category: "information",
+    eventSource: AUDIT_LOG_EVENT_SOURCE,
+    eventType: "Triggers generated",
+    timestamp: expect.anything(),
+    user: userName
+  }
+}
+
 describe("reallocate court case to another force", () => {
   const courtCaseId = 1
   const oldForceCode = "01"
@@ -61,6 +96,19 @@ describe("reallocate court case to another force", () => {
     jest.resetAllMocks()
     jest.clearAllMocks()
     ;(insertNotes as jest.Mock).mockImplementation(jest.requireActual("services/insertNotes").default)
+    ;(recalculateTriggers as jest.Mock).mockImplementation(
+      jest.requireActual("services/reallocateCourtCase/recalculateTriggers").default
+    )
+    ;(updateTriggers as jest.Mock).mockImplementation(
+      jest.requireActual("services/reallocateCourtCase/updateTriggers").default
+    )
+    ;(updateCourtCase as jest.Mock).mockImplementation(
+      jest.requireActual("services/reallocateCourtCase/updateCourtCase").default
+    )
+    ;(amendCourtCase as jest.Mock).mockImplementation(jest.requireActual("services/amendCourtCase").default)
+    ;(generateTriggers as jest.Mock).mockImplementation(
+      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate").default
+    )
   })
 
   afterAll(async () => {
@@ -120,10 +168,17 @@ describe("reallocate court case to another force", () => {
       )
 
       const events = await fetchAuditLogEvents(courtCase.messageId)
-      expect(events).toHaveLength(3)
+      expect(events).toHaveLength(4)
       expect(events).toContainEqual(createReallocationEvent(expectedForceOwner, user.username))
       expect(events).toContainEqual(createUnlockedEvent("Exception", user.username))
       expect(events).toContainEqual(createUnlockedEvent("Trigger", user.username))
+      expect(events).toContainEqual(
+        createTriggersGeneratedEvent(
+          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004],
+          true,
+          user.username
+        )
+      )
     })
 
     it("Should reallocate the case to a new force, generate system notes, user note, and unlock the case", async () => {
@@ -167,25 +222,98 @@ describe("reallocate court case to another force", () => {
       expect(parsedCase.ForceOwner?.ThirdLevelCode).toEqual("YZ")
       expect(parsedCase.ManualForceOwner).toBe(true)
       expect(actualCourtCase.notes).toHaveLength(3)
+      const notes = actualCourtCase.notes.sort((noteA, noteB) => (noteA.noteId > noteB.noteId ? 1 : -1))
 
-      expect(actualCourtCase.notes[0].userId).toEqual("System")
-      expect(actualCourtCase.notes[0].noteText).toEqual(
+      expect(notes[0].userId).toEqual("System")
+      expect(notes[0].noteText).toEqual(
         `${userName}: Portal Action: Update Applied. Element: forceOwner. New Value: ${newForceCode}`
       )
-      expect(actualCourtCase.notes[1].userId).toEqual("System")
-      expect(actualCourtCase.notes[1].noteText).toEqual(
-        `${userName}: Case reallocated to new force owner: ${expectedForceOwner}`
-      )
+      expect(notes[1].userId).toEqual("System")
+      expect(notes[1].noteText).toEqual(`${userName}: Case reallocated to new force owner: ${expectedForceOwner}`)
 
-      expect(actualCourtCase.notes[2].userId).toEqual(userName)
-      expect(actualCourtCase.notes[2].noteText).toEqual("Dummy user note")
+      expect(notes[2].userId).toEqual(userName)
+      expect(notes[2].noteText).toEqual("Dummy user note")
 
       const events = await fetchAuditLogEvents(courtCase.messageId)
-      expect(events).toHaveLength(3)
+      expect(events).toHaveLength(4)
       expect(events).toContainEqual(createReallocationEvent(expectedForceOwner, user.username))
       expect(events).toContainEqual(createUnlockedEvent("Exception", user.username))
       expect(events).toContainEqual(createUnlockedEvent("Trigger", user.username))
+      expect(events).toContainEqual(
+        createTriggersGeneratedEvent(
+          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004],
+          true,
+          user.username
+        )
+      )
     })
+  })
+
+  it("Should call functions in order", async () => {
+    const newForceCode = "04"
+    const userName = "UserName"
+    await insertCourtCasesWithFields([
+      {
+        orgForPoliceFilter: oldForceCode,
+        errorId: courtCaseId,
+        errorLockedByUsername: null,
+        triggerLockedByUsername: userName,
+        errorStatus: "Resolved"
+      }
+    ])
+
+    const user = {
+      username: userName,
+      visibleForces: [oldForceCode],
+      visibleCourts: [],
+      hasAccessTo: hasAccessToAll
+    } as Partial<User> as User
+
+    const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode)
+    expect(isError(result)).toBe(false)
+
+    expect(generateTriggers).toHaveBeenCalledTimes(1)
+    expect(recalculateTriggers).toHaveBeenCalledTimes(1)
+    expect(updateTriggers).toHaveBeenCalledTimes(1)
+    expect(amendCourtCase).toHaveBeenCalledTimes(1)
+    expect(updateCourtCase).toHaveBeenCalledTimes(1)
+    const functionCallOrders = [
+      generateTriggers,
+      recalculateTriggers,
+      updateTriggers,
+      amendCourtCase,
+      updateCourtCase
+    ].map((fn: any) => fn.mock.invocationCallOrder.slice(-1)[0])
+    expect(functionCallOrders).toStrictEqual([...functionCallOrders].sort((a, b) => (a > b ? 1 : -1)))
+  })
+
+  it("Should not add reallocation trigger (TRPR0028) when case has unresolved exceptions", async () => {
+    const newForceCode = "04"
+    const userName = "UserName"
+    await insertCourtCasesWithFields([
+      {
+        orgForPoliceFilter: oldForceCode,
+        errorId: courtCaseId,
+        errorLockedByUsername: null,
+        triggerLockedByUsername: userName,
+        errorStatus: "Unresolved"
+      }
+    ])
+
+    const user = {
+      username: userName,
+      visibleForces: [oldForceCode],
+      visibleCourts: [],
+      hasAccessTo: hasAccessToAll
+    } as Partial<User> as User
+
+    const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode)
+    expect(isError(result)).toBe(false)
+
+    expect(recalculateTriggers).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.not.arrayContaining([{ code: REALLOCATE_CASE_TRIGGER_CODE }])
+    )
   })
 
   describe("when the case is not visible to the user", () => {
@@ -258,6 +386,90 @@ describe("reallocate court case to another force", () => {
   })
 
   describe("when there is an unexpected error", () => {
+    const user = {
+      username: "Dummy User",
+      visibleForces: [oldForceCode],
+      visibleCourts: [],
+      hasAccessTo: hasAccessToAll
+    } as Partial<User> as User
+
+    it("should return error when case is recordable, in PNC update phase, and exceptions are resolved", async () => {
+      await insertCourtCasesWithFields([
+        {
+          orgForPoliceFilter: oldForceCode,
+          errorId: courtCaseId,
+          phase: Phase.PNC_UPDATE,
+          errorStatus: "Resolved",
+          errorLockedByUsername: user.username,
+          triggerLockedByUsername: user.username
+        }
+      ])
+
+      const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06").catch((error) => error)
+      expect(result).toEqual(Error("Logic to generate post update triggers is not implemented"))
+    })
+
+    it("should return error when case is recordable, in PNC update phase, and there are no exceptions", async () => {
+      await insertCourtCasesWithFields([
+        {
+          orgForPoliceFilter: oldForceCode,
+          errorId: courtCaseId,
+          phase: Phase.PNC_UPDATE,
+          errorStatus: null,
+          errorLockedByUsername: user.username,
+          triggerLockedByUsername: user.username
+        }
+      ])
+
+      const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06").catch((error) => error)
+      expect(result).toEqual(Error("Logic to generate post update triggers is not implemented"))
+    })
+
+    it("Should return error if fails to update triggers", async () => {
+      await insertCourtCasesWithFields([
+        {
+          orgForPoliceFilter: oldForceCode,
+          errorId: courtCaseId,
+          errorLockedByUsername: user.username,
+          triggerLockedByUsername: user.username
+        }
+      ])
+      ;(updateTriggers as jest.Mock).mockImplementationOnce(() => new Error("Error while updating triggers"))
+
+      const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06").catch((error) => error)
+      expect(result).toEqual(Error("Error while updating triggers"))
+    })
+
+    it("Should return the error if fails to amend court case", async () => {
+      await insertCourtCasesWithFields([
+        {
+          orgForPoliceFilter: oldForceCode,
+          errorId: courtCaseId,
+          errorLockedByUsername: user.username,
+          triggerLockedByUsername: user.username
+        }
+      ])
+      ;(amendCourtCase as jest.Mock).mockImplementationOnce(() => new Error("Error while amending court case"))
+
+      const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06").catch((error) => error)
+      expect(result).toEqual(Error("Error while amending court case"))
+    })
+
+    it("Should return error if fails to update court case", async () => {
+      await insertCourtCasesWithFields([
+        {
+          orgForPoliceFilter: oldForceCode,
+          errorId: courtCaseId,
+          errorLockedByUsername: user.username,
+          triggerLockedByUsername: user.username
+        }
+      ])
+      ;(updateCourtCase as jest.Mock).mockImplementationOnce(() => new Error("Error while update court case"))
+
+      const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06").catch((error) => error)
+      expect(result).toEqual(Error("Error while update court case"))
+    })
+
     it("Should return the error if fails to create notes", async () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
@@ -265,13 +477,6 @@ describe("reallocate court case to another force", () => {
           errorId: courtCaseId
         }
       ])
-
-      const user = {
-        username: "Dummy User",
-        visibleForces: [oldForceCode],
-        visibleCourts: [],
-        hasAccessTo: hasAccessToAll
-      } as Partial<User> as User
 
       ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
 
@@ -290,20 +495,13 @@ describe("reallocate court case to another force", () => {
       expect(events).toHaveLength(0)
     })
 
-    it("Should return the error when fails to update orgForPoliceFilter", async () => {
+    it("Should return error when fails to update orgForPoliceFilter", async () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
           orgForPoliceFilter: oldForceCode,
           errorId: courtCaseId
         }
       ])
-
-      const user = {
-        username: "Dummy User",
-        visibleForces: [oldForceCode],
-        visibleCourts: [],
-        hasAccessTo: hasAccessToAll
-      } as Partial<User> as User
 
       jest
         .spyOn(UpdateQueryBuilder.prototype, "execute")

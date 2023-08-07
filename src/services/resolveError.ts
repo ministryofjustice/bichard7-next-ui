@@ -27,11 +27,12 @@ const resolveError = async (
     throw new Error(resolutionError)
   }
 
-  const courtCaseRepository = entityManager.getRepository(CourtCase)
   const resolver = user.username
   const resolutionTimestamp = new Date()
-  let query = courtCaseRepository.createQueryBuilder().update(CourtCase)
-  query = courtCasesByOrganisationUnitQuery(query, user) as UpdateQueryBuilder<CourtCase>
+  const query = courtCasesByOrganisationUnitQuery(
+    entityManager.getRepository(CourtCase).createQueryBuilder().update(CourtCase),
+    user
+  ) as UpdateQueryBuilder<CourtCase>
 
   const queryParams: Record<string, unknown> = {
     errorStatus: "Resolved",

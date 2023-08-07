@@ -4,8 +4,8 @@ import User from "./entities/User"
 import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import storeAuditLogEvents from "./storeAuditLogEvents"
-import getCourtCase from "./getCourtCase"
 import UnlockReason from "types/UnlockReason"
+import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
 
 const unlockCourtCase = async (
   dataSource: DataSource,
@@ -16,7 +16,7 @@ const unlockCourtCase = async (
   const updateResult = await dataSource.transaction("SERIALIZABLE", async (entityManager) => {
     const events: AuditLogEvent[] = []
 
-    const courtCase = await getCourtCase(entityManager, courtCaseId)
+    const courtCase = await getCourtCaseByOrganisationUnit(entityManager, courtCaseId, user)
 
     if (isError(courtCase)) {
       throw courtCase

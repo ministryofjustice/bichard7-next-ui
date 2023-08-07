@@ -69,7 +69,7 @@ describe("unlock court case", () => {
   })
 
   describe("when a case is successfully unlocked", () => {
-    it("Should call updateLockStatusToUnlocked, courtCasesByOrganisationUnitQuery and storeAuditLogEvents", async () => {
+    it("Should call courtCasesByOrganisationUnitQuery, updateLockStatusToUnlocked and storeAuditLogEvents", async () => {
       const expectedAuditLogEvents = [
         {
           attributes: { auditLogVersion: 2, user: lockedByName },
@@ -95,6 +95,8 @@ describe("unlock court case", () => {
         (error) => error
       )
 
+      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
+      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
       expect(updateLockStatusToUnlocked).toHaveBeenCalledTimes(1)
       expect(updateLockStatusToUnlocked).toHaveBeenCalledWith(
         expect.any(Object),
@@ -103,8 +105,6 @@ describe("unlock court case", () => {
         UnlockReason.TriggerAndException,
         expectedAuditLogEvents
       )
-      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(2)
-      expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
       expect(storeAuditLogEvents).toHaveBeenCalledTimes(1)
       expect(storeAuditLogEvents).toHaveBeenCalledWith(lockedCourtCase.messageId, expectedAuditLogEvents)
     })

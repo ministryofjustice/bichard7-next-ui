@@ -1,4 +1,4 @@
-import { EntityManager, IsNull, MoreThan, Not, Repository, UpdateQueryBuilder, UpdateResult } from "typeorm"
+import { EntityManager, IsNull, MoreThan, Not, Repository, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import {
@@ -8,7 +8,6 @@ import {
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import { isError } from "types/Result"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
-import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 import Feature from "types/Feature"
 
@@ -19,12 +18,9 @@ const lock = async (
   user: User,
   events: AuditLogEvent[]
 ): Promise<UpdateResult | Error> => {
-  const result = await (
-    courtCasesByOrganisationUnitQuery(
-      courtCaseRepository.createQueryBuilder().update(CourtCase),
-      user
-    ) as UpdateQueryBuilder<CourtCase>
-  )
+  const result = await courtCaseRepository
+    .createQueryBuilder()
+    .update(CourtCase)
     .set({ [unlockReason === "Exception" ? "errorLockedByUsername" : "triggerLockedByUsername"]: user.username })
     .andWhere({
       errorId: courtCaseId,
