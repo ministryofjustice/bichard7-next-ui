@@ -12,7 +12,7 @@ import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/type
 import Feature from "types/Feature"
 
 const lock = async (
-  unlockReason: "Trigger" | "Exception",
+  lockReason: "Trigger" | "Exception",
   courtCaseRepository: Repository<CourtCase>,
   courtCaseId: number,
   user: User,
@@ -21,18 +21,18 @@ const lock = async (
   const result = await courtCaseRepository
     .createQueryBuilder()
     .update(CourtCase)
-    .set({ [unlockReason === "Exception" ? "errorLockedByUsername" : "triggerLockedByUsername"]: user.username })
+    .set({ [lockReason === "Exception" ? "errorLockedByUsername" : "triggerLockedByUsername"]: user.username })
     .andWhere({
       errorId: courtCaseId,
-      [unlockReason === "Exception" ? "errorLockedByUsername" : "triggerLockedByUsername"]: IsNull(),
-      [unlockReason === "Exception" ? "errorCount" : "triggerCount"]: MoreThan(0),
-      [unlockReason === "Exception" ? "errorStatus" : "triggerStatus"]: Not("Submitted")
+      [lockReason === "Exception" ? "errorLockedByUsername" : "triggerLockedByUsername"]: IsNull(),
+      [lockReason === "Exception" ? "errorCount" : "triggerCount"]: MoreThan(0),
+      [lockReason === "Exception" ? "errorStatus" : "triggerStatus"]: Not("Submitted")
     })
     .execute()
     .catch((error) => error)
 
   if (!result) {
-    return new Error(`Failed to lock ${unlockReason}`)
+    return new Error(`Failed to lock ${lockReason}`)
   }
 
   if (isError(result)) {
@@ -42,7 +42,7 @@ const lock = async (
   if (result.affected && result.affected > 0) {
     events.push(
       getAuditLogEvent(
-        unlockReason === "Exception" ? AuditLogEventOptions.exceptionLocked : AuditLogEventOptions.triggerLocked,
+        lockReason === "Exception" ? AuditLogEventOptions.exceptionLocked : AuditLogEventOptions.triggerLocked,
         EventCategory.information,
         AUDIT_LOG_EVENT_SOURCE,
         {
