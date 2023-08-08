@@ -13,6 +13,7 @@ import {
   loginAndGoToUrl
 } from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
+import M from "cypress/types/minimatch"
 
 const unlockCase = (caseToUnlockNumber: string, caseToUnlockText: string) => {
   cy.get(`tbody tr:nth-child(${caseToUnlockNumber}) .locked-by-tag`).get("button").contains(caseToUnlockText).click()
@@ -1413,38 +1414,104 @@ describe("Case list", () => {
       {
         orgForPoliceFilter: "011111",
         errorId: 0,
-        errorCount: 0,
-        triggerCount: 0
+        exceptions: [],
+        triggers: []
       },
       {
         orgForPoliceFilter: "011111",
         errorId: 1,
-        errorCount: 3,
-        triggerCount: 0
+        exceptions: [
+          {
+            code: "HO100310",
+            field: "ds:OffenceReasonSequence"
+          },
+          {
+            code: "HO100301",
+            field: "ds:OffenceReasonSequence"
+          }
+        ],
+        triggers: []
       },
       {
         orgForPoliceFilter: "011111",
         errorId: 2,
-        errorCount: 0,
-        triggerCount: 5
+        exceptions: [],
+        triggers: [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0010",
+            status: "Unresolved",
+            createdAt: new Date()
+          },
+          {
+            triggerId: 1,
+            triggerCode: "TRPR0011",
+            status: "Unresolved",
+            createdAt: new Date()
+          }
+        ]
       },
       {
         orgForPoliceFilter: "011111",
         errorId: 3,
-        errorCount: 2,
-        triggerCount: 2
+        exceptions: [
+          {
+            code: "HO100310",
+            field: "ds:OffenceReasonSequence"
+          },
+          {
+            code: "HO100301",
+            field: "ds:OffenceReasonSequence"
+          }
+        ],
+        triggers: [
+          {
+            triggerId: 2,
+            triggerCode: "TRPR0010",
+            status: "Unresolved",
+            createdAt: new Date()
+          },
+          {
+            triggerId: 3,
+            triggerCode: "TRPR0011",
+            status: "Unresolved",
+            createdAt: new Date()
+          }
+        ]
       }
     ]
 
+    beforeEach(() => {
+      cy.task(
+        "insertCourtCasesWithFields",
+        mixedReasonCases.map((courtCase) => {
+          return {
+            errorId: courtCase.errorId,
+            orgForPoliceFilter: courtCase.orgForPoliceFilter
+          }
+        })
+      )
+      mixedReasonCases.forEach((courtCase) => {
+        courtCase.exceptions?.forEach((exception) => {
+          cy.task("insertException", {
+            caseId: courtCase.errorId,
+            exceptionCode: exception.code,
+            errorReport: `${exception.code}||${exception.field}`
+          })
+        })
+        if (courtCase.triggers && courtCase.triggers.length > 0) {
+          cy.task("insertTriggers", { caseId: courtCase.errorId, triggers: courtCase.triggers })
+        }
+      })
+    })
+
     it("Shouldn't show cases to a user with no groups", () => {
-      cy.task("insertCourtCasesWithFields", mixedReasonCases)
       loginAndGoToUrl("nogroups@example.com")
 
       cy.findByText("There are no court cases to show").should("exist")
     })
 
     it("Should only show cases with triggers to a trigger handler", () => {
-      cy.task("insertCourtCasesWithFields", mixedReasonCases)
       loginAndGoToUrl("triggerhandler@example.com")
 
       confirmCaseDisplayed("Case00002")
@@ -1455,7 +1522,6 @@ describe("Case list", () => {
     })
 
     it("Should only show cases with exceptions to an exception handler", () => {
-      cy.task("insertCourtCasesWithFields", mixedReasonCases)
       loginAndGoToUrl("exceptionhandler@example.com")
 
       confirmCaseDisplayed("Case00001")
@@ -1466,7 +1532,6 @@ describe("Case list", () => {
     })
 
     it("Should show all cases to a general handler", () => {
-      cy.task("insertCourtCasesWithFields", mixedReasonCases)
       loginAndGoToUrl("generalhandler@example.com")
 
       confirmCaseDisplayed("Case00000")
@@ -1476,7 +1541,6 @@ describe("Case list", () => {
     })
 
     it("Should show all cases to a supervisor", () => {
-      cy.task("insertCourtCasesWithFields", mixedReasonCases)
       loginAndGoToUrl("supervisor@example.com")
 
       confirmCaseDisplayed("Case00000")
