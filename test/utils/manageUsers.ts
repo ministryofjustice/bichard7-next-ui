@@ -28,10 +28,15 @@ const insertUserIntoGroup = async (emailAddress: string, groupName: string): Pro
       br7own.users_groups(
       group_id, 
       user_id
-    ) VALUES (
-      (SELECT id FROM br7own.groups WHERE name=$1 LIMIT 1),
-      (SELECT id FROM br7own.users WHERE email=$2 LIMIT 1)
-    )`,
+    )
+    SELECT G.id, U.id FROM br7own.users AS U, br7own."groups" AS G
+    WHERE
+    	G.id = (SELECT id FROM br7own.groups WHERE name=$1 LIMIT 1)
+    	AND
+    	U.id = (SELECT id FROM br7own.users WHERE email=$2 LIMIT 1)
+    	AND
+    	NOT EXISTS (SELECT * FROM br7own.users_groups AS UG WHERE UG.group_id = G.id AND UG.user_id = U.id)
+    `,
     [groupName, emailAddress]
   )
 }
