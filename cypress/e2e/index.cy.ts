@@ -1411,7 +1411,7 @@ describe("Case list", () => {
     })
   })
 
-  describe.only("Shows relevant information to a user's role", () => {
+  describe("Shows relevant information to a user's role", () => {
     const mixedReasonCases = [
       {
         orgForPoliceFilter: "011111",

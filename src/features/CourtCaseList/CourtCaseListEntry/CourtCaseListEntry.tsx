@@ -5,8 +5,14 @@ import User from "services/entities/User"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import { useCustomStyles } from "../../../../styles/customStyles"
 import { CaseDetailsRow } from "./CaseDetailsRow/CaseDetailsRow"
-import { TriggersRow } from "./TriggersRow/TriggersRow"
+import { ExtraReasonRow } from "./ExtraReasonRow"
 import Feature from "types/Feature"
+import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
+import { SingleException } from "./CaseDetailsRow/SingleException"
+import LockedByTag from "../tags/LockedByTag/LockedByTag"
+import Trigger from "services/entities/Trigger"
+import ConditionalRender from "components/ConditionalRender"
+import CaseUnlockedTag from "../tags/CaseUnlockedTag"
 
 interface Props {
   courtCase: CourtCase
@@ -55,6 +61,64 @@ const CourtCaseListEntry: React.FC<Props> = ({
 
   const classes = useCustomStyles()
 
+  const exceptions = groupErrorsFromReport(errorReport)
+  const exceptionsCell = (
+    <>
+      {Object.keys(exceptions).map((exception, exceptionId) => {
+        return <SingleException key={exceptionId} exception={exception} exceptionCounter={exceptions[exception]} />
+      })}
+    </>
+  )
+  const exceptionsLockTag =
+    errorLockedByUsername && canUnlockCase(errorLockedByUsername) ? (
+      <LockedByTag
+        lockedBy={errorLockedByUserFullName}
+        unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
+      />
+    ) : (
+      <LockedByTag lockedBy={errorLockedByUserFullName} />
+    )
+
+  type TriggerWithCount = Partial<Trigger> & { count: number }
+  const triggersWithCounts = Object.values(
+    triggers.reduce(
+      (counts, trigger) => {
+        let current = counts[trigger.triggerCode]
+        if (!current) {
+          current = { ...trigger, count: 1 }
+        } else {
+          current.count += 1
+        }
+
+        counts[trigger.triggerCode] = current
+        return counts
+      },
+      {} as { [key: string]: TriggerWithCount }
+    )
+  )
+  const triggersCell = triggersWithCounts?.map((trigger, triggerId) => (
+    <div key={`trigger_${triggerId}`} className={"trigger-description"}>
+      {trigger.description}
+      <ConditionalRender isRendered={trigger.count > 1}>
+        <b>{` (${trigger.count})`}</b>
+      </ConditionalRender>
+    </div>
+  ))
+  const triggersLockTag = (
+    <>
+      {triggerLockedByUsername && canUnlockCase(triggerLockedByUsername) ? (
+        <LockedByTag
+          lockedBy={triggerLockedByUserFullName}
+          unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
+        />
+      ) : (
+        <LockedByTag lockedBy={triggerLockedByUserFullName} />
+      )}
+
+      <CaseUnlockedTag isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !triggerLockedByUsername} />
+    </>
+  )
+
   return (
     <>
       <CaseDetailsRow
@@ -75,17 +139,18 @@ const CourtCaseListEntry: React.FC<Props> = ({
         ptiurn={ptiurn}
         rowClassName={entityClassName}
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
+        reasonCell={exceptionsCell}
+        lockTag={exceptionsLockTag}
       />
-      <TriggersRow
-        canCurrentUserUnlockCase={triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
-        firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
-        isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !triggerLockedByUsername}
-        rowClassName={entityClassName}
-        triggerLockedByUsername={triggerLockedByUsername}
-        triggerLockedByUserFullName={triggerLockedByUserFullName}
-        triggers={triggers}
-        unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
-      />
+      <ConditionalRender isRendered={hasTriggers}>
+        <ExtraReasonRow
+          firstColumnClassName={classes["limited-border-left"]}
+          rowClassName={entityClassName}
+          isLocked={!!triggerLockedByUsername}
+          reasonCell={triggersCell}
+          lockTag={triggersLockTag}
+        />
+      </ConditionalRender>
     </>
   )
 }
