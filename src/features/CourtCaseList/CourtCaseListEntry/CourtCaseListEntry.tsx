@@ -45,17 +45,47 @@ const CourtCaseListEntry: React.FC<Props> = ({
   } = courtCase
   const { basePath, query } = useRouter()
   const searchParams = new URLSearchParams(encode(query))
+
   const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
     deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
 
     searchParams.append(`unlock${reason}`, caseId)
     return `${basePath}/?${searchParams}`
   }
+
   const canUnlockCase = (lockedUsername: string): boolean => {
     return currentUser.hasAccessTo[Feature.UnlockOtherUsersCases] || currentUser.username === lockedUsername
   }
 
   const hasTriggers = triggers.length > 0
+  const hasExceptions = !!errorReport
+
+  const exceptionsReasonCell = <ExceptionsReasonCell exceptionCounts={groupErrorsFromReport(errorReport)} />
+  const exceptionsLockTag = (
+    <ExceptionsLockTag
+      errorLockedByUsername={errorLockedByUsername}
+      errorLockedByFullName={errorLockedByUserFullName}
+      canUnlockCase={!!errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
+      unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
+    />
+  )
+  const triggersReasonCell = <TriggersReasonCell triggers={triggers} />
+  const triggersLockTag = (
+    <TriggersLockTag
+      triggersLockedByUsername={triggerLockedByUsername}
+      triggersLockedByFullName={triggerLockedByUserFullName}
+      triggersHaveBeenRecentlyUnlocked={triggerHasBeenRecentlyUnlocked}
+      canUnlockCase={!!triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
+      unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
+    />
+  )
+  const reasonAndLockTags: [JSX.Element, JSX.Element][] = []
+  if (hasExceptions && currentUser.hasAccessTo[Feature.Exceptions]) {
+    reasonAndLockTags.push([exceptionsReasonCell, exceptionsLockTag])
+  }
+  if (hasTriggers && currentUser.hasAccessTo[Feature.Triggers]) {
+    reasonAndLockTags.push([triggersReasonCell, triggersLockTag])
+  }
 
   const classes = useCustomStyles()
 
@@ -79,31 +109,16 @@ const CourtCaseListEntry: React.FC<Props> = ({
         ptiurn={ptiurn}
         rowClassName={entityClassName}
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
-        reasonCell={<ExceptionsReasonCell exceptionCounts={groupErrorsFromReport(errorReport)} />}
-        lockTag={
-          <ExceptionsLockTag
-            errorLockedByUsername={errorLockedByUsername}
-            errorLockedByFullName={errorLockedByUserFullName}
-            canUnlockCase={!!errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
-            unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
-          />
-        }
+        reasonCell={reasonAndLockTags[0] ? reasonAndLockTags[0][0] : <></>}
+        lockTag={reasonAndLockTags[0] ? reasonAndLockTags[0][1] : <></>}
       />
-      <ConditionalRender isRendered={hasTriggers}>
+      <ConditionalRender isRendered={reasonAndLockTags.length > 1}>
         <ExtraReasonRow
           firstColumnClassName={classes["limited-border-left"]}
           rowClassName={entityClassName}
           isLocked={!!triggerLockedByUsername}
-          reasonCell={<TriggersReasonCell triggers={triggers} />}
-          lockTag={
-            <TriggersLockTag
-              triggersLockedByUsername={triggerLockedByUsername}
-              triggersLockedByFullName={triggerLockedByUserFullName}
-              triggersHaveBeenRecentlyUnlocked={triggerHasBeenRecentlyUnlocked}
-              canUnlockCase={!!triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
-              unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
-            />
-          }
+          reasonCell={reasonAndLockTags[1] ? reasonAndLockTags[1][0] : <></>}
+          lockTag={reasonAndLockTags[1] ? reasonAndLockTags[1][1] : <></>}
         />
       </ConditionalRender>
     </>

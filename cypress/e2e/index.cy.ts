@@ -15,7 +15,6 @@ import {
   loginAndGoToUrl
 } from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
-import M from "cypress/types/minimatch"
 
 const unlockCase = (caseToUnlockNumber: string, caseToUnlockText: string) => {
   cy.get(`tbody tr:nth-child(${caseToUnlockNumber}) .locked-by-tag`).get("button").contains(caseToUnlockText).click()

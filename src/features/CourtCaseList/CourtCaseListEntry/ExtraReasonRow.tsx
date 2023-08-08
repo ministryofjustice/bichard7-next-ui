@@ -3,14 +3,13 @@ import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Image from "next/image"
 import { LOCKED_ICON_URL } from "utils/icons"
-import { ReactNode } from "react"
 
 interface ExtraReasonRowProps {
   firstColumnClassName: string
   rowClassName: string
   isLocked: boolean
-  reasonCell: ReactNode
-  lockTag: ReactNode
+  reasonCell: JSX.Element
+  lockTag: JSX.Element
 }
 
 const useStyles = createUseStyles({

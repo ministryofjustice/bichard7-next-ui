@@ -7,8 +7,7 @@ import ResolvedTag from "features/CourtCaseList/tags/ResolvedTag"
 import DateTime from "components/DateTime"
 import { displayedDateFormat } from "utils/formattedDate"
 import UrgentTag from "features/CourtCaseList/tags/UrgentTag"
-import { ReactNode, useState } from "react"
-import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
+import { useState } from "react"
 import {
   filterUserNotes,
   getMostRecentNote
@@ -36,8 +35,8 @@ interface CaseDetailsRowProps {
   ptiurn: string
   rowClassName: string
   unlockPath: string
-  reasonCell: ReactNode
-  lockTag: ReactNode
+  reasonCell: JSX.Element
+  lockTag: JSX.Element
 }
 
 const useStyles = createUseStyles({
