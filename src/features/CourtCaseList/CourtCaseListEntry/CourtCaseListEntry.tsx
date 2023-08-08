@@ -8,11 +8,9 @@ import { CaseDetailsRow } from "./CaseDetailsRow/CaseDetailsRow"
 import { ExtraReasonRow } from "./ExtraReasonRow"
 import Feature from "types/Feature"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
-import { SingleException } from "./CaseDetailsRow/SingleException"
-import LockedByTag from "../tags/LockedByTag/LockedByTag"
-import Trigger from "services/entities/Trigger"
 import ConditionalRender from "components/ConditionalRender"
-import CaseUnlockedTag from "../tags/CaseUnlockedTag"
+import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
+import { ExceptionsLockTag, ExceptionsReasonCell } from "./ExceptionsColumns"
 
 interface Props {
   courtCase: CourtCase
@@ -61,64 +59,6 @@ const CourtCaseListEntry: React.FC<Props> = ({
 
   const classes = useCustomStyles()
 
-  const exceptions = groupErrorsFromReport(errorReport)
-  const exceptionsCell = (
-    <>
-      {Object.keys(exceptions).map((exception, exceptionId) => {
-        return <SingleException key={exceptionId} exception={exception} exceptionCounter={exceptions[exception]} />
-      })}
-    </>
-  )
-  const exceptionsLockTag =
-    errorLockedByUsername && canUnlockCase(errorLockedByUsername) ? (
-      <LockedByTag
-        lockedBy={errorLockedByUserFullName}
-        unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
-      />
-    ) : (
-      <LockedByTag lockedBy={errorLockedByUserFullName} />
-    )
-
-  type TriggerWithCount = Partial<Trigger> & { count: number }
-  const triggersWithCounts = Object.values(
-    triggers.reduce(
-      (counts, trigger) => {
-        let current = counts[trigger.triggerCode]
-        if (!current) {
-          current = { ...trigger, count: 1 }
-        } else {
-          current.count += 1
-        }
-
-        counts[trigger.triggerCode] = current
-        return counts
-      },
-      {} as { [key: string]: TriggerWithCount }
-    )
-  )
-  const triggersCell = triggersWithCounts?.map((trigger, triggerId) => (
-    <div key={`trigger_${triggerId}`} className={"trigger-description"}>
-      {trigger.description}
-      <ConditionalRender isRendered={trigger.count > 1}>
-        <b>{` (${trigger.count})`}</b>
-      </ConditionalRender>
-    </div>
-  ))
-  const triggersLockTag = (
-    <>
-      {triggerLockedByUsername && canUnlockCase(triggerLockedByUsername) ? (
-        <LockedByTag
-          lockedBy={triggerLockedByUserFullName}
-          unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
-        />
-      ) : (
-        <LockedByTag lockedBy={triggerLockedByUserFullName} />
-      )}
-
-      <CaseUnlockedTag isCaseUnlocked={triggerHasBeenRecentlyUnlocked && !triggerLockedByUsername} />
-    </>
-  )
-
   return (
     <>
       <CaseDetailsRow
@@ -139,16 +79,31 @@ const CourtCaseListEntry: React.FC<Props> = ({
         ptiurn={ptiurn}
         rowClassName={entityClassName}
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
-        reasonCell={exceptionsCell}
-        lockTag={exceptionsLockTag}
+        reasonCell={<ExceptionsReasonCell exceptionCounts={groupErrorsFromReport(errorReport)} />}
+        lockTag={
+          <ExceptionsLockTag
+            errorLockedByUsername={errorLockedByUsername}
+            errorLockedByFullName={errorLockedByUserFullName}
+            canUnlockCase={!!errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
+            unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
+          />
+        }
       />
       <ConditionalRender isRendered={hasTriggers}>
         <ExtraReasonRow
           firstColumnClassName={classes["limited-border-left"]}
           rowClassName={entityClassName}
           isLocked={!!triggerLockedByUsername}
-          reasonCell={triggersCell}
-          lockTag={triggersLockTag}
+          reasonCell={<TriggersReasonCell triggers={triggers} />}
+          lockTag={
+            <TriggersLockTag
+              triggersLockedByUsername={triggerLockedByUsername}
+              triggersLockedByFullName={triggerLockedByUserFullName}
+              triggersHaveBeenRecentlyUnlocked={triggerHasBeenRecentlyUnlocked}
+              canUnlockCase={!!triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
+              unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
+            />
+          }
         />
       </ConditionalRender>
     </>

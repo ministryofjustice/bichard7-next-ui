@@ -2,8 +2,6 @@ import ConditionalRender from "components/ConditionalRender"
 import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Image from "next/image"
-import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
-import CaseUnlockedTag from "features/CourtCaseList/tags/CaseUnlockedTag"
 import { LOCKED_ICON_URL } from "utils/icons"
 import { ReactNode } from "react"
 

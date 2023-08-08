@@ -1,0 +1,66 @@
+import ConditionalRender from "components/ConditionalRender"
+import Trigger from "services/entities/Trigger"
+import CaseUnlockedTag from "../tags/CaseUnlockedTag"
+import LockedByTag from "../tags/LockedByTag/LockedByTag"
+
+type TriggerWithCount = Partial<Trigger> & { count: number }
+
+const triggersWithCounts = (triggers: Trigger[]) => {
+  return Object.values(
+    triggers.reduce(
+      (counts, trigger) => {
+        let current = counts[trigger.triggerCode]
+        if (!current) {
+          current = { ...trigger, count: 1 }
+        } else {
+          current.count += 1
+        }
+
+        counts[trigger.triggerCode] = current
+        return counts
+      },
+      {} as { [key: string]: TriggerWithCount }
+    )
+  )
+}
+
+export const TriggersReasonCell = ({ triggers }: { triggers: Trigger[] }) => {
+  return (
+    <>
+      {triggersWithCounts(triggers).map((trigger, triggerId) => (
+        <div key={`trigger_${triggerId}`} className={"trigger-description"}>
+          {trigger.description}
+          <ConditionalRender isRendered={trigger.count > 1}>
+            <b>{` (${trigger.count})`}</b>
+          </ConditionalRender>
+        </div>
+      ))}
+    </>
+  )
+}
+
+export const TriggersLockTag = ({
+  triggersLockedByUsername,
+  triggersLockedByFullName,
+  triggersHaveBeenRecentlyUnlocked,
+  canUnlockCase,
+  unlockPath
+}: {
+  triggersLockedByUsername: string | null | undefined
+  triggersLockedByFullName: string | null | undefined
+  triggersHaveBeenRecentlyUnlocked: boolean
+  canUnlockCase: boolean
+  unlockPath: string
+}) => {
+  return (
+    <>
+      {canUnlockCase ? (
+        <LockedByTag lockedBy={triggersLockedByFullName} unlockPath={unlockPath} />
+      ) : (
+        <LockedByTag lockedBy={triggersLockedByFullName} />
+      )}
+
+      <CaseUnlockedTag isCaseUnlocked={triggersHaveBeenRecentlyUnlocked && !triggersLockedByUsername} />
+    </>
+  )
+}
