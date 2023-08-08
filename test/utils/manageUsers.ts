@@ -58,17 +58,12 @@ const insertUsers = async (users: User | User[], userGroups?: string[]): Promise
     return result
   }
 
-  userGroups.forEach(async (userGroup) => {
-    const group = sanitiseGroupName(userGroup)
-
-    if (Array.isArray(users)) {
-      users.forEach(async (user) => {
-        await insertUserIntoGroup(user.email, group)
-      })
-    } else {
-      await insertUserIntoGroup(users.email, group)
-    }
-  })
+  await Promise.all(
+    userGroups.flatMap((userGroup) => {
+      const group = sanitiseGroupName(userGroup)
+      return [users].flat().map((user) => insertUserIntoGroup(user.email, group))
+    })
+  )
 
   return result
 }
