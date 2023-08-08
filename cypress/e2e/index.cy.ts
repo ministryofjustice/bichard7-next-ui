@@ -10,6 +10,8 @@ import {
   confirmFiltersAppliedContains,
   confirmMultipleFieldsDisplayed,
   confirmMultipleFieldsNotDisplayed,
+  confirmReasonDisplayed,
+  confirmReasonNotDisplayed,
   loginAndGoToUrl
 } from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
@@ -1409,7 +1411,7 @@ describe("Case list", () => {
     })
   })
 
-  describe("Shows only cases relevant to a user's role", () => {
+  describe.only("Shows relevant information to a user's role", () => {
     const mixedReasonCases = [
       {
         orgForPoliceFilter: "011111",
@@ -1547,6 +1549,36 @@ describe("Case list", () => {
       confirmCaseDisplayed("Case00001")
       confirmCaseDisplayed("Case00002")
       confirmCaseDisplayed("Case00003")
+    })
+
+    it("Should only show triggers in the reason column to a trigger handler", () => {
+      loginAndGoToUrl("triggerhandler@example.com")
+
+      confirmReasonDisplayed("TRPR0010")
+      confirmReasonDisplayed("TRPR0011")
+
+      confirmReasonNotDisplayed("HO100301")
+      confirmReasonNotDisplayed("HO100310")
+    })
+
+    it("Should only show exceptions in the reason column to an exception handler", () => {
+      loginAndGoToUrl("exceptionhandler@example.com")
+
+      confirmReasonNotDisplayed("TRPR0010")
+      confirmReasonNotDisplayed("TRPR0011")
+
+      confirmReasonDisplayed("HO100301")
+      confirmReasonDisplayed("HO100310")
+    })
+
+    it("Should show both triggers and exceptions in the reason column to a general handler", () => {
+      loginAndGoToUrl("generalhandler@example.com")
+
+      confirmReasonDisplayed("TRPR0010")
+      confirmReasonDisplayed("TRPR0011")
+
+      confirmReasonDisplayed("HO100301")
+      confirmReasonDisplayed("HO100310")
     })
   })
 })
