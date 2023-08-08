@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
-import { parseAhoXml } from "@moj-bichard7-developers/bichard7-next-core/dist/parse/parseAhoXml"
-import parseAnnotatedPNCUpdateDatasetXml from "@moj-bichard7-developers/bichard7-next-core/dist/parse/parseAnnotatedPNCUpdateDatasetXml/parseAnnotatedPNCUpdateDatasetXml"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
 import Layout from "components/Layout"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
@@ -22,9 +20,9 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
 import { isPost } from "utils/http"
-import { isPncUpdateDataset } from "utils/isPncUpdateDataset"
 import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
+import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -118,25 +116,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    let annotatedHearingOutcome: AnnotatedHearingOutcome | Error
-
-    if (isPncUpdateDataset(courtCase.hearingOutcome)) {
-      const pncUpdateDataset = parseAnnotatedPNCUpdateDatasetXml(courtCase.hearingOutcome)
-
-      if (isError(pncUpdateDataset)) {
-        console.error(`Failed to parse AnnotatedPNCUpdateDatasetXml: ${pncUpdateDataset}`)
-
-        annotatedHearingOutcome = pncUpdateDataset
-      } else {
-        annotatedHearingOutcome = pncUpdateDataset.AnnotatedPNCUpdateDataset.PNCUpdateDataset
-      }
-    } else {
-      annotatedHearingOutcome = parseAhoXml(courtCase.hearingOutcome)
-
-      if (isError(annotatedHearingOutcome)) {
-        console.error(`Failed to parse aho: ${annotatedHearingOutcome}`)
-      }
-    }
+    const annotatedHearingOutcome = parseHearingOutcome(courtCase.hearingOutcome)
 
     return {
       props: {
