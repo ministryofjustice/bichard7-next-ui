@@ -1,4 +1,4 @@
-import { EntityManager, IsNull, MoreThan, Not, Repository, UpdateResult } from "typeorm"
+import { EntityManager, FindOperator, IsNull, MoreThan, Not, Repository, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import {
@@ -11,23 +11,44 @@ import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 import Feature from "types/Feature"
 
+type LockReason = "Trigger" | "Exception"
+type WhereClause<T> = {
+  [P in keyof T]?: T[P] | FindOperator<T[P]>
+}
+
+const getUpdateQueryCaluses = (lockReason: LockReason, courtCaseId: number, user: User) => {
+  const setClause: Partial<CourtCase> = {}
+  const whereClause: WhereClause<CourtCase> = { errorId: courtCaseId }
+
+  if (lockReason === "Exception") {
+    setClause.errorLockedByUsername = user.username
+    whereClause.errorLockedByUsername = IsNull()
+    whereClause.errorCount = MoreThan(0)
+    whereClause.errorStatus = Not("Submitted")
+  } else {
+    setClause.triggerLockedByUsername = user.username
+    whereClause.triggerLockedByUsername = IsNull()
+    whereClause.triggerCount = MoreThan(0)
+    whereClause.triggerStatus = Not("Submitted")
+  }
+
+  return [setClause, whereClause] as const
+}
+
 const lock = async (
-  lockReason: "Trigger" | "Exception",
+  lockReason: LockReason,
   courtCaseRepository: Repository<CourtCase>,
   courtCaseId: number,
   user: User,
   events: AuditLogEvent[]
 ): Promise<UpdateResult | Error> => {
+  const [setClause, whereClause] = getUpdateQueryCaluses(lockReason, courtCaseId, user)
+
   const result = await courtCaseRepository
     .createQueryBuilder()
     .update(CourtCase)
-    .set({ [lockReason === "Exception" ? "errorLockedByUsername" : "triggerLockedByUsername"]: user.username })
-    .andWhere({
-      errorId: courtCaseId,
-      [lockReason === "Exception" ? "errorLockedByUsername" : "triggerLockedByUsername"]: IsNull(),
-      [lockReason === "Exception" ? "errorCount" : "triggerCount"]: MoreThan(0),
-      [lockReason === "Exception" ? "errorStatus" : "triggerStatus"]: Not("Submitted")
-    })
+    .set(setClause)
+    .andWhere(whereClause)
     .execute()
     .catch((error) => error as Error)
 
