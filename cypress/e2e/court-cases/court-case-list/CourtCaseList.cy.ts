@@ -84,7 +84,7 @@ describe("Court case details", () => {
       }
     ])
 
-    newUserLogin({ user: "trigger-handler-user", groups: [UserGroup.ExceptionHandler] })
+    newUserLogin({ user: "trigger-handler-user", groups: [UserGroup.TriggerHandler] })
 
     cy.visit("/bichard")
     cy.findByText("NAME Defendant").click()
