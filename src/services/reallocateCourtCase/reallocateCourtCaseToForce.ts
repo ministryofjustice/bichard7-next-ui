@@ -14,13 +14,13 @@ import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/l
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
 import { AUDIT_LOG_EVENT_SOURCE, REALLOCATE_CASE_TRIGGER_CODE } from "../../config"
 import getCourtCaseByOrganisationUnit from "../getCourtCaseByOrganisationUnit"
-import { parseAhoXml } from "@moj-bichard7-developers/bichard7-next-core/dist/parse/parseAhoXml"
 import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate"
 import type { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/dist/types/Phase"
 import recalculateTriggers from "./recalculateTriggers"
 import updateCourtCase from "./updateCourtCase"
 import updateTriggers from "./updateTriggers"
+import parseHearinOutcome from "../../utils/parseHearingOutcome"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,
@@ -43,7 +43,7 @@ const reallocateCourtCaseToForce = async (
         throw new Error("Failed to reallocate: Case not found")
       }
 
-      const aho = parseAhoXml(courtCase.hearingOutcome)
+      const aho = parseHearinOutcome(courtCase.hearingOutcome)
 
       if (isError(aho)) {
         return aho

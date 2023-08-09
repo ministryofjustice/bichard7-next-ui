@@ -58,6 +58,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
 
   const leaveAndUnlockParams = getUnlockPath(courtCase)
   const leaveAndUnlockUrl = `${basePath}?${leaveAndUnlockParams.toString()}`
+  const reallocatePath = `${basePath}/court-cases/${courtCase.errorId}/reallocate`
 
   const caseIsViewOnly = !isLockedByCurrentUser(courtCase, user.username)
   const hasCaseLock = isLockedByCurrentUser(courtCase, user.username)
@@ -140,7 +141,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
       <ButtonContainer>
         <ConditionalRender isRendered={canReallocate}>
           <LinkButton
-            href="reallocate"
+            href={reallocatePath}
             className="b7-reallocate-button"
             buttonColour={gdsLightGrey}
             buttonTextColour={textPrimary}
