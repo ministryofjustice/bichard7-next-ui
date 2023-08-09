@@ -137,7 +137,7 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
       !hasExistingUnresolvedOutOfAreaTrigger
   )
 
-  const newUnresolvedTriggersAlreadyOnCase = existingUnresolvedTriggers
+  const existingUnresolvedTriggerNotInNewTriggersList = existingUnresolvedTriggers
     .filter((unresolvedTrigger) => !containsTrigger(triggers, asTrigger(unresolvedTrigger)))
     .map(
       (triggerEntity) =>
@@ -146,7 +146,7 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
 
   const triggersOutcome: TriggersOutcome = {
     triggersToAdd: newTriggersThatAreNotOnTheCase.concat(newOutOfAreaTriggers),
-    triggersToDelete: newUnresolvedTriggersAlreadyOnCase
+    triggersToDelete: existingUnresolvedTriggerNotInNewTriggersList
   }
 
   updateOutOfAreaTriggers(triggersOutcome, existingTriggers)
