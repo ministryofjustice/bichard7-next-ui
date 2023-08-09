@@ -25,14 +25,9 @@ export const ExceptionsLockTag = ({
   unlockPath: string
   exceptionsHaveBeenRecentlyUnlocked: boolean
 }) => {
-  const lockTag = canUnlockCase ? (
-    <LockedByTag lockedBy={errorLockedByFullName} unlockPath={unlockPath} />
-  ) : (
-    <LockedByTag lockedBy={errorLockedByFullName} />
-  )
   return (
     <>
-      {lockTag}
+      <LockedByTag lockedBy={errorLockedByFullName} unlockPath={canUnlockCase ? unlockPath : undefined} />
       <CaseUnlockedTag isCaseUnlocked={exceptionsHaveBeenRecentlyUnlocked && !errorLockedByFullName} />
     </>
   )
