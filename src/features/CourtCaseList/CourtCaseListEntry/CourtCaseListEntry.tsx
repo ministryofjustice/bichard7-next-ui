@@ -67,6 +67,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
       errorLockedByFullName={errorLockedByUserFullName}
       canUnlockCase={!!errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
       unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
+      exceptionsHaveBeenRecentlyUnlocked={exceptionHasBeenRecentlyUnlocked}
     />
   )
   const triggersReasonCell = <TriggersReasonCell triggers={triggers} />

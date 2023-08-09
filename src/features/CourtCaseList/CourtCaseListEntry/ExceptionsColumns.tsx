@@ -1,6 +1,7 @@
 import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import { SingleException } from "./CaseDetailsRow/SingleException"
 import LockedByTag from "../tags/LockedByTag/LockedByTag"
+import CaseUnlockedTag from "../tags/CaseUnlockedTag"
 
 export const ExceptionsReasonCell = ({ exceptionCounts }: { exceptionCounts: KeyValuePair<string, number> }) => {
   return (
@@ -15,16 +16,24 @@ export const ExceptionsReasonCell = ({ exceptionCounts }: { exceptionCounts: Key
 export const ExceptionsLockTag = ({
   errorLockedByFullName,
   canUnlockCase,
-  unlockPath
+  unlockPath,
+  exceptionsHaveBeenRecentlyUnlocked
 }: {
   errorLockedByUsername: string | null | undefined
   errorLockedByFullName: string | null | undefined
   canUnlockCase: boolean
   unlockPath: string
+  exceptionsHaveBeenRecentlyUnlocked: boolean
 }) => {
-  return canUnlockCase ? (
+  const lockTag = canUnlockCase ? (
     <LockedByTag lockedBy={errorLockedByFullName} unlockPath={unlockPath} />
   ) : (
     <LockedByTag lockedBy={errorLockedByFullName} />
+  )
+  return (
+    <>
+      {lockTag}
+      <CaseUnlockedTag isCaseUnlocked={exceptionsHaveBeenRecentlyUnlocked && !errorLockedByFullName} />
+    </>
   )
 }

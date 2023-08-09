@@ -268,7 +268,7 @@ describe("Filtering cases", () => {
     inputAndSearch("reason-code", "TRPR0107")
     cy.contains("Case00000")
     confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
-    cy.get("tr").should("have.length", 3)
+    cy.get("tbody tr").should("have.length", 1)
     confirmFiltersAppliedContains("TRPR0107")
     removeFilterTag("TRPR0107")
 

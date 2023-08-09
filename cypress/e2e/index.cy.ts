@@ -614,25 +614,18 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      //Error locks
       cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard Test User 01")
       cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard Test User 02")
-      cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(5) .locked-by-tag`).should("not.exist")
-      cy.get(`tbody tr:nth-child(5) img[alt="Lock icon"]`).should("not.exist")
-      cy.get(`tbody tr:nth-child(7) .locked-by-tag`).should("have.text", "A Really Really Really Long Name")
-      cy.get(`tbody tr:nth-child(7) img[alt="Lock icon"]`).should("exist")
-
-      //Trigger locks
-      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard Test User 01")
+      cy.get(`tbody tr:nth-child(1) td:nth-child(8)`).should("contain.text", "TRPR0001")
+      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard Test User 02")
       cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(4) .locked-by-tag`).should("have.text", "Bichard Test User 02")
+      cy.get(`tbody tr:nth-child(2) td:nth-child(8)`).should("contain.text", "TRPR0001")
+      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("not.exist")
+      cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("not.exist")
+      cy.get(`tbody tr:nth-child(3) td:nth-child(8)`).should("contain.text", "TRPR0001")
+      cy.get(`tbody tr:nth-child(4) .locked-by-tag`).should("have.text", "A Really Really Really Long Name")
       cy.get(`tbody tr:nth-child(4) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(6) .locked-by-tag`).should("not.exist")
-      cy.get(`tbody tr:nth-child(6) img[alt="Lock icon"]`).should("not.exist")
-      cy.get(`tbody tr:nth-child(8) .locked-by-tag`).should("have.text", "A Really Really Really Long Name")
-      cy.get(`tbody tr:nth-child(8) img[alt="Lock icon"]`).should("exist")
+      cy.get(`tbody tr:nth-child(4) td:nth-child(8)`).should("contain.text", "TRPR0001")
     })
 
     it("can sort cases by who has locked it", () => {
@@ -669,6 +662,7 @@ describe("Case list", () => {
           triggerLockedByUsername: username,
           orgForPoliceFilter: "011111",
           errorCount: 1,
+          errorReport: "HO100310||ds:OffenceReasonSequence",
           triggerCount: 1
         }))
       )
@@ -720,6 +714,7 @@ describe("Case list", () => {
           triggerLockedByUsername: username,
           orgForPoliceFilter: "011111",
           errorCount: 1,
+          errorReport: "HO100310||ds:OffenceReasonSequence",
           triggerCount: 1
         }))
       )
@@ -1363,7 +1358,8 @@ describe("Case list", () => {
           errorLockedByUsername: "ExceptionHandler",
           triggerLockedByUsername: null,
           orgForPoliceFilter: "011111",
-          errorCount: 1
+          errorCount: 1,
+          errorReport: "HO100310||ds:OffenceReasonSequence"
         }
       ])
 
