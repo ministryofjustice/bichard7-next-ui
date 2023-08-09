@@ -10,6 +10,8 @@ import {
   confirmFiltersAppliedContains,
   confirmMultipleFieldsDisplayed,
   confirmMultipleFieldsNotDisplayed,
+  confirmReasonDisplayed,
+  confirmReasonNotDisplayed,
   loginAndGoToUrl
 } from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
@@ -612,25 +614,18 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      //Error locks
       cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard Test User 01")
       cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard Test User 02")
-      cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(5) .locked-by-tag`).should("not.exist")
-      cy.get(`tbody tr:nth-child(5) img[alt="Lock icon"]`).should("not.exist")
-      cy.get(`tbody tr:nth-child(7) .locked-by-tag`).should("have.text", "A Really Really Really Long Name")
-      cy.get(`tbody tr:nth-child(7) img[alt="Lock icon"]`).should("exist")
-
-      //Trigger locks
-      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard Test User 01")
+      cy.get(`tbody tr:nth-child(1) td:nth-child(8)`).should("contain.text", "TRPR0001")
+      cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard Test User 02")
       cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(4) .locked-by-tag`).should("have.text", "Bichard Test User 02")
+      cy.get(`tbody tr:nth-child(2) td:nth-child(8)`).should("contain.text", "TRPR0001")
+      cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("not.exist")
+      cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("not.exist")
+      cy.get(`tbody tr:nth-child(3) td:nth-child(8)`).should("contain.text", "TRPR0001")
+      cy.get(`tbody tr:nth-child(4) .locked-by-tag`).should("have.text", "A Really Really Really Long Name")
       cy.get(`tbody tr:nth-child(4) img[alt="Lock icon"]`).should("exist")
-      cy.get(`tbody tr:nth-child(6) .locked-by-tag`).should("not.exist")
-      cy.get(`tbody tr:nth-child(6) img[alt="Lock icon"]`).should("not.exist")
-      cy.get(`tbody tr:nth-child(8) .locked-by-tag`).should("have.text", "A Really Really Really Long Name")
-      cy.get(`tbody tr:nth-child(8) img[alt="Lock icon"]`).should("exist")
+      cy.get(`tbody tr:nth-child(4) td:nth-child(8)`).should("contain.text", "TRPR0001")
     })
 
     it("can sort cases by who has locked it", () => {
@@ -667,6 +662,7 @@ describe("Case list", () => {
           triggerLockedByUsername: username,
           orgForPoliceFilter: "011111",
           errorCount: 1,
+          errorReport: "HO100310||ds:OffenceReasonSequence",
           triggerCount: 1
         }))
       )
@@ -718,6 +714,7 @@ describe("Case list", () => {
           triggerLockedByUsername: username,
           orgForPoliceFilter: "011111",
           errorCount: 1,
+          errorReport: "HO100310||ds:OffenceReasonSequence",
           triggerCount: 1
         }))
       )
@@ -1361,7 +1358,8 @@ describe("Case list", () => {
           errorLockedByUsername: "ExceptionHandler",
           triggerLockedByUsername: null,
           orgForPoliceFilter: "011111",
-          errorCount: 1
+          errorCount: 1,
+          errorReport: "HO100310||ds:OffenceReasonSequence"
         }
       ])
 
@@ -1408,43 +1406,109 @@ describe("Case list", () => {
     })
   })
 
-  describe("Shows only cases relevant to a user's role", () => {
+  describe("Shows relevant information to a user's role", () => {
     const mixedReasonCases = [
       {
         orgForPoliceFilter: "011111",
         errorId: 0,
-        errorCount: 0,
-        triggerCount: 0
+        exceptions: [],
+        triggers: []
       },
       {
         orgForPoliceFilter: "011111",
         errorId: 1,
-        errorCount: 3,
-        triggerCount: 0
+        exceptions: [
+          {
+            code: "HO100310",
+            field: "ds:OffenceReasonSequence"
+          },
+          {
+            code: "HO100301",
+            field: "ds:OffenceReasonSequence"
+          }
+        ],
+        triggers: []
       },
       {
         orgForPoliceFilter: "011111",
         errorId: 2,
-        errorCount: 0,
-        triggerCount: 5
+        exceptions: [],
+        triggers: [
+          {
+            triggerId: 0,
+            triggerCode: "TRPR0010",
+            status: "Unresolved",
+            createdAt: new Date()
+          },
+          {
+            triggerId: 1,
+            triggerCode: "TRPR0011",
+            status: "Unresolved",
+            createdAt: new Date()
+          }
+        ]
       },
       {
         orgForPoliceFilter: "011111",
         errorId: 3,
-        errorCount: 2,
-        triggerCount: 2
+        exceptions: [
+          {
+            code: "HO100310",
+            field: "ds:OffenceReasonSequence"
+          },
+          {
+            code: "HO100301",
+            field: "ds:OffenceReasonSequence"
+          }
+        ],
+        triggers: [
+          {
+            triggerId: 2,
+            triggerCode: "TRPR0010",
+            status: "Unresolved",
+            createdAt: new Date()
+          },
+          {
+            triggerId: 3,
+            triggerCode: "TRPR0011",
+            status: "Unresolved",
+            createdAt: new Date()
+          }
+        ]
       }
     ]
 
+    beforeEach(() => {
+      cy.task(
+        "insertCourtCasesWithFields",
+        mixedReasonCases.map((courtCase) => {
+          return {
+            errorId: courtCase.errorId,
+            orgForPoliceFilter: courtCase.orgForPoliceFilter
+          }
+        })
+      )
+      mixedReasonCases.forEach((courtCase) => {
+        courtCase.exceptions?.forEach((exception) => {
+          cy.task("insertException", {
+            caseId: courtCase.errorId,
+            exceptionCode: exception.code,
+            errorReport: `${exception.code}||${exception.field}`
+          })
+        })
+        if (courtCase.triggers && courtCase.triggers.length > 0) {
+          cy.task("insertTriggers", { caseId: courtCase.errorId, triggers: courtCase.triggers })
+        }
+      })
+    })
+
     it("Shouldn't show cases to a user with no groups", () => {
-      cy.task("insertCourtCasesWithFields", mixedReasonCases)
       loginAndGoToUrl("nogroups@example.com")
 
       cy.findByText("There are no court cases to show").should("exist")
     })
 
     it("Should only show cases with triggers to a trigger handler", () => {
-      cy.task("insertCourtCasesWithFields", mixedReasonCases)
       loginAndGoToUrl("triggerhandler@example.com")
 
       confirmCaseDisplayed("Case00002")
@@ -1455,7 +1519,6 @@ describe("Case list", () => {
     })
 
     it("Should only show cases with exceptions to an exception handler", () => {
-      cy.task("insertCourtCasesWithFields", mixedReasonCases)
       loginAndGoToUrl("exceptionhandler@example.com")
 
       confirmCaseDisplayed("Case00001")
@@ -1466,7 +1529,6 @@ describe("Case list", () => {
     })
 
     it("Should show all cases to a general handler", () => {
-      cy.task("insertCourtCasesWithFields", mixedReasonCases)
       loginAndGoToUrl("generalhandler@example.com")
 
       confirmCaseDisplayed("Case00000")
@@ -1476,13 +1538,42 @@ describe("Case list", () => {
     })
 
     it("Should show all cases to a supervisor", () => {
-      cy.task("insertCourtCasesWithFields", mixedReasonCases)
       loginAndGoToUrl("supervisor@example.com")
 
       confirmCaseDisplayed("Case00000")
       confirmCaseDisplayed("Case00001")
       confirmCaseDisplayed("Case00002")
       confirmCaseDisplayed("Case00003")
+    })
+
+    it("Should only show triggers in the reason column to a trigger handler", () => {
+      loginAndGoToUrl("triggerhandler@example.com")
+
+      confirmReasonDisplayed("TRPR0010")
+      confirmReasonDisplayed("TRPR0011")
+
+      confirmReasonNotDisplayed("HO100301")
+      confirmReasonNotDisplayed("HO100310")
+    })
+
+    it("Should only show exceptions in the reason column to an exception handler", () => {
+      loginAndGoToUrl("exceptionhandler@example.com")
+
+      confirmReasonNotDisplayed("TRPR0010")
+      confirmReasonNotDisplayed("TRPR0011")
+
+      confirmReasonDisplayed("HO100301")
+      confirmReasonDisplayed("HO100310")
+    })
+
+    it("Should show both triggers and exceptions in the reason column to a general handler", () => {
+      loginAndGoToUrl("generalhandler@example.com")
+
+      confirmReasonDisplayed("TRPR0010")
+      confirmReasonDisplayed("TRPR0011")
+
+      confirmReasonDisplayed("HO100301")
+      confirmReasonDisplayed("HO100310")
     })
   })
 })

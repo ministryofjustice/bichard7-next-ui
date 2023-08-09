@@ -8,15 +8,11 @@ import DateTime from "components/DateTime"
 import { displayedDateFormat } from "utils/formattedDate"
 import UrgentTag from "features/CourtCaseList/tags/UrgentTag"
 import { useState } from "react"
-import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import {
   filterUserNotes,
   getMostRecentNote
 } from "features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/CourtCaseListEntryHelperFunction"
 import Note from "services/entities/Note"
-import { SingleException } from "./SingleException"
-import LockedByTag from "features/CourtCaseList/tags/LockedByTag/LockedByTag"
-import CaseUnlockedTag from "features/CourtCaseList/tags/CaseUnlockedTag"
 import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
 import { useCustomStyles } from "../../../../../styles/customStyles"
 import { LOCKED_ICON_URL } from "utils/icons"
@@ -39,6 +35,8 @@ interface CaseDetailsRowProps {
   ptiurn: string
   rowClassName: string
   unlockPath: string
+  reasonCell: JSX.Element
+  lockTag: JSX.Element
 }
 
 const useStyles = createUseStyles({
@@ -55,15 +53,12 @@ const useStyles = createUseStyles({
 })
 
 export const CaseDetailsRow = ({
-  canCurrentUserUnlockCase,
   hasTriggers,
   courtDate,
   courtName,
   defendantName,
   errorId,
   errorLockedByUsername,
-  errorLockedByUserFullName,
-  errorReport,
   firstColumnClassName,
   isCaseUnlocked,
   isResolved,
@@ -71,7 +66,8 @@ export const CaseDetailsRow = ({
   notes,
   ptiurn,
   rowClassName,
-  unlockPath
+  reasonCell,
+  lockTag
 }: CaseDetailsRowProps) => {
   const [showPreview, setShowPreview] = useState(true)
 
@@ -84,7 +80,6 @@ export const CaseDetailsRow = ({
 
   const caseDetailsPath = `/court-cases/${errorId}`
 
-  const exceptions = groupErrorsFromReport(errorReport)
   const userNotes = filterUserNotes(notes)
   const mostRecentUserNote = getMostRecentNote(userNotes)
   const numberOfNotes = userNotes.length
@@ -133,19 +128,8 @@ export const CaseDetailsRow = ({
         <Table.Cell className={caseDetailsCellClass}>
           <NotePreviewButton previewState={showPreview} setShowPreview={setShowPreview} numberOfNotes={numberOfNotes} />
         </Table.Cell>
-        <Table.Cell className={caseDetailsCellClass}>
-          {Object.keys(exceptions).map((exception, exceptionId) => {
-            return <SingleException key={exceptionId} exception={exception} exceptionCounter={exceptions[exception]} />
-          })}
-        </Table.Cell>
-        <Table.Cell className={caseDetailsCellClass}>
-          {canCurrentUserUnlockCase ? (
-            <LockedByTag lockedBy={errorLockedByUserFullName} unlockPath={unlockPath} />
-          ) : (
-            <LockedByTag lockedBy={errorLockedByUserFullName} />
-          )}
-          {<CaseUnlockedTag isCaseUnlocked={isCaseUnlocked} />}
-        </Table.Cell>
+        <Table.Cell className={caseDetailsCellClass}>{reasonCell}</Table.Cell>
+        <Table.Cell className={caseDetailsCellClass}>{lockTag}</Table.Cell>
       </Table.Row>
       {numberOfNotes != 0 && !showPreview && (
         <Table.Row className={`${rowClassName}`}>

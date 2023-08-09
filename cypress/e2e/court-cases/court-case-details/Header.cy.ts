@@ -147,7 +147,7 @@ describe("Court case details header", () => {
     cy.login(user.email!, "password")
 
     cy.visit("/bichard")
-    cy.get(".locked-by-tag").filter(':contains("Bichard Test User 04")').should("have.length", 2)
+    cy.get(".locked-by-tag").filter(':contains("Bichard Test User 04")').should("have.length", 1)
     cy.get("td a").contains("NAME Defendant").click()
     cy.location("pathname").should("equal", "/bichard/court-cases/0")
 

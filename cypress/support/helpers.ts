@@ -75,9 +75,17 @@ export const newUserLogin = ({ user, groups }: { user?: string; groups?: UserGro
 }
 
 export const confirmCaseDisplayed = (PTIURN: string) => {
-  cy.get("tr").not(":first").get("td:nth-child(5)").contains(PTIURN).should("exist")
+  cy.get("tbody tr td:nth-child(5)").contains(PTIURN).should("exist")
 }
 
 export const confirmCaseNotDisplayed = (PTIURN: string) => {
-  cy.get("tr").not(":first").get("td:nth-child(5)").contains(PTIURN).should("not.exist")
+  cy.get("tbody tr td:nth-child(5)").contains(PTIURN).should("not.exist")
+}
+
+export const confirmReasonDisplayed = (reason: string) => {
+  cy.get("tbody tr td:nth-child(8)").contains(reason).should("exist")
+}
+
+export const confirmReasonNotDisplayed = (reason: string) => {
+  cy.get("tbody tr td:nth-child(8)").contains(reason).should("not.exist")
 }
