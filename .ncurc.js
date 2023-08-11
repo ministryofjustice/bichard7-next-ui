@@ -4,15 +4,12 @@ const semver = new RegExp(
 
 /*
   Pinned:
-  - chalk
-    - v5 is a breaking change
+  - styled-components
+    - Conflict with GDS
 
-  Ignored:
-  - bichard7-next-data-x.x.x
-    - ncu updates all of them to the latest version, very unhelpful
-  - p-limit
-  - esbuild
-    - ignored at v0.18.16 because v0.18.17 doesn't run the postinstall script properly.
+  Skipped:
+  - next
+    - 13.4.13 causes failures with fetch
 */
 const pinned = ["styled-components"]
 const ignored = []
