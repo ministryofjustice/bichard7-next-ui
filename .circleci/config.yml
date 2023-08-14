@@ -237,6 +237,7 @@ jobs:
           environment:
             UI_IS_HTTPS: true
             TZ: "Europe/London"
+            AUDIT_LOG_API_URL: http://172.17.0.1:3010
       - store_artifacts:
           path: ./cypress/videos
       - store_artifacts:
@@ -377,6 +378,7 @@ jobs:
             STACK_TYPE: next
             WORKSPACE: local-next
             AUTH_TYPE: user-service        
+            AUDIT_LOG_API_URL: http://172.17.0.1:3010
 
 workflows:
   version: 2
