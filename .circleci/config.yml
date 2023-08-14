@@ -95,7 +95,6 @@ jobs:
     resource_class: medium
     steps:
       - checkout
-      - node/install
       - run: rm -rf ~/.npm
       - node/install-packages:
           include-branch-in-cache-key: true
@@ -114,7 +113,6 @@ jobs:
       - image: cimg/node:16.12.0
     resource_class: medium
     steps:
-      - node/install
       - attach_workspace:
           at: ~/
       - run:
@@ -126,7 +124,6 @@ jobs:
       - image: cimg/node:16.12.0
     resource_class: medium
     steps:
-      - node/install
       - attach_workspace:
           at: ~/
       - run:
@@ -138,9 +135,9 @@ jobs:
       image: ubuntu-2004:2022.07.1
       docker_layer_caching: false
     steps:
-      - node/install
       - attach_workspace:
           at: ~/
+      - node/install
       - start_bichard7_legacy
       - run:
           name: Run integration tests
@@ -154,6 +151,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - node/install
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
@@ -186,6 +184,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - node/install
       - start_bichard7_legacy
       - run:
           name: Run the seed-data script
@@ -232,6 +231,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - node/install
       - load_ui_image
       - run:
           name: Install Cypress
