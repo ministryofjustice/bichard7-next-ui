@@ -56,10 +56,6 @@ commands:
 
   ################### Services
   start_bichard7_legacy:
-    parameters:
-      ENABLE_PHASE_2:
-        default: "true"
-        type: string
     steps:
       - run:
           name: "Fetch nodejs from ECR"
@@ -70,9 +66,7 @@ commands:
       - run:
           name: Start bichard7 legacy
           working_directory: ~/bichard7-next-core
-          command: |
-            ENABLE_PHASE_2=<<parameters.ENABLE_PHASE_2>> \
-            npm run all-legacy
+          command: npm run all-legacy
       - run:
           name: Retry - start bichard7 legacy
           working_directory: ~/bichard7-next-core
@@ -83,7 +77,6 @@ commands:
               -f environment/docker-compose.yml \
               -f environment/docker-compose-bichard.yml down -v
 
-            ENABLE_PHASE_2=<<parameters.ENABLE_PHASE_2>> \
             npm run all-legacy
 
 #################################################################################
