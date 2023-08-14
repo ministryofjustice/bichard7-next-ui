@@ -63,7 +63,7 @@ commands:
     steps:
       - run:
           name: "Fetch nodejs from ECR"
-          working_directory: ~/bichard-next-core
+          working_directory: ~/bichard7-next-core
           command: bash ./scripts/fetch_docker_image.sh nodejs # required for message-forwarder in core
       - build_core_images
       - build_audit_logging_images
@@ -89,7 +89,7 @@ commands:
 #################################################################################
 
 jobs:
-  build:
+  setup:
     docker:
       - image: cimg/node:16.12.0
     resource_class: medium
@@ -105,24 +105,6 @@ jobs:
       - run:
           name: Clone bichard7-next-audit-logging
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
-      - persist_to_workspace:
-          root: ~/
-          paths: .
-
-  install_e2e_tests:
-    docker:
-      - image: cimg/node:16.12.0
-    resource_class: medium
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Clone bichard7-next-tests
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
-      - node/install-packages:
-          app-dir: ~/bichard7-next-tests
-          cache-path: ~/bichard7-next-tests/node_modules
-          include-branch-in-cache-key: true
       - persist_to_workspace:
           root: ~/
           paths: .
@@ -163,55 +145,6 @@ jobs:
       - run:
           name: Run integration tests
           command: npm run test:integration
-
-  build_ui_image:
-    machine:
-      image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
-    resource_class: medium
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Build the UI application
-          command: ./.circleci/scripts/build-ui.sh
-      - cache_ui_image
-
-  cypress_e2e_test:
-    machine:
-      image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
-    resource_class: medium
-    parallelism: 5
-    steps:
-      - attach_workspace:
-          at: ~/
-      - load_ui_image
-      - run:
-          name: Install Cypress
-          command: ./.circleci/scripts/install-cypress.sh 2>&1
-          background: true
-      - run:
-          name: Install GOV.UK Assets
-          command: npm run install:assets
-      - run:
-          name: Wait for cypress install to finish
-          command: until [ -f cypressInstalled ]; do sleep 1; done
-          no_output_timeout: 10m
-      - run:
-          name: Retrying installing Cypress
-          command: ./.circleci/scripts/install-cypress.sh
-      - start_bichard7_legacy
-      - run:
-          name: Run UI tests
-          command: TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX ./scripts/run-ui-tests-chunk.sh
-          environment:
-            UI_IS_HTTPS: true
-            TZ: "Europe/London"
-      - store_artifacts:
-          path: ./cypress/videos
-      - store_artifacts:
-          path: ./cypress/screenshots
 
   cypress_component_test:
     machine:
@@ -258,6 +191,74 @@ jobs:
           name: Run the seed-data script
           command: DEPLOY_NAME=e2e-test npm run seed-data
 
+
+  build_ui_image:
+    machine:
+      image: ubuntu-2004:2022.07.1
+      docker_layer_caching: false
+    resource_class: medium
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Build the UI application
+          command: ./.circleci/scripts/build-ui.sh
+      - cache_ui_image
+  
+  install_e2e_tests:
+    docker:
+      - image: cimg/node:16.12.0
+    resource_class: medium
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Clone bichard7-next-tests
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
+      - node/install-packages:
+          app-dir: ~/bichard7-next-tests
+          cache-path: ~/bichard7-next-tests/node_modules
+          include-branch-in-cache-key: true
+      - persist_to_workspace:
+          root: ~/
+          paths: .
+
+  cypress_e2e_tests:
+    machine:
+      image: ubuntu-2004:2022.07.1
+      docker_layer_caching: false
+    resource_class: medium
+    parallelism: 5
+    steps:
+      - attach_workspace:
+          at: ~/
+      - load_ui_image
+      - run:
+          name: Install Cypress
+          command: ./.circleci/scripts/install-cypress.sh 2>&1
+          background: true
+      - run:
+          name: Install GOV.UK Assets
+          command: npm run install:assets
+      - run:
+          name: Wait for cypress install to finish
+          command: until [ -f cypressInstalled ]; do sleep 1; done
+          no_output_timeout: 10m
+      - run:
+          name: Retrying installing Cypress
+          command: ./.circleci/scripts/install-cypress.sh
+      - start_bichard7_legacy
+      - run:
+          name: Run UI tests
+          command: TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX ./scripts/run-ui-tests-chunk.sh
+          environment:
+            UI_IS_HTTPS: true
+            TZ: "Europe/London"
+      - store_artifacts:
+          path: ./cypress/videos
+      - store_artifacts:
+          path: ./cypress/screenshots
+
   cucumber_e2e_tests:
     machine:
       image: ubuntu-2004:2022.07.1
@@ -281,30 +282,32 @@ jobs:
 workflows:
   build-and-test:
     jobs:
-      - build
+      - setup
+
       - lint:
           requires:
-            - build
+            - setup
       - unit_test:
           requires:
-            - build
+            - setup
       - integration_test:
           requires:
-            - build
+            - setup
       - cypress_component_test:
           requires:
-            - build
+            - setup
       - seed_data:
           requires:
-            - build
+            - setup
 
       - build_ui_image:
           requires:
-            - build
+            - setup
       - install_e2e_tests:
           requires:
-            - build
-      - cypress_e2e_test:
+            - setup
+
+      - cypress_e2e_tests:
           requires:
             - build_ui_image
             - install_e2e_tests
