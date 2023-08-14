@@ -373,7 +373,12 @@ jobs:
       - run:
           name: Run end-to-end tests against new UI
           working_directory: ~/bichard7-next-tests
-          command: npm i && nextUI=true bash ./scripts/run_test_chunk.sh 'not @Excluded and not @ExcludedOnMaster and not @OnlyRunsOnPNC and not @AuditLog and @NextUI'
+          command: |
+            npm i
+            
+            nextUI=true TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX \
+            bash ./scripts/run_test_chunk.sh \
+            'not @Excluded and not @ExcludedOnMaster and not @OnlyRunsOnPNC and not @AuditLog and @NextUI'
           environment:
             STACK_TYPE: next
             WORKSPACE: local-next
