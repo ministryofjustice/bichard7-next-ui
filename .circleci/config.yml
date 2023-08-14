@@ -100,22 +100,29 @@ jobs:
       - node/install-packages:
           include-branch-in-cache-key: true
       - run:
+          name: Clone bichard7-next-core
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
+      - run:
+          name: Clone bichard7-next-audit-logging
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
+      - persist_to_workspace:
+          root: ~/
+          paths: .
+
+  install_e2e_tests:
+    docker:
+      - image: cimg/node:16.12.0
+    resource_class: medium
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
           name: Clone bichard7-next-tests
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
       - node/install-packages:
           app-dir: ~/bichard7-next-tests
           cache-path: ~/bichard7-next-tests/node_modules
           include-branch-in-cache-key: true
-      - run:
-          name: Clone bichard7-next-core
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
-      - node/install-packages:
-          app-dir: ~/bichard7-next-core
-          cache-path: ~/bichard7-next-core/node_modules
-          include-branch-in-cache-key: true
-      - run:
-          name: Clone bichard7-next-audit-logging
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
       - persist_to_workspace:
           root: ~/
           paths: .
@@ -292,10 +299,15 @@ workflows:
       - build_ui_image:
           requires:
             - build
+      - install_e2e_tests:
+          requires:
+            - build
       - cypress_e2e_test:
           requires:
             - build_ui_image
+            - install_e2e_tests
       - cucumber_e2e_tests:
           requires:
             - build_ui_image
+            - install_e2e_tests
 
