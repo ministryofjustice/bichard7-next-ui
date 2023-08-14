@@ -1,7 +1,9 @@
+import SurveyFeedback from "services/entities/SurveyFeedback"
 import { DataSource } from "typeorm"
 
-type Feedback = { response: Object, feedbackType: number} // TODO: create the feedback entity
-
-const insertSurveyFeedback = (dataSource: DataSource, feedback: Feedback) => {}
+const insertSurveyFeedback = async (dataSource: DataSource, feedback: SurveyFeedback) => {
+  const surveyRepository = dataSource.getRepository(SurveyFeedback)
+  await surveyRepository.createQueryBuilder().insert().into(SurveyFeedback).values(feedback).execute()
+}
 
 export default insertSurveyFeedback
