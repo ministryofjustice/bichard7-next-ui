@@ -115,7 +115,7 @@ jobs:
     resource_class: medium
     steps:
       - attach_workspace:
-          at: .
+          at: ~/
       - run:
           name: Clone bichard7-next-tests
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
@@ -134,7 +134,7 @@ jobs:
     steps:
       - node/install
       - attach_workspace:
-          at: .
+          at: ~/
       - run:
           name: Check the code for linting errors
           command: npm run lint
@@ -146,7 +146,7 @@ jobs:
     steps:
       - node/install
       - attach_workspace:
-          at: .
+          at: ~/
       - run:
           name: Run code-based unit tests
           command: npm run test:unit
@@ -158,7 +158,7 @@ jobs:
     steps:
       - node/install
       - attach_workspace:
-          at: .
+          at: ~/
       - start_bichard7_legacy
       - run:
           name: Run integration tests
@@ -170,6 +170,8 @@ jobs:
       docker_layer_caching: false
     resource_class: medium
     steps:
+      - attach_workspace:
+          at: ~/
       - run:
           name: Build the UI application
           command: ./.circleci/scripts/build-ui.sh
@@ -183,7 +185,7 @@ jobs:
     parallelism: 5
     steps:
       - attach_workspace:
-          at: .
+          at: ~/
       - load_ui_image
       - run:
           name: Install Cypress
@@ -218,7 +220,7 @@ jobs:
     resource_class: medium
     steps:
       - attach_workspace:
-          at: .
+          at: ~/
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
@@ -250,7 +252,7 @@ jobs:
       docker_layer_caching: false
     steps:
       - attach_workspace:
-          at: .
+          at: ~/
       - start_bichard7_legacy
       - run:
           name: Run the seed-data script
@@ -268,7 +270,7 @@ jobs:
       AUTH_TYPE: user-service
     steps:
       - attach_workspace:
-          at: .
+          at: ~/
       - load_ui_image
       - start_bichard7_legacy
       - run_test_chunk:
