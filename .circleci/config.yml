@@ -267,9 +267,6 @@ workflows:
   build-and-test:
     jobs:
       - build
-      - build_ui_image
-      - seed_data
-
       - lint:
           requires:
             - build
@@ -282,7 +279,13 @@ workflows:
       - cypress_component_test:
           requires:
             - build
+      - seed_data:
+          requires:
+            - build
 
+      - build_ui_image:
+          requires:
+            - build
       - cypress_e2e_test:
           requires:
             - build_ui_image
