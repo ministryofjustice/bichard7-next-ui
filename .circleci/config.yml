@@ -96,23 +96,29 @@ jobs:
     steps:
       - checkout
       - node/install
-      - node/install-packages
+      - run: rm -rf ~/.npm
+      - node/install-packages:
+          include-branch-in-cache-key: true
       - run:
           name: Clone bichard7-next-tests
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
       - node/install-packages:
           app-dir: ~/bichard7-next-tests
+          cache-path: ~/bichard7-next-tests/node_modules
+          include-branch-in-cache-key: true
       - run:
           name: Clone bichard7-next-core
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
       - node/install-packages:
           app-dir: ~/bichard7-next-core
+          cache-path: ~/bichard7-next-core/node_modules
+          include-branch-in-cache-key: true
       - run:
           name: Clone bichard7-next-audit-logging
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
       - persist_to_workspace:
           root: ~/
-          path: .
+          paths: .
 
   lint:
     docker:
