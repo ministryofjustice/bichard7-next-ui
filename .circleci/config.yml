@@ -88,6 +88,7 @@ jobs:
     resource_class: medium
     steps:
       - checkout
+      - run: nvm install
       - run: rm -rf ~/.npm
       - node/install-packages:
           include-branch-in-cache-key: true
@@ -130,7 +131,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
-      - node/install
+      - run: nvm install
       - start_bichard7_legacy
       - run:
           name: Run integration tests
@@ -144,7 +145,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
-      - node/install
+      - run: nvm install
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
@@ -177,12 +178,11 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
-      - node/install
+      - run: nvm install
       - start_bichard7_legacy
       - run:
           name: Run the seed-data script
           command: DEPLOY_NAME=e2e-test npm run seed-data
-
 
   build_ui_image:
     machine:
@@ -204,6 +204,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - run: nvm install
       - run:
           name: Clone bichard7-next-tests
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
@@ -224,7 +225,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
-      - node/install
+      - run: nvm install
       - load_ui_image
       - run:
           name: Install Cypress
