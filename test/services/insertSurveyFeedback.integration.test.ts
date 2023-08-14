@@ -19,6 +19,10 @@ describe("insertSurveyFeedback", () => {
     await deleteFromEntity(SurveyFeedback)
   })
 
+  afterAll(async () => {
+    await dataSource.destroy()
+  })
+
   it("should insert a new survey", async () => {
     const feedback = {
       id: feedbackId,
@@ -30,7 +34,6 @@ describe("insertSurveyFeedback", () => {
 
     expect(isError(result)).toBe(false)
     const recordedFeedback = await dataSource.getRepository(SurveyFeedback).findOne({ where: { id: feedbackId } })
-    console.log(recordedFeedback)
     const actualFeedback = recordedFeedback as SurveyFeedback
     expect(actualFeedback.response).toEqual(dummyResponse)
     expect(actualFeedback.feedbackType).toBe(SurveyFeedbackType.General)

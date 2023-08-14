@@ -1,6 +1,5 @@
 import { Column, Entity, PrimaryColumn } from "typeorm"
 import BaseEntity from "./BaseEntity"
-// eslint-disable-next-line import/no-cycle
 import type { SurveyFeedbackResponse } from "types/SurveyFeedback"
 import dateTransformer from "./transformers/dateTransformer"
 import featureFlagTransformer from "./transformers/featureFlagTransformer"
