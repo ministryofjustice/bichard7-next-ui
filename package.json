@@ -20,15 +20,14 @@
     "test": "npm run test:unit && npm run test:integration && npm run test:ui:e2e",
     "test:unit": "jest --testPathIgnorePatterns=\"integration\" \"e2e\" --runInBand",
     "test:unit:update": "npm run test:unit -- -u",
-    "test:integration": "npm run wait-for-auditlog-api && jest --testPathPattern=\"integration\" --runInBand --testNamePattern=",
+    "test:integration": "jest --testPathPattern=\"integration\" --runInBand --testNamePattern=",
     "test:integration:update": "npm run test:integration -- -u",
     "test:file": "jest --runInBand --testPathPattern",
     "test:ui:e2e": "concurrently --kill-others --success first \"npm run start\" \"npm run cypress:run\"",
     "install:hooks": "./scripts/install-git-hooks.sh",
     "update-deps": "ncu -u && npm install",
     "seed-data": "ts-node ./scripts/seed-data.ts",
-    "prepare": "husky install",
-    "wait-for-auditlog-api": "WAIT_TIME=3000 STATUS_CODE=200 npx wait-on --config ./scripts/wait-for-status.js http://localhost:3010/messages 2>/dev/null || (echo \"\nMake sure that audit logging API is running.\n\" && exit 1)"
+    "prepare": "husky install"
   },
   "dependencies": {
     "@govuk-react/select": "^0.10.5",
