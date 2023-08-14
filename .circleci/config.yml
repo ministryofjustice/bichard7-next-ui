@@ -64,7 +64,7 @@ commands:
       - run:
           name: "Fetch nodejs from ECR"
           working_directory: ~/bichard-next-core
-          command: bash scripts/fetch_docker_image.sh nodejs # required for message-forwarder in core
+          command: bash ./scripts/fetch_docker_image.sh nodejs # required for message-forwarder in core
       - build_core_images
       - build_audit_logging_images
       - run:
