@@ -23,7 +23,6 @@ commands:
     steps:
       - run:
           name: "Fetch nodejs from ECR"
-          working_directory: ~/bichard7-next-core
           command: bash ./scripts/fetch-docker-image.sh nodejs
 
   build_message_forwarder:
@@ -45,17 +44,6 @@ commands:
       - run:
           name: Build the UI application
           command: ./.circleci/scripts/build-ui.sh
-
-  load_ui_image:
-    steps:
-      - restore_cache:
-          name: Restore UI docker image from cache
-          keys:
-            - ui-image-<<pipeline.git.revision>>
-      - run:
-          name: Load UI docker image
-          command: docker load < ui.tar
-          background: true
 
   run_test_chunk:
     parameters:
@@ -99,6 +87,9 @@ commands:
         default: ""
         type: string
     steps:
+      - run:
+          name: "Fetch services: <<parameters.SERVICES>>"
+          command: bash ./scripts/fetch-docker-images.sh <<parameters.SERVICES>>
       - run:
           name: "Run services: <<parameters.SERVICES>>"
           working_directory: ~/bichard7-next-core
@@ -196,9 +187,9 @@ jobs:
     resource_class: xlarge
     parallelism: 5
     steps:
-      - checkout
+      - setup
       - build_ui_image
-      - node/install
+      - build_audit_logging_images
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
@@ -213,7 +204,8 @@ jobs:
       - run:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
-      - start_bichard7_legacy
+      - start_specific_core_services:
+          SERVICES: "ui user-service nginx-auth-proxy postgres activemq audit-log-api"
       - run:
           name: Run UI tests
           command: ./scripts/run-ui-tests-chunk.sh
@@ -236,7 +228,7 @@ jobs:
       WORKSPACE: local-next
       AUTH_TYPE: user-service
     steps:
-      - checkout
+      - setup
       - build_ui_image
       - run:
           name: Clone bichard7-next-tests
