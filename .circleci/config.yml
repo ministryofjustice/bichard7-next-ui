@@ -128,6 +128,7 @@ jobs:
     machine:
       image: ubuntu-2004:2022.07.1
       docker_layer_caching: false
+    resource_class: medium
     steps:
       - attach_workspace:
           at: ~/
@@ -175,6 +176,7 @@ jobs:
     machine:
       image: ubuntu-2004:2022.07.1
       docker_layer_caching: false
+    resource_class: medium
     steps:
       - attach_workspace:
           at: ~/
@@ -187,7 +189,7 @@ jobs:
   build_ui_image:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
+      docker_layer_caching: true
     resource_class: medium
     steps:
       - attach_workspace:
@@ -220,7 +222,7 @@ jobs:
     machine:
       image: ubuntu-2004:2022.07.1
       docker_layer_caching: false
-    resource_class: medium
+    resource_class: xlarge
     parallelism: 5
     steps:
       - attach_workspace:
