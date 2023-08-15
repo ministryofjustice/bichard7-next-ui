@@ -44,12 +44,6 @@ commands:
           working_directory: ~/bichard7-next-audit-logging
           command: make build-api-server build-event-handler-server
 
-  build_ui_image:
-    steps:
-      - run:
-          name: Build the UI application
-          command: ./.circleci/scripts/build-ui.sh
-
   run_test_chunk:
     parameters:
       NEXTUI:
@@ -193,7 +187,9 @@ jobs:
     parallelism: 5
     steps:
       - setup
-      - build_ui_image
+      - run: ./.circleci/scripts/build-ui.sh
+      - fetch_images:
+          IMAGES: nodejs
       - build_audit_logging_images
       - run:
           name: Install Cypress
@@ -236,7 +232,7 @@ jobs:
       AUTH_TYPE: user-service
     steps:
       - setup
-      - build_ui_image
+      - run: ./.circleci/scripts/build-ui.sh
       - run:
           name: Clone bichard7-next-tests
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
