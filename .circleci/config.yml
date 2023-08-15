@@ -18,12 +18,17 @@ commands:
       - run:
           name: Clone bichard7-next-audit-logging
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
-
-  fetch_nodejs:
+  
+  fetch_images:
+    parameters:
+      IMAGES:
+        default: ""
+        type: string
     steps:
-      - run:
-          name: "Fetch nodejs from ECR"
-          command: bash ./scripts/fetch-docker-image.sh nodejs
+      - run: 
+          name: "Fetch images: <<parameters.IMAGES>>"
+          command: bash ./scripts/fetch-docker-images.sh <<parameters.IMAGES>>
+
 
   build_message_forwarder:
     steps:
@@ -62,7 +67,8 @@ commands:
   ################### Services
   start_bichard7_legacy:
     steps:
-      - fetch_nodejs
+      - fetch_images:
+          IMAGES: nodejs
       - build_message_forwarder
       - build_audit_logging_images
       - run:
@@ -87,9 +93,6 @@ commands:
         default: ""
         type: string
     steps:
-      - run:
-          name: "Fetch services: <<parameters.SERVICES>>"
-          command: bash ./scripts/fetch-docker-images.sh <<parameters.SERVICES>>
       - run:
           name: "Run services: <<parameters.SERVICES>>"
           working_directory: ~/bichard7-next-core
@@ -125,7 +128,8 @@ jobs:
     resource_class: medium
     steps:
       - setup
-      - fetch_nodejs
+      - fetch_images:
+          IMAGES: nodejs 
       - build_audit_logging_images
       - start_specific_core_services:
           SERVICES: "activemq localstack postgres audit-log-api"
@@ -172,7 +176,8 @@ jobs:
     resource_class: medium
     steps:
       - setup
-      - fetch_nodejs
+      - fetch_images:
+          IMAGES: nodejs
       - build_audit_logging_images
       - start_specific_core_services:
           SERVICES: "postgres audit-log-api"
@@ -204,8 +209,10 @@ jobs:
       - run:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
+      - fetch_images:
+          IMAGES: ui user-service nginx-auth-proxy
       - start_specific_core_services:
-          SERVICES: "ui user-service nginx-auth-proxy postgres activemq audit-log-api"
+          SERVICES: ui user-service nginx-auth-proxy postgres activemq audit-log-api
       - run:
           name: Run UI tests
           command: ./scripts/run-ui-tests-chunk.sh
