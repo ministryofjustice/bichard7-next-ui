@@ -185,7 +185,10 @@ jobs:
     resource_class: medium
     steps:
       - setup
-      - start_bichard7_legacy
+      - fetch_nodejs
+      - build_audit_logging_images
+      - start_specific_core_services:
+          SERVICES: "postgres audit-log-api"
       - run:
           name: Run the seed-data script
           command: DEPLOY_NAME=e2e-test npm run seed-data
@@ -247,7 +250,7 @@ jobs:
       - start_bichard7_legacy
       - run:
           name: Run UI tests
-          command: TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX ./scripts/run-ui-tests-chunk.sh
+          command: ./scripts/run-ui-tests-chunk.sh
           environment:
             UI_IS_HTTPS: true
             TZ: "Europe/London"
