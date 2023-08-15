@@ -5,6 +5,20 @@ orbs:
 
 commands:
   ################### Helpers
+  setup:
+    steps:
+      - checkout
+      - node/install
+      - run: rm -rf ~/.npm
+      - node/install-packages:
+          include-branch-in-cache-key: true
+      - run:
+          name: Clone bichard7-next-core
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
+      - run:
+          name: Clone bichard7-next-audit-logging
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
+
   build_core_images:
     steps:
       - run:
@@ -82,33 +96,12 @@ commands:
 #################################################################################
 
 jobs:
-  setup:
-    machine:
-      image: ubuntu-2004:2022.07.1
-    resource_class: large
-    steps:
-      - checkout
-      - node/install
-      - run: rm -rf ~/.npm
-      - node/install-packages:
-          include-branch-in-cache-key: true
-      - run:
-          name: Clone bichard7-next-core
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
-      - run:
-          name: Clone bichard7-next-audit-logging
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
-      - persist_to_workspace:
-          root: ~/
-          paths: .
-
   lint:
     docker:
       - image: cimg/node:16.12.0
     resource_class: medium
     steps:
-      - attach_workspace:
-          at: ~/
+      - setup
       - run:
           name: Check the code for linting errors
           command: npm run lint
@@ -118,8 +111,7 @@ jobs:
       - image: cimg/node:16.12.0
     resource_class: medium
     steps:
-      - attach_workspace:
-          at: ~/
+      - setup
       - run:
           name: Run code-based unit tests
           command: npm run test:unit
@@ -130,9 +122,7 @@ jobs:
       docker_layer_caching: false
     resource_class: medium
     steps:
-      - attach_workspace:
-          at: ~/
-      - node/install
+      - setup
       - start_bichard7_legacy
       - run:
           name: Run integration tests
@@ -144,9 +134,7 @@ jobs:
       docker_layer_caching: false
     resource_class: medium
     steps:
-      - attach_workspace:
-          at: ~/
-      - node/install
+      - setup
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
@@ -178,9 +166,7 @@ jobs:
       docker_layer_caching: false
     resource_class: medium
     steps:
-      - attach_workspace:
-          at: ~/
-      - node/install
+      - setup
       - start_bichard7_legacy
       - run:
           name: Run the seed-data script
@@ -192,8 +178,7 @@ jobs:
       docker_layer_caching: true
     resource_class: medium
     steps:
-      - attach_workspace:
-          at: ~/
+      - setup
       - run:
           name: Build the UI application
           command: ./.circleci/scripts/build-ui.sh
@@ -204,9 +189,7 @@ jobs:
       - image: cimg/node:16.12.0
     resource_class: medium
     steps:
-      - attach_workspace:
-          at: ~/
-      - node/install
+      - setup
       - run:
           name: Clone bichard7-next-tests
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
@@ -278,30 +261,14 @@ jobs:
 workflows:
   build-and-test:
     jobs:
-      - setup
+      - lint
+      - unit_test
+      - integration_test
+      - cypress_component_test
+      - seed_data
 
-      - lint:
-          requires:
-            - setup
-      - unit_test:
-          requires:
-            - setup
-      - integration_test:
-          requires:
-            - setup
-      - cypress_component_test:
-          requires:
-            - setup
-      - seed_data:
-          requires:
-            - setup
-
-      - build_ui_image:
-          requires:
-            - setup
-      - install_e2e_tests:
-          requires:
-            - setup
+      - build_ui_image
+      - install_e2e_tests
 
       - cypress_e2e_tests:
           requires:
