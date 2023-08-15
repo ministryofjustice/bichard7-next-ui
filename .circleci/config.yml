@@ -40,15 +40,11 @@ commands:
           working_directory: ~/bichard7-next-audit-logging
           command: make build-api-server build-event-handler-server
 
-  cache_ui_image:
+  build_ui_image:
     steps:
       - run:
-          name: Save UI docker image
-          command: docker save ui > ui.tar
-      - save_cache:
-          name: Cache UI docker image
-          key: ui-image-<<pipeline.git.revision>>
-          paths: ui.tar
+          name: Build the UI application
+          command: ./.circleci/scripts/build-ui.sh
 
   load_ui_image:
     steps:
@@ -191,36 +187,7 @@ jobs:
           SERVICES: "postgres audit-log-api"
       - run:
           name: Run the seed-data script
-          command: DEPLOY_NAME=e2e-test npm run seed-data
-
-  build_ui_image:
-    machine:
-      image: ubuntu-2004:2022.07.1
-      docker_layer_caching: true
-    resource_class: medium
-    steps:
-      - setup
-      - run:
-          name: Build the UI application
-          command: ./.circleci/scripts/build-ui.sh
-      - cache_ui_image
-  
-  install_e2e_tests:
-    docker:
-      - image: cimg/node:16.12.0
-    resource_class: medium
-    steps:
-      - setup
-      - run:
-          name: Clone bichard7-next-tests
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
-      - node/install-packages:
-          app-dir: ~/bichard7-next-tests
-          cache-path: ~/bichard7-next-tests/node_modules
-          include-branch-in-cache-key: true
-      - persist_to_workspace:
-          root: ~/
-          paths: .
+          command: DEPLOY_NAME=e2e-test npm run seed-data  
 
   cypress_e2e_tests:
     machine:
@@ -229,10 +196,9 @@ jobs:
     resource_class: xlarge
     parallelism: 5
     steps:
-      - attach_workspace:
-          at: ~/
+      - checkout
+      - build_ui_image
       - node/install
-      - load_ui_image
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
@@ -270,9 +236,15 @@ jobs:
       WORKSPACE: local-next
       AUTH_TYPE: user-service
     steps:
-      - attach_workspace:
-          at: ~/
-      - load_ui_image
+      - checkout
+      - build_ui_image
+      - run:
+          name: Clone bichard7-next-tests
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
+      - node/install-packages:
+          app-dir: ~/bichard7-next-tests
+          cache-path: ~/bichard7-next-tests/node_modules
+          include-branch-in-cache-key: true
       - start_bichard7_legacy
       - run_test_chunk:
           NEXTUI: "true"
@@ -288,15 +260,6 @@ workflows:
       - cypress_component_test
       - seed_data
 
-      - build_ui_image
-      - install_e2e_tests
-
-      - cypress_e2e_tests:
-          requires:
-            - build_ui_image
-            - install_e2e_tests
-      - cucumber_e2e_tests:
-          requires:
-            - build_ui_image
-            - install_e2e_tests
+      - cypress_e2e_tests
+      - cucumber_e2e_tests
 
