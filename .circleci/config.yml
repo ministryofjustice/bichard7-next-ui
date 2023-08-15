@@ -124,7 +124,7 @@ jobs:
   integration_test:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
+      docker_layer_caching: true
     resource_class: medium
     steps:
       - setup
@@ -140,7 +140,7 @@ jobs:
   cypress_component_test:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
+      docker_layer_caching: true
     resource_class: medium
     steps:
       - setup
@@ -172,7 +172,7 @@ jobs:
   seed_data:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
+      docker_layer_caching: true
     resource_class: medium
     steps:
       - setup
@@ -188,7 +188,7 @@ jobs:
   cypress_e2e_tests:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
+      docker_layer_caching: true
     resource_class: xlarge
     parallelism: 5
     steps:
@@ -227,7 +227,7 @@ jobs:
   cucumber_e2e_tests:
     machine:
       image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
+      docker_layer_caching: true
     resource_class: xlarge
     parallelism: 10
     environment:
