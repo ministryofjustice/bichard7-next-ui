@@ -86,11 +86,17 @@ commands:
       SERVICES:
         default: ""
         type: string
+      FLAGS:
+        default: ""
+        type: string
     steps:
       - run:
           name: "Run services: <<parameters.SERVICES>>"
           working_directory: ~/bichard7-next-core
-          command: docker-compose --project-name bichard -f environment/docker-compose.yml up -d <<parameters.SERVICES>>
+          command: |
+            docker-compose --project-name bichard \
+            -f environment/docker-compose.yml \
+            up -d <<parameters.SERVICES>> <<parameters.FLAGS>>
 
 #################################################################################
 
@@ -187,17 +193,14 @@ jobs:
     parallelism: 5
     steps:
       - setup
-      - run: ./.circleci/scripts/build-ui.sh
+      - run: npm run install:assets
       - fetch_images:
           IMAGES: nodejs
       - build_audit_logging_images
+      - run: ./.circleci/scripts/build-ui.sh
       - run:
-          name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
           background: true
-      - run:
-          name: Install GOV.UK Assets
-          command: npm run install:assets
       - run:
           name: Wait for cypress install to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
@@ -209,6 +212,7 @@ jobs:
           IMAGES: ui user-service nginx-auth-proxy
       - start_specific_core_services:
           SERVICES: ui user-service nginx-auth-proxy postgres activemq audit-log-api
+          FLAGS: --no-deps
       - run:
           name: Run UI tests
           command: ./scripts/run-ui-tests-chunk.sh
