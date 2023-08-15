@@ -19,6 +19,13 @@ commands:
           name: Clone bichard7-next-audit-logging
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
 
+  fetch_nodejs:
+    steps:
+      - run:
+          name: "Fetch nodejs from ECR"
+          working_directory: ~/bichard7-next-core
+          command: bash ./scripts/fetch-docker-image.sh nodejs
+
   build_message_forwarder:
     steps:
       - run:
@@ -71,10 +78,7 @@ commands:
   ################### Services
   start_bichard7_legacy:
     steps:
-      - run:
-          name: "Fetch nodejs from ECR"
-          working_directory: ~/bichard7-next-core
-          command: bash ./scripts/fetch-docker-image.sh nodejs # required for message-forwarder in core
+      - fetch_nodejs
       - build_message_forwarder
       - build_audit_logging_images
       - run:
@@ -100,7 +104,7 @@ commands:
         type: string
     steps:
       - run:
-          name: adsf
+          name: "Run services: <<parameters.SERVICES>>"
           working_directory: ~/bichard7-next-core
           command: docker-compose up -df environment/docker-compose.yaml <<parameters.SERVICES>>
 
@@ -134,6 +138,7 @@ jobs:
     resource_class: medium
     steps:
       - setup
+      - fetch_nodejs
       - build_audit_logging_images
       - start_specific_core_services:
           SERVICES: "activemq localstack postgres audit-log-api"
