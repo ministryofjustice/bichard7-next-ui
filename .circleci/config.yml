@@ -106,7 +106,7 @@ commands:
       - run:
           name: "Run services: <<parameters.SERVICES>>"
           working_directory: ~/bichard7-next-core
-          command: docker-compose --project-name bichard -f environment/docker-compose.yaml up -d <<parameters.SERVICES>>
+          command: docker-compose --project-name bichard -f environment/docker-compose.yml up -d <<parameters.SERVICES>>
 
 #################################################################################
 
