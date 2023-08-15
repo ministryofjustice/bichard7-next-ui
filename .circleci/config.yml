@@ -211,7 +211,7 @@ jobs:
       - fetch_images:
           IMAGES: ui user-service nginx-auth-proxy
       - start_specific_core_services:
-          SERVICES: ui user-service nginx-auth-proxy postgres activemq audit-log-api
+          SERVICES: ui user-service nginx-auth-proxy postgres activemq audit-log-api localstack
           FLAGS: --no-deps
       - run:
           name: Run UI tests
