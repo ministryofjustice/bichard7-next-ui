@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set +e
+
 IMAGES=($@)
 
 for image in "${IMAGES[@]}"; do
