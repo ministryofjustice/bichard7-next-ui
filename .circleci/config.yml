@@ -134,6 +134,7 @@ jobs:
     resource_class: medium
     steps:
       - setup
+      - build_audit_logging_images
       - start_specific_core_services:
           SERVICES: "activemq localstack postgres audit-log-api"
       - run:
