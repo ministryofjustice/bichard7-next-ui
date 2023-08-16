@@ -107,7 +107,7 @@ commands:
 jobs:
   lint:
     docker:
-      - image: cimg/node:16.18.1
+      - image: cimg/node:16.20.2
     resource_class: medium
     steps:
       - setup
@@ -117,7 +117,7 @@ jobs:
 
   unit_test:
     docker:
-      - image: cimg/node:16.18.1
+      - image: cimg/node:16.20.2
     resource_class: medium
     steps:
       - setup
@@ -127,7 +127,7 @@ jobs:
 
   integration_test:
     docker:
-      - image: cimg/node:16.18.1
+      - image: cimg/node:16.20.2
     resource_class: medium
     steps:
       - setup
@@ -142,7 +142,7 @@ jobs:
 
   cypress_component_test:
     docker:
-      - image: cimg/node:16.18.1
+      - image: cimg/node:16.20.2
     resource_class: medium
     steps:
       - setup
@@ -173,7 +173,7 @@ jobs:
 
   seed_data:
     docker:
-      - image: cimg/node:16.18.1
+      - image: cimg/node:16.20.2
     resource_class: medium
     steps:
       - setup
@@ -188,7 +188,7 @@ jobs:
 
   cypress_e2e_tests:
     docker:
-      - image: cimg/node:16.18.1
+      - image: cimg/node:16.20.2
     resource_class: xlarge
     parallelism: 5
     steps:
@@ -226,7 +226,7 @@ jobs:
 
   cucumber_e2e_tests:
     docker:
-      - image: cimg/node:16.18.1
+      - image: cimg/node:16.20.2
     resource_class: xlarge
     parallelism: 10
     environment:
