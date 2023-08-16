@@ -181,7 +181,7 @@ jobs:
           IMAGES: nodejs
       - build_audit_logging_images
       - start_specific_core_services:
-          SERVICES: "postgres audit-log-api"
+          SERVICES: "postgres audit-log-api localstack"
       - run:
           name: Run the seed-data script
           command: DEPLOY_NAME=e2e-test npm run seed-data  
