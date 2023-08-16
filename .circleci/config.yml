@@ -8,6 +8,8 @@ commands:
   setup:
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - node/install
       - run: rm -rf ~/.npm
       - node/install-packages:
@@ -103,7 +105,7 @@ commands:
 jobs:
   lint:
     docker:
-      - image: cimg/node:16.12.0
+      - image: cimg/node:16.18.1
     resource_class: medium
     steps:
       - setup
@@ -113,7 +115,7 @@ jobs:
 
   unit_test:
     docker:
-      - image: cimg/node:16.12.0
+      - image: cimg/node:16.18.1
     resource_class: medium
     steps:
       - setup
@@ -122,9 +124,8 @@ jobs:
           command: npm run test:unit
 
   integration_test:
-    machine:
-      image: ubuntu-2004:2023.04.2
-      docker_layer_caching: true
+    docker:
+      - image: cimg/node:16.18.1
     resource_class: medium
     steps:
       - setup
@@ -138,9 +139,8 @@ jobs:
           command: npm run test:integration
 
   cypress_component_test:
-    machine:
-      image: ubuntu-2004:2023.04.2
-      docker_layer_caching: true
+    docker:
+      - image: cimg/node:16.18.1
     resource_class: medium
     steps:
       - setup
@@ -170,9 +170,8 @@ jobs:
           path: ./cypress/screenshots
 
   seed_data:
-    machine:
-      image: ubuntu-2004:2023.04.2
-      docker_layer_caching: true
+    docker:
+      - image: cimg/node:16.18.1
     resource_class: medium
     steps:
       - setup
@@ -186,9 +185,8 @@ jobs:
           command: DEPLOY_NAME=e2e-test npm run seed-data  
 
   cypress_e2e_tests:
-    machine:
-      image: ubuntu-2004:2023.04.2
-      docker_layer_caching: true
+    docker:
+      - image: cimg/node:16.18.1
     resource_class: xlarge
     parallelism: 5
     steps:
@@ -225,9 +223,8 @@ jobs:
           path: ./cypress/screenshots
 
   cucumber_e2e_tests:
-    machine:
-      image: ubuntu-2004:2023.04.2
-      docker_layer_caching: true
+    docker:
+      - image: cimg/node:16.18.1
     resource_class: xlarge
     parallelism: 10
     environment:
