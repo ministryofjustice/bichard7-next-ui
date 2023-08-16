@@ -101,47 +101,37 @@ commands:
 
 jobs:
   lint:
-    docker:
-      - image: cimg/node:16.20.2
-    resource_class: medium
+    executor:
+      name: node/default
+      tag: '16.20.2'
     steps:
-      - setup
+      - checkout
+      - node/install-packages:
+          include-branch-in-cache-key: true
       - run:
           name: Check the code for linting errors
           command: npm run lint
 
   unit_test:
-    docker:
-      - image: cimg/node:16.20.2
-    resource_class: medium
+    executor:
+      name: node/default
+      tag: '16.20.2'
     steps:
-      - setup
+      - checkout
+      - node/install-packages:
+          include-branch-in-cache-key: true
       - run:
           name: Run code-based unit tests
           command: npm run test:unit
 
-  integration_test:
-    machine:
-      image: ubuntu-2204:current
-      docker_layer_caching: true
-    resource_class: medium
-    steps:
-      - setup
-      - fetch_images:
-          IMAGES: nodejs 
-      - build_audit_logging_images
-      - start_specific_core_services:
-          SERVICES: activemq localstack postgres audit-log-api
-      - run:
-          name: Run integration tests
-          command: npm run test:integration
-
   cypress_component_test:
-    docker:
-      - image: cimg/node:16.20.2
-    resource_class: medium
+    executor:
+      name: node/default
+      tag: '16.20.2'
     steps:
-      - setup
+      - checkout
+      - node/install-packages:
+          include-branch-in-cache-key: true
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
@@ -167,6 +157,22 @@ jobs:
       - store_artifacts:
           path: ./cypress/screenshots
 
+  integration_test:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+    resource_class: medium
+    steps:
+      - setup
+      - fetch_images:
+          IMAGES: nodejs 
+      - build_audit_logging_images
+      - start_specific_core_services:
+          SERVICES: activemq localstack postgres audit-log-api
+      - run:
+          name: Run integration tests
+          command: npm run test:integration
+
   seed_data:
     machine:
       image: ubuntu-2204:current
@@ -178,7 +184,7 @@ jobs:
           IMAGES: nodejs
       - build_audit_logging_images
       - start_specific_core_services:
-          SERVICES: "postgres audit-log-api localstack"
+          SERVICES: postgres audit-log-api localstack
       - run:
           name: Run the seed-data script
           command: DEPLOY_NAME=e2e-test npm run seed-data  
