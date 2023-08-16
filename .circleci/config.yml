@@ -99,10 +99,9 @@ commands:
     steps:
       - run:
           name: "Run services: <<parameters.SERVICES>>"
-          working_directory: ~/bichard7-next-core
+          working_directory: ~/bichard7-next-core/environment
           command: |
             docker-compose --project-name bichard \
-            -f environment/docker-compose.yml \
             up -d <<parameters.SERVICES>> <<parameters.FLAGS>> --wait <<parameters.SERVICES>>
 
 #################################################################################
@@ -175,8 +174,9 @@ jobs:
           path: ./cypress/screenshots
 
   seed_data:
-    docker:
-      - image: cimg/node:16.20.2
+    executor:
+      name: node/default
+      tag: 16.20.2
     resource_class: medium
     steps:
       - setup
