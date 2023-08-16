@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   node: circleci/node@5.1.0
   aws-cli: circleci/aws-cli@4.0.0
+  docker: circleci/docker@2.2.0
 
 commands:
   ################### Helpers
@@ -12,6 +13,7 @@ commands:
       - setup_remote_docker:
           docker_layer_caching: true
       - aws-cli/setup
+      - docker/install-docker-compose
       - node/install
       - run: rm -rf ~/.npm
       - node/install-packages:
