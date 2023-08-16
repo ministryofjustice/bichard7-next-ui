@@ -100,7 +100,7 @@ commands:
           command: |
             docker-compose --project-name bichard \
             -f environment/docker-compose.yml \
-            up -d <<parameters.SERVICES>> <<parameters.FLAGS>>
+            up -d <<parameters.SERVICES>> <<parameters.FLAGS>> --wait <<parameters.SERVICES>>
 
 #################################################################################
 
@@ -211,7 +211,7 @@ jobs:
       - fetch_images:
           IMAGES: ui user-service nginx-auth-proxy
       - start_specific_core_services:
-          SERVICES: ui user-service nginx-auth-proxy postgres activemq audit-log-api localstack
+          SERVICES: ui user-service nginx-auth-proxy postgres audit-log-api localstack
           FLAGS: --no-deps
       - run:
           name: Run UI tests
