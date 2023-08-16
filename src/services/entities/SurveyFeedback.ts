@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from "typeorm"
 import BaseEntity from "./BaseEntity"
 import type { SurveyFeedbackResponse } from "types/SurveyFeedback"
-import { SurveyFeedbackType } from "types/SurveyFeedback"
+import { SurveyFeedbackType } from "../../types/SurveyFeedback"
 import dateTransformer from "./transformers/dateTransformer"
 import jsonTransformer from "./transformers/jsonTransformer"
 
