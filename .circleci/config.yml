@@ -123,6 +123,7 @@ jobs:
   integration_test:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: medium
     steps:
       - setup
@@ -169,6 +170,7 @@ jobs:
   seed_data:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: medium
     steps:
       - setup
@@ -184,6 +186,7 @@ jobs:
   cypress_e2e_tests:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: xlarge
     parallelism: 5
     steps:
@@ -222,6 +225,7 @@ jobs:
   cucumber_e2e_tests:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: xlarge
     parallelism: 10
     environment:
