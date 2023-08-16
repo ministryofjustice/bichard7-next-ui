@@ -10,8 +10,6 @@ commands:
   setup:
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - aws-cli/setup
       - docker/install-docker
       - docker/install-docker-compose
