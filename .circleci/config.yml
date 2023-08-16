@@ -123,8 +123,8 @@ jobs:
           command: npm run test:unit
 
   integration_test:
-    docker:
-      - image: cimg/node:16.20.2
+    machine:
+      image: ubuntu-2204:current
     resource_class: medium
     steps:
       - setup
@@ -184,8 +184,8 @@ jobs:
           command: DEPLOY_NAME=e2e-test npm run seed-data  
 
   cypress_e2e_tests:
-    docker:
-      - image: cimg/node:16.20.2
+    machine:
+      image: ubuntu-2204:current
     resource_class: xlarge
     parallelism: 5
     steps:
@@ -222,8 +222,8 @@ jobs:
           path: ./cypress/screenshots
 
   cucumber_e2e_tests:
-    docker:
-      - image: cimg/node:16.20.2
+    machine:
+      image: ubuntu-2204:current
     resource_class: xlarge
     parallelism: 10
     environment:
