@@ -94,6 +94,8 @@ commands:
           name: "Run services: <<parameters.SERVICES>>"
           working_directory: ~/bichard7-next-core
           command: |
+            set +e
+            
             docker-compose --project-name bichard \
             -f environment/docker-compose.yml \
             up -d <<parameters.SERVICES>> <<parameters.FLAGS>>
@@ -132,7 +134,7 @@ jobs:
           IMAGES: nodejs 
       - build_audit_logging_images
       - start_specific_core_services:
-          SERVICES: "activemq localstack postgres audit-log-api"
+          SERVICES: activemq localstack postgres audit-log-api
       - run:
           name: Run integration tests
           command: npm run test:integration
