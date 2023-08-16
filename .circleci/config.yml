@@ -125,7 +125,7 @@ jobs:
 
   integration_test:
     machine:
-      image: ubuntu-2004:2022.07.1
+      image: ubuntu-2004:2023.04.2
       docker_layer_caching: true
     resource_class: medium
     steps:
@@ -141,7 +141,7 @@ jobs:
 
   cypress_component_test:
     machine:
-      image: ubuntu-2004:2022.07.1
+      image: ubuntu-2004:2023.04.2
       docker_layer_caching: true
     resource_class: medium
     steps:
@@ -173,7 +173,7 @@ jobs:
 
   seed_data:
     machine:
-      image: ubuntu-2004:2022.07.1
+      image: ubuntu-2004:2023.04.2
       docker_layer_caching: true
     resource_class: medium
     steps:
@@ -189,7 +189,7 @@ jobs:
 
   cypress_e2e_tests:
     machine:
-      image: ubuntu-2004:2022.07.1
+      image: ubuntu-2004:2023.04.2
       docker_layer_caching: true
     resource_class: xlarge
     parallelism: 5
@@ -228,7 +228,7 @@ jobs:
 
   cucumber_e2e_tests:
     machine:
-      image: ubuntu-2004:2022.07.1
+      image: ubuntu-2004:2023.04.2
       docker_layer_caching: true
     resource_class: xlarge
     parallelism: 10
