@@ -69,17 +69,6 @@ commands:
           name: Start bichard7 legacy
           working_directory: ~/bichard7-next-core
           command: npm run all-legacy
-      - run:
-          name: Retry - start bichard7 legacy
-          working_directory: ~/bichard7-next-core
-          when: on_fail
-          command: |
-            # TODO: add legacy compose to destroy in core
-            docker-compose --project-name bichard \
-              -f environment/docker-compose.yml \
-              -f environment/docker-compose-bichard.yml down -v
-
-            npm run all-legacy
     
   start_specific_core_services:
     parameters:
