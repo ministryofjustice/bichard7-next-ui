@@ -174,9 +174,8 @@ jobs:
           path: ./cypress/screenshots
 
   seed_data:
-    executor:
-      name: node/default
-      tag: 16.20.2
+    machine:
+      image: ubuntu-2204:2023.04.2
     resource_class: medium
     steps:
       - setup
