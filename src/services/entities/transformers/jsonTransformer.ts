@@ -1,8 +1,8 @@
 import { ValueTransformer } from "typeorm"
 
-const featureFlagTransformer: ValueTransformer = {
+const jsonTransformer: ValueTransformer = {
   to: (value) => value,
   from: (value) => value ?? {}
 }
 
-export default featureFlagTransformer
+export default jsonTransformer

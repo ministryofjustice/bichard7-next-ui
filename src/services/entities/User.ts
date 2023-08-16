@@ -1,7 +1,7 @@
 import type { default as KeyValuePair } from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import { Column, Entity, PrimaryColumn } from "typeorm"
 import BaseEntity from "./BaseEntity"
-import featureFlagTransformer from "./transformers/featureFlagTransformer"
+import jsonTransformer from "./transformers/jsonTransformer"
 import delimitedString from "./transformers/delimitedString"
 import { UserGroup } from "../../types/UserGroup"
 import { userAccess } from "../../utils/userPermissions"
@@ -33,7 +33,7 @@ export default class User extends BaseEntity {
   @Column({ name: "excluded_triggers", transformer: delimitedString(","), type: "varchar" })
   excludedTriggers!: string[]
 
-  @Column({ name: "feature_flags", transformer: featureFlagTransformer, type: "jsonb" })
+  @Column({ name: "feature_flags", transformer: jsonTransformer, type: "jsonb" })
   featureFlags!: KeyValuePair<string, boolean>
 
   groups: UserGroup[] = []
