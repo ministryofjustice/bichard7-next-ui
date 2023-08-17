@@ -1,23 +1,31 @@
 import Layout from "components/Layout"
-import { MAX_NOTE_LENGTH } from "config"
-import { BackLink, Button, Heading, HintText, Paragraph, Radio, TextArea } from "govuk-react"
+import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, Paragraph, Radio, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
-import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
-import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
+// import getDataSource from "services/getDataSource"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser } = context as AuthenticationServerSidePropsContext
+    const { currentUser, query, req } = context as AuthenticationServerSidePropsContext
+    // const { previousPath } = query as { previousPath: string | null }
+    // const dataSource = await getDataSource()
 
     const props = {
-      user: currentUser.serialize()
+      user: currentUser.serialize(),
+      previousPath: "/bichard"
     }
+
+    //get the request from context
+    // Add condition to Check if its a post request
+    // - get the form params from the request
+    // - persit the feedback using the service we created
+    // - redirect to the previous path(we need to find out how to capture the previous path when user is opening feedback page)
+    // Ensure to cover this with a cypress test
 
     return { props }
   }
@@ -25,15 +33,16 @@ export const getServerSideProps = withMultipleServerSideProps(
 
 interface Props {
   user: User
-  courtCase: CourtCase
+  previousPath: string
 }
 
-const FeedbackPage: NextPage<Props> = ({ user }: Props) => {
-  const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH) // TODO: change max feedback length to 2000 characters
+const FeedbackPage: NextPage<Props> = ({ user, previousPath }: Props) => {
+  const maxFeedbackNoteLength: number = 2000
+  const [noteRemainingLength, setNoteRemainingLength] = useState(maxFeedbackNoteLength)
+  const noteIsEmpty = noteRemainingLength === maxFeedbackNoteLength
   const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
-    setNoteRemainingLength(MAX_NOTE_LENGTH - event.currentTarget.value.length)
+    setNoteRemainingLength(maxFeedbackNoteLength - event.currentTarget.value.length)
   }
-  const { basePath } = useRouter()
   return (
     <>
       <Layout user={user}>
@@ -41,7 +50,7 @@ const FeedbackPage: NextPage<Props> = ({ user }: Props) => {
           <title>{"Report an issue | Bichard7"}</title>
           <meta name="description" content="user feedback| Bichard7" />
         </Heading>
-        <BackLink href={`${basePath}`} onClick={function noRefCheck() {}}>
+        <BackLink href={previousPath} onClick={function noRefCheck() { }}>
           {"Back"}
         </BackLink>
         <Heading as="h1">{"How can we help?"}</Heading>
@@ -65,45 +74,56 @@ const FeedbackPage: NextPage<Props> = ({ user }: Props) => {
               "If you would like to tell us about your experience using the new version of Bichard7, please do so below."
             }
           </Paragraph>
-          <Paragraph>
-            {
-              "After submitting, if we have any enquiries we would like to be able to contact you. If you would like your feedback to be anonymous please opt-out below."
-            }
-          </Paragraph>
+          <Fieldset>
+            <FormGroup>
+              <Paragraph>
+                {
+                  "After submitting, if we have any enquiries we would like to be able to contact you. If you would like your feedback to be anonymous please opt-out below."
+                }
+              </Paragraph>
 
-          <Radio name="anonymous" value={"yes"}>
-            {"Yes, I would like to be contacted about this feedback."}
-          </Radio>
+              <Radio name="anonymous" value={"yes"}>
+                {"Yes, I would like to be contacted about this feedback."}
+              </Radio>
 
-          <Radio name="anonymous" value={"no"}>
-            {"No, I would like to opt-out, which will mean my feedback will be anonymous."}
-          </Radio>
+              <Radio name="anonymous" value={"no"}>
+                {"No, I would like to opt-out, which will mean my feedback will be anonymous."}
+              </Radio>
+            </FormGroup>
 
-          <Heading as="h3" size="SMALL">
-            {"Rate your experience of using the the new version of Bichard"}
-          </Heading>
-          <Paragraph>{"Select one of the below options."}</Paragraph>
-          <Radio name={"Rate your experience"}>{"Very satisfied"}</Radio>
-          <Radio name={"Rate your experience"}>{"Satisfied"}</Radio>
-          <Radio name={"Rate your experience"}>{"Neither satisfied nor dissatisfied"}</Radio>
-          <Radio name={"Rate your experience"}>{"Dissatisfied"}</Radio>
-          <Radio name={"Rate your experience"}>{"Very dissatisfied"}</Radio>
+            <FormGroup>
+              <Heading as="h3" size="SMALL">
+                {"Rate your experience of using the the new version of Bichard"}
+              </Heading>
+              <Paragraph>{"Select one of the below options."}</Paragraph>
+              <Radio name={"Rate your experience"}>{"Very satisfied"}</Radio>
+              <Radio name={"Rate your experience"}>{"Satisfied"}</Radio>
+              <Radio name={"Rate your experience"}>{"Neither satisfied nor dissatisfied"}</Radio>
+              <Radio name={"Rate your experience"}>{"Dissatisfied"}</Radio>
+              <Radio name={"Rate your experience"}>{"Very dissatisfied"}</Radio>
+            </FormGroup>
 
-          <Heading as="h3" size="SMALL">
-            {"Tell us why you gave this rating"}
-          </Heading>
+            <FormGroup>
+              <Heading as="h3" size="SMALL">
+                {"Tell us why you gave this rating"}
+              </Heading>
 
-          <TextArea
-            input={{ name: "feedback", rows: 5, maxLength: MAX_NOTE_LENGTH, onInput: handleOnNoteChange }}
-            meta={{
-              error: "Input message into the text box",
-              touched: true
-            }}
-          >
-            { }
-          </TextArea>
-          <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
-          <Button type="submit">{"Send feedback and continue"}</Button>
+              <TextArea
+                input={{ name: "feedback", rows: 5, maxLength: maxFeedbackNoteLength, onInput: handleOnNoteChange }}
+                meta={{
+                  error: "Input message into the text box",
+                  touched: noteIsEmpty
+                }}
+              >
+                { }
+              </TextArea>
+              <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
+            </FormGroup>
+
+            <FormGroup>
+              <Button type="submit">{"Send feedback and continue"}</Button>
+            </FormGroup>
+          </Fieldset>
         </form>
       </Layout>
     </>
