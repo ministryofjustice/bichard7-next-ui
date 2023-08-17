@@ -1,272 +1,133 @@
 version: 2.1
 
+orbs:
+  node: circleci/node@5.1.0
+
 commands:
-  npm_install:
-    description: Check out the repo and install the node dependencies
+  ################### Helpers
+  setup:
     steps:
+      - checkout
+      - node/install
+      - run: rm -rf ~/.npm
+      - node/install-packages:
+          include-branch-in-cache-key: true
       - run:
-          name: Hash package lock
-          command: ./.circleci/scripts/hash-package-lock.sh
-      - restore_cache:
-          name: Load node_modules from the cache if they haven't changed
-          keys:
-            - v1-npm-deps-{{ checksum "package-lock.json.md5" }}
-            - v1-npm-deps-
+          name: Clone bichard7-next-core
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
       - run:
-          name: Install node dependencies
-          command: npm i
-
-  clone_bichard_repo:
-    description: Check out the bichard7-next repo
-    steps:
-      - add_ssh_keys:
-          fingerprints:
-            - 56:12:d8:11:e2:11:41:bc:f3:29:b7:ba:cc:d5:0c:5a
-      - run:
-          name: Clone Bichard7 Next
-          command: git clone --depth 1 git@github.com:ministryofjustice/bichard7-next.git ~/bichard7-next
-
-  run_postgres:
-    description: Run the PostgreSQL database
-    steps:
-      - run:
-          name: Spin up the PostgreSQL database
-          working_directory: ~/bichard7-next
-          command: make run-pg
-
-  run_mq:
-    description: Run MQ
-    steps:
-      - run:
-          name: Spin up MQ
-          working_directory: ~/bichard7-next
-          command: make run-activemq
-
-  run_audit_logging:
-    description: Run audit logging
-    steps:
-      - run:
-          name: Run audit logging API
-          working_directory: ~/bichard7-next-audit-logging
-          command: npm install && SKIP_PG=true SKIP_MQ=true npm run start-api
-          background: true
-
-  use_nvm_version:
-    description: Install nvm and use configured node version
-    steps:
-      - run:
-          label: Use nvm for a specific node version...
-          command: |
-            set +e
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm install
-            nvm use
-
-  checkout-tests:
-    steps:
-      - run:
-          name: Git clone e2e tests
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
-
-  checkout-audit-logging:
-    steps:
-      - run:
-          name: Git clone audit logging
+          name: Clone bichard7-next-audit-logging
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
-
-  fetch_docker_image:
+  
+  fetch_images:
     parameters:
-      image:
+      IMAGES:
+        default: ""
+        type: string
+    steps:
+      - run: 
+          name: "Fetch images: <<parameters.IMAGES>>"
+          command: bash ./scripts/fetch-docker-images.sh <<parameters.IMAGES>>
+
+
+  build_message_forwarder:
+    steps:
+      - run:
+          name: Build message forwarder image
+          working_directory: ~/bichard7-next-core
+          command: docker-compose -f environment/docker-compose.yml build message-forwarder
+
+  build_audit_logging_images:
+    steps:
+      - run:
+          name: Build audit logging images
+          working_directory: ~/bichard7-next-audit-logging
+          command: make build-api-server build-event-handler-server
+
+  run_test_chunk:
+    parameters:
+      NEXTUI:
+        default: "false"
+        type: "string"
+    steps:
+      - run:
+          name: Run test chunk
+          working_directory: ~/bichard7-next-tests
+          command: |
+            CHUNK=$(circleci tests glob "features/**/*.feature" | circleci tests split --split-by=timings) \
+            NEXTUI=<<parameters.NEXTUI>> \
+            npm run test:chunk
+
+  ################### Services
+  start_bichard7_legacy:
+    steps:
+      - fetch_images:
+          IMAGES: nodejs
+      - build_message_forwarder
+      - build_audit_logging_images
+      - run:
+          name: Start bichard7 legacy
+          working_directory: ~/bichard7-next-core
+          command: npm run all-legacy
+    
+  start_services:
+    parameters:
+      SERVICES:
+        default: ""
+        type: string
+      FLAGS:
+        default: ""
         type: string
     steps:
       - run:
-          name: Fetch the <<parameters.image>> image
-          working_directory: ~/bichard7-next
-          command: bash scripts/fetch_docker_image.sh <<parameters.image>>
-          background: true
-  
-  run_seed_data:
-    steps:
-      - run:
-          name: Run the seed-data script
-          command: DEPLOY_NAME=e2e-test npm run seed-data
+          name: "Run services: <<parameters.SERVICES>>"
+          working_directory: ~/bichard7-next-core
+          command: |
+            docker-compose --project-name bichard -f environment/docker-compose.yml \
+            up -d <<parameters.SERVICES>> <<parameters.FLAGS>> --wait <<parameters.SERVICES>>
+
+#################################################################################
 
 jobs:
   lint:
-    docker:
-      - image: cimg/node:16.12.0
-    resource_class: medium
-    working_directory: ~
+    executor:
+      name: node/default
+      tag: '16.20.2'
     steps:
       - checkout
-      - npm_install
-      - save_cache:
-          name: Save node_modules cache
-          key: v1-npm-deps-{{ checksum "package-lock.json.md5" }}
-          paths: node_modules
-      - attach_workspace:
-          at: .
+      - node/install-packages:
+          include-branch-in-cache-key: true
       - run:
           name: Check the code for linting errors
           command: npm run lint
 
   unit_test:
-    docker:
-      - image: cimg/node:16.12.0
-    resource_class: medium
-    working_directory: ~
+    executor:
+      name: node/default
+      tag: '16.20.2'
     steps:
       - checkout
-      - npm_install
-      - attach_workspace:
-          at: .
+      - node/install-packages:
+          include-branch-in-cache-key: true
       - run:
           name: Run code-based unit tests
           command: npm run test:unit
 
-  integration_test:
-    machine:
-      image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
-    working_directory: ~
-    steps:
-      - checkout
-      - checkout-audit-logging
-      - use_nvm_version
-      - npm_install
-      - attach_workspace:
-          at: .
-      - clone_bichard_repo
-      - run_postgres
-      - run_mq
-      - run_audit_logging
-      - run:
-          name: Wait for Audit logging API to start
-          command: STATUS_CODE=200 npx wait-on --config ./scripts/wait-for-status.js http://localhost:3010/messages
-      - run:
-          name: Run integration tests
-          command: npm run test:integration
-
-  build_ui_image:
-    machine:
-      image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
-    resource_class: medium
-    working_directory: ~
-    steps:
-      - checkout
-      - clone_bichard_repo
-      - run:
-          name: Build the UI application
-          command: ./.circleci/scripts/build-ui.sh
-      - run:
-          name: Save UI docker image
-          command: docker save ui > ui.tar
-      - save_cache:
-          name: Cache UI docker image
-          key: ui-image-<<pipeline.git.revision>>
-          paths: ui.tar
-
-  cypress_e2e_test:
-    machine:
-      image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
-    resource_class: medium
-    working_directory: ~
-    parallelism: 5
-    steps:
-      - checkout
-      - checkout-audit-logging
-      - clone_bichard_repo
-      - fetch_docker_image:
-          image: user-service
-      - fetch_docker_image:
-          image: nginx-auth-proxy
-      - restore_cache:
-          name: Restore UI docker image from cache
-          keys: 
-            - ui-image-<<pipeline.git.revision>>
-      - run:
-          name: Load UI docker image
-          command: docker load < ui.tar
-      - run:
-          name: Install Cypress
-          command: ./.circleci/scripts/install-cypress.sh 2>&1
-          background: true
-      - use_nvm_version
-      - npm_install
-      - run:
-          name: Install GOV.UK Assets
-          command: npm run install:assets
-      - attach_workspace:
-          at: .
-      - run:
-          name: Wait for cypress install to finish
-          command: until [ -f cypressInstalled ]; do sleep 1; done
-          no_output_timeout: 10m
-      - run:
-          name: Retrying installing Cypress
-          command: ./.circleci/scripts/install-cypress.sh
-      - run:
-          name: Wait for docker images
-          command: IMAGES=(ui user-service nginx-auth-proxy) && bash ./scripts/wait_for_images.sh "${IMAGES[@]}"
-          no_output_timeout: 15m
-      - run:
-          name: Run MQ
-          working_directory: ~/bichard7-next
-          command: COMPOSE_PROJECT_NAME="bichard7" docker-compose up -d activemq
-          background: true
-      - run_audit_logging
-      - run:
-          name: Wait for Audit logging API to start
-          command: STATUS_CODE=200 npx wait-on --config ./scripts/wait-for-status.js http://localhost:3010/messages
-      - run:
-          name: Run UI stack
-          working_directory: ~/bichard7-next
-          command: make run-ui
-          background: true
-          environment:
-            AUDIT_LOG_API_URL: http://172.17.0.1:3010
-      - run:
-          name: Wait for UI to start
-          command: STATUS_CODE=401 npx wait-on --config ./scripts/wait-for-status.js https://localhost:4080/bichard
-      - run:
-          name: Run UI tests
-          command: TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX ./scripts/run-ui-tests-chunk.sh
-          environment:
-            UI_IS_HTTPS: true
-            TZ: "Europe/London"
-            AUDIT_LOG_API_URL: http://172.17.0.1:3010
-      - store_artifacts:
-          path: ./cypress/videos
-      - store_artifacts:
-          path: ./cypress/screenshots
-
   cypress_component_test:
-    machine:
-      image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
-    resource_class: medium
-    working_directory: ~
+    executor:
+      name: node/default
+      tag: '16.20.2'
     steps:
       - checkout
-      - clone_bichard_repo
-      - fetch_docker_image:
-          image: user-service
-      - fetch_docker_image:
-          image: nginx-auth-proxy
+      - node/install-packages:
+          include-branch-in-cache-key: true
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
           background: true
-      - use_nvm_version
-      - npm_install
       - run:
           name: Install GOV.UK Assets
           command: npm run install:assets
-      - attach_workspace:
-          at: .
       - run:
           name: Wait for cypress install to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
@@ -285,119 +146,112 @@ jobs:
       - store_artifacts:
           path: ./cypress/screenshots
 
+  integration_test:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+    resource_class: medium
+    steps:
+      - setup
+      - fetch_images:
+          IMAGES: nodejs 
+      - build_audit_logging_images
+      - start_services:
+          SERVICES: activemq localstack postgres audit-log-api
+      - run:
+          name: Run integration tests
+          command: npm run test:integration
+
   seed_data:
     machine:
-      image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
-    working_directory: ~
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+    resource_class: medium
     steps:
-      - checkout
-      - checkout-audit-logging
-      - use_nvm_version
-      - npm_install
-      - attach_workspace:
-          at: .
-      - run_audit_logging
-      - clone_bichard_repo
-      - run_postgres
-      - run_seed_data
+      - setup
+      - fetch_images:
+          IMAGES: nodejs
+      - build_audit_logging_images
+      - start_services:
+          SERVICES: postgres audit-log-api localstack
+      - run:
+          name: Run the seed-data script
+          command: DEPLOY_NAME=e2e-test npm run seed-data  
 
-  new_UI_e2e_test:
+  cypress_e2e_tests:
     machine:
-      image: ubuntu-2004:2022.07.1
-      docker_layer_caching: false
+      image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: xlarge
-    working_directory: ~
-    parallelism: 10
+    parallelism: 5
     steps:
-      - checkout
-      - checkout-tests
-      - checkout-audit-logging
-      - npm_install
-      - attach_workspace:
-          at: .
-      - clone_bichard_repo
-      - fetch_docker_image:
-          image: user-service
-      - fetch_docker_image:
-          image: nginx-auth-proxy
-      - fetch_docker_image:
-          image: pncemulator
-      - fetch_docker_image:
-          image: beanconnect
-      - restore_cache:
-          name: Restore UI docker image from cache
-          keys: 
-            - ui-image-<<pipeline.git.revision>>
-      - run_audit_logging
+      - setup
+      - run: npm run install:assets
+      - fetch_images:
+          IMAGES: nodejs
+      - build_audit_logging_images
+      - run: ./.circleci/scripts/build-ui.sh
       - run:
-          name: Wait for Audit logging API to start
-          command: STATUS_CODE=200 npx wait-on --config ./scripts/wait-for-status.js http://localhost:3010/messages
-      - run:
-          name: Load UI docker image
-          command: docker load < ui.tar
+          command: ./.circleci/scripts/install-cypress.sh 2>&1
           background: true
       - run:
-          name: Wait for docker images
-          command: IMAGES=(ui user-service nginx-auth-proxy pncemulator beanconnect) && bash ./scripts/wait_for_images.sh "${IMAGES[@]}"
-          no_output_timeout: 15m
+          name: Wait for cypress install to finish
+          command: until [ -f cypressInstalled ]; do sleep 1; done
+          no_output_timeout: 10m
       - run:
-          name: Run full stack (excluding beanconnect and PNC emulator)
-          working_directory: ~/bichard7-next
-          command: |
-            make build-ci
-            make run-all-no-bc -j 4
+          name: Retrying installing Cypress
+          command: ./.circleci/scripts/install-cypress.sh
+      - fetch_images:
+          IMAGES: ui user-service nginx-auth-proxy
+      - start_services:
+          SERVICES: ui user-service nginx-auth-proxy postgres audit-log-api localstack
+          FLAGS: --no-deps
       - run:
-          name: Run beanconnect and PNC emulator
-          working_directory: ~/bichard7-next
-          command: make run-beanconnect
-      - run:
-          name: Wait for Bichard
-          working_directory: ~/bichard7-next
-          command: bash ./scripts/wait_for_bichard.sh
-      - run:
-          name: Trying to run beanconnect and PNC emulator again
-          working_directory: ~/bichard7-next
-          command: make run-beanconnect && bash ./scripts/wait_for_bichard.sh
-          when: on_fail
-      - run:
-          name: Run UI stack
-          working_directory: ~/bichard7-next
-          command: make run-ui
+          name: Run UI tests
+          command: ./scripts/run-ui-tests-chunk.sh
           environment:
-            AUDIT_LOG_API_URL: http://172.17.0.1:3010
-          background: true
+            UI_IS_HTTPS: true
+            TZ: "Europe/London"
+      - store_artifacts:
+          path: ./cypress/videos
+      - store_artifacts:
+          path: ./cypress/screenshots
+
+  cucumber_e2e_tests:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+    resource_class: xlarge
+    parallelism: 10
+    environment:
+      STACK_TYPE: next
+      WORKSPACE: local-next
+      AUTH_TYPE: user-service
+    steps:
+      - setup
+      - run: ./.circleci/scripts/build-ui.sh
       - run:
-          name: Wait for UI to start
-          command: STATUS_CODE=401 npx wait-on --config ./scripts/wait-for-status.js https://localhost:4080/bichard
-      - run:
-          name: Run end-to-end tests against new UI
-          working_directory: ~/bichard7-next-tests
-          command: |
-            npm i
-            
-            nextUI=true TOTAL_CHUNKS=$CIRCLE_NODE_TOTAL CHUNK_NUMBER=$CIRCLE_NODE_INDEX \
-            bash ./scripts/run_test_chunk.sh \
-            'not @Excluded and not @ExcludedOnMaster and not @OnlyRunsOnPNC and not @AuditLog and @NextUI'
-          environment:
-            STACK_TYPE: next
-            WORKSPACE: local-next
-            AUTH_TYPE: user-service        
-            AUDIT_LOG_API_URL: http://172.17.0.1:3010
+          name: Clone bichard7-next-tests
+          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
+      - node/install-packages:
+          app-dir: ~/bichard7-next-tests
+          cache-path: ~/bichard7-next-tests/node_modules
+          include-branch-in-cache-key: true
+      - start_bichard7_legacy
+      - run_test_chunk:
+          NEXTUI: "true"
+
+#################################################################################
 
 workflows:
-  version: 2
   build-and-test:
     jobs:
       - lint
       - unit_test
       - integration_test
       - cypress_component_test
-      - build_ui_image
-      - cypress_e2e_test:
-          requires:
-            - build_ui_image
-      - new_UI_e2e_test:
-          requires:
-            - build_ui_image
       - seed_data
+
+      - cypress_e2e_tests
+      - cucumber_e2e_tests
+
