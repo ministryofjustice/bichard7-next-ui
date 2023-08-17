@@ -70,7 +70,7 @@ commands:
           working_directory: ~/bichard7-next-core
           command: npm run all-legacy
     
-  start_specific_core_services:
+  start_services:
     parameters:
       SERVICES:
         default: ""
@@ -156,7 +156,7 @@ jobs:
       - fetch_images:
           IMAGES: nodejs 
       - build_audit_logging_images
-      - start_specific_core_services:
+      - start_services:
           SERVICES: activemq localstack postgres audit-log-api
       - run:
           name: Run integration tests
@@ -172,7 +172,7 @@ jobs:
       - fetch_images:
           IMAGES: nodejs
       - build_audit_logging_images
-      - start_specific_core_services:
+      - start_services:
           SERVICES: postgres audit-log-api localstack
       - run:
           name: Run the seed-data script
@@ -203,7 +203,7 @@ jobs:
           command: ./.circleci/scripts/install-cypress.sh
       - fetch_images:
           IMAGES: ui user-service nginx-auth-proxy
-      - start_specific_core_services:
+      - start_services:
           SERVICES: ui user-service nginx-auth-proxy postgres audit-log-api localstack
           FLAGS: --no-deps
       - run:
