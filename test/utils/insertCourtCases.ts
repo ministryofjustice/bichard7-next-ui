@@ -12,6 +12,7 @@ import { insertNoteUser } from "./insertNoteUser"
 import createAuditLogRecord from "../helpers/createAuditLogRecord"
 import { v4 as uuid } from "uuid"
 import insertManyIntoDynamoTable from "./insertManyIntoDynamoTable"
+import SurveyFeedback from "services/entities/SurveyFeedback"
 
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
   (await getDataSource()).getRepository(CourtCase).create({
@@ -19,6 +20,13 @@ const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtC
     hearingOutcome: DummyMultipleOffencesAho.hearingOutcomeXml,
     ...overrides
   } as CourtCase)
+
+const getAllFeedbacksFromDatabase = async (): Promise<SurveyFeedback[]> => {
+  const feedbacks = await (await getDataSource()).getRepository(SurveyFeedback).find()
+  console.log(feedbacks)
+
+  return feedbacks
+}
 
 const insertCourtCases = async (courtCases: CourtCase | CourtCase[]): Promise<CourtCase[]> => {
   const dataSource = await getDataSource()
@@ -128,6 +136,7 @@ const insertDummyCourtCasesWithTriggers = async (
 
 export {
   getDummyCourtCase,
+  getAllFeedbacksFromDatabase,
   insertCourtCases,
   insertCourtCasesWithFields,
   insertMultipleDummyCourtCases,

@@ -1,3 +1,4 @@
+import SurveyFeedback from "services/entities/SurveyFeedback"
 import hashedPassword from "../fixtures/hashedPassword"
 
 describe("General Feedback Form", () => {
@@ -22,10 +23,16 @@ describe("General Feedback Form", () => {
     cy.login("bichard01@example.com", "password")
   })
 
+  // Happy path: submit a feedback with anonimus selected
   it("Should be able to visit feedback page from the caselist", () => {
     cy.visit("/bichard")
     cy.findByText("feedback").click()
     cy.get("h2").contains("Share your feedback").should("exist")
+    cy.task("getAllFeedbacksFromDatabase").then((result) => {
+      console.log("RESULT FROM TASK:", result)
+      const cases = result as SurveyFeedback[]
+      expect(cases[0].feedbackType).equal(2)
+    })
     // Confirm we land on feedback page
     // submit a new feedback
     // - select how satisfied
@@ -33,6 +40,13 @@ describe("General Feedback Form", () => {
     // submit
     // expect to return to previous page
   })
+
+  // Happy path: submit a feedback with user data stored
+  // Form validation: submit form with no experience selected
+  // Form validation: submit form with no experience selected
+  // Form validation: submit form with no response
+  // Form validation: submit form with more chars than the form allows
+  // Redirection: verify to redirect back to previous pages
 })
 
 export {}

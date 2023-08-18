@@ -1,23 +1,61 @@
+import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import Layout from "components/Layout"
 import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, Paragraph, Radio, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
+import SurveyFeedback from "services/entities/SurveyFeedback"
 import User from "services/entities/User"
-// import getDataSource from "services/getDataSource"
+import getDataSource from "services/getDataSource"
+import insertSurveyFeedback from "services/insertSurveyFeedback"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { SurveyFeedbackResponse, SurveyFeedbackType } from "types/SurveyFeedback"
+import { isPost } from "utils/http"
+import parseFormData from "utils/parseFormData"
+
+enum FeedbackExperienceKey {
+  verySatisfied,
+  satisfied,
+  neutral,
+  dissatisfied,
+  veryDissatisfied
+}
+
+const FeedbackExperienceOptions: KeyValuePair<FeedbackExperienceKey, string> = {
+  0: "Very satisfied",
+  1: "Satisfied",
+  2: "Neither satisfied nor dissatisfied",
+  3: "Dissatisfied",
+  4: "Very dissatisfied"
+}
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query, req } = context as AuthenticationServerSidePropsContext
-    // const { previousPath } = query as { previousPath: string | null }
-    // const dataSource = await getDataSource()
+    // const { previousPath } = query as { previousPath: string }
+
+    const dataSource = await getDataSource()
+    console.log(query)
 
     const props = {
       user: currentUser.serialize(),
       previousPath: "/bichard"
+    }
+
+    if (isPost(req)) {
+      const { anonymous, experience, feedback } = (await parseFormData(req)) as {
+        anonymous: string
+        experience: string
+        feedback: string
+      }
+
+      await insertSurveyFeedback(dataSource, {
+        feedbackType: SurveyFeedbackType.General,
+        response: { experience, comment: feedback } as SurveyFeedbackResponse
+      } as SurveyFeedback)
+      console.log("anonymous:::::", anonymous)
     }
 
     //get the request from context
@@ -25,7 +63,8 @@ export const getServerSideProps = withMultipleServerSideProps(
     // - get the form params from the request
     // - persit the feedback using the service we created
     // - redirect to the previous path(we need to find out how to capture the previous path when user is opening feedback page)
-    // Ensure to cover this with a cypress test
+    // Ensure to cover this with a cypress test for inserting 
+    // Make the fields required
 
     return { props }
   }
@@ -96,11 +135,11 @@ const FeedbackPage: NextPage<Props> = ({ user, previousPath }: Props) => {
                 {"Rate your experience of using the the new version of Bichard"}
               </Heading>
               <Paragraph>{"Select one of the below options."}</Paragraph>
-              <Radio name={"Rate your experience"}>{"Very satisfied"}</Radio>
-              <Radio name={"Rate your experience"}>{"Satisfied"}</Radio>
-              <Radio name={"Rate your experience"}>{"Neither satisfied nor dissatisfied"}</Radio>
-              <Radio name={"Rate your experience"}>{"Dissatisfied"}</Radio>
-              <Radio name={"Rate your experience"}>{"Very dissatisfied"}</Radio>
+              {Object.keys(FeedbackExperienceOptions).map((experienceKey) => (
+                <Radio key={experienceKey} name={"experience"} value={experienceKey}>
+                  {FeedbackExperienceOptions[experienceKey as unknown as FeedbackExperienceKey]}
+                </Radio>
+              ))}
             </FormGroup>
 
             <FormGroup>

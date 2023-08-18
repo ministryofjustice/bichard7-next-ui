@@ -9,7 +9,8 @@ import {
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithNotesAndLock,
   insertMultipleDummyCourtCases,
-  insertDummyCourtCasesWithTriggers
+  insertDummyCourtCasesWithTriggers,
+  getAllFeedbacksFromDatabase
 } from "./test/utils/insertCourtCases"
 
 import insertException from "./test/utils/manageExceptions"
@@ -65,6 +66,10 @@ export default defineConfig({
 
         insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {
           return insertCourtCasesWithFields(cases)
+        },
+
+        async getAllFeedbacksFromDatabase() {
+          return getAllFeedbacksFromDatabase()
         },
 
         insertCourtCasesWithNotes(params: { caseNotes: { user: string; text: string }[][]; force: string }) {
