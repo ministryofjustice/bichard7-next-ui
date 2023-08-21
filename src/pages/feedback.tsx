@@ -55,7 +55,6 @@ export const getServerSideProps = withMultipleServerSideProps(
         feedbackType: SurveyFeedbackType.General,
         response: { experience, comment: feedback } as SurveyFeedbackResponse
       } as SurveyFeedback)
-      console.log("anonymous:::::", anonymous)
     }
 
     //get the request from context
@@ -63,7 +62,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     // - get the form params from the request
     // - persit the feedback using the service we created
     // - redirect to the previous path(we need to find out how to capture the previous path when user is opening feedback page)
-    // Ensure to cover this with a cypress test for inserting 
+    // Ensure to cover this with a cypress test for inserting
     // Make the fields required
 
     return { props }

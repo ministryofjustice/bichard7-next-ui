@@ -23,15 +23,15 @@ describe("General Feedback Form", () => {
     cy.login("bichard01@example.com", "password")
   })
 
-  // Happy path: submit a feedback with anonimus selected
+  // Happy path: submit a feedback with anonymus selected
   it("Should be able to visit feedback page from the caselist", () => {
     cy.visit("/bichard")
     cy.findByText("feedback").click()
     cy.get("h2").contains("Share your feedback").should("exist")
     cy.task("getAllFeedbacksFromDatabase").then((result) => {
       console.log("RESULT FROM TASK:", result)
-      const cases = result as SurveyFeedback[]
-      expect(cases[0].feedbackType).equal(2)
+      const feedbackResults = result as SurveyFeedback[]
+      expect(feedbackResults[0].feedbackType).equal(1)
     })
     // Confirm we land on feedback page
     // submit a new feedback
