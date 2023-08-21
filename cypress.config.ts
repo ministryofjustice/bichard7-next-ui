@@ -8,15 +8,15 @@ import {
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithNotesAndLock,
-  insertMultipleDummyCourtCases,
   insertDummyCourtCasesWithTriggers,
-  getAllFeedbacksFromDatabase
+  insertMultipleDummyCourtCases
 } from "./test/utils/insertCourtCases"
+import { deleteFeedback, getAllFeedbacksFromDatabase } from "./test/utils/manageFeedbackSurveys"
 
+import { ResolutionStatus } from "types/ResolutionStatus"
 import insertException from "./test/utils/manageExceptions"
 import { deleteTriggers, insertTriggers } from "./test/utils/manageTriggers"
 import { deleteUsers, insertUsersWithOverrides } from "./test/utils/manageUsers"
-import { ResolutionStatus } from "types/ResolutionStatus"
 
 export default defineConfig({
   e2e: {
@@ -70,6 +70,9 @@ export default defineConfig({
 
         async getAllFeedbacksFromDatabase() {
           return getAllFeedbacksFromDatabase()
+        },
+        async clearAllFeedbacksFromDatabase() {
+          return deleteFeedback()
         },
 
         insertCourtCasesWithNotes(params: { caseNotes: { user: string; text: string }[][]; force: string }) {
