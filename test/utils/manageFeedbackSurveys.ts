@@ -8,7 +8,6 @@ const deleteFeedback = async () => {
 
 const getAllFeedbacksFromDatabase = async (): Promise<SurveyFeedback[]> => {
   const feedbacks = await (await getDataSource()).getRepository(SurveyFeedback).find()
-  console.log(feedbacks)
 
   return feedbacks
 }

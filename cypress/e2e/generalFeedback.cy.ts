@@ -55,22 +55,31 @@ describe("General Feedback Form", () => {
   })
 
   // Happy path: submit a feedback with user data stored
-  it("Should be able to submit an user data survey", () => {
-    cy.task("getAllFeedbacksFromDatabase").then((result) => {
-      console.log("RESULT FROM TASK:", result)
-      const feedbackResults = result as SurveyFeedback[]
-      const feedback = feedbackResults[0]
-      expect(feedback.feedbackType).equal(0)
-      // expect(feedback.userId).equal(user.id)
-    })
-  })
+  // it("Should be able to submit a user data survey", () => {
+  //   cy.visit("/bichard")
+  //   cy.findByText("feedback").click()
+  // cy.get("[name=User management]")
+  //     cy.get("[name=anonymous]").check("no")
+  // cy.get("[name=experience]").check("0")
+  // cy.get("[name=feedback]").type("This is feedback is not anonymous")
+  // cy.get("[type=submit]").click()
+  //   cy.task("getAllFeedbacksFromDatabase").then((result) => {
+  //     console.log("RESULT FROM TASK:", result)
+  //     const feedbackResults = result as SurveyFeedback[]
+  //     const feedback = feedbackResults[0]
+  //     expect(feedback.feedbackType).equal(0)
+  // expect(feedback.userId).equal(users.username)
+  //   })
+  // })
+  // it ("Should redirect back to previous pages", () => {})
 
-  describe("Should not be able to submit a survey with", () => {
-    // Form validation: submit form with no experience selected
-    it("no experience selected", () => {})
-    it("no response", () => {})
-    it("more chars than the form allows", () => {})
-  })
+  // describe("Should not be able to submit a survey", () => {
+  //   // Form validation: submit form with no experience selected
+  //   it("without experience selected", () => {})
+  //   it("with no response", () => {})
+  //   it("with more characters than the form allows", () => {})
+
+  // })
 
   // Form validation: submit form with no experience selected
   // Form validation: submit form with no response

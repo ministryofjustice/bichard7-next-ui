@@ -37,7 +37,6 @@ export const getServerSideProps = withMultipleServerSideProps(
     // const { previousPath } = query as { previousPath: string }
 
     const dataSource = await getDataSource()
-    console.log(query)
 
     const props = {
       user: currentUser.serialize(),
