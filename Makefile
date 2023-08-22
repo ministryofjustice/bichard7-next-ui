@@ -14,7 +14,7 @@ run:
 	docker run -p 4080:443 -e DB_HOST=$(DB_HOST) ui
 
 goss:
-	GOSS_SLEEP=15 dgoss run -e DB_HOST=$(DB_HOST) "ui:latest"
+	GOSS_SLEEP=5 dgoss run -e DB_HOST=$(DB_HOST) "ui:latest"
 
 setup-e2e-env:
 	./scripts/setup-e2e-env.sh
