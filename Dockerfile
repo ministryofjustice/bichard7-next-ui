@@ -24,7 +24,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 # Currently configured to run the standalone nextjs build
 #
-# next.config.js 
+# next.config.js
 #   output: standalone
 RUN npm run build
 
@@ -51,14 +51,14 @@ COPY --from=builder /src/ui/.next/static ./.next/static
 # Extract standalone build to working directory
 COPY --from=builder /src/ui/.next/standalone .
 
-# When next shakes the tree during the build, it doesn't find 
-# a direct require/import for the standing data package that 
+# When next shakes the tree during the build, it doesn't find
+# a direct require/import for the standing data package that
 # core imports dynamically, so it removes the package entirely.
 #
 # Copy the standing data package back where it belongs
 COPY --from=builder \
-        /src/ui/.next/standalone/node_modules/@moj-bichard7-developers/bichard7-next-data \ 
-        ./node_modules/@moj-bichard7-developers/bichard7-next-core/node_modules/bichard7-next-data-latest
+    /src/ui/.next/standalone/node_modules/@moj-bichard7-developers/bichard7-next-data \
+    ./node_modules/@moj-bichard7-developers/bichard7-next-core/node_modules/bichard7-next-data-latest
 
 COPY docker/conf/nginx.conf /etc/nginx/nginx.conf
 COPY docker/conf/supervisord.conf /etc/supervisord.conf
@@ -66,4 +66,4 @@ COPY docker/conf/supervisord.conf /etc/supervisord.conf
 EXPOSE 80
 EXPOSE 443
 
-CMD [ "/usr/bin/supervisord", "-c", "/etc/supervisord.conf" ]
+CMD [ "supervisord", "-c", "/etc/supervisord.conf" ]
