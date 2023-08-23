@@ -119,11 +119,11 @@ const FeedbackPage: NextPage<Props> = ({ user, previousPath }: Props) => {
                 }
               </Paragraph>
 
-              <Radio name="anonymous" value={"no"}>
+              <Radio name="isAnonymous" value={"no"}>
                 {"Yes, I would like to be contacted about this feedback."}
               </Radio>
 
-              <Radio name="anonymous" value={"yes"}>
+              <Radio name="isAnonymous" value={"yes"}>
                 {"No, I would like to opt-out, which will mean my feedback will be anonymous."}
               </Radio>
             </FormGroup>
