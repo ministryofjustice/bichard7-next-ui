@@ -2,6 +2,8 @@ import SurveyFeedback from "services/entities/SurveyFeedback"
 import hashedPassword from "../fixtures/hashedPassword"
 
 describe("General Feedback Form", () => {
+  const expectedUserId = 0
+
   beforeEach(() => {
     cy.viewport(1280, 720)
 
@@ -12,6 +14,7 @@ describe("General Feedback Form", () => {
     cy.task("insertUsers", {
       users: [
         {
+          id: expectedUserId,
           username: "Bichard01",
           visibleForces: ["01"],
           forenames: "Bichard Test User",
@@ -40,13 +43,12 @@ describe("General Feedback Form", () => {
     cy.findByText("feedback").click()
     cy.get("h2").contains("Share your feedback").should("exist")
 
-    cy.get("[name=anonymous]").check("yes")
+    cy.get("[name=isAnonymous]").check("yes")
     cy.get("[name=experience]").check("0")
     cy.get("[name=feedback]").type("Something feedback.")
     cy.get("[type=submit]").click()
 
     cy.task("getAllFeedbacksFromDatabase").then((result) => {
-      console.log("RESULT FROM TASK:", result)
       const feedbackResults = result as SurveyFeedback[]
       const feedback = feedbackResults[0]
       expect(feedback.feedbackType).equal(0)
@@ -58,33 +60,30 @@ describe("General Feedback Form", () => {
   // it("Should be able to submit a user data survey", () => {
   //   cy.visit("/bichard")
   //   cy.findByText("feedback").click()
-  // cy.get("[name=User management]")
-  //     cy.get("[name=anonymous]").check("no")
-  // cy.get("[name=experience]").check("0")
-  // cy.get("[name=feedback]").type("This is feedback is not anonymous")
-  // cy.get("[type=submit]").click()
+  //   cy.get("[name=isAnonymous]").check("no")
+  //   cy.get("[name=experience]").check("0")
+  //   cy.get("[name=feedback]").type("This is feedback is not anonymous")
+  //   cy.get("[type=submit]").click()
   //   cy.task("getAllFeedbacksFromDatabase").then((result) => {
-  //     console.log("RESULT FROM TASK:", result)
   //     const feedbackResults = result as SurveyFeedback[]
   //     const feedback = feedbackResults[0]
   //     expect(feedback.feedbackType).equal(0)
-  // expect(feedback.userId).equal(users.username)
+  //     expect(feedback.userId).equal(expectedUserId)
   //   })
   // })
+
   // it ("Should redirect back to previous pages", () => {})
 
   // describe("Should not be able to submit a survey", () => {
-  //   // Form validation: submit form with no experience selected
+  // Form validation: submit form with no experience selected
+  // Form validation: submit form with no response
+  // Form validation: submit form with more chars than the form allows
+  // Redirection: verify to redirect back to previous pages//   // Form validation: submit form with no experience selected
   //   it("without experience selected", () => {})
   //   it("with no response", () => {})
   //   it("with more characters than the form allows", () => {})
 
   // })
-
-  // Form validation: submit form with no experience selected
-  // Form validation: submit form with no response
-  // Form validation: submit form with more chars than the form allows
-  // Redirection: verify to redirect back to previous pages
 })
 
 export {}
