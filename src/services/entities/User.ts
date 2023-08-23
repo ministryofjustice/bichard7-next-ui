@@ -10,6 +10,9 @@ import Feature from "types/Feature"
 @Entity({ name: "users" })
 export default class User extends BaseEntity {
   @PrimaryColumn()
+  id!: number
+
+  @PrimaryColumn()
   username!: string
 
   @Column()

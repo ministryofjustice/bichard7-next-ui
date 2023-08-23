@@ -44,15 +44,17 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     if (isPost(req)) {
-      const { anonymous, experience, feedback } = (await parseFormData(req)) as {
-        anonymous: string
+      const { isAnonymous, experience, feedback } = (await parseFormData(req)) as {
+        isAnonymous: string
         experience: string
         feedback: string
       }
 
+
       await insertSurveyFeedback(dataSource, {
         feedbackType: SurveyFeedbackType.General,
-        response: { anonymous, experience, comment: feedback } as SurveyFeedbackResponse
+        userId: isAnonymous === "no" ? currentUser.id : null,
+        response: { isAnonymous, experience, comment: feedback } as SurveyFeedbackResponse
       } as SurveyFeedback)
     }
 

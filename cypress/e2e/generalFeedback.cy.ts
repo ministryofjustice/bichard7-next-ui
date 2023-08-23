@@ -6,10 +6,8 @@ describe("General Feedback Form", () => {
 
   beforeEach(() => {
     cy.viewport(1280, 720)
-
-    cy.task("clearUsers")
-    // Database forigen keys
     cy.task("clearAllFeedbacksFromDatabase")
+    cy.task("clearUsers")
 
     cy.task("insertUsers", {
       users: [
@@ -57,20 +55,20 @@ describe("General Feedback Form", () => {
   })
 
   // Happy path: submit a feedback with user data stored
-  // it("Should be able to submit a user data survey", () => {
-  //   cy.visit("/bichard")
-  //   cy.findByText("feedback").click()
-  //   cy.get("[name=isAnonymous]").check("no")
-  //   cy.get("[name=experience]").check("0")
-  //   cy.get("[name=feedback]").type("This is feedback is not anonymous")
-  //   cy.get("[type=submit]").click()
-  //   cy.task("getAllFeedbacksFromDatabase").then((result) => {
-  //     const feedbackResults = result as SurveyFeedback[]
-  //     const feedback = feedbackResults[0]
-  //     expect(feedback.feedbackType).equal(0)
-  //     expect(feedback.userId).equal(expectedUserId)
-  //   })
-  // })
+  it("Should be able to submit a user data survey", () => {
+    cy.visit("/bichard")
+    cy.findByText("feedback").click()
+    cy.get("[name=isAnonymous]").check("no")
+    cy.get("[name=experience]").check("0")
+    cy.get("[name=feedback]").type("This is feedback is not anonymous")
+    cy.get("[type=submit]").click()
+    cy.task("getAllFeedbacksFromDatabase").then((result) => {
+      const feedbackResults = result as SurveyFeedback[]
+      const feedback = feedbackResults[0]
+      expect(feedback.feedbackType).equal(0)
+      expect(feedback.userId).equal(expectedUserId)
+    })
+  })
 
   // it ("Should redirect back to previous pages", () => {})
 
