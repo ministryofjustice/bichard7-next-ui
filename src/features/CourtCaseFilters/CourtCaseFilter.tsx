@@ -17,6 +17,20 @@ import ConditionalRender from "components/ConditionalRender"
 import User from "services/entities/User"
 import Feature from "types/Feature"
 
+type FilterKeyOptions =
+  | "urgentFilter"
+  | "caseAgeFilter"
+  | "dateFrom"
+  | "dateTo"
+  | "lockedFilter"
+  | "caseStateFilter"
+  | "defendantNameSearch"
+  | "courtNameSearch"
+  | "reasonCode"
+  | "ptiurnSearch"
+  | "reasonFilter"
+  | "myCasesFilter"
+
 interface Props {
   defendantName: string | null
   courtName: string | null
@@ -31,6 +45,7 @@ interface Props {
   caseState: CaseState | null
   myCases: boolean
   user: User
+  handleFilterChanges: (newFilters: Record<string, string | string[] | undefined>) => void
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -148,7 +163,8 @@ const CourtCaseFilter: React.FC<Props> = ({
   locked,
   caseState,
   myCases,
-  user
+  user,
+  handleFilterChanges
 }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
@@ -168,11 +184,12 @@ const CourtCaseFilter: React.FC<Props> = ({
     }),
     myCasesFilter: myCases ? { value: true, state: "Applied", label: "Cases locked to me" } : {}
   }
+
   const [state, dispatch] = useReducer(reducer, initialFilterState)
   const classes = useStyles()
 
   return (
-    <form method={"get"} id="filter-panel">
+    <>
       <div className="moj-filter__header">
         <div className="moj-filter__header-title">
           <h2 className="govuk-heading-m">{"Filter"}</h2>
@@ -195,7 +212,36 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
         </div>
         <div className="moj-filter__options">
-          <button className="govuk-button" data-module="govuk-button" id="search">
+          <button
+            className="govuk-button"
+            data-module="govuk-button"
+            id="search"
+            onClick={() => {
+              // TODO add all properties here
+              // TODO update their states to applied
+
+              Object.keys(state).forEach((k) => {
+                const key = k as FilterKeyOptions
+                const filterState = state[key]
+                
+                if(Array.isArray(filterState)) {
+
+                } else {
+                  if(filterState.state === "Selected") {
+
+                  }
+                }
+              })
+
+              handleFilterChanges({
+                ...(state.defendantNameSearch.state === "Selected" && { keywords: state.defendantNameSearch.value }),
+                ...(state.courtNameSearch.state === "Selected" && { courtName: state.courtNameSearch.value }),
+                ...(state.reasonCode.state === "Selected" && { reasonCode: state.reasonCode.value }),
+                ...(state.ptiurnSearch.state === "Selected" && { ptiurn: state.ptiurnSearch.value }),
+                ...(state.reasonFilter && { type: state.reasonFilter.map(reason => reason.value) })
+              })
+            }}
+          >
             {"Apply filters"}
           </button>
           <div className={classes["govuk-form-group"]}>
@@ -330,7 +376,7 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
         </div>
       </div>
-    </form>
+    </>
   )
 }
 

@@ -31,11 +31,23 @@ import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/
 import { formatFormInputDateString } from "utils/formattedDate"
 import redirectTo from "utils/redirectTo"
 import { useRouter } from "next/router"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { setCookie, getCookie } from "cookies-next"
 import hashString from "utils/hashString"
 import UnlockReason from "types/UnlockReason"
 import Feature from "types/Feature"
+import axios from "axios"
+import { basePath } from "../../next.config"
+
+async function fetchCases(queryString: string) {
+  const url = `${basePath}/api/court-cases/?${queryString}`
+  const result = await axios({
+    method: "GET",
+    url: url,
+    validateStatus: () => true
+  })
+  return result
+}
 
 interface Props {
   user: User
@@ -187,13 +199,38 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const Home: NextPage<Props> = (query) => {
-  const router = useRouter()
+const Home: NextPage<Props> = (props) => {
   // prettier-ignore
   const {
-    user, courtCases, order, page, casesPerPage, totalCases, reasons, keywords, courtName, reasonCode,
-    ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases, queryStringCookieName
-  } = query
+      user, courtCases, order, page, casesPerPage, totalCases, reasons, keywords, courtName, reasonCode,
+      ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases, queryStringCookieName
+    } = props
+
+  const router = useRouter()
+  const { query } = router
+  const [_, setData] = useState<any>(null)
+  const [queryParams, setQueryParams] = useState<string>("")
+
+  useEffect(() => {
+    const fetchDataFromApi = async () => {
+      const cases = await fetchCases(queryParams)
+      setData(cases)
+    }
+
+    fetchDataFromApi()
+  }, [queryParams])
+
+  const handleFilterChanges = (filters: Record<string, string | string[] | boolean | undefined>): void => {
+    router.push({
+      query: { ...query, ...filters }
+    })
+
+    const [, queryString] = router.asPath.split("?")
+    console.log("queryString:", queryString)
+
+    // TODO: Add function to map filters to query params
+    setQueryParams(queryString)
+  }
 
   useEffect(() => {
     const nonSavedParams = ["unlockTrigger", "unlockException"]
@@ -229,6 +266,7 @@ const Home: NextPage<Props> = (query) => {
               caseState={caseState}
               myCases={myCases}
               user={user}
+              handleFilterChanges={handleFilterChanges}
             />
           }
           appliedFilters={

@@ -188,7 +188,7 @@ describe("Filtering cases", () => {
     expandFilterSection("Case state", "#unresolved-and-resolved")
   })
 
-  it("Should display cases filtered by defendant name", () => {
+  it.only("Should display cases filtered by defendant name", () => {
     cy.task("insertCourtCasesWithFields", [
       { defendantName: "WAYNE Bruce", orgForPoliceFilter: "011111" },
       { defendantName: "GORDON Barbara", orgForPoliceFilter: "011111" },
