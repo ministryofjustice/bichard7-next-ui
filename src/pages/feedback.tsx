@@ -99,7 +99,7 @@ const FeedbackPage: NextPage<Props> = ({ user, previousPath }: Props) => {
 
         <Paragraph>
           {
-            "If you are encountering specific technical issues, you should either check our [FAQ page](#) or [contact the Bichard7](#) for support to raise a ticket. Any issues raised via this page will not be handled"
+            "If you are encountering specific technical issues, you should either check our [Help page](#) or [contact the Bichard7](#) for support to raise a ticket. Any issues raised via this page will not be handled"
           }
         </Paragraph>
 
