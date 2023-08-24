@@ -1,6 +1,17 @@
 import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import Layout from "components/Layout"
-import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, Paragraph, Radio, TextArea } from "govuk-react"
+import {
+  BackLink,
+  Button,
+  Fieldset,
+  FormGroup,
+  Heading,
+  HintText,
+  MultiChoice,
+  Paragraph,
+  Radio,
+  TextArea
+} from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import { ParsedUrlQuery } from "querystring"
@@ -40,7 +51,10 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props = {
       user: currentUser.serialize(),
-      previousPath: "/bichard"
+      previousPath: "/bichard",
+      displayAnonymousMissingError: false,
+      displayExperienceMissingError: false,
+      displayfeedbackMissingError: false
     }
 
     if (isPost(req)) {
@@ -50,12 +64,19 @@ export const getServerSideProps = withMultipleServerSideProps(
         feedback: string
       }
 
-
       await insertSurveyFeedback(dataSource, {
         feedbackType: SurveyFeedbackType.General,
         userId: isAnonymous === "no" ? currentUser.id : null,
         response: { isAnonymous, experience, comment: feedback } as SurveyFeedbackResponse
       } as SurveyFeedback)
+
+      return {
+        props: {
+          ...props,
+          displayAnonymousMissingError: !isAnonymous ? true : false,
+          displayExperienceMissingError: !experience ? true : false
+        }
+      }
     }
 
     //get the request from context
@@ -73,9 +94,16 @@ export const getServerSideProps = withMultipleServerSideProps(
 interface Props {
   user: User
   previousPath: string
+  displayAnonymousMissingError: boolean
+  displayExperienceMissingError: boolean
 }
 
-const FeedbackPage: NextPage<Props> = ({ user, previousPath }: Props) => {
+const FeedbackPage: NextPage<Props> = ({
+  user,
+  previousPath,
+  displayAnonymousMissingError,
+  displayExperienceMissingError
+}: Props) => {
   const maxFeedbackNoteLength: number = 2000
   const [noteRemainingLength, setNoteRemainingLength] = useState(maxFeedbackNoteLength)
   const noteIsEmpty = noteRemainingLength === maxFeedbackNoteLength
@@ -115,31 +143,40 @@ const FeedbackPage: NextPage<Props> = ({ user, previousPath }: Props) => {
           </Paragraph>
           <Fieldset>
             <FormGroup>
-              <Paragraph>
-                {
-                  "After submitting, if we have any enquiries we would like to be able to contact you. If you would like your feedback to be anonymous please opt-out below."
-                }
-              </Paragraph>
+              <MultiChoice
+                label="After submitting, if we have any enquiries we would like to be able to contact you. If you would like your feedback to be anonymous please opt-out below."
+                meta={{
+                  error: "Select one of the below options",
+                  touched: displayAnonymousMissingError
+                }}
+              >
+                <Radio name="isAnonymous" value={"no"}>
+                  {"Yes, I would like to be contacted about this feedback."}
+                </Radio>
 
-              <Radio name="isAnonymous" value={"no"}>
-                {"Yes, I would like to be contacted about this feedback."}
-              </Radio>
-
-              <Radio name="isAnonymous" value={"yes"}>
-                {"No, I would like to opt-out, which will mean my feedback will be anonymous."}
-              </Radio>
+                <Radio name="isAnonymous" value={"yes"}>
+                  {"No, I would like to opt-out, which will mean my feedback will be anonymous."}
+                </Radio>
+              </MultiChoice>
             </FormGroup>
 
             <FormGroup>
               <Heading as="h3" size="SMALL">
                 {"Rate your experience of using the the new version of Bichard"}
               </Heading>
-              <Paragraph>{"Select one of the below options."}</Paragraph>
-              {Object.keys(FeedbackExperienceOptions).map((experienceKey) => (
-                <Radio key={experienceKey} name={"experience"} value={experienceKey}>
-                  {FeedbackExperienceOptions[experienceKey as unknown as FeedbackExperienceKey]}
-                </Radio>
-              ))}
+              <MultiChoice
+                label={""} // TODO: Check if this works in test
+                meta={{
+                  error: "Select one of the below options",
+                  touched: displayExperienceMissingError
+                }}
+              >
+                {Object.keys(FeedbackExperienceOptions).map((experienceKey) => (
+                  <Radio key={experienceKey} name={"experience"} value={experienceKey}>
+                    {FeedbackExperienceOptions[experienceKey as unknown as FeedbackExperienceKey]}
+                  </Radio>
+                ))}
+              </MultiChoice>
             </FormGroup>
 
             <FormGroup>
@@ -156,6 +193,7 @@ const FeedbackPage: NextPage<Props> = ({ user, previousPath }: Props) => {
               >
                 { }
               </TextArea>
+
               <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
             </FormGroup>
 

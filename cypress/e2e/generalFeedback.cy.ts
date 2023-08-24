@@ -70,7 +70,14 @@ describe("General Feedback Form", () => {
     })
   })
 
-  // it ("Should redirect back to previous pages", () => {})
+  it.only("Should display error if form is not complete", () => {
+    cy.visit("/bichard")
+    cy.findByText("feedback").click()
+    cy.get("[type=submit]").click()
+    cy.contains("Select one of the below options").should("exist")
+
+    cy.contains("Input message into the text box").should("exist")
+  })
 
   // describe("Should not be able to submit a survey", () => {
   // Form validation: submit form with no experience selected
