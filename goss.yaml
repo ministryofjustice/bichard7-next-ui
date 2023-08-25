@@ -104,7 +104,7 @@ user:
 process:
   nginx:
     running: true
-  next-router-wo:
+  node:
     running: true
   supervisord:
     running: true
