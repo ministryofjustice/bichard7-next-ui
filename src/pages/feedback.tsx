@@ -109,7 +109,7 @@ const FeedbackPage: NextPage<Props> = ({
 }: Props) => {
   const maxFeedbackNoteLength: number = 2000
   const [noteRemainingLength, setNoteRemainingLength] = useState(maxFeedbackNoteLength)
-  const noteIsEmpty = noteRemainingLength === maxFeedbackNoteLength
+
   const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
     setNoteRemainingLength(maxFeedbackNoteLength - event.currentTarget.value.length)
   }
