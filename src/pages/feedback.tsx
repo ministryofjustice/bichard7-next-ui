@@ -74,7 +74,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         props: {
           ...props,
           displayAnonymousMissingError: !isAnonymous ? true : false,
-          displayExperienceMissingError: !experience ? true : false
+          displayExperienceMissingError: !experience ? true : false,
+          displayfeedbackMissingError: !feedback ? true : false
         }
       }
     }
@@ -96,13 +97,15 @@ interface Props {
   previousPath: string
   displayAnonymousMissingError: boolean
   displayExperienceMissingError: boolean
+  displayfeedbackMissingError: boolean
 }
 
 const FeedbackPage: NextPage<Props> = ({
   user,
   previousPath,
   displayAnonymousMissingError,
-  displayExperienceMissingError
+  displayExperienceMissingError,
+  displayfeedbackMissingError
 }: Props) => {
   const maxFeedbackNoteLength: number = 2000
   const [noteRemainingLength, setNoteRemainingLength] = useState(maxFeedbackNoteLength)
@@ -188,7 +191,7 @@ const FeedbackPage: NextPage<Props> = ({
                 input={{ name: "feedback", rows: 5, maxLength: maxFeedbackNoteLength, onInput: handleOnNoteChange }}
                 meta={{
                   error: "Input message into the text box",
-                  touched: noteIsEmpty
+                  touched: displayfeedbackMissingError
                 }}
               >
                 { }
