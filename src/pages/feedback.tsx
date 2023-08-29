@@ -1,18 +1,7 @@
 import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import Layout from "components/Layout"
 import RadioButton from "components/RadioButton/RadioButton"
-import {
-  BackLink,
-  Button,
-  Fieldset,
-  FormGroup,
-  Heading,
-  HintText,
-  MultiChoice,
-  Paragraph,
-  Radio,
-  TextArea
-} from "govuk-react"
+import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, Paragraph, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import { ParsedUrlQuery } from "querystring"
@@ -65,7 +54,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         feedback: string
       }
 
-      if (experience) {
+      if (isAnonymous && experience && feedback) {
         await insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.General,
           userId: isAnonymous === "no" ? currentUser.id : null,
@@ -78,15 +67,11 @@ export const getServerSideProps = withMultipleServerSideProps(
           ...props,
           displayAnonymousMissingError: !isAnonymous ? true : false,
           displayExperienceMissingError: !experience ? true : false,
-          displayfeedbackMissingError: !feedback ? true : false
+          displayfeedbackMissingError: !feedback ? true : false,
+          selectedFields: { isAnonymous: isAnonymous ?? null, experience: experience ?? null, feedback }
         }
       }
     }
-
-    //get the request from context
-    // Add condition to Check if its a post request
-    // not save data of an empty form on database
-    // - redirect to the previous path(we need to find out how to capture the previous path when user is opening feedback page)
 
     return { props }
   }
@@ -98,7 +83,7 @@ interface Props {
   displayAnonymousMissingError: boolean
   displayExperienceMissingError: boolean
   displayfeedbackMissingError: boolean
-  selected?: "yes" | "no"
+  selectedFields?: { isAnonymous: string; experience: string; feedback: string }
 }
 
 const FeedbackPage: NextPage<Props> = ({
@@ -107,7 +92,7 @@ const FeedbackPage: NextPage<Props> = ({
   displayAnonymousMissingError,
   displayExperienceMissingError,
   displayfeedbackMissingError,
-  selected
+  selectedFields
 }: Props) => {
   const maxFeedbackNoteLength: number = 2000
   const [noteRemainingLength, setNoteRemainingLength] = useState(maxFeedbackNoteLength)
@@ -116,9 +101,6 @@ const FeedbackPage: NextPage<Props> = ({
     setNoteRemainingLength(maxFeedbackNoteLength - event.currentTarget.value.length)
   }
 
-  const handleSelectedButtonChange: FormEventHandler<HTMLElement> = (event) => {
-    console.log(event)
-  }
   return (
     <>
       <Layout user={user}>
@@ -163,20 +145,17 @@ const FeedbackPage: NextPage<Props> = ({
                   name={"isAnonymous"}
                   key={""}
                   id={"isAnonymous"}
-                  checked={selected === "no"}
+                  defaultChecked={selectedFields?.isAnonymous === "no"}
                   value={"no"}
                   label={"Yes, I would like to be contacted about this feedback."}
-                  onChange={handleSelectedButtonChange}
                 />
-
                 <RadioButton
                   name={"isAnonymous"}
                   key={""}
                   id={"isAnonymous"}
-                  checked={selected === "yes"}
+                  defaultChecked={selectedFields?.isAnonymous === "yes"}
                   value={"yes"}
                   label={"No, I would like to opt-out, which will mean my feedback will be anonymous."}
-                  onChange={handleSelectedButtonChange}
                 />
               </MultiChoice>
             </FormGroup>
@@ -195,14 +174,11 @@ const FeedbackPage: NextPage<Props> = ({
                 {Object.keys(FeedbackExperienceOptions).map((experienceKey) => (
                   <RadioButton
                     id={experienceKey}
-                    checked={
-                      experienceKey === FeedbackExperienceOptions[experienceKey as unknown as FeedbackExperienceKey]
-                    }
+                    defaultChecked={experienceKey === selectedFields?.experience}
                     label={FeedbackExperienceOptions[experienceKey as unknown as FeedbackExperienceKey]}
                     key={experienceKey}
                     name={"experience"}
                     value={experienceKey}
-                    onChange={handleSelectedButtonChange}
                   />
                 ))}
               </MultiChoice>
@@ -214,13 +190,19 @@ const FeedbackPage: NextPage<Props> = ({
               </Heading>
 
               <TextArea
-                input={{ name: "feedback", rows: 5, maxLength: maxFeedbackNoteLength, onInput: handleOnNoteChange }}
+                input={{
+                  name: "feedback",
+                  defaultValue: selectedFields?.feedback,
+                  rows: 5,
+                  maxLength: maxFeedbackNoteLength,
+                  onInput: handleOnNoteChange
+                }}
                 meta={{
                   error: "Input message into the text box",
                   touched: displayfeedbackMissingError
                 }}
               >
-                { }
+                {""}
               </TextArea>
 
               <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
