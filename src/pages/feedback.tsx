@@ -63,12 +63,13 @@ export const getServerSideProps = withMultipleServerSideProps(
         experience: string
         feedback: string
       }
-
-      await insertSurveyFeedback(dataSource, {
-        feedbackType: SurveyFeedbackType.General,
-        userId: isAnonymous === "no" ? currentUser.id : null,
-        response: { isAnonymous, experience, comment: feedback } as SurveyFeedbackResponse
-      } as SurveyFeedback)
+      if (experience != undefined) {
+        await insertSurveyFeedback(dataSource, {
+          feedbackType: SurveyFeedbackType.General,
+          userId: isAnonymous === "no" ? currentUser.id : null,
+          response: { isAnonymous, experience, comment: feedback } as SurveyFeedbackResponse
+        } as SurveyFeedback)
+      }
 
       return {
         props: {
@@ -82,11 +83,8 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     //get the request from context
     // Add condition to Check if its a post request
-    // - get the form params from the request
-    // - persit the feedback using the service we created
+    // not save data of an empty form on database
     // - redirect to the previous path(we need to find out how to capture the previous path when user is opening feedback page)
-    // Ensure to cover this with a cypress test for inserting
-    // Make the fields required
 
     return { props }
   }

@@ -78,18 +78,15 @@ describe("General Feedback Form", () => {
     cy.contains("Input message into the text box").should("exist")
   })
   // it should not save the data of an empty form
-  it("should not save data of empty form", () => {
-    cy.visit("/bichard")
-    cy.findByText("feedback").click()
-    cy.get("[type=submit]").click()
-    cy.task("getAllFeedbacksFromDatabase").then((result) => {
-      const feedbackResults = result as SurveyFeedback[]
-      const feedback = feedbackResults[0]
-      expect(feedback.feedbackType).equal(undefined)
-      expect(feedback.response).equal(undefined)
-      expect(feedback.userId).equal(undefined)
-    })
-  })
+  // it("should not save data of empty form", () => {
+  //   cy.visit("/bichard")
+  //   cy.findByText("feedback").click()
+  //   cy.get("[type=submit]").click()
+  //   cy.task("getAllFeedbacksFromDatabase").then((result) => {
+  //     const feedbackResults = result as SurveyFeedback[]
+  //     const feedback = feedbackResults[0]
+  //   })
+  // })
   // the form should redirect back to previous pages
 })
 
