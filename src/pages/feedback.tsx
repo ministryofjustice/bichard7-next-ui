@@ -1,5 +1,6 @@
 import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import Layout from "components/Layout"
+import RadioButton from "components/RadioButton/RadioButton"
 import {
   BackLink,
   Button,
@@ -63,7 +64,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         experience: string
         feedback: string
       }
-      if (experience != undefined) {
+
+      if (experience) {
         await insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.General,
           userId: isAnonymous === "no" ? currentUser.id : null,
@@ -96,6 +98,7 @@ interface Props {
   displayAnonymousMissingError: boolean
   displayExperienceMissingError: boolean
   displayfeedbackMissingError: boolean
+  selected?: "yes" | "no"
 }
 
 const FeedbackPage: NextPage<Props> = ({
@@ -103,13 +106,18 @@ const FeedbackPage: NextPage<Props> = ({
   previousPath,
   displayAnonymousMissingError,
   displayExperienceMissingError,
-  displayfeedbackMissingError
+  displayfeedbackMissingError,
+  selected
 }: Props) => {
   const maxFeedbackNoteLength: number = 2000
   const [noteRemainingLength, setNoteRemainingLength] = useState(maxFeedbackNoteLength)
 
   const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
     setNoteRemainingLength(maxFeedbackNoteLength - event.currentTarget.value.length)
+  }
+
+  const handleSelectedButtonChange: FormEventHandler<HTMLElement> = (event) => {
+    console.log(event)
   }
   return (
     <>
@@ -143,7 +151,7 @@ const FeedbackPage: NextPage<Props> = ({
             }
           </Paragraph>
           <Fieldset>
-            <FormGroup>
+            <FormGroup id="isAnonymous">
               <MultiChoice
                 label="After submitting, if we have any enquiries we would like to be able to contact you. If you would like your feedback to be anonymous please opt-out below."
                 meta={{
@@ -151,17 +159,29 @@ const FeedbackPage: NextPage<Props> = ({
                   touched: displayAnonymousMissingError
                 }}
               >
-                <Radio name="isAnonymous" value={"no"}>
-                  {"Yes, I would like to be contacted about this feedback."}
-                </Radio>
+                <RadioButton
+                  name={"isAnonymous"}
+                  key={""}
+                  id={"isAnonymous"}
+                  checked={selected === "no"}
+                  value={"no"}
+                  label={"Yes, I would like to be contacted about this feedback."}
+                  onChange={handleSelectedButtonChange}
+                />
 
-                <Radio name="isAnonymous" value={"yes"}>
-                  {"No, I would like to opt-out, which will mean my feedback will be anonymous."}
-                </Radio>
+                <RadioButton
+                  name={"isAnonymous"}
+                  key={""}
+                  id={"isAnonymous"}
+                  checked={selected === "yes"}
+                  value={"yes"}
+                  label={"No, I would like to opt-out, which will mean my feedback will be anonymous."}
+                  onChange={handleSelectedButtonChange}
+                />
               </MultiChoice>
             </FormGroup>
 
-            <FormGroup>
+            <FormGroup id="experience">
               <Heading as="h3" size="SMALL">
                 {"Rate your experience of using the the new version of Bichard"}
               </Heading>
@@ -173,14 +193,22 @@ const FeedbackPage: NextPage<Props> = ({
                 }}
               >
                 {Object.keys(FeedbackExperienceOptions).map((experienceKey) => (
-                  <Radio key={experienceKey} name={"experience"} value={experienceKey}>
-                    {FeedbackExperienceOptions[experienceKey as unknown as FeedbackExperienceKey]}
-                  </Radio>
+                  <RadioButton
+                    id={experienceKey}
+                    checked={
+                      experienceKey === FeedbackExperienceOptions[experienceKey as unknown as FeedbackExperienceKey]
+                    }
+                    label={FeedbackExperienceOptions[experienceKey as unknown as FeedbackExperienceKey]}
+                    key={experienceKey}
+                    name={"experience"}
+                    value={experienceKey}
+                    onChange={handleSelectedButtonChange}
+                  />
                 ))}
               </MultiChoice>
             </FormGroup>
 
-            <FormGroup>
+            <FormGroup id="feedback">
               <Heading as="h3" size="SMALL">
                 {"Tell us why you gave this rating"}
               </Heading>
