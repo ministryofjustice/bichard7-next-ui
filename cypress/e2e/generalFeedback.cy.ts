@@ -70,15 +70,36 @@ describe("General Feedback Form", () => {
     })
   })
 
-  it("Should display error if form is not complete", () => {
+  it.only("Should display error if form is not complete", () => {
+    // Submit an empty form
     cy.visit("/bichard")
     cy.findByText("feedback").click()
     cy.get("[type=submit]").click()
-    cy.contains("Select one of the below options").should("exist")
+    cy.get("#isAnonymous").contains("Select one of the below options")
+    cy.get("#experience").contains("Select one of the below options")
     cy.contains("Input message into the text box").should("exist")
+
+    // Select first radio
+    cy.get("[name=isAnonymous]").check("no")
+    cy.get("[type=submit]").click()
+    cy.get("#isAnonymous").contains("Select one of the below options").should("not.exist")
+    cy.get("#experience").contains("Select one of the below options")
+    cy.contains("Input message into the text box").should("exist")
+    // Select second radio
+    cy.get("[name=experience]").check("0")
+    cy.get("[type=submit]").click()
+    cy.get("#isAnonymous").contains("Select one of the below options").should("not.exist")
+    cy.get("#experience").contains("Select one of the below options").should("not.exist")
+    cy.contains("Input message into the text box").should("exist")
+    // Type in feedback
+    cy.get("[name=feedback]").type("This is feedback is not anonymous")
+    cy.get("[type=submit]").click()
+
+    // Redirect back to previous page
   })
-  // it should not save the data of an empty form
-  // it("should not save data of empty form", () => {
+
+  //it should not save the data of an empty form
+  // it("Should not save data of empty form", () => {
   //   cy.visit("/bichard")
   //   cy.findByText("feedback").click()
   //   cy.get("[type=submit]").click()
@@ -87,7 +108,7 @@ describe("General Feedback Form", () => {
   //     const feedback = feedbackResults[0]
   //   })
   // })
-  // the form should redirect back to previous pages
+  //the form should redirect back to previous pages
 })
 
 export {}
