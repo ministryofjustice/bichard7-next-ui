@@ -35,13 +35,13 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query, req } = context as AuthenticationServerSidePropsContext
-    // const { previousPath } = query as { previousPath: string }
+    const { previousPath } = query as { previousPath: string }
 
     const dataSource = await getDataSource()
 
     const props = {
       user: currentUser.serialize(),
-      previousPath: "/bichard",
+      previousPath,
       displayAnonymousMissingError: false,
       displayExperienceMissingError: false,
       displayfeedbackMissingError: false

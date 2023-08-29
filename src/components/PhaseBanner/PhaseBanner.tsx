@@ -1,5 +1,5 @@
 import Link from "next/link"
-
+import { usePathname } from "next/navigation"
 interface PhaseBannerProps {
   phase: string
 }
@@ -12,7 +12,8 @@ const PhaseBanner: React.FC<PhaseBannerProps> = ({ phase }: PhaseBannerProps) =>
         <span className="govuk-phase-banner__text">
           {"This is a new service – your "}
           {/* TODO: add feedback page link */}
-          <Link href="/feedback" className="govuk-link">
+          {/* TODO: Get /bichard from config */}
+          <Link href={`/feedback?previousPath=/bichard${usePathname()}`} className="govuk-link">
             {"feedback"}
           </Link>
           {" will help us to improve it."}
