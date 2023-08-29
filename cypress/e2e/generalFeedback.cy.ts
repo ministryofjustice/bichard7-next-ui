@@ -105,6 +105,8 @@ describe("General Feedback Form", () => {
     expectToHaveNumberOfFeedbacks(1)
 
     // Redirect back to previous page
+    // cy.findByText("Back").click()
+    // cy.url().should("match")
   })
 })
 
