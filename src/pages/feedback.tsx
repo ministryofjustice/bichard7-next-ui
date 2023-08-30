@@ -11,9 +11,11 @@ import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { isError } from "types/Result"
 import { SurveyFeedbackResponse, SurveyFeedbackType } from "types/SurveyFeedback"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
+import redirectTo from "utils/redirectTo"
 
 enum FeedbackExperienceKey {
   verySatisfied,
@@ -55,11 +57,17 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
 
       if (isAnonymous && experience && feedback) {
-        await insertSurveyFeedback(dataSource, {
+        const result = await insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.General,
           userId: isAnonymous === "no" ? currentUser.id : null,
           response: { isAnonymous, experience, comment: feedback } as SurveyFeedbackResponse
         } as SurveyFeedback)
+
+        if (!isError(result)) {
+          return redirectTo(previousPath)
+        } else {
+          throw result
+        }
       }
 
       return {
@@ -115,12 +123,17 @@ const FeedbackPage: NextPage<Props> = ({
         <Heading as="h2" size="MEDIUM">
           {"Report an issue"}
         </Heading>
-
-        <Paragraph>
-          {
-            "If you are encountering specific technical issues, you should either check our [Help page](#) or [contact the Bichard7](#) for support to raise a ticket. Any issues raised via this page will not be handled"
-          }
-        </Paragraph>
+        <p className="govuk-body">
+          {"If you are encountering specific technical issues, you should either check our "}
+          <a className="govuk-link" href="/help">
+            {"Help page"}
+          </a>{" "}
+          {"or "}
+          <a className="govuk-link" href="mailto: moj-bichard7@madetech.com">
+            {"contact the Bichard7"}
+          </a>
+          {" for support to raise a ticket. Any issues raised via this page will not be handled."}
+        </p>
 
         <Heading as="h2" size="MEDIUM">
           {"Share your feedback"}
@@ -143,16 +156,14 @@ const FeedbackPage: NextPage<Props> = ({
               >
                 <RadioButton
                   name={"isAnonymous"}
-                  key={""}
-                  id={"isAnonymous"}
+                  id={"isAnonymous-no"}
                   defaultChecked={selectedFields?.isAnonymous === "no"}
                   value={"no"}
                   label={"Yes, I would like to be contacted about this feedback."}
                 />
                 <RadioButton
                   name={"isAnonymous"}
-                  key={""}
-                  id={"isAnonymous"}
+                  id={"isAnonymous-yes"}
                   defaultChecked={selectedFields?.isAnonymous === "yes"}
                   value={"yes"}
                   label={"No, I would like to opt-out, which will mean my feedback will be anonymous."}
@@ -165,7 +176,7 @@ const FeedbackPage: NextPage<Props> = ({
                 {"Rate your experience of using the the new version of Bichard"}
               </Heading>
               <MultiChoice
-                label={""} // TODO: Check if this works in test
+                label={""}
                 meta={{
                   error: "Select one of the below options",
                   touched: displayExperienceMissingError
