@@ -26,7 +26,7 @@
     "test:file": "jest --runInBand --testPathPattern",
     "test:ui:e2e": "concurrently --kill-others --success first \"npm run start\" \"npm run cypress:run\"",
     "install:hooks": "./scripts/install-git-hooks.sh",
-    "update-deps": "ncu -u && npm install",
+    "update-deps": "ncu -u -x next && npm install",
     "seed-data": "ts-node ./scripts/seed-data.ts",
     "prepare": "husky install"
   },
@@ -48,7 +48,7 @@
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.isobject": "^3.0.2",
-    "next": "13.4.19",
+    "next": "13.4.12",
     "pg": "^8.11.3",
     "qs": "^6.11.2",
     "raw-body": "^2.5.2",
