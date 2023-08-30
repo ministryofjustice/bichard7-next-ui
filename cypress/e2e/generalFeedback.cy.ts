@@ -8,6 +8,14 @@ const expectToHaveNumberOfFeedbacks = (number: number) => {
   })
 }
 
+const submitAFeedback = () => {
+  cy.findByText("feedback").click()
+  cy.get("[name=isAnonymous]").check("no")
+  cy.get("[name=experience]").check("0")
+  cy.get("[name=feedback]").type("This is feedback is not anonymous")
+  cy.get("[type=submit]").click()
+}
+
 describe("General Feedback Form", () => {
   const expectedUserId = 0
 
@@ -33,16 +41,7 @@ describe("General Feedback Form", () => {
     cy.login("bichard01@example.com", "password")
   })
 
-  it("Should be able to visit feedback page from the caselist", () => {
-    cy.visit("/bichard")
-    cy.findByText("feedback").click()
-    cy.get("h2").contains("Share your feedback").should("exist")
-
-    // TODO: Links to the Survey?? FAQ page
-    // TODO: Links to contact email works
-  })
-
-  it("Should be able to submit an anonymous survey", () => {
+  it("Should be able to submit a feedback that is anonymous", () => {
     cy.visit("/bichard")
     cy.findByText("feedback").click()
     cy.get("h2").contains("Share your feedback").should("exist")
@@ -60,13 +59,9 @@ describe("General Feedback Form", () => {
     })
   })
 
-  it("Should be able to submit a user data survey", () => {
+  it("Should be able to submit a feedback that is not anonymous", () => {
     cy.visit("/bichard")
-    cy.findByText("feedback").click()
-    cy.get("[name=isAnonymous]").check("no")
-    cy.get("[name=experience]").check("0")
-    cy.get("[name=feedback]").type("This is feedback is not anonymous")
-    cy.get("[type=submit]").click()
+    submitAFeedback()
     cy.task("getAllFeedbacksFromDatabase").then((result) => {
       const feedbackResults = result as SurveyFeedback[]
       const feedback = feedbackResults[0]
@@ -75,7 +70,7 @@ describe("General Feedback Form", () => {
     })
   })
 
-  it.only("Should display error if form is not complete", () => {
+  it("Should display error if form is not complete", () => {
     cy.visit("/bichard")
     cy.findByText("feedback").click()
     cy.get("[type=submit]").click()
@@ -103,10 +98,23 @@ describe("General Feedback Form", () => {
     cy.get("[name=feedback]").type("This is feedback is not anonymous")
     cy.get("[type=submit]").click()
     expectToHaveNumberOfFeedbacks(1)
+  })
 
-    // Redirect back to previous page
-    // cy.findByText("Back").click()
-    // cy.url().should("match")
+  it("Should redirect back to case list page", () => {
+    cy.visit("/bichard")
+    submitAFeedback()
+
+    cy.url().should("match", /\/bichard/)
+    cy.get("h1").contains("Case list").should("exist")
+  })
+
+  it("Should redirect back to case details page", () => {
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+    cy.visit("/bichard/court-cases/0")
+    submitAFeedback()
+
+    cy.url().should("match", /\/court-cases\/\d+/)
+    cy.findByText("Case details").should("exist")
   })
 })
 
