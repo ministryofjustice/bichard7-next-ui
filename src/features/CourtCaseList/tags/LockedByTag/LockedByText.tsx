@@ -1,7 +1,7 @@
 import { Tag } from "govuk-react"
 import Image from "next/image"
 import { createUseStyles } from "react-jss"
-import { tagBlue, textBlue } from "../../../../utils/colours"
+import { tagBlue, textBlue, gdsBlack } from "../../../../utils/colours"
 import { LOCKED_ICON_URL } from "../../../../utils/icons"
 
 const useStyles = createUseStyles({
@@ -20,7 +20,7 @@ const useStyles = createUseStyles({
     marginTop: 4,
     marginBottom: 2,
     fontWeight: "normal",
-    color: "black",
+    color: gdsBlack,
     letterSpacing: "0.5px",
     textTransform: "none"
   }
