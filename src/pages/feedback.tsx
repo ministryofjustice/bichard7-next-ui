@@ -1,6 +1,7 @@
 import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import Layout from "components/Layout"
 import RadioButton from "components/RadioButton/RadioButton"
+import { MAX_FEEDBACK_LENGTH } from "config"
 import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, Paragraph, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -43,10 +44,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props = {
       user: currentUser.serialize(),
-      previousPath,
-      displayAnonymousMissingError: false,
-      displayExperienceMissingError: false,
-      displayfeedbackMissingError: false
+      previousPath
     }
 
     if (isPost(req)) {
@@ -73,10 +71,11 @@ export const getServerSideProps = withMultipleServerSideProps(
       return {
         props: {
           ...props,
-          displayAnonymousMissingError: !isAnonymous ? true : false,
-          displayExperienceMissingError: !experience ? true : false,
-          displayfeedbackMissingError: !feedback ? true : false,
-          selectedFields: { isAnonymous: isAnonymous ?? null, experience: experience ?? null, feedback }
+          fields: {
+            isAnonymous: { hasError: !isAnonymous ? true : false, value: isAnonymous ?? null },
+            experience: { hasError: !experience ? true : false, value: experience ?? null },
+            feedback: { hasError: !feedback ? true : false, value: feedback }
+          }
         }
       }
     }
@@ -88,25 +87,27 @@ export const getServerSideProps = withMultipleServerSideProps(
 interface Props {
   user: User
   previousPath: string
-  displayAnonymousMissingError: boolean
-  displayExperienceMissingError: boolean
-  displayfeedbackMissingError: boolean
-  selectedFields?: { isAnonymous: string; experience: string; feedback: string }
+  fields?: {
+    isAnonymous: {
+      hasError: boolean
+      value: string
+    }
+    experience: {
+      hasError: boolean
+      value: string
+    }
+    feedback: {
+      hasError: boolean
+      value: string
+    }
+  }
 }
 
-const FeedbackPage: NextPage<Props> = ({
-  user,
-  previousPath,
-  displayAnonymousMissingError,
-  displayExperienceMissingError,
-  displayfeedbackMissingError,
-  selectedFields
-}: Props) => {
-  const maxFeedbackNoteLength: number = 2000
-  const [noteRemainingLength, setNoteRemainingLength] = useState(maxFeedbackNoteLength)
+const FeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) => {
+  const [remainingFeedbackLength, setRemainingFeedbackLength] = useState(MAX_FEEDBACK_LENGTH)
 
-  const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
-    setNoteRemainingLength(maxFeedbackNoteLength - event.currentTarget.value.length)
+  const handleFeedbackOnChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
+    setRemainingFeedbackLength(MAX_FEEDBACK_LENGTH - event.currentTarget.value.length)
   }
 
   return (
@@ -151,20 +152,20 @@ const FeedbackPage: NextPage<Props> = ({
                 label="After submitting, if we have any enquiries we would like to be able to contact you. If you would like your feedback to be anonymous please opt-out below."
                 meta={{
                   error: "Select one of the below options",
-                  touched: displayAnonymousMissingError
+                  touched: fields?.isAnonymous.hasError
                 }}
               >
                 <RadioButton
                   name={"isAnonymous"}
                   id={"isAnonymous-no"}
-                  defaultChecked={selectedFields?.isAnonymous === "no"}
+                  defaultChecked={fields?.isAnonymous.value === "no"}
                   value={"no"}
                   label={"Yes, I am happy to be contacted about this feedback."}
                 />
                 <RadioButton
                   name={"isAnonymous"}
                   id={"isAnonymous-yes"}
-                  defaultChecked={selectedFields?.isAnonymous === "yes"}
+                  defaultChecked={fields?.isAnonymous.value === "yes"}
                   value={"yes"}
                   label={"No, I would like to opt-out, which will mean my feedback will be anonymous."}
                 />
@@ -179,13 +180,13 @@ const FeedbackPage: NextPage<Props> = ({
                 label={""}
                 meta={{
                   error: "Select one of the below options",
-                  touched: displayExperienceMissingError
+                  touched: fields?.experience.hasError
                 }}
               >
                 {Object.keys(FeedbackExperienceOptions).map((experienceKey) => (
                   <RadioButton
                     id={experienceKey}
-                    defaultChecked={experienceKey === selectedFields?.experience}
+                    defaultChecked={experienceKey === fields?.experience.value}
                     label={FeedbackExperienceOptions[experienceKey as unknown as FeedbackExperienceKey]}
                     key={experienceKey}
                     name={"experience"}
@@ -203,20 +204,20 @@ const FeedbackPage: NextPage<Props> = ({
               <TextArea
                 input={{
                   name: "feedback",
-                  defaultValue: selectedFields?.feedback,
+                  defaultValue: fields?.feedback.value,
                   rows: 5,
-                  maxLength: maxFeedbackNoteLength,
-                  onInput: handleOnNoteChange
+                  maxLength: MAX_FEEDBACK_LENGTH,
+                  onInput: handleFeedbackOnChange
                 }}
                 meta={{
                   error: "Input message into the text box",
-                  touched: displayfeedbackMissingError
+                  touched: fields?.feedback.hasError
                 }}
               >
                 {""}
               </TextArea>
 
-              <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
+              <HintText>{`You have ${remainingFeedbackLength} characters remaining`}</HintText>
             </FormGroup>
 
             <FormGroup>
