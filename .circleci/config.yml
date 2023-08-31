@@ -68,7 +68,7 @@ commands:
       - run:
           name: Start bichard7 legacy
           working_directory: ~/bichard7-next-core
-          command: npm run all-legacy
+          command: SKIP_IMAGES=ui npm run all-legacy
     
   start_services:
     parameters:
@@ -202,7 +202,7 @@ jobs:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
       - fetch_images:
-          IMAGES: ui user-service nginx-auth-proxy
+          IMAGES: user-service nginx-auth-proxy
       - start_services:
           SERVICES: ui user-service nginx-auth-proxy postgres audit-log-api localstack
           FLAGS: --no-deps

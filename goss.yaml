@@ -9,7 +9,7 @@ file:
     exists: true
     owner: root
     group: root
-    size: 2338
+    size: 2394
     filetype: file
     contains: []
   /certs/server.key:
@@ -30,7 +30,7 @@ file:
   /etc/passwd:
     exists: true
     mode: "0644"
-    size: 774
+    size: 983
     owner: root
     group: root
     filetype: file
@@ -45,15 +45,9 @@ file:
     exists: false
     contains: []
 package:
-  deltarpm:
-    installed: true
-  epel-release:
-    installed: true
   nginx:
     installed: true
-  python:
-    installed: true
-  python2-pip:
+  python3:
     installed: true
   shadow-utils:
     installed: true
@@ -77,16 +71,16 @@ user:
     shell: /sbin/nologin
   nginx:
     exists: true
-    uid: 999
-    gid: 999
+    uid: 997
+    gid: 997
     groups:
       - nginx
     home: /var/lib/nginx
     shell: /sbin/nologin
   nobody:
     exists: true
-    uid: 99
-    gid: 99
+    uid: 65534
+    gid: 65534
     groups:
       - nobody
     home: /
@@ -106,7 +100,7 @@ user:
     groups:
       - systemd-network
     home: /
-    shell: /sbin/nologin
+    shell: /usr/sbin/nologin
 process:
   nginx:
     running: true
