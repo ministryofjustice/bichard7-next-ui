@@ -8,7 +8,7 @@ const config = {
   ...(workspace
     ? {}
     : {
-        endpoint: "http://localhost:4566",
+        endpoint: "http://localhost:8000",
         accessKeyId: "S3RVER",
         secretAccessKey: "S3RVER"
       })
