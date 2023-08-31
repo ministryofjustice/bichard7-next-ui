@@ -3,15 +3,15 @@
 import Note from "services/entities/Note"
 import Trigger from "services/entities/Trigger"
 import { ResolutionStatus } from "types/ResolutionStatus"
+import { v4 as uuid } from "uuid"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
+import createAuditLogRecord from "../helpers/createAuditLogRecord"
 import DummyMultipleOffencesAho from "../test-data/HO100102_1.json"
 import DummyCourtCase from "./DummyCourtCase"
 import { insertLockUsers } from "./insertLockUsers"
-import { insertNoteUser } from "./insertNoteUser"
-import createAuditLogRecord from "../helpers/createAuditLogRecord"
-import { v4 as uuid } from "uuid"
 import insertManyIntoDynamoTable from "./insertManyIntoDynamoTable"
+import { insertNoteUser } from "./insertNoteUser"
 
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
   (await getDataSource()).getRepository(CourtCase).create({
@@ -130,8 +130,8 @@ export {
   getDummyCourtCase,
   insertCourtCases,
   insertCourtCasesWithFields,
-  insertMultipleDummyCourtCases,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithNotesAndLock,
-  insertDummyCourtCasesWithTriggers
+  insertDummyCourtCasesWithTriggers,
+  insertMultipleDummyCourtCases
 }
