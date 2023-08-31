@@ -116,7 +116,7 @@ const FeedbackPage: NextPage<Props> = ({
           <title>{"Report an issue | Bichard7"}</title>
           <meta name="description" content="user feedback| Bichard7" />
         </Heading>
-        <BackLink href={previousPath} onClick={function noRefCheck() { }}>
+        <BackLink href={previousPath} onClick={function noRefCheck() {}}>
           {"Back"}
         </BackLink>
         <Heading as="h1">{"How can we help?"}</Heading>
