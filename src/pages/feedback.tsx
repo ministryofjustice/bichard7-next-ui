@@ -159,7 +159,7 @@ const FeedbackPage: NextPage<Props> = ({
                   id={"isAnonymous-no"}
                   defaultChecked={selectedFields?.isAnonymous === "no"}
                   value={"no"}
-                  label={"Yes, I would like to be contacted about this feedback."}
+                  label={"Yes, I am happy to be contacted about this feedback."}
                 />
                 <RadioButton
                   name={"isAnonymous"}
