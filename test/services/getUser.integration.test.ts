@@ -1,10 +1,10 @@
 import { DataSource } from "typeorm"
-import getDataSource from "../../src/services/getDataSource"
-import { isError } from "../../src/types/Result"
-import User from "../../src/services/entities/User"
-import { deleteUsers, getDummyUser, insertUsers, runQuery } from "../utils/manageUsers"
-import getUser from "../../src/services/getUser"
 import { UserGroup } from "types/UserGroup"
+import User from "../../src/services/entities/User"
+import getDataSource from "../../src/services/getDataSource"
+import getUser from "../../src/services/getUser"
+import { isError } from "../../src/types/Result"
+import { deleteUsers, getDummyUser, insertUsers, runQuery } from "../utils/manageUsers"
 
 describe("getUser", () => {
   let dataSource: DataSource
@@ -33,7 +33,8 @@ describe("getUser", () => {
     expect(isError(result)).toBe(false)
 
     const actualUser = result as User
-    expect({ ...actualUser }).toStrictEqual({ ...inputUser, groups: expectedGroups })
+
+    expect({ ...actualUser }).toStrictEqual({ ...inputUser, id: expect.any(Number), groups: expectedGroups })
   })
 
   it("shouldn't return the user when given different username", async () => {
@@ -64,7 +65,8 @@ describe("getUser", () => {
     expect(isError(result)).toBe(false)
 
     const actualUser = result as User
-    expect(actualUser).toStrictEqual(inputUser)
+    console.log(actualUser)
+    expect({ ...actualUser }).toStrictEqual({ ...inputUser, id: expect.any(Number) })
   })
 
   it("Should fetch feature flags correctly when unescaped values are in the DB", async () => {
