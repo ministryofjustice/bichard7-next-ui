@@ -8,5 +8,18 @@ const textBlue = "#114E81"
 const textSecondary = "#505a5f"
 const blue = "#1D70B8"
 const yellow = "#FFDD00"
+const gdsBlack = "#0b0c0c"
 
-export { darkGrey, lightGrey, gdsGrey, gdsLightGrey, textPrimary, blue, tagBlue, textBlue, yellow, textSecondary }
+export {
+  darkGrey,
+  lightGrey,
+  gdsGrey,
+  gdsLightGrey,
+  textPrimary,
+  blue,
+  tagBlue,
+  textBlue,
+  yellow,
+  textSecondary,
+  gdsBlack
+}

@@ -1,5 +1,5 @@
 import { createUseStyles } from "react-jss"
-import { darkGrey, blue, tagBlue, textBlue, yellow, lightGrey, gdsGrey } from "../src/utils/colours"
+import { darkGrey, blue, tagBlue, textBlue, yellow, lightGrey, gdsGrey, gdsBlack } from "../src/utils/colours"
 
 export const useCustomStyles = createUseStyles({
   "button--tag": {
@@ -23,7 +23,7 @@ export const useCustomStyles = createUseStyles({
       filter: "invert(1)"
     },
     "&:focus": {
-      color: "black",
+      color: gdsBlack,
       background: yellow
     },
     "&:focus img": {
@@ -51,7 +51,7 @@ export const useCustomStyles = createUseStyles({
       filter: "invert(1)"
     },
     "&:focus": {
-      color: "black",
+      color: gdsBlack,
       background: yellow
     },
     "&:focus img": {
