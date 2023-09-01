@@ -18,21 +18,21 @@ export const CourtCaseListTableHeader = ({ order }: CourtCaseListTableHeaderProp
       <Table.CellHeader setWidth={"178px"}>
         <ColumnOrderIcons columnName={"defendantName"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("defendantName")} id="defendant-name-sort">
-            {"Defendant Name"}
+            {"Defendant name"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader setWidth={"115px"}>
         <ColumnOrderIcons columnName={"courtDate"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("courtDate")} id="court-date-sort">
-            {"Court Date"}
+            {"Court date"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>
         <ColumnOrderIcons columnName={"courtName"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("courtName")} id="court-name-sort">
-            {"Court Name"}
+            {"Court name"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
@@ -61,7 +61,7 @@ export const CourtCaseListTableHeader = ({ order }: CourtCaseListTableHeaderProp
       <Table.CellHeader>
         <ColumnOrderIcons columnName={"lockedBy"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link href={orderByParams("lockedBy")} id="locked-by-sort">
-            {"Locked By"}
+            {"Locked by"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
