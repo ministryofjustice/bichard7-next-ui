@@ -13,11 +13,6 @@ const useStyles = createUseStyles({
     display: "inline-block",
     verticalAlign: "bottom",
     marginBottom: "7px"
-  },
-  icon: {
-    display: "inline-block",
-    paddingLeft: "2px",
-    verticalAlign: "bottom"
   }
 })
 
