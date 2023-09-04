@@ -111,5 +111,24 @@ export const useCustomStyles = createUseStyles({
   },
   "no-margin-bottom": {
     marginBottom: 0
+  },
+
+  "table-column-header-link": {
+    color: blue,
+
+    "&:active": {
+      color: blue
+    },
+    "&:visited": {
+      color: blue
+    },
+    "&:hover": {
+      color: blue
+    }
+  },
+
+  "table-column-header-cell": {
+    height: "100%",
+    verticalAlign: "bottom"
   }
 })
