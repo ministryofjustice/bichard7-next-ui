@@ -4,6 +4,7 @@ import { useRouter } from "next/router"
 import type { QueryOrder } from "types/CaseListQueryParams"
 
 import { useCustomStyles } from "../../../styles/customStyles"
+import ColumnHeading from "features/CourtCaseFilters/ColumnHeading"
 
 interface CourtCaseListTableHeaderProps {
   order: QueryOrder
@@ -64,7 +65,9 @@ export const CourtCaseListTableHeader = ({ order }: CourtCaseListTableHeaderProp
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>{"Reason"}</Table.CellHeader>
+      <Table.CellHeader className={classes["table-column-header-cell"]}>
+        <ColumnHeading>{"Reason"}</ColumnHeading>
+      </Table.CellHeader>
       <Table.CellHeader>
         <ColumnOrderIcons columnName={"lockedBy"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link className={classes["table-column-header-link"]} href={orderByParams("lockedBy")} id="locked-by-sort">

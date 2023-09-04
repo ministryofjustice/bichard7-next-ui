@@ -1,5 +1,5 @@
 import { createUseStyles } from "react-jss"
-import { darkGrey, blue, tagBlue, textBlue, yellow, lightGrey, gdsGrey, gdsBlack, gdsLink } from "../src/utils/colours"
+import { darkGrey, blue, tagBlue, textBlue, yellow, lightGrey, gdsGrey, gdsBlack } from "../src/utils/colours"
 
 export const useCustomStyles = createUseStyles({
   "button--tag": {
@@ -114,16 +114,16 @@ export const useCustomStyles = createUseStyles({
   },
 
   "table-column-header-link": {
-    color: gdsLink,
+    color: blue,
 
     "&:active": {
-      color: gdsLink
+      color: blue
     },
     "&:visited": {
-      color: gdsLink
+      color: blue
     },
     "&:hover": {
-      color: gdsLink
+      color: blue
     }
   },
 

@@ -9,7 +9,6 @@ const textSecondary = "#505a5f"
 const blue = "#1D70B8"
 const yellow = "#FFDD00"
 const gdsBlack = "#0b0c0c"
-const gdsLink = "#1d70b8"
 
 export {
   darkGrey,
@@ -22,6 +21,5 @@ export {
   textBlue,
   yellow,
   textSecondary,
-  gdsBlack,
-  gdsLink
+  gdsBlack
 }
