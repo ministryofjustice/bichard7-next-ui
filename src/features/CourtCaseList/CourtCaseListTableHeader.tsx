@@ -3,12 +3,15 @@ import { Link, Table } from "govuk-react"
 import { useRouter } from "next/router"
 import type { QueryOrder } from "types/CaseListQueryParams"
 
+import { useCustomStyles } from "../../../styles/customStyles"
+
 interface CourtCaseListTableHeaderProps {
   order: QueryOrder
 }
 
 export const CourtCaseListTableHeader = ({ order }: CourtCaseListTableHeaderProps) => {
   const { basePath, query } = useRouter()
+  const classes = useCustomStyles()
 
   const orderByParams = (orderBy: string) => `${basePath}/?${new URLSearchParams({ ...query, orderBy, order })}`
 
@@ -17,42 +20,46 @@ export const CourtCaseListTableHeader = ({ order }: CourtCaseListTableHeaderProp
       <Table.Cell></Table.Cell>
       <Table.CellHeader setWidth={"178px"}>
         <ColumnOrderIcons columnName={"defendantName"} currentOrder={query.order} orderBy={query.orderBy}>
-          <Link href={orderByParams("defendantName")} id="defendant-name-sort">
+          <Link
+            className={classes["table-column-header-link"]}
+            href={orderByParams("defendantName")}
+            id="defendant-name-sort"
+          >
             {"Defendant name"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader setWidth={"115px"}>
         <ColumnOrderIcons columnName={"courtDate"} currentOrder={query.order} orderBy={query.orderBy}>
-          <Link href={orderByParams("courtDate")} id="court-date-sort">
+          <Link className={classes["table-column-header-link"]} href={orderByParams("courtDate")} id="court-date-sort">
             {"Court date"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>
         <ColumnOrderIcons columnName={"courtName"} currentOrder={query.order} orderBy={query.orderBy}>
-          <Link href={orderByParams("courtName")} id="court-name-sort">
+          <Link className={classes["table-column-header-link"]} href={orderByParams("courtName")} id="court-name-sort">
             {"Court name"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>
         <ColumnOrderIcons columnName={"ptiurn"} currentOrder={query.order} orderBy={query.orderBy}>
-          <Link href={orderByParams("ptiurn")} id="ptiurn-sort">
+          <Link className={classes["table-column-header-link"]} href={orderByParams("ptiurn")} id="ptiurn-sort">
             {"PTIURN"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>
         <ColumnOrderIcons columnName={"isUrgent"} currentOrder={query.order} orderBy={query.orderBy}>
-          <Link href={orderByParams("isUrgent")} id="is-urgent-sort">
+          <Link className={classes["table-column-header-link"]} href={orderByParams("isUrgent")} id="is-urgent-sort">
             {"Urgent"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
       <Table.CellHeader>
         <ColumnOrderIcons columnName={"notes"} currentOrder={query.order} orderBy={query.orderBy}>
-          <Link href={orderByParams("notes")} id="notes-sort">
+          <Link className={classes["table-column-header-link"]} href={orderByParams("notes")} id="notes-sort">
             {"Notes"}
           </Link>
         </ColumnOrderIcons>
@@ -60,7 +67,7 @@ export const CourtCaseListTableHeader = ({ order }: CourtCaseListTableHeaderProp
       <Table.CellHeader>{"Reason"}</Table.CellHeader>
       <Table.CellHeader>
         <ColumnOrderIcons columnName={"lockedBy"} currentOrder={query.order} orderBy={query.orderBy}>
-          <Link href={orderByParams("lockedBy")} id="locked-by-sort">
+          <Link className={classes["table-column-header-link"]} href={orderByParams("lockedBy")} id="locked-by-sort">
             {"Locked by"}
           </Link>
         </ColumnOrderIcons>

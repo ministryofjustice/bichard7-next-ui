@@ -1,5 +1,5 @@
 import { createUseStyles } from "react-jss"
-import { darkGrey, blue, tagBlue, textBlue, yellow, lightGrey, gdsGrey, gdsBlack } from "../src/utils/colours"
+import { darkGrey, blue, tagBlue, textBlue, yellow, lightGrey, gdsGrey, gdsBlack, gdsLink } from "../src/utils/colours"
 
 export const useCustomStyles = createUseStyles({
   "button--tag": {
@@ -111,5 +111,19 @@ export const useCustomStyles = createUseStyles({
   },
   "no-margin-bottom": {
     marginBottom: 0
+  },
+
+  "table-column-header-link": {
+    color: gdsLink,
+
+    "&:active": {
+      color: gdsLink
+    },
+    "&:visited": {
+      color: gdsLink
+    },
+    "&:hover": {
+      color: gdsLink
+    }
   }
 })
