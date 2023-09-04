@@ -18,7 +18,7 @@ export const CourtCaseListTableHeader = ({ order }: CourtCaseListTableHeaderProp
   return (
     <Table.Row>
       <Table.Cell></Table.Cell>
-      <Table.CellHeader setWidth={"178px"}>
+      <Table.CellHeader className={classes["table-column-header-cell"]} setWidth={"178px"}>
         <ColumnOrderIcons columnName={"defendantName"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link
             className={classes["table-column-header-link"]}
@@ -29,35 +29,35 @@ export const CourtCaseListTableHeader = ({ order }: CourtCaseListTableHeaderProp
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader setWidth={"115px"}>
+      <Table.CellHeader className={classes["table-column-header-cell"]} setWidth={"115px"}>
         <ColumnOrderIcons columnName={"courtDate"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link className={classes["table-column-header-link"]} href={orderByParams("courtDate")} id="court-date-sort">
             {"Court date"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>
+      <Table.CellHeader className={classes["table-column-header-cell"]}>
         <ColumnOrderIcons columnName={"courtName"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link className={classes["table-column-header-link"]} href={orderByParams("courtName")} id="court-name-sort">
             {"Court name"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>
+      <Table.CellHeader className={classes["table-column-header-cell"]}>
         <ColumnOrderIcons columnName={"ptiurn"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link className={classes["table-column-header-link"]} href={orderByParams("ptiurn")} id="ptiurn-sort">
             {"PTIURN"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>
+      <Table.CellHeader className={classes["table-column-header-cell"]}>
         <ColumnOrderIcons columnName={"isUrgent"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link className={classes["table-column-header-link"]} href={orderByParams("isUrgent")} id="is-urgent-sort">
             {"Urgent"}
           </Link>
         </ColumnOrderIcons>
       </Table.CellHeader>
-      <Table.CellHeader>
+      <Table.CellHeader className={classes["table-column-header-cell"]}>
         <ColumnOrderIcons columnName={"notes"} currentOrder={query.order} orderBy={query.orderBy}>
           <Link className={classes["table-column-header-link"]} href={orderByParams("notes")} id="notes-sort">
             {"Notes"}

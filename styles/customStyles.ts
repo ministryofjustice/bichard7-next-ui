@@ -125,5 +125,10 @@ export const useCustomStyles = createUseStyles({
     "&:hover": {
       color: gdsLink
     }
+  },
+
+  "table-column-header-cell": {
+    height: "100%",
+    verticalAlign: "bottom"
   }
 })

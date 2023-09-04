@@ -7,14 +7,18 @@ import { blue } from "../../utils/colours"
 const useStyles = createUseStyles({
   container: {
     width: "fit-content",
-    display: "flex"
+    display: "flex",
+    alignItems: "flex-end"
   },
   content: {
-    display: "inline-block"
+    display: "inline-block",
+    verticalAlign: "bottom",
+    marginBottom: "7px"
   },
   icon: {
     display: "inline-block",
-    paddingLeft: "2px"
+    paddingLeft: "2px",
+    verticalAlign: "bottom"
   }
 })
 
