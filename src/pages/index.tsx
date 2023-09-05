@@ -1,6 +1,8 @@
+import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import Pagination from "components/Pagination"
+import { getCookie, setCookie } from "cookies-next"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
@@ -9,7 +11,9 @@ import { Main } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
+import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
+import { useEffect } from "react"
 import type CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
@@ -17,25 +21,22 @@ import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CaseState, QueryOrder, Reason, Urgency, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { CaseState, QueryOrder, Reason, SerializedCourtDateRange, Urgency } from "types/CaseListQueryParams"
+import Feature from "types/Feature"
 import { isError } from "types/Result"
-import caseStateFilters from "utils/caseStateFilters"
-import { isPost } from "utils/http"
+import UnlockReason from "types/UnlockReason"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
+import caseStateFilters from "utils/caseStateFilters"
+import { formatFormInputDateString } from "utils/formattedDate"
+import hashString from "utils/hashString"
+import { isPost } from "utils/http"
+import { calculateLastPossiblePageNumber } from "utils/pagination/calculateLastPossiblePageNumber"
 import { reasonOptions } from "utils/reasonOptions"
-import { validateDateRange } from "utils/validators/validateDateRange"
+import redirectTo from "utils/redirectTo"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
+import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
-import { formatFormInputDateString } from "utils/formattedDate"
-import redirectTo from "utils/redirectTo"
-import { useRouter } from "next/router"
-import { useEffect } from "react"
-import { setCookie, getCookie } from "cookies-next"
-import hashString from "utils/hashString"
-import UnlockReason from "types/UnlockReason"
-import Feature from "types/Feature"
 
 interface Props {
   user: User
@@ -151,6 +152,20 @@ export const getServerSideProps = withMultipleServerSideProps(
     )
 
     const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
+
+    if (isError(courtCases)) {
+      throw courtCases
+    }
+
+    const lastPossiblePageNumber = calculateLastPossiblePageNumber(courtCases.totalCases, +validatedMaxPageItems)
+    if (+validatedPageNum > lastPossiblePageNumber) {
+      if (req.url) {
+        const [urlPath, urlQuery] = req.url.split("?")
+        const parsedUrlQuery = new URLSearchParams(urlQuery)
+        parsedUrlQuery.set("page", lastPossiblePageNumber.toString())
+        return redirectTo(`${urlPath}?${parsedUrlQuery.toString()}`)
+      }
+    }
 
     if (isError(courtCases)) {
       throw courtCases
