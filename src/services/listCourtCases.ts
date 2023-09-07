@@ -50,7 +50,27 @@ const listCourtCases = async (
     .createQueryBuilder("notes")
     .select("COUNT(note_id)")
     .where("error_id = courtCase.errorId")
-  let query = repository.createQueryBuilder("courtCase")
+  let query = repository
+    .createQueryBuilder("courtCase")
+    .select([
+      "courtCase.errorId",
+      "courtCase.triggerCount",
+      "courtCase.isUrgent",
+      "courtCase.asn",
+      "courtCase.errorReport",
+      "courtCase.errorReason",
+      "courtCase.triggerReason",
+      "courtCase.errorCount",
+      "courtCase.courtDate",
+      "courtCase.ptiurn",
+      "courtCase.courtName",
+      "courtCase.resolutionTimestamp",
+      "courtCase.errorResolvedBy",
+      "courtCase.triggerResolvedBy",
+      "courtCase.defendantName",
+      "courtCase.errorLockedByUsername",
+      "courtCase.triggerLockedByUsername"
+    ])
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
   leftJoinAndSelectTriggersQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
     .leftJoinAndSelect("courtCase.notes", "note")

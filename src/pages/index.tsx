@@ -76,7 +76,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const caseAges = [caseAge]
       .flat()
       .filter((t) => Object.keys(CaseAgeOptions).includes(String(t) as string)) as string[]
-    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "25"
+    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "50"
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "courtDate"
     const validatedOrder: QueryOrder = validateOrder(order) ? order : "desc"
