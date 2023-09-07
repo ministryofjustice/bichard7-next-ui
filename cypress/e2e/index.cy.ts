@@ -887,6 +887,20 @@ describe("Case list", () => {
       cy.get("tr").contains("Case00025").should("exist")
     })
 
+    it("Should redirect to last page if the requested page is greater than the last possible page", () => {
+      cy.task("insertCourtCasesWithFields", [
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" },
+        { orgForPoliceFilter: "011111" }
+      ])
+      loginAndGoToUrl(undefined, "/bichard?page=5")
+      cy.url().should("match", /\/bichard\?page=1/)
+    })
+
     it("doesn't show navigation options when there is only one page", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
