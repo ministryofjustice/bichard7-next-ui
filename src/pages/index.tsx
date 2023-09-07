@@ -167,10 +167,6 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    if (isError(courtCases)) {
-      throw courtCases
-    }
-
     return {
       props: {
         user: currentUser.serialize(),
@@ -187,9 +183,9 @@ export const getServerSideProps = withMultipleServerSideProps(
         caseAge: caseAges,
         dateRange: validatedDateRange
           ? {
-              from: formatFormInputDateString(validatedDateRange.from),
-              to: formatFormInputDateString(validatedDateRange.to)
-            }
+            from: formatFormInputDateString(validatedDateRange.from),
+            to: formatFormInputDateString(validatedDateRange.to)
+          }
           : null,
         caseAgeCounts: caseAgeCounts,
         urgent: validatedUrgent ? validatedUrgent : null,
