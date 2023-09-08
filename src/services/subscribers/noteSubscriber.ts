@@ -9,7 +9,7 @@ export class NoteSubscriber implements EntitySubscriberInterface<Note> {
   }
 
   async afterLoad(note: Note) {
-    if (note.userId) {
+    if (note.userId && note.user) {
       note.userFullName = formatUserFullName(note.user.forenames, note.user.surname)
     }
   }
