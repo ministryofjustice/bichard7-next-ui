@@ -1,8 +1,8 @@
-import { EventSubscriber, EntitySubscriberInterface, LoadEvent } from "typeorm"
+import { EventSubscriber, EntitySubscriberInterface } from "typeorm"
 import CourtCase from "../entities/CourtCase"
-import getUser from "../getUser"
-import User from "../entities/User"
-import { formatUserFullName } from "../../utils/formatUserFullName"
+// import getUser from "../getUser"
+// import User from "../entities/User"
+// import { formatUserFullName } from "../../utils/formatUserFullName"
 
 @EventSubscriber()
 export class CourtCaseSubscriber implements EntitySubscriberInterface<CourtCase> {
@@ -10,23 +10,16 @@ export class CourtCaseSubscriber implements EntitySubscriberInterface<CourtCase>
     return CourtCase
   }
 
-  async afterLoad(courtCase: CourtCase, event: LoadEvent<CourtCase>) {
-    const { manager } = event
-
+  async afterLoad(courtCase: CourtCase) {
     if (courtCase.errorLockedByUsername) {
-      const user = await getUser(manager, courtCase.errorLockedByUsername)
-
-      if (user instanceof User) {
-        courtCase.errorLockedByUserFullName = formatUserFullName(user.forenames, user.surname)
-      }
+      // TODO:
+      // courtCase.errorLockedByUserFullName = formatUserFullName(user.forenames, user.surname)
+      courtCase.errorLockedByUserFullName = courtCase.errorLockedByUsername
     }
 
     if (courtCase.triggerLockedByUsername) {
-      const user = await getUser(manager, courtCase.triggerLockedByUsername)
-
-      if (user instanceof User) {
-        courtCase.triggerLockedByUserFullName = formatUserFullName(user.forenames, user.surname)
-      }
+      courtCase.triggerLockedByUserFullName = courtCase.triggerLockedByUsername
+      // courtCase.triggerLockedByUserFullName = formatUserFullName(user.forenames, user.surname)
     }
   }
 }
