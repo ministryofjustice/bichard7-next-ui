@@ -2,6 +2,7 @@
 
 CYPRESS_TESTS=$(find ./cypress/e2e -name "*.cy.ts")
 
+declare -i TOTAL_CHUNKS=${CIRCLE_NODE_TOTAL:-1}
 declare -i LENGTH=$(find ./cypress/e2e -name "*.cy.ts" | wc -l | xargs)
 declare -i CHUNK_SIZE=LENGTH/TOTAL_CHUNKS
 declare -i START_INDEX=$(echo "$CHUNK_SIZE*$CHUNK_NUMBER")
