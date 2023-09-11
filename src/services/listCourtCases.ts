@@ -74,6 +74,8 @@ const listCourtCases = async (
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
   leftJoinAndSelectTriggersQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
     .leftJoinAndSelect("courtCase.notes", "note")
+    .leftJoinAndSelect("courtCase.errorLockedByUser", "errorLockedByUser")
+    .leftJoinAndSelect("courtCase.triggerLockedByUser", "triggerLockedByUser")
     .skip(pageNumValidated * maxPageItemsValidated)
     .take(maxPageItemsValidated)
 

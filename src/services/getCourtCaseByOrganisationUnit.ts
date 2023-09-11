@@ -15,6 +15,8 @@ const getCourtCaseByOrganisationUnit = (
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
   query.andWhere({ errorId: courtCaseId })
   leftJoinAndSelectTriggersQuery(query, user.excludedTriggers)
+    .leftJoinAndSelect("courtCase.errorLockedByUser", "errorLockedByUser")
+    .leftJoinAndSelect("courtCase.triggerLockedByUser", "triggerLockedByUser")
     .leftJoinAndSelect("courtCase.notes", "note")
     .addOrderBy("note.createdAt", "ASC")
 

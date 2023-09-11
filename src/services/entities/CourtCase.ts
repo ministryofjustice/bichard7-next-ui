@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm"
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm"
 import type { Relation } from "typeorm"
 import BaseEntity from "./BaseEntity"
 import dateTransformer from "./transformers/dateTransformer"
@@ -8,6 +8,7 @@ import Trigger from "./Trigger"
 import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
 import type { ResolutionStatus } from "types/ResolutionStatus"
 import booleanIntTransformer from "./transformers/booleanIntTransformer"
+import User from "./User"
 
 @Entity({ name: "error_list" })
 export default class CourtCase extends BaseEntity {
@@ -120,10 +121,18 @@ export default class CourtCase extends BaseEntity {
   @OneToMany(() => Trigger, (trigger) => trigger.courtCase, { eager: true, cascade: ["insert", "update"] })
   triggers!: Relation<Trigger>[]
 
+  @ManyToOne(() => User)
+  @JoinColumn({ name: "error_locked_by_id", referencedColumnName: "username" })
+  errorLockedByUser!: User | null
+
   @Column({ name: "error_locked_by_id", type: "varchar", nullable: true })
   errorLockedByUsername?: string | null
 
   errorLockedByUserFullName?: string | null
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: "trigger_locked_by_id", referencedColumnName: "username" })
+  triggerLockedByUser!: User | null
 
   @Column({ name: "trigger_locked_by_id", type: "varchar", nullable: true })
   triggerLockedByUsername?: string | null
