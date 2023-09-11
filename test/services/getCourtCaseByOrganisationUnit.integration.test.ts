@@ -50,17 +50,13 @@ describe("getCourtCaseByOrganisationUnits", () => {
 
   it("Should return court case details when record exists and is visible to the specified forces", async () => {
     const inputCourtCase = await getDummyCourtCase({
-      orgForPoliceFilter: orgCode.padEnd(6, " "),
-      errorLockedByUser: null,
-      triggerLockedByUser: null
+      orgForPoliceFilter: orgCode.padEnd(6, " ")
     })
     await insertCourtCases(inputCourtCase)
 
     let result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
       visibleForces: [orgCode],
-      visibleCourts: [],
-      errorLockedByUser: null,
-      triggerLockedByUser: null
+      visibleCourts: []
     } as Partial<User> as User)
     expect(isError(result)).toBe(false)
 
@@ -82,9 +78,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
   it("Should return a case where the users' visibleForce matches the courtCode", async () => {
     const inputCourtCase = await getDummyCourtCase({
       courtCode: orgCode.padEnd(6, " "),
-      orgForPoliceFilter: null,
-      errorLockedByUser: null,
-      triggerLockedByUser: null
+      orgForPoliceFilter: null
     })
     await insertCourtCases(inputCourtCase)
     const result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
@@ -100,9 +94,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
   it("Should return a case where the users' visibleCourt matches the orgForPoliceFilter", async () => {
     const inputCourtCase = await getDummyCourtCase({
       courtCode: null,
-      orgForPoliceFilter: orgCode.padEnd(6, " "),
-      errorLockedByUser: null,
-      triggerLockedByUser: null
+      orgForPoliceFilter: orgCode.padEnd(6, " ")
     })
     await insertCourtCases(inputCourtCase)
     const result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
