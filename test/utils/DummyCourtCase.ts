@@ -17,8 +17,6 @@ const DummyCourtCase: Partial<CourtCase> = {
   triggerCount: 0,
   errorLockedByUsername: null,
   triggerLockedByUsername: null,
-  errorLockedByUser: null,
-  triggerLockedByUser: null,
   isUrgent: true,
   asn: "0836FP0100000377244A",
   courtCode: "B42AZ01",
