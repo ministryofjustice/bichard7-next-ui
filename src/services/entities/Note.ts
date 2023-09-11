@@ -1,10 +1,10 @@
+/* eslint-disable import/no-cycle */
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
 import type { Relation } from "typeorm"
 import BaseEntity from "./BaseEntity"
-// eslint-disable-next-line import/no-cycle
 import CourtCase from "./CourtCase"
-import dateTransformer from "./transformers/dateTransformer"
 import User from "./User"
+import dateTransformer from "./transformers/dateTransformer"
 
 @Entity({ name: "error_list_notes" })
 export default class Note extends BaseEntity {
