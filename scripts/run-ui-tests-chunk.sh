@@ -27,7 +27,7 @@ done < <(printf '%s\n' "$CYPRESS_TESTS")
 
 if [[ -z "$FILES_TO_TEST" ]]; then
   echo "No files to test"
-  exit 0
+  exit 1
 fi
 
 npx cypress run --config baseUrl='https://localhost:4443' --spec $FILES_TO_TEST
