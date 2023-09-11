@@ -1,6 +1,6 @@
 import { EventSubscriber, EntitySubscriberInterface } from "typeorm"
 import CourtCase from "../entities/CourtCase"
-import { formatUserFullName } from "utils/formatUserFullName"
+import { formatUserFullName } from "../../utils/formatUserFullName"
 
 @EventSubscriber()
 export class CourtCaseSubscriber implements EntitySubscriberInterface<CourtCase> {
