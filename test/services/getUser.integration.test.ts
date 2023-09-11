@@ -65,7 +65,6 @@ describe("getUser", () => {
     expect(isError(result)).toBe(false)
 
     const actualUser = result as User
-    console.log(actualUser)
     expect({ ...actualUser }).toStrictEqual({ ...inputUser, id: expect.any(Number) })
   })
 
