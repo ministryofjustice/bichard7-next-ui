@@ -2,9 +2,72 @@ import Layout from "components/Layout"
 import RadioButton from "components/RadioButton/RadioButton"
 import { MAX_FEEDBACK_LENGTH } from "config"
 import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, SkipLink, TextArea } from "govuk-react"
-import { NextPage } from "next"
+import { withAuthentication, withMultipleServerSideProps } from "middleware"
+import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
+import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
+import SurveyFeedback from "services/entities/SurveyFeedback"
 import User from "services/entities/User"
+import getDataSource from "services/getDataSource"
+import insertSurveyFeedback from "services/insertSurveyFeedback"
+import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { isError } from "types/Result"
+import { SurveyFeedbackResponse, SurveyFeedbackType } from "types/SurveyFeedback"
+import { isPost } from "utils/http"
+import parseFormData from "utils/parseFormData"
+import redirectTo from "utils/redirectTo"
+
+export const getServerSideProps = withMultipleServerSideProps(
+  withAuthentication,
+  async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
+    const { currentUser, query, req } = context as AuthenticationServerSidePropsContext
+    const { previousPath } = query as { previousPath: string }
+
+    const dataSource = await getDataSource()
+
+    const props = {
+      user: currentUser.serialize(),
+      previousPath
+    }
+
+    if (isPost(req)) {
+      const { issueOrPreference, caseListOrDetail, componentIssue, otherFeedback } = (await parseFormData(req)) as {
+        issueOrPreference: string
+        caseListOrDetail: string
+        componentIssue: string
+        otherFeedback: string
+      }
+
+      if (issueOrPreference && caseListOrDetail && componentIssue && otherFeedback) {
+        const result = await insertSurveyFeedback(dataSource, {
+          feedbackType: SurveyFeedbackType.Switching,
+          userId: currentUser.id,
+          response: {} as SurveyFeedbackResponse
+        } as SurveyFeedback)
+
+        if (!isError(result)) {
+          return redirectTo(previousPath)
+        } else {
+          throw result
+        }
+      }
+
+      return {
+        props: {
+          ...props,
+          fields: {
+            issueOrPreference: { hasError: !issueOrPreference ? true : false, value: issueOrPreference ?? null },
+            caseListOrDetail: { hasError: !caseListOrDetail ? true : false, value: caseListOrDetail ?? null },
+            componentIssue: { hasError: !componentIssue ? true : false, value: componentIssue ?? null },
+            otherFeedback: { hasError: !otherFeedback ? true : false, value: otherFeedback }
+          }
+        }
+      }
+    }
+
+    return { props }
+  }
+)
 
 interface Props {
   user: User
