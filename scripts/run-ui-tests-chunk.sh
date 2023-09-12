@@ -16,7 +16,7 @@ FILES_TO_TEST=""
 while read -r file_to_test
 do
     if [[ ("$INDEX" -gt "$START_INDEX") && (("$INDEX" -le "$END_INDEX") || ("${ACTUAL_CHUNK_NUMBER}" -eq "$TOTAL_CHUNKS")) ]]; then
-      FILES_TO_TEST="$FILES_TO_TEST $file_to_test"
+      FILES_TO_TEST="$FILES_TO_TEST,$file_to_test"
       printf "\x1B[32m%-6s\e[m\n"  "✓ $file_to_test"
     else
       echo "  $file_to_test"
