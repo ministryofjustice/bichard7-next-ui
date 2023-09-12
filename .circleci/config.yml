@@ -208,7 +208,9 @@ jobs:
           FLAGS: --no-deps
       - run:
           name: Run UI tests
-          command: ./scripts/run-ui-tests-chunk.sh
+          command: |
+            TEST_FILES="$(circleci tests glob "cypress/e2e/**/*.cy.ts" | circleci tests split --split-by=timings)"
+            npx cypress run --config baseUrl='https://localhost:4443' --spec ${TEST_FILES//$'\n'/','}
           environment:
             UI_IS_HTTPS: true
             TZ: "Europe/London"
