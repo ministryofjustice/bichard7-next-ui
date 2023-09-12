@@ -207,10 +207,13 @@ jobs:
           SERVICES: ui user-service nginx-auth-proxy postgres audit-log-api localstack
           FLAGS: --no-deps
       - run:
+          name: Install Cypress Reporter
+          command: npm install --save-dev cypress-circleci-reporter mocha
+      - run:
           name: Run UI tests
           command: |
             TEST_FILES="$(circleci tests glob "cypress/e2e/**/*.cy.ts" | circleci tests split --split-by=timings)"
-            npx cypress run --config baseUrl='https://localhost:4443' --spec ${TEST_FILES//$'\n'/','}
+            npx cypress run --config baseUrl='https://localhost:4443' --spec ${TEST_FILES//$'\n'/','} --reporter cypress-circleci-reporter --reporter-options "resultsDir=./cypress/results"
           environment:
             UI_IS_HTTPS: true
             TZ: "Europe/London"
