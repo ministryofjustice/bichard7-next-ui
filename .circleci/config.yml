@@ -18,14 +18,14 @@ commands:
       - run:
           name: Clone bichard7-next-audit-logging
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
-  
+
   fetch_images:
     parameters:
       IMAGES:
         default: ""
         type: string
     steps:
-      - run: 
+      - run:
           name: "Fetch images: <<parameters.IMAGES>>"
           command: bash ./scripts/fetch-docker-images.sh <<parameters.IMAGES>>
 
@@ -69,7 +69,7 @@ commands:
           name: Start bichard7 legacy
           working_directory: ~/bichard7-next-core
           command: SKIP_IMAGES=ui npm run all-legacy
-    
+
   start_services:
     parameters:
       SERVICES:
@@ -154,7 +154,7 @@ jobs:
     steps:
       - setup
       - fetch_images:
-          IMAGES: nodejs 
+          IMAGES: nodejs
       - build_audit_logging_images
       - start_services:
           SERVICES: activemq localstack postgres audit-log-api
@@ -176,7 +176,7 @@ jobs:
           SERVICES: postgres audit-log-api localstack
       - run:
           name: Run the seed-data script
-          command: DEPLOY_NAME=e2e-test npm run seed-data  
+          command: DEPLOY_NAME=e2e-test npm run seed-data
 
   cypress_e2e_tests:
     machine:
@@ -254,4 +254,3 @@ workflows:
 
       - cypress_e2e_tests
       - cucumber_e2e_tests
-
