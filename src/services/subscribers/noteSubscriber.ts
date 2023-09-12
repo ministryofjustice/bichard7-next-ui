@@ -1,7 +1,5 @@
-import { EventSubscriber, EntitySubscriberInterface, LoadEvent } from "typeorm"
+import { EventSubscriber, EntitySubscriberInterface } from "typeorm"
 import Note from "../entities/Note"
-import getUser from "../getUser"
-import User from "../entities/User"
 import { formatUserFullName } from "../../utils/formatUserFullName"
 
 @EventSubscriber()
@@ -10,14 +8,9 @@ export class NoteSubscriber implements EntitySubscriberInterface<Note> {
     return Note
   }
 
-  async afterLoad(note: Note, event: LoadEvent<Note>) {
-    const { manager } = event
-    if (note.userId) {
-      const user = await getUser(manager, note.userId)
-
-      if (user instanceof User) {
-        note.userFullName = formatUserFullName(user.forenames, user.surname)
-      }
+  async afterLoad(note: Note) {
+    if (note.userId && note.user) {
+      note.userFullName = formatUserFullName(note.user.forenames, note.user.surname)
     }
   }
 }

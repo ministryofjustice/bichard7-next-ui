@@ -37,7 +37,9 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
     const dataSource = await getDataSource()
 
-    let courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
+    const loadLockedBy = true
+
+    let courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser, loadLockedBy)
 
     if (isError(courtCase)) {
       throw courtCase
@@ -116,7 +118,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     // Fetch the record from the database after updates
-    courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
+    courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser, loadLockedBy)
 
     if (isError(courtCase)) {
       throw courtCase

@@ -1,8 +1,9 @@
+/* eslint-disable import/no-cycle */
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
 import type { Relation } from "typeorm"
 import BaseEntity from "./BaseEntity"
-// eslint-disable-next-line import/no-cycle
 import CourtCase from "./CourtCase"
+import User from "./User"
 import dateTransformer from "./transformers/dateTransformer"
 
 @Entity({ name: "error_list_notes" })
@@ -23,6 +24,10 @@ export default class Note extends BaseEntity {
 
   @Column({ name: "create_ts", type: "timestamp", transformer: dateTransformer })
   createdAt!: Date
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: "user_id", referencedColumnName: "username" })
+  user!: Relation<User>
 
   @ManyToOne(() => CourtCase)
   @JoinColumn({ name: "error_id" })
