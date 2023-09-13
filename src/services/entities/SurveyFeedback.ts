@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from "typeorm"
 import BaseEntity from "./BaseEntity"
-import type { SurveyFeedbackResponse } from "types/SurveyFeedback"
+import type { SurveyFeedbackResponse, SwitchingFeedbackResponse } from "types/SurveyFeedback"
 import { SurveyFeedbackType } from "../../types/SurveyFeedback"
 import dateTransformer from "./transformers/dateTransformer"
 import jsonTransformer from "./transformers/jsonTransformer"
@@ -11,7 +11,7 @@ export default class SurveyFeedback extends BaseEntity {
   id!: number
 
   @Column({ transformer: jsonTransformer, type: "jsonb" })
-  response!: SurveyFeedbackResponse
+  response!: SurveyFeedbackResponse | SwitchingFeedbackResponse
 
   @Column({ type: "enum", enum: SurveyFeedbackType, name: "feedback_type" })
   feedbackType!: SurveyFeedbackType

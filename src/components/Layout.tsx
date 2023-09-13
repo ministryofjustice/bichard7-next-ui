@@ -1,14 +1,14 @@
 import { Footer } from "govuk-react"
-import { ReactNode } from "react"
-import User from "../services/entities/User"
 import { useRouter } from "next/router"
-import Header from "./Header"
-import NavBar from "./NavBar"
-import PhaseBanner from "./PhaseBanner"
-import PageTemplate from "./PageTemplate"
+import { ReactNode } from "react"
 import styled from "styled-components"
+import User from "../services/entities/User"
 import ConditionalRender from "./ConditionalRender"
+import Header from "./Header"
 import LinkButton from "./LinkButton"
+import NavBar from "./NavBar"
+import PageTemplate from "./PageTemplate"
+import PhaseBanner from "./PhaseBanner"
 
 const Banner = styled.div`
   display: flex;
@@ -32,6 +32,13 @@ interface Props {
 
 const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) => {
   const { basePath } = useRouter()
+  let bichardSwithUrl = bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"
+
+  const counter = 0 //TODO: Read it from the cookie
+
+  if (counter === 0 || (counter === 1 && Math.random() > 0.5)) {
+    bichardSwithUrl = `/bichard/switching-feedback?redirectTo=${encodeURIComponent(".." + bichardSwithUrl)}`
+  }
 
   return (
     <>
@@ -42,9 +49,7 @@ const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) =
           <PhaseBanner phase={"beta"} />
 
           <ConditionalRender isRendered={bichardSwitch.display}>
-            <BichardSwitch href={bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"}>
-              {"Switch to old Bichard"}
-            </BichardSwitch>
+            <BichardSwitch href={bichardSwithUrl}>{"Switch to old Bichard"}</BichardSwitch>
           </ConditionalRender>
         </Banner>
         {children}
@@ -53,7 +58,7 @@ const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) =
         copyright={{
           image: {
             height: 102,
-            src: `${basePath}/govuk_assets/images/govuk-crest.png`,
+            src: `${basePath} /govuk_assets/images / govuk - crest.png`,
             width: 125
           },
           link: "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",

@@ -1,7 +1,7 @@
 import Layout from "components/Layout"
 import RadioButton from "components/RadioButton/RadioButton"
 import { MAX_FEEDBACK_LENGTH } from "config"
-import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, SkipLink, TextArea } from "govuk-react"
+import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import { ParsedUrlQuery } from "querystring"
@@ -12,7 +12,7 @@ import getDataSource from "services/getDataSource"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
-import { SurveyFeedbackResponse, SurveyFeedbackType } from "types/SurveyFeedback"
+import { SurveyFeedbackType, SwitchingFeedbackResponse } from "types/SurveyFeedback"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
@@ -21,16 +21,26 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query, req } = context as AuthenticationServerSidePropsContext
-    const { previousPath } = query as { previousPath: string }
+    const {
+      previousPath,
+      skip,
+      redirectTo: redirectToUrl
+    } = query as { previousPath: string; skip: string; redirectTo: string }
 
     const dataSource = await getDataSource()
 
     const props = {
       user: currentUser.serialize(),
-      previousPath
+      previousPath: previousPath || "../bichard"
     }
 
     if (isPost(req)) {
+      if (skip === "true") {
+        // insert a new record in db. JSON object should be like { skip: true }
+        //TODO: Update counter in feedback form
+        return redirectTo(redirectToUrl)
+      }
+
       const { issueOrPreference, caseListOrDetail, componentIssue, otherFeedback } = (await parseFormData(req)) as {
         issueOrPreference: string
         caseListOrDetail: string
@@ -42,11 +52,12 @@ export const getServerSideProps = withMultipleServerSideProps(
         const result = await insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.Switching,
           userId: currentUser.id,
-          response: {} as SurveyFeedbackResponse
+          response: { issueOrPreference, caseListOrDetail, componentIssue, otherFeedback } as SwitchingFeedbackResponse
         } as SurveyFeedback)
 
         if (!isError(result)) {
-          return redirectTo(previousPath)
+          //TODO: Update counter in feedback form
+          return redirectTo(redirectToUrl)
         } else {
           throw result
         }
@@ -93,6 +104,7 @@ interface Props {
 }
 const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) => {
   const [remainingFeedbackLength, setRemainingFeedbackLength] = useState(MAX_FEEDBACK_LENGTH)
+  const [isSkipped, setIsSkipped] = useState("false")
 
   const handleFeedbackOnChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
     setRemainingFeedbackLength(MAX_FEEDBACK_LENGTH - event.currentTarget.value.length)
@@ -108,10 +120,19 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
         <BackLink href={previousPath} onClick={function noRefCheck() { }}>
           {"Back"}
         </BackLink>
-        <SkipLink href="" onClick={function noRefCheck() { }}>
+        {/* <a
+          href="?skip=true"
+          onClick={() => {
+            setIsSkipped("true")
+            document.getElementById("switching-feedback-form")?.onsubmit()
+          }}
+        >
+          {"Skip feedback"}
+        </a> */}
+        {/* <SkipLink href="?skip=true" onClick={function noRefCheck() { }}>
           {" "}
           {"Skip feedback"}
-        </SkipLink>{" "}
+        </SkipLink>{" "} */}
         {/* Todo: Add old Bichard link*/}
         <Heading as="h1">{"Share your feedback"}</Heading>
         <p className="govuk-body">
@@ -119,7 +140,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
             "You have selected to revert back to old bichard. What was the reason for doing so can you please select the appropriate option and outline the problem that occurred below so that we can best understand."
           }
         </p>
-        <form method="POST" action={"#"}>
+        <form method="POST" action={"#"} id="switching-feedback-form">
           <Fieldset>
             <FormGroup id="issueOrPreference">
               <Heading as="h3" size="SMALL">
@@ -265,6 +286,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
               <Button type="submit">{"Send feedback and continue"}</Button>
             </FormGroup>
           </Fieldset>
+          <input type="hidden" name="isSkipped" value={isSkipped} />
         </form>
       </Layout>
     </>
