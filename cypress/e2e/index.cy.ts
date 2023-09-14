@@ -75,14 +75,14 @@ describe("Case list", () => {
     it("Should display all the headings with sorting or not", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       loginAndGoToUrl()
-      cy.get("#defendant-name-sort").contains("Defendant Name").should("have.attr", "href")
-      cy.get("#court-date-sort").contains("Court Date").should("have.attr", "href")
-      cy.get("#court-name-sort").contains("Court Name").should("have.attr", "href")
+      cy.get("#defendant-name-sort").contains("Defendant name").should("have.attr", "href")
+      cy.get("#court-date-sort").contains("Court date").should("have.attr", "href")
+      cy.get("#court-name-sort").contains("Court name").should("have.attr", "href")
       cy.get("#ptiurn-sort").contains("PTIURN").should("have.attr", "href")
       cy.get("#is-urgent-sort").contains("Urgent").should("have.attr", "href")
       cy.contains("Notes").should("have.attr", "href")
       cy.contains("Reason").should("not.have.attr", "href")
-      cy.get("#locked-by-sort").contains("Locked By").should("have.attr", "href")
+      cy.get("#locked-by-sort").contains("Locked by").should("have.attr", "href")
     })
 
     it("Should display multiple cases", () => {
