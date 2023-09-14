@@ -1,10 +1,15 @@
 import {
   confirmMultipleFieldsDisplayed,
   confirmMultipleFieldsNotDisplayed,
+  defaultSetup,
   loginAndGoToUrl
 } from "../../support/helpers"
 
 describe("How orgs and forces are presented", () => {
+  before(() => {
+    defaultSetup()
+  })
+
   it("Should display a case for the user's org", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     loginAndGoToUrl()

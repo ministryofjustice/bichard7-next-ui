@@ -1,9 +1,10 @@
 import {
-  loginAndGoToUrl,
   confirmCaseDisplayed,
   confirmCaseNotDisplayed,
   confirmReasonDisplayed,
-  confirmReasonNotDisplayed
+  confirmReasonNotDisplayed,
+  defaultSetup,
+  loginAndGoToUrl
 } from "../../support/helpers"
 
 describe("Shows relevant information to a user's role", () => {
@@ -77,6 +78,10 @@ describe("Shows relevant information to a user's role", () => {
       ]
     }
   ]
+
+  before(() => {
+    defaultSetup()
+  })
 
   beforeEach(() => {
     cy.task(

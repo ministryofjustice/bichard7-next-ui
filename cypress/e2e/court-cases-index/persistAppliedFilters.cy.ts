@@ -10,7 +10,7 @@ describe("Persist applied filters", () => {
   })
 
   it("Should persist applied filters", () => {
-    cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
+    cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
     loginAndGoToUrl()
 
@@ -28,7 +28,7 @@ describe("Persist applied filters", () => {
   })
 
   it("Should clear the applied filters", () => {
-    cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
+    cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
     loginAndGoToUrl()
 
