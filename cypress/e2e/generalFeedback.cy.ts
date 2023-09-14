@@ -41,6 +41,11 @@ describe("General Feedback Form", () => {
     cy.login("bichard01@example.com", "password")
   })
 
+  afterEach(() => {
+    cy.task("clearAllFeedbacksFromDatabase")
+    cy.task("clearUsers")
+  })
+
   it("Should be able to submit a feedback that is anonymous", () => {
     cy.visit("/bichard")
     cy.findByText("feedback").click()
