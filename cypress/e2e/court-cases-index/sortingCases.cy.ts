@@ -1,3 +1,4 @@
+import times from "lodash/times"
 import { defaultSetup, loginAndGoToUrl } from "../../support/helpers"
 
 const checkCasesOrder = (expectedOrder: number[]) => {
@@ -52,10 +53,10 @@ describe("Sorting cases", () => {
 
     loginAndGoToUrl()
 
-    cy.findByText("Court Name").parent().siblings().get('*[class^="icon"]').get(".unorderedArrow").should("exist")
-    cy.findByText("Court Name").click()
-    cy.findByText("Court Name").parent().siblings().get('*[class^="icon"]').should("exist")
-    cy.findByText("Court Name").parent().siblings().get('*[class^="icon"]').get(".upArrow").should("exist")
+    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".unorderedArrow").should("exist")
+    cy.get("#court-name-sort").click()
+    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').should("exist")
+    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".upArrow").should("exist")
 
     cy.get("tr")
       .not(":first")
@@ -64,8 +65,8 @@ describe("Sorting cases", () => {
         cy.wrap(row).get("td:nth-child(4)").last().contains("DDDD")
       })
 
-    cy.findByText("Court Name").click()
-    cy.findByText("Court Name").parent().siblings().get('*[class^="icon"]').get(".downArrow").should("exist")
+    cy.get("#court-name-sort").click()
+    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".downArrow").should("exist")
 
     cy.get("tr")
       .not(":first")
@@ -213,38 +214,16 @@ describe("Sorting cases", () => {
     const force = "011111"
     cy.task(
       "insertCourtCasesWithFields",
-      [
-        false,
-        false,
-        true,
-        false,
-        true,
-        true,
-        true,
-        false,
-        true,
-        false,
-        true,
-        false,
-        false,
-        false,
-        false,
-        true,
-        true,
-        false,
-        true,
-        true
-      ].map((urgency) => ({
-        isUrgent: urgency,
+      times(50).map((i: number) => ({
+        isUrgent: i % 2 === 0,
         orgForPoliceFilter: force
       }))
     )
-
     loginAndGoToUrl()
 
     cy.get("#is-urgent-sort").click()
-    cy.get(".cases-per-page").first().select("10")
-    cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 10 of 20 cases")
+    cy.get(".cases-per-page").first().select("25")
+    cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 50 cases")
 
     cy.get("tr")
       .not(":first")
@@ -253,8 +232,8 @@ describe("Sorting cases", () => {
       })
 
     cy.get("#is-urgent-sort").click()
-    cy.get(".cases-per-page").first().select("10")
-    cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 10 of 20 cases")
+    cy.get(".cases-per-page").first().select("25")
+    cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 50 cases")
     cy.get("tr")
       .not(":first")
       .each((row) => {
