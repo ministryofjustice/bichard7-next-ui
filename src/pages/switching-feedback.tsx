@@ -134,17 +134,25 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
           {"Skip feedback"}
         </SkipLink>{" "} */}
         {/* Todo: Add old Bichard link*/}
+
         <Heading as="h1">{"Share your feedback"}</Heading>
-        <p className="govuk-body">
-          {
-            "You have selected to revert back to old bichard. What was the reason for doing so can you please select the appropriate option and outline the problem that occurred below so that we can best understand."
-          }
-        </p>
+        <div></div>
+
         <form method="POST" action={"#"} id="switching-feedback-form">
+          <Fieldset>
+            <p className="govuk-body">
+              {
+                "You have selected to revert back to old bichard. What was the reason for doing so can you please select the appropriate option and outline the problem that occurred below so that we can best understand."
+              }
+            </p>
+          </Fieldset>
           <Fieldset>
             <FormGroup id="issueOrPreference">
               <Heading as="h3" size="SMALL">
                 {"Why have you decided to switch version of bichard?"}
+              </Heading>
+              <Heading as="h5" size="SMALL">
+                {"Select one of the below option."}
               </Heading>
               <MultiChoice
                 label={""}
@@ -182,6 +190,9 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
               <Heading as="h3" size="SMALL">
                 {"Which page where you finding an issue with?"}
               </Heading>
+              <Heading as="h5" size="SMALL">
+                {"Select one of the below option."}
+              </Heading>
               <MultiChoice
                 label={""}
                 meta={{
@@ -208,6 +219,9 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
             <FormGroup id="componentIssue">
               <Heading as="h3" size="SMALL">
                 {"Could you select one of the options below and explain what problem you have experienced?"}
+              </Heading>
+              <Heading as="h5" size="SMALL">
+                {"Select one of the below option."}
               </Heading>
               <MultiChoice
                 label={""}
@@ -261,9 +275,6 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
               </MultiChoice>
             </FormGroup>
             <FormGroup id="otherFeedback">
-              <Heading as="h3" size="SMALL">
-                {"Tell us why you have made this selection."}
-              </Heading>
               <TextArea
                 input={{
                   name: "otherFeedback",
@@ -276,6 +287,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
                   error: "Input message into the text box",
                   touched: fields?.otherFeedback.hasError
                 }}
+                hint="Tell us why you have made this selection."
               >
                 {""}
               </TextArea>
