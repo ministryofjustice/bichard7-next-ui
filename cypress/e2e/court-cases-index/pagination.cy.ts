@@ -58,16 +58,16 @@ describe("Pagination", () => {
 
     loginAndGoToUrl()
 
-    cy.get(".cases-per-page").first().select("25")
-    cy.get("tbody tr").should("have.length", 25)
+    cy.get(".cases-per-page").first().select("50")
+    cy.get("tbody tr").should("have.length", 50)
 
     cy.get(".moj-pagination__item").contains("Next").first().click()
-    cy.get("tbody tr").should("have.length", 25)
-    cy.get("tr").contains("Case00025").should("exist")
+    cy.get("tbody tr").should("have.length", 50)
+    cy.get("tr").contains("Case00050").should("exist")
 
-    cy.get(".cases-per-page").first().select("10")
-    cy.get("tbody tr").should("have.length", 10)
-    cy.get("tr").contains("Case00025").should("exist")
+    cy.get(".cases-per-page").first().select("25")
+    cy.get("tbody tr").should("have.length", 25)
+    cy.get("tr").contains("Case00050").should("exist")
   })
 
   it("Should redirect to last page if the requested page is greater than the last possible page", () => {
@@ -105,6 +105,8 @@ describe("Pagination", () => {
 
     loginAndGoToUrl()
 
+    cy.get(".cases-per-page").first().select("25")
+
     cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 250 cases")
     cy.get("tr").contains("Case00000").should("exist")
     cy.get("tr").contains("Case00024").should("exist")
@@ -130,6 +132,8 @@ describe("Pagination", () => {
 
     loginAndGoToUrl()
 
+    cy.get(".cases-per-page").first().select("25")
+
     cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 250 cases")
     cy.get("tr").contains("Case00000").should("exist")
     cy.get("tr").contains("Case00024").should("exist")
@@ -150,18 +154,18 @@ describe("Pagination", () => {
     cy.get("tr").contains("Case00049").should("exist")
   })
 
-  it("has correct pagination information on page 5 out of 10", () => {
+  it("has correct pagination information on page 3 out of 5", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
 
-    loginAndGoToUrl(undefined, "/bichard?page=5")
+    loginAndGoToUrl(undefined, "/bichard?page=3")
 
-    cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 101 to 125 of 250 cases")
+    cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 101 to 150 of 250 cases")
     cy.get("tr").contains("Case00100").should("exist")
     cy.get("tr").contains("Case00124").should("exist")
   })
 
   it("keeps other filters applied when changing pages", () => {
-    cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
+    cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
     loginAndGoToUrl()
 
