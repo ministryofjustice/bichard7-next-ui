@@ -1,7 +1,10 @@
+import { SWITCHING_FEEDBACK_FORM_FREQUENCY_IN_HOURS } from "config"
+import { zonedTimeToUtc } from "date-fns-tz"
 import { Footer } from "govuk-react"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
 import styled from "styled-components"
+import shouldShowSwitchingFeedbackForm from "utils/shouldShowSwitchingFeedbackForm"
 import User from "../services/entities/User"
 import ConditionalRender from "./ConditionalRender"
 import Header from "./Header"
@@ -27,17 +30,19 @@ const BichardSwitch = styled(LinkButton)`
 interface Props {
   children: ReactNode
   user: User
-  bichardSwitch?: { display: boolean; href?: string }
+  bichardSwitch?: {
+    display: boolean
+    href?: string
+    lastFeedbackFormSubmission?: Date
+  }
 }
 
 const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) => {
   const { basePath } = useRouter()
-  let bichardSwithUrl = bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"
+  let bichardSwitchUrl = bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"
 
-  const counter = 0 //TODO: Read it from the cookie
-
-  if (counter === 0 || (counter === 1 && Math.random() > 0.5)) {
-    bichardSwithUrl = `/bichard/switching-feedback?redirectTo=${encodeURIComponent(".." + bichardSwithUrl)}`
+  if (shouldShowSwitchingFeedbackForm(bichardSwitch.lastFeedbackFormSubmission)) {
+    bichardSwitchUrl = `/bichard/switching-feedback?redirectTo=${encodeURIComponent(".." + bichardSwitchUrl)}`
   }
 
   return (
@@ -49,7 +54,7 @@ const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) =
           <PhaseBanner phase={"beta"} />
 
           <ConditionalRender isRendered={bichardSwitch.display}>
-            <BichardSwitch href={bichardSwithUrl}>{"Switch to old Bichard"}</BichardSwitch>
+            <BichardSwitch href={bichardSwitchUrl}>{"Switch to old Bichard"}</BichardSwitch>
           </ConditionalRender>
         </Banner>
         {children}
