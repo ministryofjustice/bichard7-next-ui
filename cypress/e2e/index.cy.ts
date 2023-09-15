@@ -12,6 +12,12 @@ describe("Case list", () => {
     cy.task("clearCourtCases")
   })
 
+  it("will find a password in the NEXT_DATA", () => {
+    loginAndGoToUrl()
+
+    cy.window().its("__NEXT_DATA__.props.pageProps.user.password").should("not.exist")
+  })
+
   context("when there are 0 cases", () => {
     it("Should display 0 cases and the user's username when no cases are added", () => {
       loginAndGoToUrl()
