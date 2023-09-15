@@ -1,5 +1,5 @@
 import { TestTrigger } from "../../../test/utils/manageTriggers"
-import { loginAndGoToUrl } from "../../support/helpers"
+import { defaultSetup, loginAndGoToUrl } from "../../support/helpers"
 
 const unlockCase = (caseToUnlockNumber: string, caseToUnlockText: string) => {
   cy.get(`tbody tr:nth-child(${caseToUnlockNumber}) .locked-by-tag`).get("button").contains(caseToUnlockText).click()
@@ -7,6 +7,14 @@ const unlockCase = (caseToUnlockNumber: string, caseToUnlockText: string) => {
 }
 
 describe("Case unlocked badge", () => {
+  before(() => {
+    defaultSetup()
+  })
+
+  beforeEach(() => {
+    cy.task("clearCourtCases")
+  })
+
   it("Should show case unlocked badge when exception handler unlocks the case", () => {
     cy.task("insertCourtCasesWithFields", [
       {
