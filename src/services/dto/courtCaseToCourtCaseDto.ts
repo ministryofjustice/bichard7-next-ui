@@ -3,6 +3,8 @@ import CourtCase from "services/entities/CourtCase"
 const courtCaseToCourtCaseDto = (courtCase: CourtCase) => {
   const courtCaseObj = courtCase.serialize()
 
+  delete courtCaseObj.hearingOutcome
+
   if (courtCaseObj.errorLockedByUser) {
     delete courtCaseObj.errorLockedByUser.groups
     delete courtCaseObj.errorLockedByUser.hasAccessTo
