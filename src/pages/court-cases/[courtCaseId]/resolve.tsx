@@ -1,20 +1,22 @@
+import ConditionalRender from "components/ConditionalRender"
 import Layout from "components/Layout"
+import { BackLink, Button, FormGroup, Heading, Select, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
+import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
+import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
+import userToUserDto from "services/dto/userToUserDto"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
-import getDataSource from "services/getDataSource"
-import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { BackLink, Button, FormGroup, Heading, Select, TextArea } from "govuk-react"
-import { useRouter } from "next/router"
-import parseFormData from "utils/parseFormData"
-import { isPost } from "utils/http"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
-import { isError } from "types/Result"
-import ConditionalRender from "components/ConditionalRender"
-import { ResolutionReasonKey, ResolutionReasons } from "types/ManualResolution"
+import getDataSource from "services/getDataSource"
 import resolveCourtCase from "services/resolveCourtCase"
+import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { ResolutionReasonKey, ResolutionReasons } from "types/ManualResolution"
+import { isError } from "types/Result"
+import { isPost } from "utils/http"
+import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
 
@@ -39,8 +41,8 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const props: Props = {
-      user: currentUser.serialize(),
-      courtCase: courtCase.serialize(),
+      user: userToUserDto(currentUser),
+      courtCase: courtCaseToCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
     }
 

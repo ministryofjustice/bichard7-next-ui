@@ -1,27 +1,29 @@
-import Layout from "components/Layout"
-import { withAuthentication, withMultipleServerSideProps } from "middleware"
-import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
-import { ParsedUrlQuery } from "querystring"
-import CourtCase from "services/entities/CourtCase"
-import User from "services/entities/User"
-import getDataSource from "services/getDataSource"
-import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { Button, Fieldset, FormGroup, Heading, HintText, Label, Link, Select, TextArea } from "govuk-react"
-import { useRouter } from "next/router"
-import parseFormData from "utils/parseFormData"
-import { isPost } from "utils/http"
-import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
-import { isError } from "types/Result"
-import ConditionalRender from "components/ConditionalRender"
-import reallocateCourtCase from "services/reallocateCourtCase"
-import redirectTo from "utils/redirectTo"
 import { forces } from "@moj-bichard7-developers/bichard7-next-data"
 import ButtonsGroup from "components/ButtonsGroup"
-import { FormEventHandler, useState } from "react"
-import { useCustomStyles } from "../../../../styles/customStyles"
-import getForcesForReallocation from "services/getForcesForReallocation"
+import ConditionalRender from "components/ConditionalRender"
+import Layout from "components/Layout"
 import { MAX_NOTE_LENGTH } from "config"
+import { Button, Fieldset, FormGroup, Heading, HintText, Label, Link, Select, TextArea } from "govuk-react"
+import { withAuthentication, withMultipleServerSideProps } from "middleware"
+import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
+import { useRouter } from "next/router"
+import { ParsedUrlQuery } from "querystring"
+import { FormEventHandler, useState } from "react"
+import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
+import userToUserDto from "services/dto/userToUserDto"
+import CourtCase from "services/entities/CourtCase"
+import User from "services/entities/User"
+import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
+import getDataSource from "services/getDataSource"
+import getForcesForReallocation from "services/getForcesForReallocation"
+import reallocateCourtCase from "services/reallocateCourtCase"
+import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
+import { isError } from "types/Result"
 import forbidden from "utils/forbidden"
+import { isPost } from "utils/http"
+import parseFormData from "utils/parseFormData"
+import redirectTo from "utils/redirectTo"
+import { useCustomStyles } from "../../../../styles/customStyles"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -48,8 +50,8 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const props = {
-      user: currentUser.serialize(),
-      courtCase: courtCase.serialize(),
+      user: userToUserDto(currentUser),
+      courtCase: courtCaseToCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
     }
 
