@@ -1,4 +1,4 @@
-import { loginAndGoToUrl } from "../../support/helpers"
+import { defaultSetup, loginAndGoToUrl } from "../../support/helpers"
 
 // Unresolved and user has permission to see them (e.g. not Exception Handlers)
 describe("When I can see triggers on cases", () => {
@@ -11,6 +11,14 @@ describe("When I can see triggers on cases", () => {
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
     })
+
+  before(() => {
+    defaultSetup()
+  })
+
+  beforeEach(() => {
+    cy.task("clearCourtCases")
+  })
 
   it("Should display individual triggers without a count", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
