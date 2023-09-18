@@ -13,6 +13,8 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { useEffect } from "react"
+import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
+import userToUserDto from "services/dto/userToUserDto"
 import type CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
@@ -168,8 +170,8 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     return {
       props: {
-        user: currentUser.serialize(),
-        courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
+        user: userToUserDto(currentUser),
+        courtCases: courtCases.result.map((courtCase: CourtCase) => courtCaseToCourtCaseDto(courtCase)),
         order: oppositeOrder,
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,

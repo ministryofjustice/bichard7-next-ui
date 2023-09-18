@@ -7,13 +7,15 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import addNote from "services/addNote"
+import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
+import userToUserDto from "services/dto/userToUserDto"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
+import lockCourtCase from "services/lockCourtCase"
 import resolveTriggers from "services/resolveTriggers"
 import resubmitCourtCase from "services/resubmitCourtCase"
-import lockCourtCase from "services/lockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
 import { UpdateResult } from "typeorm"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
@@ -22,8 +24,8 @@ import UnlockReason from "types/UnlockReason"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
-import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import Feature from "../../../types/Feature"
+import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -134,8 +136,8 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     return {
       props: {
-        user: currentUser.serialize(),
-        courtCase: courtCase.serialize(),
+        user: userToUserDto(currentUser),
+        courtCase: courtCaseToCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
         canReallocate: courtCase.canReallocate(currentUser.username)
