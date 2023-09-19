@@ -6,6 +6,7 @@ import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
+import userToUserDto from "services/dto/userToUserDto"
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
@@ -42,7 +43,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const dataSource = await getDataSource()
 
     const props = {
-      user: currentUser.serialize(),
+      user: userToUserDto(currentUser),
       previousPath
     }
 
