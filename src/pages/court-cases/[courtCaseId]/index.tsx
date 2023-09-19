@@ -8,9 +8,8 @@ import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import addNote from "services/addNote"
 import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
-import userToUserDto from "services/dto/userToUserDto"
+import userToUserDto from "services/dto/userToCurrentUserDto"
 import CourtCase from "services/entities/CourtCase"
-import User from "services/entities/User"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
 import lockCourtCase from "services/lockCourtCase"
@@ -21,6 +20,7 @@ import { UpdateResult } from "typeorm"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
+import { CurrentUserDto } from "types/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
@@ -147,7 +147,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 interface Props {
-  user: User
+  user: CurrentUserDto
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean

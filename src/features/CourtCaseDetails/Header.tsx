@@ -6,9 +6,9 @@ import { Button, Heading } from "govuk-react"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
-import User from "services/entities/User"
 import styled from "styled-components"
 import Feature from "types/Feature"
+import { CurrentUserDto } from "types/Users"
 import {
   exceptionsAreLockedByCurrentUser,
   isLockedByCurrentUser,
@@ -18,7 +18,7 @@ import { gdsLightGrey, textPrimary } from "utils/colours"
 
 interface Props {
   courtCase: CourtCase
-  user: User
+  user: CurrentUserDto
   canReallocate: boolean
 }
 

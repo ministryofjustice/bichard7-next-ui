@@ -1,14 +1,14 @@
 import { Footer } from "govuk-react"
-import { ReactNode } from "react"
-import User from "../services/entities/User"
 import { useRouter } from "next/router"
-import Header from "./Header"
-import NavBar from "./NavBar"
-import PhaseBanner from "./PhaseBanner"
-import PageTemplate from "./PageTemplate"
+import { ReactNode } from "react"
 import styled from "styled-components"
+import { CurrentUserDto } from "types/Users"
 import ConditionalRender from "./ConditionalRender"
+import Header from "./Header"
 import LinkButton from "./LinkButton"
+import NavBar from "./NavBar"
+import PageTemplate from "./PageTemplate"
+import PhaseBanner from "./PhaseBanner"
 
 const Banner = styled.div`
   display: flex;
@@ -26,7 +26,7 @@ const BichardSwitch = styled(LinkButton)`
 `
 interface Props {
   children: ReactNode
-  user: User
+  user: CurrentUserDto
   bichardSwitch?: { display: boolean; href?: string }
 }
 

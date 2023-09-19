@@ -1,7 +1,6 @@
 import { Paragraph, Table } from "govuk-react"
 import { useRouter } from "next/router"
 import CourtCase from "services/entities/CourtCase"
-import User from "services/entities/User"
 import type { QueryOrder } from "types/CaseListQueryParams"
 import { useCustomStyles } from "../../../styles/customStyles"
 import CourtCaseListEntry from "./CourtCaseListEntry/CourtCaseListEntry"
@@ -10,7 +9,7 @@ import { CourtCaseListTableHeader } from "./CourtCaseListTableHeader"
 interface Props {
   courtCases: CourtCase[]
   order?: QueryOrder
-  currentUser: User
+  currentUser: CurrentUserDto
 }
 
 const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser }: Props) => {

@@ -6,10 +6,10 @@ import UrgencyFilterOptions from "components/FilterOptions/UrgencyFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import User from "services/entities/User"
 import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import Feature from "types/Feature"
+import { CurrentUserDto } from "types/Users"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
@@ -29,7 +29,7 @@ interface Props {
   locked: string | null
   caseState: CaseState | null
   myCases: boolean
-  user: User
+  user: CurrentUserDto
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {

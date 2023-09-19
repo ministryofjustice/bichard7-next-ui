@@ -6,24 +6,24 @@ import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
+import { CurrentUserDto } from "types/Users"
+import updateQueryString from "utils/updateQueryString"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
+import Header from "./Header"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
+import { CaseInformation } from "./Tabs/Panels/CaseInformation"
+import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
-import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
-import updateQueryString from "utils/updateQueryString"
-import { CaseInformation } from "./Tabs/Panels/CaseInformation"
-import Header from "./Header"
-import User from "services/entities/User"
 
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
-  user: User
+  user: CurrentUserDto
   canReallocate: boolean
 }
 

@@ -1,21 +1,21 @@
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import ActionLink from "components/ActionLink"
+import ConditionalRender from "components/ConditionalRender"
+import LinkButton from "components/LinkButton"
 import { GridCol, GridRow, Link } from "govuk-react"
 import { createUseStyles } from "react-jss"
-import getExceptionDefinition from "utils/getExceptionDefinition"
-import ActionLink from "components/ActionLink"
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
-import getExceptionPathDetails from "utils/getExceptionPathDetails"
+import CourtCase from "services/entities/CourtCase"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
-import CourtCase from "services/entities/CourtCase"
-import User from "services/entities/User"
-import ConditionalRender from "components/ConditionalRender"
+import { CurrentUserDto } from "types/Users"
 import { exceptionsAreLockedByCurrentUser } from "utils/caseLocks"
-import LinkButton from "components/LinkButton"
+import getExceptionDefinition from "utils/getExceptionDefinition"
+import getExceptionPathDetails from "utils/getExceptionPathDetails"
 
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
-  user: User
+  user: CurrentUserDto
   onNavigate: NavigationHandler
 }
 
