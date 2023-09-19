@@ -134,10 +134,10 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
         <BackLink href={previousPath} onClick={function noRefCheck() {}}>
           {"Back"}
         </BackLink>
+        {/* Todo: style button to match design*/}
         <form method="POST" action={skipUrl?.search}>
           <button type="submit">{"Skip feedback"}</button>
         </form>
-        {/* Todo: Add old Bichard link*/}
 
         <Heading as="h1">{"Share your feedback"}</Heading>
 
@@ -145,14 +145,14 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
           <Fieldset>
             <p className="govuk-body">
               {
-                "You have selected to revert back to old bichard. What was the reason for doing so can you please select the appropriate option and outline the problem that occurred below so that we can best understand."
+                "You have selected to revert back to old Bichard. What was the reason for doing so? Can you please select the appropriate option. And outline the problem that occurred below so that we can best understand."
               }
             </p>
           </Fieldset>
           <Fieldset>
             <FormGroup id="issueOrPreference">
               <Heading as="h3" size="SMALL">
-                {"Why have you decided to switch version of bichard?"}
+                {"Why have you decided to switch version of Bichard?"}
               </Heading>
               <Heading as="h5" size="SMALL">
                 {"Select one of the below option."}
@@ -170,7 +170,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
                   defaultChecked={fields?.issueOrPreference.value === "issue"}
                   value={"issue"}
                   label={
-                    "I have found an issue(s) when using the new version of bichard which is blocking me from completing my task."
+                    "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task."
                   }
                 />
                 <RadioButton
@@ -178,7 +178,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
                   id={"issueOrPreference-preference"}
                   defaultChecked={fields?.issueOrPreference.value === "preference"}
                   value={"preference"}
-                  label={"I prefer working in the old version and dislike working in the new version."}
+                  label={"I prefer working in the old version, and I dislike working in the new version."}
                 />
                 <RadioButton
                   name={"issueOrPreference"}

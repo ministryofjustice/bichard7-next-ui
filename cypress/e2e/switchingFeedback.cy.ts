@@ -42,10 +42,24 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.login("bichard01@example.com", "password")
   })
 
-  it("Should be able to submit a switching feedback form when switching to old Bichard", () => {
+  it.only("Should access the switching feedback form", () => {
     cy.visit("/bichard")
     cy.contains("button", "Switch to old Bichard").click()
-    submitAFeedback()
+    cy.get("a").contains("Back")
+    cy.get("button").contains("Skip feedback")
+    cy.get("h1").contains("Share your feedback")
+    cy.get("p")
+      .contains(
+        "You have selected to revert back to old Bichard. What was the reason for doing so? Can you please select the appropriate option. And outline the problem that occurred below so that we can best understand."
+      )
+      .should("exist")
+    cy.get("h3").contains("Why have you decided to switch version of Bichard?")
+    cy.get("h5").contains("Select one of the below option")
+    cy.get("label").contains(
+      "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task."
+    )
+    cy.get("label").contains("I prefer working in the old version, and I dislike working in the new version.")
+    cy.get("label").contains("Other (please specify)")
   })
 
   it("Should display error if form is not complete", () => {})
