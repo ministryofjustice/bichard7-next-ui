@@ -14,7 +14,7 @@ import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { useEffect } from "react"
 import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
-import userToUserDto from "services/dto/userToCurrentUser"
+import userToCurrentUserDto from "services/dto/userToCurrentUserDto"
 import type CourtCase from "services/entities/CourtCase"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import getDataSource from "services/getDataSource"
@@ -170,7 +170,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     return {
       props: {
-        user: userToUserDto(currentUser),
+        user: userToCurrentUserDto(currentUser),
         courtCases: courtCases.result.map((courtCase: CourtCase) => courtCaseToCourtCaseDto(courtCase)),
         order: oppositeOrder,
         totalCases: courtCases.totalCases,

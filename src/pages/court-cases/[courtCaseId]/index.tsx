@@ -8,7 +8,7 @@ import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import addNote from "services/addNote"
 import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
-import userToUserDto from "services/dto/userToCurrentUser"
+import userToCurrentUserDto from "services/dto/userToCurrentUserDto"
 import CourtCase from "services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
@@ -136,7 +136,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     return {
       props: {
-        user: userToUserDto(currentUser),
+        user: userToCurrentUserDto(currentUser),
         courtCase: courtCaseToCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),

@@ -1,7 +1,7 @@
 import User from "services/entities/User"
 import { CurrentUser } from "types/Users"
 
-const userToCurrentUser = (user: User): CurrentUser => {
+const userToCurrentUserDto = (user: User): CurrentUser => {
   const currentUser: CurrentUser = {
     username: user.username,
     email: user.email,
@@ -18,4 +18,4 @@ const userToCurrentUser = (user: User): CurrentUser => {
   return currentUser
 }
 
-export default userToCurrentUser
+export default userToCurrentUserDto

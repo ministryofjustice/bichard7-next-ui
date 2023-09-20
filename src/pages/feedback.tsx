@@ -6,14 +6,14 @@ import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
-import userToUserDto from "services/dto/userToCurrentUser"
+import userToCurrentUserDto from "services/dto/userToCurrentUserDto"
 import SurveyFeedback from "services/entities/SurveyFeedback"
-import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import { SurveyFeedbackResponse, SurveyFeedbackType } from "types/SurveyFeedback"
+import { CurrentUser } from "types/Users"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
@@ -43,7 +43,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const dataSource = await getDataSource()
 
     const props = {
-      user: userToUserDto(currentUser),
+      user: userToCurrentUserDto(currentUser),
       previousPath
     }
 
@@ -85,7 +85,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 interface Props {
-  user: User
+  user: CurrentUser
   previousPath: string
   fields?: {
     isAnonymous: {

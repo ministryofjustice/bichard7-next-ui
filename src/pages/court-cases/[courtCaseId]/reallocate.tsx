@@ -10,7 +10,7 @@ import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
 import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
-import userToUserDto from "services/dto/userToCurrentUser"
+import userToCurrentUserDto from "services/dto/userToCurrentUserDto"
 import CourtCase from "services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
@@ -50,7 +50,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const props = {
-      user: userToUserDto(currentUser),
+      user: userToCurrentUserDto(currentUser),
       courtCase: courtCaseToCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
     }
