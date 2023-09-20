@@ -1,8 +1,8 @@
 import User from "services/entities/User"
-import { CurrentUserDto } from "types/Users"
+import { CurrentUser } from "types/Users"
 
-const userToCurrentUserDto = (user: User): CurrentUserDto => {
-  const currentUserDto: CurrentUserDto = {
+const userToCurrentUser = (user: User): CurrentUser => {
+  const currentUser: CurrentUser = {
     username: user.username,
     email: user.email,
     forenames: user.forenames,
@@ -15,7 +15,7 @@ const userToCurrentUserDto = (user: User): CurrentUserDto => {
     hasAccessTo: user.hasAccessTo
   }
 
-  return currentUserDto
+  return currentUser
 }
 
-export default userToCurrentUserDto
+export default userToCurrentUser

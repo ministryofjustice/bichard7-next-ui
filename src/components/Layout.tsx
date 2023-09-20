@@ -2,7 +2,7 @@ import { Footer } from "govuk-react"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
 import styled from "styled-components"
-import { CurrentUserDto } from "types/Users"
+import { CurrentUser } from "types/Users"
 import ConditionalRender from "./ConditionalRender"
 import Header from "./Header"
 import LinkButton from "./LinkButton"
@@ -26,7 +26,7 @@ const BichardSwitch = styled(LinkButton)`
 `
 interface Props {
   children: ReactNode
-  user: CurrentUserDto
+  user: CurrentUser
   bichardSwitch?: { display: boolean; href?: string }
 }
 

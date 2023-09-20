@@ -14,7 +14,7 @@ import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { useEffect } from "react"
 import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
-import userToUserDto from "services/dto/userToCurrentUserDto"
+import userToUserDto from "services/dto/userToCurrentUser"
 import type CourtCase from "services/entities/CourtCase"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import getDataSource from "services/getDataSource"
@@ -25,7 +25,7 @@ import { CaseState, QueryOrder, Reason, SerializedCourtDateRange, Urgency } from
 import Feature from "types/Feature"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import { CurrentUserDto } from "types/Users"
+import { CurrentUser } from "types/Users"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import caseStateFilters from "utils/caseStateFilters"
 import { formatFormInputDateString } from "utils/formattedDate"
@@ -40,7 +40,7 @@ import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
 
 interface Props {
-  user: CurrentUserDto
+  user: CurrentUser
   courtCases: CourtCase[]
   order: QueryOrder
   reasons: Reason[]

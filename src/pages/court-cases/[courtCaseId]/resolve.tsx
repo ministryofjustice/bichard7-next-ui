@@ -6,7 +6,7 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
-import userToUserDto from "services/dto/userToCurrentUserDto"
+import userToUserDto from "services/dto/userToCurrentUser"
 import CourtCase from "services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
@@ -14,7 +14,7 @@ import resolveCourtCase from "services/resolveCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { ResolutionReasonKey, ResolutionReasons } from "types/ManualResolution"
 import { isError } from "types/Result"
-import { CurrentUserDto } from "types/Users"
+import { CurrentUser } from "types/Users"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
@@ -75,7 +75,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 interface Props {
-  user: CurrentUserDto
+  user: CurrentUser
   courtCase: CourtCase
   lockedByAnotherUser: boolean
   reasonTextError?: string

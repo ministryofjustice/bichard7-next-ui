@@ -8,7 +8,7 @@ import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import styled from "styled-components"
 import Feature from "types/Feature"
-import { CurrentUserDto } from "types/Users"
+import { CurrentUser } from "types/Users"
 import {
   exceptionsAreLockedByCurrentUser,
   isLockedByCurrentUser,
@@ -18,7 +18,7 @@ import { gdsLightGrey, textPrimary } from "utils/colours"
 
 interface Props {
   courtCase: CourtCase
-  user: CurrentUserDto
+  user: CurrentUser
   canReallocate: boolean
 }
 

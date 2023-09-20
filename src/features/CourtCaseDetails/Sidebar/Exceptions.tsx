@@ -7,7 +7,7 @@ import { createUseStyles } from "react-jss"
 import CourtCase from "services/entities/CourtCase"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
-import { CurrentUserDto } from "types/Users"
+import { CurrentUser } from "types/Users"
 import { exceptionsAreLockedByCurrentUser } from "utils/caseLocks"
 import getExceptionDefinition from "utils/getExceptionDefinition"
 import getExceptionPathDetails from "utils/getExceptionPathDetails"
@@ -15,7 +15,7 @@ import getExceptionPathDetails from "utils/getExceptionPathDetails"
 interface Props {
   courtCase: CourtCase
   aho: AnnotatedHearingOutcome
-  user: CurrentUserDto
+  user: CurrentUser
   onNavigate: NavigationHandler
 }
 

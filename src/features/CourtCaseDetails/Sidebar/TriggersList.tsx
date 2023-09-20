@@ -7,7 +7,7 @@ import { encode } from "querystring"
 import { ChangeEvent, SyntheticEvent, useState } from "react"
 import { createUseStyles } from "react-jss"
 import type NavigationHandler from "types/NavigationHandler"
-import { CurrentUserDto } from "types/Users"
+import { CurrentUser } from "types/Users"
 import { triggersAreLockedByAnotherUser } from "utils/caseLocks"
 import LockedTag from "../../../components/LockedTag"
 import CourtCase from "../../../services/entities/CourtCase"
@@ -15,7 +15,7 @@ import Trigger from "./Trigger"
 
 interface Props {
   courtCase: CourtCase
-  user: CurrentUserDto
+  user: CurrentUser
   onNavigate: NavigationHandler
 }
 

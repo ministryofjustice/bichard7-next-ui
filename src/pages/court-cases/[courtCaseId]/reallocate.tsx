@@ -10,7 +10,7 @@ import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
 import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
-import userToUserDto from "services/dto/userToCurrentUserDto"
+import userToUserDto from "services/dto/userToCurrentUser"
 import CourtCase from "services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
@@ -18,7 +18,7 @@ import getForcesForReallocation from "services/getForcesForReallocation"
 import reallocateCourtCase from "services/reallocateCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
-import { CurrentUserDto } from "types/Users"
+import { CurrentUser } from "types/Users"
 import forbidden from "utils/forbidden"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
@@ -71,7 +71,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 interface Props {
-  user: CurrentUserDto
+  user: CurrentUser
   courtCase: CourtCase
   lockedByAnotherUser: boolean
   noteTextError?: string
