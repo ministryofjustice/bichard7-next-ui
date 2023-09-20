@@ -204,7 +204,7 @@ jobs:
       - fetch_images:
           IMAGES: user-service nginx-auth-proxy
       - start_services:
-          SERVICES: ui user-service nginx-auth-proxy db-seed audit-log-api localstack
+          SERVICES: ui user-service nginx-auth-proxy postgres db-migrate db-seed audit-log-api localstack
           FLAGS: --no-deps
       - run:
           name: Install Cypress Reporter
