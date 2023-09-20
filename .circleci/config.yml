@@ -35,7 +35,7 @@ commands:
       - run:
           name: Build message forwarder image
           working_directory: ~/bichard7-next-core
-          command: docker-compose -f environment/docker-compose.yml build message-forwarder
+          command: docker compose -f environment/docker-compose.yml build message-forwarder
 
   build_audit_logging_images:
     steps:
@@ -83,7 +83,7 @@ commands:
           name: "Run services: <<parameters.SERVICES>>"
           working_directory: ~/bichard7-next-core
           command: |
-            docker-compose --project-name bichard -f environment/docker-compose.yml \
+            docker compose --project-name bichard -f environment/docker-compose.yml \
             up -d <<parameters.SERVICES>> <<parameters.FLAGS>> --wait <<parameters.SERVICES>>
 
 #################################################################################
