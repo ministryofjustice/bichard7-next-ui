@@ -6,7 +6,6 @@
     "install:assets": "./scripts/copy-govuk-frontend-assets.sh && ./scripts/copy-moj-frontend-assets.sh",
     "dev": "next dev -p 4080",
     "build": "next build",
-    
     "start": "next start -p 4080",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -32,6 +31,7 @@
   },
   "dependencies": {
     "@govuk-react/select": "^0.10.5",
+    "@io-orkes/conductor-javascript": "^1.2.3",
     "@ministryofjustice/frontend": "^1.8.0",
     "@moj-bichard7-developers/bichard7-next-core": "^1.2.2",
     "@moj-bichard7-developers/bichard7-next-data": "*",

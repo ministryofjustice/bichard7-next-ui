@@ -1,14 +1,15 @@
-import { DataSource, EntityManager, UpdateResult } from "typeorm"
-import { isError } from "types/Result"
-import User from "./entities/User"
-import { ManualResolution } from "types/ManualResolution"
-import CourtCase from "./entities/CourtCase"
-import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
-import insertNotes from "./insertNotes"
-import storeAuditLogEvents from "./storeAuditLogEvents"
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
-import resolveError from "./resolveError"
+import { DataSource, EntityManager, UpdateResult } from "typeorm"
+import { ManualResolution } from "types/ManualResolution"
+import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
+import { fetchWaitingTaskForWorkflow, fetchWorkflowByCorrelationId } from "./conductor"
+import CourtCase from "./entities/CourtCase"
+import User from "./entities/User"
+import insertNotes from "./insertNotes"
+import resolveError from "./resolveError"
+import storeAuditLogEvents from "./storeAuditLogEvents"
+import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 
 const resolveCourtCase = async (
   dataSource: DataSource | EntityManager,
@@ -20,11 +21,19 @@ const resolveCourtCase = async (
     const events: AuditLogEvent[] = []
 
     const resolveErrorResult = await resolveError(entityManager, courtCase, user, resolution, events)
-
     if (isError(resolveErrorResult)) {
       throw resolveErrorResult
     }
+    //
 
+    const workflow = await fetchWorkflowByCorrelationId(courtCase.messageId)
+    if (!workflow.workflowId) {
+      throw new Error()
+    }
+
+    const task = await fetchWaitingTaskForWorkflow(workflow.workflowId)
+
+    //
     const unlockResult = await updateLockStatusToUnlocked(
       entityManager,
       courtCase,
