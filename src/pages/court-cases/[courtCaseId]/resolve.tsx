@@ -6,7 +6,7 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
-import userToCurrentUserDto from "services/dto/userToCurrentUserDto"
+import { userToCurrentUserDto } from "services/dto/userDto"
 import CourtCase from "services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
