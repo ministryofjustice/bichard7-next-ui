@@ -14,7 +14,7 @@ commands:
           include-branch-in-cache-key: true
       - run:
           name: Clone bichard7-next-core
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
+          command: git clone --depth 1 --branch fix-cicd-db-migrate-scripts https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
       - run:
           name: Clone bichard7-next-audit-logging
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
