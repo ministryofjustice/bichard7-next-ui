@@ -4,16 +4,16 @@ import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
 import { GridCol, GridRow, Link } from "govuk-react"
 import { createUseStyles } from "react-jss"
-import CourtCase from "services/entities/CourtCase"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
-import { CurrentUser } from "types/Users"
+import { CourtCaseIndex } from "types/display/CourtCases"
+import { CurrentUser } from "types/display/Users"
 import { exceptionsAreLockedByCurrentUser } from "utils/caseLocks"
 import getExceptionDefinition from "utils/getExceptionDefinition"
 import getExceptionPathDetails from "utils/getExceptionPathDetails"
 
 interface Props {
-  courtCase: CourtCase
+  courtCase: CourtCaseIndex
   aho: AnnotatedHearingOutcome
   user: CurrentUser
   onNavigate: NavigationHandler

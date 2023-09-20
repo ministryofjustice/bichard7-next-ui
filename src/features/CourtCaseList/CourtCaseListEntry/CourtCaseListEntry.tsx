@@ -1,9 +1,9 @@
 import ConditionalRender from "components/ConditionalRender"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
-import CourtCase from "services/entities/CourtCase"
 import Feature from "types/Feature"
-import { CurrentUser } from "types/Users"
+import { CourtCaseIndex } from "types/display/CourtCases"
+import { CurrentUser } from "types/display/Users"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { useCustomStyles } from "../../../../styles/customStyles"
@@ -13,7 +13,7 @@ import { ExtraReasonRow } from "./ExtraReasonRow"
 import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
 
 interface Props {
-  courtCase: CourtCase
+  courtCase: CourtCaseIndex
   currentUser: CurrentUser
   exceptionHasBeenRecentlyUnlocked: boolean
   triggerHasBeenRecentlyUnlocked: boolean
@@ -95,7 +95,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
       <CaseDetailsRow
         canCurrentUserUnlockCase={errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
         hasTriggers={hasTriggers}
-        courtDate={courtDate}
+        courtDate={courtDate ? new Date(courtDate) : null}
         courtName={courtName}
         defendantName={defendantName}
         errorId={errorId}

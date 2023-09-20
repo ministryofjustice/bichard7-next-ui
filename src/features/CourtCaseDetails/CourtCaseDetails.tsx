@@ -3,10 +3,10 @@ import ConditionalRender from "components/ConditionalRender"
 import { GridCol, GridRow } from "govuk-react"
 import { useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
-import CourtCase from "services/entities/CourtCase"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
-import { CurrentUser } from "types/Users"
+import { CourtCaseInfo } from "types/display/CourtCases"
+import { CurrentUser } from "types/display/Users"
 import updateQueryString from "utils/updateQueryString"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
 import Header from "./Header"
@@ -20,7 +20,7 @@ import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
 
 interface Props {
-  courtCase: CourtCase
+  courtCase: CourtCaseInfo
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
   user: CurrentUser

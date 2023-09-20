@@ -1,11 +1,11 @@
 import { Button } from "govuk-react"
 import { useRouter } from "next/router"
-import CourtCase from "services/entities/CourtCase"
 import Trigger from "services/entities/Trigger"
+import { CourtCaseInfo } from "types/display/CourtCases"
 
 interface Props {
   trigger: Trigger
-  courtCase: CourtCase
+  courtCase: CourtCaseInfo
 }
 
 const ResolveTrigger: React.FC<Props> = ({ trigger, courtCase }: Props) => {

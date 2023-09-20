@@ -6,8 +6,8 @@ import { createUseStyles } from "react-jss"
 import styled from "styled-components"
 import Feature from "types/Feature"
 import type NavigationHandler from "types/NavigationHandler"
-import { CurrentUser } from "types/Users"
-import CourtCase from "../../../services/entities/CourtCase"
+import { CourtCaseInfo } from "types/display/CourtCases"
+import { CurrentUser } from "types/display/Users"
 import ExceptionsList from "./Exceptions"
 import TriggersList from "./TriggersList"
 
@@ -25,7 +25,7 @@ const useStyles = createUseStyles({
 })
 
 interface Props {
-  courtCase: CourtCase
+  courtCase: CourtCaseInfo
   aho: AnnotatedHearingOutcome
   user: CurrentUser
   onNavigate: NavigationHandler

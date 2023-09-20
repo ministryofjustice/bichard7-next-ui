@@ -1,5 +1,5 @@
 import User from "services/entities/User"
-import { CurrentUser, OtherUser } from "types/Users"
+import { CurrentUser, OtherUser } from "types/display/Users"
 
 export const userToCurrentUserDto = (user: User): CurrentUser => {
   const currentUser: CurrentUser = {

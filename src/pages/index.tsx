@@ -13,9 +13,8 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { useEffect } from "react"
-import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
+import { courtCaseToCourtCaseIndexDto } from "services/dto/courtCaseDto"
 import { userToCurrentUserDto } from "services/dto/userDto"
-import type CourtCase from "services/entities/CourtCase"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
@@ -25,7 +24,8 @@ import { CaseState, QueryOrder, Reason, SerializedCourtDateRange, Urgency } from
 import Feature from "types/Feature"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import { CurrentUser } from "types/Users"
+import { CourtCaseIndex } from "types/display/CourtCases"
+import { CurrentUser } from "types/display/Users"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import caseStateFilters from "utils/caseStateFilters"
 import { formatFormInputDateString } from "utils/formattedDate"
@@ -41,7 +41,7 @@ import { validateQueryParams } from "utils/validators/validateQueryParams"
 
 interface Props {
   user: CurrentUser
-  courtCases: CourtCase[]
+  courtCases: CourtCaseIndex[]
   order: QueryOrder
   reasons: Reason[]
   keywords: string[]
@@ -171,7 +171,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     return {
       props: {
         user: userToCurrentUserDto(currentUser),
-        courtCases: courtCases.result.map((courtCase: CourtCase) => courtCaseToCourtCaseDto(courtCase)),
+        courtCases: courtCases.result.map(courtCaseToCourtCaseIndexDto),
         order: oppositeOrder,
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,

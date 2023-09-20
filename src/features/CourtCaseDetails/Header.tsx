@@ -5,10 +5,10 @@ import LockedTag from "components/LockedTag"
 import { Button, Heading } from "govuk-react"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
-import CourtCase from "services/entities/CourtCase"
 import styled from "styled-components"
 import Feature from "types/Feature"
-import { CurrentUser } from "types/Users"
+import { CourtCaseInfo } from "types/display/CourtCases"
+import { CurrentUser } from "types/display/Users"
 import {
   exceptionsAreLockedByCurrentUser,
   isLockedByCurrentUser,
@@ -17,12 +17,12 @@ import {
 import { gdsLightGrey, textPrimary } from "utils/colours"
 
 interface Props {
-  courtCase: CourtCase
+  courtCase: CourtCaseInfo
   user: CurrentUser
   canReallocate: boolean
 }
 
-type lockCheckFn = (courtCase: CourtCase, username: string) => boolean
+type lockCheckFn = (courtCase: CourtCaseInfo, username: string) => boolean
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -41,7 +41,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const getUnlockPath = (courtCase: CourtCase): URLSearchParams => {
+const getUnlockPath = (courtCase: CourtCaseInfo): URLSearchParams => {
   const params = new URLSearchParams()
   if (courtCase.errorLockedByUsername) {
     params.set("unlockException", courtCase.errorId?.toString())

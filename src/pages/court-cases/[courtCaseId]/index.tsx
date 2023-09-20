@@ -7,9 +7,8 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import addNote from "services/addNote"
-import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
+import { courtCaseToCourtCaseInfoDto } from "services/dto/courtCaseDto"
 import { userToCurrentUserDto } from "services/dto/userDto"
-import CourtCase from "services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
 import lockCourtCase from "services/lockCourtCase"
@@ -20,7 +19,8 @@ import { UpdateResult } from "typeorm"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import { CurrentUser } from "types/Users"
+import { CourtCaseInfo } from "types/display/CourtCases"
+import { CurrentUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
@@ -137,7 +137,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     return {
       props: {
         user: userToCurrentUserDto(currentUser),
-        courtCase: courtCaseToCourtCaseDto(courtCase),
+        courtCase: courtCaseToCourtCaseInfoDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
         canReallocate: courtCase.canReallocate(currentUser.username)
@@ -148,7 +148,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
 interface Props {
   user: CurrentUser
-  courtCase: CourtCase
+  courtCase: CourtCaseInfo
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
   canReallocate: boolean

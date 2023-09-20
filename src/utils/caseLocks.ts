@@ -1,28 +1,28 @@
-import CourtCase from "services/entities/CourtCase"
+import { CourtCaseIndex } from "types/display/CourtCases"
 
-const triggersAreLockedByCurrentUser = (courtCase: CourtCase, username: string) =>
+const triggersAreLockedByCurrentUser = (courtCase: CourtCaseIndex, username: string) =>
   !!courtCase.triggerLockedByUsername && courtCase.triggerLockedByUsername === username
 
-const exceptionsAreLockedByCurrentUser = (courtCase: CourtCase, username: string) =>
+const exceptionsAreLockedByCurrentUser = (courtCase: CourtCaseIndex, username: string) =>
   !!courtCase.errorLockedByUsername && courtCase.errorLockedByUsername === username
 
-const isLockedByCurrentUser = (courtCase: CourtCase, username: string) =>
+const isLockedByCurrentUser = (courtCase: CourtCaseIndex, username: string) =>
   triggersAreLockedByCurrentUser(courtCase, username) || exceptionsAreLockedByCurrentUser(courtCase, username)
 
-const exceptionsAreLockedByAnotherUser = (courtCase: CourtCase, username: string) =>
+const exceptionsAreLockedByAnotherUser = (courtCase: CourtCaseIndex, username: string) =>
   !!courtCase.errorLockedByUsername && courtCase.errorLockedByUsername !== username
 
-const triggersAreLockedByAnotherUser = (courtCase: CourtCase, username: string) =>
+const triggersAreLockedByAnotherUser = (courtCase: CourtCaseIndex, username: string) =>
   !!courtCase.triggerLockedByUsername && courtCase.triggerLockedByUsername !== username
 
-const isLockedByAnotherUser = (courtCase: CourtCase, username: string) =>
+const isLockedByAnotherUser = (courtCase: CourtCaseIndex, username: string) =>
   exceptionsAreLockedByAnotherUser(courtCase, username) || triggersAreLockedByAnotherUser(courtCase, username)
 
 export {
-  triggersAreLockedByCurrentUser,
-  exceptionsAreLockedByCurrentUser,
-  isLockedByCurrentUser,
   exceptionsAreLockedByAnotherUser,
+  exceptionsAreLockedByCurrentUser,
+  isLockedByAnotherUser,
+  isLockedByCurrentUser,
   triggersAreLockedByAnotherUser,
-  isLockedByAnotherUser
+  triggersAreLockedByCurrentUser
 }

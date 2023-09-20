@@ -9,16 +9,16 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
-import courtCaseToCourtCaseDto from "services/dto/courtCaseToCourtCaseDto"
+import { courtCaseToCourtCaseInfoDto } from "services/dto/courtCaseDto"
 import { userToCurrentUserDto } from "services/dto/userDto"
-import CourtCase from "services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
 import getForcesForReallocation from "services/getForcesForReallocation"
 import reallocateCourtCase from "services/reallocateCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
-import { CurrentUser } from "types/Users"
+import { CourtCaseInfo } from "types/display/CourtCases"
+import { CurrentUser } from "types/display/Users"
 import forbidden from "utils/forbidden"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
@@ -51,7 +51,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props = {
       user: userToCurrentUserDto(currentUser),
-      courtCase: courtCaseToCourtCaseDto(courtCase),
+      courtCase: courtCaseToCourtCaseInfoDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
     }
 
@@ -72,7 +72,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
 interface Props {
   user: CurrentUser
-  courtCase: CourtCase
+  courtCase: CourtCaseInfo
   lockedByAnotherUser: boolean
   noteTextError?: string
 }
