@@ -115,7 +115,8 @@ export const useCustomStyles = createUseStyles({
 
   "table-column-header-link": {
     color: blue,
-
+    display: "flex",
+    alignItems: "center",
     "&:active": {
       color: blue
     },
