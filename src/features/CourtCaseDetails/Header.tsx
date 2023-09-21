@@ -7,8 +7,8 @@ import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
 import styled from "styled-components"
 import Feature from "types/Feature"
-import { CourtCaseInfo } from "types/display/CourtCases"
-import { CurrentUser } from "types/display/Users"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import {
   exceptionsAreLockedByCurrentUser,
   isLockedByCurrentUser,
@@ -17,12 +17,12 @@ import {
 import { gdsLightGrey, textPrimary } from "utils/colours"
 
 interface Props {
-  courtCase: CourtCaseInfo
-  user: CurrentUser
+  courtCase: DisplayFullCourtCase
+  user: DisplayFullUser
   canReallocate: boolean
 }
 
-type lockCheckFn = (courtCase: CourtCaseInfo, username: string) => boolean
+type lockCheckFn = (courtCase: DisplayFullCourtCase, username: string) => boolean
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -41,7 +41,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const getUnlockPath = (courtCase: CourtCaseInfo): URLSearchParams => {
+const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
   const params = new URLSearchParams()
   if (courtCase.errorLockedByUsername) {
     params.set("unlockException", courtCase.errorId?.toString())

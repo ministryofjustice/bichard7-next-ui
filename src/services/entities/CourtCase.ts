@@ -2,7 +2,6 @@
 import type { Relation } from "typeorm"
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm"
 import type { ResolutionStatus } from "types/ResolutionStatus"
-import BaseEntity from "./BaseEntity"
 import Note from "./Note"
 import Trigger from "./Trigger"
 import User from "./User"
@@ -11,7 +10,7 @@ import dateTransformer from "./transformers/dateTransformer"
 import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
 
 @Entity({ name: "error_list" })
-export default class CourtCase extends BaseEntity {
+export default class CourtCase {
   @PrimaryColumn({ name: "error_id" })
   errorId!: number
 

@@ -1,16 +1,17 @@
 import User from "services/entities/User"
 
-type currentUserOmittedFields = "id" | "password" | "queryStringCookieName" | "notes" | "serialize" | "toJSON"
-export type CurrentUser = Omit<User, currentUserOmittedFields>
+type displayPartialUserPickedFields = "username" | "forenames" | "surname"
 
-type otherUserOmittedFields =
-  | currentUserOmittedFields
+export type DisplayPartialUser = Pick<User, displayPartialUserPickedFields>
+
+type displayFullUserPickedFields =
+  | displayPartialUserPickedFields
   | "email"
   | "visibleForces"
   | "visibleCourts"
   | "excludedTriggers"
   | "featureFlags"
-  | "notes"
   | "groups"
   | "hasAccessTo"
-export type OtherUser = Omit<User, otherUserOmittedFields>
+
+export type DisplayFullUser = Pick<User, displayFullUserPickedFields>

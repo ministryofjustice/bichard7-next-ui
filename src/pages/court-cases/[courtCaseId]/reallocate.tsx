@@ -9,16 +9,16 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
-import { courtCaseToCourtCaseInfoDto } from "services/dto/courtCaseDto"
-import { userToCurrentUserDto } from "services/dto/userDto"
+import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
+import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
 import getForcesForReallocation from "services/getForcesForReallocation"
 import reallocateCourtCase from "services/reallocateCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
-import { CourtCaseInfo } from "types/display/CourtCases"
-import { CurrentUser } from "types/display/Users"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import forbidden from "utils/forbidden"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
@@ -50,8 +50,8 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const props = {
-      user: userToCurrentUserDto(currentUser),
-      courtCase: courtCaseToCourtCaseInfoDto(courtCase),
+      user: userToDisplayFullUserDto(currentUser),
+      courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
     }
 
@@ -71,8 +71,8 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 interface Props {
-  user: CurrentUser
-  courtCase: CourtCaseInfo
+  user: DisplayFullUser
+  courtCase: DisplayFullCourtCase
   lockedByAnotherUser: boolean
   noteTextError?: string
 }

@@ -1,10 +1,10 @@
 import CourtCase from "services/entities/CourtCase"
-import { CourtCaseIndex, CourtCaseInfo } from "types/display/CourtCases"
+import { DisplayFullCourtCase, DisplayPartialCourtCase } from "types/display/CourtCases"
 import { noteToDisplayNote } from "./noteDto"
 import { triggerToDisplayTrigger } from "./triggerDto"
 
-export const courtCaseToCourtCaseIndexDto = (courtCase: CourtCase): CourtCaseIndex => {
-  const courtCaseIndex: CourtCaseIndex = {
+export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): DisplayPartialCourtCase => {
+  const displayPartialCourtCase: DisplayPartialCourtCase = {
     asn: courtCase.asn,
     courtDate: courtCase.courtDate ? courtCase.courtDate.toISOString() : undefined,
     courtName: courtCase.courtName,
@@ -22,19 +22,19 @@ export const courtCaseToCourtCaseIndexDto = (courtCase: CourtCase): CourtCaseInd
   }
 
   if (courtCase.errorLockedByUserFullName) {
-    courtCaseIndex.errorLockedByUserFullName = courtCase.errorLockedByUserFullName
+    displayPartialCourtCase.errorLockedByUserFullName = courtCase.errorLockedByUserFullName
   }
 
   if (courtCase.triggerLockedByUserFullName) {
-    courtCaseIndex.triggerLockedByUserFullName = courtCase.triggerLockedByUserFullName
+    displayPartialCourtCase.triggerLockedByUserFullName = courtCase.triggerLockedByUserFullName
   }
 
-  return courtCaseIndex
+  return displayPartialCourtCase
 }
 
-export const courtCaseToCourtCaseInfoDto = (courtCase: CourtCase): CourtCaseInfo => {
-  const courtCaseInfo: CourtCaseInfo = {
-    ...courtCaseToCourtCaseIndexDto(courtCase),
+export const courtCaseToDisplayFullCourtCaseDto = (courtCase: CourtCase): DisplayFullCourtCase => {
+  const courtCaseInfo: DisplayFullCourtCase = {
+    ...courtCaseToDisplayPartialCourtCaseDto(courtCase),
     orgForPoliceFilter: courtCase.orgForPoliceFilter,
     courtCode: courtCase.courtCode,
     courtReference: courtCase.courtReference

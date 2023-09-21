@@ -1,7 +1,7 @@
 import Note from "services/entities/Note"
-import { OtherUser } from "./Users"
+import { DisplayPartialUser } from "./Users"
 
 export type DisplayNote = Pick<Note, "noteText" | "userId" | "userFullName"> & {
-  user?: OtherUser
+  user?: DisplayPartialUser
   createdAt: string
 }

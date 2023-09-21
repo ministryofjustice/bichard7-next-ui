@@ -2,8 +2,8 @@ import ConditionalRender from "components/ConditionalRender"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
 import Feature from "types/Feature"
-import { CourtCaseIndex } from "types/display/CourtCases"
-import { CurrentUser } from "types/display/Users"
+import { DisplayPartialCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { useCustomStyles } from "../../../../styles/customStyles"
@@ -13,8 +13,8 @@ import { ExtraReasonRow } from "./ExtraReasonRow"
 import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
 
 interface Props {
-  courtCase: CourtCaseIndex
-  currentUser: CurrentUser
+  courtCase: DisplayPartialCourtCase
+  currentUser: DisplayFullUser
   exceptionHasBeenRecentlyUnlocked: boolean
   triggerHasBeenRecentlyUnlocked: boolean
   entityClassName: string

@@ -5,16 +5,16 @@ import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
-import { courtCaseToCourtCaseInfoDto } from "services/dto/courtCaseDto"
-import { userToCurrentUserDto } from "services/dto/userDto"
+import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
+import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
 import resolveCourtCase from "services/resolveCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { ResolutionReasonKey, ResolutionReasons } from "types/ManualResolution"
 import { isError } from "types/Result"
-import { CourtCaseInfo } from "types/display/CourtCases"
-import { CurrentUser } from "types/display/Users"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
@@ -41,8 +41,8 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const props: Props = {
-      user: userToCurrentUserDto(currentUser),
-      courtCase: courtCaseToCourtCaseInfoDto(courtCase),
+      user: userToDisplayFullUserDto(currentUser),
+      courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
     }
 
@@ -75,8 +75,8 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 interface Props {
-  user: CurrentUser
-  courtCase: CourtCaseInfo
+  user: DisplayFullUser
+  courtCase: DisplayFullCourtCase
   lockedByAnotherUser: boolean
   reasonTextError?: string
   selectedReason?: ResolutionReasonKey

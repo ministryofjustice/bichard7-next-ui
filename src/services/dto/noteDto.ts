@@ -1,6 +1,6 @@
 import Note from "services/entities/Note"
 import { DisplayNote } from "types/display/Notes"
-import { userToOtherUserDto } from "./userDto"
+import { userToDisplayPartialUserDto } from "./userDto"
 
 export const noteToDisplayNote = (note: Note): DisplayNote => {
   const displayNote: DisplayNote = {
@@ -14,7 +14,7 @@ export const noteToDisplayNote = (note: Note): DisplayNote => {
   }
 
   if (note.user && note.user.username) {
-    displayNote.user = userToOtherUserDto(note.user)
+    displayNote.user = userToDisplayPartialUserDto(note.user)
   }
 
   return displayNote

@@ -1,8 +1,8 @@
 import User from "services/entities/User"
-import { CurrentUser, OtherUser } from "types/display/Users"
+import { DisplayFullUser, DisplayPartialUser } from "types/display/Users"
 
-export const userToCurrentUserDto = (user: User): CurrentUser => {
-  const currentUser: CurrentUser = {
+export const userToDisplayFullUserDto = (user: User): DisplayFullUser => {
+  const currentUser: DisplayFullUser = {
     username: user.username,
     email: user.email,
     forenames: user.forenames,
@@ -18,8 +18,8 @@ export const userToCurrentUserDto = (user: User): CurrentUser => {
   return currentUser
 }
 
-export const userToOtherUserDto = (user: User): OtherUser => {
-  const currentUser: OtherUser = {
+export const userToDisplayPartialUserDto = (user: User): DisplayPartialUser => {
+  const currentUser: DisplayPartialUser = {
     username: user.username,
     forenames: user.forenames,
     surname: user.surname

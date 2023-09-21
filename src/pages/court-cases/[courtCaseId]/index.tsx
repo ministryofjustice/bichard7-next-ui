@@ -7,8 +7,8 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import addNote from "services/addNote"
-import { courtCaseToCourtCaseInfoDto } from "services/dto/courtCaseDto"
-import { userToCurrentUserDto } from "services/dto/userDto"
+import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
+import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
 import lockCourtCase from "services/lockCourtCase"
@@ -19,8 +19,8 @@ import { UpdateResult } from "typeorm"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import { CourtCaseInfo } from "types/display/CourtCases"
-import { CurrentUser } from "types/display/Users"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
@@ -136,8 +136,8 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     return {
       props: {
-        user: userToCurrentUserDto(currentUser),
-        courtCase: courtCaseToCourtCaseInfoDto(courtCase),
+        user: userToDisplayFullUserDto(currentUser),
+        courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
         canReallocate: courtCase.canReallocate(currentUser.username)
@@ -147,8 +147,8 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 interface Props {
-  user: CurrentUser
-  courtCase: CourtCaseInfo
+  user: DisplayFullUser
+  courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
   canReallocate: boolean

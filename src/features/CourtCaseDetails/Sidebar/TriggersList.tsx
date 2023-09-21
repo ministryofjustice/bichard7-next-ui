@@ -7,15 +7,15 @@ import { encode } from "querystring"
 import { ChangeEvent, SyntheticEvent, useState } from "react"
 import { createUseStyles } from "react-jss"
 import type NavigationHandler from "types/NavigationHandler"
-import { CourtCaseInfo } from "types/display/CourtCases"
-import { CurrentUser } from "types/display/Users"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import { triggersAreLockedByAnotherUser } from "utils/caseLocks"
 import LockedTag from "../../../components/LockedTag"
 import Trigger from "./Trigger"
 
 interface Props {
-  courtCase: CourtCaseInfo
-  user: CurrentUser
+  courtCase: DisplayFullCourtCase
+  user: DisplayFullUser
   onNavigate: NavigationHandler
 }
 

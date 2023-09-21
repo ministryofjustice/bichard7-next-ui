@@ -9,7 +9,7 @@ import { createUseStyles } from "react-jss"
 import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import Feature from "types/Feature"
-import { CurrentUser } from "types/display/Users"
+import { DisplayFullUser } from "types/display/Users"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
@@ -29,7 +29,7 @@ interface Props {
   locked: string | null
   caseState: CaseState | null
   myCases: boolean
-  user: CurrentUser
+  user: DisplayFullUser
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {

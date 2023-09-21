@@ -13,8 +13,8 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { useEffect } from "react"
-import { courtCaseToCourtCaseIndexDto } from "services/dto/courtCaseDto"
-import { userToCurrentUserDto } from "services/dto/userDto"
+import { courtCaseToDisplayPartialCourtCaseDto } from "services/dto/courtCaseDto"
+import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
@@ -24,8 +24,8 @@ import { CaseState, QueryOrder, Reason, SerializedCourtDateRange, Urgency } from
 import Feature from "types/Feature"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import { CourtCaseIndex } from "types/display/CourtCases"
-import { CurrentUser } from "types/display/Users"
+import { DisplayPartialCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import caseStateFilters from "utils/caseStateFilters"
 import { formatFormInputDateString } from "utils/formattedDate"
@@ -40,8 +40,8 @@ import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
 
 interface Props {
-  user: CurrentUser
-  courtCases: CourtCaseIndex[]
+  user: DisplayFullUser
+  courtCases: DisplayPartialCourtCase[]
   order: QueryOrder
   reasons: Reason[]
   keywords: string[]
@@ -170,8 +170,8 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     return {
       props: {
-        user: userToCurrentUserDto(currentUser),
-        courtCases: courtCases.result.map(courtCaseToCourtCaseIndexDto),
+        user: userToDisplayFullUserDto(currentUser),
+        courtCases: courtCases.result.map(courtCaseToDisplayPartialCourtCaseDto),
         order: oppositeOrder,
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,

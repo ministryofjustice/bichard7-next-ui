@@ -2,7 +2,7 @@ import CourtCase from "services/entities/CourtCase"
 import { DisplayNote } from "./Notes"
 import { DisplayTrigger } from "./Triggers"
 
-type FieldsForCourtCaseIndex =
+type FieldsForDisplayPartialCourtCase =
   | "asn"
   | "courtName"
   | "errorId"
@@ -14,7 +14,7 @@ type FieldsForCourtCaseIndex =
   | "triggerCount"
   | "defendantName"
 
-export type CourtCaseIndex = Pick<CourtCase, FieldsForCourtCaseIndex> & {
+export type DisplayPartialCourtCase = Pick<CourtCase, FieldsForDisplayPartialCourtCase> & {
   courtDate?: string
   errorLockedByUserFullName?: string
   triggerLockedByUserFullName?: string
@@ -23,9 +23,13 @@ export type CourtCaseIndex = Pick<CourtCase, FieldsForCourtCaseIndex> & {
   resolutionTimestamp: string | null
 }
 
-type FieldsForCourtCaseInfo = FieldsForCourtCaseIndex | "orgForPoliceFilter" | "courtCode" | "courtReference"
+type FieldsForDisplayFullCourtCase =
+  | FieldsForDisplayPartialCourtCase
+  | "orgForPoliceFilter"
+  | "courtCode"
+  | "courtReference"
 
-export type CourtCaseInfo = Pick<CourtCase, FieldsForCourtCaseInfo> & {
+export type DisplayFullCourtCase = Pick<CourtCase, FieldsForDisplayFullCourtCase> & {
   courtDate?: string
   errorLockedByUserFullName?: string
   triggerLockedByUserFullName?: string

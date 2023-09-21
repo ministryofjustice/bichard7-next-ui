@@ -5,8 +5,8 @@ import { useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
-import { CourtCaseInfo } from "types/display/CourtCases"
-import { CurrentUser } from "types/display/Users"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import updateQueryString from "utils/updateQueryString"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
 import Header from "./Header"
@@ -20,10 +20,10 @@ import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
 
 interface Props {
-  courtCase: CourtCaseInfo
+  courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
-  user: CurrentUser
+  user: DisplayFullUser
   canReallocate: boolean
 }
 
