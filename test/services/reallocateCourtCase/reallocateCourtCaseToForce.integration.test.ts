@@ -1,27 +1,26 @@
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/dist/parse/parseAhoXml/parseAhoXml"
+import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import Phase from "@moj-bichard7-developers/bichard7-next-core/dist/types/Phase"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import Note from "services/entities/Note"
 import User from "services/entities/User"
 import insertNotes from "services/insertNotes"
 import reallocateCourtCaseToForce from "services/reallocateCourtCase/reallocateCourtCaseToForce"
 import { DataSource, UpdateQueryBuilder } from "typeorm"
+import { AUDIT_LOG_EVENT_SOURCE, REALLOCATE_CASE_TRIGGER_CODE } from "../../../src/config"
+import amendCourtCase from "../../../src/services/amendCourtCase"
 import CourtCase from "../../../src/services/entities/CourtCase"
 import getDataSource from "../../../src/services/getDataSource"
+import recalculateTriggers from "../../../src/services/reallocateCourtCase/recalculateTriggers"
+import updateCourtCase from "../../../src/services/reallocateCourtCase/updateCourtCase"
+import updateTriggers from "../../../src/services/reallocateCourtCase/updateTriggers"
 import { isError } from "../../../src/types/Result"
+import fetchAuditLogEvents from "../../helpers/fetchAuditLogEvents"
+import { hasAccessToAll } from "../../helpers/hasAccessTo"
+import deleteFromDynamoTable from "../../utils/deleteFromDynamoTable"
 import deleteFromEntity from "../../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../../utils/insertCourtCases"
-import deleteFromDynamoTable from "../../utils/deleteFromDynamoTable"
-import fetchAuditLogEvents from "../../helpers/fetchAuditLogEvents"
-import { AUDIT_LOG_EVENT_SOURCE, REALLOCATE_CASE_TRIGGER_CODE } from "../../../src/config"
-import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
-import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
-import { hasAccessToAll } from "../../helpers/hasAccessTo"
-import updateCourtCase from "../../../src/services/reallocateCourtCase/updateCourtCase"
-import amendCourtCase from "../../../src/services/amendCourtCase"
-import updateTriggers from "../../../src/services/reallocateCourtCase/updateTriggers"
-import recalculateTriggers from "../../../src/services/reallocateCourtCase/recalculateTriggers"
-import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate"
-import Phase from "@moj-bichard7-developers/bichard7-next-core/dist/types/Phase"
 
 jest.mock("services/insertNotes")
 jest.mock("services/reallocateCourtCase/recalculateTriggers")
@@ -58,7 +57,7 @@ const createReallocationEvent = (newForceOwner: string, userName: string) => {
 }
 
 const createTriggersGeneratedEvent = (triggers: string[], hasUnresolvedExceptions: boolean, userName: string) => {
-  const triggersDetails = triggers.reduce((acc: KeyValuePair<string, unknown>, triggerCode, index) => {
+  const triggersDetails = triggers.reduce((acc: Record<string, unknown>, triggerCode, index) => {
     acc[`Trigger ${index + 1} Details`] = triggerCode
     return acc
   }, {})

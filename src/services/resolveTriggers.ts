@@ -1,20 +1,19 @@
-import { DataSource, In, IsNull, UpdateResult } from "typeorm"
-import { isError } from "types/Result"
-import CourtCase from "./entities/CourtCase"
-import Trigger from "./entities/Trigger"
-import User from "./entities/User"
-import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
-import storeAuditLogEvents from "./storeAuditLogEvents"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import {
   AuditLogEventOptions,
   type AuditLogEvent
 } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import { DataSource, In, IsNull, UpdateResult } from "typeorm"
+import { isError } from "types/Result"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
-import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 import UnlockReason from "../types/UnlockReason"
+import CourtCase from "./entities/CourtCase"
+import Trigger from "./entities/Trigger"
+import User from "./entities/User"
+import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
+import storeAuditLogEvents from "./storeAuditLogEvents"
+import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 
 const generateTriggersAttributes = (triggers: Trigger[]) =>
   triggers.reduce(
@@ -24,7 +23,7 @@ const generateTriggersAttributes = (triggers: Trigger[]) =>
       acc[`Trigger ${index + 1} Details`] = `${trigger.triggerCode}${offenceNumberText}`
       return acc
     },
-    {} as KeyValuePair<string, unknown>
+    {} as Record<string, unknown>
   )
 
 const resolveTriggers = async (

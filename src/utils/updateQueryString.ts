@@ -1,6 +1,4 @@
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
-
-const updateQueryString = (params: KeyValuePair<string, unknown>) => {
+const updateQueryString = (params: Record<string, unknown>) => {
   const searchParams = new URLSearchParams(window.location.search)
   Object.entries(params).map(([key, value]) => {
     if (value === null) {
