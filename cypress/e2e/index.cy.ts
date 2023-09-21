@@ -12,7 +12,7 @@ describe("Case list", () => {
     cy.task("clearCourtCases")
   })
 
-  it("will find a password in the NEXT_DATA", () => {
+  it("will not find a password in the NEXT_DATA", () => {
     loginAndGoToUrl()
 
     cy.window().its("__NEXT_DATA__.props.pageProps.user.password").should("not.exist")
