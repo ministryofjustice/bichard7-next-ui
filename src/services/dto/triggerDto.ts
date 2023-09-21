@@ -4,8 +4,15 @@ import { DisplayTrigger } from "types/display/Triggers"
 export const triggerToDisplayTrigger = (trigger: Trigger): DisplayTrigger => {
   const displayTrigger: DisplayTrigger = {
     createdAt: trigger.createdAt.toISOString(),
+    description: trigger.description,
+    shortTriggerCode: trigger.shortTriggerCode,
+    status: trigger.status,
     triggerCode: trigger.triggerCode,
-    description: trigger.description
+    triggerId: trigger.triggerId
+  }
+
+  if (trigger.triggerItemIdentity) {
+    displayTrigger.triggerItemIdentity = trigger.triggerItemIdentity
   }
 
   if (trigger.resolvedAt) {
