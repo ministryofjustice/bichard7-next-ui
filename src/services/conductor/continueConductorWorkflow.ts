@@ -1,14 +1,15 @@
+import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import CourtCase from "../entities/CourtCase"
-import { fetchWorkflowByCorrelationId } from "./fetchWorkflowByCorrelationId"
+import { fetchBichardProcessByCorrelationId } from "./fetchBichardProcessByCorrelationId"
 import { TaskStatus } from "./types"
 import { updateWaitingTask } from "./updateWaitingTask"
 
 export const continueConductorWorkflow = async (
   courtCase: CourtCase,
   continueData: Record<string, unknown>
-): Promise<void | Error> => {
-  const fetchWorkflowResult = await fetchWorkflowByCorrelationId(courtCase.messageId)
+): PromiseResult<void> => {
+  const fetchWorkflowResult = await fetchBichardProcessByCorrelationId(courtCase.messageId)
   if (isError(fetchWorkflowResult)) {
     return fetchWorkflowResult
   }

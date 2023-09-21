@@ -26,14 +26,6 @@ const resolveCourtCase = async (
       throw resolveErrorResult
     }
 
-    // complete human task step in conductor workflow
-    const continueConductorWorkflowResult = await continueConductorWorkflow(courtCase, {
-      isManuallyResolved: true
-    })
-    if (isError(continueConductorWorkflowResult)) {
-      throw continueConductorWorkflowResult
-    }
-
     // unlock case
     const unlockResult = await updateLockStatusToUnlocked(
       entityManager,
@@ -64,6 +56,14 @@ const resolveCourtCase = async (
     const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
     if (isError(storeAuditLogResponse)) {
       throw storeAuditLogResponse
+    }
+
+    // complete human task step in conductor workflow
+    const continueConductorWorkflowResult = await continueConductorWorkflow(courtCase, {
+      status: "manually_resolved"
+    })
+    if (isError(continueConductorWorkflowResult)) {
+      throw continueConductorWorkflowResult
     }
 
     return resolveErrorResult
