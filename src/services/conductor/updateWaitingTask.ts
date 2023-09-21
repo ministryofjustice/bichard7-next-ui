@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios"
 import { basicAuthenticationHeaders } from "./auth"
 import { FailWaitingTask, UpdateWaitingTask } from "./types"
 
-import { CONDUCTOR_API_URL } from "config"
+import { CONDUCTOR_API_URL } from "../../config"
 import PromiseResult from "types/PromiseResult"
 
 export const updateWaitingTask = async (update: UpdateWaitingTask | FailWaitingTask): PromiseResult<AxiosResponse> => {

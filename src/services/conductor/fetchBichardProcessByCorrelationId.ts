@@ -2,7 +2,7 @@ import { Workflow } from "@io-orkes/conductor-javascript"
 import axios from "axios"
 import { basicAuthenticationHeaders } from "./auth"
 
-import { CONDUCTOR_API_URL } from "config"
+import { CONDUCTOR_API_URL } from "../../config"
 import PromiseResult from "types/PromiseResult"
 
 const conductorApi = axios.create({
