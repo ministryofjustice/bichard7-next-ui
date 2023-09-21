@@ -219,64 +219,6 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
                 />
               </MultiChoice>
             </FormGroup>
-            <FormGroup id="componentIssue">
-              <Heading as="h3" size="SMALL">
-                {"Could you select one of the options below and explain what problem you have experienced?"}
-              </Heading>
-              <Heading as="h5" size="SMALL">
-                {"Select one of the below option."}
-              </Heading>
-              <MultiChoice
-                label={""}
-                meta={{
-                  error: "Select one of the below options",
-                  touched: fields?.componentIssue.hasError
-                }}
-              >
-                <RadioButton
-                  name={"componentIssue"}
-                  id={"componentIssue-searchAndFilterPanel"}
-                  defaultChecked={fields?.componentIssue.value === "searchAndFilterPanel"}
-                  value={"searchAndFilterPanel"}
-                  label={"Search and filter panel"}
-                />
-                <RadioButton
-                  name={"componentIssue"}
-                  id={"componentIssue-pagePagination"}
-                  defaultChecked={fields?.componentIssue.value === "pagePagination"}
-                  value={"pagePagination"}
-                  label={"Page pagination"}
-                />
-                <RadioButton
-                  name={"componentIssue"}
-                  id={"componentIssue-columnHeaders"}
-                  defaultChecked={fields?.componentIssue.value === "columnHeaders"}
-                  value={"columnHeaders"}
-                  label={"Table column headers"}
-                />
-                <RadioButton
-                  name={"componentIssue"}
-                  id={"componentIssue-notesPreview"}
-                  defaultChecked={fields?.componentIssue.value === "notesPreview"}
-                  value={"notesPreview"}
-                  label={"Notes preview"}
-                />
-                <RadioButton
-                  name={"componentIssue"}
-                  id={"componentIssue-removingHandlers"}
-                  defaultChecked={fields?.componentIssue.value === "removingHandlers"}
-                  value={"removingHandlers"}
-                  label={"Removing handlers from case"}
-                />
-                <RadioButton
-                  name={"componentIssue"}
-                  id={"componentIssue-other"}
-                  defaultChecked={fields?.componentIssue.value === "other"}
-                  value={"other"}
-                  label={"Other (please specify)"}
-                />
-              </MultiChoice>
-            </FormGroup>
             <FormGroup id="otherFeedback">
               <TextArea
                 input={{

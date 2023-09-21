@@ -42,7 +42,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.login("bichard01@example.com", "password")
   })
 
-  it.only("Should access the switching feedback form", () => {
+  it.only("Should access the switching feedback form with first question available", () => {
     cy.visit("/bichard")
     cy.contains("button", "Switch to old Bichard").click()
     cy.get("a").contains("Back")
@@ -62,11 +62,21 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.get("label").contains("Other (please specify)")
   })
 
-  it("Should display error if form is not complete", () => {})
+  it.skip("Should show question number 2 and textarea box when first button of first question is selected ", () => {})
 
-  // it("Should open a feedback form twice a session", () => {})
+  // it("Should show only textarea box when second button of first question is selected ", () => {})
 
-  it("Should redirect to case list in old Bichard", () => {})
+  // it("Should show only textarea box when third button of first question is selected ", () => {})
 
-  it("Should redirect to the same case detail page in old Bichard", () => {})
+  // it("Should display error if textarea box is empty when second button is selected", () => {})
+
+  // it("Should display error if textarea box is empty when third button is selected", () => {})
+
+  // it("Should open old version of Bichard when user skips feedback", () => {})
+
+  // it("Should record skipped value when user skips feedback", () => {})
+
+  // it("Should redirect to case list in old Bichard", () => {})
+
+  // it("Should redirect to the same case detail page in old Bichard", () => {})
 })
