@@ -1,18 +1,18 @@
-import { EntityManager, MoreThan, Not, UpdateQueryBuilder, UpdateResult } from "typeorm"
-import CourtCase from "./entities/CourtCase"
-import User from "./entities/User"
-import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import {
   AuditLogEvent,
   AuditLogEventOptions
 } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
-import Trigger from "./entities/Trigger"
-import { validateManualResolution } from "utils/validators/validateManualResolution"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import { EntityManager, MoreThan, Not, UpdateQueryBuilder, UpdateResult } from "typeorm"
 import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { isError } from "types/Result"
-import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import { validateManualResolution } from "utils/validators/validateManualResolution"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
+import CourtCase from "./entities/CourtCase"
+import Trigger from "./entities/Trigger"
+import User from "./entities/User"
+import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 
 const resolveError = async (
   entityManager: EntityManager,

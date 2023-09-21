@@ -3,7 +3,7 @@ import { DataSource, EntityManager, UpdateResult } from "typeorm"
 import { ManualResolution } from "types/ManualResolution"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import { fetchWaitingTaskForWorkflow, fetchWorkflowByCorrelationId } from "./conductor"
+import { continueConductorWorkflow } from "./conductor"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import insertNotes from "./insertNotes"
@@ -20,20 +20,21 @@ const resolveCourtCase = async (
   return dataSource.transaction("SERIALIZABLE", async (entityManager) => {
     const events: AuditLogEvent[] = []
 
+    // resolve case
     const resolveErrorResult = await resolveError(entityManager, courtCase, user, resolution, events)
     if (isError(resolveErrorResult)) {
       throw resolveErrorResult
     }
-    //
 
-    const workflow = await fetchWorkflowByCorrelationId(courtCase.messageId)
-    if (!workflow.workflowId) {
-      throw new Error()
+    // complete human task step in conductor workflow
+    const continueConductorWorkflowResult = await continueConductorWorkflow(courtCase, {
+      isManuallyResolved: true
+    })
+    if (isError(continueConductorWorkflowResult)) {
+      throw continueConductorWorkflowResult
     }
 
-    const task = await fetchWaitingTaskForWorkflow(workflow.workflowId)
-
-    //
+    // unlock case
     const unlockResult = await updateLockStatusToUnlocked(
       entityManager,
       courtCase,
@@ -45,6 +46,7 @@ const resolveCourtCase = async (
       throw unlockResult
     }
 
+    // add manual resolution case note
     const addNoteResult = await insertNotes(entityManager, [
       {
         noteText:
@@ -54,13 +56,12 @@ const resolveCourtCase = async (
         userId: "System"
       }
     ])
-
     if (isError(addNoteResult)) {
       throw addNoteResult
     }
 
+    // push audit log events
     const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
-
     if (isError(storeAuditLogResponse)) {
       throw storeAuditLogResponse
     }
