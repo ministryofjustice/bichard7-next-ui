@@ -1,4 +1,3 @@
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import Pagination from "components/Pagination"
@@ -49,7 +48,7 @@ interface Props {
   reasonCode: string | null
   urgent: string | null
   caseAge: string[]
-  caseAgeCounts: KeyValuePair<string, number>
+  caseAgeCounts: Record<string, number>
   dateRange: SerializedCourtDateRange | null
   page: number
   casesPerPage: number

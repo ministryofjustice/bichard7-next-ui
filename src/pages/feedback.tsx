@@ -1,4 +1,3 @@
-import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import Layout from "components/Layout"
 import RadioButton from "components/RadioButton/RadioButton"
 import { MAX_FEEDBACK_LENGTH } from "config"
@@ -26,7 +25,7 @@ enum FeedbackExperienceKey {
   veryDissatisfied
 }
 
-const FeedbackExperienceOptions: KeyValuePair<FeedbackExperienceKey, string> = {
+const FeedbackExperienceOptions: Record<FeedbackExperienceKey, string> = {
   0: "Very satisfied",
   1: "Satisfied",
   2: "Neither satisfied nor dissatisfied",

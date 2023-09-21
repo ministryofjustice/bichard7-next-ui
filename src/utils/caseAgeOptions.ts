@@ -1,8 +1,7 @@
 import { subDays } from "date-fns"
 import { CourtDateRange } from "types/CaseListQueryParams"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 
-export const CaseAgeOptions: KeyValuePair<string, () => CourtDateRange> = {
+export const CaseAgeOptions: Record<string, () => CourtDateRange> = {
   Today: () => {
     const today = new Date()
     return { from: today, to: today }
