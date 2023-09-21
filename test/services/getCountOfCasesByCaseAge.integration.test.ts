@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import "reflect-metadata"
-import { DataSource, SelectQueryBuilder } from "typeorm"
+import { subDays } from "date-fns"
 import MockDate from "mockdate"
-import deleteFromEntity from "../utils/deleteFromEntity"
-import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import { isError } from "../../src/types/Result"
+import "reflect-metadata"
+import User from "services/entities/User"
+import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
+import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
+import { DataSource, SelectQueryBuilder } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
-import { subDays } from "date-fns"
-import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import User from "services/entities/User"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
+import { isError } from "../../src/types/Result"
+import deleteFromEntity from "../utils/deleteFromEntity"
+import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 
 jest.mock(
   "services/queries/courtCasesByOrganisationUnitQuery",
@@ -84,7 +83,7 @@ describe("listCourtCases", () => {
     const result = (await getCountOfCasesByCaseAge(dataSource, {
       visibleCourts: [],
       visibleForces: [orgCode]
-    } as Partial<User> as User)) as KeyValuePair<string, number>
+    } as Partial<User> as User)) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
 
@@ -109,7 +108,7 @@ describe("listCourtCases", () => {
     const result = (await getCountOfCasesByCaseAge(dataSource, {
       visibleCourts: [],
       visibleForces: [orgCode]
-    } as Partial<User> as User)) as KeyValuePair<string, number>
+    } as Partial<User> as User)) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
 
@@ -121,7 +120,7 @@ describe("listCourtCases", () => {
       const result = (await getCountOfCasesByCaseAge(dataSource, {
         visibleCourts: [],
         visibleForces: [orgCode]
-      } as Partial<User> as User)) as KeyValuePair<string, number>
+      } as Partial<User> as User)) as Record<string, number>
 
       expect(isError(result)).toBeFalsy()
 

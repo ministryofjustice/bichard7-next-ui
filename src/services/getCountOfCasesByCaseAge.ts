@@ -1,5 +1,4 @@
 import { DataSource, IsNull, SelectQueryBuilder } from "typeorm"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
@@ -10,10 +9,7 @@ import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisatio
 
 const asKey = (caseAgeOption: string) => caseAgeOption.toLowerCase().replace(/ /g, "")
 
-const getCountOfCasesByCaseAge = async (
-  connection: DataSource,
-  user: User
-): PromiseResult<KeyValuePair<string, number>> => {
+const getCountOfCasesByCaseAge = async (connection: DataSource, user: User): PromiseResult<Record<string, number>> => {
   const repository = connection.getRepository(CourtCase)
   let query = repository.createQueryBuilder()
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
@@ -45,11 +41,11 @@ const getCountOfCasesByCaseAge = async (
   return isError(response)
     ? response
     : (Object.keys(CaseAgeOptions).reduce(
-        (result: KeyValuePair<string, number>, caseAge: string) => (
+        (result: Record<string, number>, caseAge: string) => (
           (result[caseAge] = response ? response[asKey(caseAge)] : "0"), result
         ),
         {}
-      ) as KeyValuePair<string, number>)
+      ) as Record<string, number>)
 }
 
 export default getCountOfCasesByCaseAge
