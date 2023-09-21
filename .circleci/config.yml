@@ -209,7 +209,7 @@ jobs:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
       - fetch_images:
-          IMAGES: user-service nginx-auth-proxy
+          IMAGES: user-service nginx-auth-proxy conductor
       - start_services:
           SERVICES: >-
             ui user-service nginx-auth-proxy
