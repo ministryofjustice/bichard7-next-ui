@@ -42,7 +42,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.login("bichard01@example.com", "password")
   })
 
-  it.only("Should access the switching feedback form with first question available", () => {
+  it.only("Should access the switching feedback form with first question visible when user clicks 'Switch to old Bichard'", () => {
     cy.visit("/bichard")
     cy.contains("button", "Switch to old Bichard").click()
     cy.get("a").contains("Back")
@@ -62,7 +62,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.get("label").contains("Other (please specify)")
   })
 
-  it.skip("Should show question number 2 and textarea box when first button of first question is selected ", () => {})
+  // it.skip("Should show question number 2 and textarea box when first button of first question is selected ", () => {})
 
   // it("Should show only textarea box when second button of first question is selected ", () => {})
 
@@ -74,7 +74,17 @@ describe("Switching Bichard Version Feedback Form", () => {
 
   // it("Should open old version of Bichard when user skips feedback", () => {})
 
-  // it("Should record skipped value when user skips feedback", () => {})
+  // it("Should record skipped value in the database when user skips feedback", () => {})
+
+  // it("Should record User job role, email, and force when feedback form submitted", () => {})
+
+  // it("Should record User job role, email, and force when feedback form skipped", () => {})
+
+  // it("Should open the switching survey the first time user clicks 'Switch to old Bichard' after logging in", () => {})
+
+  // it("Should redirect user to old Bichard within 3 hours of first click on 'Switch to old Bichard' after logging in", () => {})
+
+  // it("Should redirect user to switching survey after 3 hours of a click on 'Switch to old Bichard'", () => {})
 
   // it("Should redirect to case list in old Bichard", () => {})
 
