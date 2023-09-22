@@ -62,7 +62,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.get("label").contains("Other (please specify)")
   })
 
-  // it.skip("Should show question number 2 and textarea box when first button of first question is selected ", () => {})
+  // it("Should show question number 2 and textarea box when first button of first question is selected ", () => {})
 
   // it("Should show only textarea box when second button of first question is selected ", () => {})
 
