@@ -12,6 +12,7 @@ import {
   insertMultipleDummyCourtCases
 } from "./test/utils/insertCourtCases"
 import { deleteFeedback, getAllFeedbacksFromDatabase } from "./test/utils/manageFeedbackSurveys"
+import { startIncomingMessageWorkflow } from "./test/utils/startIncomingMessageWorkflow"
 
 import { ResolutionStatus } from "types/ResolutionStatus"
 import insertException from "./test/utils/manageExceptions"
@@ -66,6 +67,10 @@ export default defineConfig({
 
         insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {
           return insertCourtCasesWithFields(cases)
+        },
+
+        async startIncomingMessageWorkflow() {
+          return startIncomingMessageWorkflow()
         },
 
         async getAllFeedbacksFromDatabase() {
