@@ -88,10 +88,12 @@ commands:
 
   start_conductor_worker:
     steps:
+      - node/install-packages:
+          app-dir: ~/bichard7-next-core
       - run:
-          name: Install worker dependencies
+          name: Build core
           working_directory: ~/bichard7-next-core
-          command: npm i -w packages/conductor
+          command: npm run build
       - run:
           name: Start conductor worker
           working_directory: ~/bichard7-next-core
