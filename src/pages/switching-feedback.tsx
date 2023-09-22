@@ -1,3 +1,4 @@
+import ConditionalRender from "components/ConditionalRender"
 import Layout from "components/Layout"
 import RadioButton from "components/RadioButton/RadioButton"
 import { MAX_FEEDBACK_LENGTH } from "config"
@@ -5,7 +6,7 @@ import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, 
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import { ParsedUrlQuery } from "querystring"
-import { FormEventHandler, useEffect, useState } from "react"
+import { ChangeEvent, FormEventHandler, useEffect, useState } from "react"
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
@@ -49,19 +50,19 @@ export const getServerSideProps = withMultipleServerSideProps(
         }
       }
 
-      const { issueOrPreference, caseListOrDetail, componentIssue, otherFeedback } = (await parseFormData(req)) as {
+      const { issueOrPreference, caseListOrDetail, otherFeedback } = (await parseFormData(req)) as {
         issueOrPreference: string
         caseListOrDetail: string
-        componentIssue: string
+
         otherFeedback: string
         isSkipped: string
       }
 
-      if (issueOrPreference && caseListOrDetail && componentIssue && otherFeedback) {
+      if (issueOrPreference && caseListOrDetail && otherFeedback) {
         const result = await insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.Switching,
           userId: currentUser.id,
-          response: { issueOrPreference, caseListOrDetail, componentIssue, otherFeedback } as SwitchingFeedbackResponse
+          response: { issueOrPreference, caseListOrDetail, otherFeedback } as SwitchingFeedbackResponse
         } as SurveyFeedback)
 
         if (!isError(result)) {
@@ -77,7 +78,6 @@ export const getServerSideProps = withMultipleServerSideProps(
           fields: {
             issueOrPreference: { hasError: !issueOrPreference ? true : false, value: issueOrPreference ?? null },
             caseListOrDetail: { hasError: !caseListOrDetail ? true : false, value: caseListOrDetail ?? null },
-            componentIssue: { hasError: !componentIssue ? true : false, value: componentIssue ?? null },
             otherFeedback: { hasError: !otherFeedback ? true : false, value: otherFeedback }
           }
         }
@@ -100,10 +100,6 @@ interface Props {
       hasError: boolean
       value: string
     }
-    componentIssue: {
-      hasError: boolean
-      value: string
-    }
     otherFeedback: {
       hasError: boolean
       value: string
@@ -113,17 +109,19 @@ interface Props {
 const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) => {
   const [remainingFeedbackLength, setRemainingFeedbackLength] = useState(MAX_FEEDBACK_LENGTH)
   const [skipUrl, setSkipUrl] = useState<URL | null>(null)
+  const [foundIssue, setFoundIssue] = useState<boolean>(false)
 
   useEffect(() => {
     const url = new URL(window.location.href)
     url.searchParams.append("isSkipped", "true")
     setSkipUrl(url)
   }, [])
-
   const handleFeedbackOnChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
     setRemainingFeedbackLength(MAX_FEEDBACK_LENGTH - event.currentTarget.value.length)
   }
-
+  const handleIssueChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setFoundIssue(event.target.value === "issue")
+  }
   return (
     <>
       <Layout user={user}>
@@ -169,6 +167,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
                   id={"issueOrPreference-issue"}
                   defaultChecked={fields?.issueOrPreference.value === "issue"}
                   value={"issue"}
+                  onChange={handleIssueChange}
                   label={
                     "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task."
                   }
@@ -178,6 +177,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
                   id={"issueOrPreference-preference"}
                   defaultChecked={fields?.issueOrPreference.value === "preference"}
                   value={"preference"}
+                  onChange={handleIssueChange}
                   label={"I prefer working in the old version, and I dislike working in the new version."}
                 />
                 <RadioButton
@@ -185,41 +185,48 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
                   id={"issueOrPreference-other"}
                   defaultChecked={fields?.issueOrPreference.value === "other"}
                   value={"other"}
+                  onChange={handleIssueChange}
                   label={"Other (please specify)"}
                 />
               </MultiChoice>
             </FormGroup>
-            <FormGroup id="caseListOrDetail">
-              <Heading as="h3" size="SMALL">
-                {"Which page where you finding an issue with?"}
-              </Heading>
-              <Heading as="h5" size="SMALL">
-                {"Select one of the below option."}
-              </Heading>
-              <MultiChoice
-                label={""}
-                meta={{
-                  error: "Select one of the below options",
-                  touched: fields?.caseListOrDetail.hasError
-                }}
-              >
-                <RadioButton
-                  name={"caseListOrDetail"}
-                  id={"caseListOrDetail-caselist"}
-                  defaultChecked={fields?.caseListOrDetail.value === "caselist"}
-                  value={"caselist"}
-                  label={"Case list page"}
-                />
-                <RadioButton
-                  name={"caseListOrDetail"}
-                  id={"caseListOrDetail-casedetail"}
-                  defaultChecked={fields?.caseListOrDetail.value === "casedetail"}
-                  value={"casedetail"}
-                  label={"Case details page"}
-                />
-              </MultiChoice>
-            </FormGroup>
+            <ConditionalRender isRendered={foundIssue}>
+              <FormGroup id="caseListOrDetail">
+                <Heading as="h3" size="SMALL">
+                  {"Which page were you finding an issue with?"}
+                </Heading>
+                <Heading as="h5" size="SMALL">
+                  {"Select one of the below option."}
+                </Heading>
+                <MultiChoice
+                  label={""}
+                  meta={{
+                    error: "Select one of the below options",
+                    touched: fields?.caseListOrDetail.hasError
+                  }}
+                >
+                  <RadioButton
+                    name={"caseListOrDetail"}
+                    id={"caseListOrDetail-caselist"}
+                    defaultChecked={fields?.caseListOrDetail.value === "caselist"}
+                    value={"caselist"}
+                    label={"Case list page"}
+                  />
+                  <RadioButton
+                    name={"caseListOrDetail"}
+                    id={"caseListOrDetail-casedetail"}
+                    defaultChecked={fields?.caseListOrDetail.value === "casedetail"}
+                    value={"casedetail"}
+                    label={"Case details page"}
+                  />
+                </MultiChoice>
+              </FormGroup>
+            </ConditionalRender>
+
             <FormGroup id="otherFeedback">
+              <Heading as="h3" size="SMALL">
+                {"Could you explain in detail what problem you have experienced?"}
+              </Heading>
               <TextArea
                 input={{
                   name: "otherFeedback",
