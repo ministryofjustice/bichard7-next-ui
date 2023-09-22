@@ -89,6 +89,10 @@ commands:
   start_conductor_worker:
     steps:
       - run:
+          name: Install worker dependencies
+          working_directory: ~/bichard7-next-core
+          command: npm i -w packages/conductor
+      - run:
           name: Start conductor worker
           working_directory: ~/bichard7-next-core
           command: npm run worker -w packages/conductor
@@ -99,7 +103,7 @@ jobs:
   lint:
     executor:
       name: node/default
-      tag: '16.20.2'
+      tag: '20.6.1'
     steps:
       - checkout
       - node/install-packages:
@@ -111,7 +115,7 @@ jobs:
   unit_test:
     executor:
       name: node/default
-      tag: '16.20.2'
+      tag: '20.6.1'
     steps:
       - checkout
       - node/install-packages:
@@ -123,7 +127,7 @@ jobs:
   cypress_component_test:
     executor:
       name: node/default
-      tag: '16.20.2'
+      tag: '20.6.1'
     steps:
       - checkout
       - node/install-packages:
@@ -186,9 +190,9 @@ jobs:
           command: DEPLOY_NAME=e2e-test npm run seed-data
 
   cypress_e2e_tests:
-    machine:
-      image: ubuntu-2204:current
-      docker_layer_caching: true
+    executor:
+      name: node/default
+      tag: '20.6.1'
     resource_class: xlarge
     parallelism: 5
     steps:
