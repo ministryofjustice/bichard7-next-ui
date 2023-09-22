@@ -1,12 +1,12 @@
 import MockDate from "mockdate"
+import insertNotes from "services/insertNotes"
 import { DataSource } from "typeorm"
+import { v4 as uuid } from "uuid"
+import addNote from "../../src/services/addNote"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import addNote from "../../src/services/addNote"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import insertNotes from "services/insertNotes"
-import { v4 as uuid } from "uuid"
 
 jest.mock("services/insertNotes")
 
@@ -62,7 +62,7 @@ describe("addNote", () => {
   })
 
   it("Should not add note when error is locked by other user", async () => {
-    await insertRecords("OtherUser")
+    await insertRecords("DisplayPartialUser")
     const date = new Date()
     MockDate.set(date)
     const result = await addNote(dataSource, 0, "username", note)
@@ -76,7 +76,7 @@ describe("addNote", () => {
   })
 
   it("Should not add note when trigger is locked by other user", async () => {
-    await insertRecords(null, "OtherUser")
+    await insertRecords(null, "DisplayPartialUser")
     const date = new Date()
     MockDate.set(date)
     const result = await addNote(dataSource, 0, "username", note)
