@@ -98,6 +98,7 @@ commands:
           name: Start conductor worker
           working_directory: ~/bichard7-next-core
           command: npm run worker -w packages/conductor
+          background: true
 
 #################################################################################
 
