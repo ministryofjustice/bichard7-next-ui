@@ -6,7 +6,7 @@ import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, 
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import { ParsedUrlQuery } from "querystring"
-import { ChangeEvent, FormEventHandler, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
@@ -18,6 +18,40 @@ import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
 
+interface SwitchingFeedbackFormState {
+  issueOrPreference?: string
+  caseListOrDetail?: string
+  feedback?: string
+}
+interface Props {
+  user: User
+  previousPath: string
+  fields?: {
+    issueOrPreference: {
+      hasError: boolean
+      value?: string | null
+    }
+    caseListOrDetail: {
+      hasError: boolean
+      value?: string | null
+    }
+    feedback: {
+      hasError: boolean
+      value?: string | null
+    }
+  }
+}
+
+function validateForm(form: SwitchingFeedbackFormState): boolean {
+  if (form.issueOrPreference === "issue" && form.caseListOrDetail && form.feedback) {
+    return true
+  } else if (form.issueOrPreference && form.feedback) {
+    return true
+  } else {
+    return false
+  }
+}
+
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
@@ -26,9 +60,11 @@ export const getServerSideProps = withMultipleServerSideProps(
       previousPath,
       isSkipped,
       redirectTo: redirectToUrl
-    } = query as { previousPath: string; isSkipped: string; redirectTo: string }
+    } = query as { previousPath?: string; isSkipped?: string; redirectTo?: string }
 
-    const dataSource = await getDataSource()
+    if (!redirectToUrl) {
+      throw new Error("no redirectTo URL")
+    }
 
     const props = {
       user: currentUser.serialize(),
@@ -36,6 +72,10 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     if (isPost(req)) {
+      const dataSource = await getDataSource()
+
+      const form = (await parseFormData(req)) as SwitchingFeedbackFormState
+
       if (isSkipped === "true") {
         const result = await insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.Switching,
@@ -50,19 +90,11 @@ export const getServerSideProps = withMultipleServerSideProps(
         }
       }
 
-      const { issueOrPreference, caseListOrDetail, otherFeedback } = (await parseFormData(req)) as {
-        issueOrPreference: string
-        caseListOrDetail: string
-
-        otherFeedback: string
-        isSkipped: string
-      }
-
-      if (issueOrPreference && caseListOrDetail && otherFeedback) {
+      if (validateForm(form)) {
         const result = await insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.Switching,
           userId: currentUser.id,
-          response: { issueOrPreference, caseListOrDetail, otherFeedback } as SwitchingFeedbackResponse
+          response: form as SwitchingFeedbackFormState
         } as SurveyFeedback)
 
         if (!isError(result)) {
@@ -70,15 +102,21 @@ export const getServerSideProps = withMultipleServerSideProps(
         } else {
           throw result
         }
-      }
-
-      return {
-        props: {
-          ...props,
-          fields: {
-            issueOrPreference: { hasError: !issueOrPreference ? true : false, value: issueOrPreference ?? null },
-            caseListOrDetail: { hasError: !caseListOrDetail ? true : false, value: caseListOrDetail ?? null },
-            otherFeedback: { hasError: !otherFeedback ? true : false, value: otherFeedback }
+      } else {
+        return {
+          props: {
+            ...props,
+            fields: {
+              issueOrPreference: {
+                hasError: !form.issueOrPreference ? true : false,
+                value: form.issueOrPreference ?? null
+              },
+              caseListOrDetail: {
+                hasError: !form.caseListOrDetail ? true : false,
+                value: form.caseListOrDetail ?? null
+              },
+              feedback: { hasError: !form.feedback ? true : false, value: form.feedback ?? null }
+            }
           }
         }
       }
@@ -88,69 +126,106 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-interface Props {
-  user: User
-  previousPath: string
-  fields?: {
-    issueOrPreference: {
-      hasError: boolean
-      value: string
-    }
-    caseListOrDetail: {
-      hasError: boolean
-      value: string
-    }
-    otherFeedback: {
-      hasError: boolean
-      value: string
-    }
-  }
-}
 const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) => {
-  const [remainingFeedbackLength, setRemainingFeedbackLength] = useState(MAX_FEEDBACK_LENGTH)
   const [skipUrl, setSkipUrl] = useState<URL | null>(null)
-  const [foundIssue, setFoundIssue] = useState<boolean>(false)
+
+  const [formState, setFormState] = useState<SwitchingFeedbackFormState>({
+    feedback: fields?.feedback.value ?? undefined,
+    issueOrPreference: fields?.issueOrPreference.value ?? undefined,
+    caseListOrDetail: fields?.caseListOrDetail.value ?? undefined
+  })
+  const handleFormChange = useCallback(
+    <T extends keyof SwitchingFeedbackFormState>(field: T, value: SwitchingFeedbackFormState[T]) => {
+      setFormState({
+        ...formState,
+        [field]: value
+      })
+    },
+    [formState, setFormState]
+  )
 
   useEffect(() => {
     const url = new URL(window.location.href)
     url.searchParams.append("isSkipped", "true")
     setSkipUrl(url)
   }, [])
-  const handleFeedbackOnChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
-    setRemainingFeedbackLength(MAX_FEEDBACK_LENGTH - event.currentTarget.value.length)
-  }
-  const handleIssueChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setFoundIssue(event.target.value === "issue")
-  }
+
+  const getRemainingLength = useCallback(
+    () => MAX_FEEDBACK_LENGTH - (formState.feedback?.length || 0),
+    [formState.feedback]
+  )
+
   return (
-    <>
-      <Layout user={user}>
-        <Heading as="h2" size="LARGE" aria-label="Switching Feedback">
-          <title>{"Report an issue using new Bichard | Bichard7"}</title>
-          <meta name="description" content="user switching version feedback| Bichard7" />
-        </Heading>
-        <BackLink href={previousPath} onClick={function noRefCheck() {}}>
-          {"Back"}
-        </BackLink>
-        {/* Todo: style button to match design*/}
-        <form method="POST" action={skipUrl?.search}>
-          <button type="submit">{"Skip feedback"}</button>
-        </form>
+    <Layout user={user}>
+      <Heading as="h2" size="LARGE" aria-label="Switching Feedback">
+        <title>{"Report an issue using new Bichard | Bichard7"}</title>
+        <meta name="description" content="user switching version feedback| Bichard7" />
+      </Heading>
+      <BackLink href={previousPath} onClick={function noRefCheck() {}}>
+        {"Back"}
+      </BackLink>
+      {/* Todo: style button to match design*/}
+      <form method="POST" action={skipUrl?.search}>
+        <button type="submit">{"Skip feedback"}</button>
+      </form>
 
-        <Heading as="h1">{"Share your feedback"}</Heading>
+      <Heading as="h1">{"Share your feedback"}</Heading>
 
-        <form method="POST" action={"#"}>
-          <Fieldset>
-            <p className="govuk-body">
-              {
-                "You have selected to revert back to old Bichard. What was the reason for doing so? Can you please select the appropriate option. And outline the problem that occurred below so that we can best understand."
-              }
-            </p>
-          </Fieldset>
-          <Fieldset>
-            <FormGroup id="issueOrPreference">
+      <form method="POST" action={"#"}>
+        <Fieldset>
+          <p className="govuk-body">
+            {
+              "You have selected to revert back to old Bichard. What was the reason for doing so? Can you please select the appropriate option. And outline the problem that occurred below so that we can best understand."
+            }
+          </p>
+        </Fieldset>
+        <Fieldset>
+          <FormGroup id="issueOrPreference">
+            <Heading as="h3" size="SMALL">
+              {"Why have you decided to switch version of Bichard?"}
+            </Heading>
+            <Heading as="h5" size="SMALL">
+              {"Select one of the below option."}
+            </Heading>
+            <MultiChoice
+              label={""}
+              meta={{
+                error: "Select one of the below options",
+                touched: fields?.issueOrPreference.hasError
+              }}
+            >
+              <RadioButton
+                name={"issueOrPreference"}
+                id={"issueOrPreference-issue"}
+                defaultChecked={fields?.issueOrPreference.value === "issue"}
+                value={"issue"}
+                onChange={() => handleFormChange("issueOrPreference", "issue")}
+                label={
+                  "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task."
+                }
+              />
+              <RadioButton
+                name={"issueOrPreference"}
+                id={"issueOrPreference-preference"}
+                defaultChecked={fields?.issueOrPreference.value === "preference"}
+                value={"preference"}
+                onChange={() => handleFormChange("issueOrPreference", "preference")}
+                label={"I prefer working in the old version, and I dislike working in the new version."}
+              />
+              <RadioButton
+                name={"issueOrPreference"}
+                id={"issueOrPreference-other"}
+                defaultChecked={fields?.issueOrPreference.value === "other"}
+                value={"other"}
+                onChange={() => handleFormChange("issueOrPreference", "other")}
+                label={"Other (please specify)"}
+              />
+            </MultiChoice>
+          </FormGroup>
+          <ConditionalRender isRendered={formState.issueOrPreference === "issue"}>
+            <FormGroup id="caseListOrDetail">
               <Heading as="h3" size="SMALL">
-                {"Why have you decided to switch version of Bichard?"}
+                {"Which page were you finding an issue with?"}
               </Heading>
               <Heading as="h5" size="SMALL">
                 {"Select one of the below option."}
@@ -159,100 +234,112 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
                 label={""}
                 meta={{
                   error: "Select one of the below options",
-                  touched: fields?.issueOrPreference.hasError
+                  touched: fields?.caseListOrDetail.hasError
                 }}
               >
                 <RadioButton
-                  name={"issueOrPreference"}
-                  id={"issueOrPreference-issue"}
-                  defaultChecked={fields?.issueOrPreference.value === "issue"}
-                  value={"issue"}
-                  onChange={handleIssueChange}
-                  label={
-                    "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task."
-                  }
+                  name={"caseListOrDetail"}
+                  id={"caseListOrDetail-caselist"}
+                  defaultChecked={fields?.caseListOrDetail.value === "caselist"}
+                  value={"caselist"}
+                  label={"Case list page"}
+                  onChange={() => handleFormChange("caseListOrDetail", "caselist")}
                 />
                 <RadioButton
-                  name={"issueOrPreference"}
-                  id={"issueOrPreference-preference"}
-                  defaultChecked={fields?.issueOrPreference.value === "preference"}
-                  value={"preference"}
-                  onChange={handleIssueChange}
-                  label={"I prefer working in the old version, and I dislike working in the new version."}
-                />
-                <RadioButton
-                  name={"issueOrPreference"}
-                  id={"issueOrPreference-other"}
-                  defaultChecked={fields?.issueOrPreference.value === "other"}
-                  value={"other"}
-                  onChange={handleIssueChange}
-                  label={"Other (please specify)"}
+                  name={"caseListOrDetail"}
+                  id={"caseListOrDetail-casedetail"}
+                  defaultChecked={fields?.caseListOrDetail.value === "casedetail"}
+                  value={"casedetail"}
+                  onChange={() => handleFormChange("caseListOrDetail", "casedetail")}
+                  label={"Case details page"}
                 />
               </MultiChoice>
             </FormGroup>
-            <ConditionalRender isRendered={foundIssue}>
-              <FormGroup id="caseListOrDetail">
-                <Heading as="h3" size="SMALL">
-                  {"Which page were you finding an issue with?"}
-                </Heading>
-                <Heading as="h5" size="SMALL">
-                  {"Select one of the below option."}
-                </Heading>
-                <MultiChoice
-                  label={""}
-                  meta={{
-                    error: "Select one of the below options",
-                    touched: fields?.caseListOrDetail.hasError
-                  }}
-                >
-                  <RadioButton
-                    name={"caseListOrDetail"}
-                    id={"caseListOrDetail-caselist"}
-                    defaultChecked={fields?.caseListOrDetail.value === "caselist"}
-                    value={"caselist"}
-                    label={"Case list page"}
-                  />
-                  <RadioButton
-                    name={"caseListOrDetail"}
-                    id={"caseListOrDetail-casedetail"}
-                    defaultChecked={fields?.caseListOrDetail.value === "casedetail"}
-                    value={"casedetail"}
-                    label={"Case details page"}
-                  />
-                </MultiChoice>
-              </FormGroup>
-            </ConditionalRender>
-
             <FormGroup id="otherFeedback">
               <Heading as="h3" size="SMALL">
                 {"Could you explain in detail what problem you have experienced?"}
               </Heading>
               <TextArea
                 input={{
-                  name: "otherFeedback",
-                  defaultValue: fields?.otherFeedback.value,
+                  name: "feedback",
+                  defaultValue: fields?.feedback.value ?? undefined,
                   rows: 5,
                   maxLength: MAX_FEEDBACK_LENGTH,
-                  onInput: handleFeedbackOnChange
+                  onChange: (e) => handleFormChange("feedback", e.currentTarget.value)
                 }}
                 meta={{
                   error: "Input message into the text box",
-                  touched: fields?.otherFeedback.hasError
+                  touched: fields?.feedback.hasError
                 }}
                 hint="Tell us why you have made this selection."
               >
                 {""}
               </TextArea>
 
-              <HintText>{`You have ${remainingFeedbackLength} characters remaining`}</HintText>
+              <HintText>{`You have ${getRemainingLength()} characters remaining`}</HintText>
             </FormGroup>
+          </ConditionalRender>
+          <ConditionalRender isRendered={formState.issueOrPreference === "preference"}>
+            <FormGroup id="versionPreferenceFeedback">
+              <Heading as="h3" size="SMALL">
+                {
+                  "Could you please explain why you prefer using the old version of Bichard over the new version Bichard?"
+                }
+              </Heading>
+              <TextArea
+                input={{
+                  name: "feedback",
+                  defaultValue: fields?.feedback.value ?? undefined,
+                  rows: 5,
+                  maxLength: MAX_FEEDBACK_LENGTH,
+                  onChange: (e) => handleFormChange("feedback", e.currentTarget.value)
+                }}
+                meta={{
+                  error: "Input message into the text box",
+                  touched: fields?.feedback.hasError
+                }}
+                hint="Tell us why you have made this selection."
+              >
+                {""}
+              </TextArea>
+
+              <HintText>{`You have ${getRemainingLength()} characters remaining`}</HintText>
+            </FormGroup>
+          </ConditionalRender>
+          <ConditionalRender isRendered={formState.issueOrPreference === "other"}>
+            <FormGroup id="otherReasonFeedback">
+              <Heading as="h3" size="SMALL">
+                {"Is there another reason why you are switching version of Bichard?"}
+              </Heading>
+              <TextArea
+                input={{
+                  name: "feedback",
+                  defaultValue: fields?.feedback.value ?? undefined,
+                  rows: 5,
+                  maxLength: MAX_FEEDBACK_LENGTH,
+                  onChange: (e) => handleFormChange("feedback", e.currentTarget.value)
+                }}
+                meta={{
+                  error: "Input message into the text box",
+                  touched: fields?.feedback.hasError
+                }}
+                hint="Tell us why you have made this selection."
+              >
+                {""}
+              </TextArea>
+
+              <HintText>{`You have ${getRemainingLength()} characters remaining`}</HintText>
+            </FormGroup>
+          </ConditionalRender>
+
+          <ConditionalRender isRendered={Boolean(formState.issueOrPreference)}>
             <FormGroup>
               <Button type="submit">{"Send feedback and continue"}</Button>
             </FormGroup>
-          </Fieldset>
-        </form>
-      </Layout>
-    </>
+          </ConditionalRender>
+        </Fieldset>
+      </form>
+    </Layout>
   )
 }
 
