@@ -2,7 +2,7 @@ import Note from "services/entities/Note"
 import { DisplayNote } from "types/display/Notes"
 import { userToDisplayPartialUserDto } from "./userDto"
 
-export const noteToDisplayNote = (note: Note): DisplayNote => {
+export const noteToDisplayNoteDto = (note: Note): DisplayNote => {
   const displayNote: DisplayNote = {
     noteText: note.noteText,
     createdAt: note.createdAt.toISOString(),
