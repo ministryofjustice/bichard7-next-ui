@@ -1,7 +1,7 @@
 import Trigger from "services/entities/Trigger"
 import { DisplayTrigger } from "types/display/Triggers"
 
-export const triggerToDisplayTrigger = (trigger: Trigger): DisplayTrigger => {
+export const triggerToDisplayTriggerDto = (trigger: Trigger): DisplayTrigger => {
   const displayTrigger: DisplayTrigger = {
     createdAt: trigger.createdAt.toISOString(),
     description: trigger.description,

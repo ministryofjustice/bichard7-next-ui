@@ -1,7 +1,7 @@
 import CourtCase from "services/entities/CourtCase"
 import { DisplayFullCourtCase, DisplayPartialCourtCase } from "types/display/CourtCases"
-import { noteToDisplayNote } from "./noteDto"
-import { triggerToDisplayTrigger } from "./triggerDto"
+import { noteToDisplayNoteDto } from "./noteDto"
+import { triggerToDisplayTriggerDto } from "./triggerDto"
 
 export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): DisplayPartialCourtCase => {
   const displayPartialCourtCase: DisplayPartialCourtCase = {
@@ -12,11 +12,11 @@ export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): Dis
     errorLockedByUsername: courtCase.errorLockedByUsername,
     errorReport: courtCase.errorReport,
     isUrgent: courtCase.isUrgent,
-    notes: courtCase.notes.map(noteToDisplayNote),
+    notes: courtCase.notes.map(noteToDisplayNoteDto),
     ptiurn: courtCase.ptiurn,
     resolutionTimestamp: courtCase.resolutionTimestamp ? courtCase.resolutionTimestamp.toISOString() : null,
     triggerLockedByUsername: courtCase.triggerLockedByUsername,
-    triggers: courtCase.triggers.map(triggerToDisplayTrigger),
+    triggers: courtCase.triggers.map(triggerToDisplayTriggerDto),
     triggerCount: courtCase.triggerCount,
     defendantName: courtCase.defendantName
   }
