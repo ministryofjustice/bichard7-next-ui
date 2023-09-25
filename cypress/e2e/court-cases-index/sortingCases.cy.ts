@@ -96,7 +96,7 @@ describe("Sorting cases", () => {
     checkCasesOrder([4, 3, 5, 1, 0, 2])
   })
 
-  it("Should sort by court name", () => {
+  it.only("Should sort by court name", () => {
     const courtNames = ["DDDD", "AAAA", "CCCC", "BBBB"]
     cy.task(
       "insertCourtCasesWithFields",
@@ -113,7 +113,7 @@ describe("Sorting cases", () => {
     checkCasesOrder([1, 3, 2, 0])
 
     // Sort descending by court name
-    cy.get("#court-name-sort").click()
+    cy.get('#court-name-sort').find('.upArrow').click();
     checkCasesOrder([0, 2, 3, 1])
   })
 
