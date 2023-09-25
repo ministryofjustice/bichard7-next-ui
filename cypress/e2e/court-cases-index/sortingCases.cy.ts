@@ -155,7 +155,7 @@ describe("Sorting cases", () => {
     loginAndGoToUrl()
 
     // Sort ascending by urgency
-    cy.get("#is-urgent-sort").click()
+    cy.get("#is-urgent-sort").find('.unorderedArrow').click();
     checkCasesOrder([0, 2, 1, 3])
 
     // Sort descending by urgency
