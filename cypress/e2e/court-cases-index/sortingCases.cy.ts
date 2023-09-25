@@ -133,7 +133,7 @@ describe("Sorting cases", () => {
     loginAndGoToUrl()
 
     // Sort ascending by PTIURN
-    cy.get("#ptiurn-sort").click()
+    cy.get('#ptiurn-sort').find('.unorderedArrow').click();
 
     checkPtiurnOrder(ascending)
 
