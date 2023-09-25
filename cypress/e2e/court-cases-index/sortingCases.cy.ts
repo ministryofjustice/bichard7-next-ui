@@ -53,9 +53,7 @@ describe("Sorting cases", () => {
 
     loginAndGoToUrl()
 
-    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".unorderedArrow").should("exist")
-    cy.get("#court-name-sort").click()
-    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').should("exist")
+    cy.get('#court-name-sort').find('.unorderedArrow').click();
     cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".upArrow").should("exist")
 
     cy.get("tr")
