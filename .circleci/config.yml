@@ -154,7 +154,7 @@ jobs:
     steps:
       - setup
       - fetch_images:
-          IMAGES: nodejs-20-2023 
+          IMAGES: nodejs-20-2023
       - build_audit_logging_images
       - start_services:
           SERVICES: activemq localstack db-seed audit-log-api
@@ -247,6 +247,8 @@ jobs:
       - start_bichard7_legacy
       - run_test_chunk:
           NEXTUI: "true"
+      - store_test_results:
+          path: ./cucumber/results
 
 #################################################################################
 
