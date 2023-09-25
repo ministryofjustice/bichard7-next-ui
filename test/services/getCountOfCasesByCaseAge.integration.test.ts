@@ -1,26 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import "reflect-metadata"
-import { DataSource, SelectQueryBuilder } from "typeorm"
+import { subDays } from "date-fns"
 import MockDate from "mockdate"
-import deleteFromEntity from "../utils/deleteFromEntity"
-import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import { isError } from "../../src/types/Result"
+import "reflect-metadata"
+import User from "services/entities/User"
+import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
+import { DataSource, SelectQueryBuilder } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
-import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
-import { subDays } from "date-fns"
-import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import User from "services/entities/User"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
-
-jest.mock(
-  "services/queries/courtCasesByOrganisationUnitQuery",
-  jest.fn(() =>
-    jest.fn((query) => {
-      return query
-    })
-  )
-)
+import { isError } from "../../src/types/Result"
+import deleteFromEntity from "../utils/deleteFromEntity"
+import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 
 jest.setTimeout(100000)
 describe("listCourtCases", () => {
@@ -43,14 +32,6 @@ describe("listCourtCases", () => {
 
   afterEach(() => {
     MockDate.reset()
-  })
-
-  it("Should call cases by visible forces query", async () => {
-    const user = { visibleCourts: [], visibleForces: [orgCode] } as Partial<User> as User
-    await getCountOfCasesByCaseAge(dataSource, user)
-
-    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
-    expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), user)
   })
 
   it("Should filter cases that within a specific date", async () => {
@@ -84,7 +65,7 @@ describe("listCourtCases", () => {
     const result = (await getCountOfCasesByCaseAge(dataSource, {
       visibleCourts: [],
       visibleForces: [orgCode]
-    } as Partial<User> as User)) as KeyValuePair<string, number>
+    } as Partial<User> as User)) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
 
@@ -109,7 +90,27 @@ describe("listCourtCases", () => {
     const result = (await getCountOfCasesByCaseAge(dataSource, {
       visibleCourts: [],
       visibleForces: [orgCode]
-    } as Partial<User> as User)) as KeyValuePair<string, number>
+    } as Partial<User> as User)) as Record<string, number>
+
+    expect(isError(result)).toBeFalsy()
+
+    expect(result.Today).toEqual("2")
+  })
+
+  it("Should ignore cases that are outside of the users organisation", async () => {
+    const dateToday = new Date("2001-09-26")
+    MockDate.set(dateToday)
+
+    await insertCourtCasesWithFields([
+      { courtDate: dateToday, orgForPoliceFilter: orgCode },
+      { courtDate: dateToday, orgForPoliceFilter: orgCode },
+      { courtDate: dateToday, orgForPoliceFilter: "002" }
+    ])
+
+    const result = (await getCountOfCasesByCaseAge(dataSource, {
+      visibleCourts: [],
+      visibleForces: [orgCode]
+    } as Partial<User> as User)) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
 
@@ -121,7 +122,7 @@ describe("listCourtCases", () => {
       const result = (await getCountOfCasesByCaseAge(dataSource, {
         visibleCourts: [],
         visibleForces: [orgCode]
-      } as Partial<User> as User)) as KeyValuePair<string, number>
+      } as Partial<User> as User)) as Record<string, number>
 
       expect(isError(result)).toBeFalsy()
 

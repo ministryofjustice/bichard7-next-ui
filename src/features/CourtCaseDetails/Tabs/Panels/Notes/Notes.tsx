@@ -1,21 +1,21 @@
 import ConditionalRender from "components/ConditionalRender"
 import DateTime from "components/DateTime"
 import NotesFilterOptions from "components/NotesFilterOptions"
-import AddNoteForm from "./AddNoteForm"
 import { Paragraph, Table } from "govuk-react"
 import { useState } from "react"
-import Note from "services/entities/Note"
 import type NotesViewOption from "types/NotesViewOption"
+import { DisplayNote } from "types/display/Notes"
 import { CourtCaseDetailsPanel } from "../../CourtCaseDetailsPanels"
+import AddNoteForm from "./AddNoteForm"
 
 interface NotesProps {
-  notes: Note[]
+  notes: DisplayNote[]
   lockedByAnotherUser: boolean
 }
 
-const filterNotes = (notes: Note[], viewOption?: NotesViewOption) => {
+const filterNotes = (notes: DisplayNote[], viewOption?: NotesViewOption) => {
   let noNoteText = "notes"
-  let filteredNotes: Note[] = []
+  let filteredNotes: DisplayNote[] = []
   switch (viewOption) {
     case "View system notes":
       noNoteText = "system notes"

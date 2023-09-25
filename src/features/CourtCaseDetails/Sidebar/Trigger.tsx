@@ -1,17 +1,17 @@
-import { GridCol, GridRow, Heading, Paragraph } from "govuk-react"
-import { createUseStyles } from "react-jss"
-import Checkbox from "components/Checkbox"
 import ActionLink from "components/ActionLink"
-import PreviewButton from "components/PreviewButton"
-import { default as TriggerEntity } from "services/entities/Trigger"
-import { ChangeEvent, SyntheticEvent, useState } from "react"
+import Checkbox from "components/Checkbox"
 import ConditionalRender from "components/ConditionalRender"
 import { Preview } from "components/Preview"
-import getTriggerDefinition from "utils/getTriggerDefinition"
+import PreviewButton from "components/PreviewButton"
+import { GridCol, GridRow, Heading, Paragraph } from "govuk-react"
+import { ChangeEvent, SyntheticEvent, useState } from "react"
+import { createUseStyles } from "react-jss"
 import styled from "styled-components"
+import { DisplayTrigger } from "types/display/Triggers"
+import getTriggerDefinition from "utils/getTriggerDefinition"
 
 interface Props {
-  trigger: TriggerEntity
+  trigger: DisplayTrigger
   onClick: (index: number | undefined) => void
   selectedTriggerIds: number[]
   setTriggerSelection: (event: ChangeEvent<HTMLInputElement>) => void

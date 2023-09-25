@@ -1,15 +1,15 @@
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import ConditionalRender from "components/ConditionalRender"
 import { Tabs } from "govuk-react"
 import { useState } from "react"
-import styled from "styled-components"
 import { createUseStyles } from "react-jss"
-import CourtCase from "../../../services/entities/CourtCase"
-import TriggersList from "./TriggersList"
-import ExceptionsList from "./Exceptions"
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
-import type NavigationHandler from "types/NavigationHandler"
-import ConditionalRender from "components/ConditionalRender"
-import User from "services/entities/User"
+import styled from "styled-components"
 import Feature from "types/Feature"
+import type NavigationHandler from "types/NavigationHandler"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
+import ExceptionsList from "./Exceptions"
+import TriggersList from "./TriggersList"
 
 const useStyles = createUseStyles({
   sideBar: {
@@ -25,9 +25,9 @@ const useStyles = createUseStyles({
 })
 
 interface Props {
-  courtCase: CourtCase
+  courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
-  user: User
+  user: DisplayFullUser
   onNavigate: NavigationHandler
 }
 
