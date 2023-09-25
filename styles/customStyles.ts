@@ -117,6 +117,9 @@ export const useCustomStyles = createUseStyles({
     color: blue,
     display: "flex",
     alignItems: "center",
+    "&:focus": {
+      maxWidth: "fit-content"
+    },
     "&:active": {
       color: blue
     },
