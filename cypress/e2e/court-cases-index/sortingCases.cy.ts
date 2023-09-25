@@ -96,7 +96,7 @@ describe("Sorting cases", () => {
     checkCasesOrder([4, 3, 5, 1, 0, 2])
   })
 
-  it.only("Should sort by court name", () => {
+  it("Should sort by court name", () => {
     const courtNames = ["DDDD", "AAAA", "CCCC", "BBBB"]
     cy.task(
       "insertCourtCasesWithFields",
@@ -134,6 +134,7 @@ describe("Sorting cases", () => {
 
     // Sort ascending by PTIURN
     cy.get("#ptiurn-sort").click()
+
     checkPtiurnOrder(ascending)
 
     // Sort descending by PTIURN
