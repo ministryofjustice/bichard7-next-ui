@@ -163,7 +163,7 @@ describe("Sorting cases", () => {
     checkCasesOrder([1, 3, 0, 2])
   })
 
-  it.only("Should sort by who has a case locked", () => {
+  it("Should sort by who has a case locked", () => {
     const usernames = ["alan.smith", "sarah.mcneil", "charlie.rhys", "bea.goddard"]
     cy.task(
       "insertCourtCasesWithFields",
