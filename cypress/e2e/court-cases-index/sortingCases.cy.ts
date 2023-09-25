@@ -163,7 +163,7 @@ describe("Sorting cases", () => {
     checkCasesOrder([1, 3, 0, 2])
   })
 
-  it.only("Should sort by who has a case locked", () => {
+  it("Should sort by who has a case locked", () => {
     const usernames = ["alan.smith", "sarah.mcneil", "charlie.rhys", "bea.goddard"]
     cy.task(
       "insertCourtCasesWithFields",
@@ -182,7 +182,7 @@ describe("Sorting cases", () => {
     // Sort descending by lock holder
     cy.get("#locked-by-sort").find('.downArrow').click()
     checkCasesOrder([1, 2, 3, 0])
-   )}
+  })
 
   it("can sort cases by who has locked it", () => {
     const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long.name"]
@@ -205,7 +205,7 @@ describe("Sorting cases", () => {
     checkCasesOrder([3, 0, 1, 2])
 
     // Sort descending
-    cy.get("#locked-by-sort").click()
+    cy.get("#locked-by-sort").find(".upArrow").click()
     checkCasesOrder([2, 1, 0, 3])
   })
 
@@ -230,7 +230,7 @@ describe("Sorting cases", () => {
         cy.wrap(row).contains(`Urgent`).should("exist")
       })
 
-    cy.get("#is-urgent-sort").click()
+    cy.get("#is-urgent-sort").find(".upArrow").click()
     cy.get(".cases-per-page").first().select("25")
     cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 50 cases")
     cy.get("tr")
