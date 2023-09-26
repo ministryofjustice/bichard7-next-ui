@@ -85,20 +85,6 @@ commands:
             docker compose --project-name bichard -f environment/docker-compose.yml \
             up -d <<parameters.SERVICES>> <<parameters.FLAGS>> --wait <<parameters.SERVICES>>
 
-  start_conductor_worker:
-    steps:
-      - node/install-packages:
-          app-dir: ~/bichard7-next-core
-      - run:
-          name: Build core
-          working_directory: ~/bichard7-next-core
-          command: npm run build
-      - run:
-          name: Start conductor worker
-          working_directory: ~/bichard7-next-core
-          command: npm run worker -w packages/conductor
-          background: true
-
 #################################################################################
 
 jobs:
@@ -215,16 +201,14 @@ jobs:
           name: Retrying installing Cypress
           command: ./.circleci/scripts/install-cypress.sh
       - fetch_images:
-          IMAGES: user-service nginx-auth-proxy conductor
+          IMAGES: user-service nginx-auth-proxy
       - start_services:
           SERVICES: >-
             ui user-service nginx-auth-proxy
             postgres db-migrate db-seed
             audit-log-api
             localstack
-            event-handler message-forwarder conductor
           FLAGS: --no-deps
-      - start_conductor_worker
       - run:
           name: Install Cypress Reporter
           command: npm install --save-dev cypress-circleci-reporter mocha
