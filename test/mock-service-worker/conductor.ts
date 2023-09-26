@@ -2,6 +2,7 @@ import { rest } from "msw"
 
 import { CONDUCTOR_API_URL } from "../../src/config"
 
+// MSW docs: mswjs.io/docs/
 export const conductor = [
   rest.get(`${CONDUCTOR_API_URL}/api/workflow/bichard_process/correlated/*`, (_req, res, ctx) => {
     return res(
