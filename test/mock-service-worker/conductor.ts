@@ -9,5 +9,8 @@ export const conductor = [
         }
       ])
     )
-  })
+  }),
+  rest.get("http://localhost:5002/api/queue/update/*/wait_for_resubmission/COMPLETED", (_req, res, ctx) =>
+    res(ctx.status(200))
+  )
 ]
