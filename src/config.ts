@@ -12,4 +12,4 @@ export const CONDUCTOR_API_URL = process.env.CONDUCTOR_API_URL ?? "http://localh
 export const CONDUCTOR_API_USER = process.env.CONDUCTOR_API_USER ?? "bichard"
 export const CONDUCTOR_API_PASSWORD = process.env.CONDUCTOR_API_PASSWORD ?? "password"
 
-export const NEXT_PUBLIC_API_MOCKING = process.env.NEXT_PUBLIC_API_MOCKING ?? "disabled"
+export const MSW_MOCKING = process.env.MSW_MOCKING ?? "disabled"

@@ -1,9 +1,9 @@
-import { NEXT_PUBLIC_API_MOCKING } from "config"
+import { MSW_MOCKING } from "config"
 import type { AppProps } from "next/app"
 import { useEffect } from "react"
 import "../../styles/globals.scss"
 
-if (NEXT_PUBLIC_API_MOCKING === "enabled") {
+if (MSW_MOCKING === "enabled") {
   require("../../test/mock-service-worker")
 }
 
