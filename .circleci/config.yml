@@ -29,7 +29,6 @@ commands:
           name: "Fetch images: <<parameters.IMAGES>>"
           command: bash ./scripts/fetch-docker-images.sh <<parameters.IMAGES>>
 
-
   build_message_forwarder:
     steps:
       - run:
@@ -106,7 +105,7 @@ jobs:
   lint:
     executor:
       name: node/default
-      tag: '20.6.1'
+      tag: "20.6.1"
     steps:
       - checkout
       - node/install-packages:
@@ -118,7 +117,7 @@ jobs:
   unit_test:
     executor:
       name: node/default
-      tag: '20.6.1'
+      tag: "20.6.1"
     steps:
       - checkout
       - node/install-packages:
@@ -130,7 +129,7 @@ jobs:
   cypress_component_test:
     executor:
       name: node/default
-      tag: '20.6.1'
+      tag: "20.6.1"
     steps:
       - checkout
       - node/install-packages:
@@ -168,7 +167,7 @@ jobs:
     steps:
       - setup
       - fetch_images:
-          IMAGES: nodejs-20-2023 
+          IMAGES: nodejs-20-2023
       - build_audit_logging_images
       - start_services:
           SERVICES: activemq localstack db-seed audit-log-api
@@ -235,6 +234,7 @@ jobs:
             TEST_FILES="$(circleci tests glob "cypress/e2e/**/*.cy.ts" | circleci tests split --split-by=timings)"
             npx cypress run --config baseUrl='https://localhost:4443' --spec ${TEST_FILES//$'\n'/','} --reporter cypress-circleci-reporter --reporter-options "resultsDir=./cypress/results"
           environment:
+            NEXT_PUBLIC_API_MOCKING: enabled
             UI_IS_HTTPS: true
             TZ: "Europe/London"
       - store_test_results:
