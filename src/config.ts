@@ -11,3 +11,5 @@ export const OUT_OF_AREA_TRIGGER_CODE = TriggerCode.TRPR0027
 export const CONDUCTOR_API_URL = process.env.CONDUCTOR_API_URL ?? "http://localhost:5002"
 export const CONDUCTOR_API_USER = process.env.CONDUCTOR_API_USER ?? "bichard"
 export const CONDUCTOR_API_PASSWORD = process.env.CONDUCTOR_API_PASSWORD ?? "password"
+
+export const NEXT_PUBLIC_API_MOCKING = process.env.NEXT_PUBLIC_API_MOCKING ?? "disabled"

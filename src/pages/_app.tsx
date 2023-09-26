@@ -1,6 +1,11 @@
+import { NEXT_PUBLIC_API_MOCKING } from "config"
 import type { AppProps } from "next/app"
 import { useEffect } from "react"
 import "../../styles/globals.scss"
+
+if (NEXT_PUBLIC_API_MOCKING === "enabled") {
+  require("../../test/mock-service-worker")
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {

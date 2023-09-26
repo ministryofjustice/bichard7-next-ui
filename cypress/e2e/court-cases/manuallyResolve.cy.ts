@@ -22,17 +22,16 @@ describe("Manually resolve a case", () => {
     cy.task("clearCourtCases")
   })
 
-  it.only("Should be able to resolve a case which is visible and locked by the user", () => {
-    cy.task("startIncomingMessageWorkflow")
-    // cy.task("insertCourtCasesWithFields", [
-    //   {
-    //     orgForPoliceFilter: "01",
-    //     errorCount: 1,
-    //     triggerCount: 0,
-    //     errorLockedByUsername: "Bichard01",
-    //     triggerLockedByUsername: "Bichard01"
-    //   }
-    // ])
+  it("Should be able to resolve a case which is visible and locked by the user", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        errorCount: 1,
+        triggerCount: 0,
+        errorLockedByUsername: "Bichard01",
+        triggerLockedByUsername: "Bichard01"
+      }
+    ])
 
     cy.login("bichard01@example.com", "password")
 
