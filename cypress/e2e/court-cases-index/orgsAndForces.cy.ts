@@ -10,6 +10,10 @@ describe("How orgs and forces are presented", () => {
     defaultSetup()
   })
 
+  beforeEach(() => {
+    cy.task("clearCourtCases")
+  })
+
   it("Should display a case for the user's org", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     loginAndGoToUrl()
@@ -69,7 +73,8 @@ describe("How orgs and forces are presented", () => {
       { orgForPoliceFilter: "01" },
       { orgForPoliceFilter: "011" },
       { orgForPoliceFilter: "012A" },
-      { orgForPoliceFilter: "013A1" }
+      { orgForPoliceFilter: "013A1" },
+      { orgForPoliceFilter: "014A2" }
     ])
 
     loginAndGoToUrl()
