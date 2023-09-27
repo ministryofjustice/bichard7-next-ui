@@ -219,13 +219,13 @@ jobs:
       - run:
           name: Run fake conductor service
           command: node .circleci/fakes/conductor
+          background: true
       - run:
           name: Run UI tests
           command: |
             TEST_FILES="$(circleci tests glob "cypress/e2e/**/*.cy.ts" | circleci tests split --split-by=timings)"
             npx cypress run --config baseUrl='https://localhost:4443' --spec ${TEST_FILES//$'\n'/','} --reporter cypress-circleci-reporter --reporter-options "resultsDir=./cypress/results"
           environment:
-            MSW_MOCKING: enabled
             UI_IS_HTTPS: true
             TZ: "Europe/London"
       - store_test_results:
