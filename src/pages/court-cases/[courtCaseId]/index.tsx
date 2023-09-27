@@ -185,7 +185,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         user={user}
         bichardSwitch={{ display: true, href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}` }}
       >
-        <ConditionalDisplay isDisplayed={courtCase.phase != 1}>
+        <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
           <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
             <div className="govuk-tag">{"Attention:"}</div>
             <div className={`${classes.attentionBanner} govuk-tag`}>
