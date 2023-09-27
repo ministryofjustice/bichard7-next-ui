@@ -206,7 +206,7 @@ jobs:
       - fetch_images:
           IMAGES: user-service nginx-auth-proxy
       - start_services:
-          ARGS: MSW_MOCKING=enabled 
+          ARGS: CONDUCTOR_API_URL=http://host.docker.internal:5002
           SERVICES: >-
             ui user-service nginx-auth-proxy
             postgres db-migrate db-seed
@@ -216,6 +216,9 @@ jobs:
       - run:
           name: Install Cypress Reporter
           command: npm install --save-dev cypress-circleci-reporter mocha
+      - run:
+          name: Run fake conductor service
+          command: node .circleci/fakes/conductor
       - run:
           name: Run UI tests
           command: |
