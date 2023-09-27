@@ -1,9 +1,9 @@
-import { rest } from "msw"
+const { rest } = require("msw")
 
-import { CONDUCTOR_API_URL } from "../../src/config"
+const { CONDUCTOR_API_URL } = process.env.CONDUCTOR_API_URL || "http://localhost:5002"
 
 // MSW docs: mswjs.io/docs/
-export const conductor = [
+module.exports = [
   rest.get(`${CONDUCTOR_API_URL}/api/workflow/bichard_process/correlated/*`, (_req, res, ctx) => {
     return res(
       ctx.json([
