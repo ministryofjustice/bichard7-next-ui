@@ -208,7 +208,7 @@ describe("Case details", () => {
     }
   )
 
-  it.only("Should not allow reallocating phase 2 cases", () => {
+  it("Should not allow reallocating phase 2 cases", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "01", phase: 1 },
       { orgForPoliceFilter: "01", phase: 2 }
