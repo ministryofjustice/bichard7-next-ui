@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
+import { createUseStyles } from "react-jss"
 import addNote from "services/addNote"
 import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
@@ -154,6 +156,18 @@ interface Props {
   canReallocate: boolean
 }
 
+const useStyles = createUseStyles({
+  attentionContainer: {
+    marginTop: "0.3rem",
+    marginRight: "100rem",
+    width: "100%"
+  },
+  attentionBanner: {
+    textTransform: "none",
+    fontWeight: 300
+  }
+})
+
 const CourtCaseDetailsPage: NextPage<Props> = ({
   courtCase,
   aho,
@@ -161,6 +175,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   errorLockedByAnotherUser,
   canReallocate
 }: Props) => {
+  const classes = useStyles()
   return (
     <>
       <Head>
@@ -171,6 +186,16 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         user={user}
         bichardSwitch={{ display: true, href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}` }}
       >
+        <ConditionalDisplay isDisplayed={courtCase.phase != 1}>
+          <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
+            <div className="govuk-tag">{"Attention:"}</div>
+            <div className={`${classes.attentionBanner} govuk-tag`}>
+              {
+                "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
+              }
+            </div>
+          </div>
+        </ConditionalDisplay>
         <CourtCaseDetails
           courtCase={courtCase}
           aho={aho}
