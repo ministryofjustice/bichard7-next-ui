@@ -37,7 +37,8 @@ export const courtCaseToDisplayFullCourtCaseDto = (courtCase: CourtCase): Displa
     ...courtCaseToDisplayPartialCourtCaseDto(courtCase),
     orgForPoliceFilter: courtCase.orgForPoliceFilter,
     courtCode: courtCase.courtCode,
-    courtReference: courtCase.courtReference
+    courtReference: courtCase.courtReference,
+    phase: courtCase.phase
   }
 
   return courtCaseInfo

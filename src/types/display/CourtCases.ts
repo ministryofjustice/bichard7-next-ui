@@ -36,4 +36,5 @@ export type DisplayFullCourtCase = Pick<CourtCase, FieldsForDisplayFullCourtCase
   notes: DisplayNote[]
   triggers: DisplayTrigger[]
   resolutionTimestamp: string | null
+  phase?: number | null
 }
