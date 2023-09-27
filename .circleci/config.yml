@@ -206,7 +206,7 @@ jobs:
       - fetch_images:
           IMAGES: user-service nginx-auth-proxy
       - start_services:
-          ARGS: CONDUCTOR_API_URL=http://host.docker.internal:5002
+          ARGS: CONDUCTOR_API_URL=http://172.17.0.1:5002
           SERVICES: >-
             ui user-service nginx-auth-proxy
             postgres db-migrate db-seed

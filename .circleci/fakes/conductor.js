@@ -1,5 +1,5 @@
 require("http")
-  .createServer(async (req, res) => {
+  .createServer(async (_, res) => {
     const body = JSON.stringify([
       {
         workflowId: "test workflow ID"
