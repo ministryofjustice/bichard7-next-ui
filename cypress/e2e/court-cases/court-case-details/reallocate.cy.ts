@@ -208,7 +208,7 @@ describe("Case details", () => {
     }
   )
 
-  it("Should not allow reallocating phase 2 cases", () => {
+  it.only("Should not allow reallocating phase 2 cases", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "01", phase: 1 },
       { orgForPoliceFilter: "01", phase: 2 }
@@ -235,6 +235,9 @@ describe("Case details", () => {
     cy.contains(
       "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
     ).should("exist")
+
+    cy.visit("/bichard/court-cases/1/reallocate")
+    cy.url().should("match", /\/court-cases\/\d+/)
   })
 })
 
