@@ -159,7 +159,6 @@ interface Props {
 const useStyles = createUseStyles({
   attentionContainer: {
     marginTop: "0.3rem",
-    marginRight: "100rem",
     width: "100%"
   },
   attentionBanner: {
