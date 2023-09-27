@@ -3,6 +3,7 @@ import type { AppProps } from "next/app"
 import { useEffect } from "react"
 import "../../styles/globals.scss"
 
+console.log("Mock service worker is", MSW_MOCKING)
 if (MSW_MOCKING === "enabled") {
   require("../../test/mock-service-worker")
 }
