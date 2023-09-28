@@ -18,12 +18,12 @@ describe("When I can see triggers on cases", () => {
 
   beforeEach(() => {
     cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "011111" }])
   })
 
   it("Should display individual triggers without a count", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     cy.task("insertTriggers", { caseId: 0, triggers: makeTriggers() })
-    loginAndGoToUrl()
+    loginAndGoToUrl("triggerhandler@example.com")
 
     cy.get(".trigger-description")
       .contains(/\(\d+\)/) // any number between parentheses
@@ -31,17 +31,15 @@ describe("When I can see triggers on cases", () => {
   })
 
   it("Should group duplicate triggers", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     cy.task("insertTriggers", { caseId: 0, triggers: makeTriggers(1) })
-    loginAndGoToUrl()
+    loginAndGoToUrl("triggerhandler@example.com")
 
     cy.get("table").find(".trigger-description").should("have.length", 1)
   })
 
   it("Should include a count for grouped triggers", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     cy.task("insertTriggers", { caseId: 0, triggers: makeTriggers(2) })
-    loginAndGoToUrl()
+    loginAndGoToUrl("triggerhandler@example.com")
 
     cy.get(".trigger-description")
       .contains(/\(\d+\)/) // any number between parentheses
@@ -49,14 +47,13 @@ describe("When I can see triggers on cases", () => {
   })
 
   it("Should display individual and grouped triggers together", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers = [...makeTriggers(), ...makeTriggers(1)].map((t, i) => {
       t.triggerId = i
       return t
     })
 
     cy.task("insertTriggers", { caseId: 0, triggers })
-    loginAndGoToUrl()
+    loginAndGoToUrl("triggerhandler@example.com")
 
     cy.get(".trigger-description:contains('TRPR0001')")
       .contains(/\(\d+\)/) // any number between parentheses
@@ -68,10 +65,9 @@ describe("When I can see triggers on cases", () => {
   })
 
   it("Should display the correct count for grouped triggers", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers = makeTriggers(1, 12)
     cy.task("insertTriggers", { caseId: 0, triggers })
-    loginAndGoToUrl()
+    loginAndGoToUrl("triggerhandler@example.com")
 
     cy.get(".trigger-description:contains('TRPR0001')")
       .contains(/\(\d+\)/) // any number between parentheses

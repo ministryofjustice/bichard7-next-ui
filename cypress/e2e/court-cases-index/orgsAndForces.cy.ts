@@ -73,8 +73,7 @@ describe("How orgs and forces are presented", () => {
       { orgForPoliceFilter: "01" },
       { orgForPoliceFilter: "011" },
       { orgForPoliceFilter: "012A" },
-      { orgForPoliceFilter: "013A1" },
-      { orgForPoliceFilter: "014A2" }
+      { orgForPoliceFilter: "013A1" }
     ])
 
     loginAndGoToUrl()
