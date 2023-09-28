@@ -2,10 +2,6 @@ import type { AppProps } from "next/app"
 import { useEffect } from "react"
 import "../../styles/globals.scss"
 
-// if (MSW_MOCKING === "enabled") {
-//   require("../../test/mock-service-worker")
-// }
-
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     document.body.className = document.body.className ? `${document.body.className} js-enabled` : "js-enabled"

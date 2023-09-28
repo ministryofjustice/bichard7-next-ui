@@ -1,4 +1,5 @@
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import { USE_CONDUCTOR } from "config"
 import { DataSource, EntityManager, UpdateResult } from "typeorm"
 import { ManualResolution } from "types/ManualResolution"
 import { isError } from "types/Result"
@@ -52,15 +53,18 @@ const resolveCourtCase = async (
       throw addNoteResult
     }
 
-    // push audit log events
-    const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
-    if (isError(storeAuditLogResponse)) {
-      throw storeAuditLogResponse
+    if (!USE_CONDUCTOR) {
+      // push audit log events
+      const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
+      if (isError(storeAuditLogResponse)) {
+        throw storeAuditLogResponse
+      }
     }
 
     // complete human task step in conductor workflow
     const continueConductorWorkflowResult = await continueConductorWorkflow(courtCase, {
-      status: "manually_resolved"
+      status: "manually_resolved",
+      auditLogEvents: events
     })
     if (isError(continueConductorWorkflowResult)) {
       throw continueConductorWorkflowResult
