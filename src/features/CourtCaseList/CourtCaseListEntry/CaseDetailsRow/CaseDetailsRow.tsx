@@ -1,21 +1,21 @@
 import ConditionalRender from "components/ConditionalRender"
-import { Link, Table } from "govuk-react"
-import { createUseStyles } from "react-jss"
-import Image from "next/image"
-import { useRouter } from "next/router"
-import ResolvedTag from "features/CourtCaseList/tags/ResolvedTag"
 import DateTime from "components/DateTime"
-import { displayedDateFormat } from "utils/formattedDate"
-import UrgentTag from "features/CourtCaseList/tags/UrgentTag"
-import { useState } from "react"
 import {
   filterUserNotes,
   getMostRecentNote
 } from "features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/CourtCaseListEntryHelperFunction"
-import Note from "services/entities/Note"
-import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
-import { useCustomStyles } from "../../../../../styles/customStyles"
+import ResolvedTag from "features/CourtCaseList/tags/ResolvedTag"
+import UrgentTag from "features/CourtCaseList/tags/UrgentTag"
+import { Link, Table } from "govuk-react"
+import Image from "next/image"
+import { useRouter } from "next/router"
+import { useState } from "react"
+import { createUseStyles } from "react-jss"
+import { DisplayNote } from "types/display/Notes"
+import { displayedDateFormat } from "utils/formattedDate"
 import { LOCKED_ICON_URL } from "utils/icons"
+import { useCustomStyles } from "../../../../../styles/customStyles"
+import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
 
 interface CaseDetailsRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
@@ -31,7 +31,7 @@ interface CaseDetailsRowProps {
   isCaseUnlocked: boolean
   isResolved: boolean
   isUrgent: boolean
-  notes: Note[]
+  notes: DisplayNote[]
   ptiurn: string
   rowClassName: string
   unlockPath: string

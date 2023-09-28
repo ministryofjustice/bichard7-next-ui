@@ -53,9 +53,7 @@ describe("Sorting cases", () => {
 
     loginAndGoToUrl()
 
-    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".unorderedArrow").should("exist")
-    cy.get("#court-name-sort").click()
-    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').should("exist")
+    cy.get("#court-name-sort").find(".unorderedArrow").click()
     cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".upArrow").should("exist")
 
     cy.get("tr")
@@ -115,8 +113,11 @@ describe("Sorting cases", () => {
     checkCasesOrder([1, 3, 2, 0])
 
     // Sort descending by court name
-    cy.get("#court-name-sort").click()
+    cy.get("#court-name-sort").find(".upArrow").click()
     checkCasesOrder([0, 2, 3, 1])
+
+    cy.get("#court-name-sort").find(".downArrow").click()
+    checkCasesOrder([1, 3, 2, 0])
   })
 
   it("Should sort by PTIURN", () => {
@@ -135,7 +136,8 @@ describe("Sorting cases", () => {
     loginAndGoToUrl()
 
     // Sort ascending by PTIURN
-    cy.get("#ptiurn-sort").click()
+    cy.get("#ptiurn-sort").find(".unorderedArrow").click()
+
     checkPtiurnOrder(ascending)
 
     // Sort descending by PTIURN
@@ -156,7 +158,7 @@ describe("Sorting cases", () => {
     loginAndGoToUrl()
 
     // Sort ascending by urgency
-    cy.get("#is-urgent-sort").click()
+    cy.get("#is-urgent-sort").find(".unorderedArrow").click()
     checkCasesOrder([0, 2, 1, 3])
 
     // Sort descending by urgency
@@ -181,7 +183,7 @@ describe("Sorting cases", () => {
     checkCasesOrder([0, 3, 2, 1])
 
     // Sort descending by lock holder
-    cy.get("#locked-by-sort").click()
+    cy.get("#locked-by-sort").find(".upArrow").click()
     checkCasesOrder([1, 2, 3, 0])
   })
 
@@ -206,7 +208,7 @@ describe("Sorting cases", () => {
     checkCasesOrder([3, 0, 1, 2])
 
     // Sort descending
-    cy.get("#locked-by-sort").click()
+    cy.get("#locked-by-sort").find(".upArrow").click()
     checkCasesOrder([2, 1, 0, 3])
   })
 
@@ -231,7 +233,7 @@ describe("Sorting cases", () => {
         cy.wrap(row).contains(`Urgent`).should("exist")
       })
 
-    cy.get("#is-urgent-sort").click()
+    cy.get("#is-urgent-sort").find(".upArrow").click()
     cy.get(".cases-per-page").first().select("25")
     cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 50 cases")
     cy.get("tr")

@@ -1,13 +1,13 @@
-import { truncate } from "lodash"
-import ConditionalRender from "../../../../components/ConditionalRender"
-import { Dispatch, SetStateAction } from "react"
-import { validateMostRecentNoteDate } from "./CourtCaseListEntryHelperFunction"
-import type Note from "../../../../services/entities/Note"
-import PreviewButton from "../../../../components/PreviewButton"
 import { Preview } from "components/Preview"
+import { truncate } from "lodash"
+import { Dispatch, SetStateAction } from "react"
+import { DisplayNote } from "types/display/Notes"
+import ConditionalRender from "../../../../components/ConditionalRender"
+import PreviewButton from "../../../../components/PreviewButton"
+import { validateMostRecentNoteDate } from "./CourtCaseListEntryHelperFunction"
 
 interface NotePreviewProps {
-  latestNote: Note
+  latestNote: DisplayNote
   numberOfNotes: number
 }
 

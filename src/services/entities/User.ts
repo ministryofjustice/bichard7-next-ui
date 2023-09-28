@@ -2,14 +2,13 @@ import { Column, Entity, JoinColumn, OneToMany, PrimaryColumn, Relation } from "
 import Feature from "types/Feature"
 import { UserGroup } from "../../types/UserGroup"
 import { userAccess } from "../../utils/userPermissions"
-import BaseEntity from "./BaseEntity"
 import delimitedString from "./transformers/delimitedString"
 import jsonTransformer from "./transformers/jsonTransformer"
 // eslint-disable-next-line import/no-cycle
 import Note from "./Note"
 
 @Entity({ name: "users" })
-export default class User extends BaseEntity {
+export default class User {
   @PrimaryColumn()
   id!: number
 

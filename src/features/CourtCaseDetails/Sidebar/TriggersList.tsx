@@ -1,21 +1,21 @@
-import { Button, GridCol, GridRow } from "govuk-react"
-import CourtCase from "../../../services/entities/CourtCase"
-import { createUseStyles } from "react-jss"
 import ActionLink from "components/ActionLink"
-import { ChangeEvent, SyntheticEvent, useState } from "react"
-import type NavigationHandler from "types/NavigationHandler"
-import Trigger from "./Trigger"
-import { sortBy } from "lodash"
 import ConditionalRender from "components/ConditionalRender"
-import LockedTag from "../../../components/LockedTag"
+import { Button, GridCol, GridRow } from "govuk-react"
+import { sortBy } from "lodash"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
+import { ChangeEvent, SyntheticEvent, useState } from "react"
+import { createUseStyles } from "react-jss"
+import type NavigationHandler from "types/NavigationHandler"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import { triggersAreLockedByAnotherUser } from "utils/caseLocks"
-import User from "services/entities/User"
+import LockedTag from "../../../components/LockedTag"
+import Trigger from "./Trigger"
 
 interface Props {
-  courtCase: CourtCase
-  user: User
+  courtCase: DisplayFullCourtCase
+  user: DisplayFullUser
   onNavigate: NavigationHandler
 }
 

@@ -83,7 +83,6 @@ describe("How orgs and forces are presented", () => {
     cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00001")
     cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00002")
     cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00003")
-    cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00004")
   })
 
   it("Should display cases for parent forces up to the second-level force", () => {

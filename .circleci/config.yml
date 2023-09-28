@@ -258,6 +258,8 @@ jobs:
       - start_bichard7_legacy
       - run_test_chunk:
           NEXTUI: "true"
+      - store_test_results:
+          path: ./cucumber/results
 
 #################################################################################
 
