@@ -51,13 +51,13 @@ const listCourtCases = async (
     .getRepository(Note)
     .createQueryBuilder("notes")
     .select("COUNT(note_id)")
-    .where("error_id = courtCase.errorId AND user_id != 'system'")
+    .where("error_id = courtCase.errorId AND user_id NOT ILIKE 'system'")
 
   const mostRecentNoteTextSubquery = connection
     .getRepository(Note)
     .createQueryBuilder("notes")
     .select("note_text")
-    .where("error_id = courtCase.errorId AND user_id != 'system'")
+    .where("error_id = courtCase.errorId AND user_id NOT ILIKE 'system'")
     .orderBy("create_ts", "DESC")
     .limit(1)
 
@@ -65,7 +65,7 @@ const listCourtCases = async (
     .getRepository(Note)
     .createQueryBuilder("notes")
     .select("create_ts")
-    .where("error_id = courtCase.errorId AND user_id != 'system'")
+    .where("error_id = courtCase.errorId AND user_id NOT ILIKE 'system'")
     .orderBy("create_ts", "DESC")
     .limit(1)
 
@@ -133,9 +133,7 @@ const listCourtCases = async (
   const sortOrder = order === "desc" ? "DESC" : "ASC"
 
   // Primary sorts
-  if (orderBy === "reason") {
-    query.orderBy("courtCase.errorReason", sortOrder).addOrderBy("courtCase.triggerReason", sortOrder)
-  } else if (orderBy === "lockedBy") {
+  if (orderBy === "lockedBy") {
     query
       .orderBy("courtCase.errorLockedByUsername", sortOrder)
       .addOrderBy("courtCase.triggerLockedByUsername", sortOrder)

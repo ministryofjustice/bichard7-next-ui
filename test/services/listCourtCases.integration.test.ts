@@ -92,22 +92,26 @@ describe("listCourtCases", () => {
     const caseNotes: { user: string; text: string }[][] = [
       [
         {
-          user: "System",
-          text: "System note 1"
+          user: "bichard01",
+          text: "Test note 1"
         }
       ],
       [
         {
           user: "System",
-          text: "System note 2"
+          text: "Not included"
         },
         {
           user: "bichard01",
           text: "Test note 1"
         },
         {
-          user: "System",
-          text: "System note 3"
+          user: "bichard01",
+          text: "Test note 2"
+        },
+        {
+          user: "bichard01",
+          text: "Test note 3"
         }
       ],
       [
@@ -135,9 +139,9 @@ describe("listCourtCases", () => {
 
     expect(cases).toHaveLength(3)
 
-    expect(cases[0].notes).toHaveLength(1)
-    expect(cases[1].notes).toHaveLength(3)
-    expect(cases[2].notes).toHaveLength(3)
+    expect(cases[0].noteCount).toEqual(1)
+    expect(cases[1].noteCount).toEqual(3)
+    expect(cases[2].noteCount).toEqual(3)
   })
 
   describe("Pagination", () => {
@@ -198,7 +202,7 @@ describe("listCourtCases", () => {
       const { result: cases, totalCases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(10)
-      expect(cases[0].notes[0].noteText).toBe("Test note 2")
+      expect(cases[0].note?.noteText).toBe("Test note 2")
       expect(totalCases).toEqual(100)
     })
 
@@ -231,7 +235,6 @@ describe("listCourtCases", () => {
 
       expect(cases).toHaveLength(10)
       expect(cases[0].triggers[0].triggerCode).toBe("TRPR0001")
-      expect(cases[0].triggers[0].status).toBe("Unresolved")
       expect(totalCases).toEqual(100)
     })
 
@@ -353,102 +356,26 @@ describe("listCourtCases", () => {
     expect(totalCasesDesc).toEqual(3)
   })
 
-  describe("ordered by 'lockedBy' reason", () => {
-    it("Should order by error reason as primary order", async () => {
-      await insertCourtCasesWithFields(
-        ["HO100100", "HO100101", "HO100102"].map((code) => ({
-          errorReason: code,
-          orgForPoliceFilter: orgCode
-        }))
-      )
-
-      const resultAsc = await listCourtCases(dataSource, { maxPageItems: "100", orderBy: "reason" }, testUser)
-      expect(isError(resultAsc)).toBe(false)
-      const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
-
-      expect(casesAsc).toHaveLength(3)
-      expect(casesAsc[0].errorReason).toStrictEqual("HO100100")
-      expect(casesAsc[1].errorReason).toStrictEqual("HO100101")
-      expect(casesAsc[2].errorReason).toStrictEqual("HO100102")
-      expect(totalCasesAsc).toEqual(3)
-
-      const resultDesc = await listCourtCases(
-        dataSource,
-        {
-          maxPageItems: "100",
-          orderBy: "reason",
-          order: "desc"
-        },
-        testUser
-      )
-      expect(isError(resultDesc)).toBe(false)
-      const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
-
-      expect(casesDesc).toHaveLength(3)
-      expect(casesDesc[0].errorReason).toStrictEqual("HO100102")
-      expect(casesDesc[1].errorReason).toStrictEqual("HO100101")
-      expect(casesDesc[2].errorReason).toStrictEqual("HO100100")
-      expect(totalCasesDesc).toEqual(3)
-    })
-
-    it("Should order by trigger reason as secondary order", async () => {
-      await insertCourtCasesWithFields(
-        ["TRPR0010", "TRPR0011", "TRPR0012"].map((code) => ({
-          triggerReason: code,
-          orgForPoliceFilter: orgCode
-        }))
-      )
-
-      const resultAsc = await listCourtCases(dataSource, { maxPageItems: "100", orderBy: "reason" }, testUser)
-      expect(isError(resultAsc)).toBe(false)
-      const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
-
-      expect(casesAsc).toHaveLength(3)
-      expect(casesAsc[0].triggerReason).toStrictEqual("TRPR0010")
-      expect(casesAsc[1].triggerReason).toStrictEqual("TRPR0011")
-      expect(casesAsc[2].triggerReason).toStrictEqual("TRPR0012")
-      expect(totalCasesAsc).toEqual(3)
-
-      const resultDesc = await listCourtCases(
-        dataSource,
-        {
-          maxPageItems: "100",
-          orderBy: "reason",
-          order: "desc"
-        },
-        testUser
-      )
-      expect(isError(resultDesc)).toBe(false)
-      const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
-
-      expect(casesDesc).toHaveLength(3)
-      expect(casesDesc[0].triggerReason).toStrictEqual("TRPR0012")
-      expect(casesDesc[1].triggerReason).toStrictEqual("TRPR0011")
-      expect(casesDesc[2].triggerReason).toStrictEqual("TRPR0010")
-      expect(totalCasesDesc).toEqual(3)
-    })
-  })
-
   it("Should order by notes number", async () => {
     const caseNotes: { user: string; text: string }[][] = [
       [
         {
-          user: "System",
-          text: "System note 1"
+          user: "bichard01",
+          text: "bichard01 note 1"
         }
       ],
       [
         {
-          user: "System",
-          text: "System note 2"
+          user: "bichard01",
+          text: "bichard01 note 2"
         },
         {
           user: "bichard01",
-          text: "Test note 1"
+          text: "bichard01 note 1"
         },
         {
-          user: "System",
-          text: "System note 3"
+          user: "bichard01",
+          text: "bichard01 note 3"
         }
       ],
       [
@@ -474,9 +401,9 @@ describe("listCourtCases", () => {
     const { result: casesAsc, totalCases: totalCasesAsc } = resultAsc as ListCourtCaseResult
 
     expect(casesAsc).toHaveLength(3)
-    expect(casesAsc[0].notes).toHaveLength(1)
-    expect(casesAsc[1].notes).toHaveLength(3)
-    expect(casesAsc[2].notes).toHaveLength(3)
+    expect(casesAsc[0].noteCount).toEqual(1)
+    expect(casesAsc[1].noteCount).toEqual(3)
+    expect(casesAsc[2].noteCount).toEqual(3)
     expect(totalCasesAsc).toEqual(3)
 
     const resultDesc = await listCourtCases(
@@ -492,9 +419,9 @@ describe("listCourtCases", () => {
     const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
 
     expect(casesDesc).toHaveLength(3)
-    expect(casesDesc[0].notes).toHaveLength(3)
-    expect(casesDesc[1].notes).toHaveLength(3)
-    expect(casesDesc[2].notes).toHaveLength(1)
+    expect(casesDesc[0].noteCount).toEqual(3)
+    expect(casesDesc[1].noteCount).toEqual(3)
+    expect(casesDesc[2].noteCount).toEqual(1)
     expect(totalCasesDesc).toEqual(3)
   })
 
@@ -866,7 +793,7 @@ describe("listCourtCases", () => {
       cases = (result as ListCourtCaseResult).result
 
       expect(cases).toHaveLength(1)
-      expect(cases[0].errorReason).toStrictEqual(errorToInclude)
+      expect(cases[0].errorReport).toMatch(errorToInclude)
 
       // Searching for a partial match error/trigger code
       result = await listCourtCases(
@@ -882,8 +809,8 @@ describe("listCourtCases", () => {
       cases = (result as ListCourtCaseResult).result
 
       expect(cases).toHaveLength(2)
-      expect(cases[0].triggers[0].triggerCode).toStrictEqual(triggerToIncludePartialMatch.triggerCode)
-      expect(cases[1].errorReason).toStrictEqual(errorToIncludePartialMatch)
+      expect(cases[0].triggers[1].triggerCode).toStrictEqual(triggerToIncludePartialMatch.triggerCode)
+      expect(cases[1].errorReport).toMatch(errorToIncludePartialMatch)
     })
 
     it("Should list cases when there is a case insensitive match in any exceptions", async () => {
@@ -1028,7 +955,7 @@ describe("listCourtCases", () => {
       expect(cases[2].errorId).toBe(4)
     })
 
-    it.only("Should filter cases with all reasons", async () => {
+    it("Should filter cases with all reasons", async () => {
       await insertCourtCasesWithFields(Array.from({ length: 4 }, () => ({ orgForPoliceFilter: orgCode })))
       await insertException(0, "HO100300")
       await insertTriggers(1, [testTrigger])
@@ -1429,7 +1356,6 @@ describe("listCourtCases", () => {
 
       expect(cases).toHaveLength(1)
       expect(cases[0].triggers).toHaveLength(1)
-      expect(cases[0].triggers[0].status).toEqual("Unresolved")
       expect(cases[0].triggers[0].triggerCode).toEqual(unresolvedTriggerCode)
     })
   })

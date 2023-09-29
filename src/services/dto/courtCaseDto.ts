@@ -14,7 +14,7 @@ export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): Dis
     errorLockedByUsername: courtCase.errorLockedByUsername,
     errorReport: courtCase.errorReport,
     isUrgent: courtCase.isUrgent,
-    noteCount: courtCase.noteCount ? courtCase.noteCount : 0,
+    noteCount: courtCase.noteCount ? +courtCase.noteCount : 0,
     note: null,
     ptiurn: courtCase.ptiurn,
     resolutionTimestamp: courtCase.resolutionTimestamp ? courtCase.resolutionTimestamp.toISOString() : null,
