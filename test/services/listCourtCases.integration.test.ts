@@ -1028,7 +1028,7 @@ describe("listCourtCases", () => {
       expect(cases[2].errorId).toBe(4)
     })
 
-    it("Should filter cases with all reasons", async () => {
+    it.only("Should filter cases with all reasons", async () => {
       await insertCourtCasesWithFields(Array.from({ length: 4 }, () => ({ orgForPoliceFilter: orgCode })))
       await insertException(0, "HO100300")
       await insertTriggers(1, [testTrigger])

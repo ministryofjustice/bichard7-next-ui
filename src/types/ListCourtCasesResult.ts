@@ -1,6 +1,6 @@
-import type CourtCase from "../services/entities/CourtCase"
+import { DisplayPartialCourtCase } from "./display/CourtCases"
 
 export type ListCourtCaseResult = {
-  result: CourtCase[]
+  result: DisplayPartialCourtCase[]
   totalCases: number
 }

@@ -19,6 +19,7 @@ import CourtCase from "./entities/CourtCase"
 import Note from "./entities/Note"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
+import { rawCourtCaseToDisplayPartialCourtCaseDto } from "./dto/courtCaseDto"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -97,7 +98,7 @@ const listCourtCases = async (
   caseState = caseState ?? "Unresolved"
 
   query
-    .innerJoin(
+    .leftJoin(
       (triggerQuery) => {
         return triggerQuery
           .from("Trigger", "triggers")
@@ -311,14 +312,16 @@ const listCourtCases = async (
     // console.log("\n")
 
     if (!isError(count) && !isError(result)) {
-      // console.log("CourtCases", count)
-      // console.log("CourtCase", result[0])
+      console.log("CourtCases", count)
+      console.log("CourtCase", result[0])
     }
 
-    return isError(result)
-      ? result
+    const displayPartialCourtCases = result.map((rec)=> rawCourtCaseToDisplayPartialCourtCaseDto(rec))
+
+    return isError(displayPartialCourtCases)
+      ? displayPartialCourtCases
       : {
-          result,
+          result: displayPartialCourtCases,
           totalCases: count
         }
   } catch (error) {

@@ -5,56 +5,62 @@ import { formatUserFullName } from "utils/formatUserFullName"
 import { noteToDisplayNoteDto, noteToDisplayPartialNoteDto } from "./noteDto"
 import { triggerToDisplayTriggerDto, triggerToPartialDisplayTriggerDto } from "./triggerDto"
 
-export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): DisplayPartialCourtCase => {
+export const rawCourtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): DisplayPartialCourtCase => {
   const sanitisedCourtCase = Object.entries(courtCase).reduce(
     (acc, item) => ({ ...acc, [camelCase(item[0].replace(/courtCase_/g, ""))]: item[1] }),
     {}
   ) as CourtCase
 
+  return courtCaseToDisplayPartialCourtCaseDto(sanitisedCourtCase)
+}
+
+
+export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): DisplayPartialCourtCase => {
+
   const displayPartialCourtCase: DisplayPartialCourtCase = {
-    asn: sanitisedCourtCase.asn,
-    courtDate: sanitisedCourtCase.courtDate ? sanitisedCourtCase.courtDate.toISOString() : undefined,
-    courtName: sanitisedCourtCase.courtName,
-    errorId: sanitisedCourtCase.errorId,
-    errorLockedByUsername: sanitisedCourtCase.errorLockedByUsername,
-    errorReport: sanitisedCourtCase.errorReport,
-    isUrgent: sanitisedCourtCase.isUrgent,
-    noteCount: sanitisedCourtCase.noteCount ? sanitisedCourtCase.noteCount : 0,
+    asn: courtCase.asn,
+    courtDate: courtCase.courtDate ? courtCase.courtDate.toISOString() : undefined,
+    courtName: courtCase.courtName,
+    errorId: courtCase.errorId,
+    errorLockedByUsername: courtCase.errorLockedByUsername,
+    errorReport: courtCase.errorReport,
+    isUrgent: courtCase.isUrgent,
+    noteCount: courtCase.noteCount ? courtCase.noteCount : 0,
     note: null,
-    ptiurn: sanitisedCourtCase.ptiurn,
-    resolutionTimestamp: sanitisedCourtCase.resolutionTimestamp
-      ? sanitisedCourtCase.resolutionTimestamp.toISOString()
+    ptiurn: courtCase.ptiurn,
+    resolutionTimestamp: courtCase.resolutionTimestamp
+      ? courtCase.resolutionTimestamp.toISOString()
       : null,
-    triggerLockedByUsername: sanitisedCourtCase.triggerLockedByUsername,
-    triggerCount: sanitisedCourtCase.triggerCount,
-    defendantName: sanitisedCourtCase.defendantName,
-    triggers: sanitisedCourtCase.triggerCodes
-      ? sanitisedCourtCase.triggerCodes.split(",").map(triggerToPartialDisplayTriggerDto)
+    triggerLockedByUsername: courtCase.triggerLockedByUsername,
+    triggerCount: courtCase.triggerCount,
+    defendantName: courtCase.defendantName,
+    triggers: courtCase.triggerCodes
+      ? courtCase.triggerCodes.split(",").map(triggerToPartialDisplayTriggerDto)
       : []
   }
 
-  if (sanitisedCourtCase.mostRecentNoteText && sanitisedCourtCase.mostRecentNoteDate) {
+  if (courtCase.mostRecentNoteText && courtCase.mostRecentNoteDate) {
     displayPartialCourtCase.note = noteToDisplayPartialNoteDto(
-      sanitisedCourtCase.mostRecentNoteText,
-      sanitisedCourtCase.mostRecentNoteDate
+      courtCase.mostRecentNoteText,
+      courtCase.mostRecentNoteDate
     )
   }
 
-  if (sanitisedCourtCase.errorLockedByUserFullName) {
-    displayPartialCourtCase.errorLockedByUserFullName = sanitisedCourtCase.errorLockedByUserFullName
-  } else if (sanitisedCourtCase.errorLockedByUserForenames && sanitisedCourtCase.errorLockedByUserSurname) {
+  if (courtCase.errorLockedByUserFullName) {
+    displayPartialCourtCase.errorLockedByUserFullName = courtCase.errorLockedByUserFullName
+  } else if (courtCase.errorLockedByUserForenames && courtCase.errorLockedByUserSurname) {
     displayPartialCourtCase.errorLockedByUserFullName = formatUserFullName(
-      sanitisedCourtCase.errorLockedByUserForenames,
-      sanitisedCourtCase.errorLockedByUserSurname
+      courtCase.errorLockedByUserForenames,
+      courtCase.errorLockedByUserSurname
     )
   }
 
-  if (sanitisedCourtCase.triggerLockedByUserFullName) {
-    displayPartialCourtCase.triggerLockedByUserFullName = sanitisedCourtCase.triggerLockedByUserFullName
-  } else if (sanitisedCourtCase.triggerLockedByUserForenames && sanitisedCourtCase.triggerLockedByUserSurname) {
+  if (courtCase.triggerLockedByUserFullName) {
+    displayPartialCourtCase.triggerLockedByUserFullName = courtCase.triggerLockedByUserFullName
+  } else if (courtCase.triggerLockedByUserForenames && courtCase.triggerLockedByUserSurname) {
     displayPartialCourtCase.triggerLockedByUserFullName = formatUserFullName(
-      sanitisedCourtCase.triggerLockedByUserForenames,
-      sanitisedCourtCase.triggerLockedByUserSurname
+      courtCase.triggerLockedByUserForenames,
+      courtCase.triggerLockedByUserSurname
     )
   }
 
