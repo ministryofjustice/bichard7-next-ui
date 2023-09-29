@@ -1,14 +1,12 @@
 import Trigger from "services/entities/Trigger"
 
-type displayTriggerPickedFields =
-  | "description"
-  | "shortTriggerCode"
-  | "status"
-  | "triggerCode"
-  | "triggerId"
-  | "triggerItemIdentity"
+type displayPartialTriggerPickedFields = "triggerCode" | "description"
 
-export type DisplayTrigger = Pick<Trigger, displayTriggerPickedFields> & {
+export type DisplayPartialTrigger = Pick<Trigger, displayPartialTriggerPickedFields>
+
+type displayTriggerPickedFields = "shortTriggerCode" | "status" | "triggerId" | "triggerItemIdentity"
+
+export type DisplayTrigger = Pick<Trigger, displayPartialTriggerPickedFields | displayTriggerPickedFields> & {
   createdAt: string
   resolvedAt?: string
 }

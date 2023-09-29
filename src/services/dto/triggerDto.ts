@@ -1,5 +1,13 @@
 import Trigger from "services/entities/Trigger"
-import { DisplayTrigger } from "types/display/Triggers"
+import { DisplayPartialTrigger, DisplayTrigger } from "types/display/Triggers"
+import getTriggerWithDescription from "utils/formatReasons/getTriggerWithDescription"
+
+export const triggerToPartialDisplayTriggerDto = (triggerCode: string): DisplayPartialTrigger => {
+  return {
+    triggerCode,
+    description: getTriggerWithDescription(triggerCode)
+  }
+}
 
 export const triggerToDisplayTriggerDto = (trigger: Trigger): DisplayTrigger => {
   const displayTrigger: DisplayTrigger = {

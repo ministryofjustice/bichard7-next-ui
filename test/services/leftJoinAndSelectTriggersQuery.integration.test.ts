@@ -1,12 +1,12 @@
 import CourtCase from "services/entities/CourtCase"
+import Trigger from "services/entities/Trigger"
 import getDataSource from "services/getDataSource"
 import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import { DataSource, Repository, SelectQueryBuilder } from "typeorm"
+import { ResolutionStatus } from "types/ResolutionStatus"
 import { isError } from "types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields, insertDummyCourtCasesWithTriggers } from "../utils/insertCourtCases"
-import { ResolutionStatus } from "types/ResolutionStatus"
-import Trigger from "services/entities/Trigger"
 import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 
 describe("leftJoinAndSelectTriggersQuery", () => {

@@ -1,28 +1,19 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import "reflect-metadata"
-import { DataSource } from "typeorm"
+import Note from "services/entities/Note"
+import User from "services/entities/User"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
-import listCourtCases from "../../src/services/listCourtCases"
+import { DataSource } from "typeorm"
+import { Reason } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
-import deleteFromEntity from "../utils/deleteFromEntity"
-import {
-  insertDummyCourtCasesWithNotes,
-  insertDummyCourtCasesWithTriggers,
-  insertCourtCasesWithFields,
-  insertMultipleDummyCourtCases
-} from "../utils/insertCourtCases"
-import insertException from "../utils/manageExceptions"
-import { isError } from "../../src/types/Result"
+import { ResolutionStatus } from "types/ResolutionStatus"
+import { UserGroup } from "types/UserGroup"
 import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
 import getDataSource from "../../src/services/getDataSource"
-import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
-import Note from "services/entities/Note"
-import { ResolutionStatus } from "types/ResolutionStatus"
-import User from "services/entities/User"
-import { Reason } from "types/CaseListQueryParams"
-import { UserGroup } from "types/UserGroup"
+import listCourtCases from "../../src/services/listCourtCases"
+import { isError } from "../../src/types/Result"
 import {
   exceptionHandlerHasAccessTo,
   generalHandlerHasAccessTo,
@@ -32,6 +23,15 @@ import {
   triggerAndExceptionHandlerHasAccessTo,
   triggerHandlerHasAccessTo
 } from "../helpers/hasAccessTo"
+import deleteFromEntity from "../utils/deleteFromEntity"
+import {
+  insertCourtCasesWithFields,
+  insertDummyCourtCasesWithNotes,
+  insertDummyCourtCasesWithTriggers,
+  insertMultipleDummyCourtCases
+} from "../utils/insertCourtCases"
+import insertException from "../utils/manageExceptions"
+import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")

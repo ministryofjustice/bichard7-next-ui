@@ -141,6 +141,24 @@ export default class CourtCase {
   @OneToMany(() => Note, (note) => note.courtCase, { eager: true, cascade: ["insert", "update"] })
   notes!: Relation<Note>[]
 
+  // Used to optimise court case index page
+  mostRecentNoteText?: string
+
+  mostRecentNoteDate?: Date
+
+  noteCount?: number
+
+  triggerCodes?: string
+
+  triggerLockedByUserForenames?: string
+
+  triggerLockedByUserSurname?: string
+
+  errorLockedByUserForenames?: string
+
+  errorLockedByUserSurname?: string
+  // End
+
   exceptionsAreLockedByAnotherUser(username: string) {
     return !!this.errorLockedByUsername && this.errorLockedByUsername !== username
   }

@@ -1,13 +1,13 @@
+import Trigger from "services/entities/Trigger"
+import User from "services/entities/User"
+import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
-import getDataSource from "../../src/services/getDataSource"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
+import getDataSource from "../../src/services/getDataSource"
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import User from "services/entities/User"
-import Trigger from "services/entities/Trigger"
-import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
 

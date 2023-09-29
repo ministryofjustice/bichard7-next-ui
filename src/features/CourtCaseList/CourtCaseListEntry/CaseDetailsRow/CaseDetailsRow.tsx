@@ -1,9 +1,5 @@
 import ConditionalRender from "components/ConditionalRender"
 import DateTime from "components/DateTime"
-import {
-  filterUserNotes,
-  getMostRecentNote
-} from "features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/CourtCaseListEntryHelperFunction"
 import ResolvedTag from "features/CourtCaseList/tags/ResolvedTag"
 import UrgentTag from "features/CourtCaseList/tags/UrgentTag"
 import { Link, Table } from "govuk-react"
@@ -11,7 +7,7 @@ import Image from "next/image"
 import { useRouter } from "next/router"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
-import { DisplayNote } from "types/display/Notes"
+import { DisplayPartialNote } from "types/display/Notes"
 import { displayedDateFormat } from "utils/formattedDate"
 import { LOCKED_ICON_URL } from "utils/icons"
 import { useCustomStyles } from "../../../../../styles/customStyles"
@@ -31,7 +27,8 @@ interface CaseDetailsRowProps {
   isCaseUnlocked: boolean
   isResolved: boolean
   isUrgent: boolean
-  notes: DisplayNote[]
+  noteCount: number
+  note: DisplayPartialNote | null
   ptiurn: string
   rowClassName: string
   unlockPath: string
@@ -62,7 +59,8 @@ export const CaseDetailsRow = ({
   firstColumnClassName,
   isResolved,
   isUrgent,
-  notes,
+  noteCount,
+  note,
   ptiurn,
   rowClassName,
   reasonCell,
@@ -70,9 +68,9 @@ export const CaseDetailsRow = ({
 }: CaseDetailsRowProps) => {
   const [showPreview, setShowPreview] = useState(true)
   const { basePath } = useRouter()
-  const userNotes = filterUserNotes(notes)
-  const mostRecentUserNote = getMostRecentNote(userNotes)
-  const numberOfNotes = userNotes.length
+  // const userNotes = filterUserNotes(notes)
+  // const mostRecentUserNote = getMostRecentNote(userNotes)
+  const numberOfNotes = noteCount
 
   const classes = useStyles()
   const customClasses = useCustomStyles()
@@ -120,7 +118,7 @@ export const CaseDetailsRow = ({
           <Table.Cell className={`${notePreviewCellClass} ${customClasses["top-padding-none"]}`}></Table.Cell>
           <Table.Cell className={`${notePreviewCellClass} ${customClasses["top-padding-none"]}`}></Table.Cell>
           <Table.Cell className={`${notePreviewCellClass} ${customClasses["top-padding-none"]}`} colSpan={2}>
-            <NotePreview latestNote={mostRecentUserNote} numberOfNotes={numberOfNotes} />
+            <NotePreview latestNote={note} numberOfNotes={noteCount} />
           </Table.Cell>
           <Table.Cell className={`${notePreviewCellClass} ${customClasses["top-padding-none"]}`} />
         </Table.Row>

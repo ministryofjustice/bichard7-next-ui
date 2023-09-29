@@ -1,11 +1,11 @@
 import ConditionalRender from "components/ConditionalRender"
-import { DisplayTrigger } from "types/display/Triggers"
+import { DisplayPartialTrigger, DisplayTrigger } from "types/display/Triggers"
 import CaseUnlockedTag from "../tags/CaseUnlockedTag"
 import LockedByTag from "../tags/LockedByTag/LockedByTag"
 
-type TriggerWithCount = Partial<DisplayTrigger> & { count: number }
+type TriggerWithCount = Partial<DisplayPartialTrigger> & { count: number }
 
-const triggersWithCounts = (triggers: DisplayTrigger[]) => {
+const triggersWithCounts = (triggers: DisplayPartialTrigger[]) => {
   return Object.values(
     triggers.reduce(
       (counts, trigger) => {
@@ -24,7 +24,7 @@ const triggersWithCounts = (triggers: DisplayTrigger[]) => {
   )
 }
 
-export const TriggersReasonCell = ({ triggers }: { triggers: DisplayTrigger[] }) => {
+export const TriggersReasonCell = ({ triggers }: { triggers: DisplayPartialTrigger[] }) => {
   return (
     <>
       {triggersWithCounts(triggers).map((trigger, triggerId) => (

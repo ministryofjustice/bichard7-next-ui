@@ -36,7 +36,8 @@ const CourtCaseListEntry: React.FC<Props> = ({
     errorLockedByUserFullName,
     errorReport,
     isUrgent,
-    notes,
+    noteCount,
+    note,
     ptiurn,
     resolutionTimestamp,
     triggerLockedByUsername,
@@ -106,7 +107,8 @@ const CourtCaseListEntry: React.FC<Props> = ({
         isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername}
         isResolved={resolutionTimestamp !== null}
         isUrgent={isUrgent}
-        notes={notes}
+        noteCount={noteCount}
+        note={note}
         ptiurn={ptiurn}
         rowClassName={entityClassName}
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}

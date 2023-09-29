@@ -10,6 +10,7 @@ import {
   SelectQueryBuilder
 } from "typeorm"
 import { CaseListQueryParams, Reason } from "types/CaseListQueryParams"
+import Feature from "types/Feature"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
@@ -18,8 +19,6 @@ import CourtCase from "./entities/CourtCase"
 import Note from "./entities/Note"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
-import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
-import Feature from "types/Feature"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -45,11 +44,29 @@ const listCourtCases = async (
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
   const maxPageItemsValidated = maxPageItems ? parseInt(maxPageItems, 10) : 25
   const repository = connection.getRepository(CourtCase)
-  const subquery = connection
+
+  const noteCountSubquery = connection
     .getRepository(Note)
     .createQueryBuilder("notes")
     .select("COUNT(note_id)")
-    .where("error_id = courtCase.errorId")
+    .where("error_id = courtCase.errorId AND user_id != 'system'")
+
+  const mostRecentNoteTextSubquery = connection
+    .getRepository(Note)
+    .createQueryBuilder("notes")
+    .select("note_text")
+    .where("error_id = courtCase.errorId AND user_id != 'system'")
+    .orderBy("create_ts", "DESC")
+    .limit(1)
+
+  const mostRecentNoteDateSubquery = connection
+    .getRepository(Note)
+    .createQueryBuilder("notes")
+    .select("create_ts")
+    .where("error_id = courtCase.errorId AND user_id != 'system'")
+    .orderBy("create_ts", "DESC")
+    .limit(1)
+
   let query = repository
     .createQueryBuilder("courtCase")
     .select([
@@ -71,15 +88,45 @@ const listCourtCases = async (
       "courtCase.errorLockedByUsername",
       "courtCase.triggerLockedByUsername"
     ])
+
+  const getExcludedTriggers = (excludedTriggers?: string[]): string[] =>
+    excludedTriggers && excludedTriggers.length > 0 ? excludedTriggers : [""]
+
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
-  leftJoinAndSelectTriggersQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
-    .leftJoinAndSelect("courtCase.notes", "note")
+
+  caseState = caseState ?? "Unresolved"
+
+  query
+    .innerJoin(
+      (triggerQuery) => {
+        return triggerQuery
+          .from("Trigger", "triggers")
+          .select("triggers.error_id, string_agg(triggers.trigger_code, ',')", "trigger_codes")
+          .andWhere(
+            "triggers.trigger_code NOT IN (:...excludedTriggers)" +
+              (caseState === undefined || caseState === "Unresolved and resolved"
+                ? ""
+                : " AND triggers.status = :triggerStatus"),
+            {
+              excludedTriggers: getExcludedTriggers(user.excludedTriggers),
+              triggerStatus: caseState === "Resolved" ? "2" : "1"
+            }
+          )
+          .groupBy("triggers.error_id")
+      },
+      "triggers",
+      "courtCase.errorId = triggers.error_id"
+    )
+    .addSelect("trigger_codes")
+    .addSelect("errorLockedByUser.username", "errorLockedByUsername")
+    .addSelect("triggerLockedByUser.username", "triggerLockedByUsername")
+    .addSelect(`(${mostRecentNoteTextSubquery.getQuery()})`, "most_recent_note_text")
+    .addSelect(`(${mostRecentNoteDateSubquery.getQuery()})`, "most_recent_note_date")
+    .addSelect(`(${noteCountSubquery.getQuery()})`, "note_count")
     .leftJoin("courtCase.errorLockedByUser", "errorLockedByUser")
     .addSelect(["errorLockedByUser.forenames", "errorLockedByUser.surname"])
     .leftJoin("courtCase.triggerLockedByUser", "triggerLockedByUser")
     .addSelect(["triggerLockedByUser.forenames", "triggerLockedByUser.surname"])
-    .skip(pageNumValidated * maxPageItemsValidated)
-    .take(maxPageItemsValidated)
 
   const sortOrder = order === "desc" ? "DESC" : "ASC"
 
@@ -93,9 +140,7 @@ const listCourtCases = async (
   } else if (orderBy === "isUrgent") {
     query.orderBy("courtCase.isUrgent", sortOrder === "ASC" ? "DESC" : "ASC")
   } else if (orderBy === "notes") {
-    query
-      .addSelect(`(${subquery.getQuery()})`, "note_count")
-      .orderBy("note_count", sortOrder === "ASC" ? "ASC" : "DESC")
+    query.orderBy("note_count", sortOrder === "ASC" ? "ASC" : "DESC")
   } else {
     const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
     query.orderBy(orderByQuery, sortOrder)
@@ -128,7 +173,7 @@ const listCourtCases = async (
   if (reasonCode) {
     query.andWhere(
       new Brackets((qb) => {
-        qb.where("trigger.trigger_code ilike '%' || :reason || '%'", {
+        qb.where("trigger_codes ilike '%' || :reason || '%'", {
           reason: reasonCode
         }).orWhere("courtCase.error_report ilike '%' || :reason || '%'", {
           reason: reasonCode
@@ -151,7 +196,7 @@ const listCourtCases = async (
         if (reasons?.includes(Reason.Bails)) {
           Object.keys(BailCodes).forEach((triggerCode, i) => {
             const paramName = `bails${i}`
-            qb.orWhere(`trigger.trigger_code ilike '%' || :${paramName} || '%'`, {
+            qb.orWhere(`trigger_codes ilike '%' || :${paramName} || '%'`, {
               [paramName]: triggerCode
             })
           })
@@ -193,7 +238,7 @@ const listCourtCases = async (
       new Brackets((qb) => {
         qb.where({
           resolutionTimestamp: IsNull()
-        }).orWhere("trigger.status = 1")
+        })
       })
     )
   } else if (caseState === "Resolved") {
@@ -206,11 +251,9 @@ const listCourtCases = async (
         new Brackets((qb) => {
           qb.where({
             errorResolvedBy: resolvedByUsername
+          }).orWhere({
+            triggerResolvedBy: resolvedByUsername
           })
-            .orWhere({
-              triggerResolvedBy: resolvedByUsername
-            })
-            .orWhere("trigger.resolvedBy = :triggerResolver", { triggerResolver: resolvedByUsername })
         })
       )
     }
@@ -254,13 +297,33 @@ const listCourtCases = async (
     query.andWhere({ triggerCount: MoreThan(0) })
   }
 
-  const result = await query.getManyAndCount().catch((error: Error) => error)
-  return isError(result)
-    ? result
-    : {
-        result: result[0],
-        totalCases: result[1]
-      }
+  // console.log("SQL", query.getQueryAndParameters())
+  try {
+    const count = await query.getCount()
+    const result = await query
+      .offset(pageNumValidated * maxPageItemsValidated)
+      .limit(maxPageItemsValidated)
+      .getRawMany()
+
+    // console.log("pageNumValidated", pageNumValidated)
+    // console.log("maxPageItemsValidated", maxPageItemsValidated)
+    // console.log("=>", pageNumValidated * maxPageItemsValidated)
+    // console.log("\n")
+
+    if (!isError(count) && !isError(result)) {
+      // console.log("CourtCases", count)
+      // console.log("CourtCase", result[0])
+    }
+
+    return isError(result)
+      ? result
+      : {
+          result,
+          totalCases: count
+        }
+  } catch (error) {
+    throw error
+  }
 }
 
 export default listCourtCases

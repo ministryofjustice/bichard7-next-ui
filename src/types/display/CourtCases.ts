@@ -1,6 +1,6 @@
 import CourtCase from "services/entities/CourtCase"
-import { DisplayNote } from "./Notes"
-import { DisplayTrigger } from "./Triggers"
+import { DisplayNote, DisplayPartialNote } from "./Notes"
+import { DisplayPartialTrigger, DisplayTrigger } from "./Triggers"
 
 type FieldsForDisplayPartialCourtCase =
   | "asn"
@@ -18,9 +18,10 @@ export type DisplayPartialCourtCase = Pick<CourtCase, FieldsForDisplayPartialCou
   courtDate?: string
   errorLockedByUserFullName?: string
   triggerLockedByUserFullName?: string
-  notes: DisplayNote[]
-  triggers: DisplayTrigger[]
+  triggers: DisplayPartialTrigger[]
   resolutionTimestamp: string | null
+  noteCount: number
+  note: DisplayPartialNote | null
 }
 
 type FieldsForDisplayFullCourtCase =
