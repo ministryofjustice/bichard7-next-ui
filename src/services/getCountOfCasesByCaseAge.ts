@@ -19,21 +19,19 @@ const getCountOfCasesByCaseAge = async (connection: DataSource, user: User): Pro
     const slaDateFrom = formatFormInputDateString(CaseAgeOptions[slaCaseAgeOption]().from)
     const slaDateTo = formatFormInputDateString(CaseAgeOptions[slaCaseAgeOption]().to)
 
-    const subQuery = repository
-      .createQueryBuilder(key)
-      .select("COUNT(*)", key)
-      .where(`${key}.courtDate >= '${slaDateFrom}' AND ${key}.courtDate <= '${slaDateTo}'`)
-      .andWhere({
-        resolutionTimestamp: IsNull()
-      })
-      .getQuery()
-
     if (i === 0) {
-      query.select(`counts${i}.${key}`)
+      query.select(
+        `Count(CASE WHEN court_date >= '${slaDateFrom}' AND court_date <= '${slaDateTo}' THEN 1 END) as ${key}`
+      )
     } else {
-      query.addSelect(`counts${i}.${key}`)
+      query.addSelect(
+        `Count(CASE WHEN court_date >= '${slaDateFrom}' AND court_date <= '${slaDateTo}' THEN 1 END) as ${key}`
+      )
     }
-    query.from("(" + subQuery + ")", `counts${i}`)
+  })
+
+  query.andWhere({
+    resolutionTimestamp: IsNull()
   })
 
   const response = await query.getRawOne().catch((error: Error) => error)
