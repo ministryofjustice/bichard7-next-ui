@@ -120,6 +120,8 @@ const listCourtCases = async (
       "courtCase.errorId = triggers.error_id"
     )
     .addSelect("trigger_codes")
+
+  query
     .addSelect("errorLockedByUser.username", "errorLockedByUsername")
     .addSelect("triggerLockedByUser.username", "triggerLockedByUsername")
     .addSelect(`(${mostRecentNoteTextSubquery.getQuery()})`, "most_recent_note_text")
@@ -234,13 +236,25 @@ const listCourtCases = async (
   }
 
   if (!caseState || caseState === "Unresolved") {
-    query.andWhere(
-      new Brackets((qb) => {
-        qb.where({
-          resolutionTimestamp: IsNull()
+    query
+      .leftJoin(
+        (triggerQuery) => {
+          return triggerQuery
+            .from("Trigger", "triggers_tbl")
+            .select("triggers_tbl.error_id, string_agg(triggers_tbl.status::text, ',')", "trigger_statuses")
+            .groupBy("triggers_tbl.error_id")
+        },
+        "triggers_tbl",
+        "courtCase.errorId = triggers_tbl.error_id"
+      )
+      .addSelect("trigger_statuses")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where({
+            resolutionTimestamp: IsNull()
+          }).orWhere("trigger_statuses LIKE '%1%'")
         })
-      })
-    )
+      )
   } else if (caseState === "Resolved") {
     query.andWhere({
       resolutionTimestamp: Not(IsNull())

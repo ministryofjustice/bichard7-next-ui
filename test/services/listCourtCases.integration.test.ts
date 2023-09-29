@@ -59,9 +59,6 @@ describe("listCourtCases", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
-    ;(leftJoinAndSelectTriggersQuery as jest.Mock).mockImplementation(
-      jest.requireActual("services/queries/leftJoinAndSelectTriggersQuery").default
-    )
   })
 
   afterAll(async () => {
@@ -1324,9 +1321,6 @@ describe("listCourtCases", () => {
       expect(cases).toHaveLength(2)
       expect(cases[0].triggers).toHaveLength(1)
       expect(cases[1].triggers).toHaveLength(0)
-
-      expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledTimes(1)
-      expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(expect.any(Object), undefined, "Unresolved")
     })
 
     it("Should return 'unresolved' triggers when a case has resolutionTimestamp but there are unresolved triggers", async () => {
