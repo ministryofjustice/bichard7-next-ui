@@ -46,8 +46,8 @@ commands:
 
   run_test_chunk:
     parameters:
-      NEXTUI:
-        default: "false"
+      ARGS:
+        default: ""
         type: "string"
     steps:
       - run:
@@ -55,7 +55,7 @@ commands:
           working_directory: ~/bichard7-next-tests
           command: |
             CHUNK=$(circleci tests glob "features/**/*.feature" | circleci tests split --split-by=timings) \
-            NEXTUI=<<parameters.NEXTUI>> \
+            <<parameters.ARGS>> \
             npm run test:chunk
 
   ################### Services
@@ -246,7 +246,9 @@ jobs:
           include-branch-in-cache-key: true
       - start_bichard7_legacy
       - run_test_chunk:
-          NEXTUI: "true"
+          ARGS: >-
+            NEXTUI="true"
+            MESSAGE_ENTRY_POINT="mq"
       - store_test_results:
           path: ./cucumber/results
 
