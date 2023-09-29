@@ -6,14 +6,14 @@ import { GridCol, GridRow, Link } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
-import { DisplayPartialCourtCase } from "types/display/CourtCases"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { exceptionsAreLockedByCurrentUser } from "utils/caseLocks"
 import getExceptionDefinition from "utils/getExceptionDefinition"
 import getExceptionPathDetails from "utils/getExceptionPathDetails"
 
 interface Props {
-  courtCase: DisplayPartialCourtCase
+  courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
   user: DisplayFullUser
   onNavigate: NavigationHandler
