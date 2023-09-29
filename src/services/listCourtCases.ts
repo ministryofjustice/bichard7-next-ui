@@ -14,12 +14,13 @@ import Feature from "types/Feature"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
+import { DisplayPartialCourtCase } from "types/display/CourtCases"
 import { BailCodes } from "utils/bailCodes"
+import { rawCourtCaseToDisplayPartialCourtCaseDto } from "./dto/courtCaseDto"
 import CourtCase from "./entities/CourtCase"
 import Note from "./entities/Note"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
-import { rawCourtCaseToDisplayPartialCourtCaseDto } from "./dto/courtCaseDto"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -311,12 +312,12 @@ const listCourtCases = async (
     // console.log("=>", pageNumValidated * maxPageItemsValidated)
     // console.log("\n")
 
-    if (!isError(count) && !isError(result)) {
-      console.log("CourtCases", count)
-      console.log("CourtCase", result[0])
-    }
+    // if (!isError(count) && !isError(result)) {
+    //   console.log("CourtCases", count)
+    //   console.log("CourtCase", result[0])
+    // }
 
-    const displayPartialCourtCases = result.map((rec)=> rawCourtCaseToDisplayPartialCourtCaseDto(rec))
+    const displayPartialCourtCases: DisplayPartialCourtCase[] = result.map(rawCourtCaseToDisplayPartialCourtCaseDto)
 
     return isError(displayPartialCourtCases)
       ? displayPartialCourtCases

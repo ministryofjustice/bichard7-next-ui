@@ -5,18 +5,7 @@ import { formatUserFullName } from "utils/formatUserFullName"
 import { noteToDisplayNoteDto, noteToDisplayPartialNoteDto } from "./noteDto"
 import { triggerToDisplayTriggerDto, triggerToPartialDisplayTriggerDto } from "./triggerDto"
 
-export const rawCourtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): DisplayPartialCourtCase => {
-  const sanitisedCourtCase = Object.entries(courtCase).reduce(
-    (acc, item) => ({ ...acc, [camelCase(item[0].replace(/courtCase_/g, ""))]: item[1] }),
-    {}
-  ) as CourtCase
-
-  return courtCaseToDisplayPartialCourtCaseDto(sanitisedCourtCase)
-}
-
-
 export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): DisplayPartialCourtCase => {
-
   const displayPartialCourtCase: DisplayPartialCourtCase = {
     asn: courtCase.asn,
     courtDate: courtCase.courtDate ? courtCase.courtDate.toISOString() : undefined,
@@ -28,15 +17,11 @@ export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): Dis
     noteCount: courtCase.noteCount ? courtCase.noteCount : 0,
     note: null,
     ptiurn: courtCase.ptiurn,
-    resolutionTimestamp: courtCase.resolutionTimestamp
-      ? courtCase.resolutionTimestamp.toISOString()
-      : null,
+    resolutionTimestamp: courtCase.resolutionTimestamp ? courtCase.resolutionTimestamp.toISOString() : null,
     triggerLockedByUsername: courtCase.triggerLockedByUsername,
     triggerCount: courtCase.triggerCount,
     defendantName: courtCase.defendantName,
-    triggers: courtCase.triggerCodes
-      ? courtCase.triggerCodes.split(",").map(triggerToPartialDisplayTriggerDto)
-      : []
+    triggers: courtCase.triggerCodes ? courtCase.triggerCodes.split(",").map(triggerToPartialDisplayTriggerDto) : []
   }
 
   if (courtCase.mostRecentNoteText && courtCase.mostRecentNoteDate) {
@@ -65,6 +50,15 @@ export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): Dis
   }
 
   return displayPartialCourtCase
+}
+
+export const rawCourtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): DisplayPartialCourtCase => {
+  const sanitisedCourtCase = Object.entries(courtCase).reduce(
+    (acc, item) => ({ ...acc, [camelCase(item[0].replace(/courtCase_/g, ""))]: item[1] }),
+    {}
+  ) as CourtCase
+
+  return courtCaseToDisplayPartialCourtCaseDto(sanitisedCourtCase)
 }
 
 export const courtCaseToDisplayFullCourtCaseDto = (courtCase: CourtCase): DisplayFullCourtCase => {

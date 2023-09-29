@@ -13,7 +13,6 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { useEffect } from "react"
-import { courtCaseToDisplayPartialCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import getDataSource from "services/getDataSource"
@@ -171,7 +170,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     return {
       props: {
         user: userToDisplayFullUserDto(currentUser),
-        courtCases: courtCases.result.map(courtCaseToDisplayPartialCourtCaseDto),
+        courtCases: courtCases.result,
         order: oppositeOrder,
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,
