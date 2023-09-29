@@ -1,5 +1,5 @@
 import ConditionalRender from "components/ConditionalRender"
-import { DisplayPartialTrigger, DisplayTrigger } from "types/display/Triggers"
+import { DisplayPartialTrigger } from "types/display/Triggers"
 import CaseUnlockedTag from "../tags/CaseUnlockedTag"
 import LockedByTag from "../tags/LockedByTag/LockedByTag"
 
