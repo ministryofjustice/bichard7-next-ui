@@ -1,21 +1,27 @@
-import User from "services/entities/User"
 import hashedPassword from "../../fixtures/hashedPassword"
 
 describe("Manually resolve a case", () => {
-  const defaultUsers: Partial<User>[] = Array.from(Array(2)).map((_value, idx) => {
-    return {
-      username: `Bichard0${idx}`,
-      visibleForces: [`0${idx}`],
-      forenames: "Bichard Test User",
-      surname: `0${idx}`,
-      email: `bichard0${idx}@example.com`,
-      password: hashedPassword
-    }
-  })
+  const insertUsers = (userRoles: string[]) => {
+    userRoles.forEach((userRole: string) => {
+      cy.task("insertUsers", {
+        users: [
+          {
+            username: `${userRole} username`,
+            visibleForces: ["01"],
+            forenames: `${userRole}'s forename`,
+            surname: `${userRole}surname`,
+            email: `${userRole}@example.com`,
+            password: hashedPassword
+          }
+        ],
+        userGroups: ["B7NewUI_grp", `B7${userRole}_grp`]
+      })
+    })
+  }
 
   before(() => {
     cy.task("clearUsers")
-    cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"] })
+    insertUsers(["ExceptionHandler", "TriggerHandler", "GeneralHandler"])
   })
 
   beforeEach(() => {
@@ -28,12 +34,12 @@ describe("Manually resolve a case", () => {
         orgForPoliceFilter: "01",
         errorCount: 1,
         triggerCount: 0,
-        errorLockedByUsername: "Bichard01",
-        triggerLockedByUsername: "Bichard01"
+        errorLockedByUsername: "GeneralHandler username",
+        triggerLockedByUsername: "GeneralHandler username"
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
+    cy.login("GeneralHandler@example.com", "password")
 
     cy.visit("/bichard")
 
@@ -52,7 +58,9 @@ describe("Manually resolve a case", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("Bichard01: Portal Action: Record Manually Resolved. Reason: PNCRecordIsAccurate. Reason Text:")
+    cy.contains(
+      "GeneralHandler username: Portal Action: Record Manually Resolved. Reason: PNCRecordIsAccurate. Reason Text:"
+    )
   })
 
   it("Should prompt the user to enter resolution details if the reason is Reallocated", () => {
@@ -61,11 +69,11 @@ describe("Manually resolve a case", () => {
         orgForPoliceFilter: "01",
         errorCount: 1,
         triggerCount: 0,
-        errorLockedByUsername: "Bichard01",
-        triggerLockedByUsername: "Bichard01"
+        errorLockedByUsername: "GeneralHandler username",
+        triggerLockedByUsername: "GeneralHandler username"
       }
     ])
-    cy.login("bichard01@example.com", "password")
+    cy.login("GeneralHandler@example.com", "password")
 
     cy.visit("/bichard")
 
@@ -90,13 +98,13 @@ describe("Manually resolve a case", () => {
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
     cy.contains(
-      "Bichard01: Portal Action: Record Manually Resolved. Reason: Reallocated. Reason Text: Some reason text"
+      "GeneralHandler username: Portal Action: Record Manually Resolved. Reason: Reallocated. Reason Text: Some reason text"
     )
   })
 
   it("Should return 404 for a case that this user can not see", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
-    cy.login("bichard01@example.com", "password")
+    cy.login("GeneralHandler@example.com", "password")
 
     cy.request({
       failOnStatusCode: false,
@@ -107,7 +115,7 @@ describe("Manually resolve a case", () => {
   })
 
   it("Should return 404 for a case that does not exist", () => {
-    cy.login("bichard01@example.com", "password")
+    cy.login("GeneralHandler@example.com", "password")
 
     cy.request({
       failOnStatusCode: false,
