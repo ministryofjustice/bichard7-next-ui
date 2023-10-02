@@ -2,6 +2,7 @@ import { UserGroup } from "types/UserGroup"
 import hashedPassword from "../fixtures/hashedPassword"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import { userAccess } from "utils/userPermissions"
+import SurveyFeedback from "services/entities/SurveyFeedback"
 
 export function confirmFiltersAppliedContains(filterTag: string) {
   cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag)
@@ -88,4 +89,11 @@ export const confirmReasonDisplayed = (reason: string) => {
 
 export const confirmReasonNotDisplayed = (reason: string) => {
   cy.get("tbody tr td:nth-child(8)").contains(reason).should("not.exist")
+}
+
+export const expectToHaveNumberOfFeedbacks = (number: number) => {
+  cy.task("getAllFeedbacksFromDatabase").then((result) => {
+    const feedbackResults = result as SurveyFeedback[]
+    expect(feedbackResults.length).equal(number)
+  })
 }
