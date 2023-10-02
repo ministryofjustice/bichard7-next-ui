@@ -86,16 +86,16 @@ describe("Switching Bichard Version Feedback Form", () => {
         moreDetailsText: undefined
       },
       { feedbackSavedToDatabase: false, redirectedToOldBichard: false, question2Error: true, moreDetailsError: true }
+    ],
+    [
+      "Submitting without answering question 2",
+      {
+        question1Choice: "I have found an issue",
+        question2Choice: undefined,
+        moreDetailsText: "Submitted without Question 2"
+      },
+      { feedbackSavedToDatabase: false, redirectedToOldBichard: false, question2Error: true, moreDetailsError: false }
     ]
-    // [
-    //   // "Submitting without answering question 2",
-    //   // {
-    //   //   question1Choice: "I have found an issue",
-    //   //   question2Choice: undefined,
-    //   //   moreDetailsText: "Submitted without Question 2"
-    //   // },
-    //   // { feedbackSavedToDatabase: false, redirectedToOldBichard: false, question2Error: true, moreDetailsError: false }
-    // ]
   ]
   testCases.forEach(([testName, testInput, testResult]) => {
     it(testName, () => {
@@ -190,8 +190,8 @@ describe("Switching Bichard Version Feedback Form", () => {
   // })
 
   // describe("I prefer the old verison", () => {
-  //   // it("Should show only textarea box when second button of first question is selected ", () => {})
-  //   // it("Should display error if textarea box is empty when second button is selected", () => {})
+  // it("Should show only textarea box when second button of first question is selected ", () => {})
+  // it("Should display error if textarea box is empty when second button is selected", () => {})
   // })
 
   // describe("Other", () => {
