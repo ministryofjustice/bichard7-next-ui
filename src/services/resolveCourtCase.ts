@@ -53,21 +53,21 @@ const resolveCourtCase = async (
       throw addNoteResult
     }
 
-    if (!USE_CONDUCTOR) {
+    if (USE_CONDUCTOR) {
+      // complete human task step in conductor workflow
+      const continueConductorWorkflowResult = await continueConductorWorkflow(courtCase, {
+        status: "manually_resolved",
+        auditLogEvents: events
+      })
+      if (isError(continueConductorWorkflowResult)) {
+        throw continueConductorWorkflowResult
+      }
+    } else {
       // push audit log events
       const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
       if (isError(storeAuditLogResponse)) {
         throw storeAuditLogResponse
       }
-    }
-
-    // complete human task step in conductor workflow
-    const continueConductorWorkflowResult = await continueConductorWorkflow(courtCase, {
-      status: "manually_resolved",
-      auditLogEvents: events
-    })
-    if (isError(continueConductorWorkflowResult)) {
-      throw continueConductorWorkflowResult
     }
 
     return resolveErrorResult
