@@ -1,12 +1,8 @@
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import hashedPassword from "../fixtures/hashedPassword"
+import { expectToHaveNumberOfFeedbacks } from "../support/helpers"
 
-const expectToHaveNumberOfFeedbacks = (number: number) => {
-  cy.task("getAllFeedbacksFromDatabase").then((result) => {
-    const feedbackResults = result as SurveyFeedback[]
-    expect(feedbackResults.length).equal(number)
-  })
-}
+
 
 const submitAFeedback = () => {
   cy.findByText("Switch to old Bichard").click()
@@ -42,7 +38,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.login("bichard01@example.com", "password")
   })
 
-  it.only("Should access the switching feedback form with first question visible when user clicks 'Switch to old Bichard'", () => {
+  it("Should access the switching feedback form with first question visible when user clicks 'Switch to old Bichard'", () => {
     cy.visit("/bichard")
     cy.contains("button", "Switch to old Bichard").click()
     cy.get("a").contains("Back")
@@ -62,15 +58,34 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.get("label").contains("Other (please specify)")
   })
 
-  // it("Should show question number 2 and textarea box when first button of first question is selected ", () => {})
+  describe("I have found an issue", () => {
+    it.only("Should show text area box when case list page or case details page radio button is selected", () => {
+      cy.visit("/bichard")
+      cy.contains("button", "Switch to old Bichard").click()
 
-  // it("Should show only textarea box when second button of first question is selected ", () => {})
+      cy.get("#caseListOrDetail").should("not.exist")
+      cy.get("#otherFeedback").should("not.exist")
+      cy.get("button").contains("Send feedback and continue").should("not.exist")
+      cy.get("#issueOrPreference-issue").check()
+      cy.get("#caseListOrDetail").should("exist")
+      cy.get("#otherFeedback").should("exist")
+      cy.get("button").contains("Send feedback and continue").should("exist")
+      cy.get("#caseListOrDetail-caselist").click()
+      cy.get("[name=feedback]").type("This is test feedback")
+      cy.get("button").contains("Send feedback and continue").click()
+      expectToHaveNumberOfFeedbacks(1)
+    })
+  })
 
-  // it("Should show only textarea box when third button of first question is selected ", () => {})
+  describe("I prefer the old verison", () => {
+    // it("Should show only textarea box when second button of first question is selected ", () => {})
+    // it("Should display error if textarea box is empty when second button is selected", () => {})
+  })
 
-  // it("Should display error if textarea box is empty when second button is selected", () => {})
-
-  // it("Should display error if textarea box is empty when third button is selected", () => {})
+  describe("Other", () => {
+    // it("Should show only textarea box when third button of first question is selected ", () => {})
+    // it("Should display error if textarea box is empty when third button is selected", () => {})
+  })
 
   // it("Should open old version of Bichard when user skips feedback", () => {})
 
