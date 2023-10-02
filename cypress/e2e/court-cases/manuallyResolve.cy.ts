@@ -1,4 +1,5 @@
 import hashedPassword from "../../fixtures/hashedPassword"
+import canManuallyResolveAndSubmitTestData from "../../fixtures/canManuallyResolveAndSubmitTestData.json"
 
 describe("Manually resolve a case", () => {
   const insertUsers = (userRoles: string[]) => {
@@ -21,7 +22,7 @@ describe("Manually resolve a case", () => {
 
   before(() => {
     cy.task("clearUsers")
-    insertUsers(["ExceptionHandler", "TriggerHandler", "GeneralHandler"])
+    insertUsers(["GeneralHandler", "ExceptionHandler", "TriggerHandler"])
   })
 
   beforeEach(() => {
@@ -124,6 +125,46 @@ describe("Manually resolve a case", () => {
       expect(response.status).to.eq(404)
     })
   })
+
+  canManuallyResolveAndSubmitTestData.forEach(
+    ({ canManuallyResolveAndSubmit, exceptionStatus, exceptionLockedByAnotherUser, loggedInAs }) => {
+      it(`Should ${
+        canManuallyResolveAndSubmit ? "be able to resolve or submit" : "NOT be able to resolve or submit"
+      } when exceptions are ${exceptionStatus}, ${
+        exceptionLockedByAnotherUser ? "locked by another user" : "locked by current user"
+      } and user is a ${loggedInAs}`, () => {
+        cy.task("insertCourtCasesWithFields", [
+          {
+            orgForPoliceFilter: "01",
+            errorStatus: exceptionStatus,
+            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : `${loggedInAs} username`
+          }
+        ])
+
+        cy.login(`${loggedInAs}@example.com`, "password")
+        cy.visit("/bichard/court-cases/0")
+
+        if (loggedInAs === "GeneralHander") {
+          cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
+        }
+
+        if (canManuallyResolveAndSubmit) {
+          cy.get("button").contains("Mark As Manually Resolved").should("exist")
+          // TODO check submit button should exists
+        } else {
+          cy.get("button").contains("Mark As Manually Resolved").should("not.exist")
+          // TODO check submit button should not exists
+        }
+
+        cy.request({
+          failOnStatusCode: false,
+          url: "/bichard/court-cases/0/resolve"
+        }).then((response) => {
+          expect(response.status).to.eq(canManuallyResolveAndSubmit ? 200 : 403)
+        })
+      })
+    }
+  )
 })
 
 export {}

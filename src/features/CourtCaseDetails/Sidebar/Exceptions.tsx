@@ -82,7 +82,11 @@ const Exceptions = ({ courtCase, aho, user, onNavigate }: Props) => {
             </GridRow>
 
             <GridRow>
-              <ConditionalRender isRendered={exceptionsAreLockedByCurrentUser(courtCase, user.username)}>
+              <ConditionalRender
+                isRendered={
+                  exceptionsAreLockedByCurrentUser(courtCase, user.username) && courtCase.errorStatus === "Unresolved"
+                }
+              >
                 <LinkButton href="resolve">{"Mark As Manually Resolved"}</LinkButton>
               </ConditionalRender>
             </GridRow>
