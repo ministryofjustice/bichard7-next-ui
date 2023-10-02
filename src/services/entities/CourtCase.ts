@@ -157,6 +157,8 @@ export default class CourtCase {
   errorLockedByUserForenames?: string
 
   errorLockedByUserSurname?: string
+
+  resolutionTs?: Date
   // End
 
   exceptionsAreLockedByAnotherUser(username: string) {

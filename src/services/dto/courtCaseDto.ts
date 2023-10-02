@@ -16,12 +16,20 @@ export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): Dis
     isUrgent: courtCase.isUrgent,
     noteCount: courtCase.noteCount ? +courtCase.noteCount : 0,
     note: null,
+    resolutionTimestamp: null,
     ptiurn: courtCase.ptiurn,
-    resolutionTimestamp: courtCase.resolutionTimestamp ? courtCase.resolutionTimestamp.toISOString() : null,
     triggerLockedByUsername: courtCase.triggerLockedByUsername,
     triggerCount: courtCase.triggerCount,
     defendantName: courtCase.defendantName,
     triggers: courtCase.triggerCodes ? courtCase.triggerCodes.split(",").map(triggerToPartialDisplayTriggerDto) : []
+  }
+
+  if (courtCase.resolutionTs) {
+    displayPartialCourtCase.resolutionTimestamp = courtCase.resolutionTs ? courtCase.resolutionTs.toISOString() : null
+  } else {
+    displayPartialCourtCase.resolutionTimestamp = courtCase.resolutionTimestamp
+      ? courtCase.resolutionTimestamp.toISOString()
+      : null
   }
 
   if (courtCase.mostRecentNoteText && courtCase.mostRecentNoteDate) {

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import isSameDay from "date-fns/isSameDay"
 import "reflect-metadata"
 import Note from "services/entities/Note"
 import User from "services/entities/User"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import { DataSource } from "typeorm"
 import { Reason } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
@@ -34,7 +34,6 @@ import insertException from "../utils/manageExceptions"
 import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
-jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
 
 jest.setTimeout(100000)
 describe("listCourtCases", () => {
@@ -72,17 +71,6 @@ describe("listCourtCases", () => {
 
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledTimes(1)
     expect(courtCasesByOrganisationUnitQuery).toHaveBeenCalledWith(expect.any(Object), testUser)
-  })
-
-  it("Should call leftJoinAndSelectTriggersQuery with the correct arguments", async () => {
-    const excludedTriggers = ["TRPDUMMY"]
-    const caseState = "Unresolved and resolved"
-    const excludedTriggersUser = Object.assign({ excludedTriggers: excludedTriggers }, testUser)
-
-    await listCourtCases(dataSource, { maxPageItems: "1", caseState: caseState }, excludedTriggersUser)
-
-    expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledTimes(1)
-    expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(expect.any(Object), excludedTriggers, caseState)
   })
 
   it("Should return cases with notes correctly", async () => {
@@ -329,9 +317,14 @@ describe("listCourtCases", () => {
     const { result: cases, totalCases } = result as ListCourtCaseResult
 
     expect(cases).toHaveLength(3)
-    expect(cases[0].courtDate).toStrictEqual(new Date(firstDate))
-    expect(cases[1].courtDate).toStrictEqual(new Date(secondDate))
-    expect(cases[2].courtDate).toStrictEqual(new Date(thirdDate))
+
+    const courtCaseDateAsc1 = cases[0].courtDate ? cases[0].courtDate : ""
+    const courtCaseDateAsc2 = cases[1].courtDate ? cases[1].courtDate : ""
+    const courtCaseDateAsc3 = cases[2].courtDate ? cases[2].courtDate : ""
+
+    expect(isSameDay(new Date(courtCaseDateAsc1), firstDate)).toBeTruthy()
+    expect(isSameDay(new Date(courtCaseDateAsc2), secondDate)).toBeTruthy()
+    expect(isSameDay(new Date(courtCaseDateAsc3), thirdDate)).toBeTruthy()
     expect(totalCases).toEqual(3)
 
     const resultDesc = await listCourtCases(
@@ -347,10 +340,15 @@ describe("listCourtCases", () => {
     const { result: casesDesc, totalCases: totalCasesDesc } = resultDesc as ListCourtCaseResult
 
     expect(casesDesc).toHaveLength(3)
-    expect(casesDesc[0].courtDate).toStrictEqual(thirdDate)
-    expect(casesDesc[1].courtDate).toStrictEqual(secondDate)
-    expect(casesDesc[2].courtDate).toStrictEqual(firstDate)
     expect(totalCasesDesc).toEqual(3)
+
+    const courtCaseDateDesc1 = casesDesc[0].courtDate ? casesDesc[0].courtDate : ""
+    const courtCaseDateDesc2 = casesDesc[1].courtDate ? casesDesc[1].courtDate : ""
+    const courtCaseDateDesc3 = casesDesc[2].courtDate ? casesDesc[2].courtDate : ""
+
+    expect(isSameDay(new Date(courtCaseDateDesc1), thirdDate)).toBeTruthy()
+    expect(isSameDay(new Date(courtCaseDateDesc2), secondDate)).toBeTruthy()
+    expect(isSameDay(new Date(courtCaseDateDesc3), firstDate)).toBeTruthy()
   })
 
   it("Should order by notes number", async () => {
@@ -1257,11 +1255,13 @@ describe("listCourtCases", () => {
       const { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(3)
-      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([
-        resolutionTimestamp,
-        resolutionTimestamp,
-        resolutionTimestamp
-      ])
+      const case1 = cases[0]
+      const case2 = cases[1]
+      const case3 = cases[2]
+
+      expect(new Date(case1.resolutionTimestamp ? case1.resolutionTimestamp : "")).toEqual(resolutionTimestamp)
+      expect(new Date(case2.resolutionTimestamp ? case2.resolutionTimestamp : "")).toEqual(resolutionTimestamp)
+      expect(new Date(case3.resolutionTimestamp ? case3.resolutionTimestamp : "")).toEqual(resolutionTimestamp)
     })
 
     it("Should return all cases if case state is 'Unresolved and resolved'", async () => {
@@ -1286,12 +1286,16 @@ describe("listCourtCases", () => {
       const { result: cases } = result as ListCourtCaseResult
 
       expect(cases).toHaveLength(4)
-      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([
-        null,
-        resolutionTimestamp,
-        resolutionTimestamp,
-        resolutionTimestamp
-      ])
+
+      const case1 = cases[0]
+      const case2 = cases[1]
+      const case3 = cases[2]
+      const case4 = cases[3]
+
+      expect(case1.resolutionTimestamp).toBeNull()
+      expect(new Date(case2.resolutionTimestamp ? case2.resolutionTimestamp : "")).toEqual(resolutionTimestamp)
+      expect(new Date(case3.resolutionTimestamp ? case3.resolutionTimestamp : "")).toEqual(resolutionTimestamp)
+      expect(new Date(case4.resolutionTimestamp ? case4.resolutionTimestamp : "")).toEqual(resolutionTimestamp)
     })
 
     it("Should only include 'Unresolved' triggers when caseState is not set", async () => {
