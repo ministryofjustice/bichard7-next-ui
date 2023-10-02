@@ -261,15 +261,31 @@ const listCourtCases = async (
     })
 
     if (resolvedByUsername !== undefined) {
-      query.andWhere(
-        new Brackets((qb) => {
-          qb.where({
-            errorResolvedBy: resolvedByUsername
-          }).orWhere({
-            triggerResolvedBy: resolvedByUsername
+      query
+        .leftJoin(
+          (triggerQuery) => {
+            return triggerQuery
+              .from("Trigger", "triggers_tbl")
+              .select("triggers_tbl.error_id, string_agg(triggers_tbl.resolved_by, ',')", "trigger_resolved_by")
+              .groupBy("triggers_tbl.error_id")
+          },
+          "triggers_tbl",
+          "courtCase.errorId = triggers_tbl.error_id"
+        )
+        .addSelect("trigger_resolved_by")
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where({
+              errorResolvedBy: resolvedByUsername
+            })
+              .orWhere({
+                triggerResolvedBy: resolvedByUsername
+              })
+              .orWhere("trigger_resolved_by LIKE '%' || :triggerResolver || '%'", {
+                triggerResolver: resolvedByUsername
+              })
           })
-        })
-      )
+        )
     }
   }
 
@@ -311,7 +327,7 @@ const listCourtCases = async (
     query.andWhere({ triggerCount: MoreThan(0) })
   }
 
-  // console.log("SQL", query.getQueryAndParameters())
+  console.log("SQL", query.getQueryAndParameters())
   try {
     const count = await query.getCount()
     const result = await query
