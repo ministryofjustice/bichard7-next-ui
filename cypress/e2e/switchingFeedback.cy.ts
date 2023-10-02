@@ -2,8 +2,6 @@ import SurveyFeedback from "services/entities/SurveyFeedback"
 import hashedPassword from "../fixtures/hashedPassword"
 import { expectToHaveNumberOfFeedbacks } from "../support/helpers"
 
-
-
 const submitAFeedback = () => {
   cy.findByText("Switch to old Bichard").click()
   cy.get("[name=issueOrPreference]").check("issue")
@@ -58,34 +56,148 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.get("label").contains("Other (please specify)")
   })
 
-  describe("I have found an issue", () => {
-    it.only("Should show text area box when case list page or case details page radio button is selected", () => {
+  type SurveyInput = {
+    question1Choice: "I have found an issue" | "I prefer working in the old version" | "Other" | undefined
+    question2Choice: "Case list page" | "Case details page" | undefined
+    moreDetailsText: string | undefined
+  }
+  type SurveyResult = {
+    feedbackSavedToDatabase: boolean
+    redirectedToOldBichard: boolean
+    question2Error: boolean
+    moreDetailsError: boolean
+  }
+  type TestCase = [string, SurveyInput, SurveyResult]
+  const testCases: TestCase[] = [
+    [
+      "Choosing the first options for both questions and filling in details text",
+      {
+        question1Choice: "I have found an issue",
+        question2Choice: "Case list page",
+        moreDetailsText: "There is an issue on the case list page"
+      },
+      { feedbackSavedToDatabase: true, redirectedToOldBichard: true, question2Error: false, moreDetailsError: false }
+    ],
+    [
+      "Submitting without answering question 2 or giving details",
+      {
+        question1Choice: "I have found an issue",
+        question2Choice: undefined,
+        moreDetailsText: undefined
+      },
+      { feedbackSavedToDatabase: false, redirectedToOldBichard: false, question2Error: true, moreDetailsError: true }
+    ]
+    // [
+    //   // "Submitting without answering question 2",
+    //   // {
+    //   //   question1Choice: "I have found an issue",
+    //   //   question2Choice: undefined,
+    //   //   moreDetailsText: "Submitted without Question 2"
+    //   // },
+    //   // { feedbackSavedToDatabase: false, redirectedToOldBichard: false, question2Error: true, moreDetailsError: false }
+    // ]
+  ]
+  testCases.forEach(([testName, testInput, testResult]) => {
+    it(testName, () => {
       cy.visit("/bichard")
       cy.contains("button", "Switch to old Bichard").click()
 
       cy.get("#caseListOrDetail").should("not.exist")
       cy.get("#otherFeedback").should("not.exist")
       cy.get("button").contains("Send feedback and continue").should("not.exist")
-      cy.get("#issueOrPreference-issue").check()
-      cy.get("#caseListOrDetail").should("exist")
-      cy.get("#otherFeedback").should("exist")
-      cy.get("button").contains("Send feedback and continue").should("exist")
-      cy.get("#caseListOrDetail-caselist").click()
-      cy.get("[name=feedback]").type("This is test feedback")
-      cy.get("button").contains("Send feedback and continue").click()
-      expectToHaveNumberOfFeedbacks(1)
+
+      const question1AnswerIds = {
+        "I have found an issue": "#issueOrPreference-issue",
+        "I prefer working in the old version": "#issueOrPreference-preference",
+        Other: "issueOrPreference-other"
+      }
+
+      if (testInput.question1Choice !== undefined) {
+        cy.get(question1AnswerIds[testInput.question1Choice]).check()
+        cy.get("#caseListOrDetail").should("exist")
+
+        const question2AnswerIds = {
+          "Case list page": "#caseListOrDetail-caselist",
+          "Case details page": "#caseListOrDetail-casedetail"
+        }
+        if (testInput.question2Choice !== undefined) {
+          cy.get(question2AnswerIds[testInput.question2Choice]).click()
+        }
+
+        if (testInput.question1Choice === "I have found an issue") {
+          cy.contains("Could you explain in detail what problem you have experienced?").should("exist")
+          cy.get("#otherFeedback").should("exist")
+
+          if (testInput.moreDetailsText !== undefined) {
+            cy.get("[name=feedback]").type(testInput.moreDetailsText)
+          }
+        }
+
+        cy.get("button").contains("Send feedback and continue").should("exist")
+        cy.get("button").contains("Send feedback and continue").click()
+
+        if (testResult.redirectedToOldBichard) {
+          cy.url().should("match", /\/bichard-ui/)
+        } else {
+          cy.url().should("not.match", /\/bichard-ui/)
+        }
+
+        cy.get("#caseListOrDetail span", {}).should(testResult.question2Error ? "exist" : "not.exist")
+
+        cy.get("#otherFeedback span").should(testResult.moreDetailsError ? "exist" : "not.exist")
+
+        expectToHaveNumberOfFeedbacks(testResult.feedbackSavedToDatabase ? 1 : 0)
+      } else {
+        cy.get("button").contains("Send feedback and continue").should("not.exist")
+      }
     })
   })
 
-  describe("I prefer the old verison", () => {
-    // it("Should show only textarea box when second button of first question is selected ", () => {})
-    // it("Should display error if textarea box is empty when second button is selected", () => {})
-  })
+  // describe("I have found an issue", () => {
+  //   it("Should show text area box when case list page or case details page radio button is selected", () => {
+  // cy.visit("/bichard")
+  // cy.contains("button", "Switch to old Bichard").click()
 
-  describe("Other", () => {
-    // it("Should show only textarea box when third button of first question is selected ", () => {})
-    // it("Should display error if textarea box is empty when third button is selected", () => {})
-  })
+  // cy.get("#caseListOrDetail").should("not.exist")
+  // cy.get("#otherFeedback").should("not.exist")
+  // cy.get("button").contains("Send feedback and continue").should("not.exist")
+  // cy.get("#issueOrPreference-issue").check()
+  // cy.get("#caseListOrDetail").should("exist")
+  // cy.contains("Could you explain in detail what problem you have experienced?").should("exist")
+  // cy.get("#otherFeedback").should("exist")
+  // cy.get("button").contains("Send feedback and continue").should("exist")
+  // cy.get("#caseListOrDetail-caselist").click()
+  // cy.get("[name=feedback]").type("This is test feedback")
+  // cy.get("button").contains("Send feedback and continue").click()
+  // expectToHaveNumberOfFeedbacks(1)
+  //   })
+  //   it("Should show text area box when case details page radio button is selected", () => {
+  //     cy.visit("/bichard")
+  //     cy.contains("button", "Switch to old Bichard").click()
+
+  //     cy.get("#caseListOrDetail").should("not.exist")
+  //     cy.get("#otherFeedback").should("not.exist")
+  //     cy.get("button").contains("Send feedback and continue").should("not.exist")
+  //     cy.get("#issueOrPreference-issue").check()
+  //     cy.get("#caseListOrDetail").should("exist")
+  //     cy.get("#otherFeedback").should("exist")
+  //     cy.get("button").contains("Send feedback and continue").should("exist")
+  //     cy.get("#caseListOrDetail-casedetail").click()
+  //     cy.get("[name=feedback]").type("This is test feedback 2")
+  //     cy.get("button").contains("Send feedback and continue").click()
+  //     expectToHaveNumberOfFeedbacks(1)
+  //   })
+  // })
+
+  // describe("I prefer the old verison", () => {
+  //   // it("Should show only textarea box when second button of first question is selected ", () => {})
+  //   // it("Should display error if textarea box is empty when second button is selected", () => {})
+  // })
+
+  // describe("Other", () => {
+  //   // it("Should show only textarea box when third button of first question is selected ", () => {})
+  //   // it("Should display error if textarea box is empty when third button is selected", () => {})
+  // })
 
   // it("Should open old version of Bichard when user skips feedback", () => {})
 
