@@ -6,17 +6,13 @@ import { GridCol, GridRow, Link } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
-import { DisplayPartialCourtCase } from "types/display/CourtCases"
-import { DisplayFullUser } from "types/display/Users"
-import { exceptionsAreLockedByCurrentUser } from "utils/caseLocks"
 import getExceptionDefinition from "utils/getExceptionDefinition"
 import getExceptionPathDetails from "utils/getExceptionPathDetails"
 
 interface Props {
-  courtCase: DisplayPartialCourtCase
   aho: AnnotatedHearingOutcome
-  user: DisplayFullUser
   onNavigate: NavigationHandler
+  canResolveAndSubmit: boolean
 }
 
 const useStyles = createUseStyles({
@@ -31,7 +27,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const Exceptions = ({ courtCase, aho, user, onNavigate }: Props) => {
+const Exceptions = ({ aho, onNavigate, canResolveAndSubmit }: Props) => {
   const classes = useStyles()
 
   const handleClick = (tab?: CaseDetailsTab, offenceOrderIndex?: number) => {
@@ -82,11 +78,7 @@ const Exceptions = ({ courtCase, aho, user, onNavigate }: Props) => {
             </GridRow>
 
             <GridRow>
-              <ConditionalRender
-                isRendered={
-                  exceptionsAreLockedByCurrentUser(courtCase, user.username) && courtCase.errorStatus === "Unresolved"
-                }
-              >
+              <ConditionalRender isRendered={canResolveAndSubmit}>
                 <LinkButton href="resolve">{"Mark As Manually Resolved"}</LinkButton>
               </ConditionalRender>
             </GridRow>

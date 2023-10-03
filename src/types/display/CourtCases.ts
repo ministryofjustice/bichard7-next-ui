@@ -13,7 +13,6 @@ type FieldsForDisplayPartialCourtCase =
   | "triggerLockedByUsername"
   | "triggerCount"
   | "defendantName"
-  | "errorStatus"
 
 export type DisplayPartialCourtCase = Pick<CourtCase, FieldsForDisplayPartialCourtCase> & {
   courtDate?: string

@@ -9,6 +9,12 @@
     "canManuallyResolveAndSubmit": true,
     "exceptionLockedByAnotherUser": false,
     "exceptionStatus": "Unresolved",
+    "loggedInAs": "Supervisor"
+  },
+  {
+    "canManuallyResolveAndSubmit": true,
+    "exceptionLockedByAnotherUser": false,
+    "exceptionStatus": "Unresolved",
     "loggedInAs": "ExceptionHandler"
   },
   {

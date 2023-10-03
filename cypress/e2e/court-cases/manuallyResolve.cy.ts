@@ -22,7 +22,7 @@ describe("Manually resolve a case", () => {
 
   before(() => {
     cy.task("clearUsers")
-    insertUsers(["GeneralHandler", "ExceptionHandler", "TriggerHandler"])
+    insertUsers(["GeneralHandler", "ExceptionHandler", "TriggerHandler", "Supervisor"])
   })
 
   beforeEach(() => {
