@@ -354,11 +354,11 @@ describe("Court case details", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
 
     cy.login("bichard01@example.com", "password")
-
     cy.visit("/bichard/court-cases/0")
 
-    cy.get(".moj-tab-panel-triggers").should("be.visible")
-    cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
+    cy.get(".moj-tab-panel-triggers").should("not.be.visible")
+    cy.get(".moj-tab-panel-exceptions").should("be.visible")
+    cy.get(".triggers-and-exceptions-sidebar a").contains("Triggers").click()
 
     cy.get(".moj-tab-panel-triggers .moj-trigger-row").should("not.exist")
     cy.get(".moj-tab-panel-triggers").contains("There are no triggers for this case.")
@@ -366,7 +366,16 @@ describe("Court case details", () => {
 
   it("Should show exceptions in exceptions tab", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-
+    const triggers: TestTrigger[] = [
+      {
+        triggerId: 0,
+        triggerItemIdentity: 1,
+        triggerCode: "TRPR0010",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+    cy.task("insertTriggers", { caseId: 0, triggers })
     cy.login("bichard01@example.com", "password")
 
     cy.visit("/bichard/court-cases/0")

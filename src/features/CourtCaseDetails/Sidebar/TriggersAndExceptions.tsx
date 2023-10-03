@@ -48,7 +48,12 @@ const TabList = styled(Tabs.List)`
 
 const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate, canResolveAndSubmit }: Props) => {
   const availableTabs = [Feature.Triggers, Feature.Exceptions].filter((tab) => user.hasAccessTo[tab])
-  const defaultTab = availableTabs.length > 0 ? availableTabs[0] : undefined
+  const defaultTab =
+    availableTabs.length > 0
+      ? availableTabs.length == 2 && courtCase.triggerCount === 0
+        ? availableTabs[1]
+        : availableTabs[0]
+      : undefined
   const [selectedTab, setSelectedTab] = useState(defaultTab)
   const classes = useStyles()
 
