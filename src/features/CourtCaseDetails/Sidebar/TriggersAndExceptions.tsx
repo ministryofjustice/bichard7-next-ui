@@ -29,6 +29,7 @@ interface Props {
   aho: AnnotatedHearingOutcome
   user: DisplayFullUser
   onNavigate: NavigationHandler
+  canResolveAndSubmit: boolean
 }
 
 const TabList = styled(Tabs.List)`
@@ -45,9 +46,14 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate }: Props) => {
+const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate, canResolveAndSubmit }: Props) => {
   const availableTabs = [Feature.Triggers, Feature.Exceptions].filter((tab) => user.hasAccessTo[tab])
-  const defaultTab = availableTabs.length > 0 ? availableTabs[0] : undefined
+  const defaultTab =
+    availableTabs.length > 0
+      ? availableTabs.length == 2 && courtCase.triggerCount === 0
+        ? availableTabs[1]
+        : availableTabs[0]
+      : undefined
   const [selectedTab, setSelectedTab] = useState(defaultTab)
   const classes = useStyles()
 
@@ -95,7 +101,7 @@ const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate }: Props) => {
               selected={selectedTab === Feature.Exceptions}
               className="moj-tab-panel-exceptions"
             >
-              <ExceptionsList courtCase={courtCase} aho={aho} user={user} onNavigate={onNavigate} />
+              <ExceptionsList aho={aho} onNavigate={onNavigate} canResolveAndSubmit={canResolveAndSubmit} />
             </Tabs.Panel>
           </ConditionalRender>
         </Tabs>

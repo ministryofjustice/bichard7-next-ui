@@ -7,13 +7,26 @@ interface Props extends React.ComponentProps<"button"> {
   href: string
   buttonColour?: string
   buttonTextColour?: string
+  buttonShadowColour?: string
 }
 
-const LinkButton: React.FC<Props> = ({ children, href, buttonColour, buttonTextColour, ...buttonProps }: Props) => {
+const LinkButton: React.FC<Props> = ({
+  children,
+  href,
+  buttonColour,
+  buttonShadowColour,
+  buttonTextColour,
+  ...buttonProps
+}: Props) => {
   const { asPath, basePath } = useRouter()
   return (
     <a href={href.startsWith("/") ? href : `${basePath}${asPath}/${href}`}>
-      <Button buttonColour={buttonColour} buttonTextColour={buttonTextColour} {...buttonProps}>
+      <Button
+        buttonColour={buttonColour}
+        buttonTextColour={buttonTextColour}
+        buttonShadowColour={buttonShadowColour}
+        {...buttonProps}
+      >
         {children}
       </Button>
     </a>
