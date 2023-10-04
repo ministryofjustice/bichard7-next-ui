@@ -36,7 +36,7 @@ const UserManagementNavItem: React.FC<NavBarProps> = (groups) => {
 
 const NavBar: React.FC<NavBarProps> = ({ groups }) => {
   const classes = useCustomStyles()
-  const isSupervisor = groups.some(group => group ===  UserGroup.Supervisor)
+  const isSupervisor = groups.some((group) => group === UserGroup.Supervisor)
   return (
     <div className="moj-primary-navigation" role="navigation">
       <div className={`${classes["max-width"]} moj-primary-navigation__container`}>
@@ -49,7 +49,7 @@ const NavBar: React.FC<NavBarProps> = ({ groups }) => {
               <NavItem name={"Help"} link={"/help/"} />
             </ul>
           </nav>
-        </div> 
+        </div>
       </div>
     </div>
   )
