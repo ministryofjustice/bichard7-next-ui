@@ -14,7 +14,7 @@ import {
   isLockedByCurrentUser,
   triggersAreLockedByCurrentUser
 } from "utils/caseLocks"
-import { gdsLightGrey, textPrimary } from "utils/colours"
+import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 
 interface Props {
   courtCase: DisplayFullCourtCase
@@ -145,6 +145,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
             className="b7-reallocate-button"
             buttonColour={gdsLightGrey}
             buttonTextColour={textPrimary}
+            buttonShadowColour={gdsMidGrey}
           >
             {"Reallocate Case"}
           </LinkButton>
@@ -168,6 +169,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
               className={classes.button}
               buttonColour={gdsLightGrey}
               buttonTextColour={textPrimary}
+              buttonShadowColour={gdsMidGrey}
             >
               {"Return to case list"}
             </Button>

@@ -8,6 +8,7 @@ import CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
 import getExceptionDefinition from "utils/getExceptionDefinition"
 import getExceptionPathDetails from "utils/getExceptionPathDetails"
+import { gdsLightGrey, textPrimary, gdsMidGrey } from "../../../utils/colours"
 
 interface Props {
   aho: AnnotatedHearingOutcome
@@ -24,6 +25,12 @@ const useStyles = createUseStyles({
 
   exceptionHelp: {
     marginTop: "10px"
+  },
+
+  buttonContainer: {
+    display: "flex",
+    justifyContent: "flex-end",
+    marginBottom: "0"
   }
 })
 
@@ -76,15 +83,22 @@ const Exceptions = ({ aho, onNavigate, canResolveAndSubmit }: Props) => {
                 </Link>
               </GridCol>
             </GridRow>
-
-            <GridRow>
-              <ConditionalRender isRendered={canResolveAndSubmit}>
-                <LinkButton href="resolve">{"Mark As Manually Resolved"}</LinkButton>
-              </ConditionalRender>
-            </GridRow>
           </div>
         )
       })}
+      <ConditionalRender isRendered={canResolveAndSubmit && aho.Exceptions.length > 0}>
+        <div className={`${classes.buttonContainer}`}>
+          <LinkButton
+            href="resolve"
+            className="b7-manually-resolve-button"
+            buttonColour={gdsLightGrey}
+            buttonTextColour={textPrimary}
+            buttonShadowColour={gdsMidGrey}
+          >
+            {"Mark as manually resolved"}
+          </LinkButton>
+        </div>
+      </ConditionalRender>
     </>
   )
 }

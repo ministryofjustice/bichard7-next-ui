@@ -47,7 +47,7 @@ describe("Manually resolve a case", () => {
     cy.findByText("NAME Defendant").click()
 
     cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
-    cy.get("button").contains("Mark As Manually Resolved").click()
+    cy.get("button").contains("Mark as manually resolved").click()
     cy.get("H2").should("have.text", "Resolve Case")
     cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
 
@@ -81,7 +81,7 @@ describe("Manually resolve a case", () => {
     cy.findByText("NAME Defendant").click()
 
     cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
-    cy.get("button").contains("Mark As Manually Resolved").click()
+    cy.get("button").contains("Mark as manually resolved").click()
     cy.get("H2").should("have.text", "Resolve Case")
     cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
 
@@ -149,10 +149,10 @@ describe("Manually resolve a case", () => {
         }
 
         if (canManuallyResolveAndSubmit) {
-          cy.get("button").contains("Mark As Manually Resolved").should("exist")
+          cy.get("button").contains("Mark as manually resolved").should("exist")
           // TODO check submit button should exists
         } else {
-          cy.get("button").contains("Mark As Manually Resolved").should("not.exist")
+          cy.get("button").contains("Mark as manually resolved").should("not.exist")
           // TODO check submit button should not exists
         }
 
