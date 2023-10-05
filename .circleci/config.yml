@@ -252,6 +252,29 @@ jobs:
       - store_test_results:
           path: ./cucumber/results
 
+  zap_scanner:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+    resource_class: xlarge
+    steps:
+      - setup
+      - run: ./.circleci/scripts/build-ui.sh
+      - fetch_images:
+          IMAGES: nodejs-20-2023
+      - build_audit_logging_images
+      - fetch_images:
+          IMAGES: user-service nginx-auth-proxy
+      - start_services:
+          SERVICES: ui user-service nginx-auth-proxy postgres db-migrate db-seed audit-log-api localstack
+          FLAGS: --no-deps
+      - run:
+          name: Seed database
+          command: DEPLOY_NAME=e2e-test npm run seed-data
+      - run:
+          name: Run ZAP scanner
+          command: ./scripts/zap-scan.sh
+
 #################################################################################
 
 workflows:
@@ -265,3 +288,4 @@ workflows:
 
       - cypress_e2e_tests
       - cucumber_e2e_tests
+      - zap_scanner
