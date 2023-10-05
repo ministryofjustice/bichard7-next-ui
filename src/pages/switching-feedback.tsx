@@ -43,24 +43,14 @@ interface Props {
 }
 
 function validateForm(form: SwitchingFeedbackFormState): boolean {
-  const caseA =
-    form.issueOrPreference === "issue" && form.caseListOrDetail === "caselist" && form.feedback !== undefined
-  const caseB =
-    form.issueOrPreference === "issue" && form.caseListOrDetail === "casedetail" && form.feedback !== undefined
-  const caseC =
-    form.issueOrPreference === "preference" && form.caseListOrDetail === "caselist" && form.feedback !== undefined
-  const caseD =
-    form.issueOrPreference === "preference" && form.caseListOrDetail === "casedetail" && form.feedback !== undefined
-  const caseE =
-    form.issueOrPreference === "other" && form.caseListOrDetail === "caselist" && form.feedback !== undefined
-  const caseF =
-    form.issueOrPreference === "other" && form.caseListOrDetail === "casedetail" && form.feedback !== undefined
+  const isIssueOrPreferenceValid =
+    !!form.issueOrPreference && ["issue", "preference", "other"].includes(form.issueOrPreference)
+  const isCaseListOrDetailValid =
+    form.issueOrPreference !== "issue" ||
+    (!!form.caseListOrDetail && ["caselist", "casedetail"].includes(form.caseListOrDetail))
+  const isFeedbackValid = !!form.feedback
 
-  if (caseA || caseB || caseC || caseD || caseE || caseF) {
-    return true
-  } else {
-    return false
-  }
+  return isIssueOrPreferenceValid && isCaseListOrDetailValid && isFeedbackValid
 }
 
 export const getServerSideProps = withMultipleServerSideProps(
