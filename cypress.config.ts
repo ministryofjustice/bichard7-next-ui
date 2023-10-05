@@ -11,8 +11,9 @@ import {
   insertDummyCourtCasesWithTriggers,
   insertMultipleDummyCourtCases
 } from "./test/utils/insertCourtCases"
-import { deleteFeedback, getAllFeedbacksFromDatabase } from "./test/utils/manageFeedbackSurveys"
+import { deleteFeedback, getAllFeedbacksFromDatabase, insertFeedback } from "./test/utils/manageFeedbackSurveys"
 
+import SurveyFeedback from "services/entities/SurveyFeedback"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import insertException from "./test/utils/manageExceptions"
 import { deleteTriggers, insertTriggers } from "./test/utils/manageTriggers"
@@ -70,6 +71,9 @@ export default defineConfig({
 
         async getAllFeedbacksFromDatabase() {
           return getAllFeedbacksFromDatabase()
+        },
+        async insertFeedback(feedback: Partial<SurveyFeedback>) {
+          return insertFeedback(feedback)
         },
         async clearAllFeedbacksFromDatabase() {
           return deleteFeedback()
