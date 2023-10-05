@@ -2,7 +2,7 @@ import Feature from "../types/Feature"
 import { UserGroup } from "../types/UserGroup"
 
 // This type is used instead of the User entity to avoid dependency cycles
-type User = { groups: UserGroup[] }
+type User = { groups: UserGroup[]; featureFlags: Record<string, boolean> }
 
 const hasAccessToTriggers = (user: User): boolean => {
   return (
@@ -18,7 +18,9 @@ const hasAccessToTriggers = (user: User): boolean => {
 }
 
 const hasAccessToExceptions = (user: User): boolean => {
+  const featureEnabled = user.featureFlags.exceptionsEnabled ?? false
   return (
+    featureEnabled &&
     user.groups !== undefined &&
     user.groups.some(
       (group) =>
@@ -44,4 +46,4 @@ const userAccess = (user: User): { [key in Feature]: boolean } => {
   }
 }
 
-export { hasAccessToTriggers, hasAccessToExceptions, isSupervisor, userAccess }
+export { hasAccessToExceptions, hasAccessToTriggers, isSupervisor, userAccess }
