@@ -18,9 +18,8 @@ const hasAccessToTriggers = (user: User): boolean => {
 }
 
 const hasAccessToExceptions = (user: User): boolean => {
-  const featureEnabled = user.featureFlags.exceptionsEnabled ?? false
   return (
-    featureEnabled &&
+    !!user.featureFlags.exceptionsEnabled &&
     user.groups !== undefined &&
     user.groups.some(
       (group) =>
