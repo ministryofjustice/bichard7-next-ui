@@ -1,15 +1,5 @@
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import hashedPassword from "../fixtures/hashedPassword"
-import { expectToHaveNumberOfFeedbacks } from "../support/helpers"
-
-const submitAFeedback = () => {
-  cy.findByText("Switch to old Bichard").click()
-  cy.get("[name=issueOrPreference]").check("issue")
-  cy.get("[name=caseListOrDetail]").check("caselist")
-  cy.get("[name=componentIssue]").check("columnHeaders")
-  cy.get("[name=otherFeedback]").type("I rather the old Bichard. It's easier to use.")
-  cy.get("[type=submit]").click()
-}
 
 describe("Switching Bichard Version Feedback Form", () => {
   const expectedUserId = 0
@@ -293,7 +283,7 @@ describe("Switching Bichard Version Feedback Form", () => {
         steps: [
           {
             action: "insert-feedback",
-            date: new Date(Date.now() - (179 * 60 * 1000)) // 2 hours and 59 minutes ago
+            date: new Date(Date.now() - 179 * 60 * 1000) // 2 hours and 59 minutes ago
           },
 
           {
@@ -318,10 +308,76 @@ describe("Switching Bichard Version Feedback Form", () => {
           }
         ]
       }
+    ],
+    [
+      "Should redirect user to switching survey after 3 hours of a click on 'Switch to old Bichard'",
+      {
+        steps: [
+          {
+            action: "insert-feedback",
+            date: new Date(Date.now() - 182 * 60 * 1000) // 3 hours and 02 minutes ago
+          },
+          {
+            action: "check",
+            label:
+              "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task.",
+            idInFor: true
+          },
+          {
+            action: "check",
+            label: "Case list page",
+            idInFor: true
+          },
+          {
+            action: "exists",
+            text: "Could you explain in detail what problem you have experienced?"
+          },
+          {
+            action: "type",
+            input: "Some feedback",
+            label: "Tell us why you have made this selection."
+          },
+          {
+            action: "click",
+            button: "Send feedback and continue"
+          },
+          {
+            action: "check-db",
+            shouldExist: true,
+            data: { feedback: "Some feedback", caseListOrDetail: "caselist", issueOrPreference: "issue" }
+          },
+          {
+            action: "match-url",
+            url: /\/bichard-ui\/.*$/
+          }
+        ]
+      }
+    ],
+    [
+      "Should redirect to case list in old Bichard",
+      {
+        steps: [
+          {
+            action: "match-url",
+            url: /\/bichard-ui\/.*$/
+          }
+        ]
+      }
+    ],
+    [
+      "Should redirect to the same case detail page in old Bichard",
+      {
+        steps: [
+          {
+            action: "match-url",
+            url: /\/bichard-ui\/.*$/
+          }
+        ]
+      }
     ]
   ]
 
-  TestCases.slice(-1).forEach(([testName, testInput]) => {
+  TestCases.slice(-4).forEach(([testName, testInput]) => {
     it(testName, () => {
       cy.visit("/bichard")
       cy.contains("button", "Switch to old Bichard").click()
@@ -381,12 +437,4 @@ describe("Switching Bichard Version Feedback Form", () => {
       })
     })
   })
-
-  // it("Should redirect user to old Bichard within 3 hours of first click on 'Switch to old Bichard' after logging in", () => {})
-
-  // it("Should redirect user to switching survey after 3 hours of a click on 'Switch to old Bichard'", () => {})
-
-  // it("Should redirect to case list in old Bichard", () => {})
-
-  // it("Should redirect to the same case detail page in old Bichard", () => {})
 })
