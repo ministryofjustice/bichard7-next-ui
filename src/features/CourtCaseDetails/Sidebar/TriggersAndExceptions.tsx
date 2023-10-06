@@ -73,7 +73,9 @@ const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate, canResolveAnd
               </Tabs.Tab>
             </ConditionalRender>
 
-            <ConditionalRender isRendered={user.hasAccessTo[Feature.Exceptions]}>
+            <ConditionalRender
+              isRendered={user.hasAccessTo[Feature.Exceptions] && user.hasAccessTo[Feature.ExceptionsEnabled]}
+            >
               <Tabs.Tab
                 id="exceptions-tab"
                 className={classes.tab}

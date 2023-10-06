@@ -19,7 +19,6 @@ const hasAccessToTriggers = (user: User): boolean => {
 
 const hasAccessToExceptions = (user: User): boolean => {
   return (
-    !!user.featureFlags?.exceptionsEnabled &&
     user.groups !== undefined &&
     user.groups.some(
       (group) =>
@@ -41,7 +40,8 @@ const userAccess = (user: User): { [key in Feature]: boolean } => {
     [Feature.Exceptions]: hasAccessToExceptions(user),
     [Feature.CaseDetailsSidebar]: hasAccessToTriggers(user) || hasAccessToExceptions(user),
     [Feature.UnlockOtherUsersCases]: isSupervisor(user),
-    [Feature.ListAllCases]: isSupervisor(user)
+    [Feature.ListAllCases]: isSupervisor(user),
+    [Feature.ExceptionsEnabled]: !!user.featureFlags?.exceptionsEnabled
   }
 }
 

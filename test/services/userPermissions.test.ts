@@ -79,7 +79,7 @@ describe("user permissions", () => {
 
     user.featureFlags = { exceptionsEnabled: false }
 
-    expect(user.hasAccessTo[Feature.Exceptions]).toBe(false)
+    expect(user.hasAccessTo[Feature.ExceptionsEnabled]).toBe(false)
     expect(user.hasAccessTo[Feature.Triggers]).toBe(true)
   })
 
@@ -95,7 +95,7 @@ describe("user permissions", () => {
 
     user.featureFlags = { exceptionsEnabled: true }
 
-    expect(user.hasAccessTo[Feature.Exceptions]).toBe(true)
+    expect(user.hasAccessTo[Feature.ExceptionsEnabled]).toBe(true)
     expect(user.hasAccessTo[Feature.Triggers]).toBe(true)
   })
 })
