@@ -1,5 +1,6 @@
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import hashedPassword from "../fixtures/hashedPassword"
+import TestCases from "../fixtures/switchingFeedbackTestData"
 
 describe("Switching Bichard Version Feedback Form", () => {
   const expectedUserId = 0
@@ -26,7 +27,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.login("bichard01@example.com", "password")
   })
 
-  it.skip("Should access the switching feedback form with first question visible when user clicks 'Switch to old Bichard'", () => {
+  it("Should access the switching feedback form with first question visible when user clicks 'Switch to old Bichard'", () => {
     cy.visit("/bichard")
     cy.contains("button", "Switch to old Bichard").click()
     cy.get("a").contains("Back")
@@ -46,345 +47,9 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.get("label").contains("Other (please specify)")
   })
 
-  type TestCaseStepAction =
-    | "check"
-    | "exists"
-    | "type"
-    | "click"
-    | "check-db"
-    | "match-url"
-    | "switch-to-old-bichard"
-    | "insert-feedback"
-
-  type TestCaseStep = {
-    action: TestCaseStepAction
-    input?: string
-    button?: string
-    label?: string
-    text?: string
-    idInFor?: boolean
-    shouldExist?: boolean
-    data?: Record<string, unknown> | null
-    url?: RegExp
-    date?: Date
-  }
-
-  type TestCase = [
-    string,
-    {
-      steps: TestCaseStep[]
-    }
-  ]
-  const TestCases: TestCase[] = [
-    [
-      "Found an issue > Case list page > Give feedback > Submit",
-      {
-        steps: [
-          {
-            action: "check",
-            label:
-              "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task.",
-            idInFor: true
-          },
-          {
-            action: "check",
-            label: "Case list page",
-            idInFor: true
-          },
-          {
-            action: "exists",
-            text: "Could you explain in detail what problem you have experienced?"
-          },
-          {
-            action: "type",
-            input: "Some feedback",
-            label: "Tell us why you have made this selection."
-          },
-          {
-            action: "click",
-            button: "Send feedback and continue"
-          },
-          {
-            action: "check-db",
-            shouldExist: true,
-            data: { feedback: "Some feedback", caseListOrDetail: "caselist", issueOrPreference: "issue" }
-          }
-        ]
-      }
-    ],
-    [
-      "Found an issue > Case details page > Give feedback > Submit",
-      {
-        steps: [
-          {
-            action: "check",
-            label:
-              "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task.",
-            idInFor: true
-          },
-          {
-            action: "check",
-            label: "Case details page",
-            idInFor: true
-          },
-          {
-            action: "exists",
-            text: "Could you explain in detail what problem you have experienced?"
-          },
-          {
-            action: "type",
-            input: "Some feedback",
-            label: "Tell us why you have made this selection."
-          },
-          {
-            action: "click",
-            button: "Send feedback and continue"
-          },
-          {
-            action: "check-db",
-            shouldExist: true,
-            data: { feedback: "Some feedback", caseListOrDetail: "casedetail", issueOrPreference: "issue" }
-          }
-        ]
-      }
-    ],
-    [
-      "Prefer old Bichard > Give feedback > Submit",
-      {
-        steps: [
-          {
-            action: "check",
-            label: "I prefer working in the old version, and I dislike working in the new version.",
-            idInFor: true
-          },
-          {
-            action: "exists",
-            text: "Could you please explain why you prefer using the old version of Bichard over the new version Bichard?"
-          },
-          {
-            action: "type",
-            input: "Some feedback",
-            label: "Tell us why you have made this selection."
-          },
-          {
-            action: "click",
-            button: "Send feedback and continue"
-          },
-          {
-            action: "check-db",
-            shouldExist: true,
-            data: { feedback: "Some feedback", issueOrPreference: "preference" }
-          }
-        ]
-      }
-    ],
-    [
-      "Other > Give feedback > Submit",
-      {
-        steps: [
-          {
-            action: "check",
-            label: "Other (please specify)",
-            idInFor: true
-          },
-          {
-            action: "exists",
-            text: "Is there another reason why you are switching version of Bichard?"
-          },
-          {
-            action: "type",
-            input: "Some feedback",
-            label: "Tell us why you have made this selection."
-          },
-          {
-            action: "click",
-            button: "Send feedback and continue"
-          },
-          {
-            action: "check-db",
-            shouldExist: true,
-            data: { feedback: "Some feedback", issueOrPreference: "other" }
-          }
-        ]
-      }
-    ],
-    [
-      "Found an issue > Don't fill anything > Submit",
-      {
-        steps: [
-          {
-            action: "check",
-            label:
-              "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task.",
-            idInFor: true
-          },
-          {
-            action: "click",
-            button: "Send feedback and continue"
-          },
-          {
-            action: "exists",
-            text: "Input message into the text box"
-          },
-          {
-            action: "check-db",
-            shouldExist: false
-          }
-        ]
-      }
-    ],
-    [
-      "Option > Don't fill anything in > Submit ",
-      {
-        steps: [
-          {
-            action: "check",
-            label: "Other (please specify)",
-            idInFor: true
-          },
-          {
-            action: "click",
-            button: "Send feedback and continue"
-          },
-          {
-            action: "exists",
-            text: "Input message into the text box"
-          },
-          {
-            action: "check-db",
-            shouldExist: false
-          }
-        ]
-      }
-    ],
-    [
-      "Skip Feedback >Database record skip > old Bichard",
-      {
-        steps: [
-          {
-            action: "click",
-            button: "Skip feedback"
-          },
-          {
-            action: "check-db",
-            shouldExist: true,
-            data: { skipped: true }
-          },
-          {
-            action: "match-url",
-            url: /\/bichard-ui\/.*$/
-          }
-        ]
-      }
-    ],
-    [
-      "Should redirect user to old Bichard within 3 hours of first click on 'Switch to old Bichard' after logging in",
-      {
-        steps: [
-          {
-            action: "insert-feedback",
-            date: new Date(Date.now() - 179 * 60 * 1000) // 2 hours and 59 minutes ago
-          },
-
-          {
-            action: "click",
-            button: "Skip feedback"
-          },
-          {
-            action: "check-db",
-            shouldExist: true,
-            data: { skipped: true }
-          },
-          {
-            action: "match-url",
-            url: /\/bichard-ui\/.*$/
-          },
-          {
-            action: "switch-to-old-bichard"
-          },
-          {
-            action: "match-url",
-            url: /\/bichard-ui\/.*$/
-          }
-        ]
-      }
-    ],
-    [
-      "Should redirect user to switching survey after 3 hours of a click on 'Switch to old Bichard'",
-      {
-        steps: [
-          {
-            action: "insert-feedback",
-            date: new Date(Date.now() - 182 * 60 * 1000) // 3 hours and 02 minutes ago
-          },
-          {
-            action: "check",
-            label:
-              "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task.",
-            idInFor: true
-          },
-          {
-            action: "check",
-            label: "Case list page",
-            idInFor: true
-          },
-          {
-            action: "exists",
-            text: "Could you explain in detail what problem you have experienced?"
-          },
-          {
-            action: "type",
-            input: "Some feedback",
-            label: "Tell us why you have made this selection."
-          },
-          {
-            action: "click",
-            button: "Send feedback and continue"
-          },
-          {
-            action: "check-db",
-            shouldExist: true,
-            data: { feedback: "Some feedback", caseListOrDetail: "caselist", issueOrPreference: "issue" }
-          },
-          {
-            action: "match-url",
-            url: /\/bichard-ui\/.*$/
-          }
-        ]
-      }
-    ],
-    [
-      "Should redirect to case list in old Bichard",
-      {
-        steps: [
-          {
-            action: "match-url",
-            url: /\/bichard-ui\/.*$/
-          }
-        ]
-      }
-    ],
-    [
-      "Should redirect to the same case detail page in old Bichard",
-      {
-        steps: [
-          {
-            action: "match-url",
-            url: /\/bichard-ui\/.*$/
-          }
-        ]
-      }
-    ]
-  ]
-
-  TestCases.slice(-4).forEach(([testName, testInput]) => {
+  TestCases.forEach(([testName, testInput]) => {
     it(testName, () => {
-      cy.visit("/bichard")
-      cy.contains("button", "Switch to old Bichard").click()
-
-      cy.get("#caseListOrDetail").should("not.exist")
-      cy.get("#otherFeedback").should("not.exist")
-      cy.get("button").contains("Send feedback and continue").should("not.exist")
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
 
       testInput.steps.forEach((step) => {
         let element
@@ -429,10 +94,20 @@ describe("Switching Bichard Version Feedback Form", () => {
             break
 
           case "insert-feedback":
-            cy.task("insertFeedback", {})
+            cy.task("insertFeedback", {
+              userId: expectedUserId,
+              response: { skipped: true },
+              feedbackType: 1,
+              createdAt: step.date
+            })
           case "switch-to-old-bichard":
-            cy.visit("/bichard")
+            cy.visit(step.navigateTo ?? "/bichard")
             cy.contains("button", "Switch to old Bichard").click()
+            break
+          case "expectTheFeedbackForm":
+            cy.get("#caseListOrDetail").should("not.exist")
+            cy.get("#otherFeedback").should("not.exist")
+            cy.get("button").contains("Send feedback and continue").should("not.exist")
         }
       })
     })
