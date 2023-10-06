@@ -7,13 +7,14 @@ import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import { ParsedUrlQuery } from "querystring"
 import { useCallback, useEffect, useState } from "react"
+import { userToDisplayFullUserDto } from "services/dto/userDto"
 import SurveyFeedback from "services/entities/SurveyFeedback"
-import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import { SurveyFeedbackType, SwitchingFeedbackResponse } from "types/SurveyFeedback"
+import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
@@ -24,7 +25,7 @@ interface SwitchingFeedbackFormState {
   feedback?: string
 }
 interface Props {
-  user: User
+  user: DisplayFullUser
   previousPath: string
   fields?: {
     issueOrPreference: {
@@ -68,7 +69,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const props = {
-      user: currentUser.serialize(),
+      user: userToDisplayFullUserDto(currentUser),
       previousPath: previousPath || "../bichard"
     }
 
