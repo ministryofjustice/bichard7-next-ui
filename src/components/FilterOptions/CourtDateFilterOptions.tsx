@@ -1,17 +1,16 @@
-import { CaseAgeOptions } from "utils/caseAgeOptions"
-import { mapCaseAges } from "utils/validators/validateCaseAges"
-import RadioButton from "components/RadioButton/RadioButton"
-import type { FilterAction } from "types/CourtCaseFilter"
-import type { Dispatch } from "react"
 import DateInput from "components/CustomDateInput/DateInput"
-import { SerializedCourtDateRange } from "types/CaseListQueryParams"
-import { formatDisplayedDate } from "utils/formattedDate"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
+import RadioButton from "components/RadioButton/RadioButton"
+import type { Dispatch } from "react"
 import { createUseStyles } from "react-jss"
+import { SerializedCourtDateRange } from "types/CaseListQueryParams"
+import type { FilterAction } from "types/CourtCaseFilter"
+import { CaseAgeOptions } from "utils/caseAgeOptions"
+import { formatDisplayedDate } from "utils/formattedDate"
+import { mapCaseAges } from "utils/validators/validateCaseAges"
 
 interface Props {
   caseAges?: string[]
-  caseAgeCounts: KeyValuePair<string, number>
+  caseAgeCounts: Record<string, number>
   dispatch: Dispatch<FilterAction>
   dateRange: SerializedCourtDateRange | undefined
 }
@@ -39,7 +38,7 @@ const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
     : `${namedCaseAge} (${formatDisplayedDate(dateRange.from)})`
 }
 
-const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: KeyValuePair<string, number>): string => {
+const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: Record<string, number>): string => {
   const caseCount = `(${caseAgeCounts[namedCaseAge as string]})`
 
   return ["Today", "Yesterday"].includes(namedCaseAge)

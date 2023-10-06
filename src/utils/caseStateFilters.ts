@@ -1,6 +1,4 @@
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
-
-export const caseStateLabels: KeyValuePair<string, string> = {
+export const caseStateLabels: Record<string, string> = {
   "Unresolved and resolved": "Unresolved & resolved cases",
   Resolved: "Resolved cases"
 }

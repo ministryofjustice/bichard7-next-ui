@@ -2,11 +2,10 @@ import Trigger from "../../../src/services/entities/Trigger"
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { v4 as uuid } from "uuid"
 import AuditLogEvent from "../../../../bichard7-next-audit-logging/src/shared-types/src/AuditLogEvent"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 
 type GeneratedEvents = {
   events: AuditLogEvent[]
-  valueLookup: KeyValuePair<string, unknown>[]
+  valueLookup: Record<string, unknown>[]
 }
 
 export default function generateAuditLogEvents(
@@ -20,7 +19,7 @@ export default function generateAuditLogEvents(
   const triggerCodesResolved = triggerCodes.filter((triggerCode) =>
     resolvedTriggers.some((r) => r.triggerCode === triggerCode)
   )
-  const triggerDetailsObj = triggerCodesResolved.reduce((acc: KeyValuePair<string, string>, triggerCode, index) => {
+  const triggerDetailsObj = triggerCodesResolved.reduce((acc: Record<string, string>, triggerCode, index) => {
     acc[`Trigger ${index} Details`] = triggerCode
     return acc
   }, {})
@@ -50,7 +49,7 @@ export default function generateAuditLogEvents(
       "Original Hearing Outcome / PNC Update Dataset": {
         valueLookup: ahoValueLookup.id
       },
-      ...triggerCodesResolved.reduce((acc: KeyValuePair<string, string>, triggerCode, index) => {
+      ...triggerCodesResolved.reduce((acc: Record<string, string>, triggerCode, index) => {
         acc[`Trigger Code ${index.toString().padStart(2, "0")}`] = triggerCode
         return acc
       }, {})

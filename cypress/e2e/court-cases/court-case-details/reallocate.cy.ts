@@ -1,7 +1,7 @@
 import User from "services/entities/User"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
-import hashedPassword from "../../../fixtures/hashedPassword"
 import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
+import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("Case details", () => {
   const defaultUsers: Partial<User>[] = Array.from(Array(4)).map((_value, idx) => {
@@ -207,6 +207,38 @@ describe("Case details", () => {
       })
     }
   )
+
+  it("Should not allow reallocating phase 2 cases", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "01", phase: 1 },
+      { orgForPoliceFilter: "01", phase: 2 }
+    ])
+    const triggers: TestTrigger[] = [
+      {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+    cy.task("insertTriggers", { caseId: 0, triggers })
+    cy.login("bichard01@example.com", "password")
+
+    cy.visit("/bichard/court-cases/0")
+
+    cy.contains(
+      "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
+    ).should("not.be.visible")
+
+    cy.visit("/bichard/court-cases/1")
+
+    cy.contains(
+      "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
+    ).should("exist")
+
+    cy.visit("/bichard/court-cases/1/reallocate")
+    cy.url().should("match", /\/court-cases\/\d+/)
+  })
 })
 
 export {}

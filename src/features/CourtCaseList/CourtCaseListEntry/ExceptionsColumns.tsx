@@ -1,9 +1,8 @@
-import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
-import { SingleException } from "./CaseDetailsRow/SingleException"
-import LockedByTag from "../tags/LockedByTag/LockedByTag"
 import CaseUnlockedTag from "../tags/CaseUnlockedTag"
+import LockedByTag from "../tags/LockedByTag/LockedByTag"
+import { SingleException } from "./CaseDetailsRow/SingleException"
 
-export const ExceptionsReasonCell = ({ exceptionCounts }: { exceptionCounts: KeyValuePair<string, number> }) => {
+export const ExceptionsReasonCell = ({ exceptionCounts }: { exceptionCounts: Record<string, number> }) => {
   return (
     <>
       {Object.keys(exceptionCounts).map((exception, exceptionId) => {

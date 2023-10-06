@@ -1,4 +1,3 @@
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import Pagination from "components/Pagination"
@@ -14,8 +13,8 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { useEffect } from "react"
-import type CourtCase from "services/entities/CourtCase"
-import User from "services/entities/User"
+import { courtCaseToDisplayPartialCourtCaseDto } from "services/dto/courtCaseDto"
+import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import getDataSource from "services/getDataSource"
 import getLastSwitchingFormSubmission from "services/getLastSwitchingFormSubmission"
@@ -26,6 +25,8 @@ import { CaseState, QueryOrder, Reason, SerializedCourtDateRange, Urgency } from
 import Feature from "types/Feature"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
+import { DisplayPartialCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import caseStateFilters from "utils/caseStateFilters"
 import { formatFormInputDateString } from "utils/formattedDate"
@@ -40,8 +41,8 @@ import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
 
 interface Props {
-  user: User
-  courtCases: CourtCase[]
+  user: DisplayFullUser
+  courtCases: DisplayPartialCourtCase[]
   order: QueryOrder
   reasons: Reason[]
   keywords: string[]
@@ -50,7 +51,7 @@ interface Props {
   reasonCode: string | null
   urgent: string | null
   caseAge: string[]
-  caseAgeCounts: KeyValuePair<string, number>
+  caseAgeCounts: Record<string, number>
   dateRange: SerializedCourtDateRange | null
   page: number
   casesPerPage: number
@@ -177,8 +178,8 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     return {
       props: {
-        user: currentUser.serialize(),
-        courtCases: courtCases.result.map((courtCase: CourtCase) => courtCase.serialize()),
+        user: userToDisplayFullUserDto(currentUser),
+        courtCases: courtCases.result.map(courtCaseToDisplayPartialCourtCaseDto),
         lastSwitchingFormSubmission: (lastSwitchingFormSubmission ?? new Date(0)).toISOString(),
         order: oppositeOrder,
         totalCases: courtCases.totalCases,

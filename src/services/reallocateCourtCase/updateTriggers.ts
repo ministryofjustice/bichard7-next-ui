@@ -1,21 +1,20 @@
-import { EntityManager, IsNull } from "typeorm"
-import CourtCase from "../entities/CourtCase"
-import { isError } from "../../types/Result"
-import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
-import { default as TriggerEntity } from "../entities/Trigger"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import {
   AuditLogEvent,
   AuditLogEventOption,
   AuditLogEventOptions
 } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
+import { EntityManager, IsNull } from "typeorm"
 import { AUDIT_LOG_EVENT_SOURCE } from "../../config"
+import { isError } from "../../types/Result"
+import CourtCase from "../entities/CourtCase"
+import { default as TriggerEntity } from "../entities/Trigger"
 import User from "../entities/User"
-import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 
 const getTriggersDetails = (triggers: Trigger[]) =>
-  triggers.reduce((acc: KeyValuePair<string, unknown>, trigger, index) => {
+  triggers.reduce((acc: Record<string, unknown>, trigger, index) => {
     acc[`Trigger ${index + 1} Details`] = trigger.code
     return acc
   }, {})

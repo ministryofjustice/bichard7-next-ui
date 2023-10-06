@@ -3,6 +3,7 @@ import hashedPassword from "../fixtures/hashedPassword"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import { userAccess } from "utils/userPermissions"
 import SurveyFeedback from "services/entities/SurveyFeedback"
+import User from "services/entities/User"
 
 export function confirmFiltersAppliedContains(filterTag: string) {
   cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag)
@@ -96,4 +97,89 @@ export const expectToHaveNumberOfFeedbacks = (number: number) => {
     const feedbackResults = result as SurveyFeedback[]
     expect(feedbackResults.length).equal(number)
   })
+}
+
+export const setupDefaultUsers = () => {
+  const defaultUsers: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
+    return {
+      username: `Bichard0${idx}`,
+      visibleForces: [`00${idx}`],
+      visibleCourts: [`${idx}C`],
+      forenames: "Bichard Test User",
+      surname: `0${idx}`,
+      email: `bichard0${idx}@example.com`,
+      password: hashedPassword
+    }
+  })
+  defaultUsers.push({
+    username: `Bichard011111`,
+    visibleForces: [`0011111`],
+    forenames: "Bichard Test User",
+    surname: `011111`,
+    email: `bichard011111@example.com`,
+    password: hashedPassword
+  })
+  defaultUsers.push({
+    username: `TriggerHandler`,
+    visibleForces: [`0011111`],
+    forenames: "Trigger Handler User",
+    surname: `011111`,
+    email: `triggerhandler@example.com`,
+    password: hashedPassword
+  })
+  defaultUsers.push({
+    username: `ExceptionHandler`,
+    visibleForces: [`0011111`],
+    forenames: "Exception Handler User",
+    surname: `011111`,
+    email: `exceptionhandler@example.com`,
+    password: hashedPassword
+  })
+  defaultUsers.push({
+    username: `GeneralHandler`,
+    visibleForces: [`0011111`],
+    forenames: "General Handler User",
+    surname: `011111`,
+    email: `generalhandler@example.com`,
+    password: hashedPassword
+  })
+  defaultUsers.push({
+    username: `Supervisor`,
+    visibleForces: [`0011111`],
+    forenames: "Sup",
+    surname: "User",
+    email: "supervisor@example.com",
+    password: hashedPassword
+  })
+  defaultUsers.push({
+    username: `NoGroups`,
+    visibleForces: [`0011111`],
+    forenames: "No",
+    surname: "Groups",
+    email: "nogroups@example.com",
+    password: hashedPassword
+  })
+
+  return defaultUsers
+}
+
+export const defaultSetup = () => {
+  const defaultUsers = setupDefaultUsers()
+  cy.task("clearUsers")
+  cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp"] })
+  defaultUsers
+    .filter((u) => u.forenames === "Bichard Test User")
+    .map((user) => {
+      cy.task("insertIntoUserGroup", { emailAddress: user.email, groupName: "B7GeneralHandler_grp" })
+    })
+  cy.task("insertIntoUserGroup", { emailAddress: "triggerhandler@example.com", groupName: "B7TriggerHandler_grp" })
+  cy.task("insertIntoUserGroup", {
+    emailAddress: "exceptionhandler@example.com",
+    groupName: "B7ExceptionHandler_grp"
+  })
+  cy.task("insertIntoUserGroup", {
+    emailAddress: "generalhandler@example.com",
+    groupName: "B7GeneralHandler_grp"
+  })
+  cy.task("insertIntoUserGroup", { emailAddress: "supervisor@example.com", groupName: "B7Supervisor_grp" })
 }

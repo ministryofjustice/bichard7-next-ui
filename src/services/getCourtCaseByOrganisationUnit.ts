@@ -8,14 +8,26 @@ import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQ
 const getCourtCaseByOrganisationUnit = (
   dataSource: DataSource | EntityManager,
   courtCaseId: number,
-  user: User
+  user: User,
+  loadLockUsers?: boolean
 ): PromiseResult<CourtCase | null> => {
   const courtCaseRepository = dataSource.getRepository(CourtCase)
   let query = courtCaseRepository.createQueryBuilder("courtCase")
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
-  query.andWhere({ errorId: courtCaseId })
+  query = query.andWhere({ errorId: courtCaseId })
+
+  if (loadLockUsers) {
+    query
+      .leftJoin("courtCase.errorLockedByUser", "errorLockedByUser")
+      .addSelect(["errorLockedByUser.forenames", "errorLockedByUser.surname"])
+      .leftJoin("courtCase.triggerLockedByUser", "triggerLockedByUser")
+      .addSelect(["triggerLockedByUser.forenames", "triggerLockedByUser.surname"])
+  }
+
   leftJoinAndSelectTriggersQuery(query, user.excludedTriggers)
     .leftJoinAndSelect("courtCase.notes", "note")
+    .leftJoin("note.user", "user")
+    .addSelect(["user.forenames", "user.surname"])
     .addOrderBy("note.createdAt", "ASC")
 
   return query.getOne().catch((error) => error)

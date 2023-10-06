@@ -10,6 +10,7 @@ import LinkButton from "./LinkButton"
 import NavBar from "./NavBar"
 import PageTemplate from "./PageTemplate"
 import PhaseBanner from "./PhaseBanner"
+import { DisplayFullUser } from "types/display/Users"
 
 const Banner = styled.div`
   display: flex;
@@ -27,7 +28,7 @@ const BichardSwitch = styled(LinkButton)`
 `
 interface Props {
   children: ReactNode
-  user: User
+  user: DisplayFullUser
   bichardSwitch?: {
     display: boolean
     href?: string

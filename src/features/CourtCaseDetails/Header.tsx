@@ -5,24 +5,24 @@ import LockedTag from "components/LockedTag"
 import { Button, Heading } from "govuk-react"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
-import CourtCase from "services/entities/CourtCase"
-import User from "services/entities/User"
 import styled from "styled-components"
 import Feature from "types/Feature"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import {
   exceptionsAreLockedByCurrentUser,
   isLockedByCurrentUser,
   triggersAreLockedByCurrentUser
 } from "utils/caseLocks"
-import { gdsLightGrey, textPrimary } from "utils/colours"
+import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 
 interface Props {
-  courtCase: CourtCase
-  user: User
+  courtCase: DisplayFullCourtCase
+  user: DisplayFullUser
   canReallocate: boolean
 }
 
-type lockCheckFn = (courtCase: CourtCase, username: string) => boolean
+type lockCheckFn = (courtCase: DisplayFullCourtCase, username: string) => boolean
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -41,7 +41,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const getUnlockPath = (courtCase: CourtCase): URLSearchParams => {
+const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
   const params = new URLSearchParams()
   if (courtCase.errorLockedByUsername) {
     params.set("unlockException", courtCase.errorId?.toString())
@@ -139,12 +139,13 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
         />
       </HeaderRow>
       <ButtonContainer>
-        <ConditionalRender isRendered={canReallocate}>
+        <ConditionalRender isRendered={canReallocate && courtCase.phase === 1}>
           <LinkButton
             href={reallocatePath}
             className="b7-reallocate-button"
             buttonColour={gdsLightGrey}
             buttonTextColour={textPrimary}
+            buttonShadowColour={gdsMidGrey}
           >
             {"Reallocate Case"}
           </LinkButton>
@@ -168,6 +169,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
               className={classes.button}
               buttonColour={gdsLightGrey}
               buttonTextColour={textPrimary}
+              buttonShadowColour={gdsMidGrey}
             >
               {"Return to case list"}
             </Button>

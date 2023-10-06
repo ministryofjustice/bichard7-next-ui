@@ -1,22 +1,19 @@
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import ActionLink from "components/ActionLink"
+import ConditionalRender from "components/ConditionalRender"
+import LinkButton from "components/LinkButton"
 import { GridCol, GridRow, Link } from "govuk-react"
 import { createUseStyles } from "react-jss"
-import getExceptionDefinition from "utils/getExceptionDefinition"
-import ActionLink from "components/ActionLink"
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
-import getExceptionPathDetails from "utils/getExceptionPathDetails"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
-import CourtCase from "services/entities/CourtCase"
-import User from "services/entities/User"
-import ConditionalRender from "components/ConditionalRender"
-import { exceptionsAreLockedByCurrentUser } from "utils/caseLocks"
-import LinkButton from "components/LinkButton"
+import getExceptionDefinition from "utils/getExceptionDefinition"
+import getExceptionPathDetails from "utils/getExceptionPathDetails"
+import { gdsLightGrey, textPrimary, gdsMidGrey } from "../../../utils/colours"
 
 interface Props {
-  courtCase: CourtCase
   aho: AnnotatedHearingOutcome
-  user: User
   onNavigate: NavigationHandler
+  canResolveAndSubmit: boolean
 }
 
 const useStyles = createUseStyles({
@@ -28,10 +25,16 @@ const useStyles = createUseStyles({
 
   exceptionHelp: {
     marginTop: "10px"
+  },
+
+  buttonContainer: {
+    display: "flex",
+    justifyContent: "flex-end",
+    marginBottom: "0"
   }
 })
 
-const Exceptions = ({ courtCase, aho, user, onNavigate }: Props) => {
+const Exceptions = ({ aho, onNavigate, canResolveAndSubmit }: Props) => {
   const classes = useStyles()
 
   const handleClick = (tab?: CaseDetailsTab, offenceOrderIndex?: number) => {
@@ -80,15 +83,22 @@ const Exceptions = ({ courtCase, aho, user, onNavigate }: Props) => {
                 </Link>
               </GridCol>
             </GridRow>
-
-            <GridRow>
-              <ConditionalRender isRendered={exceptionsAreLockedByCurrentUser(courtCase, user.username)}>
-                <LinkButton href="resolve">{"Mark As Manually Resolved"}</LinkButton>
-              </ConditionalRender>
-            </GridRow>
           </div>
         )
       })}
+      <ConditionalRender isRendered={canResolveAndSubmit && aho.Exceptions.length > 0}>
+        <div className={`${classes.buttonContainer}`}>
+          <LinkButton
+            href="resolve"
+            className="b7-manually-resolve-button"
+            buttonColour={gdsLightGrey}
+            buttonTextColour={textPrimary}
+            buttonShadowColour={gdsMidGrey}
+          >
+            {"Mark as manually resolved"}
+          </LinkButton>
+        </div>
+      </ConditionalRender>
     </>
   )
 }

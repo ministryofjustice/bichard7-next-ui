@@ -1,4 +1,3 @@
-import KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import Layout from "components/Layout"
 import RadioButton from "components/RadioButton/RadioButton"
 import { MAX_FEEDBACK_LENGTH } from "config"
@@ -7,13 +6,14 @@ import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
+import { userToDisplayFullUserDto } from "services/dto/userDto"
 import SurveyFeedback from "services/entities/SurveyFeedback"
-import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import { SurveyFeedbackResponse, SurveyFeedbackType } from "types/SurveyFeedback"
+import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
@@ -26,7 +26,7 @@ enum FeedbackExperienceKey {
   veryDissatisfied
 }
 
-const FeedbackExperienceOptions: KeyValuePair<FeedbackExperienceKey, string> = {
+const FeedbackExperienceOptions: Record<FeedbackExperienceKey, string> = {
   0: "Very satisfied",
   1: "Satisfied",
   2: "Neither satisfied nor dissatisfied",
@@ -43,7 +43,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const dataSource = await getDataSource()
 
     const props = {
-      user: currentUser.serialize(),
+      user: userToDisplayFullUserDto(currentUser),
       previousPath
     }
 
@@ -85,7 +85,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 interface Props {
-  user: User
+  user: DisplayFullUser
   previousPath: string
   fields?: {
     isAnonymous: {

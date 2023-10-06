@@ -18,7 +18,8 @@ const useStyles = createUseStyles({
   icon: {
     display: "inline-block",
     paddingLeft: "2px",
-    verticalAlign: "bottom"
+    verticalAlign: "bottom",
+    paddingTop: "10px"
   }
 })
 

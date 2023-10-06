@@ -3,28 +3,29 @@ import ConditionalRender from "components/ConditionalRender"
 import { GridCol, GridRow } from "govuk-react"
 import { useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
-import CourtCase from "services/entities/CourtCase"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
+import updateQueryString from "utils/updateQueryString"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
+import Header from "./Header"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
+import { CaseInformation } from "./Tabs/Panels/CaseInformation"
+import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
-import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
-import updateQueryString from "utils/updateQueryString"
-import { CaseInformation } from "./Tabs/Panels/CaseInformation"
-import Header from "./Header"
-import User from "services/entities/User"
 
 interface Props {
-  courtCase: CourtCase
+  courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
-  user: User
+  user: DisplayFullUser
   canReallocate: boolean
+  canResolveAndSubmit: boolean
 }
 
 const useStyles = createUseStyles({
@@ -40,7 +41,14 @@ const useStyles = createUseStyles({
 const sideBarWidth = "33%"
 const contentWidth = "67%"
 
-const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, user, errorLockedByAnotherUser, canReallocate }) => {
+const CourtCaseDetails: React.FC<Props> = ({
+  courtCase,
+  aho,
+  user,
+  errorLockedByAnotherUser,
+  canReallocate,
+  canResolveAndSubmit
+}) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
@@ -135,7 +143,13 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, user, errorLockedBy
         </GridCol>
 
         <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
-          <TriggersAndExceptions courtCase={courtCase} aho={aho} user={user} onNavigate={handleNavigation} />
+          <TriggersAndExceptions
+            courtCase={courtCase}
+            aho={aho}
+            user={user}
+            onNavigate={handleNavigation}
+            canResolveAndSubmit={canResolveAndSubmit}
+          />
         </GridCol>
       </GridRow>
     </>

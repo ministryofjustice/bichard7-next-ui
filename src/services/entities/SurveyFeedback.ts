@@ -1,12 +1,11 @@
 import { Column, Entity, PrimaryColumn } from "typeorm"
-import BaseEntity from "./BaseEntity"
 import type { SurveyFeedbackResponse, SwitchingFeedbackResponse } from "types/SurveyFeedback"
 import { SurveyFeedbackType } from "../../types/SurveyFeedback"
 import dateTransformer from "./transformers/dateTransformer"
 import jsonTransformer from "./transformers/jsonTransformer"
 
 @Entity({ name: "survey_feedback" })
-export default class SurveyFeedback extends BaseEntity {
+export default class SurveyFeedback {
   @PrimaryColumn()
   id!: number
 

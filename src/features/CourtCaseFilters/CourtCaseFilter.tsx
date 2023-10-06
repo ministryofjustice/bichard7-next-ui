@@ -1,21 +1,20 @@
+import ConditionalRender from "components/ConditionalRender"
 import CaseStateFilterOptions from "components/FilterOptions/CaseStateFilterOptions"
+import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions/ReasonFilterOptions"
 import UrgencyFilterOptions from "components/FilterOptions/UrgencyFilterOptions"
-import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
 import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
+import Feature from "types/Feature"
+import { DisplayFullUser } from "types/display/Users"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
-import ConditionalRender from "components/ConditionalRender"
-import User from "services/entities/User"
-import Feature from "types/Feature"
 
 interface Props {
   defendantName: string | null
@@ -24,13 +23,13 @@ interface Props {
   ptiurn: string | null
   reasons: Reason[]
   caseAge: string[]
-  caseAgeCounts: KeyValuePair<string, number>
+  caseAgeCounts: Record<string, number>
   dateRange: SerializedCourtDateRange | null
   urgency: string | null
   locked: string | null
   caseState: CaseState | null
   myCases: boolean
-  user: User
+  user: DisplayFullUser
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {

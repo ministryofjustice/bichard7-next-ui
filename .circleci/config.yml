@@ -18,14 +18,14 @@ commands:
       - run:
           name: Clone bichard7-next-audit-logging
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
-  
+
   fetch_images:
     parameters:
       IMAGES:
         default: ""
         type: string
     steps:
-      - run: 
+      - run:
           name: "Fetch images: <<parameters.IMAGES>>"
           command: bash ./scripts/fetch-docker-images.sh <<parameters.IMAGES>>
 
@@ -35,7 +35,7 @@ commands:
       - run:
           name: Build message forwarder image
           working_directory: ~/bichard7-next-core
-          command: docker-compose -f environment/docker-compose.yml build message-forwarder
+          command: docker compose -f environment/docker-compose.yml build message-forwarder
 
   build_audit_logging_images:
     steps:
@@ -46,8 +46,8 @@ commands:
 
   run_test_chunk:
     parameters:
-      NEXTUI:
-        default: "false"
+      ARGS:
+        default: ""
         type: "string"
     steps:
       - run:
@@ -55,21 +55,21 @@ commands:
           working_directory: ~/bichard7-next-tests
           command: |
             CHUNK=$(circleci tests glob "features/**/*.feature" | circleci tests split --split-by=timings) \
-            NEXTUI=<<parameters.NEXTUI>> \
+            <<parameters.ARGS>> \
             npm run test:chunk
 
   ################### Services
   start_bichard7_legacy:
     steps:
       - fetch_images:
-          IMAGES: nodejs
+          IMAGES: nodejs-20-2023
       - build_message_forwarder
       - build_audit_logging_images
       - run:
           name: Start bichard7 legacy
           working_directory: ~/bichard7-next-core
           command: SKIP_IMAGES=ui npm run all-legacy
-    
+
   start_services:
     parameters:
       SERVICES:
@@ -83,7 +83,7 @@ commands:
           name: "Run services: <<parameters.SERVICES>>"
           working_directory: ~/bichard7-next-core
           command: |
-            docker-compose --project-name bichard -f environment/docker-compose.yml \
+            docker compose --project-name bichard -f environment/docker-compose.yml \
             up -d <<parameters.SERVICES>> <<parameters.FLAGS>> --wait <<parameters.SERVICES>>
 
 #################################################################################
@@ -154,10 +154,10 @@ jobs:
     steps:
       - setup
       - fetch_images:
-          IMAGES: nodejs 
+          IMAGES: nodejs-20-2023
       - build_audit_logging_images
       - start_services:
-          SERVICES: activemq localstack postgres audit-log-api
+          SERVICES: activemq localstack db-seed audit-log-api
       - run:
           name: Run integration tests
           command: npm run test:integration
@@ -170,13 +170,13 @@ jobs:
     steps:
       - setup
       - fetch_images:
-          IMAGES: nodejs
+          IMAGES: nodejs-20-2023
       - build_audit_logging_images
       - start_services:
-          SERVICES: postgres audit-log-api localstack
+          SERVICES: db-seed audit-log-api localstack
       - run:
           name: Run the seed-data script
-          command: DEPLOY_NAME=e2e-test npm run seed-data  
+          command: DEPLOY_NAME=e2e-test npm run seed-data
 
   cypress_e2e_tests:
     machine:
@@ -188,7 +188,7 @@ jobs:
       - setup
       - run: npm run install:assets
       - fetch_images:
-          IMAGES: nodejs
+          IMAGES: nodejs-20-2023
       - build_audit_logging_images
       - run: ./.circleci/scripts/build-ui.sh
       - run:
@@ -204,14 +204,21 @@ jobs:
       - fetch_images:
           IMAGES: user-service nginx-auth-proxy
       - start_services:
-          SERVICES: ui user-service nginx-auth-proxy postgres audit-log-api localstack
+          SERVICES: ui user-service nginx-auth-proxy postgres db-migrate db-seed audit-log-api localstack
           FLAGS: --no-deps
       - run:
+          name: Install Cypress Reporter
+          command: npm install --save-dev cypress-circleci-reporter mocha
+      - run:
           name: Run UI tests
-          command: ./scripts/run-ui-tests-chunk.sh
+          command: |
+            TEST_FILES="$(circleci tests glob "cypress/e2e/**/*.cy.ts" | circleci tests split --split-by=timings)"
+            npx cypress run --config baseUrl='https://localhost:4443' --spec ${TEST_FILES//$'\n'/','} --reporter cypress-circleci-reporter --reporter-options "resultsDir=./cypress/results"
           environment:
             UI_IS_HTTPS: true
             TZ: "Europe/London"
+      - store_test_results:
+          path: ./cypress/results
       - store_artifacts:
           path: ./cypress/videos
       - store_artifacts:
@@ -239,7 +246,11 @@ jobs:
           include-branch-in-cache-key: true
       - start_bichard7_legacy
       - run_test_chunk:
-          NEXTUI: "true"
+          ARGS: >-
+            NEXTUI="true"
+            MESSAGE_ENTRY_POINT="mq"
+      - store_test_results:
+          path: ./cucumber/results
 
 #################################################################################
 
@@ -254,4 +265,3 @@ workflows:
 
       - cypress_e2e_tests
       - cucumber_e2e_tests
-

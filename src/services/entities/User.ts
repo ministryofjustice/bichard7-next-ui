@@ -1,14 +1,14 @@
-import type { default as KeyValuePair } from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
-import { Column, Entity, PrimaryColumn } from "typeorm"
-import BaseEntity from "./BaseEntity"
-import jsonTransformer from "./transformers/jsonTransformer"
-import delimitedString from "./transformers/delimitedString"
+import { Column, Entity, JoinColumn, OneToMany, PrimaryColumn, Relation } from "typeorm"
+import Feature from "types/Feature"
 import { UserGroup } from "../../types/UserGroup"
 import { userAccess } from "../../utils/userPermissions"
-import Feature from "types/Feature"
+import delimitedString from "./transformers/delimitedString"
+import jsonTransformer from "./transformers/jsonTransformer"
+// eslint-disable-next-line import/no-cycle
+import Note from "./Note"
 
 @Entity({ name: "users" })
-export default class User extends BaseEntity {
+export default class User {
   @PrimaryColumn()
   id!: number
 
@@ -37,7 +37,11 @@ export default class User extends BaseEntity {
   excludedTriggers!: string[]
 
   @Column({ name: "feature_flags", transformer: jsonTransformer, type: "jsonb" })
-  featureFlags!: KeyValuePair<string, boolean>
+  featureFlags!: Record<string, boolean>
+
+  @OneToMany(() => Note, (note) => note.user)
+  @JoinColumn({ name: "user_id" })
+  notes!: Relation<Note>[]
 
   groups: UserGroup[] = []
 

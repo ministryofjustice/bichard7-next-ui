@@ -1,7 +1,6 @@
 import RadioButton from "components/RadioButton/RadioButton"
 import type { ChangeEvent, Dispatch } from "react"
 import type { FilterAction } from "types/CourtCaseFilter"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import lockedFilters from "utils/lockedFilters"
 
 interface Props {
@@ -9,7 +8,7 @@ interface Props {
   dispatch: Dispatch<FilterAction>
 }
 
-const LockedOptions: KeyValuePair<string, boolean> = {
+const LockedOptions: Record<string, boolean> = {
   Locked: true,
   Unlocked: false
 }

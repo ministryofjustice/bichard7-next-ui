@@ -1,15 +1,15 @@
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import ConditionalRender from "components/ConditionalRender"
 import { Tabs } from "govuk-react"
 import { useState } from "react"
-import styled from "styled-components"
 import { createUseStyles } from "react-jss"
-import CourtCase from "../../../services/entities/CourtCase"
-import TriggersList from "./TriggersList"
-import ExceptionsList from "./Exceptions"
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
-import type NavigationHandler from "types/NavigationHandler"
-import ConditionalRender from "components/ConditionalRender"
-import User from "services/entities/User"
+import styled from "styled-components"
 import Feature from "types/Feature"
+import type NavigationHandler from "types/NavigationHandler"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
+import ExceptionsList from "./Exceptions"
+import TriggersList from "./TriggersList"
 
 const useStyles = createUseStyles({
   sideBar: {
@@ -25,10 +25,11 @@ const useStyles = createUseStyles({
 })
 
 interface Props {
-  courtCase: CourtCase
+  courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
-  user: User
+  user: DisplayFullUser
   onNavigate: NavigationHandler
+  canResolveAndSubmit: boolean
 }
 
 const TabList = styled(Tabs.List)`
@@ -45,9 +46,14 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate }: Props) => {
+const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate, canResolveAndSubmit }: Props) => {
   const availableTabs = [Feature.Triggers, Feature.Exceptions].filter((tab) => user.hasAccessTo[tab])
-  const defaultTab = availableTabs.length > 0 ? availableTabs[0] : undefined
+  const defaultTab =
+    availableTabs.length > 0
+      ? availableTabs.length == 2 && courtCase.triggerCount === 0
+        ? availableTabs[1]
+        : availableTabs[0]
+      : undefined
   const [selectedTab, setSelectedTab] = useState(defaultTab)
   const classes = useStyles()
 
@@ -95,7 +101,7 @@ const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate }: Props) => {
               selected={selectedTab === Feature.Exceptions}
               className="moj-tab-panel-exceptions"
             >
-              <ExceptionsList courtCase={courtCase} aho={aho} user={user} onNavigate={onNavigate} />
+              <ExceptionsList aho={aho} onNavigate={onNavigate} canResolveAndSubmit={canResolveAndSubmit} />
             </Tabs.Panel>
           </ConditionalRender>
         </Tabs>

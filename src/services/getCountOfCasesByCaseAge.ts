@@ -1,5 +1,4 @@
 import { DataSource, IsNull, SelectQueryBuilder } from "typeorm"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
@@ -10,10 +9,7 @@ import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisatio
 
 const asKey = (caseAgeOption: string) => caseAgeOption.toLowerCase().replace(/ /g, "")
 
-const getCountOfCasesByCaseAge = async (
-  connection: DataSource,
-  user: User
-): PromiseResult<KeyValuePair<string, number>> => {
+const getCountOfCasesByCaseAge = async (connection: DataSource, user: User): PromiseResult<Record<string, number>> => {
   const repository = connection.getRepository(CourtCase)
   let query = repository.createQueryBuilder()
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
@@ -23,21 +19,19 @@ const getCountOfCasesByCaseAge = async (
     const slaDateFrom = formatFormInputDateString(CaseAgeOptions[slaCaseAgeOption]().from)
     const slaDateTo = formatFormInputDateString(CaseAgeOptions[slaCaseAgeOption]().to)
 
-    const subQuery = repository
-      .createQueryBuilder(key)
-      .select("COUNT(*)", key)
-      .where(`${key}.courtDate >= '${slaDateFrom}' AND ${key}.courtDate <= '${slaDateTo}'`)
-      .andWhere({
-        resolutionTimestamp: IsNull()
-      })
-      .getQuery()
-
     if (i === 0) {
-      query.select(`counts${i}.${key}`)
+      query.select(
+        `Count(CASE WHEN court_date >= '${slaDateFrom}' AND court_date <= '${slaDateTo}' THEN 1 END) as ${key}`
+      )
     } else {
-      query.addSelect(`counts${i}.${key}`)
+      query.addSelect(
+        `Count(CASE WHEN court_date >= '${slaDateFrom}' AND court_date <= '${slaDateTo}' THEN 1 END) as ${key}`
+      )
     }
-    query.from("(" + subQuery + ")", `counts${i}`)
+  })
+
+  query.andWhere({
+    resolutionTimestamp: IsNull()
   })
 
   const response = await query.getRawOne().catch((error: Error) => error)
@@ -45,11 +39,11 @@ const getCountOfCasesByCaseAge = async (
   return isError(response)
     ? response
     : (Object.keys(CaseAgeOptions).reduce(
-        (result: KeyValuePair<string, number>, caseAge: string) => (
+        (result: Record<string, number>, caseAge: string) => (
           (result[caseAge] = response ? response[asKey(caseAge)] : "0"), result
         ),
         {}
-      ) as KeyValuePair<string, number>)
+      ) as Record<string, number>)
 }
 
 export default getCountOfCasesByCaseAge

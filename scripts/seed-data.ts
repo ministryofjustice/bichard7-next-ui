@@ -1,14 +1,12 @@
 import { subDays } from "date-fns"
 import CourtCase from "../src/services/entities/CourtCase"
-import Trigger from "../src/services/entities/Trigger"
-import Note from "../src/services/entities/Trigger"
+import { default as Note, default as Trigger } from "../src/services/entities/Trigger"
 import getDataSource from "../src/services/getDataSource"
+import createAuditLogRecord from "../test/helpers/createAuditLogRecord"
 import createDummyCase from "../test/helpers/createDummyCase"
 import deleteFromEntity from "../test/utils/deleteFromEntity"
-import createAuditLogRecord from "../test/helpers/createAuditLogRecord"
-import insertManyIntoDynamoTable from "../test/utils/insertManyIntoDynamoTable"
-import type KeyValuePair from "@moj-bichard7-developers/bichard7-next-core/dist/types/KeyValuePair"
 import { insertLockUsers } from "../test/utils/insertLockUsers"
+import insertManyIntoDynamoTable from "../test/utils/insertManyIntoDynamoTable"
 import { insertNoteUser } from "../test/utils/insertNoteUser"
 
 if (process.env.DEPLOY_NAME !== "e2e-test") {
@@ -28,7 +26,7 @@ console.log(`Seeding ${numCases} cases for force ID ${forceId}`)
 
 getDataSource().then(async (dataSource) => {
   const entitiesToClear = [CourtCase, Trigger, Note]
-  const auditLogs: KeyValuePair<string, unknown>[] = []
+  const auditLogs: Record<string, unknown>[] = []
   await Promise.all(entitiesToClear.map((entity) => deleteFromEntity(entity)))
 
   const courtCases = await Promise.all(

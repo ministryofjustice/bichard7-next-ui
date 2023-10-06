@@ -37,9 +37,9 @@ export default defineConfig({
         async insertIntoUserGroup(params: { emailAddress: string; groupName: string }): Promise<null> {
           const updateUserGroup = async () => {
             const insertQuery = `
-              INSERT INTO 
+              INSERT INTO
                 br7own.users_groups(
-                  group_id, 
+                  group_id,
                   user_id
                 ) VALUES (
                   (SELECT id FROM br7own.groups WHERE name=$1 LIMIT 1),
@@ -110,9 +110,11 @@ export default defineConfig({
         insertException(params: { caseId: number; exceptionCode: string; errorReport?: string }) {
           return insertException(params.caseId, params.exceptionCode, params.errorReport)
         },
+
         getCourtCaseById(params: { caseId: number }) {
           return getCourtCaseById(params.caseId)
         },
+
         table(message) {
           console.table(message)
           return null

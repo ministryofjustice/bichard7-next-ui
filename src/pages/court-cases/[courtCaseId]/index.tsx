@@ -1,29 +1,33 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
+import { createUseStyles } from "react-jss"
 import addNote from "services/addNote"
-import CourtCase from "services/entities/CourtCase"
-import User from "services/entities/User"
+import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
+import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
+import lockCourtCase from "services/lockCourtCase"
 import resolveTriggers from "services/resolveTriggers"
 import resubmitCourtCase from "services/resubmitCourtCase"
-import lockCourtCase from "services/lockCourtCase"
 import unlockCourtCase from "services/unlockCourtCase"
 import { UpdateResult } from "typeorm"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
-import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import Feature from "../../../types/Feature"
+import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -37,7 +41,9 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
     const dataSource = await getDataSource()
 
-    let courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
+    const loadLockedBy = true
+
+    let courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser, loadLockedBy)
 
     if (isError(courtCase)) {
       throw courtCase
@@ -116,7 +122,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     // Fetch the record from the database after updates
-    courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
+    courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser, loadLockedBy)
 
     if (isError(courtCase)) {
       throw courtCase
@@ -132,31 +138,46 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     return {
       props: {
-        user: currentUser.serialize(),
-        courtCase: courtCase.serialize(),
+        user: userToDisplayFullUserDto(currentUser),
+        courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
-        canReallocate: courtCase.canReallocate(currentUser.username)
+        canReallocate: courtCase.canReallocate(currentUser.username),
+        canResolveAndSubmit: courtCase.canResolveOrSubmit(currentUser)
       }
     }
   }
 )
 
 interface Props {
-  user: User
-  courtCase: CourtCase
+  user: DisplayFullUser
+  courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
   canReallocate: boolean
+  canResolveAndSubmit: boolean
 }
+
+const useStyles = createUseStyles({
+  attentionContainer: {
+    marginTop: "0.3rem",
+    width: "100%"
+  },
+  attentionBanner: {
+    textTransform: "none",
+    fontWeight: 300
+  }
+})
 
 const CourtCaseDetailsPage: NextPage<Props> = ({
   courtCase,
   aho,
   user,
   errorLockedByAnotherUser,
-  canReallocate
+  canReallocate,
+  canResolveAndSubmit
 }: Props) => {
+  const classes = useStyles()
   return (
     <>
       <Head>
@@ -167,12 +188,23 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         user={user}
         bichardSwitch={{ display: true, href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}` }}
       >
+        <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
+          <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
+            <div className="govuk-tag">{"Attention:"}</div>
+            <div className={`${classes.attentionBanner} govuk-tag`}>
+              {
+                "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
+              }
+            </div>
+          </div>
+        </ConditionalDisplay>
         <CourtCaseDetails
           courtCase={courtCase}
           aho={aho}
           user={user}
           errorLockedByAnotherUser={errorLockedByAnotherUser}
           canReallocate={canReallocate}
+          canResolveAndSubmit={canResolveAndSubmit}
         />
       </Layout>
     </>
