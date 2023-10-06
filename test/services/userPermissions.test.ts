@@ -44,6 +44,22 @@ describe("user permissions", () => {
 
     expect(user.hasAccessTo[Feature.Exceptions]).toBe(true)
     expect(user.hasAccessTo[Feature.Triggers]).toBe(true)
+    expect(user.hasAccessTo[Feature.ViewReports]).toBe(true)
+  })
+
+  test("User in all groups except supervisor", () => {
+    const user = createUser(
+      UserGroup.Allocator,
+      UserGroup.Audit,
+      UserGroup.ExceptionHandler,
+      UserGroup.GeneralHandler,
+      UserGroup.TriggerHandler,
+      UserGroup.UserManager,
+      UserGroup.AuditLoggingManager,
+      UserGroup.SuperUserManager,
+      UserGroup.NewUI
+    )
+    expect(user.hasAccessTo[Feature.ViewReports]).toBe(false)
   })
 
   test("User in all non-handler groups", () => {
@@ -57,6 +73,30 @@ describe("user permissions", () => {
 
     expect(user.hasAccessTo[Feature.Exceptions]).toBe(false)
     expect(user.hasAccessTo[Feature.Triggers]).toBe(false)
+  })
+
+  test("User in user manager group", () => {
+    const user = createUser(
+
+      UserGroup.SuperUserManager,
+      UserGroup.UserManager
+    )
+
+    expect(user.hasAccessTo[Feature.ViewUserManagement]).toBe(true)
+  })
+
+  test("User in all groups except user manager groups", () => {
+    const user = createUser(
+      UserGroup.Allocator,
+      UserGroup.Audit,
+      UserGroup.ExceptionHandler,
+      UserGroup.GeneralHandler,
+      UserGroup.TriggerHandler,
+      UserGroup.AuditLoggingManager,
+      UserGroup.NewUI,
+      UserGroup.Supervisor
+    )
+    expect(user.hasAccessTo[Feature.ViewUserManagement]).toBe(false)
   })
 
   test("User with no groups", () => {

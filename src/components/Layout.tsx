@@ -9,6 +9,7 @@ import LinkButton from "./LinkButton"
 import NavBar from "./NavBar"
 import PageTemplate from "./PageTemplate"
 import PhaseBanner from "./PhaseBanner"
+import Feature from "types/Feature"
 
 const Banner = styled.div`
   display: flex;
@@ -36,7 +37,7 @@ const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) =
   return (
     <>
       <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={user.username} />
-      <NavBar groups={user.groups} />
+      <NavBar hasAccessToReports={user.hasAccessTo[Feature.ViewReports]} hasAccessToUserManagement={user.hasAccessTo[Feature.ViewUserManagement]} />
       <PageTemplate>
         <Banner>
           <PhaseBanner phase={"beta"} />

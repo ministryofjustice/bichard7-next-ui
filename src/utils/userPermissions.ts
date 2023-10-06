@@ -34,13 +34,19 @@ const isSupervisor = (user: User): boolean => {
   return user.groups !== undefined && user.groups.some((group) => group === UserGroup.Supervisor)
 }
 
+const isUserManager = (user: User): boolean => {
+  return user.groups !== undefined && user.groups.some((group) => group === UserGroup.UserManager || group === UserGroup.SuperUserManager)
+}
+
 const userAccess = (user: User): { [key in Feature]: boolean } => {
   return {
     [Feature.Triggers]: hasAccessToTriggers(user),
     [Feature.Exceptions]: hasAccessToExceptions(user),
     [Feature.CaseDetailsSidebar]: hasAccessToTriggers(user) || hasAccessToExceptions(user),
     [Feature.UnlockOtherUsersCases]: isSupervisor(user),
-    [Feature.ListAllCases]: isSupervisor(user)
+    [Feature.ListAllCases]: isSupervisor(user),
+    [Feature.ViewReports]: isSupervisor(user),
+    [Feature.ViewUserManagement]: isUserManager(user)
   }
 }
 
