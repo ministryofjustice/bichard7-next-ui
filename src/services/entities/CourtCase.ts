@@ -8,6 +8,7 @@ import User from "./User"
 import booleanIntTransformer from "./transformers/booleanIntTransformer"
 import dateTransformer from "./transformers/dateTransformer"
 import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
+import Feature from "../../types/Feature"
 
 @Entity({ name: "error_list" })
 export default class CourtCase {
@@ -163,6 +164,15 @@ export default class CourtCase {
       this.errorStatus !== "Submitted"
 
     return canReallocateAsExceptionHandler || canReallocateAsTriggerHandler
+  }
+
+  canResolveOrSubmit(user: User) {
+    const canResolveOrSubmit =
+      this.exceptionsAreLockedByCurrentUser(user.username) &&
+      this.errorStatus === "Unresolved" &&
+      user.hasAccessTo[Feature.Exceptions]
+
+    return canResolveOrSubmit
   }
 
   triggersAreLockedByCurrentUser(username: string) {

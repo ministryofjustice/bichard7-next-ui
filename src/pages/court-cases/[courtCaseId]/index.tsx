@@ -142,7 +142,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
-        canReallocate: courtCase.canReallocate(currentUser.username)
+        canReallocate: courtCase.canReallocate(currentUser.username),
+        canResolveAndSubmit: courtCase.canResolveOrSubmit(currentUser)
       }
     }
   }
@@ -154,6 +155,7 @@ interface Props {
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
   canReallocate: boolean
+  canResolveAndSubmit: boolean
 }
 
 const useStyles = createUseStyles({
@@ -172,7 +174,8 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   aho,
   user,
   errorLockedByAnotherUser,
-  canReallocate
+  canReallocate,
+  canResolveAndSubmit
 }: Props) => {
   const classes = useStyles()
   return (
@@ -201,6 +204,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
           user={user}
           errorLockedByAnotherUser={errorLockedByAnotherUser}
           canReallocate={canReallocate}
+          canResolveAndSubmit={canResolveAndSubmit}
         />
       </Layout>
     </>
