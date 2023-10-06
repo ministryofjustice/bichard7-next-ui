@@ -113,6 +113,37 @@ describe("Home", () => {
 
         cy.contains("nav a", "Reports").should("not.exist")
       })
+
+      it("as a user that is part of all groups except User Manager, I should not have access to the User Manager tab", () => {
+        cy.task("insertUsers", {
+          users: [
+            {
+              username: `notUserManager`,
+              visibleForces: [`01`],
+              forenames: "Bichard Test User",
+              surname: `01`,
+              email: `notUserManager@example.com`,
+              password:
+                "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw"
+            }
+          ],
+          userGroups: [
+            "B7Allocator_grp",
+            "B7Audit_grp",
+            "B7ExceptionHandler_grp",
+            "B7GeneralHandler_grp",
+            "B7TriggerHandler_grp",
+            "B7Supervisor_grp",
+            "B7AuditLoggingManager_grp",
+            "B7SuperUserManager_grp",
+            "B7NewUI_grp"
+          ]
+        })
+        cy.login("notUserManager@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.contains("nav a", "User management").should("not.exist")
+      })
     })
     context("phase banner", () => {
       it("displays a phase banner", () => {
