@@ -1,4 +1,4 @@
-import Feature from "../types/Feature"
+import Permission from "../types/Permission"
 import { UserGroup } from "../types/UserGroup"
 
 // This type is used instead of the User entity to avoid dependency cycles
@@ -34,14 +34,14 @@ const isSupervisor = (user: User): boolean => {
   return user.groups !== undefined && user.groups.some((group) => group === UserGroup.Supervisor)
 }
 
-const userAccess = (user: User): { [key in Feature]: boolean } => {
+const userAccess = (user: User): { [key in Permission]: boolean } => {
   return {
-    [Feature.Triggers]: hasAccessToTriggers(user),
-    [Feature.Exceptions]: hasAccessToExceptions(user),
-    [Feature.CaseDetailsSidebar]: hasAccessToTriggers(user) || hasAccessToExceptions(user),
-    [Feature.UnlockOtherUsersCases]: isSupervisor(user),
-    [Feature.ListAllCases]: isSupervisor(user),
-    [Feature.ExceptionsEnabled]: !!user.featureFlags?.exceptionsEnabled
+    [Permission.Triggers]: hasAccessToTriggers(user),
+    [Permission.Exceptions]: hasAccessToExceptions(user),
+    [Permission.CaseDetailsSidebar]: hasAccessToTriggers(user) || hasAccessToExceptions(user),
+    [Permission.UnlockOtherUsersCases]: isSupervisor(user),
+    [Permission.ListAllCases]: isSupervisor(user),
+    [Permission.ExceptionsEnabled]: !!user.featureFlags?.exceptionsEnabled
   }
 }
 

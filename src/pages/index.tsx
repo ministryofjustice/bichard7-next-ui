@@ -21,7 +21,7 @@ import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { CaseState, QueryOrder, Reason, SerializedCourtDateRange, Urgency } from "types/CaseListQueryParams"
-import Feature from "types/Feature"
+import Permission from "types/Permission"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
@@ -120,7 +120,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const resolvedByUsername =
-      validatedCaseState === "Resolved" && !currentUser.hasAccessTo[Feature.ListAllCases]
+      validatedCaseState === "Resolved" && !currentUser.hasAccessTo[Permission.ListAllCases]
         ? currentUser.username
         : undefined
 

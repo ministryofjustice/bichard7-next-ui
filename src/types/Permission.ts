@@ -1,4 +1,4 @@
-enum Feature {
+enum Permission {
   CaseDetailsSidebar,
   Exceptions,
   Triggers,
@@ -7,4 +7,4 @@ enum Feature {
   ExceptionsEnabled
 }
 
-export default Feature
+export default Permission

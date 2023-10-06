@@ -20,7 +20,7 @@ import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
 import forbidden from "../../../utils/forbidden"
-import Feature from "../../../types/Feature"
+import Permission from "../../../types/Permission"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -42,7 +42,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw courtCase
     }
 
-    if (!courtCase.canResolveOrSubmit(currentUser) || !currentUser.hasAccessTo[Feature.ExceptionsEnabled]) {
+    if (!courtCase.canResolveOrSubmit(currentUser) || !currentUser.hasAccessTo[Permission.ExceptionsEnabled]) {
       return forbidden(res)
     }
 
