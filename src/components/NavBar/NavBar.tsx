@@ -24,7 +24,6 @@ const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
   )
 }
 
-
 const NavBar: React.FC<NavBarProps> = ({ hasAccessToUserManagement, hasAccessToReports }) => {
   const classes = useCustomStyles()
   return (

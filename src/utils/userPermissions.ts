@@ -35,7 +35,10 @@ const isSupervisor = (user: User): boolean => {
 }
 
 const isUserManager = (user: User): boolean => {
-  return user.groups !== undefined && user.groups.some((group) => group === UserGroup.UserManager || group === UserGroup.SuperUserManager)
+  return (
+    user.groups !== undefined &&
+    user.groups.some((group) => group === UserGroup.UserManager || group === UserGroup.SuperUserManager)
+  )
 }
 
 const userAccess = (user: User): { [key in Feature]: boolean } => {

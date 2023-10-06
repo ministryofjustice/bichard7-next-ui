@@ -76,11 +76,7 @@ describe("user permissions", () => {
   })
 
   test("User in user manager group", () => {
-    const user = createUser(
-
-      UserGroup.SuperUserManager,
-      UserGroup.UserManager
-    )
+    const user = createUser(UserGroup.SuperUserManager, UserGroup.UserManager)
 
     expect(user.hasAccessTo[Feature.ViewUserManagement]).toBe(true)
   })
