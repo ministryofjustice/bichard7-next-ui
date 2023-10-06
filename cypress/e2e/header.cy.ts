@@ -83,7 +83,7 @@ describe("Home", () => {
         cy.contains("nav a", "Sign out").should("have.attr", "href", "/users/logout/")
       })
 
-      it.only("as a user that is part of all groups except Supervisor, I should not have access to the Reports tab", () => {
+      it("as a user that is part of all groups except Supervisor, I should not have access to the Reports tab", () => {
         cy.task("insertUsers", {
           users: [
             {
