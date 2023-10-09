@@ -41,7 +41,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw courtCase
     }
 
-    if (!courtCase.canResolveOrSubmit(currentUser) || !currentUser.featureFlags?.exceptionsEnabled) {
+    if (!courtCase.canResolveOrSubmit(currentUser)) {
       return forbidden(res)
     }
 
