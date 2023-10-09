@@ -11,6 +11,7 @@ import { userToDisplayFullUserDto } from "services/dto/userDto"
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import getDataSource from "services/getDataSource"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
+import styled from "styled-components"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import { SurveyFeedbackType, SwitchingFeedbackResponse } from "types/SurveyFeedback"
@@ -42,6 +43,56 @@ interface Props {
     }
   }
 }
+
+const TopBottonsRow = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const BackButtonWrapper = styled.div`
+  flex: 1;
+`
+
+const SkipButton = styled.button`
+  flex: 1;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font-family: "nta", Arial, sans-serif;
+  font-size: 1rem;
+  position: relative;
+  line-height: 1.25;
+
+  &::before {
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-color: transparent;
+    -webkit-clip-path: polygon(0% 50%, 100% 100%, 100% 0%);
+    -webkit-clip-path: polygon(0% 50%, 100% 100%, 100% 0%);
+    clip-path: polygon(0% 50%, 100% 100%, 100% 0%);
+    border-width: 5px 6px 5px 0;
+    border-right-color: inherit;
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: 1px;
+    right: -8px;
+    margin: auto;
+    transform: rotate(180deg);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    bottom: 0;
+    left: 6px;
+    background-color: #0b0c0c;
+  }
+`
 
 function validateForm(form: SwitchingFeedbackFormState): boolean {
   const isIssueOrPreferenceValid =
@@ -163,13 +214,17 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
         <title>{"Report an issue using new Bichard | Bichard7"}</title>
         <meta name="description" content="user switching version feedback| Bichard7" />
       </Heading>
-      <BackLink href={previousPath} onClick={function noRefCheck() {}}>
-        {"Back"}
-      </BackLink>
-      {/* Todo: style button to match design*/}
-      <form method="POST" action={skipUrl?.search}>
-        <button type="submit">{"Skip feedback"}</button>
-      </form>
+
+      <TopBottonsRow>
+        <BackButtonWrapper>
+          <BackLink href={previousPath} onClick={function noRefCheck() {}}>
+            {"Back"}
+          </BackLink>
+        </BackButtonWrapper>
+        <form method="POST" action={skipUrl?.search}>
+          <SkipButton type="submit">{"Skip feedback"}</SkipButton>
+        </form>
+      </TopBottonsRow>
 
       <Heading as="h1">{"Share your feedback"}</Heading>
 
