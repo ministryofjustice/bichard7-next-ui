@@ -43,10 +43,9 @@ describe("user permissions", () => {
   test("User in only supervisor group", () => {
     const user = createUser(UserGroup.Supervisor)
 
-<<<<<<< HEAD
-    expect(user.hasAccessTo[Feature.Exceptions]).toBe(true)
-    expect(user.hasAccessTo[Feature.Triggers]).toBe(true)
-    expect(user.hasAccessTo[Feature.ViewReports]).toBe(true)
+    expect(user.hasAccessTo[Permission.Exceptions]).toBe(true)
+    expect(user.hasAccessTo[Permission.Triggers]).toBe(true)
+    expect(user.hasAccessTo[Permission.ViewReports]).toBe(true)
   })
 
   test("User in all groups except supervisor", () => {
@@ -61,11 +60,7 @@ describe("user permissions", () => {
       UserGroup.SuperUserManager,
       UserGroup.NewUI
     )
-    expect(user.hasAccessTo[Feature.ViewReports]).toBe(false)
-=======
-    expect(user.hasAccessTo[Permission.Exceptions]).toBe(true)
-    expect(user.hasAccessTo[Permission.Triggers]).toBe(true)
->>>>>>> main
+    expect(user.hasAccessTo[Permission.ViewReports]).toBe(false)
   })
 
   test("User in all non-handler groups", () => {
@@ -84,7 +79,7 @@ describe("user permissions", () => {
   test("User in user manager group", () => {
     const user = createUser(UserGroup.SuperUserManager, UserGroup.UserManager)
 
-    expect(user.hasAccessTo[Feature.ViewUserManagement]).toBe(true)
+    expect(user.hasAccessTo[Permission.ViewUserManagement]).toBe(true)
   })
 
   test("User in all groups except user manager groups", () => {
@@ -98,7 +93,27 @@ describe("user permissions", () => {
       UserGroup.NewUI,
       UserGroup.Supervisor
     )
-    expect(user.hasAccessTo[Feature.ViewUserManagement]).toBe(false)
+    expect(user.hasAccessTo[Permission.ViewUserManagement]).toBe(false)
+  })
+
+  test("User in user manager group", () => {
+    const user = createUser(UserGroup.SuperUserManager, UserGroup.UserManager)
+
+    expect(user.hasAccessTo[Permission.ViewUserManagement]).toBe(true)
+  })
+
+  test("User in all groups except user manager groups", () => {
+    const user = createUser(
+      UserGroup.Allocator,
+      UserGroup.Audit,
+      UserGroup.ExceptionHandler,
+      UserGroup.GeneralHandler,
+      UserGroup.TriggerHandler,
+      UserGroup.AuditLoggingManager,
+      UserGroup.NewUI,
+      UserGroup.Supervisor
+    )
+    expect(user.hasAccessTo[Permission.ViewUserManagement]).toBe(false)
   })
 
   test("User with no groups", () => {
