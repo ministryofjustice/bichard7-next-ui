@@ -142,6 +142,7 @@ describe("Manually resolve a case", () => {
         !exceptionsFeatureFlagEnabled ? "and exceptions feature flag is disabled" : ""
       }`, () => {
         if (!exceptionsFeatureFlagEnabled) {
+          cy.task("clearUsers")
           cy.task("insertUsers", {
             users: [
               {
@@ -154,24 +155,16 @@ describe("Manually resolve a case", () => {
                 featureFlags: { exceptionsEnabled: false }
               }
             ],
-            userGroups: ["B7NewUI_grp", `B7${loggedInAs}_grp`]
+            userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
           })
-          cy.task("insertCourtCasesWithFields", [
-            {
-              orgForPoliceFilter: "01",
-              errorStatus: exceptionStatus,
-              errorLockedByUsername: loggedInAs
-            }
-          ])
-        } else {
-          cy.task("insertCourtCasesWithFields", [
-            {
-              orgForPoliceFilter: "01",
-              errorStatus: exceptionStatus,
-              errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : `${loggedInAs} username`
-            }
-          ])
         }
+        cy.task("insertCourtCasesWithFields", [
+          {
+            orgForPoliceFilter: "01",
+            errorStatus: exceptionStatus,
+            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : `${loggedInAs} username`
+          }
+        ])
         cy.login(`${loggedInAs}@example.com`, "password")
         cy.visit("/bichard/court-cases/0")
 
