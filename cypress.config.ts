@@ -95,16 +95,18 @@ export default defineConfig({
           return insertUsersWithOverrides(params.users, params.userGroups)
         },
 
-        clearUsers() {
-          return deleteUsers().then(() => true)
+        async clearUsers() {
+          await deleteUsers()
+          return true
         },
 
         insertTriggers(args) {
           return insertTriggers(args.caseId, args.triggers)
         },
 
-        clearTriggers() {
-          return deleteTriggers().then(() => true)
+        async clearTriggers() {
+          await deleteTriggers()
+          return true
         },
 
         insertException(params: { caseId: number; exceptionCode: string; errorReport?: string }) {

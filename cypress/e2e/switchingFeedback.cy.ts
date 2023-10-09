@@ -22,7 +22,7 @@ describe("Switching Bichard Version Feedback Form", () => {
           password: hashedPassword
         }
       ],
-      userGroups: ["B7NewUI_grp"]
+      userGroups: ["B7NewUI_grp", "B7Supervisor_grp"]
     })
     cy.login("bichard01@example.com", "password")
   })
