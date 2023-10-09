@@ -120,6 +120,6 @@ describe("user permissions", () => {
     const user = createUser()
 
     expect(user.hasAccessTo[Permission.Exceptions]).toBe(false)
-    expect(user.hasAccessTo[Permission.Triggers]).toBe(false)
+    expect(user.hasAccessTo[Permission.Triggers]).toBe(false) //
   })
 })
