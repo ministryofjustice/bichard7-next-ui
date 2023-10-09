@@ -9,12 +9,12 @@ import getDataSource from "../../src/services/getDataSource"
 import getLastSwitchingFormSubmission from "../../src/services/getLastSwitchingFormSubmission"
 import deleteFromEntity from "../utils/deleteFromEntity"
 describe("getLastSwitchingFormSubmission", () => {
-  let dataSource: DataSource, bichard01: User, bichard02: User
+  let dataSource: DataSource, bichard01: User, supervisor1: User
 
   beforeAll(async () => {
     dataSource = await getDataSource()
     bichard01 = (await getUser(dataSource, "Bichard01")) as User
-    bichard02 = (await getUser(dataSource, "Bichard02")) as User
+    supervisor1 = (await getUser(dataSource, "Supervisor1")) as User
   })
 
   beforeEach(async () => {
@@ -85,7 +85,7 @@ describe("getLastSwitchingFormSubmission", () => {
     await insertSurveyFeedback(dataSource, {
       feedbackType: SurveyFeedbackType.Switching,
       response: { skipped: true } as SwitchingFeedbackResponse,
-      userId: bichard02.id,
+      userId: supervisor1.id,
       createdAt: new Date("2023-09-20T23:23:23")
     } as SurveyFeedback)
 
