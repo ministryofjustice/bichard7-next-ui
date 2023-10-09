@@ -9,7 +9,7 @@ import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/l
 import { isError } from "types/Result"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
-import Feature from "types/Feature"
+import Permission from "types/Permission"
 
 type LockReason = "Trigger" | "Exception"
 type WhereClause<T> = {
@@ -86,11 +86,11 @@ const updateLockStatusToLocked = async (
   const courtCaseRepository = dataSource.getRepository(CourtCase)
   let result: UpdateResult | Error | undefined
 
-  if (user.hasAccessTo[Feature.Exceptions]) {
+  if (user.hasAccessTo[Permission.Exceptions]) {
     result = await lock("Exception", courtCaseRepository, courtCaseId, user, events)
   }
 
-  if (user.hasAccessTo[Feature.Triggers]) {
+  if (user.hasAccessTo[Permission.Triggers]) {
     result = await lock("Trigger", courtCaseRepository, courtCaseId, user, events)
   }
 

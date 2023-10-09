@@ -8,7 +8,7 @@ import User from "./User"
 import booleanIntTransformer from "./transformers/booleanIntTransformer"
 import dateTransformer from "./transformers/dateTransformer"
 import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
-import Feature from "../../types/Feature"
+import Permission from "../../types/Permission"
 
 @Entity({ name: "error_list" })
 export default class CourtCase {
@@ -170,7 +170,8 @@ export default class CourtCase {
     const canResolveOrSubmit =
       this.exceptionsAreLockedByCurrentUser(user.username) &&
       this.errorStatus === "Unresolved" &&
-      user.hasAccessTo[Feature.Exceptions]
+      user.hasAccessTo[Permission.Exceptions] &&
+      !!user.featureFlags.exceptionsEnabled
 
     return canResolveOrSubmit
   }
