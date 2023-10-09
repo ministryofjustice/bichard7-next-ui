@@ -66,36 +66,4 @@ describe("user permissions", () => {
     expect(user.hasAccessTo[Permission.Exceptions]).toBe(false)
     expect(user.hasAccessTo[Permission.Triggers]).toBe(false)
   })
-
-  test("An user who's groups have more permissions than a trigger handler has the feature flag exceptions_enabled set to false, should not have access to exceptions", () => {
-    const user = createUser(
-      UserGroup.Audit,
-      UserGroup.AuditLoggingManager,
-      UserGroup.NewUI,
-      UserGroup.SuperUserManager,
-      UserGroup.UserManager,
-      UserGroup.GeneralHandler
-    )
-
-    user.featureFlags = { exceptionsEnabled: false }
-
-    expect(user.hasAccessTo[Permission.ExceptionsEnabled]).toBe(false)
-    expect(user.hasAccessTo[Permission.Triggers]).toBe(true)
-  })
-
-  test("An user who's groups have more permissions than a trigger handler has the feature flag exceptions_enabled set to true, should have access to exceptions", () => {
-    const user = createUser(
-      UserGroup.Audit,
-      UserGroup.AuditLoggingManager,
-      UserGroup.NewUI,
-      UserGroup.SuperUserManager,
-      UserGroup.UserManager,
-      UserGroup.GeneralHandler
-    )
-
-    user.featureFlags = { exceptionsEnabled: true }
-
-    expect(user.hasAccessTo[Permission.ExceptionsEnabled]).toBe(true)
-    expect(user.hasAccessTo[Permission.Triggers]).toBe(true)
-  })
 })

@@ -170,7 +170,8 @@ export default class CourtCase {
     const canResolveOrSubmit =
       this.exceptionsAreLockedByCurrentUser(user.username) &&
       this.errorStatus === "Unresolved" &&
-      user.hasAccessTo[Permission.Exceptions]
+      user.hasAccessTo[Permission.Exceptions] &&
+      !!user.featureFlags.exceptionsEnabled
 
     return canResolveOrSubmit
   }

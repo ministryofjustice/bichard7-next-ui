@@ -127,20 +127,51 @@ describe("Manually resolve a case", () => {
   })
 
   canManuallyResolveAndSubmitTestData.forEach(
-    ({ canManuallyResolveAndSubmit, exceptionStatus, exceptionLockedByAnotherUser, loggedInAs }) => {
+    ({
+      canManuallyResolveAndSubmit,
+      exceptionStatus,
+      exceptionLockedByAnotherUser,
+      loggedInAs,
+      exceptionsFeatureFlagEnabled
+    }) => {
       it(`Should ${
         canManuallyResolveAndSubmit ? "be able to resolve or submit" : "NOT be able to resolve or submit"
       } when exceptions are ${exceptionStatus}, ${
         exceptionLockedByAnotherUser ? "locked by another user" : "locked by current user"
-      } and user is a ${loggedInAs}`, () => {
-        cy.task("insertCourtCasesWithFields", [
-          {
-            orgForPoliceFilter: "01",
-            errorStatus: exceptionStatus,
-            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : `${loggedInAs} username`
-          }
-        ])
-
+      } and user is a ${loggedInAs} ${
+        !exceptionsFeatureFlagEnabled ? "and exceptions feature flag is disabled" : ""
+      }`, () => {
+        if (!exceptionsFeatureFlagEnabled) {
+          cy.task("insertUsers", {
+            users: [
+              {
+                username: `${loggedInAs} username`,
+                visibleForces: ["01"],
+                forenames: `${loggedInAs}'s forename`,
+                surname: `${loggedInAs}surname`,
+                email: `${loggedInAs}@example.com`,
+                password: hashedPassword,
+                featureFlags: { exceptionsEnabled: false }
+              }
+            ],
+            userGroups: ["B7NewUI_grp", `B7${loggedInAs}_grp`]
+          })
+          cy.task("insertCourtCasesWithFields", [
+            {
+              orgForPoliceFilter: "01",
+              errorStatus: exceptionStatus,
+              errorLockedByUsername: loggedInAs
+            }
+          ])
+        } else {
+          cy.task("insertCourtCasesWithFields", [
+            {
+              orgForPoliceFilter: "01",
+              errorStatus: exceptionStatus,
+              errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : `${loggedInAs} username`
+            }
+          ])
+        }
         cy.login(`${loggedInAs}@example.com`, "password")
         cy.visit("/bichard/court-cases/0")
 

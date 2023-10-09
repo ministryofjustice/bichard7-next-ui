@@ -40,8 +40,7 @@ const userAccess = (user: User): { [key in Permission]: boolean } => {
     [Permission.Exceptions]: hasAccessToExceptions(user),
     [Permission.CaseDetailsSidebar]: hasAccessToTriggers(user) || hasAccessToExceptions(user),
     [Permission.UnlockOtherUsersCases]: isSupervisor(user),
-    [Permission.ListAllCases]: isSupervisor(user),
-    [Permission.ExceptionsEnabled]: !!user.featureFlags?.exceptionsEnabled
+    [Permission.ListAllCases]: isSupervisor(user)
   }
 }
 
