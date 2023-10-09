@@ -14,6 +14,10 @@ describe("Switching Bichard Version Feedback Form", () => {
     })
   })
 
+  after(() => {
+    cy.task("clearAllFeedbacksFromDatabase")
+  })
+
   beforeEach(() => {
     cy.viewport(1280, 720)
     cy.task("clearAllFeedbacksFromDatabase")
