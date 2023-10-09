@@ -114,7 +114,7 @@ describe("Home", () => {
         cy.contains("nav a", "Reports").should("not.exist")
       })
 
-      it.only("as a user that is part of all groups except User Manager and Super User Manager, I should not have access to the User Manager tab", () => {
+      it("as a user that is part of all groups except User Manager and Super User Manager, I should not have access to the User Manager tab", () => {
         cy.task("insertUsers", {
           users: [
             {
