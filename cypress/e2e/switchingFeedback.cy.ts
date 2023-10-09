@@ -5,6 +5,15 @@ import TestCases from "../fixtures/switchingFeedbackTestData"
 describe("Switching Bichard Version Feedback Form", () => {
   const expectedUserId = 0
 
+  before(() => {
+    cy.intercept("GET", "/bichard-ui/*", {
+      statusCode: 200,
+      body: {
+        name: "Dummy response"
+      }
+    })
+  })
+
   beforeEach(() => {
     cy.viewport(1280, 720)
     cy.task("clearAllFeedbacksFromDatabase")
