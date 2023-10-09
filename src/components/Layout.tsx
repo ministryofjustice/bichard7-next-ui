@@ -9,7 +9,7 @@ import LinkButton from "./LinkButton"
 import NavBar from "./NavBar"
 import PageTemplate from "./PageTemplate"
 import PhaseBanner from "./PhaseBanner"
-import Feature from "types/Feature"
+import Permission from "types/Permission"
 
 const Banner = styled.div`
   display: flex;
@@ -38,8 +38,8 @@ const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) =
     <>
       <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={user.username} />
       <NavBar
-        hasAccessToReports={user.hasAccessTo[Feature.ViewReports]}
-        hasAccessToUserManagement={user.hasAccessTo[Feature.ViewUserManagement]}
+        hasAccessToReports={user.hasAccessTo[Permission.ViewReports]}
+        hasAccessToUserManagement={user.hasAccessTo[Permission.ViewUserManagement]}
       />
       <PageTemplate>
         <Banner>

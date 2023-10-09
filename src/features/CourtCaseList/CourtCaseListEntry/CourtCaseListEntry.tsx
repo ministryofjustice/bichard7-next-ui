@@ -1,7 +1,7 @@
 import ConditionalRender from "components/ConditionalRender"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
-import Feature from "types/Feature"
+import Permission from "types/Permission"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
@@ -54,7 +54,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
   }
 
   const canUnlockCase = (lockedUsername: string): boolean => {
-    return currentUser.hasAccessTo[Feature.UnlockOtherUsersCases] || currentUser.username === lockedUsername
+    return currentUser.hasAccessTo[Permission.UnlockOtherUsersCases] || currentUser.username === lockedUsername
   }
 
   const hasTriggers = triggers.length > 0
@@ -81,10 +81,10 @@ const CourtCaseListEntry: React.FC<Props> = ({
     />
   )
   const reasonAndLockTags: [JSX.Element, JSX.Element][] = []
-  if (hasExceptions && currentUser.hasAccessTo[Feature.Exceptions]) {
+  if (hasExceptions && currentUser.hasAccessTo[Permission.Exceptions]) {
     reasonAndLockTags.push([exceptionsReasonCell, exceptionsLockTag])
   }
-  if (hasTriggers && currentUser.hasAccessTo[Feature.Triggers]) {
+  if (hasTriggers && currentUser.hasAccessTo[Permission.Triggers]) {
     reasonAndLockTags.push([triggersReasonCell, triggersLockTag])
   }
 
