@@ -26,7 +26,7 @@ import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
-import Feature from "../../../types/Feature"
+import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 
 export const getServerSideProps = withMultipleServerSideProps(
@@ -59,7 +59,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     if (isPost(req) && lock === "false") {
       lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser, UnlockReason.TriggerAndException)
-    } else if (currentUser.hasAccessTo[Feature.Exceptions] || currentUser.hasAccessTo[Feature.Triggers]) {
+    } else if (currentUser.hasAccessTo[Permission.Exceptions] || currentUser.hasAccessTo[Permission.Triggers]) {
       lockResult = await lockCourtCase(dataSource, +courtCaseId, currentUser)
     }
 

@@ -1,8 +1,8 @@
-import Feature from "../types/Feature"
+import Permission from "../types/Permission"
 import { UserGroup } from "../types/UserGroup"
 
 // This type is used instead of the User entity to avoid dependency cycles
-type User = { groups: UserGroup[] }
+type User = { groups: UserGroup[]; featureFlags?: Record<string, boolean> }
 
 const hasAccessToTriggers = (user: User): boolean => {
   return (
@@ -41,16 +41,16 @@ const isUserManager = (user: User): boolean => {
   )
 }
 
-const userAccess = (user: User): { [key in Feature]: boolean } => {
+const userAccess = (user: User): { [key in Permission]: boolean } => {
   return {
-    [Feature.Triggers]: hasAccessToTriggers(user),
-    [Feature.Exceptions]: hasAccessToExceptions(user),
-    [Feature.CaseDetailsSidebar]: hasAccessToTriggers(user) || hasAccessToExceptions(user),
-    [Feature.UnlockOtherUsersCases]: isSupervisor(user),
-    [Feature.ListAllCases]: isSupervisor(user),
-    [Feature.ViewReports]: isSupervisor(user),
-    [Feature.ViewUserManagement]: isUserManager(user)
+    [Permission.Triggers]: hasAccessToTriggers(user),
+    [Permission.Exceptions]: hasAccessToExceptions(user),
+    [Permission.CaseDetailsSidebar]: hasAccessToTriggers(user) || hasAccessToExceptions(user),
+    [Permission.UnlockOtherUsersCases]: isSupervisor(user),
+    [Permission.ListAllCases]: isSupervisor(user),
+    [Permission.ViewReports]: isSupervisor(user),
+    [Permission.ViewUserManagement]: isUserManager(user)
   }
 }
 
-export { hasAccessToTriggers, hasAccessToExceptions, isSupervisor, userAccess }
+export { hasAccessToExceptions, hasAccessToTriggers, isSupervisor, userAccess }
