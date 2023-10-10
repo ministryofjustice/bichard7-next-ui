@@ -11,7 +11,6 @@ import PageTemplate from "./PageTemplate"
 import PhaseBanner from "./PhaseBanner"
 import { DisplayFullUser } from "types/display/Users"
 import Permission from "types/Permission"
-import { DisplayFullUser } from "types/display/Users"
 
 const Banner = styled.div`
   display: flex;
