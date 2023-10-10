@@ -6,7 +6,7 @@ type TestCaseStepAction =
   | "check-db"
   | "match-url"
   | "switch-to-old-bichard"
-  | "expectTheFeedbackForm"
+  | "expect-the-feedback-form"
   | "insert-feedback"
 
 type TestCaseStep = {
@@ -38,7 +38,7 @@ const TestCases: TestCase[] = [
           action: "switch-to-old-bichard"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         },
         {
           action: "check",
@@ -80,13 +80,13 @@ const TestCases: TestCase[] = [
           action: "switch-to-old-bichard"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         },
         {
           action: "switch-to-old-bichard"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         },
         {
           action: "check",
@@ -128,13 +128,13 @@ const TestCases: TestCase[] = [
           action: "switch-to-old-bichard"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         },
         {
           action: "switch-to-old-bichard"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         },
         {
           action: "check",
@@ -170,7 +170,7 @@ const TestCases: TestCase[] = [
           action: "switch-to-old-bichard"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         },
         {
           action: "check",
@@ -206,7 +206,7 @@ const TestCases: TestCase[] = [
           action: "switch-to-old-bichard"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         },
         {
           action: "check",
@@ -237,7 +237,7 @@ const TestCases: TestCase[] = [
           action: "switch-to-old-bichard"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         },
         {
           action: "check",
@@ -267,7 +267,7 @@ const TestCases: TestCase[] = [
           action: "switch-to-old-bichard"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         },
         {
           action: "click",
@@ -320,7 +320,7 @@ const TestCases: TestCase[] = [
           action: "switch-to-old-bichard"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         }
       ]
     }
@@ -333,7 +333,7 @@ const TestCases: TestCase[] = [
           action: "switch-to-old-bichard"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         },
         {
           action: "check",
@@ -369,7 +369,7 @@ const TestCases: TestCase[] = [
           navigateTo: "/bichard/court-cases/0"
         },
         {
-          action: "expectTheFeedbackForm"
+          action: "expect-the-feedback-form"
         },
         {
           action: "check",

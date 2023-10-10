@@ -117,7 +117,7 @@ describe("Switching Bichard Version Feedback Form", () => {
             cy.visit(step.navigateTo ?? "/bichard")
             cy.contains("button", "Switch to old Bichard").click()
             break
-          case "expectTheFeedbackForm":
+          case "expect-the-feedback-form":
             cy.get("#caseListOrDetail").should("not.exist")
             cy.get("#otherFeedback").should("not.exist")
             cy.get("button").contains("Send feedback and continue").should("not.exist")
