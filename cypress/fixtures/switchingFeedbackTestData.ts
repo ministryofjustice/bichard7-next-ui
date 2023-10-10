@@ -314,7 +314,7 @@ const TestCases: TestCase[] = [
       steps: [
         {
           action: "insert-feedback",
-          date: new Date(Date.now() - 245 * 60 * 1000) // 4 hours and 05 minutes ago
+          date: new Date(Date.now() - 185 * 60 * 1000) // 3 hours and 05 minutes ago
         },
         {
           action: "switch-to-old-bichard"
