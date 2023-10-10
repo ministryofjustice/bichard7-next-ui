@@ -10,6 +10,8 @@ import NavBar from "./NavBar"
 import PageTemplate from "./PageTemplate"
 import PhaseBanner from "./PhaseBanner"
 import { DisplayFullUser } from "types/display/Users"
+import Permission from "types/Permission"
+import { DisplayFullUser } from "types/display/Users"
 
 const Banner = styled.div`
   display: flex;
@@ -46,7 +48,10 @@ const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) =
   return (
     <>
       <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={user.username} />
-      <NavBar groups={user.groups} />
+      <NavBar
+        hasAccessToReports={user.hasAccessTo[Permission.ViewReports]}
+        hasAccessToUserManagement={user.hasAccessTo[Permission.ViewUserManagement]}
+      />
       <PageTemplate>
         <Banner>
           <PhaseBanner phase={"beta"} />

@@ -3,7 +3,9 @@ enum Permission {
   Exceptions,
   Triggers,
   UnlockOtherUsersCases,
-  ListAllCases
+  ListAllCases,
+  ViewReports,
+  ViewUserManagement
 }
 
 export default Permission
