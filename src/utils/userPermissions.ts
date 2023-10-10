@@ -34,13 +34,22 @@ const isSupervisor = (user: User): boolean => {
   return user.groups !== undefined && user.groups.some((group) => group === UserGroup.Supervisor)
 }
 
+const isUserManager = (user: User): boolean => {
+  return (
+    user.groups !== undefined &&
+    user.groups.some((group) => group === UserGroup.UserManager || group === UserGroup.SuperUserManager)
+  )
+}
+
 const userAccess = (user: User): { [key in Permission]: boolean } => {
   return {
     [Permission.Triggers]: hasAccessToTriggers(user),
     [Permission.Exceptions]: hasAccessToExceptions(user),
     [Permission.CaseDetailsSidebar]: hasAccessToTriggers(user) || hasAccessToExceptions(user),
     [Permission.UnlockOtherUsersCases]: isSupervisor(user),
-    [Permission.ListAllCases]: isSupervisor(user)
+    [Permission.ListAllCases]: isSupervisor(user),
+    [Permission.ViewReports]: isSupervisor(user),
+    [Permission.ViewUserManagement]: isUserManager(user)
   }
 }
 

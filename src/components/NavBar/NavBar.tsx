@@ -1,7 +1,4 @@
-import ConditionalRender from "components/ConditionalRender"
 import { useRouter } from "next/router"
-import hasUserManagementAccess from "services/hasUserManagementAccess"
-import { UserGroup } from "types/UserGroup"
 import { useCustomStyles } from "../../../styles/customStyles"
 
 interface NavItemProps {
@@ -10,7 +7,8 @@ interface NavItemProps {
 }
 
 interface NavBarProps {
-  groups: UserGroup[]
+  hasAccessToUserManagement: boolean
+  hasAccessToReports: boolean
 }
 
 const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
@@ -26,15 +24,7 @@ const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
   )
 }
 
-const UserManagementNavItem: React.FC<NavBarProps> = (groups) => {
-  return (
-    <ConditionalRender isRendered={hasUserManagementAccess(groups)}>
-      <NavItem name={"User management"} link={"/users/users/"} />
-    </ConditionalRender>
-  )
-}
-
-const NavBar: React.FC<NavBarProps> = ({ groups }) => {
+const NavBar: React.FC<NavBarProps> = ({ hasAccessToUserManagement, hasAccessToReports }) => {
   const classes = useCustomStyles()
   return (
     <div className="moj-primary-navigation" role="navigation">
@@ -43,8 +33,8 @@ const NavBar: React.FC<NavBarProps> = ({ groups }) => {
           <nav className="moj-primary-navigation" aria-label="Primary navigation">
             <ul className="moj-primary-navigation__list">
               <NavItem name={"Case list"} link={"/bichard/"} />
-              <NavItem name={"Reports"} link={"/bichard-ui/ReturnToReportIndex"} />
-              <UserManagementNavItem groups={groups} />
+              {hasAccessToReports && <NavItem name={"Reports"} link={"/bichard-ui/ReturnToReportIndex"} />}
+              {hasAccessToUserManagement && <NavItem name={"User management"} link={"/users/users/"} />}
               <NavItem name={"Help"} link={"/help/"} />
             </ul>
           </nav>
