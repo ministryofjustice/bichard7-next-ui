@@ -10,7 +10,7 @@ import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
-import Feature from "types/Feature"
+import Permission from "types/Permission"
 
 const unlock = async (
   unlockReason: "Trigger" | "Exception",
@@ -30,7 +30,7 @@ const unlock = async (
     .set({ [updatedFieldName]: null })
     .where("error_id = :id", { id: courtCaseId })
 
-  if (!user.hasAccessTo[Feature.UnlockOtherUsersCases]) {
+  if (!user.hasAccessTo[Permission.UnlockOtherUsersCases]) {
     query.andWhere({ [updatedFieldName]: user.username })
   }
 
@@ -64,10 +64,10 @@ const updateLockStatusToUnlocked = async (
   events: AuditLogEvent[]
 ): Promise<UpdateResult | Error> => {
   const shouldUnlockExceptions =
-    user.hasAccessTo[Feature.Exceptions] &&
+    user.hasAccessTo[Permission.Exceptions] &&
     (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Exception)
   const shouldUnlockTriggers =
-    user.hasAccessTo[Feature.Triggers] &&
+    user.hasAccessTo[Permission.Triggers] &&
     (unlockReason === UnlockReason.TriggerAndException || unlockReason === UnlockReason.Trigger)
 
   if (!shouldUnlockExceptions && !shouldUnlockTriggers) {
@@ -79,8 +79,8 @@ const updateLockStatusToUnlocked = async (
   }
 
   const anyLockUserHasPermissionToUnlock =
-    (user.hasAccessTo[Feature.Exceptions] && courtCase.errorLockedByUsername) ||
-    (user.hasAccessTo[Feature.Triggers] && courtCase.triggerLockedByUsername)
+    (user.hasAccessTo[Permission.Exceptions] && courtCase.errorLockedByUsername) ||
+    (user.hasAccessTo[Permission.Triggers] && courtCase.triggerLockedByUsername)
 
   if (!anyLockUserHasPermissionToUnlock) {
     return new Error("Case is not locked")

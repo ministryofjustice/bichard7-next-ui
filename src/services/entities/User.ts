@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, OneToMany, PrimaryColumn, Relation } from "typeorm"
-import Feature from "types/Feature"
+import Permission from "types/Permission"
 import { UserGroup } from "../../types/UserGroup"
 import { userAccess } from "../../utils/userPermissions"
 import delimitedString from "./transformers/delimitedString"
@@ -45,7 +45,7 @@ export default class User {
 
   groups: UserGroup[] = []
 
-  get hasAccessTo(): { [key in Feature]: boolean } {
+  get hasAccessTo(): { [key in Permission]: boolean } {
     return userAccess(this)
   }
 }

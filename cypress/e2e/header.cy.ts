@@ -28,7 +28,7 @@ describe("Home", () => {
         cy.visit("/bichard")
 
         cy.contains("nav a", "Case list").should("have.attr", "href", "/bichard/")
-        cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex")
+        cy.contains("nav a", "Reports").should("not.exist")
         cy.contains("nav a", "User management").should("not.exist")
         cy.contains("nav a", "Help").should("have.attr", "href", "/help/")
         cy.contains("nav a", "Sign out").should("have.attr", "href", "/users/logout/")
@@ -52,10 +52,96 @@ describe("Home", () => {
         cy.visit("/bichard")
 
         cy.contains("nav a", "Case list").should("have.attr", "href", "/bichard/")
-        cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex")
+        cy.contains("nav a", "Reports").should("not.exist")
         cy.contains("nav a", "User management").should("have.attr", "href", "/users/users/")
         cy.contains("nav a", "Help").should("have.attr", "href", "/help/")
         cy.contains("nav a", "Sign out").should("have.attr", "href", "/users/logout/")
+      })
+
+      it("as a user that is part of the Supervisor group, I should have access to these nav items", () => {
+        cy.task("insertUsers", {
+          users: [
+            {
+              username: `supervisorUser`,
+              visibleForces: [`01`],
+              forenames: "Bichard Test User",
+              surname: `01`,
+              email: `supervisorUser@example.com`,
+              password:
+                "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw"
+            }
+          ],
+          userGroups: ["B7NewUI_grp", "B7Supervisor_grp"]
+        })
+        cy.login("supervisorUser@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.contains("nav a", "Case list").should("have.attr", "href", "/bichard/")
+        cy.contains("nav a", "Reports").should("have.attr", "href", "/bichard-ui/ReturnToReportIndex")
+        cy.contains("nav a", "User management").should("not.exist")
+        cy.contains("nav a", "Help").should("have.attr", "href", "/help/")
+        cy.contains("nav a", "Sign out").should("have.attr", "href", "/users/logout/")
+      })
+
+      it("as a user that is part of all groups except Supervisor, I should not have access to the Reports tab", () => {
+        cy.task("insertUsers", {
+          users: [
+            {
+              username: `notSupervisorUser`,
+              visibleForces: [`01`],
+              forenames: "Bichard Test User",
+              surname: `01`,
+              email: `notSupervisorUser@example.com`,
+              password:
+                "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw"
+            }
+          ],
+          userGroups: [
+            "B7Allocator_grp",
+            "B7Audit_grp",
+            "B7ExceptionHandler_grp",
+            "B7GeneralHandler_grp",
+            "B7TriggerHandler_grp",
+            "B7UserManager_grp",
+            "B7AuditLoggingManager_grp",
+            "B7SuperUserManager_grp",
+            "B7NewUI_grp"
+          ]
+        })
+        cy.login("notSupervisorUser@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.contains("nav a", "Reports").should("not.exist")
+      })
+
+      it("as a user that is part of all groups except User Manager and Super User Manager, I should not have access to the User Manager tab", () => {
+        cy.task("insertUsers", {
+          users: [
+            {
+              username: `notUserManager`,
+              visibleForces: [`01`],
+              forenames: "Bichard Test User",
+              surname: `01`,
+              email: `notUserManager@example.com`,
+              password:
+                "$argon2id$v=19$m=15360,t=2,p=1$CK/shCsqcAng1U81FDzAxA$UEPw1XKYaTjPwKtoiNUZGW64skCaXZgHrtNraZxwJPw"
+            }
+          ],
+          userGroups: [
+            "B7Allocator_grp",
+            "B7Audit_grp",
+            "B7ExceptionHandler_grp",
+            "B7GeneralHandler_grp",
+            "B7TriggerHandler_grp",
+            "B7Supervisor_grp",
+            "B7AuditLoggingManager_grp",
+            "B7NewUI_grp"
+          ]
+        })
+        cy.login("notUserManager@example.com", "password")
+        cy.visit("/bichard")
+
+        cy.contains("nav a", "User management").should("not.exist")
       })
     })
     context("phase banner", () => {

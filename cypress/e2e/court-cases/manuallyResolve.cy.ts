@@ -127,12 +127,37 @@ describe("Manually resolve a case", () => {
   })
 
   canManuallyResolveAndSubmitTestData.forEach(
-    ({ canManuallyResolveAndSubmit, exceptionStatus, exceptionLockedByAnotherUser, loggedInAs }) => {
+    ({
+      canManuallyResolveAndSubmit,
+      exceptionStatus,
+      exceptionLockedByAnotherUser,
+      loggedInAs,
+      exceptionsFeatureFlagEnabled
+    }) => {
       it(`Should ${
         canManuallyResolveAndSubmit ? "be able to resolve or submit" : "NOT be able to resolve or submit"
       } when exceptions are ${exceptionStatus}, ${
         exceptionLockedByAnotherUser ? "locked by another user" : "locked by current user"
-      } and user is a ${loggedInAs}`, () => {
+      } and user is a ${loggedInAs} ${
+        !exceptionsFeatureFlagEnabled ? "and exceptions feature flag is disabled" : ""
+      }`, () => {
+        if (!exceptionsFeatureFlagEnabled) {
+          cy.task("clearUsers")
+          cy.task("insertUsers", {
+            users: [
+              {
+                username: `${loggedInAs} username`,
+                visibleForces: ["01"],
+                forenames: `${loggedInAs}'s forename`,
+                surname: `${loggedInAs}surname`,
+                email: `${loggedInAs}@example.com`,
+                password: hashedPassword,
+                featureFlags: { exceptionsEnabled: false }
+              }
+            ],
+            userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
+          })
+        }
         cy.task("insertCourtCasesWithFields", [
           {
             orgForPoliceFilter: "01",
@@ -140,7 +165,6 @@ describe("Manually resolve a case", () => {
             errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : `${loggedInAs} username`
           }
         ])
-
         cy.login(`${loggedInAs}@example.com`, "password")
         cy.visit("/bichard/court-cases/0")
 
