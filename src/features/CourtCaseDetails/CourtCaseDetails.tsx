@@ -151,6 +151,7 @@ const CourtCaseDetails: React.FC<Props> = ({
             user={user}
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}
+            csrfToken={csrfToken}
           />
         </GridCol>
       </GridRow>
