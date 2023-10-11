@@ -140,7 +140,7 @@ const CourtCaseDetails: React.FC<Props> = ({
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Notes"}>
-            <Notes notes={courtCase.notes} lockedByAnotherUser={errorLockedByAnotherUser} />
+            <Notes notes={courtCase.notes} lockedByAnotherUser={errorLockedByAnotherUser} csrfToken={csrfToken} />
           </ConditionalRender>
         </GridCol>
 
