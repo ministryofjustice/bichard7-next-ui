@@ -239,7 +239,7 @@ jobs:
       - run: ./.circleci/scripts/build-ui.sh
       - run:
           name: Clone bichard7-next-tests
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
+          command: rm -rf ~/bichard7-next-tests && git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
       - node/install-packages:
           app-dir: ~/bichard7-next-tests
           cache-path: ~/bichard7-next-tests/node_modules
