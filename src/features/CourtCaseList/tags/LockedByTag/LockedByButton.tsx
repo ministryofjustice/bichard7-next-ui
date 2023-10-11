@@ -2,6 +2,7 @@ import Image from "next/image"
 import { createUseStyles } from "react-jss"
 import { useCustomStyles } from "../../../../../styles/customStyles"
 import { LOCKED_ICON_URL } from "utils/icons"
+import Form from "../../../../components/Form"
 
 const useStyles = createUseStyles({
   LockedIcon: {
@@ -21,12 +22,11 @@ const UnlockConfirmation = ({ csrfToken, onCancel, unlockPath }: UnlockConfirmat
     <>
       <p>{"Click the button to unlock the case"}</p>
       <div className="govuk-button-group">
-        <form method="POST" action={unlockPath}>
-          <input type="hidden" name={"CSRFToken"} value={csrfToken} />
+        <Form method="post" action={unlockPath} csrfToken={csrfToken}>
           <button className="govuk-button" data-module="govuk-button" id="unlock">
             {"Unlock"}
           </button>
-        </form>
+        </Form>
         <a
           className="govuk-link"
           href="/"
