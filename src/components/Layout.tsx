@@ -2,7 +2,6 @@ import { Footer } from "govuk-react"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
 import styled from "styled-components"
-import shouldShowSwitchingFeedbackForm from "utils/shouldShowSwitchingFeedbackForm"
 import ConditionalRender from "./ConditionalRender"
 import Header from "./Header"
 import LinkButton from "./LinkButton"
@@ -32,15 +31,19 @@ interface Props {
   bichardSwitch?: {
     display: boolean
     href?: string
-    lastFeedbackFormSubmission?: Date
+    displaySwitchingSurveyFeedback: boolean
   }
 }
 
-const Layout = ({ children, user, bichardSwitch = { display: false } }: Props) => {
+const Layout = ({
+  children,
+  user,
+  bichardSwitch = { display: false, displaySwitchingSurveyFeedback: false }
+}: Props) => {
   const { basePath } = useRouter()
   let bichardSwitchUrl = bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"
 
-  if (shouldShowSwitchingFeedbackForm(bichardSwitch.lastFeedbackFormSubmission)) {
+  if (bichardSwitch.displaySwitchingSurveyFeedback) {
     bichardSwitchUrl = `/bichard/switching-feedback?redirectTo=${encodeURIComponent(".." + bichardSwitchUrl)}`
   }
 

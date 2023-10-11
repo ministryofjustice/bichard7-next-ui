@@ -39,6 +39,7 @@ import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
+import shouldShowSwitchingFeedbackForm from "../utils/shouldShowSwitchingFeedbackForm"
 
 interface Props {
   user: DisplayFullUser
@@ -60,7 +61,7 @@ interface Props {
   caseState: CaseState | null
   myCases: boolean
   queryStringCookieName: string
-  lastSwitchingFormSubmission: string
+  displaySwitchingSurveyFeedback: boolean
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc"
@@ -180,7 +181,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       props: {
         user: userToDisplayFullUserDto(currentUser),
         courtCases: courtCases.result.map(courtCaseToDisplayPartialCourtCaseDto),
-        lastSwitchingFormSubmission: (lastSwitchingFormSubmission ?? new Date(0)).toISOString(),
+        displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0)),
         order: oppositeOrder,
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,
@@ -213,7 +214,7 @@ const Home: NextPage<Props> = (query) => {
   // prettier-ignore
   const {
     user, courtCases, order, page, casesPerPage, totalCases, reasons, keywords, courtName, reasonCode,
-    ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases, queryStringCookieName, lastSwitchingFormSubmission: lastSwitchingFormSubmission
+    ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases, queryStringCookieName, displaySwitchingSurveyFeedback
   } = query
 
   useEffect(() => {
@@ -232,10 +233,7 @@ const Home: NextPage<Props> = (query) => {
         <title>{"Case List | Bichard7"}</title>
         <meta name="description" content="Case List | Bichard7" />
       </Head>
-      <Layout
-        user={user}
-        bichardSwitch={{ display: true, lastFeedbackFormSubmission: new Date(lastSwitchingFormSubmission) }}
-      >
+      <Layout user={user} bichardSwitch={{ display: true, displaySwitchingSurveyFeedback }}>
         <Main />
         <CourtCaseWrapper
           filter={
