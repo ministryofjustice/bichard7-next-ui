@@ -17,6 +17,9 @@ import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
+import Form from "../components/Form"
+import withCsrf from "../middleware/withCsrf/withCsrf"
+import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 
 enum FeedbackExperienceKey {
   verySatisfied,
@@ -36,13 +39,16 @@ const FeedbackExperienceOptions: Record<FeedbackExperienceKey, string> = {
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
+  withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query, req } = context as AuthenticationServerSidePropsContext
+    const { currentUser, query, req, csrfToken } = context as AuthenticationServerSidePropsContext &
+      CsrfServerSidePropsContext
     const { previousPath } = query as { previousPath: string }
 
     const dataSource = await getDataSource()
 
     const props = {
+      csrfToken,
       user: userToDisplayFullUserDto(currentUser),
       previousPath
     }
@@ -85,6 +91,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 interface Props {
+  csrfToken: string
   user: DisplayFullUser
   previousPath: string
   fields?: {
@@ -103,7 +110,7 @@ interface Props {
   }
 }
 
-const FeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) => {
+const FeedbackPage: NextPage<Props> = ({ user, previousPath, fields, csrfToken }: Props) => {
   const [remainingFeedbackLength, setRemainingFeedbackLength] = useState(MAX_FEEDBACK_LENGTH)
 
   const handleFeedbackOnChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
@@ -140,7 +147,7 @@ const FeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) =>
           {"Share your feedback"}
         </Heading>
 
-        <form method="POST" action={"#"}>
+        <Form method="POST" action={"#"} csrfToken={csrfToken}>
           <Paragraph>
             {
               "If you would like to tell us about your experience using the new version of Bichard7, please do so below."
@@ -224,7 +231,7 @@ const FeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) =>
               <Button type="submit">{"Send feedback and continue"}</Button>
             </FormGroup>
           </Fieldset>
-        </form>
+        </Form>
       </Layout>
     </>
   )
