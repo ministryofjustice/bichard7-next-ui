@@ -28,11 +28,15 @@ import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
 import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
+import withCsrf from "../../../middleware/withCsrf/withCsrf"
+import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
+  withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
+    const { req, currentUser, query, csrfToken } = context as AuthenticationServerSidePropsContext &
+      CsrfServerSidePropsContext
     const { courtCaseId, lock, resolveTrigger, resubmitCase } = query as {
       courtCaseId: string
       lock: string
@@ -138,6 +142,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     return {
       props: {
+        csrfToken,
         user: userToDisplayFullUserDto(currentUser),
         courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
@@ -156,6 +161,7 @@ interface Props {
   errorLockedByAnotherUser: boolean
   canReallocate: boolean
   canResolveAndSubmit: boolean
+  csrfToken: string
 }
 
 const useStyles = createUseStyles({
@@ -175,7 +181,8 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   user,
   errorLockedByAnotherUser,
   canReallocate,
-  canResolveAndSubmit
+  canResolveAndSubmit,
+  csrfToken
 }: Props) => {
   const classes = useStyles()
   return (
@@ -199,6 +206,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
           </div>
         </ConditionalDisplay>
         <CourtCaseDetails
+          csrfToken={csrfToken}
           courtCase={courtCase}
           aho={aho}
           user={user}
