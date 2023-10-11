@@ -4,6 +4,7 @@ import { MAX_FEEDBACK_LENGTH } from "config"
 import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, Paragraph, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
+import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
@@ -113,10 +114,10 @@ const FeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) =>
   return (
     <>
       <Layout user={user}>
-        <Heading as="h2" size="LARGE" aria-label="General Feedback">
+        <Head>
           <title>{"Report an issue | Bichard7"}</title>
-          <meta name="description" content="user feedback| Bichard7" />
-        </Heading>
+          <meta name="description" content="User feedback | Bichard7" />
+        </Head>
         <BackLink href={previousPath} onClick={function noRefCheck() {}}>
           {"Back"}
         </BackLink>
