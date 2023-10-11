@@ -1,10 +1,12 @@
 import Layout from "components/Layout"
 import RadioButton from "components/RadioButton/RadioButton"
 import { MAX_FEEDBACK_LENGTH } from "config"
+import { getCookie } from "cookies-next"
 import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, Paragraph, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
+import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
@@ -15,6 +17,7 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import { SurveyFeedbackResponse, SurveyFeedbackType } from "types/SurveyFeedback"
 import { DisplayFullUser } from "types/display/Users"
+import getQueryStringCookieName from "utils/getQueryStringCookieName"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
@@ -69,6 +72,14 @@ export const getServerSideProps = withMultipleServerSideProps(
         }
       }
 
+      if (req.url) {
+        const queryStringCookieValue = getCookie(getQueryStringCookieName(currentUser.username), { req })
+        const [urlPath, urlQueryString] = req.url.split("?")
+        if (urlPath === "/" && queryStringCookieValue && !urlQueryString) {
+          return redirectTo(`${urlPath}?${queryStringCookieValue}`)
+        }
+      }
+
       return {
         props: {
           ...props,
@@ -106,6 +117,7 @@ interface Props {
 
 const FeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) => {
   const [remainingFeedbackLength, setRemainingFeedbackLength] = useState(MAX_FEEDBACK_LENGTH)
+  const router = useRouter()
 
   const handleFeedbackOnChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
     setRemainingFeedbackLength(MAX_FEEDBACK_LENGTH - event.currentTarget.value.length)
@@ -118,7 +130,7 @@ const FeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) =>
           <title>{"Report an issue | Bichard7"}</title>
           <meta name="description" content="User feedback | Bichard7" />
         </Head>
-        <BackLink href={previousPath} onClick={function noRefCheck() {}}>
+        <BackLink href={`${router.basePath}` + previousPath} onClick={function noRefCheck() {}}>
           {"Back"}
         </BackLink>
         <Heading as="h1">{"How can we help?"}</Heading>

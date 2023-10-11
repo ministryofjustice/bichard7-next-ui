@@ -29,7 +29,7 @@ import { DisplayFullUser } from "types/display/Users"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import caseStateFilters from "utils/caseStateFilters"
 import { formatFormInputDateString } from "utils/formattedDate"
-import hashString from "utils/hashString"
+import getQueryStringCookieName from "utils/getQueryStringCookieName"
 import { isPost } from "utils/http"
 import { calculateLastPossiblePageNumber } from "utils/pagination/calculateLastPossiblePageNumber"
 import { reasonOptions } from "utils/reasonOptions"
@@ -67,7 +67,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
-    const queryStringCookieName = `qs_case_list_${hashString(currentUser.username)}`
+    const queryStringCookieName = getQueryStringCookieName(currentUser.username)
     // prettier-ignore
     const {
       orderBy, page, type, keywords, courtName, reasonCode, ptiurn, maxPageItems, order,
