@@ -1,3 +1,5 @@
+import { addHours, addMinutes } from "date-fns"
+
 type TestCaseStepAction =
   | "check"
   | "exists"
@@ -29,6 +31,28 @@ type TestCase = [
     steps: TestCaseStep[]
   }
 ]
+
+const getUtcDateForDatabase = ({ minutes, hours }: { minutes: number; hours: number }) => {
+  let date = new Date()
+  if (minutes) {
+    date = addMinutes(date, minutes)
+  }
+
+  if (hours) {
+    date = addHours(date, hours)
+  }
+
+  return new Date(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds(),
+    date.getUTCMilliseconds()
+  )
+}
+
 const TestCases: TestCase[] = [
   [
     "Found an issue > Case list page > Give feedback > Submit",
@@ -291,7 +315,7 @@ const TestCases: TestCase[] = [
       steps: [
         {
           action: "insert-feedback",
-          date: new Date(Date.now() - 179 * 60 * 1000) // 2 hours and 59 minutes ago
+          date: getUtcDateForDatabase({ hours: -2, minutes: -55 }) // 2 hours and 59 minutes ago
         },
         {
           action: "switch-to-old-bichard"
@@ -314,7 +338,7 @@ const TestCases: TestCase[] = [
       steps: [
         {
           action: "insert-feedback",
-          date: new Date(Date.now() - 185 * 60 * 1000) // 3 hours and 05 minutes ago
+          date: getUtcDateForDatabase({ hours: -3, minutes: -5 }) // 3 hours and 05 minutes ago
         },
         {
           action: "switch-to-old-bichard"
