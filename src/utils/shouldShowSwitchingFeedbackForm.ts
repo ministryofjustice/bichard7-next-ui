@@ -14,8 +14,6 @@ const shouldShowSwitchingFeedbackForm = (lastFeedbackFormSubmission?: Date) => {
   )
   const hoursBehindInMs = addHours(utcDate, -SWITCHING_FEEDBACK_FORM_FREQUENCY_IN_HOURS).getTime()
 
-  console.log(lastFeedbackFormSubmission)
-
   return !lastFeedbackFormSubmission || lastFeedbackFormSubmission.getTime() < hoursBehindInMs
 }
 
