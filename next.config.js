@@ -4,6 +4,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["hex-rgb", "is-plain-obj"],
   output: "standalone",
+  poweredByHeader: false,
   async rewrites() {
     return [
       {
