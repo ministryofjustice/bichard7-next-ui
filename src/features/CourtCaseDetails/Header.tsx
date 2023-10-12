@@ -6,7 +6,7 @@ import { Button, Heading } from "govuk-react"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
 import styled from "styled-components"
-import Feature from "types/Feature"
+import Permission from "types/Permission"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import {
@@ -14,7 +14,7 @@ import {
   isLockedByCurrentUser,
   triggersAreLockedByCurrentUser
 } from "utils/caseLocks"
-import { gdsLightGrey, textPrimary } from "utils/colours"
+import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 
 interface Props {
   courtCase: DisplayFullCourtCase
@@ -107,7 +107,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           {"Case details"}
         </Heading>
         <CaseDetailsLockTag
-          isRendered={user.hasAccessTo[Feature.Exceptions]}
+          isRendered={user.hasAccessTo[Permission.Exceptions]}
           lockName="Exceptions"
           getLockHolderFn={() =>
             getLockHolder(user.username, courtCase.errorLockedByUserFullName, exceptionsAreLockedByCurrentUser)
@@ -131,7 +131,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
           />
         </Heading>
         <CaseDetailsLockTag
-          isRendered={user.hasAccessTo[Feature.Triggers]}
+          isRendered={user.hasAccessTo[Permission.Triggers]}
           lockName="Triggers"
           getLockHolderFn={() =>
             getLockHolder(user.username, courtCase.triggerLockedByUserFullName, triggersAreLockedByCurrentUser)
@@ -145,6 +145,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
             className="b7-reallocate-button"
             buttonColour={gdsLightGrey}
             buttonTextColour={textPrimary}
+            buttonShadowColour={gdsMidGrey}
           >
             {"Reallocate Case"}
           </LinkButton>
@@ -168,6 +169,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
               className={classes.button}
               buttonColour={gdsLightGrey}
               buttonTextColour={textPrimary}
+              buttonShadowColour={gdsMidGrey}
             >
               {"Return to case list"}
             </Button>

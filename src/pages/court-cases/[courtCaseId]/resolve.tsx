@@ -19,11 +19,12 @@ import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
+import forbidden from "../../../utils/forbidden"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query, req } = context as AuthenticationServerSidePropsContext
+    const { currentUser, query, req, res } = context as AuthenticationServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
 
     const dataSource = await getDataSource()
@@ -38,6 +39,10 @@ export const getServerSideProps = withMultipleServerSideProps(
     if (isError(courtCase)) {
       console.error(courtCase)
       throw courtCase
+    }
+
+    if (!courtCase.canResolveOrSubmit(currentUser)) {
+      return forbidden(res)
     }
 
     const props: Props = {

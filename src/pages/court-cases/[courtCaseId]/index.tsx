@@ -26,7 +26,7 @@ import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
-import Feature from "../../../types/Feature"
+import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 
 export const getServerSideProps = withMultipleServerSideProps(
@@ -59,7 +59,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     if (isPost(req) && lock === "false") {
       lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser, UnlockReason.TriggerAndException)
-    } else if (currentUser.hasAccessTo[Feature.Exceptions] || currentUser.hasAccessTo[Feature.Triggers]) {
+    } else if (currentUser.hasAccessTo[Permission.Exceptions] || currentUser.hasAccessTo[Permission.Triggers]) {
       lockResult = await lockCourtCase(dataSource, +courtCaseId, currentUser)
     }
 
@@ -142,7 +142,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
-        canReallocate: courtCase.canReallocate(currentUser.username)
+        canReallocate: courtCase.canReallocate(currentUser.username),
+        canResolveAndSubmit: courtCase.canResolveOrSubmit(currentUser)
       }
     }
   }
@@ -154,6 +155,7 @@ interface Props {
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
   canReallocate: boolean
+  canResolveAndSubmit: boolean
 }
 
 const useStyles = createUseStyles({
@@ -172,7 +174,8 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   aho,
   user,
   errorLockedByAnotherUser,
-  canReallocate
+  canReallocate,
+  canResolveAndSubmit
 }: Props) => {
   const classes = useStyles()
   return (
@@ -201,6 +204,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
           user={user}
           errorLockedByAnotherUser={errorLockedByAnotherUser}
           canReallocate={canReallocate}
+          canResolveAndSubmit={canResolveAndSubmit}
         />
       </Layout>
     </>

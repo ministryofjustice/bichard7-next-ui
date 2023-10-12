@@ -21,18 +21,18 @@ Open [http://localhost:4080/bichard](http://localhost:4080/bichard) with your br
 
 ### Running the database, user-service and nginx-auth-proxy
 
-To spin up a local instance of the database, user-service and auth proxy, you can use the following make targets in the [main bichard repo](https://github.com/ministryofjustice/bichard7-next):
+To spin up a local instance of the database, user-service and auth proxy, you can use the following `npm run ui` command in the [bichard7-next-core](https://github.com/ministryofjustice/bichard7-next-core):
 
 ```shell
-$ cd /path/to/bichard7-next
-$ make run-pg && make run-user-service && make run-nginx-auth-proxy
+$ cd /path/to/bichard7-next-core
+$ npm run ui
 ```
 
-Once the dependencies follow the login instruction from the `bichard7-next` repo:
+Once the dependencies have run follow these login instruction:
 
 1. Navigate to the User Service at [https://localhost:4443/users/](https://localhost:4443/users/) and sign in:
-   > User: <your-madetech-email>, Pass: password
-   > **N.B.** You can use the `./scripts/get_2fa_email_link.sh` to quickly grab the one-time email verification link from the user-service container logs.
+   > User: e.g bichard01@example.com, Pass: password
+   > You can grab the 2fa code out of the local Bichard database on the users table under the `email_verification_code` column
 1. After signing in, you should see the User Service home page. An `.AUTH` cookie is generated for localhost, so now you can access Bichard7 UI on [http://localhost:4080/bichard](http://localhost:4080/bichard)
 
 ## Development
@@ -50,8 +50,8 @@ Once the dependencies follow the login instruction from the `bichard7-next` repo
 
 ## Testing
 
-To run the tests, ensure that you have a local postgres instance running (run `make run-pg` from the `bichard7-next` repo),
-then run `npm run test`
+To run the tests, ensure that you have a local postgres instance running (run `npm run ui` from the `bichard7-next-core` repo),
+then run `npm run test` in this repo
 
 ### Unit Testing
 

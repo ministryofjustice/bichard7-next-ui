@@ -10,7 +10,7 @@ export const userToDisplayFullUserDto = (user: User): DisplayFullUser => {
     visibleForces: user.visibleForces,
     visibleCourts: user.visibleCourts,
     excludedTriggers: user.excludedTriggers,
-    featureFlags: user.featureFlags,
+    featureFlags: user.featureFlags ?? null,
     groups: user.groups,
     hasAccessTo: user.hasAccessTo
   }

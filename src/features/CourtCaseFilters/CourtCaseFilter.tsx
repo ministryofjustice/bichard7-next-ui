@@ -8,7 +8,7 @@ import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
 import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
-import Feature from "types/Feature"
+import Permission from "types/Permission"
 import { DisplayFullUser } from "types/display/Users"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
@@ -254,14 +254,14 @@ const CourtCaseFilter: React.FC<Props> = ({
               </label>
             </div>
           </div>
-          <ConditionalRender isRendered={user.hasAccessTo[Feature.Triggers]}>
+          <ConditionalRender isRendered={user.hasAccessTo[Permission.Triggers]}>
             <div className={`${classes["govuk-form-group"]} reasons`}>
               <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"}>
                 <ReasonFilterOptions
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
                   reasonOptions={
-                    user.hasAccessTo[Feature.Triggers] && !user.hasAccessTo[Feature.Exceptions]
+                    user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]
                       ? [Reason.Bails, Reason.Triggers]
                       : undefined
                   }

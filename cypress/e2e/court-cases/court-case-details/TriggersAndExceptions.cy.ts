@@ -400,4 +400,41 @@ describe("Triggers and exceptions tabs", () => {
     cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
   })
+
+  it("should show both trigger and exceptions to General Handlers with triggers tab selected", () => {
+    cy.task("insertTriggers", { caseId: 0, triggers: mixedTriggers })
+    newUserLogin({ groups: [UserGroup.GeneralHandler] })
+    cy.visit(caseURL)
+
+    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("be.visible")
+
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("not.be.visible")
+  })
+
+  it("should select exceptions tab by default when there aren't any triggers", () => {
+    cy.task("clearTriggers")
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "01"
+      }
+    ])
+
+    newUserLogin({ groups: [UserGroup.GeneralHandler] })
+    cy.visit(caseURL)
+
+    cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #triggers").should("not.be.visible")
+
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
+  })
 })

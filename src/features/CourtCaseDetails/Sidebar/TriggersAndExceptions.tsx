@@ -4,7 +4,7 @@ import { Tabs } from "govuk-react"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import styled from "styled-components"
-import Feature from "types/Feature"
+import Permission from "types/Permission"
 import type NavigationHandler from "types/NavigationHandler"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
@@ -29,6 +29,7 @@ interface Props {
   aho: AnnotatedHearingOutcome
   user: DisplayFullUser
   onNavigate: NavigationHandler
+  canResolveAndSubmit: boolean
 }
 
 const TabList = styled(Tabs.List)`
@@ -45,57 +46,62 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate }: Props) => {
-  const availableTabs = [Feature.Triggers, Feature.Exceptions].filter((tab) => user.hasAccessTo[tab])
-  const defaultTab = availableTabs.length > 0 ? availableTabs[0] : undefined
+const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate, canResolveAndSubmit }: Props) => {
+  const availableTabs = [Permission.Triggers, Permission.Exceptions].filter((tab) => user.hasAccessTo[tab])
+  const defaultTab =
+    availableTabs.length > 0
+      ? availableTabs.length == 2 && courtCase.triggerCount === 0
+        ? availableTabs[1]
+        : availableTabs[0]
+      : undefined
   const [selectedTab, setSelectedTab] = useState(defaultTab)
   const classes = useStyles()
 
   return (
     <div className={`${classes.sideBar} triggers-and-exceptions-sidebar`}>
-      <ConditionalRender isRendered={user.hasAccessTo[Feature.CaseDetailsSidebar]}>
+      <ConditionalRender isRendered={user.hasAccessTo[Permission.CaseDetailsSidebar]}>
         <Tabs>
           <TabList>
-            <ConditionalRender isRendered={user.hasAccessTo[Feature.Triggers]}>
+            <ConditionalRender isRendered={user.hasAccessTo[Permission.Triggers]}>
               <Tabs.Tab
                 id="triggers-tab"
                 className={classes.tab}
-                onClick={() => setSelectedTab(Feature.Triggers)}
-                selected={selectedTab === Feature.Triggers}
+                onClick={() => setSelectedTab(Permission.Triggers)}
+                selected={selectedTab === Permission.Triggers}
               >
                 {`Triggers`}
               </Tabs.Tab>
             </ConditionalRender>
 
-            <ConditionalRender isRendered={user.hasAccessTo[Feature.Exceptions]}>
+            <ConditionalRender isRendered={user.hasAccessTo[Permission.Exceptions]}>
               <Tabs.Tab
                 id="exceptions-tab"
                 className={classes.tab}
-                onClick={() => setSelectedTab(Feature.Exceptions)}
-                selected={selectedTab === Feature.Exceptions}
+                onClick={() => setSelectedTab(Permission.Exceptions)}
+                selected={selectedTab === Permission.Exceptions}
               >
                 {`Exceptions`}
               </Tabs.Tab>
             </ConditionalRender>
           </TabList>
 
-          <ConditionalRender isRendered={user.hasAccessTo[Feature.Triggers]}>
+          <ConditionalRender isRendered={user.hasAccessTo[Permission.Triggers]}>
             <Tabs.Panel
               id="triggers"
-              selected={selectedTab === Feature.Triggers}
+              selected={selectedTab === Permission.Triggers}
               className={`moj-tab-panel-triggers ${classes.tabPanelTriggers}`}
             >
               <TriggersList courtCase={courtCase} user={user} onNavigate={onNavigate} />
             </Tabs.Panel>
           </ConditionalRender>
 
-          <ConditionalRender isRendered={user.hasAccessTo[Feature.Exceptions]}>
+          <ConditionalRender isRendered={user.hasAccessTo[Permission.Exceptions]}>
             <Tabs.Panel
               id="exceptions"
-              selected={selectedTab === Feature.Exceptions}
+              selected={selectedTab === Permission.Exceptions}
               className="moj-tab-panel-exceptions"
             >
-              <ExceptionsList courtCase={courtCase} aho={aho} user={user} onNavigate={onNavigate} />
+              <ExceptionsList aho={aho} onNavigate={onNavigate} canResolveAndSubmit={canResolveAndSubmit} />
             </Tabs.Panel>
           </ConditionalRender>
         </Tabs>
