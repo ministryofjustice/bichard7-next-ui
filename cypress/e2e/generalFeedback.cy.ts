@@ -107,10 +107,29 @@ describe("General Feedback Form", () => {
     cy.get("h1").contains("Case list").should("exist")
   })
 
+  it("will go back to the case list page when I press the back button", () => {
+    cy.visit("/bichard")
+    cy.findByText("feedback").click()
+    cy.contains("Back").click()
+
+    cy.url().should("match", /\/bichard/)
+    cy.get("h1").contains("Case list").should("exist")
+  })
+
   it("Should redirect back to case details page", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     cy.visit("/bichard/court-cases/0")
     submitAFeedback()
+
+    cy.url().should("match", /\/court-cases\/\d+/)
+    cy.findByText("Case details").should("exist")
+  })
+
+  it("will go back to the case details page when I press the back button", () => {
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+    cy.visit("/bichard/court-cases/0")
+    cy.findByText("feedback").click()
+    cy.contains("Back").click()
 
     cy.url().should("match", /\/court-cases\/\d+/)
     cy.findByText("Case details").should("exist")
