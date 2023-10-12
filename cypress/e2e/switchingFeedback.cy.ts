@@ -1,10 +1,80 @@
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import hashedPassword from "../fixtures/hashedPassword"
-import TestCases from "../fixtures/switchingFeedbackTestData"
+import { addHours, addMinutes } from "date-fns"
+
+const expectedUserId = 0
+
+const getUtcDateForDatabase = ({ minutes, hours }: { minutes: number; hours: number }) => {
+  let date = new Date()
+  if (minutes) {
+    date = addMinutes(date, minutes)
+  }
+
+  if (hours) {
+    date = addHours(date, hours)
+  }
+
+  return new Date(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds(),
+    date.getUTCMilliseconds()
+  )
+}
+
+const navigateAndClickSwitchToOldBichard = (url = "/bichard") => {
+  cy.visit(url)
+  cy.contains("button", "Switch to old Bichard").click()
+}
+
+const expectFeedbackForm = () => {
+  cy.get("#caseListOrDetail").should("not.exist")
+  cy.get("#otherFeedback").should("not.exist")
+  cy.get("button").contains("Send feedback and continue").should("not.exist")
+}
+
+const typeFeedback = () => {
+  cy.find("textarea").type("Some Feedback")
+}
+
+const clickSendFeedbackButton = () => {
+  cy.get("button").contains("Send feedback and continue").click()
+}
+
+const clickSkipFeedbackButton = () => {
+  cy.get("button").contains("Skip feedback").click()
+}
+
+const verifyFeedback = (data: unknown) => {
+  cy.task("getAllFeedbacksFromDatabase").then((result) => {
+    const feedbackResults = result as SurveyFeedback[]
+    const feedback = feedbackResults[0]
+    expect(feedback.feedbackType).equal(1)
+    expect(feedback.userId).equal(expectedUserId)
+    expect(feedback.response).deep.equal(data)
+  })
+}
+
+const verifyNoFeedbackExists = () => {
+  cy.task("getAllFeedbacksFromDatabase").then((result) => {
+    const feedbackResults = result as SurveyFeedback[]
+    expect(feedbackResults).to.have.length(0)
+  })
+}
+
+const insertFeedback = (date: Date) => {
+  cy.task("insertFeedback", {
+    userId: expectedUserId,
+    response: { skipped: true },
+    feedbackType: 1,
+    createdAt: date
+  })
+}
 
 describe("Switching Bichard Version Feedback Form", () => {
-  const expectedUserId = 0
-
   before(() => {
     cy.intercept("GET", "/bichard-ui/*", {
       statusCode: 200,
@@ -60,69 +130,122 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.get("label").contains("Other (please specify)")
   })
 
-  TestCases.forEach(([testName, testInput]) => {
-    it(testName, () => {
-      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+  it("Found an issue > Case list page > Give feedback > Submit", () => {
+    navigateAndClickSwitchToOldBichard()
+    expectFeedbackForm()
+    cy
+      .get(
+        'label:contains("I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task.")'
+      )
+      ?.click()
+    cy.get('label:contains("Case list page")')?.click()
+    cy.contains("Could you explain in detail what problem you have experienced?").should("exist")
+    typeFeedback()
+    clickSendFeedbackButton()
+    verifyFeedback({ feedback: "Some feedback", caseListOrDetail: "caselist", issueOrPreference: "issue" })
+  })
 
-      testInput.steps.forEach((step) => {
-        let element
+  it("Found an issue > Case details page > Give feedback > Submit", () => {
+    navigateAndClickSwitchToOldBichard()
+    expectFeedbackForm()
+    navigateAndClickSwitchToOldBichard()
+    expectFeedbackForm()
+    cy
+      .get(
+        'label:contains("I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task.")'
+      )
+      ?.click()
+    cy.get('label:contains("Case details page")')?.click()
+    cy.contains("Could you explain in detail what problem you have experienced?").should("exist")
+    typeFeedback()
+    clickSendFeedbackButton()
+    verifyFeedback({ feedback: "Some feedback", caseListOrDetail: "casedetail", issueOrPreference: "issue" })
+  })
 
-        if (step.label) {
-          element = cy.get(`label:contains("${step.label}")`)
-        }
+  it("Prefer old Bichard > Give feedback > Submit", () => {
+    navigateAndClickSwitchToOldBichard()
+    expectFeedbackForm()
+    navigateAndClickSwitchToOldBichard()
+    expectFeedbackForm()
+    cy.get('label:contains("I prefer working in the old version, and I dislike working in the new version.")')?.click()
+    cy.contains(
+      "Could you please explain why you prefer using the old version of Bichard over the new version Bichard?"
+    ).should("exist")
+    typeFeedback()
+    clickSendFeedbackButton()
+    verifyFeedback({ feedback: "Some feedback", issueOrPreference: "preference" })
+  })
 
-        if (step.button) {
-          element = cy.get("button").contains(step.button)
-        }
+  it("Other > Give feedback > Submit", () => {
+    navigateAndClickSwitchToOldBichard()
+    expectFeedbackForm()
+    cy.get('label:contains("Other (please specify)")')?.click()
+    cy.contains("Is there another reason why you are switching version of Bichard?").should("exist")
+    typeFeedback()
+    clickSendFeedbackButton()
+    verifyFeedback({ feedback: "Some feedback", issueOrPreference: "other" })
+  })
 
-        switch (step.action) {
-          case "type":
-            element!.find("textarea")[step.action](step.input!)
-            break
+  it("Found an issue > Don't fill anything > Submit", () => {
+    navigateAndClickSwitchToOldBichard()
+    expectFeedbackForm()
+    cy
+      .get(
+        'label:contains("I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task.")'
+      )
+      ?.click()
+    clickSendFeedbackButton()
+    cy.contains("Input message into the text box").should("exist")
+    verifyNoFeedbackExists()
+  })
 
-          case "exists":
-            cy.contains(step.text!).should("exist")
-            break
+  it("Option > Don't fill anything in > Submit ", () => {
+    navigateAndClickSwitchToOldBichard()
+    expectFeedbackForm()
+    cy.get('label:contains("Other (please specify)")')?.click()
+    clickSendFeedbackButton()
+    cy.contains("Input message into the text box").should("exist")
+    verifyNoFeedbackExists()
+  })
 
-          case "check-db":
-            cy.task("getAllFeedbacksFromDatabase").then((result) => {
-              const feedbackResults = result as SurveyFeedback[]
-              expect(feedbackResults).to.have.length(step.shouldExist ? 1 : 0)
-              if (step.shouldExist) {
-                const feedback = feedbackResults[0]
-                expect(feedback.feedbackType).equal(1)
-                expect(feedback.userId).equal(expectedUserId)
-                expect(feedback.response).deep.equal(step.data)
-              }
-            })
-            break
+  it("Skip Feedback >Database record skip > old Bichard", () => {
+    navigateAndClickSwitchToOldBichard()
+    expectFeedbackForm()
+    clickSkipFeedbackButton()
+    verifyFeedback({ skipped: true })
+    cy.url().should("match", /\/bichard-ui\/.*$/)
+  })
 
-          case "check":
-          case "click":
-            element?.click()
-            break
+  it("Should redirect user to old Bichard within 3 hours of first click on 'Switch to old Bichard' after logging in", () => {
+    insertFeedback(getUtcDateForDatabase({ hours: -2, minutes: -55 })) // 2 hours and 59 minutes ago
+    navigateAndClickSwitchToOldBichard()
+    cy.url().should("match", /\/bichard-ui\/.*$/)
+    verifyFeedback({ skipped: true })
+  })
 
-          case "match-url":
-            cy.url().should("match", step.url)
-            break
+  it("Should redirect user to switching survey after 3 hours of a click on 'Switch to old Bichard'", () => {
+    insertFeedback(getUtcDateForDatabase({ hours: -3, minutes: -5 })) // 3 hours and 05 minutes ago
+    navigateAndClickSwitchToOldBichard()
+    expectFeedbackForm()
+  })
 
-          case "insert-feedback":
-            cy.task("insertFeedback", {
-              userId: expectedUserId,
-              response: { skipped: true },
-              feedbackType: 1,
-              createdAt: step.date
-            })
-          case "switch-to-old-bichard":
-            cy.visit(step.navigateTo ?? "/bichard")
-            cy.contains("button", "Switch to old Bichard").click()
-            break
-          case "expect-the-feedback-form":
-            cy.get("#caseListOrDetail").should("not.exist")
-            cy.get("#otherFeedback").should("not.exist")
-            cy.get("button").contains("Send feedback and continue").should("not.exist")
-        }
-      })
-    })
+  it("Should redirect to case list in old Bichard", () => {
+    navigateAndClickSwitchToOldBichard()
+    expectFeedbackForm()
+    cy.get('label:contains("Other (please specify)")')?.click()
+    cy.contains("Is there another reason why you are switching version of Bichard?").should("exist")
+    typeFeedback()
+    clickSendFeedbackButton()
+    cy.url().should("match", /\/bichard-ui\/RefreshListNoRedirect$/)
+  })
+
+  it("Should redirect to the same case detail page in old Bichard", () => {
+    navigateAndClickSwitchToOldBichard("/bichard/court-cases/0")
+    expectFeedbackForm()
+    cy.get('label:contains("Other (please specify)")')?.click()
+    cy.contains("Is there another reason why you are switching version of Bichard?").should("exist")
+    typeFeedback()
+    clickSendFeedbackButton()
+    cy.url().should("match", /\/bichard-ui\/SelectRecord\?unstick=true&error_id=0$/)
   })
 })
