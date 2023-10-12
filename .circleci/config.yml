@@ -273,7 +273,7 @@ jobs:
           command: DEPLOY_NAME=e2e-test npm run seed-data
       - run:
           name: Run ZAP scanner
-          command: ./scripts/zap-scan.sh
+          command: npm run zap
 
 #################################################################################
 
