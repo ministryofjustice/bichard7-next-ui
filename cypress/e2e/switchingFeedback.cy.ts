@@ -4,7 +4,7 @@ import { addHours, addMinutes } from "date-fns"
 
 const expectedUserId = 0
 
-const getUtcDateForDatabase = ({ minutes, hours }: { minutes: number; hours: number }) => {
+const getDate = ({ minutes, hours }: { minutes: number; hours: number }) => {
   let date = new Date()
   if (minutes) {
     date = addMinutes(date, minutes)
@@ -37,7 +37,7 @@ const expectFeedbackForm = () => {
 }
 
 const typeFeedback = () => {
-  cy.find("textarea").type("Some Feedback")
+  cy.get("textarea[name=feedback]").type("Some feedback")
 }
 
 const clickSendFeedbackButton = () => {
@@ -82,6 +82,9 @@ describe("Switching Bichard Version Feedback Form", () => {
         name: "Dummy response"
       }
     })
+
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
   })
 
   after(() => {
@@ -107,6 +110,7 @@ describe("Switching Bichard Version Feedback Form", () => {
       ],
       userGroups: ["B7NewUI_grp", "B7Supervisor_grp"]
     })
+
     cy.login("bichard01@example.com", "password")
   })
 
@@ -217,14 +221,14 @@ describe("Switching Bichard Version Feedback Form", () => {
   })
 
   it("Should redirect user to old Bichard within 3 hours of first click on 'Switch to old Bichard' after logging in", () => {
-    insertFeedback(getUtcDateForDatabase({ hours: -2, minutes: -55 })) // 2 hours and 59 minutes ago
+    insertFeedback(getDate({ hours: -2, minutes: -55 })) // 2 hours and 55 minutes ago
     navigateAndClickSwitchToOldBichard()
     cy.url().should("match", /\/bichard-ui\/.*$/)
     verifyFeedback({ skipped: true })
   })
 
   it("Should redirect user to switching survey after 3 hours of a click on 'Switch to old Bichard'", () => {
-    insertFeedback(getUtcDateForDatabase({ hours: -3, minutes: -5 })) // 3 hours and 05 minutes ago
+    insertFeedback(getDate({ hours: -3, minutes: -5 })) // 3 hours and 05 minutes ago
     navigateAndClickSwitchToOldBichard()
     expectFeedbackForm()
   })
