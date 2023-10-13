@@ -1,12 +1,6 @@
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import hashedPassword from "../fixtures/hashedPassword"
-
-const expectToHaveNumberOfFeedbacks = (number: number) => {
-  cy.task("getAllFeedbacksFromDatabase").then((result) => {
-    const feedbackResults = result as SurveyFeedback[]
-    expect(feedbackResults.length).equal(number)
-  })
-}
+import { expectToHaveNumberOfFeedbacks } from "../support/helpers"
 
 const submitAFeedback = () => {
   cy.findByText("feedback").click()
