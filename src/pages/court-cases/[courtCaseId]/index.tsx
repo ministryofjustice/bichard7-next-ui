@@ -26,8 +26,10 @@ import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
-import Feature from "../../../types/Feature"
+import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
+import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
+import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -59,7 +61,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     if (isPost(req) && lock === "false") {
       lockResult = await unlockCourtCase(dataSource, +courtCaseId, currentUser, UnlockReason.TriggerAndException)
-    } else if (currentUser.hasAccessTo[Feature.Exceptions] || currentUser.hasAccessTo[Feature.Triggers]) {
+    } else if (currentUser.hasAccessTo[Permission.Exceptions] || currentUser.hasAccessTo[Permission.Triggers]) {
       lockResult = await lockCourtCase(dataSource, +courtCaseId, currentUser)
     }
 
@@ -136,13 +138,21 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const annotatedHearingOutcome = parseHearingOutcome(courtCase.hearingOutcome)
 
+    const lastSwitchingFormSubmission = await getLastSwitchingFormSubmission(dataSource, currentUser.id)
+
+    if (isError(lastSwitchingFormSubmission)) {
+      throw lastSwitchingFormSubmission
+    }
+
     return {
       props: {
         user: userToDisplayFullUserDto(currentUser),
         courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
-        canReallocate: courtCase.canReallocate(currentUser.username)
+        canReallocate: courtCase.canReallocate(currentUser.username),
+        canResolveAndSubmit: courtCase.canResolveOrSubmit(currentUser),
+        displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0))
       }
     }
   }
@@ -154,6 +164,8 @@ interface Props {
   aho: AnnotatedHearingOutcome
   errorLockedByAnotherUser: boolean
   canReallocate: boolean
+  canResolveAndSubmit: boolean
+  displaySwitchingSurveyFeedback: boolean
 }
 
 const useStyles = createUseStyles({
@@ -172,7 +184,9 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   aho,
   user,
   errorLockedByAnotherUser,
-  canReallocate
+  canReallocate,
+  canResolveAndSubmit,
+  displaySwitchingSurveyFeedback
 }: Props) => {
   const classes = useStyles()
   return (
@@ -183,7 +197,11 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
       </Head>
       <Layout
         user={user}
-        bichardSwitch={{ display: true, href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}` }}
+        bichardSwitch={{
+          display: true,
+          href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}`,
+          displaySwitchingSurveyFeedback
+        }}
       >
         <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
           <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
@@ -201,6 +219,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
           user={user}
           errorLockedByAnotherUser={errorLockedByAnotherUser}
           canReallocate={canReallocate}
+          canResolveAndSubmit={canResolveAndSubmit}
         />
       </Layout>
     </>

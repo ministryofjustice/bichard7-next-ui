@@ -7,7 +7,7 @@ export const AUDIT_LOG_API_KEY = process.env.AUDIT_LOG_API_KEY ?? "dummy_api_key
 export const AUDIT_LOG_EVENT_SOURCE = "Bichard New UI"
 export const REALLOCATE_CASE_TRIGGER_CODE = "TRPR0028" as TriggerCode
 export const OUT_OF_AREA_TRIGGER_CODE = TriggerCode.TRPR0027
-
+export const SWITCHING_FEEDBACK_FORM_FREQUENCY_IN_HOURS = 3
 export const USE_CONDUCTOR = process.env.CONDUCTOR_API_URL ? true : false
 export const CONDUCTOR_API_URL = process.env.CONDUCTOR_API_URL ?? "http://localhost:5002"
 export const CONDUCTOR_API_USER = process.env.CONDUCTOR_API_USER ?? "bichard"

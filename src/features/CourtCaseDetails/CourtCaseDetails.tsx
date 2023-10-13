@@ -25,6 +25,7 @@ interface Props {
   errorLockedByAnotherUser: boolean
   user: DisplayFullUser
   canReallocate: boolean
+  canResolveAndSubmit: boolean
 }
 
 const useStyles = createUseStyles({
@@ -40,7 +41,14 @@ const useStyles = createUseStyles({
 const sideBarWidth = "33%"
 const contentWidth = "67%"
 
-const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, user, errorLockedByAnotherUser, canReallocate }) => {
+const CourtCaseDetails: React.FC<Props> = ({
+  courtCase,
+  aho,
+  user,
+  errorLockedByAnotherUser,
+  canReallocate,
+  canResolveAndSubmit
+}) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
@@ -135,7 +143,13 @@ const CourtCaseDetails: React.FC<Props> = ({ courtCase, aho, user, errorLockedBy
         </GridCol>
 
         <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
-          <TriggersAndExceptions courtCase={courtCase} aho={aho} user={user} onNavigate={handleNavigation} />
+          <TriggersAndExceptions
+            courtCase={courtCase}
+            aho={aho}
+            user={user}
+            onNavigate={handleNavigation}
+            canResolveAndSubmit={canResolveAndSubmit}
+          />
         </GridCol>
       </GridRow>
     </>
