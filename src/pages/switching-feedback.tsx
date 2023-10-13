@@ -19,6 +19,8 @@ import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
+import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
+import Form from "../components/Form"
 
 interface SwitchingFeedbackFormState {
   issueOrPreference?: string
@@ -27,6 +29,7 @@ interface SwitchingFeedbackFormState {
 }
 interface Props {
   user: DisplayFullUser
+  csrfToken: string
   previousPath: string
   fields?: {
     issueOrPreference: {
@@ -58,7 +61,7 @@ function validateForm(form: SwitchingFeedbackFormState): boolean {
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query, req } = context as AuthenticationServerSidePropsContext
+    const { currentUser, query, req, csrfToken } = context as CsrfServerSidePropsContext & AuthenticationServerSidePropsContext
     const {
       previousPath,
       isSkipped,
@@ -71,7 +74,8 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props = {
       user: userToDisplayFullUserDto(currentUser),
-      previousPath: previousPath || "../bichard"
+      previousPath: previousPath || "../bichard",
+      csrfToken
     }
 
     if (isPost(req)) {
@@ -129,7 +133,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) => {
+const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, csrfToken }: Props) => {
   const [skipUrl, setSkipUrl] = useState<URL | null>(null)
 
   const [formState, setFormState] = useState<SwitchingFeedbackFormState>({
@@ -169,7 +173,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
 
       <Heading as="h1">{"Share your feedback"}</Heading>
 
-      <form method="POST" action={"#"}>
+      <Form method="POST" action={"#"} csrfToken={csrfToken}>
         <Fieldset>
           <p className="govuk-body">
             {
