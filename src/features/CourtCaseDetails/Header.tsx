@@ -101,7 +101,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
   )
 
   return (
-    <HeaderContainer>
+    <HeaderContainer id="header-container">
       <HeaderRow>
         <Heading as="h1" size="LARGE">
           {"Case details"}
