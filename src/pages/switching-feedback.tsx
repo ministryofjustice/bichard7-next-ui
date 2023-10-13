@@ -21,6 +21,7 @@ import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import Form from "../components/Form"
+import withCsrf from "../middleware/withCsrf/withCsrf"
 
 interface SwitchingFeedbackFormState {
   issueOrPreference?: string
@@ -60,8 +61,9 @@ function validateForm(form: SwitchingFeedbackFormState): boolean {
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
+  withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query, req, csrfToken } = context as CsrfServerSidePropsContext & AuthenticationServerSidePropsContext
+    const { currentUser, query, req, csrfToken, formData } = context as CsrfServerSidePropsContext & AuthenticationServerSidePropsContext
     const {
       previousPath,
       isSkipped,
@@ -81,7 +83,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     if (isPost(req)) {
       const dataSource = await getDataSource()
 
-      const form = (await parseFormData(req)) as SwitchingFeedbackFormState
+      const form = formData as SwitchingFeedbackFormState
 
       if (isSkipped === "true") {
         const result = await insertSurveyFeedback(dataSource, {
@@ -340,7 +342,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
             </FormGroup>
           </ConditionalRender>
         </Fieldset>
-      </form>
+      </Form>
     </Layout>
   )
 }
