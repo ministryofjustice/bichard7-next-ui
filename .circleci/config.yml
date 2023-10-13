@@ -246,11 +246,11 @@ jobs:
       WORKSPACE: local-next
       AUTH_TYPE: user-service
     steps:
-      - setup
-      - run: ./.circleci/scripts/build-ui.sh
       - run:
           name: Clone bichard7-next-tests
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
+      - setup
+      - run: ./.circleci/scripts/build-ui.sh
       - node/install-packages:
           app-dir: ~/bichard7-next-tests
           cache-path: ~/bichard7-next-tests/node_modules

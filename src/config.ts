@@ -12,3 +12,4 @@ export const USE_CONDUCTOR = process.env.CONDUCTOR_API_URL ? true : false
 export const CONDUCTOR_API_URL = process.env.CONDUCTOR_API_URL ?? "http://localhost:5002"
 export const CONDUCTOR_API_USER = process.env.CONDUCTOR_API_USER ?? "bichard"
 export const CONDUCTOR_API_PASSWORD = process.env.CONDUCTOR_API_PASSWORD ?? "password"
+export const SWITCHING_FEEDBACK_FORM_FREQUENCY_IN_HOURS = 3

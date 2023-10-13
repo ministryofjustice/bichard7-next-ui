@@ -11,8 +11,9 @@ import {
   insertDummyCourtCasesWithTriggers,
   insertMultipleDummyCourtCases
 } from "./test/utils/insertCourtCases"
-import { deleteFeedback, getAllFeedbacksFromDatabase } from "./test/utils/manageFeedbackSurveys"
+import { deleteFeedback, getAllFeedbacksFromDatabase, insertFeedback } from "./test/utils/manageFeedbackSurveys"
 
+import SurveyFeedback from "services/entities/SurveyFeedback"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import insertException from "./test/utils/manageExceptions"
 import { deleteTriggers, insertTriggers } from "./test/utils/manageTriggers"
@@ -71,7 +72,9 @@ export default defineConfig({
         async getAllFeedbacksFromDatabase() {
           return getAllFeedbacksFromDatabase()
         },
-
+        async insertFeedback(feedback: Partial<SurveyFeedback>) {
+          return insertFeedback(feedback)
+        },
         async clearAllFeedbacksFromDatabase() {
           return deleteFeedback()
         },
@@ -92,16 +95,18 @@ export default defineConfig({
           return insertUsersWithOverrides(params.users, params.userGroups)
         },
 
-        clearUsers() {
-          return deleteUsers().then(() => true)
+        async clearUsers() {
+          await deleteUsers()
+          return true
         },
 
         insertTriggers(args) {
           return insertTriggers(args.caseId, args.triggers)
         },
 
-        clearTriggers() {
-          return deleteTriggers().then(() => true)
+        async clearTriggers() {
+          await deleteTriggers()
+          return true
         },
 
         insertException(params: { caseId: number; exceptionCode: string; errorReport?: string }) {

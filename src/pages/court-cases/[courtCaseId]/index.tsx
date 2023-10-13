@@ -28,6 +28,8 @@ import notSuccessful from "utils/notSuccessful"
 import parseFormData from "utils/parseFormData"
 import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
+import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
+import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -136,6 +138,12 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const annotatedHearingOutcome = parseHearingOutcome(courtCase.hearingOutcome)
 
+    const lastSwitchingFormSubmission = await getLastSwitchingFormSubmission(dataSource, currentUser.id)
+
+    if (isError(lastSwitchingFormSubmission)) {
+      throw lastSwitchingFormSubmission
+    }
+
     return {
       props: {
         user: userToDisplayFullUserDto(currentUser),
@@ -143,7 +151,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
         canReallocate: courtCase.canReallocate(currentUser.username),
-        canResolveAndSubmit: courtCase.canResolveOrSubmit(currentUser)
+        canResolveAndSubmit: courtCase.canResolveOrSubmit(currentUser),
+        displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0))
       }
     }
   }
@@ -156,6 +165,7 @@ interface Props {
   errorLockedByAnotherUser: boolean
   canReallocate: boolean
   canResolveAndSubmit: boolean
+  displaySwitchingSurveyFeedback: boolean
 }
 
 const useStyles = createUseStyles({
@@ -175,7 +185,8 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   user,
   errorLockedByAnotherUser,
   canReallocate,
-  canResolveAndSubmit
+  canResolveAndSubmit,
+  displaySwitchingSurveyFeedback
 }: Props) => {
   const classes = useStyles()
   return (
@@ -186,7 +197,11 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
       </Head>
       <Layout
         user={user}
-        bichardSwitch={{ display: true, href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}` }}
+        bichardSwitch={{
+          display: true,
+          href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}`,
+          displaySwitchingSurveyFeedback
+        }}
       >
         <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
           <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
