@@ -26,7 +26,7 @@ export default <Props extends { [key: string]: any }>(
 
     const { maximumTokenAgeInSeconds } = CSRF
     const { formToken, cookieToken, cookieName } = generateCsrfToken(req)
-    setCookie(res, cookieName, cookieToken, { maxAge: maximumTokenAgeInSeconds, path: "/", httpOnly: true })
+    setCookie(res, cookieName, cookieToken, { maxAge: maximumTokenAgeInSeconds, path: "/bichard", httpOnly: true })
 
     return getServerSidePropsFunction({ ...context, formData, csrfToken: formToken } as CsrfServerSidePropsContext)
   }
