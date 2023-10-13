@@ -1,8 +1,8 @@
 import { ResolutionStatus } from "types/ResolutionStatus"
+import { UserGroup } from "types/UserGroup"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import { newUserLogin } from "../../../support/helpers"
-import { UserGroup } from "types/UserGroup"
 
 const caseURL = "/bichard/court-cases/0"
 
@@ -219,7 +219,10 @@ describe("Triggers and exceptions", () => {
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("#triggers-locked-tag #triggers-locked-tag-lockee").should("contain.text", "Another User")
+      cy.get("#lock-container").should("contain.text", "Another User")
+      cy.get("#lock-container").should("not.contain.text", "Bichard01")
+      cy.get("#triggers").should("contain.text", "Another User")
+      cy.get("#triggers").should("not.contain.text", "Bichard01")
     })
   })
 
