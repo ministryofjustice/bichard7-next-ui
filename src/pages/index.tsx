@@ -17,6 +17,7 @@ import { courtCaseToDisplayPartialCourtCaseDto } from "services/dto/courtCaseDto
 import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import getDataSource from "services/getDataSource"
+import getLastSwitchingFormSubmission from "services/getLastSwitchingFormSubmission"
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
@@ -38,6 +39,7 @@ import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
+import shouldShowSwitchingFeedbackForm from "../utils/shouldShowSwitchingFeedbackForm"
 
 interface Props {
   user: DisplayFullUser
@@ -59,6 +61,7 @@ interface Props {
   caseState: CaseState | null
   myCases: boolean
   queryStringCookieName: string
+  displaySwitchingSurveyFeedback: boolean
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc"
@@ -168,10 +171,17 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
+    const lastSwitchingFormSubmission = await getLastSwitchingFormSubmission(dataSource, currentUser.id)
+
+    if (isError(lastSwitchingFormSubmission)) {
+      throw lastSwitchingFormSubmission
+    }
+
     return {
       props: {
         user: userToDisplayFullUserDto(currentUser),
         courtCases: courtCases.result.map(courtCaseToDisplayPartialCourtCaseDto),
+        displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0)),
         order: oppositeOrder,
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,
@@ -204,7 +214,7 @@ const Home: NextPage<Props> = (query) => {
   // prettier-ignore
   const {
     user, courtCases, order, page, casesPerPage, totalCases, reasons, keywords, courtName, reasonCode,
-    ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases, queryStringCookieName
+    ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases, queryStringCookieName, displaySwitchingSurveyFeedback
   } = query
 
   useEffect(() => {
@@ -223,7 +233,7 @@ const Home: NextPage<Props> = (query) => {
         <title>{"Case List | Bichard7"}</title>
         <meta name="description" content="Case List | Bichard7" />
       </Head>
-      <Layout user={user} bichardSwitch={{ display: true }}>
+      <Layout user={user} bichardSwitch={{ display: true, displaySwitchingSurveyFeedback }}>
         <Main />
         <CourtCaseWrapper
           filter={
