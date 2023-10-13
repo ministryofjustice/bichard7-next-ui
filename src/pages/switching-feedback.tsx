@@ -17,7 +17,6 @@ import { isError } from "types/Result"
 import { SurveyFeedbackType, SwitchingFeedbackResponse } from "types/SurveyFeedback"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
-import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import Form from "../components/Form"
@@ -63,7 +62,8 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query, req, csrfToken, formData } = context as CsrfServerSidePropsContext & AuthenticationServerSidePropsContext
+    const { currentUser, query, req, csrfToken, formData } = context as CsrfServerSidePropsContext &
+      AuthenticationServerSidePropsContext
     const {
       previousPath,
       isSkipped,
