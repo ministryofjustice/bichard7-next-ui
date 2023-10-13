@@ -21,7 +21,6 @@ import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import forbidden from "utils/forbidden"
 import { isPost } from "utils/http"
-import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
 import { useCustomStyles } from "../../../../styles/customStyles"
 import Form from "../../../components/Form"
@@ -32,7 +31,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query, req, res, csrfToken } = context as AuthenticationServerSidePropsContext &
+    const { currentUser, query, req, res, csrfToken, formData } = context as AuthenticationServerSidePropsContext &
       CsrfServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
 
@@ -66,7 +65,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     if (isPost(req)) {
-      const { force, note } = (await parseFormData(req)) as { force: string; note?: string }
+      const { force, note } = formData as { force: string; note?: string }
       const reallocateResult = await reallocateCourtCase(dataSource, courtCase.errorId, currentUser, force, note)
 
       if (isError(reallocateResult)) {

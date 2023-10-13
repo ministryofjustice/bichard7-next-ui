@@ -16,7 +16,6 @@ import { isError } from "types/Result"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
-import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
 import forbidden from "../../../utils/forbidden"
@@ -28,7 +27,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query, req, res, csrfToken } = context as AuthenticationServerSidePropsContext &
+    const { currentUser, query, req, res, csrfToken, formData } = context as AuthenticationServerSidePropsContext &
       CsrfServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
 
@@ -58,7 +57,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     if (isPost(req)) {
-      const { reason, reasonText } = (await parseFormData(req)) as { reason: string; reasonText: string }
+      const { reason, reasonText } = formData as { reason: string; reasonText: string }
       const validation = validateManualResolution({ reason: reason as ResolutionReasonKey, reasonText })
 
       if (validation.error) {

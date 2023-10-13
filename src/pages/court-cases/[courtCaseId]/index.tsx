@@ -25,7 +25,6 @@ import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
-import parseFormData from "utils/parseFormData"
 import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
@@ -37,7 +36,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { req, currentUser, query, csrfToken } = context as AuthenticationServerSidePropsContext &
+    const { req, currentUser, query, csrfToken, formData } = context as AuthenticationServerSidePropsContext &
       CsrfServerSidePropsContext
     const { courtCaseId, lock, resolveTrigger, resubmitCase } = query as {
       courtCaseId: string
@@ -98,7 +97,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     if (isPost(req) && resubmitCase === "true") {
-      const { amendments } = (await parseFormData(req)) as { amendments: string }
+      const { amendments } = formData as { amendments: string }
 
       const parsedAmendments = JSON.parse(amendments)
 
@@ -113,7 +112,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     if (isPost(req)) {
-      const { noteText } = (await parseFormData(req)) as { noteText: string }
+      const { noteText } = formData as { noteText: string }
       if (noteText) {
         const { isSuccessful, ValidationException, Exception } = await addNote(
           dataSource,
