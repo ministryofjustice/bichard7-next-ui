@@ -108,7 +108,7 @@ const TriggersList = ({ courtCase, user, onNavigate }: Props) => {
         </GridRow>
       </ConditionalRender>
       <ConditionalRender isRendered={hasTriggers && triggersLockedByAnotherUser}>
-        <LockedTag lockName="Triggers" lockedBy={courtCase.errorLockedByUserFullName ?? "Another user"} />
+        <LockedTag lockName="Triggers" lockedBy={courtCase.triggerLockedByUserFullName ?? "Another user"} />
       </ConditionalRender>
     </form>
   )
