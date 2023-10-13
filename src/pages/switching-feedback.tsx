@@ -100,10 +100,16 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
 
       if (validateForm(form)) {
+        const response: SwitchingFeedbackResponse = {
+          ...(form.issueOrPreference ? { issueOrPreference: form.issueOrPreference } : {}),
+          ...(form.caseListOrDetail ? { caseListOrDetail: form.caseListOrDetail } : {}),
+          ...(form.feedback ? { otherFeedback: form.feedback } : {})
+        }
+
         const result = await insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.Switching,
           userId: currentUser.id,
-          response: form as SwitchingFeedbackFormState
+          response
         } as SurveyFeedback)
 
         if (!isError(result)) {

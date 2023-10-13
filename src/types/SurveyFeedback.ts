@@ -2,10 +2,9 @@ export type SurveyFeedbackResponse = { experience: string; comment: string }
 
 export type SwitchingFeedbackResponse =
   | {
-      issueOrPreference: string
-      caseListOrDetail: string
-      componentIssue: string
-      otherFeedback: string
+      issueOrPreference?: string
+      caseListOrDetail?: string
+      otherFeedback?: string
     }
   | {
       skipped: boolean
