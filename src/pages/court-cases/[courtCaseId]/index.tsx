@@ -30,6 +30,8 @@ import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
+import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
+import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -140,6 +142,12 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const annotatedHearingOutcome = parseHearingOutcome(courtCase.hearingOutcome)
 
+    const lastSwitchingFormSubmission = await getLastSwitchingFormSubmission(dataSource, currentUser.id)
+
+    if (isError(lastSwitchingFormSubmission)) {
+      throw lastSwitchingFormSubmission
+    }
+
     return {
       props: {
         csrfToken,
@@ -148,7 +156,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
         canReallocate: courtCase.canReallocate(currentUser.username),
-        canResolveAndSubmit: courtCase.canResolveOrSubmit(currentUser)
+        canResolveAndSubmit: courtCase.canResolveOrSubmit(currentUser),
+        displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0))
       }
     }
   }
@@ -162,6 +171,7 @@ interface Props {
   canReallocate: boolean
   canResolveAndSubmit: boolean
   csrfToken: string
+  displaySwitchingSurveyFeedback: boolean
 }
 
 const useStyles = createUseStyles({
@@ -182,6 +192,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   errorLockedByAnotherUser,
   canReallocate,
   canResolveAndSubmit,
+  displaySwitchingSurveyFeedback,
   csrfToken
 }: Props) => {
   const classes = useStyles()
@@ -193,7 +204,11 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
       </Head>
       <Layout
         user={user}
-        bichardSwitch={{ display: true, href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}` }}
+        bichardSwitch={{
+          display: true,
+          href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}`,
+          displaySwitchingSurveyFeedback
+        }}
       >
         <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
           <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>

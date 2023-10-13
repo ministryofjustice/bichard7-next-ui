@@ -2,8 +2,11 @@
 
 form {
   & > fieldset {
-    width: 100%;
-    max-width: $b7-form-width;
+    width: 66%;
+
+    @media only screen and (max-width: $b7-landscape-tablet-width) {
+      width: 100%;
+    }
 
     label {
       font-weight: 700;
