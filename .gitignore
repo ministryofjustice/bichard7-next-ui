@@ -129,3 +129,6 @@ public/images/govuk-crest.png
 public/images/govuk-logotype-crown.png
 public/images/govuk-mask-icon.svg
 public/images/govuk-opengraph-image.png
+
+# Ignore auto-generated zap.yaml
+scripts/zap/zap.yaml
