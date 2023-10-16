@@ -177,7 +177,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
         <meta name="description" content="user switching version feedback| Bichard7" />
       </Heading>
 
-      <FeedbackHeaderLinks backLinkUrl={previousPath} skipLinkUrl={skipUrl?.search} />
+      <FeedbackHeaderLinks csrfToken={csrfToken} backLinkUrl={previousPath} skipLinkUrl={skipUrl?.search} />
 
       <Heading as="h1">{"Share your feedback"}</Heading>
 
