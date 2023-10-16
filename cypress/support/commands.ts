@@ -36,10 +36,10 @@ Cypress.Commands.add("login", (emailAddress, password) => {
   )
 })
 
-Cypress.Commands.add("checkCsrf", (url, method) => {
+Cypress.Commands.add("checkCsrf", (url) => {
   cy.request({
     failOnStatusCode: false,
-    method,
+    method: "POST",
     url,
     headers: {
       cookie: "CSRFToken%2Flogin=JMHZOOog-n0ZMO-UfRCZTCUxiQutsEeLpS8I.CJOHfajQ2zDKOZPaBh5J8VT%2FK4UrG6rB6o33VIvK04g"
@@ -51,10 +51,10 @@ Cypress.Commands.add("checkCsrf", (url, method) => {
         "CSRFToken%2Flogin=1629375460103.JMHZOOog-n0ZMO-UfRCZTCUxiQutsEeLpS8I.7+42/hdHVuddtxLw8IvGvIPVhkFj6kbvYukS1mGm64o"
     }
   }).then((withTokensResponse) => {
-    expect(withTokensResponse.status).to.eq(403)
+    expect(withTokensResponse.status).to.eq(403, `${url} response code was not 403`)
     cy.request({
       failOnStatusCode: false,
-      method,
+      method: "POST",
       url,
       form: true,
       followRedirect: false

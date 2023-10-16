@@ -213,7 +213,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     verifyNoFeedbackExists()
   })
 
-  it("Skip Feedback >Database record skip > old Bichard", () => {
+  it("Skip Feedback > Database record skip > old Bichard", () => {
     navigateAndClickSwitchToOldBichard()
     expectFeedbackForm()
     clickSkipFeedbackButton()
