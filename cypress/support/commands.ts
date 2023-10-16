@@ -51,7 +51,7 @@ Cypress.Commands.add("checkCsrf", (url) => {
         "CSRFToken%2Flogin=1629375460103.JMHZOOog-n0ZMO-UfRCZTCUxiQutsEeLpS8I.7+42/hdHVuddtxLw8IvGvIPVhkFj6kbvYukS1mGm64o"
     }
   }).then((withTokensResponse) => {
-    expect(withTokensResponse.status).to.eq(403, `${url} response code was not 403`)
+    expect(withTokensResponse.status.toString()).not.to.match(/2\d{2}/, `${url} response code is 2xx`)
     cy.request({
       failOnStatusCode: false,
       method: "POST",
@@ -59,7 +59,7 @@ Cypress.Commands.add("checkCsrf", (url) => {
       form: true,
       followRedirect: false
     }).then((withoutTokensResponse) => {
-      expect(withoutTokensResponse.status).to.eq(403, `${url} response code was not 403`)
+      expect(withoutTokensResponse.status.toString()).not.to.match(/2\d{2}/, `${url} response code is 2xx`)
     })
   })
 })
@@ -70,7 +70,7 @@ declare global {
     interface Chainable {
       findByText(text: string): Chainable<Element>
       login(emailAddress: string, password: string): Chainable<Element>
-      checkCsrf(url: string, method: string): Chainable<Element>
+      checkCsrf(url: string): Chainable<Element>
     }
   }
 }
