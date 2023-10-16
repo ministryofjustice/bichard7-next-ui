@@ -48,6 +48,8 @@ COPY --from=builder /src/ui/next.config.js ./
 COPY --from=builder /src/ui/public ./public
 COPY --from=builder /src/ui/.next/static ./.next/static
 
+RUN chmod -R 755 public
+
 # Extract standalone build to working directory
 COPY --from=builder /src/ui/.next/standalone .
 
