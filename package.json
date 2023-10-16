@@ -27,7 +27,8 @@
     "install:hooks": "./scripts/install-git-hooks.sh",
     "update-deps": "ncu -u -x next -x cypress && npm install",
     "seed-data": "ts-node ./scripts/seed-data.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "zap": "./scripts/zap/zap-scan.sh"
   },
   "dependencies": {
     "@govuk-react/select": "^0.10.6",
