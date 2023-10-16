@@ -32,5 +32,10 @@ describe("Triggers and exceptions tabs", () => {
 
     cy.task("insertException", { caseId: 0, exceptionCode: "HO100402", errorReport: "test data" })
   })
-  it("if there's a pnc exception, it should show up in the list", () => {})
+
+  it("if there's a pnc exception, it should show up in the list", () => {
+    cy.visit(caseURL)
+    cy.get("#exceptions-tab").click()
+    cy.get(".exception-details").contains("HO100402")
+  })
 })
