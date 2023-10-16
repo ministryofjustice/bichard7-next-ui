@@ -59,7 +59,7 @@ Cypress.Commands.add("checkCsrf", (url, method) => {
       form: true,
       followRedirect: false
     }).then((withoutTokensResponse) => {
-      expect(withoutTokensResponse.status).to.eq(403)
+      expect(withoutTokensResponse.status).to.eq(403, `${url} response code was not 403`)
     })
   })
 })
