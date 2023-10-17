@@ -13,6 +13,7 @@ import { ExtraReasonRow } from "./ExtraReasonRow"
 import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
 
 interface Props {
+  csrfToken: string
   courtCase: DisplayPartialCourtCase
   currentUser: DisplayFullUser
   exceptionHasBeenRecentlyUnlocked: boolean
@@ -21,6 +22,7 @@ interface Props {
 }
 
 const CourtCaseListEntry: React.FC<Props> = ({
+  csrfToken,
   entityClassName,
   courtCase,
   currentUser,
@@ -63,6 +65,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
   const exceptionsReasonCell = <ExceptionsReasonCell exceptionCounts={groupErrorsFromReport(errorReport)} />
   const exceptionsLockTag = (
     <ExceptionsLockTag
+      csrfToken={csrfToken}
       errorLockedByUsername={errorLockedByUsername}
       errorLockedByFullName={errorLockedByUserFullName}
       canUnlockCase={!!errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
@@ -78,6 +81,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
       triggersHaveBeenRecentlyUnlocked={triggerHasBeenRecentlyUnlocked}
       canUnlockCase={!!triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
       unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
+      csrfToken={csrfToken}
     />
   )
   const reasonAndLockTags: [JSX.Element, JSX.Element][] = []

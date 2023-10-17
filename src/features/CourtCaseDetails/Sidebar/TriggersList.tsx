@@ -12,11 +12,13 @@ import { DisplayFullUser } from "types/display/Users"
 import { triggersAreLockedByAnotherUser } from "utils/caseLocks"
 import LockedTag from "../../../components/LockedTag"
 import Trigger from "./Trigger"
+import Form from "../../../components/Form"
 
 interface Props {
   courtCase: DisplayFullCourtCase
   user: DisplayFullUser
   onNavigate: NavigationHandler
+  csrfToken: string
 }
 
 const useStyles = createUseStyles({
@@ -37,7 +39,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const TriggersList = ({ courtCase, user, onNavigate }: Props) => {
+const TriggersList = ({ courtCase, user, onNavigate, csrfToken }: Props) => {
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
   const { basePath, query } = useRouter()
@@ -76,7 +78,7 @@ const TriggersList = ({ courtCase, user, onNavigate }: Props) => {
   }
 
   return (
-    <form method="post" action={resolveTriggerUrl(selectedTriggerIds)}>
+    <Form method="post" action={resolveTriggerUrl(selectedTriggerIds)} csrfToken={csrfToken}>
       {triggers.length === 0 && "There are no triggers for this case."}
       <ConditionalRender isRendered={hasUnresolvedTriggers && !triggersLockedByAnotherUser}>
         <GridRow id={"select-all-triggers"} className={classes.selectAllContainer}>
@@ -110,7 +112,7 @@ const TriggersList = ({ courtCase, user, onNavigate }: Props) => {
       <ConditionalRender isRendered={hasTriggers && triggersLockedByAnotherUser}>
         <LockedTag lockName="Triggers" lockedBy={courtCase.errorLockedByUserFullName ?? "Another user"} />
       </ConditionalRender>
-    </form>
+    </Form>
   )
 }
 

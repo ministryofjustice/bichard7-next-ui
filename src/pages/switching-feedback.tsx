@@ -17,8 +17,10 @@ import { isError } from "types/Result"
 import { SurveyFeedbackType, SwitchingFeedbackResponse } from "types/SurveyFeedback"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
-import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
+import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
+import Form from "../components/Form"
+import withCsrf from "../middleware/withCsrf/withCsrf"
 
 interface SwitchingFeedbackFormState {
   issueOrPreference?: string
@@ -27,6 +29,7 @@ interface SwitchingFeedbackFormState {
 }
 interface Props {
   user: DisplayFullUser
+  csrfToken: string
   previousPath: string
   fields?: {
     issueOrPreference: {
@@ -57,8 +60,10 @@ function validateForm(form: SwitchingFeedbackFormState): boolean {
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
+  withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query, req } = context as AuthenticationServerSidePropsContext
+    const { currentUser, query, req, csrfToken, formData } = context as CsrfServerSidePropsContext &
+      AuthenticationServerSidePropsContext
     const {
       previousPath,
       isSkipped,
@@ -71,13 +76,14 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props = {
       user: userToDisplayFullUserDto(currentUser),
-      previousPath: previousPath || "../bichard"
+      previousPath: previousPath || "../bichard",
+      csrfToken
     }
 
     if (isPost(req)) {
       const dataSource = await getDataSource()
 
-      const form = (await parseFormData(req)) as SwitchingFeedbackFormState
+      const form = formData as SwitchingFeedbackFormState
 
       if (isSkipped === "true") {
         const result = await insertSurveyFeedback(dataSource, {
@@ -94,10 +100,16 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
 
       if (validateForm(form)) {
+        const response: SwitchingFeedbackResponse = {
+          ...(form.issueOrPreference ? { issueOrPreference: form.issueOrPreference } : {}),
+          ...(form.caseListOrDetail ? { caseListOrDetail: form.caseListOrDetail } : {}),
+          ...(form.feedback ? { otherFeedback: form.feedback } : {})
+        }
+
         const result = await insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.Switching,
           userId: currentUser.id,
-          response: form as SwitchingFeedbackFormState
+          response
         } as SurveyFeedback)
 
         if (!isError(result)) {
@@ -129,7 +141,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: Props) => {
+const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, csrfToken }: Props) => {
   const [skipUrl, setSkipUrl] = useState<URL | null>(null)
 
   const [formState, setFormState] = useState<SwitchingFeedbackFormState>({
@@ -165,11 +177,11 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
         <meta name="description" content="user switching version feedback| Bichard7" />
       </Heading>
 
-      <FeedbackHeaderLinks backLinkUrl={previousPath} skipLinkUrl={skipUrl?.search} />
+      <FeedbackHeaderLinks csrfToken={csrfToken} backLinkUrl={previousPath} skipLinkUrl={skipUrl?.search} />
 
       <Heading as="h1">{"Share your feedback"}</Heading>
 
-      <form method="POST" action={"#"}>
+      <Form method="POST" action={"#"} csrfToken={csrfToken}>
         <Fieldset>
           <p className="govuk-body">
             {
@@ -336,7 +348,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields }: 
             </FormGroup>
           </ConditionalRender>
         </Fieldset>
-      </form>
+      </Form>
     </Layout>
   )
 }

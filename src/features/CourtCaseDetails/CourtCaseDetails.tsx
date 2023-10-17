@@ -26,6 +26,7 @@ interface Props {
   user: DisplayFullUser
   canReallocate: boolean
   canResolveAndSubmit: boolean
+  csrfToken: string
 }
 
 const useStyles = createUseStyles({
@@ -47,7 +48,8 @@ const CourtCaseDetails: React.FC<Props> = ({
   user,
   errorLockedByAnotherUser,
   canReallocate,
-  canResolveAndSubmit
+  canResolveAndSubmit,
+  csrfToken
 }) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
@@ -84,7 +86,7 @@ const CourtCaseDetails: React.FC<Props> = ({
 
   return (
     <>
-      <Header courtCase={courtCase} user={user} canReallocate={canReallocate} />
+      <Header courtCase={courtCase} user={user} canReallocate={canReallocate} csrfToken={csrfToken} />
       <CourtCaseDetailsSummaryBox
         asn={courtCase.asn}
         courtCode={courtCase.courtCode}
@@ -138,7 +140,7 @@ const CourtCaseDetails: React.FC<Props> = ({
           </ConditionalRender>
 
           <ConditionalRender isRendered={activeTab === "Notes"}>
-            <Notes notes={courtCase.notes} lockedByAnotherUser={errorLockedByAnotherUser} />
+            <Notes notes={courtCase.notes} lockedByAnotherUser={errorLockedByAnotherUser} csrfToken={csrfToken} />
           </ConditionalRender>
         </GridCol>
 
@@ -149,6 +151,7 @@ const CourtCaseDetails: React.FC<Props> = ({
             user={user}
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}
+            csrfToken={csrfToken}
           />
         </GridCol>
       </GridRow>

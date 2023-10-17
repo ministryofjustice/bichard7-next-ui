@@ -21,14 +21,18 @@ import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import forbidden from "utils/forbidden"
 import { isPost } from "utils/http"
-import parseFormData from "utils/parseFormData"
 import redirectTo from "utils/redirectTo"
 import { useCustomStyles } from "../../../../styles/customStyles"
+import Form from "../../../components/Form"
+import withCsrf from "../../../middleware/withCsrf/withCsrf"
+import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
+  withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query, req, res } = context as AuthenticationServerSidePropsContext
+    const { currentUser, query, req, res, csrfToken, formData } = context as AuthenticationServerSidePropsContext &
+      CsrfServerSidePropsContext
     const { courtCaseId } = query as { courtCaseId: string }
 
     const dataSource = await getDataSource()
@@ -54,13 +58,14 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     const props = {
+      csrfToken,
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
     }
 
     if (isPost(req)) {
-      const { force, note } = (await parseFormData(req)) as { force: string; note?: string }
+      const { force, note } = formData as { force: string; note?: string }
       const reallocateResult = await reallocateCourtCase(dataSource, courtCase.errorId, currentUser, force, note)
 
       if (isError(reallocateResult)) {
@@ -79,9 +84,10 @@ interface Props {
   courtCase: DisplayFullCourtCase
   lockedByAnotherUser: boolean
   noteTextError?: string
+  csrfToken: string
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser }: Props) => {
+const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser, csrfToken }: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
   const classes = useCustomStyles()
   const { basePath } = useRouter()
@@ -103,7 +109,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
         </Heading>
         <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
         <ConditionalRender isRendered={!lockedByAnotherUser}>
-          <form method="POST" action="#">
+          <Form method="POST" action="#" csrfToken={csrfToken}>
             <Fieldset>
               <FormGroup>
                 <Label>{"Current force owner"}</Label>
@@ -135,7 +141,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
                 <Link href={`${basePath}/court-cases/${courtCase.errorId}`}>{"Cancel"}</Link>
               </ButtonsGroup>
             </Fieldset>
-          </form>
+          </Form>
         </ConditionalRender>
       </Layout>
     </>

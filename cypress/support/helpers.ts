@@ -165,6 +165,7 @@ export const setupDefaultUsers = () => {
 
 export const defaultSetup = () => {
   const defaultUsers = setupDefaultUsers()
+  cy.task("clearAllFeedbacksFromDatabase")
   cy.task("clearUsers")
   cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp"] })
   defaultUsers
