@@ -1,6 +1,5 @@
 import axios from "axios"
 import { differenceInMilliseconds } from "date-fns"
-import { continueConductorWorkflow } from "services/conductor"
 import User from "services/entities/User"
 import insertNotes from "services/insertNotes"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
@@ -535,8 +534,8 @@ describe("resolveCourtCase", () => {
     })
 
     it("Should return the error if fails to store audit logs", async () => {
-      const error = `Error updating conductor workflow`
-      ;(continueConductorWorkflow as jest.Mock).mockImplementationOnce(() => new Error(error))
+      const error = `Error while calling audit log API`
+      ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(error))
 
       let result
       try {
