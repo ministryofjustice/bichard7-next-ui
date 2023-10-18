@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker"
-import { differenceInDays, subDays, subYears } from "date-fns"
+import { subYears } from "date-fns"
 import sample from "lodash.sample"
 import { DataSource, EntityManager } from "typeorm"
 import { v4 as uuidv4 } from "uuid"
@@ -12,6 +12,7 @@ import createDummyExceptions from "./createDummyExceptions"
 import createDummyNotes from "./createDummyNotes"
 import createDummyPtiurn from "./createDummyPtiurn"
 import createDummyTriggers from "./createDummyTriggers"
+import randomDate from "./createRandomDate"
 
 const randomBoolean = (): boolean => sample([true, false]) ?? true
 
@@ -19,11 +20,6 @@ const randomUsername = (): string =>
   `${faker.person.firstName().toLowerCase()}.${faker.person.lastName().toLowerCase()}`
 
 const randomName = (): string => `${faker.person.lastName().toUpperCase()} ${faker.person.firstName()}`
-
-const randomDate = (from: Date, to: Date): Date => {
-  const dateRangeDays = differenceInDays(from, to)
-  return subDays(to, Math.round(Math.random() * dateRangeDays))
-}
 
 export default async (
   dataSource: DataSource | EntityManager,
@@ -36,7 +32,7 @@ export default async (
   const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgCode + faker.string.alpha(2).toUpperCase())
   const isResolved = randomBoolean()
   const resolutionDate = isResolved ? randomDate(caseDate, dateTo || new Date()) : null
-  const triggers = createDummyTriggers(dataSource, caseId, caseDate, isResolved)
+  const triggers = createDummyTriggers(dataSource, caseId, caseDate, dateTo || new Date(), isResolved)
   const hasTriggers = triggers.filter((trigger) => trigger.status === "Unresolved").length > 0
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
   const { errorReport, errorReason, exceptionCount } = createDummyExceptions(isResolved, hasTriggers)
