@@ -1,9 +1,9 @@
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
-import { USE_CONDUCTOR } from "config"
 import { DataSource, EntityManager, UpdateResult } from "typeorm"
 import { ManualResolution } from "types/ManualResolution"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
+import { CONDUCTOR_API_URL, USE_CONDUCTOR } from "../config"
 import { continueConductorWorkflow } from "./conductor"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
@@ -53,7 +53,7 @@ const resolveCourtCase = async (
       throw addNoteResult
     }
 
-    if (USE_CONDUCTOR) {
+    if (CONDUCTOR_API_URL && USE_CONDUCTOR) {
       // complete human task step in conductor workflow
       const continueConductorWorkflowResult = await continueConductorWorkflow(courtCase, {
         status: "manually_resolved",
