@@ -9,7 +9,7 @@ interface OffencesProps {
 }
 
 export const Offences = ({ offences, onOffenceSelected, selectedOffenceIndex }: OffencesProps) => {
-  return selectedOffenceIndex !== undefined ? (
+  return selectedOffenceIndex !== undefined && offences[selectedOffenceIndex - 1] !== undefined ? (
     <>
       <OffenceDetails
         offence={offences[selectedOffenceIndex - 1]}

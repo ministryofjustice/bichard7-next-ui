@@ -455,6 +455,23 @@ describe("Court case details", () => {
     cy.get("h3").should("have.text", "Offence 1 of 3")
   })
 
+  it("Should be able to refresh after I click 'Back to all offences'", () => {
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+
+    cy.login("bichard01@example.com", "password")
+
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("h3").should("not.have.text", "Offence 1 of 3")
+    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Next hearing date / Offence 1")
+    cy.get(".exception-header .exception-location").click()
+    cy.get("h3:visible").should("have.text", "Offence 1 of 3")
+
+    cy.contains("Back to all offences").click()
+    cy.reload()
+  })
+
   it("Should take the user to the case tab when exception is clicked", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
