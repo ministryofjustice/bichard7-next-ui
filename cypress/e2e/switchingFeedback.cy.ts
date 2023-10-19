@@ -32,8 +32,8 @@ const navigateAndClickSwitchToOldBichard = (url = "/bichard") => {
 }
 
 const expectFeedbackForm = () => {
-  cy.get("#caseListOrDetail").should("not.exist")
-  cy.get("#otherFeedback").should("not.exist")
+  cy.get("#pageWithIssue").should("not.exist")
+  cy.get("#comment").should("not.exist")
   cy.get("button").contains("Send feedback and continue").should("not.exist")
 }
 
@@ -148,9 +148,9 @@ describe("Switching Bichard Version Feedback Form", () => {
     typeFeedback()
     clickSendFeedbackButton()
     verifyFeedback({
-      otherFeedback: "Some feedback",
-      caseListOrDetail: Page.caseList,
-      issueOrPreference: SwitchingReason.issue
+      comment: "Some feedback",
+      pageWithIssue: Page.caseList,
+      switchingReason: SwitchingReason.issue
     })
   })
 
@@ -169,9 +169,9 @@ describe("Switching Bichard Version Feedback Form", () => {
     typeFeedback()
     clickSendFeedbackButton()
     verifyFeedback({
-      otherFeedback: "Some feedback",
-      caseListOrDetail: Page.caseDetails,
-      issueOrPreference: SwitchingReason.issue
+      comment: "Some feedback",
+      pageWithIssue: Page.caseDetails,
+      switchingReason: SwitchingReason.issue
     })
   })
 
@@ -186,7 +186,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     ).should("exist")
     typeFeedback()
     clickSendFeedbackButton()
-    verifyFeedback({ otherFeedback: "Some feedback", issueOrPreference: SwitchingReason.preference })
+    verifyFeedback({ comment: "Some feedback", switchingReason: SwitchingReason.preference })
   })
 
   it("Other > Give feedback > Submit", () => {
@@ -196,7 +196,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.contains("Is there another reason why you are switching version of Bichard?").should("exist")
     typeFeedback()
     clickSendFeedbackButton()
-    verifyFeedback({ otherFeedback: "Some feedback", issueOrPreference: SwitchingReason.other })
+    verifyFeedback({ comment: "Some feedback", switchingReason: SwitchingReason.other })
   })
 
   it("Found an issue > Don't fill anything > Submit", () => {

@@ -20,9 +20,9 @@ export type SurveyFeedbackResponse = { experience: FeedbackExperienceValue; comm
 
 export type SwitchingFeedbackResponse =
   | {
-      issueOrPreference?: SwitchingReason
-      caseListOrDetail?: Page
-      otherFeedback?: string
+      switchingReason?: SwitchingReason
+      pageWithIssue?: Page
+      comment?: string
     }
   | {
       skipped: boolean
