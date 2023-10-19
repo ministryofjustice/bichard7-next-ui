@@ -1,4 +1,4 @@
-import { EntityManager, FindOperator, IsNull, MoreThan, Not, Repository, UpdateResult } from "typeorm"
+import { EntityManager, FindOperator, IsNull, MoreThan, Repository, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import { type AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"

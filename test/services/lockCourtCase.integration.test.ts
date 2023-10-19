@@ -13,6 +13,7 @@ import updateLockStatusToLocked from "services/updateLockStatusToLocked"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import { hasAccessToAll } from "../helpers/hasAccessTo"
+import getCourtCase from "services/getCourtCase"
 
 jest.mock("services/updateLockStatusToLocked")
 jest.mock("services/storeAuditLogEvents")
@@ -181,6 +182,86 @@ describe("lock court case", () => {
       const events = auditLogs[0].events
 
       expect(events).toHaveLength(0)
+    })
+  })
+
+  describe("When attempting to lock cases with resolved triggers or exceptions", () => {
+    it("Should lock an unresolved exception when all triggers are resolved", async () => {
+      const courtCaseId = 1
+      const [courtCase] = await insertCourtCasesWithFields([
+        {
+          errorId: courtCaseId,
+          errorLockedByUsername: null,
+          triggerLockedByUsername: null,
+          errorCount: 1,
+          errorStatus: "Unresolved",
+          triggerCount: 1,
+          triggerStatus: "Resolved",
+          orgForPoliceFilter: "36FPA "
+        }
+      ])
+
+      const result = await lockCourtCase(dataSource, courtCase.errorId, user)
+      expect(isError(result)).toBeFalsy()
+
+      const fetchedCourtCase = await getCourtCase(dataSource, courtCaseId)
+      expect(isError(fetchedCourtCase)).toBeFalsy()
+      const updatedCourtCase = fetchedCourtCase as CourtCase
+
+      expect(updatedCourtCase.errorLockedByUsername).toBe(user.username)
+      expect(updatedCourtCase.triggerLockedByUsername).toBeNull()
+    })
+
+    it("Should lock an unresolved trigger when all exceptions are resolved", async () => {
+      const courtCaseId = 1
+      const [courtCase] = await insertCourtCasesWithFields([
+        {
+          errorId: courtCaseId,
+          errorLockedByUsername: null,
+          triggerLockedByUsername: null,
+          errorCount: 1,
+          errorStatus: "Resolved",
+          triggerCount: 1,
+          triggerStatus: "Unresolved",
+          orgForPoliceFilter: "36FPA "
+        }
+      ])
+
+      const result = await lockCourtCase(dataSource, courtCase.errorId, user)
+      expect(isError(result)).toBeFalsy()
+
+      const fetchedCourtCase = await getCourtCase(dataSource, courtCaseId)
+      expect(isError(fetchedCourtCase)).toBeFalsy()
+      const updatedCourtCase = fetchedCourtCase as CourtCase
+
+      expect(updatedCourtCase.triggerLockedByUsername).toBe(user.username)
+      expect(updatedCourtCase.errorLockedByUsername).toBeNull()
+    })
+
+    it("Should lock neither triggers nor exceptions when both are resolved", async () => {
+      const courtCaseId = 1
+      const [courtCase] = await insertCourtCasesWithFields([
+        {
+          errorId: courtCaseId,
+          errorLockedByUsername: null,
+          triggerLockedByUsername: null,
+          errorCount: 1,
+          errorStatus: "Resolved",
+          triggerCount: 1,
+          triggerStatus: "Resolved",
+          orgForPoliceFilter: "36FPA "
+        }
+      ])
+
+      const result = await lockCourtCase(dataSource, courtCase.errorId, user)
+      expect(isError(result)).toBeFalsy()
+
+      const fetchedCourtCase = await getCourtCase(dataSource, courtCaseId)
+      expect(isError(fetchedCourtCase)).toBeFalsy()
+      const updatedCourtCase = fetchedCourtCase as CourtCase
+
+      expect(updatedCourtCase.triggerLockedByUsername).toBeNull()
+      expect(updatedCourtCase.errorLockedByUsername).toBeNull()
     })
   })
 })
