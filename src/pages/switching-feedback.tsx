@@ -14,7 +14,7 @@ import getDataSource from "services/getDataSource"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
-import { Page, SurveyFeedbackType, SwitchingFeedbackResponse } from "types/SurveyFeedback"
+import { Page, SurveyFeedbackType, SwitchingFeedbackResponse, SwitchingReason } from "types/SurveyFeedback"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
@@ -22,11 +22,18 @@ import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import Form from "../components/Form"
 import withCsrf from "../middleware/withCsrf/withCsrf"
 
+const SwitchingReasonLabel: Record<SwitchingReason, string> = {
+  issue: "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task.",
+  preference: "I prefer working in the old version, and I dislike working in the new version.",
+  other: "Other (please specify)"
+}
+
 interface SwitchingFeedbackFormState {
-  issueOrPreference?: string
+  issueOrPreference?: SwitchingReason
   caseListOrDetail?: Page
   feedback?: string
 }
+
 interface Props {
   user: DisplayFullUser
   csrfToken: string
@@ -49,9 +56,9 @@ interface Props {
 
 function validateForm(form: SwitchingFeedbackFormState): boolean {
   const isIssueOrPreferenceValid =
-    !!form.issueOrPreference && ["issue", "preference", "other"].includes(form.issueOrPreference)
+    !!form.issueOrPreference && Object.values(SwitchingReason).includes(form.issueOrPreference as SwitchingReason)
   const isCaseListOrDetailValid =
-    form.issueOrPreference !== "issue" ||
+    form.issueOrPreference !== SwitchingReason.issue ||
     (!!form.caseListOrDetail && Object.values(Page).includes(form.caseListOrDetail as Page))
   const isFeedbackValid = !!form.feedback
 
@@ -101,7 +108,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
       if (validateForm(form)) {
         const response: SwitchingFeedbackResponse = {
-          ...(form.issueOrPreference ? { issueOrPreference: form.issueOrPreference } : {}),
+          ...(form.issueOrPreference ? { issueOrPreference: form.issueOrPreference as SwitchingReason } : {}),
           ...(form.caseListOrDetail ? { caseListOrDetail: form.caseListOrDetail as Page } : {}),
           ...(form.feedback ? { otherFeedback: form.feedback } : {})
         }
@@ -146,7 +153,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
 
   const [formState, setFormState] = useState<SwitchingFeedbackFormState>({
     feedback: fields?.feedback.value ?? undefined,
-    issueOrPreference: fields?.issueOrPreference.value ?? undefined,
+    issueOrPreference: fields?.issueOrPreference.value as SwitchingReason,
     caseListOrDetail: fields?.caseListOrDetail.value as Page
   })
   const handleFormChange = useCallback(
@@ -206,33 +213,31 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
             >
               <RadioButton
                 name={"issueOrPreference"}
-                id={"issueOrPreference-issue"}
-                defaultChecked={fields?.issueOrPreference.value === "issue"}
-                value={"issue"}
-                onChange={() => handleFormChange("issueOrPreference", "issue")}
-                label={
-                  "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task."
-                }
+                id={`issueOrPreference-${SwitchingReason.issue}`}
+                defaultChecked={fields?.issueOrPreference.value === SwitchingReason.issue}
+                value={SwitchingReason.issue}
+                onChange={() => handleFormChange("issueOrPreference", SwitchingReason.issue)}
+                label={SwitchingReasonLabel[SwitchingReason.issue]}
               />
               <RadioButton
                 name={"issueOrPreference"}
-                id={"issueOrPreference-preference"}
-                defaultChecked={fields?.issueOrPreference.value === "preference"}
-                value={"preference"}
-                onChange={() => handleFormChange("issueOrPreference", "preference")}
-                label={"I prefer working in the old version, and I dislike working in the new version."}
+                id={`issueOrPreference-${SwitchingReason.preference}`}
+                defaultChecked={fields?.issueOrPreference.value === SwitchingReason.preference}
+                value={SwitchingReason.preference}
+                onChange={() => handleFormChange("issueOrPreference", SwitchingReason.preference)}
+                label={SwitchingReasonLabel[SwitchingReason.preference]}
               />
               <RadioButton
                 name={"issueOrPreference"}
-                id={"issueOrPreference-other"}
-                defaultChecked={fields?.issueOrPreference.value === "other"}
-                value={"other"}
-                onChange={() => handleFormChange("issueOrPreference", "other")}
-                label={"Other (please specify)"}
+                id={`issueOrPreference-${SwitchingReason.other}`}
+                defaultChecked={fields?.issueOrPreference.value === SwitchingReason.other}
+                value={SwitchingReason.other}
+                onChange={() => handleFormChange("issueOrPreference", SwitchingReason.other)}
+                label={SwitchingReasonLabel[SwitchingReason.other]}
               />
             </MultiChoice>
           </FormGroup>
-          <ConditionalRender isRendered={formState.issueOrPreference === "issue"}>
+          <ConditionalRender isRendered={formState.issueOrPreference === SwitchingReason.issue}>
             <FormGroup id="caseListOrDetail">
               <Heading as="h3" size="SMALL">
                 {"Which page were you finding an issue with?"}
@@ -289,7 +294,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
               <HintText>{`You have ${getRemainingLength()} characters remaining`}</HintText>
             </FormGroup>
           </ConditionalRender>
-          <ConditionalRender isRendered={formState.issueOrPreference === "preference"}>
+          <ConditionalRender isRendered={formState.issueOrPreference === SwitchingReason.preference}>
             <FormGroup id="versionPreferenceFeedback">
               <Heading as="h3" size="SMALL">
                 {
@@ -316,7 +321,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
               <HintText>{`You have ${getRemainingLength()} characters remaining`}</HintText>
             </FormGroup>
           </ConditionalRender>
-          <ConditionalRender isRendered={formState.issueOrPreference === "other"}>
+          <ConditionalRender isRendered={formState.issueOrPreference === SwitchingReason.other}>
             <FormGroup id="otherReasonFeedback">
               <Heading as="h3" size="SMALL">
                 {"Is there another reason why you are switching version of Bichard?"}

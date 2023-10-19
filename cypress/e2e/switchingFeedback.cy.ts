@@ -1,7 +1,7 @@
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import hashedPassword from "../fixtures/hashedPassword"
 import { addHours, addMinutes } from "date-fns"
-import { Page, type SwitchingFeedbackResponse } from "../../src/types/SurveyFeedback"
+import { Page, SwitchingReason, type SwitchingFeedbackResponse } from "../../src/types/SurveyFeedback"
 
 const expectedUserId = 0
 
@@ -147,7 +147,11 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.contains("Could you explain in detail what problem you have experienced?").should("exist")
     typeFeedback()
     clickSendFeedbackButton()
-    verifyFeedback({ otherFeedback: "Some feedback", caseListOrDetail: Page.caseList, issueOrPreference: "issue" })
+    verifyFeedback({
+      otherFeedback: "Some feedback",
+      caseListOrDetail: Page.caseList,
+      issueOrPreference: SwitchingReason.issue
+    })
   })
 
   it("Found an issue > Case details page > Give feedback > Submit", () => {
@@ -164,7 +168,11 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.contains("Could you explain in detail what problem you have experienced?").should("exist")
     typeFeedback()
     clickSendFeedbackButton()
-    verifyFeedback({ otherFeedback: "Some feedback", caseListOrDetail: Page.caseDetails, issueOrPreference: "issue" })
+    verifyFeedback({
+      otherFeedback: "Some feedback",
+      caseListOrDetail: Page.caseDetails,
+      issueOrPreference: SwitchingReason.issue
+    })
   })
 
   it("Prefer old Bichard > Give feedback > Submit", () => {
@@ -178,7 +186,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     ).should("exist")
     typeFeedback()
     clickSendFeedbackButton()
-    verifyFeedback({ otherFeedback: "Some feedback", issueOrPreference: "preference" })
+    verifyFeedback({ otherFeedback: "Some feedback", issueOrPreference: SwitchingReason.preference })
   })
 
   it("Other > Give feedback > Submit", () => {
@@ -188,7 +196,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.contains("Is there another reason why you are switching version of Bichard?").should("exist")
     typeFeedback()
     clickSendFeedbackButton()
-    verifyFeedback({ otherFeedback: "Some feedback", issueOrPreference: "other" })
+    verifyFeedback({ otherFeedback: "Some feedback", issueOrPreference: SwitchingReason.other })
   })
 
   it("Found an issue > Don't fill anything > Submit", () => {
