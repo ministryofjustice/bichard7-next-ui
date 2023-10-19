@@ -8,12 +8,13 @@ import CourtCaseListEntry from "./CourtCaseListEntry/CourtCaseListEntry"
 import { CourtCaseListTableHeader } from "./CourtCaseListTableHeader"
 
 interface Props {
+  csrfToken: string
   courtCases: DisplayPartialCourtCase[]
   order?: QueryOrder
   currentUser: DisplayFullUser
 }
 
-const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser }: Props) => {
+const CourtCaseList: React.FC<Props> = ({ csrfToken, courtCases, order = "asc", currentUser }: Props) => {
   const { query } = useRouter()
 
   const recentlyUnlockedExceptionId = query.unlockException
@@ -27,6 +28,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", currentUser
     <Table head={<CourtCaseListTableHeader order={order} />}>
       {courtCases.map((courtCase, index) => (
         <CourtCaseListEntry
+          csrfToken={csrfToken}
           courtCase={courtCase}
           currentUser={currentUser}
           exceptionHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedExceptionId}

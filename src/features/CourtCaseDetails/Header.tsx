@@ -15,11 +15,13 @@ import {
   triggersAreLockedByCurrentUser
 } from "utils/caseLocks"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
+import Form from "../../components/Form"
 
 interface Props {
   courtCase: DisplayFullCourtCase
   user: DisplayFullUser
   canReallocate: boolean
+  csrfToken: string
 }
 
 type lockCheckFn = (courtCase: DisplayFullCourtCase, username: string) => boolean
@@ -52,7 +54,7 @@ const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
   return params
 }
 
-const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
+const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
 
@@ -156,11 +158,11 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate }: Props) => {
               {"Leave and lock"}
             </Button>
           </a>
-          <form method="post" action={leaveAndUnlockUrl}>
+          <Form method="post" action={leaveAndUnlockUrl} csrfToken={csrfToken}>
             <Button id="leave-and-unlock" className={classes.button} type="submit">
               {"Leave and unlock"}
             </Button>
-          </form>
+          </Form>
         </ConditionalRender>
         <ConditionalRender isRendered={!hasCaseLock}>
           <a href={basePath}>

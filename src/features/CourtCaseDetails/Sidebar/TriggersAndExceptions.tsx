@@ -30,6 +30,7 @@ interface Props {
   user: DisplayFullUser
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
+  csrfToken: string
 }
 
 const TabList = styled(Tabs.List)`
@@ -46,7 +47,7 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate, canResolveAndSubmit }: Props) => {
+const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate, canResolveAndSubmit, csrfToken }: Props) => {
   const availableTabs = [Permission.Triggers, Permission.Exceptions].filter((tab) => user.hasAccessTo[tab])
   const defaultTab =
     availableTabs.length > 0
@@ -91,7 +92,7 @@ const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate, canResolveAnd
               selected={selectedTab === Permission.Triggers}
               className={`moj-tab-panel-triggers ${classes.tabPanelTriggers}`}
             >
-              <TriggersList courtCase={courtCase} user={user} onNavigate={onNavigate} />
+              <TriggersList courtCase={courtCase} user={user} onNavigate={onNavigate} csrfToken={csrfToken} />
             </Tabs.Panel>
           </ConditionalRender>
 

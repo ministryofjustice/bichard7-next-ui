@@ -3,12 +3,14 @@ import { MAX_NOTE_LENGTH } from "config"
 import { Button, FormGroup, HintText, Label, TextArea } from "govuk-react"
 import { FormEvent, FormEventHandler, useState } from "react"
 import { useLeavePageConfirmation } from "hooks/useLeavePageConfimation"
+import Form from "../../../../../components/Form"
 
 interface Props {
   lockedByAnotherUser: boolean
+  csrfToken: string
 }
 
-const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser }: Props) => {
+const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, csrfToken }: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
   const [isFormValid, setIsFormValid] = useState(true)
   const showError = !isFormValid && noteRemainingLength === MAX_NOTE_LENGTH
@@ -29,7 +31,7 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser }: Props) => {
   }
   return (
     <ConditionalRender isRendered={!lockedByAnotherUser}>
-      <form method="POST" action="#" onSubmit={validateForm}>
+      <Form method="POST" action="#" onSubmit={validateForm} csrfToken={csrfToken}>
         <FormGroup>
           <Label className="govuk-heading-m b7-form-label-lg" htmlFor="note-text">
             {"Add a new note"}
@@ -55,7 +57,7 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser }: Props) => {
         <Button id="add-note-button" type="submit">
           {"Add note"}
         </Button>
-      </form>
+      </Form>
     </ConditionalRender>
   )
 }
