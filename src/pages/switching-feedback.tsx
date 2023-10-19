@@ -14,7 +14,7 @@ import getDataSource from "services/getDataSource"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
-import { SurveyFeedbackType, SwitchingFeedbackResponse } from "types/SurveyFeedback"
+import { Page, SurveyFeedbackType, SwitchingFeedbackResponse } from "types/SurveyFeedback"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
@@ -24,7 +24,7 @@ import withCsrf from "../middleware/withCsrf/withCsrf"
 
 interface SwitchingFeedbackFormState {
   issueOrPreference?: string
-  caseListOrDetail?: string
+  caseListOrDetail?: Page
   feedback?: string
 }
 interface Props {
@@ -52,7 +52,7 @@ function validateForm(form: SwitchingFeedbackFormState): boolean {
     !!form.issueOrPreference && ["issue", "preference", "other"].includes(form.issueOrPreference)
   const isCaseListOrDetailValid =
     form.issueOrPreference !== "issue" ||
-    (!!form.caseListOrDetail && ["caselist", "casedetail"].includes(form.caseListOrDetail))
+    (!!form.caseListOrDetail && Object.values(Page).includes(form.caseListOrDetail as Page))
   const isFeedbackValid = !!form.feedback
 
   return isIssueOrPreferenceValid && isCaseListOrDetailValid && isFeedbackValid
@@ -102,7 +102,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       if (validateForm(form)) {
         const response: SwitchingFeedbackResponse = {
           ...(form.issueOrPreference ? { issueOrPreference: form.issueOrPreference } : {}),
-          ...(form.caseListOrDetail ? { caseListOrDetail: form.caseListOrDetail } : {}),
+          ...(form.caseListOrDetail ? { caseListOrDetail: form.caseListOrDetail as Page } : {}),
           ...(form.feedback ? { otherFeedback: form.feedback } : {})
         }
 
@@ -147,7 +147,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
   const [formState, setFormState] = useState<SwitchingFeedbackFormState>({
     feedback: fields?.feedback.value ?? undefined,
     issueOrPreference: fields?.issueOrPreference.value ?? undefined,
-    caseListOrDetail: fields?.caseListOrDetail.value ?? undefined
+    caseListOrDetail: fields?.caseListOrDetail.value as Page
   })
   const handleFormChange = useCallback(
     <T extends keyof SwitchingFeedbackFormState>(field: T, value: SwitchingFeedbackFormState[T]) => {
@@ -249,18 +249,18 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
               >
                 <RadioButton
                   name={"caseListOrDetail"}
-                  id={"caseListOrDetail-caselist"}
-                  defaultChecked={fields?.caseListOrDetail.value === "caselist"}
-                  value={"caselist"}
+                  id={"caseListOrDetail-case-list"}
+                  defaultChecked={fields?.caseListOrDetail.value === Page.caseList}
+                  value={Page.caseList}
                   label={"Case list page"}
-                  onChange={() => handleFormChange("caseListOrDetail", "caselist")}
+                  onChange={() => handleFormChange("caseListOrDetail", Page.caseList)}
                 />
                 <RadioButton
                   name={"caseListOrDetail"}
-                  id={"caseListOrDetail-casedetail"}
-                  defaultChecked={fields?.caseListOrDetail.value === "casedetail"}
-                  value={"casedetail"}
-                  onChange={() => handleFormChange("caseListOrDetail", "casedetail")}
+                  id={"caseListOrDetail-case-detail"}
+                  defaultChecked={fields?.caseListOrDetail.value === Page.caseDetails}
+                  value={Page.caseDetails}
+                  onChange={() => handleFormChange("caseListOrDetail", Page.caseDetails)}
                   label={"Case details page"}
                 />
               </MultiChoice>

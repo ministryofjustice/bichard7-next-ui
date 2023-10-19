@@ -1,7 +1,7 @@
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import hashedPassword from "../fixtures/hashedPassword"
 import { addHours, addMinutes } from "date-fns"
-import type { SwitchingFeedbackResponse } from "../../src/types/SurveyFeedback"
+import { Page, type SwitchingFeedbackResponse } from "../../src/types/SurveyFeedback"
 
 const expectedUserId = 0
 
@@ -147,7 +147,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.contains("Could you explain in detail what problem you have experienced?").should("exist")
     typeFeedback()
     clickSendFeedbackButton()
-    verifyFeedback({ otherFeedback: "Some feedback", caseListOrDetail: "caselist", issueOrPreference: "issue" })
+    verifyFeedback({ otherFeedback: "Some feedback", caseListOrDetail: Page.caseList, issueOrPreference: "issue" })
   })
 
   it("Found an issue > Case details page > Give feedback > Submit", () => {
@@ -164,7 +164,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.contains("Could you explain in detail what problem you have experienced?").should("exist")
     typeFeedback()
     clickSendFeedbackButton()
-    verifyFeedback({ otherFeedback: "Some feedback", caseListOrDetail: "casedetail", issueOrPreference: "issue" })
+    verifyFeedback({ otherFeedback: "Some feedback", caseListOrDetail: Page.caseDetails, issueOrPreference: "issue" })
   })
 
   it("Prefer old Bichard > Give feedback > Submit", () => {

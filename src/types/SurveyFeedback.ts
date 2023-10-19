@@ -5,12 +5,17 @@ export type FeedbackExperienceValue =
   | "Dissatisfied"
   | "Very dissatisfied"
 
+export enum Page {
+    caseList = "Case list",
+    caseDetails = "Case details",
+  }
+
 export type SurveyFeedbackResponse = { experience: FeedbackExperienceValue; comment: string }
 
 export type SwitchingFeedbackResponse =
   | {
       issueOrPreference?: string
-      caseListOrDetail?: string
+      caseListOrDetail?: Page
       otherFeedback?: string
     }
   | {
