@@ -14,7 +14,7 @@ type WhereClause<T> = {
   [P in keyof T]?: T[P] | FindOperator<T[P]>
 }
 
-const getUpdateQueryCaluses = (lockReason: LockReason, courtCaseId: number, user: User) => {
+const getUpdateQueryClauses = (lockReason: LockReason, courtCaseId: number, user: User) => {
   const setClause: Partial<CourtCase> = {}
   const whereClause: WhereClause<CourtCase> = { errorId: courtCaseId }
 
@@ -22,12 +22,12 @@ const getUpdateQueryCaluses = (lockReason: LockReason, courtCaseId: number, user
     setClause.errorLockedByUsername = user.username
     whereClause.errorLockedByUsername = IsNull()
     whereClause.errorCount = MoreThan(0)
-    whereClause.errorStatus = Not("Submitted")
+    whereClause.errorStatus = "Unresolved"
   } else {
     setClause.triggerLockedByUsername = user.username
     whereClause.triggerLockedByUsername = IsNull()
     whereClause.triggerCount = MoreThan(0)
-    whereClause.triggerStatus = Not("Submitted")
+    whereClause.triggerStatus = "Unresolved"
   }
 
   return [setClause, whereClause] as const
@@ -40,7 +40,7 @@ const lock = async (
   user: User,
   events: AuditLogEvent[]
 ): Promise<UpdateResult | Error> => {
-  const [setClause, whereClause] = getUpdateQueryCaluses(lockReason, courtCaseId, user)
+  const [setClause, whereClause] = getUpdateQueryClauses(lockReason, courtCaseId, user)
 
   const result = await courtCaseRepository
     .createQueryBuilder()
