@@ -1,4 +1,11 @@
-export type SurveyFeedbackResponse = { experience: string; comment: string }
+export type FeedbackExperienceValue =
+  | "Very satisfied"
+  | "Satisfied"
+  | "Neither satisfied nor dissatisfied"
+  | "Dissatisfied"
+  | "Very dissatisfied"
+
+export type SurveyFeedbackResponse = { experience: FeedbackExperienceValue; comment: string }
 
 export type SwitchingFeedbackResponse =
   | {
