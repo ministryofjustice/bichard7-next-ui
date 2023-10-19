@@ -91,6 +91,71 @@ describe("Court case details", () => {
 
     cy.get("#exceptions-locked-tag").should("not.exist")
   })
+
+  it("should only lock exceptions on an unlocked case if triggers are already resolved", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "03",
+        errorCount: 1,
+        errorStatus: "Unresolved",
+        triggerCount: 1,
+        triggerStatus: "Resolved"
+      }
+    ])
+
+    cy.login("bichard03@example.com", "password")
+    cy.visit("/bichard")
+    cy.findByText("NAME Defendant").click()
+
+    cy.get("#triggers-locked-tag-lockee").should("not.contain.text")
+    cy.get("#exceptions-locked-tag-lockee").should("exist")
+    cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
+  })
+
+  it("should only lock triggers on an unlocked case if exceptions are already resolved", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "03",
+        errorCount: 1,
+        errorStatus: "Resolved",
+        triggerCount: 1,
+        triggerStatus: "Unresolved"
+      }
+    ])
+
+    cy.login("bichard03@example.com", "password")
+    cy.visit("/bichard")
+    cy.findByText("NAME Defendant").click()
+
+    cy.get("#exceptions-locked-tag-lockee").should("not.contain.text")
+    cy.get("#triggers-locked-tag").should("exist")
+    cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
+  })
+
+  it("shouldn't lock either triggers nor exceptions on an unlocked case if both are already resolved", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "03",
+        errorCount: 1,
+        errorStatus: "Resolved",
+        triggerCount: 1,
+        triggerStatus: "Resolved"
+      }
+    ])
+
+    cy.login("bichard03@example.com", "password")
+    cy.visit("/bichard")
+    cy.findByText("NAME Defendant").click()
+
+    cy.get("#exceptions-locked-tag-lockee").should("not.contain.text")
+    cy.get("#triggers-locked-tag-lockee").should("not.contain.text")
+  })
 })
 
 export {}
