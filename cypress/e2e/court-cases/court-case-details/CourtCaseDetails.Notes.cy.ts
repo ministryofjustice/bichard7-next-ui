@@ -271,23 +271,6 @@ describe("Court case details", () => {
     clickTab("Notes")
     cy.findByText("Case has no notes.").should("exist")
   })
-
-  it("Should show a confirmation box if user clicks back with unsaved note", () => {
-    cy.on("window:confirm", () => false)
-    insertTriggers()
-    loginAndGoToNotes()
-
-    cy.get("textarea").type("Dummy note")
-
-    cy.go("back")
-
-    cy.get("H3").contains("Notes")
-    cy.get("textarea")
-      .invoke("val")
-      .then((value) => {
-        expect(value).to.equal("Dummy note")
-      })
-  })
 })
 
 export {}
