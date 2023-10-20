@@ -1,5 +1,5 @@
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/dist/parse/parseAhoXml/parseAhoXml"
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/parse/parseAhoXml/parseAhoXml"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/types/AnnotatedHearingOutcome"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"

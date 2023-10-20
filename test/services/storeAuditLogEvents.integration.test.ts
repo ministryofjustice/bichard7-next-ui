@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/lib/auditLog/getAuditLogEvent"
 import { v4 as uuid } from "uuid"
 import { isError } from "types/Result"
 import getDataSource from "services/getDataSource"
@@ -7,12 +7,12 @@ import axios from "axios"
 import {
   AuditLogEvent,
   AuditLogEventOptions
-} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+} from "@moj-bichard7-developers/bichard7-next-core/types/AuditLogEvent"
 import createAuditLog from "../helpers/createAuditLog"
 import { AUDIT_LOG_API_KEY, AUDIT_LOG_API_URL } from "../../src/config"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/types/EventCategory"
 
 jest.mock("axios")
 

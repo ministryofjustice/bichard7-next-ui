@@ -33,7 +33,7 @@
   "dependencies": {
     "@govuk-react/select": "^0.10.6",
     "@ministryofjustice/frontend": "^1.8.0",
-    "@moj-bichard7-developers/bichard7-next-core": "^1.2.2",
+    "@moj-bichard7-developers/bichard7-next-core": "^2.0.4",
     "@moj-bichard7-developers/bichard7-next-data": "*",
     "@types/lodash.clonedeep": "^4.5.7",
     "axios": "^1.5.1",

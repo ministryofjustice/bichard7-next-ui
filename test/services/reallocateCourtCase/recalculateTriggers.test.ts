@@ -1,8 +1,8 @@
 import { OUT_OF_AREA_TRIGGER_CODE, REALLOCATE_CASE_TRIGGER_CODE } from "../../../src/config"
 import recalculateTriggers from "../../../src/services/reallocateCourtCase/recalculateTriggers"
 import { default as TriggerEntity } from "../../../src/services/entities/Trigger"
-import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
-import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/dist/types/TriggerCode"
+import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/types/Trigger"
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/types/TriggerCode"
 import { ResolutionStatus } from "../../../src/types/ResolutionStatus"
 
 describe("recalculateTriggers", () => {

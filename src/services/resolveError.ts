@@ -2,17 +2,15 @@ import { EntityManager, MoreThan, Not, UpdateQueryBuilder, UpdateResult } from "
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
-import {
-  AuditLogEvent,
-  AuditLogEventOptions
-} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
+import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
 import Trigger from "./entities/Trigger"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
 import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { isError } from "types/Result"
-import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
+import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
 
 const resolveError = async (
   entityManager: EntityManager,
@@ -73,7 +71,7 @@ const resolveError = async (
   }
 
   events?.push(
-    getAuditLogEvent(AuditLogEventOptions.exceptionResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
+    getAuditLogEvent(EventCode.ExceptionsResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
       user: user.username,
       auditLogVersion: 2,
       resolutionReasonCode: ResolutionReasonCode[resolution.reason],

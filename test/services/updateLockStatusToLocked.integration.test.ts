@@ -6,7 +6,7 @@ import updateLockStatusToLocked from "../../src/services/updateLockStatusToLocke
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/types/AuditLogEvent"
 import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import { UserGroup } from "../../src/types/UserGroup"
 import getCourtCase from "../../src/services/getCourtCase"

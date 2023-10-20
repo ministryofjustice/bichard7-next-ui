@@ -1,7 +1,7 @@
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/dist/parse/parseAhoXml/parseAhoXml"
-import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate"
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
-import Phase from "@moj-bichard7-developers/bichard7-next-core/dist/types/Phase"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/parse/parseAhoXml/parseAhoXml"
+import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/triggers/generate"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/types/AnnotatedHearingOutcome"
+import Phase from "@moj-bichard7-developers/bichard7-next-core/types/Phase"
 import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import Note from "services/entities/Note"
 import User from "services/entities/User"
@@ -27,7 +27,7 @@ jest.mock("services/reallocateCourtCase/recalculateTriggers")
 jest.mock("services/reallocateCourtCase/updateTriggers")
 jest.mock("services/reallocateCourtCase/updateCourtCase")
 jest.mock("services/amendCourtCase")
-jest.mock("@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate")
+jest.mock("@moj-bichard7-developers/bichard7-next-core/triggers/generate")
 
 const createUnlockedEvent = (unlockReason: "Trigger" | "Exception", userName: string) => {
   return {
@@ -106,7 +106,7 @@ describe("reallocate court case to another force", () => {
     )
     ;(amendCourtCase as jest.Mock).mockImplementation(jest.requireActual("services/amendCourtCase").default)
     ;(generateTriggers as jest.Mock).mockImplementation(
-      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate").default
+      jest.requireActual("@moj-bichard7-developers/bichard7-next-core/triggers/generate").default
     )
   })
 
