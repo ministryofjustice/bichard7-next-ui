@@ -2,6 +2,7 @@ import Image from "next/image"
 import { createUseStyles } from "react-jss"
 import { useCustomStyles } from "../../../../../styles/customStyles"
 import { LOCKED_ICON_URL } from "utils/icons"
+import Form from "../../../../components/Form"
 
 const useStyles = createUseStyles({
   LockedIcon: {
@@ -11,20 +12,21 @@ const useStyles = createUseStyles({
 })
 
 interface UnlockConfirmationProps {
+  csrfToken: string
   onCancel: () => void
   unlockPath?: string
 }
 
-const UnlockConfirmation = ({ onCancel, unlockPath }: UnlockConfirmationProps) => {
+const UnlockConfirmation = ({ csrfToken, onCancel, unlockPath }: UnlockConfirmationProps) => {
   return (
     <>
       <p>{"Click the button to unlock the case"}</p>
       <div className="govuk-button-group">
-        <form method="POST" action={unlockPath}>
+        <Form method="post" action={unlockPath} csrfToken={csrfToken}>
           <button className="govuk-button" data-module="govuk-button" id="unlock">
             {"Unlock"}
           </button>
-        </form>
+        </Form>
         <a
           className="govuk-link"
           href="/"
@@ -41,6 +43,7 @@ const UnlockConfirmation = ({ onCancel, unlockPath }: UnlockConfirmationProps) =
 }
 
 interface LockedByButtonProps {
+  csrfToken: string
   lockedBy?: string | null
   unlockPath?: string
   showUnlockConfirmation: boolean
@@ -48,6 +51,7 @@ interface LockedByButtonProps {
 }
 
 const LockedByButton = ({
+  csrfToken,
   lockedBy,
   unlockPath,
   showUnlockConfirmation,
@@ -74,6 +78,7 @@ const LockedByButton = ({
       </button>
       {showUnlockConfirmation && (
         <UnlockConfirmation
+          csrfToken={csrfToken}
           onCancel={() => {
             setShowUnlockConfirmation(false)
           }}

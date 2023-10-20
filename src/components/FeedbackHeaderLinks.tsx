@@ -1,5 +1,6 @@
 import { BackLink } from "govuk-react"
 import styled from "styled-components"
+import Form from "./Form"
 
 const LinksRow = styled.div`
   display: flex;
@@ -51,10 +52,11 @@ const SkipLink = styled.button`
   }
 `
 type Props = {
+  csrfToken: string
   backLinkUrl: string
   skipLinkUrl?: string
 }
-const FeedbackHeaderLinks = ({ backLinkUrl, skipLinkUrl }: Props) => {
+const FeedbackHeaderLinks = ({ csrfToken, backLinkUrl, skipLinkUrl }: Props) => {
   return (
     <LinksRow>
       <BackLinkWrapper>
@@ -62,9 +64,9 @@ const FeedbackHeaderLinks = ({ backLinkUrl, skipLinkUrl }: Props) => {
           {"Back"}
         </BackLink>
       </BackLinkWrapper>
-      <form method="POST" action={skipLinkUrl}>
+      <Form method="POST" action={skipLinkUrl} csrfToken={csrfToken}>
         <SkipLink type="submit">{"Skip feedback"}</SkipLink>
-      </form>
+      </Form>
     </LinksRow>
   )
 }

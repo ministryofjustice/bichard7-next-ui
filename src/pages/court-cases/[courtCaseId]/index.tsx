@@ -25,16 +25,19 @@ import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
-import parseFormData from "utils/parseFormData"
 import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
+import withCsrf from "../../../middleware/withCsrf/withCsrf"
+import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
+  withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
+    const { req, currentUser, query, csrfToken, formData } = context as AuthenticationServerSidePropsContext &
+      CsrfServerSidePropsContext
     const { courtCaseId, lock, resolveTrigger, resubmitCase } = query as {
       courtCaseId: string
       lock: string
@@ -94,7 +97,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     if (isPost(req) && resubmitCase === "true") {
-      const { amendments } = (await parseFormData(req)) as { amendments: string }
+      const { amendments } = formData as { amendments: string }
 
       const parsedAmendments = JSON.parse(amendments)
 
@@ -109,7 +112,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     }
 
     if (isPost(req)) {
-      const { noteText } = (await parseFormData(req)) as { noteText: string }
+      const { noteText } = formData as { noteText: string }
       if (noteText) {
         const { isSuccessful, ValidationException, Exception } = await addNote(
           dataSource,
@@ -146,6 +149,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     return {
       props: {
+        csrfToken,
         user: userToDisplayFullUserDto(currentUser),
         courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
@@ -165,6 +169,7 @@ interface Props {
   errorLockedByAnotherUser: boolean
   canReallocate: boolean
   canResolveAndSubmit: boolean
+  csrfToken: string
   displaySwitchingSurveyFeedback: boolean
 }
 
@@ -186,7 +191,8 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   errorLockedByAnotherUser,
   canReallocate,
   canResolveAndSubmit,
-  displaySwitchingSurveyFeedback
+  displaySwitchingSurveyFeedback,
+  csrfToken
 }: Props) => {
   const classes = useStyles()
   return (
@@ -214,6 +220,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
           </div>
         </ConditionalDisplay>
         <CourtCaseDetails
+          csrfToken={csrfToken}
           courtCase={courtCase}
           aho={aho}
           user={user}

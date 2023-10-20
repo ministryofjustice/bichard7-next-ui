@@ -39,9 +39,12 @@ import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
+import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
+import withCsrf from "../middleware/withCsrf/withCsrf"
 import shouldShowSwitchingFeedbackForm from "../utils/shouldShowSwitchingFeedbackForm"
 
 interface Props {
+  csrfToken: string
   user: DisplayFullUser
   courtCases: DisplayPartialCourtCase[]
   order: QueryOrder
@@ -68,8 +71,10 @@ const validateOrder = (param: unknown): param is QueryOrder => param === "asc" |
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
+  withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { req, currentUser, query } = context as AuthenticationServerSidePropsContext
+    const { req, currentUser, query, csrfToken } = context as CsrfServerSidePropsContext &
+      AuthenticationServerSidePropsContext
     const queryStringCookieName = getQueryStringCookieName(currentUser.username)
     // prettier-ignore
     const {
@@ -179,6 +184,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     return {
       props: {
+        csrfToken: csrfToken,
         user: userToDisplayFullUserDto(currentUser),
         courtCases: courtCases.result.map(courtCaseToDisplayPartialCourtCaseDto),
         displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0)),
@@ -213,7 +219,7 @@ const Home: NextPage<Props> = (query) => {
   const router = useRouter()
   // prettier-ignore
   const {
-    user, courtCases, order, page, casesPerPage, totalCases, reasons, keywords, courtName, reasonCode,
+    csrfToken, user, courtCases, order, page, casesPerPage, totalCases, reasons, keywords, courtName, reasonCode,
     ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases, queryStringCookieName, displaySwitchingSurveyFeedback
   } = query
 
@@ -270,7 +276,9 @@ const Home: NextPage<Props> = (query) => {
               }}
             />
           }
-          courtCaseList={<CourtCaseList courtCases={courtCases} order={order} currentUser={user} />}
+          courtCaseList={
+            <CourtCaseList csrfToken={csrfToken} courtCases={courtCases} order={order} currentUser={user} />
+          }
           paginationTop={<Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />}
           paginationBottom={
             <ConditionalDisplay isDisplayed={courtCases.length > 0}>
