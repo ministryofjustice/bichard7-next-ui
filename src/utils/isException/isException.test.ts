@@ -1,5 +1,5 @@
 import isException from "./isException"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/parse/parseAhoXml/parseAhoXml"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
 import HO100302_1 from "../../../test/test-data/HO100302_1.json"
 import validHO from "../../../test/test-data/AnnotatedHO1.json"
 import HO100239_1 from "../../../test/test-data/HO100239_1.json"

@@ -1,18 +1,19 @@
 import { DataSource } from "typeorm"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/lib/auditLog/getAuditLogEvent"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
 import { v4 as uuid } from "uuid"
 import { isError } from "types/Result"
 import getDataSource from "services/getDataSource"
 import axios from "axios"
 import {
   AuditLogEvent,
-  AuditLogEventOptions
-} from "@moj-bichard7-developers/bichard7-next-core/types/AuditLogEvent"
+  auditLogEventLookup
+} from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import createAuditLog from "../helpers/createAuditLog"
 import { AUDIT_LOG_API_KEY, AUDIT_LOG_API_URL } from "../../src/config"
 import storeAuditLogEvents from "services/storeAuditLogEvents"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import EventCategory from "@moj-bichard7-developers/bichard7-next-core/types/EventCategory"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
+import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
 
 jest.mock("axios")
 
@@ -36,12 +37,9 @@ describe("storeAuditLogEvents", () => {
   })
 
   it("Should store audit log events in dynamoDB", async () => {
-    const expectedEvent = getAuditLogEvent(
-      AuditLogEventOptions.reportRun,
-      EventCategory.information,
-      "dummyEventSource",
-      { key1: "value1" }
-    )
+    const expectedEvent = getAuditLogEvent(EventCode.ReportRun, EventCategory.information, "dummyEventSource", {
+      key1: "value1"
+    })
     const auditLog = await createAuditLog()
 
     const result = await storeAuditLogEvents(auditLog.messageId, [expectedEvent]).catch((error) => error)
@@ -56,7 +54,7 @@ describe("storeAuditLogEvents", () => {
         category: "information",
         eventSource: "dummyEventSource",
         eventCode: "report-run",
-        eventType: AuditLogEventOptions.reportRun.type,
+        eventType: auditLogEventLookup[EventCode.ReportRun],
         timestamp: expect.anything()
       }
     ])
