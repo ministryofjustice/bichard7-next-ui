@@ -109,7 +109,8 @@ describe("Court case details", () => {
     cy.visit("/bichard")
     cy.findByText("NAME Defendant").click()
 
-    cy.get("#triggers-locked-tag-lockee").should("not.contain.text")
+    cy.get("#triggers-resolved-tag").should("exist").should("contain.text", "Resolved")
+    cy.get("#triggers-locked-tag").should("not.exist")
     cy.get("#exceptions-locked-tag-lockee").should("exist")
     cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Locked to you")
   })
@@ -131,7 +132,8 @@ describe("Court case details", () => {
     cy.visit("/bichard")
     cy.findByText("NAME Defendant").click()
 
-    cy.get("#exceptions-locked-tag-lockee").should("not.contain.text")
+    cy.get("#exceptions-resolved-tag").should("exist").should("contain.text", "Resolved")
+    cy.get("#exceptions-locked-tag").should("not.exist")
     cy.get("#triggers-locked-tag").should("exist")
     cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
   })
@@ -153,8 +155,10 @@ describe("Court case details", () => {
     cy.visit("/bichard")
     cy.findByText("NAME Defendant").click()
 
-    cy.get("#exceptions-locked-tag-lockee").should("not.contain.text")
-    cy.get("#triggers-locked-tag-lockee").should("not.contain.text")
+    cy.get("#exceptions-resolved-tag").should("exist").should("contain.text", "Resolved")
+    cy.get("#exceptions-locked-tag").should("not.exist")
+    cy.get("#triggers-resolved-tag").should("exist").should("contain.text", "Resolved")
+    cy.get("#triggers-locked-tag").should("not.exist")
   })
 })
 

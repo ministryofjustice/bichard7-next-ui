@@ -7,11 +7,13 @@ type FieldsForDisplayPartialCourtCase =
   | "courtName"
   | "errorId"
   | "errorLockedByUsername"
+  | "errorStatus"
   | "errorReport"
   | "isUrgent"
   | "ptiurn"
   | "triggerLockedByUsername"
   | "triggerCount"
+  | "triggerStatus"
   | "defendantName"
 
 export type DisplayPartialCourtCase = Pick<CourtCase, FieldsForDisplayPartialCourtCase> & {

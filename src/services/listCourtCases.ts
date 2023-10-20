@@ -61,6 +61,8 @@ const listCourtCases = async (
       "courtCase.errorReason",
       "courtCase.triggerReason",
       "courtCase.errorCount",
+      "courtCase.errorStatus",
+      "courtCase.triggerStatus",
       "courtCase.courtDate",
       "courtCase.ptiurn",
       "courtCase.courtName",
