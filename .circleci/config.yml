@@ -203,6 +203,7 @@ jobs:
       - fetch_images:
           IMAGES: user-service nginx-auth-proxy
       - run: npm run ui
+          working_directory: ~/bichard7-next-core
       - run:
           name: Install Cypress Reporter
           command: npm install --save-dev cypress-circleci-reporter mocha
@@ -262,9 +263,8 @@ jobs:
       - build_audit_logging_images
       - fetch_images:
           IMAGES: user-service nginx-auth-proxy
-      - start_services:
-          SERVICES: ui user-service nginx-auth-proxy postgres db-migrate db-seed audit-log-api localstack
-          FLAGS: --no-deps
+      - run: npm run ui
+          working_directory: ~/bichard7-next-core
       - run:
           name: Seed database
           command: DEPLOY_NAME=e2e-test npm run seed-data
