@@ -1,21 +1,22 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { Heading, Table } from "govuk-react"
-import getOffenceCode from "utils/getOffenceCode"
-import { TableRow } from "../../TableRow"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
-import { capitaliseExpression, getYesOrNo, HearingResult } from "./HearingResult"
-import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
+import { Heading, Table } from "govuk-react"
 import { formatDisplayedDate } from "utils/formattedDate"
+import getOffenceCode from "utils/getOffenceCode"
+import { TableRow } from "../../TableRow"
+import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
+import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { StartDate } from "./StartDate"
 
 interface OffenceDetailsProps {
+  className: string
   offence: Offence
   offencesCount: number
   onBackToAllOffences: () => void
 }
 
-export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: OffenceDetailsProps) => {
+export const OffenceDetails = ({ className, offence, offencesCount, onBackToAllOffences }: OffenceDetailsProps) => {
   const getOffenceCategory = (offenceCode: string | undefined) => {
     let offenceCategoryWithDescription = offenceCode
     offenceCategory.forEach((category) => {
@@ -41,7 +42,7 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
   }
 
   return (
-    <>
+    <div className={className}>
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
       <Heading as="h3" size="MEDIUM">
         {`Offence ${offence.CourtOffenceSequenceNumber} of ${offencesCount}`}
@@ -79,6 +80,6 @@ export const OffenceDetails = ({ offence, offencesCount, onBackToAllOffences }: 
         <TableRow label="Code" value={"TODO"} />
       </Table>
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
-    </>
+    </div>
   )
 }

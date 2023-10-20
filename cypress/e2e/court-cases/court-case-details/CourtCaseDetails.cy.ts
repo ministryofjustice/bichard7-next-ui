@@ -1,14 +1,14 @@
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 // import { differenceInMinutes, parse } from "date-fns"
 import User from "services/entities/User"
-import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
-import a11yConfig from "../../../support/a11yConfig"
 import hashedPassword from "../../../fixtures/hashedPassword"
+import a11yConfig from "../../../support/a11yConfig"
+import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 // import resubmitCaseJson from "../../fixtures/expected_resubmit_01.json"
 import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
 import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
-import { clickTab } from "../../../support/helpers"
 import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
+import { clickTab } from "../../../support/helpers"
 
 describe("Court case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
@@ -201,7 +201,9 @@ describe("Court case details", () => {
     cy.contains("SX03001A")
     cy.contains("Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003").click()
     cy.contains("td", "Offence code").siblings().contains("SX03001A")
-    cy.contains("td", "Title").siblings().contains("Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003")
+    cy.contains("td:visible", "Title")
+      .siblings()
+      .contains("Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003")
     cy.contains("td", "Sequence number").siblings().contains("001")
     cy.contains("td", "Category").siblings().contains("CI (indictable)")
     cy.contains("td", "Arrest date").siblings().contains("01/12/2010")
@@ -327,7 +329,7 @@ describe("Court case details", () => {
         triggerItemIdentity: 1,
         triggerCode: "TRPR0015",
         status: "Unresolved",
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
+        createdAt: new Date("2022-07-09T11:22:34.000Z")
       }
     ]
     cy.task("insertTriggers", { caseId: 0, triggers })
@@ -436,9 +438,9 @@ describe("Court case details", () => {
 
     cy.get("h3").should("not.have.text", "Offence 1 of 3")
     cy.get(".moj-tab-panel-triggers .trigger-header button").eq(0).contains("Offence 1").click()
-    cy.get("h3").should("have.text", "Offence 1 of 3")
+    cy.get("h3:visible").should("have.text", "Offence 1 of 3")
     cy.get(".moj-tab-panel-triggers .trigger-header button").eq(1).contains("Offence 2").click()
-    cy.get("h3").should("have.text", "Offence 2 of 3")
+    cy.get("h3:visible").should("have.text", "Offence 2 of 3")
   })
 
   it("Should take the user to offence tab when exception is clicked", () => {
@@ -452,7 +454,7 @@ describe("Court case details", () => {
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Next hearing date / Offence 1")
     cy.get(".exception-header .exception-location").click()
-    cy.get("h3").should("have.text", "Offence 1 of 3")
+    cy.get("h3:visible").should("have.text", "Offence 1 of 3")
   })
 
   it("Should be able to refresh after I click 'Back to all offences'", () => {
@@ -485,7 +487,7 @@ describe("Court case details", () => {
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Arrest summons number / Case")
     cy.get(".exception-header .exception-location").click()
-    cy.get("h3").should("have.text", "Case")
+    cy.get("h3:visible").should("have.text", "Case")
   })
 
   it("Should show contextual help for a trigger when the accordion button is clicked", () => {

@@ -1,9 +1,9 @@
 import User from "services/entities/User"
-import hashedPassword from "../../../fixtures/hashedPassword"
-import { clickTab, loginAndGoToUrl } from "../../../support/helpers"
-import a11yConfig from "../../../support/a11yConfig"
-import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
+import hashedPassword from "../../../fixtures/hashedPassword"
+import a11yConfig from "../../../support/a11yConfig"
+import { clickTab, loginAndGoToUrl } from "../../../support/helpers"
+import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 
 const loginAndGoToNotes = () => {
   loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
@@ -230,8 +230,12 @@ describe("Court case details", () => {
     cy.get("textarea").type("A ".repeat(500), { delay: 0 })
     cy.get("button").contains("Add note").click()
 
+    clickTab("Notes")
+
     cy.get("textarea").type("B ".repeat(500), { delay: 0 })
     cy.get("button").contains("Add note").click()
+
+    clickTab("Notes")
 
     cy.get("textarea").type("C ".repeat(100), { delay: 0 })
     cy.get("button").contains("Add note").click()
