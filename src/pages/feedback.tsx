@@ -67,7 +67,11 @@ export const getServerSideProps = withMultipleServerSideProps(
         const result = await insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.General,
           userId: isAnonymous === "no" ? currentUser.id : null,
-          response: { isAnonymous, experience, comment: feedback } as SurveyFeedbackResponse
+          response: {
+            isAnonymous,
+            experience: +experience,
+            comment: feedback
+          } as SurveyFeedbackResponse
         } as SurveyFeedback)
 
         if (!isError(result)) {

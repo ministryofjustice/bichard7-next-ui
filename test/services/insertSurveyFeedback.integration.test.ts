@@ -8,7 +8,7 @@ import deleteFromEntity from "../utils/deleteFromEntity"
 
 describe("insertSurveyFeedback", () => {
   let dataSource: DataSource
-  const dummyResponse = { experience: "very satisfied", comment: "some comment" }
+  const dummyResponse = { experience: 0, comment: "some comment" }
   const feedbackId = 0
 
   beforeAll(async () => {

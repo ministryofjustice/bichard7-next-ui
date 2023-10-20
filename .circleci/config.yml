@@ -29,7 +29,6 @@ commands:
           name: "Fetch images: <<parameters.IMAGES>>"
           command: bash ./scripts/fetch-docker-images.sh <<parameters.IMAGES>>
 
-
   build_message_forwarder:
     steps:
       - run:
@@ -92,7 +91,7 @@ jobs:
   lint:
     executor:
       name: node/default
-      tag: '16.20.2'
+      tag: "16.20.2"
     steps:
       - checkout
       - node/install-packages:
@@ -104,7 +103,7 @@ jobs:
   unit_test:
     executor:
       name: node/default
-      tag: '16.20.2'
+      tag: "16.20.2"
     steps:
       - checkout
       - node/install-packages:
@@ -116,7 +115,7 @@ jobs:
   cypress_component_test:
     executor:
       name: node/default
-      tag: '16.20.2'
+      tag: "16.20.2"
     steps:
       - checkout
       - node/install-packages:
@@ -203,9 +202,9 @@ jobs:
           command: ./.circleci/scripts/install-cypress.sh
       - fetch_images:
           IMAGES: user-service nginx-auth-proxy
-      - start_services:
-          SERVICES: ui user-service nginx-auth-proxy postgres db-migrate db-seed audit-log-api localstack
-          FLAGS: --no-deps
+      - run: 
+          command: npm run ui
+          working_directory: ~/bichard7-next-core
       - run:
           name: Install Cypress Reporter
           command: npm install --save-dev cypress-circleci-reporter mocha
@@ -265,9 +264,9 @@ jobs:
       - build_audit_logging_images
       - fetch_images:
           IMAGES: user-service nginx-auth-proxy
-      - start_services:
-          SERVICES: ui user-service nginx-auth-proxy postgres db-migrate db-seed audit-log-api localstack
-          FLAGS: --no-deps
+      - run:
+          command: npm run ui
+          working_directory: ~/bichard7-next-core
       - run:
           name: Seed database
           command: DEPLOY_NAME=e2e-test npm run seed-data
