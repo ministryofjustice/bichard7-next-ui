@@ -39,7 +39,7 @@ jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
 jest.setTimeout(100000)
 describe("listCourtCases", () => {
   let dataSource: DataSource
-  const orgCode = "36FPA1"
+  const orgCode = "01"
   const testUser = {
     visibleForces: [orgCode],
     visibleCourts: [],
@@ -1051,6 +1051,87 @@ describe("listCourtCases", () => {
       expect(cases[1].errorId).toBe(1)
       expect(cases[2].errorId).toBe(2)
     })
+  })
+
+  describe("Filter cases having a combination of reason and resolved status filter", () => {
+    const unresolvedTrigger: Partial<TestTrigger> = {
+      triggerCode: "TRPR0001",
+      status: "Unresolved",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
+    const resolvedTrigger: Partial<TestTrigger> = {
+      triggerCode: "TRPR0001",
+      status: "Resolved",
+      createdAt: new Date("2022-07-09T10:22:34.000Z")
+    }
+
+    it.only("Filter for Triggers and Unresolved cases", async () => {
+      // Triggers and Unresolved cases
+      // Seed a cases wth Triggers resolved, Exceptions Resolved, Everything resolved, Everything Unresolved
+      await insertCourtCasesWithFields([
+        {
+          defendantName: "Trigger Resolved",
+          orgForPoliceFilter: orgCode,
+          triggerResolvedBy: "Dummy user",
+          triggerResolvedTimestamp: new Date(),
+          triggerStatus: "Resolved"
+        },
+        {
+          defendantName: "Exceptions Resolved",
+          orgForPoliceFilter: orgCode,
+          errorResolvedBy: "Dummy user",
+          errorResolvedTimestamp: new Date(),
+          errorStatus: "Resolved"
+        },
+        {
+          defendantName: "Everything Resolved",
+          orgForPoliceFilter: orgCode,
+          triggerResolvedBy: "Dummy user",
+          triggerResolvedTimestamp: new Date(),
+          triggerStatus: "Resolved",
+          errorResolvedBy: "Dummy user",
+          errorResolvedTimestamp: new Date(),
+          errorStatus: "Resolved",
+          resolutionTimestamp: new Date()
+        },
+        { defendantName: "Everything Unresolved", orgForPoliceFilter: orgCode }
+      ])
+      await insertTriggers(0, [resolvedTrigger as TestTrigger])
+      await insertException(0, "HO100300", undefined, "Unresolved")
+
+      await insertTriggers(1, [unresolvedTrigger as TestTrigger])
+      await insertException(1, "HO100300", undefined, "Resolved")
+
+      await insertTriggers(2, [resolvedTrigger as TestTrigger])
+      await insertException(2, "HO100300", undefined, "Resolved")
+
+      await insertTriggers(3, [unresolvedTrigger as TestTrigger])
+      await insertException(3, "HO100300", undefined, "Unresolved")
+
+      // await insertException(0, "HO100300")
+      // await insertTriggers(1, [testTrigger])
+      // await insertTriggers(2, [conditionalBailTrigger])
+
+      // const result = await listCourtCases(
+      //   dataSource,
+      //   {
+      //     maxPageItems: "100",
+      //     reasons: [Reason.Bails, Reason.Exceptions, Reason.Triggers]
+      //   },
+      //   testUser
+      // )
+
+      // expect(isError(result)).toBeFalsy()
+      // const { result: cases } = result as ListCourtCaseResult
+
+      // expect(cases).toHaveLength(3)
+      // expect(cases[0].errorId).toBe(0)
+      // expect(cases[1].errorId).toBe(1)
+      // expect(cases[2].errorId).toBe(2)
+    })
+    // Exceptions and unresolved cases
+    // Triggers and Resolved cases
+    // Exceptions and Resolved cases
   })
 
   describe("Filter cases by urgency", () => {
