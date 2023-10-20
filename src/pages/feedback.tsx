@@ -15,7 +15,7 @@ import getDataSource from "services/getDataSource"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
-import { FeedbackExperienceValue, SurveyFeedbackResponse, SurveyFeedbackType } from "types/SurveyFeedback"
+import { SurveyFeedbackResponse, SurveyFeedbackType } from "types/SurveyFeedback"
 import { DisplayFullUser } from "types/display/Users"
 import getQueryStringCookieName from "utils/getQueryStringCookieName"
 import { isPost } from "utils/http"
@@ -32,7 +32,7 @@ enum FeedbackExperienceKey {
   veryDissatisfied
 }
 
-const FeedbackExperienceOptions: Record<FeedbackExperienceKey, FeedbackExperienceValue> = {
+const FeedbackExperienceOptions: Record<FeedbackExperienceKey, string> = {
   0: "Very satisfied",
   1: "Satisfied",
   2: "Neither satisfied nor dissatisfied",
@@ -69,7 +69,7 @@ export const getServerSideProps = withMultipleServerSideProps(
           userId: isAnonymous === "no" ? currentUser.id : null,
           response: {
             isAnonymous,
-            experience: FeedbackExperienceOptions[+experience as FeedbackExperienceKey],
+            experience: +experience,
             comment: feedback
           } as SurveyFeedbackResponse
         } as SurveyFeedback)

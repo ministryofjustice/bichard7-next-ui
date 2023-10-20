@@ -1,10 +1,3 @@
-export type FeedbackExperienceValue =
-  | "Very satisfied"
-  | "Satisfied"
-  | "Neither satisfied nor dissatisfied"
-  | "Dissatisfied"
-  | "Very dissatisfied"
-
 export enum SwitchingReason {
   issue = "issue",
   preference = "preference",
@@ -16,7 +9,7 @@ export enum Page {
   caseDetails = "Case details"
 }
 
-export type SurveyFeedbackResponse = { experience: FeedbackExperienceValue; comment: string }
+export type SurveyFeedbackResponse = { experience: number; comment: string }
 
 export type SwitchingFeedbackResponse =
   | {
