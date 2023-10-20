@@ -2,7 +2,7 @@ import ConditionalRender from "components/ConditionalRender"
 import { MAX_NOTE_LENGTH } from "config"
 import { Button, FormGroup, HintText, Label, TextArea } from "govuk-react"
 import { FormEvent, FormEventHandler, useState } from "react"
-import { useLeavePageConfirmation } from "hooks/useLeavePageConfimation"
+import { useBeforeunload } from "react-beforeunload"
 import Form from "../../../../../components/Form"
 
 interface Props {
@@ -12,10 +12,15 @@ interface Props {
 
 const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, csrfToken }: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
+  const [submitted, setSubmitted] = useState(false)
   const [isFormValid, setIsFormValid] = useState(true)
   const showError = !isFormValid && noteRemainingLength === MAX_NOTE_LENGTH
 
-  useLeavePageConfirmation(noteRemainingLength !== MAX_NOTE_LENGTH)
+  useBeforeunload(
+    !submitted && noteRemainingLength !== MAX_NOTE_LENGTH
+      ? (event: BeforeUnloadEvent) => event.preventDefault()
+      : undefined
+  )
 
   const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
     setNoteRemainingLength(MAX_NOTE_LENGTH - event.currentTarget.value.length)
@@ -27,11 +32,19 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, csrfToken }: Props)
       event.preventDefault()
       return false
     }
+
     return true
   }
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    if (validateForm(event)) {
+      setSubmitted(true)
+    }
+  }
+
   return (
     <ConditionalRender isRendered={!lockedByAnotherUser}>
-      <Form method="POST" action="#" onSubmit={validateForm} csrfToken={csrfToken}>
+      <Form method="POST" action="" onSubmit={handleSubmit} csrfToken={csrfToken}>
         <FormGroup>
           <Label className="govuk-heading-m b7-form-label-lg" htmlFor="note-text">
             {"Add a new note"}
