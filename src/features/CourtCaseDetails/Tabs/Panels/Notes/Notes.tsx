@@ -9,6 +9,7 @@ import { CourtCaseDetailsPanel } from "../../CourtCaseDetailsPanels"
 import AddNoteForm from "./AddNoteForm"
 
 interface NotesProps {
+  className: string
   notes: DisplayNote[]
   lockedByAnotherUser: boolean
   csrfToken: string
@@ -34,14 +35,14 @@ const filterNotes = (notes: DisplayNote[], viewOption?: NotesViewOption) => {
   return [filteredNotes, noNoteText] as const
 }
 
-export const Notes = ({ notes, lockedByAnotherUser, csrfToken }: NotesProps) => {
+export const Notes = ({ className, notes, lockedByAnotherUser, csrfToken }: NotesProps) => {
   const [viewOption, setViewOption] = useState<NotesViewOption | undefined>()
   const [filteredNotes, noNoteText] = filterNotes(notes, viewOption)
   const hasNotes = notes.length > 0
   const hasFilteredNotes = filteredNotes.length > 0
 
   return (
-    <CourtCaseDetailsPanel heading={"Notes"}>
+    <CourtCaseDetailsPanel className={className} heading={"Notes"}>
       <NotesFilterOptions dispatch={setViewOption} selectedOption={viewOption} />
       <ConditionalRender isRendered={hasNotes}>
         <Table

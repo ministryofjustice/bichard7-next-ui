@@ -5,13 +5,14 @@ import getOffenceCode from "utils/getOffenceCode"
 import { OffencesListRow } from "./OffencesListRow"
 
 interface OffencesListProps {
+  className: string
   offences: Offence[]
   setDetailedOffenceIndex: (index: number) => void
 }
 
-export const OffencesList = ({ offences, setDetailedOffenceIndex }: OffencesListProps) => {
+export const OffencesList = ({ className, offences, setDetailedOffenceIndex }: OffencesListProps) => {
   return (
-    <>
+    <div className={className}>
       <Heading as="h3" size="MEDIUM">
         {"Offences"}
       </Heading>
@@ -35,6 +36,6 @@ export const OffencesList = ({ offences, setDetailedOffenceIndex }: OffencesList
             />
           ))}
       </Table>
-    </>
+    </div>
   )
 }

@@ -1,13 +1,11 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import ConditionalRender from "components/ConditionalRender"
 import { GridCol, GridRow } from "govuk-react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
-import updateQueryString from "utils/updateQueryString"
 import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
 import Header from "./Header"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
@@ -36,6 +34,14 @@ const useStyles = createUseStyles({
   sideBarContainer: {
     minWidth: "320px",
     maxWidth: "430px"
+  },
+  visible: {
+    visibility: "visible",
+    display: "block"
+  },
+  notVisible: {
+    visibility: "hidden",
+    display: "none"
   }
 })
 
@@ -55,20 +61,6 @@ const CourtCaseDetails: React.FC<Props> = ({
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
 
-  useEffect(() => {
-    const queryStringParams = new URLSearchParams(window.location.search)
-
-    const tabParam = queryStringParams.get("tab")
-    if (tabParam) {
-      setActiveTab(tabParam as CaseDetailsTab)
-    }
-
-    const offenceParam = queryStringParams.get("offence")
-    if (offenceParam) {
-      setSelectedOffenceIndex(+offenceParam)
-    }
-  }, [])
-
   const handleNavigation: NavigationHandler = ({ location, args }) => {
     switch (location) {
       case "Case Details > Case":
@@ -77,7 +69,6 @@ const CourtCaseDetails: React.FC<Props> = ({
       case "Case Details > Offences":
         if (typeof args?.offenceOrderIndex === "number") {
           setSelectedOffenceIndex(+args.offenceOrderIndex)
-          updateQueryString({ offence: args.offenceOrderIndex })
         }
         setActiveTab("Offences")
         break
@@ -100,9 +91,7 @@ const CourtCaseDetails: React.FC<Props> = ({
       <CourtCaseDetailsTabs
         activeTab={activeTab}
         onTabClick={(tab) => {
-          setSelectedOffenceIndex(undefined)
           setActiveTab(tab)
-          updateQueryString({ tab, offence: null })
         }}
         tabs={["Defendant", "Hearing", "Case", "Offences", "Notes"]}
         width={contentWidth}
@@ -110,38 +99,42 @@ const CourtCaseDetails: React.FC<Props> = ({
 
       <GridRow>
         <GridCol setWidth={contentWidth} className={classes.contentColumn}>
-          <ConditionalRender isRendered={activeTab === "Defendant"}>
-            <CourtCaseDetailsPanel heading={"Defendant details"}>
-              <DefendantDetails defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant} />
-            </CourtCaseDetailsPanel>
-          </ConditionalRender>
+          <CourtCaseDetailsPanel
+            className={activeTab === "Defendant" ? classes.visible : classes.notVisible}
+            heading={"Defendant details"}
+          >
+            <DefendantDetails defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant} />
+          </CourtCaseDetailsPanel>
 
-          <ConditionalRender isRendered={activeTab === "Hearing"}>
-            <CourtCaseDetailsPanel heading={"Hearing details"}>
-              <HearingDetails hearing={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing} />
-            </CourtCaseDetailsPanel>
-          </ConditionalRender>
+          <CourtCaseDetailsPanel
+            className={activeTab === "Hearing" ? classes.visible : classes.notVisible}
+            heading={"Hearing details"}
+          >
+            <HearingDetails hearing={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing} />
+          </CourtCaseDetailsPanel>
 
-          <ConditionalRender isRendered={activeTab === "Case"}>
-            <CourtCaseDetailsPanel heading={"Case"}>
-              <CaseInformation caseInformation={aho.AnnotatedHearingOutcome.HearingOutcome.Case} />
-            </CourtCaseDetailsPanel>
-          </ConditionalRender>
+          <CourtCaseDetailsPanel
+            className={activeTab === "Case" ? classes.visible : classes.notVisible}
+            heading={"Case"}
+          >
+            <CaseInformation caseInformation={aho.AnnotatedHearingOutcome.HearingOutcome.Case} />
+          </CourtCaseDetailsPanel>
 
-          <ConditionalRender isRendered={activeTab === "Offences"}>
-            <Offences
-              offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
-              onOffenceSelected={(offenceIndex) => {
-                setSelectedOffenceIndex(offenceIndex)
-                updateQueryString({ offence: offenceIndex })
-              }}
-              selectedOffenceIndex={selectedOffenceIndex}
-            />
-          </ConditionalRender>
+          <Offences
+            className={activeTab === "Offences" ? classes.visible : classes.notVisible}
+            offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
+            onOffenceSelected={(offenceIndex) => {
+              setSelectedOffenceIndex(offenceIndex)
+            }}
+            selectedOffenceIndex={selectedOffenceIndex}
+          />
 
-          <ConditionalRender isRendered={activeTab === "Notes"}>
-            <Notes notes={courtCase.notes} lockedByAnotherUser={errorLockedByAnotherUser} csrfToken={csrfToken} />
-          </ConditionalRender>
+          <Notes
+            className={activeTab === "Notes" ? classes.visible : classes.notVisible}
+            notes={courtCase.notes}
+            lockedByAnotherUser={errorLockedByAnotherUser}
+            csrfToken={csrfToken}
+          />
         </GridCol>
 
         <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
