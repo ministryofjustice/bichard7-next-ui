@@ -1,4 +1,4 @@
-import { Case } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import { Case } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { TableRow } from "./TableRow"
 import { Table } from "govuk-react"
 import formatForce from "utils/formatForce"

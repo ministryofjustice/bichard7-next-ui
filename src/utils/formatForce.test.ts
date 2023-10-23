@@ -1,4 +1,4 @@
-import { Case } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import { Case } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { Force } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import formatForce from "./formatForce"
 

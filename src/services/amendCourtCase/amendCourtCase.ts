@@ -1,17 +1,17 @@
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/dist/parse/parseAhoXml/parseAhoXml"
-import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/dist/serialise/ahoXml/generate"
-import Phase from "@moj-bichard7-developers/bichard7-next-core/dist/types/Phase"
 import updateCourtCaseAho from "services/updateCourtCaseAho"
 import { DataSource, EntityManager } from "typeorm"
 import { Amendments } from "types/Amendments"
 import { isError } from "types/Result"
 import createForceOwner from "utils/createForceOwner"
 import applyAmendmentsToAho from "./applyAmendmentsToAho"
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import type User from "../entities/User"
 import insertNotes from "services/insertNotes"
 import getSystemNotes from "utils/amendments/getSystemNotes"
 import CourtCase from "../entities/CourtCase"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
+import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/generate"
+import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 
 const amendCourtCase = async (
   dataSource: DataSource | EntityManager,
