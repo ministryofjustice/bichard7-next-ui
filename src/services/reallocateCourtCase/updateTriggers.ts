@@ -1,17 +1,14 @@
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
-import {
-  AuditLogEvent,
-  AuditLogEventOption,
-  AuditLogEventOptions
-} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
-import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
-import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
+import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
+import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/Trigger"
 import { EntityManager, IsNull } from "typeorm"
 import { AUDIT_LOG_EVENT_SOURCE } from "../../config"
 import { isError } from "../../types/Result"
 import CourtCase from "../entities/CourtCase"
 import { default as TriggerEntity } from "../entities/Trigger"
 import User from "../entities/User"
+import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
 
 const getTriggersDetails = (triggers: Trigger[]) =>
   triggers.reduce((acc: Record<string, unknown>, trigger, index) => {
@@ -19,8 +16,8 @@ const getTriggersDetails = (triggers: Trigger[]) =>
     return acc
   }, {})
 
-const generateEvent = (option: AuditLogEventOption, triggers: Trigger[], user: User, hasUnresolvedException: boolean) =>
-  getAuditLogEvent(option, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
+const generateEvent = (eventCode: EventCode, triggers: Trigger[], user: User, hasUnresolvedException: boolean) =>
+  getAuditLogEvent(eventCode, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
     user: user.username,
     auditLogVersion: 2,
     "Trigger and Exception Flag": hasUnresolvedException,
@@ -57,9 +54,7 @@ const updateTriggers = async (
       return addTriggersResult
     }
 
-    generatedEvents.push(
-      generateEvent(AuditLogEventOptions.triggerGenerated, triggersToAdd, user, hasUnresolvedException)
-    )
+    generatedEvents.push(generateEvent(EventCode.TriggersGenerated, triggersToAdd, user, hasUnresolvedException))
   }
 
   if (triggersToDelete.length > 0) {
@@ -78,9 +73,7 @@ const updateTriggers = async (
       return deleteTriggersResult
     }
 
-    generatedEvents.push(
-      generateEvent(AuditLogEventOptions.triggerDeleted, triggersToDelete, user, hasUnresolvedException)
-    )
+    generatedEvents.push(generateEvent(EventCode.TriggersDeleted, triggersToDelete, user, hasUnresolvedException))
   }
 
   generatedEvents.forEach((event) => events.push(event))

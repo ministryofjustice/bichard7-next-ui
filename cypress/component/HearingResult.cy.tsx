@@ -1,8 +1,8 @@
-import { Result } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import { CjsPlea } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/Plea"
 import { HearingResult } from "../../src/features/CourtCaseDetails/Tabs/Panels/Offences/Offence/HearingResult"
-import { CjsPlea } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Plea"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
-import ResultClass from "@moj-bichard7-developers/bichard7-next-core/dist/types/ResultClass"
+import ResultClass from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/ResultClass"
+import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 
 describe("Hearing Result", () => {
   it("displays all mandatory fields", () => {

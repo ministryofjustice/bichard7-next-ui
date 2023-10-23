@@ -1,16 +1,14 @@
 import { EntityManager, Repository, UpdateResult } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
-import {
-  AuditLogEvent,
-  AuditLogEventOptions
-} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
+import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
-import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
 import Permission from "types/Permission"
+import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
 
 const unlock = async (
   unlockReason: "Trigger" | "Exception",
@@ -43,7 +41,7 @@ const unlock = async (
   if (result.affected && result.affected > 0) {
     events.push(
       getAuditLogEvent(
-        unlockReason === "Exception" ? AuditLogEventOptions.exceptionUnlocked : AuditLogEventOptions.triggerUnlocked,
+        unlockReason === "Exception" ? EventCode.ExceptionsUnlocked : EventCode.TriggersUnlocked,
         EventCategory.information,
         AUDIT_LOG_EVENT_SOURCE,
         {

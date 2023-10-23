@@ -1,9 +1,7 @@
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
-import {
-  AuditLogEvent,
-  AuditLogEventOptions
-} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
-import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
+import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
 import { EntityManager, MoreThan, Not, UpdateQueryBuilder, UpdateResult } from "typeorm"
 import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { isError } from "types/Result"
@@ -73,7 +71,7 @@ const resolveError = async (
   }
 
   events?.push(
-    getAuditLogEvent(AuditLogEventOptions.exceptionResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
+    getAuditLogEvent(EventCode.ExceptionsResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
       user: user.username,
       auditLogVersion: 2,
       resolutionReasonCode: ResolutionReasonCode[resolution.reason],

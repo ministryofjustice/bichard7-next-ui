@@ -1,4 +1,4 @@
-import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import { DataSource, EntityManager, UpdateResult } from "typeorm"
 import { ManualResolution } from "types/ManualResolution"
 import { isError } from "types/Result"
