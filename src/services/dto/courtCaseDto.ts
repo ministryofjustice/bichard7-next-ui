@@ -11,12 +11,14 @@ export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): Dis
     errorId: courtCase.errorId,
     errorLockedByUsername: courtCase.errorLockedByUsername,
     errorReport: courtCase.errorReport,
+    errorStatus: courtCase.errorStatus,
     isUrgent: courtCase.isUrgent,
     notes: courtCase.notes.map(noteToDisplayNoteDto),
     ptiurn: courtCase.ptiurn,
     resolutionTimestamp: courtCase.resolutionTimestamp ? courtCase.resolutionTimestamp.toISOString() : null,
     triggerLockedByUsername: courtCase.triggerLockedByUsername,
     triggers: courtCase.triggers.map(triggerToDisplayTriggerDto),
+    triggerStatus: courtCase.triggerStatus ?? null,
     triggerCount: courtCase.triggerCount,
     defendantName: courtCase.defendantName
   }
