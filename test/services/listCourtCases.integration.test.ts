@@ -39,7 +39,7 @@ jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
 jest.setTimeout(100000)
 describe("listCourtCases", () => {
   let dataSource: DataSource
-  const orgCode = "01"
+  const orgCode = "36FPA1"
   const testUser = {
     visibleForces: [orgCode],
     visibleCourts: [],
@@ -1053,31 +1053,28 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe("Filter cases having a combination of reason and resolved status filter", () => {
-    const unresolvedTrigger: Partial<TestTrigger> = {
-      triggerCode: "TRPR0001",
-      status: "Unresolved",
-      createdAt: new Date("2022-07-09T10:22:34.000Z")
-    }
-    const resolvedTrigger: Partial<TestTrigger> = {
-      triggerCode: "TRPR0001",
-      status: "Resolved",
-      createdAt: new Date("2022-07-09T10:22:34.000Z")
+  describe("Filter cases having a combination of reason and caseState filter", () => {
+    const dummyTriggerCode = "TRPR0001"
+    const bailsTriggerCode = "TRPR0010"
+    const getTrigger = (triggerCode: string, status: ResolutionStatus): Partial<TestTrigger> => {
+      return {
+        triggerCode: triggerCode,
+        status: status,
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
     }
 
-    it.only("Filter for Triggers and Unresolved cases", async () => {
-      // Triggers and Unresolved cases
-      // Seed a cases wth Triggers resolved, Exceptions Resolved, Everything resolved, Everything Unresolved
+    it("Filter for Triggers and Unresolved cases", async () => {
       await insertCourtCasesWithFields([
         {
-          defendantName: "Trigger Resolved",
+          defendantName: "Triggers Resolved/Exceptions Unresolved",
           orgForPoliceFilter: orgCode,
           triggerResolvedBy: "Dummy user",
           triggerResolvedTimestamp: new Date(),
           triggerStatus: "Resolved"
         },
         {
-          defendantName: "Exceptions Resolved",
+          defendantName: "Exceptions Resolved/Triggers Unresolved",
           orgForPoliceFilter: orgCode,
           errorResolvedBy: "Dummy user",
           errorResolvedTimestamp: new Date(),
@@ -1094,44 +1091,168 @@ describe("listCourtCases", () => {
           errorStatus: "Resolved",
           resolutionTimestamp: new Date()
         },
-        { defendantName: "Everything Unresolved", orgForPoliceFilter: orgCode }
+        { defendantName: "Everything Unresolved", orgForPoliceFilter: orgCode },
+        {
+          defendantName: "Bails Resolved/No Exceptions",
+          orgForPoliceFilter: orgCode,
+          triggerResolvedBy: "Dummy user",
+          triggerResolvedTimestamp: new Date(),
+          resolutionTimestamp: new Date(),
+          triggerStatus: "Resolved"
+        },
+        { defendantName: "Bails Unresolved/No Exceptions", orgForPoliceFilter: orgCode }
       ])
-      await insertTriggers(0, [resolvedTrigger as TestTrigger])
+      await insertTriggers(0, [getTrigger(dummyTriggerCode, "Resolved") as TestTrigger])
       await insertException(0, "HO100300", undefined, "Unresolved")
 
-      await insertTriggers(1, [unresolvedTrigger as TestTrigger])
+      await insertTriggers(1, [getTrigger(dummyTriggerCode, "Unresolved") as TestTrigger])
       await insertException(1, "HO100300", undefined, "Resolved")
 
-      await insertTriggers(2, [resolvedTrigger as TestTrigger])
+      await insertTriggers(2, [getTrigger(dummyTriggerCode, "Resolved") as TestTrigger])
       await insertException(2, "HO100300", undefined, "Resolved")
 
-      await insertTriggers(3, [unresolvedTrigger as TestTrigger])
+      await insertTriggers(3, [getTrigger(dummyTriggerCode, "Unresolved") as TestTrigger])
       await insertException(3, "HO100300", undefined, "Unresolved")
 
-      // await insertException(0, "HO100300")
-      // await insertTriggers(1, [testTrigger])
-      // await insertTriggers(2, [conditionalBailTrigger])
+      await insertTriggers(4, [getTrigger(bailsTriggerCode, "Resolved") as TestTrigger])
+      await insertTriggers(5, [getTrigger(bailsTriggerCode, "Unresolved") as TestTrigger])
 
-      // const result = await listCourtCases(
-      //   dataSource,
-      //   {
-      //     maxPageItems: "100",
-      //     reasons: [Reason.Bails, Reason.Exceptions, Reason.Triggers]
-      //   },
-      //   testUser
-      // )
+      let result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasons: [Reason.Triggers],
+          caseState: "Unresolved"
+        },
+        testUser
+      )
 
-      // expect(isError(result)).toBeFalsy()
-      // const { result: cases } = result as ListCourtCaseResult
+      expect(isError(result)).toBeFalsy()
+      let { result: cases } = result as ListCourtCaseResult
 
-      // expect(cases).toHaveLength(3)
-      // expect(cases[0].errorId).toBe(0)
-      // expect(cases[1].errorId).toBe(1)
-      // expect(cases[2].errorId).toBe(2)
+      expect(cases).toHaveLength(3)
+      expect(cases[0].defendantName).toBe("Exceptions Resolved/Triggers Unresolved")
+      expect(cases[1].defendantName).toBe("Everything Unresolved")
+      expect(cases[2].defendantName).toBe("Bails Unresolved/No Exceptions")
+
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasons: [Reason.Triggers],
+          caseState: "Resolved"
+        },
+        testUser
+      )
+
+      expect(isError(result)).toBeFalsy()
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(3)
+      expect(cases[0].defendantName).toBe("Triggers Resolved/Exceptions Unresolved")
+      expect(cases[1].defendantName).toBe("Everything Resolved")
+      expect(cases[2].defendantName).toBe("Bails Resolved/No Exceptions")
+
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasons: [Reason.Exceptions],
+          caseState: "Unresolved"
+        },
+        testUser
+      )
+
+      expect(isError(result)).toBeFalsy()
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].defendantName).toBe("Triggers Resolved/Exceptions Unresolved")
+      expect(cases[1].defendantName).toBe("Everything Unresolved")
+
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasons: [Reason.Exceptions],
+          caseState: "Resolved"
+        },
+        testUser
+      )
+
+      expect(isError(result)).toBeFalsy()
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].defendantName).toBe("Exceptions Resolved/Triggers Unresolved")
+      expect(cases[1].defendantName).toBe("Everything Resolved")
+
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          caseState: "Resolved"
+        },
+        testUser
+      )
+
+      expect(isError(result)).toBeFalsy()
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].defendantName).toBe("Everything Resolved")
+      expect(cases[1].defendantName).toBe("Bails Resolved/No Exceptions")
+
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          caseState: "Unresolved"
+        },
+        testUser
+      )
+
+      expect(isError(result)).toBeFalsy()
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(4)
+      expect(cases[0].defendantName).toBe("Triggers Resolved/Exceptions Unresolved")
+      expect(cases[1].defendantName).toBe("Exceptions Resolved/Triggers Unresolved")
+      expect(cases[2].defendantName).toBe("Everything Unresolved")
+      expect(cases[3].defendantName).toBe("Bails Unresolved/No Exceptions")
+
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasons: [Reason.Bails],
+          caseState: "Resolved"
+        },
+        testUser
+      )
+
+      expect(isError(result)).toBeFalsy()
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].defendantName).toBe("Bails Resolved/No Exceptions")
+
+      result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasons: [Reason.Bails],
+          caseState: "Unresolved"
+        },
+        testUser
+      )
+
+      expect(isError(result)).toBeFalsy()
+      cases = (result as ListCourtCaseResult).result
+
+      expect(cases).toHaveLength(1)
+      expect(cases[0].defendantName).toBe("Bails Unresolved/No Exceptions")
     })
-    // Exceptions and unresolved cases
-    // Triggers and Resolved cases
-    // Exceptions and Resolved cases
   })
 
   describe("Filter cases by urgency", () => {
@@ -1481,37 +1602,6 @@ describe("listCourtCases", () => {
 
       expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledTimes(1)
       expect(leftJoinAndSelectTriggersQuery).toHaveBeenCalledWith(expect.any(Object), undefined, "Unresolved")
-    })
-
-    it("Should return 'unresolved' triggers when a case has resolutionTimestamp but there are unresolved triggers", async () => {
-      const unresolvedTriggerCode = "TRPR0001"
-      const unresolvedTrigger: TestTrigger = {
-        triggerId: 1,
-        status: "Unresolved",
-        triggerCode: unresolvedTriggerCode,
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
-      }
-
-      const resolvedTrigger: TestTrigger = {
-        triggerId: 1,
-        status: "Resolved",
-        triggerCode: "TRPR0002",
-        createdAt: new Date("2022-07-09T10:22:34.000Z")
-      }
-
-      await insertCourtCasesWithFields(
-        Array.from({ length: 2 }, () => ({ orgForPoliceFilter: orgCode, resolutionTimestamp: new Date() }))
-      )
-      await insertTriggers(0, [unresolvedTrigger, resolvedTrigger])
-
-      const result = await listCourtCases(dataSource, { maxPageItems: "100", caseState: "Unresolved" }, testUser)
-      expect(isError(result)).toBe(false)
-      const { result: cases } = result as ListCourtCaseResult
-
-      expect(cases).toHaveLength(1)
-      expect(cases[0].triggers).toHaveLength(1)
-      expect(cases[0].triggers[0].status).toEqual("Unresolved")
-      expect(cases[0].triggers[0].triggerCode).toEqual(unresolvedTriggerCode)
     })
   })
 
