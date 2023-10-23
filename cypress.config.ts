@@ -135,5 +135,5 @@ export default defineConfig({
     }
   },
 
-  retries: 2
+  retries: process.env.CI ? 2 : 0
 })

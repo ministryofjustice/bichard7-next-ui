@@ -71,6 +71,9 @@ commands:
 
   start_services:
     parameters:
+      ARGS:
+        default: ""
+        type: string
       SERVICES:
         default: ""
         type: string
@@ -82,7 +85,7 @@ commands:
           name: "Run services: <<parameters.SERVICES>>"
           working_directory: ~/bichard7-next-core
           command: |
-            docker compose --project-name bichard -f environment/docker-compose.yml \
+            <<parameters.ARGS>> docker compose --project-name bichard -f environment/docker-compose.yml \
             up -d <<parameters.SERVICES>> <<parameters.FLAGS>> --wait <<parameters.SERVICES>>
 
 #################################################################################
@@ -202,12 +205,16 @@ jobs:
           command: ./.circleci/scripts/install-cypress.sh
       - fetch_images:
           IMAGES: user-service nginx-auth-proxy
-      - run: 
+      - run:
           command: npm run ui
           working_directory: ~/bichard7-next-core
       - run:
           name: Install Cypress Reporter
           command: npm install --save-dev cypress-circleci-reporter mocha
+      - run:
+          name: Run fake conductor service
+          command: node .circleci/fakes/conductor
+          background: true
       - run:
           name: Run UI tests
           command: |

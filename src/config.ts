@@ -15,3 +15,7 @@ export const CSRF = {
   formSecret: process.env.CSRF_FORM_SECRET ?? "OliverTwist2",
   maximumTokenAgeInSeconds: parseInt(process.env.CSRF_TOKEN_MAX_AGE ?? "600", 10)
 }
+export const CONDUCTOR_API_URL = process.env.CONDUCTOR_API_URL ?? "http://localhost:5002"
+export const CONDUCTOR_API_USER = process.env.CONDUCTOR_API_USER ?? "bichard"
+export const CONDUCTOR_API_PASSWORD = process.env.CONDUCTOR_API_PASSWORD ?? "password"
+export const LEGACY_PHASE1 = process.env.LEGACY_PHASE1 ?? "true"
