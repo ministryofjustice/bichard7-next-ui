@@ -2,6 +2,7 @@ import User from "services/entities/User"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
 import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
+import { clickTab } from "../../../support/helpers"
 
 describe("Case details", () => {
   const defaultUsers: Partial<User>[] = Array.from(Array(4)).map((_value, idx) => {
@@ -58,14 +59,16 @@ describe("Case details", () => {
     cy.login("bichard03@example.com", "password")
     cy.visit("/bichard")
     cy.findByText("NAME Defendant").click()
-    cy.get(".moj-sub-navigation a").contains("Notes").click()
-    cy.get("table tbody tr").should("have.length", 3)
-    cy.get("table tbody tr").should(
+
+    clickTab("Notes")
+
+    cy.get("table tbody tr:visible").should("have.length", 3)
+    cy.get("table tbody tr:visible").should(
       "contain",
       "Bichard01: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
     )
-    cy.get("table tbody tr").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
-    cy.get("table tbody tr").should("contain", "This is a dummy note")
+    cy.get("table tbody tr:visible").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
+    cy.get("table tbody tr:visible").should("contain", "This is a dummy note")
   })
 
   it("Should be able to reallocate a case without note", () => {
@@ -100,13 +103,15 @@ describe("Case details", () => {
     cy.login("bichard03@example.com", "password")
     cy.visit("/bichard")
     cy.findByText("NAME Defendant").click()
-    cy.get(".moj-sub-navigation a").contains("Notes").click()
-    cy.get("table tbody tr").should("have.length", 2)
-    cy.get("table tbody tr").should(
+
+    clickTab("Notes")
+
+    cy.get("table tbody tr:visible").should("have.length", 2)
+    cy.get("table tbody tr:visible").should(
       "contain",
       "Bichard01: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
     )
-    cy.get("table tbody tr").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
+    cy.get("table tbody tr:visible").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
   })
 
   it("Should not accept more than 1000 characters in note text field", () => {
@@ -145,15 +150,17 @@ describe("Case details", () => {
     cy.login("bichard03@example.com", "password")
     cy.visit("/bichard")
     cy.findByText("NAME Defendant").click()
-    cy.get(".moj-sub-navigation a").contains("Notes").click()
-    cy.get("table tbody tr").should("have.length", 3)
-    cy.get("table tbody tr").should(
+
+    clickTab("Notes")
+
+    cy.get("table tbody tr:visible").should("have.length", 3)
+    cy.get("table tbody tr:visible").should(
       "contain",
       "Bichard01: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
     )
-    cy.get("table tbody tr").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
-    cy.get("table tbody tr").should("not.contain", "a".repeat(1001))
-    cy.get("table tbody tr").should("contain", "a".repeat(1000))
+    cy.get("table tbody tr:visible").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
+    cy.get("table tbody tr:visible").should("not.contain", "a".repeat(1001))
+    cy.get("table tbody tr:visible").should("contain", "a".repeat(1000))
   })
 
   it("Should return 404 for a case that this user can not see", () => {
