@@ -9,9 +9,9 @@ import { insertTriggers } from "../../utils/manageTriggers"
 import { default as TriggerEntity } from "../../../src/services/entities/Trigger"
 import MockDate from "mockdate"
 import updateTriggers from "../../../src/services/reallocateCourtCase/updateTriggers"
-import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
-import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/dist/types/TriggerCode"
-import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/Trigger"
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
+import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import User from "../../../src/services/entities/User"
 
 const insertCourtCase = async (fields: Partial<CourtCase> = {}) => {

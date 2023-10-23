@@ -1,4 +1,4 @@
-import { Result } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
 import { Duration } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import { Durations } from "@moj-bichard7-developers/bichard7-next-data/dist/types/Duration"

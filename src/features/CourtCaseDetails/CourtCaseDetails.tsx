@@ -1,4 +1,4 @@
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
 import { GridCol, GridRow } from "govuk-react"
 import { useEffect, useState } from "react"

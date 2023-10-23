@@ -5,22 +5,20 @@ import User from "../entities/User"
 import insertNotes from "../insertNotes"
 import updateLockStatusToUnlocked from "../updateLockStatusToUnlocked"
 import UnlockReason from "types/UnlockReason"
-import {
-  AuditLogEvent,
-  AuditLogEventOptions
-} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
+import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import storeAuditLogEvents from "../storeAuditLogEvents"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
-import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
 import { AUDIT_LOG_EVENT_SOURCE, REALLOCATE_CASE_TRIGGER_CODE } from "../../config"
 import getCourtCaseByOrganisationUnit from "../getCourtCaseByOrganisationUnit"
-import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/dist/triggers/generate"
-import type { Trigger } from "@moj-bichard7-developers/bichard7-next-core/dist/types/Trigger"
-import Phase from "@moj-bichard7-developers/bichard7-next-core/dist/types/Phase"
+import generateTriggers from "@moj-bichard7-developers/bichard7-next-core/core/phase1/triggers/generate"
+import type { Trigger } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/Trigger"
+import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import recalculateTriggers from "./recalculateTriggers"
 import updateCourtCase from "./updateCourtCase"
 import updateTriggers from "./updateTriggers"
 import parseHearinOutcome from "../../utils/parseHearingOutcome"
+import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
 
 const reallocateCourtCaseToForce = async (
   dataSource: DataSource | EntityManager,
@@ -129,16 +127,11 @@ const reallocateCourtCaseToForce = async (
       }
 
       events.push(
-        getAuditLogEvent(
-          AuditLogEventOptions.hearingOutcomeReallocated,
-          EventCategory.information,
-          AUDIT_LOG_EVENT_SOURCE,
-          {
-            user: user.username,
-            auditLogVersion: 2,
-            "New Force Owner": `${newForceCode}`
-          }
-        )
+        getAuditLogEvent(EventCode.HearingOutcomeReallocated, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
+          user: user.username,
+          auditLogVersion: 2,
+          "New Force Owner": `${newForceCode}`
+        })
       )
 
       const unlockResult = await updateLockStatusToUnlocked(
