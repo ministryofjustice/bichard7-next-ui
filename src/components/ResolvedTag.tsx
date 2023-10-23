@@ -4,6 +4,7 @@ import Image from "next/image"
 
 const ResolvedTagContainer = styled.div`
   display: flex;
+  align-items: center;
   margin-left: 15px;
 
   & > img {
