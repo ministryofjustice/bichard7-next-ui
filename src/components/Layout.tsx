@@ -3,14 +3,14 @@ import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
 import styled from "styled-components"
+import Permission from "types/Permission"
+import { DisplayFullUser } from "types/display/Users"
 import ConditionalRender from "./ConditionalRender"
 import Header from "./Header"
 import LinkButton from "./LinkButton"
 import NavBar from "./NavBar"
 import PageTemplate from "./PageTemplate"
 import PhaseBanner from "./PhaseBanner"
-import { DisplayFullUser } from "types/display/Users"
-import Permission from "types/Permission"
 
 const Banner = styled.div`
   display: flex;
@@ -70,7 +70,7 @@ const Layout = ({
         copyright={{
           image: {
             height: 102,
-            src: `${basePath} /govuk_assets/images / govuk - crest.png`,
+            src: `${basePath}/govuk_assets/images/govuk-crest.png`,
             width: 125
           },
           link: "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",
