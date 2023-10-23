@@ -4,6 +4,7 @@ import sample from "@stdlib/random-sample"
 import { DataSource, EntityManager } from "typeorm"
 import Trigger from "../../src/services/entities/Trigger"
 import createResolutionStatus from "./createResolutionStatus"
+import randomDate from "./createRandomDate"
 
 const triggerFrequency = {
   TRPR0015: 112166,
@@ -47,6 +48,7 @@ export default (
   dataSource: DataSource | EntityManager,
   errorId: number,
   creationDate: Date,
+  dateTo: Date,
   isResolved?: boolean
 ): Trigger[] => {
   const numTriggers = Math.min(Math.round(exponential(2) * 2), 5) + 1
@@ -57,17 +59,18 @@ export default (
   })
 
   return triggerCodes.map((triggerCode, idx) => {
-    const status = isResolved ? "Resolved" : createResolutionStatus()
+    const thisTriggerStatus = isResolved ? "Resolved" : createResolutionStatus()
     return dataSource.getRepository(Trigger).create({
       errorId,
       triggerCode: triggerCode,
-      status: status,
+      status: thisTriggerStatus,
       createdAt: creationDate,
       resolvedBy:
-        status === "Resolved"
+        thisTriggerStatus === "Resolved"
           ? `${faker.person.firstName().toLowerCase()}.${faker.person.lastName().toLowerCase()}`
           : null,
-      triggerItemIdentity: idx
+      triggerItemIdentity: idx,
+      resolvedAt: thisTriggerStatus === "Resolved" ? randomDate(creationDate, dateTo || new Date()) : null
     })
   })
 }
