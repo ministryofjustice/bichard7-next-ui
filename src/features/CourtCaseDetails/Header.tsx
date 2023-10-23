@@ -16,6 +16,7 @@ import {
 } from "utils/caseLocks"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 import Form from "../../components/Form"
+import ResolvedTag from "components/ResolvedTag"
 
 interface Props {
   courtCase: DisplayFullCourtCase
@@ -90,17 +91,25 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken }: 
 
   const CaseDetailsLockTag = ({
     isRendered,
+    isResolved,
     lockName,
     getLockHolderFn
   }: {
     isRendered: boolean
+    isResolved: boolean
     lockName: string
     getLockHolderFn: () => string
-  }) => (
-    <ConditionalRender isRendered={isRendered}>
+  }) => {
+    if (!isRendered) {
+      return
+    }
+
+    return isResolved ? (
+      <ResolvedTag itemName={lockName} />
+    ) : (
       <LockedTag lockName={lockName} lockedBy={getLockHolderFn()} />
-    </ConditionalRender>
-  )
+    )
+  }
 
   return (
     <HeaderContainer id="header-container">
@@ -110,6 +119,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken }: 
         </Heading>
         <CaseDetailsLockTag
           isRendered={user.hasAccessTo[Permission.Exceptions]}
+          isResolved={courtCase.errorStatus === "Resolved"}
           lockName="Exceptions"
           getLockHolderFn={() =>
             getLockHolder(user.username, courtCase.errorLockedByUserFullName, exceptionsAreLockedByCurrentUser)
@@ -134,6 +144,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken }: 
         </Heading>
         <CaseDetailsLockTag
           isRendered={user.hasAccessTo[Permission.Triggers]}
+          isResolved={courtCase.triggerStatus === "Resolved"}
           lockName="Triggers"
           getLockHolderFn={() =>
             getLockHolder(user.username, courtCase.triggerLockedByUserFullName, triggersAreLockedByCurrentUser)
