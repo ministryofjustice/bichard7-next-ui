@@ -1,9 +1,6 @@
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/dist/lib/auditLog/getAuditLogEvent"
-import {
-  AuditLogEventOptions,
-  type AuditLogEvent
-} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AuditLogEvent"
-import EventCategory from "@moj-bichard7-developers/bichard7-next-core/dist/types/EventCategory"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
+import { type AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
 import { DataSource, In, IsNull, UpdateResult } from "typeorm"
 import { isError } from "types/Result"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
@@ -14,6 +11,7 @@ import User from "./entities/User"
 import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
 import storeAuditLogEvents from "./storeAuditLogEvents"
 import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
+import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
 
 const generateTriggersAttributes = (triggers: Trigger[]) =>
   triggers.reduce(
@@ -79,7 +77,7 @@ const resolveTriggers = async (
     const events: AuditLogEvent[] = []
 
     events.push(
-      getAuditLogEvent(AuditLogEventOptions.triggerResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
+      getAuditLogEvent(EventCode.TriggersResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
         user: user.username,
         auditLogVersion: 2,
         "Number Of Triggers": triggerIds.length,
@@ -121,7 +119,7 @@ const resolveTriggers = async (
       }
 
       events.push(
-        getAuditLogEvent(AuditLogEventOptions.allTriggersResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
+        getAuditLogEvent(EventCode.AllTriggersResolved, EventCategory.information, AUDIT_LOG_EVENT_SOURCE, {
           user: user.username,
           auditLogVersion: 2,
           "Number Of Triggers": allTriggers.length,

@@ -1,4 +1,4 @@
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import ActionLink from "components/ActionLink"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"

@@ -1,7 +1,7 @@
 import {
   AnnotatedHearingOutcome,
   Offence
-} from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+} from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import cloneDeep from "lodash.clonedeep"
 import createDummyAho from "../../../../test/helpers/createDummyAho"
 import createDummyOffence from "../../../../test/helpers/createDummyOffence"

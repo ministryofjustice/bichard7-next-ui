@@ -1,10 +1,21 @@
-export type SurveyFeedbackResponse = { experience: string; comment: string }
+export enum SwitchingReason {
+  issue = "issue",
+  preference = "preference",
+  other = "other"
+}
+
+export enum Page {
+  caseList = "Case list",
+  caseDetails = "Case details"
+}
+
+export type SurveyFeedbackResponse = { experience: number; comment: string }
 
 export type SwitchingFeedbackResponse =
   | {
-      issueOrPreference?: string
-      caseListOrDetail?: string
-      otherFeedback?: string
+      switchingReason?: SwitchingReason
+      pageWithIssue?: Page
+      comment?: string
     }
   | {
       skipped: boolean
