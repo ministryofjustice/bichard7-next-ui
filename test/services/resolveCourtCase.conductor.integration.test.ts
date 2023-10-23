@@ -59,16 +59,12 @@ describe("", () => {
   })
 
   it("Should return the error if fails to update conductor workflow", async () => {
-    const error = `Error updating conductor workflow`
-    ;(continueConductorWorkflow as jest.Mock).mockImplementationOnce(() => new Error(error))
+    const expectedError = `Error updating conductor workflow`
+    ;(continueConductorWorkflow as jest.Mock).mockImplementationOnce(() => new Error(expectedError))
 
-    let result
-    try {
-      result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
-    } catch (e) {
-      result = e as Error
-    }
-    expect(result).toEqual(Error(error))
+    const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch((error) => error as Error)
+
+    expect(result).toEqual(Error(expectedError))
 
     const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
     const actualCourtCase = record as CourtCase

@@ -481,12 +481,10 @@ describe("resolveCourtCase", () => {
     it("Should return the error if fails to create notes", async () => {
       ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
 
-      let result
-      try {
-        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
-      } catch (error) {
-        result = error as Error
-      }
+      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
+        (error) => error as Error
+      )
+
       expect(result).toEqual(Error(`Error while creating notes`))
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
@@ -500,12 +498,9 @@ describe("resolveCourtCase", () => {
         () => new Error(`Error while unlocking the case`)
       )
 
-      let result
-      try {
-        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
-      } catch (error) {
-        result = error as Error
-      }
+      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
+        (error) => error as Error
+      )
 
       expect(result).toEqual(Error(`Error while unlocking the case`))
 
@@ -518,12 +513,9 @@ describe("resolveCourtCase", () => {
     it("Should return the error if fails to update the conductor workflow", async () => {
       ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(`Error while calling audit log API`))
 
-      let result
-      try {
-        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
-      } catch (error) {
-        result = error as Error
-      }
+      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
+        (error) => error as Error
+      )
 
       expect(result).toEqual(Error(`Error while calling audit log API`))
 
@@ -534,16 +526,14 @@ describe("resolveCourtCase", () => {
     })
 
     it("Should return the error if fails to store audit logs", async () => {
-      const error = `Error while calling audit log API`
-      ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(error))
+      const expectedError = `Error while calling audit log API`
+      ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(expectedError))
 
-      let result
-      try {
-        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
-      } catch (e) {
-        result = e as Error
-      }
-      expect(result).toEqual(Error(error))
+      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
+        (error) => error as Error
+      )
+
+      expect(result).toEqual(Error(expectedError))
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
       const actualCourtCase = record as CourtCase
@@ -556,12 +546,10 @@ describe("resolveCourtCase", () => {
         .spyOn(UpdateQueryBuilder.prototype, "execute")
         .mockRejectedValue(Error("Failed to update record with some error"))
 
-      let result
-      try {
-        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
-      } catch (error) {
-        result = error as Error
-      }
+      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
+        (error) => error as Error
+      )
+
       expect(result).toEqual(Error(`Failed to update record with some error`))
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
