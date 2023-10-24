@@ -20,7 +20,6 @@ import { Page, SurveyFeedbackType, SwitchingFeedbackResponse, SwitchingReason } 
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
-import redirectToCaseIndex from "utils/redirectToCaseIndex"
 import Form from "../components/Form"
 import withCsrf from "../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
@@ -146,8 +145,6 @@ export const getServerSideProps = withMultipleServerSideProps(
         }
       }
     }
-
-    redirectToCaseIndex(currentUser.username, req)
 
     return { props }
   }
