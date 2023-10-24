@@ -29,7 +29,7 @@ interface BichardSwitchProps {
 
 const BichardSwitchBtn: React.FC<BichardSwitchProps> = ({ href }: BichardSwitchProps) => {
   return (
-    <LinkButton style={{ marginBottom: 0 }} href={href + `&previousPath=${usePathname()}`}>
+    <LinkButton className={"BichardSwitch"} style={{ marginBottom: 0 }} href={href + `&previousPath=${usePathname()}`}>
       {"Switch to old Bichard"}
     </LinkButton>
   )
