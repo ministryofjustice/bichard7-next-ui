@@ -1,15 +1,16 @@
 import { Footer } from "govuk-react"
+import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
 import styled from "styled-components"
+import Permission from "types/Permission"
+import { DisplayFullUser } from "types/display/Users"
 import ConditionalRender from "./ConditionalRender"
 import Header from "./Header"
 import LinkButton from "./LinkButton"
 import NavBar from "./NavBar"
 import PageTemplate from "./PageTemplate"
 import PhaseBanner from "./PhaseBanner"
-import { DisplayFullUser } from "types/display/Users"
-import Permission from "types/Permission"
 
 const Banner = styled.div`
   display: flex;
@@ -22,9 +23,18 @@ const Banner = styled.div`
   }
 `
 
-const BichardSwitch = styled(LinkButton)`
-  margin-bottom: 0;
-`
+interface BichardSwitchProps {
+  href: string
+}
+
+const BichardSwitchBtn: React.FC<BichardSwitchProps> = ({ href }: BichardSwitchProps) => {
+  return (
+    <LinkButton className={"BichardSwitch"} style={{ marginBottom: 0 }} href={href + `&previousPath=${usePathname()}`}>
+      {"Switch to old Bichard"}
+    </LinkButton>
+  )
+}
+
 interface Props {
   children: ReactNode
   user: DisplayFullUser
@@ -44,7 +54,7 @@ const Layout = ({
   let bichardSwitchUrl = bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"
 
   if (bichardSwitch.displaySwitchingSurveyFeedback) {
-    bichardSwitchUrl = `/bichard/switching-feedback?redirectTo=${encodeURIComponent(".." + bichardSwitchUrl)}`
+    bichardSwitchUrl = `${basePath}/switching-feedback?redirectTo=${encodeURIComponent(".." + bichardSwitchUrl)}`
   }
 
   return (
@@ -59,7 +69,7 @@ const Layout = ({
           <PhaseBanner phase={"beta"} />
 
           <ConditionalRender isRendered={bichardSwitch.display}>
-            <BichardSwitch href={bichardSwitchUrl}>{"Switch to old Bichard"}</BichardSwitch>
+            <BichardSwitchBtn href={bichardSwitchUrl} />
           </ConditionalRender>
         </Banner>
         {children}
@@ -68,7 +78,7 @@ const Layout = ({
         copyright={{
           image: {
             height: 102,
-            src: `${basePath} /govuk_assets/images / govuk - crest.png`,
+            src: `${basePath}/govuk_assets/images/govuk-crest.png`,
             width: 125
           },
           link: "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",

@@ -1,7 +1,6 @@
 import Layout from "components/Layout"
 import RadioButton from "components/RadioButton/RadioButton"
 import { MAX_FEEDBACK_LENGTH } from "config"
-import { getCookie } from "cookies-next"
 import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, Paragraph, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -17,7 +16,6 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import { SurveyFeedbackResponse, SurveyFeedbackType } from "types/SurveyFeedback"
 import { DisplayFullUser } from "types/display/Users"
-import getQueryStringCookieName from "utils/getQueryStringCookieName"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
 import Form from "../components/Form"
@@ -78,14 +76,6 @@ export const getServerSideProps = withMultipleServerSideProps(
           return redirectTo(previousPath)
         } else {
           throw result
-        }
-      }
-
-      if (req.url) {
-        const queryStringCookieValue = getCookie(getQueryStringCookieName(currentUser.username), { req })
-        const [urlPath, urlQueryString] = req.url.split("?")
-        if (urlPath === "/" && queryStringCookieValue && !urlQueryString) {
-          return redirectTo(`${urlPath}?${queryStringCookieValue}`)
         }
       }
 

@@ -1,7 +1,7 @@
-import SurveyFeedback from "services/entities/SurveyFeedback"
-import hashedPassword from "../fixtures/hashedPassword"
 import { addHours, addMinutes } from "date-fns"
+import SurveyFeedback from "services/entities/SurveyFeedback"
 import { Page, SwitchingReason, type SwitchingFeedbackResponse } from "../../src/types/SurveyFeedback"
+import hashedPassword from "../fixtures/hashedPassword"
 
 const expectedUserId = 0
 
@@ -113,6 +113,25 @@ describe("Switching Bichard Version Feedback Form", () => {
     })
 
     cy.login("bichard01@example.com", "password")
+  })
+
+  it("will go back to the case list page when I press the back button", () => {
+    cy.visit("/bichard")
+    cy.findByText("Switch to old Bichard").click()
+    cy.contains("Back").click()
+
+    cy.url().should("match", /\/bichard/)
+    cy.get("h1").contains("Case list").should("exist")
+  })
+
+  it("will go back to the case details page when I press the back button", () => {
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+    cy.visit("/bichard/court-cases/0")
+    cy.findByText("Switch to old Bichard").click()
+    cy.contains("Back").click()
+
+    cy.url().should("match", /\/court-cases\/\d+/)
+    cy.findByText("Case details").should("exist")
   })
 
   it("Should access the switching feedback form with first question visible when user clicks 'Switch to old Bichard'", () => {

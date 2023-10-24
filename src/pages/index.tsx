@@ -39,8 +39,8 @@ import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
-import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import withCsrf from "../middleware/withCsrf/withCsrf"
+import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import shouldShowSwitchingFeedbackForm from "../utils/shouldShowSwitchingFeedbackForm"
 
 interface Props {
@@ -119,8 +119,10 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
+    // This needs to be here for the cookie to load/be sticky.
+    // Do not remove!
     if (req.url) {
-      const queryStringCookieValue = getCookie(queryStringCookieName, { req })
+      const queryStringCookieValue = getCookie(getQueryStringCookieName(currentUser.username), { req })
       const [urlPath, urlQueryString] = req.url.split("?")
       if (urlPath === "/" && queryStringCookieValue && !urlQueryString) {
         return redirectTo(`${urlPath}?${queryStringCookieValue}`)
