@@ -3,6 +3,7 @@ import { UserGroup } from "types/UserGroup"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import { newUserLogin } from "../../../support/helpers"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 
 const caseURL = "/bichard/court-cases/0"
 
@@ -435,6 +436,36 @@ describe("Triggers and exceptions tabs", () => {
     cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #triggers").should("not.be.visible")
+
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
+  })
+})
+
+describe("PNC Exceptions", () => {
+  before(() => {
+    cy.task("clearTriggers")
+    cy.task("clearCourtCases")
+  })
+
+  beforeEach(() => {
+    cy.task("clearUsers")
+  })
+
+  it("should render HO100314 PNC exception on top of the exceptions list", () => {
+    cy.task("insertCourtCaseWithPncException", {
+      exceptionCode: "HO100314",
+      exceptionMessage: "Unexpected PNC communication error",
+      case: {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "01"
+      }
+    })
+
+    newUserLogin({ groups: [UserGroup.GeneralHandler] })
+    cy.visit(caseURL)
 
     cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
