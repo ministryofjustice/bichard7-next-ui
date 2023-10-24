@@ -6,6 +6,7 @@ import { MAX_FEEDBACK_LENGTH } from "config"
 import { Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
+import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import { useCallback, useEffect, useState } from "react"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
@@ -18,9 +19,9 @@ import { Page, SurveyFeedbackType, SwitchingFeedbackResponse, SwitchingReason } 
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
-import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import Form from "../components/Form"
 import withCsrf from "../middleware/withCsrf/withCsrf"
+import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 
 const SwitchingReasonLabel: Record<SwitchingReason, string> = {
   issue: "I have found an issue(s) when using the new version of Bichard which is blocking me from completing my task.",
@@ -179,10 +180,10 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
 
   return (
     <Layout user={user}>
-      <Heading as="h2" size="LARGE" aria-label="Switching Feedback">
+      <Head>
         <title>{"Report an issue using new Bichard | Bichard7"}</title>
         <meta name="description" content="user switching version feedback| Bichard7" />
-      </Heading>
+      </Head>
 
       <FeedbackHeaderLinks csrfToken={csrfToken} backLinkUrl={previousPath} skipLinkUrl={skipUrl?.search} />
 
