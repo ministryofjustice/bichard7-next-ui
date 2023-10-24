@@ -1,14 +1,15 @@
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import ActionLink from "components/ActionLink"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
-import { GridCol, GridRow, Link } from "govuk-react"
 import { createUseStyles } from "react-jss"
-import CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
-import getExceptionDefinition from "utils/getExceptionDefinition"
-import getExceptionPathDetails from "utils/getExceptionPathDetails"
 import { gdsLightGrey, textPrimary, gdsMidGrey } from "../../../utils/colours"
+import DefaultException from "../../../components/Exception/DefaultException"
+import PncException from "../../../components/Exception/PncException"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+
+const isPncException = (code: ExceptionCode) =>
+  [ExceptionCode.HO100302, ExceptionCode.HO100314, ExceptionCode.HO100402, ExceptionCode.HO100404].includes(code)
 
 interface Props {
   aho: AnnotatedHearingOutcome
@@ -17,16 +18,6 @@ interface Props {
 }
 
 const useStyles = createUseStyles({
-  exceptionRow: {
-    "&:not(:last-child)": {
-      marginBottom: "25px"
-    }
-  },
-
-  exceptionHelp: {
-    marginTop: "10px"
-  },
-
   buttonContainer: {
     display: "flex",
     justifyContent: "flex-end",
@@ -37,55 +28,16 @@ const useStyles = createUseStyles({
 const Exceptions = ({ aho, onNavigate, canResolveAndSubmit }: Props) => {
   const classes = useStyles()
 
-  const handleClick = (tab?: CaseDetailsTab, offenceOrderIndex?: number) => {
-    switch (tab) {
-      case "Offences":
-        onNavigate({ location: "Case Details > Offences", args: { offenceOrderIndex } })
-        break
-      case "Case":
-        onNavigate({ location: "Case Details > Case" })
-        break
-    }
-  }
-
   return (
     <>
       {aho.Exceptions.length === 0 && "There are no exceptions for this case."}
-      {aho.Exceptions.map(({ code, path }, index) => {
-        const exceptionDefinition = getExceptionDefinition(code)
-        const { tab, offenceOrderIndex, formattedFieldName, location } = getExceptionPathDetails(path)
-
-        return (
-          <div key={`exception_${index}`} className={`${classes.exceptionRow} moj-exception-row`}>
-            <GridRow className="exception-header">
-              <GridCol>
-                <b>
-                  {formattedFieldName}
-                  {" / "}
-                </b>
-                <ActionLink onClick={() => handleClick(tab, offenceOrderIndex)} className="exception-location">
-                  {location}
-                </ActionLink>
-              </GridCol>
-            </GridRow>
-
-            <GridRow className="exception-details">
-              <GridCol>
-                {code}
-                {exceptionDefinition?.shortDescription && ` - ${exceptionDefinition.shortDescription}`}
-              </GridCol>
-            </GridRow>
-
-            <GridRow className={`${classes.exceptionHelp} exception-help`}>
-              <GridCol>
-                <Link href={`/help/bichard-functionality/exceptions/resolution.html#${code}`} target="_blank">
-                  {"More information"}
-                </Link>
-              </GridCol>
-            </GridRow>
-          </div>
+      {aho.Exceptions.map(({ code, path }, index) =>
+        isPncException(code) ? (
+          <PncException key={`exception_${index}`} code={code} message={aho.PncErrorMessage} />
+        ) : (
+          <DefaultException key={`exception_${index}`} path={path} code={code} onNavigate={onNavigate} />
         )
-      })}
+      )}
       <ConditionalRender isRendered={canResolveAndSubmit && aho.Exceptions.length > 0}>
         <div className={`${classes.buttonContainer}`}>
           <LinkButton
