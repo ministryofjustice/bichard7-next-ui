@@ -7,6 +7,7 @@ import { Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, TextArea }
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
+import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { useCallback, useEffect, useState } from "react"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
@@ -19,6 +20,7 @@ import { Page, SurveyFeedbackType, SwitchingFeedbackResponse, SwitchingReason } 
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
+import redirectToCaseIndex from "utils/redirectToCaseIndex"
 import Form from "../components/Form"
 import withCsrf from "../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
@@ -76,7 +78,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       previousPath,
       isSkipped,
       redirectTo: redirectToUrl
-    } = query as { previousPath?: string; isSkipped?: string; redirectTo?: string }
+    } = query as { previousPath: string; isSkipped?: string; redirectTo?: string }
 
     if (!redirectToUrl) {
       throw new Error("no redirectTo URL")
@@ -84,7 +86,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props = {
       user: userToDisplayFullUserDto(currentUser),
-      previousPath: previousPath || "../bichard",
+      previousPath,
       csrfToken
     }
 
@@ -145,12 +147,15 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
+    redirectToCaseIndex(currentUser.username, req)
+
     return { props }
   }
 )
 
 const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, csrfToken }: Props) => {
   const [skipUrl, setSkipUrl] = useState<URL | null>(null)
+  const router = useRouter()
 
   const [formState, setFormState] = useState<SwitchingFeedbackFormState>({
     feedback: fields?.feedback.value ?? undefined,
@@ -185,7 +190,11 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
         <meta name="description" content="user switching version feedback| Bichard7" />
       </Head>
 
-      <FeedbackHeaderLinks csrfToken={csrfToken} backLinkUrl={previousPath} skipLinkUrl={skipUrl?.search} />
+      <FeedbackHeaderLinks
+        csrfToken={csrfToken}
+        backLinkUrl={`${router.basePath}` + previousPath}
+        skipLinkUrl={skipUrl?.search}
+      />
 
       <Heading as="h1">{"Share your feedback"}</Heading>
 

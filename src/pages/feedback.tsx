@@ -1,7 +1,6 @@
 import Layout from "components/Layout"
 import RadioButton from "components/RadioButton/RadioButton"
 import { MAX_FEEDBACK_LENGTH } from "config"
-import { getCookie } from "cookies-next"
 import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, Paragraph, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -17,9 +16,9 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import { SurveyFeedbackResponse, SurveyFeedbackType } from "types/SurveyFeedback"
 import { DisplayFullUser } from "types/display/Users"
-import getQueryStringCookieName from "utils/getQueryStringCookieName"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
+import redirectToCaseIndex from "utils/redirectToCaseIndex"
 import Form from "../components/Form"
 import withCsrf from "../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
@@ -81,13 +80,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         }
       }
 
-      if (req.url) {
-        const queryStringCookieValue = getCookie(getQueryStringCookieName(currentUser.username), { req })
-        const [urlPath, urlQueryString] = req.url.split("?")
-        if (urlPath === "/" && queryStringCookieValue && !urlQueryString) {
-          return redirectTo(`${urlPath}?${queryStringCookieValue}`)
-        }
-      }
+      redirectToCaseIndex(currentUser.username, req)
 
       return {
         props: {

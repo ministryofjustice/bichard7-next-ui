@@ -1,7 +1,7 @@
 import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import Pagination from "components/Pagination"
-import { getCookie, setCookie } from "cookies-next"
+import { setCookie } from "cookies-next"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
@@ -35,12 +35,13 @@ import { isPost } from "utils/http"
 import { calculateLastPossiblePageNumber } from "utils/pagination/calculateLastPossiblePageNumber"
 import { reasonOptions } from "utils/reasonOptions"
 import redirectTo from "utils/redirectTo"
+import redirectToCaseIndex from "utils/redirectToCaseIndex"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
-import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import withCsrf from "../middleware/withCsrf/withCsrf"
+import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import shouldShowSwitchingFeedbackForm from "../utils/shouldShowSwitchingFeedbackForm"
 
 interface Props {
@@ -119,13 +120,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    if (req.url) {
-      const queryStringCookieValue = getCookie(queryStringCookieName, { req })
-      const [urlPath, urlQueryString] = req.url.split("?")
-      if (urlPath === "/" && queryStringCookieValue && !urlQueryString) {
-        return redirectTo(`${urlPath}?${queryStringCookieValue}`)
-      }
-    }
+    redirectToCaseIndex(currentUser.username, req)
 
     const resolvedByUsername =
       validatedCaseState === "Resolved" && !currentUser.hasAccessTo[Permission.ListAllCases]

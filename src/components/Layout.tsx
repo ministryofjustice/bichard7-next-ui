@@ -1,4 +1,5 @@
 import { Footer } from "govuk-react"
+import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
 import styled from "styled-components"
@@ -44,7 +45,8 @@ const Layout = ({
   let bichardSwitchUrl = bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"
 
   if (bichardSwitch.displaySwitchingSurveyFeedback) {
-    bichardSwitchUrl = `/bichard/switching-feedback?redirectTo=${encodeURIComponent(".." + bichardSwitchUrl)}`
+    bichardSwitchUrl = `${basePath}/switching-feedback?redirectTo=${encodeURIComponent(".." + bichardSwitchUrl)}`
+    bichardSwitchUrl += `&previousPath=${usePathname()}`
   }
 
   return (
