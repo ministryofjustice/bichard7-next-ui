@@ -23,9 +23,18 @@ const Banner = styled.div`
   }
 `
 
-const BichardSwitch = styled(LinkButton)`
-  margin-bottom: 0;
-`
+interface BichardSwitchProps {
+  href: string
+}
+
+const BichardSwitchBtn: React.FC<BichardSwitchProps> = ({ href }: BichardSwitchProps) => {
+  return (
+    <LinkButton style={{ marginBottom: 0 }} href={href + `&previousPath=${usePathname()}`}>
+      {"Switch to old Bichard"}
+    </LinkButton>
+  )
+}
+
 interface Props {
   children: ReactNode
   user: DisplayFullUser
@@ -46,7 +55,6 @@ const Layout = ({
 
   if (bichardSwitch.displaySwitchingSurveyFeedback) {
     bichardSwitchUrl = `${basePath}/switching-feedback?redirectTo=${encodeURIComponent(".." + bichardSwitchUrl)}`
-    bichardSwitchUrl += `&previousPath=${usePathname()}`
   }
 
   return (
@@ -61,7 +69,7 @@ const Layout = ({
           <PhaseBanner phase={"beta"} />
 
           <ConditionalRender isRendered={bichardSwitch.display}>
-            <BichardSwitch href={bichardSwitchUrl}>{"Switch to old Bichard"}</BichardSwitch>
+            <BichardSwitchBtn href={bichardSwitchUrl} />
           </ConditionalRender>
         </Banner>
         {children}
