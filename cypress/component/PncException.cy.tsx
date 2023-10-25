@@ -23,7 +23,7 @@ describe("PncException", () => {
       code: ExceptionCode.HO100402,
       message: "I1008 - GWAY - ENQUIRY ERROR MORE THAN 3 DISPOSAL GROUPS 20/0000/00/544160F",
       expectedHeading: "HO100402 - PNC Update Error",
-      expectedMessage: "ENQUIRY ERROR MORE THAN 3 DISPOSAL GROUPS"
+      expectedMessage: "Enquiry error more than 3 disposal groups"
     },
     {
       title: "Incorrect charge count on court case",

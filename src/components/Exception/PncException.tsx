@@ -23,7 +23,7 @@ const useStyles = createUseStyles({
 const pncExceptionDescriptions: Record<string, Record<string, string>> = {
   [ExceptionCode.HO100402]: {
     "I1008 - GWAY - ENQUIRY ERROR INVALID ADJUDICATION": "Check the offence matching",
-    "I1008 - GWAY - ENQUIRY ERROR MORE THAN 3 DISPOSAL GROUPS": "ENQUIRY ERROR MORE THAN 3 DISPOSAL GROUPS",
+    "I1008 - GWAY - ENQUIRY ERROR MORE THAN 3 DISPOSAL GROUPS": "Enquiry error more than 3 disposal groups",
     "I1008 - GWAY - ENQUIRY ERROR NO SUITABLE DISPOSAL GROUPS":
       "Create DH page on PNC, then Submit the case on Bichard 7",
     "I1008 - GWAY - ENQUIRY ERROR RECORD CORRUPTION: INCORRECT CHARGE COUNT ON COURT CASE":
