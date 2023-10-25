@@ -3,7 +3,7 @@ import { UserGroup } from "types/UserGroup"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import { newUserLogin } from "../../../support/helpers"
-import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 const caseURL = "/bichard/court-cases/0"
 
