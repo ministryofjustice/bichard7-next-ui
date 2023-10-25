@@ -27,17 +27,21 @@ const useStyles = createUseStyles({
 
 const Exceptions = ({ aho, onNavigate, canResolveAndSubmit }: Props) => {
   const classes = useStyles()
+  const pncExceptions = aho.Exceptions.filter(({ code }) => isPncException(code))
+  const otherExceptions = aho.Exceptions.filter(({ code }) => !isPncException(code))
 
   return (
     <>
       {aho.Exceptions.length === 0 && "There are no exceptions for this case."}
-      {aho.Exceptions.map(({ code, path }, index) =>
-        isPncException(code) ? (
-          <PncException key={`exception_${index}`} code={code} message={aho.PncErrorMessage} />
-        ) : (
-          <DefaultException key={`exception_${index}`} path={path} code={code} onNavigate={onNavigate} />
-        )
-      )}
+
+      {pncExceptions.map(({ code }, index) => (
+        <PncException key={`exception_${index}`} code={code} message={aho.PncErrorMessage} />
+      ))}
+
+      {otherExceptions.map(({ code, path }, index) => (
+        <DefaultException key={`exception_${index}`} path={path} code={code} onNavigate={onNavigate} />
+      ))}
+
       <ConditionalRender isRendered={canResolveAndSubmit && aho.Exceptions.length > 0}>
         <div className={`${classes.buttonContainer}`}>
           <LinkButton
