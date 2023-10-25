@@ -18,8 +18,9 @@ import { ResolutionStatus } from "types/ResolutionStatus"
 import insertException from "./test/utils/manageExceptions"
 import { deleteTriggers, insertTriggers } from "./test/utils/manageTriggers"
 import { deleteUsers, insertUsersWithOverrides } from "./test/utils/manageUsers"
-import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
-import generateAhoWithPncException from "./test/helpers/generateAhoWithPncException"
+import generateAhoWithPncException, {
+  GenerateAhoWithPncExceptionParams
+} from "./test/helpers/generateAhoWithPncException"
 
 export default defineConfig({
   e2e: {
@@ -90,16 +91,15 @@ export default defineConfig({
         },
 
         insertCourtCaseWithPncException(params: {
-          exceptionCode: ExceptionCode
-          exceptionMessage: string
+          exceptions: GenerateAhoWithPncExceptionParams
           case: Partial<CourtCase>
         }) {
           return insertCourtCasesWithFields([
             {
               ...(params.case ?? {}),
-              errorReport: params.exceptionCode,
+              errorReport: params.exceptions.pncExceptionCode.toString(),
               errorStatus: "Unresolved",
-              hearingOutcome: generateAhoWithPncException(params.exceptionCode, params.exceptionMessage)
+              hearingOutcome: generateAhoWithPncException(params.exceptions)
             }
           ])
         },

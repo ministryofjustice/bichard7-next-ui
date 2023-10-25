@@ -453,10 +453,12 @@ describe("PNC Exceptions", () => {
     cy.task("clearUsers")
   })
 
-  it("should render HO100314 PNC exception on top of the exceptions list", () => {
+  it("should render PNC exception and correctly display the PNC error message", () => {
     cy.task("insertCourtCaseWithPncException", {
-      exceptionCode: "HO100314",
-      exceptionMessage: "Unexpected PNC communication error",
+      exceptions: {
+        pncExceptionCode: "HO100402",
+        pncExceptionMessage: "I1008 - GWAY - ENQUIRY ERROR NO SUITABLE DISPOSAL GROUPS 20/01JP/01/5151Y"
+      },
       case: {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
@@ -470,5 +472,58 @@ describe("PNC Exceptions", () => {
     cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions .moj-badge").should("have.text", "PNC Error")
+    cy.get(".b7-accordion__button").should("have.text", "PNC error message").click()
+    cy.get(".b7-accordion__content .b7-inset-text__content").should(
+      "have.text",
+      "Create DH page on PNC, then Submit the case on Bichard 7"
+    )
+  })
+
+  it("should render PNC exception and not display the PNC error message accordion when message is empty", () => {
+    cy.task("insertCourtCaseWithPncException", {
+      exceptions: {
+        pncExceptionCode: "HO100402"
+      },
+      case: {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "01"
+      }
+    })
+
+    newUserLogin({ groups: [UserGroup.GeneralHandler] })
+    cy.visit(caseURL)
+
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions .moj-badge").should("have.text", "PNC Error")
+    cy.get(".b7-accordion").should("not.exist")
+  })
+
+  it("should render PNC exception on top of the exceptions list", () => {
+    cy.task("insertCourtCaseWithPncException", {
+      exceptions: {
+        pncExceptionCode: ExceptionCode.HO100302,
+        ho100108: true,
+        ho100332: true
+      },
+      case: {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "01"
+      }
+    })
+
+    newUserLogin({ groups: [UserGroup.GeneralHandler] })
+    cy.visit(caseURL)
+
+    cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
+    cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
+    cy.get("#exceptions .moj-exception-row").eq(0).find(".moj-badge").should("have.text", "PNC Error")
+    cy.get("#exceptions .moj-exception-row").eq(1).should("contain.text", "HO100332 - Offences match more than one CCR")
+    cy.get("#exceptions .moj-exception-row").eq(2).should("contain.text", "HO100108")
   })
 })

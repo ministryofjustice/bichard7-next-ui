@@ -74,8 +74,9 @@
                                 <ds:Reason>191</ds:Reason>
                             </ds:OffenceCode>
                         </ds:OffenceReason>
+                        {EXCEPTION_HO100332}
                     </ds:CriminalProsecutionReference>
-                    <ds:OffenceCategory Literal="Summary Motoring">CM</ds:OffenceCategory>
+                    <ds:OffenceCategory {EXCEPTION_HO100108} Literal="Summary Motoring">CM</ds:OffenceCategory>
                     <ds:ArrestDate>2010-12-01</ds:ArrestDate>
                     <ds:ChargeDate>2010-12-02</ds:ChargeDate>
                     <ds:ActualOffenceDateCode Literal="on or in">1</ds:ActualOffenceDateCode>
