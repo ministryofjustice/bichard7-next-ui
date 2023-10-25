@@ -15,7 +15,7 @@ const useStyles = createUseStyles({
       marginBottom: ".5rem"
     },
     "&:not(:last-child)": {
-      marginBottom: "25px"
+      marginBottom: "1.25rem"
     }
   }
 })

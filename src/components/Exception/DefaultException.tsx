@@ -15,12 +15,12 @@ type Props = {
 const useStyles = createUseStyles({
   exceptionRow: {
     "&:not(:last-child)": {
-      marginBottom: "25px"
+      marginBottom: "1.25rem"
     }
   },
 
   exceptionHelp: {
-    marginTop: "10px"
+    marginTop: ".62rem"
   }
 })
 
