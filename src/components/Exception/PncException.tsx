@@ -1,5 +1,4 @@
 import { GridCol, GridRow, Link } from "govuk-react"
-import getExceptionDefinition from "../../utils/getExceptionDefinition"
 import { createUseStyles } from "react-jss"
 import Badge from "../Badge"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
@@ -21,9 +20,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const pncExceptionDescriptions = {
-  [ExceptionCode.HO100302]: getExceptionDefinition(ExceptionCode.HO100302)?.shortDescription,
-  [ExceptionCode.HO100314]: getExceptionDefinition(ExceptionCode.HO100314)?.shortDescription,
+const pncExceptionDescriptions: Record<string, Record<string, string>> = {
   [ExceptionCode.HO100402]: {
     "I1008 - GWAY - ENQUIRY ERROR INVALID ADJUDICATION": "Check the offence matching",
     "I1008 - GWAY - ENQUIRY ERROR MORE THAN 3 DISPOSAL GROUPS": "ENQUIRY ERROR MORE THAN 3 DISPOSAL GROUPS",
@@ -34,20 +31,25 @@ const pncExceptionDescriptions = {
     "I1008 - GWAY - ENQUIRY ERROR TOO MANY DISPOSALS": "Check PNC record and re-submit",
     "I1036 - Error encountered processing enquiry": "Re-submit case to the PNC"
   },
-  [ExceptionCode.HO100404]: "Unexpected PNC communication error"
+  [ExceptionCode.HO100404]: {
+    "Unexpected PNC communication error": "Re-submit case to the PNC"
+  }
 }
 
-const getPncExceptionDescription = (code: ExceptionCode, message: string) => {
-  if (code === ExceptionCode.HO100402) {
-    return Object.entries(pncExceptionDescriptions[code]).find(([pncMessage]) => message.includes(pncMessage))?.[1]
+const getPncExceptionDescription = (code: ExceptionCode, message?: string) => {
+  const descriptions = pncExceptionDescriptions[code]
+
+  if (descriptions) {
+    return Object.entries(descriptions).find(([descriptionKey]) => message?.includes(descriptionKey))?.[1]
   }
 
-  return pncExceptionDescriptions[code as Exclude<keyof typeof pncExceptionDescriptions, ExceptionCode.HO100402>]
+  return message
 }
 
 const PncException = ({ code, message }: Props) => {
   const classes = useStyles()
   const isPncQueryExceptionCode = [ExceptionCode.HO100302, ExceptionCode.HO100314].includes(code)
+  const description = getPncExceptionDescription(code, message)
 
   return (
     <div className={`${classes.exceptionRow} moj-exception-row`}>
@@ -66,12 +68,14 @@ const PncException = ({ code, message }: Props) => {
 
       <GridRow className="exception-row exception-row__help">
         <GridCol>
-          <Accordion id={`exception-${code.toLocaleLowerCase()}`} heading="PNC error message">
-            <div className="b7-inset-text">
-              <span className="b7-inset-text__heading">{"PNC error message"}</span>
-              {getPncExceptionDescription(code, message)}
-            </div>
-          </Accordion>
+          {description && (
+            <Accordion id={`exception-${code.toLocaleLowerCase()}`} heading="PNC error message">
+              <div className="b7-inset-text">
+                <span className="b7-inset-text__heading">{"PNC error message"}</span>
+                <span className="b7-inset-text__content">{description}</span>
+              </div>
+            </Accordion>
+          )}
           <Link href={`/help/bichard-functionality/exceptions/resolution.html#${code}`} target="_blank">
             {"More information"}
           </Link>
