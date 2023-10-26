@@ -198,7 +198,7 @@ const listCourtCases = async (
             ? { triggerResolvedTimestamp: IsNull() }
             : {}),
           ...(reasons?.includes(Reason.Exceptions) ? { errorResolvedTimestamp: IsNull() } : {}),
-          ...(!reasons ? { resolutionTimestamp: IsNull() } : {})
+          ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: IsNull() } : {})
         })
       })
     )
@@ -208,7 +208,7 @@ const listCourtCases = async (
         ? { triggerResolvedTimestamp: Not(IsNull()) }
         : {}),
       ...(reasons?.includes(Reason.Exceptions) ? { errorResolvedTimestamp: Not(IsNull()) } : {}),
-      ...(!reasons ? { resolutionTimestamp: Not(IsNull()) } : {})
+      ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: Not(IsNull()) } : {})
     })
 
     if (resolvedByUsername !== undefined) {
