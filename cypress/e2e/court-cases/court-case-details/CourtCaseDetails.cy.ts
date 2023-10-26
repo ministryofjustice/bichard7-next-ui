@@ -7,6 +7,7 @@ import logAccessibilityViolations from "../../../support/logAccessibilityViolati
 // import resubmitCaseJson from "../../fixtures/expected_resubmit_01.json"
 import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
 import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
+import DummyHO100200Aho from "../../../../test/test-data/HO100200_1.json"
 import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 import { clickTab } from "../../../support/helpers"
 
@@ -476,7 +477,7 @@ describe("Court case details", () => {
 
   it("Should take the user to the case tab when exception is clicked", () => {
     cy.task("insertCourtCasesWithFields", [
-      { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
+      { orgForPoliceFilter: "01", hearingOutcome: DummyHO100200Aho.hearingOutcomeXml }
     ])
 
     cy.login("bichard01@example.com", "password")
@@ -485,7 +486,7 @@ describe("Court case details", () => {
 
     cy.get("h3").should("not.have.text", "Case")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
-    cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Arrest summons number / Case")
+    cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Organisation unit code / Case Details")
     cy.get(".exception-header .exception-location").click()
     cy.get("h3:visible").should("have.text", "Case")
   })
@@ -530,7 +531,24 @@ describe("Court case details", () => {
     cy.get(".triggers-help li").should("contain.text", "3096 Interim Disqualification from Driving")
   })
 
-  it("Should generate a more information link for each exception", () => {
+  it("Should generate a more information link for each exception (Non-PNC excception)", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "01", hearingOutcome: DummyHO100200Aho.hearingOutcomeXml }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("h3").should("not.have.text", "Case")
+    cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
+    cy.get(".exception-help a")
+      .contains("More information")
+      .should("exist")
+      .should("have.attr", "href", "/help/bichard-functionality/exceptions/resolution.html#HO100200")
+  })
+
+  it("Should generate a more information link for each exception (PNC excception)", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
     ])
@@ -541,7 +559,7 @@ describe("Court case details", () => {
 
     cy.get("h3").should("not.have.text", "Case")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
-    cy.get(".exception-help a")
+    cy.get(".exception-row__help a")
       .contains("More information")
       .should("exist")
       .should("have.attr", "href", "/help/bichard-functionality/exceptions/resolution.html#HO100302")

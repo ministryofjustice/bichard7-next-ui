@@ -188,14 +188,14 @@ jobs:
     parallelism: 5
     steps:
       - setup
+      - run:
+          command: ./.circleci/scripts/install-cypress.sh 2>&1
+          background: true
       - run: npm run install:assets
       - fetch_images:
           IMAGES: nodejs-20-2023
       - build_audit_logging_images
       - run: ./.circleci/scripts/build-ui.sh
-      - run:
-          command: ./.circleci/scripts/install-cypress.sh 2>&1
-          background: true
       - run:
           name: Wait for cypress install to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
