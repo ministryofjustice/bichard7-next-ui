@@ -27,9 +27,9 @@ interface BichardSwitchProps {
   href: string
 }
 
-const BichardSwitchBtn: React.FC<BichardSwitchProps> = ({ href }: BichardSwitchProps) => {
+const BichardSwitchButton: React.FC<BichardSwitchProps> = ({ href }: BichardSwitchProps) => {
   return (
-    <LinkButton className={"BichardSwitch"} style={{ marginBottom: 0 }} href={href + `&previousPath=${usePathname()}`}>
+    <LinkButton className={"BichardSwitch"} style={{ marginBottom: 0 }} href={href}>
       {"Switch to old Bichard"}
     </LinkButton>
   )
@@ -51,10 +51,15 @@ const Layout = ({
   bichardSwitch = { display: false, displaySwitchingSurveyFeedback: false }
 }: Props) => {
   const { basePath } = useRouter()
+  const pathname = usePathname()
   let bichardSwitchUrl = bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"
 
   if (bichardSwitch.displaySwitchingSurveyFeedback) {
-    bichardSwitchUrl = `${basePath}/switching-feedback?redirectTo=${encodeURIComponent(".." + bichardSwitchUrl)}`
+    const searchParams = new URLSearchParams({
+      previousPath: pathname,
+      redirectTo: `..${bichardSwitchUrl}`
+    })
+    bichardSwitchUrl = `${basePath}/switching-feedback?${searchParams}`
   }
 
   return (
@@ -69,7 +74,7 @@ const Layout = ({
           <PhaseBanner phase={"beta"} />
 
           <ConditionalRender isRendered={bichardSwitch.display}>
-            <BichardSwitchBtn href={bichardSwitchUrl} />
+            <BichardSwitchButton href={bichardSwitchUrl} />
           </ConditionalRender>
         </Banner>
         {children}
