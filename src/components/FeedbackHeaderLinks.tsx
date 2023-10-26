@@ -53,14 +53,18 @@ const SkipLink = styled.button`
 `
 type Props = {
   csrfToken: string
-  backLinkUrl: string
   skipLinkUrl?: string
 }
-const FeedbackHeaderLinks = ({ csrfToken, backLinkUrl, skipLinkUrl }: Props) => {
+const FeedbackHeaderLinks = ({ csrfToken, skipLinkUrl }: Props) => {
   return (
     <LinksRow>
       <BackLinkWrapper>
-        <BackLink href={backLinkUrl} onClick={function noRefCheck() {}}>
+        <BackLink
+          href="#"
+          onClick={() => {
+            history.back()
+          }}
+        >
           {"Back"}
         </BackLink>
       </BackLinkWrapper>

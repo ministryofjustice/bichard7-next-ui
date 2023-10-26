@@ -1,5 +1,4 @@
 import { Footer } from "govuk-react"
-import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
 import styled from "styled-components"
@@ -29,7 +28,7 @@ interface BichardSwitchProps {
 
 const BichardSwitchBtn: React.FC<BichardSwitchProps> = ({ href }: BichardSwitchProps) => {
   return (
-    <LinkButton className={"BichardSwitch"} style={{ marginBottom: 0 }} href={href + `&previousPath=${usePathname()}`}>
+    <LinkButton className={"BichardSwitch"} style={{ marginBottom: 0 }} href={href}>
       {"Switch to old Bichard"}
     </LinkButton>
   )
