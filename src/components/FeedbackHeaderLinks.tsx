@@ -1,7 +1,6 @@
 import { BackLink } from "govuk-react"
 import styled from "styled-components"
 import Form from "./Form"
-import { useRouter } from "next/router"
 
 const LinksRow = styled.div`
   display: flex;
@@ -57,15 +56,13 @@ type Props = {
   skipLinkUrl?: string
 }
 const FeedbackHeaderLinks = ({ csrfToken, skipLinkUrl }: Props) => {
-  const router = useRouter()
-
   return (
     <LinksRow>
       <BackLinkWrapper>
         <BackLink
           href="#"
           onClick={() => {
-            router.back()
+            history.back()
           }}
         >
           {"Back"}
