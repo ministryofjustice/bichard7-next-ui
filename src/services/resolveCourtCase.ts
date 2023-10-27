@@ -3,7 +3,7 @@ import { DataSource, EntityManager, UpdateResult } from "typeorm"
 import { ManualResolution } from "types/ManualResolution"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import { LEGACY_PHASE1 } from "../config"
+import { ENABLE_CORE_PHASE1 } from "../config"
 import { continueConductorWorkflow } from "./conductor"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
@@ -53,7 +53,7 @@ const resolveCourtCase = async (
       throw addNoteResult
     }
 
-    if (LEGACY_PHASE1 === "true") {
+    if (ENABLE_CORE_PHASE1 === "false") {
       // push audit log events
       const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
       if (isError(storeAuditLogResponse)) {
