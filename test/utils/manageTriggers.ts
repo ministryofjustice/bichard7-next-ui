@@ -23,7 +23,12 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
     .into(Trigger)
     .values(
       triggers.map((t) => {
-        return { ...t, errorId: caseId }
+        return {
+          resolvedAt: t.status === "Resolved" ? new Date() : null,
+          resolvedBy: t.status === "Resolved" ? "Dummy User" : null,
+          errorId: caseId,
+          ...t
+        }
       })
     )
     .execute()
