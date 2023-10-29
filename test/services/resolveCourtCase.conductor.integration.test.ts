@@ -1,5 +1,5 @@
 /* eslint-disable import/first */
-process.env.LEGACY_PHASE1 = "false"
+process.env.ENABLE_CORE_PHASE1 = "true"
 
 import { continueConductorWorkflow } from "services/conductor"
 import CourtCase from "services/entities/CourtCase"
