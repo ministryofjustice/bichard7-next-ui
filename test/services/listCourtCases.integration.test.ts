@@ -1,28 +1,19 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import "reflect-metadata"
-import { DataSource } from "typeorm"
+import Note from "services/entities/Note"
+import User from "services/entities/User"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
-import listCourtCases from "../../src/services/listCourtCases"
+import { DataSource } from "typeorm"
+import { CaseState, Reason } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
-import deleteFromEntity from "../utils/deleteFromEntity"
-import {
-  insertDummyCourtCasesWithNotes,
-  insertDummyCourtCasesWithTriggers,
-  insertCourtCasesWithFields,
-  insertMultipleDummyCourtCases
-} from "../utils/insertCourtCases"
-import insertException from "../utils/manageExceptions"
-import { isError } from "../../src/types/Result"
+import { ResolutionStatus } from "types/ResolutionStatus"
+import { UserGroup } from "types/UserGroup"
 import CourtCase from "../../src/services/entities/CourtCase"
 import Trigger from "../../src/services/entities/Trigger"
 import getDataSource from "../../src/services/getDataSource"
-import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
-import Note from "services/entities/Note"
-import { ResolutionStatus } from "types/ResolutionStatus"
-import User from "services/entities/User"
-import { CaseState, Reason } from "types/CaseListQueryParams"
-import { UserGroup } from "types/UserGroup"
+import listCourtCases from "../../src/services/listCourtCases"
+import { isError } from "../../src/types/Result"
 import {
   exceptionHandlerHasAccessTo,
   generalHandlerHasAccessTo,
@@ -32,6 +23,15 @@ import {
   triggerAndExceptionHandlerHasAccessTo,
   triggerHandlerHasAccessTo
 } from "../helpers/hasAccessTo"
+import deleteFromEntity from "../utils/deleteFromEntity"
+import {
+  insertCourtCasesWithFields,
+  insertDummyCourtCasesWithNotes,
+  insertDummyCourtCasesWithTriggers,
+  insertMultipleDummyCourtCases
+} from "../utils/insertCourtCases"
+import insertException from "../utils/manageExceptions"
+import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
@@ -79,7 +79,7 @@ describe("listCourtCases", () => {
 
   it("Should call leftJoinAndSelectTriggersQuery with the correct arguments", async () => {
     const excludedTriggers = ["TRPDUMMY"]
-    const caseState = "Unresolved and resolved"
+    const caseState = "Resolved"
     const excludedTriggersUser = Object.assign({ excludedTriggers: excludedTriggers }, testUser)
 
     await listCourtCases(dataSource, { maxPageItems: "1", caseState: caseState }, excludedTriggersUser)
@@ -1483,36 +1483,6 @@ describe("listCourtCases", () => {
 
       expect(cases).toHaveLength(3)
       expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([
-        resolutionTimestamp,
-        resolutionTimestamp,
-        resolutionTimestamp
-      ])
-    })
-
-    it("Should return all cases if case state is 'Unresolved and resolved'", async () => {
-      const resolutionTimestamp = new Date()
-      await insertCourtCasesWithFields(
-        [null, resolutionTimestamp, resolutionTimestamp, resolutionTimestamp].map((timeStamp) => ({
-          resolutionTimestamp: timeStamp,
-          orgForPoliceFilter: orgCode
-        }))
-      )
-
-      const result = await listCourtCases(
-        dataSource,
-        {
-          maxPageItems: "100",
-          caseState: "Unresolved and resolved"
-        },
-        testUser
-      )
-
-      expect(isError(result)).toBeFalsy()
-      const { result: cases } = result as ListCourtCaseResult
-
-      expect(cases).toHaveLength(4)
-      expect(cases.map((c) => c.resolutionTimestamp)).toStrictEqual([
-        null,
         resolutionTimestamp,
         resolutionTimestamp,
         resolutionTimestamp
