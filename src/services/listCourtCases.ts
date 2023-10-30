@@ -194,13 +194,21 @@ const listCourtCases = async (
     query.andWhere(
       new Brackets((qb) => {
         qb.where({
-          resolutionTimestamp: IsNull()
-        }).orWhere("trigger.status = 1")
+          ...(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
+            ? { triggerResolvedTimestamp: IsNull() }
+            : {}),
+          ...(reasons?.includes(Reason.Exceptions) ? { errorResolvedTimestamp: IsNull() } : {}),
+          ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: IsNull() } : {})
+        })
       })
     )
   } else if (caseState === "Resolved") {
     query.andWhere({
-      resolutionTimestamp: Not(IsNull())
+      ...(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
+        ? { triggerResolvedTimestamp: Not(IsNull()) }
+        : {}),
+      ...(reasons?.includes(Reason.Exceptions) ? { errorResolvedTimestamp: Not(IsNull()) } : {}),
+      ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: Not(IsNull()) } : {})
     })
 
     if (resolvedByUsername !== undefined) {
