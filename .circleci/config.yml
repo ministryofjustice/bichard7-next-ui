@@ -94,7 +94,7 @@ jobs:
   lint:
     executor:
       name: node/default
-      tag: "16.20.2"
+      tag: "20.6.1"
     steps:
       - checkout
       - node/install-packages:
@@ -106,7 +106,7 @@ jobs:
   unit_test:
     executor:
       name: node/default
-      tag: "16.20.2"
+      tag: "20.6.1"
     steps:
       - checkout
       - node/install-packages:
@@ -118,7 +118,7 @@ jobs:
   cypress_component_test:
     executor:
       name: node/default
-      tag: "16.20.2"
+      tag: "20.6.1"
     steps:
       - checkout
       - node/install-packages:
