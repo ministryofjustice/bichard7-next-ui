@@ -22,7 +22,6 @@ const useStyles = createUseStyles({
 
 const ActionLink = ({ children, className, onClick }: Props) => {
   const classes = useStyles()
-
   return (
     <button onClick={onClick} className={`${classes.button} ${className} moj-action-link`}>
       {children}

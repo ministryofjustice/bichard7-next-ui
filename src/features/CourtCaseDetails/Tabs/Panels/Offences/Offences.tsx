@@ -17,6 +17,9 @@ export const Offences = ({ className, offences, onOffenceSelected, selectedOffen
         offence={offences[selectedOffenceIndex - 1]}
         offencesCount={offences.length}
         onBackToAllOffences={() => onOffenceSelected(undefined)}
+        onNextClick={() => onOffenceSelected(selectedOffenceIndex + 1)}
+        onPreviousClick={() => onOffenceSelected(selectedOffenceIndex - 1)}
+        selectedOffenceIndex={selectedOffenceIndex}
       />
     </>
   ) : (

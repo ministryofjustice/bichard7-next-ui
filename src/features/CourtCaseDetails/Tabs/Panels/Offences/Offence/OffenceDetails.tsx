@@ -1,22 +1,45 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
-import { Heading, Table } from "govuk-react"
+import { GridCol, GridRow, Heading, Table } from "govuk-react"
 import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
 import { TableRow } from "../../TableRow"
 import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { StartDate } from "./StartDate"
+import SecondaryButton from "components/SecondaryButton"
+import { createUseStyles } from "react-jss"
 
 interface OffenceDetailsProps {
   className: string
   offence: Offence
   offencesCount: number
   onBackToAllOffences: () => void
+  onNextClick: () => void
+  onPreviousClick: () => void
+  selectedOffenceIndex: number
 }
+const useStyles = createUseStyles({
+  button: {
+    textAlign: "right"
+  },
 
-export const OffenceDetails = ({ className, offence, offencesCount, onBackToAllOffences }: OffenceDetailsProps) => {
+  nextButton: {
+    marginLeft: "30px"
+  }
+})
+
+export const OffenceDetails = ({
+  className,
+  offence,
+  offencesCount,
+  onBackToAllOffences,
+  onNextClick,
+  onPreviousClick,
+  selectedOffenceIndex
+}: OffenceDetailsProps) => {
+  const classes = useStyles()
   const getOffenceCategory = (offenceCode: string | undefined) => {
     let offenceCategoryWithDescription = offenceCode
     offenceCategory.forEach((category) => {
@@ -43,7 +66,21 @@ export const OffenceDetails = ({ className, offence, offencesCount, onBackToAllO
 
   return (
     <div className={className}>
-      <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
+      <GridRow>
+        <GridCol>
+          <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
+        </GridCol>
+        <GridCol className={classes.button}>
+          {selectedOffenceIndex !== 1 && (
+            <SecondaryButton onClick={() => onPreviousClick()}>{"Previous offence"}</SecondaryButton>
+          )}
+          {selectedOffenceIndex !== offencesCount && (
+            <SecondaryButton className={classes.nextButton} onClick={() => onNextClick()}>
+              {"Next offence"}
+            </SecondaryButton>
+          )}
+        </GridCol>
+      </GridRow>
       <Heading as="h3" size="MEDIUM">
         {`Offence ${offence.CourtOffenceSequenceNumber} of ${offencesCount}`}
       </Heading>

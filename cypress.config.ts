@@ -5,6 +5,7 @@ import User from "./src/services/entities/User"
 import deleteFromEntity from "./test/utils/deleteFromEntity"
 import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import {
+  getAhoWithMultipleOffences,
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithNotesAndLock,
@@ -70,6 +71,12 @@ export default defineConfig({
 
         insertCourtCasesWithFields(cases: Partial<CourtCase>[]) {
           return insertCourtCasesWithFields(cases)
+        },
+
+        insertCourtCaseWithMultipleOffences(params: { case: Partial<CourtCase>; offenceCount: number }) {
+          return insertCourtCasesWithFields([
+            { ...params.case, hearingOutcome: getAhoWithMultipleOffences(params.offenceCount) }
+          ])
         },
 
         async getAllFeedbacksFromDatabase() {
