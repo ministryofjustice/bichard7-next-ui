@@ -17,6 +17,7 @@ import {
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 import Form from "../../components/Form"
 import ResolvedTag from "components/ResolvedTag"
+import SecondaryButton from "components/SecondaryButton"
 
 interface Props {
   courtCase: DisplayFullCourtCase
@@ -177,15 +178,9 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken }: 
         </ConditionalRender>
         <ConditionalRender isRendered={!hasCaseLock}>
           <a href={basePath}>
-            <Button
-              id="return-to-case-list"
-              className={classes.button}
-              buttonColour={gdsLightGrey}
-              buttonTextColour={textPrimary}
-              buttonShadowColour={gdsMidGrey}
-            >
+            <SecondaryButton id="return-to-case-list" className={classes.button}>
               {"Return to case list"}
-            </Button>
+            </SecondaryButton>
           </a>
         </ConditionalRender>
       </ButtonContainer>

@@ -1,14 +1,15 @@
 import { Button } from "govuk-react"
+import { ReactNode } from "react"
 import { gdsLightGrey, textPrimary, gdsMidGrey } from "utils/colours"
 
 type Props = {
-  text: string
+  children: ReactNode
   id?: string
   className?: string
   onClick?: () => void
 }
 
-const SecondaryButton = ({ id, text, className, onClick }: Props) => (
+const SecondaryButton = ({ id, children, className, onClick }: Props) => (
   <Button
     onClick={onClick}
     id={id}
@@ -17,7 +18,7 @@ const SecondaryButton = ({ id, text, className, onClick }: Props) => (
     buttonTextColour={textPrimary}
     buttonShadowColour={gdsMidGrey}
   >
-    {text}
+    {children}
   </Button>
 )
 

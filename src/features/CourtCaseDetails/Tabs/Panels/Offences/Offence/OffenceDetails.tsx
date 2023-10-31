@@ -71,9 +71,13 @@ export const OffenceDetails = ({
           <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
         </GridCol>
         <GridCol className={classes.button}>
-          {selectedOffenceIndex !== 1 && <SecondaryButton text="Previous offence" onClick={() => onPreviousClick()} />}
+          {selectedOffenceIndex !== 1 && (
+            <SecondaryButton onClick={() => onPreviousClick()}>{"Previous offence"}</SecondaryButton>
+          )}
           {selectedOffenceIndex !== offencesCount && (
-            <SecondaryButton text="Next offence" className={classes.nextButton} onClick={() => onNextClick()} />
+            <SecondaryButton className={classes.nextButton} onClick={() => onNextClick()}>
+              {"Next offence"}
+            </SecondaryButton>
           )}
         </GridCol>
       </GridRow>
