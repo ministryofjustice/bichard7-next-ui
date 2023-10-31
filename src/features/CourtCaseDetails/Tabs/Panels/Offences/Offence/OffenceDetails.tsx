@@ -10,7 +10,6 @@ import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult
 import { StartDate } from "./StartDate"
 import SecondaryButton from "components/SecondaryButton"
 import { createUseStyles } from "react-jss"
-import { text } from "stream/consumers"
 
 interface OffenceDetailsProps {
   className: string

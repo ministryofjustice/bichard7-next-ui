@@ -8,11 +8,15 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import createAuditLogRecord from "../helpers/createAuditLogRecord"
 import DummyMultipleOffencesAho from "../test-data/HO100102_1.json"
+import DummyCustomOffences from "../test-data/HO100102_1_multiple_offences.json"
 import DummyCourtCase from "./DummyCourtCase"
 import { insertLockUsers } from "./insertLockUsers"
 import insertManyIntoDynamoTable from "./insertManyIntoDynamoTable"
 import { insertNoteUser } from "./insertNoteUser"
 
+const getAhoWithMultipleOffences = (offenceCount: number) => {
+  DummyCustomOffences.hearingOutcomeXml
+}
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
   (await getDataSource()).getRepository(CourtCase).create({
     ...DummyCourtCase,
