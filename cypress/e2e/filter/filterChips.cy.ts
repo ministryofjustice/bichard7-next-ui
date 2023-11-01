@@ -401,13 +401,13 @@ describe("Case list", () => {
       // Check if the filter chip is applied to the "Filters applied" section at the top of the case list
       cy.contains("Apply filters").click()
       cy.get(".moj-filter-tags").children().contains("Cases locked to me").should("exist")
-      cy.get("#filter-button").contains("Show filter").click()
+      cy.get("#filter-button").contains("Show search panel").click()
       cy.get("#my-cases-filter").should("be.checked")
 
       // Clears filter chip using `Clear filters` button and check the checkbox is deselected
       cy.contains("Hide filter").click()
       cy.get(".moj-filter-tags").contains("Clear filters").click()
-      cy.get("#filter-button").contains("Show filter").click()
+      cy.get("#filter-button").contains("Show search panel").click()
       cy.get("#my-cases-filter").should("not.be.checked")
     })
 
