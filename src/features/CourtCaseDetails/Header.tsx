@@ -62,13 +62,13 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken, pr
 
   const leaveAndUnlockParams = getUnlockPath(courtCase)
 
+  let reallocatePath = `${basePath}${usePathname()}/reallocate`
   let leaveAndUnlockUrl = `${basePath}?${leaveAndUnlockParams.toString()}`
 
   if (previousPath) {
     leaveAndUnlockUrl += `&${previousPath}`
+    reallocatePath += `?previousPath=${encodeURIComponent(previousPath)}`
   }
-
-  const reallocatePath = `${basePath}${usePathname()}/reallocate`
 
   const caseIsViewOnly = !isLockedByCurrentUser(courtCase, user.username)
   const hasCaseLock = isLockedByCurrentUser(courtCase, user.username)

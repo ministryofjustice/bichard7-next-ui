@@ -36,7 +36,10 @@ export const getServerSideProps = withMultipleServerSideProps(
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query, req, res, csrfToken, formData } = context as AuthenticationServerSidePropsContext &
       CsrfServerSidePropsContext
-    const { courtCaseId } = query as { courtCaseId: string }
+    const { courtCaseId, previousPath } = query as {
+      courtCaseId: string
+      previousPath: string
+    }
 
     const dataSource = await getDataSource()
     const courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
@@ -62,6 +65,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props = {
       csrfToken,
+      previousPath,
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
@@ -88,9 +92,16 @@ interface Props {
   lockedByAnotherUser: boolean
   noteTextError?: string
   csrfToken: string
+  previousPath: string
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser, csrfToken }: Props) => {
+const CourtCaseDetailsPage: NextPage<Props> = ({
+  courtCase,
+  user,
+  lockedByAnotherUser,
+  csrfToken,
+  previousPath
+}: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
   const classes = useCustomStyles()
   const { basePath } = useRouter()
@@ -100,6 +111,12 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
     setNoteRemainingLength(MAX_NOTE_LENGTH - event.currentTarget.value.length)
   }
 
+  let backLink = `${basePath}/court-cases/${courtCase.errorId}`
+
+  if (previousPath) {
+    backLink += `?previousPath=${encodeURIComponent(previousPath)}`
+  }
+
   return (
     <>
       <Head>
@@ -107,7 +124,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
         <meta name="description" content="Case Reallocation | Bichard7" />
       </Head>
       <Layout user={user}>
-        <BackLink href={`${basePath}/court-cases/${courtCase.errorId}`} onClick={function noRefCheck() {}}>
+        <BackLink href={backLink} onClick={function noRefCheck() {}}>
           {"Case Details"}
         </BackLink>
         <HeaderContainer id="header-container">
@@ -148,7 +165,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
                 <Button id="Reallocate" type="submit">
                   {"Reallocate"}
                 </Button>
-                <Link href={`${basePath}/court-cases/${courtCase.errorId}`}>{"Cancel"}</Link>
+                <Link href={backLink}>{"Cancel"}</Link>
               </ButtonsGroup>
             </Fieldset>
           </Form>
