@@ -104,7 +104,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
     <>
       <Head>
         <title>{"Case Reallocation | Bichard7"}</title>
-        <meta name="description" content="Case Reallocation| Bichard7" />
+        <meta name="description" content="Case Reallocation | Bichard7" />
       </Head>
       <Layout user={user}>
         <BackLink href={`${basePath}/court-cases/${courtCase.errorId}`} onClick={function noRefCheck() {}}>
