@@ -37,6 +37,7 @@ interface CaseDetailsRowProps {
   unlockPath: string
   reasonCell: JSX.Element
   lockTag: JSX.Element
+  previousPath: string | null
 }
 
 const useStyles = createUseStyles({
@@ -66,7 +67,8 @@ export const CaseDetailsRow = ({
   ptiurn,
   rowClassName,
   reasonCell,
-  lockTag
+  lockTag,
+  previousPath
 }: CaseDetailsRowProps) => {
   const [showPreview, setShowPreview] = useState(true)
   const { basePath } = useRouter()
@@ -80,6 +82,11 @@ export const CaseDetailsRow = ({
   const caseDetailsCellClass = !hasTriggers && showPreview ? "" : customClasses["border-bottom-none"]
   const notePreviewCellClass = !hasTriggers && !showPreview ? "" : customClasses["border-bottom-none"]
 
+  let previousPathWebSafe = ""
+  if (previousPath) {
+    previousPathWebSafe = `?previousPath=${encodeURIComponent(previousPath)}`
+  }
+
   return (
     <>
       <Table.Row className={`${classes.caseDetailsRow} ${rowClassName}`}>
@@ -89,7 +96,7 @@ export const CaseDetailsRow = ({
           </ConditionalRender>
         </Table.Cell>
         <Table.Cell className={caseDetailsCellClass}>
-          <Link href={`${basePath}/court-cases/${errorId}`}>
+          <Link href={`${basePath}/court-cases/${errorId}${previousPathWebSafe}`}>
             {defendantName}
             <br />
             <ResolvedTag isResolved={isResolved} />

@@ -25,6 +25,7 @@ interface Props {
   canReallocate: boolean
   canResolveAndSubmit: boolean
   csrfToken: string
+  previousPath: string
 }
 
 const useStyles = createUseStyles({
@@ -55,7 +56,8 @@ const CourtCaseDetails: React.FC<Props> = ({
   errorLockedByAnotherUser,
   canReallocate,
   canResolveAndSubmit,
-  csrfToken
+  csrfToken,
+  previousPath
 }) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
@@ -77,7 +79,13 @@ const CourtCaseDetails: React.FC<Props> = ({
 
   return (
     <>
-      <Header courtCase={courtCase} user={user} canReallocate={canReallocate} csrfToken={csrfToken} />
+      <Header
+        previousPath={previousPath}
+        courtCase={courtCase}
+        user={user}
+        canReallocate={canReallocate}
+        csrfToken={csrfToken}
+      />
       <CourtCaseDetailsSummaryBox
         asn={courtCase.asn}
         courtCode={courtCase.courtCode}
