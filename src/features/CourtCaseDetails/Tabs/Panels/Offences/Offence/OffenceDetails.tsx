@@ -29,7 +29,7 @@ const useStyles = createUseStyles({
     marginLeft: "30px"
   },
 
-  table: {
+  wrapper: {
     "& td": {
       width: "50%"
     }
@@ -71,7 +71,7 @@ export const OffenceDetails = ({
   }
 
   return (
-    <div className={className}>
+    <div className={`${className} ${classes.wrapper}`}>
       <GridRow>
         <GridCol>
           <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
@@ -90,7 +90,7 @@ export const OffenceDetails = ({
       <Heading as="h3" size="MEDIUM">
         {`Offence ${offence.CourtOffenceSequenceNumber} of ${offencesCount}`}
       </Heading>
-      <Table className={classes.table}>
+      <Table>
         <TableRow label="Offence code" value={getOffenceCode(offence)} />
         <TableRow label="Title" value={offence.OffenceTitle} />
         <TableRow label="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
@@ -114,12 +114,12 @@ export const OffenceDetails = ({
         {"Hearing result"}
       </Heading>
       {offence.Result.map((result, index) => {
-        return <HearingResult className={classes.table} result={result} key={index} />
+        return <HearingResult result={result} key={index} />
       })}
       <Heading as="h4" size="MEDIUM">
         {"Qualifier"}
       </Heading>
-      <Table className={classes.table}>
+      <Table>
         <TableRow label="Code" value={"TODO"} />
       </Table>
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
