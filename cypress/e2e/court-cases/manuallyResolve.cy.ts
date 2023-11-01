@@ -48,7 +48,7 @@ describe("Manually resolve a case", () => {
 
     cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
     cy.get("button").contains("Mark as manually resolved").click()
-    cy.get("H2").should("have.text", "Resolve Case")
+    cy.get("H1").should("have.text", "Resolve Case")
     cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
 
     cy.get('select[name="reason"]').select("PNCRecordIsAccurate")
@@ -82,7 +82,7 @@ describe("Manually resolve a case", () => {
 
     cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
     cy.get("button").contains("Mark as manually resolved").click()
-    cy.get("H2").should("have.text", "Resolve Case")
+    cy.get("H1").should("have.text", "Resolve Case")
     cy.findByText("Case Details").should("have.attr", "href", "/bichard/court-cases/0")
 
     cy.get('select[name="reason"]').select("Reallocated")
