@@ -127,9 +127,17 @@ describe("Case list", () => {
 
     it.only("Should display the resolved badge on cases marked as resolved", () => {
       cy.task("insertCourtCasesWithFields", [
-        { errorStatus: "Resolved", resolutionTimestamp: new Date(), orgForPoliceFilter: "01" },
+        {
+          errorStatus: "Resolved",
+          resolutionTimestamp: new Date(),
+          errorLockedByUsername: "aUser",
+          triggerLockedByUsername: "anotherUser",
+          errorResolvedBy: "anybody",
+          errorResolvedTimestamp: new Date(),
+          orgForPoliceFilter: "01"
+        },
         { resolutionTimestamp: null, orgForPoliceFilter: "01" },
-        { errorStatus: "Resolved", resolutionTimestamp: new Date(), orgForPoliceFilter: "01" }
+        { resolutionTimestamp: null, orgForPoliceFilter: "01" }
       ])
 
       loginAndGoToUrl()
