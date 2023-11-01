@@ -18,6 +18,7 @@ interface Props {
   aho: AnnotatedHearingOutcome
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
+  previousPath: string
 }
 
 const useStyles = createUseStyles({
@@ -45,12 +46,18 @@ const SeparatorLine = styled.div`
   }
 `
 
-const Exceptions = ({ aho, onNavigate, canResolveAndSubmit }: Props) => {
+const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath }: Props) => {
   const classes = useStyles()
   const pncExceptions = aho.Exceptions.filter(({ code }) => isPncException(code))
   const otherExceptions = aho.Exceptions.filter(({ code }) => !isPncException(code))
 
   const router = useRouter()
+
+  let resolveLink = `${router.basePath}${usePathname()}/resolve`
+
+  if (previousPath) {
+    resolveLink += `?previousPath=${encodeURIComponent(previousPath)}`
+  }
 
   return (
     <>
@@ -69,7 +76,7 @@ const Exceptions = ({ aho, onNavigate, canResolveAndSubmit }: Props) => {
       <ConditionalRender isRendered={canResolveAndSubmit && aho.Exceptions.length > 0}>
         <div className={classes.buttonContainer}>
           <LinkButton
-            href={`${router.basePath}${usePathname()}/resolve`}
+            href={resolveLink}
             className="b7-manually-resolve-button"
             buttonColour={gdsLightGrey}
             buttonTextColour={textPrimary}

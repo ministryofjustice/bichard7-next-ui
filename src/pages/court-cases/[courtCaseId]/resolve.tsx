@@ -33,7 +33,10 @@ export const getServerSideProps = withMultipleServerSideProps(
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query, req, res, csrfToken, formData } = context as AuthenticationServerSidePropsContext &
       CsrfServerSidePropsContext
-    const { courtCaseId } = query as { courtCaseId: string }
+    const { courtCaseId, previousPath } = query as {
+      courtCaseId: string
+      previousPath: string
+    }
 
     const dataSource = await getDataSource()
     const courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
@@ -55,6 +58,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props: Props = {
       csrfToken,
+      previousPath,
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
@@ -81,7 +85,13 @@ export const getServerSideProps = withMultipleServerSideProps(
         currentUser
       )
 
-      return redirectTo(`/court-cases/${courtCase.errorId}`)
+      let redirectUrl = `/court-cases/${courtCase.errorId}`
+
+      if (previousPath) {
+        redirectUrl += `?previousPath=${encodeURIComponent(previousPath)}`
+      }
+
+      return redirectTo(redirectUrl)
     }
 
     return { props }
@@ -95,6 +105,7 @@ interface Props {
   reasonTextError?: string
   selectedReason?: ResolutionReasonKey
   csrfToken: string
+  previousPath: string
 }
 
 const ResolveCourtCasePage: NextPage<Props> = ({
@@ -103,9 +114,16 @@ const ResolveCourtCasePage: NextPage<Props> = ({
   lockedByAnotherUser,
   selectedReason,
   reasonTextError,
-  csrfToken
+  csrfToken,
+  previousPath
 }: Props) => {
   const { basePath } = useRouter()
+
+  let backLink = `${basePath}/court-cases/${courtCase.errorId}`
+
+  if (previousPath) {
+    backLink += `?previousPath=${encodeURIComponent(previousPath)}`
+  }
 
   return (
     <>
@@ -114,7 +132,7 @@ const ResolveCourtCasePage: NextPage<Props> = ({
           <title>{"Resolve Case | Bichard7"}</title>
           <meta name="description" content="Resolve Case | Bichard7" />
         </Head>
-        <BackLink href={`${basePath}/court-cases/${courtCase.errorId}`} onClick={function noRefCheck() {}}>
+        <BackLink href={backLink} onClick={function noRefCheck() {}}>
           {"Case Details"}
         </BackLink>
         <HeaderContainer id="header-container">
@@ -164,7 +182,7 @@ const ResolveCourtCasePage: NextPage<Props> = ({
                 <Button id="Resolve" type="submit">
                   {"Resolve"}
                 </Button>
-                <Link href={`${basePath}/court-cases/${courtCase.errorId}`}>{"Cancel"}</Link>
+                <Link href={backLink}>{"Cancel"}</Link>
               </ButtonsGroup>
             </Fieldset>
           </Form>

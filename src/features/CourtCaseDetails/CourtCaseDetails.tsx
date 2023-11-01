@@ -153,6 +153,7 @@ const CourtCaseDetails: React.FC<Props> = ({
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}
             csrfToken={csrfToken}
+            previousPath={previousPath}
           />
         </GridCol>
       </GridRow>
