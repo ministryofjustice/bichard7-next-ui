@@ -101,7 +101,7 @@ describe("Case list", () => {
       cy.findByText(`Case00003`).should("exist")
       cy.findByText(`Case00004`).should("exist")
 
-      it.skip("Should not show pagination buttons when there are 0 cases", () => {
+      it("Should not show pagination buttons when there are 0 cases", () => {
         loginAndGoToUrl()
 
         cy.get(".moj-pagination__item").should("not.exist")
