@@ -1,11 +1,14 @@
 import { forces } from "@moj-bichard7-developers/bichard7-next-data"
 import ButtonsGroup from "components/ButtonsGroup"
 import ConditionalRender from "components/ConditionalRender"
+import HeaderContainer from "components/Header/HeaderContainer"
+import HeaderRow from "components/Header/HeaderRow"
 import Layout from "components/Layout"
 import { MAX_NOTE_LENGTH } from "config"
-import { Button, Fieldset, FormGroup, Heading, HintText, Label, Link, Select, TextArea } from "govuk-react"
+import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, Label, Link, Select, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
+import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
@@ -99,14 +102,21 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
 
   return (
     <>
+      <Head>
+        <title>{"Case Reallocation | Bichard7"}</title>
+        <meta name="description" content="Case Reallocation| Bichard7" />
+      </Head>
       <Layout user={user}>
-        <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
-          <title>{"Case Reallocation | Bichard7"}</title>
-          <meta name="description" content="Case Reallocation| Bichard7" />
-        </Heading>
-        <Heading as="h2" size="MEDIUM">
-          {"Case reallocation"}
-        </Heading>
+        <BackLink href={`${basePath}/court-cases/${courtCase.errorId}`} onClick={function noRefCheck() {}}>
+          {"Case Details"}
+        </BackLink>
+        <HeaderContainer id="header-container">
+          <HeaderRow>
+            <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
+              {"Case reallocation"}
+            </Heading>
+          </HeaderRow>
+        </HeaderContainer>
         <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
         <ConditionalRender isRendered={!lockedByAnotherUser}>
           <Form method="POST" action="#" csrfToken={csrfToken}>

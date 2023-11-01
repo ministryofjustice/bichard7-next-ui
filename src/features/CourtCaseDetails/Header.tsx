@@ -1,5 +1,7 @@
 import Badge from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
+import HeaderContainer from "components/Header/HeaderContainer"
+import HeaderRow from "components/Header/HeaderRow"
 import LinkButton from "components/LinkButton"
 import LockedTag from "components/LockedTag"
 import ResolvedTag from "components/ResolvedTag"
@@ -37,10 +39,6 @@ const ButtonContainer = styled.div`
   gap: 12px;
 `
 
-const HeaderContainer = styled.div`
-  margin-top: 30px;
-`
-
 const useStyles = createUseStyles({
   button: {
     marginBottom: 0
@@ -74,15 +72,6 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken, pr
 
   const caseIsViewOnly = !isLockedByCurrentUser(courtCase, user.username)
   const hasCaseLock = isLockedByCurrentUser(courtCase, user.username)
-
-  const HeaderRow = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    & > #exceptions-locked-tag {
-      padding-top: 10px;
-    }
-  `
 
   const getLockHolder = (
     username: string,
