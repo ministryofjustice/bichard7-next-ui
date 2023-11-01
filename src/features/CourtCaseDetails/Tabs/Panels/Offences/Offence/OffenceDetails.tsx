@@ -27,6 +27,12 @@ const useStyles = createUseStyles({
 
   nextButton: {
     marginLeft: "30px"
+  },
+
+  table: {
+    "& td": {
+      width: "50%"
+    }
   }
 })
 
@@ -84,7 +90,7 @@ export const OffenceDetails = ({
       <Heading as="h3" size="MEDIUM">
         {`Offence ${offence.CourtOffenceSequenceNumber} of ${offencesCount}`}
       </Heading>
-      <Table>
+      <Table className={classes.table}>
         <TableRow label="Offence code" value={getOffenceCode(offence)} />
         <TableRow label="Title" value={offence.OffenceTitle} />
         <TableRow label="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
@@ -108,12 +114,12 @@ export const OffenceDetails = ({
         {"Hearing result"}
       </Heading>
       {offence.Result.map((result, index) => {
-        return <HearingResult result={result} key={index} />
+        return <HearingResult className={classes.table} result={result} key={index} />
       })}
       <Heading as="h4" size="MEDIUM">
         {"Qualifier"}
       </Heading>
-      <Table>
+      <Table className={classes.table}>
         <TableRow label="Code" value={"TODO"} />
       </Table>
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />

@@ -30,9 +30,10 @@ export const formatDuration = (durationLength: number, durationUnit: string): st
 
 interface HearingResultProps {
   result: Result
+  className?: string
 }
 
-export const HearingResult = ({ result }: HearingResultProps) => {
+export const HearingResult = ({ result, className }: HearingResultProps) => {
   const getPleaStatus = (pleaCode: string | undefined) => {
     let pleaStatusDescription = pleaCode
     pleaStatus.forEach((plea) => {
@@ -54,7 +55,7 @@ export const HearingResult = ({ result }: HearingResultProps) => {
   }
 
   return (
-    <Table>
+    <Table className={className}>
       <TableRow label="CJS Code" value={result.CJSresultCode} />
       <TableRow
         label="Result hearing type"
