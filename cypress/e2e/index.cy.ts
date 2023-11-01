@@ -127,9 +127,9 @@ describe("Case list", () => {
 
     it.only("Should display the resolved badge on cases marked as resolved", () => {
       cy.task("insertCourtCasesWithFields", [
-        { resolutionTimestamp: "2023-10-31T12:40:19.298Z", orgForPoliceFilter: "01" },
+        { errorStatus: "Resolved", resolutionTimestamp: new Date(), orgForPoliceFilter: "01" },
         { resolutionTimestamp: null, orgForPoliceFilter: "01" },
-        { resolutionTimestamp: new Date(), orgForPoliceFilter: "01" }
+        { errorStatus: "Resolved", resolutionTimestamp: new Date(), orgForPoliceFilter: "01" }
       ])
 
       loginAndGoToUrl()
@@ -138,10 +138,10 @@ describe("Case list", () => {
       cy.get(".govuk-checkboxes__item").contains("View resolved cases").click()
       cy.get("#search").contains("Apply filters").click()
 
-      // cy.get("tr").not(":first").eq(0).get("td:nth-child(4)").contains(`Case00000`)
-      // cy.get("tr").not(":first").eq(0).contains(`Resolved`).should("exist")
-      // cy.get("tr").not(":first").eq(1).contains(`Resolved`).should("not.exist")
-      // cy.get("tr").not(":first").eq(2).contains(`Resolved`).should("exist")
+      cy.get("tr").not(":first").eq(0).get("td:nth-child(4)").contains(`Case00000`)
+      cy.get("tr").not(":first").eq(0).contains(`Resolved`).should("exist")
+      cy.get("tr").not(":first").eq(1).contains(`Resolved`).should("not.exist")
+      cy.get("tr").not(":first").eq(2).contains(`Resolved`).should("exist")
     })
 
     it("Should display the correct number of user-created notes on cases & allow the sort by the number of notes", () => {
