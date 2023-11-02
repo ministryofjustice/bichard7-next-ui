@@ -1,12 +1,12 @@
 import CourtCase from "services/entities/CourtCase"
+import Trigger from "services/entities/Trigger"
 import getDataSource from "services/getDataSource"
 import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import { DataSource, Repository, SelectQueryBuilder } from "typeorm"
+import { ResolutionStatus } from "types/ResolutionStatus"
 import { isError } from "types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields, insertDummyCourtCasesWithTriggers } from "../utils/insertCourtCases"
-import { ResolutionStatus } from "types/ResolutionStatus"
-import Trigger from "services/entities/Trigger"
 import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 
 describe("leftJoinAndSelectTriggersQuery", () => {
@@ -201,34 +201,6 @@ describe("leftJoinAndSelectTriggersQuery", () => {
         expect(caseWithTrigger.triggers[0].triggerCode).toEqual(resolvedTriggerCode)
         expect(caseWithTrigger.triggers[0].status).toEqual("Resolved")
       })
-    })
-
-    it("Should include both resolved and unresolved triggers when case state is 'Unresolved and resolved'", async () => {
-      const triggers: { code: string; status: ResolutionStatus }[] = [
-        {
-          code: "TRPR0001",
-          status: "Unresolved"
-        },
-        {
-          code: "TRPR0002",
-          status: "Resolved"
-        }
-      ]
-      await insertDummyCourtCasesWithTriggers([triggers, triggers], dummyOrgCode)
-
-      const result = await (
-        leftJoinAndSelectTriggersQuery(query, [], "Unresolved and resolved") as SelectQueryBuilder<CourtCase>
-      )
-        .orderBy("courtCase.errorId")
-        .getMany()
-        .catch((error: Error) => error)
-
-      expect(isError(result)).toBe(false)
-      const cases = result as CourtCase[]
-
-      expect(cases).toHaveLength(2)
-      expect(cases[0].triggers).toHaveLength(2)
-      expect(cases[1].triggers).toHaveLength(2)
     })
 
     it("Should include both resolved and unresolved triggers when case state is undefined", async () => {

@@ -217,13 +217,13 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const Home: NextPage<Props> = (query) => {
+const Home: NextPage<Props> = (props) => {
   const router = useRouter()
   // prettier-ignore
   const {
     csrfToken, user, courtCases, order, page, casesPerPage, totalCases, reasons, keywords, courtName, reasonCode,
     ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases, queryStringCookieName, displaySwitchingSurveyFeedback
-  } = query
+  } = props
 
   useEffect(() => {
     const nonSavedParams = ["unlockTrigger", "unlockException"]
