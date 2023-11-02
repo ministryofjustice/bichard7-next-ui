@@ -1,5 +1,4 @@
 import ConditionalRender from "components/ConditionalRender"
-import CaseStateFilterOptions from "components/FilterOptions/CaseStateFilterOptions"
 import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions/ReasonFilterOptions"
 import UrgencyFilterOptions from "components/FilterOptions/UrgencyFilterOptions"
@@ -289,9 +288,31 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
           <div>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Case state"}>
-              <CaseStateFilterOptions state={state.caseStateFilter.value} dispatch={dispatch} />
-            </ExpandingFilters>
+            <fieldset className="govuk-fieldset">
+              <legend className="govuk-fieldset__legend govuk-body">{"Case state"}</legend>
+              <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                <div className="govuk-checkboxes__item">
+                  <input
+                    className="govuk-checkboxes__input"
+                    id="resolved"
+                    name="state"
+                    type="checkbox"
+                    value={state.caseStateFilter.value}
+                    checked={state.caseStateFilter.value == "Resolved"}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                      dispatch({
+                        method: event.currentTarget.checked ? "add" : "remove",
+                        type: "caseState",
+                        value: "Resolved"
+                      })
+                    }}
+                  ></input>
+                  <label className="govuk-label govuk-checkboxes__label" htmlFor="resolved">
+                    {"View resolved cases"}
+                  </label>
+                </div>
+              </div>
+            </fieldset>
           </div>
           <div>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />

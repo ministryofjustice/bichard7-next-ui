@@ -208,26 +208,17 @@ describe("Case list", () => {
     })
 
     describe("Case state", () => {
-      it("Should apply the 'Unresolved & resolved cases' filter chip", () => {
-        cy.get("#filter-button").click()
-        cy.get("#unresolved-and-resolved").click()
-
-        cy.get(".govuk-heading-s").contains("Case state").should("exist")
-        cy.get(".moj-filter__tag").contains("Unresolved & resolved cases").should("exist")
-        cy.get(".moj-filter__tag").contains("Resolved cases").should("not.exist")
-      })
-
-      it("Should apply the 'Resolved cases' radio button and cancel it when the 'X' is clicked", () => {
+      it("Should apply the 'Resolved cases' filter chip when resolved cases checkbox seltected and cancels it when the 'X' is clicked", () => {
         cy.get("#filter-button").click()
         cy.get("#resolved").click()
 
         cy.get(".govuk-heading-s").contains("Case state").should("exist")
         cy.get(".moj-filter__tag").contains("Resolved cases").should("exist")
-        cy.get(".moj-filter__tag").contains("Unresolved & resolved cases").should("not.exist")
 
-        // Removes the urgent filter chips
+        // Removes the resolved cases filter chips
         cy.get("li button.moj-filter__tag").contains("Resolved cases").trigger("click")
         cy.get(".moj-filter__tag").should("not.exist")
+        cy.get(".govuk-checkboxes__item").contains("View resolved cases").should("not.be.checked")
       })
     })
 

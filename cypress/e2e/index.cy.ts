@@ -127,21 +127,27 @@ describe("Case list", () => {
 
     it("Should display the resolved badge on cases marked as resolved", () => {
       cy.task("insertCourtCasesWithFields", [
-        { resolutionTimestamp: new Date(), orgForPoliceFilter: "01" },
+        {
+          errorStatus: "Resolved",
+          resolutionTimestamp: new Date(),
+          errorResolvedBy: "Bichard01",
+          errorResolvedTimestamp: new Date(),
+          orgForPoliceFilter: "01"
+        },
         { resolutionTimestamp: null, orgForPoliceFilter: "01" },
-        { resolutionTimestamp: new Date(), orgForPoliceFilter: "01" }
+        { resolutionTimestamp: null, orgForPoliceFilter: "01" }
       ])
 
       loginAndGoToUrl()
 
       cy.get("#filter-button").contains("Show search panel").click()
-      cy.get("#unresolved-and-resolved").click()
+      cy.get("#resolved").click()
       cy.get("#search").contains("Apply filters").click()
 
       cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
       cy.get("tr").not(":first").eq(0).contains(`Resolved`).should("exist")
-      cy.get("tr").not(":first").eq(1).contains(`Resolved`).should("not.exist")
-      cy.get("tr").not(":first").eq(2).contains(`Resolved`).should("exist")
+      cy.get("tr").not(":first").eq(1).should("not.exist")
+      cy.get("tr").not(":first").eq(2).should("not.exist")
     })
 
     it("Should display the correct number of user-created notes on cases & allow the sort by the number of notes", () => {
