@@ -8,6 +8,13 @@ const storeAuditLogEvents = async (messageId: string, events: AuditLogEvent[]) =
     return
   }
 
+  events.forEach((event) => {
+    event.attributes = {
+      ...(event.attributes ?? {}),
+      newUI: true
+    }
+  })
+
   return axios({
     url: `${AUDIT_LOG_API_URL}/messages/${messageId}/events`,
     method: "POST",

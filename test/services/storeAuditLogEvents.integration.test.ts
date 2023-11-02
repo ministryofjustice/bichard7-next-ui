@@ -50,7 +50,7 @@ describe("storeAuditLogEvents", () => {
 
     expect(record.events).toStrictEqual([
       {
-        attributes: { key1: "value1" },
+        attributes: { key1: "value1", newUI: true },
         category: "information",
         eventSource: "dummyEventSource",
         eventCode: "report-run",
@@ -75,7 +75,7 @@ describe("storeAuditLogEvents", () => {
 
     expect(axios).toBeCalledWith({
       url: `${AUDIT_LOG_API_URL}/messages/dummy_key/events`,
-      data: "[{}]",
+      data: '[{"attributes":{"newUI":true}}]',
       headers: { "X-API-Key": AUDIT_LOG_API_KEY },
       method: "POST"
     })
