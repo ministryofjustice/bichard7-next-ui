@@ -134,7 +134,7 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      cy.get("#filter-button").contains("Show filter").click()
+      cy.get("#filter-button").contains("Show search panel").click()
       cy.get("#unresolved-and-resolved").click()
       cy.get("#search").contains("Apply filters").click()
 

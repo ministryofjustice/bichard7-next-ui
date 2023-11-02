@@ -174,7 +174,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     <form method={"get"} id="filter-panel">
       <div className="moj-filter__header">
         <div className="moj-filter__header-title">
-          <h2 className="govuk-heading-m">{"Filter"}</h2>
+          <h2 className="govuk-heading-m">{"Search panel"}</h2>
         </div>
         <div className="moj-filter__header-action"></div>
       </div>
