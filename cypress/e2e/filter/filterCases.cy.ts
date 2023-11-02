@@ -783,7 +783,7 @@ describe("Filtering cases", () => {
       visitBasePathAndShowFilters()
       inputAndSearch("keywords", "WAYNE Bruce")
 
-      cy.contains("Show filter")
+      cy.contains("Show search panel")
       cy.contains("Hide filter").should("not.exist")
       cy.get(".moj-filter-tags").contains("Filters applied")
       cy.get(".moj-filter-tags").contains("Clear filters")
@@ -793,9 +793,9 @@ describe("Filtering cases", () => {
       visitBasePathAndShowFilters()
       inputAndSearch("keywords", "WAYNE Bruce")
 
-      cy.contains("Show filter")
-      cy.contains("Show filter").click()
-      cy.contains("Show filter").should("not.exist")
+      cy.contains("Show search panel")
+      cy.contains("Show search panel").click()
+      cy.contains("Show search panel").should("not.exist")
       cy.contains("Hide filter")
       cy.contains("Filters applied").should("not.exist")
       cy.get(".moj-filter-tags").contains("Clear filters").should("not.exist")

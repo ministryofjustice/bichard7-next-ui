@@ -27,6 +27,12 @@ const useStyles = createUseStyles({
 
   nextButton: {
     marginLeft: "30px"
+  },
+
+  wrapper: {
+    "& td": {
+      width: "50%"
+    }
   }
 })
 
@@ -65,7 +71,7 @@ export const OffenceDetails = ({
   }
 
   return (
-    <div className={className}>
+    <div className={`${className} ${classes.wrapper}`}>
       <GridRow>
         <GridCol>
           <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />

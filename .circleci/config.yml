@@ -8,7 +8,7 @@ commands:
   setup:
     steps:
       - checkout
-      - node/install
+      - node_install
       - run: rm -rf ~/.npm
       - node/install-packages:
           include-branch-in-cache-key: true
@@ -57,6 +57,20 @@ commands:
             <<parameters.ARGS>> \
             npm run test:chunk
 
+  node_install:
+    steps:
+      - restore_cache:
+          name: Restore nvm cache
+          keys:
+            # Invalidate the cache based on architecture, the version of Node defined in `nvmrc`
+            - v1-nvm-cache-{{ arch }}-{{ checksum ".nvmrc" }}
+      - run: nvm install
+      - save_cache:
+          name: Save nvm cache
+          key: v1-nvm-cache-{{ arch }}-{{ checksum ".nvmrc" }}
+          paths:
+            - /opt/circleci/.nvm/.cache
+
   ################### Services
   start_bichard7_legacy:
     steps:
@@ -92,11 +106,12 @@ commands:
 
 jobs:
   lint:
-    executor:
-      name: node/default
-      tag: "20.6.1"
+    machine:
+      image: ubuntu-2204:2023.07.2
+    resource_class: xlarge
     steps:
       - checkout
+      - node_install
       - node/install-packages:
           include-branch-in-cache-key: true
       - run:
@@ -104,11 +119,12 @@ jobs:
           command: npm run lint
 
   unit_test:
-    executor:
-      name: node/default
-      tag: "20.6.1"
+    machine:
+      image: ubuntu-2204:2023.07.2
+    resource_class: xlarge
     steps:
       - checkout
+      - node_install
       - node/install-packages:
           include-branch-in-cache-key: true
       - run:
@@ -116,11 +132,12 @@ jobs:
           command: npm run test:unit
 
   cypress_component_test:
-    executor:
-      name: node/default
-      tag: "20.6.1"
+    machine:
+      image: ubuntu-2204:2023.07.2
+    resource_class: xlarge
     steps:
       - checkout
+      - node_install
       - node/install-packages:
           include-branch-in-cache-key: true
       - run:
