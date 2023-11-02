@@ -25,6 +25,7 @@ import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
+import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
@@ -95,6 +96,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       if (isError(updateTriggerResult)) {
         throw updateTriggerResult
       }
+
+      return redirectTo(`/`)
     }
 
     if (isPost(req) && resubmitCase === "true") {
