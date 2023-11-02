@@ -288,7 +288,8 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
           <div>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Case state"}>
+            <fieldset className="govuk-fieldset">
+              <legend className="govuk-fieldset__legend govuk-body">{"Case state"}</legend>
               <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
                 <div className="govuk-checkboxes__item">
                   <input
@@ -311,7 +312,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                   </label>
                 </div>
               </div>
-            </ExpandingFilters>
+            </fieldset>
           </div>
           <div>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
