@@ -1,6 +1,6 @@
+import { SelectQueryBuilder } from "typeorm"
 import { CaseState } from "types/CaseListQueryParams"
 import CourtCase from "../entities/CourtCase"
-import { SelectQueryBuilder } from "typeorm"
 
 const getExcludedTriggers = (excludedTriggers?: string[]): string[] =>
   excludedTriggers && excludedTriggers.length > 0 ? excludedTriggers : [""]
@@ -14,9 +14,7 @@ const leftJoinAndSelectTriggersQuery = (
     "courtCase.triggers",
     "trigger",
     "trigger.triggerCode NOT IN (:...excludedTriggers)" +
-      (caseState === undefined || caseState === "Unresolved and resolved"
-        ? ""
-        : " AND trigger.status = :triggerStatus"),
+      (caseState === undefined ? "" : " AND trigger.status = :triggerStatus"),
     {
       excludedTriggers: getExcludedTriggers(excludedTriggers),
       triggerStatus: caseState === "Resolved" ? "2" : "1"
