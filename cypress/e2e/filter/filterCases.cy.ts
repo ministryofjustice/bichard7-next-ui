@@ -1,4 +1,5 @@
 import { addDays, format, subDays } from "date-fns"
+import { BailCodes } from "../../../src/utils/bailCodes"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import hashedPassword from "../../fixtures/hashedPassword"
 import a11yConfig from "../../support/a11yConfig"
@@ -10,7 +11,6 @@ import {
   filterByCaseAge
 } from "../../support/helpers"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
-import { BailCodes } from "../../../src/utils/bailCodes"
 
 function visitBasePathAndShowFilters() {
   cy.visit("/bichard")
@@ -177,15 +177,6 @@ describe("Filtering cases", () => {
 
     collapseFilterSection("Locked state", "#locked")
     expandFilterSection("Locked state", "#locked")
-  })
-
-  it("Should expand and collapse case state filter navigation", () => {
-    visitBasePathAndShowFilters()
-
-    cy.contains("Unresolved & resolved cases")
-
-    collapseFilterSection("Case state", "#unresolved-and-resolved")
-    expandFilterSection("Case state", "#unresolved-and-resolved")
   })
 
   it("Should display cases filtered by defendant name", () => {
@@ -678,19 +669,10 @@ describe("Filtering cases", () => {
 
     visitBasePathAndShowFilters()
 
-    // Filter for resolved and unresolved cases
-    cy.get("#unresolved-and-resolved").click()
-    cy.get("button[id=search]").click()
-
-    cy.get(".moj-scrollable-pane tbody tr").should("have.length", 4)
-    cy.contains("Case00000")
-
-    // Removing case state filter tag unresolved cases should be shown with the filter disabled
-    removeFilterTag("Unresolved & resolved cases")
+    // Filter for unresolved cases by default
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
 
     // Filter for resolved cases
-    cy.get("button[id=filter-button]").click()
     cy.get("#resolved").click()
     cy.get("button[id=search]").click()
 

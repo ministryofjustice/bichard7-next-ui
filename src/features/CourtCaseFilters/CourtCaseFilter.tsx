@@ -293,7 +293,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                 <div className="govuk-checkboxes__item">
                   <input
                     className="govuk-checkboxes__input"
-                    id="case-state-filter"
+                    id="resolved"
                     name="state"
                     type="checkbox"
                     value={state.caseStateFilter.value}
@@ -306,12 +306,11 @@ const CourtCaseFilter: React.FC<Props> = ({
                       })
                     }}
                   ></input>
-                  <label className="govuk-label govuk-checkboxes__label" htmlFor="case-state-filter">
+                  <label className="govuk-label govuk-checkboxes__label" htmlFor="resolved">
                     {"View resolved cases"}
                   </label>
                 </div>
               </div>
-              {/* <CaseStateFilterOptions state={state.caseStateFilter.value} dispatch={dispatch} /> */}
             </ExpandingFilters>
           </div>
           <div>

@@ -141,7 +141,7 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       cy.get("#filter-button").contains("Show filter").click()
-      cy.get(".govuk-checkboxes__item").contains("View resolved cases").click()
+      cy.get("#my-cases-filter").contains("View resolved cases").click()
       cy.get("#search").contains("Apply filters").click()
 
       cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
