@@ -58,7 +58,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props: Props = {
       csrfToken,
-      previousPath,
+      previousPath: previousPath ?? null,
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
@@ -105,7 +105,7 @@ interface Props {
   reasonTextError?: string
   selectedReason?: ResolutionReasonKey
   csrfToken: string
-  previousPath: string
+  previousPath: string | null
 }
 
 const ResolveCourtCasePage: NextPage<Props> = ({
