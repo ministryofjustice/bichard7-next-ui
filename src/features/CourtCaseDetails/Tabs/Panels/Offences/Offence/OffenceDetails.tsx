@@ -12,6 +12,7 @@ import SecondaryButton from "components/SecondaryButton"
 import { createUseStyles } from "react-jss"
 import UneditableFields from "components/UneditableFields"
 import ErrorMessages from "Data/ErrorMessages"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 interface OffenceDetailsProps {
   className: string
@@ -21,6 +22,7 @@ interface OffenceDetailsProps {
   onNextClick: () => void
   onPreviousClick: () => void
   selectedOffenceIndex: number
+  exceptions: ExceptionCode[]
 }
 const useStyles = createUseStyles({
   button: {
@@ -45,9 +47,13 @@ export const OffenceDetails = ({
   onBackToAllOffences,
   onNextClick,
   onPreviousClick,
-  selectedOffenceIndex
+  selectedOffenceIndex,
+  exceptions
 }: OffenceDetailsProps) => {
   const classes = useStyles()
+  const qualifierCode =
+    offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
+    offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
   const getOffenceCategory = (offenceCode: string | undefined) => {
     let offenceCategoryWithDescription = offenceCode
     offenceCategory.forEach((category) => {
@@ -118,10 +124,27 @@ export const OffenceDetails = ({
       {offence.Result.map((result, index) => {
         return <HearingResult result={result} key={index} />
       })}
-      <Heading as="h4" size="MEDIUM">
-        {"Qualifier"}
-      </Heading>
-      <UneditableFields badge={"SYSTEM ERROR"} colour={"purple"} message={ErrorMessages.QualifierCode} code={"XX"} />
+
+      {qualifierCode && (
+        <>
+          <Heading as="h4" size="MEDIUM">
+            {"Qualifier"}
+          </Heading>
+          <Table>
+            {exceptions.includes(ExceptionCode.HO100309) ? (
+              <UneditableFields
+                badge={"SYSTEM ERROR"}
+                colour={"purple"}
+                message={ErrorMessages.QualifierCode}
+                code={qualifierCode}
+                label={"Code"}
+              />
+            ) : (
+              <TableRow label={"Code"} value={qualifierCode} />
+            )}
+          </Table>
+        </>
+      )}
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
     </div>
   )
