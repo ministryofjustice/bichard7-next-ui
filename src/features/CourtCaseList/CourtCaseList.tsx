@@ -20,6 +20,18 @@ const CourtCaseList: React.FC<Props> = ({ csrfToken, courtCases, order = "asc", 
   const recentlyUnlockedExceptionId = query.unlockException
   const recentlyUnlockedTriggerId = query.unlockTrigger
 
+  const queryString = Object.entries(query)
+    .reduce((acc, [key, value]) => {
+      if (key === "unlockException" || key === "unlockTrigger") {
+        // next
+      } else {
+        acc.push(`${key}=${value}`)
+      }
+
+      return acc
+    }, new Array<string>())
+    .join("&")
+
   const classes = useCustomStyles()
 
   return courtCases.length === 0 ? (
@@ -35,6 +47,7 @@ const CourtCaseList: React.FC<Props> = ({ csrfToken, courtCases, order = "asc", 
           triggerHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedTriggerId}
           key={`court-case-${courtCase.ptiurn}`}
           entityClassName={index % 2 == 1 ? classes["light-grey-background"] : ""}
+          previousPath={queryString}
         />
       ))}
     </Table>

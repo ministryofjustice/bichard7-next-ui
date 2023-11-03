@@ -1,11 +1,14 @@
 import { forces } from "@moj-bichard7-developers/bichard7-next-data"
 import ButtonsGroup from "components/ButtonsGroup"
 import ConditionalRender from "components/ConditionalRender"
+import HeaderContainer from "components/Header/HeaderContainer"
+import HeaderRow from "components/Header/HeaderRow"
 import Layout from "components/Layout"
 import { MAX_NOTE_LENGTH } from "config"
-import { Button, Fieldset, FormGroup, Heading, HintText, Label, Link, Select, TextArea } from "govuk-react"
+import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, Label, Link, Select, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
+import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { FormEventHandler, useState } from "react"
@@ -33,7 +36,10 @@ export const getServerSideProps = withMultipleServerSideProps(
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query, req, res, csrfToken, formData } = context as AuthenticationServerSidePropsContext &
       CsrfServerSidePropsContext
-    const { courtCaseId } = query as { courtCaseId: string }
+    const { courtCaseId, previousPath } = query as {
+      courtCaseId: string
+      previousPath: string
+    }
 
     const dataSource = await getDataSource()
     const courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
@@ -59,6 +65,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props = {
       csrfToken,
+      previousPath,
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
@@ -85,9 +92,16 @@ interface Props {
   lockedByAnotherUser: boolean
   noteTextError?: string
   csrfToken: string
+  previousPath: string
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnotherUser, csrfToken }: Props) => {
+const CourtCaseDetailsPage: NextPage<Props> = ({
+  courtCase,
+  user,
+  lockedByAnotherUser,
+  csrfToken,
+  previousPath
+}: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
   const classes = useCustomStyles()
   const { basePath } = useRouter()
@@ -97,16 +111,29 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
     setNoteRemainingLength(MAX_NOTE_LENGTH - event.currentTarget.value.length)
   }
 
+  let backLink = `${basePath}/court-cases/${courtCase.errorId}`
+
+  if (previousPath) {
+    backLink += `?previousPath=${encodeURIComponent(previousPath)}`
+  }
+
   return (
     <>
+      <Head>
+        <title>{"Case Reallocation | Bichard7"}</title>
+        <meta name="description" content="Case Reallocation | Bichard7" />
+      </Head>
       <Layout user={user}>
-        <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
-          <title>{"Case Reallocation | Bichard7"}</title>
-          <meta name="description" content="Case Reallocation| Bichard7" />
-        </Heading>
-        <Heading as="h2" size="MEDIUM">
-          {"Case reallocation"}
-        </Heading>
+        <BackLink href={backLink} onClick={function noRefCheck() {}}>
+          {"Case Details"}
+        </BackLink>
+        <HeaderContainer id="header-container">
+          <HeaderRow>
+            <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
+              {"Case reallocation"}
+            </Heading>
+          </HeaderRow>
+        </HeaderContainer>
         <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
         <ConditionalRender isRendered={!lockedByAnotherUser}>
           <Form method="POST" action="#" csrfToken={csrfToken}>
@@ -138,7 +165,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({ courtCase, user, lockedByAnothe
                 <Button id="Reallocate" type="submit">
                   {"Reallocate"}
                 </Button>
-                <Link href={`${basePath}/court-cases/${courtCase.errorId}`}>{"Cancel"}</Link>
+                <Link href={backLink}>{"Cancel"}</Link>
               </ButtonsGroup>
             </Fieldset>
           </Form>
