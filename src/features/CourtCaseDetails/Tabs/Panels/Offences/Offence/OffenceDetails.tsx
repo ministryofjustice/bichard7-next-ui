@@ -10,7 +10,7 @@ import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult
 import { StartDate } from "./StartDate"
 import SecondaryButton from "components/SecondaryButton"
 import { createUseStyles } from "react-jss"
-import UneditableFields from "components/UneditableFields"
+import UneditableField from "components/UneditableField"
 import ErrorMessages from "Data/ErrorMessages"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
@@ -132,7 +132,7 @@ export const OffenceDetails = ({
           </Heading>
           <Table>
             {exceptions.includes(ExceptionCode.HO100309) ? (
-              <UneditableFields
+              <UneditableField
                 badge={"SYSTEM ERROR"}
                 colour={"purple"}
                 message={ErrorMessages.QualifierCode}
