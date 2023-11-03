@@ -1,8 +1,13 @@
 import Badge from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
+import HeaderContainer from "components/Header/HeaderContainer"
+import HeaderRow from "components/Header/HeaderRow"
 import LinkButton from "components/LinkButton"
 import LockedTag from "components/LockedTag"
+import ResolvedTag from "components/ResolvedTag"
+import SecondaryButton from "components/SecondaryButton"
 import { Button, Heading } from "govuk-react"
+import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
 import styled from "styled-components"
@@ -16,14 +21,13 @@ import {
 } from "utils/caseLocks"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 import Form from "../../components/Form"
-import ResolvedTag from "components/ResolvedTag"
-import SecondaryButton from "components/SecondaryButton"
 
 interface Props {
   courtCase: DisplayFullCourtCase
   user: DisplayFullUser
   canReallocate: boolean
   csrfToken: string
+  previousPath: string
 }
 
 type lockCheckFn = (courtCase: DisplayFullCourtCase, username: string) => boolean
@@ -33,10 +37,6 @@ const ButtonContainer = styled.div`
   justify-content: flex-end;
   margin-bottom: 24px;
   gap: 12px;
-`
-
-const HeaderContainer = styled.div`
-  margin-top: 30px;
 `
 
 const useStyles = createUseStyles({
@@ -56,25 +56,22 @@ const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
   return params
 }
 
-const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken }: Props) => {
+const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken, previousPath }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
 
   const leaveAndUnlockParams = getUnlockPath(courtCase)
-  const leaveAndUnlockUrl = `${basePath}?${leaveAndUnlockParams.toString()}`
-  const reallocatePath = `${basePath}/court-cases/${courtCase.errorId}/reallocate`
+
+  let reallocatePath = `${basePath}${usePathname()}/reallocate`
+  let leaveAndUnlockUrl = `${basePath}?${leaveAndUnlockParams.toString()}`
+
+  if (previousPath) {
+    leaveAndUnlockUrl += `&${previousPath}`
+    reallocatePath += `?previousPath=${encodeURIComponent(previousPath)}`
+  }
 
   const caseIsViewOnly = !isLockedByCurrentUser(courtCase, user.username)
   const hasCaseLock = isLockedByCurrentUser(courtCase, user.username)
-
-  const HeaderRow = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    & > #exceptions-locked-tag {
-      padding-top: 10px;
-    }
-  `
 
   const getLockHolder = (
     username: string,

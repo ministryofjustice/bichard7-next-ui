@@ -4,8 +4,8 @@ import { Tabs } from "govuk-react"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import styled from "styled-components"
-import Permission from "types/Permission"
 import type NavigationHandler from "types/NavigationHandler"
+import Permission from "types/Permission"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import ExceptionsList from "./Exceptions"
@@ -31,6 +31,7 @@ interface Props {
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
   csrfToken: string
+  previousPath: string
 }
 
 const TabList = styled(Tabs.List)`
@@ -47,7 +48,15 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate, canResolveAndSubmit, csrfToken }: Props) => {
+const TriggersAndExceptions = ({
+  courtCase,
+  aho,
+  user,
+  onNavigate,
+  canResolveAndSubmit,
+  csrfToken,
+  previousPath
+}: Props) => {
   const availableTabs = [Permission.Triggers, Permission.Exceptions].filter((tab) => user.hasAccessTo[tab])
   const defaultTab =
     availableTabs.length > 0
@@ -102,7 +111,12 @@ const TriggersAndExceptions = ({ courtCase, aho, user, onNavigate, canResolveAnd
               selected={selectedTab === Permission.Exceptions}
               className="moj-tab-panel-exceptions"
             >
-              <ExceptionsList aho={aho} onNavigate={onNavigate} canResolveAndSubmit={canResolveAndSubmit} />
+              <ExceptionsList
+                aho={aho}
+                onNavigate={onNavigate}
+                canResolveAndSubmit={canResolveAndSubmit}
+                previousPath={previousPath}
+              />
             </Tabs.Panel>
           </ConditionalRender>
         </Tabs>

@@ -25,11 +25,11 @@ import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
+import withCsrf from "../../../middleware/withCsrf/withCsrf"
+import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
+import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
-import withCsrf from "../../../middleware/withCsrf/withCsrf"
-import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
-import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
 
 export const getServerSideProps = withMultipleServerSideProps(
@@ -38,11 +38,12 @@ export const getServerSideProps = withMultipleServerSideProps(
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { req, currentUser, query, csrfToken, formData } = context as AuthenticationServerSidePropsContext &
       CsrfServerSidePropsContext
-    const { courtCaseId, lock, resolveTrigger, resubmitCase } = query as {
+    const { courtCaseId, lock, resolveTrigger, resubmitCase, previousPath } = query as {
       courtCaseId: string
       lock: string
       resolveTrigger: string | string[] | undefined
       resubmitCase: string
+      previousPath: string
     }
     const dataSource = await getDataSource()
 
@@ -150,6 +151,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     return {
       props: {
         csrfToken,
+        previousPath: previousPath ?? null,
         user: userToDisplayFullUserDto(currentUser),
         courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
@@ -171,6 +173,7 @@ interface Props {
   canResolveAndSubmit: boolean
   csrfToken: string
   displaySwitchingSurveyFeedback: boolean
+  previousPath: string
 }
 
 const useStyles = createUseStyles({
@@ -192,7 +195,8 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   canReallocate,
   canResolveAndSubmit,
   displaySwitchingSurveyFeedback,
-  csrfToken
+  csrfToken,
+  previousPath
 }: Props) => {
   const classes = useStyles()
   return (
@@ -227,6 +231,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
           errorLockedByAnotherUser={errorLockedByAnotherUser}
           canReallocate={canReallocate}
           canResolveAndSubmit={canResolveAndSubmit}
+          previousPath={previousPath}
         />
       </Layout>
     </>

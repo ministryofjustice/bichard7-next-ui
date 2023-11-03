@@ -1,13 +1,15 @@
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
+import { usePathname } from "next/navigation"
+import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
+import styled from "styled-components"
 import type NavigationHandler from "types/NavigationHandler"
-import { gdsLightGrey, textPrimary, gdsMidGrey } from "../../../utils/colours"
 import DefaultException from "../../../components/Exception/DefaultException"
 import PncException from "../../../components/Exception/PncException"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import styled from "styled-components"
+import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
 
 const isPncException = (code: ExceptionCode) =>
   [ExceptionCode.HO100302, ExceptionCode.HO100314, ExceptionCode.HO100402, ExceptionCode.HO100404].includes(code)
@@ -16,6 +18,7 @@ interface Props {
   aho: AnnotatedHearingOutcome
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
+  previousPath: string
 }
 
 const useStyles = createUseStyles({
@@ -43,10 +46,18 @@ const SeparatorLine = styled.div`
   }
 `
 
-const Exceptions = ({ aho, onNavigate, canResolveAndSubmit }: Props) => {
+const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath }: Props) => {
   const classes = useStyles()
   const pncExceptions = aho.Exceptions.filter(({ code }) => isPncException(code))
   const otherExceptions = aho.Exceptions.filter(({ code }) => !isPncException(code))
+
+  const router = useRouter()
+
+  let resolveLink = `${router.basePath}${usePathname()}/resolve`
+
+  if (previousPath) {
+    resolveLink += `?previousPath=${encodeURIComponent(previousPath)}`
+  }
 
   return (
     <>
@@ -65,7 +76,7 @@ const Exceptions = ({ aho, onNavigate, canResolveAndSubmit }: Props) => {
       <ConditionalRender isRendered={canResolveAndSubmit && aho.Exceptions.length > 0}>
         <div className={classes.buttonContainer}>
           <LinkButton
-            href="resolve"
+            href={resolveLink}
             className="b7-manually-resolve-button"
             buttonColour={gdsLightGrey}
             buttonTextColour={textPrimary}

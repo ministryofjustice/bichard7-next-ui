@@ -19,6 +19,7 @@ interface Props {
   exceptionHasBeenRecentlyUnlocked: boolean
   triggerHasBeenRecentlyUnlocked: boolean
   entityClassName: string
+  previousPath: string | null
 }
 
 const CourtCaseListEntry: React.FC<Props> = ({
@@ -27,7 +28,8 @@ const CourtCaseListEntry: React.FC<Props> = ({
   courtCase,
   currentUser,
   exceptionHasBeenRecentlyUnlocked,
-  triggerHasBeenRecentlyUnlocked
+  triggerHasBeenRecentlyUnlocked,
+  previousPath
 }: Props) => {
   const {
     courtDate,
@@ -116,6 +118,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
         unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
         reasonCell={reasonAndLockTags[0] ? reasonAndLockTags[0][0] : <></>}
         lockTag={reasonAndLockTags[0] ? reasonAndLockTags[0][1] : <></>}
+        previousPath={previousPath}
       />
       <ConditionalRender isRendered={reasonAndLockTags.length > 1}>
         <ExtraReasonRow
