@@ -6,7 +6,7 @@ const testData: {
   hasExceptions: boolean
   hasTriggers: boolean
   resolveTriggers: boolean
-  resolveExceptions: boolean
+  resolveExceptions?: boolean
   expectedPath: string
   exceptionsFeatureFlagEnabled: boolean
 }[] = [
@@ -27,6 +27,14 @@ const testData: {
     resolveExceptions: true,
     expectedPath: "case list page",
     exceptionsFeatureFlagEnabled: true
+  },
+  {
+    loggedInAs: "GeneralHandler",
+    hasExceptions: true,
+    hasTriggers: true,
+    resolveTriggers: true,
+    expectedPath: "case list page",
+    exceptionsFeatureFlagEnabled: false
   }
 ]
 
@@ -62,7 +70,7 @@ describe("Redirect when resolve triggers and exceptions", () => {
               surname: `${loggedInAs}surname`,
               email: `${loggedInAs}@example.com`,
               password: hashedPassword,
-              ...(exceptionsFeatureFlagEnabled ? { featureFlags: { exceptionsEnabled: true } } : {})
+              featureFlags: { exceptionsEnabled: exceptionsFeatureFlagEnabled }
             }
           ],
           userGroups: ["B7NewUI_grp", `B7${loggedInAs}_grp`]
@@ -92,7 +100,7 @@ describe("Redirect when resolve triggers and exceptions", () => {
         cy.login(`${loggedInAs}@example.com`, "password")
         cy.visit("/bichard/court-cases/0")
 
-        if (resolveExceptions) {
+        if (resolveExceptions && exceptionsFeatureFlagEnabled) {
           if (loggedInAs === "GeneralHandler") {
             cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
           }
