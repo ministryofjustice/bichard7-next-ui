@@ -26,7 +26,7 @@ const useStyles = createUseStyles({
     "& .qualifier-code": {
       paddingBottom: ".94rem"
     },
-    "& .badge": {
+    "& .badgeWrapper": {
       paddingBottom: ".62rem",
       display: "flex",
       gap: ".62rem",
@@ -40,7 +40,7 @@ const useStyles = createUseStyles({
     }
   }
 })
-const UneditableFields = ({ badge, message, code, colour, label }: Props) => {
+const UneditableField = ({ badge, message, code, colour, label }: Props) => {
   const classes = useStyles()
   const labelField = (
     <>
@@ -53,9 +53,9 @@ const UneditableFields = ({ badge, message, code, colour, label }: Props) => {
   const value = (
     <div className={classes.value}>
       <div className="qualifier-code">{code}</div>
-      <div className="badge">
+      <div className="badgeWrapper">
         <div>
-          <Badge isRendered={true} colour={colour} label={badge} />
+          <Badge className="badge" isRendered={true} colour={colour} label={badge} />
         </div>
         <div className="last-updated">{"Last Updated: 13:01 - 04/07/23"}</div>
       </div>
@@ -72,4 +72,4 @@ const UneditableFields = ({ badge, message, code, colour, label }: Props) => {
   )
 }
 
-export default UneditableFields
+export default UneditableField

@@ -1,5 +1,5 @@
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import UneditableFields from "../../src/components/UneditableFields"
+import UneditableField from "../../src/components/UneditableField"
 
 describe("Uneditable Fields", () => {
   ;[
@@ -14,7 +14,7 @@ describe("Uneditable Fields", () => {
     }
   ].forEach(({ title, exception, badge, message, code, label }) => {
     it(`should show an error prompt for exception ${exception} (${title})`, () => {
-      cy.mount(<UneditableFields badge={badge} message={message} code={code} label={label} colour={"purple"} />)
+      cy.mount(<UneditableField badge={badge} message={message} code={code} label={label} colour={"purple"} />)
       cy.get(".qualifier-code").should("have.text", code)
       cy.get(".badge").should("have.text", badge)
       cy.get(".message").should("have.text", message)
