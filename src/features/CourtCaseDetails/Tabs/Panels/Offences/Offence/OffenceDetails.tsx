@@ -10,6 +10,8 @@ import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult
 import { StartDate } from "./StartDate"
 import SecondaryButton from "components/SecondaryButton"
 import { createUseStyles } from "react-jss"
+import UneditableFields from "components/UneditableFields"
+import ErrorMessages from "Data/ErrorMessages"
 
 interface OffenceDetailsProps {
   className: string
@@ -119,9 +121,7 @@ export const OffenceDetails = ({
       <Heading as="h4" size="MEDIUM">
         {"Qualifier"}
       </Heading>
-      <Table>
-        <TableRow label="Code" value={"TODO"} />
-      </Table>
+      <UneditableFields badge={"SYSTEM ERROR"} colour={"purple"} message={ErrorMessages.QualifierCode} code={"XX"} />
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
     </div>
   )
