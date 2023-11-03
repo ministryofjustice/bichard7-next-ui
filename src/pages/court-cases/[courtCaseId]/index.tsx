@@ -32,6 +32,14 @@ import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContex
 import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
+import CourtCase from "../../../services/entities/CourtCase"
+
+const allIssuesCleared = (courtCase: CourtCase, triggerToResolve: number[]) => {
+  const triggersResolved =
+    courtCase.triggers.filter((t) => t.status === "Unresolved").length === triggerToResolve.length
+  const exceptionsResolved = courtCase.errorStatus !== "Unresolved"
+  return triggersResolved && exceptionsResolved
+}
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -97,7 +105,9 @@ export const getServerSideProps = withMultipleServerSideProps(
         throw updateTriggerResult
       }
 
-      return redirectTo(`/`)
+      if (allIssuesCleared(courtCase, triggersToResolve)) {
+        return redirectTo(`/`)
+      }
     }
 
     if (isPost(req) && resubmitCase === "true") {
