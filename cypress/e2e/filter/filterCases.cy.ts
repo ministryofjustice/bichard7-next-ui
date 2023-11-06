@@ -493,7 +493,7 @@ describe("Filtering cases", () => {
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 7)
 
-    cy.contains("Hide filter").click()
+    cy.contains("Hide search panel").click()
 
     confirmFiltersAppliedContains("01/01/2022 - 31/12/2022")
     removeFilterTag("01/01/2022 - 31/12/2022")
@@ -802,7 +802,7 @@ describe("Filtering cases", () => {
       inputAndSearch("keywords", "WAYNE Bruce")
 
       cy.contains("Show search panel")
-      cy.contains("Hide filter").should("not.exist")
+      cy.contains("Hide search panel").should("not.exist")
       cy.get(".moj-filter-tags").contains("Filters applied")
       cy.get(".moj-filter-tags").contains("Clear filters")
     })
@@ -814,7 +814,7 @@ describe("Filtering cases", () => {
       cy.contains("Show search panel")
       cy.contains("Show search panel").click()
       cy.contains("Show search panel").should("not.exist")
-      cy.contains("Hide filter")
+      cy.contains("Hide search panel")
       cy.contains("Filters applied").should("not.exist")
       cy.get(".moj-filter-tags").contains("Clear filters").should("not.exist")
       cy.contains("Applied filters")
