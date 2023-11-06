@@ -26,6 +26,7 @@ import Form from "../../../components/Form"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import forbidden from "../../../utils/forbidden"
+import Permission from "../../../types/Permission"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -58,7 +59,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props: Props = {
       csrfToken,
-      previousPath,
+      previousPath: previousPath ?? null,
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
@@ -78,12 +79,16 @@ export const getServerSideProps = withMultipleServerSideProps(
         }
       }
 
-      await resolveCourtCase(
+      const result = await resolveCourtCase(
         dataSource,
         courtCase,
         { reason: reason as ResolutionReasonKey, reasonText: reasonText ?? "" },
         currentUser
       )
+
+      if (isError(result)) {
+        throw result
+      }
 
       let redirectUrl = `/court-cases/${courtCase.errorId}`
 
@@ -91,7 +96,11 @@ export const getServerSideProps = withMultipleServerSideProps(
         redirectUrl += `?previousPath=${encodeURIComponent(previousPath)}`
       }
 
-      return redirectTo(redirectUrl)
+      if (!currentUser.hasAccessTo[Permission.Triggers] || courtCase.triggerStatus !== "Unresolved") {
+        return redirectTo("/")
+      } else {
+        return redirectTo(redirectUrl)
+      }
     }
 
     return { props }
@@ -105,7 +114,7 @@ interface Props {
   reasonTextError?: string
   selectedReason?: ResolutionReasonKey
   csrfToken: string
-  previousPath: string
+  previousPath: string | null
 }
 
 const ResolveCourtCasePage: NextPage<Props> = ({

@@ -10,9 +10,9 @@ import type NavigationHandler from "types/NavigationHandler"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { triggersAreLockedByAnotherUser } from "utils/caseLocks"
+import Form from "../../../components/Form"
 import LockedTag from "../../../components/LockedTag"
 import Trigger from "./Trigger"
-import Form from "../../../components/Form"
 
 interface Props {
   courtCase: DisplayFullCourtCase
@@ -61,7 +61,9 @@ const TriggersList = ({ courtCase, user, onNavigate, csrfToken }: Props) => {
 
   const selectAll = (event: SyntheticEvent) => {
     event.preventDefault()
-    setSelectedTriggerIds(courtCase.triggers.map((trigger) => trigger.triggerId))
+    setSelectedTriggerIds(
+      courtCase.triggers.filter((trigger) => trigger.status === "Unresolved").map((trigger) => trigger.triggerId)
+    )
   }
 
   const handleClick = (offenceOrderIndex?: number) => {
