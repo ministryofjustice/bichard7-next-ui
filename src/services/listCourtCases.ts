@@ -21,10 +21,11 @@ import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
 
-const shouldSeeExceptions = (user: User, reasons: Reason[] | undefined): boolean => {
-  const isExceptionHandler = user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]
-  return isExceptionHandler || !!reasons?.includes(Reason.Exceptions)
-}
+const canOnlySeeExceptions = (user: User): boolean =>
+  user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]
+
+const canSeeTriggersAndException = (user: User) =>
+  user.hasAccessTo[Permission.Exceptions] && user.hasAccessTo[Permission.Triggers]
 
 const listCourtCases = async (
   connection: DataSource,
@@ -202,7 +203,9 @@ const listCourtCases = async (
           ...(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
             ? { triggerResolvedTimestamp: IsNull() }
             : {}),
-          ...(shouldSeeExceptions(user, reasons) ? { errorResolvedTimestamp: IsNull() } : {}),
+          ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions)
+            ? { errorResolvedTimestamp: IsNull() }
+            : {}),
           ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: IsNull() } : {})
         })
       })
@@ -212,8 +215,12 @@ const listCourtCases = async (
       ...(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
         ? { triggerResolvedTimestamp: Not(IsNull()) }
         : {}),
-      ...(reasons?.includes(Reason.Exceptions) ? { errorResolvedTimestamp: Not(IsNull()) } : {}),
-      ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: Not(IsNull()) } : {})
+      ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions)
+        ? { errorResolvedTimestamp: Not(IsNull()) }
+        : {}),
+      ...(canSeeTriggersAndException(user) && (!reasons || reasons.length === 0)
+        ? { resolutionTimestamp: Not(IsNull()) }
+        : {})
     })
 
     if (resolvedByUsername !== undefined) {

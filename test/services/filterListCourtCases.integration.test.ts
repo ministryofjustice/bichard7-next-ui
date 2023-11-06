@@ -127,6 +127,13 @@ describe("listCourtCases", () => {
         caseState: "Unresolved",
         user: exceptionHandlerUser,
         expectedCases: ["Triggers Resolved/Exceptions Unresolved", "Everything Unresolved"]
+      },
+      {
+        description:
+          "Should see cases with resolved exceptions when user is an exception handler and resolved filter applied",
+        caseState: "Resolved",
+        user: exceptionHandlerUser,
+        expectedCases: ["Exceptions Resolved/Triggers Unresolved", "Everything Resolved"]
       }
     ]
 
