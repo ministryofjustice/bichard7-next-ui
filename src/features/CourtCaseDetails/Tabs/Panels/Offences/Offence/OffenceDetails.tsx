@@ -1,15 +1,18 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
+import SecondaryButton from "components/SecondaryButton"
+import UneditableField from "components/UneditableField"
 import { GridCol, GridRow, Heading, Table } from "govuk-react"
+import { createUseStyles } from "react-jss"
+import ErrorMessages from "types/ErrorMessages"
 import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
 import { TableRow } from "../../TableRow"
 import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { StartDate } from "./StartDate"
-import SecondaryButton from "components/SecondaryButton"
-import { createUseStyles } from "react-jss"
 
 interface OffenceDetailsProps {
   className: string
@@ -19,6 +22,7 @@ interface OffenceDetailsProps {
   onNextClick: () => void
   onPreviousClick: () => void
   selectedOffenceIndex: number
+  exceptions: ExceptionCode[]
 }
 const useStyles = createUseStyles({
   button: {
@@ -43,9 +47,13 @@ export const OffenceDetails = ({
   onBackToAllOffences,
   onNextClick,
   onPreviousClick,
-  selectedOffenceIndex
+  selectedOffenceIndex,
+  exceptions
 }: OffenceDetailsProps) => {
   const classes = useStyles()
+  const qualifierCode =
+    offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
+    offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
   const getOffenceCategory = (offenceCode: string | undefined) => {
     let offenceCategoryWithDescription = offenceCode
     offenceCategory.forEach((category) => {
@@ -116,12 +124,29 @@ export const OffenceDetails = ({
       {offence.Result.map((result, index) => {
         return <HearingResult result={result} key={index} />
       })}
-      <Heading as="h4" size="MEDIUM">
-        {"Qualifier"}
-      </Heading>
-      <Table>
-        <TableRow label="Code" value={"TODO"} />
-      </Table>
+
+      {qualifierCode && (
+        <>
+          <div className="qualifierCodeTable">
+            <Heading as="h4" size="MEDIUM">
+              {"Qualifier"}
+            </Heading>
+            <Table>
+              {exceptions.includes(ExceptionCode.HO100309) ? (
+                <UneditableField
+                  badge={"SYSTEM ERROR"}
+                  colour={"purple"}
+                  message={ErrorMessages.QualifierCode}
+                  code={qualifierCode}
+                  label={"Code"}
+                />
+              ) : (
+                <TableRow label={"Code"} value={qualifierCode} />
+              )}
+            </Table>
+          </div>
+        </>
+      )}
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
     </div>
   )
