@@ -1053,7 +1053,7 @@ describe("listCourtCases", () => {
     })
   })
 
-  describe.only("Filter cases having a combination of reason and caseState filter", () => {
+  describe("Filter cases having a combination of reason and caseState filter", () => {
     const dummyTriggerCode = "TRPR0001"
     const bailsTriggerCode = "TRPR0010"
     const getTrigger = (triggerCode: string, status: ResolutionStatus): TestTrigger => {

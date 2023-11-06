@@ -11,6 +11,7 @@ import {
 } from "typeorm"
 import { CaseListQueryParams, Reason } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
+import Permission from "types/Permission"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import { BailCodes } from "utils/bailCodes"
@@ -19,7 +20,11 @@ import Note from "./entities/Note"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
-import Permission from "types/Permission"
+
+const shouldSeeExceptions = (user: User, reasons: Reason[] | undefined): boolean => {
+  const isExceptionHandler = user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]
+  return isExceptionHandler || !!reasons?.includes(Reason.Exceptions)
+}
 
 const listCourtCases = async (
   connection: DataSource,
@@ -197,7 +202,7 @@ const listCourtCases = async (
           ...(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
             ? { triggerResolvedTimestamp: IsNull() }
             : {}),
-          ...(reasons?.includes(Reason.Exceptions) ? { errorResolvedTimestamp: IsNull() } : {}),
+          ...(shouldSeeExceptions(user, reasons) ? { errorResolvedTimestamp: IsNull() } : {}),
           ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: IsNull() } : {})
         })
       })
