@@ -4,6 +4,7 @@ import { Table } from "govuk-react"
 interface TableRowProps {
   label: string
   value: string | number | null | undefined | React.ReactNode
+  className?: string
 }
 
 const style: CSSProperties = {
