@@ -33,7 +33,7 @@ const testData: {
     hasExceptions: true,
     hasTriggers: true,
     resolveTriggers: true,
-    expectedPath: "case list page",
+    expectedPath: "case details page", // users using the switch button on the case to complete exceptions on old Bichard
     exceptionsFeatureFlagEnabled: false
   }
 ]
