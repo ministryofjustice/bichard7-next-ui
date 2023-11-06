@@ -1,5 +1,6 @@
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import UneditableField from "../../src/components/UneditableField"
+import ErrorMessage from "../../src/Data/ErrorMessages"
 
 describe("Uneditable Fields", () => {
   ;[
@@ -8,8 +9,7 @@ describe("Uneditable Fields", () => {
       label: "Code",
       exception: ExceptionCode.HO100309,
       badge: "SYSTEM ERROR",
-      message:
-        "This code could not be recognised, contact the courts to verify the correct information and report to the Bichard 7 team. Resolve exception by manually updating the PNC with correct code.",
+      message: ErrorMessage.QualifierCode,
       code: "XX"
     }
   ].forEach(({ title, exception, badge, message, code, label }) => {
