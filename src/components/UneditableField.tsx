@@ -55,11 +55,11 @@ const UneditableField = ({ badge, message, code, colour, label }: Props) => {
       <div className="qualifier-code">{code}</div>
       <div className="badgeWrapper">
         <div>
-          <Badge className="badge" isRendered={true} colour={colour} label={badge} />
+          <Badge className="error-prompt-badge" isRendered={true} colour={colour} label={badge} />
         </div>
         <div className="last-updated">{"Last Updated: 13:01 - 04/07/23"}</div>
       </div>
-      <div className="message">{message}</div>
+      <div className="error-prompt-message">{message}</div>
     </div>
   )
   return (
