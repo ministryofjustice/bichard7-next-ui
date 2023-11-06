@@ -1,7 +1,7 @@
-import Badge from "./Badge"
-import { textSecondary } from "utils/colours"
-import { createUseStyles } from "react-jss"
 import { Table } from "govuk-react"
+import { createUseStyles } from "react-jss"
+import { textSecondary } from "utils/colours"
+import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
 
 type Props = {
@@ -20,7 +20,7 @@ const useStyles = createUseStyles({
     }
   },
   value: {
-    "& .message": {
+    "& .error-prompt-message": {
       color: textSecondary
     },
     "& .qualifier-code": {
@@ -30,13 +30,7 @@ const useStyles = createUseStyles({
       paddingBottom: ".62rem",
       display: "flex",
       gap: ".62rem",
-      alignItems: "center",
-      "& .last-updated": {
-        fontSize: "1rem",
-        fontStyle: "normal",
-        fontWeight: "300",
-        color: textSecondary
-      }
+      alignItems: "center"
     }
   }
 })
@@ -54,10 +48,7 @@ const UneditableField = ({ badge, message, code, colour, label }: Props) => {
     <div className={classes.value}>
       <div className="qualifier-code">{code}</div>
       <div className="badgeWrapper">
-        <div>
-          <Badge className="error-prompt-badge" isRendered={true} colour={colour} label={badge} />
-        </div>
-        <div className="last-updated">{"Last Updated: 13:01 - 04/07/23"}</div>
+        <Badge className="error-prompt-badge" isRendered={true} colour={colour} label={badge} />
       </div>
       <div className="error-prompt-message">{message}</div>
     </div>
