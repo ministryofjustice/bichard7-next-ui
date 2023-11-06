@@ -1,3 +1,4 @@
+import ErrorMessages from "Data/ErrorMessages"
 import HO100309 from "../../../../test/test-data/HO100309.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
 
@@ -45,6 +46,7 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Aid and abet theft").click()
       cy.get(".qualifierCodeTable").contains("XX")
+      cy.get(".error-prompt-message").contains(ErrorMessages.QualifierCode)
     })
   })
 })
