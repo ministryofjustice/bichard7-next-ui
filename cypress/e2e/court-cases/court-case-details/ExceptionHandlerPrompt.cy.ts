@@ -25,8 +25,8 @@ describe("ExceptionHandlerPrompt", () => {
     cy.task("clearCourtCases")
   })
 
-  context("Result qualifier - HO100309", () => {
-    it("Should display no error prompt if no exception is raised", () => {
+  context("Result Code Qualifier not found - HO100309", () => {
+    it("Should display no error prompt if a HO100309 is not raised", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
 
       cy.login("bichard01@example.com", "password")
@@ -37,7 +37,7 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".qualifierCodeTable").contains("A")
     })
 
-    it("Should display an error prompt when an exception is raised", () => {
+    it("Should display an error prompt when a HO100309 is raised", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01", hearingOutcome: HO100309.hearingOutcomeXml }])
 
       cy.login("bichard01@example.com", "password")
