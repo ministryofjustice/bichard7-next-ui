@@ -16,8 +16,8 @@ describe("Uneditable Fields", () => {
     it(`should show an error prompt for exception ${exception} (${title})`, () => {
       cy.mount(<UneditableField badge={badge} message={message} code={code} label={label} colour={"purple"} />)
       cy.get(".qualifier-code").should("have.text", code)
-      cy.get(".badge").should("have.text", badge)
-      cy.get(".message").should("have.text", message)
+      cy.get(".error-prompt-badge").should("have.text", badge)
+      cy.get(".error-prompt-message").should("have.text", message)
     })
   })
 })
