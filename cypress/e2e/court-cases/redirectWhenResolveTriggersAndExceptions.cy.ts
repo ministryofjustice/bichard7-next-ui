@@ -33,7 +33,17 @@ const testData: {
     hasExceptions: true,
     hasTriggers: true,
     resolveTriggers: true,
+    resolveExceptions: false,
     expectedPath: "case details page", // users using the switch button on the case to complete exceptions on old Bichard
+    exceptionsFeatureFlagEnabled: false
+  },
+  {
+    loggedInAs: "GeneralHandler",
+    hasExceptions: true,
+    hasTriggers: true,
+    resolveExceptions: true,
+    resolveTriggers: false,
+    expectedPath: "case details page",
     exceptionsFeatureFlagEnabled: false
   },
   {
@@ -41,6 +51,7 @@ const testData: {
     hasExceptions: true,
     hasTriggers: false,
     resolveExceptions: true,
+    resolveTriggers: false,
     expectedPath: "case list page",
     exceptionsFeatureFlagEnabled: true
   },
@@ -49,6 +60,7 @@ const testData: {
     hasExceptions: true,
     hasTriggers: true,
     resolveExceptions: true,
+    resolveTriggers: false,
     expectedPath: "case list page",
     exceptionsFeatureFlagEnabled: true
   },
@@ -57,6 +69,7 @@ const testData: {
     hasExceptions: true,
     hasTriggers: true,
     resolveTriggers: true,
+    resolveExceptions: false,
     expectedPath: "case list page",
     exceptionsFeatureFlagEnabled: true
   }
