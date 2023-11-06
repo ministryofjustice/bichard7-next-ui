@@ -11,7 +11,7 @@ import { DataSource } from "typeorm"
 import { CaseState } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import { ResolutionStatus } from "types/ResolutionStatus"
-import { exceptionHandlerHasAccessTo } from "../helpers/hasAccessTo"
+import { exceptionHandlerHasAccessTo, triggerHandlerHasAccessTo } from "../helpers/hasAccessTo"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
@@ -21,7 +21,7 @@ jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
 
 jest.setTimeout(100000)
-describe("listCourtCases", () => {
+describe("filterListCourtCases", () => {
   let dataSource: DataSource
   const orgCode = "36FPA1"
 
@@ -31,6 +31,11 @@ describe("listCourtCases", () => {
     hasAccessTo: exceptionHandlerHasAccessTo
   } as Partial<User> as User
 
+  const triggerHandlerUser = {
+    visibleForces: [orgCode],
+    visibleCourts: [],
+    hasAccessTo: triggerHandlerHasAccessTo
+  } as Partial<User> as User
   beforeAll(async () => {
     dataSource = await getDataSource()
   })
@@ -134,6 +139,17 @@ describe("listCourtCases", () => {
         caseState: "Resolved",
         user: exceptionHandlerUser,
         expectedCases: ["Exceptions Resolved/Triggers Unresolved", "Everything Resolved"]
+      },
+      {
+        description:
+          "Should see cases with unresolved triggers when user is a trigger handler and unresolved filter applied",
+        caseState: "Unresolved",
+        user: triggerHandlerUser,
+        expectedCases: [
+          "Exceptions Resolved/Triggers Unresolved",
+          "Everything Unresolved",
+          "Bails Unresolved/No Exceptions"
+        ]
       }
     ]
 
