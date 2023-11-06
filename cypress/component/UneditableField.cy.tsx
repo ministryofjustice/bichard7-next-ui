@@ -1,6 +1,6 @@
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import UneditableField from "../../src/components/UneditableField"
-import ErrorMessage from "../../src/Data/ErrorMessages"
+import ErrorMessage from "../../src/types/ErrorMessages"
 
 describe("Uneditable Fields", () => {
   ;[
