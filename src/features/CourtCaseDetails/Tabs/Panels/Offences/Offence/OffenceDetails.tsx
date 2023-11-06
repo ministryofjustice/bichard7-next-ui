@@ -1,18 +1,18 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
+import ErrorMessages from "Data/ErrorMessages"
+import SecondaryButton from "components/SecondaryButton"
+import UneditableField from "components/UneditableField"
 import { GridCol, GridRow, Heading, Table } from "govuk-react"
+import { createUseStyles } from "react-jss"
 import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
 import { TableRow } from "../../TableRow"
 import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { StartDate } from "./StartDate"
-import SecondaryButton from "components/SecondaryButton"
-import { createUseStyles } from "react-jss"
-import UneditableField from "components/UneditableField"
-import ErrorMessages from "Data/ErrorMessages"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 interface OffenceDetailsProps {
   className: string
@@ -127,22 +127,24 @@ export const OffenceDetails = ({
 
       {qualifierCode && (
         <>
-          <Heading as="h4" size="MEDIUM">
-            {"Qualifier"}
-          </Heading>
-          <Table>
-            {exceptions.includes(ExceptionCode.HO100309) ? (
-              <UneditableField
-                badge={"SYSTEM ERROR"}
-                colour={"purple"}
-                message={ErrorMessages.QualifierCode}
-                code={qualifierCode}
-                label={"Code"}
-              />
-            ) : (
-              <TableRow label={"Code"} value={qualifierCode} />
-            )}
-          </Table>
+          <div className="qualifierCodeTable">
+            <Heading as="h4" size="MEDIUM">
+              {"Qualifier"}
+            </Heading>
+            <Table>
+              {exceptions.includes(ExceptionCode.HO100309) ? (
+                <UneditableField
+                  badge={"SYSTEM ERROR"}
+                  colour={"purple"}
+                  message={ErrorMessages.QualifierCode}
+                  code={qualifierCode}
+                  label={"Code"}
+                />
+              ) : (
+                <TableRow label={"Code"} value={qualifierCode} />
+              )}
+            </Table>
+          </div>
         </>
       )}
       <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
