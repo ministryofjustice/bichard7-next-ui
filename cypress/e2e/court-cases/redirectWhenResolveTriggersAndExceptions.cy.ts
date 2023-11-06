@@ -44,6 +44,22 @@ const testData: {
     expectedPath: "case list page",
     exceptionsFeatureFlagEnabled: true
   },
+  {
+    loggedInAs: "ExceptionHandler",
+    hasExceptions: true,
+    hasTriggers: true,
+    resolveExceptions: true,
+    expectedPath: "case list page",
+    exceptionsFeatureFlagEnabled: true
+  },
+  {
+    loggedInAs: "TriggerHandler",
+    hasExceptions: true,
+    hasTriggers: true,
+    resolveTriggers: true,
+    expectedPath: "case list page",
+    exceptionsFeatureFlagEnabled: true
+  }
 ]
 
 describe("Redirect when resolve triggers and exceptions", () => {

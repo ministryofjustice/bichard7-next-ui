@@ -33,12 +33,14 @@ import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
 import CourtCase from "../../../services/entities/CourtCase"
+import User from "../../../services/entities/User"
 
-const allIssuesCleared = (courtCase: CourtCase, triggerToResolve: number[]) => {
-  const triggersResolved =
-    courtCase.triggers.filter((t) => t.status === "Unresolved").length === triggerToResolve.length
+const allIssuesCleared = (courtCase: CourtCase, triggerToResolve: number[], user: User) => {
+  const triggersResolved = user.hasAccessTo[Permission.Triggers]
+    ? courtCase.triggers.filter((t) => t.status === "Unresolved").length === triggerToResolve.length
+    : true
+  const exceptionsResolved = user.hasAccessTo[Permission.Exceptions] ? courtCase.errorStatus !== "Unresolved" : true
 
-  const exceptionsResolved = courtCase.errorStatus !== "Unresolved"
   return triggersResolved && exceptionsResolved
 }
 

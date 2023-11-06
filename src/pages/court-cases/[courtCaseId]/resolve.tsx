@@ -26,6 +26,7 @@ import Form from "../../../components/Form"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import forbidden from "../../../utils/forbidden"
+import Permission from "../../../types/Permission"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -95,7 +96,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         redirectUrl += `?previousPath=${encodeURIComponent(previousPath)}`
       }
 
-      if (courtCase.triggerStatus !== "Unresolved") {
+      if (!currentUser.hasAccessTo[Permission.Triggers] || courtCase.triggerStatus !== "Unresolved") {
         return redirectTo("/")
       } else {
         return redirectTo(redirectUrl)
