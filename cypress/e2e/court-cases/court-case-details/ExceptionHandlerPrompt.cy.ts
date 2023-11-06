@@ -1,4 +1,4 @@
-import ErrorMessages from "Data/ErrorMessages"
+import ErrorMessages from "types/ErrorMessages"
 import HO100309 from "../../../../test/test-data/HO100309.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
 
