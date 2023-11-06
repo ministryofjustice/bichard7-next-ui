@@ -78,12 +78,16 @@ export const getServerSideProps = withMultipleServerSideProps(
         }
       }
 
-      await resolveCourtCase(
+      const result = await resolveCourtCase(
         dataSource,
         courtCase,
         { reason: reason as ResolutionReasonKey, reasonText: reasonText ?? "" },
         currentUser
       )
+
+      if (isError(result)) {
+        throw result
+      }
 
       let redirectUrl = `/court-cases/${courtCase.errorId}`
 
@@ -91,7 +95,11 @@ export const getServerSideProps = withMultipleServerSideProps(
         redirectUrl += `?previousPath=${encodeURIComponent(previousPath)}`
       }
 
-      return redirectTo(redirectUrl)
+      if (courtCase.triggerStatus !== "Unresolved") {
+        return redirectTo("/")
+      } else {
+        return redirectTo(redirectUrl)
+      }
     }
 
     return { props }

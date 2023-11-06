@@ -5,7 +5,7 @@ const testData: {
   loggedInAs: string
   hasExceptions: boolean
   hasTriggers: boolean
-  resolveTriggers: boolean
+  resolveTriggers?: boolean
   resolveExceptions?: boolean
   expectedPath: string
   exceptionsFeatureFlagEnabled: boolean
@@ -35,7 +35,15 @@ const testData: {
     resolveTriggers: true,
     expectedPath: "case details page", // users using the switch button on the case to complete exceptions on old Bichard
     exceptionsFeatureFlagEnabled: false
-  }
+  },
+  {
+    loggedInAs: "GeneralHandler",
+    hasExceptions: true,
+    hasTriggers: false,
+    resolveExceptions: true,
+    expectedPath: "case list page",
+    exceptionsFeatureFlagEnabled: true
+  },
 ]
 
 describe("Redirect when resolve triggers and exceptions", () => {
