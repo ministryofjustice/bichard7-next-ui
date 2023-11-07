@@ -99,7 +99,23 @@ export const OffenceDetails = ({
         {`Offence ${offence.CourtOffenceSequenceNumber} of ${offencesCount}`}
       </Heading>
       <Table>
-        <TableRow label="Offence code" value={getOffenceCode(offence)} />
+        <Table>
+          {exceptions.includes(ExceptionCode.HO100251) || exceptions.includes(ExceptionCode.HO100306) ? (
+            <UneditableField
+              badge={"SYSTEM ERROR"}
+              colour={"purple"}
+              message={
+                exceptions.includes(ExceptionCode.HO100251)
+                  ? ErrorMessages.HO100251_error_prompt
+                  : ErrorMessages.HO100306_error_prompt
+              }
+              code={getOffenceCode(offence)}
+              label={"Offence code"}
+            />
+          ) : (
+            <TableRow label="Offence code" value={getOffenceCode(offence)} />
+          )}
+        </Table>
         <TableRow label="Title" value={offence.OffenceTitle} />
         <TableRow label="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
         <TableRow label="Category" value={getOffenceCategory(offence.OffenceCategory)} />
