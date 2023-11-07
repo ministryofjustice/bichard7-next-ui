@@ -99,38 +99,46 @@ export const OffenceDetails = ({
         {`Offence ${offence.CourtOffenceSequenceNumber} of ${offencesCount}`}
       </Heading>
       <Table>
-        {exceptions.includes(ExceptionCode.HO100251) || exceptions.includes(ExceptionCode.HO100306) ? (
-          <UneditableField
-            badge={"SYSTEM ERROR"}
-            colour={"purple"}
-            message={
-              exceptions.includes(ExceptionCode.HO100251)
-                ? ErrorMessages.HO100251_error_prompt
-                : ErrorMessages.HO100306_error_prompt
-            }
-            code={getOffenceCode(offence)}
-            label={"Offence code"}
+        <div className="offences-table">
+          {exceptions.includes(ExceptionCode.HO100251) || exceptions.includes(ExceptionCode.HO100306) ? (
+            <UneditableField
+              badge={"SYSTEM ERROR"}
+              colour={"purple"}
+              message={
+                exceptions.includes(ExceptionCode.HO100251)
+                  ? ErrorMessages.HO100251_error_prompt
+                  : ErrorMessages.HO100306_error_prompt
+              }
+              code={getOffenceCode(offence)}
+              label={"Offence code"}
+            />
+          ) : (
+            <TableRow label="Offence code" value={getOffenceCode(offence)} />
+          )}
+          <TableRow label="Title" value={offence.OffenceTitle} />
+          <TableRow label="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
+          <TableRow label="Category" value={getOffenceCategory(offence.OffenceCategory)} />
+          <TableRow
+            label="Arrest date"
+            value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))}
           />
-        ) : (
-          <TableRow label="Offence code" value={getOffenceCode(offence)} />
-        )}
-        <TableRow label="Title" value={offence.OffenceTitle} />
-        <TableRow label="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
-        <TableRow label="Category" value={getOffenceCategory(offence.OffenceCategory)} />
-        <TableRow label="Arrest date" value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))} />
-        <TableRow label="Charge date" value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))} />
-        <TableRow label="Start date" value={<StartDate offence={offence} />} />
-        <TableRow label="Location" value={offence.LocationOfOffence} />
-        <TableRow label="Wording" value={offence.ActualOffenceWording} />
-        <TableRow label="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
-        <TableRow label="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
-        <TableRow label="Home Office classification" value={offence.HomeOfficeClassification} />
-        <TableRow
-          label="Conviction date"
-          value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
-        />
-        <TableRow label="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
-        <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
+          <TableRow
+            label="Charge date"
+            value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))}
+          />
+          <TableRow label="Start date" value={<StartDate offence={offence} />} />
+          <TableRow label="Location" value={offence.LocationOfOffence} />
+          <TableRow label="Wording" value={offence.ActualOffenceWording} />
+          <TableRow label="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
+          <TableRow label="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
+          <TableRow label="Home Office classification" value={offence.HomeOfficeClassification} />
+          <TableRow
+            label="Conviction date"
+            value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
+          />
+          <TableRow label="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
+          <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
+        </div>
       </Table>
       <Heading as="h4" size="MEDIUM">
         {"Hearing result"}
@@ -141,7 +149,7 @@ export const OffenceDetails = ({
 
       {qualifierCode && (
         <>
-          <div className="qualifierCodeTable">
+          <div className="qualifier-code-table">
             <Heading as="h4" size="MEDIUM">
               {"Qualifier"}
             </Heading>
