@@ -14,7 +14,7 @@ type TestTrigger = {
   resolvedAt?: Date
 }
 
-const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<boolean> => {
+const insertTriggers = async (caseId: number, triggers: TestTrigger[], username?: string): Promise<boolean> => {
   const dataSource = await getDataSource()
 
   await dataSource
@@ -25,7 +25,7 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
       triggers.map((t) => {
         return {
           resolvedAt: t.status === "Resolved" ? new Date() : null,
-          resolvedBy: t.status === "Resolved" ? "Dummy User" : null,
+          resolvedBy: t.status === "Resolved" ? username ?? "Dummy User" : null,
           errorId: caseId,
           ...t
         }
@@ -33,10 +33,15 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
     )
     .execute()
 
+  const allResolvedTriggers = triggers.filter((t) => t.status === "Resolved")
+  const allTriggersResolved = allResolvedTriggers.length === triggers.length
+  const triggerResolvedBy = allTriggersResolved ? username ?? "Dummy User" : null
+
   await dataSource
     .createQueryBuilder()
     .update(CourtCase)
     .set({
+      triggerResolvedBy,
       triggerCount: () => `trigger_count + ${triggers.length}`,
       triggerReason: triggers[triggers.length - 1].triggerCode
     })
@@ -48,5 +53,5 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[]): Promise<
 
 const deleteTriggers = async () => deleteFromEntity(Trigger)
 
+export { deleteTriggers, insertTriggers }
 export type { TestTrigger }
-export { insertTriggers, deleteTriggers }

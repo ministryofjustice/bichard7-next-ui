@@ -216,17 +216,20 @@ const listCourtCases = async (
   } else if (caseState === "Resolved") {
     query.andWhere({
       ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Bails)
-        ? { triggerResolvedTimestamp: Not(IsNull()) }
+        ? { triggerResolvedTimestamp: Not(IsNull()), triggerResolvedBy: user.username }
         : {}),
       ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions)
-        ? { errorResolvedTimestamp: Not(IsNull()) }
-        : {}),
-      ...(canSeeTriggersAndException(user) && (!reasons || reasons.length === 0)
-        ? { resolutionTimestamp: Not(IsNull()) }
+        ? { errorResolvedTimestamp: Not(IsNull()), errorResolvedBy: user.username }
         : {})
     })
 
-    if (resolvedByUsername !== undefined) {
+    if (resolvedByUsername === undefined) {
+      if (canSeeTriggersAndException(user) && (!reasons || reasons.length === 0)) {
+        query.andWhere(
+          `(NOT("courtCase"."resolution_ts" IS NULL) AND ("courtCase"."trigger_resolved_by" = '${user.username}' OR "courtCase"."error_resolved_by" = '${user.username}'))`
+        )
+      }
+    } else {
       query.andWhere(
         new Brackets((qb) => {
           qb.where({
@@ -279,6 +282,7 @@ const listCourtCases = async (
     query.andWhere({ triggerCount: MoreThan(0) })
   }
 
+  console.log("SQL", query.getQueryAndParameters())
   const result = await query.getManyAndCount().catch((error: Error) => error)
   return isError(result)
     ? result
