@@ -168,7 +168,7 @@ describe("Manually resolve a case", () => {
         cy.login(`${loggedInAs}@example.com`, "password")
         cy.visit("/bichard/court-cases/0")
 
-        if (loggedInAs === "GeneralHander") {
+        if (loggedInAs === "GeneralHandler") {
           cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
         }
 

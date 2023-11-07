@@ -288,28 +288,45 @@ describe("Triggers and exceptions", () => {
   })
 
   describe("Resolve triggers", () => {
-    it("Should be able to resolve a trigger", () => {
-      const caseTriggers: { code: string; status: ResolutionStatus }[][] = [
-        [
-          {
-            code: "TRPR0001",
-            status: "Unresolved"
-          }
-        ]
+    it("Should be able to resolve a trigger and redirect to case list when all triggers resolved and exceptions resolved", () => {
+      const caseTriggers: Partial<TestTrigger>[] = [
+        {
+          triggerCode: "TRPR0001",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        },
+        {
+          triggerCode: "TRPR0002",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
       ]
 
       cy.task("clearCourtCases")
-      cy.task("insertDummyCourtCasesWithTriggers", {
-        caseTriggers,
-        orgCode: "01",
-        triggersLockedByUsername: "Bichard01"
-      })
+      cy.task("insertCourtCasesWithFields", [
+        {
+          triggerLockedByUsername: "Bichard01",
+          orgForPoliceFilter: "01",
+          errorStatus: "Resolved"
+        }
+      ])
+      cy.task("insertTriggers", { caseId: 0, triggers: caseTriggers })
       cy.login("bichard01@example.com", "password")
       cy.visit(caseURL)
 
+      cy.get(".trigger-header input[type='checkbox']").first().check()
+      cy.get("#mark-triggers-complete-button").click()
+
+      cy.url().should("match", /\/court-cases\/\d+/)
+      cy.get("span.moj-badge--green").eq(0).should("have.text", "Complete")
+
       cy.get(".trigger-header input[type='checkbox']").check()
       cy.get("#mark-triggers-complete-button").click()
-      cy.get("span.moj-badge--green").should("have.text", "Complete")
+
+      cy.url().should("match", /\/bichard$/)
+      cy.visit(caseURL)
+      cy.get("span.moj-badge--green").eq(0).should("have.text", "Complete")
+      cy.get("span.moj-badge--green").eq(1).should("have.text", "Complete")
     })
 
     it("Should be able to resolve all triggers on a case using 'select all' if all are unresolved", () => {
