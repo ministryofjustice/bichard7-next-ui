@@ -27,7 +27,7 @@ const canOnlySeeExceptions = (user: User): boolean =>
 const canOnlySeeTriggers = (user: User): boolean =>
   user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]
 
-const canSeeTriggersAndException = (user: User) =>
+const canSeeTriggersAndException = (user: User): boolean =>
   user.hasAccessTo[Permission.Exceptions] && user.hasAccessTo[Permission.Triggers]
 
 const listCourtCases = async (
