@@ -203,7 +203,7 @@ const listCourtCases = async (
     query.andWhere(
       new Brackets((qb) => {
         qb.where({
-          ...(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
+          ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Bails)
             ? { triggerResolvedTimestamp: IsNull() }
             : {}),
           ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions)
@@ -215,7 +215,7 @@ const listCourtCases = async (
     )
   } else if (caseState === "Resolved") {
     query.andWhere({
-      ...(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
+      ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Bails)
         ? { triggerResolvedTimestamp: Not(IsNull()) }
         : {}),
       ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions)
