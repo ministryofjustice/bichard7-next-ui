@@ -102,10 +102,15 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken, pr
       return
     }
 
-    return isResolved ? (
-      <ResolvedTag itemName={lockName} />
-    ) : (
-      <LockedTag lockName={lockName} lockedBy={getLockHolderFn()} />
+    return (
+      <>
+        <ConditionalRender isRendered={isResolved}>
+          <ResolvedTag itemName={lockName} />
+        </ConditionalRender>
+        <ConditionalRender isRendered={!isResolved}>
+          <LockedTag lockName={lockName} lockedBy={getLockHolderFn()} />
+        </ConditionalRender>
+      </>
     )
   }
 
