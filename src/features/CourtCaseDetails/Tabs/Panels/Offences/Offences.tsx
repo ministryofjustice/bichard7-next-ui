@@ -8,7 +8,7 @@ interface OffencesProps {
   offences: Offence[]
   onOffenceSelected: (offenceIndex?: number) => void
   selectedOffenceIndex?: number
-  exceptions: ExceptionCode[]
+  exceptions: { code: ExceptionCode; path: (string | number)[] }[]
 }
 
 export const Offences = ({

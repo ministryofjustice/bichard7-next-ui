@@ -130,7 +130,7 @@ const CourtCaseDetails: React.FC<Props> = ({
 
           <Offences
             className={activeTab === "Offences" ? classes.visible : classes.notVisible}
-            exceptions={aho.Exceptions.map((exception) => exception.code)}
+            exceptions={aho.Exceptions}
             offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
             onOffenceSelected={(offenceIndex) => {
               setSelectedOffenceIndex(offenceIndex)

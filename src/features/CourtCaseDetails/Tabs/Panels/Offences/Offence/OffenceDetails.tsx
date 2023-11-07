@@ -22,7 +22,7 @@ interface OffenceDetailsProps {
   onNextClick: () => void
   onPreviousClick: () => void
   selectedOffenceIndex: number
-  exceptions: ExceptionCode[]
+  exceptions: { code: ExceptionCode; path: (string | number)[] }[]
 }
 const useStyles = createUseStyles({
   button: {
@@ -54,6 +54,18 @@ export const OffenceDetails = ({
   const qualifierCode =
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
+
+  const offenceCodeReason =
+    offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
+    offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Reason
+
+  const hasOffenceError = exceptions.find(
+    (exception) => exception.code === ExceptionCode.HO100306 && exception.path[5] === selectedOffenceIndex - 1
+  )
+
+  const hasQualifierError = exceptions.find(
+    (exception) => exception.code === ExceptionCode.HO100309 && exception.path[5] === selectedOffenceIndex - 1
+  )
   const getOffenceCategory = (offenceCode: string | undefined) => {
     let offenceCategoryWithDescription = offenceCode
     offenceCategory.forEach((category) => {
@@ -77,6 +89,7 @@ export const OffenceDetails = ({
   const getFormattedSequenceNumber = (number: number) => {
     return number.toLocaleString("en-UK", { minimumIntegerDigits: 3 })
   }
+  console.log(JSON.stringify(exceptions, null, 2))
 
   return (
     <div className={`${className} ${classes.wrapper}`}>
@@ -100,20 +113,20 @@ export const OffenceDetails = ({
       </Heading>
       <Table>
         <div className="offences-table">
-          {exceptions.includes(ExceptionCode.HO100251) || exceptions.includes(ExceptionCode.HO100306) ? (
-            <UneditableField
-              badge={"SYSTEM ERROR"}
-              colour={"purple"}
-              message={
-                exceptions.includes(ExceptionCode.HO100251)
-                  ? ErrorMessages.HO100251_error_prompt
-                  : ErrorMessages.HO100306_error_prompt
-              }
-              code={getOffenceCode(offence)}
-              label={"Offence code"}
-            />
-          ) : (
-            <TableRow label="Offence code" value={getOffenceCode(offence)} />
+          {offenceCodeReason && (
+            <>
+              {hasOffenceError ? (
+                <UneditableField
+                  badge={"SYSTEM ERROR"}
+                  colour={"purple"}
+                  message={ErrorMessages.HO100306_error_prompt}
+                  code={getOffenceCode(offence)}
+                  label={"Offence code"}
+                />
+              ) : (
+                <TableRow label="Offence code" value={getOffenceCode(offence)} />
+              )}
+            </>
           )}
           <TableRow label="Title" value={offence.OffenceTitle} />
           <TableRow label="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
@@ -154,7 +167,7 @@ export const OffenceDetails = ({
               {"Qualifier"}
             </Heading>
             <Table>
-              {exceptions.includes(ExceptionCode.HO100309) ? (
+              {hasQualifierError ? (
                 <UneditableField
                   badge={"SYSTEM ERROR"}
                   colour={"purple"}

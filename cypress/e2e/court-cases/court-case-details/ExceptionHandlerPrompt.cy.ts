@@ -1,5 +1,6 @@
 import ErrorMessages from "types/ErrorMessages"
 import HO100309 from "../../../../test/test-data/HO100309.json"
+import HO100306 from "../../../../test/test-data/HO100306.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("ExceptionHandlerPrompt", () => {
@@ -47,6 +48,10 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".govuk-link").contains("Aid and abet theft").click()
       cy.get(".qualifier-code-table").contains("XX")
       cy.get(".error-prompt-message").contains(ErrorMessages.QualifierCode)
+      cy.get("button").contains("Next offence").click()
+      cy.get(".error-prompt-message").should("not.exist")
+      cy.get("button").contains("Next offence").click()
+      cy.get(".error-prompt-message").should("not.exist")
     })
   })
 
@@ -62,18 +67,19 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".offences-table").contains("SX03001A")
     })
 
-    it("Should display an error prompt when a HO100251 is raised", () => {
-      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01", hearingOutcome: HO100309.hearingOutcomeXml }])
-
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
-    })
-
     it("Should display an error prompt when a HO100306 is raised", () => {
-      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01", hearingOutcome: HO100309.hearingOutcomeXml }])
+      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01", hearingOutcome: HO100306.hearingOutcomeXml }])
 
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Aid and abet theft").click()
+      cy.get(".offences-table").contains("YY10XYZA")
+      cy.get(".error-prompt-message").contains(ErrorMessages.HO100306_error_prompt)
+      cy.get("button").contains("Next offence").click()
+      cy.get(".error-prompt-message").should("not.exist")
+      cy.get("button").contains("Next offence").click()
+      cy.get(".error-prompt-message").should("not.exist")
     })
   })
 })
