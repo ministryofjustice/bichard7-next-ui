@@ -11,7 +11,11 @@ import { DataSource } from "typeorm"
 import { CaseState } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import { ResolutionStatus } from "types/ResolutionStatus"
-import { exceptionHandlerHasAccessTo, triggerHandlerHasAccessTo } from "../helpers/hasAccessTo"
+import {
+  exceptionHandlerHasAccessTo,
+  generalHandlerHasAccessTo,
+  triggerHandlerHasAccessTo
+} from "../helpers/hasAccessTo"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 import insertException from "../utils/manageExceptions"
@@ -36,6 +40,13 @@ describe("filterListCourtCases", () => {
     visibleCourts: [],
     hasAccessTo: triggerHandlerHasAccessTo
   } as Partial<User> as User
+
+  const generalHandlerUser = {
+    visibleForces: [orgCode],
+    visibleCourts: [],
+    hasAccessTo: generalHandlerHasAccessTo
+  } as Partial<User> as User
+
   beforeAll(async () => {
     dataSource = await getDataSource()
   })
@@ -150,6 +161,24 @@ describe("filterListCourtCases", () => {
           "Everything Unresolved",
           "Bails Unresolved/No Exceptions"
         ]
+      },
+      {
+        description:
+          "Should see cases with resolved triggers when user is a trigger handler and resolved filter applied",
+        caseState: "Resolved",
+        user: triggerHandlerUser,
+        expectedCases: [
+          "Triggers Resolved/Exceptions Unresolved",
+          "Everything Resolved",
+          "Bails Resolved/No Exceptions"
+        ]
+      },
+      {
+        description:
+          "Should see cases with resolved triggers and exceptions when user is a general handler and resolved filter applied",
+        caseState: "Resolved",
+        user: generalHandlerUser,
+        expectedCases: ["Everything Resolved", "Bails Resolved/No Exceptions"]
       }
     ]
 
@@ -165,8 +194,6 @@ describe("filterListCourtCases", () => {
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
-
-      console.log("cases:", cases)
 
       expect(cases).toHaveLength(expectedCases.length)
 
