@@ -251,61 +251,61 @@ describe("filterListCourtCases", () => {
     })
 
     const testCases: { description: string; caseState: CaseState; user: User; expectedCases: string[] }[] = [
-      // {
-      //   description:
-      //     "Should see cases with unresolved exceptions when user is an exception handler and unresolved filter applied",
-      //   caseState: "Unresolved",
-      //   user: exceptionHandler,
-      //   expectedCases: [
-      //     "Exceptions Unresolved/Trigger Resolved by someoneElse",
-      //     "Exceptions Unresolved/Trigger Unresolved",
-      //     "Exceptions Unresolved/No triggers"
-      //   ]
-      // },
-      // {
-      //   description:
-      //     "Should see cases with resolved exceptions when user is an exception handler and resolved filter applied",
-      //   caseState: "Resolved",
-      //   user: exceptionHandler,
-      //   expectedCases: [
-      //     "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
-      //     "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"
-      //   ]
-      // },
-      // {
-      //   description:
-      //     "Should see cases with unresolved triggers when user is a trigger handler and unresolved filter applied",
-      //   caseState: "Unresolved",
-      //   user: triggerHandler,
-      //   expectedCases: [
-      //     "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
-      //     "Exceptions Unresolved/Trigger Unresolved",
-      //     "No exceptions/Bails Trigger Unresolved"
-      //   ]
-      // },
-      // {
-      //   description:
-      //     "Should see cases with resolved triggers when user is a trigger handler and resolved filter applied",
-      //   caseState: "Resolved",
-      //   user: triggerHandler,
-      //   expectedCases: [
-      //     "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler",
-      //     "No exceptions/Bails Trigger Resolved by triggerHandler"
-      //   ]
-      // },
-      // {
-      //   description:
-      //     "Should see cases with unresolved triggers or unresolved exceptions when user is a general handler and unresolved filter applied",
-      //   caseState: "Unresolved",
-      //   user: generalHandler,
-      //   expectedCases: [
-      //     "Exceptions Unresolved/Trigger Resolved by someoneElse",
-      //     "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
-      //     "Exceptions Unresolved/Trigger Unresolved",
-      //     "No exceptions/Bails Trigger Unresolved",
-      //     "Exceptions Unresolved/No triggers"
-      //   ]
-      // },
+      {
+        description:
+          "Should see cases with unresolved exceptions when user is an exception handler and unresolved filter applied",
+        caseState: "Unresolved",
+        user: exceptionHandler,
+        expectedCases: [
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Unresolved/Trigger Unresolved",
+          "Exceptions Unresolved/No triggers"
+        ]
+      },
+      {
+        description:
+          "Should see cases with resolved exceptions when user is an exception handler and resolved filter applied",
+        caseState: "Resolved",
+        user: exceptionHandler,
+        expectedCases: [
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"
+        ]
+      },
+      {
+        description:
+          "Should see cases with unresolved triggers when user is a trigger handler and unresolved filter applied",
+        caseState: "Unresolved",
+        user: triggerHandler,
+        expectedCases: [
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Unresolved/Trigger Unresolved",
+          "No exceptions/Bails Trigger Unresolved"
+        ]
+      },
+      {
+        description:
+          "Should see cases with resolved triggers when user is a trigger handler and resolved filter applied",
+        caseState: "Resolved",
+        user: triggerHandler,
+        expectedCases: [
+          "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler",
+          "No exceptions/Bails Trigger Resolved by triggerHandler"
+        ]
+      },
+      {
+        description:
+          "Should see cases with unresolved triggers or unresolved exceptions when user is a general handler and unresolved filter applied",
+        caseState: "Unresolved",
+        user: generalHandler,
+        expectedCases: [
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Unresolved/Trigger Unresolved",
+          "No exceptions/Bails Trigger Unresolved",
+          "Exceptions Unresolved/No triggers"
+        ]
+      },
       {
         description:
           "Should see cases with resolved triggers and exceptions when user is a general handler and resolved filter applied",
