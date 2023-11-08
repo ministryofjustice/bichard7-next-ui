@@ -116,7 +116,11 @@ describe("filterListCourtCases", () => {
           triggerResolvedTimestamp: args.trigger?.triggerResolvedBy ? new Date() : null,
           triggerStatus: args.trigger?.triggerResolvedBy ? "Resolved" : "Unresolved",
           resolutionTimestamp:
-            args.trigger?.triggerResolvedBy && args.exception?.exceptionResolvedBy ? new Date() : undefined
+            (args.trigger?.triggerResolvedBy && args.exception?.exceptionResolvedBy) ||
+            (args.trigger?.triggerResolvedBy && !args.exception) ||
+            (args.exception?.exceptionResolvedBy && !args.trigger)
+              ? new Date()
+              : undefined
         }
       ])
       if (args.trigger) {
@@ -217,6 +221,14 @@ describe("filterListCourtCases", () => {
       await insertTestCaseWithTriggersAndExceptions({
         caseId: 8,
         trigger: {
+          triggerResolvedBy: triggerHandler.username,
+          bailsTrigger: true
+        },
+        exception: undefined
+      })
+      await insertTestCaseWithTriggersAndExceptions({
+        caseId: 9,
+        trigger: {
           triggerResolvedBy: undefined,
           bailsTrigger: true
         },
@@ -261,7 +273,22 @@ describe("filterListCourtCases", () => {
           "Should see cases with resolved triggers when user is a trigger handler and resolved filter applied",
         caseState: "Resolved",
         user: triggerHandler,
-        expectedCases: ["Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"]
+        expectedCases: [
+          "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler",
+          "No exceptions/Bails Trigger Resolved by triggerHandler"
+        ]
+      },
+      {
+        description:
+          "Should see cases with unresolved triggers or unresolved exceptions when user is a general handler and unresolved filter applied",
+        caseState: "Unresolved",
+        user: generalHandler,
+        expectedCases: [
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Unresolved/Trigger Unresolved",
+          "No exceptions/Bails Trigger Unresolved"
+        ]
       },
       {
         description:
@@ -289,13 +316,15 @@ describe("filterListCourtCases", () => {
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      console.log(cases)
+      console.log(cases.map((c) => c.defendantName))
 
       expect(cases).toHaveLength(expectedCases.length)
 
-      for (let i = 0; i < expectedCases.length; i++) {
-        expect(cases[i].defendantName).toBe(expectedCases[i])
-      }
+      cases
+        .map((c) => c.defendantName)
+        .forEach((defendantName) => {
+          expect(expectedCases).toContain(defendantName)
+        })
     })
   })
 })
