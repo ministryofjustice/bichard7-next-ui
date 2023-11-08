@@ -1523,6 +1523,7 @@ describe("listCourtCases", () => {
   })
 
   describe("Filter cases by resolution status", () => {
+    //TODO: move this test
     it("Should show supervisors all resolved cases for their force", async () => {
       const resolutionTimestamp = new Date()
       const casesToInsert: Partial<CourtCase>[] = [undefined, "Bichard01", "Supervisor", "Bichard02", undefined].map(

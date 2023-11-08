@@ -200,59 +200,44 @@ const listCourtCases = async (
   }
 
   if (!caseState || caseState === "Unresolved") {
-    query.andWhere(
-      new Brackets((qb) => {
-        qb.where({
-          ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Bails)
-            ? { triggerResolvedTimestamp: IsNull() }
-            : {}),
-          ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions)
-            ? { errorResolvedTimestamp: IsNull() }
-            : {}),
-          ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: IsNull() } : {})
-        })
-      })
-    )
-  } else if (caseState === "Resolved") {
     query.andWhere({
-      ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Bails)
-        ? { triggerResolvedTimestamp: Not(IsNull()), triggerResolvedBy: user.username }
+      ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
+        ? { triggerResolvedTimestamp: IsNull() }
         : {}),
       ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions)
-        ? { errorResolvedTimestamp: Not(IsNull()), errorResolvedBy: user.username }
+        ? { errorResolvedTimestamp: IsNull() }
+        : {}),
+      ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: IsNull() } : {})
+    })
+  } else if (caseState === "Resolved") {
+    query.andWhere({
+      ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
+        ? {
+            triggerResolvedTimestamp: Not(IsNull())
+          }
+        : {}),
+      ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions)
+        ? {
+            errorResolvedTimestamp: Not(IsNull())
+          }
+        : {}),
+      ...(canSeeTriggersAndException(user) && (!reasons || reasons.length === 0)
+        ? { resolutionTimestamp: Not(IsNull()) }
         : {})
     })
 
-    if (resolvedByUsername) {
+    if (resolvedByUsername || !user.hasAccessTo[Permission.ListAllCases]) {
       query.andWhere(
         new Brackets((qb) => {
           qb.where({
-            errorResolvedBy: resolvedByUsername
+            errorResolvedBy: resolvedByUsername ?? user.username
           })
             .orWhere({
-              triggerResolvedBy: resolvedByUsername
+              triggerResolvedBy: resolvedByUsername ?? user.username
             })
-            .orWhere("trigger.resolvedBy = :triggerResolver", { triggerResolver: resolvedByUsername })
+            .orWhere("trigger.resolvedBy = :triggerResolver", { triggerResolver: resolvedByUsername ?? user.username })
         })
       )
-    } else {
-      {
-        if (canSeeTriggersAndException(user) && (!reasons || reasons.length === 0)) {
-          query
-            .andWhere({
-              resolutionTimestamp: Not(IsNull())
-            })
-            .andWhere(
-              new Brackets((qb) => {
-                qb.where({
-                  triggerResolvedBy: user.username
-                }).orWhere({
-                  errorResolvedBy: user.username
-                })
-              })
-            )
-        }
-      }
     }
   }
 
