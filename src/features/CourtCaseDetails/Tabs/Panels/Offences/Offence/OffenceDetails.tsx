@@ -13,6 +13,7 @@ import { TableRow } from "../../TableRow"
 import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { StartDate } from "./StartDate"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
 
 interface OffenceDetailsProps {
   className: string
@@ -23,6 +24,7 @@ interface OffenceDetailsProps {
   onPreviousClick: () => void
   selectedOffenceIndex: number
   exceptions: { code: ExceptionCode; path: (string | number)[] }[]
+  courtCase: DisplayFullCourtCase
 }
 const useStyles = createUseStyles({
   button: {
@@ -48,7 +50,8 @@ export const OffenceDetails = ({
   onNextClick,
   onPreviousClick,
   selectedOffenceIndex,
-  exceptions
+  exceptions,
+  courtCase
 }: OffenceDetailsProps) => {
   const classes = useStyles()
   const qualifierCode =
@@ -59,13 +62,16 @@ export const OffenceDetails = ({
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Reason
 
-  const hasOffenceError = exceptions.find(
-    (exception) => exception.code === ExceptionCode.HO100306 && exception.path[5] === selectedOffenceIndex - 1
-  )
+  const hasOffenceError =
+    exceptions.find(
+      (exception) => exception.code === ExceptionCode.HO100306 && exception.path[5] === selectedOffenceIndex - 1
+    ) && courtCase.errorStatus !== "Resolved"
 
-  const hasQualifierError = exceptions.find(
-    (exception) => exception.code === ExceptionCode.HO100309 && exception.path[5] === selectedOffenceIndex - 1
-  )
+  const hasQualifierError =
+    exceptions.find(
+      (exception) => exception.code === ExceptionCode.HO100309 && exception.path[5] === selectedOffenceIndex - 1
+    ) && courtCase.errorStatus !== "Resolved"
+
   const getOffenceCategory = (offenceCode: string | undefined) => {
     let offenceCategoryWithDescription = offenceCode
     offenceCategory.forEach((category) => {

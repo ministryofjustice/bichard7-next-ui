@@ -136,6 +136,7 @@ const CourtCaseDetails: React.FC<Props> = ({
               setSelectedOffenceIndex(offenceIndex)
             }}
             selectedOffenceIndex={selectedOffenceIndex}
+            courtCase={courtCase}
           />
 
           <Notes

@@ -39,7 +39,9 @@ describe("ExceptionHandlerPrompt", () => {
     })
 
     it("Should display an error prompt when a HO100309 is raised", () => {
-      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01", hearingOutcome: HO100309.hearingOutcomeXml }])
+      cy.task("insertCourtCasesWithFields", [
+        { orgForPoliceFilter: "01", errorCount: 1, triggerCount: 1, hearingOutcome: HO100309.hearingOutcomeXml }
+      ])
 
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
@@ -68,7 +70,9 @@ describe("ExceptionHandlerPrompt", () => {
     })
 
     it("Should display an error prompt when a HO100306 is raised", () => {
-      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01", hearingOutcome: HO100306.hearingOutcomeXml }])
+      cy.task("insertCourtCasesWithFields", [
+        { orgForPoliceFilter: "01", errorCount: 1, triggerCount: 1, hearingOutcome: HO100306.hearingOutcomeXml }
+      ])
 
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")

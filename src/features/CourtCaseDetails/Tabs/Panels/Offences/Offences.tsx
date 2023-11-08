@@ -2,6 +2,7 @@ import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/
 import { OffenceDetails } from "./Offence/OffenceDetails"
 import { OffencesList } from "./OffencesList/OffencesList"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
 
 interface OffencesProps {
   className: string
@@ -9,6 +10,7 @@ interface OffencesProps {
   onOffenceSelected: (offenceIndex?: number) => void
   selectedOffenceIndex?: number
   exceptions: { code: ExceptionCode; path: (string | number)[] }[]
+  courtCase: DisplayFullCourtCase
 }
 
 export const Offences = ({
@@ -16,7 +18,8 @@ export const Offences = ({
   offences,
   onOffenceSelected,
   selectedOffenceIndex,
-  exceptions
+  exceptions,
+  courtCase
 }: OffencesProps) => {
   return selectedOffenceIndex !== undefined && offences[selectedOffenceIndex - 1] !== undefined ? (
     <>
@@ -29,6 +32,7 @@ export const Offences = ({
         onPreviousClick={() => onOffenceSelected(selectedOffenceIndex - 1)}
         selectedOffenceIndex={selectedOffenceIndex}
         exceptions={exceptions}
+        courtCase={courtCase}
       />
     </>
   ) : (
