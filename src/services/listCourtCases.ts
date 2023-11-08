@@ -225,9 +225,24 @@ const listCourtCases = async (
 
     if (resolvedByUsername === undefined) {
       if (canSeeTriggersAndException(user) && (!reasons || reasons.length === 0)) {
-        query.andWhere(
-          `(NOT("courtCase"."resolution_ts" IS NULL) AND ("courtCase"."trigger_resolved_by" = '${user.username}' OR "courtCase"."error_resolved_by" = '${user.username}'))`
-        )
+        query.andWhere({resolutionTimestamp: Not(IsNull())})
+        // query.andWhere(
+        //   new Brackets((qb) => {
+        //     qb.where({
+        //       resolutionTimestamp: Not(IsNull())
+        //     }).andWhere(
+        //       new Brackets((foo) => {
+        //         foo
+        //           .where({
+        //             triggerResolvedBy: resolvedByUsername
+        //           })
+        //           .orWhere({
+        //             errorResolvedBy: resolvedByUsername
+        //           })
+        //       })
+        //     )
+        //   })
+          // `(NOT("courtCase"."resolution_ts" IS NULL) AND ("courtCase"."trigger_resolved_by" = '${user.username}' OR "courtCase"."error_resolved_by" = '${user.username}'))`
       }
     } else {
       query.andWhere(
