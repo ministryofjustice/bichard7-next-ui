@@ -13,7 +13,7 @@ import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import {
   exceptionHandlerHasAccessTo,
-  // generalHandlerHasAccessTo,
+  generalHandlerHasAccessTo,
   triggerHandlerHasAccessTo
 } from "../helpers/hasAccessTo"
 import deleteFromEntity from "../utils/deleteFromEntity"
@@ -28,26 +28,28 @@ jest.setTimeout(100000)
 describe("filterListCourtCases", () => {
   let dataSource: DataSource
   const orgCode = "36FPA1"
+  const anotherUserName = "someoneElse"
 
-  const exceptionHandlerUser = {
+  const exceptionHandler = {
     username: "exceptionHandler",
     visibleForces: [orgCode],
     visibleCourts: [],
     hasAccessTo: exceptionHandlerHasAccessTo
   } as Partial<User> as User
 
-  const triggerHandlerUser = {
+  const triggerHandler = {
+    username: "triggerHandler",
     visibleForces: [orgCode],
     visibleCourts: [],
     hasAccessTo: triggerHandlerHasAccessTo
   } as Partial<User> as User
 
-  // const generalHandlerUser = {
-  //   username: "generalHandler",
-  //   visibleForces: [orgCode],
-  //   visibleCourts: [],
-  //   hasAccessTo: generalHandlerHasAccessTo
-  // } as Partial<User> as User
+  const generalHandler = {
+    username: "generalHandler",
+    visibleForces: [orgCode],
+    visibleCourts: [],
+    hasAccessTo: generalHandlerHasAccessTo
+  } as Partial<User> as User
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -74,8 +76,8 @@ describe("filterListCourtCases", () => {
   })
 
   describe("Filter cases having a combination of behaviours for Exception Handlers and Trigger Handlers", () => {
-    // const dummyTriggerCode = "TRPR0001"
-    // const bailsTriggerCode = "TRPR0010"
+    const dummyTriggerCode = "TRPR0001"
+    const bailsTriggerCode = "TRPR0010"
     const getTrigger = (triggerCode: string, status: ResolutionStatus): TestTrigger => {
       return {
         triggerCode: triggerCode,
@@ -86,141 +88,147 @@ describe("filterListCourtCases", () => {
 
     const insertTestCaseWithTriggersAndExceptions = async (args: {
       caseId: number
-      triggerResolvedBy?: string
-      exceptionResolvedBy?: string
-      triggerCode?: string
+      trigger?: {
+        triggerResolvedBy?: string
+        bailsTrigger?: boolean
+      }
+      exception?: {
+        exceptionResolvedBy?: string
+      }
     }) => {
+      const triggerOrBailsTrigger = `${args.trigger?.bailsTrigger ? "Bails Trigger" : "Trigger"}`
+
       await insertCourtCasesWithFields([
         {
           errorId: args.caseId,
           defendantName: `${
-            args.exceptionResolvedBy ? `Exceptions Resolved by ${args.exceptionResolvedBy}` : "Exceptions Unresolved"
-          }/${args.triggerResolvedBy ? `Triggers Resolved by ${args.triggerResolvedBy}` : "Triggers Unresolved"}`,
+            args.exception?.exceptionResolvedBy
+              ? `Exceptions Resolved by ${args.exception.exceptionResolvedBy}`
+              : `${args.exception ? "Exceptions Unresolved" : "No exceptions"}`
+          }/${
+            args.trigger?.triggerResolvedBy
+              ? `${triggerOrBailsTrigger} Resolved by ${args.trigger.triggerResolvedBy}`
+              : `${triggerOrBailsTrigger} Unresolved`
+          }`,
+          errorCount: args.exception ? 1 : 0,
           orgForPoliceFilter: orgCode,
-          triggerResolvedBy: args.triggerResolvedBy,
-          triggerResolvedTimestamp: args.triggerResolvedBy ? new Date() : null,
-          triggerStatus: args.triggerResolvedBy ? "Resolved" : "Unresolved"
+          triggerResolvedBy: args.trigger?.triggerResolvedBy,
+          triggerResolvedTimestamp: args.trigger?.triggerResolvedBy ? new Date() : null,
+          triggerStatus: args.trigger?.triggerResolvedBy ? "Resolved" : "Unresolved"
         }
       ])
-      if (args.triggerCode) {
-        await insertTriggers(args.caseId, [
-          getTrigger(args.triggerCode, args.triggerResolvedBy ? "Resolved" : "Unresolved")
-        ])
+      if (args.trigger) {
+        await insertTriggers(
+          args.caseId,
+          [
+            getTrigger(
+              args.trigger.bailsTrigger ? bailsTriggerCode : dummyTriggerCode,
+              args.trigger.triggerResolvedBy ? "Resolved" : "Unresolved"
+            )
+          ],
+          args.trigger.triggerResolvedBy
+        )
       }
-      await insertException(
-        args.caseId,
-        "HO100300",
-        "HO100300",
-        args.exceptionResolvedBy ? "Resolved" : "Unresolved",
-        args.exceptionResolvedBy
-      )
+      if (args.exception) {
+        await insertException(
+          args.caseId,
+          "HO100300",
+          "HO100300",
+          args.exception.exceptionResolvedBy ? "Resolved" : "Unresolved",
+          args.exception.exceptionResolvedBy
+        )
+      }
     }
 
     beforeEach(async () => {
-      await insertCourtCasesWithFields([
-        // {
-        //   errorId: 3,
-        //   defendantName: "Everything Resolved - generalHandler triggers",
-        //   orgForPoliceFilter: orgCode,
-        //   triggerResolvedBy: "generalHandler",
-        //   triggerResolvedTimestamp: new Date(),
-        //   triggerStatus: "Resolved",
-        //   errorResolvedBy: "Dummy user",
-        //   errorResolvedTimestamp: new Date(),
-        //   errorStatus: "Resolved",
-        //   resolutionTimestamp: new Date()
-        // },
-        // {
-        //   errorId: 4,
-        //   defendantName: "Everything Resolved - generalHandler errors",
-        //   orgForPoliceFilter: orgCode,
-        //   triggerResolvedBy: "Dummy user",
-        //   triggerResolvedTimestamp: new Date(),
-        //   triggerStatus: "Resolved",
-        //   errorResolvedBy: "generalHandler",
-        //   errorResolvedTimestamp: new Date(),
-        //   errorStatus: "Resolved",
-        //   resolutionTimestamp: new Date()
-        // },
-        // {
-        //   errorId: 5,
-        //   defendantName: "Everything Resolved - generalHandler both",
-        //   orgForPoliceFilter: orgCode,
-        //   triggerResolvedBy: "generalHandler",
-        //   triggerResolvedTimestamp: new Date(),
-        //   triggerStatus: "Resolved",
-        //   errorResolvedBy: "generalHandler",
-        //   errorResolvedTimestamp: new Date(),
-        //   errorStatus: "Resolved",
-        //   resolutionTimestamp: new Date()
-        // },
-        // {
-        //   errorId: 6,
-        //   defendantName: "Exceptions Resolved by exceptionHandler/Triggers Resolved by other user",
-        //   orgForPoliceFilter: orgCode,
-        //   triggerResolvedBy: "Dummy user",
-        //   triggerResolvedTimestamp: new Date(),
-        //   triggerStatus: "Resolved",
-        //   errorResolvedBy: "exceptionHandler",
-        //   errorResolvedTimestamp: new Date(),
-        //   errorStatus: "Resolved",
-        //   resolutionTimestamp: new Date()
-        // },
-        // { errorId: 7, defendantName: "Everything Unresolved", orgForPoliceFilter: orgCode },
-        // {
-        //   errorId: 8,
-        //   defendantName: "Bails Resolved/No Exceptions",
-        //   orgForPoliceFilter: orgCode,
-        //   triggerResolvedBy: "Dummy user",
-        //   triggerResolvedTimestamp : new Date(),
-        //   resolutionTimestamp: new Date(),
-        //   triggerStatus: "Resolved"
-        // },
-        // { errorId: 9, defendantName: "Bails Unresolved/No Exceptions", orgForPoliceFilter: orgCode }
-      ])
-
       await insertTestCaseWithTriggersAndExceptions({
         caseId: 0,
-        triggerResolvedBy: "Dummy user",
-        exceptionResolvedBy: undefined
+        trigger: {
+          triggerResolvedBy: anotherUserName
+        },
+        exception: {
+          exceptionResolvedBy: undefined
+        }
       })
       await insertTestCaseWithTriggersAndExceptions({
         caseId: 1,
-        triggerResolvedBy: undefined,
-        exceptionResolvedBy: exceptionHandlerUser.username
+        trigger: {
+          triggerResolvedBy: undefined
+        },
+        exception: {
+          exceptionResolvedBy: exceptionHandler.username
+        }
       })
       await insertTestCaseWithTriggersAndExceptions({
         caseId: 2,
-        triggerResolvedBy: triggerHandlerUser.username,
-        exceptionResolvedBy: exceptionHandlerUser.username
+        trigger: {
+          triggerResolvedBy: triggerHandler.username
+        },
+        exception: {
+          exceptionResolvedBy: exceptionHandler.username
+        }
       })
-
-      // await insertTriggers(0, [getTrigger(dummyTriggerCode, "Resolved")])
-      // await insertException(0, "HO100300", undefined, "Unresolved")
-
-      // await insertTriggers(1, [getTrigger(dummyTriggerCode, "Unresolved")])
-      // await insertException(1, "HO100300", undefined, "Resolved", "exceptionHandler")
-
-      // await insertTriggers(2, [getTrigger(dummyTriggerCode, "Resolved")])
-      // await insertException(2, "HO100300", undefined, "Resolved", "exceptionHandler")
-
-      // await insertTriggers(3, [getTrigger(dummyTriggerCode, "Resolved")], "generalHandler")
-      // await insertException(3, "HO100300", undefined, "Resolved")
-
-      // await insertTriggers(4, [getTrigger(dummyTriggerCode, "Resolved")])
-      // await insertException(4, "HO100300", undefined, "Resolved", "generalHandler")
-
-      // await insertTriggers(5, [getTrigger(dummyTriggerCode, "Resolved")], "generalHandler")
-      // await insertException(5, "HO100300", undefined, "Resolved", "generalHandler")
-
-      // await insertTriggers(6, [getTrigger(dummyTriggerCode, "Resolved")])
-      // await insertException(6, "HO100300", undefined, "Resolved", "exceptionHandler")
-
-      // await insertTriggers(7, [getTrigger(dummyTriggerCode, "Unresolved")])
-      // await insertException(7, "HO100300", undefined, "Unresolved")
-
-      // await insertTriggers(8, [getTrigger(bailsTriggerCode, "Resolved")])
-      // await insertTriggers(9, [getTrigger(bailsTriggerCode, "Unresolved")])
+      await insertTestCaseWithTriggersAndExceptions({
+        caseId: 3,
+        trigger: {
+          triggerResolvedBy: generalHandler.username
+        },
+        exception: {
+          exceptionResolvedBy: anotherUserName
+        }
+      })
+      await insertTestCaseWithTriggersAndExceptions({
+        caseId: 4,
+        trigger: {
+          triggerResolvedBy: anotherUserName
+        },
+        exception: {
+          exceptionResolvedBy: generalHandler.username
+        }
+      })
+      await insertTestCaseWithTriggersAndExceptions({
+        caseId: 5,
+        trigger: {
+          triggerResolvedBy: generalHandler.username
+        },
+        exception: {
+          exceptionResolvedBy: generalHandler.username
+        }
+      })
+      await insertTestCaseWithTriggersAndExceptions({
+        caseId: 6,
+        trigger: {
+          triggerResolvedBy: anotherUserName
+        },
+        exception: {
+          exceptionResolvedBy: undefined
+        }
+      })
+      await insertTestCaseWithTriggersAndExceptions({
+        caseId: 7,
+        trigger: {
+          triggerResolvedBy: undefined
+        },
+        exception: {
+          exceptionResolvedBy: undefined
+        }
+      })
+      await insertTestCaseWithTriggersAndExceptions({
+        caseId: 8,
+        trigger: {
+          triggerResolvedBy: anotherUserName,
+          bailsTrigger: true
+        },
+        exception: undefined
+      })
+      await insertTestCaseWithTriggersAndExceptions({
+        caseId: 9,
+        trigger: {
+          triggerResolvedBy: undefined,
+          bailsTrigger: true
+        },
+        exception: undefined
+      })
     })
 
     const testCases: { description: string; caseState: CaseState; user: User; expectedCases: string[] }[] = [
@@ -228,14 +236,14 @@ describe("filterListCourtCases", () => {
         description:
           "Should see cases with unresolved exceptions when user is an exception handler and unresolved filter applied",
         caseState: "Unresolved",
-        user: exceptionHandlerUser,
+        user: exceptionHandler,
         expectedCases: ["Exceptions Unresolved/Triggers Resolved by Dummy user", "Everything Unresolved"]
       },
       {
         description:
           "Should see cases with resolved exceptions when user is an exception handler and resolved filter applied",
         caseState: "Resolved",
-        user: exceptionHandlerUser,
+        user: exceptionHandler,
         expectedCases: [
           "Exceptions Resolved by exceptionHandler/Triggers Unresolved",
           "Exceptions Resolved by exceptionHandler/Triggers Resolved by triggerHandler",
