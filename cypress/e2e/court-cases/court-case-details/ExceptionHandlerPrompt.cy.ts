@@ -78,8 +78,8 @@ describe("ExceptionHandlerPrompt", () => {
     })
   })
 
-  context("Offence code error prompts for HO100251 and HO100306", () => {
-    it("Should display no error prompt if HO100251 or HO100306 is not raised", () => {
+  context("Offence code error prompts for HO100306", () => {
+    it("Should display no error prompt if HO100306 is not raised", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
 
       cy.login("bichard01@example.com", "password")
