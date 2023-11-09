@@ -13,6 +13,7 @@ import { TableRow } from "../../TableRow"
 import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { StartDate } from "./StartDate"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
 
 interface OffenceDetailsProps {
   className: string
@@ -22,7 +23,8 @@ interface OffenceDetailsProps {
   onNextClick: () => void
   onPreviousClick: () => void
   selectedOffenceIndex: number
-  exceptions: ExceptionCode[]
+  exceptions: { code: ExceptionCode; path: (string | number)[] }[]
+  courtCase: DisplayFullCourtCase
 }
 const useStyles = createUseStyles({
   button: {
@@ -48,12 +50,28 @@ export const OffenceDetails = ({
   onNextClick,
   onPreviousClick,
   selectedOffenceIndex,
-  exceptions
+  exceptions,
+  courtCase
 }: OffenceDetailsProps) => {
   const classes = useStyles()
   const qualifierCode =
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
+
+  const offenceCodeReason =
+    offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
+    offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Reason
+
+  const hasOffenceError =
+    exceptions.find(
+      (exception) => exception.code === ExceptionCode.HO100306 && exception.path[5] === selectedOffenceIndex - 1
+    ) && courtCase.errorStatus !== "Resolved"
+
+  const hasQualifierError =
+    exceptions.find(
+      (exception) => exception.code === ExceptionCode.HO100309 && exception.path[5] === selectedOffenceIndex - 1
+    ) && courtCase.errorStatus !== "Resolved"
+
   const getOffenceCategory = (offenceCode: string | undefined) => {
     let offenceCategoryWithDescription = offenceCode
     offenceCategory.forEach((category) => {
@@ -77,6 +95,7 @@ export const OffenceDetails = ({
   const getFormattedSequenceNumber = (number: number) => {
     return number.toLocaleString("en-UK", { minimumIntegerDigits: 3 })
   }
+  console.log(JSON.stringify(exceptions, null, 2))
 
   return (
     <div className={`${className} ${classes.wrapper}`}>
@@ -99,24 +118,46 @@ export const OffenceDetails = ({
         {`Offence ${offence.CourtOffenceSequenceNumber} of ${offencesCount}`}
       </Heading>
       <Table>
-        <TableRow label="Offence code" value={getOffenceCode(offence)} />
-        <TableRow label="Title" value={offence.OffenceTitle} />
-        <TableRow label="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
-        <TableRow label="Category" value={getOffenceCategory(offence.OffenceCategory)} />
-        <TableRow label="Arrest date" value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))} />
-        <TableRow label="Charge date" value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))} />
-        <TableRow label="Start date" value={<StartDate offence={offence} />} />
-        <TableRow label="Location" value={offence.LocationOfOffence} />
-        <TableRow label="Wording" value={offence.ActualOffenceWording} />
-        <TableRow label="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
-        <TableRow label="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
-        <TableRow label="Home Office classification" value={offence.HomeOfficeClassification} />
-        <TableRow
-          label="Conviction date"
-          value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
-        />
-        <TableRow label="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
-        <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
+        <div className="offences-table">
+          {offenceCodeReason && (
+            <>
+              {hasOffenceError ? (
+                <UneditableField
+                  badge={"SYSTEM ERROR"}
+                  colour={"purple"}
+                  message={ErrorMessages.HO100306ErrorPrompt}
+                  code={getOffenceCode(offence)}
+                  label={"Offence code"}
+                />
+              ) : (
+                <TableRow label="Offence code" value={getOffenceCode(offence)} />
+              )}
+            </>
+          )}
+          <TableRow label="Title" value={offence.OffenceTitle} />
+          <TableRow label="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
+          <TableRow label="Category" value={getOffenceCategory(offence.OffenceCategory)} />
+          <TableRow
+            label="Arrest date"
+            value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))}
+          />
+          <TableRow
+            label="Charge date"
+            value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))}
+          />
+          <TableRow label="Start date" value={<StartDate offence={offence} />} />
+          <TableRow label="Location" value={offence.LocationOfOffence} />
+          <TableRow label="Wording" value={offence.ActualOffenceWording} />
+          <TableRow label="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
+          <TableRow label="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
+          <TableRow label="Home Office classification" value={offence.HomeOfficeClassification} />
+          <TableRow
+            label="Conviction date"
+            value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
+          />
+          <TableRow label="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
+          <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
+        </div>
       </Table>
       <Heading as="h4" size="MEDIUM">
         {"Hearing result"}
@@ -127,12 +168,12 @@ export const OffenceDetails = ({
 
       {qualifierCode && (
         <>
-          <div className="qualifierCodeTable">
+          <div className="qualifier-code-table">
             <Heading as="h4" size="MEDIUM">
               {"Qualifier"}
             </Heading>
             <Table>
-              {exceptions.includes(ExceptionCode.HO100309) ? (
+              {hasQualifierError ? (
                 <UneditableField
                   badge={"SYSTEM ERROR"}
                   colour={"purple"}
