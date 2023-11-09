@@ -229,7 +229,7 @@ describe("Court case details", () => {
     cy.contains("td", "Plea").siblings().contains("NG (Not guilty)")
     cy.contains("td", "Verdict").siblings().contains("G (Guilty)")
     cy.contains("td", "Mode of trial reason").siblings().contains("SUM")
-    cy.contains("td", "Text").siblings().contains("Travel Restriction Order")
+    cy.contains("td", "Hearing result text").siblings().contains("Travel Restriction Order")
     cy.contains("td", "PNC disposal type").siblings().contains("3078")
     cy.contains("td", "Result class").siblings().contains("Judgement with final result")
     cy.contains("td", "PNC adjudication exists").siblings().contains("N")
