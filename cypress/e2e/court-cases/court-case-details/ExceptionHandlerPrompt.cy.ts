@@ -48,10 +48,13 @@ describe("ExceptionHandlerPrompt", () => {
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Aid and abet theft").click()
+
       cy.get(".qualifier-code-table").contains("XX")
       cy.get(".error-prompt-message").contains(ErrorMessages.QualifierCode)
+
       cy.get("button").contains("Next offence").click()
       cy.get(".error-prompt-message").should("not.exist")
+
       cy.get("button").contains("Next offence").click()
       cy.get(".error-prompt-message").should("not.exist")
     })
@@ -66,13 +69,18 @@ describe("ExceptionHandlerPrompt", () => {
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Aid and abet theft").click()
+
       cy.get(".qualifier-code-table").contains("XX")
       cy.get(".qualifier-code-table .error-prompt-message").contains(ErrorMessages.QualifierCode)
       cy.get(".offences-table").contains("YY10XYZXX")
-      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100306_error_prompt)
+      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100306ErrorPrompt)
+
       cy.get("#exceptions-tab").contains("Exceptions").click()
       cy.get("button").contains("Mark as manually resolved").click()
       cy.get("button").contains("Resolve").click()
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Aid and abet theft").click()
+
       cy.get(".qualifier-code-table .error-prompt-message").should("not.exist")
       cy.get(".offences-table .error-prompt-message").should("not.exist")
     })
@@ -100,10 +108,13 @@ describe("ExceptionHandlerPrompt", () => {
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Aid and abet theft").click()
+
       cy.get(".offences-table").contains("YY10XYZA")
-      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100306_error_prompt)
+      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100306ErrorPrompt)
+
       cy.get("button").contains("Next offence").click()
       cy.get(".offences-table .error-prompt-message").should("not.exist")
+
       cy.get("button").contains("Next offence").click()
       cy.get(".offences-table .error-prompt-message").should("not.exist")
     })

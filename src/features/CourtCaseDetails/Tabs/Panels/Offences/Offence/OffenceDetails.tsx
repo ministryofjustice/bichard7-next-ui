@@ -125,7 +125,7 @@ export const OffenceDetails = ({
                 <UneditableField
                   badge={"SYSTEM ERROR"}
                   colour={"purple"}
-                  message={ErrorMessages.HO100306_error_prompt}
+                  message={ErrorMessages.HO100306ErrorPrompt}
                   code={getOffenceCode(offence)}
                   label={"Offence code"}
                 />
