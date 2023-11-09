@@ -88,7 +88,7 @@ const CourtCaseDetails: React.FC<Props> = ({
       />
       <CourtCaseDetailsSummaryBox
         asn={courtCase.asn}
-        courtCode={courtCase.courtCode}
+        courtHouseCode={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
         courtName={courtCase.courtName}
         courtReference={courtCase.courtReference}
         pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
