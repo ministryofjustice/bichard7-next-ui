@@ -227,15 +227,28 @@ const listCourtCases = async (
     })
 
     if (resolvedByUsername || !user.hasAccessTo[Permission.ListAllCases]) {
+      console.log("here")
       query.andWhere(
         new Brackets((qb) => {
-          qb.where({
-            errorResolvedBy: resolvedByUsername ?? user.username
-          })
-            .orWhere({
+          if (reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)) {
+            qb.where({
               triggerResolvedBy: resolvedByUsername ?? user.username
             })
-            .orWhere("trigger.resolvedBy = :triggerResolver", { triggerResolver: resolvedByUsername ?? user.username })
+          } else if (reasons?.includes(Reason.Exceptions)) {
+            qb.where({
+              errorResolvedBy: resolvedByUsername ?? user.username
+            })
+          } else {
+            qb.where({
+              errorResolvedBy: resolvedByUsername ?? user.username
+            })
+              .orWhere({
+                triggerResolvedBy: resolvedByUsername ?? user.username
+              })
+              .orWhere("trigger.resolvedBy = :triggerResolver", {
+                triggerResolver: resolvedByUsername ?? user.username
+              })
+          }
         })
       )
     }
@@ -278,6 +291,8 @@ const listCourtCases = async (
   if (!user.hasAccessTo[Permission.Exceptions]) {
     query.andWhere({ triggerCount: MoreThan(0) })
   }
+
+  console.log(query.getQueryAndParameters())
 
   const result = await query.getManyAndCount().catch((error: Error) => error)
   return isError(result)

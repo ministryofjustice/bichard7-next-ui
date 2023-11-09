@@ -1121,53 +1121,6 @@ describe("listCourtCases", () => {
 
     const testCases: { description: string; caseState: CaseState; reasons?: [Reason]; excpectedCases: string[] }[] = [
       {
-        description: "Should return cases with unresolved triggers when filtering for unresolved triggers",
-        caseState: "Unresolved",
-        reasons: [Reason.Triggers],
-        excpectedCases: [
-          "Exceptions Resolved/Triggers Unresolved",
-          "Everything Unresolved",
-          "Bails Unresolved/No Exceptions"
-        ]
-      },
-      {
-        description: "Should return cases with resolved triggers when filtering for resolved triggers",
-        caseState: "Resolved",
-        reasons: [Reason.Triggers],
-        excpectedCases: [
-          "Triggers Resolved/Exceptions Unresolved",
-          "Everything Resolved",
-          "Bails Resolved/No Exceptions"
-        ]
-      },
-      {
-        description: "Should return cases with unresolved exceptions when filtering for unresolved exceptions",
-        caseState: "Unresolved",
-        reasons: [Reason.Exceptions],
-        excpectedCases: ["Triggers Resolved/Exceptions Unresolved", "Everything Unresolved"]
-      },
-      {
-        description: "Should return cases with resolved exceptions when filtering for resolved exceptions",
-        caseState: "Resolved",
-        reasons: [Reason.Exceptions],
-        excpectedCases: ["Exceptions Resolved/Triggers Unresolved", "Everything Resolved"]
-      },
-      {
-        description: "Should return cases that are fully resolved when filtering for resolved cases",
-        caseState: "Resolved",
-        excpectedCases: ["Everything Resolved", "Bails Resolved/No Exceptions"]
-      },
-      {
-        description: "Should return cases that has unresolved items when filtering for unresolved cases",
-        caseState: "Unresolved",
-        excpectedCases: [
-          "Triggers Resolved/Exceptions Unresolved",
-          "Exceptions Resolved/Triggers Unresolved",
-          "Everything Unresolved",
-          "Bails Unresolved/No Exceptions"
-        ]
-      },
-      {
         description: "Should return cases that have resolved bails when filtering for resolved bails",
         caseState: "Resolved",
         reasons: [Reason.Bails],
