@@ -14,18 +14,19 @@ import { ResolutionStatus } from "types/ResolutionStatus"
 import {
   exceptionHandlerHasAccessTo,
   generalHandlerHasAccessTo,
+  supervisorHasAccessTo,
   triggerHandlerHasAccessTo
-} from "../helpers/hasAccessTo"
-import deleteFromEntity from "../utils/deleteFromEntity"
-import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import insertException from "../utils/manageExceptions"
-import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
+} from "../../helpers/hasAccessTo"
+import deleteFromEntity from "../../utils/deleteFromEntity"
+import { insertCourtCasesWithFields } from "../../utils/insertCourtCases"
+import insertException from "../../utils/manageExceptions"
+import { TestTrigger, insertTriggers } from "../../utils/manageTriggers"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
 
 jest.setTimeout(100000)
-describe("filterListCourtCases", () => {
+describe("Filter cases by resolution status", () => {
   let dataSource: DataSource
   const orgCode = "36FPA1"
   const anotherUserName = "someoneElse"
@@ -49,6 +50,13 @@ describe("filterListCourtCases", () => {
     visibleForces: [orgCode],
     visibleCourts: [],
     hasAccessTo: generalHandlerHasAccessTo
+  } as Partial<User> as User
+
+  const supervisor = {
+    username: "generalHandler",
+    visibleForces: [orgCode],
+    visibleCourts: [],
+    hasAccessTo: supervisorHasAccessTo
   } as Partial<User> as User
 
   beforeAll(async () => {
@@ -317,6 +325,34 @@ describe("filterListCourtCases", () => {
           "Exceptions Resolved by generalHandler/Trigger Resolved by generalHandler",
           "Exceptions Resolved by generalHandler/No triggers"
         ]
+      },
+      {
+        description:
+          "Should see cases with unresolved triggers or unresolved exceptions when user is a supervisor and resolved filter applied",
+        caseState: "Unresolved",
+        user: supervisor,
+        expectedCases: [
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Unresolved/Trigger Unresolved",
+          "No exceptions/Bails Trigger Unresolved",
+          "Exceptions Unresolved/No triggers"
+        ]
+      },
+      {
+        description:
+          "Should see cases with triggers and exceptions, resolved by anyone when user is a supervisor and resolved filter applied",
+        caseState: "Resolved",
+        user: supervisor,
+        expectedCases: [
+          "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler",
+          "Exceptions Resolved by someoneElse/Trigger Resolved by generalHandler",
+          "Exceptions Resolved by generalHandler/Trigger Resolved by someoneElse",
+          "Exceptions Resolved by generalHandler/Trigger Resolved by generalHandler",
+          "No exceptions/Bails Trigger Resolved by someoneElse",
+          "No exceptions/Bails Trigger Resolved by triggerHandler",
+          "Exceptions Resolved by generalHandler/No triggers"
+        ]
       }
     ]
 
@@ -334,14 +370,13 @@ describe("filterListCourtCases", () => {
       const { result: cases } = result as ListCourtCaseResult
 
       console.log(cases.map((c) => c.defendantName))
-
-      expect(cases).toHaveLength(expectedCases.length)
-
       cases
         .map((c) => c.defendantName)
         .forEach((defendantName) => {
           expect(expectedCases).toContain(defendantName)
         })
+
+      expect(cases).toHaveLength(expectedCases.length)
     })
   })
 })

@@ -9,11 +9,11 @@ import { CaseState, Reason } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { UserGroup } from "types/UserGroup"
-import CourtCase from "../../src/services/entities/CourtCase"
-import Trigger from "../../src/services/entities/Trigger"
-import getDataSource from "../../src/services/getDataSource"
-import listCourtCases from "../../src/services/listCourtCases"
-import { isError } from "../../src/types/Result"
+import CourtCase from "../../../src/services/entities/CourtCase"
+import Trigger from "../../../src/services/entities/Trigger"
+import getDataSource from "../../../src/services/getDataSource"
+import listCourtCases from "../../../src/services/listCourtCases"
+import { isError } from "../../../src/types/Result"
 import {
   exceptionHandlerHasAccessTo,
   generalHandlerHasAccessTo,
@@ -22,16 +22,16 @@ import {
   supervisorHasAccessTo,
   triggerAndExceptionHandlerHasAccessTo,
   triggerHandlerHasAccessTo
-} from "../helpers/hasAccessTo"
-import deleteFromEntity from "../utils/deleteFromEntity"
+} from "../../helpers/hasAccessTo"
+import deleteFromEntity from "../../utils/deleteFromEntity"
 import {
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithTriggers,
   insertMultipleDummyCourtCases
-} from "../utils/insertCourtCases"
-import insertException from "../utils/manageExceptions"
-import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
+} from "../../utils/insertCourtCases"
+import insertException from "../../utils/manageExceptions"
+import { TestTrigger, insertTriggers } from "../../utils/manageTriggers"
 
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
@@ -1053,6 +1053,7 @@ describe("listCourtCases", () => {
     })
   })
 
+  // TODO: move these tests
   describe("Filter cases having a combination of reason and caseState filter", () => {
     const dummyTriggerCode = "TRPR0001"
     const bailsTriggerCode = "TRPR0010"
@@ -1582,6 +1583,7 @@ describe("listCourtCases", () => {
       expect(cases.map((c) => c.errorId)).toStrictEqual([0, 2])
     })
 
+    // TODO move these:
     it("Should show handlers cases that they resolved a trigger for", async () => {
       const resolutionTimestamp = new Date()
       const thisUser = "Bichard01"
@@ -1636,6 +1638,7 @@ describe("listCourtCases", () => {
     })
   })
 
+  // TODO: move these
   describe("Filter cases by user role", () => {
     const mixedReasonCases: Partial<CourtCase>[] = [
       {
