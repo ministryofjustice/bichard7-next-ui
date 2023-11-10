@@ -5,7 +5,7 @@ import User from "services/entities/User"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import { DataSource } from "typeorm"
-import { CaseState, Reason } from "types/CaseListQueryParams"
+import { Reason } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { UserGroup } from "types/UserGroup"
@@ -1588,27 +1588,6 @@ describe("listCourtCases", () => {
       expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
     })
 
-    it("Should only show cases with both triggers and exceptions to a trigger handler when trying to filter for exceptions", async () => {
-      await insertCourtCasesWithFields(mixedReasonCases)
-
-      const result = await listCourtCases(
-        dataSource,
-        { maxPageItems: "100", reasons: [Reason.Exceptions] },
-        triggerHandlerUser
-      )
-
-      expect(isError(result)).toBeFalsy()
-      const { result: cases } = result as ListCourtCaseResult
-
-      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
-      const expectedCaseIDs = mixedReasonCases
-        .filter((c) => c.triggerCount! > 0 && c.errorCount! > 0)
-        .map((c) => c.errorId)
-        .sort()
-      expect(cases).toHaveLength(expectedCaseIDs.length)
-      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
-    })
-
     it("Should show only cases with exceptions to an exception handler", async () => {
       await insertCourtCasesWithFields(mixedReasonCases)
 
@@ -1620,27 +1599,6 @@ describe("listCourtCases", () => {
       const returnedCaseIDs = cases.map((c) => c.errorId).sort()
       const expectedCaseIDs = mixedReasonCases
         .filter((c) => c.errorCount! > 0)
-        .map((c) => c.errorId)
-        .sort()
-      expect(cases).toHaveLength(expectedCaseIDs.length)
-      expect(returnedCaseIDs).toStrictEqual(expectedCaseIDs)
-    })
-
-    it("Should only show cases with both triggers and exceptions to an exception handler when trying to filter for triggers", async () => {
-      await insertCourtCasesWithFields(mixedReasonCases)
-
-      const result = await listCourtCases(
-        dataSource,
-        { maxPageItems: "100", reasons: [Reason.Triggers] },
-        exceptionHandlerUser
-      )
-
-      expect(isError(result)).toBeFalsy()
-      const { result: cases } = result as ListCourtCaseResult
-
-      const returnedCaseIDs = cases.map((c) => c.errorId).sort()
-      const expectedCaseIDs = mixedReasonCases
-        .filter((c) => c.triggerCount! > 0 && c.errorCount! > 0)
         .map((c) => c.errorId)
         .sort()
       expect(cases).toHaveLength(expectedCaseIDs.length)

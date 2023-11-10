@@ -258,6 +258,16 @@ describe("Filter cases by resolution status", () => {
           exceptionResolvedBy: generalHandler.username
         }
       })
+      await insertTestCaseWithTriggersAndExceptions({
+        caseId: 14,
+        trigger: {
+          triggerResolvedBy: undefined,
+          bailsTrigger: true
+        },
+        exception: {
+          exceptionResolvedBy: undefined
+        }
+      })
     })
 
     const testCases: {
@@ -275,7 +285,8 @@ describe("Filter cases by resolution status", () => {
         expectedCases: [
           "Exceptions Unresolved/Trigger Resolved by someoneElse",
           "Exceptions Unresolved/Trigger Unresolved",
-          "Exceptions Unresolved/No triggers"
+          "Exceptions Unresolved/No triggers",
+          "Exceptions Unresolved/Bails Trigger Unresolved"
         ]
       },
       {
@@ -296,7 +307,8 @@ describe("Filter cases by resolution status", () => {
         expectedCases: [
           "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
           "Exceptions Unresolved/Trigger Unresolved",
-          "No exceptions/Bails Trigger Unresolved"
+          "No exceptions/Bails Trigger Unresolved",
+          "Exceptions Unresolved/Bails Trigger Unresolved"
         ]
       },
       {
@@ -319,7 +331,8 @@ describe("Filter cases by resolution status", () => {
           "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
           "Exceptions Unresolved/Trigger Unresolved",
           "No exceptions/Bails Trigger Unresolved",
-          "Exceptions Unresolved/No triggers"
+          "Exceptions Unresolved/No triggers",
+          "Exceptions Unresolved/Bails Trigger Unresolved"
         ]
       },
       {
@@ -346,7 +359,8 @@ describe("Filter cases by resolution status", () => {
           "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
           "Exceptions Unresolved/Trigger Unresolved",
           "No exceptions/Bails Trigger Unresolved",
-          "Exceptions Unresolved/No triggers"
+          "Exceptions Unresolved/No triggers",
+          "Exceptions Unresolved/Bails Trigger Unresolved"
         ]
       },
       {
@@ -375,7 +389,8 @@ describe("Filter cases by resolution status", () => {
         expectedCases: [
           "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
           "Exceptions Unresolved/Trigger Unresolved",
-          "No exceptions/Bails Trigger Unresolved"
+          "No exceptions/Bails Trigger Unresolved",
+          "Exceptions Unresolved/Bails Trigger Unresolved"
         ]
       },
       {
@@ -399,7 +414,8 @@ describe("Filter cases by resolution status", () => {
         expectedCases: [
           "Exceptions Unresolved/Trigger Resolved by someoneElse",
           "Exceptions Unresolved/Trigger Unresolved",
-          "Exceptions Unresolved/No triggers"
+          "Exceptions Unresolved/No triggers",
+          "Exceptions Unresolved/Bails Trigger Unresolved"
         ]
       },
       {
@@ -429,7 +445,7 @@ describe("Filter cases by resolution status", () => {
         caseState: "Unresolved",
         reasons: [Reason.Bails],
         user: generalHandler,
-        expectedCases: ["No exceptions/Bails Trigger Unresolved"]
+        expectedCases: ["No exceptions/Bails Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
       },
       {
         description:
@@ -445,7 +461,7 @@ describe("Filter cases by resolution status", () => {
         caseState: "Unresolved",
         reasons: [Reason.Bails],
         user: triggerHandler,
-        expectedCases: ["No exceptions/Bails Trigger Unresolved"]
+        expectedCases: ["No exceptions/Bails Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
       },
       {
         description: "Should return cases that have resolved bails when filtering for resolved bails as a supervisor",
@@ -465,24 +481,50 @@ describe("Filter cases by resolution status", () => {
         caseState: "Unresolved",
         reasons: [Reason.Bails],
         user: supervisor,
-        expectedCases: ["No exceptions/Bails Trigger Unresolved"]
+        expectedCases: ["No exceptions/Bails Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
       },
       {
-        description:
-          "Should see no cases when filtering for resolved exceptions as a trigger handler",
+        description: "Should see no cases when filtering for resolved exceptions as a trigger handler",
         caseState: "Resolved",
         reasons: [Reason.Exceptions],
         user: triggerHandler,
         expectedCases: []
       },
       {
-        description:
-          "Should see no cases when filtering for unresolved exceptions as a trigger handler",
+        description: "Should see no cases when filtering for unresolved exceptions as a trigger handler",
         caseState: "Unresolved",
         reasons: [Reason.Exceptions],
         user: triggerHandler,
         expectedCases: []
       },
+      {
+        description: "Should see no cases when filtering for resolved triggers as a exception handler",
+        caseState: "Resolved",
+        reasons: [Reason.Triggers],
+        user: exceptionHandler,
+        expectedCases: []
+      },
+      {
+        description: "Should see no cases when filtering for unresolved triggers as a exception handler",
+        caseState: "Unresolved",
+        reasons: [Reason.Triggers],
+        user: exceptionHandler,
+        expectedCases: []
+      },
+      {
+        description: "Should see no cases when filtering for resolved bails as a exception handler",
+        caseState: "Resolved",
+        reasons: [Reason.Bails],
+        user: exceptionHandler,
+        expectedCases: []
+      },
+      {
+        description: "Should see no cases when filtering for unresolved bails as a exception handler",
+        caseState: "Unresolved",
+        reasons: [Reason.Bails],
+        user: exceptionHandler,
+        expectedCases: []
+      }
     ]
 
     it.each(testCases)("$description", async ({ caseState, user, expectedCases, reasons }) => {
@@ -498,9 +540,6 @@ describe("Filter cases by resolution status", () => {
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
-
-      console.log(cases
-        .map((c) => c.defendantName))
 
       cases
         .map((c) => c.defendantName)

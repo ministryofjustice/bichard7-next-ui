@@ -199,9 +199,9 @@ const listCourtCases = async (
     }
   }
 
-  const userNotAllowedToFilter = (user: User, reasons: Reason[]) => {
-    return canOnlySeeTriggers(user) && reasons?.includes(Reason.Exceptions)
-  }
+  const userNotAllowedToFilter = (user: User, reasons: Reason[]) =>
+    (canOnlySeeTriggers(user) && reasons?.includes(Reason.Exceptions)) ||
+    (canOnlySeeExceptions(user) && (reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)))
 
   if (userNotAllowedToFilter(user, reasons ?? [])) {
     query.andWhere("false")
