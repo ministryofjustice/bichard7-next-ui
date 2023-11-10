@@ -4,14 +4,17 @@ import { Brackets, IsNull, Not, SelectQueryBuilder } from "typeorm"
 import { CaseState, Reason } from "types/CaseListQueryParams"
 import Permission from "types/Permission"
 
-const canOnlySeeExceptions = (user: User): boolean =>
-  user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]
+const shouldFilterForExceptions = (user: User, reasons: Reason[]): boolean =>
+  (user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]) ||
+  reasons?.includes(Reason.Exceptions)
 
-const canOnlySeeTriggers = (user: User): boolean =>
-  user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]
+const shouldFilterForTriggers = (user: User, reasons: Reason[]): boolean =>
+  (user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]) ||
+  reasons?.includes(Reason.Triggers) ||
+  reasons?.includes(Reason.Bails)
 
-const canSeeTriggersAndException = (user: User): boolean =>
-  user.hasAccessTo[Permission.Exceptions] && user.hasAccessTo[Permission.Triggers]
+const canSeeTriggersAndException = (user: User, reasons: Reason[]): boolean =>
+  user.hasAccessTo[Permission.Exceptions] && user.hasAccessTo[Permission.Triggers] && (!reasons || reasons.length === 0)
 
 const filterIfUnresolved = (
   query: SelectQueryBuilder<CourtCase>,
@@ -19,11 +22,9 @@ const filterIfUnresolved = (
   reasons: Reason[]
 ): SelectQueryBuilder<CourtCase> => {
   return query.andWhere({
-    ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
-      ? { triggerResolvedTimestamp: IsNull() }
-      : {}),
-    ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions) ? { errorResolvedTimestamp: IsNull() } : {}),
-    ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: IsNull() } : {})
+    ...(shouldFilterForTriggers(user, reasons) ? { triggerResolvedTimestamp: IsNull() } : {}),
+    ...(shouldFilterForExceptions(user, reasons) ? { errorResolvedTimestamp: IsNull() } : {}),
+    ...(canSeeTriggersAndException(user, reasons) ? { resolutionTimestamp: IsNull() } : {})
   })
 }
 
@@ -34,19 +35,9 @@ const filterIfResolved = (
   resolvedByUsername?: string
 ) => {
   query.andWhere({
-    ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
-      ? {
-          triggerResolvedTimestamp: Not(IsNull())
-        }
-      : {}),
-    ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions)
-      ? {
-          errorResolvedTimestamp: Not(IsNull())
-        }
-      : {}),
-    ...(canSeeTriggersAndException(user) && (!reasons || reasons.length === 0)
-      ? { resolutionTimestamp: Not(IsNull()) }
-      : {})
+    ...(shouldFilterForTriggers(user, reasons) ? { triggerResolvedTimestamp: Not(IsNull()) } : {}),
+    ...(shouldFilterForExceptions(user, reasons) ? { errorResolvedTimestamp: Not(IsNull()) } : {}),
+    ...(canSeeTriggersAndException(user, reasons) ? { resolutionTimestamp: Not(IsNull()) } : {})
   })
 
   if (resolvedByUsername || !user.hasAccessTo[Permission.ListAllCases]) {

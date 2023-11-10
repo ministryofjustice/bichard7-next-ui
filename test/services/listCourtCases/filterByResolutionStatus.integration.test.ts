@@ -633,8 +633,6 @@ describe("Filter cases by resolution status", () => {
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
 
-      console.log(cases.map((c) => c.defendantName))
-
       cases
         .map((c) => c.defendantName)
         .forEach((defendantName) => {
