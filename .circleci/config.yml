@@ -9,7 +9,6 @@ commands:
     steps:
       - checkout
       - node_install
-      - run: rm -rf ~/.npm
       - node/install-packages:
           include-branch-in-cache-key: true
       - run:
