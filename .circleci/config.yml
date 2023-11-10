@@ -75,11 +75,11 @@ commands:
           name: Restore npm cache
           keys:
             # Invalidate the cache based on architecture, the version of Node defined in `package-lock.json`
-            - v1-npm-cache-{{ arch }}-{{ .Branch }}-{{ checksum ".package-lock.json" }}
+            - v1-npm-cache-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run: npm ci
       - save_cache:
           name: Save npm cache
-          key: v1-npm-cache-{{ arch }}-{{ .Branch }}-{{ checksum ".package-lock.json" }}
+          key: v1-npm-cache-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
           paths:
             - /opt/circleci/.npm/.cache
 
