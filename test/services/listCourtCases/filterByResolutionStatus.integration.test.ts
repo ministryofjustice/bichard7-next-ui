@@ -571,6 +571,49 @@ describe("Filter cases by resolution status", () => {
         },
         user: exceptionHandler,
         expectedCases: []
+      },
+      {
+        description:
+          "Should only see trigger that is resolved by themselves when searching a bails trigger code as a trigger handler",
+        filters: {
+          caseState: "Resolved",
+          reasonCode: bailsTriggerCode
+        },
+        user: triggerHandler,
+        expectedCases: ["No exceptions/Bails Trigger Resolved by triggerHandler"]
+      },
+      {
+        description:
+          "Should only see exception that is resolved by themselves when searching an exception code as an exception handler",
+        filters: {
+          caseState: "Resolved",
+          reasonCode: "HO100"
+        },
+        user: exceptionHandler,
+        expectedCases: [
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"
+        ]
+      },
+      {
+        description:
+          "Should only see exception that has unresolved exception when searching a trigger code as an exception handler",
+        filters: {
+          caseState: "Unresolved",
+          reasonCode: "TRP"
+        },
+        user: exceptionHandler,
+        expectedCases: ["Exceptions Unresolved/Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
+      },
+      {
+        description:
+          "Should only see exception that has exception resolved by themselves when searching a trigger code as an exception handler",
+        filters: {
+          caseState: "Resolved",
+          reasonCode: "TRP"
+        },
+        user: exceptionHandler,
+        expectedCases: ["Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"]
       }
     ]
 
@@ -586,6 +629,8 @@ describe("Filter cases by resolution status", () => {
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
+
+      console.log(cases.map((c) => c.defendantName))
 
       cases
         .map((c) => c.defendantName)
