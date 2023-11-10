@@ -1,16 +1,12 @@
 version: 2.1
 
-orbs:
-  node: circleci/node@5.1.0
-
 commands:
   ################### Helpers
   setup:
     steps:
       - checkout
       - node_install
-      - node/install-packages:
-          include-branch-in-cache-key: true
+      - npm_install
       - run:
           name: Clone bichard7-next-core
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
@@ -70,6 +66,20 @@ commands:
           paths:
             - /opt/circleci/.nvm/.cache
 
+  npm_install:
+    steps:
+      - restore_cache:
+          name: Restore npm cache
+          keys:
+            # Invalidate the cache based on architecture, the version of Node defined in `package-lock.json`
+            - v1-npm-cache-{{ arch }}-{{ .Branch }}-{{ checksum ".package-lock.json" }}
+      - run: npm ci
+      - save_cache:
+          name: Save npm cache
+          key: v1-npm-cache-{{ arch }}-{{ .Branch }}-{{ checksum ".package-lock.json" }}
+          paths:
+            - /opt/circleci/.npm/.cache
+
   ################### Services
   start_bichard7_legacy:
     steps:
@@ -111,8 +121,7 @@ jobs:
     steps:
       - checkout
       - node_install
-      - node/install-packages:
-          include-branch-in-cache-key: true
+      - npm_install
       - run:
           name: Check the code for linting errors
           command: npm run lint
@@ -124,8 +133,7 @@ jobs:
     steps:
       - checkout
       - node_install
-      - node/install-packages:
-          include-branch-in-cache-key: true
+      - npm_install
       - run:
           name: Run code-based unit tests
           command: npm run test:unit
@@ -137,8 +145,7 @@ jobs:
     steps:
       - checkout
       - node_install
-      - node/install-packages:
-          include-branch-in-cache-key: true
+      - npm_install
       - run:
           name: Install Cypress
           command: ./.circleci/scripts/install-cypress.sh 2>&1
