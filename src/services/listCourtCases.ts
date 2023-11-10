@@ -227,7 +227,6 @@ const listCourtCases = async (
     })
 
     if (resolvedByUsername || !user.hasAccessTo[Permission.ListAllCases]) {
-      console.log("here")
       query.andWhere(
         new Brackets((qb) => {
           if (reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)) {
@@ -291,8 +290,6 @@ const listCourtCases = async (
   if (!user.hasAccessTo[Permission.Exceptions]) {
     query.andWhere({ triggerCount: MoreThan(0) })
   }
-
-  console.log(query.getQueryAndParameters())
 
   const result = await query.getManyAndCount().catch((error: Error) => error)
   return isError(result)

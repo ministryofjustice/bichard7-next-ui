@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { isError } from "lodash"
 import CourtCase from "services/entities/CourtCase"
 import Note from "services/entities/Note"
@@ -6,8 +5,6 @@ import Trigger from "services/entities/Trigger"
 import User from "services/entities/User"
 import getDataSource from "services/getDataSource"
 import listCourtCases from "services/listCourtCases"
-import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import { DataSource } from "typeorm"
 import { CaseState, Reason } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
@@ -22,9 +19,6 @@ import deleteFromEntity from "../../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../../utils/insertCourtCases"
 import insertException from "../../utils/manageExceptions"
 import { TestTrigger, insertTriggers } from "../../utils/manageTriggers"
-
-jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
-jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
 
 jest.setTimeout(100000)
 describe("Filter cases by resolution status", () => {
@@ -62,20 +56,9 @@ describe("Filter cases by resolution status", () => {
 
   beforeAll(async () => {
     dataSource = await getDataSource()
-  })
-
-  beforeEach(async () => {
     await deleteFromEntity(CourtCase)
     await deleteFromEntity(Trigger)
     await deleteFromEntity(Note)
-    jest.resetAllMocks()
-    jest.clearAllMocks()
-    ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
-      jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
-    )
-    ;(leftJoinAndSelectTriggersQuery as jest.Mock).mockImplementation(
-      jest.requireActual("services/queries/leftJoinAndSelectTriggersQuery").default
-    )
   })
 
   afterAll(async () => {
@@ -155,7 +138,7 @@ describe("Filter cases by resolution status", () => {
       }
     }
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       await insertTestCaseWithTriggersAndExceptions({
         caseId: 0,
         trigger: {
@@ -433,11 +416,56 @@ describe("Filter cases by resolution status", () => {
         ]
       },
       {
-        description: "Should return cases that have resolved bails when filtering for resolved bails",
+        description:
+          "Should return cases that have resolved bails when filtering for resolved bails as a general handler",
         caseState: "Resolved",
         user: generalHandler,
         reasons: [Reason.Bails],
         expectedCases: ["No exceptions/Bails Trigger Resolved by generalHandler"]
+      },
+      {
+        description:
+          "Should return cases that have unresolved bails when filtering for unresolved bails as a general handler",
+        caseState: "Unresolved",
+        reasons: [Reason.Bails],
+        user: generalHandler,
+        expectedCases: ["No exceptions/Bails Trigger Unresolved"]
+      },
+      {
+        description:
+          "Should return cases that have resolved bails when filtering for resolved bails as a trigger handler",
+        caseState: "Resolved",
+        user: triggerHandler,
+        reasons: [Reason.Bails],
+        expectedCases: ["No exceptions/Bails Trigger Resolved by triggerHandler"]
+      },
+      {
+        description:
+          "Should return cases that have unresolved bails when filtering for unresolved bails as a trigger handler",
+        caseState: "Unresolved",
+        reasons: [Reason.Bails],
+        user: triggerHandler,
+        expectedCases: ["No exceptions/Bails Trigger Unresolved"]
+      },
+      {
+        description: "Should return cases that have resolved bails when filtering for resolved bails as a supervisor",
+        caseState: "Resolved",
+        user: supervisor,
+        reasons: [Reason.Bails],
+        expectedCases: [
+          "No exceptions/Bails Trigger Resolved by someoneElse",
+          "No exceptions/Bails Trigger Resolved by triggerHandler",
+          "No exceptions/Bails Trigger Resolved by generalHandler",
+          "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse"
+        ]
+      },
+      {
+        description:
+          "Should return cases that have unresolved bails when filtering for unresolved bails as a supervisor",
+        caseState: "Unresolved",
+        reasons: [Reason.Bails],
+        user: supervisor,
+        expectedCases: ["No exceptions/Bails Trigger Unresolved"]
       }
     ]
 
