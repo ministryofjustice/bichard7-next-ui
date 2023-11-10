@@ -528,13 +528,14 @@ describe("Filter cases by resolution status", () => {
         expectedCases: []
       },
       {
-        description: "Should see no cases when filtering for unresolved exceptions as a trigger handler",
+        description:
+          "Should only see cases with unresolved triggers when filtering for unresolved exceptions as a trigger handler",
         filters: {
           caseState: "Unresolved",
           reasons: [Reason.Exceptions]
         },
         user: triggerHandler,
-        expectedCases: []
+        expectedCases: ["Exceptions Unresolved/Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
       },
       {
         description: "Should see no cases when filtering for resolved triggers as a exception handler",
@@ -546,13 +547,14 @@ describe("Filter cases by resolution status", () => {
         expectedCases: []
       },
       {
-        description: "Should see no cases when filtering for unresolved triggers as a exception handler",
+        description:
+          "Should only see cases with unresolved exceptions when filtering for unresolved triggers as a exception handler",
         filters: {
           caseState: "Unresolved",
           reasons: [Reason.Triggers]
         },
         user: exceptionHandler,
-        expectedCases: []
+        expectedCases: ["Exceptions Unresolved/Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
       },
       {
         description: "Should see no cases when filtering for resolved bails as a exception handler",
@@ -564,13 +566,14 @@ describe("Filter cases by resolution status", () => {
         expectedCases: []
       },
       {
-        description: "Should see no cases when filtering for unresolved bails as a exception handler",
+        description:
+          "Should only see cases with unresolved exceptions when filtering for unresolved bails as an exception handler",
         filters: {
           caseState: "Unresolved",
           reasons: [Reason.Bails]
         },
         user: exceptionHandler,
-        expectedCases: []
+        expectedCases: ["Exceptions Unresolved/Bails Trigger Unresolved"]
       },
       {
         description:

@@ -13,10 +13,6 @@ const canOnlySeeTriggers = (user: User): boolean =>
 const canSeeTriggersAndException = (user: User): boolean =>
   user.hasAccessTo[Permission.Exceptions] && user.hasAccessTo[Permission.Triggers]
 
-const userNotAllowedToFilter = (user: User, reasons: Reason[]) =>
-  (canOnlySeeTriggers(user) && reasons?.includes(Reason.Exceptions)) ||
-  (canOnlySeeExceptions(user) && (reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)))
-
 const filterIfUnresolved = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
@@ -90,10 +86,6 @@ const filterByResolutionStatus = (
 ): SelectQueryBuilder<CourtCase> => {
   reasons = reasons ?? []
   caseState = caseState ?? "Unresolved"
-
-  if (userNotAllowedToFilter(user, reasons)) {
-    query.andWhere("false")
-  }
 
   if (caseState === "Unresolved") {
     query = filterIfUnresolved(query, user, reasons)
