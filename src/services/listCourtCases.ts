@@ -18,17 +18,9 @@ import { BailCodes } from "utils/bailCodes"
 import CourtCase from "./entities/CourtCase"
 import Note from "./entities/Note"
 import User from "./entities/User"
+import filterByResolutionStatus from "./filters/filterByResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
-
-const canOnlySeeExceptions = (user: User): boolean =>
-  user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]
-
-const canOnlySeeTriggers = (user: User): boolean =>
-  user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]
-
-const canSeeTriggersAndException = (user: User): boolean =>
-  user.hasAccessTo[Permission.Exceptions] && user.hasAccessTo[Permission.Triggers]
 
 const listCourtCases = async (
   connection: DataSource,
@@ -199,67 +191,7 @@ const listCourtCases = async (
     }
   }
 
-  const userNotAllowedToFilter = (user: User, reasons: Reason[]) =>
-    (canOnlySeeTriggers(user) && reasons?.includes(Reason.Exceptions)) ||
-    (canOnlySeeExceptions(user) && (reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)))
-
-  if (userNotAllowedToFilter(user, reasons ?? [])) {
-    query.andWhere("false")
-  }
-
-  if (!caseState || caseState === "Unresolved") {
-    query.andWhere({
-      ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
-        ? { triggerResolvedTimestamp: IsNull() }
-        : {}),
-      ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions)
-        ? { errorResolvedTimestamp: IsNull() }
-        : {}),
-      ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: IsNull() } : {})
-    })
-  } else if (caseState === "Resolved") {
-    query.andWhere({
-      ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
-        ? {
-            triggerResolvedTimestamp: Not(IsNull())
-          }
-        : {}),
-      ...(canOnlySeeExceptions(user) || reasons?.includes(Reason.Exceptions)
-        ? {
-            errorResolvedTimestamp: Not(IsNull())
-          }
-        : {}),
-      ...(canSeeTriggersAndException(user) && (!reasons || reasons.length === 0)
-        ? { resolutionTimestamp: Not(IsNull()) }
-        : {})
-    })
-
-    if (resolvedByUsername || !user.hasAccessTo[Permission.ListAllCases]) {
-      query.andWhere(
-        new Brackets((qb) => {
-          if (reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)) {
-            qb.where({
-              triggerResolvedBy: resolvedByUsername ?? user.username
-            })
-          } else if (reasons?.includes(Reason.Exceptions)) {
-            qb.where({
-              errorResolvedBy: resolvedByUsername ?? user.username
-            })
-          } else {
-            qb.where({
-              errorResolvedBy: resolvedByUsername ?? user.username
-            })
-              .orWhere({
-                triggerResolvedBy: resolvedByUsername ?? user.username
-              })
-              .orWhere("trigger.resolvedBy = :triggerResolver", {
-                triggerResolver: resolvedByUsername ?? user.username
-              })
-          }
-        })
-      )
-    }
-  }
+  query = filterByResolutionStatus(query, user, reasons, caseState, resolvedByUsername)
 
   if (allocatedToUserName) {
     query.andWhere(
