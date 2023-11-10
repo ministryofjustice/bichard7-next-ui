@@ -466,7 +466,23 @@ describe("Filter cases by resolution status", () => {
         reasons: [Reason.Bails],
         user: supervisor,
         expectedCases: ["No exceptions/Bails Trigger Unresolved"]
-      }
+      },
+      {
+        description:
+          "Should see no cases when filtering for resolved exceptions as a trigger handler",
+        caseState: "Resolved",
+        reasons: [Reason.Exceptions],
+        user: triggerHandler,
+        expectedCases: []
+      },
+      {
+        description:
+          "Should see no cases when filtering for unresolved exceptions as a trigger handler",
+        caseState: "Unresolved",
+        reasons: [Reason.Exceptions],
+        user: triggerHandler,
+        expectedCases: []
+      },
     ]
 
     it.each(testCases)("$description", async ({ caseState, user, expectedCases, reasons }) => {
@@ -482,6 +498,9 @@ describe("Filter cases by resolution status", () => {
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult
+
+      console.log(cases
+        .map((c) => c.defendantName))
 
       cases
         .map((c) => c.defendantName)

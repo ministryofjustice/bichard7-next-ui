@@ -199,6 +199,14 @@ const listCourtCases = async (
     }
   }
 
+  const userNotAllowedToFilter = (user: User, reasons: Reason[]) => {
+    return canOnlySeeTriggers(user) && reasons?.includes(Reason.Exceptions)
+  }
+
+  if (userNotAllowedToFilter(user, reasons ?? [])) {
+    query.andWhere("false")
+  }
+
   if (!caseState || caseState === "Unresolved") {
     query.andWhere({
       ...(canOnlySeeTriggers(user) || reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
