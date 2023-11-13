@@ -12,6 +12,7 @@ import { ResolutionStatus } from "types/ResolutionStatus"
 import {
   exceptionHandlerHasAccessTo,
   generalHandlerHasAccessTo,
+  hasAccessToNone,
   supervisorHasAccessTo,
   triggerHandlerHasAccessTo
 } from "../../helpers/hasAccessTo"
@@ -25,6 +26,13 @@ describe("Filter cases by resolution status", () => {
   let dataSource: DataSource
   const orgCode = "36FPA1"
   const anotherUserName = "someoneElse"
+
+  const noGroupsUser = {
+    visibleForces: [orgCode],
+    visibleCourts: [],
+    groups: [],
+    hasAccessTo: hasAccessToNone
+  } as Partial<User> as User
 
   const exceptionHandler = {
     username: "exceptionHandler",
@@ -276,6 +284,20 @@ describe("Filter cases by resolution status", () => {
       user: User
       expectedCases: string[]
     }[] = [
+      {
+        description: "Shouldn't show cases to a user with no permissions",
+        filters: {},
+        user: noGroupsUser,
+        expectedCases: []
+      },
+      {
+        description: "Shouldn't show cases to a user with no permissions when a reason filter is passed",
+        filters: {
+          reasons: [Reason.Triggers]
+        },
+        user: noGroupsUser,
+        expectedCases: []
+      },
       {
         description:
           "Should see cases with unresolved exceptions when user is an exception handler and unresolved filter applied",
