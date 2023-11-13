@@ -8,27 +8,17 @@ import { DataSource } from "typeorm"
 import { Reason } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import { ResolutionStatus } from "types/ResolutionStatus"
-import { UserGroup } from "types/UserGroup"
 import CourtCase from "../../../src/services/entities/CourtCase"
 import Trigger from "../../../src/services/entities/Trigger"
 import getDataSource from "../../../src/services/getDataSource"
 import listCourtCases from "../../../src/services/listCourtCases"
 import { isError } from "../../../src/types/Result"
-import {
-  exceptionHandlerHasAccessTo,
-  generalHandlerHasAccessTo,
-  hasAccessToAll,
-  hasAccessToNone,
-  supervisorHasAccessTo,
-  triggerAndExceptionHandlerHasAccessTo,
-  triggerHandlerHasAccessTo
-} from "../../helpers/hasAccessTo"
+import { hasAccessToAll } from "../../helpers/hasAccessTo"
 import deleteFromEntity from "../../utils/deleteFromEntity"
 import {
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
-  insertDummyCourtCasesWithTriggers,
-  insertMultipleDummyCourtCases
+  insertDummyCourtCasesWithTriggers
 } from "../../utils/insertCourtCases"
 import insertException from "../../utils/manageExceptions"
 import { TestTrigger, insertTriggers } from "../../utils/manageTriggers"
