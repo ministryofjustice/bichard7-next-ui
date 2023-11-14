@@ -52,7 +52,7 @@
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.isobject": "^3.0.2",
-    "next": "13.4.12",
+    "next": "14.0.2",
     "pg": "^8.11.3",
     "qs": "^6.11.2",
     "raw-body": "^2.5.2",
