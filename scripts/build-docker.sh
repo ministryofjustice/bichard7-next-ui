@@ -2,7 +2,7 @@
 
 set -ex
 
-readonly DOCKER_REFERENCE="nginx-nodejs-2023-supervisord"
+readonly DOCKER_REFERENCE="nginx-nodejs-20-2023-supervisord"
 
 function has_local_image() {
   IMAGES=$(docker images --filter=reference="${DOCKER_REFERENCE}:*" -q | wc -l)
@@ -52,9 +52,9 @@ fi
 
   if [[ -n "${CODEBUILD_RESOLVED_SOURCE_VERSION}" && -n "${CODEBUILD_START_TIME}" ]]; then
       ## Install goss/trivy
-      curl -L https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
+      curl -L https://github.com/goss-org/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
       chmod +rx /usr/local/bin/goss
-      curl -L https://github.com/aelsabbahy/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
+      curl -L https://github.com/goss-org/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
       chmod +rx /usr/local/bin/dgoss
 
       export GOSS_PATH="/usr/local/bin/goss"

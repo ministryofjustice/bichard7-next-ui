@@ -1,5 +1,5 @@
 #########################################################
-ARG BUILD_IMAGE="nginx-nodejs-2023-supervisord"
+ARG BUILD_IMAGE="nginx-nodejs-20-2023-supervisord"
 FROM ${BUILD_IMAGE} as builder
 
 LABEL maintainer="CJSE"
