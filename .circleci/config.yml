@@ -226,9 +226,6 @@ jobs:
           command: npm run ui
           working_directory: ~/bichard7-next-core
       - run:
-          name: Install Cypress Reporter
-          command: npm install --save-dev cypress-circleci-reporter mocha
-      - run:
           name: Run fake conductor service
           command: node .circleci/fakes/conductor
           background: true
