@@ -639,6 +639,66 @@ describe("Filter cases by resolution status", () => {
         },
         user: exceptionHandler,
         expectedCases: ["Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"]
+      },
+      {
+        description: "Should only see unresolved triggers when case state is not set as a trigger handler",
+        filters: {
+          caseState: undefined,
+          reasonCode: undefined
+        },
+        user: triggerHandler,
+        expectedCases: [
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Unresolved/Trigger Unresolved",
+          "No exceptions/Bails Trigger Unresolved",
+          "Exceptions Unresolved/Bails Trigger Unresolved"
+        ]
+      },
+      {
+        description: "Should only see unresolved exceptions when case state is not set as an exceptions handler",
+        filters: {
+          caseState: undefined,
+          reasonCode: undefined
+        },
+        user: exceptionHandler,
+        expectedCases: [
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Unresolved/Trigger Unresolved",
+          "Exceptions Unresolved/No triggers",
+          "Exceptions Unresolved/Bails Trigger Unresolved"
+        ]
+      },
+      {
+        description: "Should see unresolved triggers and exceptions when case state is not set as a general handler",
+        filters: {
+          caseState: undefined,
+          reasonCode: undefined
+        },
+        user: generalHandler,
+        expectedCases: [
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Unresolved/Trigger Unresolved",
+          "No exceptions/Bails Trigger Unresolved",
+          "Exceptions Unresolved/No triggers",
+          "Exceptions Unresolved/Bails Trigger Unresolved"
+        ]
+      },
+      {
+        description: "Should see unresolved triggers and exceptions when case state is not set as a supervisor",
+        filters: {
+          caseState: undefined,
+          reasonCode: undefined
+        },
+        user: supervisor,
+        expectedCases: [
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Unresolved/Trigger Unresolved",
+          "No exceptions/Bails Trigger Unresolved",
+          "Exceptions Unresolved/No triggers",
+          "Exceptions Unresolved/Bails Trigger Unresolved"
+        ]
       }
     ]
 
