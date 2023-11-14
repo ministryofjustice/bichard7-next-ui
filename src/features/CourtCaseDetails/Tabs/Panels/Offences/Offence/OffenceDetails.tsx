@@ -62,15 +62,18 @@ export const OffenceDetails = ({
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Reason
 
-  const hasOffenceError =
+  const findUnresolvedException = (exceptionCode: ExceptionCode) =>
     exceptions.find(
-      (exception) => exception.code === ExceptionCode.HO100306 && exception.path[5] === selectedOffenceIndex - 1
+      (exception) => exception.code === exceptionCode && exception.path[5] === selectedOffenceIndex - 1
     ) && courtCase.errorStatus !== "Resolved"
 
-  const hasQualifierError =
-    exceptions.find(
-      (exception) => exception.code === ExceptionCode.HO100309 && exception.path[5] === selectedOffenceIndex - 1
-    ) && courtCase.errorStatus !== "Resolved"
+  const offenceCodeErrorPrompt = findUnresolvedException(ExceptionCode.HO100306)
+    ? ErrorMessages.HO100306ErrorPrompt
+    : findUnresolvedException("HO100251" as ExceptionCode)
+      ? ErrorMessages.HO100251ErrorPrompt
+      : undefined
+
+  const qualifierErrorPrompt = findUnresolvedException(ExceptionCode.HO100309) && ErrorMessages.QualifierCode
 
   const getOffenceCategory = (offenceCode: string | undefined) => {
     let offenceCategoryWithDescription = offenceCode
@@ -95,7 +98,6 @@ export const OffenceDetails = ({
   const getFormattedSequenceNumber = (number: number) => {
     return number.toLocaleString("en-UK", { minimumIntegerDigits: 3 })
   }
-  console.log(JSON.stringify(exceptions, null, 2))
 
   return (
     <div className={`${className} ${classes.wrapper}`}>
@@ -121,11 +123,11 @@ export const OffenceDetails = ({
         <div className="offences-table">
           {offenceCodeReason && (
             <>
-              {hasOffenceError ? (
+              {offenceCodeErrorPrompt ? (
                 <UneditableField
                   badge={"SYSTEM ERROR"}
                   colour={"purple"}
-                  message={ErrorMessages.HO100306ErrorPrompt}
+                  message={offenceCodeErrorPrompt}
                   code={getOffenceCode(offence)}
                   label={"Offence code"}
                 />
@@ -173,11 +175,11 @@ export const OffenceDetails = ({
               {"Qualifier"}
             </Heading>
             <Table>
-              {hasQualifierError ? (
+              {qualifierErrorPrompt ? (
                 <UneditableField
                   badge={"SYSTEM ERROR"}
                   colour={"purple"}
-                  message={ErrorMessages.QualifierCode}
+                  message={qualifierErrorPrompt}
                   code={qualifierCode}
                   label={"Code"}
                 />
