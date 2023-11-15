@@ -241,7 +241,8 @@ describe("Court case details", () => {
     cy.contains("td", "Notifiable to Home Office").siblings().contains("Y")
     cy.contains("td", "Home Office classification").siblings().contains("019/11")
     cy.contains("td", "Conviction date").siblings().contains("26/09/2011")
-    cy.contains("td", "Court Offence Sequence Number").siblings().contains("1")
+    cy.contains("td", "PNC sequence number").siblings().contains("001")
+    cy.contains("td", "Court offence sequence number").siblings().contains("1")
     cy.contains("td", "Committed on bail").siblings().contains("D (Don't know)")
 
     cy.contains("td", "CJS Code").siblings().contains("3078")
@@ -276,7 +277,8 @@ describe("Court case details", () => {
     cy.contains("td", "Notifiable to Home Office").siblings().contains("Y")
     cy.contains("td", "Home Office classification").siblings().contains("019/07")
     cy.contains("td", "Conviction date").siblings().contains("26/09/2011")
-    cy.contains("td", "Court Offence Sequence Number").siblings().contains("3")
+    cy.contains("td", "PNC sequence number").siblings().contains("002")
+    cy.contains("td", "Court offence sequence number").siblings().contains("3")
     cy.contains("td", "Committed on bail").siblings().contains("D (Don't know)")
 
     cy.contains("td", "CJS Code").siblings().contains("3052")
@@ -313,7 +315,8 @@ describe("Court case details", () => {
     cy.contains("td", "Notifiable to Home Office").siblings().contains("N")
     cy.contains("td", "Home Office classification").siblings().contains("809/01")
     cy.contains("td", "Conviction date").siblings().contains("26/09/2011")
-    cy.contains("td", "Court Offence Sequence Number").siblings().contains("5")
+    cy.contains("td", "PNC sequence number").siblings().contains("003")
+    cy.contains("td", "Court offence sequence number").siblings().contains("5")
     cy.contains("td", "Committed on bail").siblings().contains("D (Don't know)")
 
     cy.contains("td", "CJS Code").siblings().contains("1015")

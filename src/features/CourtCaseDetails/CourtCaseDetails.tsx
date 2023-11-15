@@ -137,6 +137,7 @@ const CourtCaseDetails: React.FC<Props> = ({
             }}
             selectedOffenceIndex={selectedOffenceIndex}
             courtCase={courtCase}
+            pncQuery={aho.PncQuery}
           />
 
           <Notes
