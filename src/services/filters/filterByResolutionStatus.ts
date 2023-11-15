@@ -4,23 +4,36 @@ import { Brackets, IsNull, Not, SelectQueryBuilder } from "typeorm"
 import { CaseState, Reason } from "types/CaseListQueryParams"
 import Permission from "types/Permission"
 
+const reasonFilterOnlyIncludesTriggers = (reasons: Reason[]): boolean =>
+  (reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)) && !reasons?.includes(Reason.Exceptions)
+
+const reasonFilterOnlyIncludesExceptions = (reasons: Reason[]): boolean =>
+  reasons?.includes(Reason.Exceptions) && !(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails))
+
 const shouldFilterForExceptions = (user: User, reasons: Reason[]): boolean =>
   (user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]) ||
-  reasons?.includes(Reason.Exceptions)
+  reasonFilterOnlyIncludesExceptions(reasons)
 
 const shouldFilterForTriggers = (user: User, reasons: Reason[]): boolean =>
   (user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]) ||
-  reasons?.includes(Reason.Triggers) ||
-  reasons?.includes(Reason.Bails)
+  reasonFilterOnlyIncludesTriggers(reasons)
 
 const canSeeTriggersAndException = (user: User, reasons: Reason[]): boolean =>
-  user.hasAccessTo[Permission.Exceptions] && user.hasAccessTo[Permission.Triggers] && (!reasons || reasons.length === 0)
+  user.hasAccessTo[Permission.Exceptions] &&
+  user.hasAccessTo[Permission.Triggers] &&
+  (!reasons ||
+    reasons.length === 0 ||
+    (reasons?.includes(Reason.Exceptions) && reasons?.includes(Reason.Triggers) && reasons?.includes(Reason.Bails)))
 
 const filterIfUnresolved = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
   reasons: Reason[]
 ): SelectQueryBuilder<CourtCase> => {
+  console.log("shouldFilterForTriggers(user, reasons)", shouldFilterForTriggers(user, reasons))
+  console.log("shouldFilterForExceptions(user, reasons)", shouldFilterForExceptions(user, reasons))
+  console.log("canSeeTriggersAndException(user, reasons)", canSeeTriggersAndException(user, reasons))
+
   return query.andWhere({
     ...(shouldFilterForTriggers(user, reasons) ? { triggerResolvedTimestamp: IsNull() } : {}),
     ...(shouldFilterForExceptions(user, reasons) ? { errorResolvedTimestamp: IsNull() } : {}),
@@ -43,11 +56,11 @@ const filterIfResolved = (
   if (resolvedByUsername || !user.hasAccessTo[Permission.ListAllCases]) {
     query.andWhere(
       new Brackets((qb) => {
-        if (reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)) {
+        if (reasonFilterOnlyIncludesTriggers(reasons)) {
           qb.where({
             triggerResolvedBy: resolvedByUsername ?? user.username
           })
-        } else if (reasons?.includes(Reason.Exceptions)) {
+        } else if (reasonFilterOnlyIncludesExceptions(reasons)) {
           qb.where({
             errorResolvedBy: resolvedByUsername ?? user.username
           })
