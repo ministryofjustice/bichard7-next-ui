@@ -81,7 +81,7 @@ commands:
       - run:
           name: Start bichard7 legacy
           working_directory: ~/bichard7-next-core
-          command: SKIP_IMAGES=ui npm run all-legacy
+          command: SKIP_IMAGES=ui npm run all-legacy || npm run all-legacy
 
   start_services:
     parameters:
