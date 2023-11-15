@@ -642,10 +642,7 @@ describe("Filter cases by resolution status", () => {
       },
       {
         description: "Should only see unresolved triggers when case state is not set as a trigger handler",
-        filters: {
-          caseState: undefined,
-          reasonCode: undefined
-        },
+        filters: {},
         user: triggerHandler,
         expectedCases: [
           "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
@@ -656,10 +653,7 @@ describe("Filter cases by resolution status", () => {
       },
       {
         description: "Should only see unresolved exceptions when case state is not set as an exceptions handler",
-        filters: {
-          caseState: undefined,
-          reasonCode: undefined
-        },
+        filters: {},
         user: exceptionHandler,
         expectedCases: [
           "Exceptions Unresolved/Trigger Resolved by someoneElse",
@@ -670,10 +664,7 @@ describe("Filter cases by resolution status", () => {
       },
       {
         description: "Should see unresolved triggers and exceptions when case state is not set as a general handler",
-        filters: {
-          caseState: undefined,
-          reasonCode: undefined
-        },
+        filters: {},
         user: generalHandler,
         expectedCases: [
           "Exceptions Unresolved/Trigger Resolved by someoneElse",
@@ -686,10 +677,7 @@ describe("Filter cases by resolution status", () => {
       },
       {
         description: "Should see unresolved triggers and exceptions when case state is not set as a supervisor",
-        filters: {
-          caseState: undefined,
-          reasonCode: undefined
-        },
+        filters: {},
         user: supervisor,
         expectedCases: [
           "Exceptions Unresolved/Trigger Resolved by someoneElse",
