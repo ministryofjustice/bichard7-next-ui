@@ -20,7 +20,7 @@ import { Offences } from "./Tabs/Panels/Offences/Offences"
 interface Props {
   courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
-  errorLockedByAnotherUser: boolean
+  isLockedByCurrentUser: boolean
   user: DisplayFullUser
   canReallocate: boolean
   canResolveAndSubmit: boolean
@@ -53,7 +53,7 @@ const CourtCaseDetails: React.FC<Props> = ({
   courtCase,
   aho,
   user,
-  errorLockedByAnotherUser,
+  isLockedByCurrentUser,
   canReallocate,
   canResolveAndSubmit,
   csrfToken,
@@ -143,7 +143,7 @@ const CourtCaseDetails: React.FC<Props> = ({
           <Notes
             className={activeTab === "Notes" ? classes.visible : classes.notVisible}
             notes={courtCase.notes}
-            lockedByAnotherUser={errorLockedByAnotherUser}
+            isLockedByCurrentUser={isLockedByCurrentUser}
             csrfToken={csrfToken}
           />
         </GridCol>

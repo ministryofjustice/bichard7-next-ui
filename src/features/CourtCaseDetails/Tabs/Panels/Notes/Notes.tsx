@@ -11,7 +11,7 @@ import AddNoteForm from "./AddNoteForm"
 interface NotesProps {
   className: string
   notes: DisplayNote[]
-  lockedByAnotherUser: boolean
+  isLockedByCurrentUser: boolean
   csrfToken: string
 }
 
@@ -35,7 +35,7 @@ const filterNotes = (notes: DisplayNote[], viewOption?: NotesViewOption) => {
   return [filteredNotes, noNoteText] as const
 }
 
-export const Notes = ({ className, notes, lockedByAnotherUser, csrfToken }: NotesProps) => {
+export const Notes = ({ className, notes, isLockedByCurrentUser, csrfToken }: NotesProps) => {
   const [viewOption, setViewOption] = useState<NotesViewOption | undefined>()
   const [filteredNotes, noNoteText] = filterNotes(notes, viewOption)
   const hasNotes = notes.length > 0
@@ -68,7 +68,7 @@ export const Notes = ({ className, notes, lockedByAnotherUser, csrfToken }: Note
       <ConditionalRender isRendered={!hasFilteredNotes}>
         <Paragraph>{`Case has no ${noNoteText}.`}</Paragraph>
       </ConditionalRender>
-      <AddNoteForm lockedByAnotherUser={lockedByAnotherUser} csrfToken={csrfToken} />
+      <AddNoteForm isLockedByCurrentUser={isLockedByCurrentUser} csrfToken={csrfToken} />
     </CourtCaseDetailsPanel>
   )
 }
