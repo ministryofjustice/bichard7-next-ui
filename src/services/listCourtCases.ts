@@ -9,16 +9,15 @@ import {
   Not,
   SelectQueryBuilder
 } from "typeorm"
-import { CaseListQueryParams, Reason } from "types/CaseListQueryParams"
+import { CaseListQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import Permission from "types/Permission"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
-import { BailCodes } from "utils/bailCodes"
 import CourtCase from "./entities/CourtCase"
 import Note from "./entities/Note"
 import User from "./entities/User"
-import filterByResolutionStatus from "./filters/filterByResolutionStatus"
+import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
 
@@ -140,29 +139,6 @@ const listCourtCases = async (
     )
   }
 
-  if (reasons) {
-    query.andWhere(
-      new Brackets((qb) => {
-        if (reasons?.includes(Reason.Triggers)) {
-          qb.where({ triggerCount: MoreThan(0) })
-        }
-
-        if (reasons?.includes(Reason.Exceptions)) {
-          qb.orWhere({ errorCount: MoreThan(0) })
-        }
-
-        if (reasons?.includes(Reason.Bails)) {
-          Object.keys(BailCodes).forEach((triggerCode, i) => {
-            const paramName = `bails${i}`
-            qb.orWhere(`trigger.trigger_code ilike '%' || :${paramName} || '%'`, {
-              [paramName]: triggerCode
-            })
-          })
-        }
-      })
-    )
-  }
-
   if (urgent === "Urgent") {
     query.andWhere({ isUrgent: MoreThan(0) })
   } else if (urgent === "Non-urgent") {
@@ -191,7 +167,7 @@ const listCourtCases = async (
     }
   }
 
-  query = filterByResolutionStatus(query, user, reasons, caseState, resolvedByUsername)
+  query = filterByReasonAndResolutionStatus(query, user, reasons, caseState, resolvedByUsername)
 
   if (allocatedToUserName) {
     query.andWhere(

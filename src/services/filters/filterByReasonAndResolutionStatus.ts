@@ -1,8 +1,9 @@
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
-import { Brackets, IsNull, Not, SelectQueryBuilder } from "typeorm"
+import { Brackets, FindOperator, IsNull, MoreThan, Not, SelectQueryBuilder } from "typeorm"
 import { CaseState, Reason } from "types/CaseListQueryParams"
 import Permission from "types/Permission"
+import { BailCodes } from "../../utils/bailCodes"
 
 const reasonFilterOnlyIncludesTriggers = (reasons: Reason[]): boolean =>
   (reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)) && !reasons?.includes(Reason.Exceptions)
@@ -30,10 +31,6 @@ const filterIfUnresolved = (
   user: User,
   reasons: Reason[]
 ): SelectQueryBuilder<CourtCase> => {
-  console.log("shouldFilterForTriggers(user, reasons)", shouldFilterForTriggers(user, reasons))
-  console.log("shouldFilterForExceptions(user, reasons)", shouldFilterForExceptions(user, reasons))
-  console.log("canSeeTriggersAndException(user, reasons)", canSeeTriggersAndException(user, reasons))
-
   return query.andWhere({
     ...(shouldFilterForTriggers(user, reasons) ? { triggerResolvedTimestamp: IsNull() } : {}),
     ...(shouldFilterForExceptions(user, reasons) ? { errorResolvedTimestamp: IsNull() } : {}),
@@ -81,7 +78,41 @@ const filterIfResolved = (
   return query
 }
 
-const filterByResolutionStatus = (
+const filterByReasons = (
+  query: SelectQueryBuilder<CourtCase>,
+  reasons: Reason[],
+  resolvedOrUnresolved?: FindOperator<null>
+): SelectQueryBuilder<CourtCase> => {
+  query.andWhere(
+    new Brackets((qb) => {
+      if (reasons?.includes(Reason.Triggers)) {
+        qb.where({
+          triggerCount: MoreThan(0),
+          triggerResolvedTimestamp: resolvedOrUnresolved
+        })
+      }
+
+      if (reasons?.includes(Reason.Exceptions)) {
+        qb.orWhere({
+          errorCount: MoreThan(0),
+          errorResolvedTimestamp: resolvedOrUnresolved
+        })
+      }
+
+      if (reasons?.includes(Reason.Bails)) {
+        Object.keys(BailCodes).forEach((triggerCode, i) => {
+          const paramName = `bails${i}`
+          qb.orWhere(`trigger.trigger_code ilike '%' || :${paramName} || '%'`, {
+            [paramName]: triggerCode
+          })
+        })
+      }
+    })
+  )
+  return query
+}
+
+const filterByReasonAndResolutionStatus = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
   reasons?: Reason[],
@@ -90,6 +121,10 @@ const filterByResolutionStatus = (
 ): SelectQueryBuilder<CourtCase> => {
   reasons = reasons ?? []
   caseState = caseState ?? "Unresolved"
+
+  if (reasons) {
+    query = filterByReasons(query, reasons, caseState === "Unresolved" ? IsNull() : Not(IsNull()))
+  }
 
   if (caseState === "Unresolved") {
     query = filterIfUnresolved(query, user, reasons)
@@ -100,4 +135,4 @@ const filterByResolutionStatus = (
   return query
 }
 
-export default filterByResolutionStatus
+export default filterByReasonAndResolutionStatus
