@@ -6,7 +6,8 @@ export default async (
   caseId: number,
   exceptionCode: string,
   errorReport?: string,
-  exceptionResolved?: ResolutionStatus
+  exceptionResolved?: ResolutionStatus,
+  username?: string
 ): Promise<boolean> => {
   const dataSource = await getDataSource()
 
@@ -20,7 +21,7 @@ export default async (
         errorReport: () =>
           `(CASE WHEN (error_report = '') THEN '${errorReport}' ELSE error_report || ', ' || '${errorReport}' END)`
       }),
-      errorResolvedBy: exceptionResolved === "Resolved" ? "Dummy UserName" : null,
+      errorResolvedBy: exceptionResolved === "Resolved" ? username ?? "Dummy UserName" : null,
       errorResolvedTimestamp: exceptionResolved === "Resolved" ? new Date() : null,
       errorStatus: exceptionResolved ?? "Unresolved"
     })
