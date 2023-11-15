@@ -1,4 +1,7 @@
-import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import type {
+  AnnotatedHearingOutcome,
+  Offence
+} from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
@@ -25,6 +28,7 @@ interface OffenceDetailsProps {
   selectedOffenceIndex: number
   exceptions: { code: ExceptionCode; path: (string | number)[] }[]
   courtCase: DisplayFullCourtCase
+  pncQuery?: AnnotatedHearingOutcome["PncQuery"]
 }
 const useStyles = createUseStyles({
   button: {
@@ -51,9 +55,13 @@ export const OffenceDetails = ({
   onPreviousClick,
   selectedOffenceIndex,
   exceptions,
-  courtCase
+  courtCase,
+  pncQuery
 }: OffenceDetailsProps) => {
   const classes = useStyles()
+  const offenceCode = getOffenceCode(offence)
+  const pncSequenceNumber = pncQuery?.courtCases?.[0]?.offences?.find((o) => o.offence.cjsOffenceCode === offenceCode)
+    ?.offence?.sequenceNumber
   const qualifierCode =
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
@@ -75,15 +83,12 @@ export const OffenceDetails = ({
 
   const qualifierErrorPrompt = findUnresolvedException(ExceptionCode.HO100309) && ErrorMessages.QualifierCode
 
-  const getOffenceCategory = (offenceCode: string | undefined) => {
-    let offenceCategoryWithDescription = offenceCode
-    offenceCategory.forEach((category) => {
-      if (category.cjsCode === offenceCode) {
-        offenceCategoryWithDescription = `${offenceCode} (${category.description.toLowerCase()})`
-      }
-    })
-    return offenceCategoryWithDescription
-  }
+  let offenceCategoryWithDescription = offence.OffenceCategory
+  offenceCategory.forEach((category) => {
+    if (category.cjsCode === offence.OffenceCategory) {
+      offenceCategoryWithDescription = `${offence.OffenceCategory} (${category.description.toLowerCase()})`
+    }
+  })
 
   const getCommittedOnBail = (bailCode: string) => {
     let committedOnBailWithDescription = bailCode
@@ -124,16 +129,16 @@ export const OffenceDetails = ({
                   badge={"SYSTEM ERROR"}
                   colour={"purple"}
                   message={offenceCodeErrorPrompt}
-                  code={getOffenceCode(offence)}
+                  code={offenceCode}
                   label={"Offence code"}
                 />
               ) : (
-                <TableRow label="Offence code" value={getOffenceCode(offence)} />
+                <TableRow label="Offence code" value={offenceCode} />
               )}
             </>
           )}
           <TableRow label="Title" value={offence.OffenceTitle} />
-          <TableRow label="Category" value={getOffenceCategory(offence.OffenceCategory)} />
+          <TableRow label="Category" value={offenceCategoryWithDescription} />
           <TableRow
             label="Arrest date"
             value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))}
@@ -152,7 +157,8 @@ export const OffenceDetails = ({
             label="Conviction date"
             value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
           />
-          <TableRow label="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
+          <TableRow label="PNC sequence number" value={pncSequenceNumber?.toString().padStart(3, "0")} />
+          <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
         </div>
       </Table>
