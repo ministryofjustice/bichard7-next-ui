@@ -95,10 +95,6 @@ export const OffenceDetails = ({
     return committedOnBailWithDescription
   }
 
-  const getFormattedSequenceNumber = (number: number) => {
-    return number.toLocaleString("en-UK", { minimumIntegerDigits: 3 })
-  }
-
   return (
     <div className={`${className} ${classes.wrapper}`}>
       <GridRow>
@@ -117,7 +113,7 @@ export const OffenceDetails = ({
         </GridCol>
       </GridRow>
       <Heading as="h3" size="MEDIUM">
-        {`Offence ${offence.CourtOffenceSequenceNumber} of ${offencesCount}`}
+        {`Offence ${selectedOffenceIndex} of ${offencesCount}`}
       </Heading>
       <Table>
         <div className="offences-table">
@@ -137,7 +133,6 @@ export const OffenceDetails = ({
             </>
           )}
           <TableRow label="Title" value={offence.OffenceTitle} />
-          <TableRow label="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
           <TableRow label="Category" value={getOffenceCategory(offence.OffenceCategory)} />
           <TableRow
             label="Arrest date"

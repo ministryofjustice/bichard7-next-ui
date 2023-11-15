@@ -198,14 +198,35 @@ describe("Court case details", () => {
 
     clickTab("Offences")
 
-    cy.contains("28/11/2010")
-    cy.contains("SX03001A")
-    cy.contains("Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003").click()
+    cy.contains("tbody tr:nth-child(1) td:nth-child(1)", "1")
+    cy.contains("tbody tr:nth-child(1) td:nth-child(2)", "28/11/2010")
+    cy.contains("tbody tr:nth-child(1) td:nth-child(3)", "SX03001A")
+    cy.contains(
+      "tbody tr:nth-child(1) td:nth-child(4) a",
+      "Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003"
+    )
+
+    cy.contains("tbody tr:nth-child(2) td:nth-child(1)", "3")
+    cy.contains("tbody tr:nth-child(2) td:nth-child(2)", "28/11/2010")
+    cy.contains("tbody tr:nth-child(2) td:nth-child(3)", "SX03001")
+    cy.contains("tbody tr:nth-child(2) td:nth-child(4) a", "Rape a girl aged 13 / 14 / 15 - SOA 2003")
+
+    cy.contains("tbody tr:nth-child(3) td:nth-child(1)", "5")
+    cy.contains("tbody tr:nth-child(3) td:nth-child(2)", "28/11/2010")
+    cy.contains("tbody tr:nth-child(3) td:nth-child(3)", "RT88191")
+    cy.contains(
+      "tbody tr:nth-child(3) td:nth-child(4) a",
+      "Use a motor vehicle on a road / public place without third party insurance"
+    )
+
+    // Checking the first offence details
+    cy.get("tbody tr:nth-child(1) td:nth-child(4) a").click()
+
+    cy.contains("h3", "Offence 1 of 3")
     cy.contains("td", "Offence code").siblings().contains("SX03001A")
     cy.contains("td:visible", "Title")
       .siblings()
       .contains("Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003")
-    cy.contains("td", "Sequence number").siblings().contains("001")
     cy.contains("td", "Category").siblings().contains("CI (indictable)")
     cy.contains("td", "Arrest date").siblings().contains("01/12/2010")
     cy.contains("td", "Charge date").siblings().contains("02/12/2010")
@@ -231,6 +252,78 @@ describe("Court case details", () => {
     cy.contains("td", "Mode of trial reason").siblings().contains("SUM")
     cy.contains("td", "Hearing result text").siblings().contains("Travel Restriction Order")
     cy.contains("td", "PNC disposal type").siblings().contains("3078")
+    cy.contains("td", "Result class").siblings().contains("Judgement with final result")
+    cy.contains("td", "PNC adjudication exists").siblings().contains("N")
+    cy.contains(".qualifier-code-table h4", "Qualifier")
+    cy.contains(".qualifier-code-table td", "Code").siblings().contains("A")
+
+    // Checking the second offence details
+    cy.contains("a", "Back to all offences").click()
+    cy.get("tbody tr:nth-child(2) td:nth-child(4) a").click()
+
+    cy.contains("h3", "Offence 2 of 3")
+    cy.contains("td", "Offence code").siblings().contains("SX03001")
+    cy.contains("td:visible", "Title").siblings().contains("Rape a girl aged 13 / 14 / 15 - SOA 2003")
+    cy.contains("td", "Category").siblings().contains("CI (indictable)")
+    cy.contains("td", "Arrest date").siblings().contains("01/12/2010")
+    cy.contains("td", "Charge date").siblings().contains("02/12/2010")
+    cy.contains("td", "Start date").siblings().should("contain.text", "On or in")
+    cy.contains("td", "Start date").siblings().should("contain.text", "28/11/2010")
+    cy.contains("td", "Start date").siblings().should("contain.text", "Date code: 1")
+    cy.contains("td", "Location").siblings().contains("Kingston High Street")
+    cy.contains("td", "Wording").siblings().contains("Rape of a Female")
+    cy.contains("td", "Record on PNC").siblings().contains("Y")
+    cy.contains("td", "Notifiable to Home Office").siblings().contains("Y")
+    cy.contains("td", "Home Office classification").siblings().contains("019/07")
+    cy.contains("td", "Conviction date").siblings().contains("26/09/2011")
+    cy.contains("td", "Court Offence Sequence Number").siblings().contains("3")
+    cy.contains("td", "Committed on bail").siblings().contains("D (Don't know)")
+
+    cy.contains("td", "CJS Code").siblings().contains("3052")
+    cy.contains("td", "Result hearing type").siblings().contains("Other")
+    cy.contains("td", "Result hearing date").siblings().contains("26/09/2011")
+    cy.contains("td", "Plea").siblings().contains("NG (Not guilty)")
+    cy.contains("td", "Verdict").siblings().contains("G (Guilty)")
+    cy.contains("td", "Mode of trial reason").siblings().contains("SUM")
+    cy.contains("td", "Hearing result text").siblings().contains("defendant must never be allowed out")
+    cy.contains("td", "PNC disposal type").siblings().contains("3052")
+    cy.contains("td", "Result class").siblings().contains("Judgement with final result")
+    cy.contains("td", "PNC adjudication exists").siblings().contains("N")
+    cy.contains("td", "Urgent").siblings().contains("Y")
+    cy.contains("td", "Urgency").siblings().contains("24 Hours")
+
+    // Checking the third offence details
+    cy.contains("a", "Back to all offences").click()
+    cy.get("tbody tr:nth-child(3) td:nth-child(4) a").click()
+
+    cy.contains("h3", "Offence 3 of 3")
+    cy.contains("td", "Offence code").siblings().contains("RT88191")
+    cy.contains("td:visible", "Title")
+      .siblings()
+      .contains("Use a motor vehicle on a road / public place without third party insurance")
+    cy.contains("td", "Category").siblings().contains("CM (summary motoring)")
+    cy.contains("td", "Arrest date").siblings().contains("01/12/2010")
+    cy.contains("td", "Charge date").siblings().contains("02/12/2010")
+    cy.contains("td", "Start date").siblings().should("contain.text", "On or in")
+    cy.contains("td", "Start date").siblings().should("contain.text", "28/11/2010")
+    cy.contains("td", "Start date").siblings().should("contain.text", "Date code: 1")
+    cy.contains("td", "Location").siblings().contains("Kingston High Street")
+    cy.contains("td", "Wording").siblings().contains("Use a motor vehicle without third party insurance.")
+    cy.contains("td", "Record on PNC").siblings().contains("N")
+    cy.contains("td", "Notifiable to Home Office").siblings().contains("N")
+    cy.contains("td", "Home Office classification").siblings().contains("809/01")
+    cy.contains("td", "Conviction date").siblings().contains("26/09/2011")
+    cy.contains("td", "Court Offence Sequence Number").siblings().contains("5")
+    cy.contains("td", "Committed on bail").siblings().contains("D (Don't know)")
+
+    cy.contains("td", "CJS Code").siblings().contains("1015")
+    cy.contains("td", "Result hearing type").siblings().contains("Other")
+    cy.contains("td", "Result hearing date").siblings().contains("26/09/2011")
+    cy.contains("td", "Plea").siblings().contains("NG (Not guilty)")
+    cy.contains("td", "Verdict").siblings().contains("G (Guilty)")
+    cy.contains("td", "Mode of trial reason").siblings().contains("SUM")
+    cy.contains("td", "Hearing result text").siblings().contains("Fined 100.")
+    cy.contains("td", "PNC disposal type").siblings().contains("1015")
     cy.contains("td", "Result class").siblings().contains("Judgement with final result")
     cy.contains("td", "PNC adjudication exists").siblings().contains("N")
   })

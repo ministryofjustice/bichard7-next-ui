@@ -5,14 +5,13 @@ import getOffenceCode from "utils/getOffenceCode"
 
 interface OffencesListRowProps {
   offence: Offence
-  number: number
   onClick: (offence: Offence) => void
 }
 
-export const OffencesListRow = ({ offence, onClick, number }: OffencesListRowProps) => {
+export const OffencesListRow = ({ offence, onClick }: OffencesListRowProps) => {
   return (
     <Table.Row>
-      <Table.Cell>{number}</Table.Cell>
+      <Table.Cell>{offence.CourtOffenceSequenceNumber}</Table.Cell>
       <Table.Cell>{formatDisplayedDate(new Date(offence.ActualOffenceStartDate.StartDate)).toString()}</Table.Cell>
       <Table.Cell>{getOffenceCode(offence)}</Table.Cell>
       <Table.Cell>
