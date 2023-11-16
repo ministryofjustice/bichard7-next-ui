@@ -5,10 +5,10 @@ import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
 
 type Props = {
-  badge: string
+  badgeText: string
   message: string
   value?: string
-  colour: string
+  badgeColour: "purple"
   label: string
   children?: React.ReactNode
 }
@@ -36,11 +36,11 @@ const useStyles = createUseStyles({
   }
 })
 
-const UneditableField = ({ badge, message, value, colour, label, children }: Props) => {
+const UneditableField = ({ badgeText, badgeColour, message, value, label, children }: Props) => {
   const classes = useStyles()
   const labelField = (
     <>
-      <div> {label}</div>
+      <div>{label}</div>
       <div className="error-icon">
         <ErrorIcon />
       </div>
@@ -50,9 +50,9 @@ const UneditableField = ({ badge, message, value, colour, label, children }: Pro
   const cellContent = (
     <div className={classes.content}>
       {value && <div className="invalid-value">{value}</div>}
-      {badge && (
+      {badgeText && (
         <div className="badge-wrapper">
-          <Badge className="error-prompt-badge" isRendered={true} colour={colour} label={badge} />
+          <Badge className="error-prompt-badge" isRendered={true} colour={badgeColour} label={badgeText} />
         </div>
       )}
       {message && <div className="error-prompt-message">{message}</div>}

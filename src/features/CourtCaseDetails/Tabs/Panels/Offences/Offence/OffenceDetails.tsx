@@ -164,8 +164,8 @@ export const OffenceDetails = ({
             <>
               {offenceCodeErrorPrompt ? (
                 <UneditableField
-                  badge={"SYSTEM ERROR"}
-                  colour={"purple"}
+                  badgeText={"SYSTEM ERROR"}
+                  badgeColour="purple"
                   message={offenceCodeErrorPrompt}
                   value={offenceCode}
                   label={"Offence code"}
@@ -197,8 +197,8 @@ export const OffenceDetails = ({
           />
           {offenceMatchingException ? (
             <UneditableField
-              badge={offenceMatchingException.badge}
-              colour={"purple"}
+              badgeText={offenceMatchingException.badge}
+              badgeColour="purple"
               message={`Court Case Reference: ${courtCase.courtReference}`}
               label={"PNC sequence number"}
             />
@@ -233,8 +233,8 @@ export const OffenceDetails = ({
             <Table>
               {qualifierErrorPrompt ? (
                 <UneditableField
-                  badge={"SYSTEM ERROR"}
-                  colour={"purple"}
+                  badgeText={"SYSTEM ERROR"}
+                  badgeColour="purple"
                   message={qualifierErrorPrompt}
                   value={qualifierCode}
                   label={"Code"}
