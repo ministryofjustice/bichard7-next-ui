@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker"
 import { subYears } from "date-fns"
 import sample from "lodash.sample"
+import Trigger from "services/entities/Trigger"
 import { DataSource, EntityManager } from "typeorm"
 import { v4 as uuidv4 } from "uuid"
 import CourtCase from "../../src/services/entities/CourtCase"
@@ -32,8 +33,19 @@ export default async (
   const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgCode + faker.string.alpha(2).toUpperCase())
   const isResolved = randomBoolean()
   const resolutionDate = isResolved ? randomDate(caseDate, dateTo || new Date()) : null
-  const triggers = createDummyTriggers(dataSource, caseId, caseDate, dateTo || new Date(), isResolved)
+
+  let triggers: Trigger[]
+  let triggersExist: boolean
+  const magicNumberForIncludingEmptyTriggers = 25
+  if (caseId % magicNumberForIncludingEmptyTriggers === 0) {
+    triggers = []
+    triggersExist = false
+  } else {
+    triggers = createDummyTriggers(dataSource, caseId, caseDate, dateTo || new Date(), isResolved)
+    triggersExist = true
+  }
   const hasUnresolvedTriggers = triggers.filter((trigger) => trigger.status === "Unresolved").length > 0
+
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
   const { errorReport, errorReason, exceptionCount } = createDummyExceptions(isResolved, hasUnresolvedTriggers)
   const hasExceptions = exceptionCount > 0
@@ -43,7 +55,8 @@ export default async (
     messageId: uuidv4(),
     orgForPoliceFilter: orgCode,
     errorLockedByUsername: !isResolved && hasExceptions && randomBoolean() ? randomUsername() : null,
-    triggerLockedByUsername: !isResolved && hasUnresolvedTriggers && randomBoolean() ? randomUsername() : null,
+    triggerLockedByUsername:
+      !isResolved && hasUnresolvedTriggers && randomBoolean() && triggersExist ? randomUsername() : null,
     phase: 1,
     errorStatus: hasExceptions ? "Unresolved" : "Resolved",
     triggerStatus: hasUnresolvedTriggers ? "Unresolved" : "Resolved",
@@ -76,8 +89,9 @@ export default async (
     triggers: triggers,
     resolutionTimestamp: resolutionDate,
     errorResolvedBy: isResolved ? randomName() : null,
-    triggerResolvedBy: isResolved || !hasUnresolvedTriggers ? randomName() : null,
-    triggerResolvedTimestamp: isResolved || !hasUnresolvedTriggers ? new Date() : null,
+    triggerResolvedBy: (isResolved && triggersExist) || (triggersExist && !hasUnresolvedTriggers) ? randomName() : null,
+    triggerResolvedTimestamp:
+      (isResolved && triggersExist) || (triggersExist && !hasUnresolvedTriggers) ? new Date() : null,
     errorResolvedTimestamp: isResolved ? resolutionDate : null
   })
 
