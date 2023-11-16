@@ -76,7 +76,6 @@ const CourtCaseDetails: React.FC<Props> = ({
         break
     }
   }
-
   return (
     <>
       <Header
@@ -111,7 +110,10 @@ const CourtCaseDetails: React.FC<Props> = ({
             className={activeTab === "Defendant" ? classes.visible : classes.notVisible}
             heading={"Defendant details"}
           >
-            <DefendantDetails defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant} />
+            <DefendantDetails
+              defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant}
+              asn={courtCase.asn}
+            />
           </CourtCaseDetailsPanel>
 
           <CourtCaseDetailsPanel
