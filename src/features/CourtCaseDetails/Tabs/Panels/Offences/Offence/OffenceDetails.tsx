@@ -66,10 +66,6 @@ export const OffenceDetails = ({
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
 
-  const offenceCodeReason =
-    offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
-    offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Reason
-
   const findUnresolvedException = (exceptionCode: ExceptionCode) =>
     exceptions.find(
       (exception) => exception.code === exceptionCode && exception.path[5] === selectedOffenceIndex - 1
