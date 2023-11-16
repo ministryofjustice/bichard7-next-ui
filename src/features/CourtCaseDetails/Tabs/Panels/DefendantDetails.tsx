@@ -13,10 +13,9 @@ interface DefendantDetailsProps {
   asn: string | null
 }
 export const DefendantDetails = ({ defendant, asn }: DefendantDetailsProps) => {
-  console.log("defendant tab", asn)
   return (
     <Table>
-      <TableRow className="asn" label="ASN" value={asn} />
+      <TableRow label="ASN" value={asn} />
       <TableRow label="PNC Check name" value={defendant.PNCCheckname} />
       <TableRow label="Given name" value={defendant.DefendantDetail?.PersonName.GivenName?.join(", ")} />
       <TableRow label="Family name" value={defendant.DefendantDetail?.PersonName.FamilyName} />
