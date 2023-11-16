@@ -15,7 +15,7 @@ describe("ExceptionHandlerPrompt", () => {
       users: [
         {
           username: "Bichard01",
-          visibleForces: ["01"],
+          visibleForces: ["001"],
           forenames: "Bichard Test User",
           surname: "01",
           email: "bichard01@example.com",
@@ -128,6 +128,22 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".govuk-link").contains("National Offence with Offence Code not recognised exception").click()
 
       cy.get(".offences-table").contains("TH68$$$")
+      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100251ErrorPrompt)
+    })
+
+    it("Should display an error prompt when a HO100306 is raised on a local offence", () => {
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Local Offence with Offence Code not found exception").click()
+
+      cy.get(".offences-table").contains("ABC00")
+      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100306ErrorPrompt)
+    })
+
+    it("Should display an error prompt when a HO100251 is raised on a local offence", () => {
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Local Offence with Offence Code not recognised exception").click()
+
+      cy.get(".offences-table").contains("$$$$$$")
       cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100251ErrorPrompt)
     })
 
