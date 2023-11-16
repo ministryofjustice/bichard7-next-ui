@@ -103,6 +103,8 @@ user:
     home: /
     shell: /usr/sbin/nologin
 process:
+  next-server:
+    running: true
   nginx:
     running: true
   supervisord:
