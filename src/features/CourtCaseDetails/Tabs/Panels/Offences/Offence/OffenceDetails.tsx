@@ -28,7 +28,6 @@ interface OffenceDetailsProps {
   selectedOffenceIndex: number
   exceptions: { code: ExceptionCode; path: (string | number)[] }[]
   courtCase: DisplayFullCourtCase
-  pncQuery?: AnnotatedHearingOutcome["PncQuery"]
 }
 const useStyles = createUseStyles({
   button: {
@@ -55,13 +54,10 @@ export const OffenceDetails = ({
   onPreviousClick,
   selectedOffenceIndex,
   exceptions,
-  courtCase,
-  pncQuery
+  courtCase
 }: OffenceDetailsProps) => {
   const classes = useStyles()
   const offenceCode = getOffenceCode(offence)
-  const pncSequenceNumber = pncQuery?.courtCases?.[0]?.offences?.find((o) => o.offence.cjsOffenceCode === offenceCode)
-    ?.offence?.sequenceNumber
   const qualifierCode =
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
@@ -157,7 +153,7 @@ export const OffenceDetails = ({
             label="Conviction date"
             value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
           />
-          <TableRow label="PNC sequence number" value={pncSequenceNumber?.toString().padStart(3, "0")} />
+          <TableRow label="PNC sequence number" value={offence.CriminalProsecutionReference.OffenceReasonSequence} />
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
         </div>

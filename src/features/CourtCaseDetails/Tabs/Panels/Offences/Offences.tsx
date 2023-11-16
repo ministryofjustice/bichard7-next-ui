@@ -14,7 +14,6 @@ interface OffencesProps {
   selectedOffenceIndex?: number
   exceptions: { code: ExceptionCode; path: (string | number)[] }[]
   courtCase: DisplayFullCourtCase
-  pncQuery?: AnnotatedHearingOutcome["PncQuery"]
 }
 
 export const Offences = ({
@@ -23,8 +22,7 @@ export const Offences = ({
   onOffenceSelected,
   selectedOffenceIndex,
   exceptions,
-  courtCase,
-  pncQuery
+  courtCase
 }: OffencesProps) => {
   return selectedOffenceIndex !== undefined && offences[selectedOffenceIndex - 1] !== undefined ? (
     <>
