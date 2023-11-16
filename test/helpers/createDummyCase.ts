@@ -33,19 +33,20 @@ export default async (
   const isResolved = randomBoolean()
   const resolutionDate = isResolved ? randomDate(caseDate, dateTo || new Date()) : null
   const triggers = createDummyTriggers(dataSource, caseId, caseDate, dateTo || new Date(), isResolved)
-  const hasTriggers = triggers.filter((trigger) => trigger.status === "Unresolved").length > 0
+  const hasUnresolvedTriggers = triggers.filter((trigger) => trigger.status === "Unresolved").length > 0
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
-  const { errorReport, errorReason, exceptionCount } = createDummyExceptions(isResolved, hasTriggers)
+  const { errorReport, errorReason, exceptionCount } = createDummyExceptions(isResolved, hasUnresolvedTriggers)
   const hasExceptions = exceptionCount > 0
+
   const courtCase = await dataSource.getRepository(CourtCase).save({
     errorId: caseId,
     messageId: uuidv4(),
     orgForPoliceFilter: orgCode,
     errorLockedByUsername: !isResolved && hasExceptions && randomBoolean() ? randomUsername() : null,
-    triggerLockedByUsername: !isResolved && hasTriggers && randomBoolean() ? randomUsername() : null,
+    triggerLockedByUsername: !isResolved && hasUnresolvedTriggers && randomBoolean() ? randomUsername() : null,
     phase: 1,
     errorStatus: hasExceptions ? "Unresolved" : "Resolved",
-    triggerStatus: hasTriggers ? "Unresolved" : "Resolved",
+    triggerStatus: hasUnresolvedTriggers ? "Unresolved" : "Resolved",
     errorQualityChecked: 1,
     triggerQualityChecked: 1,
     triggerCount: triggers.length,
@@ -75,7 +76,9 @@ export default async (
     triggers: triggers,
     resolutionTimestamp: resolutionDate,
     errorResolvedBy: isResolved ? randomName() : null,
-    triggerResolvedBy: isResolved ? randomName() : null
+    triggerResolvedBy: isResolved || !hasUnresolvedTriggers ? randomName() : null,
+    triggerResolvedTimestamp: isResolved || !hasUnresolvedTriggers ? new Date() : null,
+    errorResolvedTimestamp: isResolved ? resolutionDate : null
   })
 
   return courtCase
