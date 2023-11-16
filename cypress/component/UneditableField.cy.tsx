@@ -11,6 +11,22 @@ describe("Uneditable Fields", () => {
       badge: "SYSTEM ERROR",
       message: ErrorMessage.QualifierCode,
       code: "XX"
+    },
+    {
+      title: "ASN",
+      label: "ASN",
+      exception: ExceptionCode.HO200113,
+      badge: "SYSTEM ERROR",
+      message: ErrorMessage.AsnUneditable,
+      code: "2300000000000942133G"
+    },
+    {
+      title: "ASN",
+      label: "ASN",
+      exception: ExceptionCode.HO200114,
+      badge: "SYSTEM ERROR",
+      message: ErrorMessage.AsnUneditable,
+      code: "2200000000001145631B"
     }
   ].forEach(({ title, exception, badge, message, code, label }) => {
     it(`should show an error prompt for exception ${exception} (${title})`, () => {
