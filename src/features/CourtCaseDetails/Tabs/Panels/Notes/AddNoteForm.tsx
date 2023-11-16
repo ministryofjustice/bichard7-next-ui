@@ -6,11 +6,11 @@ import { useBeforeunload } from "react-beforeunload"
 import Form from "../../../../../components/Form"
 
 interface Props {
-  lockedByAnotherUser: boolean
+  isLockedByCurrentUser: boolean
   csrfToken: string
 }
 
-const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, csrfToken }: Props) => {
+const AddNoteForm: React.FC<Props> = ({ isLockedByCurrentUser, csrfToken }: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
   const [submitted, setSubmitted] = useState(false)
   const [isFormValid, setIsFormValid] = useState(true)
@@ -43,7 +43,7 @@ const AddNoteForm: React.FC<Props> = ({ lockedByAnotherUser, csrfToken }: Props)
   }
 
   return (
-    <ConditionalRender isRendered={!lockedByAnotherUser}>
+    <ConditionalRender isRendered={isLockedByCurrentUser}>
       <Form method="POST" action="" onSubmit={handleSubmit} csrfToken={csrfToken}>
         <FormGroup>
           <Label className="govuk-heading-m b7-form-label-lg" htmlFor="note-text">

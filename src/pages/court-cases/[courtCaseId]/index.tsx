@@ -171,7 +171,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         user: userToDisplayFullUserDto(currentUser),
         courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
-        errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
+        isLockedByCurrentUser: courtCase.isLockedByCurrentUser(currentUser.username),
         canReallocate: courtCase.canReallocate(currentUser.username),
         canResolveAndSubmit: courtCase.canResolveOrSubmit(currentUser),
         displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0))
@@ -184,7 +184,7 @@ interface Props {
   user: DisplayFullUser
   courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
-  errorLockedByAnotherUser: boolean
+  isLockedByCurrentUser: boolean
   canReallocate: boolean
   canResolveAndSubmit: boolean
   csrfToken: string
@@ -207,7 +207,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   courtCase,
   aho,
   user,
-  errorLockedByAnotherUser,
+  isLockedByCurrentUser,
   canReallocate,
   canResolveAndSubmit,
   displaySwitchingSurveyFeedback,
@@ -244,7 +244,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
           courtCase={courtCase}
           aho={aho}
           user={user}
-          errorLockedByAnotherUser={errorLockedByAnotherUser}
+          isLockedByCurrentUser={isLockedByCurrentUser}
           canReallocate={canReallocate}
           canResolveAndSubmit={canResolveAndSubmit}
           previousPath={previousPath}
