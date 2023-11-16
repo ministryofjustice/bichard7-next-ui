@@ -1,7 +1,4 @@
-import type {
-  AnnotatedHearingOutcome,
-  Offence
-} from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { OffenceDetails } from "./Offence/OffenceDetails"
 import { OffencesList } from "./OffencesList/OffencesList"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
@@ -36,7 +33,6 @@ export const Offences = ({
         selectedOffenceIndex={selectedOffenceIndex}
         exceptions={exceptions}
         courtCase={courtCase}
-        pncQuery={pncQuery}
       />
     </>
   ) : (
