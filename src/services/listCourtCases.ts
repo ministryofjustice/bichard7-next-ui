@@ -9,17 +9,17 @@ import {
   Not,
   SelectQueryBuilder
 } from "typeorm"
-import { CaseListQueryParams, Reason } from "types/CaseListQueryParams"
+import { CaseListQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
+import Permission from "types/Permission"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
-import { BailCodes } from "utils/bailCodes"
 import CourtCase from "./entities/CourtCase"
 import Note from "./entities/Note"
 import User from "./entities/User"
+import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
-import Permission from "types/Permission"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -139,29 +139,6 @@ const listCourtCases = async (
     )
   }
 
-  if (reasons) {
-    query.andWhere(
-      new Brackets((qb) => {
-        if (reasons?.includes(Reason.Triggers)) {
-          qb.where({ triggerCount: MoreThan(0) })
-        }
-
-        if (reasons?.includes(Reason.Exceptions)) {
-          qb.orWhere({ errorCount: MoreThan(0) })
-        }
-
-        if (reasons?.includes(Reason.Bails)) {
-          Object.keys(BailCodes).forEach((triggerCode, i) => {
-            const paramName = `bails${i}`
-            qb.orWhere(`trigger.trigger_code ilike '%' || :${paramName} || '%'`, {
-              [paramName]: triggerCode
-            })
-          })
-        }
-      })
-    )
-  }
-
   if (urgent === "Urgent") {
     query.andWhere({ isUrgent: MoreThan(0) })
   } else if (urgent === "Non-urgent") {
@@ -190,41 +167,7 @@ const listCourtCases = async (
     }
   }
 
-  if (!caseState || caseState === "Unresolved") {
-    query.andWhere(
-      new Brackets((qb) => {
-        qb.where({
-          ...(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
-            ? { triggerResolvedTimestamp: IsNull() }
-            : {}),
-          ...(reasons?.includes(Reason.Exceptions) ? { errorResolvedTimestamp: IsNull() } : {}),
-          ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: IsNull() } : {})
-        })
-      })
-    )
-  } else if (caseState === "Resolved") {
-    query.andWhere({
-      ...(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)
-        ? { triggerResolvedTimestamp: Not(IsNull()) }
-        : {}),
-      ...(reasons?.includes(Reason.Exceptions) ? { errorResolvedTimestamp: Not(IsNull()) } : {}),
-      ...(!reasons || reasons.length === 0 ? { resolutionTimestamp: Not(IsNull()) } : {})
-    })
-
-    if (resolvedByUsername !== undefined) {
-      query.andWhere(
-        new Brackets((qb) => {
-          qb.where({
-            errorResolvedBy: resolvedByUsername
-          })
-            .orWhere({
-              triggerResolvedBy: resolvedByUsername
-            })
-            .orWhere("trigger.resolvedBy = :triggerResolver", { triggerResolver: resolvedByUsername })
-        })
-      )
-    }
-  }
+  query = filterByReasonAndResolutionStatus(query, user, reasons, caseState, resolvedByUsername)
 
   if (allocatedToUserName) {
     query.andWhere(

@@ -26,10 +26,10 @@ const addNote = async (
     }
   }
 
-  if (courtCase.isLockedByAnotherUser(username)) {
+  if (!courtCase.isLockedByCurrentUser(username)) {
     return {
       isSuccessful: false,
-      ValidationException: "Case is locked by another user"
+      ValidationException: "Case is not locked by the user"
     }
   }
 

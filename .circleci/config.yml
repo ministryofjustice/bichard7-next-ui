@@ -81,7 +81,7 @@ commands:
       - run:
           name: Start bichard7 legacy
           working_directory: ~/bichard7-next-core
-          command: SKIP_IMAGES=ui npm run all-legacy
+          command: SKIP_IMAGES=ui npm run all-legacy || npm run all-legacy
 
   start_services:
     parameters:
@@ -225,9 +225,6 @@ jobs:
       - run:
           command: npm run ui
           working_directory: ~/bichard7-next-core
-      - run:
-          name: Install Cypress Reporter
-          command: npm install --save-dev cypress-circleci-reporter mocha
       - run:
           name: Run fake conductor service
           command: node .circleci/fakes/conductor

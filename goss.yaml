@@ -18,9 +18,9 @@ file:
     group: root
     filetype: file
     size:
-      lt: 3300
-    size:
-      gt: 3267
+      and:
+        - lt: 3300
+        - gt: 3267
     contains: []
   /etc/nginx/nginx.conf:
     exists: true
@@ -103,9 +103,9 @@ user:
     home: /
     shell: /usr/sbin/nologin
 process:
-  nginx:
+  next-server:
     running: true
-  node:
+  nginx:
     running: true
   supervisord:
     running: true

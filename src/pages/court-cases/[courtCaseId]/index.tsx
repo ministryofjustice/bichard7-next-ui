@@ -25,12 +25,24 @@ import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
+import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
+import CourtCase from "../../../services/entities/CourtCase"
+import User from "../../../services/entities/User"
+
+const allIssuesCleared = (courtCase: CourtCase, triggerToResolve: number[], user: User) => {
+  const triggersResolved = user.hasAccessTo[Permission.Triggers]
+    ? courtCase.triggers.filter((t) => t.status === "Unresolved").length === triggerToResolve.length
+    : true
+  const exceptionsResolved = user.hasAccessTo[Permission.Exceptions] ? courtCase.errorStatus !== "Unresolved" : true
+
+  return triggersResolved && exceptionsResolved
+}
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -95,6 +107,10 @@ export const getServerSideProps = withMultipleServerSideProps(
       if (isError(updateTriggerResult)) {
         throw updateTriggerResult
       }
+
+      if (allIssuesCleared(courtCase, triggersToResolve, currentUser)) {
+        return redirectTo(`/`)
+      }
     }
 
     if (isPost(req) && resubmitCase === "true") {
@@ -155,7 +171,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         user: userToDisplayFullUserDto(currentUser),
         courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
         aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
-        errorLockedByAnotherUser: courtCase.exceptionsAreLockedByAnotherUser(currentUser.username),
+        isLockedByCurrentUser: courtCase.isLockedByCurrentUser(currentUser.username),
         canReallocate: courtCase.canReallocate(currentUser.username),
         canResolveAndSubmit: courtCase.canResolveOrSubmit(currentUser),
         displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0))
@@ -168,7 +184,7 @@ interface Props {
   user: DisplayFullUser
   courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
-  errorLockedByAnotherUser: boolean
+  isLockedByCurrentUser: boolean
   canReallocate: boolean
   canResolveAndSubmit: boolean
   csrfToken: string
@@ -191,7 +207,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   courtCase,
   aho,
   user,
-  errorLockedByAnotherUser,
+  isLockedByCurrentUser,
   canReallocate,
   canResolveAndSubmit,
   displaySwitchingSurveyFeedback,
@@ -228,7 +244,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
           courtCase={courtCase}
           aho={aho}
           user={user}
-          errorLockedByAnotherUser={errorLockedByAnotherUser}
+          isLockedByCurrentUser={isLockedByCurrentUser}
           canReallocate={canReallocate}
           canResolveAndSubmit={canResolveAndSubmit}
           previousPath={previousPath}

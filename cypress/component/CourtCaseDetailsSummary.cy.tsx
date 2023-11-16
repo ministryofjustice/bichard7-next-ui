@@ -5,7 +5,7 @@ describe("Court Case Details Summary Box", () => {
     cy.mount(
       <CourtCaseDetailsSummaryBox
         asn="asn-value"
-        courtCode="courtCode-value"
+        courtHouseCode="courtHouseCodeLJA-value"
         courtName="courtName-value"
         courtReference={"courtReference-value"}
         pnci="pnci-value"
@@ -19,7 +19,7 @@ describe("Court Case Details Summary Box", () => {
     cy.contains("asn-value")
 
     cy.contains("Court code (LJA)")
-    cy.contains("ourtCode-value")
+    cy.contains("courtHouseCodeLJA-value")
 
     cy.contains("Court name")
     cy.contains("courtName-value")

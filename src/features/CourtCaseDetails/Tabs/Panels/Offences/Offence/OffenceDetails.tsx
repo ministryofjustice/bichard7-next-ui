@@ -1,4 +1,7 @@
-import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import type {
+  AnnotatedHearingOutcome,
+  Offence
+} from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
@@ -13,6 +16,7 @@ import { TableRow } from "../../TableRow"
 import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { StartDate } from "./StartDate"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
 
 interface OffenceDetailsProps {
   className: string
@@ -22,7 +26,9 @@ interface OffenceDetailsProps {
   onNextClick: () => void
   onPreviousClick: () => void
   selectedOffenceIndex: number
-  exceptions: ExceptionCode[]
+  exceptions: { code: ExceptionCode; path: (string | number)[] }[]
+  courtCase: DisplayFullCourtCase
+  pncQuery?: AnnotatedHearingOutcome["PncQuery"]
 }
 const useStyles = createUseStyles({
   button: {
@@ -48,21 +54,41 @@ export const OffenceDetails = ({
   onNextClick,
   onPreviousClick,
   selectedOffenceIndex,
-  exceptions
+  exceptions,
+  courtCase,
+  pncQuery
 }: OffenceDetailsProps) => {
   const classes = useStyles()
+  const offenceCode = getOffenceCode(offence)
+  const pncSequenceNumber = pncQuery?.courtCases?.[0]?.offences?.find((o) => o.offence.cjsOffenceCode === offenceCode)
+    ?.offence?.sequenceNumber
   const qualifierCode =
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
-  const getOffenceCategory = (offenceCode: string | undefined) => {
-    let offenceCategoryWithDescription = offenceCode
-    offenceCategory.forEach((category) => {
-      if (category.cjsCode === offenceCode) {
-        offenceCategoryWithDescription = `${offenceCode} (${category.description.toLowerCase()})`
-      }
-    })
-    return offenceCategoryWithDescription
-  }
+
+  const offenceCodeReason =
+    offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
+    offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Reason
+
+  const findUnresolvedException = (exceptionCode: ExceptionCode) =>
+    exceptions.find(
+      (exception) => exception.code === exceptionCode && exception.path[5] === selectedOffenceIndex - 1
+    ) && courtCase.errorStatus !== "Resolved"
+
+  const offenceCodeErrorPrompt = findUnresolvedException(ExceptionCode.HO100306)
+    ? ErrorMessages.HO100306ErrorPrompt
+    : findUnresolvedException("HO100251" as ExceptionCode)
+      ? ErrorMessages.HO100251ErrorPrompt
+      : undefined
+
+  const qualifierErrorPrompt = findUnresolvedException(ExceptionCode.HO100309) && ErrorMessages.QualifierCode
+
+  let offenceCategoryWithDescription = offence.OffenceCategory
+  offenceCategory.forEach((category) => {
+    if (category.cjsCode === offence.OffenceCategory) {
+      offenceCategoryWithDescription = `${offence.OffenceCategory} (${category.description.toLowerCase()})`
+    }
+  })
 
   const getCommittedOnBail = (bailCode: string) => {
     let committedOnBailWithDescription = bailCode
@@ -72,10 +98,6 @@ export const OffenceDetails = ({
       }
     })
     return committedOnBailWithDescription
-  }
-
-  const getFormattedSequenceNumber = (number: number) => {
-    return number.toLocaleString("en-UK", { minimumIntegerDigits: 3 })
   }
 
   return (
@@ -96,27 +118,49 @@ export const OffenceDetails = ({
         </GridCol>
       </GridRow>
       <Heading as="h3" size="MEDIUM">
-        {`Offence ${offence.CourtOffenceSequenceNumber} of ${offencesCount}`}
+        {`Offence ${selectedOffenceIndex} of ${offencesCount}`}
       </Heading>
       <Table>
-        <TableRow label="Offence code" value={getOffenceCode(offence)} />
-        <TableRow label="Title" value={offence.OffenceTitle} />
-        <TableRow label="Sequence number" value={getFormattedSequenceNumber(offence.CourtOffenceSequenceNumber)} />
-        <TableRow label="Category" value={getOffenceCategory(offence.OffenceCategory)} />
-        <TableRow label="Arrest date" value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))} />
-        <TableRow label="Charge date" value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))} />
-        <TableRow label="Start date" value={<StartDate offence={offence} />} />
-        <TableRow label="Location" value={offence.LocationOfOffence} />
-        <TableRow label="Wording" value={offence.ActualOffenceWording} />
-        <TableRow label="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
-        <TableRow label="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
-        <TableRow label="Home Office classification" value={offence.HomeOfficeClassification} />
-        <TableRow
-          label="Conviction date"
-          value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
-        />
-        <TableRow label="Court Offence Sequence Number" value={offence.CourtOffenceSequenceNumber} />
-        <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
+        <div className="offences-table">
+          {offenceCodeReason && (
+            <>
+              {offenceCodeErrorPrompt ? (
+                <UneditableField
+                  badge={"SYSTEM ERROR"}
+                  colour={"purple"}
+                  message={offenceCodeErrorPrompt}
+                  code={offenceCode}
+                  label={"Offence code"}
+                />
+              ) : (
+                <TableRow label="Offence code" value={offenceCode} />
+              )}
+            </>
+          )}
+          <TableRow label="Title" value={offence.OffenceTitle} />
+          <TableRow label="Category" value={offenceCategoryWithDescription} />
+          <TableRow
+            label="Arrest date"
+            value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))}
+          />
+          <TableRow
+            label="Charge date"
+            value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))}
+          />
+          <TableRow label="Start date" value={<StartDate offence={offence} />} />
+          <TableRow label="Location" value={offence.LocationOfOffence} />
+          <TableRow label="Wording" value={offence.ActualOffenceWording} />
+          <TableRow label="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
+          <TableRow label="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
+          <TableRow label="Home Office classification" value={offence.HomeOfficeClassification} />
+          <TableRow
+            label="Conviction date"
+            value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
+          />
+          <TableRow label="PNC sequence number" value={pncSequenceNumber?.toString().padStart(3, "0")} />
+          <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
+          <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
+        </div>
       </Table>
       <Heading as="h4" size="MEDIUM">
         {"Hearing result"}
@@ -127,16 +171,16 @@ export const OffenceDetails = ({
 
       {qualifierCode && (
         <>
-          <div className="qualifierCodeTable">
+          <div className="qualifier-code-table">
             <Heading as="h4" size="MEDIUM">
               {"Qualifier"}
             </Heading>
             <Table>
-              {exceptions.includes(ExceptionCode.HO100309) ? (
+              {qualifierErrorPrompt ? (
                 <UneditableField
                   badge={"SYSTEM ERROR"}
                   colour={"purple"}
-                  message={ErrorMessages.QualifierCode}
+                  message={qualifierErrorPrompt}
                   code={qualifierCode}
                   label={"Code"}
                 />

@@ -32,7 +32,7 @@ const useStyles = createUseStyles({
 
 interface CourtCaseDetailsSummaryBoxProps {
   asn: string | null
-  courtCode: string | null
+  courtHouseCode: string | null
   courtName: string
   courtReference: string
   pnci: string | undefined
@@ -43,7 +43,7 @@ interface CourtCaseDetailsSummaryBoxProps {
 
 const CourtCaseDetailsSummaryBox = ({
   asn,
-  courtCode,
+  courtHouseCode,
   courtName,
   courtReference,
   pnci,
@@ -60,7 +60,7 @@ const CourtCaseDetailsSummaryBox = ({
       <CourtCaseDetailsSummaryBoxField label="PNCID" value={pnci} />
       <CourtCaseDetailsSummaryBoxField label="DOB" value={formatDisplayedDate(dob || "")} />
       <CourtCaseDetailsSummaryBoxField label="Hearing date" value={formatDisplayedDate(hearingDate || "")} />
-      <CourtCaseDetailsSummaryBoxField label="Court code (LJA)" value={courtCode} />
+      <CourtCaseDetailsSummaryBoxField label="Court code (LJA)" value={courtHouseCode} />
       <CourtCaseDetailsSummaryBoxField label="Court case reference" value={courtReference} />
       <CourtCaseDetailsSummaryBoxField label="Court name" value={courtName} />
     </div>

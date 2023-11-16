@@ -20,7 +20,7 @@ import { Offences } from "./Tabs/Panels/Offences/Offences"
 interface Props {
   courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
-  errorLockedByAnotherUser: boolean
+  isLockedByCurrentUser: boolean
   user: DisplayFullUser
   canReallocate: boolean
   canResolveAndSubmit: boolean
@@ -53,7 +53,7 @@ const CourtCaseDetails: React.FC<Props> = ({
   courtCase,
   aho,
   user,
-  errorLockedByAnotherUser,
+  isLockedByCurrentUser,
   canReallocate,
   canResolveAndSubmit,
   csrfToken,
@@ -87,7 +87,7 @@ const CourtCaseDetails: React.FC<Props> = ({
       />
       <CourtCaseDetailsSummaryBox
         asn={courtCase.asn}
-        courtCode={courtCase.courtCode}
+        courtHouseCode={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
         courtName={courtCase.courtName}
         courtReference={courtCase.courtReference}
         pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
@@ -132,18 +132,20 @@ const CourtCaseDetails: React.FC<Props> = ({
 
           <Offences
             className={activeTab === "Offences" ? classes.visible : classes.notVisible}
-            exceptions={aho.Exceptions.map((exception) => exception.code)}
+            exceptions={aho.Exceptions}
             offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
             onOffenceSelected={(offenceIndex) => {
               setSelectedOffenceIndex(offenceIndex)
             }}
             selectedOffenceIndex={selectedOffenceIndex}
+            courtCase={courtCase}
+            pncQuery={aho.PncQuery}
           />
 
           <Notes
             className={activeTab === "Notes" ? classes.visible : classes.notVisible}
             notes={courtCase.notes}
-            lockedByAnotherUser={errorLockedByAnotherUser}
+            isLockedByCurrentUser={isLockedByCurrentUser}
             csrfToken={csrfToken}
           />
         </GridCol>

@@ -4,27 +4,38 @@ import hashedPassword from "../../../fixtures/hashedPassword"
 import a11yConfig from "../../../support/a11yConfig"
 import { clickTab, loginAndGoToUrl } from "../../../support/helpers"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
+import CourtCase from "../../../../src/services/entities/CourtCase"
 
 const loginAndGoToNotes = () => {
   loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
   cy.contains("Notes").click()
 }
 
-const insertTriggers = () => {
-  cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-  const triggers: TestTrigger[] = [
-    {
-      triggerId: 0,
-      triggerCode: "TRPR0001",
-      status: "Unresolved",
-      createdAt: new Date("2022-07-09T10:22:34.000Z")
+const trigger: TestTrigger = {
+  triggerId: 0,
+  triggerCode: "TRPR0001",
+  status: "Unresolved",
+  createdAt: new Date("2022-07-09T10:22:34.000Z")
+}
+
+const exception = {
+  caseId: 0,
+  exceptionCode: "HO100310",
+  errorReport: "HO100310||ds:OffenceReasonSequence"
+}
+
+const insertCaseWithTriggerAndException = (courtCase?: Partial<CourtCase>) => {
+  cy.task("insertCourtCasesWithFields", [
+    courtCase ?? {
+      orgForPoliceFilter: "01"
     }
-  ]
-  cy.task("insertTriggers", { caseId: 0, triggers })
+  ])
+  cy.task("insertTriggers", { caseId: 0, triggers: [trigger] })
+  cy.task("insertException", exception)
 }
 
 describe("Court case details", () => {
-  const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
+  const users: Partial<User>[] = Array.from(Array(3)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
       visibleForces: [`0${idx}`],
@@ -39,7 +50,7 @@ describe("Court case details", () => {
     cy.task("clearCourtCases")
     cy.task("clearUsers")
     cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
+    cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
     cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
     cy.clearCookies()
     cy.viewport(1800, 720)
@@ -50,8 +61,7 @@ describe("Court case details", () => {
   })
 
   it("Should be accessible", () => {
-    insertTriggers()
-
+    insertCaseWithTriggerAndException()
     loginAndGoToNotes()
 
     cy.injectAxe()
@@ -195,11 +205,13 @@ describe("Court case details", () => {
     cy.get("#add-note-button").should("not.exist")
   })
 
-  it("Should display the notes text area if the case is not locked to another users", () => {
+  it("Should display the notes text area if the case is locked by the user", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [[]],
       force: "02"
     })
+    cy.task("insertException", exception)
+
     cy.login("bichard02@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
@@ -210,7 +222,33 @@ describe("Court case details", () => {
   })
 
   it("Should be able to add a note when case is visible to the user and not locked by another user", () => {
-    insertTriggers()
+    insertCaseWithTriggerAndException()
+    loginAndGoToNotes()
+    cy.get("textarea").type("Dummy note")
+    cy.get("button").contains("Add note").click()
+
+    clickTab("Notes")
+
+    const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
+    cy.contains(dateTimeRegex)
+    cy.contains("Dummy note")
+  })
+
+  it("Should be able to add a note when case is visible to the user and error locked by another user", () => {
+    insertCaseWithTriggerAndException({ orgForPoliceFilter: "01", errorLockedByUsername: "someone.else" })
+    loginAndGoToNotes()
+    cy.get("textarea").type("Dummy note")
+    cy.get("button").contains("Add note").click()
+
+    clickTab("Notes")
+
+    const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
+    cy.contains(dateTimeRegex)
+    cy.contains("Dummy note")
+  })
+
+  it("Should be able to add a note when case is visible to the user and trigger locked by another user", () => {
+    insertCaseWithTriggerAndException({ orgForPoliceFilter: "01", triggerLockedByUsername: "someone.else" })
     loginAndGoToNotes()
     cy.get("textarea").type("Dummy note")
     cy.get("button").contains("Add note").click()
@@ -223,7 +261,7 @@ describe("Court case details", () => {
   })
 
   it("Should be able to add a long note", () => {
-    insertTriggers()
+    insertCaseWithTriggerAndException()
     loginAndGoToNotes()
     cy.contains("h3", "Notes")
 
@@ -249,7 +287,7 @@ describe("Court case details", () => {
   })
 
   it("Should show error message when note text is empty", () => {
-    insertTriggers()
+    insertCaseWithTriggerAndException()
     loginAndGoToNotes()
 
     cy.get("H3").contains("Notes")
@@ -263,7 +301,7 @@ describe("Court case details", () => {
   })
 
   it("Adding an empty note doesn't add a note, when the case is visible to the user and not locked by another user", () => {
-    insertTriggers()
+    insertCaseWithTriggerAndException()
     loginAndGoToNotes()
 
     cy.url().should("match", /.*\/court-cases\/0/)
