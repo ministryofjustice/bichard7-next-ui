@@ -16,6 +16,7 @@ import { StartDate } from "./StartDate"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import errorPaths from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/errorPaths"
 import { isEqual } from "lodash"
+import Badge from "../../../../../../components/Badge"
 
 type Exception = { code: ExceptionCode; path: (string | number)[] }
 interface OffenceDetailsProps {
@@ -47,24 +48,37 @@ const useStyles = createUseStyles({
 })
 
 const offenceMatchingExceptions = {
-  asn: [ExceptionCode.HO100304, ExceptionCode.HO100328],
-  offenceReason: [
+  noOffencesMatched: [ExceptionCode.HO100304, ExceptionCode.HO100328, ExceptionCode.HO100507],
+  offenceNotMatched: [
     ExceptionCode.HO100203,
     ExceptionCode.HO100228,
     ExceptionCode.HO100310,
+    ExceptionCode.HO100311,
     ExceptionCode.HO100312,
     ExceptionCode.HO100320,
-    ExceptionCode.HO100332
+    ExceptionCode.HO100329,
+    ExceptionCode.HO100332,
+    ExceptionCode.HO100333
   ]
 }
 
-const hasOffenceMatchingException = (exceptions: Exception[], offenceIndex: number) =>
-  exceptions.some(
+const getOffenceMatchingException = (exceptions: Exception[], offenceIndex: number) => {
+  const offenceMatchingException = exceptions.find(
     (exception) =>
-      (offenceMatchingExceptions.asn.includes(exception.code) && isEqual(exception.path, errorPaths.case.asn)) ||
-      (offenceMatchingExceptions.offenceReason.includes(exception.code) &&
+      offenceMatchingExceptions.noOffencesMatched.includes(exception.code) ||
+      (offenceMatchingExceptions.offenceNotMatched.includes(exception.code) &&
         isEqual(exception.path, errorPaths.offence(offenceIndex).reasonSequence))
   )
+
+  if (!offenceMatchingException) {
+    return undefined
+  }
+
+  return {
+    code: offenceMatchingException.code,
+    badge: offenceMatchingException.code === ExceptionCode.HO100507 ? "Added by Court" : "Unmatched"
+  }
+}
 
 export const OffenceDetails = ({
   className,
@@ -83,7 +97,7 @@ export const OffenceDetails = ({
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
   const isCaseUnresolved = courtCase.errorStatus !== "Resolved"
-  const hasOffenceMatchingError = isCaseUnresolved && hasOffenceMatchingException(exceptions, selectedOffenceIndex - 1)
+  const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex - 1)
 
   const offenceCodeReason =
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
@@ -153,7 +167,7 @@ export const OffenceDetails = ({
                   badge={"SYSTEM ERROR"}
                   colour={"purple"}
                   message={offenceCodeErrorPrompt}
-                  code={offenceCode}
+                  value={offenceCode}
                   label={"Offence code"}
                 />
               ) : (
@@ -181,15 +195,23 @@ export const OffenceDetails = ({
             label="Conviction date"
             value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
           />
-          {hasOffenceMatchingError ? (
+          {offenceMatchingException ? (
             <UneditableField
-              badge={"SYSTEM ERROR"}
+              badge={offenceMatchingException.badge}
               colour={"purple"}
-              message={"Unmatched"}
+              message={`Court Case Reference: ${courtCase.courtReference}`}
               label={"PNC sequence number"}
             />
           ) : (
-            <TableRow label="PNC sequence number" value={offence.CriminalProsecutionReference.OffenceReasonSequence} />
+            <TableRow
+              label="PNC sequence number"
+              value={
+                <>
+                  <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
+                  <Badge isRendered={true} colour="green" label="Matched" />
+                </>
+              }
+            />
           )}
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
@@ -214,7 +236,7 @@ export const OffenceDetails = ({
                   badge={"SYSTEM ERROR"}
                   colour={"purple"}
                   message={qualifierErrorPrompt}
-                  code={qualifierCode}
+                  value={qualifierCode}
                   label={"Code"}
                 />
               ) : (
