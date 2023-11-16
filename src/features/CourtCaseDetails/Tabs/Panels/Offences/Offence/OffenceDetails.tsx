@@ -71,10 +71,10 @@ export const OffenceDetails = ({
       (exception) => exception.code === exceptionCode && exception.path[5] === selectedOffenceIndex - 1
     ) && courtCase.errorStatus !== "Resolved"
 
-  const offenceCodeErrorPrompt = findUnresolvedException(ExceptionCode.HO100306)
-    ? ErrorMessages.HO100306ErrorPrompt
-    : findUnresolvedException("HO100251" as ExceptionCode)
-      ? ErrorMessages.HO100251ErrorPrompt
+  const offenceCodeErrorPrompt = findUnresolvedException("HO100251" as ExceptionCode)
+    ? ErrorMessages.HO100251ErrorPrompt
+    : findUnresolvedException(ExceptionCode.HO100306)
+      ? ErrorMessages.HO100306ErrorPrompt
       : undefined
 
   const qualifierErrorPrompt = findUnresolvedException(ExceptionCode.HO100309) && ErrorMessages.QualifierCode
