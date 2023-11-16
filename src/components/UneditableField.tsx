@@ -7,7 +7,7 @@ import ErrorIcon from "./ErrorIcon"
 type Props = {
   badge: string
   message: string
-  code: string
+  code?: string
   colour: string
   label: string
 }
