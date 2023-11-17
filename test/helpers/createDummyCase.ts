@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker"
 import { subYears } from "date-fns"
 import sample from "lodash.sample"
+import Trigger from "services/entities/Trigger"
 import { DataSource, EntityManager } from "typeorm"
 import { v4 as uuidv4 } from "uuid"
 import CourtCase from "../../src/services/entities/CourtCase"
@@ -32,20 +33,33 @@ export default async (
   const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgCode + faker.string.alpha(2).toUpperCase())
   const isResolved = randomBoolean()
   const resolutionDate = isResolved ? randomDate(caseDate, dateTo || new Date()) : null
-  const triggers = createDummyTriggers(dataSource, caseId, caseDate, dateTo || new Date(), isResolved)
-  const hasTriggers = triggers.filter((trigger) => trigger.status === "Unresolved").length > 0
+
+  let triggers: Trigger[]
+  let triggersExist: boolean
+  const magicNumberForIncludingEmptyTriggers = 25
+  if (caseId % magicNumberForIncludingEmptyTriggers === 0) {
+    triggers = []
+    triggersExist = false
+  } else {
+    triggers = createDummyTriggers(dataSource, caseId, caseDate, dateTo || new Date(), isResolved)
+    triggersExist = true
+  }
+  const hasUnresolvedTriggers = triggers.filter((trigger) => trigger.status === "Unresolved").length > 0
+
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
-  const { errorReport, errorReason, exceptionCount } = createDummyExceptions(isResolved, hasTriggers)
+  const { errorReport, errorReason, exceptionCount } = createDummyExceptions(hasUnresolvedTriggers)
   const hasExceptions = exceptionCount > 0
+
   const courtCase = await dataSource.getRepository(CourtCase).save({
     errorId: caseId,
     messageId: uuidv4(),
     orgForPoliceFilter: orgCode,
     errorLockedByUsername: !isResolved && hasExceptions && randomBoolean() ? randomUsername() : null,
-    triggerLockedByUsername: !isResolved && hasTriggers && randomBoolean() ? randomUsername() : null,
+    triggerLockedByUsername:
+      !isResolved && hasUnresolvedTriggers && randomBoolean() && triggersExist ? randomUsername() : null,
     phase: 1,
-    errorStatus: hasExceptions ? "Unresolved" : "Resolved",
-    triggerStatus: hasTriggers ? "Unresolved" : "Resolved",
+    errorStatus: exceptionCount === 0 ? null : !isResolved && hasExceptions ? "Unresolved" : "Resolved",
+    triggerStatus: triggers.length === 0 ? null : hasUnresolvedTriggers ? "Unresolved" : "Resolved",
     errorQualityChecked: 1,
     triggerQualityChecked: 1,
     triggerCount: triggers.length,
@@ -56,7 +70,7 @@ export default async (
     errorReport: errorReport,
     createdTimestamp: caseDate,
     errorReason: errorReason,
-    triggerReason: "",
+    triggerReason: triggers.length > 0 ? triggers[0].triggerCode : null,
     errorCount: exceptionCount,
     userUpdatedFlag: randomBoolean() ? 1 : 0,
     courtDate: caseDate,
@@ -75,7 +89,10 @@ export default async (
     triggers: triggers,
     resolutionTimestamp: resolutionDate,
     errorResolvedBy: isResolved ? randomName() : null,
-    triggerResolvedBy: isResolved ? randomName() : null
+    triggerResolvedBy: (isResolved && triggersExist) || (triggersExist && !hasUnresolvedTriggers) ? randomName() : null,
+    triggerResolvedTimestamp:
+      (isResolved && triggersExist) || (triggersExist && !hasUnresolvedTriggers) ? new Date() : null,
+    errorResolvedTimestamp: isResolved ? resolutionDate : null
   })
 
   return courtCase

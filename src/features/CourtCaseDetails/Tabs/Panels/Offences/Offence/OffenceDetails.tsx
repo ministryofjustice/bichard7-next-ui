@@ -164,7 +164,7 @@ export const OffenceDetails = ({
       </Heading>
       <Table>
         <div className="offences-table">
-          {offenceCodeReason && (
+          {
             <>
               {offenceCodeErrorPrompt ? (
                 <ExceptionPromptTableRow
@@ -178,7 +178,7 @@ export const OffenceDetails = ({
                 <TableRow label="Offence code" value={offenceCode} />
               )}
             </>
-          )}
+          }
           <TableRow label="Title" value={offence.OffenceTitle} />
           <TableRow label="Category" value={offenceCategoryWithDescription} />
           <TableRow
