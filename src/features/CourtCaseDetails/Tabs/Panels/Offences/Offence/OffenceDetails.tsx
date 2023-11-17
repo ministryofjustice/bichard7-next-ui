@@ -66,19 +66,15 @@ export const OffenceDetails = ({
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
 
-  const offenceCodeReason =
-    offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
-    offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Reason
-
   const findUnresolvedException = (exceptionCode: ExceptionCode) =>
     exceptions.find(
       (exception) => exception.code === exceptionCode && exception.path[5] === selectedOffenceIndex - 1
     ) && courtCase.errorStatus !== "Resolved"
 
-  const offenceCodeErrorPrompt = findUnresolvedException(ExceptionCode.HO100306)
-    ? ErrorMessages.HO100306ErrorPrompt
-    : findUnresolvedException("HO100251" as ExceptionCode)
-      ? ErrorMessages.HO100251ErrorPrompt
+  const offenceCodeErrorPrompt = findUnresolvedException("HO100251" as ExceptionCode)
+    ? ErrorMessages.HO100251ErrorPrompt
+    : findUnresolvedException(ExceptionCode.HO100306)
+      ? ErrorMessages.HO100306ErrorPrompt
       : undefined
 
   const qualifierErrorPrompt = findUnresolvedException(ExceptionCode.HO100309) && ErrorMessages.QualifierCode
@@ -122,7 +118,7 @@ export const OffenceDetails = ({
       </Heading>
       <Table>
         <div className="offences-table">
-          {offenceCodeReason && (
+          {
             <>
               {offenceCodeErrorPrompt ? (
                 <UneditableField
@@ -136,7 +132,7 @@ export const OffenceDetails = ({
                 <TableRow label="Offence code" value={offenceCode} />
               )}
             </>
-          )}
+          }
           <TableRow label="Title" value={offence.OffenceTitle} />
           <TableRow label="Category" value={offenceCategoryWithDescription} />
           <TableRow

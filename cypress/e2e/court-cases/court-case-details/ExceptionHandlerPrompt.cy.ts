@@ -4,6 +4,10 @@ import HO100306andHO100251 from "../../../../test/test-data/HO100306andHO100251.
 import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("ExceptionHandlerPrompt", () => {
+  const caseWithOffenceQualifierError = 0
+  const caseWithOffenceCodeErrors = 1
+  const caseWithNoError = 2
+
   before(() => {
     cy.task("clearCourtCases")
     cy.task("clearUsers")
@@ -11,7 +15,7 @@ describe("ExceptionHandlerPrompt", () => {
       users: [
         {
           username: "Bichard01",
-          visibleForces: ["01"],
+          visibleForces: ["001"],
           forenames: "Bichard Test User",
           surname: "01",
           email: "bichard01@example.com",
@@ -20,18 +24,34 @@ describe("ExceptionHandlerPrompt", () => {
       ],
       userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
     })
-  })
 
-  beforeEach(() => {
     cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorId: caseWithOffenceQualifierError,
+        orgForPoliceFilter: "01",
+        errorCount: 1,
+        triggerCount: 1,
+        hearingOutcome: HO100309.hearingOutcomeXml
+      },
+      {
+        errorId: caseWithOffenceCodeErrors,
+        orgForPoliceFilter: "01",
+        errorCount: 1,
+        triggerCount: 1,
+        hearingOutcome: HO100306andHO100251.hearingOutcomeXml
+      },
+      {
+        errorId: caseWithNoError,
+        orgForPoliceFilter: "01"
+      }
+    ])
   })
 
   context("Result Code Qualifier not found - HO100309", () => {
     it("Should display no error prompt if a HO100309 is not raised", () => {
-      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-
       cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      cy.visit(`/bichard/court-cases/${caseWithNoError}`)
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003").click()
@@ -39,12 +59,8 @@ describe("ExceptionHandlerPrompt", () => {
     })
 
     it("Should display an error prompt when a HO100309 is raised", () => {
-      cy.task("insertCourtCasesWithFields", [
-        { orgForPoliceFilter: "01", errorCount: 1, triggerCount: 1, hearingOutcome: HO100309.hearingOutcomeXml }
-      ])
-
       cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      cy.visit(`/bichard/court-cases/${caseWithOffenceQualifierError}`)
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Aid and abet theft").click()
@@ -60,12 +76,8 @@ describe("ExceptionHandlerPrompt", () => {
     })
 
     it("Should not display any error prompts when exceptions are marked as manually resolved", () => {
-      cy.task("insertCourtCasesWithFields", [
-        { orgForPoliceFilter: "01", errorCount: 1, triggerCount: 1, hearingOutcome: HO100309.hearingOutcomeXml }
-      ])
-
       cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      cy.visit(`/bichard/court-cases/${caseWithOffenceQualifierError}`)
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Aid and abet theft").click()
@@ -87,56 +99,79 @@ describe("ExceptionHandlerPrompt", () => {
   })
 
   context("Offence code error prompts for OffenceCode errors", () => {
-    it("Should display no error prompt if HO100306 or HO100251 are not raised", () => {
-      cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-
+    beforeEach(() => {
       cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      cy.visit(`/bichard/court-cases/${caseWithOffenceCodeErrors}`)
+    })
 
+    it("Should display no error prompt if HO100306 or HO100251 are not raised", () => {
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-      cy.get(".govuk-link").contains("Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003").click()
-      cy.get(".offences-table").contains("SX03001A")
+      cy.get(".govuk-link").contains("Offence with no errors").click()
+      cy.get(".offences-table").contains("RT88191")
       cy.get(".offences-table .error-prompt-message").should("not.exist")
     })
 
-    it("Should display an error prompt when a HO100306 is raised", () => {
-      cy.task("insertCourtCasesWithFields", [
-        {
-          orgForPoliceFilter: "01",
-          errorCount: 1,
-          triggerCount: 1,
-          hearingOutcome: HO100306andHO100251.hearingOutcomeXml
-        }
-      ])
-
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
-
+    it("Should display an error prompt when a HO100306 is raised on a national offence", () => {
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("National Offence with Offence Code not found exception").click()
 
       cy.get(".offences-table").contains("TH68XYZ")
       cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100306ErrorPrompt)
+
+      cy.get("a.govuk-back-link").contains("Back to all offences").click()
+      cy.get(".govuk-link").contains("Offence with no errors").click()
+      cy.get(".offences-table .error-prompt-message").should("not.exist")
     })
 
-    it("Should display an error prompt when a HO100251 is raised", () => {
-      cy.task("insertCourtCasesWithFields", [
-        {
-          orgForPoliceFilter: "01",
-          errorCount: 1,
-          triggerCount: 1,
-          hearingOutcome: HO100306andHO100251.hearingOutcomeXml
-        }
-      ])
-
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
-
+    it("Should display an error prompt when a HO100251 is raised on a national offence", () => {
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("National Offence with Offence Code not recognised exception").click()
 
       cy.get(".offences-table").contains("TH68$$$")
       cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100251ErrorPrompt)
+    })
+
+    it("Should display an error prompt when a HO100306 is raised on a local offence", () => {
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Local Offence with Offence Code not found exception").click()
+
+      cy.get(".offences-table").contains("ABC00")
+      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100306ErrorPrompt)
+    })
+
+    it("Should display an error prompt when a HO100251 is raised on a local offence", () => {
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Local Offence with Offence Code not recognised exception").click()
+
+      cy.get(".offences-table").contains("$$$$$$")
+      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100251ErrorPrompt)
+    })
+
+    it("Should not display any error prompts when exceptions are marked as manually resolved", () => {
+      cy.get("#exceptions-tab").contains("Exceptions").click()
+      cy.get("button").contains("Mark as manually resolved").click()
+      cy.get("button").contains("Resolve").click()
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+
+      cy.get(".govuk-link").contains("National Offence with Offence Code not found exception").click()
+      cy.get(".qualifier-code-table .error-prompt-message").should("not.exist")
+      cy.get(".offences-table .error-prompt-message").should("not.exist")
+      cy.get("a.govuk-back-link").contains("Back to all offences").click()
+
+      cy.get(".govuk-link").contains("National Offence with Offence Code not recognised exception").click()
+      cy.get(".qualifier-code-table .error-prompt-message").should("not.exist")
+      cy.get(".offences-table .error-prompt-message").should("not.exist")
+      cy.get("a.govuk-back-link").contains("Back to all offences").click()
+
+      cy.get(".govuk-link").contains("Local Offence with Offence Code not found exception").click()
+      cy.get(".qualifier-code-table .error-prompt-message").should("not.exist")
+      cy.get(".offences-table .error-prompt-message").should("not.exist")
+      cy.get("a.govuk-back-link").contains("Back to all offences").click()
+
+      cy.get(".govuk-link").contains("Local Offence with Offence Code not recognised exception").click()
+      cy.get(".qualifier-code-table .error-prompt-message").should("not.exist")
+      cy.get(".offences-table .error-prompt-message").should("not.exist")
+      cy.get("a.govuk-back-link").contains("Back to all offences").click()
     })
   })
 })
