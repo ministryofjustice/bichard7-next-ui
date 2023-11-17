@@ -7,7 +7,7 @@ import ErrorIcon from "./ErrorIcon"
 type Props = {
   badgeText: string
   message: string
-  value?: string
+  value?: React.ReactNode
   badgeColour: "purple"
   label: string
   children?: React.ReactNode
@@ -36,7 +36,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const UneditableField = ({ badgeText, badgeColour, message, value, label, children }: Props) => {
+const ExceptionPromptTableRow = ({ badgeText, badgeColour, message, value, label, children }: Props) => {
   const classes = useStyles()
   const labelField = (
     <>
@@ -69,4 +69,4 @@ const UneditableField = ({ badgeText, badgeColour, message, value, label, childr
   )
 }
 
-export default UneditableField
+export default ExceptionPromptTableRow

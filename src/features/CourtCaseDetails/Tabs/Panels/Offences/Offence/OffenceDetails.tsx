@@ -3,8 +3,7 @@ import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
 import SecondaryButton from "components/SecondaryButton"
-import UneditableField from "components/UneditableField"
-import { GridCol, GridRow, Heading, Table } from "govuk-react"
+import { GridCol, GridRow, Heading, Input, Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import ErrorMessages from "types/ErrorMessages"
 import { formatDisplayedDate } from "utils/formattedDate"
@@ -17,6 +16,7 @@ import { DisplayFullCourtCase } from "types/display/CourtCases"
 import errorPaths from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/errorPaths"
 import { isEqual } from "lodash"
 import Badge from "../../../../../../components/Badge"
+import ExceptionPromptTableRow from "../../../../../../components/ExceptionPromptTableRow"
 
 type Exception = { code: ExceptionCode; path: (string | number)[] }
 interface OffenceDetailsProps {
@@ -44,6 +44,10 @@ const useStyles = createUseStyles({
     "& td": {
       width: "50%"
     }
+  },
+
+  pncSequenceNumber: {
+    width: "4.125rem"
   }
 })
 
@@ -163,7 +167,7 @@ export const OffenceDetails = ({
           {offenceCodeReason && (
             <>
               {offenceCodeErrorPrompt ? (
-                <UneditableField
+                <ExceptionPromptTableRow
                   badgeText={"SYSTEM ERROR"}
                   badgeColour="purple"
                   message={offenceCodeErrorPrompt}
@@ -196,11 +200,12 @@ export const OffenceDetails = ({
             value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
           />
           {offenceMatchingException ? (
-            <UneditableField
+            <ExceptionPromptTableRow
               badgeText={offenceMatchingException.badge}
               badgeColour="purple"
               message={`Court Case Reference: ${courtCase.courtReference}`}
               label={"PNC sequence number"}
+              value={<Input type="text" maxLength={3} className={classes.pncSequenceNumber} />}
             />
           ) : (
             <TableRow
@@ -208,7 +213,7 @@ export const OffenceDetails = ({
               value={
                 <>
                   <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
-                  <Badge isRendered={true} colour="green" label="Matched" />
+                  <Badge isRendered={true} colour="purple" label="Matched" />
                 </>
               }
             />
@@ -232,7 +237,7 @@ export const OffenceDetails = ({
             </Heading>
             <Table>
               {qualifierErrorPrompt ? (
-                <UneditableField
+                <ExceptionPromptTableRow
                   badgeText={"SYSTEM ERROR"}
                   badgeColour="purple"
                   message={qualifierErrorPrompt}
