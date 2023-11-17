@@ -47,7 +47,7 @@ export default async (
   const hasUnresolvedTriggers = triggers.filter((trigger) => trigger.status === "Unresolved").length > 0
 
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
-  const { errorReport, errorReason, exceptionCount } = createDummyExceptions(isResolved, hasUnresolvedTriggers)
+  const { errorReport, errorReason, exceptionCount } = createDummyExceptions(hasUnresolvedTriggers)
   const hasExceptions = exceptionCount > 0
 
   const courtCase = await dataSource.getRepository(CourtCase).save({
@@ -58,7 +58,7 @@ export default async (
     triggerLockedByUsername:
       !isResolved && hasUnresolvedTriggers && randomBoolean() && triggersExist ? randomUsername() : null,
     phase: 1,
-    errorStatus: exceptionCount === 0 ? null : hasExceptions ? "Unresolved" : "Resolved",
+    errorStatus: exceptionCount === 0 ? null : !isResolved && hasExceptions ? "Unresolved" : "Resolved",
     triggerStatus: triggers.length === 0 ? null : hasUnresolvedTriggers ? "Unresolved" : "Resolved",
     errorQualityChecked: 1,
     triggerQualityChecked: 1,
