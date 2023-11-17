@@ -29,6 +29,8 @@ interface Props {
   caseState: CaseState | null
   myCases: boolean
   user: DisplayFullUser
+  order: string | null
+  orderBy: string | null
 }
 
 const reducer = (state: Filter, action: FilterAction): Filter => {
@@ -146,7 +148,9 @@ const CourtCaseFilter: React.FC<Props> = ({
   locked,
   caseState,
   myCases,
-  user
+  user,
+  order,
+  orderBy
 }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
@@ -196,6 +200,10 @@ const CourtCaseFilter: React.FC<Props> = ({
           <button className="govuk-button" data-module="govuk-button" id="search">
             {"Apply filters"}
           </button>
+
+          <input type="hidden" id="order" name="order" value={order || ""} />
+          <input type="hidden" id="orderBy" name="orderBy" value={orderBy || ""} />
+
           <div className={classes["govuk-form-group"]}>
             <label className="govuk-label govuk-label--m">{"Search"}</label>
             <div>
