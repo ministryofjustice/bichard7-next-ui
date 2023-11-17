@@ -58,8 +58,8 @@ export default async (
     triggerLockedByUsername:
       !isResolved && hasUnresolvedTriggers && randomBoolean() && triggersExist ? randomUsername() : null,
     phase: 1,
-    errorStatus: hasExceptions ? "Unresolved" : "Resolved",
-    triggerStatus: hasUnresolvedTriggers ? "Unresolved" : "Resolved",
+    errorStatus: exceptionCount === 0 ? null : hasExceptions ? "Unresolved" : "Resolved",
+    triggerStatus: triggers.length === 0 ? null : hasUnresolvedTriggers ? "Unresolved" : "Resolved",
     errorQualityChecked: 1,
     triggerQualityChecked: 1,
     triggerCount: triggers.length,
