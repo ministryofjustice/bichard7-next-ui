@@ -203,7 +203,13 @@ export const OffenceDetails = ({
             <ExceptionPromptTableRow
               badgeText={offenceMatchingException.badge}
               badgeColour="purple"
-              message={`Court Case Reference: ${courtCase.courtReference}`}
+              message={
+                <>
+                  {"Court Case Reference:"}
+                  <br />
+                  {courtCase.courtReference}
+                </>
+              }
               label={"PNC sequence number"}
               value={<Input type="text" maxLength={3} className={classes.pncSequenceNumber} />}
             />

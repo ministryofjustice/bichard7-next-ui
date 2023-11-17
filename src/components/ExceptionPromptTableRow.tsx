@@ -6,8 +6,8 @@ import ErrorIcon from "./ErrorIcon"
 
 type Props = {
   badgeText: string
-  message: string
-  value?: React.ReactNode
+  message: string | React.ReactNode
+  value?: string | React.ReactNode
   badgeColour: "purple"
   label: string
   children?: React.ReactNode
