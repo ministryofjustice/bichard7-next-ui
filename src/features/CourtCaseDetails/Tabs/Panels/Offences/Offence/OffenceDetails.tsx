@@ -103,10 +103,6 @@ export const OffenceDetails = ({
   const isCaseUnresolved = courtCase.errorStatus !== "Resolved"
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex - 1)
 
-  const offenceCodeReason =
-    offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
-    offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Reason
-
   const hasExceptionOnOffence = (exceptionCode: ExceptionCode) =>
     isCaseUnresolved &&
     exceptions.some(
@@ -120,8 +116,8 @@ export const OffenceDetails = ({
     )
 
   const offenceCodeErrorPrompt =
-    (hasExceptionOnOffence(ExceptionCode.HO100306) && ErrorMessages.HO100306ErrorPrompt) ||
-    (hasExceptionOnOffence("HO100251" as ExceptionCode) && ErrorMessages.HO100251ErrorPrompt)
+    (hasExceptionOnOffence("HO100251" as ExceptionCode) && ErrorMessages.HO100251ErrorPrompt) ||
+    (hasExceptionOnOffence(ExceptionCode.HO100306) && ErrorMessages.HO100306ErrorPrompt)
 
   const qualifierErrorPrompt = hasExceptionOnOffence(ExceptionCode.HO100309) && ErrorMessages.QualifierCode
 
