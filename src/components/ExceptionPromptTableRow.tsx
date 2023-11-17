@@ -24,7 +24,7 @@ const useStyles = createUseStyles({
     "& .error-prompt-message": {
       color: textSecondary
     },
-    "& .invalid-value": {
+    "& .field-value": {
       paddingBottom: ".94rem"
     },
     "& .badge-wrapper": {
@@ -49,7 +49,7 @@ const ExceptionPromptTableRow = ({ badgeText, badgeColour, message, value, label
 
   const cellContent = (
     <div className={classes.content}>
-      {value && <div className="invalid-value">{value}</div>}
+      {value && <div className="field-value">{value}</div>}
       {badgeText && (
         <div className="badge-wrapper">
           <Badge className="error-prompt-badge" isRendered={true} colour={badgeColour} label={badgeText} />
