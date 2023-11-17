@@ -70,7 +70,7 @@ export default async (
     errorReport: errorReport,
     createdTimestamp: caseDate,
     errorReason: errorReason,
-    triggerReason: "",
+    triggerReason: triggers.length > 0 ? triggers[0].triggerCode : "",
     errorCount: exceptionCount,
     userUpdatedFlag: randomBoolean() ? 1 : 0,
     courtDate: caseDate,
