@@ -34,11 +34,8 @@ const fields = [
   "OrganisationUnitCode"
 ]
 
-export default (
-  isResolved: boolean,
-  hasTriggers: boolean
-): { errorReason: string; errorReport: string; exceptionCount: number } => {
-  if (isResolved || (hasTriggers && Math.random() > 0.5)) {
+export default (hasTriggers: boolean): { errorReason: string; errorReport: string; exceptionCount: number } => {
+  if (hasTriggers && Math.random() > 0.5) {
     return { errorReason: "", errorReport: "", exceptionCount: 0 }
   }
 
