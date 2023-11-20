@@ -65,9 +65,11 @@ interface Props {
   myCases: boolean
   queryStringCookieName: string
   displaySwitchingSurveyFeedback: boolean
+  searchOrder: string | null
+  orderBy: string | null
 }
 
-const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param == "desc"
+const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -191,6 +193,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         courtCases: courtCases.result.map(courtCaseToDisplayPartialCourtCaseDto),
         displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0)),
         order: oppositeOrder,
+        searchOrder: validatedOrder === "asc" ? "asc" : "desc",
+        orderBy: validatedOrderBy,
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,
         casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,
@@ -219,10 +223,30 @@ export const getServerSideProps = withMultipleServerSideProps(
 
 const Home: NextPage<Props> = (props) => {
   const router = useRouter()
-  // prettier-ignore
   const {
-    csrfToken, user, courtCases, order, page, casesPerPage, totalCases, reasons, keywords, courtName, reasonCode,
-    ptiurn, caseAge, caseAgeCounts, dateRange, urgent, locked, caseState, myCases, queryStringCookieName, displaySwitchingSurveyFeedback
+    csrfToken,
+    user,
+    courtCases,
+    order,
+    page,
+    casesPerPage,
+    totalCases,
+    reasons,
+    keywords,
+    courtName,
+    reasonCode,
+    ptiurn,
+    caseAge,
+    caseAgeCounts,
+    dateRange,
+    urgent,
+    locked,
+    caseState,
+    myCases,
+    queryStringCookieName,
+    displaySwitchingSurveyFeedback,
+    searchOrder,
+    orderBy
   } = props
 
   useEffect(() => {
@@ -259,6 +283,8 @@ const Home: NextPage<Props> = (props) => {
               caseState={caseState}
               myCases={myCases}
               user={user}
+              order={searchOrder}
+              orderBy={orderBy}
             />
           }
           appliedFilters={

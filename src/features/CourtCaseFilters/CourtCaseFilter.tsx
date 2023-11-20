@@ -6,14 +6,14 @@ import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
 import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
-import type { Filter, FilterAction } from "types/CourtCaseFilter"
+import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
 import { DisplayFullUser } from "types/display/Users"
-import { caseStateLabels } from "utils/caseStateFilters"
 import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
+import { filtersReducer } from "./reducers/filters"
 
 interface Props {
   defendantName: string | null
@@ -29,99 +29,8 @@ interface Props {
   caseState: CaseState | null
   myCases: boolean
   user: DisplayFullUser
-}
-
-const reducer = (state: Filter, action: FilterAction): Filter => {
-  const newState = Object.assign({}, state)
-  if (action.method === "add") {
-    if (action.type === "urgency") {
-      newState.urgentFilter.value = action.value
-      newState.urgentFilter.label = action.value ? "Urgent" : "Non-urgent"
-      newState.urgentFilter.state = "Selected"
-    } else if (action.type === "caseAge") {
-      if (newState.caseAgeFilter.filter((caseAgeFilter) => caseAgeFilter.value === action.value).length < 1) {
-        newState.caseAgeFilter.push({ value: action.value as string, state: "Selected" })
-      }
-    } else if (action.type === "dateFrom") {
-      newState.dateFrom.value = action.value
-      newState.dateFrom.state = "Selected"
-    } else if (action.type === "dateTo") {
-      newState.dateTo.value = action.value
-      newState.dateTo.state = "Selected"
-    } else if (action.type === "caseState") {
-      newState.caseStateFilter.value = action.value
-      newState.caseStateFilter.label = caseStateLabels[action.value ?? ""]
-      newState.caseStateFilter.state = "Selected"
-    } else if (action.type === "locked") {
-      newState.lockedFilter.value = action.value
-      newState.lockedFilter.label = action.value ? "Locked" : "Unlocked"
-      newState.lockedFilter.state = "Selected"
-    } else if (action.type === "myCases") {
-      newState.myCasesFilter.value = action.value
-      newState.myCasesFilter.label = action.value ? "Cases locked to me" : undefined
-      newState.myCasesFilter.state = "Selected"
-    } else if (action.type === "reason") {
-      // React might invoke our reducer more than once for a single event,
-      // so avoid duplicating reason filters
-      if (newState.reasonFilter.filter((reasonFilter) => reasonFilter.value === action.value).length < 1) {
-        newState.reasonFilter.push({ value: action.value, state: "Selected" })
-      }
-    } else if (action.type === "defendantName") {
-      newState.defendantNameSearch.value = action.value
-      newState.defendantNameSearch.label = action.value
-      newState.defendantNameSearch.state = "Selected"
-    } else if (action.type === "courtName") {
-      newState.courtNameSearch.value = action.value
-      newState.courtNameSearch.label = action.value
-      newState.courtNameSearch.state = "Selected"
-    } else if (action.type === "reasonCode") {
-      newState.reasonCode.value = action.value
-      newState.reasonCode.label = action.value
-      newState.reasonCode.state = "Selected"
-    } else if (action.type === "ptiurn") {
-      newState.ptiurnSearch.value = action.value
-      newState.ptiurnSearch.label = action.value
-      newState.ptiurnSearch.state = "Selected"
-    }
-  } else if (action.method === "remove") {
-    if (action.type === "urgency") {
-      newState.urgentFilter.value = undefined
-      newState.urgentFilter.label = undefined
-    } else if (action.type === "caseAge") {
-      if (action.value) {
-        newState.caseAgeFilter = newState.caseAgeFilter.filter((caseAgeFilter) => caseAgeFilter.value !== action.value)
-      } else {
-        newState.caseAgeFilter = []
-      }
-    } else if (action.type === "dateRange") {
-      newState.dateFrom.value = undefined
-      newState.dateTo.value = undefined
-    } else if (action.type === "caseState") {
-      newState.caseStateFilter.value = undefined
-      newState.caseStateFilter.label = undefined
-    } else if (action.type === "locked") {
-      newState.lockedFilter.value = undefined
-      newState.lockedFilter.label = undefined
-    } else if (action.type === "myCases") {
-      newState.myCasesFilter.value = undefined
-      newState.myCasesFilter.label = undefined
-    } else if (action.type === "reason") {
-      newState.reasonFilter = newState.reasonFilter.filter((reasonFilter) => reasonFilter.value !== action.value)
-    } else if (action.type === "defendantName") {
-      newState.defendantNameSearch.value = ""
-      newState.defendantNameSearch.label = undefined
-    } else if (action.type === "courtName") {
-      newState.courtNameSearch.value = ""
-      newState.courtNameSearch.label = undefined
-    } else if (action.type === "reasonCode") {
-      newState.reasonCode.value = ""
-      newState.reasonCode.label = undefined
-    } else if (action.type === "ptiurn") {
-      newState.ptiurnSearch.value = ""
-      newState.ptiurnSearch.label = undefined
-    }
-  }
-  return newState
+  order: string | null
+  orderBy: string | null
 }
 
 const useStyles = createUseStyles({
@@ -146,7 +55,9 @@ const CourtCaseFilter: React.FC<Props> = ({
   locked,
   caseState,
   myCases,
-  user
+  user,
+  order,
+  orderBy
 }: Props) => {
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
@@ -166,7 +77,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     }),
     myCasesFilter: myCases ? { value: true, state: "Applied", label: "Cases locked to me" } : {}
   }
-  const [state, dispatch] = useReducer(reducer, initialFilterState)
+  const [state, dispatch] = useReducer(filtersReducer, initialFilterState)
   const classes = useStyles()
 
   return (
@@ -196,6 +107,10 @@ const CourtCaseFilter: React.FC<Props> = ({
           <button className="govuk-button" data-module="govuk-button" id="search">
             {"Apply filters"}
           </button>
+
+          <input type="hidden" id="order" name="order" value={order || ""} />
+          <input type="hidden" id="orderBy" name="orderBy" value={orderBy || ""} />
+
           <div className={classes["govuk-form-group"]}>
             <label className="govuk-label govuk-label--m">{"Search"}</label>
             <div>
