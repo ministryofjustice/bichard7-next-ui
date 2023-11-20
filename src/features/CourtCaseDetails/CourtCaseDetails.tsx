@@ -3,6 +3,7 @@ import { GridCol, GridRow } from "govuk-react"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import type NavigationHandler from "types/NavigationHandler"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
@@ -26,6 +27,7 @@ interface Props {
   canResolveAndSubmit: boolean
   csrfToken: string
   previousPath: string
+  exceptions: { code: ExceptionCode; path: (string | number)[] }[]
 }
 
 const useStyles = createUseStyles({
@@ -113,6 +115,7 @@ const CourtCaseDetails: React.FC<Props> = ({
             <DefendantDetails
               defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant}
               asn={courtCase.asn}
+              exceptions={aho.Exceptions}
             />
           </CourtCaseDetailsPanel>
 
