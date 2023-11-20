@@ -7,6 +7,7 @@ import { formatDisplayedDate } from "utils/formattedDate"
 import { TableRow } from "../../TableRow"
 import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/plea-status.json"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -30,9 +31,13 @@ export const formatDuration = (durationLength: number, durationUnit: string): st
 
 interface HearingResultProps {
   result: Result
+  exceptions: ExceptionCode[]
 }
 
-export const HearingResult = ({ result }: HearingResultProps) => {
+export const HearingResult = ({ result, exceptions }: HearingResultProps) => {
+  const nextHearinDateException = exceptions.some(
+    (code) => code === ExceptionCode.HO100102 || code === ExceptionCode.HO100323
+  )
   const getPleaStatus = (pleaCode: string | undefined) => {
     let pleaStatusDescription = pleaCode
     pleaStatus.forEach((plea) => {
@@ -81,10 +86,10 @@ export const HearingResult = ({ result }: HearingResultProps) => {
       <ConditionalRender isRendered={typeof result.NextResultSourceOrganisation === "string"}>
         <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
       </ConditionalRender>
-      <ConditionalRender isRendered={result.NextHearingDate !== "false"}>
+      <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearinDateException}>
         <TableRow
           label="Next hearing date"
-          value={result.NextHearingDate && formatDisplayedDate(new Date(result.NextHearingDate))}
+          value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
         />
       </ConditionalRender>
       <TableRow label="Plea" value={getPleaStatus(result.PleaStatus)} />

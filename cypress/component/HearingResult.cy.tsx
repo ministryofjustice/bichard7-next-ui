@@ -3,14 +3,17 @@ import { HearingResult } from "../../src/features/CourtCaseDetails/Tabs/Panels/O
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 import ResultClass from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/ResultClass"
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 describe("Hearing Result", () => {
-  it("displays all mandatory fields", () => {
-    const result = {
+  let result: Result
+
+  beforeEach(() => {
+    result = {
       CJSresultCode: 1234,
       ResultHearingType: "hearing type",
-      ResultHearingDate: new Date("10/09/2022"),
-      NextHearingDate: "false", // TODO: confirm this a literal string in the pnc
+      ResultHearingDate: new Date("2022-09-10"),
+      NextHearingDate: new Date("2022-09-11"),
       PleaStatus: CjsPlea.Guilty,
       Verdict: verdicts[1].cjsCode,
       ModeOfTrialReason: "reason",
@@ -19,12 +22,15 @@ describe("Hearing Result", () => {
       ResultClass: ResultClass.ADJOURNMENT,
       PNCAdjudicationExists: true
     } as Result
+  })
 
-    cy.mount(<HearingResult result={result} />)
+  it("displays all mandatory fields", () => {
+    cy.mount(<HearingResult result={result} exceptions={[]} />)
 
     cy.contains("td", "CJS Code").siblings().should("include.text", "1234")
     cy.contains("td", "Result hearing type").siblings().should("include.text", "Hearing type")
-    cy.contains("td", "Result hearing date").siblings().should("include.text", "09/10/2022")
+    cy.contains("td", "Result hearing date").siblings().should("include.text", "10/09/2022")
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "11/09/2022")
     cy.contains("td", "Plea").siblings().should("include.text", "G (Guilty)")
     cy.contains("td", "Verdict").siblings().should("include.text", "G (Guilty)")
     cy.contains("td", "Mode of trial reason").siblings().should("include.text", "reason")
@@ -34,33 +40,31 @@ describe("Hearing Result", () => {
     cy.contains("td", "PNC adjudication exists").siblings().should("include.text", "Y")
   })
 
-  it("displays the duration length and unit", () => {
-    const result = {
-      Duration: [
+  describe("Durations", () => {
+    it("displays the duration length and unit", () => {
+      result.Duration = [
         {
           DurationLength: 6,
           DurationType: "",
           DurationUnit: "M"
         }
       ]
-    } as Result
 
-    cy.mount(<HearingResult result={result} />)
+      cy.mount(<HearingResult result={result} exceptions={[]} />)
 
-    cy.contains("td", "Duration").siblings().should("include.text", "6 months")
-  })
+      cy.contains("td", "Duration").siblings().should("include.text", "6 months")
+    })
 
-  it("does not display the duration row if not present", () => {
-    const result = {} as Result
+    it("does not display the duration row if not present", () => {
+      result.Duration = undefined
 
-    cy.mount(<HearingResult result={result} />)
+      cy.mount(<HearingResult result={result} exceptions={[]} />)
 
-    cy.contains("td", "Duration").should("not.exist")
-  })
+      cy.contains("td", "Duration").should("not.exist")
+    })
 
-  it("displays multiple durations", () => {
-    const result = {
-      Duration: [
+    it("displays multiple durations", () => {
+      result.Duration = [
         {
           DurationLength: 3,
           DurationType: "",
@@ -72,11 +76,35 @@ describe("Hearing Result", () => {
           DurationUnit: "D"
         }
       ]
-    } as Result
+      cy.mount(<HearingResult result={result} exceptions={[]} />)
+      cy.contains("td", "Duration").siblings().should("include.text", "3 years")
+      cy.contains("td", "Duration").siblings().should("include.text", "28 days")
+    })
+  })
 
-    cy.mount(<HearingResult result={result} />)
+  describe("Next hearing date", () => {
+    it("does not display the next hearing date row if not present", () => {
+      result.NextHearingDate = undefined
 
-    cy.contains("td", "Duration").siblings().should("include.text", "3 years")
-    cy.contains("td", "Duration").siblings().should("include.text", "28 days")
+      cy.mount(<HearingResult result={result} exceptions={[]} />)
+
+      cy.contains("td", "Next hearing date").should("not.exist")
+    })
+
+    it("displays the next hearing date with an invalid value", () => {
+      result.NextHearingDate = "false"
+
+      cy.mount(<HearingResult result={result} exceptions={[]} />)
+
+      cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
+    })
+
+    it("displays the next hearing date field when it has no value but has an error", () => {
+      result.NextHearingDate = undefined
+
+      cy.mount(<HearingResult result={result} exceptions={[ExceptionCode.HO100323]} />)
+
+      cy.contains("td", "Next hearing date").siblings().should("include.text", "")
+    })
   })
 })

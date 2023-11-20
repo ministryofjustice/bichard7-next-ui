@@ -103,19 +103,16 @@ export const OffenceDetails = ({
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
   const isCaseUnresolved = courtCase.errorStatus !== "Resolved"
+  const thisOffencePath = `AnnotatedHearingOutcome>HearingOutcome>Case>HearingDefendant>Offence>${
+    selectedOffenceIndex - 1
+  }`
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex)
+  const unresolvedExceptionsOnThisOffence = !isCaseUnresolved
+    ? []
+    : exceptions.filter((exception) => exception.path.join(">").startsWith(thisOffencePath))
 
   const hasExceptionOnOffence = (exceptionCode: ExceptionCode) =>
-    isCaseUnresolved &&
-    exceptions.some(
-      (exception) =>
-        exception.code === exceptionCode &&
-        exception.path
-          .join(">")
-          .startsWith(
-            `AnnotatedHearingOutcome>HearingOutcome>Case>HearingDefendant>Offence>${selectedOffenceIndex - 1}`
-          )
-    )
+    unresolvedExceptionsOnThisOffence.some((exception) => exception.code === exceptionCode)
 
   const offenceCodeErrorPrompt =
     (hasExceptionOnOffence("HO100251" as ExceptionCode) && ErrorMessages.HO100251ErrorPrompt) ||
@@ -218,13 +215,22 @@ export const OffenceDetails = ({
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
         </div>
       </Table>
-      <Heading as="h4" size="MEDIUM">
-        {"Hearing result"}
-      </Heading>
-      {offence.Result.map((result, index) => {
-        return <HearingResult result={result} key={index} />
-      })}
-
+      <div className="offence-results-table">
+        <Heading as="h4" size="MEDIUM">
+          {"Hearing result"}
+        </Heading>
+        {offence.Result.map((result, index) => {
+          return (
+            <HearingResult
+              result={result}
+              exceptions={unresolvedExceptionsOnThisOffence
+                .filter((resultExceptions) => resultExceptions.path[7] === index)
+                .map((e) => e.code)}
+              key={index}
+            />
+          )
+        })}
+      </div>
       {qualifierCode && (
         <>
           <div className="qualifier-code-table">

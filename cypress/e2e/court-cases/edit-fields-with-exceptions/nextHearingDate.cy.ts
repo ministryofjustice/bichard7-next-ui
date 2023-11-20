@@ -39,9 +39,18 @@ describe("NextHearingDate", () => {
       cy.visit("/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-      // cy.get(".govuk-link").contains("Aid and abet theft").click()
-      // cy.get(".qualifierCodeTable").contains("XX")
-      // cy.get(".error-prompt-message").contains(ErrorMessages.QualifierCode)
+      cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+      cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
+
+      cy.get("a.govuk-back-link").contains("Back to all offences").click()
+      cy.get(".govuk-link")
+        .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
+        .click()
+      cy.contains("td", "Next hearing date").siblings().should("include.text", "")
+
+      cy.get("a.govuk-back-link").contains("Back to all offences").click()
+      cy.get(".govuk-link").contains("Offence with no exceptions").click()
+      cy.contains("td", "Next hearing date").should("not.exist")
     })
   })
 })
