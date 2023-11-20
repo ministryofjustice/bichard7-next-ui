@@ -3,7 +3,7 @@ import ConditionalRender from "components/ConditionalRender"
 interface BadgeProps {
   isRendered: boolean
   className?: string
-  colour: string
+  colour: "red" | "blue" | "purple"
   label: string
 }
 
