@@ -9,16 +9,34 @@ import getDataSource from "../../src/services/getDataSource"
 import createAuditLogRecord from "../helpers/createAuditLogRecord"
 import DummyMultipleOffencesAho from "../test-data/HO100102_1.json"
 import DummyCustomOffences from "../test-data/HO100102_1_multiple_offences.json"
+import CustomExceptions from "../test-data/CustomExceptions.json"
 import DummyCourtCase from "./DummyCourtCase"
 import { insertLockUsers } from "./insertLockUsers"
 import insertManyIntoDynamoTable from "./insertManyIntoDynamoTable"
 import { insertNoteUser } from "./insertNoteUser"
 import fs from "fs"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 const getAhoWithMultipleOffences = (offenceCount: number) => {
   const offenceXml = fs.readFileSync("test/test-data/offence.xml").toString()
   const offences = offenceXml.repeat(offenceCount)
   return DummyCustomOffences.hearingOutcomeXml.replace("{OFFENCES}", offences)
+}
+
+const getAhoWithCustomExceptions = (exceptions: Record<string, ExceptionCode>) => {
+  const errorCount = Object.values(exceptions).filter((exception) => exception).length
+  const hearingOutcome = CustomExceptions.hearingOutcomeXml
+    .replace("{ARREST_SUMMONS_NUMBER_ERROR}", exceptions.asn ? `Error="${exceptions.asn}"` : "")
+    .replace(
+      "{OFFENCE_REASON_SEQUENCE_ERROR}",
+      exceptions.offenceReasonSequence ? `Error="${exceptions.offenceReasonSequence}"` : ""
+    )
+
+  return {
+    hearingOutcome: hearingOutcome,
+    updatedHearingOutcome: hearingOutcome,
+    errorCount
+  }
 }
 
 const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtCase> =>
@@ -138,6 +156,7 @@ const insertDummyCourtCasesWithTriggers = async (
 export {
   getDummyCourtCase,
   getAhoWithMultipleOffences,
+  getAhoWithCustomExceptions,
   insertCourtCases,
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
