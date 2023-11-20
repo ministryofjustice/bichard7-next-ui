@@ -88,7 +88,7 @@ const CourtCaseDetails: React.FC<Props> = ({
         csrfToken={csrfToken}
       />
       <CourtCaseDetailsSummaryBox
-        asn={courtCase.asn}
+        asn={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber}
         courtHouseCode={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
         courtName={courtCase.courtName}
         courtReference={courtCase.courtReference}
@@ -114,8 +114,10 @@ const CourtCaseDetails: React.FC<Props> = ({
           >
             <DefendantDetails
               defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant}
-              asn={courtCase.asn}
+              asn={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber}
               exceptions={aho.Exceptions}
+              selectedOffenceIndex={selectedOffenceIndex}
+              courtCase={courtCase}
             />
           </CourtCaseDetailsPanel>
 
