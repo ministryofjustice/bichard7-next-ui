@@ -1,6 +1,8 @@
 import ErrorMessages from "types/ErrorMessages"
-import HO100309 from "../../../../test/test-data/HO100309.json"
 import HO100306andHO100251 from "../../../../test/test-data/HO100306andHO100251.json"
+import HO100309 from "../../../../test/test-data/HO100309.json"
+import HO200113 from "../../../../test/test-data/HO200113.json"
+
 import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("ExceptionHandlerPrompt", () => {
@@ -172,6 +174,25 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".qualifier-code-table .error-prompt-message").should("not.exist")
       cy.get(".offences-table .error-prompt-message").should("not.exist")
       cy.get("a.govuk-back-link").contains("Back to all offences").click()
+    })
+  })
+
+  context("ASN error prompt", () => {
+    it.only("Should display an error prompt when a HO200113 is raised", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          errorCount: 1,
+          triggerCount: 1,
+          hearingOutcome: HO200113.hearingOutcomeXml
+        }
+      ])
+
+      cy.login("bichard01@example.com", "password")
+      cy.visit("/bichard/court-cases/0")
+
+      cy.get(".defendant-table").contains("2300000000000942133G")
+      cy.get(".defendant-table .error-prompt-message").contains(ErrorMessages.AsnUneditable)
     })
   })
 })
