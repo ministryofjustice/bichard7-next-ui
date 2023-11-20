@@ -66,12 +66,15 @@ const offenceMatchingExceptions = {
   ]
 }
 
+const getOffenceReasonSequencePath = (offenceIndex: number) =>
+  errorPaths.offence(offenceIndex).reasonSequence.filter((path) => path !== "AnnotatedHearingOutcome")
+
 const getOffenceMatchingException = (exceptions: Exception[], offenceIndex: number) => {
   const offenceMatchingException = exceptions.find(
     (exception) =>
       offenceMatchingExceptions.noOffencesMatched.includes(exception.code) ||
       (offenceMatchingExceptions.offenceNotMatched.includes(exception.code) &&
-        isEqual(exception.path, errorPaths.offence(offenceIndex).reasonSequence))
+        isEqual(exception.path, getOffenceReasonSequencePath(offenceIndex)))
   )
 
   if (!offenceMatchingException) {
@@ -101,7 +104,7 @@ export const OffenceDetails = ({
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
   const isCaseUnresolved = courtCase.errorStatus !== "Resolved"
-  const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex - 1)
+  const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex)
 
   const hasExceptionOnOffence = (exceptionCode: ExceptionCode) =>
     isCaseUnresolved &&
