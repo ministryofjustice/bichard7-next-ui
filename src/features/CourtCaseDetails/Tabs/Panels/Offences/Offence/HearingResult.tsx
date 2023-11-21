@@ -3,11 +3,12 @@ import ConditionalRender from "components/ConditionalRender"
 import { Duration } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import { Durations } from "@moj-bichard7-developers/bichard7-next-data/dist/types/Duration"
 import { Table } from "govuk-react"
-import { formatDisplayedDate } from "utils/formattedDate"
+import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
 import { TableRow } from "../../TableRow"
 import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/plea-status.json"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import EditableFieldTableRow from "../../../../../../components/EditableFieldTableRow"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -87,10 +88,23 @@ export const HearingResult = ({ result, exceptions }: HearingResultProps) => {
         <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
       </ConditionalRender>
       <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearinDateException}>
-        <TableRow
-          label="Next hearing date"
-          value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
-        />
+        {!!nextHearinDateException ? (
+          <EditableFieldTableRow
+            label="Next hearing date"
+            currentValue={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
+            editableField={
+              <input
+                className="govuk-input"
+                type="date"
+                min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
+                id={"next-hearing-date-input"}
+                name={"Next"}
+              />
+            }
+          />
+        ) : (
+          <TableRow label={"Next hearing date"} value={formatDisplayedDate(String(result.NextHearingDate))} />
+        )}
       </ConditionalRender>
       <TableRow label="Plea" value={getPleaStatus(result.PleaStatus)} />
       <TableRow label="Verdict" value={getVerdict(result.Verdict)} />
