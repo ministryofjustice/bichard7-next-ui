@@ -38,6 +38,7 @@ const LockedByText = ({ lockedBy, unlockPath }: LockedByTextProps) => {
       <div className={classes.LockedByTag}>
         <Image
           src={LOCKED_ICON_URL}
+          priority
           width={18}
           height={18}
           className={unlockPath ? classes.LockedIcon : undefined}
