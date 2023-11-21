@@ -3,8 +3,7 @@ import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/t
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
-import SecondaryButton from "components/SecondaryButton"
-import { GridCol, GridRow, Heading, Input, Table } from "govuk-react"
+import { Heading, Input, Table } from "govuk-react"
 import { isEqual } from "lodash"
 import { createUseStyles } from "react-jss"
 import ErrorMessages from "types/ErrorMessages"
@@ -14,8 +13,8 @@ import getOffenceCode from "utils/getOffenceCode"
 import Badge from "../../../../../../components/Badge"
 import ExceptionPromptTableRow from "../../../../../../components/ExceptionPromptTableRow"
 import { TableRow } from "../../TableRow"
-import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
+import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
 
 type Exception = { code: ExceptionCode; path: (string | number)[] }
@@ -143,21 +142,13 @@ export const OffenceDetails = ({
 
   return (
     <div className={`${className} ${classes.wrapper}`}>
-      <GridRow>
-        <GridCol>
-          <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
-        </GridCol>
-        <GridCol className={classes.button}>
-          {selectedOffenceIndex !== 1 && (
-            <SecondaryButton onClick={() => onPreviousClick()}>{"Previous offence"}</SecondaryButton>
-          )}
-          {selectedOffenceIndex !== offencesCount && (
-            <SecondaryButton className={classes.nextButton} onClick={() => onNextClick()}>
-              {"Next offence"}
-            </SecondaryButton>
-          )}
-        </GridCol>
-      </GridRow>
+      <OffenceNavigation
+        onBackToAllOffences={() => onBackToAllOffences()}
+        selectedOffenceIndex={selectedOffenceIndex}
+        onPreviousClick={() => onPreviousClick()}
+        onNextClick={() => onNextClick()}
+        offencesCount={offencesCount}
+      />
       <Heading as="h3" size="MEDIUM">
         {`Offence ${selectedOffenceIndex} of ${offencesCount}`}
       </Heading>
@@ -256,21 +247,13 @@ export const OffenceDetails = ({
           </div>
         </>
       )}
-      <GridRow>
-        <GridCol>
-          <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
-        </GridCol>
-        <GridCol className={classes.button}>
-          {selectedOffenceIndex !== 1 && (
-            <SecondaryButton onClick={() => onPreviousClick()}>{"Previous offence"}</SecondaryButton>
-          )}
-          {selectedOffenceIndex !== offencesCount && (
-            <SecondaryButton className={classes.nextButton} onClick={() => onNextClick()}>
-              {"Next offence"}
-            </SecondaryButton>
-          )}
-        </GridCol>
-      </GridRow>
+      <OffenceNavigation
+        onBackToAllOffences={() => onBackToAllOffences()}
+        selectedOffenceIndex={selectedOffenceIndex}
+        onPreviousClick={() => onPreviousClick()}
+        onNextClick={() => onNextClick()}
+        offencesCount={offencesCount}
+      />
     </div>
   )
 }
