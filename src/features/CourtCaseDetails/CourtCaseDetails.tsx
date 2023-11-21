@@ -1,4 +1,5 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { GridCol, GridRow } from "govuk-react"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
@@ -96,6 +97,9 @@ const CourtCaseDetails: React.FC<Props> = ({
         dob={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString()}
         hearingDate={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString()}
       />
+
+      <OrganisationUnitTypeahead />
+
       <CourtCaseDetailsTabs
         activeTab={activeTab}
         onTabClick={(tab) => {
