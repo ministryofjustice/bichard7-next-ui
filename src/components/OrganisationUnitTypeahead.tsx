@@ -17,11 +17,34 @@ const FilteredAndSortedOrganisationUnits = sortBy(
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
+
+  label {
+    margin-right: 10px;
+  }
+
+  button {
+    margin-right: 10px;
+  }
+
+  li {
+    list-style: none;
+  }
 `
 
 const ListWrapper = styled.div`
   display: flex;
   flex-direction: column;
+
+  li {
+    box-sizing: border-box;
+    padding: 5px;
+    border: 1px black solid;
+  }
+
+  span {
+    display: block;
+    font-size: medium;
+  }
 `
 
 const OrganisationUnitTypeahead: React.FC = () => {
@@ -79,6 +102,7 @@ const OrganisationUnitTypeahead: React.FC = () => {
                   {...getItemProps({ item, index })}
                 >
                   {item.thirdLevelName}
+                  <span>{item.topLevelName}</span>
                 </li>
               ))}
           </ul>
