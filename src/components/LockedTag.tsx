@@ -26,7 +26,7 @@ const LockedTag = ({ lockName, lockedBy, ...rest }: LockedTagProps) => (
   <LockedTagContainer {...rest} id={`${lockName.toLowerCase()}-locked-tag`}>
     {lockName}
     <Lockee id={`${lockName.toLowerCase()}-locked-tag-lockee`}>
-      <Image src={LOCKED_ICON_URL} width={18} height={18} alt="Lock icon" />
+      <Image src={LOCKED_ICON_URL} priority width={18} height={18} alt="Lock icon" />
       {lockedBy}
     </Lockee>
   </LockedTagContainer>
