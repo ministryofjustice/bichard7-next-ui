@@ -8,7 +8,7 @@ import { TableRow } from "../../TableRow"
 import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/plea-status.json"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import EditableFieldTableRow from "../../../../../../components/EditableFieldTableRow"
+import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -89,19 +89,19 @@ export const HearingResult = ({ result, exceptions }: HearingResultProps) => {
       </ConditionalRender>
       <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearinDateException}>
         {!!nextHearinDateException ? (
-          <EditableFieldTableRow
+          <ExceptionFieldTableRow
+            badgeText="Editable Field"
             label="Next hearing date"
-            currentValue={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
-            editableField={
-              <input
-                className="govuk-input"
-                type="date"
-                min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
-                id={"next-hearing-date-input"}
-                name={"Next"}
-              />
-            }
-          />
+            value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
+          >
+            <input
+              className="govuk-input"
+              type="date"
+              min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
+              id={"next-hearing-date-input"}
+              name={"Next"}
+            />
+          </ExceptionFieldTableRow>
         ) : (
           <TableRow label={"Next hearing date"} value={formatDisplayedDate(String(result.NextHearingDate))} />
         )}

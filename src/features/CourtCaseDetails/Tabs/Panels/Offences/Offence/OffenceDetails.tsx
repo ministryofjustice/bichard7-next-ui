@@ -11,11 +11,12 @@ import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
 import Badge from "../../../../../../components/Badge"
-import ExceptionPromptTableRow from "../../../../../../components/ExceptionPromptTableRow"
 import { TableRow } from "../../TableRow"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
+import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
+import ErrorPromptMessage from "../../../../../../components/ErrorPromptMessage"
 
 type Exception = { code: ExceptionCode; path: (string | number)[] }
 interface OffenceDetailsProps {
@@ -154,13 +155,9 @@ export const OffenceDetails = ({
           {
             <>
               {offenceCodeErrorPrompt ? (
-                <ExceptionPromptTableRow
-                  badgeText={"SYSTEM ERROR"}
-                  badgeColour="purple"
-                  message={offenceCodeErrorPrompt}
-                  value={offenceCode}
-                  label={"Offence code"}
-                />
+                <ExceptionFieldTableRow badgeText={"SYSTEM ERROR"} value={offenceCode} label={"Offence code"}>
+                  <ErrorPromptMessage message={offenceCodeErrorPrompt} />
+                </ExceptionFieldTableRow>
               ) : (
                 <TableRow label="Offence code" value={offenceCode} />
               )}
@@ -187,19 +184,18 @@ export const OffenceDetails = ({
             value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
           />
           {offenceMatchingException ? (
-            <ExceptionPromptTableRow
+            <ExceptionFieldTableRow
               badgeText={offenceMatchingException.badge}
-              badgeColour="purple"
-              message={
-                <>
-                  {"Court Case Reference:"}
-                  <br />
-                  {courtCase.courtReference}
-                </>
-              }
               label={"PNC sequence number"}
               value={<Input type="text" maxLength={3} className={classes.pncSequenceNumber} />}
-            />
+            >
+              {" "}
+              <>
+                {"Court Case Reference:"}
+                <br />
+                {courtCase.courtReference}
+              </>
+            </ExceptionFieldTableRow>
           ) : (
             <TableRow
               label="PNC sequence number"
@@ -239,13 +235,9 @@ export const OffenceDetails = ({
             </Heading>
             <Table>
               {qualifierErrorPrompt ? (
-                <ExceptionPromptTableRow
-                  badgeText={"SYSTEM ERROR"}
-                  badgeColour="purple"
-                  message={qualifierErrorPrompt}
-                  value={qualifierCode}
-                  label={"Code"}
-                />
+                <ExceptionFieldTableRow badgeText={"SYSTEM ERROR"} value={qualifierCode} label={"Code"}>
+                  <ErrorPromptMessage message={qualifierErrorPrompt} />
+                </ExceptionFieldTableRow>
               ) : (
                 <TableRow label={"Code"} value={qualifierCode} />
               )}

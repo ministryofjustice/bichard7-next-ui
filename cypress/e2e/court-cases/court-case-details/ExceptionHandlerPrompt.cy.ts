@@ -66,13 +66,13 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".govuk-link").contains("Aid and abet theft").click()
 
       cy.get(".qualifier-code-table").contains("XX")
-      cy.get(".error-prompt-message").contains(ErrorMessages.QualifierCode)
+      cy.get('[class*="errorPromptMessage"]').contains(ErrorMessages.QualifierCode)
 
       cy.get("button").contains("Next offence").click()
-      cy.get(".error-prompt-message").should("not.exist")
+      cy.get('[class*="errorPromptMessage"]').should("not.exist")
 
       cy.get("button").contains("Next offence").click()
-      cy.get(".error-prompt-message").should("not.exist")
+      cy.get('[class*="errorPromptMessage"]').should("not.exist")
     })
 
     it("Should not display any error prompts when exceptions are marked as manually resolved", () => {
@@ -83,9 +83,9 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".govuk-link").contains("Aid and abet theft").click()
 
       cy.get(".qualifier-code-table").contains("XX")
-      cy.get(".qualifier-code-table .error-prompt-message").contains(ErrorMessages.QualifierCode)
+      cy.get(".qualifier-code-table [class*='errorPromptMessage']").contains(ErrorMessages.QualifierCode)
       cy.get(".offences-table").contains("YY10XYZXX")
-      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100306ErrorPrompt)
+      cy.get(".offences-table [class*='errorPromptMessage']").contains(ErrorMessages.HO100306ErrorPrompt)
 
       cy.get("#exceptions-tab").contains("Exceptions").click()
       cy.get("button").contains("Mark as manually resolved").click()
@@ -93,8 +93,8 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Aid and abet theft").click()
 
-      cy.get(".qualifier-code-table .error-prompt-message").should("not.exist")
-      cy.get(".offences-table .error-prompt-message").should("not.exist")
+      cy.get(".qualifier-code-table [class*='errorPromptMessage']").should("not.exist")
+      cy.get(".offences-table [class*='errorPromptMessage']").should("not.exist")
     })
   })
 
@@ -108,7 +108,7 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Offence with no errors").click()
       cy.get(".offences-table").contains("RT88191")
-      cy.get(".offences-table .error-prompt-message").should("not.exist")
+      cy.get(".offences-table [class*='errorPromptMessage']").should("not.exist")
     })
 
     it("Should display an error prompt when a HO100306 is raised on a national offence", () => {
@@ -116,11 +116,11 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".govuk-link").contains("National Offence with Offence Code not found exception").click()
 
       cy.get(".offences-table").contains("TH68XYZ")
-      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100306ErrorPrompt)
+      cy.get(".offences-table [class*='errorPromptMessage']").contains(ErrorMessages.HO100306ErrorPrompt)
 
       cy.get("a.govuk-back-link").contains("Back to all offences").click()
       cy.get(".govuk-link").contains("Offence with no errors").click()
-      cy.get(".offences-table .error-prompt-message").should("not.exist")
+      cy.get(".offences-table [class*='errorPromptMessage']").should("not.exist")
     })
 
     it("Should display an error prompt when a HO100251 is raised on a national offence", () => {
@@ -128,7 +128,7 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".govuk-link").contains("National Offence with Offence Code not recognised exception").click()
 
       cy.get(".offences-table").contains("TH68$$$")
-      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100251ErrorPrompt)
+      cy.get(".offences-table [class*='errorPromptMessage']").contains(ErrorMessages.HO100251ErrorPrompt)
     })
 
     it("Should display an error prompt when a HO100306 is raised on a local offence", () => {
@@ -136,7 +136,7 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".govuk-link").contains("Local Offence with Offence Code not found exception").click()
 
       cy.get(".offences-table").contains("ABC00")
-      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100306ErrorPrompt)
+      cy.get(".offences-table [class*='errorPromptMessage']").contains(ErrorMessages.HO100306ErrorPrompt)
     })
 
     it("Should display an error prompt when a HO100251 is raised on a local offence", () => {
@@ -144,7 +144,7 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".govuk-link").contains("Local Offence with Offence Code not recognised exception").click()
 
       cy.get(".offences-table").contains("$$$$$$")
-      cy.get(".offences-table .error-prompt-message").contains(ErrorMessages.HO100251ErrorPrompt)
+      cy.get(".offences-table [class*='errorPromptMessage']").contains(ErrorMessages.HO100251ErrorPrompt)
     })
 
     it("Should not display any error prompts when exceptions are marked as manually resolved", () => {
@@ -154,23 +154,23 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
 
       cy.get(".govuk-link").contains("National Offence with Offence Code not found exception").click()
-      cy.get(".qualifier-code-table .error-prompt-message").should("not.exist")
-      cy.get(".offences-table .error-prompt-message").should("not.exist")
+      cy.get(".qualifier-code-table [class*='errorPromptMessage']").should("not.exist")
+      cy.get(".offences-table [class*='errorPromptMessage']").should("not.exist")
       cy.get("a.govuk-back-link").contains("Back to all offences").click()
 
       cy.get(".govuk-link").contains("National Offence with Offence Code not recognised exception").click()
-      cy.get(".qualifier-code-table .error-prompt-message").should("not.exist")
-      cy.get(".offences-table .error-prompt-message").should("not.exist")
+      cy.get(".qualifier-code-table [class*='errorPromptMessage']").should("not.exist")
+      cy.get(".offences-table [class*='errorPromptMessage']").should("not.exist")
       cy.get("a.govuk-back-link").contains("Back to all offences").click()
 
       cy.get(".govuk-link").contains("Local Offence with Offence Code not found exception").click()
-      cy.get(".qualifier-code-table .error-prompt-message").should("not.exist")
-      cy.get(".offences-table .error-prompt-message").should("not.exist")
+      cy.get(".qualifier-code-table [class*='errorPromptMessage']").should("not.exist")
+      cy.get(".offences-table [class*='errorPromptMessage']").should("not.exist")
       cy.get("a.govuk-back-link").contains("Back to all offences").click()
 
       cy.get(".govuk-link").contains("Local Offence with Offence Code not recognised exception").click()
-      cy.get(".qualifier-code-table .error-prompt-message").should("not.exist")
-      cy.get(".offences-table .error-prompt-message").should("not.exist")
+      cy.get(".qualifier-code-table [class*='errorPromptMessage']").should("not.exist")
+      cy.get(".offences-table [class*='errorPromptMessage']").should("not.exist")
       cy.get("a.govuk-back-link").contains("Back to all offences").click()
     })
   })

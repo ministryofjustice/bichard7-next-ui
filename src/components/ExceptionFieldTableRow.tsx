@@ -4,9 +4,11 @@ import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
 
 type Props = {
-  currentValue?: string | React.ReactNode
-  editableField: string | React.ReactNode
+  badgeText: string
+  value?: string | React.ReactNode
+  badgeColour?: "red" | "blue" | "purple"
   label: string
+  children?: React.ReactNode
 }
 
 const useStyles = createUseStyles({
@@ -29,7 +31,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const EditableFieldTableRow = ({ label, currentValue, editableField }: Props) => {
+const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, children }: Props) => {
   const classes = useStyles()
   const labelField = (
     <>
@@ -42,11 +44,13 @@ const EditableFieldTableRow = ({ label, currentValue, editableField }: Props) =>
 
   const cellContent = (
     <div className={classes.content}>
-      <div className="field-value">{currentValue}</div>
-      <div className="badge-wrapper">
-        <Badge className="editable-field" isRendered={true} colour={"purple"} label={"Editable Field"} />
-      </div>
-      {editableField}
+      {value && <div className="field-value">{value}</div>}
+      {badgeText && (
+        <div className="badge-wrapper">
+          <Badge className="error-badge" isRendered={true} colour={badgeColour ?? "purple"} label={badgeText} />
+        </div>
+      )}
+      {children}
     </div>
   )
 
@@ -60,4 +64,4 @@ const EditableFieldTableRow = ({ label, currentValue, editableField }: Props) =>
   )
 }
 
-export default EditableFieldTableRow
+export default ExceptionFieldTableRow
