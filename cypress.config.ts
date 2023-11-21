@@ -7,6 +7,7 @@ import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import {
   getAhoWithMultipleOffences,
   insertCourtCasesWithFields,
+  getAhoWithCustomExceptions,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithNotesAndLock,
   insertDummyCourtCasesWithTriggers,
@@ -22,6 +23,7 @@ import { deleteUsers, insertUsersWithOverrides } from "./test/utils/manageUsers"
 import generateAhoWithPncException, {
   GenerateAhoWithPncExceptionParams
 } from "./test/helpers/generateAhoWithPncException"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 export default defineConfig({
   e2e: {
@@ -76,6 +78,18 @@ export default defineConfig({
         insertCourtCaseWithMultipleOffences(params: { case: Partial<CourtCase>; offenceCount: number }) {
           return insertCourtCasesWithFields([
             { ...params.case, hearingOutcome: getAhoWithMultipleOffences(params.offenceCount) }
+          ])
+        },
+
+        insertCourtCaseWithFieldsWithExceptions(params: {
+          case: Partial<CourtCase>
+          exceptions: { asn?: ExceptionCode; offenceReasonSequence?: ExceptionCode }
+        }) {
+          return insertCourtCasesWithFields([
+            {
+              ...params.case,
+              ...getAhoWithCustomExceptions(params.exceptions)
+            }
           ])
         },
 

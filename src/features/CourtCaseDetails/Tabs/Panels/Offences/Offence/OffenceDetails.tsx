@@ -1,13 +1,9 @@
-import type {
-  AnnotatedHearingOutcome,
-  Offence
-} from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
 import SecondaryButton from "components/SecondaryButton"
-import UneditableField from "components/UneditableField"
-import { GridCol, GridRow, Heading, Table } from "govuk-react"
+import { GridCol, GridRow, Heading, Input, Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import ErrorMessages from "types/ErrorMessages"
 import { formatDisplayedDate } from "utils/formattedDate"
@@ -17,7 +13,12 @@ import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { StartDate } from "./StartDate"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
+import errorPaths from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/errorPaths"
+import { isEqual } from "lodash"
+import Badge from "../../../../../../components/Badge"
+import ExceptionPromptTableRow from "../../../../../../components/ExceptionPromptTableRow"
 
+type Exception = { code: ExceptionCode; path: (string | number)[] }
 interface OffenceDetailsProps {
   className: string
   offence: Offence
@@ -26,10 +27,10 @@ interface OffenceDetailsProps {
   onNextClick: () => void
   onPreviousClick: () => void
   selectedOffenceIndex: number
-  exceptions: { code: ExceptionCode; path: (string | number)[] }[]
+  exceptions: Exception[]
   courtCase: DisplayFullCourtCase
-  pncQuery?: AnnotatedHearingOutcome["PncQuery"]
 }
+
 const useStyles = createUseStyles({
   button: {
     textAlign: "right"
@@ -43,8 +44,48 @@ const useStyles = createUseStyles({
     "& td": {
       width: "50%"
     }
+  },
+
+  pncSequenceNumber: {
+    width: "4.125rem"
   }
 })
+
+const offenceMatchingExceptions = {
+  noOffencesMatched: [ExceptionCode.HO100304, ExceptionCode.HO100328, ExceptionCode.HO100507],
+  offenceNotMatched: [
+    ExceptionCode.HO100203,
+    ExceptionCode.HO100228,
+    ExceptionCode.HO100310,
+    ExceptionCode.HO100311,
+    ExceptionCode.HO100312,
+    ExceptionCode.HO100320,
+    ExceptionCode.HO100329,
+    ExceptionCode.HO100332,
+    ExceptionCode.HO100333
+  ]
+}
+
+const getOffenceReasonSequencePath = (offenceIndex: number) =>
+  errorPaths.offence(offenceIndex).reasonSequence.filter((path) => path !== "AnnotatedHearingOutcome")
+
+const getOffenceMatchingException = (exceptions: Exception[], offenceIndex: number) => {
+  const offenceMatchingException = exceptions.find(
+    (exception) =>
+      offenceMatchingExceptions.noOffencesMatched.includes(exception.code) ||
+      (offenceMatchingExceptions.offenceNotMatched.includes(exception.code) &&
+        isEqual(exception.path, getOffenceReasonSequencePath(offenceIndex)))
+  )
+
+  if (!offenceMatchingException) {
+    return undefined
+  }
+
+  return {
+    code: offenceMatchingException.code,
+    badge: offenceMatchingException.code === ExceptionCode.HO100507 ? "Added by Court" : "Unmatched"
+  }
+}
 
 export const OffenceDetails = ({
   className,
@@ -55,29 +96,33 @@ export const OffenceDetails = ({
   onPreviousClick,
   selectedOffenceIndex,
   exceptions,
-  courtCase,
-  pncQuery
+  courtCase
 }: OffenceDetailsProps) => {
   const classes = useStyles()
   const offenceCode = getOffenceCode(offence)
-  const pncSequenceNumber = pncQuery?.courtCases?.[0]?.offences?.find((o) => o.offence.cjsOffenceCode === offenceCode)
-    ?.offence?.sequenceNumber
   const qualifierCode =
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
+  const isCaseUnresolved = courtCase.errorStatus !== "Resolved"
+  const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex)
 
-  const findUnresolvedException = (exceptionCode: ExceptionCode) =>
-    exceptions.find(
-      (exception) => exception.code === exceptionCode && exception.path[5] === selectedOffenceIndex - 1
-    ) && courtCase.errorStatus !== "Resolved"
+  const hasExceptionOnOffence = (exceptionCode: ExceptionCode) =>
+    isCaseUnresolved &&
+    exceptions.some(
+      (exception) =>
+        exception.code === exceptionCode &&
+        exception.path
+          .join(">")
+          .startsWith(
+            `AnnotatedHearingOutcome>HearingOutcome>Case>HearingDefendant>Offence>${selectedOffenceIndex - 1}`
+          )
+    )
 
-  const offenceCodeErrorPrompt = findUnresolvedException("HO100251" as ExceptionCode)
-    ? ErrorMessages.HO100251ErrorPrompt
-    : findUnresolvedException(ExceptionCode.HO100306)
-      ? ErrorMessages.HO100306ErrorPrompt
-      : undefined
+  const offenceCodeErrorPrompt =
+    (hasExceptionOnOffence("HO100251" as ExceptionCode) && ErrorMessages.HO100251ErrorPrompt) ||
+    (hasExceptionOnOffence(ExceptionCode.HO100306) && ErrorMessages.HO100306ErrorPrompt)
 
-  const qualifierErrorPrompt = findUnresolvedException(ExceptionCode.HO100309) && ErrorMessages.QualifierCode
+  const qualifierErrorPrompt = hasExceptionOnOffence(ExceptionCode.HO100309) && ErrorMessages.QualifierCode
 
   let offenceCategoryWithDescription = offence.OffenceCategory
   offenceCategory.forEach((category) => {
@@ -121,11 +166,11 @@ export const OffenceDetails = ({
           {
             <>
               {offenceCodeErrorPrompt ? (
-                <UneditableField
-                  badge={"SYSTEM ERROR"}
-                  colour={"purple"}
+                <ExceptionPromptTableRow
+                  badgeText={"SYSTEM ERROR"}
+                  badgeColour="purple"
                   message={offenceCodeErrorPrompt}
-                  code={offenceCode}
+                  value={offenceCode}
                   label={"Offence code"}
                 />
               ) : (
@@ -153,7 +198,31 @@ export const OffenceDetails = ({
             label="Conviction date"
             value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
           />
-          <TableRow label="PNC sequence number" value={pncSequenceNumber?.toString().padStart(3, "0")} />
+          {offenceMatchingException ? (
+            <ExceptionPromptTableRow
+              badgeText={offenceMatchingException.badge}
+              badgeColour="purple"
+              message={
+                <>
+                  {"Court Case Reference:"}
+                  <br />
+                  {courtCase.courtReference}
+                </>
+              }
+              label={"PNC sequence number"}
+              value={<Input type="text" maxLength={3} className={classes.pncSequenceNumber} />}
+            />
+          ) : (
+            <TableRow
+              label="PNC sequence number"
+              value={
+                <>
+                  <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
+                  <Badge isRendered={true} colour="purple" label="Matched" />
+                </>
+              }
+            />
+          )}
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
         </div>
@@ -173,11 +242,11 @@ export const OffenceDetails = ({
             </Heading>
             <Table>
               {qualifierErrorPrompt ? (
-                <UneditableField
-                  badge={"SYSTEM ERROR"}
-                  colour={"purple"}
+                <ExceptionPromptTableRow
+                  badgeText={"SYSTEM ERROR"}
+                  badgeColour="purple"
                   message={qualifierErrorPrompt}
-                  code={qualifierCode}
+                  value={qualifierCode}
                   label={"Code"}
                 />
               ) : (
