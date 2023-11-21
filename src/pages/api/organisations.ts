@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next"
 import OrganisationUnits from "@moj-bichard7-developers/bichard7-next-data/data/organisation-unit.json"
 
 const FilteredOrganisationUnits = OrganisationUnits.filter(
-  (organisationUnit) => organisationUnit.topLevelName !== "Police Service"
+  (organisationUnit) => organisationUnit.topLevelName !== "Police Service" && /\S/.test(organisationUnit.thirdLevelName)
 )
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
