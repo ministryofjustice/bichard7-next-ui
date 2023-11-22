@@ -1,9 +1,9 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import { GridCol, GridRow } from "govuk-react"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import type NavigationHandler from "types/NavigationHandler"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
@@ -116,7 +116,6 @@ const CourtCaseDetails: React.FC<Props> = ({
               defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant}
               asn={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber}
               exceptions={aho.Exceptions}
-              selectedOffenceIndex={selectedOffenceIndex}
               courtCase={courtCase}
             />
           </CourtCaseDetailsPanel>

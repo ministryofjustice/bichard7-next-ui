@@ -28,6 +28,7 @@ describe("Uneditable Fields", () => {
       message: ErrorMessage.AsnUneditable,
       code: "2200000000001145631B"
     }
+    // Add component test missed in BICAWS-3009 - HO100306
   ].forEach(({ title, exception, badge, message, code, label }) => {
     it(`should show an error prompt for exception ${exception} (${title})`, () => {
       cy.mount(<UneditableField badge={badge} message={message} code={code} label={label} colour={"purple"} />)
