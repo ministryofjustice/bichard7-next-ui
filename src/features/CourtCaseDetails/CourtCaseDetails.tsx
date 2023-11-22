@@ -14,6 +14,14 @@ import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
+import { AmendmentArrValues, AmendmentValues, IndividualAmendmentValues } from "../../types/Amendments"
+import {
+  appendNewValue,
+  doesUpdateExist,
+  isAmendmentArr,
+  isAmendmentValue
+} from "../../components/HearingOutcome/utils"
+import { isObject } from "lodash"
 
 interface Props {
   courtCase: DisplayFullCourtCase
@@ -58,6 +66,28 @@ const CourtCaseDetails: React.FC<Props> = ({
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
+
+  const [amendments, setAmendements] = useState<Record<string, AmendmentValues>>({})
+
+  //TODO tidy this up and add test
+  //TODO allow handling multiple next hearing date updates
+  const amendFn = (keyToAmend: string) => (newValue: IndividualAmendmentValues) => {
+    const updatedIdx =
+      Array.isArray(amendments[keyToAmend]) && isAmendmentArr(amendments[keyToAmend]) && isObject(newValue)
+        ? doesUpdateExist(amendments[keyToAmend] as AmendmentArrValues, newValue)
+        : -1
+
+    const updatedArr =
+      Array.isArray(amendments[keyToAmend]) && isObject(newValue)
+        ? appendNewValue(newValue, keyToAmend, updatedIdx, amendments)
+        : [newValue]
+    const updatedValue = isObject(newValue) ? updatedArr : newValue
+
+    setAmendements({
+      ...amendments,
+      ...(isAmendmentValue(updatedValue) && { [keyToAmend]: updatedValue })
+    })
+  }
 
   const handleNavigation: NavigationHandler = ({ location, args }) => {
     switch (location) {
@@ -116,6 +146,7 @@ const CourtCaseDetails: React.FC<Props> = ({
             }}
             selectedOffenceIndex={selectedOffenceIndex}
             courtCase={courtCase}
+            amendFn={amendFn}
           />
 
           <Notes
@@ -135,6 +166,7 @@ const CourtCaseDetails: React.FC<Props> = ({
             canResolveAndSubmit={canResolveAndSubmit}
             csrfToken={csrfToken}
             previousPath={previousPath}
+            amendments={amendments}
           />
         </GridCol>
       </GridRow>

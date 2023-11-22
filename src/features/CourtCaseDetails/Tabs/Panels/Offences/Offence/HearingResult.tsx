@@ -9,6 +9,7 @@ import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/pl
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
+import { IndividualAmendmentValues } from "../../../../../../types/Amendments"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -33,9 +34,12 @@ export const formatDuration = (durationLength: number, durationUnit: string): st
 interface HearingResultProps {
   result: Result
   exceptions: ExceptionCode[]
+  resultIndex: number
+  offenceIndex: number
+  amendFn: (keyToAmend: string) => (newValue: IndividualAmendmentValues) => void
 }
 
-export const HearingResult = ({ result, exceptions }: HearingResultProps) => {
+export const HearingResult = ({ result, exceptions, resultIndex, offenceIndex, amendFn }: HearingResultProps) => {
   const nextHearinDateException = exceptions.some(
     (code) => code === ExceptionCode.HO100102 || code === ExceptionCode.HO100323
   )
@@ -98,8 +102,15 @@ export const HearingResult = ({ result, exceptions }: HearingResultProps) => {
               className="govuk-input"
               type="date"
               min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
-              id={"next-hearing-date-input"}
-              name={"Next"}
+              id={"next-hearing-date"}
+              name={"next-hearing-date"}
+              onChange={(event) => {
+                amendFn("nextHearingDate")({
+                  resultIndex: resultIndex,
+                  offenceIndex: offenceIndex,
+                  updatedValue: event.target.value
+                })
+              }}
             />
           </ExceptionFieldTableRow>
         ) : (

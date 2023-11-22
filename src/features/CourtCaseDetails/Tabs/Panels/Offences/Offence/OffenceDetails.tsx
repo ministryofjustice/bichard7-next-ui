@@ -17,6 +17,7 @@ import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
 import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
 import ErrorPromptMessage from "../../../../../../components/ErrorPromptMessage"
+import { IndividualAmendmentValues } from "../../../../../../types/Amendments"
 
 type Exception = { code: ExceptionCode; path: (string | number)[] }
 interface OffenceDetailsProps {
@@ -29,6 +30,7 @@ interface OffenceDetailsProps {
   selectedOffenceIndex: number
   exceptions: Exception[]
   courtCase: DisplayFullCourtCase
+  amendFn: (keyToAmend: string) => (newValue: IndividualAmendmentValues) => void
 }
 
 const useStyles = createUseStyles({
@@ -96,7 +98,8 @@ export const OffenceDetails = ({
   onPreviousClick,
   selectedOffenceIndex,
   exceptions,
-  courtCase
+  courtCase,
+  amendFn
 }: OffenceDetailsProps) => {
   const classes = useStyles()
   const offenceCode = getOffenceCode(offence)
@@ -218,11 +221,14 @@ export const OffenceDetails = ({
         {offence.Result.map((result, index) => {
           return (
             <HearingResult
+              key={index}
               result={result}
               exceptions={unresolvedExceptionsOnThisOffence
                 .filter((resultExceptions) => resultExceptions.path[7] === index)
                 .map((e) => e.code)}
-              key={index}
+              offenceIndex={selectedOffenceIndex}
+              resultIndex={index}
+              amendFn={amendFn}
             />
           )
         })}
