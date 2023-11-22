@@ -6,8 +6,6 @@ import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
-import CourtCaseDetailsSummaryBox from "./CourtCaseDetailsSummaryBox"
-import Header from "./Header"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
@@ -22,7 +20,6 @@ interface Props {
   aho: AnnotatedHearingOutcome
   isLockedByCurrentUser: boolean
   user: DisplayFullUser
-  canReallocate: boolean
   canResolveAndSubmit: boolean
   csrfToken: string
   previousPath: string
@@ -54,7 +51,6 @@ const CourtCaseDetails: React.FC<Props> = ({
   aho,
   user,
   isLockedByCurrentUser,
-  canReallocate,
   canResolveAndSubmit,
   csrfToken,
   previousPath
@@ -79,23 +75,6 @@ const CourtCaseDetails: React.FC<Props> = ({
 
   return (
     <>
-      <Header
-        previousPath={previousPath}
-        courtCase={courtCase}
-        user={user}
-        canReallocate={canReallocate}
-        csrfToken={csrfToken}
-      />
-      <CourtCaseDetailsSummaryBox
-        asn={courtCase.asn}
-        courtHouseCode={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
-        courtName={courtCase.courtName}
-        courtReference={courtCase.courtReference}
-        pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
-        ptiurn={courtCase.ptiurn}
-        dob={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString()}
-        hearingDate={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString()}
-      />
       <CourtCaseDetailsTabs
         activeTab={activeTab}
         onTabClick={(tab) => {
