@@ -31,7 +31,7 @@ export const ExtraReasonRow = ({
     <Table.Row className={`${classes.extraReasonRow} ${rowClassName}`}>
       <Table.Cell className={firstColumnClassName}>
         <ConditionalRender isRendered={isLocked}>
-          <Image src={LOCKED_ICON_URL} priority loading="eager" width={20} height={20} alt="Lock icon" />
+          <Image src={LOCKED_ICON_URL} priority width={20} height={20} alt="Lock icon" />
         </ConditionalRender>
       </Table.Cell>
       <Table.Cell />

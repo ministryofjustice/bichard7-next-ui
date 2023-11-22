@@ -70,7 +70,6 @@ const LockedByButton = ({
         <Image
           src={LOCKED_ICON_URL}
           priority
-          loading="eager"
           width={18}
           height={18}
           className={unlockPath ? classes.LockedIcon : undefined}

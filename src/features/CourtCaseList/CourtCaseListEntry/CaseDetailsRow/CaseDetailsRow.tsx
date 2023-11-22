@@ -92,7 +92,7 @@ export const CaseDetailsRow = ({
       <Table.Row className={`${classes.caseDetailsRow} ${rowClassName}`}>
         <Table.Cell className={`${caseDetailsCellClass} ${firstColumnClassName}`}>
           <ConditionalRender isRendered={!!errorLockedByUsername}>
-            <Image src={LOCKED_ICON_URL} priority loading="eager" width={20} height={20} alt="Lock icon" />
+            <Image src={LOCKED_ICON_URL} priority width={20} height={20} alt="Lock icon" />
           </ConditionalRender>
         </Table.Cell>
         <Table.Cell className={caseDetailsCellClass}>
