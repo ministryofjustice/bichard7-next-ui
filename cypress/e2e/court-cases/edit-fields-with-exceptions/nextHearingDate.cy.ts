@@ -95,7 +95,7 @@ describe("NextHearingDate", () => {
 
       verifyUpdates({
         expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
-        updatedMessageNotHaveContent: [`<ds:NextHearingDate Error="HO100102">false</ds:NextHearingDate>`],
+        updatedMessageNotHaveContent: ["<ds:NextHearingDate>false</ds:NextHearingDate>"],
         updatedMessageHaveContent: ["<ds:NextHearingDate>2024-01-01</ds:NextHearingDate>"]
       })
     })

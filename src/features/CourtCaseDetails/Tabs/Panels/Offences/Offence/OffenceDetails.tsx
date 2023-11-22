@@ -226,7 +226,7 @@ export const OffenceDetails = ({
               exceptions={unresolvedExceptionsOnThisOffence
                 .filter((resultExceptions) => resultExceptions.path[7] === index)
                 .map((e) => e.code)}
-              offenceIndex={selectedOffenceIndex}
+              selectedOffenceIndex={selectedOffenceIndex}
               resultIndex={index}
               amendFn={amendFn}
             />

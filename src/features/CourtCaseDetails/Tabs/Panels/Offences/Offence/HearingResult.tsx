@@ -35,11 +35,17 @@ interface HearingResultProps {
   result: Result
   exceptions: ExceptionCode[]
   resultIndex: number
-  offenceIndex: number
+  selectedOffenceIndex: number
   amendFn: (keyToAmend: string) => (newValue: IndividualAmendmentValues) => void
 }
 
-export const HearingResult = ({ result, exceptions, resultIndex, offenceIndex, amendFn }: HearingResultProps) => {
+export const HearingResult = ({
+  result,
+  exceptions,
+  resultIndex,
+  selectedOffenceIndex,
+  amendFn
+}: HearingResultProps) => {
   const nextHearinDateException = exceptions.some(
     (code) => code === ExceptionCode.HO100102 || code === ExceptionCode.HO100323
   )
@@ -107,7 +113,7 @@ export const HearingResult = ({ result, exceptions, resultIndex, offenceIndex, a
               onChange={(event) => {
                 amendFn("nextHearingDate")({
                   resultIndex: resultIndex,
-                  offenceIndex: offenceIndex,
+                  offenceIndex: selectedOffenceIndex - 1, //Displayed offence for navigation is not 0 indexed,
                   updatedValue: event.target.value
                 })
               }}
