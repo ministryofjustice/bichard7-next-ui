@@ -41,7 +41,10 @@ const setAmendedField = (
   switch (keyToAmend) {
     case "nextHearingDate":
       amendments = setNextHearingDate(newValue, amendments)
+      break
     // TODO: handle other editable fields here
+    default:
+      amendments[keyToAmend] = newValue as AmendmentValues
   }
 
   return amendments

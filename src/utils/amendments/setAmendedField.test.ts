@@ -82,4 +82,41 @@ describe("setAmendedField", () => {
       })
     })
   })
+
+  describe("Where amendment values are primitive strings", () => {
+    const updatedValue = "dummy update"
+
+    it("can set the amended value when there are no other amendments", () => {
+      const existingAmendments = {}
+      const result = setAmendedField("asn", updatedValue, existingAmendments)
+
+      expect(result).toEqual({
+        asn: updatedValue
+      })
+    })
+
+    it("can update the an existing amendment value", () => {
+      const existingAmendments = {
+        forceOwner: "old value"
+      }
+      const result = setAmendedField("forceOwner", updatedValue, existingAmendments)
+
+      expect(result).toEqual({
+        forceOwner: updatedValue
+      })
+    })
+
+    it("can add amendments when there are other amendments", () => {
+      const existingAmendments = {
+        forceOwner: "old value",
+        asn: "untouched"
+      }
+      const result = setAmendedField("forceOwner", updatedValue, existingAmendments)
+
+      expect(result).toEqual({
+        forceOwner: updatedValue,
+        asn: "untouched"
+      })
+    })
+  })
 })
