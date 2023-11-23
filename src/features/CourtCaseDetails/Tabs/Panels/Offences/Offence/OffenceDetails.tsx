@@ -17,7 +17,7 @@ import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
 import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
 import ErrorPromptMessage from "../../../../../../components/ErrorPromptMessage"
-import { AmendmentKeys, IndividualAmendmentValues } from "../../../../../../types/Amendments"
+import { AmendmentKeys, AmendmentValues, IndividualAmendmentValues } from "../../../../../../types/Amendments"
 
 type Exception = { code: ExceptionCode; path: (string | number)[] }
 interface OffenceDetailsProps {
@@ -30,6 +30,7 @@ interface OffenceDetailsProps {
   selectedOffenceIndex: number
   exceptions: Exception[]
   courtCase: DisplayFullCourtCase
+  amendments: Record<string, AmendmentValues>
   amendFn: (AmendmentKeys: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
 
@@ -99,6 +100,7 @@ export const OffenceDetails = ({
   selectedOffenceIndex,
   exceptions,
   courtCase,
+  amendments,
   amendFn
 }: OffenceDetailsProps) => {
   const classes = useStyles()
@@ -228,6 +230,7 @@ export const OffenceDetails = ({
                 .map((e) => e.code)}
               selectedOffenceIndex={selectedOffenceIndex}
               resultIndex={index}
+              amendments={amendments}
               amendFn={amendFn}
             />
           )

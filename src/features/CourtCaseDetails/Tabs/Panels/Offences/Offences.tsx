@@ -3,7 +3,7 @@ import { OffenceDetails } from "./Offence/OffenceDetails"
 import { OffencesList } from "./OffencesList/OffencesList"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import { AmendmentKeys, IndividualAmendmentValues } from "../../../../../types/Amendments"
+import { AmendmentKeys, AmendmentValues, IndividualAmendmentValues } from "../../../../../types/Amendments"
 
 interface OffencesProps {
   className: string
@@ -12,6 +12,7 @@ interface OffencesProps {
   selectedOffenceIndex?: number
   exceptions: { code: ExceptionCode; path: (string | number)[] }[]
   courtCase: DisplayFullCourtCase
+  amendments: Record<string, AmendmentValues>
   amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
 
@@ -22,6 +23,7 @@ export const Offences = ({
   selectedOffenceIndex,
   exceptions,
   courtCase,
+  amendments,
   amendFn
 }: OffencesProps) => {
   return selectedOffenceIndex !== undefined && offences[selectedOffenceIndex - 1] !== undefined ? (
@@ -36,6 +38,7 @@ export const Offences = ({
         selectedOffenceIndex={selectedOffenceIndex}
         exceptions={exceptions}
         courtCase={courtCase}
+        amendments={amendments}
         amendFn={amendFn}
       />
     </>

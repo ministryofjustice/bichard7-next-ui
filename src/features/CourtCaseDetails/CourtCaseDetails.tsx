@@ -64,7 +64,7 @@ const CourtCaseDetails: React.FC<Props> = ({
   const [amendments, setAmendements] = useState<Record<string, AmendmentValues>>({})
 
   const amendFn = (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => {
-    setAmendements(setAmendedFields(keyToAmend, newValue, amendments))
+    setAmendements({ ...setAmendedFields(keyToAmend, newValue, amendments) })
   }
 
   const handleNavigation: NavigationHandler = ({ location, args }) => {
@@ -124,6 +124,7 @@ const CourtCaseDetails: React.FC<Props> = ({
             }}
             selectedOffenceIndex={selectedOffenceIndex}
             courtCase={courtCase}
+            amendments={amendments}
             amendFn={amendFn}
           />
 

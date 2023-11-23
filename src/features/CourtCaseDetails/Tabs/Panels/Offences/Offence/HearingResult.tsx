@@ -2,14 +2,19 @@ import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/A
 import ConditionalRender from "components/ConditionalRender"
 import { Duration } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import { Durations } from "@moj-bichard7-developers/bichard7-next-data/dist/types/Duration"
-import { Table } from "govuk-react"
+import { HintText, Table } from "govuk-react"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
 import { TableRow } from "../../TableRow"
 import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/plea-status.json"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
-import { AmendmentKeys, IndividualAmendmentValues } from "../../../../../../types/Amendments"
+import {
+  AmendmentKeys,
+  AmendmentValues,
+  IndividualAmendmentValues,
+  UpdatedNextHearingDate
+} from "../../../../../../types/Amendments"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -31,11 +36,26 @@ export const formatDuration = (durationLength: number, durationUnit: string): st
   return `${durationLength} ${Durations[durationUnit as Duration]}`
 }
 
+const getDateValue = (
+  amendments: Record<string, AmendmentValues>,
+  offenceIndex: number,
+  resultIndex: number
+): string => {
+  const amendment =
+    amendments?.nextHearingDate &&
+    (amendments.nextHearingDate as UpdatedNextHearingDate[]).find(
+      (amendment) => amendment.offenceIndex === offenceIndex && amendment.resultIndex === resultIndex
+    )?.updatedValue
+
+  return amendment ? formatFormInputDateString(new Date(amendment)) : ""
+}
+
 interface HearingResultProps {
   result: Result
   exceptions: ExceptionCode[]
   resultIndex: number
   selectedOffenceIndex: number
+  amendments: Record<string, AmendmentValues>
   amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
 
@@ -44,6 +64,7 @@ export const HearingResult = ({
   exceptions,
   resultIndex,
   selectedOffenceIndex,
+  amendments,
   amendFn
 }: HearingResultProps) => {
   const nextHearinDateException = exceptions.some(
@@ -104,12 +125,14 @@ export const HearingResult = ({
             label="Next hearing date"
             value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
           >
+            <HintText>{"Enter date"}</HintText>
             <input
               className="govuk-input"
               type="date"
               min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
               id={"next-hearing-date"}
               name={"next-hearing-date"}
+              value={getDateValue(amendments, selectedOffenceIndex - 1, resultIndex)}
               onChange={(event) => {
                 amendFn("nextHearingDate")({
                   resultIndex: resultIndex,
