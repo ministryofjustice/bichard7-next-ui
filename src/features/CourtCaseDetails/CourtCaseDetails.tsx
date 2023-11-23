@@ -14,14 +14,8 @@ import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
-import { AmendmentArrValues, AmendmentValues, IndividualAmendmentValues } from "../../types/Amendments"
-import {
-  appendNewValue,
-  doesUpdateExist,
-  isAmendmentArr,
-  isAmendmentValue
-} from "../../components/HearingOutcome/utils"
-import { isObject } from "lodash"
+import { AmendmentValues, IndividualAmendmentValues } from "../../types/Amendments"
+import setAmendedFields from "../../utils/amendments/setAmendedFields"
 
 interface Props {
   courtCase: DisplayFullCourtCase
@@ -69,24 +63,8 @@ const CourtCaseDetails: React.FC<Props> = ({
 
   const [amendments, setAmendements] = useState<Record<string, AmendmentValues>>({})
 
-  //TODO tidy this up and add test
-  //TODO allow handling multiple next hearing date updates
   const amendFn = (keyToAmend: string) => (newValue: IndividualAmendmentValues) => {
-    const updatedIdx =
-      Array.isArray(amendments[keyToAmend]) && isAmendmentArr(amendments[keyToAmend]) && isObject(newValue)
-        ? doesUpdateExist(amendments[keyToAmend] as AmendmentArrValues, newValue)
-        : -1
-
-    const updatedArr =
-      Array.isArray(amendments[keyToAmend]) && isObject(newValue)
-        ? appendNewValue(newValue, keyToAmend, updatedIdx, amendments)
-        : [newValue]
-    const updatedValue = isObject(newValue) ? updatedArr : newValue
-
-    setAmendements({
-      ...amendments,
-      ...(isAmendmentValue(updatedValue) && { [keyToAmend]: updatedValue })
-    })
+    setAmendements(setAmendedFields(keyToAmend, newValue, amendments))
   }
 
   const handleNavigation: NavigationHandler = ({ location, args }) => {
