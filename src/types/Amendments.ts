@@ -25,6 +25,8 @@ export type AmendmentValues =
   | UpdatedNextHearingDate[]
   | UpdatedCourtOffenceSequenceNumber[]
 
+export type AmendmentRecords = Record<string, AmendmentValues>
+
 export type AmendmentArrValues = Exclude<AmendmentValues, string>
 
 export type IndividualAmendmentValues =

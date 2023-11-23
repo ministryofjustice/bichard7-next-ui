@@ -1,14 +1,12 @@
 import {
   AmendmentKeys,
+  AmendmentRecords,
   AmendmentValues,
   IndividualAmendmentValues,
   UpdatedNextHearingDate
 } from "../../types/Amendments"
 
-const setNextHearingDate = (
-  newValue: IndividualAmendmentValues,
-  amendments: Record<string, AmendmentValues>
-): Record<string, AmendmentValues> => {
+const setNextHearingDate = (newValue: IndividualAmendmentValues, amendments: AmendmentRecords): AmendmentRecords => {
   const nextHearingDate = amendments.nextHearingDate as UpdatedNextHearingDate[]
   const newHearingDate = newValue as UpdatedNextHearingDate
 
@@ -36,8 +34,8 @@ const setNextHearingDate = (
 const setAmendedField = (
   keyToAmend: AmendmentKeys,
   newValue: IndividualAmendmentValues,
-  amendments: Record<string, AmendmentValues>
-): Record<string, AmendmentValues> => {
+  amendments: AmendmentRecords
+): AmendmentRecords => {
   switch (keyToAmend) {
     case "nextHearingDate":
       amendments = setNextHearingDate(newValue, amendments)

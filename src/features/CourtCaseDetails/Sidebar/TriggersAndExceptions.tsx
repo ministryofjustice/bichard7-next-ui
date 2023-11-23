@@ -10,7 +10,7 @@ import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import Exceptions from "./Exceptions"
 import TriggersList from "./TriggersList"
-import { AmendmentValues } from "../../../types/Amendments"
+import { AmendmentRecords } from "../../../types/Amendments"
 
 const useStyles = createUseStyles({
   sideBar: {
@@ -33,7 +33,7 @@ interface Props {
   canResolveAndSubmit: boolean
   csrfToken: string
   previousPath: string
-  amendments: Record<string, AmendmentValues>
+  amendments: AmendmentRecords
 }
 
 const TabList = styled(Tabs.List)`

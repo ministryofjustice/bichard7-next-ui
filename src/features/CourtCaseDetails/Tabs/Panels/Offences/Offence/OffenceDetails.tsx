@@ -17,7 +17,7 @@ import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
 import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
 import ErrorPromptMessage from "../../../../../../components/ErrorPromptMessage"
-import { AmendmentKeys, AmendmentValues, IndividualAmendmentValues } from "../../../../../../types/Amendments"
+import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../../../types/Amendments"
 
 type Exception = { code: ExceptionCode; path: (string | number)[] }
 interface OffenceDetailsProps {
@@ -30,7 +30,7 @@ interface OffenceDetailsProps {
   selectedOffenceIndex: number
   exceptions: Exception[]
   courtCase: DisplayFullCourtCase
-  amendments: Record<string, AmendmentValues>
+  amendments: AmendmentRecords
   amendFn: (AmendmentKeys: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
 

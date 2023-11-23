@@ -11,7 +11,7 @@ import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/
 import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
 import {
   AmendmentKeys,
-  AmendmentValues,
+  AmendmentRecords,
   IndividualAmendmentValues,
   UpdatedNextHearingDate
 } from "../../../../../../types/Amendments"
@@ -36,18 +36,18 @@ export const formatDuration = (durationLength: number, durationUnit: string): st
   return `${durationLength} ${Durations[durationUnit as Duration]}`
 }
 
-const getDateValue = (
-  amendments: Record<string, AmendmentValues>,
+const getNextHearingDateValue = (
+  amendmentRecords: AmendmentRecords,
   offenceIndex: number,
   resultIndex: number
 ): string => {
-  const amendment =
-    amendments?.nextHearingDate &&
-    (amendments.nextHearingDate as UpdatedNextHearingDate[]).find(
-      (amendment) => amendment.offenceIndex === offenceIndex && amendment.resultIndex === resultIndex
+  const nextHearingDateAmendment =
+    amendmentRecords?.nextHearingDate &&
+    (amendmentRecords.nextHearingDate as UpdatedNextHearingDate[]).find(
+      (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
     )?.updatedValue
 
-  return amendment ? formatFormInputDateString(new Date(amendment)) : ""
+  return nextHearingDateAmendment ? formatFormInputDateString(new Date(nextHearingDateAmendment)) : ""
 }
 
 interface HearingResultProps {
@@ -55,7 +55,7 @@ interface HearingResultProps {
   exceptions: ExceptionCode[]
   resultIndex: number
   selectedOffenceIndex: number
-  amendments: Record<string, AmendmentValues>
+  amendments: AmendmentRecords
   amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
 
@@ -132,7 +132,7 @@ export const HearingResult = ({
               min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
               id={"next-hearing-date"}
               name={"next-hearing-date"}
-              value={getDateValue(amendments, selectedOffenceIndex - 1, resultIndex)}
+              value={getNextHearingDateValue(amendments, selectedOffenceIndex - 1, resultIndex)}
               onChange={(event) => {
                 amendFn("nextHearingDate")({
                   resultIndex: resultIndex,

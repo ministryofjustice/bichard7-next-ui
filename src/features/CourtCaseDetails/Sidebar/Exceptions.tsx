@@ -12,7 +12,7 @@ import PncException from "../../../components/Exception/PncException"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
 import { Button } from "govuk-react"
 import Form from "../../../components/Form"
-import { AmendmentValues } from "../../../types/Amendments"
+import { AmendmentRecords } from "../../../types/Amendments"
 
 const isPncException = (code: ExceptionCode) =>
   [ExceptionCode.HO100302, ExceptionCode.HO100314, ExceptionCode.HO100402, ExceptionCode.HO100404].includes(code)
@@ -22,7 +22,7 @@ interface Props {
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
   previousPath: string
-  amendments: Record<string, AmendmentValues>
+  amendments: AmendmentRecords
   csrfToken: string
 }
 
