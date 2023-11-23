@@ -15,6 +15,8 @@ export type Amendments = {
   noUpdatesResubmit?: boolean
 }
 
+export type AmendmentKeys = keyof Amendments
+
 export type AmendmentValues =
   | string
   | UpdatedOffenceValue[]

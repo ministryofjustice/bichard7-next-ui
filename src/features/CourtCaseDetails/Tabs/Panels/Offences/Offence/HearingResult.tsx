@@ -9,7 +9,7 @@ import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/pl
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
-import { IndividualAmendmentValues } from "../../../../../../types/Amendments"
+import { AmendmentKeys, IndividualAmendmentValues } from "../../../../../../types/Amendments"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -36,7 +36,7 @@ interface HearingResultProps {
   exceptions: ExceptionCode[]
   resultIndex: number
   selectedOffenceIndex: number
-  amendFn: (keyToAmend: string) => (newValue: IndividualAmendmentValues) => void
+  amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
 
 export const HearingResult = ({

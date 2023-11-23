@@ -14,8 +14,8 @@ import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
-import { AmendmentValues, IndividualAmendmentValues } from "../../types/Amendments"
-import setAmendedFields from "../../utils/amendments/setAmendedFields"
+import { AmendmentKeys, AmendmentValues, IndividualAmendmentValues } from "../../types/Amendments"
+import setAmendedFields from "../../utils/amendments/setAmendedField"
 
 interface Props {
   courtCase: DisplayFullCourtCase
@@ -63,7 +63,7 @@ const CourtCaseDetails: React.FC<Props> = ({
 
   const [amendments, setAmendements] = useState<Record<string, AmendmentValues>>({})
 
-  const amendFn = (keyToAmend: string) => (newValue: IndividualAmendmentValues) => {
+  const amendFn = (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => {
     setAmendements(setAmendedFields(keyToAmend, newValue, amendments))
   }
 
