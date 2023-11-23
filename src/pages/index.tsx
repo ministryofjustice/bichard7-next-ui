@@ -1,7 +1,12 @@
+import "boarding.js/styles/main.css"
 import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import Pagination from "components/Pagination"
 import { getCookie, setCookie } from "cookies-next"
+// optionally include the base theme
+import { Boarding } from "boarding.js"
+import "boarding.js/styles/themes/basic.css"
+import BoardingContext, { BoardingContextType } from "components/context/BoardingContext"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
@@ -12,7 +17,7 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { courtCaseToDisplayPartialCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
@@ -67,6 +72,7 @@ interface Props {
   displaySwitchingSurveyFeedback: boolean
   searchOrder: string | null
   orderBy: string | null
+  boardingCookieName: string
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
@@ -186,6 +192,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw lastSwitchingFormSubmission
     }
 
+    const boardingCookieName = getQueryStringCookieName(`boarding-${currentUser.username}`)
+
     return {
       props: {
         csrfToken: csrfToken,
@@ -215,7 +223,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null,
         myCases: !!validatedMyCases,
-        queryStringCookieName
+        queryStringCookieName,
+        boardingCookieName
       }
     }
   }
@@ -246,8 +255,40 @@ const Home: NextPage<Props> = (props) => {
     queryStringCookieName,
     displaySwitchingSurveyFeedback,
     searchOrder,
-    orderBy
+    orderBy,
+    boardingCookieName
   } = props
+
+  const [boardingShown, setBoardingShown] = useState(false)
+  const [boardingContext] = useState<BoardingContextType>({
+    boarding: new Boarding({
+      opacity: 0.6
+    })
+  })
+
+  boardingContext.boarding.defineSteps([
+    {
+      element: "#case-list",
+      popover: {
+        title: "Case List",
+        description: "Click here for your Case List"
+      }
+    },
+    {
+      element: "#filter-button",
+      popover: {
+        title: "Show search panel",
+        description: "Click here to show search options"
+      }
+    },
+    {
+      element: "#court-date-sort",
+      popover: {
+        title: "Sorting",
+        description: "Click the title of the columns to sort. Click again to inverse the sort."
+      }
+    }
+  ])
 
   useEffect(() => {
     const nonSavedParams = ["unlockTrigger", "unlockException"]
@@ -257,7 +298,19 @@ const Home: NextPage<Props> = (props) => {
     nonSavedParams.map((param) => queryParams.delete(param))
 
     setCookie(queryStringCookieName, queryParams.toString(), { path: "/" })
-  }, [router, queryStringCookieName])
+
+    const queryStringCookieValue = getCookie(boardingCookieName, { path: "/" })
+
+    if (queryStringCookieValue !== "shown" && !boardingShown) {
+      boardingContext.boarding.start()
+      // the boarding gets rendered twice so we have to use state
+      setBoardingShown(true)
+      // We set a cookie so we don't spam them
+      setCookie(boardingCookieName, "shown", { path: "/", expires: new Date(2050, 1, 1) })
+    }
+
+    // setTimeout(() => boarding.start(), 5000)
+  }, [router, queryStringCookieName, boardingCookieName, boardingShown, boardingContext.boarding])
 
   return (
     <>
@@ -265,56 +318,58 @@ const Home: NextPage<Props> = (props) => {
         <title>{"Case List | Bichard7"}</title>
         <meta name="description" content="Case List | Bichard7" />
       </Head>
-      <Layout user={user} bichardSwitch={{ display: true, displaySwitchingSurveyFeedback }}>
-        <Main />
-        <CourtCaseWrapper
-          filter={
-            <CourtCaseFilter
-              reasons={reasons}
-              defendantName={keywords[0]}
-              courtName={courtName}
-              reasonCode={reasonCode}
-              ptiurn={ptiurn}
-              caseAge={caseAge}
-              caseAgeCounts={caseAgeCounts}
-              dateRange={dateRange}
-              urgency={urgent}
-              locked={locked}
-              caseState={caseState}
-              myCases={myCases}
-              user={user}
-              order={searchOrder}
-              orderBy={orderBy}
-            />
-          }
-          appliedFilters={
-            <AppliedFilters
-              filters={{
-                reasons,
-                keywords,
-                courtName,
-                reasonCode,
-                ptiurn,
-                caseAge,
-                dateRange: dateRange,
-                urgency: urgent,
-                locked: locked,
-                caseState: caseState,
-                myCases
-              }}
-            />
-          }
-          courtCaseList={
-            <CourtCaseList csrfToken={csrfToken} courtCases={courtCases} order={order} currentUser={user} />
-          }
-          paginationTop={<Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />}
-          paginationBottom={
-            <ConditionalDisplay isDisplayed={courtCases.length > 0}>
-              <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
-            </ConditionalDisplay>
-          }
-        />
-      </Layout>
+      <BoardingContext.Provider value={boardingContext}>
+        <Layout user={user} bichardSwitch={{ display: true, displaySwitchingSurveyFeedback }}>
+          <Main />
+          <CourtCaseWrapper
+            filter={
+              <CourtCaseFilter
+                reasons={reasons}
+                defendantName={keywords[0]}
+                courtName={courtName}
+                reasonCode={reasonCode}
+                ptiurn={ptiurn}
+                caseAge={caseAge}
+                caseAgeCounts={caseAgeCounts}
+                dateRange={dateRange}
+                urgency={urgent}
+                locked={locked}
+                caseState={caseState}
+                myCases={myCases}
+                user={user}
+                order={searchOrder}
+                orderBy={orderBy}
+              />
+            }
+            appliedFilters={
+              <AppliedFilters
+                filters={{
+                  reasons,
+                  keywords,
+                  courtName,
+                  reasonCode,
+                  ptiurn,
+                  caseAge,
+                  dateRange: dateRange,
+                  urgency: urgent,
+                  locked: locked,
+                  caseState: caseState,
+                  myCases
+                }}
+              />
+            }
+            courtCaseList={
+              <CourtCaseList csrfToken={csrfToken} courtCases={courtCases} order={order} currentUser={user} />
+            }
+            paginationTop={<Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />}
+            paginationBottom={
+              <ConditionalDisplay isDisplayed={courtCases.length > 0}>
+                <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
+              </ConditionalDisplay>
+            }
+          />
+        </Layout>
+      </BoardingContext.Provider>
     </>
   )
 }
