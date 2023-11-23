@@ -287,6 +287,13 @@ const Home: NextPage<Props> = (props) => {
         title: "Sorting",
         description: "Click the title of the columns to sort. Click again to inverse the sort."
       }
+    },
+    {
+      element: "#help",
+      popover: {
+        title: "Help",
+        description: 'Click "Help" to see this again.'
+      }
     }
   ])
 
