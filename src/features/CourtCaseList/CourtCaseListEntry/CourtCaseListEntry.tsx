@@ -1,9 +1,9 @@
 import ConditionalRender from "components/ConditionalRender"
+import { useCurrentUserContext } from "context/CurrentUserContext"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
 import Permission from "types/Permission"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
-import { DisplayFullUser } from "types/display/Users"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { useCustomStyles } from "../../../../styles/customStyles"
@@ -14,7 +14,6 @@ import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
 
 interface Props {
   courtCase: DisplayPartialCourtCase
-  currentUser: DisplayFullUser
   exceptionHasBeenRecentlyUnlocked: boolean
   triggerHasBeenRecentlyUnlocked: boolean
   entityClassName: string
@@ -24,7 +23,6 @@ interface Props {
 const CourtCaseListEntry: React.FC<Props> = ({
   entityClassName,
   courtCase,
-  currentUser,
   exceptionHasBeenRecentlyUnlocked,
   triggerHasBeenRecentlyUnlocked,
   previousPath
@@ -47,6 +45,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
   } = courtCase
   const { basePath, query } = useRouter()
   const searchParams = new URLSearchParams(encode(query))
+  const currentUser = useCurrentUserContext().currentUser
 
   const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
     deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)

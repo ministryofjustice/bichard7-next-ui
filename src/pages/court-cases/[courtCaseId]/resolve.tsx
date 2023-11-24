@@ -3,12 +3,14 @@ import ConditionalRender from "components/ConditionalRender"
 import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
 import Layout from "components/Layout"
+import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
 import { BackLink, Button, Fieldset, FormGroup, Heading, Label, Link, Select, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
+import { useState } from "react"
 import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
@@ -25,8 +27,8 @@ import { validateManualResolution } from "utils/validators/validateManualResolut
 import Form from "../../../components/Form"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
-import forbidden from "../../../utils/forbidden"
 import Permission from "../../../types/Permission"
+import forbidden from "../../../utils/forbidden"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -127,6 +129,7 @@ const ResolveCourtCasePage: NextPage<Props> = ({
   previousPath
 }: Props) => {
   const { basePath } = useRouter()
+  const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
 
   let backLink = `${basePath}/court-cases/${courtCase.errorId}`
 
@@ -136,67 +139,69 @@ const ResolveCourtCasePage: NextPage<Props> = ({
 
   return (
     <>
-      <Layout user={user}>
-        <Head>
-          <title>{"Resolve Case | Bichard7"}</title>
-          <meta name="description" content="Resolve Case | Bichard7" />
-        </Head>
-        <BackLink href={backLink} onClick={function noRefCheck() {}}>
-          {"Case Details"}
-        </BackLink>
-        <HeaderContainer id="header-container">
-          <HeaderRow>
-            <Heading as="h1" size="LARGE" aria-label="Resolve Case">
-              {"Resolve Case"}
-            </Heading>
-          </HeaderRow>
-        </HeaderContainer>
-        <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
-        <ConditionalRender isRendered={!lockedByAnotherUser}>
-          <Form method="POST" action="#" csrfToken={csrfToken}>
-            <Fieldset>
-              <FormGroup>
-                <Label>{"Select a reason"}</Label>
-                <Select
-                  input={{
-                    name: "reason"
-                  }}
-                  label={""}
-                >
-                  {Object.keys(ResolutionReasons).map((reason) => {
-                    return (
-                      <option selected={selectedReason === reason} key={reason} value={reason}>
-                        {ResolutionReasons[reason as ResolutionReasonKey]}
-                      </option>
-                    )
-                  })}
-                </Select>
-              </FormGroup>
-              <FormGroup>
-                <Label>{"Resolution Details"}</Label>
-                <TextArea
-                  input={{
-                    name: "reasonText"
-                  }}
-                  meta={{
-                    error: reasonTextError,
-                    touched: !!reasonTextError
-                  }}
-                >
-                  {}
-                </TextArea>
-              </FormGroup>
+      <CurrentUserContext.Provider value={currentUserContext}>
+        <Layout>
+          <Head>
+            <title>{"Resolve Case | Bichard7"}</title>
+            <meta name="description" content="Resolve Case | Bichard7" />
+          </Head>
+          <BackLink href={backLink} onClick={function noRefCheck() {}}>
+            {"Case Details"}
+          </BackLink>
+          <HeaderContainer id="header-container">
+            <HeaderRow>
+              <Heading as="h1" size="LARGE" aria-label="Resolve Case">
+                {"Resolve Case"}
+              </Heading>
+            </HeaderRow>
+          </HeaderContainer>
+          <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
+          <ConditionalRender isRendered={!lockedByAnotherUser}>
+            <Form method="POST" action="#" csrfToken={csrfToken}>
+              <Fieldset>
+                <FormGroup>
+                  <Label>{"Select a reason"}</Label>
+                  <Select
+                    input={{
+                      name: "reason"
+                    }}
+                    label={""}
+                  >
+                    {Object.keys(ResolutionReasons).map((reason) => {
+                      return (
+                        <option selected={selectedReason === reason} key={reason} value={reason}>
+                          {ResolutionReasons[reason as ResolutionReasonKey]}
+                        </option>
+                      )
+                    })}
+                  </Select>
+                </FormGroup>
+                <FormGroup>
+                  <Label>{"Resolution Details"}</Label>
+                  <TextArea
+                    input={{
+                      name: "reasonText"
+                    }}
+                    meta={{
+                      error: reasonTextError,
+                      touched: !!reasonTextError
+                    }}
+                  >
+                    {}
+                  </TextArea>
+                </FormGroup>
 
-              <ButtonsGroup>
-                <Button id="Resolve" type="submit">
-                  {"Resolve"}
-                </Button>
-                <Link href={backLink}>{"Cancel"}</Link>
-              </ButtonsGroup>
-            </Fieldset>
-          </Form>
-        </ConditionalRender>
-      </Layout>
+                <ButtonsGroup>
+                  <Button id="Resolve" type="submit">
+                    {"Resolve"}
+                  </Button>
+                  <Link href={backLink}>{"Cancel"}</Link>
+                </ButtonsGroup>
+              </Fieldset>
+            </Form>
+          </ConditionalRender>
+        </Layout>
+      </CurrentUserContext.Provider>
     </>
   )
 }
