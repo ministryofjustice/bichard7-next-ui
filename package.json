@@ -39,6 +39,7 @@
     "@types/lodash.clonedeep": "^4.5.9",
     "axios": "^1.6.2",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
+    "boarding.js": "^3.5.2",
     "cookie": "^0.6.0",
     "cookie-signature": "^1.2.1",
     "cookies-next": "^4.1.0",
