@@ -6,6 +6,7 @@ import LinkButton from "components/LinkButton"
 import LockedTag from "components/LockedTag"
 import ResolvedTag from "components/ResolvedTag"
 import SecondaryButton from "components/SecondaryButton"
+import { useCsrfToken } from "context/CsrfTokenContext"
 import { Button, Heading } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
@@ -26,7 +27,6 @@ interface Props {
   courtCase: DisplayFullCourtCase
   user: DisplayFullUser
   canReallocate: boolean
-  csrfToken: string
   previousPath: string
 }
 
@@ -56,9 +56,10 @@ const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
   return params
 }
 
-const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken, previousPath }: Props) => {
+const Header: React.FC<Props> = ({ courtCase, user, canReallocate, previousPath }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
+  const csrfTokenContext = useCsrfToken()
 
   const leaveAndUnlockParams = getUnlockPath(courtCase)
 
@@ -167,7 +168,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken, pr
               {"Leave and lock"}
             </Button>
           </a>
-          <Form method="post" action={leaveAndUnlockUrl} csrfToken={csrfToken}>
+          <Form method="post" action={leaveAndUnlockUrl} csrfToken={csrfTokenContext.csrfToken}>
             <Button id="leave-and-unlock" className={classes.button} type="submit">
               {"Leave and unlock"}
             </Button>

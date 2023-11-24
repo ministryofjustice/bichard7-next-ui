@@ -2,11 +2,15 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
+import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
+import CourtCaseDetailsSummaryBox from "features/CourtCaseDetails/CourtCaseDetailsSummaryBox"
+import Header from "features/CourtCaseDetails/Header"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
+import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import addNote from "services/addNote"
 import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
@@ -27,15 +31,13 @@ import { isPost } from "utils/http"
 import notSuccessful from "utils/notSuccessful"
 import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
+import CourtCase from "../../../services/entities/CourtCase"
+import User from "../../../services/entities/User"
 import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
-import CourtCase from "../../../services/entities/CourtCase"
-import User from "../../../services/entities/User"
-import Header from "features/CourtCaseDetails/Header"
-import CourtCaseDetailsSummaryBox from "features/CourtCaseDetails/CourtCaseDetailsSummaryBox"
 
 const allIssuesCleared = (courtCase: CourtCase, triggerToResolve: number[], user: User) => {
   const triggersResolved = user.hasAccessTo[Permission.Triggers]
@@ -217,57 +219,55 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   previousPath
 }: Props) => {
   const classes = useStyles()
+
+  const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
+
   return (
     <>
       <Head>
         <title>{"Case Details | Bichard7"}</title>
         <meta name="description" content="Case Details | Bichard7" />
       </Head>
-      <Layout
-        user={user}
-        bichardSwitch={{
-          display: true,
-          href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}`,
-          displaySwitchingSurveyFeedback
-        }}
-      >
-        <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
-          <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
-            <div className="govuk-tag">{"Attention:"}</div>
-            <div className={`${classes.attentionBanner} govuk-tag`}>
-              {
-                "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
-              }
+      <CsrfTokenContext.Provider value={csrfTokenContext}>
+        <Layout
+          user={user}
+          bichardSwitch={{
+            display: true,
+            href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}`,
+            displaySwitchingSurveyFeedback
+          }}
+        >
+          <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
+            <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
+              <div className="govuk-tag">{"Attention:"}</div>
+              <div className={`${classes.attentionBanner} govuk-tag`}>
+                {
+                  "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
+                }
+              </div>
             </div>
-          </div>
-        </ConditionalDisplay>
-        <Header
-          previousPath={previousPath}
-          courtCase={courtCase}
-          user={user}
-          canReallocate={canReallocate}
-          csrfToken={csrfToken}
-        />
-        <CourtCaseDetailsSummaryBox
-          asn={courtCase.asn}
-          courtHouseCode={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
-          courtName={courtCase.courtName}
-          courtReference={courtCase.courtReference}
-          pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
-          ptiurn={courtCase.ptiurn}
-          dob={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString()}
-          hearingDate={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString()}
-        />
-        <CourtCaseDetails
-          csrfToken={csrfToken}
-          courtCase={courtCase}
-          aho={aho}
-          user={user}
-          isLockedByCurrentUser={isLockedByCurrentUser}
-          canResolveAndSubmit={canResolveAndSubmit}
-          previousPath={previousPath}
-        />
-      </Layout>
+          </ConditionalDisplay>
+          <Header previousPath={previousPath} courtCase={courtCase} user={user} canReallocate={canReallocate} />
+          <CourtCaseDetailsSummaryBox
+            asn={courtCase.asn}
+            courtHouseCode={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
+            courtName={courtCase.courtName}
+            courtReference={courtCase.courtReference}
+            pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
+            ptiurn={courtCase.ptiurn}
+            dob={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString()}
+            hearingDate={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString()}
+          />
+          <CourtCaseDetails
+            courtCase={courtCase}
+            aho={aho}
+            user={user}
+            isLockedByCurrentUser={isLockedByCurrentUser}
+            canResolveAndSubmit={canResolveAndSubmit}
+            previousPath={previousPath}
+          />
+        </Layout>
+      </CsrfTokenContext.Provider>
     </>
   )
 }

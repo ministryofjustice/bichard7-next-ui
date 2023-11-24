@@ -2,6 +2,8 @@ import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
+import { useCsrfToken } from "context/CsrfTokenContext"
+import { Button } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
@@ -9,10 +11,9 @@ import styled from "styled-components"
 import type NavigationHandler from "types/NavigationHandler"
 import DefaultException from "../../../components/Exception/DefaultException"
 import PncException from "../../../components/Exception/PncException"
-import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
-import { Button } from "govuk-react"
 import Form from "../../../components/Form"
 import { AmendmentRecords } from "../../../types/Amendments"
+import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
 
 const isPncException = (code: ExceptionCode) =>
   [ExceptionCode.HO100302, ExceptionCode.HO100314, ExceptionCode.HO100402, ExceptionCode.HO100404].includes(code)
@@ -23,7 +24,6 @@ interface Props {
   canResolveAndSubmit: boolean
   previousPath: string
   amendments: AmendmentRecords
-  csrfToken: string
 }
 
 const useStyles = createUseStyles({
@@ -51,10 +51,11 @@ const SeparatorLine = styled.div`
   }
 `
 
-const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath, amendments, csrfToken }: Props) => {
+const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath, amendments }: Props) => {
   const classes = useStyles()
   const pncExceptions = aho.Exceptions.filter(({ code }) => isPncException(code))
   const otherExceptions = aho.Exceptions.filter(({ code }) => !isPncException(code))
+  const csrfTokenContext = useCsrfToken()
 
   const router = useRouter()
 
@@ -84,7 +85,7 @@ const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath, amendm
 
       <ConditionalRender isRendered={canResolveAndSubmit && aho.Exceptions.length > 0}>
         <div className={classes.buttonContainer}>
-          <Form method="post" action={submitCasePath} csrfToken={csrfToken}>
+          <Form method="post" action={submitCasePath} csrfToken={csrfTokenContext.csrfToken}>
             <input type="hidden" name="amendments" value={JSON.stringify(amendments)} />
             <Button id="submit" type="submit">
               {"Submit exception(s)"}

@@ -44,23 +44,17 @@ export const TriggersLockTag = ({
   triggersLockedByFullName,
   triggersHaveBeenRecentlyUnlocked,
   canUnlockCase,
-  unlockPath,
-  csrfToken
+  unlockPath
 }: {
   triggersLockedByUsername: string | null | undefined
   triggersLockedByFullName: string | null | undefined
   triggersHaveBeenRecentlyUnlocked: boolean
   canUnlockCase: boolean
   unlockPath: string
-  csrfToken: string
 }) => {
   return (
     <>
-      <LockedByTag
-        csrfToken={csrfToken}
-        lockedBy={triggersLockedByFullName}
-        unlockPath={canUnlockCase ? unlockPath : undefined}
-      />
+      <LockedByTag lockedBy={triggersLockedByFullName} unlockPath={canUnlockCase ? unlockPath : undefined} />
       <CaseUnlockedTag isCaseUnlocked={triggersHaveBeenRecentlyUnlocked && !triggersLockedByUsername} />
     </>
   )
