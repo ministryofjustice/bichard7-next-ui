@@ -108,7 +108,7 @@ export const OffenceDetails = ({
   const qualifierCode =
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
-  const isCaseUnresolved = courtCase.errorStatus !== "Resolved"
+  const isCaseUnresolved = courtCase.errorStatus === "Unresolved"
   const thisOffencePath = `AnnotatedHearingOutcome>HearingOutcome>Case>HearingDefendant>Offence>${
     selectedOffenceIndex - 1
   }`
