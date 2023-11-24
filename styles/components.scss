@@ -68,3 +68,36 @@
 .b7-accordion .b7-accordion__header .b7-accordion__heading .b7-accordion__button .js-enabled .b7-accordion__toggle {
   margin-bottom: 0;
 }
+
+#boarding-popover-item {
+  width: 350px;
+
+  .boarding-popover-title {
+    @extend .govuk-heading-s;
+  }
+
+  .boarding-popover-description {
+    @extend .govuk-body;
+  }
+
+  .boarding-next-btn {
+    @extend .govuk-button;
+  }
+
+  .boarding-prev-btn, .boarding-close-btn {
+    margin-right: 10px;
+  }
+
+  .boarding-prev-btn, .boarding-close-btn {
+    @extend .govuk-button;
+    @extend .govuk-button--secondary;
+  }
+
+  .boarding-prev-btn, .boarding-next-btn, .boarding-close-btn {
+    margin-bottom: 0;
+  }
+
+  .boarding-btn-group {
+    float: right;
+  }
+}
