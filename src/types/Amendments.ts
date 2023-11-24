@@ -15,6 +15,8 @@ export type Amendments = {
   noUpdatesResubmit?: boolean
 }
 
+export type AmendmentKeys = keyof Amendments
+
 export type AmendmentValues =
   | string
   | UpdatedOffenceValue[]
@@ -22,6 +24,8 @@ export type AmendmentValues =
   | UpdatedOffenceResult[]
   | UpdatedNextHearingDate[]
   | UpdatedCourtOffenceSequenceNumber[]
+
+export type AmendmentRecords = Record<string, AmendmentValues>
 
 export type AmendmentArrValues = Exclude<AmendmentValues, string>
 

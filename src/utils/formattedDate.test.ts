@@ -13,8 +13,8 @@ describe("formatDisplayedDate", () => {
     expect(formatDisplayedDate("2023-01-01")).toStrictEqual("01/01/2023")
   })
 
-  it("can handle when users enter an invalid date string", () => {
-    expect(formatDisplayedDate("not a real date")).toStrictEqual("")
+  it("can handle when users enter an invalid date string(users need to see the invalid value)", () => {
+    expect(formatDisplayedDate("not a real date")).toStrictEqual("not a real date")
   })
 })
 
