@@ -11,7 +11,7 @@ export const formatDisplayedDate = (date: Date | string): string => {
 
   if (typeof date === "string") {
     const dateInstance = new Date(date)
-    return isValid(dateInstance) ? format(dateInstance, displayedDateFormat) : ""
+    return isValid(dateInstance) ? format(dateInstance, displayedDateFormat) : date
   }
 
   return ""

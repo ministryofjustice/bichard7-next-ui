@@ -1,4 +1,4 @@
-import { AmendmentArrValues, AmendmentValues, IndividualAmendmentArrValues } from "types/Amendments"
+import { AmendmentArrValues, AmendmentRecords, AmendmentValues, IndividualAmendmentArrValues } from "types/Amendments"
 
 const isAmendmentArrValue = (value: AmendmentValues, indexToUpdate: number): value is AmendmentArrValues =>
   (value as AmendmentArrValues)[indexToUpdate].updatedValue !== undefined
@@ -39,7 +39,7 @@ export const appendNewValue = (
   newArrValue: IndividualAmendmentArrValues,
   keyToAmend: string,
   indexToUpdate: number,
-  amendmentsObj: Record<string, AmendmentValues>
+  amendmentsObj: AmendmentRecords
 ) => {
   if (indexToUpdate > -1 && isAmendmentArrValue(amendmentsObj[keyToAmend], indexToUpdate)) {
     // updated the existing object

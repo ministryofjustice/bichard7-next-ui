@@ -34,6 +34,8 @@ import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
 import CourtCase from "../../../services/entities/CourtCase"
 import User from "../../../services/entities/User"
+import Header from "features/CourtCaseDetails/Header"
+import CourtCaseDetailsSummaryBox from "features/CourtCaseDetails/CourtCaseDetailsSummaryBox"
 
 const allIssuesCleared = (courtCase: CourtCase, triggerToResolve: number[], user: User) => {
   const triggersResolved = user.hasAccessTo[Permission.Triggers]
@@ -239,13 +241,29 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
             </div>
           </div>
         </ConditionalDisplay>
+        <Header
+          previousPath={previousPath}
+          courtCase={courtCase}
+          user={user}
+          canReallocate={canReallocate}
+          csrfToken={csrfToken}
+        />
+        <CourtCaseDetailsSummaryBox
+          asn={courtCase.asn}
+          courtHouseCode={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
+          courtName={courtCase.courtName}
+          courtReference={courtCase.courtReference}
+          pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
+          ptiurn={courtCase.ptiurn}
+          dob={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString()}
+          hearingDate={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString()}
+        />
         <CourtCaseDetails
           csrfToken={csrfToken}
           courtCase={courtCase}
           aho={aho}
           user={user}
           isLockedByCurrentUser={isLockedByCurrentUser}
-          canReallocate={canReallocate}
           canResolveAndSubmit={canResolveAndSubmit}
           previousPath={previousPath}
         />

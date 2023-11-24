@@ -1,11 +1,9 @@
-import type {
-  AnnotatedHearingOutcome,
-  Offence
-} from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { OffenceDetails } from "./Offence/OffenceDetails"
 import { OffencesList } from "./OffencesList/OffencesList"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../../types/Amendments"
 
 interface OffencesProps {
   className: string
@@ -14,7 +12,8 @@ interface OffencesProps {
   selectedOffenceIndex?: number
   exceptions: { code: ExceptionCode; path: (string | number)[] }[]
   courtCase: DisplayFullCourtCase
-  pncQuery?: AnnotatedHearingOutcome["PncQuery"]
+  amendments: AmendmentRecords
+  amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
 
 export const Offences = ({
@@ -24,7 +23,8 @@ export const Offences = ({
   selectedOffenceIndex,
   exceptions,
   courtCase,
-  pncQuery
+  amendments,
+  amendFn
 }: OffencesProps) => {
   return selectedOffenceIndex !== undefined && offences[selectedOffenceIndex - 1] !== undefined ? (
     <>
@@ -38,7 +38,8 @@ export const Offences = ({
         selectedOffenceIndex={selectedOffenceIndex}
         exceptions={exceptions}
         courtCase={courtCase}
-        pncQuery={pncQuery}
+        amendments={amendments}
+        amendFn={amendFn}
       />
     </>
   ) : (

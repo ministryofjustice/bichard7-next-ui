@@ -1,15 +1,14 @@
 import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
-import { textSecondary } from "utils/colours"
 import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
 
 type Props = {
-  badge: string
-  message: string
-  code: string | null
-  colour: string
+  badgeText: string
+  value?: string | React.ReactNode
+  badgeColour?: "red" | "blue" | "purple"
   label: string
+  children?: React.ReactNode
 }
 
 const useStyles = createUseStyles({
@@ -19,11 +18,8 @@ const useStyles = createUseStyles({
       paddingTop: ".62rem"
     }
   },
-  value: {
-    "& .error-prompt-message": {
-      color: textSecondary
-    },
-    "& .qualifier-code": {
+  content: {
+    "& .field-value": {
       paddingBottom: ".94rem"
     },
     "& .badge-wrapper": {
@@ -34,33 +30,38 @@ const useStyles = createUseStyles({
     }
   }
 })
-const UneditableField = ({ badge, message, code, colour, label }: Props) => {
+
+const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, children }: Props) => {
   const classes = useStyles()
   const labelField = (
     <>
-      <div> {label}</div>
+      <div>{label}</div>
       <div className="error-icon">
         <ErrorIcon />
       </div>
     </>
   )
-  const value = (
-    <div className={classes.value}>
-      <div className="qualifier-code">{code}</div>
-      <div className="badge-wrapper">
-        <Badge className="error-prompt-badge" isRendered={true} colour={colour} label={badge} />
-      </div>
-      <div className="error-prompt-message">{message}</div>
+
+  const cellContent = (
+    <div className={classes.content}>
+      {value && <div className="field-value">{value}</div>}
+      {badgeText && (
+        <div className="badge-wrapper">
+          <Badge className="error-badge" isRendered={true} colour={badgeColour ?? "purple"} label={badgeText} />
+        </div>
+      )}
+      {children}
     </div>
   )
+
   return (
     <Table.Row>
       <Table.Cell className={classes.label}>
         <b>{labelField}</b>
       </Table.Cell>
-      <Table.Cell>{value}</Table.Cell>
+      <Table.Cell>{cellContent}</Table.Cell>
     </Table.Row>
   )
 }
 
-export default UneditableField
+export default ExceptionFieldTableRow
