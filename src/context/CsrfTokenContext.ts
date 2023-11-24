@@ -1,4 +1,4 @@
-import { createContext } from "react"
+import { createContext, useContext } from "react"
 
 interface CsrfTokenContextType {
   csrfToken: string
@@ -6,5 +6,15 @@ interface CsrfTokenContextType {
 
 const CsrfTokenContext = createContext<CsrfTokenContextType | null>(null)
 
-export { CsrfTokenContext }
+const useCsrfToken = () => {
+  const csrfTokenContext = useContext(CsrfTokenContext)
+
+  if (!csrfTokenContext) {
+    throw new Error("csrfToken has to be used within <CsrfTokenContextType>")
+  }
+
+  return csrfTokenContext
+}
+
+export { CsrfTokenContext, useCsrfToken }
 export type { CsrfTokenContextType }

@@ -1,6 +1,5 @@
-import { CsrfTokenContext } from "context/CsrfTokenContext"
+import { useCsrfToken } from "context/CsrfTokenContext"
 import Image from "next/image"
-import { useContext } from "react"
 import { createUseStyles } from "react-jss"
 import { LOCKED_ICON_URL } from "utils/icons"
 import { useCustomStyles } from "../../../../../styles/customStyles"
@@ -19,14 +18,13 @@ interface UnlockConfirmationProps {
 }
 
 const UnlockConfirmation = ({ onCancel, unlockPath }: UnlockConfirmationProps) => {
-  const csrfTokenContext = useContext(CsrfTokenContext)
-  const csrfToken = csrfTokenContext?.csrfToken
+  const csrfTokenContext = useCsrfToken()
 
   return (
     <>
       <p>{"Click the button to unlock the case"}</p>
       <div className="govuk-button-group">
-        <Form method="post" action={unlockPath} csrfToken={csrfToken || ""}>
+        <Form method="post" action={unlockPath} csrfToken={csrfTokenContext.csrfToken}>
           <button className="govuk-button" data-module="govuk-button" id="unlock">
             {"Unlock"}
           </button>
