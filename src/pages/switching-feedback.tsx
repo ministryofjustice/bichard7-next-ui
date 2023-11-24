@@ -3,6 +3,7 @@ import FeedbackHeaderLinks from "components/FeedbackHeaderLinks"
 import Layout from "components/Layout"
 import RadioButton from "components/RadioButton/RadioButton"
 import { MAX_FEEDBACK_LENGTH } from "config"
+import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
 import { Button, Fieldset, FormGroup, Heading, HintText, MultiChoice, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -153,6 +154,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, csrfToken }: Props) => {
   const [skipUrl, setSkipUrl] = useState<URL | null>(null)
   const router = useRouter()
+  const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
 
   const [formState, setFormState] = useState<SwitchingFeedbackFormState>({
     feedback: fields?.feedback.value ?? undefined,
@@ -181,73 +183,33 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
   )
 
   return (
-    <Layout user={user}>
-      <Head>
-        <title>{"Report an issue using new Bichard | Bichard7"}</title>
-        <meta name="description" content="user switching version feedback| Bichard7" />
-      </Head>
+    <CurrentUserContext.Provider value={currentUserContext}>
+      <Layout>
+        <Head>
+          <title>{"Report an issue using new Bichard | Bichard7"}</title>
+          <meta name="description" content="user switching version feedback| Bichard7" />
+        </Head>
 
-      <FeedbackHeaderLinks
-        csrfToken={csrfToken}
-        backLinkUrl={`${router.basePath}` + previousPath}
-        skipLinkUrl={skipUrl?.search}
-      />
+        <FeedbackHeaderLinks
+          csrfToken={csrfToken}
+          backLinkUrl={`${router.basePath}` + previousPath}
+          skipLinkUrl={skipUrl?.search}
+        />
 
-      <Heading as="h1">{"Share your feedback"}</Heading>
+        <Heading as="h1">{"Share your feedback"}</Heading>
 
-      <Form method="POST" action={"#"} csrfToken={csrfToken}>
-        <Fieldset>
-          <p className="govuk-body">
-            {
-              "You have selected to revert back to old Bichard. What was the reason for doing so? Can you please select the appropriate option. And outline the problem that occurred below so that we can best understand."
-            }
-          </p>
-        </Fieldset>
-        <Fieldset>
-          <FormGroup id="switchingReason">
-            <Heading as="h3" size="SMALL">
-              {"Why have you decided to switch version of Bichard?"}
-            </Heading>
-            <Heading as="h5" size="SMALL">
-              {"Select one of the below option."}
-            </Heading>
-            <MultiChoice
-              label={""}
-              meta={{
-                error: "Select one of the below options",
-                touched: fields?.switchingReason.hasError
-              }}
-            >
-              <RadioButton
-                name={"switchingReason"}
-                id={`switchingReason-${SwitchingReason.issue}`}
-                defaultChecked={fields?.switchingReason.value === SwitchingReason.issue}
-                value={SwitchingReason.issue}
-                onChange={() => handleFormChange("switchingReason", SwitchingReason.issue)}
-                label={SwitchingReasonLabel[SwitchingReason.issue]}
-              />
-              <RadioButton
-                name={"switchingReason"}
-                id={`switchingReason-${SwitchingReason.preference}`}
-                defaultChecked={fields?.switchingReason.value === SwitchingReason.preference}
-                value={SwitchingReason.preference}
-                onChange={() => handleFormChange("switchingReason", SwitchingReason.preference)}
-                label={SwitchingReasonLabel[SwitchingReason.preference]}
-              />
-              <RadioButton
-                name={"switchingReason"}
-                id={`switchingReason-${SwitchingReason.other}`}
-                defaultChecked={fields?.switchingReason.value === SwitchingReason.other}
-                value={SwitchingReason.other}
-                onChange={() => handleFormChange("switchingReason", SwitchingReason.other)}
-                label={SwitchingReasonLabel[SwitchingReason.other]}
-              />
-            </MultiChoice>
-          </FormGroup>
-          <ConditionalRender isRendered={formState.switchingReason === SwitchingReason.issue}>
-            <FormGroup id="pageWithIssue">
+        <Form method="POST" action={"#"} csrfToken={csrfToken}>
+          <Fieldset>
+            <p className="govuk-body">
+              {
+                "You have selected to revert back to old Bichard. What was the reason for doing so? Can you please select the appropriate option. And outline the problem that occurred below so that we can best understand."
+              }
+            </p>
+          </Fieldset>
+          <Fieldset>
+            <FormGroup id="switchingReason">
               <Heading as="h3" size="SMALL">
-                {"Which page were you finding an issue with?"}
+                {"Why have you decided to switch version of Bichard?"}
               </Heading>
               <Heading as="h5" size="SMALL">
                 {"Select one of the below option."}
@@ -256,112 +218,154 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
                 label={""}
                 meta={{
                   error: "Select one of the below options",
-                  touched: fields?.pageWithIssue.hasError
+                  touched: fields?.switchingReason.hasError
                 }}
               >
                 <RadioButton
-                  name={"pageWithIssue"}
-                  id={"pageWithIssue-case-list"}
-                  defaultChecked={fields?.pageWithIssue.value === Page.caseList}
-                  value={Page.caseList}
-                  label={"Case list page"}
-                  onChange={() => handleFormChange("pageWithIssue", Page.caseList)}
+                  name={"switchingReason"}
+                  id={`switchingReason-${SwitchingReason.issue}`}
+                  defaultChecked={fields?.switchingReason.value === SwitchingReason.issue}
+                  value={SwitchingReason.issue}
+                  onChange={() => handleFormChange("switchingReason", SwitchingReason.issue)}
+                  label={SwitchingReasonLabel[SwitchingReason.issue]}
                 />
                 <RadioButton
-                  name={"pageWithIssue"}
-                  id={"pageWithIssue-case-detail"}
-                  defaultChecked={fields?.pageWithIssue.value === Page.caseDetails}
-                  value={Page.caseDetails}
-                  onChange={() => handleFormChange("pageWithIssue", Page.caseDetails)}
-                  label={"Case details page"}
+                  name={"switchingReason"}
+                  id={`switchingReason-${SwitchingReason.preference}`}
+                  defaultChecked={fields?.switchingReason.value === SwitchingReason.preference}
+                  value={SwitchingReason.preference}
+                  onChange={() => handleFormChange("switchingReason", SwitchingReason.preference)}
+                  label={SwitchingReasonLabel[SwitchingReason.preference]}
+                />
+                <RadioButton
+                  name={"switchingReason"}
+                  id={`switchingReason-${SwitchingReason.other}`}
+                  defaultChecked={fields?.switchingReason.value === SwitchingReason.other}
+                  value={SwitchingReason.other}
+                  onChange={() => handleFormChange("switchingReason", SwitchingReason.other)}
+                  label={SwitchingReasonLabel[SwitchingReason.other]}
                 />
               </MultiChoice>
             </FormGroup>
-            <FormGroup id="comment">
-              <Heading as="h3" size="SMALL">
-                {"Could you explain in detail what problem you have experienced?"}
-              </Heading>
-              <TextArea
-                input={{
-                  name: "feedback",
-                  defaultValue: fields?.feedback.value ?? undefined,
-                  rows: 5,
-                  maxLength: MAX_FEEDBACK_LENGTH,
-                  onChange: (e) => handleFormChange("feedback", e.currentTarget.value)
-                }}
-                meta={{
-                  error: "Input message into the text box",
-                  touched: fields?.feedback.hasError
-                }}
-                hint="Tell us why you have made this selection."
-              >
-                {""}
-              </TextArea>
+            <ConditionalRender isRendered={formState.switchingReason === SwitchingReason.issue}>
+              <FormGroup id="pageWithIssue">
+                <Heading as="h3" size="SMALL">
+                  {"Which page were you finding an issue with?"}
+                </Heading>
+                <Heading as="h5" size="SMALL">
+                  {"Select one of the below option."}
+                </Heading>
+                <MultiChoice
+                  label={""}
+                  meta={{
+                    error: "Select one of the below options",
+                    touched: fields?.pageWithIssue.hasError
+                  }}
+                >
+                  <RadioButton
+                    name={"pageWithIssue"}
+                    id={"pageWithIssue-case-list"}
+                    defaultChecked={fields?.pageWithIssue.value === Page.caseList}
+                    value={Page.caseList}
+                    label={"Case list page"}
+                    onChange={() => handleFormChange("pageWithIssue", Page.caseList)}
+                  />
+                  <RadioButton
+                    name={"pageWithIssue"}
+                    id={"pageWithIssue-case-detail"}
+                    defaultChecked={fields?.pageWithIssue.value === Page.caseDetails}
+                    value={Page.caseDetails}
+                    onChange={() => handleFormChange("pageWithIssue", Page.caseDetails)}
+                    label={"Case details page"}
+                  />
+                </MultiChoice>
+              </FormGroup>
+              <FormGroup id="comment">
+                <Heading as="h3" size="SMALL">
+                  {"Could you explain in detail what problem you have experienced?"}
+                </Heading>
+                <TextArea
+                  input={{
+                    name: "feedback",
+                    defaultValue: fields?.feedback.value ?? undefined,
+                    rows: 5,
+                    maxLength: MAX_FEEDBACK_LENGTH,
+                    onChange: (e) => handleFormChange("feedback", e.currentTarget.value)
+                  }}
+                  meta={{
+                    error: "Input message into the text box",
+                    touched: fields?.feedback.hasError
+                  }}
+                  hint="Tell us why you have made this selection."
+                >
+                  {""}
+                </TextArea>
 
-              <HintText>{`You have ${getRemainingLength()} characters remaining`}</HintText>
-            </FormGroup>
-          </ConditionalRender>
-          <ConditionalRender isRendered={formState.switchingReason === SwitchingReason.preference}>
-            <FormGroup id="versionPreferenceFeedback">
-              <Heading as="h3" size="SMALL">
-                {
-                  "Could you please explain why you prefer using the old version of Bichard over the new version Bichard?"
-                }
-              </Heading>
-              <TextArea
-                input={{
-                  name: "feedback",
-                  defaultValue: fields?.feedback.value ?? undefined,
-                  rows: 5,
-                  maxLength: MAX_FEEDBACK_LENGTH,
-                  onChange: (e) => handleFormChange("feedback", e.currentTarget.value)
-                }}
-                meta={{
-                  error: "Input message into the text box",
-                  touched: fields?.feedback.hasError
-                }}
-                hint="Tell us why you have made this selection."
-              >
-                {""}
-              </TextArea>
+                <HintText>{`You have ${getRemainingLength()} characters remaining`}</HintText>
+              </FormGroup>
+            </ConditionalRender>
+            <ConditionalRender isRendered={formState.switchingReason === SwitchingReason.preference}>
+              <FormGroup id="versionPreferenceFeedback">
+                <Heading as="h3" size="SMALL">
+                  {
+                    "Could you please explain why you prefer using the old version of Bichard over the new version Bichard?"
+                  }
+                </Heading>
+                <TextArea
+                  input={{
+                    name: "feedback",
+                    defaultValue: fields?.feedback.value ?? undefined,
+                    rows: 5,
+                    maxLength: MAX_FEEDBACK_LENGTH,
+                    onChange: (e) => handleFormChange("feedback", e.currentTarget.value)
+                  }}
+                  meta={{
+                    error: "Input message into the text box",
+                    touched: fields?.feedback.hasError
+                  }}
+                  hint="Tell us why you have made this selection."
+                >
+                  {""}
+                </TextArea>
 
-              <HintText>{`You have ${getRemainingLength()} characters remaining`}</HintText>
-            </FormGroup>
-          </ConditionalRender>
-          <ConditionalRender isRendered={formState.switchingReason === SwitchingReason.other}>
-            <FormGroup id="otherReasonFeedback">
-              <Heading as="h3" size="SMALL">
-                {"Is there another reason why you are switching version of Bichard?"}
-              </Heading>
-              <TextArea
-                input={{
-                  name: "feedback",
-                  defaultValue: fields?.feedback.value ?? undefined,
-                  rows: 5,
-                  maxLength: MAX_FEEDBACK_LENGTH,
-                  onChange: (e) => handleFormChange("feedback", e.currentTarget.value)
-                }}
-                meta={{
-                  error: "Input message into the text box",
-                  touched: fields?.feedback.hasError
-                }}
-                hint="Tell us why you have made this selection."
-              >
-                {""}
-              </TextArea>
+                <HintText>{`You have ${getRemainingLength()} characters remaining`}</HintText>
+              </FormGroup>
+            </ConditionalRender>
+            <ConditionalRender isRendered={formState.switchingReason === SwitchingReason.other}>
+              <FormGroup id="otherReasonFeedback">
+                <Heading as="h3" size="SMALL">
+                  {"Is there another reason why you are switching version of Bichard?"}
+                </Heading>
+                <TextArea
+                  input={{
+                    name: "feedback",
+                    defaultValue: fields?.feedback.value ?? undefined,
+                    rows: 5,
+                    maxLength: MAX_FEEDBACK_LENGTH,
+                    onChange: (e) => handleFormChange("feedback", e.currentTarget.value)
+                  }}
+                  meta={{
+                    error: "Input message into the text box",
+                    touched: fields?.feedback.hasError
+                  }}
+                  hint="Tell us why you have made this selection."
+                >
+                  {""}
+                </TextArea>
 
-              <HintText>{`You have ${getRemainingLength()} characters remaining`}</HintText>
-            </FormGroup>
-          </ConditionalRender>
+                <HintText>{`You have ${getRemainingLength()} characters remaining`}</HintText>
+              </FormGroup>
+            </ConditionalRender>
 
-          <ConditionalRender isRendered={Boolean(formState.switchingReason)}>
-            <FormGroup>
-              <Button type="submit">{"Send feedback and continue"}</Button>
-            </FormGroup>
-          </ConditionalRender>
-        </Fieldset>
-      </Form>
-    </Layout>
+            <ConditionalRender isRendered={Boolean(formState.switchingReason)}>
+              <FormGroup>
+                <Button type="submit">{"Send feedback and continue"}</Button>
+              </FormGroup>
+            </ConditionalRender>
+          </Fieldset>
+        </Form>
+      </Layout>
+    </CurrentUserContext.Provider>
   )
 }
 

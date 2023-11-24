@@ -5,7 +5,6 @@ import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import { DisplayFullUser } from "types/display/Users"
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../types/Amendments"
 import setAmendedFields from "../../utils/amendments/setAmendedField"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
@@ -21,7 +20,6 @@ interface Props {
   courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
   isLockedByCurrentUser: boolean
-  user: DisplayFullUser
   canResolveAndSubmit: boolean
   previousPath: string
 }
@@ -50,7 +48,6 @@ const contentWidth = "67%"
 const CourtCaseDetails: React.FC<Props> = ({
   courtCase,
   aho,
-  user,
   isLockedByCurrentUser,
   canResolveAndSubmit,
   previousPath
@@ -137,7 +134,6 @@ const CourtCaseDetails: React.FC<Props> = ({
           <TriggersAndExceptions
             courtCase={courtCase}
             aho={aho}
-            user={user}
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}
             previousPath={previousPath}
