@@ -10,6 +10,9 @@ import type NavigationHandler from "types/NavigationHandler"
 import DefaultException from "../../../components/Exception/DefaultException"
 import PncException from "../../../components/Exception/PncException"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
+import { Button } from "govuk-react"
+import Form from "../../../components/Form"
+import { AmendmentRecords } from "../../../types/Amendments"
 
 const isPncException = (code: ExceptionCode) =>
   [ExceptionCode.HO100302, ExceptionCode.HO100314, ExceptionCode.HO100402, ExceptionCode.HO100404].includes(code)
@@ -19,6 +22,8 @@ interface Props {
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
   previousPath: string
+  amendments: AmendmentRecords
+  csrfToken: string
 }
 
 const useStyles = createUseStyles({
@@ -46,7 +51,7 @@ const SeparatorLine = styled.div`
   }
 `
 
-const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath }: Props) => {
+const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath, amendments, csrfToken }: Props) => {
   const classes = useStyles()
   const pncExceptions = aho.Exceptions.filter(({ code }) => isPncException(code))
   const otherExceptions = aho.Exceptions.filter(({ code }) => !isPncException(code))
@@ -58,6 +63,10 @@ const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath }: Prop
   if (previousPath) {
     resolveLink += `?previousPath=${encodeURIComponent(previousPath)}`
   }
+
+  const submitCasePath = `${router.basePath}${usePathname()}?${new URLSearchParams({
+    resubmitCase: "true"
+  })}`
 
   return (
     <>
@@ -74,6 +83,14 @@ const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath }: Prop
       ))}
 
       <ConditionalRender isRendered={canResolveAndSubmit && aho.Exceptions.length > 0}>
+        <div className={classes.buttonContainer}>
+          <Form method="post" action={submitCasePath} csrfToken={csrfToken}>
+            <input type="hidden" name="amendments" value={JSON.stringify(amendments)} />
+            <Button id="submit" type="submit">
+              {"Submit exception(s)"}
+            </Button>
+          </Form>
+        </div>
         <div className={classes.buttonContainer}>
           <LinkButton
             href={resolveLink}

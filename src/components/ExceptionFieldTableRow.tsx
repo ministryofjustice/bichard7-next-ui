@@ -1,14 +1,12 @@
 import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
-import { textSecondary } from "utils/colours"
 import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
 
 type Props = {
   badgeText: string
-  message: string | React.ReactNode
   value?: string | React.ReactNode
-  badgeColour: "purple"
+  badgeColour?: "red" | "blue" | "purple"
   label: string
   children?: React.ReactNode
 }
@@ -21,9 +19,6 @@ const useStyles = createUseStyles({
     }
   },
   content: {
-    "& .error-prompt-message": {
-      color: textSecondary
-    },
     "& .field-value": {
       paddingBottom: ".94rem"
     },
@@ -36,7 +31,7 @@ const useStyles = createUseStyles({
   }
 })
 
-const ExceptionPromptTableRow = ({ badgeText, badgeColour, message, value, label, children }: Props) => {
+const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, children }: Props) => {
   const classes = useStyles()
   const labelField = (
     <>
@@ -52,10 +47,10 @@ const ExceptionPromptTableRow = ({ badgeText, badgeColour, message, value, label
       {value && <div className="field-value">{value}</div>}
       {badgeText && (
         <div className="badge-wrapper">
-          <Badge className="error-prompt-badge" isRendered={true} colour={badgeColour} label={badgeText} />
+          <Badge className="error-badge" isRendered={true} colour={badgeColour ?? "purple"} label={badgeText} />
         </div>
       )}
-      {message && <div className="error-prompt-message">{message}</div>}
+      {children}
     </div>
   )
 
@@ -64,9 +59,9 @@ const ExceptionPromptTableRow = ({ badgeText, badgeColour, message, value, label
       <Table.Cell className={classes.label}>
         <b>{labelField}</b>
       </Table.Cell>
-      <Table.Cell>{children ?? cellContent}</Table.Cell>
+      <Table.Cell>{cellContent}</Table.Cell>
     </Table.Row>
   )
 }
 
-export default ExceptionPromptTableRow
+export default ExceptionFieldTableRow
