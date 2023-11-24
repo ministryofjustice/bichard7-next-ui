@@ -112,6 +112,7 @@ export const OffenceDetails = ({
   const thisOffencePath = `AnnotatedHearingOutcome>HearingOutcome>Case>HearingDefendant>Offence>${
     selectedOffenceIndex - 1
   }`
+  const thisResultPath = (resultIndex: number) => `${thisOffencePath}>Result>${resultIndex}`
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex)
   const unresolvedExceptionsOnThisOffence = !isCaseUnresolved
     ? []
@@ -226,7 +227,7 @@ export const OffenceDetails = ({
               key={index}
               result={result}
               exceptions={unresolvedExceptionsOnThisOffence
-                .filter((resultExceptions) => resultExceptions.path[7] === index)
+                .filter((resultException) => resultException.path.join(">").startsWith(thisResultPath(index)))
                 .map((e) => e.code)}
               selectedOffenceIndex={selectedOffenceIndex}
               resultIndex={index}
