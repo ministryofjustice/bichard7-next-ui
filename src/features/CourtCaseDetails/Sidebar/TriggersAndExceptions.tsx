@@ -8,9 +8,9 @@ import type NavigationHandler from "types/NavigationHandler"
 import Permission from "types/Permission"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
+import { AmendmentRecords } from "../../../types/Amendments"
 import Exceptions from "./Exceptions"
 import TriggersList from "./TriggersList"
-import { AmendmentRecords } from "../../../types/Amendments"
 
 const useStyles = createUseStyles({
   sideBar: {
@@ -31,7 +31,6 @@ interface Props {
   user: DisplayFullUser
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
-  csrfToken: string
   previousPath: string
   amendments: AmendmentRecords
 }
@@ -56,7 +55,6 @@ const TriggersAndExceptions = ({
   user,
   onNavigate,
   canResolveAndSubmit,
-  csrfToken,
   previousPath,
   amendments
 }: Props) => {
@@ -104,7 +102,7 @@ const TriggersAndExceptions = ({
               selected={selectedTab === Permission.Triggers}
               className={`moj-tab-panel-triggers ${classes.tabPanelTriggers}`}
             >
-              <TriggersList courtCase={courtCase} user={user} onNavigate={onNavigate} csrfToken={csrfToken} />
+              <TriggersList courtCase={courtCase} user={user} onNavigate={onNavigate} />
             </Tabs.Panel>
           </ConditionalRender>
 
@@ -120,7 +118,6 @@ const TriggersAndExceptions = ({
                 canResolveAndSubmit={canResolveAndSubmit}
                 previousPath={previousPath}
                 amendments={amendments}
-                csrfToken={csrfToken}
               />
             </Tabs.Panel>
           </ConditionalRender>

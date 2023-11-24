@@ -1,5 +1,6 @@
 import ConditionalRender from "components/ConditionalRender"
 import { MAX_NOTE_LENGTH } from "config"
+import { useCsrfToken } from "context/CsrfTokenContext"
 import { Button, FormGroup, HintText, Label, TextArea } from "govuk-react"
 import { FormEvent, FormEventHandler, useState } from "react"
 import { useBeforeunload } from "react-beforeunload"
@@ -7,14 +8,14 @@ import Form from "../../../../../components/Form"
 
 interface Props {
   isLockedByCurrentUser: boolean
-  csrfToken: string
 }
 
-const AddNoteForm: React.FC<Props> = ({ isLockedByCurrentUser, csrfToken }: Props) => {
+const AddNoteForm: React.FC<Props> = ({ isLockedByCurrentUser }: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
   const [submitted, setSubmitted] = useState(false)
   const [isFormValid, setIsFormValid] = useState(true)
   const showError = !isFormValid && noteRemainingLength === MAX_NOTE_LENGTH
+  const csrfTokenContext = useCsrfToken()
 
   useBeforeunload(
     !submitted && noteRemainingLength !== MAX_NOTE_LENGTH
@@ -44,7 +45,7 @@ const AddNoteForm: React.FC<Props> = ({ isLockedByCurrentUser, csrfToken }: Prop
 
   return (
     <ConditionalRender isRendered={isLockedByCurrentUser}>
-      <Form method="POST" action="" onSubmit={handleSubmit} csrfToken={csrfToken}>
+      <Form method="POST" action="" onSubmit={handleSubmit} csrfToken={csrfTokenContext.csrfToken}>
         <FormGroup>
           <Label className="govuk-heading-m b7-form-label-lg" htmlFor="note-text">
             {"Add a new note"}
