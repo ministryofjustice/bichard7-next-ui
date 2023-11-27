@@ -191,7 +191,7 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Court date"} hideChildren={true}>
+            <ExpandingFilters filterName={"Court date"}>
               <CourtDateFilterOptions
                 caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
                 caseAgeCounts={caseAgeCounts}
