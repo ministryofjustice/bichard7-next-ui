@@ -31,25 +31,30 @@ const useStyles = createUseStyles({
   }
 })
 
-interface CourtCaseDetailsSummaryBoxProps {
-  courtHouseCode: string | null
-  pnci: string | undefined
-  dob: string | undefined
-  hearingDate: string | undefined
-}
-
-const CourtCaseDetailsSummaryBox = ({ courtHouseCode, pnci, dob, hearingDate }: CourtCaseDetailsSummaryBoxProps) => {
+const CourtCaseDetailsSummaryBox = () => {
   const classes = useStyles()
   const courtCase = useCourtCaseContext().courtCase
+
+  const formattedHearingDate = formatDisplayedDate(
+    courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString() || ""
+  )
+  const formattedDobDate = formatDisplayedDate(
+    courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString() ||
+      ""
+  )
+  const pnci = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier
 
   return (
     <div className={`${classes["court-case-details-summary-box"]} govuk-body`}>
       <CourtCaseDetailsSummaryBoxField label="PTIURN" value={courtCase.ptiurn} />
       <CourtCaseDetailsSummaryBoxField label="ASN" value={courtCase.asn} />
       <CourtCaseDetailsSummaryBoxField label="PNCID" value={pnci} />
-      <CourtCaseDetailsSummaryBoxField label="DOB" value={formatDisplayedDate(dob || "")} />
-      <CourtCaseDetailsSummaryBoxField label="Hearing date" value={formatDisplayedDate(hearingDate || "")} />
-      <CourtCaseDetailsSummaryBoxField label="Court code (LJA)" value={courtHouseCode} />
+      <CourtCaseDetailsSummaryBoxField label="DOB" value={formattedDobDate} />
+      <CourtCaseDetailsSummaryBoxField label="Hearing date" value={formattedHearingDate} />
+      <CourtCaseDetailsSummaryBoxField
+        label="Court code (LJA)"
+        value={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
+      />
       <CourtCaseDetailsSummaryBoxField label="Court case reference" value={courtCase.courtReference} />
       <CourtCaseDetailsSummaryBoxField label="Court name" value={courtCase.courtName} />
     </div>

@@ -1,4 +1,3 @@
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
 import { useCourtCaseContext } from "context/CourtCaseContext"
 import { useCurrentUserContext } from "context/CurrentUserContext"
@@ -26,7 +25,6 @@ const useStyles = createUseStyles({
 })
 
 interface Props {
-  aho: AnnotatedHearingOutcome
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
   previousPath: string
@@ -47,7 +45,7 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const TriggersAndExceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath, amendments }: Props) => {
+const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, previousPath, amendments }: Props) => {
   const currentUser = useCurrentUserContext().currentUser
   const courtCase = useCourtCaseContext().courtCase
 
@@ -106,7 +104,6 @@ const TriggersAndExceptions = ({ aho, onNavigate, canResolveAndSubmit, previousP
               className="moj-tab-panel-exceptions"
             >
               <Exceptions
-                aho={aho}
                 onNavigate={onNavigate}
                 canResolveAndSubmit={canResolveAndSubmit}
                 previousPath={previousPath}

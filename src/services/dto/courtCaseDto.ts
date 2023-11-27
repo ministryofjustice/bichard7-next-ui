@@ -1,5 +1,6 @@
 import CourtCase from "services/entities/CourtCase"
 import { DisplayFullCourtCase, DisplayPartialCourtCase } from "types/display/CourtCases"
+import parseHearingOutcome from "utils/parseHearingOutcome"
 import { noteToDisplayNoteDto } from "./noteDto"
 import { triggerToDisplayTriggerDto } from "./triggerDto"
 
@@ -35,12 +36,15 @@ export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): Dis
 }
 
 export const courtCaseToDisplayFullCourtCaseDto = (courtCase: CourtCase): DisplayFullCourtCase => {
+  const annotatedHearingOutcome = parseHearingOutcome(courtCase.hearingOutcome)
+
   const courtCaseInfo: DisplayFullCourtCase = {
     ...courtCaseToDisplayPartialCourtCaseDto(courtCase),
     orgForPoliceFilter: courtCase.orgForPoliceFilter,
     courtCode: courtCase.courtCode,
     courtReference: courtCase.courtReference,
-    phase: courtCase.phase
+    phase: courtCase.phase,
+    aho: JSON.parse(JSON.stringify(annotatedHearingOutcome))
   }
 
   return courtCaseInfo

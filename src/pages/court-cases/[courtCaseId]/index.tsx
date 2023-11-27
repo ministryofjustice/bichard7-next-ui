@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import { CourtCaseContext, CourtCaseContextType } from "context/CourtCaseContext"
@@ -38,7 +37,6 @@ import User from "../../../services/entities/User"
 import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import Permission from "../../../types/Permission"
-import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
 
 const allIssuesCleared = (courtCase: CourtCase, triggerToResolve: number[], user: User) => {
@@ -162,8 +160,6 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const annotatedHearingOutcome = parseHearingOutcome(courtCase.hearingOutcome)
-
     const lastSwitchingFormSubmission = await getLastSwitchingFormSubmission(dataSource, currentUser.id)
 
     if (isError(lastSwitchingFormSubmission)) {
@@ -176,7 +172,6 @@ export const getServerSideProps = withMultipleServerSideProps(
         previousPath: previousPath ?? null,
         user: userToDisplayFullUserDto(currentUser),
         courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
-        aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
         isLockedByCurrentUser: courtCase.isLockedByCurrentUser(currentUser.username),
         canReallocate: courtCase.canReallocate(currentUser.username),
         canResolveAndSubmit: courtCase.canResolveOrSubmit(currentUser),
@@ -189,7 +184,6 @@ export const getServerSideProps = withMultipleServerSideProps(
 interface Props {
   user: DisplayFullUser
   courtCase: DisplayFullCourtCase
-  aho: AnnotatedHearingOutcome
   isLockedByCurrentUser: boolean
   canReallocate: boolean
   canResolveAndSubmit: boolean
@@ -211,7 +205,6 @@ const useStyles = createUseStyles({
 
 const CourtCaseDetailsPage: NextPage<Props> = ({
   courtCase,
-  aho,
   user,
   isLockedByCurrentUser,
   canReallocate,
@@ -253,14 +246,8 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
                 </div>
               </ConditionalDisplay>
               <Header previousPath={previousPath} canReallocate={canReallocate} />
-              <CourtCaseDetailsSummaryBox
-                courtHouseCode={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
-                pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
-                dob={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString()}
-                hearingDate={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString()}
-              />
+              <CourtCaseDetailsSummaryBox />
               <CourtCaseDetails
-                aho={aho}
                 isLockedByCurrentUser={isLockedByCurrentUser}
                 canResolveAndSubmit={canResolveAndSubmit}
                 previousPath={previousPath}

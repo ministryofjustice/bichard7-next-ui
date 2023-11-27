@@ -1,4 +1,4 @@
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { useCourtCaseContext } from "context/CourtCaseContext"
 import { GridCol, GridRow } from "govuk-react"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
@@ -16,7 +16,6 @@ import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
 
 interface Props {
-  aho: AnnotatedHearingOutcome
   isLockedByCurrentUser: boolean
   canResolveAndSubmit: boolean
   previousPath: string
@@ -43,7 +42,8 @@ const useStyles = createUseStyles({
 const sideBarWidth = "33%"
 const contentWidth = "67%"
 
-const CourtCaseDetails: React.FC<Props> = ({ aho, isLockedByCurrentUser, canResolveAndSubmit, previousPath }) => {
+const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAndSubmit, previousPath }) => {
+  const courtCase = useCourtCaseContext().courtCase
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
@@ -85,27 +85,27 @@ const CourtCaseDetails: React.FC<Props> = ({ aho, isLockedByCurrentUser, canReso
             className={activeTab === "Defendant" ? classes.visible : classes.notVisible}
             heading={"Defendant details"}
           >
-            <DefendantDetails defendant={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant} />
+            <DefendantDetails defendant={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant} />
           </CourtCaseDetailsPanel>
 
           <CourtCaseDetailsPanel
             className={activeTab === "Hearing" ? classes.visible : classes.notVisible}
             heading={"Hearing details"}
           >
-            <HearingDetails hearing={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing} />
+            <HearingDetails hearing={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing} />
           </CourtCaseDetailsPanel>
 
           <CourtCaseDetailsPanel
             className={activeTab === "Case" ? classes.visible : classes.notVisible}
             heading={"Case"}
           >
-            <CaseInformation caseInformation={aho.AnnotatedHearingOutcome.HearingOutcome.Case} />
+            <CaseInformation caseInformation={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case} />
           </CourtCaseDetailsPanel>
 
           <Offences
             className={activeTab === "Offences" ? classes.visible : classes.notVisible}
-            exceptions={aho.Exceptions}
-            offences={aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
+            exceptions={courtCase.aho.Exceptions}
+            offences={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
             onOffenceSelected={(offenceIndex) => {
               setSelectedOffenceIndex(offenceIndex)
             }}
@@ -122,7 +122,6 @@ const CourtCaseDetails: React.FC<Props> = ({ aho, isLockedByCurrentUser, canReso
 
         <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
           <TriggersAndExceptions
-            aho={aho}
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}
             previousPath={previousPath}
