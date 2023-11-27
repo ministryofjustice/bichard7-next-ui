@@ -13,13 +13,11 @@ export const ExceptionsReasonCell = ({ exceptionCounts }: { exceptionCounts: Rec
 }
 
 export const ExceptionsLockTag = ({
-  csrfToken,
   errorLockedByFullName,
   canUnlockCase,
   unlockPath,
   exceptionsHaveBeenRecentlyUnlocked
 }: {
-  csrfToken: string
   errorLockedByUsername: string | null | undefined
   errorLockedByFullName: string | null | undefined
   canUnlockCase: boolean
@@ -28,11 +26,7 @@ export const ExceptionsLockTag = ({
 }) => {
   return (
     <>
-      <LockedByTag
-        csrfToken={csrfToken}
-        lockedBy={errorLockedByFullName}
-        unlockPath={canUnlockCase ? unlockPath : undefined}
-      />
+      <LockedByTag lockedBy={errorLockedByFullName} unlockPath={canUnlockCase ? unlockPath : undefined} />
       <CaseUnlockedTag isCaseUnlocked={exceptionsHaveBeenRecentlyUnlocked && !errorLockedByFullName} />
     </>
   )

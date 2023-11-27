@@ -5,7 +5,8 @@ import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import { DisplayFullUser } from "types/display/Users"
+import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../types/Amendments"
+import setAmendedFields from "../../utils/amendments/setAmendedField"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
@@ -14,16 +15,12 @@ import { DefendantDetails } from "./Tabs/Panels/DefendantDetails"
 import { HearingDetails } from "./Tabs/Panels/HearingDetails"
 import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
-import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../types/Amendments"
-import setAmendedFields from "../../utils/amendments/setAmendedField"
 
 interface Props {
   courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
   isLockedByCurrentUser: boolean
-  user: DisplayFullUser
   canResolveAndSubmit: boolean
-  csrfToken: string
   previousPath: string
 }
 
@@ -51,10 +48,8 @@ const contentWidth = "67%"
 const CourtCaseDetails: React.FC<Props> = ({
   courtCase,
   aho,
-  user,
   isLockedByCurrentUser,
   canResolveAndSubmit,
-  csrfToken,
   previousPath
 }) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
@@ -132,7 +127,6 @@ const CourtCaseDetails: React.FC<Props> = ({
             className={activeTab === "Notes" ? classes.visible : classes.notVisible}
             notes={courtCase.notes}
             isLockedByCurrentUser={isLockedByCurrentUser}
-            csrfToken={csrfToken}
           />
         </GridCol>
 
@@ -140,10 +134,8 @@ const CourtCaseDetails: React.FC<Props> = ({
           <TriggersAndExceptions
             courtCase={courtCase}
             aho={aho}
-            user={user}
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}
-            csrfToken={csrfToken}
             previousPath={previousPath}
             amendments={amendments}
           />

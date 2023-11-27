@@ -6,6 +6,8 @@ import LinkButton from "components/LinkButton"
 import LockedTag from "components/LockedTag"
 import ResolvedTag from "components/ResolvedTag"
 import SecondaryButton from "components/SecondaryButton"
+import { useCsrfToken } from "context/CsrfTokenContext"
+import { useCurrentUserContext } from "context/CurrentUserContext"
 import { Button, Heading } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
@@ -13,7 +15,6 @@ import { createUseStyles } from "react-jss"
 import styled from "styled-components"
 import Permission from "types/Permission"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import { DisplayFullUser } from "types/display/Users"
 import {
   exceptionsAreLockedByCurrentUser,
   isLockedByCurrentUser,
@@ -24,9 +25,7 @@ import Form from "../../components/Form"
 
 interface Props {
   courtCase: DisplayFullCourtCase
-  user: DisplayFullUser
   canReallocate: boolean
-  csrfToken: string
   previousPath: string
 }
 
@@ -56,9 +55,11 @@ const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
   return params
 }
 
-const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken, previousPath }: Props) => {
+const Header: React.FC<Props> = ({ courtCase, canReallocate, previousPath }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
+  const csrfTokenContext = useCsrfToken()
+  const currentUser = useCurrentUserContext().currentUser
 
   const leaveAndUnlockParams = getUnlockPath(courtCase)
 
@@ -70,8 +71,8 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken, pr
     reallocatePath += `?previousPath=${encodeURIComponent(previousPath)}`
   }
 
-  const caseIsViewOnly = !isLockedByCurrentUser(courtCase, user.username)
-  const hasCaseLock = isLockedByCurrentUser(courtCase, user.username)
+  const caseIsViewOnly = !isLockedByCurrentUser(courtCase, currentUser.username)
+  const hasCaseLock = isLockedByCurrentUser(courtCase, currentUser.username)
 
   const getLockHolder = (
     username: string,
@@ -116,11 +117,11 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken, pr
           {"Case details"}
         </Heading>
         <CaseDetailsLockTag
-          isRendered={user.hasAccessTo[Permission.Exceptions]}
+          isRendered={currentUser.hasAccessTo[Permission.Exceptions]}
           isResolved={courtCase.errorStatus === "Resolved"}
           lockName="Exceptions"
           getLockHolderFn={() =>
-            getLockHolder(user.username, courtCase.errorLockedByUserFullName, exceptionsAreLockedByCurrentUser)
+            getLockHolder(currentUser.username, courtCase.errorLockedByUserFullName, exceptionsAreLockedByCurrentUser)
           }
         />
       </HeaderRow>
@@ -141,11 +142,11 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken, pr
           />
         </Heading>
         <CaseDetailsLockTag
-          isRendered={user.hasAccessTo[Permission.Triggers]}
+          isRendered={currentUser.hasAccessTo[Permission.Triggers]}
           isResolved={courtCase.triggerStatus === "Resolved"}
           lockName="Triggers"
           getLockHolderFn={() =>
-            getLockHolder(user.username, courtCase.triggerLockedByUserFullName, triggersAreLockedByCurrentUser)
+            getLockHolder(currentUser.username, courtCase.triggerLockedByUserFullName, triggersAreLockedByCurrentUser)
           }
         />
       </HeaderRow>
@@ -167,7 +168,7 @@ const Header: React.FC<Props> = ({ courtCase, user, canReallocate, csrfToken, pr
               {"Leave and lock"}
             </Button>
           </a>
-          <Form method="post" action={leaveAndUnlockUrl} csrfToken={csrfToken}>
+          <Form method="post" action={leaveAndUnlockUrl} csrfToken={csrfTokenContext.csrfToken}>
             <Button id="leave-and-unlock" className={classes.button} type="submit">
               {"Leave and unlock"}
             </Button>

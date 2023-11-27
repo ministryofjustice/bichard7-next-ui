@@ -1,9 +1,9 @@
 import ConditionalRender from "components/ConditionalRender"
+import { useCurrentUserContext } from "context/CurrentUserContext"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
 import Permission from "types/Permission"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
-import { DisplayFullUser } from "types/display/Users"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
 import { useCustomStyles } from "../../../../styles/customStyles"
@@ -13,9 +13,7 @@ import { ExtraReasonRow } from "./ExtraReasonRow"
 import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
 
 interface Props {
-  csrfToken: string
   courtCase: DisplayPartialCourtCase
-  currentUser: DisplayFullUser
   exceptionHasBeenRecentlyUnlocked: boolean
   triggerHasBeenRecentlyUnlocked: boolean
   entityClassName: string
@@ -23,10 +21,8 @@ interface Props {
 }
 
 const CourtCaseListEntry: React.FC<Props> = ({
-  csrfToken,
   entityClassName,
   courtCase,
-  currentUser,
   exceptionHasBeenRecentlyUnlocked,
   triggerHasBeenRecentlyUnlocked,
   previousPath
@@ -49,6 +45,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
   } = courtCase
   const { basePath, query } = useRouter()
   const searchParams = new URLSearchParams(encode(query))
+  const currentUser = useCurrentUserContext().currentUser
 
   const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
     deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
@@ -67,7 +64,6 @@ const CourtCaseListEntry: React.FC<Props> = ({
   const exceptionsReasonCell = <ExceptionsReasonCell exceptionCounts={groupErrorsFromReport(errorReport)} />
   const exceptionsLockTag = (
     <ExceptionsLockTag
-      csrfToken={csrfToken}
       errorLockedByUsername={errorLockedByUsername}
       errorLockedByFullName={errorLockedByUserFullName}
       canUnlockCase={!!errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
@@ -83,7 +79,6 @@ const CourtCaseListEntry: React.FC<Props> = ({
       triggersHaveBeenRecentlyUnlocked={triggerHasBeenRecentlyUnlocked}
       canUnlockCase={!!triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
       unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
-      csrfToken={csrfToken}
     />
   )
   const reasonAndLockTags: [JSX.Element, JSX.Element][] = []

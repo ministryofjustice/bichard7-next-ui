@@ -1,5 +1,7 @@
 import ActionLink from "components/ActionLink"
 import ConditionalRender from "components/ConditionalRender"
+import { useCsrfToken } from "context/CsrfTokenContext"
+import { useCurrentUserContext } from "context/CurrentUserContext"
 import { Button, GridCol, GridRow } from "govuk-react"
 import { sortBy } from "lodash"
 import { useRouter } from "next/router"
@@ -8,7 +10,6 @@ import { ChangeEvent, SyntheticEvent, useState } from "react"
 import { createUseStyles } from "react-jss"
 import type NavigationHandler from "types/NavigationHandler"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import { DisplayFullUser } from "types/display/Users"
 import { triggersAreLockedByAnotherUser } from "utils/caseLocks"
 import Form from "../../../components/Form"
 import LockedTag from "../../../components/LockedTag"
@@ -16,9 +17,7 @@ import Trigger from "./Trigger"
 
 interface Props {
   courtCase: DisplayFullCourtCase
-  user: DisplayFullUser
   onNavigate: NavigationHandler
-  csrfToken: string
 }
 
 const useStyles = createUseStyles({
@@ -39,7 +38,9 @@ const useStyles = createUseStyles({
   }
 })
 
-const TriggersList = ({ courtCase, user, onNavigate, csrfToken }: Props) => {
+const TriggersList = ({ courtCase, onNavigate }: Props) => {
+  const currentUser = useCurrentUserContext().currentUser
+
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
   const { basePath, query } = useRouter()
@@ -47,7 +48,8 @@ const TriggersList = ({ courtCase, user, onNavigate, csrfToken }: Props) => {
   const triggers = sortBy(courtCase.triggers, "triggerItemIdentity")
   const hasTriggers = triggers.length > 0
   const hasUnresolvedTriggers = triggers.filter((t) => t.status === "Unresolved").length > 0
-  const triggersLockedByAnotherUser = triggersAreLockedByAnotherUser(courtCase, user.username)
+  const triggersLockedByAnotherUser = triggersAreLockedByAnotherUser(courtCase, currentUser.username)
+  const csrfTokenContext = useCsrfToken()
 
   const setTriggerSelection = ({ target: checkbox }: ChangeEvent<HTMLInputElement>) => {
     const triggerId = parseInt(checkbox.value, 10)
@@ -80,7 +82,7 @@ const TriggersList = ({ courtCase, user, onNavigate, csrfToken }: Props) => {
   }
 
   return (
-    <Form method="post" action={resolveTriggerUrl(selectedTriggerIds)} csrfToken={csrfToken}>
+    <Form method="post" action={resolveTriggerUrl(selectedTriggerIds)} csrfToken={csrfTokenContext.csrfToken}>
       {triggers.length === 0 && "There are no triggers for this case."}
       <ConditionalRender isRendered={hasUnresolvedTriggers && !triggersLockedByAnotherUser}>
         <GridRow id={"select-all-triggers"} className={classes.selectAllContainer}>

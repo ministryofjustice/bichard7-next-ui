@@ -1,10 +1,10 @@
+import { useCurrentUserContext } from "context/CurrentUserContext"
 import { Footer } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
 import styled from "styled-components"
 import Permission from "types/Permission"
-import { DisplayFullUser } from "types/display/Users"
 import ConditionalRender from "./ConditionalRender"
 import Header from "./Header"
 import LinkButton from "./LinkButton"
@@ -37,7 +37,6 @@ const BichardSwitchButton: React.FC<BichardSwitchProps> = ({ href }: BichardSwit
 
 interface Props {
   children: ReactNode
-  user: DisplayFullUser
   bichardSwitch?: {
     display: boolean
     href?: string
@@ -45,13 +44,11 @@ interface Props {
   }
 }
 
-const Layout = ({
-  children,
-  user,
-  bichardSwitch = { display: false, displaySwitchingSurveyFeedback: false }
-}: Props) => {
+const Layout = ({ children, bichardSwitch = { display: false, displaySwitchingSurveyFeedback: false } }: Props) => {
   const { basePath } = useRouter()
   const pathname = usePathname()
+  const currentUser = useCurrentUserContext().currentUser
+
   let bichardSwitchUrl = bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"
 
   if (bichardSwitch.displaySwitchingSurveyFeedback) {
@@ -64,10 +61,10 @@ const Layout = ({
 
   return (
     <>
-      <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={user.username} />
+      <Header serviceName={"Bichard7"} organisationName={"Ministry of Justice"} userName={currentUser.username} />
       <NavBar
-        hasAccessToReports={user.hasAccessTo[Permission.ViewReports]}
-        hasAccessToUserManagement={user.hasAccessTo[Permission.ViewUserManagement]}
+        hasAccessToReports={currentUser.hasAccessTo[Permission.ViewReports]}
+        hasAccessToUserManagement={currentUser.hasAccessTo[Permission.ViewUserManagement]}
       />
       <PageTemplate>
         <Banner>
