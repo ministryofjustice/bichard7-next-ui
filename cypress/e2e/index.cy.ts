@@ -30,7 +30,8 @@ describe("Case list", () => {
 
       cy.findByText("Previous page").should("not.exist")
       cy.findByText("Next page").should("not.exist")
-      cy.get("#bottom-pagination-bar").should("not.be.visible")
+      cy.get("#top-pagination-bar").should("not.exist")
+      cy.get("#bottom-pagination-bar").should("not.exist")
     })
 
     it("Should display 0 cases when there are no cases 'locked to me' and hide the bottom pagination bar ", () => {
@@ -52,7 +53,8 @@ describe("Case list", () => {
 
       cy.findByText("Previous page").should("not.exist")
       cy.findByText("Next page").should("not.exist")
-      cy.get("#bottom-pagination-bar").should("not.be.visible")
+      cy.get("#top-pagination-bar").should("not.exist")
+      cy.get("#bottom-pagination-bar").should("not.exist")
     })
 
     it("Should be accessible", () => {
