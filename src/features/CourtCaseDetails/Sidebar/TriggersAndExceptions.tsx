@@ -1,5 +1,6 @@
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
+import { useCourtCaseContext } from "context/CourtCaseContext"
 import { useCurrentUserContext } from "context/CurrentUserContext"
 import { Tabs } from "govuk-react"
 import { useState } from "react"
@@ -7,7 +8,6 @@ import { createUseStyles } from "react-jss"
 import styled from "styled-components"
 import type NavigationHandler from "types/NavigationHandler"
 import Permission from "types/Permission"
-import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { AmendmentRecords } from "../../../types/Amendments"
 import Exceptions from "./Exceptions"
 import TriggersList from "./TriggersList"
@@ -26,7 +26,6 @@ const useStyles = createUseStyles({
 })
 
 interface Props {
-  courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
@@ -48,15 +47,10 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const TriggersAndExceptions = ({
-  courtCase,
-  aho,
-  onNavigate,
-  canResolveAndSubmit,
-  previousPath,
-  amendments
-}: Props) => {
+const TriggersAndExceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath, amendments }: Props) => {
   const currentUser = useCurrentUserContext().currentUser
+  const courtCase = useCourtCaseContext().courtCase
+
   const availableTabs = [Permission.Triggers, Permission.Exceptions].filter((tab) => currentUser.hasAccessTo[tab])
   const defaultTab =
     availableTabs.length > 0
@@ -101,7 +95,7 @@ const TriggersAndExceptions = ({
               selected={selectedTab === Permission.Triggers}
               className={`moj-tab-panel-triggers ${classes.tabPanelTriggers}`}
             >
-              <TriggersList courtCase={courtCase} onNavigate={onNavigate} />
+              <TriggersList onNavigate={onNavigate} />
             </Tabs.Panel>
           </ConditionalRender>
 

@@ -4,7 +4,6 @@ import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
-import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../types/Amendments"
 import setAmendedFields from "../../utils/amendments/setAmendedField"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
@@ -17,7 +16,6 @@ import { Notes } from "./Tabs/Panels/Notes/Notes"
 import { Offences } from "./Tabs/Panels/Offences/Offences"
 
 interface Props {
-  courtCase: DisplayFullCourtCase
   aho: AnnotatedHearingOutcome
   isLockedByCurrentUser: boolean
   canResolveAndSubmit: boolean
@@ -45,13 +43,7 @@ const useStyles = createUseStyles({
 const sideBarWidth = "33%"
 const contentWidth = "67%"
 
-const CourtCaseDetails: React.FC<Props> = ({
-  courtCase,
-  aho,
-  isLockedByCurrentUser,
-  canResolveAndSubmit,
-  previousPath
-}) => {
+const CourtCaseDetails: React.FC<Props> = ({ aho, isLockedByCurrentUser, canResolveAndSubmit, previousPath }) => {
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
@@ -118,21 +110,18 @@ const CourtCaseDetails: React.FC<Props> = ({
               setSelectedOffenceIndex(offenceIndex)
             }}
             selectedOffenceIndex={selectedOffenceIndex}
-            courtCase={courtCase}
             amendments={amendments}
             amendFn={amendFn}
           />
 
           <Notes
             className={activeTab === "Notes" ? classes.visible : classes.notVisible}
-            notes={courtCase.notes}
             isLockedByCurrentUser={isLockedByCurrentUser}
           />
         </GridCol>
 
         <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
           <TriggersAndExceptions
-            courtCase={courtCase}
             aho={aho}
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}

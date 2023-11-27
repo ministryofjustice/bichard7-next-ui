@@ -1,5 +1,6 @@
 import ActionLink from "components/ActionLink"
 import ConditionalRender from "components/ConditionalRender"
+import { useCourtCaseContext } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
 import { useCurrentUserContext } from "context/CurrentUserContext"
 import { Button, GridCol, GridRow } from "govuk-react"
@@ -9,14 +10,12 @@ import { encode } from "querystring"
 import { ChangeEvent, SyntheticEvent, useState } from "react"
 import { createUseStyles } from "react-jss"
 import type NavigationHandler from "types/NavigationHandler"
-import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { triggersAreLockedByAnotherUser } from "utils/caseLocks"
 import Form from "../../../components/Form"
 import LockedTag from "../../../components/LockedTag"
 import Trigger from "./Trigger"
 
 interface Props {
-  courtCase: DisplayFullCourtCase
   onNavigate: NavigationHandler
 }
 
@@ -38,8 +37,9 @@ const useStyles = createUseStyles({
   }
 })
 
-const TriggersList = ({ courtCase, onNavigate }: Props) => {
+const TriggersList = ({ onNavigate }: Props) => {
   const currentUser = useCurrentUserContext().currentUser
+  const courtCase = useCourtCaseContext().courtCase
 
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])

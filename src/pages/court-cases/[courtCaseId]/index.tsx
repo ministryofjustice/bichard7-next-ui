@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
+import { CourtCaseContext, CourtCaseContextType } from "context/CourtCaseContext"
 import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
+import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
 import CourtCaseDetailsSummaryBox from "features/CourtCaseDetails/CourtCaseDetailsSummaryBox"
 import Header from "features/CourtCaseDetails/Header"
@@ -37,8 +40,6 @@ import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContex
 import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
-import { CurrentUserContextType, CurrentUserContext } from "context/CurrentUserContext"
-import ConditionalRender from "../../../components/ConditionalRender"
 
 const allIssuesCleared = (courtCase: CourtCase, triggerToResolve: number[], user: User) => {
   const triggersResolved = user.hasAccessTo[Permission.Triggers]
@@ -223,6 +224,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
 
   const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
   const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
+  const [courtCaseContext] = useState<CourtCaseContextType>({ courtCase })
 
   return (
     <>
@@ -232,42 +234,39 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
       </Head>
       <CsrfTokenContext.Provider value={csrfTokenContext}>
         <CurrentUserContext.Provider value={currentUserContext}>
-          <Layout
-            bichardSwitch={{
-              display: true,
-              href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}`,
-              displaySwitchingSurveyFeedback
-            }}
-          >
-            <ConditionalRender isRendered={courtCase.phase !== 1}>
-              <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
-                <div className="govuk-tag">{"Attention:"}</div>
-                <div className={`${classes.attentionBanner} govuk-tag`}>
-                  {
-                    "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
-                  }
+          <CourtCaseContext.Provider value={courtCaseContext}>
+            <Layout
+              bichardSwitch={{
+                display: true,
+                href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}`,
+                displaySwitchingSurveyFeedback
+              }}
+            >
+              <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
+                <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
+                  <div className="govuk-tag">{"Attention:"}</div>
+                  <div className={`${classes.attentionBanner} govuk-tag`}>
+                    {
+                      "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
+                    }
+                  </div>
                 </div>
-              </div>
-            </ConditionalRender>
-            <Header previousPath={previousPath} courtCase={courtCase} canReallocate={canReallocate} />
-            <CourtCaseDetailsSummaryBox
-              asn={courtCase.asn}
-              courtHouseCode={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
-              courtName={courtCase.courtName}
-              courtReference={courtCase.courtReference}
-              pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
-              ptiurn={courtCase.ptiurn}
-              dob={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString()}
-              hearingDate={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString()}
-            />
-            <CourtCaseDetails
-              courtCase={courtCase}
-              aho={aho}
-              isLockedByCurrentUser={isLockedByCurrentUser}
-              canResolveAndSubmit={canResolveAndSubmit}
-              previousPath={previousPath}
-            />
-          </Layout>
+              </ConditionalDisplay>
+              <Header previousPath={previousPath} canReallocate={canReallocate} />
+              <CourtCaseDetailsSummaryBox
+                courtHouseCode={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
+                pnci={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier}
+                dob={aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString()}
+                hearingDate={aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString()}
+              />
+              <CourtCaseDetails
+                aho={aho}
+                isLockedByCurrentUser={isLockedByCurrentUser}
+                canResolveAndSubmit={canResolveAndSubmit}
+                previousPath={previousPath}
+              />
+            </Layout>
+          </CourtCaseContext.Provider>
         </CurrentUserContext.Provider>
       </CsrfTokenContext.Provider>
     </>
