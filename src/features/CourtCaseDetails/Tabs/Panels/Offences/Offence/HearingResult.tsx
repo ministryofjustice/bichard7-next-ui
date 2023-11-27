@@ -67,8 +67,12 @@ export const HearingResult = ({
   amendments,
   amendFn
 }: HearingResultProps) => {
-  const nextHearinDateException = exceptions.some(
+  const nextHearingDateException = exceptions.some(
     (code) => code === ExceptionCode.HO100102 || code === ExceptionCode.HO100323
+  )
+
+  const nextHearingLocationException = exceptions.some(
+    (code) => code === ExceptionCode.HO100200 || code === ExceptionCode.HO100300 || code === ExceptionCode.HO100322
   )
   const getPleaStatus = (pleaCode: string | undefined) => {
     let pleaStatusDescription = pleaCode
@@ -115,11 +119,18 @@ export const HearingResult = ({
           }
         />
       </ConditionalRender>
-      <ConditionalRender isRendered={typeof result.NextResultSourceOrganisation === "string"}>
+      <ConditionalRender
+        isRendered={
+          !!(
+            (result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode) ||
+            nextHearingLocationException
+          )
+        }
+      >
         <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
       </ConditionalRender>
-      <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearinDateException}>
-        {!!nextHearinDateException ? (
+      <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearingDateException}>
+        {!!nextHearingDateException ? (
           <ExceptionFieldTableRow
             badgeText="Editable Field"
             label="Next hearing date"
