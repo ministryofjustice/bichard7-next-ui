@@ -8,6 +8,7 @@ import Trigger from "../../src/services/entities/Trigger"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
 import getDataSource from "../../src/services/getDataSource"
 import resolveTriggers from "../../src/services/resolveTriggers"
+import insertException from "../utils/manageExceptions"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
 import { hasAccessToAll } from "../helpers/hasAccessTo"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
@@ -530,6 +531,90 @@ describe("resolveTriggers", () => {
         .map((trigger) => trigger.triggerCode)
       const events = await fetchAuditLogEvents(courtCase.messageId)
       expect(events).toStrictEqual([createTriggersResolvedEvent(resolvedTriggerCodes)])
+    })
+
+    it("Shouldn't set resolution timestamp when a case has unresolved exceptions", async () => {
+      const [courtCase] = await insertCourtCasesWithFields([
+        {
+          errorLockedByUsername: resolverUsername,
+          triggerLockedByUsername: resolverUsername,
+          orgForPoliceFilter: visibleForce
+        }
+      ])
+
+      const trigger: TestTrigger = {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-12T10:22:34.000Z")
+      }
+      await insertTriggers(0, [trigger])
+
+      await insertException(courtCase.errorId, "HO100300", "HO100300", "Unresolved")
+
+      const courtCaseBeforeResolvingTrigger = (await getCourtCaseByOrganisationUnit(dataSource, 0, user)) as CourtCase
+      expect(courtCaseBeforeResolvingTrigger.resolutionTimestamp).toBeNull()
+      expect(courtCaseBeforeResolvingTrigger.errorResolvedTimestamp).toBeNull()
+      expect(courtCaseBeforeResolvingTrigger.triggerResolvedTimestamp).toBeNull()
+      expect(courtCaseBeforeResolvingTrigger.triggerCount).toBe(1)
+      expect(courtCaseBeforeResolvingTrigger.errorCount).toBe(1)
+
+      const resolveTriggersResult = await resolveTriggers(
+        dataSource,
+        [trigger.triggerId],
+        courtCase.errorId,
+        user
+      ).catch((error) => error)
+      expect(isError(resolveTriggersResult)).toBeFalsy()
+
+      const courtCaseAfterResolvingTrigger = (await getCourtCaseByOrganisationUnit(dataSource, 0, user)) as CourtCase
+      expect(courtCaseAfterResolvingTrigger.resolutionTimestamp).toBeNull()
+      expect(courtCaseAfterResolvingTrigger.errorResolvedTimestamp).toBeNull()
+      expect(courtCaseAfterResolvingTrigger.triggerResolvedTimestamp).not.toBeNull()
+      expect(courtCaseAfterResolvingTrigger.triggerCount).toBe(1)
+      expect(courtCaseAfterResolvingTrigger.errorCount).toBe(1)
+    })
+
+    it("Should set resolution timestamp when a case has resolved exceptions", async () => {
+      const [courtCase] = await insertCourtCasesWithFields([
+        {
+          errorLockedByUsername: resolverUsername,
+          triggerLockedByUsername: resolverUsername,
+          orgForPoliceFilter: visibleForce
+        }
+      ])
+
+      const trigger: TestTrigger = {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-12T10:22:34.000Z")
+      }
+      await insertTriggers(0, [trigger])
+
+      await insertException(courtCase.errorId, "HO100300", "HO100300", "Resolved", user.username)
+
+      const courtCaseBeforeResolvingTrigger = (await getCourtCaseByOrganisationUnit(dataSource, 0, user)) as CourtCase
+      expect(courtCaseBeforeResolvingTrigger.resolutionTimestamp).toBeNull()
+      expect(courtCaseBeforeResolvingTrigger.errorResolvedTimestamp).not.toBeNull()
+      expect(courtCaseBeforeResolvingTrigger.triggerResolvedTimestamp).toBeNull()
+      expect(courtCaseBeforeResolvingTrigger.triggerCount).toBe(1)
+      expect(courtCaseBeforeResolvingTrigger.errorCount).toBe(1)
+
+      const resolveTriggersResult = await resolveTriggers(
+        dataSource,
+        [trigger.triggerId],
+        courtCase.errorId,
+        user
+      ).catch((error) => error)
+      expect(isError(resolveTriggersResult)).toBeFalsy()
+
+      const courtCaseAfterResolvingTrigger = (await getCourtCaseByOrganisationUnit(dataSource, 0, user)) as CourtCase
+      expect(courtCaseAfterResolvingTrigger.resolutionTimestamp).not.toBeNull()
+      expect(courtCaseAfterResolvingTrigger.errorResolvedTimestamp).not.toBeNull()
+      expect(courtCaseAfterResolvingTrigger.triggerResolvedTimestamp).not.toBeNull()
+      expect(courtCaseAfterResolvingTrigger.triggerCount).toBe(1)
+      expect(courtCaseAfterResolvingTrigger.errorCount).toBe(1)
     })
   })
 })
