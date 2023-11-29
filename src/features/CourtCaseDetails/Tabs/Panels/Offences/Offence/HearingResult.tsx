@@ -2,7 +2,7 @@ import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/A
 import ConditionalRender from "components/ConditionalRender"
 import { Duration } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import { Durations } from "@moj-bichard7-developers/bichard7-next-data/dist/types/Duration"
-import { HintText, Table } from "govuk-react"
+import { HintText, Label, Table } from "govuk-react"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
 import { TableRow } from "../../TableRow"
 import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/plea-status.json"
@@ -13,7 +13,8 @@ import {
   AmendmentKeys,
   AmendmentRecords,
   IndividualAmendmentValues,
-  UpdatedNextHearingDate
+  UpdatedNextHearingDate,
+  UpdatedOffenceResult
 } from "../../../../../../types/Amendments"
 import { Exception } from "../../../../../../types/exceptions"
 
@@ -49,6 +50,20 @@ const getNextHearingDateValue = (
     )?.updatedValue
 
   return nextHearingDateAmendment ? formatFormInputDateString(new Date(nextHearingDateAmendment)) : ""
+}
+
+const getNextHearingLocationValue = (
+  amendmentRecords: AmendmentRecords,
+  offenceIndex: number,
+  resultIndex: number
+): string => {
+  return (
+    (amendmentRecords?.nextSourceOrganisation &&
+      (amendmentRecords.nextSourceOrganisation as UpdatedOffenceResult[]).find(
+        (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
+      )?.updatedValue) ??
+    ""
+  )
 }
 
 interface HearingResultProps {
@@ -141,13 +156,13 @@ export const HearingResult = ({
             label="Next hearing location"
             value={result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode}
           >
-            <HintText>{"Enter next hearing location"}</HintText>
+            <Label>{"Enter next hearing location"}</Label>
             <HintText>{"OU code, 6-7 characters"}</HintText>
             <input
               className="govuk-input"
-              min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
               id={"next-hearing-location"}
               name={"next-hearing-location"}
+              value={getNextHearingLocationValue(amendments, selectedOffenceIndex - 1, resultIndex)}
               onChange={(event) => {
                 amendFn("nextSourceOrganisation")({
                   resultIndex: resultIndex,

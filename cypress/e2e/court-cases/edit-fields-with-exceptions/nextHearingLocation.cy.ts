@@ -1,30 +1,7 @@
 import nextHearingLocationExceptions from "../../../../test/test-data/NextHearingLocationExceptions.json"
 import dummyAho from "../../../../test/test-data/HO100102_1.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
-import CourtCase from "../../../../src/services/entities/CourtCase"
-
-const verifyUpdates = (args: {
-  expectedCourtCase: Partial<CourtCase>
-  updatedMessageHaveContent?: string[]
-  updatedMessageNotHaveContent?: string[]
-}) => {
-  cy.task("getCourtCaseById", { caseId: args.expectedCourtCase.errorId }).then((result) => {
-    const updatedCase = result as CourtCase
-    expect(updatedCase.errorStatus).equal(args.expectedCourtCase.errorStatus)
-
-    if (args.updatedMessageNotHaveContent) {
-      args.updatedMessageNotHaveContent.forEach((oldValue) => {
-        expect(updatedCase.updatedHearingOutcome).not.match(new RegExp(oldValue))
-      })
-    }
-
-    if (args.updatedMessageHaveContent) {
-      args.updatedMessageHaveContent.forEach((update) => {
-        expect(updatedCase.updatedHearingOutcome).match(new RegExp(update))
-      })
-    }
-  })
-}
+import { verifyUpdatedMessage } from "../../../support/helpers"
 
 describe("NextHearingLocation", () => {
   before(() => {
@@ -109,7 +86,7 @@ describe("NextHearingLocation", () => {
     cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
     cy.contains("Bichard01: Portal Action: Resubmitted Message.")
 
-    verifyUpdates({
+    verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
       updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100200">B@1EF$1</ds:OrganisationUnitCode>'],
       updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>"]
@@ -139,7 +116,7 @@ describe("NextHearingLocation", () => {
     cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
     cy.contains("Bichard01: Portal Action: Resubmitted Message.")
 
-    verifyUpdates({
+    verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
       updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100300">B46AM03</ds:OrganisationUnitCode>'],
       updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>"]
@@ -171,10 +148,47 @@ describe("NextHearingLocation", () => {
     cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
     cy.contains("Bichard01: Portal Action: Resubmitted Message.")
 
-    verifyUpdates({
+    verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
       updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100322" />'],
       updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>"]
+    })
+  })
+
+  it("Should be able to edit multiple next hearing locations", () => {
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
+    cy.get("#next-hearing-location").type("B01EF00")
+    cy.get("a.govuk-back-link").contains("Back to all offences").click()
+
+    cy.get(".govuk-link")
+      .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
+      .click()
+    cy.get("#next-hearing-location").type("B01EF01")
+
+    cy.get("button").contains("Submit exception(s)").click()
+
+    cy.get("H1").should("have.text", "Case details")
+    cy.contains("Notes").click()
+    const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
+    cy.contains(dateTimeRegex)
+    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF00")
+    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
+    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+
+    verifyUpdatedMessage({
+      expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
+      updatedMessageNotHaveContent: [
+        '<ds:OrganisationUnitCode Error="HO100300">B46AM03</ds:OrganisationUnitCode>',
+        '<ds:OrganisationUnitCode Error="HO100322" />'
+      ],
+      updatedMessageHaveContent: [
+        "<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>",
+        "<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>"
+      ]
     })
   })
 })

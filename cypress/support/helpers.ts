@@ -4,6 +4,7 @@ import CaseDetailsTab from "types/CaseDetailsTab"
 import { userAccess } from "utils/userPermissions"
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import User from "services/entities/User"
+import CourtCase from "../../src/services/entities/CourtCase"
 
 export function confirmFiltersAppliedContains(filterTag: string) {
   cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag)
@@ -183,4 +184,27 @@ export const defaultSetup = () => {
     groupName: "B7GeneralHandler_grp"
   })
   cy.task("insertIntoUserGroup", { emailAddress: "supervisor@example.com", groupName: "B7Supervisor_grp" })
+}
+
+export const verifyUpdatedMessage = (args: {
+  expectedCourtCase: Partial<CourtCase>
+  updatedMessageHaveContent?: string[]
+  updatedMessageNotHaveContent?: string[]
+}) => {
+  cy.task("getCourtCaseById", { caseId: args.expectedCourtCase.errorId }).then((result) => {
+    const updatedCase = result as CourtCase
+    expect(updatedCase.errorStatus).equal(args.expectedCourtCase.errorStatus)
+
+    if (args.updatedMessageNotHaveContent) {
+      args.updatedMessageNotHaveContent.forEach((oldValue) => {
+        expect(updatedCase.updatedHearingOutcome).not.match(new RegExp(oldValue))
+      })
+    }
+
+    if (args.updatedMessageHaveContent) {
+      args.updatedMessageHaveContent.forEach((update) => {
+        expect(updatedCase.updatedHearingOutcome).match(new RegExp(update))
+      })
+    }
+  })
 }
