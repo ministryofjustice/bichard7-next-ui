@@ -5,7 +5,6 @@ import Trigger from "services/entities/Trigger"
 import { DataSource, EntityManager } from "typeorm"
 import { v4 as uuidv4 } from "uuid"
 import CourtCase from "../../src/services/entities/CourtCase"
-import dummyAHO from "../test-data/AnnotatedHO1.json"
 import dummyAHOWithOneError from "../test-data/AnnotatedHO2_OneError.json"
 import createDummyAsn from "./createDummyAsn"
 import createDummyCourtCode from "./createDummyCourtCode"
@@ -14,6 +13,7 @@ import createDummyNotes from "./createDummyNotes"
 import createDummyPtiurn from "./createDummyPtiurn"
 import createDummyTriggers from "./createDummyTriggers"
 import randomDate from "./createRandomDate"
+import generateAho from "./generateAho"
 
 const randomBoolean = (): boolean => sample([true, false]) ?? true
 
@@ -29,6 +29,10 @@ export default async (
   dateFrom?: Date,
   dateTo?: Date
 ): Promise<CourtCase> => {
+  const firstName = `${faker.person.firstName().toUpperCase()}`
+  const lastName = `${faker.person.lastName().toUpperCase()}`
+  const courtName = faker.location.city()
+
   const caseDate = randomDate(dateFrom || subYears(new Date(), 1), dateTo || new Date())
   const ptiurn = createDummyPtiurn(caseDate.getFullYear(), orgCode + faker.string.alpha(2).toUpperCase())
   const isResolved = randomBoolean()
@@ -66,7 +70,9 @@ export default async (
     isUrgent: randomBoolean(),
     asn: createDummyAsn(caseDate.getFullYear(), orgCode + faker.string.alpha(2).toUpperCase()),
     courtCode: createDummyCourtCode(orgCode),
-    hearingOutcome: (errorReport ? dummyAHOWithOneError : dummyAHO).hearingOutcomeXml,
+    hearingOutcome: errorReport
+      ? dummyAHOWithOneError.hearingOutcomeXml
+      : generateAho({ firstName, lastName, courtName, ptiurn }),
     errorReport: errorReport,
     createdTimestamp: caseDate,
     errorReason: errorReason,
@@ -75,9 +81,9 @@ export default async (
     userUpdatedFlag: randomBoolean() ? 1 : 0,
     courtDate: caseDate,
     ptiurn: ptiurn,
-    courtName: faker.location.city(),
+    courtName: courtName,
     messageReceivedTimestamp: caseDate,
-    defendantName: randomName(),
+    defendantName: `${firstName} ${lastName}`,
     courtRoom: Math.round(Math.random() * 15)
       .toString()
       .padStart(2, "0"),
