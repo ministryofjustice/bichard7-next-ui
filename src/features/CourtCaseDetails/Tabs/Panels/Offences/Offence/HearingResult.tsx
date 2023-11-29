@@ -15,6 +15,7 @@ import {
   IndividualAmendmentValues,
   UpdatedNextHearingDate
 } from "../../../../../../types/Amendments"
+import { Exception } from "../../../../../../types/exceptions"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -52,7 +53,7 @@ const getNextHearingDateValue = (
 
 interface HearingResultProps {
   result: Result
-  exceptions: ExceptionCode[]
+  exceptions: Exception[]
   resultIndex: number
   selectedOffenceIndex: number
   amendments: AmendmentRecords
@@ -68,12 +69,19 @@ export const HearingResult = ({
   amendFn
 }: HearingResultProps) => {
   const nextHearingDateException = exceptions.some(
-    (code) => code === ExceptionCode.HO100102 || code === ExceptionCode.HO100323
+    (exception) =>
+      exception.path.join(".").endsWith(".NextHearingDate") &&
+      (exception.code === ExceptionCode.HO100102 || exception.code === ExceptionCode.HO100323)
   )
 
   const nextHearingLocationException = exceptions.some(
-    (code) => code === ExceptionCode.HO100200 || code === ExceptionCode.HO100300 || code === ExceptionCode.HO100322
+    (exception) =>
+      exception.path.join(".").endsWith(".NextResultSourceOrganisation.OrganisationUnitCode") &&
+      (exception.code === ExceptionCode.HO100200 ||
+        exception.code === ExceptionCode.HO100300 ||
+        exception.code === ExceptionCode.HO100322)
   )
+
   const getPleaStatus = (pleaCode: string | undefined) => {
     let pleaStatusDescription = pleaCode
     pleaStatus.forEach((plea) => {
