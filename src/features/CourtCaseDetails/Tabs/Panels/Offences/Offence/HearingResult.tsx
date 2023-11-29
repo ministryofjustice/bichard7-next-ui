@@ -135,6 +135,31 @@ export const HearingResult = ({
           )
         }
       >
+        {!!nextHearingLocationException ? (
+          <ExceptionFieldTableRow
+            badgeText="Editable Field"
+            label="Next hearing location"
+            value={result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode}
+          >
+            <HintText>{"Enter next hearing location"}</HintText>
+            <HintText>{"OU code, 6-7 characters"}</HintText>
+            <input
+              className="govuk-input"
+              min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
+              id={"next-hearing-location"}
+              name={"next-hearing-location"}
+              onChange={(event) => {
+                amendFn("nextSourceOrganisation")({
+                  resultIndex: resultIndex,
+                  offenceIndex: selectedOffenceIndex - 1,
+                  updatedValue: event.target.value
+                })
+              }}
+            />
+          </ExceptionFieldTableRow>
+        ) : (
+          <TableRow label={"Next hearing date"} value={formatDisplayedDate(String(result.NextHearingDate))} />
+        )}
         <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
       </ConditionalRender>
       <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearingDateException}>

@@ -1,6 +1,30 @@
 import nextHearingLocationExceptions from "../../../../test/test-data/NextHearingLocationExceptions.json"
 import dummyAho from "../../../../test/test-data/HO100102_1.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
+import CourtCase from "../../../../src/services/entities/CourtCase"
+
+const verifyUpdates = (args: {
+  expectedCourtCase: Partial<CourtCase>
+  updatedMessageHaveContent?: string[]
+  updatedMessageNotHaveContent?: string[]
+}) => {
+  cy.task("getCourtCaseById", { caseId: args.expectedCourtCase.errorId }).then((result) => {
+    const updatedCase = result as CourtCase
+    expect(updatedCase.errorStatus).equal(args.expectedCourtCase.errorStatus)
+
+    if (args.updatedMessageNotHaveContent) {
+      args.updatedMessageNotHaveContent.forEach((oldValue) => {
+        expect(updatedCase.updatedHearingOutcome).not.match(new RegExp(oldValue))
+      })
+    }
+
+    if (args.updatedMessageHaveContent) {
+      args.updatedMessageHaveContent.forEach((update) => {
+        expect(updatedCase.updatedHearingOutcome).match(new RegExp(update))
+      })
+    }
+  })
+}
 
 describe("NextHearingLocation", () => {
   before(() => {
@@ -69,7 +93,27 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
+    cy.get("#next-hearing-location").type("B01EF01")
+
+    cy.get("button").contains("Submit exception(s)").click()
+
+    cy.location().should((loc) => {
+      expect(loc.href).to.contain("?resubmitCase=true")
+    })
+
+    cy.get("H1").should("have.text", "Case details")
+    cy.contains("Notes").click()
+    const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
+    cy.contains(dateTimeRegex)
+    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
+    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+
+    verifyUpdates({
+      expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
+      updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100200">B@1EF$1</ds:OrganisationUnitCode>'],
+      updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>"]
+    })
   })
 
   it("Should be able to edit field if HO100300 is raised", () => {
@@ -79,7 +123,27 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B46AM03")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
+    cy.get("#next-hearing-location").type("B01EF01")
+
+    cy.get("button").contains("Submit exception(s)").click()
+
+    cy.location().should((loc) => {
+      expect(loc.href).to.contain("?resubmitCase=true")
+    })
+
+    cy.get("H1").should("have.text", "Case details")
+    cy.contains("Notes").click()
+    const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
+    cy.contains(dateTimeRegex)
+    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
+    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+
+    verifyUpdates({
+      expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
+      updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100300">B46AM03</ds:OrganisationUnitCode>'],
+      updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>"]
+    })
   })
 
   it("Should be able to edit field if HO100322 is raised", () => {
@@ -91,6 +155,26 @@ describe("NextHearingLocation", () => {
       .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
       .click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
+    cy.get("#next-hearing-location").type("B01EF01")
+
+    cy.get("button").contains("Submit exception(s)").click()
+
+    cy.location().should((loc) => {
+      expect(loc.href).to.contain("?resubmitCase=true")
+    })
+
+    cy.get("H1").should("have.text", "Case details")
+    cy.contains("Notes").click()
+    const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
+    cy.contains(dateTimeRegex)
+    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
+    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+
+    verifyUpdates({
+      expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
+      updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100322" />'],
+      updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>"]
+    })
   })
 })
