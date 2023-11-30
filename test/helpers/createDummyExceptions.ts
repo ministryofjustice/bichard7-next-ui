@@ -3,26 +3,26 @@ import sampleMany from "@stdlib/random-sample"
 import { sample as sampleOne } from "lodash"
 
 const possibleExceptions = [
-  "HO100321",
-  "HO100304",
-  "HO100314",
-  "HO100301",
-  "HO100310",
-  "HO100302",
-  "HO100402",
-  "HO100404",
-  "HO100212",
-  "HO100324",
-  "HO100206",
-  "HO100325",
+  "HO100101",
   "HO100104",
+  "HO100113",
+  "HO100206",
+  "HO100212",
+  "HO100234",
+  "HO100301",
+  "HO100302",
+  "HO100304",
+  "HO100306",
+  "HO100310",
+  "HO100314",
+  "HO100321",
   "HO100322",
   "HO100323",
-  "HO100306",
-  "HO100234",
-  "HO100101",
+  "HO100324",
   "HO100325",
-  "HO100113"
+  "HO100325",
+  "HO100402",
+  "HO100404"
 ]
 const fields = [
   "ArrestSummonsNumber",
