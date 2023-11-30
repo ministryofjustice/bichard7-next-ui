@@ -11,7 +11,7 @@ const useCurrentUserContext = () => {
   const currentUserContext = useContext(CurrentUserContext)
 
   if (!currentUserContext) {
-    throw new Error("currentUser has to be used within <CurrentUserContextType>")
+    throw new Error("currentUser has to be used within <CurrentUserContext.Provider>")
   }
 
   return currentUserContext

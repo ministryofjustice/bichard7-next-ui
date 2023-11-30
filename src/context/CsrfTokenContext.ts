@@ -10,7 +10,7 @@ const useCsrfToken = () => {
   const csrfTokenContext = useContext(CsrfTokenContext)
 
   if (!csrfTokenContext) {
-    throw new Error("csrfToken has to be used within <CsrfTokenContextType>")
+    throw new Error("csrfToken has to be used within <CsrfTokenContext.Provider>")
   }
 
   return csrfTokenContext

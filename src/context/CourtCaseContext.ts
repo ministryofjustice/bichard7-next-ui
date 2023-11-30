@@ -11,7 +11,7 @@ const useCourtCase = (): DisplayFullCourtCase => {
   const courtCaseContext = useContext(CourtCaseContext)
 
   if (!courtCaseContext) {
-    throw new Error("courtCase has to be used within <CourtCaseContextType>")
+    throw new Error("courtCase has to be used within <CourtCaseContext.Provider>")
   }
 
   return courtCaseContext.courtCase
