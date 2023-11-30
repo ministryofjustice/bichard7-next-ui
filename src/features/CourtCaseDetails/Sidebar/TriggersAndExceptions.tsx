@@ -1,5 +1,5 @@
 import ConditionalRender from "components/ConditionalRender"
-import { useCourtCaseContext } from "context/CourtCaseContext"
+import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUserContext } from "context/CurrentUserContext"
 import { Tabs } from "govuk-react"
 import { useState } from "react"
@@ -47,7 +47,7 @@ const TabList = styled(Tabs.List)`
 
 const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, previousPath, amendments }: Props) => {
   const currentUser = useCurrentUserContext().currentUser
-  const courtCase = useCourtCaseContext().courtCase
+  const courtCase = useCourtCase()
 
   const availableTabs = [Permission.Triggers, Permission.Exceptions].filter((tab) => currentUser.hasAccessTo[tab])
   const defaultTab =

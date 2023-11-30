@@ -1,4 +1,4 @@
-import { useCourtCaseContext } from "context/CourtCaseContext"
+import { useCourtCase } from "context/CourtCaseContext"
 import { GridCol, GridRow } from "govuk-react"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
@@ -43,7 +43,7 @@ const sideBarWidth = "33%"
 const contentWidth = "67%"
 
 const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAndSubmit, previousPath }) => {
-  const courtCase = useCourtCaseContext().courtCase
+  const courtCase = useCourtCase()
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()

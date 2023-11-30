@@ -1,7 +1,7 @@
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
-import { useCourtCaseContext } from "context/CourtCaseContext"
+import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
 import { Button } from "govuk-react"
 import { usePathname } from "next/navigation"
@@ -52,7 +52,7 @@ const SeparatorLine = styled.div`
 
 const Exceptions = ({ onNavigate, canResolveAndSubmit, previousPath, amendments }: Props) => {
   const classes = useStyles()
-  const courtCase = useCourtCaseContext().courtCase
+  const courtCase = useCourtCase()
   const pncExceptions = courtCase.aho.Exceptions.filter(({ code }) => isPncException(code))
   const otherExceptions = courtCase.aho.Exceptions.filter(({ code }) => !isPncException(code))
   const csrfTokenContext = useCsrfToken()

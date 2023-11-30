@@ -1,4 +1,4 @@
-import { useCourtCaseContext } from "context/CourtCaseContext"
+import { useCourtCase } from "context/CourtCaseContext"
 import { createUseStyles } from "react-jss"
 import { gdsLightGrey } from "utils/colours"
 import { formatDisplayedDate } from "utils/formattedDate"
@@ -33,7 +33,7 @@ const useStyles = createUseStyles({
 
 const CourtCaseDetailsSummaryBox = () => {
   const classes = useStyles()
-  const courtCase = useCourtCaseContext().courtCase
+  const courtCase = useCourtCase()
 
   const formattedHearingDate = formatDisplayedDate(
     courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString() || ""

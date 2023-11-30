@@ -3,7 +3,7 @@ import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/t
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
-import { useCourtCaseContext } from "context/CourtCaseContext"
+import { useCourtCase } from "context/CourtCaseContext"
 import { Heading, Input, Table } from "govuk-react"
 import { isEqual } from "lodash"
 import { createUseStyles } from "react-jss"
@@ -101,7 +101,7 @@ export const OffenceDetails = ({
   amendments,
   amendFn
 }: OffenceDetailsProps) => {
-  const courtCase = useCourtCaseContext().courtCase
+  const courtCase = useCourtCase()
 
   const classes = useStyles()
   const offenceCode = getOffenceCode(offence)

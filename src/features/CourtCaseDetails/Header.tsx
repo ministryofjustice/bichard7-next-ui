@@ -6,7 +6,7 @@ import LinkButton from "components/LinkButton"
 import LockedTag from "components/LockedTag"
 import ResolvedTag from "components/ResolvedTag"
 import SecondaryButton from "components/SecondaryButton"
-import { useCourtCaseContext } from "context/CourtCaseContext"
+import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
 import { useCurrentUserContext } from "context/CurrentUserContext"
 import { Button, Heading } from "govuk-react"
@@ -60,7 +60,7 @@ const Header: React.FC<Props> = ({ canReallocate, previousPath }: Props) => {
   const classes = useStyles()
   const csrfTokenContext = useCsrfToken()
   const currentUser = useCurrentUserContext().currentUser
-  const courtCase = useCourtCaseContext().courtCase
+  const courtCase = useCourtCase()
 
   const leaveAndUnlockParams = getUnlockPath(courtCase)
 

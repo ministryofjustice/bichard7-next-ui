@@ -1,6 +1,6 @@
 import ActionLink from "components/ActionLink"
 import ConditionalRender from "components/ConditionalRender"
-import { useCourtCaseContext } from "context/CourtCaseContext"
+import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
 import { useCurrentUserContext } from "context/CurrentUserContext"
 import { Button, GridCol, GridRow } from "govuk-react"
@@ -39,7 +39,7 @@ const useStyles = createUseStyles({
 
 const TriggersList = ({ onNavigate }: Props) => {
   const currentUser = useCurrentUserContext().currentUser
-  const courtCase = useCourtCaseContext().courtCase
+  const courtCase = useCourtCase()
 
   const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])

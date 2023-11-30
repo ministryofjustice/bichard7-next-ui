@@ -1,7 +1,7 @@
 import ConditionalRender from "components/ConditionalRender"
 import DateTime from "components/DateTime"
 import NotesFilterOptions from "components/NotesFilterOptions"
-import { useCourtCaseContext } from "context/CourtCaseContext"
+import { useCourtCase } from "context/CourtCaseContext"
 import { Paragraph, Table } from "govuk-react"
 import { useState } from "react"
 import type NotesViewOption from "types/NotesViewOption"
@@ -35,7 +35,7 @@ const filterNotes = (notes: DisplayNote[], viewOption?: NotesViewOption) => {
 }
 
 export const Notes = ({ className, isLockedByCurrentUser }: NotesProps) => {
-  const courtCase = useCourtCaseContext().courtCase
+  const courtCase = useCourtCase()
   const notes: DisplayNote[] = courtCase.notes
 
   const [viewOption, setViewOption] = useState<NotesViewOption | undefined>()

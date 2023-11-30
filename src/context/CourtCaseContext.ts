@@ -7,15 +7,15 @@ interface CourtCaseContextType {
 
 const CourtCaseContext = createContext<CourtCaseContextType | null>(null)
 
-const useCourtCaseContext = () => {
+const useCourtCase = () => {
   const courtCaseContext = useContext(CourtCaseContext)
 
   if (!courtCaseContext) {
     throw new Error("courtCase has to be used within <CourtCaseContextType>")
   }
 
-  return courtCaseContext
+  return courtCaseContext.courtCase
 }
 
-export { CourtCaseContext, useCourtCaseContext }
+export { CourtCaseContext, useCourtCase }
 export type { CourtCaseContextType }
