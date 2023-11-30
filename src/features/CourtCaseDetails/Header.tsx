@@ -58,7 +58,7 @@ const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
 const Header: React.FC<Props> = ({ canReallocate, previousPath }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
-  const csrfTokenContext = useCsrfToken()
+  const csrfToken = useCsrfToken()
   const currentUser = useCurrentUserContext().currentUser
   const courtCase = useCourtCase()
 
@@ -169,7 +169,7 @@ const Header: React.FC<Props> = ({ canReallocate, previousPath }: Props) => {
               {"Leave and lock"}
             </Button>
           </a>
-          <Form method="post" action={leaveAndUnlockUrl} csrfToken={csrfTokenContext.csrfToken}>
+          <Form method="post" action={leaveAndUnlockUrl} csrfToken={csrfToken}>
             <Button id="leave-and-unlock" className={classes.button} type="submit">
               {"Leave and unlock"}
             </Button>

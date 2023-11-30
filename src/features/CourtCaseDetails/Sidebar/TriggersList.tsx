@@ -49,7 +49,7 @@ const TriggersList = ({ onNavigate }: Props) => {
   const hasTriggers = triggers.length > 0
   const hasUnresolvedTriggers = triggers.filter((t) => t.status === "Unresolved").length > 0
   const triggersLockedByAnotherUser = triggersAreLockedByAnotherUser(courtCase, currentUser.username)
-  const csrfTokenContext = useCsrfToken()
+  const csrfToken = useCsrfToken()
 
   const setTriggerSelection = ({ target: checkbox }: ChangeEvent<HTMLInputElement>) => {
     const triggerId = parseInt(checkbox.value, 10)
@@ -82,7 +82,7 @@ const TriggersList = ({ onNavigate }: Props) => {
   }
 
   return (
-    <Form method="post" action={resolveTriggerUrl(selectedTriggerIds)} csrfToken={csrfTokenContext.csrfToken}>
+    <Form method="post" action={resolveTriggerUrl(selectedTriggerIds)} csrfToken={csrfToken}>
       {triggers.length === 0 && "There are no triggers for this case."}
       <ConditionalRender isRendered={hasUnresolvedTriggers && !triggersLockedByAnotherUser}>
         <GridRow id={"select-all-triggers"} className={classes.selectAllContainer}>

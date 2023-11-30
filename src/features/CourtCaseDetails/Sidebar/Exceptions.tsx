@@ -55,7 +55,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, previousPath, amendments 
   const courtCase = useCourtCase()
   const pncExceptions = courtCase.aho.Exceptions.filter(({ code }) => isPncException(code))
   const otherExceptions = courtCase.aho.Exceptions.filter(({ code }) => !isPncException(code))
-  const csrfTokenContext = useCsrfToken()
+  const csrfToken = useCsrfToken()
 
   const router = useRouter()
 
@@ -85,7 +85,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, previousPath, amendments 
 
       <ConditionalRender isRendered={canResolveAndSubmit && courtCase.aho.Exceptions.length > 0}>
         <div className={classes.buttonContainer}>
-          <Form method="post" action={submitCasePath} csrfToken={csrfTokenContext.csrfToken}>
+          <Form method="post" action={submitCasePath} csrfToken={csrfToken}>
             <input type="hidden" name="amendments" value={JSON.stringify(amendments)} />
             <Button id="submit" type="submit">
               {"Submit exception(s)"}

@@ -6,14 +6,14 @@ interface CsrfTokenContextType {
 
 const CsrfTokenContext = createContext<CsrfTokenContextType | null>(null)
 
-const useCsrfToken = () => {
+const useCsrfToken = (): string => {
   const csrfTokenContext = useContext(CsrfTokenContext)
 
   if (!csrfTokenContext) {
     throw new Error("csrfToken has to be used within <CsrfTokenContext.Provider>")
   }
 
-  return csrfTokenContext
+  return csrfTokenContext.csrfToken
 }
 
 export { CsrfTokenContext, useCsrfToken }
