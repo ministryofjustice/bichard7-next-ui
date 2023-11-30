@@ -8,7 +8,7 @@ import ResolvedTag from "components/ResolvedTag"
 import SecondaryButton from "components/SecondaryButton"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
-import { useCurrentUserContext } from "context/CurrentUserContext"
+import { useCurrentUser } from "context/CurrentUserContext"
 import { usePreviousPath } from "context/PreviousPathContext"
 import { Button, Heading } from "govuk-react"
 import { usePathname } from "next/navigation"
@@ -59,7 +59,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
   const csrfToken = useCsrfToken()
-  const currentUser = useCurrentUserContext().currentUser
+  const currentUser = useCurrentUser()
   const courtCase = useCourtCase()
   const previousPath = usePreviousPath()
 

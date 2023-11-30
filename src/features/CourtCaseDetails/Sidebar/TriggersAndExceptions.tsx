@@ -1,6 +1,5 @@
 import ConditionalRender from "components/ConditionalRender"
 import { useCourtCase } from "context/CourtCaseContext"
-import { useCurrentUserContext } from "context/CurrentUserContext"
 import { Tabs } from "govuk-react"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
@@ -10,6 +9,7 @@ import Permission from "types/Permission"
 import { AmendmentRecords } from "../../../types/Amendments"
 import Exceptions from "./Exceptions"
 import TriggersList from "./TriggersList"
+import { useCurrentUser } from "context/CurrentUserContext"
 
 const useStyles = createUseStyles({
   sideBar: {
@@ -45,7 +45,7 @@ const TabList = styled(Tabs.List)`
 `
 
 const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
-  const currentUser = useCurrentUserContext().currentUser
+  const currentUser = useCurrentUser()
   const courtCase = useCourtCase()
 
   const availableTabs = [Permission.Triggers, Permission.Exceptions].filter((tab) => currentUser.hasAccessTo[tab])

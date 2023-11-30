@@ -2,7 +2,6 @@ import ActionLink from "components/ActionLink"
 import ConditionalRender from "components/ConditionalRender"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
-import { useCurrentUserContext } from "context/CurrentUserContext"
 import { Button, GridCol, GridRow } from "govuk-react"
 import { sortBy } from "lodash"
 import { useRouter } from "next/router"
@@ -14,6 +13,7 @@ import { triggersAreLockedByAnotherUser } from "utils/caseLocks"
 import Form from "../../../components/Form"
 import LockedTag from "../../../components/LockedTag"
 import Trigger from "./Trigger"
+import { useCurrentUser } from "context/CurrentUserContext"
 
 interface Props {
   onNavigate: NavigationHandler
@@ -38,7 +38,7 @@ const useStyles = createUseStyles({
 })
 
 const TriggersList = ({ onNavigate }: Props) => {
-  const currentUser = useCurrentUserContext().currentUser
+  const currentUser = useCurrentUser()
   const courtCase = useCourtCase()
 
   const classes = useStyles()
