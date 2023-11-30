@@ -9,6 +9,7 @@ import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/pl
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
+import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import {
   AmendmentKeys,
   AmendmentRecords,
@@ -158,18 +159,11 @@ export const HearingResult = ({
           >
             <Label>{"Enter next hearing location"}</Label>
             <HintText>{"OU code, 6-7 characters"}</HintText>
-            <input
-              className="govuk-input"
-              id={"next-hearing-location"}
-              name={"next-hearing-location"}
+            <OrganisationUnitTypeahead
               value={getNextHearingLocationValue(amendments, selectedOffenceIndex - 1, resultIndex)}
-              onChange={(event) => {
-                amendFn("nextSourceOrganisation")({
-                  resultIndex: resultIndex,
-                  offenceIndex: selectedOffenceIndex - 1,
-                  updatedValue: event.target.value
-                })
-              }}
+              amendFn={amendFn}
+              resultIndex={resultIndex}
+              offenceIndex={selectedOffenceIndex - 1}
             />
           </ExceptionFieldTableRow>
         ) : (

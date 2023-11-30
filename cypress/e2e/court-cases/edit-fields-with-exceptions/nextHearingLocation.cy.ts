@@ -101,7 +101,7 @@ describe("NextHearingLocation", () => {
     cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B46AM03")
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
-    cy.get("#next-hearing-location").type("B01EF01")
+    cy.get("#next-hearing-location").type("B46DB00")
 
     cy.get("button").contains("Submit exception(s)").click()
 
@@ -113,13 +113,13 @@ describe("NextHearingLocation", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
+    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B46DB00")
     cy.contains("Bichard01: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
       updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100300">B46AM03</ds:OrganisationUnitCode>'],
-      updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>"]
+      updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B46DB00</ds:OrganisationUnitCode>"]
     })
   })
 
@@ -133,7 +133,7 @@ describe("NextHearingLocation", () => {
       .click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "")
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
-    cy.get("#next-hearing-location").type("B01EF01")
+    cy.get("#next-hearing-location").type("B01EF00")
 
     cy.get("button").contains("Submit exception(s)").click()
 
@@ -145,7 +145,7 @@ describe("NextHearingLocation", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
+    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF00")
     cy.contains("Bichard01: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
@@ -167,7 +167,7 @@ describe("NextHearingLocation", () => {
     cy.get(".govuk-link")
       .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
       .click()
-    cy.get("#next-hearing-location").type("B01EF01")
+    cy.get("#next-hearing-location").type("B46DB00")
 
     cy.get("button").contains("Submit exception(s)").click()
 
@@ -176,7 +176,7 @@ describe("NextHearingLocation", () => {
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
     cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF00")
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
+    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B46DB00")
     cy.contains("Bichard01: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
@@ -186,8 +186,8 @@ describe("NextHearingLocation", () => {
         '<ds:OrganisationUnitCode Error="HO100322" />'
       ],
       updatedMessageHaveContent: [
-        "<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>",
-        "<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>"
+        "<ds:OrganisationUnitCode>B01EF00</ds:OrganisationUnitCode>",
+        "<ds:OrganisationUnitCode>B46DB00</ds:OrganisationUnitCode>"
       ]
     })
   })
