@@ -18,7 +18,6 @@ import { Offences } from "./Tabs/Panels/Offences/Offences"
 interface Props {
   isLockedByCurrentUser: boolean
   canResolveAndSubmit: boolean
-  previousPath: string
 }
 
 const useStyles = createUseStyles({
@@ -42,7 +41,7 @@ const useStyles = createUseStyles({
 const sideBarWidth = "33%"
 const contentWidth = "67%"
 
-const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAndSubmit, previousPath }) => {
+const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAndSubmit }) => {
   const courtCase = useCourtCase()
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
@@ -124,7 +123,6 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
           <TriggersAndExceptions
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}
-            previousPath={previousPath}
             amendments={amendments}
           />
         </GridCol>

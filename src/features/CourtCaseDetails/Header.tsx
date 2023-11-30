@@ -9,6 +9,7 @@ import SecondaryButton from "components/SecondaryButton"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
 import { useCurrentUserContext } from "context/CurrentUserContext"
+import { usePreviousPath } from "context/PreviousPathContext"
 import { Button, Heading } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
@@ -26,7 +27,6 @@ import Form from "../../components/Form"
 
 interface Props {
   canReallocate: boolean
-  previousPath: string
 }
 
 type lockCheckFn = (courtCase: DisplayFullCourtCase, username: string) => boolean
@@ -55,12 +55,13 @@ const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
   return params
 }
 
-const Header: React.FC<Props> = ({ canReallocate, previousPath }: Props) => {
+const Header: React.FC<Props> = ({ canReallocate }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
   const csrfToken = useCsrfToken()
   const currentUser = useCurrentUserContext().currentUser
   const courtCase = useCourtCase()
+  const previousPath = usePreviousPath()
 
   const leaveAndUnlockParams = getUnlockPath(courtCase)
 

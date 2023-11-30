@@ -27,7 +27,6 @@ const useStyles = createUseStyles({
 interface Props {
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
-  previousPath: string
   amendments: AmendmentRecords
 }
 
@@ -45,7 +44,7 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, previousPath, amendments }: Props) => {
+const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
   const currentUser = useCurrentUserContext().currentUser
   const courtCase = useCourtCase()
 
@@ -103,12 +102,7 @@ const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, previousPath, 
               selected={selectedTab === Permission.Exceptions}
               className="moj-tab-panel-exceptions"
             >
-              <Exceptions
-                onNavigate={onNavigate}
-                canResolveAndSubmit={canResolveAndSubmit}
-                previousPath={previousPath}
-                amendments={amendments}
-              />
+              <Exceptions onNavigate={onNavigate} canResolveAndSubmit={canResolveAndSubmit} amendments={amendments} />
             </Tabs.Panel>
           </ConditionalRender>
         </Tabs>

@@ -3,6 +3,7 @@ import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
+import { usePreviousPath } from "context/PreviousPathContext"
 import { Button } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
@@ -21,7 +22,6 @@ const isPncException = (code: ExceptionCode) =>
 interface Props {
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
-  previousPath: string
   amendments: AmendmentRecords
 }
 
@@ -50,12 +50,13 @@ const SeparatorLine = styled.div`
   }
 `
 
-const Exceptions = ({ onNavigate, canResolveAndSubmit, previousPath, amendments }: Props) => {
+const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
   const classes = useStyles()
   const courtCase = useCourtCase()
   const pncExceptions = courtCase.aho.Exceptions.filter(({ code }) => isPncException(code))
   const otherExceptions = courtCase.aho.Exceptions.filter(({ code }) => !isPncException(code))
   const csrfToken = useCsrfToken()
+  const previousPath = usePreviousPath()
 
   const router = useRouter()
 

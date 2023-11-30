@@ -4,6 +4,7 @@ import Layout from "components/Layout"
 import { CourtCaseContext, CourtCaseContextType } from "context/CourtCaseContext"
 import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
 import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
+import { PreviousPathContext, PreviousPathContextType } from "context/PreviousPathContext"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
 import CourtCaseDetailsSummaryBox from "features/CourtCaseDetails/CourtCaseDetailsSummaryBox"
 import Header from "features/CourtCaseDetails/Header"
@@ -218,6 +219,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
   const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
   const [courtCaseContext] = useState<CourtCaseContextType>({ courtCase })
+  const [previousPathContext] = useState<PreviousPathContextType>({ previousPath })
 
   return (
     <>
@@ -228,31 +230,32 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
       <CsrfTokenContext.Provider value={csrfTokenContext}>
         <CurrentUserContext.Provider value={currentUserContext}>
           <CourtCaseContext.Provider value={courtCaseContext}>
-            <Layout
-              bichardSwitch={{
-                display: true,
-                href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}`,
-                displaySwitchingSurveyFeedback
-              }}
-            >
-              <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
-                <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
-                  <div className="govuk-tag">{"Attention:"}</div>
-                  <div className={`${classes.attentionBanner} govuk-tag`}>
-                    {
-                      "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
-                    }
+            <PreviousPathContext.Provider value={previousPathContext}>
+              <Layout
+                bichardSwitch={{
+                  display: true,
+                  href: `/bichard-ui/SelectRecord?unstick=true&error_id=${courtCase.errorId}`,
+                  displaySwitchingSurveyFeedback
+                }}
+              >
+                <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
+                  <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
+                    <div className="govuk-tag">{"Attention:"}</div>
+                    <div className={`${classes.attentionBanner} govuk-tag`}>
+                      {
+                        "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
+                      }
+                    </div>
                   </div>
-                </div>
-              </ConditionalDisplay>
-              <Header previousPath={previousPath} canReallocate={canReallocate} />
-              <CourtCaseDetailsSummaryBox />
-              <CourtCaseDetails
-                isLockedByCurrentUser={isLockedByCurrentUser}
-                canResolveAndSubmit={canResolveAndSubmit}
-                previousPath={previousPath}
-              />
-            </Layout>
+                </ConditionalDisplay>
+                <Header canReallocate={canReallocate} />
+                <CourtCaseDetailsSummaryBox />
+                <CourtCaseDetails
+                  isLockedByCurrentUser={isLockedByCurrentUser}
+                  canResolveAndSubmit={canResolveAndSubmit}
+                />
+              </Layout>
+            </PreviousPathContext.Provider>
           </CourtCaseContext.Provider>
         </CurrentUserContext.Provider>
       </CsrfTokenContext.Provider>
