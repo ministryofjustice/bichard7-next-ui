@@ -7,7 +7,7 @@ interface CourtCaseContextType {
 
 const CourtCaseContext = createContext<CourtCaseContextType | null>(null)
 
-const useCourtCase = () => {
+const useCourtCase = (): DisplayFullCourtCase => {
   const courtCaseContext = useContext(CourtCaseContext)
 
   if (!courtCaseContext) {
