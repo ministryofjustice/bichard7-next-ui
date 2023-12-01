@@ -6,8 +6,10 @@ import LinkButton from "components/LinkButton"
 import LockedTag from "components/LockedTag"
 import ResolvedTag from "components/ResolvedTag"
 import SecondaryButton from "components/SecondaryButton"
+import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
-import { useCurrentUserContext } from "context/CurrentUserContext"
+import { useCurrentUser } from "context/CurrentUserContext"
+import { usePreviousPath } from "context/PreviousPathContext"
 import { Button, Heading } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
@@ -24,9 +26,7 @@ import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 import Form from "../../components/Form"
 
 interface Props {
-  courtCase: DisplayFullCourtCase
   canReallocate: boolean
-  previousPath: string
 }
 
 type lockCheckFn = (courtCase: DisplayFullCourtCase, username: string) => boolean
@@ -55,11 +55,13 @@ const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
   return params
 }
 
-const Header: React.FC<Props> = ({ courtCase, canReallocate, previousPath }: Props) => {
+const Header: React.FC<Props> = ({ canReallocate }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
-  const csrfTokenContext = useCsrfToken()
-  const currentUser = useCurrentUserContext().currentUser
+  const csrfToken = useCsrfToken()
+  const currentUser = useCurrentUser()
+  const courtCase = useCourtCase()
+  const previousPath = usePreviousPath()
 
   const leaveAndUnlockParams = getUnlockPath(courtCase)
 
@@ -168,7 +170,7 @@ const Header: React.FC<Props> = ({ courtCase, canReallocate, previousPath }: Pro
               {"Leave and lock"}
             </Button>
           </a>
-          <Form method="post" action={leaveAndUnlockUrl} csrfToken={csrfTokenContext.csrfToken}>
+          <Form method="post" action={leaveAndUnlockUrl} csrfToken={csrfToken}>
             <Button id="leave-and-unlock" className={classes.button} type="submit">
               {"Leave and unlock"}
             </Button>

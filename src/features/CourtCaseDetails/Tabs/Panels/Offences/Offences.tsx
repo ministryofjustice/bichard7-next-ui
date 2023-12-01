@@ -1,9 +1,8 @@
 import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { OffenceDetails } from "./Offence/OffenceDetails"
-import { OffencesList } from "./OffencesList/OffencesList"
-import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../../types/Amendments"
 import { Exception } from "../../../../../types/exceptions"
+import { OffenceDetails } from "./Offence/OffenceDetails"
+import { OffencesList } from "./OffencesList/OffencesList"
 
 interface OffencesProps {
   className: string
@@ -11,7 +10,6 @@ interface OffencesProps {
   onOffenceSelected: (offenceIndex?: number) => void
   selectedOffenceIndex?: number
   exceptions: Exception[]
-  courtCase: DisplayFullCourtCase
   amendments: AmendmentRecords
   amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
@@ -22,7 +20,6 @@ export const Offences = ({
   onOffenceSelected,
   selectedOffenceIndex,
   exceptions,
-  courtCase,
   amendments,
   amendFn
 }: OffencesProps) => {
@@ -37,7 +34,6 @@ export const Offences = ({
         onPreviousClick={() => onOffenceSelected(selectedOffenceIndex - 1)}
         selectedOffenceIndex={selectedOffenceIndex}
         exceptions={exceptions}
-        courtCase={courtCase}
         amendments={amendments}
         amendFn={amendFn}
       />

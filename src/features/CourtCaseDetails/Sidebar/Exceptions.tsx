@@ -1,8 +1,9 @@
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
+import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
+import { usePreviousPath } from "context/PreviousPathContext"
 import { Button } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
@@ -19,10 +20,8 @@ const isPncException = (code: ExceptionCode) =>
   [ExceptionCode.HO100302, ExceptionCode.HO100314, ExceptionCode.HO100402, ExceptionCode.HO100404].includes(code)
 
 interface Props {
-  aho: AnnotatedHearingOutcome
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
-  previousPath: string
   amendments: AmendmentRecords
 }
 
@@ -51,11 +50,13 @@ const SeparatorLine = styled.div`
   }
 `
 
-const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath, amendments }: Props) => {
+const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
   const classes = useStyles()
-  const pncExceptions = aho.Exceptions.filter(({ code }) => isPncException(code))
-  const otherExceptions = aho.Exceptions.filter(({ code }) => !isPncException(code))
-  const csrfTokenContext = useCsrfToken()
+  const courtCase = useCourtCase()
+  const pncExceptions = courtCase.aho.Exceptions.filter(({ code }) => isPncException(code))
+  const otherExceptions = courtCase.aho.Exceptions.filter(({ code }) => !isPncException(code))
+  const csrfToken = useCsrfToken()
+  const previousPath = usePreviousPath()
 
   const router = useRouter()
 
@@ -71,10 +72,10 @@ const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath, amendm
 
   return (
     <>
-      {aho.Exceptions.length === 0 && "There are no exceptions for this case."}
+      {courtCase.aho.Exceptions.length === 0 && "There are no exceptions for this case."}
 
       {pncExceptions.map(({ code }, index) => (
-        <PncException key={`exception_${index}`} code={code} message={aho.PncErrorMessage} />
+        <PncException key={`exception_${index}`} code={code} message={courtCase.aho.PncErrorMessage} />
       ))}
 
       {pncExceptions.length > 0 && otherExceptions.length > 0 && <SeparatorLine />}
@@ -83,9 +84,9 @@ const Exceptions = ({ aho, onNavigate, canResolveAndSubmit, previousPath, amendm
         <DefaultException key={`exception_${index}`} path={path} code={code} onNavigate={onNavigate} />
       ))}
 
-      <ConditionalRender isRendered={canResolveAndSubmit && aho.Exceptions.length > 0}>
+      <ConditionalRender isRendered={canResolveAndSubmit && courtCase.aho.Exceptions.length > 0}>
         <div className={classes.buttonContainer}>
-          <Form method="post" action={submitCasePath} csrfToken={csrfTokenContext.csrfToken}>
+          <Form method="post" action={submitCasePath} csrfToken={csrfToken}>
             <input type="hidden" name="amendments" value={JSON.stringify(amendments)} />
             <Button id="submit" type="submit">
               {"Submit exception(s)"}

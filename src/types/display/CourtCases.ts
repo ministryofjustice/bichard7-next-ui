@@ -1,3 +1,4 @@
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import CourtCase from "services/entities/CourtCase"
 import { DisplayNote } from "./Notes"
 import { DisplayTrigger } from "./Triggers"
@@ -39,4 +40,5 @@ export type DisplayFullCourtCase = Pick<CourtCase, FieldsForDisplayFullCourtCase
   triggers: DisplayTrigger[]
   resolutionTimestamp: string | null
   phase?: number | null
+  aho: AnnotatedHearingOutcome
 }
