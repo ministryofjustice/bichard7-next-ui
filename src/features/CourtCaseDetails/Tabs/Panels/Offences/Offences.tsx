@@ -1,5 +1,4 @@
 import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../../types/Amendments"
 import { Exception } from "../../../../../types/exceptions"
 import { OffenceDetails } from "./Offence/OffenceDetails"
@@ -11,7 +10,6 @@ interface OffencesProps {
   onOffenceSelected: (offenceIndex?: number) => void
   selectedOffenceIndex?: number
   exceptions: Exception[]
-  courtCase: DisplayFullCourtCase
   amendments: AmendmentRecords
   amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
