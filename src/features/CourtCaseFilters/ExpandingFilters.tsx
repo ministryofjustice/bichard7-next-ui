@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import ConditionalDisplay from "components/ConditionalDisplay"
-import ConditionalRender from "components/ConditionalRender"
 import { ReactNode, useState } from "react"
 import { createUseStyles } from "react-jss"
 import { blue } from "../../utils/colours"
@@ -50,10 +49,9 @@ const DownArrow: React.FC = () => (
 interface Props {
   filterName: string
   children: ReactNode
-  hideChildren?: boolean
 }
 
-const ExpandingFilters: React.FC<Props> = ({ filterName, children, hideChildren }: Props) => {
+const ExpandingFilters: React.FC<Props> = ({ filterName, children }: Props) => {
   const [caseTypeIsVisible, setCaseTypeVisible] = useState(true)
   const classes = useStyles()
   return (
@@ -73,11 +71,7 @@ const ExpandingFilters: React.FC<Props> = ({ filterName, children, hideChildren 
           </legend>
         </div>
       </div>
-      {hideChildren ? (
-        <ConditionalDisplay isDisplayed={caseTypeIsVisible}>{children}</ConditionalDisplay>
-      ) : (
-        <ConditionalRender isRendered={caseTypeIsVisible}>{children}</ConditionalRender>
-      )}
+      <ConditionalDisplay isDisplayed={caseTypeIsVisible}>{children}</ConditionalDisplay>
     </fieldset>
   )
 }

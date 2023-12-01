@@ -19,7 +19,7 @@ function visitBasePathAndShowFilters() {
 
 function collapseFilterSection(sectionToBeCollapsed: string, optionToBeCollapsed: string) {
   cy.contains(exactMatch(sectionToBeCollapsed), { matchCase: true }).parent().parent().parent().find("button").click()
-  cy.get(optionToBeCollapsed).should("not.exist")
+  cy.get(optionToBeCollapsed).should("not.be.visible")
 }
 
 function expandFilterSection(sectionToBeExpanded: string, optionToBeExpanded: string) {

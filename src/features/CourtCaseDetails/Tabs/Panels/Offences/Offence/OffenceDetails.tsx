@@ -18,8 +18,8 @@ import { StartDate } from "./StartDate"
 import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
 import ErrorPromptMessage from "../../../../../../components/ErrorPromptMessage"
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../../../types/Amendments"
+import { Exception } from "../../../../../../types/exceptions"
 
-type Exception = { code: ExceptionCode; path: (string | number)[] }
 interface OffenceDetailsProps {
   className: string
   offence: Offence
@@ -226,9 +226,9 @@ export const OffenceDetails = ({
             <HearingResult
               key={index}
               result={result}
-              exceptions={unresolvedExceptionsOnThisOffence
-                .filter((resultException) => resultException.path.join(">").startsWith(thisResultPath(index)))
-                .map((e) => e.code)}
+              exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>
+                resultException.path.join(">").startsWith(thisResultPath(index))
+              )}
               selectedOffenceIndex={selectedOffenceIndex}
               resultIndex={index}
               amendments={amendments}

@@ -1,4 +1,3 @@
-import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import Pagination from "components/Pagination"
 import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
@@ -315,9 +314,7 @@ const Home: NextPage<Props> = (props) => {
                 <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />
               }
               paginationBottom={
-                <ConditionalDisplay isDisplayed={courtCases.length > 0}>
-                  <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
-                </ConditionalDisplay>
+                <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
               }
             />
           </Layout>

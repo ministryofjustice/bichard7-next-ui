@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
 import CourtCaseDetails from "features/CourtCaseDetails/CourtCaseDetails"
@@ -39,6 +38,7 @@ import Permission from "../../../types/Permission"
 import parseHearingOutcome from "../../../utils/parseHearingOutcome"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
 import { CurrentUserContextType, CurrentUserContext } from "context/CurrentUserContext"
+import ConditionalRender from "../../../components/ConditionalRender"
 
 const allIssuesCleared = (courtCase: CourtCase, triggerToResolve: number[], user: User) => {
   const triggersResolved = user.hasAccessTo[Permission.Triggers]
@@ -239,7 +239,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
               displaySwitchingSurveyFeedback
             }}
           >
-            <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
+            <ConditionalRender isRendered={courtCase.phase !== 1}>
               <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
                 <div className="govuk-tag">{"Attention:"}</div>
                 <div className={`${classes.attentionBanner} govuk-tag`}>
@@ -248,7 +248,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
                   }
                 </div>
               </div>
-            </ConditionalDisplay>
+            </ConditionalRender>
             <Header previousPath={previousPath} courtCase={courtCase} canReallocate={canReallocate} />
             <CourtCaseDetailsSummaryBox
               asn={courtCase.asn}

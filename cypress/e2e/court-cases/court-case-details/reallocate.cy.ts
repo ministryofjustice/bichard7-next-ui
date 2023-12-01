@@ -235,7 +235,7 @@ describe("Case details", () => {
 
     cy.contains(
       "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
-    ).should("not.be.visible")
+    ).should("not.exist")
 
     cy.visit("/bichard/court-cases/1")
 
