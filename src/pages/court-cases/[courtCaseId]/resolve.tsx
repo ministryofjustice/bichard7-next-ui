@@ -187,7 +187,7 @@ const ResolveCourtCasePage: NextPage<Props> = ({
                       touched: !!reasonTextError
                     }}
                   >
-                    {}
+                    {""}
                   </TextArea>
                 </FormGroup>
 

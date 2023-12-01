@@ -63,7 +63,7 @@ const AddNoteForm: React.FC<Props> = ({ isLockedByCurrentUser }: Props) => {
               touched: showError
             }}
           >
-            {}
+            {""}
           </TextArea>
           <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
         </FormGroup>
