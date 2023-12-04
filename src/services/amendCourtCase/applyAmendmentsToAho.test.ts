@@ -226,7 +226,7 @@ describe("applyAmendmentsToAho", () => {
       nextHearingDate: [
         {
           offenceIndex,
-          updatedValue: new Date(2022, 8, 24),
+          updatedValue: "2022-08-24",
           resultIndex: 0
         }
       ]

@@ -43,14 +43,19 @@ const getNextHearingDateValue = (
   amendmentRecords: AmendmentRecords,
   offenceIndex: number,
   resultIndex: number
-): string => {
+): string | undefined => {
+  const validDateFormat = /^20\d{2}-\d{2}-\d{2}$/
   const nextHearingDateAmendment =
     amendmentRecords?.nextHearingDate &&
     (amendmentRecords.nextHearingDate as UpdatedNextHearingDate[]).find(
       (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
     )?.updatedValue
 
-  return nextHearingDateAmendment ? formatFormInputDateString(new Date(nextHearingDateAmendment)) : ""
+  if (!nextHearingDateAmendment) {
+    return ""
+  }
+
+  return validDateFormat.test(nextHearingDateAmendment) ? nextHearingDateAmendment : undefined
 }
 
 const getNextHearingLocationValue = (
