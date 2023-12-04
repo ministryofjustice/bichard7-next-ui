@@ -18,7 +18,7 @@ describe("amend fresult variable text", () => {
 
   it("amend valid next hearing date to defendant result", () => {
     const offenceIndex = -1
-    const updatedValue = new Date(2022, 8, 24)
+    const updatedValue = "2022-08-24"
     const resultIndex = 0
 
     expect(aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Result?.NextHearingDate).toBe(undefined)
@@ -33,7 +33,7 @@ describe("amend fresult variable text", () => {
 
   it("amend valid next hearing date to offender result", () => {
     const offenceIndex = 0
-    const updatedValue = new Date(2022, 8, 24)
+    const updatedValue = "2022-08-24"
     const resultIndex = 0
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
@@ -59,7 +59,7 @@ describe("amend fresult variable text", () => {
 
   it("throws an error as defendant Result is undefined", () => {
     const offenceIndex = -1
-    const updatedValue = new Date(2022, 8, 24)
+    const updatedValue = "2022-08-24"
     const resultIndex = 0
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Result = undefined
@@ -80,7 +80,7 @@ describe("amend fresult variable text", () => {
 
   it("throws an error if result is out of range", () => {
     const offenceIndex = 0
-    const updatedValue = new Date(2022, 8, 24)
+    const updatedValue = "2022-08-24"
     const resultIndex = 2
 
     expect(() =>
@@ -99,7 +99,7 @@ describe("amend fresult variable text", () => {
 
   it("throws an error if offence is out of range", () => {
     const offenceIndex = 1
-    const updatedValue = new Date(2022, 8, 24)
+    const updatedValue = "2022-08-24"
     const resultIndex = 0
 
     expect(() =>
@@ -120,12 +120,12 @@ describe("amend fresult variable text", () => {
     const amendments = [
       {
         offenceIndex: 0,
-        updatedValue: new Date(2022, 8, 24),
+        updatedValue: "2022-08-24",
         resultIndex: 0
       },
       {
         offenceIndex: 3,
-        updatedValue: new Date(2022, 7, 24),
+        updatedValue: "2022-07-24",
         resultIndex: 0
       }
     ]
@@ -159,12 +159,12 @@ describe("amend fresult variable text", () => {
     const amendments = [
       {
         offenceIndex: 0,
-        updatedValue: new Date(2022, 8, 24),
+        updatedValue: "2022-08-24",
         resultIndex: 0
       },
       {
         offenceIndex: 3,
-        updatedValue: new Date(2022, 7, 24),
+        updatedValue: "2022-07-24",
         resultIndex: 1
       }
     ]

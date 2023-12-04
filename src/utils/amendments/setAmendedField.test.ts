@@ -4,7 +4,7 @@ describe("setAmendedField", () => {
   describe("nextHearingDate", () => {
     it("can set the amended value when there are no other amendments", () => {
       const existingAmendments = {}
-      const updatedValue = new Date("2024-01-01")
+      const updatedValue = "2024-01-01"
 
       const result = setAmendedField(
         "nextHearingDate",
@@ -18,12 +18,12 @@ describe("setAmendedField", () => {
     })
 
     it("can update the an existing amendment value", () => {
-      const oldValue = new Date("2001-05-05")
+      const oldValue = "2001-05-05"
       const existingAmendments = {
         nextHearingDate: [{ resultIndex: 0, offenceIndex: 0, updatedValue: oldValue }]
       }
 
-      const updatedValue = new Date("2024-01-02")
+      const updatedValue = "2024-01-02"
 
       const result = setAmendedField(
         "nextHearingDate",
@@ -37,8 +37,8 @@ describe("setAmendedField", () => {
     })
 
     it("can set multiple amended value for the same key", () => {
-      const firstResultOfFirstOffenceNextHearingDate = new Date("2024-01-01")
-      const secondResultOfFirstOffenceNextHearingDate = new Date("2024-01-02")
+      const firstResultOfFirstOffenceNextHearingDate = "2024-01-01"
+      const secondResultOfFirstOffenceNextHearingDate = "2024-01-02"
 
       const existingAmendments = {
         nextHearingDate: [{ offenceIndex: 0, resultIndex: 0, updatedValue: firstResultOfFirstOffenceNextHearingDate }]
@@ -59,8 +59,8 @@ describe("setAmendedField", () => {
     })
 
     it("can add amendments when there are other amendments", () => {
-      const firstResultOfFirstOffenceNextHearingDate = new Date("2024-01-01")
-      const secondResultOfFirstOffenceNextHearingDate = new Date("2024-01-02")
+      const firstResultOfFirstOffenceNextHearingDate = "2024-01-01"
+      const secondResultOfFirstOffenceNextHearingDate = "2024-01-02"
 
       const existingAmendments = {
         forceOwner: "03",
