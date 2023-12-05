@@ -61,7 +61,7 @@ export type UpdatedOffenceResult = UpdatedOffenceValue & {
 export type UpdatedNextHearingDate = {
   offenceIndex: number
   resultIndex: number
-  updatedValue: Date
+  updatedValue: string
 }
 
 export type UpdatedOffence = {
