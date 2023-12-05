@@ -58,7 +58,7 @@ describe("unlock court case", () => {
         }
       ])) as CourtCase[]
     )[0]
-  })
+  }, 20_000)
 
   afterEach(async () => {
     jest.resetAllMocks()

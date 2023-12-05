@@ -55,7 +55,7 @@ describe("lock court case", () => {
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )
-  })
+  }, 20_000)
 
   afterEach(async () => {
     jest.resetAllMocks()
