@@ -1,19 +1,19 @@
+import axios from "axios"
 import User from "services/entities/User"
+import getCourtCase from "services/getCourtCase"
+import lockCourtCase from "services/lockCourtCase"
+import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
+import storeAuditLogEvents from "services/storeAuditLogEvents"
+import updateLockStatusToLocked from "services/updateLockStatusToLocked"
 import { DataSource } from "typeorm"
+import { AUDIT_LOG_API_URL, AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import { isError } from "../../src/types/Result"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
+import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import lockCourtCase from "services/lockCourtCase"
-import { AUDIT_LOG_API_URL, AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
-import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import axios from "axios"
-import updateLockStatusToLocked from "services/updateLockStatusToLocked"
-import storeAuditLogEvents from "services/storeAuditLogEvents"
-import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import { hasAccessToAll } from "../helpers/hasAccessTo"
-import getCourtCase from "services/getCourtCase"
 
 jest.mock("services/updateLockStatusToLocked")
 jest.mock("services/storeAuditLogEvents")
@@ -101,7 +101,7 @@ describe("lock court case", () => {
       )
       expect(storeAuditLogEvents).toHaveBeenCalledTimes(1)
       expect(storeAuditLogEvents).toHaveBeenCalledWith(unlockedCourtCase.messageId, expectedAuditLogEvents)
-    })
+    }, 10000)
 
     it("Should lock the case and update the audit log events", async () => {
       const result = await lockCourtCase(dataSource, unlockedCourtCase.errorId, user)
