@@ -7,55 +7,33 @@ import { SurveyFeedbackType, SwitchingFeedbackResponse } from "types/SurveyFeedb
 import getDataSource from "../../src/services/getDataSource"
 import getLastSwitchingFormSubmission from "../../src/services/getLastSwitchingFormSubmission"
 import deleteFromEntity from "../utils/deleteFromEntity"
+import { insertUsersWithOverrides } from "../utils/manageUsers"
 
 describe("getLastSwitchingFormSubmission", () => {
-  let dataSource: DataSource, bichard01: User, supervisor1: User
+  let dataSource: DataSource
+  const bichardUserId = 0
+  const supervisorUserId = 1
 
   beforeAll(async () => {
     dataSource = await getDataSource()
     await deleteFromEntity(User)
 
-    await dataSource
-      .createQueryBuilder()
-      .insert()
-      .into(User)
-      .values([
-        {
-          username: `bichard01`,
-          visibleForces: [`01`],
-          visibleCourts: [],
-          excludedTriggers: [],
-          forenames: "Bichard Test User",
-          password: "",
-          surname: `01`,
-          email: `bichard01@example.com`,
-          featureFlags: { test_flag: true, exceptionsEnabled: true }
-        },
-        {
-          username: `supervisor1`,
-          visibleForces: [`01`],
-          visibleCourts: [],
-          excludedTriggers: [],
-          forenames: "Bichard Test User",
-          password: "",
-          surname: `01`,
-          email: `supervisor1@example.com`,
-          featureFlags: { test_flag: true, exceptionsEnabled: true }
-        }
-      ])
-      .execute()
+    await insertUsersWithOverrides([
+      { id: bichardUserId, username: `bichard01`, email: `bichard01@example.com` },
+      { id: supervisorUserId, username: `supervisor1`, email: `supervisor1@example.com` }
+    ])
 
-    bichard01 = (await dataSource
-      .getRepository(User)
-      .createQueryBuilder("user")
-      .where("user.username = :username", { username: "bichard01" })
-      .getOne()) as User
+    // bichard01 = (await dataSource
+    //   .getRepository(User)
+    //   .createQueryBuilder("user")
+    //   .where("user.username = :username", { username: "bichard01" })
+    //   .getOne()) as User
 
-    supervisor1 = (await dataSource
-      .getRepository(User)
-      .createQueryBuilder("user")
-      .where("user.username = :username", { username: "supervisor1" })
-      .getOne()) as User
+    // supervisor1 = (await dataSource
+    //   .getRepository(User)
+    //   .createQueryBuilder("user")
+    //   .where("user.username = :username", { username: "supervisor1" })
+    //   .getOne()) as User
   })
 
   beforeEach(async () => {
@@ -77,10 +55,10 @@ describe("getLastSwitchingFormSubmission", () => {
     await insertSurveyFeedback(dataSource, {
       feedbackType: SurveyFeedbackType.Switching,
       response: { skipped: true } as SwitchingFeedbackResponse,
-      userId: bichard01.id
+      userId: bichardUserId
     } as SurveyFeedback)
 
-    const result = await getLastSwitchingFormSubmission(dataSource, bichard01.id)
+    const result = await getLastSwitchingFormSubmission(dataSource, bichardUserId)
 
     expect(isError(result)).toBe(false)
     expect(result).not.toBeNull()
@@ -95,13 +73,13 @@ describe("getLastSwitchingFormSubmission", () => {
         insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.Switching,
           response: { skipped: true } as SwitchingFeedbackResponse,
-          userId: bichard01.id,
+          userId: bichardUserId,
           createdAt: new Date(dateString)
         } as SurveyFeedback)
       )
     )
 
-    const result = await getLastSwitchingFormSubmission(dataSource, bichard01.id)
+    const result = await getLastSwitchingFormSubmission(dataSource, bichardUserId)
 
     expect(isError(result)).toBe(false)
     expect(result).not.toBeNull()
@@ -116,7 +94,7 @@ describe("getLastSwitchingFormSubmission", () => {
         insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.Switching,
           response: { skipped: true } as SwitchingFeedbackResponse,
-          userId: bichard01.id,
+          userId: bichardUserId,
           createdAt: new Date(dateString)
         } as SurveyFeedback)
       )
@@ -125,11 +103,11 @@ describe("getLastSwitchingFormSubmission", () => {
     await insertSurveyFeedback(dataSource, {
       feedbackType: SurveyFeedbackType.Switching,
       response: { skipped: true } as SwitchingFeedbackResponse,
-      userId: supervisor1.id,
+      userId: supervisorUserId,
       createdAt: new Date("2023-09-20T23:23:23")
     } as SurveyFeedback)
 
-    const result = await getLastSwitchingFormSubmission(dataSource, bichard01.id)
+    const result = await getLastSwitchingFormSubmission(dataSource, bichardUserId)
 
     expect(isError(result)).toBe(false)
     expect(result).not.toBeNull()
@@ -139,7 +117,7 @@ describe("getLastSwitchingFormSubmission", () => {
   it("Should return error if database operation fails", async () => {
     jest.spyOn(Repository.prototype, "findOne").mockRejectedValue(new Error("dummy error"))
 
-    const result = await getLastSwitchingFormSubmission(dataSource, bichard01.id)
+    const result = await getLastSwitchingFormSubmission(dataSource, bichardUserId)
 
     expect(isError(result)).toBe(true)
     expect((result as Error).message).toBe("dummy error")
