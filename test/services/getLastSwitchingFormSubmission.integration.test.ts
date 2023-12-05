@@ -1,5 +1,4 @@
 import SurveyFeedback from "services/entities/SurveyFeedback"
-import User from "services/entities/User"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
 import { DataSource, Repository } from "typeorm"
 import { isError } from "types/Result"
@@ -7,7 +6,7 @@ import { SurveyFeedbackType, SwitchingFeedbackResponse } from "types/SurveyFeedb
 import getDataSource from "../../src/services/getDataSource"
 import getLastSwitchingFormSubmission from "../../src/services/getLastSwitchingFormSubmission"
 import deleteFromEntity from "../utils/deleteFromEntity"
-import { insertUsersWithOverrides } from "../utils/manageUsers"
+import { deleteUsers, insertUsersWithOverrides } from "../utils/manageUsers"
 
 describe("getLastSwitchingFormSubmission", () => {
   let dataSource: DataSource
@@ -16,24 +15,12 @@ describe("getLastSwitchingFormSubmission", () => {
 
   beforeAll(async () => {
     dataSource = await getDataSource()
-    await deleteFromEntity(User)
+    await deleteUsers()
 
     await insertUsersWithOverrides([
       { id: bichardUserId, username: `bichard01`, email: `bichard01@example.com` },
       { id: supervisorUserId, username: `supervisor1`, email: `supervisor1@example.com` }
     ])
-
-    // bichard01 = (await dataSource
-    //   .getRepository(User)
-    //   .createQueryBuilder("user")
-    //   .where("user.username = :username", { username: "bichard01" })
-    //   .getOne()) as User
-
-    // supervisor1 = (await dataSource
-    //   .getRepository(User)
-    //   .createQueryBuilder("user")
-    //   .where("user.username = :username", { username: "supervisor1" })
-    //   .getOne()) as User
   })
 
   beforeEach(async () => {
@@ -41,7 +28,7 @@ describe("getLastSwitchingFormSubmission", () => {
   })
 
   afterAll(async () => {
-    await deleteFromEntity(User)
+    await deleteUsers()
     await dataSource.destroy()
   })
 

@@ -15,6 +15,7 @@ import { hasAccessToAll } from "../helpers/hasAccessTo"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
+import { deleteUsers } from "../utils/manageUsers"
 
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
@@ -37,7 +38,7 @@ describe("unlock court case", () => {
 
   beforeEach(async () => {
     await deleteFromEntity(CourtCase)
-    await deleteFromEntity(User)
+    await deleteUsers()
     await deleteFromDynamoTable("auditLogTable", "messageId")
     await deleteFromDynamoTable("auditLogEventsTable", "_id")
     ;(updateLockStatusToUnlocked as jest.Mock).mockImplementation(
