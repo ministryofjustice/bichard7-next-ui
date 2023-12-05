@@ -307,12 +307,12 @@ workflows:
       - cypress_component_test
       - seed_data
 
-      - cypress_e2e_tests
-        requires:
-          - build-ui
-      - cucumber_e2e_tests
-        requires:
-          - build-ui
-      - zap_scanner
-        requires:
-          - build-ui
+      - cypress_e2e_tests:
+          requires:
+            - build-ui
+      - cucumber_e2e_tests:
+          requires:
+            - build-ui
+      - zap_scanner:
+          requires:
+            - build-ui
