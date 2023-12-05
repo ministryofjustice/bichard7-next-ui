@@ -1,18 +1,19 @@
-import { v4 as uuid } from "uuid"
-import { DataSource, Repository } from "typeorm"
-import CourtCase from "../../../src/services/entities/CourtCase"
-import getDataSource from "../../../src/services/getDataSource"
-import deleteFromEntity from "../../utils/deleteFromEntity"
-import { insertCourtCasesWithFields } from "../../utils/insertCourtCases"
-import { isError } from "../../../src/types/Result"
-import { insertTriggers } from "../../utils/manageTriggers"
-import { default as TriggerEntity } from "../../../src/services/entities/Trigger"
-import MockDate from "mockdate"
-import updateTriggers from "../../../src/services/reallocateCourtCase/updateTriggers"
+import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/Trigger"
 import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
-import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
+import MockDate from "mockdate"
+import { DataSource, Repository } from "typeorm"
+import { v4 as uuid } from "uuid"
+import CourtCase from "../../../src/services/entities/CourtCase"
+import { default as TriggerEntity } from "../../../src/services/entities/Trigger"
 import User from "../../../src/services/entities/User"
+import getDataSource from "../../../src/services/getDataSource"
+import updateTriggers from "../../../src/services/reallocateCourtCase/updateTriggers"
+import { isError } from "../../../src/types/Result"
+import deleteFromDynamoTable from "../../utils/deleteFromDynamoTable"
+import deleteFromEntity from "../../utils/deleteFromEntity"
+import { insertCourtCasesWithFields } from "../../utils/insertCourtCases"
+import { insertTriggers } from "../../utils/manageTriggers"
 
 const insertCourtCase = async (fields: Partial<CourtCase> = {}) => {
   const existingCourtCasesDbObject: Partial<CourtCase> = {
@@ -65,9 +66,11 @@ describe("updateCourtCase", () => {
 
   beforeEach(async () => {
     MockDate.set(timestamp)
+    await deleteFromDynamoTable("auditLogTable", "messageId")
+    await deleteFromDynamoTable("auditLogEventsTable", "_id")
     await deleteFromEntity(TriggerEntity)
     await deleteFromEntity(CourtCase)
-  })
+  }, 20_000)
 
   afterAll(async () => {
     MockDate.reset()
