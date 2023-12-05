@@ -110,7 +110,7 @@ describe("reallocate court case to another force", () => {
     ;(generateTriggers as jest.Mock).mockImplementation(
       jest.requireActual("@moj-bichard7-developers/bichard7-next-core/core/phase1/triggers/generate").default
     )
-  })
+  }, 20_000)
 
   afterAll(async () => {
     await dataSource.destroy()
