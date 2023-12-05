@@ -1,20 +1,21 @@
+import axios from "axios"
 import User from "services/entities/User"
+import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
+import storeAuditLogEvents from "services/storeAuditLogEvents"
+import unlockCourtCase from "services/unlockCourtCase"
+import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import { DataSource } from "typeorm"
+import UnlockReason from "types/UnlockReason"
+import { AUDIT_LOG_API_URL, AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import CourtCase from "../../src/services/entities/CourtCase"
+import getCourtCase from "../../src/services/getCourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import { isError } from "../../src/types/Result"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
+import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import unlockCourtCase from "services/unlockCourtCase"
-import { AUDIT_LOG_API_URL, AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
-import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
-import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
-import storeAuditLogEvents from "services/storeAuditLogEvents"
-import UnlockReason from "types/UnlockReason"
-import axios from "axios"
-import getCourtCase from "../../src/services/getCourtCase"
-import { hasAccessToAll } from "../helpers/hasAccessTo"
+import { deleteUsers } from "../utils/manageUsers"
 
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
@@ -37,6 +38,7 @@ describe("unlock court case", () => {
 
   beforeEach(async () => {
     await deleteFromEntity(CourtCase)
+    await deleteUsers()
     await deleteFromDynamoTable("auditLogTable", "messageId")
     await deleteFromDynamoTable("auditLogEventsTable", "_id")
     ;(updateLockStatusToUnlocked as jest.Mock).mockImplementation(
@@ -57,7 +59,7 @@ describe("unlock court case", () => {
         }
       ])) as CourtCase[]
     )[0]
-  })
+  }, 20_000)
 
   afterEach(async () => {
     jest.resetAllMocks()
