@@ -1,6 +1,5 @@
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import User from "services/entities/User"
-import getUser from "services/getUser"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
 import { DataSource, Repository } from "typeorm"
 import { isError } from "types/Result"
@@ -14,8 +13,49 @@ describe("getLastSwitchingFormSubmission", () => {
 
   beforeAll(async () => {
     dataSource = await getDataSource()
-    bichard01 = (await getUser(dataSource, "Bichard01")) as User
-    supervisor1 = (await getUser(dataSource, "Supervisor1")) as User
+    await deleteFromEntity(User)
+
+    await dataSource
+      .createQueryBuilder()
+      .insert()
+      .into(User)
+      .values([
+        {
+          username: `bichard01`,
+          visibleForces: [`01`],
+          visibleCourts: [],
+          excludedTriggers: [],
+          forenames: "Bichard Test User",
+          password: "",
+          surname: `01`,
+          email: `bichard01@example.com`,
+          featureFlags: { test_flag: true, exceptionsEnabled: true }
+        },
+        {
+          username: `supervisor1`,
+          visibleForces: [`01`],
+          visibleCourts: [],
+          excludedTriggers: [],
+          forenames: "Bichard Test User",
+          password: "",
+          surname: `01`,
+          email: `supervisor1@example.com`,
+          featureFlags: { test_flag: true, exceptionsEnabled: true }
+        }
+      ])
+      .execute()
+
+    bichard01 = (await dataSource
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .where("user.username = :username", { username: "bichard01" })
+      .getOne()) as User
+
+    supervisor1 = (await dataSource
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .where("user.username = :username", { username: "supervisor1" })
+      .getOne()) as User
   })
 
   beforeEach(async () => {
@@ -23,9 +63,8 @@ describe("getLastSwitchingFormSubmission", () => {
   })
 
   afterAll(async () => {
-    if (dataSource) {
-      await dataSource.destroy()
-    }
+    await deleteFromEntity(User)
+    await dataSource.destroy()
   })
 
   it("Should return null when there is no record submitted", async () => {
