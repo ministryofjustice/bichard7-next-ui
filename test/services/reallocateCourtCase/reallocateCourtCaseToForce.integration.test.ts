@@ -4,6 +4,7 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import Note from "services/entities/Note"
+import SurveyFeedback from "services/entities/SurveyFeedback"
 import User from "services/entities/User"
 import insertNotes from "services/insertNotes"
 import reallocateCourtCaseToForce from "services/reallocateCourtCase/reallocateCourtCaseToForce"
@@ -90,6 +91,7 @@ describe("reallocate court case to another force", () => {
   beforeEach(async () => {
     await deleteFromEntity(Note)
     await deleteFromEntity(CourtCase)
+    await deleteFromEntity(SurveyFeedback)
     await deleteFromDynamoTable("auditLogTable", "messageId")
     await deleteFromDynamoTable("auditLogEventsTable", "_id")
     jest.resetAllMocks()
