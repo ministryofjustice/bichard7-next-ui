@@ -119,6 +119,10 @@ jobs:
       image: ubuntu-2204:2023.07.2
     resource_class: xlarge
     steps:
+      - checkout
+      - node_install
+      - node/install-packages:
+          include-branch-in-cache-key: true
       - run:
           name: Check the code for linting errors
           command: npm run lint
