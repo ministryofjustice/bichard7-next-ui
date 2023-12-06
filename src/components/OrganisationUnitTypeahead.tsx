@@ -1,32 +1,13 @@
-import OrganisationUnits from "@moj-bichard7-developers/bichard7-next-data/data/organisation-unit.json"
 import { OrganisationUnit } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import { useCombobox } from "downshift"
 import { Input } from "govuk-react"
-import { sortBy } from "lodash"
 import { useState } from "react"
 import styled from "styled-components"
 import { AmendmentKeys, IndividualAmendmentValues, UpdatedOffenceResult } from "../types/Amendments"
-
-const FilteredOrganisationUnits: OrganisationUnit[] = OrganisationUnits.filter(
-  (organisationUnit) => organisationUnit.topLevelName !== "Police Service" && /\S/.test(organisationUnit.thirdLevelName)
-)
-const FilteredAndSortedOrganisationUnits = sortBy(
-  FilteredOrganisationUnits,
-  (organisationUnit) => organisationUnit.thirdLevelName
-)
-
-const getFullOrganisationCode = (organisationUnit: OrganisationUnit) =>
-  `${organisationUnit.topLevelCode}${organisationUnit.secondLevelCode}${organisationUnit.thirdLevelCode}${organisationUnit.bottomLevelCode}`
-
-const getFullOrganisationName = (organisationUnit: OrganisationUnit) =>
-  [
-    organisationUnit.topLevelName,
-    organisationUnit.secondLevelName,
-    organisationUnit.thirdLevelName,
-    organisationUnit.bottomLevelName
-  ]
-    .filter((part) => !!part)
-    .join("-")
+import searchCourtOrganisationUnits, {
+  getFullOrganisationCode,
+  getFullOrganisationName
+} from "../services/searchCourtOrganisationUnits"
 
 const ListWrapper = styled.div`
   li {
@@ -52,17 +33,13 @@ interface Props {
 }
 
 const OrganisationUnitTypeahead: React.FC<Props> = ({ value, amendFn, resultIndex, offenceIndex }: Props) => {
-  const items = FilteredAndSortedOrganisationUnits
+  const items = searchCourtOrganisationUnits("")
   const [inputItems, setInputItems] = useState(items)
 
   const { isOpen, getMenuProps, getInputProps, highlightedIndex, getItemProps } = useCombobox({
     items: inputItems,
     onInputValueChange: ({ inputValue }) => {
-      const filteredInputItems: OrganisationUnit[] = items.filter((organisationUnit) =>
-        getFullOrganisationCode(organisationUnit)
-          .toLowerCase()
-          .startsWith((inputValue || "").toLowerCase())
-      )
+      const filteredInputItems: OrganisationUnit[] = searchCourtOrganisationUnits(inputValue ?? "")
       setInputItems(filteredInputItems)
       amendFn("nextSourceOrganisation")({
         resultIndex: resultIndex,
