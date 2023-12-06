@@ -19,10 +19,11 @@ describe("Organiation Units API endpoint", () => {
       userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
     })
     cy.clearCookies()
-    cy.login("bichard01@example.com", "password")
   })
 
   it("returns a list of organisations that matches the search keyword", () => {
+    cy.login("bichard01@example.com", "password")
+
     const searchKeyword = "croydon"
     cy.request({
       method: "GET",
@@ -39,8 +40,9 @@ describe("Organiation Units API endpoint", () => {
   })
 
   it("returns one item in a list for when search keyword is an exact match", () => {
-    const searchKeyword = "B01EF00"
+    cy.login("bichard01@example.com", "password")
 
+    const searchKeyword = "B01EF00"
     cy.request({
       method: "GET",
       url: `/bichard/api/organisation-units?search=${searchKeyword}`
