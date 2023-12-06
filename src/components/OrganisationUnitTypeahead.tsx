@@ -1,21 +1,28 @@
-import { OrganisationUnit } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import { useCombobox } from "downshift"
 import { Input } from "govuk-react"
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import styled from "styled-components"
 import { AmendmentKeys, IndividualAmendmentValues, UpdatedOffenceResult } from "../types/Amendments"
-import searchCourtOrganisationUnits, {
-  getFullOrganisationCode,
-  getFullOrganisationName
-} from "../services/searchCourtOrganisationUnits"
+import OrganisationUnitApiResponse from "../types/OrganisationUnitApiResponse"
+import axios from "axios"
+import { isError } from "../types/Result"
 
 const ListWrapper = styled.div`
+  max-height: 20rem;
+  overflow-y: scroll;
+  background: white;
+  width: 100%;
+
+  ul {
+    margin-top: 0;
+    padding-left: 0;
+  }
+
   li {
     list-style: none;
     padding: 10px;
     border: 1px gray solid;
     position: relative;
-    left: -40px;
   }
 
   span {
@@ -33,49 +40,70 @@ interface Props {
 }
 
 const OrganisationUnitTypeahead: React.FC<Props> = ({ value, amendFn, resultIndex, offenceIndex }: Props) => {
-  const items = searchCourtOrganisationUnits("")
-  const [inputItems, setInputItems] = useState(items)
+  const [inputItems, setInputItems] = useState<OrganisationUnitApiResponse>([])
 
-  const { isOpen, getMenuProps, getInputProps, highlightedIndex, getItemProps } = useCombobox({
-    items: inputItems,
-    onInputValueChange: ({ inputValue }) => {
-      const filteredInputItems: OrganisationUnit[] = searchCourtOrganisationUnits(inputValue ?? "")
-      setInputItems(filteredInputItems)
+  const fetchItems = useCallback(
+    async (searchStringParam?: string) => {
+      const organisationUnitsResponse = await axios
+        .get<OrganisationUnitApiResponse>("/bichard/api/organisation-units", {
+          params: {
+            search: searchStringParam
+          }
+        })
+        .then((response) => response.data)
+        .catch((error) => error as Error)
+
+      if (isError(organisationUnitsResponse)) {
+        return
+      }
+
+      setInputItems(organisationUnitsResponse)
       amendFn("nextSourceOrganisation")({
-        resultIndex: resultIndex,
-        offenceIndex: offenceIndex,
-        updatedValue: inputValue
+        resultIndex,
+        offenceIndex,
+        updatedValue: searchStringParam
       } as UpdatedOffenceResult)
     },
-    itemToString(item) {
-      return item ? getFullOrganisationCode(item) : ""
-    }
+    [amendFn, resultIndex, offenceIndex]
+  )
+
+  const { isOpen, getMenuProps, getInputProps, highlightedIndex, getItemProps, inputValue } = useCombobox({
+    items: inputItems,
+    initialInputValue: value,
+    itemToString: (item) => item?.fullOrganisationCode ?? ""
   })
+
+  useEffect(() => {
+    fetchItems(inputValue)
+  }, [fetchItems, inputValue])
+
   return (
     <div>
       <Input
         {...getInputProps({
-          className: "govuk-input govuk-input--width-20",
+          className: "govuk-input",
           id: "next-hearing-location",
           name: "next-hearing-location",
-          value: value
+          value: inputValue
         })}
       />
-      <ListWrapper>
-        <ul {...getMenuProps()}>
-          {isOpen &&
-            inputItems.map((item, index) => (
-              <li
-                style={highlightedIndex === index ? { backgroundColor: "#bde4ff" } : {}}
-                key={`${item}${index}`}
-                {...getItemProps({ item, index })}
-              >
-                {getFullOrganisationCode(item)}
-                <span>{getFullOrganisationName(item)}</span>
-              </li>
-            ))}
-        </ul>
-      </ListWrapper>
+      {isOpen && inputItems.length > 0 && (
+        <ListWrapper>
+          <ul {...getMenuProps()}>
+            {isOpen &&
+              inputItems.map((item, index) => (
+                <li
+                  style={highlightedIndex === index ? { backgroundColor: "#bde4ff" } : {}}
+                  key={`${item}${index}`}
+                  {...getItemProps({ item, index })}
+                >
+                  {item.fullOrganisationCode}
+                  <span>{item.fullOrganisationName}</span>
+                </li>
+              ))}
+          </ul>
+        </ListWrapper>
+      )}
     </div>
   )
 }

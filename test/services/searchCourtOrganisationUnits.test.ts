@@ -1,4 +1,3 @@
-import { OrganisationUnit } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import searchCourtOrganisationUnits, {
   getOrganisationCodeAndName
 } from "../../src/services/searchCourtOrganisationUnits"
@@ -12,15 +11,7 @@ describe("searchCourtOrganisationUnits", () => {
     const result = searchCourtOrganisationUnits("B01EF00")
     expect(result).toHaveLength(1)
 
-    const org = result[0] as OrganisationUnit
-    expect(org.topLevelCode).toEqual("B")
-    expect(org.secondLevelCode).toEqual("01")
-    expect(org.thirdLevelCode).toEqual("EF")
-    expect(org.bottomLevelCode).toEqual("00")
-    expect(org.topLevelName).toEqual("Magistrates' Courts")
-    expect(org.secondLevelName).toEqual("London")
-    expect(org.thirdLevelName).toEqual("Croydon")
-    expect(org.bottomLevelName).toEqual("")
+    expect(getOrganisationCodeAndName(result[0])).toEqual("B01EF00 Magistrates' Courts London Croydon")
   })
 
   it("Should not include police organisations", () => {
@@ -39,9 +30,8 @@ describe("searchCourtOrganisationUnits", () => {
     const result = searchCourtOrganisationUnits("Croydon")
     expect(result).toHaveLength(3)
 
-    const organisations = result as OrganisationUnit[]
-    expect(getOrganisationCodeAndName(organisations[0])).toEqual("C01CY00 Crown Courts London Croydon")
-    expect(getOrganisationCodeAndName(organisations[1])).toEqual("B01EF00 Magistrates' Courts London Croydon")
-    expect(getOrganisationCodeAndName(organisations[2])).toEqual("C01JI00 Crown Courts London Jury's Inn Croydon")
+    expect(getOrganisationCodeAndName(result[0])).toEqual("C01CY00 Crown Courts London Croydon")
+    expect(getOrganisationCodeAndName(result[1])).toEqual("B01EF00 Magistrates' Courts London Croydon")
+    expect(getOrganisationCodeAndName(result[2])).toEqual("C01JI00 Crown Courts London Jury's Inn Croydon")
   })
 })
