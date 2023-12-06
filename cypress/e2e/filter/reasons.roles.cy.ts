@@ -42,18 +42,12 @@ describe("Reasons filters", () => {
     cy.get("#filter-panel .reasons .exceptions").should("exist")
   })
 
-  it("should display 'Triggers' and 'Bails' for trigger handlers", () => {
+  it("should only display 'Bails' for trigger handlers", () => {
     newUserLogin({ groups: [UserGroup.TriggerHandler] })
     navigateAndShowFilters()
 
     cy.get("#filter-panel .reasons .bails").should("exist")
-    cy.get("#filter-panel .reasons .triggers").should("exist")
-  })
-
-  it("should not display 'Exceptions' for trigger handlers", () => {
-    newUserLogin({ groups: [UserGroup.TriggerHandler] })
-    navigateAndShowFilters()
-
+    cy.get("#filter-panel .reasons .triggers").should("not.exist")
     cy.get("#filter-panel .reasons .exceptions").should("not.exist")
   })
 
