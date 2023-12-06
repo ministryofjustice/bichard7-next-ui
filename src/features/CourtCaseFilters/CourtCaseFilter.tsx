@@ -175,7 +175,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
                   reasonOptions={
                     currentUser.hasAccessTo[Permission.Triggers] && !currentUser.hasAccessTo[Permission.Exceptions]
-                      ? [Reason.Bails, Reason.Triggers]
+                      ? [Reason.Bails]
                       : undefined
                   }
                   dispatch={dispatch}
