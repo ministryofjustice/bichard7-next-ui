@@ -113,6 +113,8 @@ jobs:
     steps:
       - setup
       - run: ./.circleci/scripts/build-ui.sh
+      - persist_to_workspace:
+          root: .
 
   lint:
     machine:
