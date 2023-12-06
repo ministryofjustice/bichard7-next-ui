@@ -42,28 +42,26 @@ interface Props {
 const OrganisationUnitTypeahead: React.FC<Props> = ({ value, amendFn, resultIndex, offenceIndex }: Props) => {
   const [inputItems, setInputItems] = useState<OrganisationUnitApiResponse>([])
 
-  const fetchItems = useCallback(
-    async (searchStringParam?: string) => {
-      const organisationUnitsResponse = await axios
-        .get<OrganisationUnitApiResponse>("/bichard/api/organisation-units", {
-          params: {
-            search: searchStringParam
-          }
-        })
-        .then((response) => response.data)
-        .catch((error) => error as Error)
+  const fetchItems = useCallback(async (searchStringParam?: string) => {
+    const organisationUnitsResponse = await axios
+      .get<OrganisationUnitApiResponse>("/bichard/api/organisation-units", {
+        params: {
+          search: searchStringParam
+        }
+      })
+      .then((response) => response.data)
+      .catch((error) => error as Error)
 
-      if (isError(organisationUnitsResponse)) {
-        return
-      }
+    if (isError(organisationUnitsResponse)) {
+      return
+    }
 
-      setInputItems(organisationUnitsResponse)
-    },
-    [amendFn, resultIndex, offenceIndex]
-  )
+    setInputItems(organisationUnitsResponse)
+  }, [])
 
   const { isOpen, getMenuProps, getInputProps, highlightedIndex, getItemProps, inputValue } = useCombobox({
     items: inputItems,
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     onInputValueChange: ({ inputValue }) => {
       amendFn("nextSourceOrganisation")({
         resultIndex: resultIndex,
