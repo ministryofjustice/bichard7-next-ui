@@ -58,17 +58,19 @@ const OrganisationUnitTypeahead: React.FC<Props> = ({ value, amendFn, resultInde
       }
 
       setInputItems(organisationUnitsResponse)
-      amendFn("nextSourceOrganisation")({
-        resultIndex,
-        offenceIndex,
-        updatedValue: searchStringParam
-      } as UpdatedOffenceResult)
     },
     [amendFn, resultIndex, offenceIndex]
   )
 
   const { isOpen, getMenuProps, getInputProps, highlightedIndex, getItemProps, inputValue } = useCombobox({
     items: inputItems,
+    onInputValueChange: ({ inputValue }) => {
+      amendFn("nextSourceOrganisation")({
+        resultIndex: resultIndex,
+        offenceIndex: offenceIndex,
+        updatedValue: inputValue
+      } as UpdatedOffenceResult)
+    },
     initialInputValue: value,
     itemToString: (item) => item?.fullOrganisationCode ?? ""
   })
@@ -84,7 +86,7 @@ const OrganisationUnitTypeahead: React.FC<Props> = ({ value, amendFn, resultInde
           className: "govuk-input",
           id: "next-hearing-location",
           name: "next-hearing-location",
-          value: inputValue
+          value: value
         })}
       />
       {isOpen && inputItems.length > 0 && (
