@@ -111,7 +111,7 @@ jobs:
       image: ubuntu-2204:current
     resource_class: xlarge
     steps:
-      - setup
+      - checkout
       - run: ./.circleci/scripts/build-ui.sh
       - run:
           name: Save Docker image
@@ -121,8 +121,8 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
+            - .
             - images
-            - scripts
 
   lint:
     machine:
