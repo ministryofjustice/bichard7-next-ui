@@ -1,6 +1,6 @@
 import { useCourtCase } from "context/CourtCaseContext"
 import { GridCol, GridRow } from "govuk-react"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
@@ -49,9 +49,12 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
 
   const [amendments, setAmendements] = useState<AmendmentRecords>({})
 
-  const amendFn = (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => {
-    setAmendements({ ...setAmendedFields(keyToAmend, newValue, amendments) })
-  }
+  const amendFn = useCallback(
+    (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => {
+      setAmendements((previousAmendments) => ({ ...setAmendedFields(keyToAmend, newValue, previousAmendments) }))
+    },
+    []
+  )
 
   const handleNavigation: NavigationHandler = ({ location, args }) => {
     switch (location) {

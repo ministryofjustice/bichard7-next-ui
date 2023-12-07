@@ -172,9 +172,8 @@ export const HearingResult = ({
             />
           </ExceptionFieldTableRow>
         ) : (
-          <TableRow label={"Next hearing date"} value={formatDisplayedDate(String(result.NextHearingDate))} />
+          <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
         )}
-        <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
       </ConditionalRender>
       <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearingDateException}>
         {!!nextHearingDateException ? (
