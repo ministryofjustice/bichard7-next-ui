@@ -13,7 +13,7 @@ describe("Court case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
-      visibleForces: [`0${idx}`],
+      visibleForces: [`00${idx}`],
       forenames: "Bichard Test User",
       surname: `0${idx}`,
       email: `bichard0${idx}@example.com`,
@@ -105,10 +105,10 @@ describe("Court case details", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "02"
+        orgForPoliceFilter: "01"
       }
     ])
-    cy.login("bichard02@example.com", "password")
+    cy.login("bichard01@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
     clickTab("Defendant")
@@ -129,6 +129,16 @@ describe("Court case details", () => {
 
     cy.contains("td", "PNC file name").siblings().contains("SEXOFFENCE/TRPRFOUR")
     cy.contains("td", "Remand status").siblings().contains("Unconditional bail")
+    cy.get("H3").contains("Notes")
+    cy.contains("td", "Exclusion").siblings().contains("Exclusion: text describing exclusion")
+    cy.contains("td", "Other")
+      .siblings()
+      .contains("Other: not to go to the address of 11 Made Up street, Somewhere town")
+    cy.contains("td", "Residence")
+      .siblings()
+      .contains("Residence: live and sleep each night at 29 Made Up street, Another town")
+    cy.contains("td", "Curfew").siblings().contains("Curfew: curfew conditions")
+    cy.contains("td", "Bail reason").siblings().contains("to prevent offending")
   })
 
   it("Should display the content of the Case tab", () => {

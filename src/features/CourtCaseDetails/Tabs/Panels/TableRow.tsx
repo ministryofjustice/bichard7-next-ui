@@ -1,8 +1,9 @@
 import type { CSSProperties } from "styled-components"
-import { Table } from "govuk-react"
+import { HintText, Table } from "govuk-react"
 
 interface TableRowProps {
   label: string
+  hintText?: string
   value: string | number | null | undefined | React.ReactNode
   className?: string
 }
@@ -11,10 +12,11 @@ const style: CSSProperties = {
   verticalAlign: "top"
 }
 
-export const TableRow = ({ label, value }: TableRowProps) => (
+export const TableRow = ({ label, hintText, value }: TableRowProps) => (
   <Table.Row>
     <Table.Cell style={style}>
       <b>{label}</b>
+      {hintText && <HintText>{hintText}</HintText>}
     </Table.Cell>
     <Table.Cell>{value}</Table.Cell>
   </Table.Row>

@@ -175,7 +175,7 @@ describe("reallocate court case to another force", () => {
       expect(events).toContainEqual(createUnlockedEvent("Trigger", user.username))
       expect(events).toContainEqual(
         createTriggersGeneratedEvent(
-          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004],
+          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004, TriggerCode.TRPR0010],
           true,
           user.username
         )
@@ -242,7 +242,7 @@ describe("reallocate court case to another force", () => {
       expect(events).toContainEqual(createUnlockedEvent("Trigger", user.username))
       expect(events).toContainEqual(
         createTriggersGeneratedEvent(
-          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004],
+          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004, TriggerCode.TRPR0010],
           true,
           user.username
         )
