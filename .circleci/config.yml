@@ -9,16 +9,8 @@ commands:
     steps:
       - checkout
       - node_install
-      - restore_cache:
-          name: Restore npm cache
-          keys:
-            - v1-npm-cache-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-      - run: npm ci
-      - save_cache:
-          name: Save npm cache
-          key: v1-npm-cache-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          paths:
-            - /opt/circleci/.npm/cache
+      - node/install-packages:
+          include-branch-in-cache-key: true
       - run:
           name: Clone bichard7-next-core
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
