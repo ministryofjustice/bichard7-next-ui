@@ -113,8 +113,16 @@ jobs:
     steps:
       - setup
       - run: ./.circleci/scripts/build-ui.sh
+      - run:
+          name: Save Docker image
+          command: |
+            mkdir -p images
+            docker image save -o "images/ui:latest" "ui:latest"
       - persist_to_workspace:
           root: .
+          paths:
+            - images
+            - scripts
 
   lint:
     machine:
@@ -291,6 +299,10 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - run:
+          name: Load image
+          command: |
+            docker image load < "images/ui:latest"
       - fetch_images:
           IMAGES: nodejs-20-2023
       - build_audit_logging_images
