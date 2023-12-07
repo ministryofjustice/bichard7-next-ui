@@ -11,6 +11,7 @@ commands:
       - node_install
       - node/install-packages:
           include-branch-in-cache-key: true
+          with-cache: true
       - run:
           name: Clone bichard7-next-core
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
