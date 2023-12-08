@@ -377,13 +377,7 @@ describe("Court case details", () => {
     })
 
     cy.clearCookies()
-
-    cy.request({
-      failOnStatusCode: false,
-      url: "/bichard/court-cases/0"
-    }).then((response) => {
-      expect(response.status).to.eq(401)
-    })
+    cy.toBeUnauthorized("/bichard/court-cases/0")
   })
 
   it("Should resubmit a case when no updates made and the resubmit button is clicked", () => {
