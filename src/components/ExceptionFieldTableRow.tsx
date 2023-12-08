@@ -55,7 +55,7 @@ const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, children
   )
 
   return (
-    <Table.Row>
+    <Table.Row className="error-prompt">
       <Table.Cell className={classes.label}>
         <b>{labelField}</b>
       </Table.Cell>
