@@ -16,15 +16,16 @@ export const BailConditions = ({ bailConditions, bailReason, offences }: BailCon
         return {
           label: conditionWithLabel ? conditionWithLabel[1].trim() : "Other",
           value: bailCondition,
-          offence: `Offence ${
-            offences.filter((offence) =>
-              offence.Result.filter((res) => res.ResultVariableText?.includes(bailCondition))
-            )[0].CourtOffenceSequenceNumber
-          }`
+          offenceIndex: offences
+            .map(
+              (offence) =>
+                offence.Result.some((res) => res.ResultVariableText?.includes(bailCondition)) &&
+                offence.CourtOffenceSequenceNumber
+            )
+            .filter((courtOffenceSequenceNumber) => !!courtOffenceSequenceNumber)[0]
         }
       })
     : []
-
   return (
     <ConditionalRender isRendered={conditions.length > 0}>
       <p />
@@ -34,7 +35,7 @@ export const BailConditions = ({ bailConditions, bailReason, offences }: BailCon
           <TableRow
             key={`bail-condition-${i}`}
             label={condition.label}
-            hintText={condition.offence}
+            hintText={condition.offenceIndex ? `Offence ${condition.offenceIndex}` : ""}
             value={condition.value}
           />
         ))}
