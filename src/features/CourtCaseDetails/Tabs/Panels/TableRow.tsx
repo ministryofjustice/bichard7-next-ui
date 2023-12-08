@@ -10,9 +10,8 @@ interface TableRowProps {
 const style: CSSProperties = {
   verticalAlign: "top"
 }
-
 export const TableRow = ({ label, value }: TableRowProps) => (
-  <Table.Row>
+  <Table.Row className={`table-row-${label.split(" ").join("-").toLowerCase()}`}>
     <Table.Cell style={style}>
       <b>{label}</b>
     </Table.Cell>
