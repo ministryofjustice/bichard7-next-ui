@@ -93,6 +93,7 @@ const resolveTriggers = async (
     const areAllTriggersResolved = allTriggers.filter((trigger) => trigger.resolvedAt).length === allTriggers.length
 
     if (areAllTriggersResolved) {
+      const hasUnresolvedExceptions = courtCase.errorCount > 0 && courtCase.errorResolvedTimestamp === null
       const updateCaseResult = await entityManager
         .getRepository(CourtCase)
         .update(
@@ -103,8 +104,8 @@ const resolveTriggers = async (
           },
           {
             triggerResolvedBy: resolver,
-            resolutionTimestamp: new Date(),
             triggerResolvedTimestamp: new Date(),
+            resolutionTimestamp: hasUnresolvedExceptions ? null : new Date(),
             triggerStatus: "Resolved"
           }
         )

@@ -1,19 +1,19 @@
-import { DataSource } from "typeorm"
-import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
-import { v4 as uuid } from "uuid"
-import { isError } from "types/Result"
-import getDataSource from "services/getDataSource"
-import axios from "axios"
 import {
   AuditLogEvent,
   auditLogEventLookup
 } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
-import createAuditLog from "../helpers/createAuditLog"
-import { AUDIT_LOG_API_KEY, AUDIT_LOG_API_URL } from "../../src/config"
-import storeAuditLogEvents from "services/storeAuditLogEvents"
-import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
 import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
+import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
+import axios from "axios"
+import getDataSource from "services/getDataSource"
+import storeAuditLogEvents from "services/storeAuditLogEvents"
+import { DataSource } from "typeorm"
+import { isError } from "types/Result"
+import { v4 as uuid } from "uuid"
+import { AUDIT_LOG_API_KEY, AUDIT_LOG_API_URL } from "../../src/config"
+import createAuditLog from "../helpers/createAuditLog"
+import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 
 jest.mock("axios")
 
@@ -34,7 +34,7 @@ describe("storeAuditLogEvents", () => {
     await deleteFromDynamoTable("auditLogTable", "messageId")
     await deleteFromDynamoTable("auditLogEventsTable", "_id")
     ;(axios as unknown as jest.Mock).mockImplementation(jest.requireActual("axios").default)
-  })
+  }, 20_000)
 
   it("Should store audit log events in dynamoDB", async () => {
     const expectedEvent = getAuditLogEvent(EventCode.ReportRun, EventCategory.information, "dummyEventSource", {

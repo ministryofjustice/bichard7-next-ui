@@ -5,6 +5,7 @@ import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
 import Layout from "components/Layout"
 import { MAX_NOTE_LENGTH } from "config"
+import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
 import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, Label, Link, Select, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -110,6 +111,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
     setNoteRemainingLength(MAX_NOTE_LENGTH - event.currentTarget.value.length)
   }
+  const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
 
   let backLink = `${basePath}/court-cases/${courtCase.errorId}`
 
@@ -123,54 +125,56 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         <title>{"Case Reallocation | Bichard7"}</title>
         <meta name="description" content="Case Reallocation | Bichard7" />
       </Head>
-      <Layout user={user}>
-        <BackLink href={backLink} onClick={function noRefCheck() {}}>
-          {"Case Details"}
-        </BackLink>
-        <HeaderContainer id="header-container">
-          <HeaderRow>
-            <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
-              {"Case reallocation"}
-            </Heading>
-          </HeaderRow>
-        </HeaderContainer>
-        <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
-        <ConditionalRender isRendered={!lockedByAnotherUser}>
-          <Form method="POST" action="#" csrfToken={csrfToken}>
-            <Fieldset>
-              <FormGroup>
-                <Label>{"Current force owner"}</Label>
-                <span>{`${currentForce?.code} - ${currentForce?.name}`}</span>
-              </FormGroup>
-              <FormGroup>
-                <Label>{"New force owner"}</Label>
-                <Select input={{ name: "force" }} label={""}>
-                  {forcesForReallocation.map(({ code, name }) => (
-                    <option key={code} value={code}>
-                      {`${code} - ${name}`}
-                    </option>
-                  ))}
-                </Select>
-              </FormGroup>
-              <FormGroup>
-                <Label>{"Add a note (optional)"}</Label>
-                <HintText className={classes["no-margin-bottom"]}>{"Input reason for case reallocation"}</HintText>
-                <TextArea input={{ name: "note", rows: 5, maxLength: MAX_NOTE_LENGTH, onInput: handleOnNoteChange }}>
-                  {}
-                </TextArea>
-                <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
-              </FormGroup>
+      <CurrentUserContext.Provider value={currentUserContext}>
+        <Layout>
+          <BackLink href={backLink} onClick={function noRefCheck() {}}>
+            {"Case Details"}
+          </BackLink>
+          <HeaderContainer id="header-container">
+            <HeaderRow>
+              <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
+                {"Case reallocation"}
+              </Heading>
+            </HeaderRow>
+          </HeaderContainer>
+          <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
+          <ConditionalRender isRendered={!lockedByAnotherUser}>
+            <Form method="POST" action="#" csrfToken={csrfToken}>
+              <Fieldset>
+                <FormGroup>
+                  <Label>{"Current force owner"}</Label>
+                  <span>{`${currentForce?.code} - ${currentForce?.name}`}</span>
+                </FormGroup>
+                <FormGroup>
+                  <Label>{"New force owner"}</Label>
+                  <Select input={{ name: "force" }} label={""}>
+                    {forcesForReallocation.map(({ code, name }) => (
+                      <option key={code} value={code}>
+                        {`${code} - ${name}`}
+                      </option>
+                    ))}
+                  </Select>
+                </FormGroup>
+                <FormGroup>
+                  <Label>{"Add a note (optional)"}</Label>
+                  <HintText className={classes["no-margin-bottom"]}>{"Input reason for case reallocation"}</HintText>
+                  <TextArea input={{ name: "note", rows: 5, maxLength: MAX_NOTE_LENGTH, onInput: handleOnNoteChange }}>
+                    {""}
+                  </TextArea>
+                  <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
+                </FormGroup>
 
-              <ButtonsGroup>
-                <Button id="Reallocate" type="submit">
-                  {"Reallocate"}
-                </Button>
-                <Link href={backLink}>{"Cancel"}</Link>
-              </ButtonsGroup>
-            </Fieldset>
-          </Form>
-        </ConditionalRender>
-      </Layout>
+                <ButtonsGroup>
+                  <Button id="Reallocate" type="submit">
+                    {"Reallocate"}
+                  </Button>
+                  <Link href={backLink}>{"Cancel"}</Link>
+                </ButtonsGroup>
+              </Fieldset>
+            </Form>
+          </ConditionalRender>
+        </Layout>
+      </CurrentUserContext.Provider>
     </>
   )
 }

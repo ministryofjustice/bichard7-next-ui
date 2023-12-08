@@ -1,3 +1,4 @@
+import { useCourtCase } from "context/CourtCaseContext"
 import { createUseStyles } from "react-jss"
 import { gdsLightGrey } from "utils/colours"
 import { formatDisplayedDate } from "utils/formattedDate"
@@ -30,39 +31,32 @@ const useStyles = createUseStyles({
   }
 })
 
-interface CourtCaseDetailsSummaryBoxProps {
-  asn: string | null
-  courtHouseCode: string | null
-  courtName: string
-  courtReference: string
-  pnci: string | undefined
-  ptiurn: string
-  dob: string | undefined
-  hearingDate: string | undefined
-}
-
-const CourtCaseDetailsSummaryBox = ({
-  asn,
-  courtHouseCode,
-  courtName,
-  courtReference,
-  pnci,
-  ptiurn,
-  dob,
-  hearingDate
-}: CourtCaseDetailsSummaryBoxProps) => {
+const CourtCaseDetailsSummaryBox = () => {
   const classes = useStyles()
+  const courtCase = useCourtCase()
+
+  const formattedHearingDate = formatDisplayedDate(
+    courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString() || ""
+  )
+  const formattedDobDate = formatDisplayedDate(
+    courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString() ||
+      ""
+  )
+  const pnci = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier
 
   return (
     <div className={`${classes["court-case-details-summary-box"]} govuk-body`}>
-      <CourtCaseDetailsSummaryBoxField label="PTIURN" value={ptiurn} />
-      <CourtCaseDetailsSummaryBoxField label="ASN" value={asn} />
+      <CourtCaseDetailsSummaryBoxField label="PTIURN" value={courtCase.ptiurn} />
+      <CourtCaseDetailsSummaryBoxField label="ASN" value={courtCase.asn} />
       <CourtCaseDetailsSummaryBoxField label="PNCID" value={pnci} />
-      <CourtCaseDetailsSummaryBoxField label="DOB" value={formatDisplayedDate(dob || "")} />
-      <CourtCaseDetailsSummaryBoxField label="Hearing date" value={formatDisplayedDate(hearingDate || "")} />
-      <CourtCaseDetailsSummaryBoxField label="Court code (LJA)" value={courtHouseCode} />
-      <CourtCaseDetailsSummaryBoxField label="Court case reference" value={courtReference} />
-      <CourtCaseDetailsSummaryBoxField label="Court name" value={courtName} />
+      <CourtCaseDetailsSummaryBoxField label="DOB" value={formattedDobDate} />
+      <CourtCaseDetailsSummaryBoxField label="Hearing date" value={formattedHearingDate} />
+      <CourtCaseDetailsSummaryBoxField
+        label="Court code (LJA)"
+        value={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
+      />
+      <CourtCaseDetailsSummaryBoxField label="Court case reference" value={courtCase.courtReference} />
+      <CourtCaseDetailsSummaryBoxField label="Court name" value={courtCase.courtName} />
     </div>
   )
 }

@@ -1,5 +1,3 @@
-import { OrganisationUnitCodes } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-
 export type Amendments = {
   asn: string
   offenceReasonSequence: UpdatedOffenceValue[]
@@ -27,8 +25,6 @@ export type AmendmentValues =
 
 export type AmendmentRecords = Record<string, AmendmentValues>
 
-export type AmendmentArrValues = Exclude<AmendmentValues, string>
-
 export type IndividualAmendmentValues =
   | string
   | UpdatedOffenceValue
@@ -37,19 +33,10 @@ export type IndividualAmendmentValues =
   | UpdatedNextHearingDate
   | UpdatedCourtOffenceSequenceNumber
 
-export type IndividualAmendmentArrValues = Exclude<IndividualAmendmentValues, string>
-
 export type RelevantIndexes = {
   offenceIndex: number
   resultIndex?: number
   resultQualifierIndex?: number
-}
-
-export type RawCourtCaseForAmend = {
-  phase: number
-  annotated_msg: string
-  org_for_police_filter: string
-  updated_msg: string | null
 }
 
 export type UpdatedOffenceValue = {
@@ -74,7 +61,7 @@ export type UpdatedOffenceResult = UpdatedOffenceValue & {
 export type UpdatedNextHearingDate = {
   offenceIndex: number
   resultIndex: number
-  updatedValue: Date
+  updatedValue: string
 }
 
 export type UpdatedOffence = {
@@ -87,8 +74,3 @@ export enum ValidProperties {
   NextHearingDate = "NextHearingDate",
   ResultVariableText = "ResultVariableText"
 }
-
-export type ValuesToAmend =
-  | { property: "NextHearingDate"; value: Date }
-  | { property: "NextResultSourceOrganisation"; value: OrganisationUnitCodes }
-  | { property: "ResultVariableText"; value: string }

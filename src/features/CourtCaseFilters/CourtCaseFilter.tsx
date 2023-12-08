@@ -2,13 +2,13 @@ import ConditionalRender from "components/ConditionalRender"
 import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions/ReasonFilterOptions"
 import UrgencyFilterOptions from "components/FilterOptions/UrgencyFilterOptions"
+import { useCurrentUser } from "context/CurrentUserContext"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
 import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
-import { DisplayFullUser } from "types/display/Users"
 import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
 import ExpandingFilters from "./ExpandingFilters"
@@ -28,7 +28,6 @@ interface Props {
   locked: string | null
   caseState: CaseState | null
   myCases: boolean
-  user: DisplayFullUser
   order: string | null
   orderBy: string | null
 }
@@ -55,7 +54,6 @@ const CourtCaseFilter: React.FC<Props> = ({
   locked,
   caseState,
   myCases,
-  user,
   order,
   orderBy
 }: Props) => {
@@ -79,6 +77,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   }
   const [state, dispatch] = useReducer(filtersReducer, initialFilterState)
   const classes = useStyles()
+  const currentUser = useCurrentUser()
 
   return (
     <form method={"get"} id="filter-panel">
@@ -168,15 +167,15 @@ const CourtCaseFilter: React.FC<Props> = ({
               </label>
             </div>
           </div>
-          <ConditionalRender isRendered={user.hasAccessTo[Permission.Triggers]}>
+          <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
             <div className={`${classes["govuk-form-group"]} reasons`}>
               <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"}>
                 <ReasonFilterOptions
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
                   reasonOptions={
-                    user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]
-                      ? [Reason.Bails, Reason.Triggers]
+                    currentUser.hasAccessTo[Permission.Triggers] && !currentUser.hasAccessTo[Permission.Exceptions]
+                      ? [Reason.Bails]
                       : undefined
                   }
                   dispatch={dispatch}
@@ -192,7 +191,7 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Court date"} hideChildren={true}>
+            <ExpandingFilters filterName={"Court date"}>
               <CourtDateFilterOptions
                 caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
                 caseAgeCounts={caseAgeCounts}

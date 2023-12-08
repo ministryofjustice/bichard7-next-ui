@@ -1,6 +1,7 @@
-import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
 import Pagination from "components/Pagination"
+import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
+import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
 import { getCookie, setCookie } from "cookies-next"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
@@ -12,7 +13,7 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { courtCaseToDisplayPartialCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
@@ -259,62 +260,66 @@ const Home: NextPage<Props> = (props) => {
     setCookie(queryStringCookieName, queryParams.toString(), { path: "/" })
   }, [router, queryStringCookieName])
 
+  const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
+  const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
+
   return (
     <>
       <Head>
         <title>{"Case List | Bichard7"}</title>
         <meta name="description" content="Case List | Bichard7" />
       </Head>
-      <Layout user={user} bichardSwitch={{ display: true, displaySwitchingSurveyFeedback }}>
-        <Main />
-        <CourtCaseWrapper
-          filter={
-            <CourtCaseFilter
-              reasons={reasons}
-              defendantName={keywords[0]}
-              courtName={courtName}
-              reasonCode={reasonCode}
-              ptiurn={ptiurn}
-              caseAge={caseAge}
-              caseAgeCounts={caseAgeCounts}
-              dateRange={dateRange}
-              urgency={urgent}
-              locked={locked}
-              caseState={caseState}
-              myCases={myCases}
-              user={user}
-              order={searchOrder}
-              orderBy={orderBy}
+      <CsrfTokenContext.Provider value={csrfTokenContext}>
+        <CurrentUserContext.Provider value={currentUserContext}>
+          <Layout bichardSwitch={{ display: true, displaySwitchingSurveyFeedback }}>
+            <Main />
+            <CourtCaseWrapper
+              filter={
+                <CourtCaseFilter
+                  reasons={reasons}
+                  defendantName={keywords[0]}
+                  courtName={courtName}
+                  reasonCode={reasonCode}
+                  ptiurn={ptiurn}
+                  caseAge={caseAge}
+                  caseAgeCounts={caseAgeCounts}
+                  dateRange={dateRange}
+                  urgency={urgent}
+                  locked={locked}
+                  caseState={caseState}
+                  myCases={myCases}
+                  order={searchOrder}
+                  orderBy={orderBy}
+                />
+              }
+              appliedFilters={
+                <AppliedFilters
+                  filters={{
+                    reasons,
+                    keywords,
+                    courtName,
+                    reasonCode,
+                    ptiurn,
+                    caseAge,
+                    dateRange: dateRange,
+                    urgency: urgent,
+                    locked: locked,
+                    caseState: caseState,
+                    myCases
+                  }}
+                />
+              }
+              courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
+              paginationTop={
+                <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />
+              }
+              paginationBottom={
+                <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
+              }
             />
-          }
-          appliedFilters={
-            <AppliedFilters
-              filters={{
-                reasons,
-                keywords,
-                courtName,
-                reasonCode,
-                ptiurn,
-                caseAge,
-                dateRange: dateRange,
-                urgency: urgent,
-                locked: locked,
-                caseState: caseState,
-                myCases
-              }}
-            />
-          }
-          courtCaseList={
-            <CourtCaseList csrfToken={csrfToken} courtCases={courtCases} order={order} currentUser={user} />
-          }
-          paginationTop={<Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />}
-          paginationBottom={
-            <ConditionalDisplay isDisplayed={courtCases.length > 0}>
-              <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
-            </ConditionalDisplay>
-          }
-        />
-      </Layout>
+          </Layout>
+        </CurrentUserContext.Provider>
+      </CsrfTokenContext.Provider>
     </>
   )
 }

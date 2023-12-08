@@ -2,19 +2,16 @@ import { Paragraph, Table } from "govuk-react"
 import { useRouter } from "next/router"
 import type { QueryOrder } from "types/CaseListQueryParams"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
-import { DisplayFullUser } from "types/display/Users"
 import { useCustomStyles } from "../../../styles/customStyles"
 import CourtCaseListEntry from "./CourtCaseListEntry/CourtCaseListEntry"
 import { CourtCaseListTableHeader } from "./CourtCaseListTableHeader"
 
 interface Props {
-  csrfToken: string
   courtCases: DisplayPartialCourtCase[]
   order?: QueryOrder
-  currentUser: DisplayFullUser
 }
 
-const CourtCaseList: React.FC<Props> = ({ csrfToken, courtCases, order = "asc", currentUser }: Props) => {
+const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) => {
   const { query } = useRouter()
 
   const recentlyUnlockedExceptionId = query.unlockException
@@ -40,9 +37,7 @@ const CourtCaseList: React.FC<Props> = ({ csrfToken, courtCases, order = "asc", 
     <Table head={<CourtCaseListTableHeader order={order} />}>
       {courtCases.map((courtCase, index) => (
         <CourtCaseListEntry
-          csrfToken={csrfToken}
           courtCase={courtCase}
-          currentUser={currentUser}
           exceptionHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedExceptionId}
           triggerHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedTriggerId}
           key={`court-case-${courtCase.ptiurn}`}

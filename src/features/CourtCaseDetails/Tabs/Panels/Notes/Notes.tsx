@@ -1,6 +1,7 @@
 import ConditionalRender from "components/ConditionalRender"
 import DateTime from "components/DateTime"
 import NotesFilterOptions from "components/NotesFilterOptions"
+import { useCourtCase } from "context/CourtCaseContext"
 import { Paragraph, Table } from "govuk-react"
 import { useState } from "react"
 import type NotesViewOption from "types/NotesViewOption"
@@ -10,9 +11,7 @@ import AddNoteForm from "./AddNoteForm"
 
 interface NotesProps {
   className: string
-  notes: DisplayNote[]
   isLockedByCurrentUser: boolean
-  csrfToken: string
 }
 
 const filterNotes = (notes: DisplayNote[], viewOption?: NotesViewOption) => {
@@ -35,7 +34,10 @@ const filterNotes = (notes: DisplayNote[], viewOption?: NotesViewOption) => {
   return [filteredNotes, noNoteText] as const
 }
 
-export const Notes = ({ className, notes, isLockedByCurrentUser, csrfToken }: NotesProps) => {
+export const Notes = ({ className, isLockedByCurrentUser }: NotesProps) => {
+  const courtCase = useCourtCase()
+  const notes: DisplayNote[] = courtCase.notes
+
   const [viewOption, setViewOption] = useState<NotesViewOption | undefined>()
   const [filteredNotes, noNoteText] = filterNotes(notes, viewOption)
   const hasNotes = notes.length > 0
@@ -68,7 +70,7 @@ export const Notes = ({ className, notes, isLockedByCurrentUser, csrfToken }: No
       <ConditionalRender isRendered={!hasFilteredNotes}>
         <Paragraph>{`Case has no ${noNoteText}.`}</Paragraph>
       </ConditionalRender>
-      <AddNoteForm isLockedByCurrentUser={isLockedByCurrentUser} csrfToken={csrfToken} />
+      <AddNoteForm isLockedByCurrentUser={isLockedByCurrentUser} />
     </CourtCaseDetailsPanel>
   )
 }

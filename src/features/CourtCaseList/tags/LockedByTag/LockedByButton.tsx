@@ -1,7 +1,8 @@
+import { useCsrfToken } from "context/CsrfTokenContext"
 import Image from "next/image"
 import { createUseStyles } from "react-jss"
-import { useCustomStyles } from "../../../../../styles/customStyles"
 import { LOCKED_ICON_URL } from "utils/icons"
+import { useCustomStyles } from "../../../../../styles/customStyles"
 import Form from "../../../../components/Form"
 
 const useStyles = createUseStyles({
@@ -12,12 +13,13 @@ const useStyles = createUseStyles({
 })
 
 interface UnlockConfirmationProps {
-  csrfToken: string
   onCancel: () => void
   unlockPath?: string
 }
 
-const UnlockConfirmation = ({ csrfToken, onCancel, unlockPath }: UnlockConfirmationProps) => {
+const UnlockConfirmation = ({ onCancel, unlockPath }: UnlockConfirmationProps) => {
+  const csrfToken = useCsrfToken()
+
   return (
     <>
       <p>{"Click the button to unlock the case"}</p>
@@ -43,7 +45,6 @@ const UnlockConfirmation = ({ csrfToken, onCancel, unlockPath }: UnlockConfirmat
 }
 
 interface LockedByButtonProps {
-  csrfToken: string
   lockedBy?: string | null
   unlockPath?: string
   showUnlockConfirmation: boolean
@@ -51,7 +52,6 @@ interface LockedByButtonProps {
 }
 
 const LockedByButton = ({
-  csrfToken,
   lockedBy,
   unlockPath,
   showUnlockConfirmation,
@@ -59,6 +59,7 @@ const LockedByButton = ({
 }: LockedByButtonProps) => {
   const classes = useStyles()
   const lockedByButtonClasses = useCustomStyles()
+
   return (
     <>
       <button
@@ -79,7 +80,6 @@ const LockedByButton = ({
       </button>
       {showUnlockConfirmation && (
         <UnlockConfirmation
-          csrfToken={csrfToken}
           onCancel={() => {
             setShowUnlockConfirmation(false)
           }}

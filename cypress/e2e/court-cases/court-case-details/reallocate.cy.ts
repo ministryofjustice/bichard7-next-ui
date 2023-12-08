@@ -233,15 +233,19 @@ describe("Case details", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.contains(
-      "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
-    ).should("not.be.visible")
+    cy.get(".govuk-tag:visible")
+      .contains(
+        "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
+      )
+      .should("not.exist")
 
     cy.visit("/bichard/court-cases/1")
 
-    cy.contains(
-      "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
-    ).should("exist")
+    cy.get(".govuk-tag")
+      .contains(
+        "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
+      )
+      .should("exist")
 
     cy.visit("/bichard/court-cases/1/reallocate")
     cy.url().should("match", /\/court-cases\/\d+/)

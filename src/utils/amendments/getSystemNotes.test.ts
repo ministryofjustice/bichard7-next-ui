@@ -78,7 +78,7 @@ describe("getSystemNotes", () => {
   })
 
   it("can generate system notes when the amendment value is UpdatedNextHearingDate type", () => {
-    const updatedDate = new Date("2023-01-16")
+    const updatedDate = "2023-01-16"
     expect(
       getSystemNotes(
         {
@@ -96,7 +96,7 @@ describe("getSystemNotes", () => {
     ).toStrictEqual([
       {
         errorId: dummyErrorId,
-        noteText: `${user.username}: Portal Action: Update Applied. Element: nextHearingDate. New Value: 16/01/2023`,
+        noteText: `${user.username}: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-01-16`,
         userId: "System"
       }
     ])

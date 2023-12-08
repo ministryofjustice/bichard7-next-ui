@@ -1,17 +1,18 @@
-import { v4 as uuid } from "uuid"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
+import MockDate from "mockdate"
 import { DataSource, UpdateQueryBuilder, UpdateResult } from "typeorm"
+import { v4 as uuid } from "uuid"
 import CourtCase from "../../../src/services/entities/CourtCase"
+import Trigger from "../../../src/services/entities/Trigger"
 import getDataSource from "../../../src/services/getDataSource"
+import updateCourtCase from "../../../src/services/reallocateCourtCase/updateCourtCase"
+import { ResolutionStatus } from "../../../src/types/ResolutionStatus"
+import { isError } from "../../../src/types/Result"
+import deleteFromDynamoTable from "../../utils/deleteFromDynamoTable"
 import deleteFromEntity from "../../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../../utils/insertCourtCases"
-import updateCourtCase from "../../../src/services/reallocateCourtCase/updateCourtCase"
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { isError } from "../../../src/types/Result"
 import { insertTriggers } from "../../utils/manageTriggers"
-import { ResolutionStatus } from "../../../src/types/ResolutionStatus"
-import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
-import Trigger from "../../../src/services/entities/Trigger"
-import MockDate from "mockdate"
 
 const getAho = (
   asn: string | null = "a".repeat(50),
@@ -85,9 +86,11 @@ describe("updateCourtCase", () => {
 
   beforeEach(async () => {
     MockDate.set(timestamp)
+    await deleteFromDynamoTable("auditLogTable", "messageId")
+    await deleteFromDynamoTable("auditLogEventsTable", "_id")
     await deleteFromEntity(Trigger)
     await deleteFromEntity(CourtCase)
-  })
+  }, 20_000)
 
   afterAll(async () => {
     MockDate.reset()

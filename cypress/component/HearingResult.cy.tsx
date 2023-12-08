@@ -7,6 +7,7 @@ import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/
 
 describe("Hearing Result", () => {
   let result: Result
+  const dummyIndex = 0
 
   beforeEach(() => {
     result = {
@@ -25,7 +26,16 @@ describe("Hearing Result", () => {
   })
 
   it("displays all mandatory fields", () => {
-    cy.mount(<HearingResult result={result} exceptions={[]} />)
+    cy.mount(
+      <HearingResult
+        result={result}
+        resultIndex={dummyIndex}
+        selectedOffenceIndex={dummyIndex}
+        amendments={{}}
+        amendFn={() => () => {}}
+        exceptions={[]}
+      />
+    )
 
     cy.contains("td", "CJS Code").siblings().should("include.text", "1234")
     cy.contains("td", "Result hearing type").siblings().should("include.text", "Hearing type")
@@ -50,7 +60,16 @@ describe("Hearing Result", () => {
         }
       ]
 
-      cy.mount(<HearingResult result={result} exceptions={[]} />)
+      cy.mount(
+        <HearingResult
+          result={result}
+          resultIndex={dummyIndex}
+          selectedOffenceIndex={dummyIndex}
+          amendments={{}}
+          amendFn={() => () => {}}
+          exceptions={[]}
+        />
+      )
 
       cy.contains("td", "Duration").siblings().should("include.text", "6 months")
     })
@@ -58,7 +77,16 @@ describe("Hearing Result", () => {
     it("does not display the duration row if not present", () => {
       result.Duration = undefined
 
-      cy.mount(<HearingResult result={result} exceptions={[]} />)
+      cy.mount(
+        <HearingResult
+          result={result}
+          resultIndex={dummyIndex}
+          selectedOffenceIndex={dummyIndex}
+          amendments={{}}
+          amendFn={() => () => {}}
+          exceptions={[]}
+        />
+      )
 
       cy.contains("td", "Duration").should("not.exist")
     })
@@ -76,7 +104,16 @@ describe("Hearing Result", () => {
           DurationUnit: "D"
         }
       ]
-      cy.mount(<HearingResult result={result} exceptions={[]} />)
+      cy.mount(
+        <HearingResult
+          result={result}
+          resultIndex={dummyIndex}
+          selectedOffenceIndex={dummyIndex}
+          amendments={{}}
+          amendFn={() => () => {}}
+          exceptions={[]}
+        />
+      )
       cy.contains("td", "Duration").siblings().should("include.text", "3 years")
       cy.contains("td", "Duration").siblings().should("include.text", "28 days")
     })
@@ -86,7 +123,16 @@ describe("Hearing Result", () => {
     it("does not display the next hearing date row if not present", () => {
       result.NextHearingDate = undefined
 
-      cy.mount(<HearingResult result={result} exceptions={[]} />)
+      cy.mount(
+        <HearingResult
+          result={result}
+          resultIndex={0}
+          selectedOffenceIndex={0}
+          amendments={{}}
+          amendFn={() => () => {}}
+          exceptions={[]}
+        />
+      )
 
       cy.contains("td", "Next hearing date").should("not.exist")
     })
@@ -94,7 +140,16 @@ describe("Hearing Result", () => {
     it("displays the next hearing date with an invalid value", () => {
       result.NextHearingDate = "false"
 
-      cy.mount(<HearingResult result={result} exceptions={[]} />)
+      cy.mount(
+        <HearingResult
+          result={result}
+          resultIndex={0}
+          selectedOffenceIndex={0}
+          amendments={{}}
+          amendFn={() => () => {}}
+          exceptions={[]}
+        />
+      )
 
       cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
     })
@@ -102,9 +157,40 @@ describe("Hearing Result", () => {
     it("displays the next hearing date field when it has no value but has an error", () => {
       result.NextHearingDate = undefined
 
-      cy.mount(<HearingResult result={result} exceptions={[ExceptionCode.HO100323]} />)
+      cy.mount(
+        <HearingResult
+          result={result}
+          resultIndex={0}
+          selectedOffenceIndex={0}
+          amendments={{}}
+          amendFn={() => () => {}}
+          exceptions={[{ path: ["dummyPath", "NextHearingDate"], code: ExceptionCode.HO100323 }]}
+        />
+      )
 
       cy.contains("td", "Next hearing date").siblings().should("include.text", "")
+    })
+
+    it("displays the next hearing location field when it has no value but has an error", () => {
+      result.NextResultSourceOrganisation = undefined
+
+      cy.mount(
+        <HearingResult
+          result={result}
+          resultIndex={0}
+          selectedOffenceIndex={0}
+          amendments={{}}
+          amendFn={() => () => {}}
+          exceptions={[
+            {
+              path: ["dummyPath", "NextResultSourceOrganisation", "OrganisationUnitCode"],
+              code: ExceptionCode.HO100200
+            }
+          ]}
+        />
+      )
+
+      cy.contains("td", "Next hearing location").siblings().should("include.text", "")
     })
   })
 })
