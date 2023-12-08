@@ -362,12 +362,28 @@ describe("Court case details", () => {
     })
   })
 
-  it.skip("Should redirect to the user-service if the auth token provided is for a non-existent user", () => {
+  it("Should return 401 if there is no auth token in the cookies(this will redirect to the user-service)", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01"
+      }
+    ])
     cy.login("bichard01@example.com", "password")
-    cy.clearCookies()
-    cy.visit("/bichard/court-cases/0", { failOnStatusCode: false })
+    cy.request({
+      failOnStatusCode: false,
+      url: "/bichard/court-cases/0"
+    }).then((response) => {
+      expect(response.status).to.eq(200)
+    })
 
-    cy.url().should("match", /\/users/)
+    cy.clearCookies()
+
+    cy.request({
+      failOnStatusCode: false,
+      url: "/bichard/court-cases/0"
+    }).then((response) => {
+      expect(response.status).to.eq(401)
+    })
   })
 
   it("Should resubmit a case when no updates made and the resubmit button is clicked", () => {
