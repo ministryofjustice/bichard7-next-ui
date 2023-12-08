@@ -1,8 +1,7 @@
-import { Paragraph, Table } from "govuk-react"
+import { Paragraph } from "govuk-react"
 import { useRouter } from "next/router"
 import type { QueryOrder } from "types/CaseListQueryParams"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
-import { useCustomStyles } from "../../../styles/customStyles"
 import CourtCaseListEntry from "./CourtCaseListEntry/CourtCaseListEntry"
 import { CourtCaseListTableHeader } from "./CourtCaseListTableHeader"
 
@@ -29,7 +28,6 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
     }, new Array<string>())
     .join("&")
 
-  const classes = useCustomStyles()
   return courtCases.length === 0 ? (
     <Paragraph>{"There are no court cases to show"}</Paragraph>
   ) : (

@@ -7,25 +7,17 @@ import { Link, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
-import { DisplayNote } from "types/display/Notes"
 import { displayedDateFormat } from "utils/formattedDate"
 import { LOCKED_ICON_URL } from "utils/icons"
 import { NotePreviewButton } from "./NotePreviewButton"
 import { useState } from "react"
 import { NotePreviewRow } from "./NotePreviewRow"
+import { DisplayPartialCourtCase } from "types/display/CourtCases"
 
 interface CaseDetailsRowProps {
-  courtDate: Date | null
-  courtName: string
-  defendantName: string | null
-  errorId: number
-  errorLockedByUsername: string | null | undefined
-  isResolved: boolean
-  isUrgent: boolean
-  notes: DisplayNote[]
-  ptiurn: string
+  courtCase: DisplayPartialCourtCase
   reasonCell?: JSX.Element
-  lockTag: JSX.Element
+  lockTag?: JSX.Element
   previousPath: string | null
 }
 
@@ -41,25 +33,24 @@ const useStyles = createUseStyles({
   }
 })
 
-export const CaseDetailsRow = ({
-  courtDate,
-  courtName,
-  defendantName,
-  errorId,
-  errorLockedByUsername,
-  isResolved,
-  isUrgent,
-  notes,
-  ptiurn,
-  reasonCell,
-  lockTag,
-  previousPath
-}: CaseDetailsRowProps) => {
+export const CaseDetailsRow = ({ courtCase, reasonCell, lockTag, previousPath }: CaseDetailsRowProps) => {
+  const {
+    resolutionTimestamp,
+    notes,
+    errorLockedByUsername,
+    defendantName,
+    errorId,
+    courtDate,
+    courtName,
+    ptiurn,
+    isUrgent
+  } = courtCase
   const { basePath } = useRouter()
   const [showPreview, setShowPreview] = useState(true)
   const userNotes = filterUserNotes(notes)
   const numberOfNotes = userNotes.length
   const classes = useStyles()
+  const isResolved = resolutionTimestamp !== null
 
   let previousPathWebSafe = ""
   if (previousPath) {

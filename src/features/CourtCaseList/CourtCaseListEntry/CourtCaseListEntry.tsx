@@ -1,4 +1,3 @@
-import ConditionalRender from "components/ConditionalRender"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
@@ -25,17 +24,10 @@ const CourtCaseListEntry: React.FC<Props> = ({
   previousPath
 }: Props) => {
   const {
-    courtDate,
-    courtName,
-    defendantName,
     errorId,
     errorLockedByUsername,
     errorLockedByUserFullName,
     errorReport,
-    isUrgent,
-    notes,
-    ptiurn,
-    resolutionTimestamp,
     triggerLockedByUsername,
     triggerLockedByUserFullName,
     triggers
@@ -59,57 +51,47 @@ const CourtCaseListEntry: React.FC<Props> = ({
   const hasTriggers = triggers.length > 0
   const hasExceptions = !!errorReport
 
-  const exceptionsReasonCell = <ExceptionsReasonCell exceptionCounts={groupErrorsFromReport(errorReport)} />
-  const exceptionsLockTag = (
-    <ExceptionsLockTag
-      errorLockedByUsername={errorLockedByUsername}
-      errorLockedByFullName={errorLockedByUserFullName}
-      canUnlockCase={!!errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
-      unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
-      exceptionsHaveBeenRecentlyUnlocked={exceptionHasBeenRecentlyUnlocked}
-    />
-  )
-  const triggersReasonCell = <TriggersReasonCell triggers={triggers} />
-  const triggersLockTag = (
-    <TriggersLockTag
-      triggersLockedByUsername={triggerLockedByUsername}
-      triggersLockedByFullName={triggerLockedByUserFullName}
-      triggersHaveBeenRecentlyUnlocked={triggerHasBeenRecentlyUnlocked}
-      canUnlockCase={!!triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
-      unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
-    />
-  )
-  const reasonAndLockTags: [JSX.Element, JSX.Element][] = []
+  let exceptionsReasonCell, exceptionsLockTag, triggersReasonCell, triggersLockTag
   if (hasExceptions && currentUser.hasAccessTo[Permission.Exceptions]) {
-    reasonAndLockTags.push([exceptionsReasonCell, exceptionsLockTag])
+    exceptionsReasonCell = <ExceptionsReasonCell exceptionCounts={groupErrorsFromReport(errorReport)} />
+    exceptionsLockTag = (
+      <ExceptionsLockTag
+        errorLockedByUsername={errorLockedByUsername}
+        errorLockedByFullName={errorLockedByUserFullName}
+        canUnlockCase={!!errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
+        unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
+        exceptionsHaveBeenRecentlyUnlocked={exceptionHasBeenRecentlyUnlocked}
+      />
+    )
   }
   if (hasTriggers && currentUser.hasAccessTo[Permission.Triggers]) {
-    reasonAndLockTags.push([triggersReasonCell, triggersLockTag])
+    triggersReasonCell = <TriggersReasonCell triggers={triggers} />
+    triggersLockTag = (
+      <TriggersLockTag
+        triggersLockedByUsername={triggerLockedByUsername}
+        triggersLockedByFullName={triggerLockedByUserFullName}
+        triggersHaveBeenRecentlyUnlocked={triggerHasBeenRecentlyUnlocked}
+        canUnlockCase={!!triggerLockedByUsername && canUnlockCase(triggerLockedByUsername)}
+        unlockPath={unlockCaseWithReasonPath("Trigger", `${errorId}`)}
+      />
+    )
   }
 
   return (
     <tbody>
       <CaseDetailsRow
-        courtDate={courtDate ? new Date(courtDate) : null}
-        courtName={courtName}
-        defendantName={defendantName}
-        errorId={errorId}
-        errorLockedByUsername={errorLockedByUsername}
-        isResolved={resolutionTimestamp !== null}
-        isUrgent={isUrgent}
-        notes={notes}
-        ptiurn={ptiurn}
-        reasonCell={reasonAndLockTags[0]?.[0]}
-        lockTag={reasonAndLockTags[0] ? reasonAndLockTags[0][1] : <></>}
+        courtCase={courtCase}
+        reasonCell={exceptionsReasonCell || triggersReasonCell}
+        lockTag={exceptionsLockTag || triggersLockTag}
         previousPath={previousPath}
       />
-      <ConditionalRender isRendered={reasonAndLockTags.length > 1}>
+      {exceptionsLockTag && triggersLockTag && triggersReasonCell && (
         <ExtraReasonRow
           isLocked={!!triggerLockedByUsername}
-          reasonCell={reasonAndLockTags[1] ? reasonAndLockTags[1][0] : <></>}
-          lockTag={reasonAndLockTags[1] ? reasonAndLockTags[1][1] : <></>}
+          reasonCell={triggersReasonCell}
+          lockTag={triggersLockTag}
         />
-      </ConditionalRender>
+      )}
     </tbody>
   )
 }
