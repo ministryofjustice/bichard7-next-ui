@@ -87,7 +87,12 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
             className={activeTab === "Defendant" ? classes.visible : classes.notVisible}
             heading={"Defendant details"}
           >
-            <DefendantDetails defendant={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant} />
+            <DefendantDetails
+              defendant={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant}
+              asn={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber}
+              exceptions={courtCase.aho.Exceptions}
+              courtCase={courtCase}
+            />
           </CourtCaseDetailsPanel>
 
           <CourtCaseDetailsPanel
