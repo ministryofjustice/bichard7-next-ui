@@ -11,6 +11,8 @@ import { DisplayNote } from "types/display/Notes"
 import { displayedDateFormat } from "utils/formattedDate"
 import { LOCKED_ICON_URL } from "utils/icons"
 import { NotePreviewButton } from "./NotePreviewButton"
+import { useState } from "react"
+import { NotePreviewRow } from "./NotePreviewRow"
 
 interface CaseDetailsRowProps {
   courtDate: Date | null
@@ -26,8 +28,6 @@ interface CaseDetailsRowProps {
   reasonCell?: JSX.Element
   lockTag: JSX.Element
   previousPath: string | null
-  showPreview: boolean
-  onPreviewButtonClick: () => void
 }
 
 const useStyles = createUseStyles({
@@ -56,11 +56,10 @@ export const CaseDetailsRow = ({
   rowClassName,
   reasonCell,
   lockTag,
-  previousPath,
-  showPreview,
-  onPreviewButtonClick
+  previousPath
 }: CaseDetailsRowProps) => {
   const { basePath } = useRouter()
+  const [showPreview, setShowPreview] = useState(true)
   const userNotes = filterUserNotes(notes)
   const numberOfNotes = userNotes.length
   const classes = useStyles()
@@ -68,6 +67,10 @@ export const CaseDetailsRow = ({
   let previousPathWebSafe = ""
   if (previousPath) {
     previousPathWebSafe = `?previousPath=${encodeURIComponent(previousPath)}`
+  }
+
+  const handlePreviewButtonClick = () => {
+    setShowPreview(!showPreview)
   }
 
   return (
@@ -94,11 +97,12 @@ export const CaseDetailsRow = ({
           <UrgentTag isUrgent={isUrgent} />
         </Table.Cell>
         <Table.Cell>
-          <NotePreviewButton previewState={showPreview} onClick={onPreviewButtonClick} numberOfNotes={numberOfNotes} />
+          <NotePreviewButton previewState={showPreview} setShowPreview={setShowPreview} numberOfNotes={numberOfNotes} />
         </Table.Cell>
         <Table.Cell>{reasonCell}</Table.Cell>
         <Table.Cell>{lockTag}</Table.Cell>
       </Table.Row>
+      {notes.length > 0 && !showPreview && <NotePreviewRow notes={notes} />}
     </>
   )
 }

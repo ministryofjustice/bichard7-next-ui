@@ -30,11 +30,13 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
     .join("&")
 
   const classes = useCustomStyles()
-
   return courtCases.length === 0 ? (
     <Paragraph>{"There are no court cases to show"}</Paragraph>
   ) : (
-    <Table head={<CourtCaseListTableHeader order={order} />} className="cases-list">
+    <table className="cases-list">
+      <thead>
+        <CourtCaseListTableHeader order={order} />
+      </thead>
       {courtCases.map((courtCase, index) => (
         <CourtCaseListEntry
           courtCase={courtCase}
@@ -45,7 +47,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
           previousPath={queryString}
         />
       ))}
-    </Table>
+    </table>
   )
 }
 

@@ -6,6 +6,13 @@ body {
 }
 
 .cases-list {
+  border-spacing: 0;
+  border-collapse: separate;
+  tbody {
+    tr:not(:last-child) td {
+      border-bottom: none;
+    }
+  }
   .note-preview-row {
     td {
       padding-top: 0;

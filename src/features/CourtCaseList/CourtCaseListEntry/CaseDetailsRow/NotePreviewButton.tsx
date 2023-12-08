@@ -13,7 +13,7 @@ interface NotePreviewProps {
 
 interface NotePreviewButtonProps {
   previewState: boolean
-  onClick: () => void
+  setShowPreview: Dispatch<SetStateAction<boolean>>
   numberOfNotes: number
 }
 
@@ -34,7 +34,7 @@ export const NotePreviewButton: React.FC<NotePreviewButtonProps> = (props: NoteP
     <>
       <ConditionalRender isRendered={props.numberOfNotes > 0}>
         <div>{props.numberOfNotes > 1 ? `${props.numberOfNotes} notes` : `${props.numberOfNotes} note`}</div>
-        <PreviewButton showPreview={props.previewState} onClick={props.onClick} previewLabel="Preview" />
+        <PreviewButton showPreview={props.previewState} onClick={props.setShowPreview} previewLabel="Preview" />
       </ConditionalRender>
     </>
   )

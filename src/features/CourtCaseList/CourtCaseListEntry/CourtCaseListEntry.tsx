@@ -10,8 +10,6 @@ import { CaseDetailsRow } from "./CaseDetailsRow/CaseDetailsRow"
 import { ExceptionsLockTag, ExceptionsReasonCell } from "./ExceptionsColumns"
 import { ExtraReasonRow } from "./ExtraReasonRow"
 import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
-import { NotePreviewRow } from "./CaseDetailsRow/NotePreviewRow"
-import { useState } from "react"
 
 interface Props {
   courtCase: DisplayPartialCourtCase
@@ -46,7 +44,6 @@ const CourtCaseListEntry: React.FC<Props> = ({
   } = courtCase
 
   const { basePath, query } = useRouter()
-  const [showPreview, setShowPreview] = useState(true)
   const searchParams = new URLSearchParams(encode(query))
   const currentUser = useCurrentUser()
 
@@ -92,12 +89,8 @@ const CourtCaseListEntry: React.FC<Props> = ({
     reasonAndLockTags.push([triggersReasonCell, triggersLockTag])
   }
 
-  const handlePreviewButtonClick = () => {
-    setShowPreview(!showPreview)
-  }
-
   return (
-    <>
+    <tbody>
       <CaseDetailsRow
         courtDate={courtDate ? new Date(courtDate) : null}
         courtName={courtName}
@@ -112,12 +105,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
         reasonCell={reasonAndLockTags[0]?.[0]}
         lockTag={reasonAndLockTags[0] ? reasonAndLockTags[0][1] : <></>}
         previousPath={previousPath}
-        showPreview={showPreview}
-        onPreviewButtonClick={handlePreviewButtonClick}
       />
-
-      {notes.length > 0 && !showPreview && <NotePreviewRow notes={notes} />}
-
       <ConditionalRender isRendered={reasonAndLockTags.length > 1}>
         <ExtraReasonRow
           rowClassName={entityClassName}
@@ -126,7 +114,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
           lockTag={reasonAndLockTags[1] ? reasonAndLockTags[1][1] : <></>}
         />
       </ConditionalRender>
-    </>
+    </tbody>
   )
 }
 
