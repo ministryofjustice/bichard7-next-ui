@@ -370,54 +370,31 @@ describe("Court case details", () => {
     cy.url().should("match", /\/users/)
   })
 
-  // it("Should resubmit a case when the resubmit button is clicked", () => {
-  //   cy.task("insertCourtCasesWithFields", [
-  //     {
-  //       errorLockedByUsername: null,
-  //       triggerLockedByUsername: null,
-  //       orgForPoliceFilter: "02"
-  //     }
-  //   ])
+  it("Should resubmit a case when no updates made and the resubmit button is clicked", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        errorCount: 1,
+        orgForPoliceFilter: "02"
+      }
+    ])
 
-  //   cy.login("bichard02@example.com", "password")
+    cy.login("bichard02@example.com", "password")
 
-  //   cy.visit("/bichard/court-cases/0")
+    cy.visit("/bichard/court-cases/0")
 
-  //   cy.get("button").contains("Resubmit").click()
-  //   cy.location().should((loc) => {
-  //     expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
-  //   })
+    cy.get("button").contains("Submit exception(s)").click()
+    cy.location().should((loc) => {
+      expect(loc.href).to.contain("?resubmitCase=true")
+    })
 
-  //   cy.get("H1").should("have.text", "Case details")
-  //   cy.contains("Notes").click()
-  //   const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-  //   cy.contains(dateTimeRegex)
-  //   cy.contains("Bichard02: Portal Action: Resubmitted Message.")
-  // })
-
-  // it("Should resubmit a case when updates are made and the resubmit button is clicked", () => {
-  //   cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
-  //   cy.login("bichard02@example.com", "password")
-
-  //   cy.visit("/bichard/court-cases/0")
-
-  //   // need to make the updates and then check them in the db
-  //   cy.get("input").first().type("2024-09-26")
-  //   cy.get("button").contains("Resubmit").click()
-  //   cy.task("getCourtCaseById", { caseId: 0 }).then((res) =>
-  //     expect(JSON.stringify(res)).to.eq(JSON.stringify(resubmitCaseJson))
-  //   )
-  //   cy.location().should((loc) => {
-  //     expect(loc.href).to.contain("?courtCaseId=0&resubmitCase=true")
-  //   })
-
-  //   cy.get("H1").should("have.text", "Case details")
-  //   cy.contains("Notes").click()
-  //   const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-  //   cy.contains(dateTimeRegex)
-  //   cy.contains("Bichard02: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-09-26")
-  //   cy.contains("Bichard02: Portal Action: Resubmitted Message.")
-  // })
+    cy.get("H1").should("have.text", "Case details")
+    cy.contains("Notes").click()
+    const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
+    cy.contains(dateTimeRegex)
+    cy.contains("Bichard02: Portal Action: Resubmitted Message.")
+  })
 
   it("Should show triggers tab by default when navigating to court case details page", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
