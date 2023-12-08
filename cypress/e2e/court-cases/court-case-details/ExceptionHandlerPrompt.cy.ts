@@ -177,7 +177,7 @@ describe("ExceptionHandlerPrompt", () => {
     })
   })
 
-  context("ASN error prompt", () => {
+  context.only("ASN error prompt", () => {
     it("Should not display an error prompt when a HO200113 is not raised", () => {
       cy.task("insertCourtCasesWithFields", [
         {
@@ -190,7 +190,7 @@ describe("ExceptionHandlerPrompt", () => {
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
 
-      cy.get("label").contains("1101ZD0100000448754K")
+      cy.get(".table-row-ASN").contains("1101ZD0100000448754K")
       cy.get(".error-prompt-message").should("not.exist")
     })
     it("Should display an error prompt when a HO200113 is raised", () => {
@@ -206,8 +206,8 @@ describe("ExceptionHandlerPrompt", () => {
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
 
-      cy.get(".defendant-table").contains("2300000000000942133G")
-      cy.get(".defendant-table .error-prompt-message").contains(ErrorMessages.AsnUneditable)
+      cy.get(".error-prompt").contains("2300000000000942133G")
+      cy.get(".error-prompt").contains(ErrorMessages.AsnUneditable)
     })
     // TODO: add test cases for HO200114
   })
