@@ -24,7 +24,6 @@ interface CaseDetailsRowProps {
   isUrgent: boolean
   notes: DisplayNote[]
   ptiurn: string
-  rowClassName: string
   reasonCell?: JSX.Element
   lockTag: JSX.Element
   previousPath: string | null
@@ -32,8 +31,7 @@ interface CaseDetailsRowProps {
 
 const useStyles = createUseStyles({
   caseDetailsRow: {
-    verticalAlign: "top",
-    borderColor: "unset"
+    verticalAlign: "top"
   },
   flexBox: {
     display: "flex"
@@ -53,7 +51,6 @@ export const CaseDetailsRow = ({
   isUrgent,
   notes,
   ptiurn,
-  rowClassName,
   reasonCell,
   lockTag,
   previousPath
@@ -69,13 +66,9 @@ export const CaseDetailsRow = ({
     previousPathWebSafe = `?previousPath=${encodeURIComponent(previousPath)}`
   }
 
-  const handlePreviewButtonClick = () => {
-    setShowPreview(!showPreview)
-  }
-
   return (
     <>
-      <Table.Row className={`${classes.caseDetailsRow} ${rowClassName}`}>
+      <Table.Row className={`${classes.caseDetailsRow}`}>
         <Table.Cell>
           <ConditionalRender isRendered={!!errorLockedByUsername}>
             <Image src={LOCKED_ICON_URL} priority width={20} height={20} alt="Lock icon" />

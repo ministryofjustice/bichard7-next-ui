@@ -15,12 +15,10 @@ interface Props {
   courtCase: DisplayPartialCourtCase
   exceptionHasBeenRecentlyUnlocked: boolean
   triggerHasBeenRecentlyUnlocked: boolean
-  entityClassName: string
   previousPath: string | null
 }
 
 const CourtCaseListEntry: React.FC<Props> = ({
-  entityClassName,
   courtCase,
   exceptionHasBeenRecentlyUnlocked,
   triggerHasBeenRecentlyUnlocked,
@@ -101,14 +99,12 @@ const CourtCaseListEntry: React.FC<Props> = ({
         isUrgent={isUrgent}
         notes={notes}
         ptiurn={ptiurn}
-        rowClassName={entityClassName}
         reasonCell={reasonAndLockTags[0]?.[0]}
         lockTag={reasonAndLockTags[0] ? reasonAndLockTags[0][1] : <></>}
         previousPath={previousPath}
       />
       <ConditionalRender isRendered={reasonAndLockTags.length > 1}>
         <ExtraReasonRow
-          rowClassName={entityClassName}
           isLocked={!!triggerLockedByUsername}
           reasonCell={reasonAndLockTags[1] ? reasonAndLockTags[1][0] : <></>}
           lockTag={reasonAndLockTags[1] ? reasonAndLockTags[1][1] : <></>}

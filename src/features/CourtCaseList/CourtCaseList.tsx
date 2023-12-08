@@ -43,7 +43,6 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
           exceptionHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedExceptionId}
           triggerHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedTriggerId}
           key={`court-case-${courtCase.ptiurn}`}
-          entityClassName={index % 2 == 1 ? classes["light-grey-background"] : ""}
           previousPath={queryString}
         />
       ))}

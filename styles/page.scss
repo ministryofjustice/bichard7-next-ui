@@ -13,6 +13,11 @@ body {
       border-bottom: none;
     }
   }
+  tbody:nth-child(odd){
+    tr{
+      background-color: $b7-light-grey-color;
+    }
+  }
   .note-preview-row {
     td {
       padding-top: 0;
