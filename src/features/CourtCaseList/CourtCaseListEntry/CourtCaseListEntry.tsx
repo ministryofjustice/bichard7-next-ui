@@ -6,11 +6,12 @@ import Permission from "types/Permission"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
 import { deleteQueryParamsByName } from "utils/deleteQueryParam"
 import groupErrorsFromReport from "utils/formatReasons/groupErrorsFromReport"
-import { useCustomStyles } from "../../../../styles/customStyles"
 import { CaseDetailsRow } from "./CaseDetailsRow/CaseDetailsRow"
 import { ExceptionsLockTag, ExceptionsReasonCell } from "./ExceptionsColumns"
 import { ExtraReasonRow } from "./ExtraReasonRow"
 import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
+import { NotePreviewRow } from "./CaseDetailsRow/NotePreviewRow"
+import { useState } from "react"
 
 interface Props {
   courtCase: DisplayPartialCourtCase
@@ -43,7 +44,9 @@ const CourtCaseListEntry: React.FC<Props> = ({
     triggerLockedByUserFullName,
     triggers
   } = courtCase
+
   const { basePath, query } = useRouter()
+  const [showPreview, setShowPreview] = useState(true)
   const searchParams = new URLSearchParams(encode(query))
   const currentUser = useCurrentUser()
 
@@ -89,35 +92,34 @@ const CourtCaseListEntry: React.FC<Props> = ({
     reasonAndLockTags.push([triggersReasonCell, triggersLockTag])
   }
 
-  const classes = useCustomStyles()
+  const handlePreviewButtonClick = () => {
+    setShowPreview(!showPreview)
+  }
 
   return (
     <>
       <CaseDetailsRow
-        canCurrentUserUnlockCase={errorLockedByUsername && canUnlockCase(errorLockedByUsername)}
-        hasTriggers={hasTriggers}
         courtDate={courtDate ? new Date(courtDate) : null}
         courtName={courtName}
         defendantName={defendantName}
         errorId={errorId}
         errorLockedByUsername={errorLockedByUsername}
-        errorLockedByUserFullName={errorLockedByUserFullName}
-        errorReport={errorReport}
-        firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
-        isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername}
         isResolved={resolutionTimestamp !== null}
         isUrgent={isUrgent}
         notes={notes}
         ptiurn={ptiurn}
         rowClassName={entityClassName}
-        unlockPath={unlockCaseWithReasonPath("Exception", `${errorId}`)}
-        reasonCell={reasonAndLockTags[0] ? reasonAndLockTags[0][0] : <></>}
+        reasonCell={reasonAndLockTags[0]?.[0]}
         lockTag={reasonAndLockTags[0] ? reasonAndLockTags[0][1] : <></>}
         previousPath={previousPath}
+        showPreview={showPreview}
+        onPreviewButtonClick={handlePreviewButtonClick}
       />
+
+      {notes.length > 0 && !showPreview && <NotePreviewRow notes={notes} />}
+
       <ConditionalRender isRendered={reasonAndLockTags.length > 1}>
         <ExtraReasonRow
-          firstColumnClassName={classes["limited-border-left"]}
           rowClassName={entityClassName}
           isLocked={!!triggerLockedByUsername}
           reasonCell={reasonAndLockTags[1] ? reasonAndLockTags[1][0] : <></>}

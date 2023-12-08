@@ -4,3 +4,11 @@ body {
   font-family: $b7-font-family;
   font-size: $b7-default-font-size;
 }
+
+.cases-list {
+  .note-preview-row {
+    td {
+      padding-top: 0;
+    }
+  }
+}

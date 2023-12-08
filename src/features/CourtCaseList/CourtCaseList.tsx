@@ -34,7 +34,7 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
   return courtCases.length === 0 ? (
     <Paragraph>{"There are no court cases to show"}</Paragraph>
   ) : (
-    <Table head={<CourtCaseListTableHeader order={order} />}>
+    <Table head={<CourtCaseListTableHeader order={order} />} className="cases-list">
       {courtCases.map((courtCase, index) => (
         <CourtCaseListEntry
           courtCase={courtCase}
