@@ -679,26 +679,28 @@ describe("Court case details", () => {
 
   canReallocateTestData.forEach(
     ({ canReallocate, triggers, exceptions, triggersLockedByAnotherUser, exceptionLockedByAnotherUser }) => {
-      it(`should show Reallocate button when triggers are ${triggers} and ${triggersLockedByAnotherUser ? "" : "NOT"
-        } locked by another user, and exceptions are ${exceptions} and ${exceptionLockedByAnotherUser ? "" : "NOT"
-        } locked by another user`, () => {
-          cy.task("insertCourtCasesWithFields", [
-            {
-              orgForPoliceFilter: "01",
-              triggerStatus: triggers,
-              errorStatus: exceptions,
-              triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "Bichard03" : null,
-              errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : null
-            }
-          ])
+      it(`should show Reallocate button when triggers are ${triggers} and ${
+        triggersLockedByAnotherUser ? "" : "NOT"
+      } locked by another user, and exceptions are ${exceptions} and ${
+        exceptionLockedByAnotherUser ? "" : "NOT"
+      } locked by another user`, () => {
+        cy.task("insertCourtCasesWithFields", [
+          {
+            orgForPoliceFilter: "01",
+            triggerStatus: triggers,
+            errorStatus: exceptions,
+            triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "Bichard03" : null,
+            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : null
+          }
+        ])
 
-          cy.login("bichard01@example.com", "password")
-          cy.visit("/bichard/court-cases/0")
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard/court-cases/0")
 
-          cy.get("button.b7-reallocate-button").should(canReallocate ? "exist" : "not.exist")
-        })
+        cy.get("button.b7-reallocate-button").should(canReallocate ? "exist" : "not.exist")
+      })
     }
   )
 })
 
-export { }
+export {}
