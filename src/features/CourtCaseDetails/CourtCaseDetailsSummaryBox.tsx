@@ -40,7 +40,7 @@ const CourtCaseDetailsSummaryBox = () => {
   )
   const formattedDobDate = formatDisplayedDate(
     courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail?.BirthDate?.toString() ||
-    ""
+      ""
   )
   const pnci = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier
 
