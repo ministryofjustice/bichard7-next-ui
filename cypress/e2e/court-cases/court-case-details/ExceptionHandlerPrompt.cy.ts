@@ -2,6 +2,7 @@ import ErrorMessages from "types/ErrorMessages"
 import HO100309 from "../../../../test/test-data/HO100309.json"
 import HO100306andHO100251 from "../../../../test/test-data/HO100306andHO100251.json"
 import HO200113 from "../../../../test/test-data/HO200113.json"
+import HO200114 from "../../../../test/test-data/HO200114.json"
 
 import hashedPassword from "../../../fixtures/hashedPassword"
 
@@ -190,9 +191,10 @@ describe("ExceptionHandlerPrompt", () => {
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
 
-      cy.get(".table-row-ASN").contains("1101ZD0100000448754K")
+      cy.get(".Defendant-details-table").contains("1101ZD0100000448754K")
       cy.get(".error-prompt-message").should("not.exist")
     })
+
     it("Should display an error prompt when a HO200113 is raised", () => {
       cy.task("insertCourtCasesWithFields", [
         {
@@ -209,6 +211,38 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".error-prompt").contains("2300000000000942133G")
       cy.get(".error-prompt").contains(ErrorMessages.AsnUneditable)
     })
-    // TODO: add test cases for HO200114
+
+    it("Should not display an error prompt when a HO200114 is not raised", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          errorCount: 1,
+          triggerCount: 1
+        }
+      ])
+
+      cy.login("bichard01@example.com", "password")
+      cy.visit("/bichard/court-cases/0")
+
+      cy.get(".Defendant-details-table").contains("1101ZD0100000448754K")
+      cy.get(".error-prompt-message").should("not.exist")
+    })
+
+    it("Should display an error prompt when a HO200114 is raised", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          errorCount: 1,
+          triggerCount: 1,
+          hearingOutcome: HO200114.hearingOutcomeXml
+        }
+      ])
+
+      cy.login("bichard01@example.com", "password")
+      cy.visit("/bichard/court-cases/0")
+
+      cy.get(".error-prompt").contains("2300000000000532316D")
+      cy.get(".error-prompt").contains(ErrorMessages.AsnUneditable)
+    })
   })
 })
