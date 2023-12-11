@@ -15,7 +15,6 @@ import ErrorPromptMessage from "components/ErrorPromptMessage"
 import { BailConditions } from "./BailConditions"
 import { createUseStyles } from "react-jss"
 
-
 interface DefendantDetailsProps {
   defendant: HearingDefendant
   asn: string | null
@@ -32,12 +31,13 @@ const useStyles = createUseStyles({
 })
 
 export const DefendantDetails = ({ defendant, asn, exceptions, courtCase }: DefendantDetailsProps) => {
-  const classes = useStyles()
-  const findUnresolvedException = (exceptionCode: ExceptionCode) =>
-    exceptions.find((exception) => exception.code === exceptionCode && courtCase.errorStatus !== "Resolved")
-  // need to add logic for HO200114, need to check if you can have both HO200113 and HO200114
-  const asnErrorPrompt = findUnresolvedException(ExceptionCode.HO200113) && ErrorMessages.AsnUneditable
-    || findUnresolvedException(ExceptionCode.HO200114) && ErrorMessages.AsnUneditable
+  const classes = useStyles(),
+    findUnresolvedException = (exceptionCode: ExceptionCode) =>
+      exceptions.find((exception) => exception.code === exceptionCode && courtCase.errorStatus !== "Resolved"),
+    // Need to add logic for HO200114, need to check if you can have both HO200113 and HO200114
+    asnErrorPrompt =
+      (findUnresolvedException(ExceptionCode.HO200113) && ErrorMessages.AsnUneditable) ||
+      (findUnresolvedException(ExceptionCode.HO200114) && ErrorMessages.AsnUneditable)
 
   return (
     <div className={`Defendant-details-table ${classes.wrapper}`}>
@@ -61,8 +61,9 @@ export const DefendantDetails = ({ defendant, asn, exceptions, courtCase }: Defe
         <TableRow label="Date of birth" value={formatDisplayedDate(defendant.DefendantDetail?.BirthDate || "")} />
         <TableRow
           label="Gender"
-          value={`${defendant.DefendantDetail?.Gender} (${GenderCodes[defendant.DefendantDetail?.Gender as GenderCode]
-            })`}
+          value={`${defendant.DefendantDetail?.Gender} (${
+            GenderCodes[defendant.DefendantDetail?.Gender as GenderCode]
+          })`}
         />
         <TableRow label="Address" value={<AddressCell address={defendant.Address} />} />
         <TableRow label="PNC file name" value={defendant.DefendantDetail?.GeneratedPNCFilename} />
@@ -75,7 +76,6 @@ export const DefendantDetails = ({ defendant, asn, exceptions, courtCase }: Defe
         bailConditions={defendant.BailConditions}
         bailReason={defendant.ReasonForBailConditions}
         offences={defendant.Offence}
-
       />
     </div>
   )
