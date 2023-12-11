@@ -178,7 +178,7 @@ describe("ExceptionHandlerPrompt", () => {
     })
   })
 
-  context.only("ASN error prompt", () => {
+  context("ASN error prompt", () => {
     it("Should not display an error prompt when a HO200113 is not raised", () => {
       cy.task("insertCourtCasesWithFields", [
         {
