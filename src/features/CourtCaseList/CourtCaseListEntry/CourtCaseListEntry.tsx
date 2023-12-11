@@ -38,7 +38,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
     isUrgent,
     notes,
     ptiurn,
-    resolutionTimestamp,
+    errorStatus,
     triggerLockedByUsername,
     triggerLockedByUserFullName,
     triggers
@@ -105,7 +105,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
         errorReport={errorReport}
         firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
         isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername}
-        isResolved={resolutionTimestamp !== null}
+        resolutionStatus={errorStatus ?? "Unresolved"}
         isUrgent={isUrgent}
         notes={notes}
         ptiurn={ptiurn}

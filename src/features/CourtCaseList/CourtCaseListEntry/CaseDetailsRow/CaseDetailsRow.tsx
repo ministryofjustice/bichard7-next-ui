@@ -4,7 +4,7 @@ import {
   filterUserNotes,
   getMostRecentNote
 } from "features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/CourtCaseListEntryHelperFunction"
-import ResolvedTag from "features/CourtCaseList/tags/ResolvedTag"
+import ResolutionStatusBadge from "features/CourtCaseList/tags/ResolutionStatusBadge"
 import UrgentTag from "features/CourtCaseList/tags/UrgentTag"
 import { Link, Table } from "govuk-react"
 import Image from "next/image"
@@ -16,6 +16,7 @@ import { displayedDateFormat } from "utils/formattedDate"
 import { LOCKED_ICON_URL } from "utils/icons"
 import { useCustomStyles } from "../../../../../styles/customStyles"
 import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
+import { ResolutionStatus } from "../../../../types/ResolutionStatus"
 
 interface CaseDetailsRowProps {
   canCurrentUserUnlockCase: string | boolean | null | undefined
@@ -29,7 +30,7 @@ interface CaseDetailsRowProps {
   errorReport: string
   firstColumnClassName: string
   isCaseUnlocked: boolean
-  isResolved: boolean
+  resolutionStatus: ResolutionStatus
   isUrgent: boolean
   notes: DisplayNote[]
   ptiurn: string
@@ -61,7 +62,7 @@ export const CaseDetailsRow = ({
   errorId,
   errorLockedByUsername,
   firstColumnClassName,
-  isResolved,
+  resolutionStatus,
   isUrgent,
   notes,
   ptiurn,
@@ -99,7 +100,7 @@ export const CaseDetailsRow = ({
           <Link href={`${basePath}/court-cases/${errorId}${previousPathWebSafe}`}>
             {defendantName}
             <br />
-            <ResolvedTag isResolved={isResolved} />
+            <ResolutionStatusBadge resolutionStatus={resolutionStatus} />
           </Link>
         </Table.Cell>
         <Table.Cell className={caseDetailsCellClass}>
