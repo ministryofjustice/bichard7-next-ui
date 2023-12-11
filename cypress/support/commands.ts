@@ -1,14 +1,14 @@
-const login = ({ emailAddress, password }: { emailAddress: string; password: string }) => {
-  let runningWithProxy: boolean
-  if (Cypress.config("baseUrl") !== "https://localhost:4443") {
+const runningWithProxy = (): boolean => {
+  if (Cypress.config("baseUrl") === "https://localhost:4443") {
     console.log(`Running with proxy: ${Cypress.config("baseUrl")}`)
-    runningWithProxy = true
-  } else {
-    console.log(`Running locally: ${Cypress.config("baseUrl")}`)
-    runningWithProxy = false
+    return true
   }
+  console.log(`Running locally: ${Cypress.config("baseUrl")}`)
+  return false
+}
 
-  cy.visit(runningWithProxy ? "https://localhost:4443/users" : "/users")
+const login = ({ emailAddress, password }: { emailAddress: string; password: string }) => {
+  cy.visit(!runningWithProxy() ? "https://localhost:4443/users" : "/users")
   cy.get("input[type=email]").type(emailAddress)
   cy.get("button[type=submit]").click()
   cy.get("input#validationCode").should("exist")
@@ -64,6 +64,20 @@ Cypress.Commands.add("checkCsrf", (url) => {
   })
 })
 
+Cypress.Commands.add("toBeUnauthorized", (url: string) => {
+  if (runningWithProxy()) {
+    cy.visit(url, { failOnStatusCode: false })
+    cy.url().should("match", /\/users/)
+  } else {
+    cy.request({
+      failOnStatusCode: false,
+      url: url
+    }).then((response) => {
+      expect(response.status).to.eq(401)
+    })
+  }
+})
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
@@ -71,6 +85,7 @@ declare global {
       findByText(text: string): Chainable<Element>
       login(emailAddress: string, password: string): Chainable<Element>
       checkCsrf(url: string): Chainable<Element>
+      toBeUnauthorized(url: string): Chainable<Element>
     }
   }
 }
