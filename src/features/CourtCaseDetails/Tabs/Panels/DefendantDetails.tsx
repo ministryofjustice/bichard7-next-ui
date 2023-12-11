@@ -37,20 +37,22 @@ export const DefendantDetails = ({ defendant, asn, exceptions, courtCase }: Defe
     exceptions.find((exception) => exception.code === exceptionCode && courtCase.errorStatus !== "Resolved")
   // need to add logic for HO200114, need to check if you can have both HO200113 and HO200114
   const asnErrorPrompt = findUnresolvedException(ExceptionCode.HO200113) && ErrorMessages.AsnUneditable
+    || findUnresolvedException(ExceptionCode.HO200114) && ErrorMessages.AsnUneditable
+
   return (
     <div className={`Defendant-details-table ${classes.wrapper}`}>
-    <Table>
-      {
-        <>
-          {asnErrorPrompt ? (
-            <ExceptionFieldTableRow badgeText={"SYSTEM ERROR"} value={asn} badgeColour={"purple"} label={"ASN"}>
-              <ErrorPromptMessage message={ErrorMessages.AsnUneditable} />
-            </ExceptionFieldTableRow>
-          ) : (
-            <TableRow label="ASN" value={asn} />
-          )}
-        </>
-      }
+      <Table>
+        {
+          <>
+            {asnErrorPrompt ? (
+              <ExceptionFieldTableRow badgeText={"SYSTEM ERROR"} value={asn} badgeColour={"purple"} label={"ASN"}>
+                <ErrorPromptMessage message={ErrorMessages.AsnUneditable} />
+              </ExceptionFieldTableRow>
+            ) : (
+              <TableRow label="ASN" value={asn} />
+            )}
+          </>
+        }
 
         <TableRow label="PNC Check name" value={defendant.PNCCheckname} />
         <TableRow label="Given name" value={defendant.DefendantDetail?.PersonName.GivenName?.join(", ")} />
@@ -59,9 +61,8 @@ export const DefendantDetails = ({ defendant, asn, exceptions, courtCase }: Defe
         <TableRow label="Date of birth" value={formatDisplayedDate(defendant.DefendantDetail?.BirthDate || "")} />
         <TableRow
           label="Gender"
-          value={`${defendant.DefendantDetail?.Gender} (${
-            GenderCodes[defendant.DefendantDetail?.Gender as GenderCode]
-          })`}
+          value={`${defendant.DefendantDetail?.Gender} (${GenderCodes[defendant.DefendantDetail?.Gender as GenderCode]
+            })`}
         />
         <TableRow label="Address" value={<AddressCell address={defendant.Address} />} />
         <TableRow label="PNC file name" value={defendant.DefendantDetail?.GeneratedPNCFilename} />
