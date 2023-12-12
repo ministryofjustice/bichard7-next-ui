@@ -4,7 +4,7 @@ import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
 import LinkButton from "components/LinkButton"
 import LockedTag from "components/LockedTag"
-import ResolvedTag from "components/ResolvedTag"
+import ResolutionStatusTag from "components/ResolutionStatusTag"
 import SecondaryButton from "components/SecondaryButton"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
@@ -24,6 +24,7 @@ import {
 } from "utils/caseLocks"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 import Form from "../../components/Form"
+import { ResolutionStatus } from "../../types/ResolutionStatus"
 
 interface Props {
   canReallocate: boolean
@@ -92,12 +93,12 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
 
   const CaseDetailsLockTag = ({
     isRendered,
-    isResolved,
+    resolutionStatus,
     lockName,
     getLockHolderFn
   }: {
     isRendered: boolean
-    isResolved: boolean
+    resolutionStatus?: ResolutionStatus | null
     lockName: string
     getLockHolderFn: () => string
   }) => {
@@ -105,8 +106,8 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
       return
     }
 
-    return isResolved ? (
-      <ResolvedTag itemName={lockName} />
+    return resolutionStatus && resolutionStatus !== "Unresolved" ? (
+      <ResolutionStatusTag itemName={lockName} resolutionStatus={resolutionStatus} />
     ) : (
       <LockedTag lockName={lockName} lockedBy={getLockHolderFn()} />
     )
@@ -120,7 +121,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
         </Heading>
         <CaseDetailsLockTag
           isRendered={currentUser.hasAccessTo[Permission.Exceptions]}
-          isResolved={courtCase.errorStatus === "Resolved"}
+          resolutionStatus={courtCase.errorStatus}
           lockName="Exceptions"
           getLockHolderFn={() =>
             getLockHolder(currentUser.username, courtCase.errorLockedByUserFullName, exceptionsAreLockedByCurrentUser)
@@ -145,7 +146,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
         </Heading>
         <CaseDetailsLockTag
           isRendered={currentUser.hasAccessTo[Permission.Triggers]}
-          isResolved={courtCase.triggerStatus === "Resolved"}
+          resolutionStatus={courtCase.triggerStatus}
           lockName="Triggers"
           getLockHolderFn={() =>
             getLockHolder(currentUser.username, courtCase.triggerLockedByUserFullName, triggersAreLockedByCurrentUser)
