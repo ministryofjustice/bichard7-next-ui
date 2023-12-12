@@ -34,7 +34,6 @@ export const DefendantDetails = ({ defendant, asn, exceptions, courtCase }: Defe
   const classes = useStyles(),
     findUnresolvedException = (exceptionCode: ExceptionCode) =>
       exceptions.find((exception) => exception.code === exceptionCode && courtCase.errorStatus !== "Resolved"),
-    // Need to add logic for HO200114, need to check if you can have both HO200113 and HO200114
     asnErrorPrompt =
       (findUnresolvedException(ExceptionCode.HO200113) && ErrorMessages.AsnUneditable) ||
       (findUnresolvedException(ExceptionCode.HO200114) && ErrorMessages.AsnUneditable)
