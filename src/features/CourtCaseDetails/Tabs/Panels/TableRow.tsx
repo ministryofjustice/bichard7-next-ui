@@ -16,8 +16,7 @@ export const TableRow = ({ label, value }: TableRowProps) => (
   <Table.Row className={`table-row__${label.split(" ").join("-").toLowerCase()}`}>
     <Table.Cell style={style}>
       <b>{label}</b>
-        <h1>{"hello"}</h1>
-      </header>
+      {/*  TODO: sort out hint text */}
       {/* {hintText && <HintText>{hintText}</HintText>} */}
     </Table.Cell>
     <Table.Cell>{value}</Table.Cell>
