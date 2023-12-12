@@ -3,23 +3,23 @@ import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/t
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
+import { useCourtCase } from "context/CourtCaseContext"
 import { Heading, Input, Table } from "govuk-react"
 import { isEqual } from "lodash"
 import { createUseStyles } from "react-jss"
 import ErrorMessages from "types/ErrorMessages"
-import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
 import Badge from "../../../../../../components/Badge"
+import ErrorPromptMessage from "../../../../../../components/ErrorPromptMessage"
+import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
+import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../../../types/Amendments"
+import { Exception } from "../../../../../../types/exceptions"
 import { TableRow } from "../../TableRow"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
-import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
-import ErrorPromptMessage from "../../../../../../components/ErrorPromptMessage"
-import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../../../types/Amendments"
 
-type Exception = { code: ExceptionCode; path: (string | number)[] }
 interface OffenceDetailsProps {
   className: string
   offence: Offence
@@ -29,7 +29,6 @@ interface OffenceDetailsProps {
   onPreviousClick: () => void
   selectedOffenceIndex: number
   exceptions: Exception[]
-  courtCase: DisplayFullCourtCase
   amendments: AmendmentRecords
   amendFn: (AmendmentKeys: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
@@ -99,10 +98,11 @@ export const OffenceDetails = ({
   onPreviousClick,
   selectedOffenceIndex,
   exceptions,
-  courtCase,
   amendments,
   amendFn
 }: OffenceDetailsProps) => {
+  const courtCase = useCourtCase()
+
   const classes = useStyles()
   const offenceCode = getOffenceCode(offence)
   const qualifierCode =
@@ -226,9 +226,9 @@ export const OffenceDetails = ({
             <HearingResult
               key={index}
               result={result}
-              exceptions={unresolvedExceptionsOnThisOffence
-                .filter((resultException) => resultException.path.join(">").startsWith(thisResultPath(index)))
-                .map((e) => e.code)}
+              exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>
+                resultException.path.join(">").startsWith(thisResultPath(index))
+              )}
               selectedOffenceIndex={selectedOffenceIndex}
               resultIndex={index}
               amendments={amendments}

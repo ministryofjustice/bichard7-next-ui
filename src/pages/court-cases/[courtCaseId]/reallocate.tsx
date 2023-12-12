@@ -5,6 +5,7 @@ import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
 import Layout from "components/Layout"
 import { MAX_NOTE_LENGTH } from "config"
+import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
 import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, Label, Link, Select, TextArea } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -29,7 +30,6 @@ import { useCustomStyles } from "../../../../styles/customStyles"
 import Form from "../../../components/Form"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
-import { CurrentUserContextType, CurrentUserContext } from "context/CurrentUserContext"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -159,7 +159,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
                   <Label>{"Add a note (optional)"}</Label>
                   <HintText className={classes["no-margin-bottom"]}>{"Input reason for case reallocation"}</HintText>
                   <TextArea input={{ name: "note", rows: 5, maxLength: MAX_NOTE_LENGTH, onInput: handleOnNoteChange }}>
-                    {}
+                    {""}
                   </TextArea>
                   <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
                 </FormGroup>

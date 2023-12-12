@@ -1,16 +1,15 @@
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import ConditionalRender from "components/ConditionalRender"
-import { useCurrentUserContext } from "context/CurrentUserContext"
+import { useCourtCase } from "context/CourtCaseContext"
 import { Tabs } from "govuk-react"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import styled from "styled-components"
 import type NavigationHandler from "types/NavigationHandler"
 import Permission from "types/Permission"
-import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { AmendmentRecords } from "../../../types/Amendments"
 import Exceptions from "./Exceptions"
 import TriggersList from "./TriggersList"
+import { useCurrentUser } from "context/CurrentUserContext"
 
 const useStyles = createUseStyles({
   sideBar: {
@@ -26,11 +25,8 @@ const useStyles = createUseStyles({
 })
 
 interface Props {
-  courtCase: DisplayFullCourtCase
-  aho: AnnotatedHearingOutcome
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
-  previousPath: string
   amendments: AmendmentRecords
 }
 
@@ -48,15 +44,10 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const TriggersAndExceptions = ({
-  courtCase,
-  aho,
-  onNavigate,
-  canResolveAndSubmit,
-  previousPath,
-  amendments
-}: Props) => {
-  const currentUser = useCurrentUserContext().currentUser
+const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
+  const currentUser = useCurrentUser()
+  const courtCase = useCourtCase()
+
   const availableTabs = [Permission.Triggers, Permission.Exceptions].filter((tab) => currentUser.hasAccessTo[tab])
   const defaultTab =
     availableTabs.length > 0
@@ -101,7 +92,7 @@ const TriggersAndExceptions = ({
               selected={selectedTab === Permission.Triggers}
               className={`moj-tab-panel-triggers ${classes.tabPanelTriggers}`}
             >
-              <TriggersList courtCase={courtCase} onNavigate={onNavigate} />
+              <TriggersList onNavigate={onNavigate} />
             </Tabs.Panel>
           </ConditionalRender>
 
@@ -111,13 +102,7 @@ const TriggersAndExceptions = ({
               selected={selectedTab === Permission.Exceptions}
               className="moj-tab-panel-exceptions"
             >
-              <Exceptions
-                aho={aho}
-                onNavigate={onNavigate}
-                canResolveAndSubmit={canResolveAndSubmit}
-                previousPath={previousPath}
-                amendments={amendments}
-              />
+              <Exceptions onNavigate={onNavigate} canResolveAndSubmit={canResolveAndSubmit} amendments={amendments} />
             </Tabs.Panel>
           </ConditionalRender>
         </Tabs>

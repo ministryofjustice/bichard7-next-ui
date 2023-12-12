@@ -18,13 +18,13 @@ interface UnlockConfirmationProps {
 }
 
 const UnlockConfirmation = ({ onCancel, unlockPath }: UnlockConfirmationProps) => {
-  const csrfTokenContext = useCsrfToken()
+  const csrfToken = useCsrfToken()
 
   return (
     <>
       <p>{"Click the button to unlock the case"}</p>
       <div className="govuk-button-group">
-        <Form method="post" action={unlockPath} csrfToken={csrfTokenContext.csrfToken}>
+        <Form method="post" action={unlockPath} csrfToken={csrfToken}>
           <button className="govuk-button" data-module="govuk-button" id="unlock">
             {"Unlock"}
           </button>

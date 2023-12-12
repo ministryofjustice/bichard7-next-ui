@@ -2,19 +2,22 @@ import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/A
 import ConditionalRender from "components/ConditionalRender"
 import { Duration } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import { Durations } from "@moj-bichard7-developers/bichard7-next-data/dist/types/Duration"
-import { HintText, Table } from "govuk-react"
+import { HintText, Label, Table } from "govuk-react"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
 import { TableRow } from "../../TableRow"
 import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/plea-status.json"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
+import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import {
   AmendmentKeys,
   AmendmentRecords,
   IndividualAmendmentValues,
-  UpdatedNextHearingDate
+  UpdatedNextHearingDate,
+  UpdatedOffenceResult
 } from "../../../../../../types/Amendments"
+import { Exception } from "../../../../../../types/exceptions"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -40,19 +43,38 @@ const getNextHearingDateValue = (
   amendmentRecords: AmendmentRecords,
   offenceIndex: number,
   resultIndex: number
-): string => {
+): string | undefined => {
+  const validDateFormat = /^20\d{2}-\d{2}-\d{2}$/
   const nextHearingDateAmendment =
     amendmentRecords?.nextHearingDate &&
     (amendmentRecords.nextHearingDate as UpdatedNextHearingDate[]).find(
       (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
     )?.updatedValue
 
-  return nextHearingDateAmendment ? formatFormInputDateString(new Date(nextHearingDateAmendment)) : ""
+  if (!nextHearingDateAmendment) {
+    return ""
+  }
+
+  return validDateFormat.test(nextHearingDateAmendment) ? nextHearingDateAmendment : undefined
+}
+
+const getNextHearingLocationValue = (
+  amendmentRecords: AmendmentRecords,
+  offenceIndex: number,
+  resultIndex: number
+): string => {
+  return (
+    (amendmentRecords?.nextSourceOrganisation &&
+      (amendmentRecords.nextSourceOrganisation as UpdatedOffenceResult[]).find(
+        (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
+      )?.updatedValue) ??
+    ""
+  )
 }
 
 interface HearingResultProps {
   result: Result
-  exceptions: ExceptionCode[]
+  exceptions: Exception[]
   resultIndex: number
   selectedOffenceIndex: number
   amendments: AmendmentRecords
@@ -67,9 +89,20 @@ export const HearingResult = ({
   amendments,
   amendFn
 }: HearingResultProps) => {
-  const nextHearinDateException = exceptions.some(
-    (code) => code === ExceptionCode.HO100102 || code === ExceptionCode.HO100323
+  const nextHearingDateException = exceptions.some(
+    (exception) =>
+      exception.path.join(".").endsWith(".NextHearingDate") &&
+      (exception.code === ExceptionCode.HO100102 || exception.code === ExceptionCode.HO100323)
   )
+
+  const nextHearingLocationException = exceptions.some(
+    (exception) =>
+      exception.path.join(".").endsWith(".NextResultSourceOrganisation.OrganisationUnitCode") &&
+      (exception.code === ExceptionCode.HO100200 ||
+        exception.code === ExceptionCode.HO100300 ||
+        exception.code === ExceptionCode.HO100322)
+  )
+
   const getPleaStatus = (pleaCode: string | undefined) => {
     let pleaStatusDescription = pleaCode
     pleaStatus.forEach((plea) => {
@@ -115,11 +148,35 @@ export const HearingResult = ({
           }
         />
       </ConditionalRender>
-      <ConditionalRender isRendered={typeof result.NextResultSourceOrganisation === "string"}>
-        <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
+      <ConditionalRender
+        isRendered={
+          !!(
+            (result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode) ||
+            nextHearingLocationException
+          )
+        }
+      >
+        {!!nextHearingLocationException ? (
+          <ExceptionFieldTableRow
+            badgeText="Editable Field"
+            label="Next hearing location"
+            value={result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode}
+          >
+            <Label>{"Enter next hearing location"}</Label>
+            <HintText>{"OU code, 6-7 characters"}</HintText>
+            <OrganisationUnitTypeahead
+              value={getNextHearingLocationValue(amendments, selectedOffenceIndex - 1, resultIndex)}
+              amendFn={amendFn}
+              resultIndex={resultIndex}
+              offenceIndex={selectedOffenceIndex - 1}
+            />
+          </ExceptionFieldTableRow>
+        ) : (
+          <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
+        )}
       </ConditionalRender>
-      <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearinDateException}>
-        {!!nextHearinDateException ? (
+      <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearingDateException}>
+        {!!nextHearingDateException ? (
           <ExceptionFieldTableRow
             badgeText="Editable Field"
             label="Next hearing date"

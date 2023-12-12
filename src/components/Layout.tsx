@@ -1,4 +1,4 @@
-import { useCurrentUserContext } from "context/CurrentUserContext"
+import { useCurrentUser } from "context/CurrentUserContext"
 import { Footer } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
@@ -47,7 +47,7 @@ interface Props {
 const Layout = ({ children, bichardSwitch = { display: false, displaySwitchingSurveyFeedback: false } }: Props) => {
   const { basePath } = useRouter()
   const pathname = usePathname()
-  const currentUser = useCurrentUserContext().currentUser
+  const currentUser = useCurrentUser()
 
   let bichardSwitchUrl = bichardSwitch.href ?? "/bichard-ui/RefreshListNoRedirect"
 

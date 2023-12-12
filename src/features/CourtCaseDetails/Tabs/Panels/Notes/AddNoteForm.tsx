@@ -15,7 +15,7 @@ const AddNoteForm: React.FC<Props> = ({ isLockedByCurrentUser }: Props) => {
   const [submitted, setSubmitted] = useState(false)
   const [isFormValid, setIsFormValid] = useState(true)
   const showError = !isFormValid && noteRemainingLength === MAX_NOTE_LENGTH
-  const csrfTokenContext = useCsrfToken()
+  const csrfToken = useCsrfToken()
 
   useBeforeunload(
     !submitted && noteRemainingLength !== MAX_NOTE_LENGTH
@@ -45,7 +45,7 @@ const AddNoteForm: React.FC<Props> = ({ isLockedByCurrentUser }: Props) => {
 
   return (
     <ConditionalRender isRendered={isLockedByCurrentUser}>
-      <Form method="POST" action="" onSubmit={handleSubmit} csrfToken={csrfTokenContext.csrfToken}>
+      <Form method="POST" action="" onSubmit={handleSubmit} csrfToken={csrfToken}>
         <FormGroup>
           <Label className="govuk-heading-m b7-form-label-lg" htmlFor="note-text">
             {"Add a new note"}
@@ -63,7 +63,7 @@ const AddNoteForm: React.FC<Props> = ({ isLockedByCurrentUser }: Props) => {
               touched: showError
             }}
           >
-            {}
+            {""}
           </TextArea>
           <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
         </FormGroup>

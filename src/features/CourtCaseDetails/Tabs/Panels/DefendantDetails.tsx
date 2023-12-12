@@ -7,29 +7,50 @@ import { TableRow } from "./TableRow"
 import { formatDisplayedDate } from "utils/formattedDate"
 import { AddressCell } from "./AddressCell"
 import { capitalizeString } from "utils/capitaliseString"
+import { BailConditions } from "./BailConditions"
+import { createUseStyles } from "react-jss"
 
 interface DefendantDetailsProps {
   defendant: HearingDefendant
 }
 
+const useStyles = createUseStyles({
+  wrapper: {
+    "& td": {
+      width: "50%"
+    }
+  }
+})
+
 export const DefendantDetails = ({ defendant }: DefendantDetailsProps) => {
+  const classes = useStyles()
+
   return (
-    <Table>
-      <TableRow label="PNC Check name" value={defendant.PNCCheckname} />
-      <TableRow label="Given name" value={defendant.DefendantDetail?.PersonName.GivenName?.join(", ")} />
-      <TableRow label="Family name" value={defendant.DefendantDetail?.PersonName.FamilyName} />
-      <TableRow label="Title" value={defendant.DefendantDetail?.PersonName.Title} />
-      <TableRow label="Date of birth" value={formatDisplayedDate(defendant.DefendantDetail?.BirthDate || "")} />
-      <TableRow
-        label="Gender"
-        value={`${defendant.DefendantDetail?.Gender} (${GenderCodes[defendant.DefendantDetail?.Gender as GenderCode]})`}
+    <div className={`Defendant-details-table ${classes.wrapper}`}>
+      <Table>
+        <TableRow label="PNC Check name" value={defendant.PNCCheckname} />
+        <TableRow label="Given name" value={defendant.DefendantDetail?.PersonName.GivenName?.join(", ")} />
+        <TableRow label="Family name" value={defendant.DefendantDetail?.PersonName.FamilyName} />
+        <TableRow label="Title" value={defendant.DefendantDetail?.PersonName.Title} />
+        <TableRow label="Date of birth" value={formatDisplayedDate(defendant.DefendantDetail?.BirthDate || "")} />
+        <TableRow
+          label="Gender"
+          value={`${defendant.DefendantDetail?.Gender} (${
+            GenderCodes[defendant.DefendantDetail?.Gender as GenderCode]
+          })`}
+        />
+        <TableRow label="Address" value={<AddressCell address={defendant.Address} />} />
+        <TableRow label="PNC file name" value={defendant.DefendantDetail?.GeneratedPNCFilename} />
+        <TableRow
+          label="Remand status"
+          value={capitalizeString(RemandStatuses[defendant.RemandStatus as RemandStatusCode])}
+        />
+      </Table>
+      <BailConditions
+        bailConditions={defendant.BailConditions}
+        bailReason={defendant.ReasonForBailConditions}
+        offences={defendant.Offence}
       />
-      <TableRow label="Address" value={<AddressCell address={defendant.Address} />} />
-      <TableRow label="PNC file name" value={defendant.DefendantDetail?.GeneratedPNCFilename} />
-      <TableRow
-        label="Remand status"
-        value={capitalizeString(RemandStatuses[defendant.RemandStatus as RemandStatusCode])}
-      />
-    </Table>
+    </div>
   )
 }

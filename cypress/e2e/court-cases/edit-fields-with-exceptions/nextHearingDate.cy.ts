@@ -1,30 +1,7 @@
-import CourtCase from "../../../../src/services/entities/CourtCase"
 import nextHearingDateExceptions from "../../../../test/test-data/NextHearingDateExceptions.json"
 import dummyAho from "../../../../test/test-data/error_list_aho.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
-
-const verifyUpdates = (args: {
-  expectedCourtCase: Partial<CourtCase>
-  updatedMessageHaveContent?: string[]
-  updatedMessageNotHaveContent?: string[]
-}) => {
-  cy.task("getCourtCaseById", { caseId: args.expectedCourtCase.errorId }).then((result) => {
-    const updatedCase = result as CourtCase
-    expect(updatedCase.errorStatus).equal(args.expectedCourtCase.errorStatus)
-
-    if (args.updatedMessageNotHaveContent) {
-      args.updatedMessageNotHaveContent.forEach((oldValue) => {
-        expect(updatedCase.updatedHearingOutcome).not.match(new RegExp(oldValue))
-      })
-    }
-
-    if (args.updatedMessageHaveContent) {
-      args.updatedMessageHaveContent.forEach((update) => {
-        expect(updatedCase.updatedHearingOutcome).match(new RegExp(update))
-      })
-    }
-  })
-}
+import { verifyUpdatedMessage } from "../../../support/helpers"
 
 describe("NextHearingDate", () => {
   before(() => {
@@ -149,7 +126,7 @@ describe("NextHearingDate", () => {
     cy.contains("Bichard01: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-01-01")
     cy.contains("Bichard01: Portal Action: Resubmitted Message.")
 
-    verifyUpdates({
+    verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
       updatedMessageNotHaveContent: ["<ds:NextHearingDate>false</ds:NextHearingDate>"],
       updatedMessageHaveContent: ["<ds:NextHearingDate>2024-01-01</ds:NextHearingDate>"]
@@ -179,7 +156,7 @@ describe("NextHearingDate", () => {
     cy.contains("Bichard01: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24")
     cy.contains("Bichard01: Portal Action: Resubmitted Message.")
 
-    verifyUpdates({
+    verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
       updatedMessageNotHaveContent: ["<ds:NextHearingDate />"],
       updatedMessageHaveContent: ["<ds:NextHearingDate>2023-12-24</ds:NextHearingDate>"]
@@ -214,7 +191,7 @@ describe("NextHearingDate", () => {
     cy.contains("Bichard01: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24")
     cy.contains("Bichard01: Portal Action: Resubmitted Message.")
 
-    verifyUpdates({
+    verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
       updatedMessageNotHaveContent: ["<ds:NextHearingDate>false</ds:NextHearingDate>", "<ds:NextHearingDate />"],
       updatedMessageHaveContent: [

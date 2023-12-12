@@ -1,5 +1,5 @@
 import ConditionalRender from "components/ConditionalRender"
-import { useCurrentUserContext } from "context/CurrentUserContext"
+import { useCurrentUser } from "context/CurrentUserContext"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
 import Permission from "types/Permission"
@@ -38,14 +38,14 @@ const CourtCaseListEntry: React.FC<Props> = ({
     isUrgent,
     notes,
     ptiurn,
-    resolutionTimestamp,
+    errorStatus,
     triggerLockedByUsername,
     triggerLockedByUserFullName,
     triggers
   } = courtCase
   const { basePath, query } = useRouter()
   const searchParams = new URLSearchParams(encode(query))
-  const currentUser = useCurrentUserContext().currentUser
+  const currentUser = useCurrentUser()
 
   const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
     deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
@@ -105,7 +105,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
         errorReport={errorReport}
         firstColumnClassName={hasTriggers ? classes["limited-border-left"] : ""}
         isCaseUnlocked={exceptionHasBeenRecentlyUnlocked && !errorLockedByUsername}
-        isResolved={resolutionTimestamp !== null}
+        resolutionStatus={errorStatus ?? "Unresolved"}
         isUrgent={isUrgent}
         notes={notes}
         ptiurn={ptiurn}

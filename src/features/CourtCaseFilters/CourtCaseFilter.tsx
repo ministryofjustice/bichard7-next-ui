@@ -2,7 +2,7 @@ import ConditionalRender from "components/ConditionalRender"
 import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions/ReasonFilterOptions"
 import UrgencyFilterOptions from "components/FilterOptions/UrgencyFilterOptions"
-import { useCurrentUserContext } from "context/CurrentUserContext"
+import { useCurrentUser } from "context/CurrentUserContext"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
@@ -77,7 +77,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   }
   const [state, dispatch] = useReducer(filtersReducer, initialFilterState)
   const classes = useStyles()
-  const currentUser = useCurrentUserContext().currentUser
+  const currentUser = useCurrentUser()
 
   return (
     <form method={"get"} id="filter-panel">
@@ -175,7 +175,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
                   reasonOptions={
                     currentUser.hasAccessTo[Permission.Triggers] && !currentUser.hasAccessTo[Permission.Exceptions]
-                      ? [Reason.Bails, Reason.Triggers]
+                      ? [Reason.Bails]
                       : undefined
                   }
                   dispatch={dispatch}
