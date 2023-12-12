@@ -25,6 +25,8 @@ import {
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 import Form from "../../components/Form"
 import { ResolutionStatus } from "../../types/ResolutionStatus"
+import ResolutionStatusBadge from "../CourtCaseList/tags/ResolutionStatusBadge"
+import UrgentTag from "../CourtCaseList/tags/UrgentTag"
 
 interface Props {
   canReallocate: boolean
@@ -54,6 +56,18 @@ const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
     params.set("unlockTrigger", courtCase.errorId?.toString())
   }
   return params
+}
+
+const getResolutionStatus = (courtCase: DisplayFullCourtCase): ResolutionStatus | undefined => {
+  if (courtCase.errorStatus === "Submitted") {
+    return "Submitted"
+  } else if (
+    (courtCase.errorStatus === "Resolved" && courtCase.triggerStatus === "Resolved") ||
+    (!courtCase.errorStatus && courtCase.triggerStatus === "Resolved") ||
+    (!courtCase.triggerStatus && courtCase.errorStatus === "Resolved")
+  ) {
+    return "Resolved"
+  }
 }
 
 const Header: React.FC<Props> = ({ canReallocate }: Props) => {
@@ -131,12 +145,13 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
       <HeaderRow>
         <Heading as="h2" size="MEDIUM">
           {courtCase.defendantName}
-          <Badge
-            isRendered={courtCase.isUrgent}
-            label="Urgent"
-            colour="red"
-            className="govuk-!-static-margin-left-5 urgent-badge"
-          />
+          <span className={"govuk-!-static-margin-left-5"}>
+            {getResolutionStatus(courtCase) ? (
+              <ResolutionStatusBadge resolutionStatus={getResolutionStatus(courtCase) || "Unresolved"} />
+            ) : (
+              <UrgentTag isUrgent={courtCase.isUrgent} />
+            )}
+          </span>
           <Badge
             isRendered={caseIsViewOnly}
             label="View only"

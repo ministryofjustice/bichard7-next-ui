@@ -14,9 +14,9 @@ const ResolutionStatusBadge: React.FC<Props> = ({ resolutionStatus }: Props) => 
 
   return (
     <span
-      className={`moj-badge moj-badge--${resolutionStatus === "Resolved" ? "grey" : "blue"} ${
-        classes["margin-top-bottom"]
-      }`}
+      className={`moj-badge moj-badge-${resolutionStatus.toLowerCase()} moj-badge--${
+        resolutionStatus === "Resolved" ? "grey" : "blue"
+      } ${classes["margin-top-bottom"]}`}
     >{`${resolutionStatus}`}</span>
   )
 }
