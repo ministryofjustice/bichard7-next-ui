@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker"
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
 import { subYears } from "date-fns"
 import sample from "lodash.sample"
 import Trigger from "services/entities/Trigger"
@@ -49,6 +50,10 @@ export default async (
     triggersExist = true
   }
   const hasUnresolvedTriggers = triggers.filter((trigger) => trigger.status === "Unresolved").length > 0
+
+  const ahoXml = generateAho({ firstName, lastName, courtName, ptiurn })
+
+  const aho = parseAhoXml(ahoXml)
 
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
   const { errorReport, errorReason, exceptionCount } = createDummyExceptions(hasUnresolvedTriggers)
