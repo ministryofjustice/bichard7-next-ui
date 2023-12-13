@@ -3,7 +3,7 @@ import hashedPassword from "../../../fixtures/hashedPassword"
 import { UserGroup } from "types/UserGroup"
 import { newUserLogin } from "../../../support/helpers"
 
-describe("Court case details", () => {
+describe("Lock court cases", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
@@ -136,6 +136,52 @@ describe("Court case details", () => {
     cy.get("#exceptions-locked-tag").should("not.exist")
     cy.get("#triggers-locked-tag").should("exist")
     cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
+  })
+
+  it("shouldn't lock exceptions on an unlocked case if exceptions are submitted", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "03",
+        errorCount: 1,
+        errorStatus: "Submitted",
+        triggerCount: 1,
+        triggerStatus: "Unresolved"
+      }
+    ])
+
+    cy.login("bichard03@example.com", "password")
+    cy.visit("/bichard")
+    cy.findByText("NAME Defendant").click()
+
+    cy.get("#exceptions-submitted-tag").should("exist").should("contain.text", "Submitted")
+    cy.get("#exceptions-locked-tag").should("not.exist")
+    cy.get("#triggers-resolved-tag").should("not.exist")
+    cy.get("#triggers-locked-tag-lockee").should("contain.text", "Locked to you")
+  })
+
+  it("shouldn't lock exceptions or triggers on an unlocked case if exceptions are submitted and triggers are resolved", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorLockedByUsername: null,
+        triggerLockedByUsername: null,
+        orgForPoliceFilter: "03",
+        errorCount: 1,
+        errorStatus: "Submitted",
+        triggerCount: 1,
+        triggerStatus: "Resolved"
+      }
+    ])
+
+    cy.login("bichard03@example.com", "password")
+    cy.visit("/bichard")
+    cy.findByText("NAME Defendant").click()
+
+    cy.get("#exceptions-submitted-tag").should("exist").should("contain.text", "Submitted")
+    cy.get("#exceptions-locked-tag").should("not.exist")
+    cy.get("#triggers-resolved-tag").should("exist").should("contain.text", "Resolved")
+    cy.get("#triggers-locked-tag").should("not.exist")
   })
 
   it("shouldn't lock either triggers nor exceptions on an unlocked case if both are already resolved", () => {
