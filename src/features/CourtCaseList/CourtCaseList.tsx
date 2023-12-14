@@ -35,12 +35,12 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
       <thead>
         <CourtCaseListTableHeader order={order} />
       </thead>
-      {courtCases.map((courtCase, index) => (
+      {courtCases.map((courtCase) => (
         <CourtCaseListEntry
           courtCase={courtCase}
           exceptionHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedExceptionId}
           triggerHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedTriggerId}
-          key={`court-case-${courtCase.ptiurn}`}
+          key={`court-case-${courtCase.errorId}`}
           previousPath={queryString}
         />
       ))}
