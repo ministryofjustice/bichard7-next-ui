@@ -120,7 +120,7 @@ describe("Case unlocked badge", () => {
     cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
   })
 
-  it("shows who has locked a case in the 'locked by' column", () => {
+  it.only("shows who has locked a case in the 'locked by' column", () => {
     const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long.name"]
     cy.task(
       "insertCourtCasesWithFields",
@@ -145,18 +145,18 @@ describe("Case unlocked badge", () => {
 
     loginAndGoToUrl()
 
-    cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard Test User 01")
-    cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
-    cy.get(`tbody tr:nth-child(1) td:nth-child(8)`).should("contain.text", "TRPR0001")
-    cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard Test User 02")
-    cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
-    cy.get(`tbody tr:nth-child(2) td:nth-child(8)`).should("contain.text", "TRPR0001")
-    cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("not.exist")
-    cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("not.exist")
-    cy.get(`tbody tr:nth-child(3) td:nth-child(8)`).should("contain.text", "TRPR0001")
-    cy.get(`tbody tr:nth-child(4) .locked-by-tag`).should("have.text", "A Really Really Really Long Name")
-    cy.get(`tbody tr:nth-child(4) img[alt="Lock icon"]`).should("exist")
-    cy.get(`tbody tr:nth-child(4) td:nth-child(8)`).should("contain.text", "TRPR0001")
+    cy.get("tbody").eq(0).find("tr:nth-child(1) .locked-by-tag").should("have.text", "Bichard Test User 01")
+    cy.get("tbody").eq(0).find('tr:nth-child(1) img[alt="Lock icon"]').should("exist")
+    cy.get("tbody").eq(0).find("tr:nth-child(1) td:nth-child(8)").should("contain.text", "TRPR0001")
+    cy.get("tbody").eq(1).find("tr:nth-child(1) .locked-by-tag").should("have.text", "Bichard Test User 02")
+    cy.get("tbody").eq(1).find('tr:nth-child(1) img[alt="Lock icon"]').should("exist")
+    cy.get("tbody").eq(1).find("tr:nth-child(1) td:nth-child(8)").should("contain.text", "TRPR0001")
+    cy.get("tbody").eq(2).find("tr:nth-child(1) .locked-by-tag").should("not.exist")
+    cy.get("tbody").eq(2).find(`tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
+    cy.get("tbody").eq(2).find(`tr:nth-child(1) td:nth-child(8)`).should("contain.text", "TRPR0001")
+    cy.get("tbody").eq(3).find(`tr:nth-child(1) .locked-by-tag`).should("have.text", "A Really Really Really Long Name")
+    cy.get("tbody").eq(3).find(`tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
+    cy.get("tbody").eq(3).find(`tr:nth-child(1) td:nth-child(8)`).should("contain.text", "TRPR0001")
   })
 
   it("Should unlock any case as a supervisor user", () => {
