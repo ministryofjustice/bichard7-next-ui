@@ -43,7 +43,7 @@ export const CaseDetailsRow = ({
 
   return (
     <>
-      <Table.Row>
+      <Table.Row className="caseDetailsRow">
         <Table.Cell>
           <ConditionalRender isRendered={!!errorLockedByUsername}>
             <Image src={LOCKED_ICON_URL} priority width={20} height={20} alt="Lock icon" />
