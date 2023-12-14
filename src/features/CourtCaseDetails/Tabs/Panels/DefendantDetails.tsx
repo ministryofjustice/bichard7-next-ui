@@ -14,6 +14,8 @@ import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import { BailConditions } from "./BailConditions"
 import { createUseStyles } from "react-jss"
+import { Exception } from "types/exceptions"
+import _ from "lodash"
 
 interface DefendantDetailsProps {
   defendant: HearingDefendant
@@ -30,13 +32,25 @@ const useStyles = createUseStyles({
   }
 })
 
+const hasException = (exceptions: Exception[], exceptionCode: ExceptionCode) =>
+  exceptions.find((exception) => exception.code === exceptionCode)
+
+const errorPromptByException: { [key in ExceptionCode]?: ErrorMessages } = {
+  [ExceptionCode.HO200113]: ErrorMessages.AsnUneditable,
+  [ExceptionCode.HO200114]: ErrorMessages.AsnUneditable
+}
+
+const asnErrorPromptForCase = (courtCase: DisplayFullCourtCase, exceptions: Exception[]): ErrorMessages | undefined => {
+  const exceptionCodeToUse = _.find(
+    Object.keys(errorPromptByException),
+    (exceptionCode) => hasException(exceptions, exceptionCode as ExceptionCode) && courtCase.errorStatus !== "Resolved"
+  ) as ExceptionCode | undefined
+  return exceptionCodeToUse ? errorPromptByException[exceptionCodeToUse] : undefined
+}
+
 export const DefendantDetails = ({ defendant, asn, exceptions, courtCase }: DefendantDetailsProps) => {
-  const classes = useStyles(),
-    findUnresolvedException = (exceptionCode: ExceptionCode) =>
-      exceptions.find((exception) => exception.code === exceptionCode && courtCase.errorStatus !== "Resolved"),
-    asnErrorPrompt =
-      (findUnresolvedException(ExceptionCode.HO200113) && ErrorMessages.AsnUneditable) ||
-      (findUnresolvedException(ExceptionCode.HO200114) && ErrorMessages.AsnUneditable)
+  const classes = useStyles()
+  const asnErrorPrompt = asnErrorPromptForCase(courtCase, exceptions)
 
   return (
     <div className={`Defendant-details-table ${classes.wrapper}`}>
@@ -45,7 +59,7 @@ export const DefendantDetails = ({ defendant, asn, exceptions, courtCase }: Defe
           <>
             {asnErrorPrompt ? (
               <ExceptionFieldTableRow badgeText={"SYSTEM ERROR"} value={asn} badgeColour={"purple"} label={"ASN"}>
-                <ErrorPromptMessage message={ErrorMessages.AsnUneditable} />
+                <ErrorPromptMessage message={asnErrorPrompt} />
               </ExceptionFieldTableRow>
             ) : (
               <TableRow label="ASN" value={asn} />
