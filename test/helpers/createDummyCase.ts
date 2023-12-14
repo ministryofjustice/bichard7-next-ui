@@ -1,11 +1,13 @@
 import { faker } from "@faker-js/faker"
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { subYears } from "date-fns"
 import sample from "lodash.sample"
 import Trigger from "services/entities/Trigger"
 import { DataSource, EntityManager } from "typeorm"
 import { v4 as uuidv4 } from "uuid"
 import CourtCase from "../../src/services/entities/CourtCase"
+import { Result, isError } from "../../src/types/Result"
 import dummyAHOWithOneError from "../test-data/AnnotatedHO2_OneError.json"
 import createDummyAsn from "./createDummyAsn"
 import createDummyCourtCode from "./createDummyCourtCode"
@@ -27,6 +29,7 @@ export default async (
   dataSource: DataSource | EntityManager,
   caseId: number,
   orgCode: string,
+  ahoTemplate: string,
   dateFrom?: Date,
   dateTo?: Date
 ): Promise<CourtCase> => {
@@ -51,9 +54,14 @@ export default async (
   }
   const hasUnresolvedTriggers = triggers.filter((trigger) => trigger.status === "Unresolved").length > 0
 
-  const ahoXml = generateAho({ firstName, lastName, courtName, ptiurn })
+  const randomisedAho = generateAho({ firstName, lastName, courtName, ptiurn, ahoTemplate })
 
-  const aho = parseAhoXml(ahoXml)
+  const parsedAho: Result<AnnotatedHearingOutcome> = parseAhoXml(randomisedAho)
+
+  if (isError(parsedAho)) {
+    console.log("Missing or invalid AHO")
+    throw parsedAho
+  }
 
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
   const { errorReport, errorReason, exceptionCount } = createDummyExceptions(hasUnresolvedTriggers)
@@ -77,7 +85,7 @@ export default async (
     courtCode: createDummyCourtCode(orgCode),
     hearingOutcome: errorReport
       ? dummyAHOWithOneError.hearingOutcomeXml
-      : generateAho({ firstName, lastName, courtName, ptiurn }),
+      : generateAho({ firstName, lastName, courtName, ptiurn, ahoTemplate }),
     errorReport: errorReport,
     createdTimestamp: caseDate,
     errorReason: errorReason,

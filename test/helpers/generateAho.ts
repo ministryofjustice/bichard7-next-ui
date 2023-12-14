@@ -1,6 +1,5 @@
-import fs from "fs"
-
 export type GenerateAhoParams = {
+  ahoTemplate: string
   firstName: string
   lastName: string
   ptiurn: string
@@ -8,8 +7,7 @@ export type GenerateAhoParams = {
 }
 
 const generateAho = (params: GenerateAhoParams) => {
-  const ahoXml = fs.readFileSync("test/test-data/AnnotatedHOTemplate.xml").toString()
-  return ahoXml
+  return params.ahoTemplate
     .replaceAll("{FIRSTNAME}", params.firstName)
     .replaceAll("{LASTNAME}", params.lastName)
     .replaceAll("{PTIURN}", params.ptiurn)
