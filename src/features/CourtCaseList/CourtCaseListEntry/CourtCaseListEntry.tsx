@@ -30,7 +30,8 @@ const CourtCaseListEntry: React.FC<Props> = ({
     errorReport,
     triggerLockedByUsername,
     triggerLockedByUserFullName,
-    triggers
+    triggers,
+    errorStatus
   } = courtCase
 
   const { basePath, query } = useRouter()
@@ -83,6 +84,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
         courtCase={courtCase}
         reasonCell={exceptionsReasonCell || triggersReasonCell}
         lockTag={exceptionsLockTag || triggersLockTag}
+        resolutionStatus={errorStatus ?? "Unresolved"}
         previousPath={previousPath}
       />
       {exceptionsLockTag && triggersLockTag && triggersReasonCell && (

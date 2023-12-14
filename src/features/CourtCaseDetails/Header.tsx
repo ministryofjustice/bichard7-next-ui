@@ -4,7 +4,7 @@ import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
 import LinkButton from "components/LinkButton"
 import LockedTag from "components/LockedTag"
-import ResolvedTag from "components/ResolvedTag"
+import ResolutionStatusTag from "components/ResolutionStatusTag"
 import SecondaryButton from "components/SecondaryButton"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
@@ -24,6 +24,9 @@ import {
 } from "utils/caseLocks"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 import Form from "../../components/Form"
+import { ResolutionStatus } from "../../types/ResolutionStatus"
+import ResolutionStatusBadge from "../CourtCaseList/tags/ResolutionStatusBadge"
+import UrgentTag from "../CourtCaseList/tags/UrgentTag"
 
 interface Props {
   canReallocate: boolean
@@ -53,6 +56,18 @@ const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
     params.set("unlockTrigger", courtCase.errorId?.toString())
   }
   return params
+}
+
+const getResolutionStatus = (courtCase: DisplayFullCourtCase): ResolutionStatus | undefined => {
+  if (courtCase.errorStatus === "Submitted") {
+    return "Submitted"
+  } else if (
+    (courtCase.errorStatus === "Resolved" && courtCase.triggerStatus === "Resolved") ||
+    (!courtCase.errorStatus && courtCase.triggerStatus === "Resolved") ||
+    (!courtCase.triggerStatus && courtCase.errorStatus === "Resolved")
+  ) {
+    return "Resolved"
+  }
 }
 
 const Header: React.FC<Props> = ({ canReallocate }: Props) => {
@@ -92,12 +107,12 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
 
   const CaseDetailsLockTag = ({
     isRendered,
-    isResolved,
+    resolutionStatus,
     lockName,
     getLockHolderFn
   }: {
     isRendered: boolean
-    isResolved: boolean
+    resolutionStatus?: ResolutionStatus | null
     lockName: string
     getLockHolderFn: () => string
   }) => {
@@ -105,8 +120,8 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
       return
     }
 
-    return isResolved ? (
-      <ResolvedTag itemName={lockName} />
+    return resolutionStatus && resolutionStatus !== "Unresolved" ? (
+      <ResolutionStatusTag itemName={lockName} resolutionStatus={resolutionStatus} />
     ) : (
       <LockedTag lockName={lockName} lockedBy={getLockHolderFn()} />
     )
@@ -120,7 +135,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
         </Heading>
         <CaseDetailsLockTag
           isRendered={currentUser.hasAccessTo[Permission.Exceptions]}
-          isResolved={courtCase.errorStatus === "Resolved"}
+          resolutionStatus={courtCase.errorStatus}
           lockName="Exceptions"
           getLockHolderFn={() =>
             getLockHolder(currentUser.username, courtCase.errorLockedByUserFullName, exceptionsAreLockedByCurrentUser)
@@ -130,12 +145,13 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
       <HeaderRow>
         <Heading as="h2" size="MEDIUM">
           {courtCase.defendantName}
-          <Badge
-            isRendered={courtCase.isUrgent}
-            label="Urgent"
-            colour="red"
-            className="govuk-!-static-margin-left-5 urgent-badge"
-          />
+          <span className={"govuk-!-static-margin-left-5"}>
+            {getResolutionStatus(courtCase) ? (
+              <ResolutionStatusBadge resolutionStatus={getResolutionStatus(courtCase) || "Unresolved"} />
+            ) : (
+              <UrgentTag isUrgent={courtCase.isUrgent} />
+            )}
+          </span>
           <Badge
             isRendered={caseIsViewOnly}
             label="View only"
@@ -145,7 +161,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
         </Heading>
         <CaseDetailsLockTag
           isRendered={currentUser.hasAccessTo[Permission.Triggers]}
-          isResolved={courtCase.triggerStatus === "Resolved"}
+          resolutionStatus={courtCase.triggerStatus}
           lockName="Triggers"
           getLockHolderFn={() =>
             getLockHolder(currentUser.username, courtCase.triggerLockedByUserFullName, triggersAreLockedByCurrentUser)
