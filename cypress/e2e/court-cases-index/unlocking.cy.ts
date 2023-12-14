@@ -120,7 +120,7 @@ describe("Case unlocked badge", () => {
     cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
   })
 
-  it.only("shows who has locked a case in the 'locked by' column", () => {
+  it("shows who has locked a case in the 'locked by' column", () => {
     const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long.name"]
     cy.task(
       "insertCourtCasesWithFields",
