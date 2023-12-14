@@ -1,29 +1,30 @@
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import exponential from "@stdlib/random-base-exponential"
 import sampleMany from "@stdlib/random-sample"
 import { sample as sampleOne } from "lodash"
+import { HO100206 } from "./exceptions"
 
-const possibleExceptions = [
-  "HO100101",
-  "HO100104",
-  "HO100113",
-  "HO100206",
-  "HO100212",
-  "HO100234",
-  "HO100301",
-  "HO100302",
-  "HO100304",
-  "HO100306",
-  "HO100310",
-  "HO100314",
-  "HO100321",
-  "HO100322",
-  "HO100323",
-  "HO100324",
-  "HO100325",
-  "HO100325",
-  "HO100402",
-  "HO100404"
-]
+const possibleExceptions: Record<string, (aho: AnnotatedHearingOutcome) => AnnotatedHearingOutcome> = {
+  HO100101: (aho) => aho,
+  HO100104: (aho) => aho,
+  HO100113: (aho) => aho,
+  HO100206: (aho) => HO100206(aho),
+  HO100212: (aho) => aho,
+  HO100234: (aho) => aho,
+  HO100301: (aho) => aho,
+  HO100302: (aho) => aho,
+  HO100304: (aho) => aho,
+  HO100306: (aho) => aho,
+  HO100310: (aho) => aho,
+  HO100314: (aho) => aho,
+  HO100321: (aho) => aho,
+  HO100322: (aho) => aho,
+  HO100323: (aho) => aho,
+  HO100324: (aho) => aho,
+  HO100325: (aho) => aho,
+  HO100402: (aho) => aho,
+  HO100404: (aho) => aho
+}
 const fields = [
   "ArrestSummonsNumber",
   "OffenceReasonSequence",
@@ -34,16 +35,31 @@ const fields = [
   "OrganisationUnitCode"
 ]
 
-export default (hasTriggers: boolean): { errorReason: string; errorReport: string; exceptionCount: number } => {
+export default (
+  hasTriggers: boolean,
+  aho: AnnotatedHearingOutcome
+): {
+  errorReason: string
+  errorReport: string
+  exceptionCount: number
+  ahoWithExceptions?: AnnotatedHearingOutcome
+} => {
   if (hasTriggers && Math.random() > 0.5) {
     return { errorReason: "", errorReport: "", exceptionCount: 0 }
   }
 
   const numExceptions = Math.min(Math.round(exponential(2) * 2), 5) + 1
-  const exceptions = sampleMany(possibleExceptions, { size: numExceptions })
+  const exceptions = sampleMany(Object.keys(possibleExceptions), { size: numExceptions })
+  // const exceptions = ["HO100206"]
+
+  exceptions.forEach((exception) => {
+    aho = possibleExceptions[exception](aho)
+  })
+
   return {
     errorReport: exceptions.map((exception) => `${exception}||br7:${sampleOne(fields)}`).join(", "),
     errorReason: exceptions[0],
-    exceptionCount: exceptions.length
+    exceptionCount: exceptions.length,
+    ahoWithExceptions
   }
 }

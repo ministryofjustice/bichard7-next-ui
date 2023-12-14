@@ -1,14 +1,15 @@
 import { faker } from "@faker-js/faker"
 import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
+import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/generate"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { subYears } from "date-fns"
 import sample from "lodash.sample"
-import Trigger from "services/entities/Trigger"
-import { DataSource, EntityManager } from "typeorm"
-import { v4 as uuidv4 } from "uuid"
-import CourtCase from "../../src/services/entities/CourtCase"
+   
+port Trigger from "services/entities/Trigger"
+impo { DataSource, EntityManager } from "typeorm"
+mpor { v4 as uuidv4 } from "uuid"
+port CourtCase from "../../src/services/entities/CourtCase"
 import { Result, isError } from "../../src/types/Result"
-import dummyAHOWithOneError from "../test-data/AnnotatedHO2_OneError.json"
 import createDummyAsn from "./createDummyAsn"
 import createDummyCourtCode from "./createDummyCourtCode"
 import createDummyExceptions from "./createDummyExceptions"
@@ -64,8 +65,17 @@ export default async (
   }
 
   const notes = createDummyNotes(dataSource, caseId, triggers, isResolved)
-  const { errorReport, errorReason, exceptionCount } = createDummyExceptions(hasUnresolvedTriggers)
+  const { errorReport, errorReason, exceptionCount, ahoWithExceptions } = createDummyExceptions(
+    hasUnresolvedTriggers,
+    parsedAho
+  )
   const hasExceptions = exceptionCount > 0
+
+  let ahoWithExceptionsXml
+
+  if (ahoWithExceptions) {
+    ahoWithExceptionsXml = convertAhoToXml(ahoWithExceptions)
+  }
 
   const courtCase = await dataSource.getRepository(CourtCase).save({
     errorId: caseId,
@@ -84,7 +94,7 @@ export default async (
     asn: createDummyAsn(caseDate.getFullYear(), orgCode + faker.string.alpha(2).toUpperCase()),
     courtCode: createDummyCourtCode(orgCode),
     hearingOutcome: errorReport
-      ? dummyAHOWithOneError.hearingOutcomeXml
+      ? ahoWithExceptionsXml
       : generateAho({ firstName, lastName, courtName, ptiurn, ahoTemplate }),
     errorReport: errorReport,
     createdTimestamp: caseDate,
