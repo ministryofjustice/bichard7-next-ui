@@ -60,6 +60,6 @@ export default (
     errorReport: exceptions.map((exception) => `${exception}||br7:${sampleOne(fields)}`).join(", "),
     errorReason: exceptions[0],
     exceptionCount: exceptions.length,
-    ahoWithExceptions
+    ahoWithExceptions: aho
   }
 }
