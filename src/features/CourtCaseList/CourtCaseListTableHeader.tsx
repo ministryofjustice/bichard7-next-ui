@@ -8,7 +8,7 @@ import { useCustomStyles } from "../../../styles/customStyles"
 import styled from "styled-components"
 
 const CellHeader = styled(Table.CellHeader)`
-  border-color: var(--table-border-color);
+  border-color: var(--border-input);
 `
 
 interface CourtCaseListTableHeaderProps {

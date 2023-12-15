@@ -10,7 +10,7 @@ body {
   border-collapse: separate;
   tbody {
     td {
-      border-color: $b7-table-border-color;
+      border-color: $b7-row-border-color;
       vertical-align: top;
     }
     tr:not(:last-child) td {
