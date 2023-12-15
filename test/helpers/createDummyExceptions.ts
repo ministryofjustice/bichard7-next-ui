@@ -2,14 +2,14 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import exponential from "@stdlib/random-base-exponential"
 import sampleMany from "@stdlib/random-sample"
 import { sample as sampleOne } from "lodash"
-import { HO100206 } from "./exceptions"
+import { HO100206, HO100212 } from "./exceptions"
 
 const possibleExceptions: Record<string, (aho: AnnotatedHearingOutcome) => AnnotatedHearingOutcome> = {
   HO100101: (aho) => aho,
   HO100104: (aho) => aho,
   HO100113: (aho) => aho,
   HO100206: (aho) => HO100206(aho),
-  HO100212: (aho) => aho,
+  HO100212: (aho) => HO100212(aho),
   HO100234: (aho) => aho,
   HO100301: (aho) => aho,
   HO100302: (aho) => aho,
@@ -50,7 +50,6 @@ export default (
 
   const numExceptions = Math.min(Math.round(exponential(2) * 2), 5) + 1
   const exceptions = sampleMany(Object.keys(possibleExceptions), { size: numExceptions })
-  // const exceptions = ["HO100206"]
 
   exceptions.forEach((exception) => {
     aho = possibleExceptions[exception](aho)
