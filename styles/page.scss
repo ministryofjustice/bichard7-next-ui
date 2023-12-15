@@ -9,12 +9,15 @@ body {
   border-spacing: 0;
   border-collapse: separate;
   tbody {
+    td {
+      border-color: $b7-table-border-color;
+    }
     tr:not(:last-child) td {
       border-bottom: none;
     }
   }
-  tbody:nth-child(odd){
-    tr{
+  tbody:nth-child(odd) {
+    tr {
       background-color: $b7-light-grey-color;
     }
   }
@@ -22,5 +25,8 @@ body {
     td {
       padding-top: 0;
     }
+  }
+  .number-of-notes {
+    text-align: center;
   }
 }
