@@ -8,7 +8,15 @@ export default function (aho: AnnotatedHearingOutcome): AnnotatedHearingOutcome 
 
   aho.Exceptions.push({
     code: ExceptionCode.HO100212,
-    path: [] // TODO: figure out how to get paths
+    path: [
+      "AnnotatedHearingOutcome",
+      "HearingOutcome",
+      "Case",
+      "HearingDefendant",
+      "DefendantDetail",
+      "PersonName",
+      "Title"
+    ]
   })
   return aho
 }
