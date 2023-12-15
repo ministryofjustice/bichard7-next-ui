@@ -18,5 +18,6 @@ export default function (aho: AnnotatedHearingOutcome): AnnotatedHearingOutcome 
       "Title"
     ]
   })
+
   return aho
 }

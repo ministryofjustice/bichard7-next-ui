@@ -2,7 +2,7 @@ import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-
 import exponential from "@stdlib/random-base-exponential"
 import sampleMany from "@stdlib/random-sample"
 import { sample as sampleOne } from "lodash"
-import { HO100206, HO100212 } from "./exceptions"
+import { HO100206, HO100212, HO100234 } from "./exceptions"
 
 const possibleExceptions: Record<string, (aho: AnnotatedHearingOutcome) => AnnotatedHearingOutcome> = {
   HO100101: (aho) => aho,
@@ -10,7 +10,7 @@ const possibleExceptions: Record<string, (aho: AnnotatedHearingOutcome) => Annot
   HO100113: (aho) => aho,
   HO100206: (aho) => HO100206(aho),
   HO100212: (aho) => HO100212(aho),
-  HO100234: (aho) => aho,
+  HO100234: (aho) => HO100234(aho),
   HO100301: (aho) => aho,
   HO100302: (aho) => aho,
   HO100304: (aho) => aho,

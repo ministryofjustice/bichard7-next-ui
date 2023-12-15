@@ -1,13 +1,11 @@
-import { faker } from "@faker-js/faker"
-import errorPaths from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/errorPaths"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 export default function (aho: AnnotatedHearingOutcome): AnnotatedHearingOutcome {
-  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber = faker.string.uuid()
+  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[0].ActualOffenceWording = ""
   aho.Exceptions.push({
-    code: ExceptionCode.HO100206,
-    path: errorPaths.case.asn
+    code: ExceptionCode.HO100234,
+    path: ["AnnotatedHearingOutcome", "HearingOutcome", "Case", "HearingDefendant", "Offence", "ActualOffenceWording"]
   })
 
   return aho
