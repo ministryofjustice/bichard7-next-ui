@@ -4,3 +4,7 @@ $b7-landscape-tablet-width: 768px;
 $b7-light-grey-color: #F3F2F1;
 $b7-dark-grey-color: #b1b4b6;
 $b7-table-border-color: #505A5F;
+
+:root {
+    --table-border-color : $b7-table-border-color;
+}

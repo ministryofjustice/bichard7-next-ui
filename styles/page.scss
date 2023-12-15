@@ -11,6 +11,7 @@ body {
   tbody {
     td {
       border-color: $b7-table-border-color;
+      vertical-align: top;
     }
     tr:not(:last-child) td {
       border-bottom: none;
