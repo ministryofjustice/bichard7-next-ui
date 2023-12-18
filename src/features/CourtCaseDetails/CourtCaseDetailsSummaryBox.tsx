@@ -43,14 +43,12 @@ const CourtCaseDetailsSummaryBox = () => {
       ""
   )
   const pnci = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.PNCIdentifier
+  const asn = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber
 
   return (
     <div className={`${classes["court-case-details-summary-box"]} govuk-body`}>
       <CourtCaseDetailsSummaryBoxField label="PTIURN" value={courtCase.ptiurn} />
-      <CourtCaseDetailsSummaryBoxField
-        label="ASN"
-        value={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber}
-      />
+      <CourtCaseDetailsSummaryBoxField label="ASN" value={asn} />
       <CourtCaseDetailsSummaryBoxField label="PNCID" value={pnci} />
       <CourtCaseDetailsSummaryBoxField label="DOB" value={formattedDobDate} />
       <CourtCaseDetailsSummaryBoxField label="Hearing date" value={formattedHearingDate} />
