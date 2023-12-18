@@ -1,15 +1,14 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import ConditionalRender from "components/ConditionalRender"
-import { Duration } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
-import { Durations } from "@moj-bichard7-developers/bichard7-next-data/dist/types/Duration"
-import { HintText, Label, Table } from "govuk-react"
-import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
-import { TableRow } from "../../TableRow"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/plea-status.json"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
+import { Durations } from "@moj-bichard7-developers/bichard7-next-data/dist/types/Duration"
+import { Duration } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
+import ConditionalRender from "components/ConditionalRender"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
+import { HintText, Label, Table } from "govuk-react"
+import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
+import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
 import {
   AmendmentKeys,
   AmendmentRecords,
@@ -18,6 +17,7 @@ import {
   UpdatedOffenceResult
 } from "../../../../../../types/Amendments"
 import { Exception } from "../../../../../../types/exceptions"
+import { TableRow } from "../../TableRow"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -156,7 +156,7 @@ export const HearingResult = ({
           )
         }
       >
-        {!!nextHearingLocationException ? (
+        {nextHearingLocationException ? (
           <ExceptionFieldTableRow
             badgeText="Editable Field"
             label="Next hearing location"
@@ -176,7 +176,7 @@ export const HearingResult = ({
         )}
       </ConditionalRender>
       <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearingDateException}>
-        {!!nextHearingDateException ? (
+        {nextHearingDateException ? (
           <ExceptionFieldTableRow
             badgeText="Editable Field"
             label="Next hearing date"

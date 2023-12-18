@@ -35,7 +35,7 @@ interface PageNumProps {
 const PageNum: React.FC<PageNumProps> = ({ pageNum, totalPages, className, linkedPageNum }: PageNumProps) => {
   const { query } = useRouter()
 
-  const label = !!linkedPageNum ? (
+  const label = linkedPageNum ? (
     <Link
       className="moj-pagination__link"
       href={{ query: { ...query, page: linkedPageNum } }}
