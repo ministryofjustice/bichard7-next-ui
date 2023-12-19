@@ -11,7 +11,7 @@ describe("Pagination", () => {
     cy.task("clearCourtCases")
   })
 
-  it.only("Should be accessible", () => {
+  it("Should be accessible", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
     loginAndGoToUrl()
