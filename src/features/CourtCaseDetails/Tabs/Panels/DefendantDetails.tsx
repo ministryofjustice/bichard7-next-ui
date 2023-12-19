@@ -25,7 +25,7 @@ const useStyles = createUseStyles({
 export const DefendantDetails = () => {
   const classes = useStyles()
   const courtCase = useCourtCase()
-  const defendant = courtCase.aho.DefendantDetail
+  const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
   const asnErrorPrompt = findExceptions(
     courtCase,
     courtCase.aho.Exceptions,
@@ -37,7 +37,7 @@ export const DefendantDetails = () => {
     <div className={`Defendant-details-table ${classes.wrapper}`}>
       <Table>
         <ExceptionFieldTableRow
-          badgeText={"SYSTEM ERROR"}
+          badgeText={"System Error"}
           value={defendant.ArrestSummonsNumber}
           badgeColour={"purple"}
           label={"ASN"}
