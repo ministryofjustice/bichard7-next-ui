@@ -1,4 +1,3 @@
-import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import { GenderCode, RemandStatusCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import { GenderCodes } from "@moj-bichard7-developers/bichard7-next-data/dist/types/GenderCode"
@@ -8,19 +7,12 @@ import { TableRow } from "./TableRow"
 import { formatDisplayedDate } from "utils/formattedDate"
 import { AddressCell } from "./AddressCell"
 import { capitalizeString } from "utils/capitaliseString"
-import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { findExceptions } from "types/ErrorMessages"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import { BailConditions } from "./BailConditions"
 import { createUseStyles } from "react-jss"
-
-interface DefendantDetailsProps {
-  defendant: HearingDefendant
-  asn: string | null
-  exceptions: { code: ExceptionCode; path: (string | number)[] }[]
-  courtCase: DisplayFullCourtCase
-}
+import { useCourtCase } from "../../../../context/CourtCaseContext"
 
 const useStyles = createUseStyles({
   wrapper: {
@@ -30,16 +22,23 @@ const useStyles = createUseStyles({
   }
 })
 
-export const DefendantDetails = ({ defendant, asn, exceptions, courtCase }: DefendantDetailsProps) => {
+export const DefendantDetails = () => {
   const classes = useStyles()
-  const asnErrorPrompt = findExceptions(courtCase, exceptions, ExceptionCode.HO200113, ExceptionCode.HO200114)
-  
+  const courtCase = useCourtCase()
+  const defendant = courtCase.aho.DefendantDetail
+  const asnErrorPrompt = findExceptions(
+    courtCase,
+    courtCase.aho.Exceptions,
+    ExceptionCode.HO200113,
+    ExceptionCode.HO200114
+  )
+
   return (
     <div className={`Defendant-details-table ${classes.wrapper}`}>
       <Table>
         <ExceptionFieldTableRow
           badgeText={"SYSTEM ERROR"}
-          value={asn}
+          value={defendant.ArrestSummonsNumber}
           badgeColour={"purple"}
           label={"ASN"}
           displayError={!!asnErrorPrompt}
