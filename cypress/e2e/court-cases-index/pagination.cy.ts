@@ -22,7 +22,6 @@ describe("Pagination", () => {
     cy.get("h1")
 
     cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
-    console.log(logAccessibilityViolations)
   })
 
   it("lets users select how many cases to show per page", () => {
