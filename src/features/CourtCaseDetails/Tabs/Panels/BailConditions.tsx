@@ -24,7 +24,7 @@ export const BailConditions = ({ bailConditions, bailReason, offences }: BailCon
         }
       })
     : []
-    
+
   return (
     <ConditionalRender isRendered={conditions.length > 0}>
       <p />
