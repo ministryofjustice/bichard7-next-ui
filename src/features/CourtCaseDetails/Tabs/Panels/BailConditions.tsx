@@ -16,16 +16,17 @@ export const BailConditions = ({ bailConditions, bailReason, offences }: BailCon
         return {
           label: conditionWithLabel ? conditionWithLabel[1].trim() : "Other",
           value: bailCondition,
-          offenceIndex: offences
-            .map(
-              (offence) =>
-                offence.Result.some((res) => res.ResultVariableText?.includes(bailCondition)) &&
-                offence.CourtOffenceSequenceNumber
-            )
-            .filter((courtOffenceSequenceNumber) => !!courtOffenceSequenceNumber)[0]
+          offenceIndex: offences.find(
+            (offence) =>
+              offence.CourtOffenceSequenceNumber &&
+              offence.Result.some((res) => res.ResultVariableText?.includes(bailCondition)) &&
+              offence.CourtOffenceSequenceNumber
+          )?.CourtOffenceSequenceNumber
         }
       })
     : []
+
+  console.log(bailConditions)
   return (
     <ConditionalRender isRendered={conditions.length > 0}>
       <p />
