@@ -18,7 +18,7 @@ describe("Uneditable Fields", () => {
       label: "ASN",
       exception: ExceptionCode.HO200113,
       badge: "SYSTEM ERROR",
-      message: ErrorMessage.AsnUneditable,
+      message: ErrorMessage.HO200113,
       value: "2300000000000942133G"
     },
     {
@@ -26,7 +26,7 @@ describe("Uneditable Fields", () => {
       label: "ASN",
       exception: ExceptionCode.HO200114,
       badge: "SYSTEM ERROR",
-      message: ErrorMessage.AsnUneditable,
+      message: ErrorMessage.HO200114,
       value: "2200000000001145631B"
     }
   ].forEach(({ title, exception, badge, message, value, label }) => {

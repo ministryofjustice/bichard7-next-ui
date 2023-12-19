@@ -4,11 +4,12 @@ import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
 
 type Props = {
-  badgeText: string
+  badgeText: "System Error" | "Editable Field"
   value?: string | React.ReactNode
   badgeColour?: "red" | "blue" | "purple"
   label: string
   children?: React.ReactNode
+  displayError?: boolean
 }
 
 const useStyles = createUseStyles({
@@ -19,11 +20,8 @@ const useStyles = createUseStyles({
     }
   },
   content: {
-    "& .field-value": {
-      paddingBottom: ".94rem"
-    },
     "& .badge-wrapper": {
-      paddingBottom: ".62rem",
+      padding: ".94rem 0 .62rem 0",
       display: "flex",
       gap: ".62rem",
       alignItems: "center"
@@ -31,31 +29,33 @@ const useStyles = createUseStyles({
   }
 })
 
-const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, children }: Props) => {
+const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, displayError, children }: Props) => {
   const classes = useStyles()
   const labelField = (
     <>
       <div>{label}</div>
-      <div className="error-icon">
-        <ErrorIcon />
-      </div>
+      {displayError !== false && (
+        <div className="error-icon">
+          <ErrorIcon />
+        </div>
+      )}
     </>
   )
 
   const cellContent = (
     <div className={classes.content}>
       {value && <div className="field-value">{value}</div>}
-      {badgeText && (
+      {badgeText && displayError !== false && (
         <div className="badge-wrapper">
           <Badge className="error-badge" isRendered={true} colour={badgeColour ?? "purple"} label={badgeText} />
         </div>
       )}
-      {children}
+      {displayError !== false && children}
     </div>
   )
 
   return (
-    <Table.Row className="error-prompt">
+    <Table.Row>
       <Table.Cell className={classes.label}>
         <b>{labelField}</b>
       </Table.Cell>

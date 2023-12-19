@@ -208,8 +208,8 @@ describe("ExceptionHandlerPrompt", () => {
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
 
-      cy.get(".error-prompt").contains("2300000000000942133G")
-      cy.get(".error-prompt").contains(ErrorMessages.AsnUneditable)
+      cy.get(".field-value").contains("2300000000000942133G")
+      cy.get(".error-prompt").contains(ErrorMessages.HO200113)
     })
 
     it("Should not display an error prompt when a HO200114 is not raised", () => {
@@ -241,8 +241,8 @@ describe("ExceptionHandlerPrompt", () => {
       cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
 
-      cy.get(".error-prompt").contains("2300000000000532316D")
-      cy.get(".error-prompt").contains(ErrorMessages.AsnUneditable)
+      cy.get(".field-value").contains("2300000000000532316D")
+      cy.get(".error-prompt").contains(ErrorMessages.HO200114)
     })
   })
 })
