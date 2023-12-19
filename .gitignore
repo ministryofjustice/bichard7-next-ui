@@ -108,6 +108,7 @@ cypress/videos
 cypress/screenshots
 
 .vscode/
+.idea/
 
 # Ignore govuk-frontend assets - these are copied from
 # node_modules/govuk-frontend using scripts/copy-govuk-frontend-assets.sh

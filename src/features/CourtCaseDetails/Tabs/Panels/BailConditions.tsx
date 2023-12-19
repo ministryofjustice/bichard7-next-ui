@@ -19,14 +19,12 @@ export const BailConditions = ({ bailConditions, bailReason, offences }: BailCon
           offenceIndex: offences.find(
             (offence) =>
               offence.CourtOffenceSequenceNumber &&
-              offence.Result.some((res) => res.ResultVariableText?.includes(bailCondition)) &&
-              offence.CourtOffenceSequenceNumber
+              offence.Result.some((res) => res.ResultVariableText?.includes(bailCondition))
           )?.CourtOffenceSequenceNumber
         }
       })
     : []
-
-  console.log(bailConditions)
+    
   return (
     <ConditionalRender isRendered={conditions.length > 0}>
       <p />
