@@ -23,7 +23,7 @@ export const CourtCaseListTableHeader = ({ order }: CourtCaseListTableHeaderProp
 
   return (
     <Table.Row>
-      <CellHeader />
+      <Table.Cell></Table.Cell>
       <CellHeader className={classes["table-column-header-cell"]} setWidth={"178px"}>
         <Link
           className={classes["table-column-header-link"]}
