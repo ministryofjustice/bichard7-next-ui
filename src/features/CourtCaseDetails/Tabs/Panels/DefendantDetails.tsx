@@ -1,4 +1,4 @@
-import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import { GenderCode, RemandStatusCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import { GenderCodes } from "@moj-bichard7-developers/bichard7-next-data/dist/types/GenderCode"
 import { RemandStatuses } from "@moj-bichard7-developers/bichard7-next-data/dist/types/RemandStatusCode"
@@ -7,12 +7,12 @@ import { TableRow } from "./TableRow"
 import { formatDisplayedDate } from "utils/formattedDate"
 import { AddressCell } from "./AddressCell"
 import { capitalizeString } from "utils/capitaliseString"
+import { findExceptions } from "types/ErrorMessages"
+import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
+import ErrorPromptMessage from "components/ErrorPromptMessage"
 import { BailConditions } from "./BailConditions"
 import { createUseStyles } from "react-jss"
-
-interface DefendantDetailsProps {
-  defendant: HearingDefendant
-}
+import { useCourtCase } from "../../../../context/CourtCaseContext"
 
 const useStyles = createUseStyles({
   wrapper: {
@@ -22,12 +22,30 @@ const useStyles = createUseStyles({
   }
 })
 
-export const DefendantDetails = ({ defendant }: DefendantDetailsProps) => {
+export const DefendantDetails = () => {
   const classes = useStyles()
+  const courtCase = useCourtCase()
+  const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
+  const asnErrorPrompt = findExceptions(
+    courtCase,
+    courtCase.aho.Exceptions,
+    ExceptionCode.HO200113,
+    ExceptionCode.HO200114
+  )
 
   return (
     <div className={`Defendant-details-table ${classes.wrapper}`}>
       <Table>
+        <ExceptionFieldTableRow
+          badgeText={"System Error"}
+          value={defendant.ArrestSummonsNumber}
+          badgeColour={"purple"}
+          label={"ASN"}
+          displayError={!!asnErrorPrompt}
+        >
+          <ErrorPromptMessage message={asnErrorPrompt} />
+        </ExceptionFieldTableRow>
+
         <TableRow label="PNC Check name" value={defendant.PNCCheckname} />
         <TableRow label="Given name" value={defendant.DefendantDetail?.PersonName.GivenName?.join(", ")} />
         <TableRow label="Family name" value={defendant.DefendantDetail?.PersonName.FamilyName} />

@@ -25,7 +25,7 @@ describe("Court Case Details Summary Box", () => {
         courtReference: "cRef-value",
         courtName: "cName-value",
         orgForPoliceFilter: "01",
-        hearingOutcome: dummyAho.hearingOutcomeXml
+        hearingOutcome: dummyAho.hearingOutcomeXml.replace("9625UC0000000118191Z", "asn-value")
       }
     ])
     cy.task("insertTriggers", { caseId: 0, triggers: [trigger] })

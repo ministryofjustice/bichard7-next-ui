@@ -2,7 +2,7 @@ import { createUseStyles } from "react-jss"
 import { textSecondary } from "../utils/colours"
 
 type Props = {
-  message: string
+  message?: string
 }
 
 const useStyles = createUseStyles({
@@ -14,7 +14,7 @@ const useStyles = createUseStyles({
 const ErrorPromptMessage = ({ message }: Props) => {
   const classes = useStyles()
 
-  return <div className={classes.errorPromptMessage}>{message}</div>
+  return <div className={`error-prompt ${classes.errorPromptMessage}`}>{message}</div>
 }
 
 export default ErrorPromptMessage

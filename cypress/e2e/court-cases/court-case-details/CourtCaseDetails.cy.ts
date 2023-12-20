@@ -112,6 +112,7 @@ describe("Court case details", () => {
     cy.visit("/bichard/court-cases/0")
 
     clickTab("Defendant")
+    cy.contains("td", "ASN").siblings().contains("1101ZD0100000448754K")
     cy.contains("td", "PNC Check name").siblings().contains("SEXOFFENCE")
     cy.contains("td", "Given name").siblings().contains("TRPRFOUR")
     cy.contains("td", "Family name").siblings().contains("SEXOFFENCE")

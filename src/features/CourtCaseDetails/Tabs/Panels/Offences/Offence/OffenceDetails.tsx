@@ -71,7 +71,16 @@ const offenceMatchingExceptions = {
 const getOffenceReasonSequencePath = (offenceIndex: number) =>
   errorPaths.offence(offenceIndex).reasonSequence.filter((path) => path !== "AnnotatedHearingOutcome")
 
-const getOffenceMatchingException = (exceptions: Exception[], offenceIndex: number) => {
+type GetOffenceMatchingExceptionResult =
+  | {
+      code: ExceptionCode
+      badge: "Added by Court" | "Unmatched"
+    }
+  | undefined
+const getOffenceMatchingException = (
+  exceptions: Exception[],
+  offenceIndex: number
+): GetOffenceMatchingExceptionResult => {
   const offenceMatchingException = exceptions.find(
     (exception) =>
       offenceMatchingExceptions.noOffencesMatched.includes(exception.code) ||
@@ -161,7 +170,7 @@ export const OffenceDetails = ({
           {
             <>
               {offenceCodeErrorPrompt ? (
-                <ExceptionFieldTableRow badgeText={"SYSTEM ERROR"} value={offenceCode} label={"Offence code"}>
+                <ExceptionFieldTableRow badgeText={"System Error"} value={offenceCode} label={"Offence code"}>
                   <ErrorPromptMessage message={offenceCodeErrorPrompt} />
                 </ExceptionFieldTableRow>
               ) : (
@@ -245,7 +254,7 @@ export const OffenceDetails = ({
             </Heading>
             <Table>
               {qualifierErrorPrompt ? (
-                <ExceptionFieldTableRow badgeText={"SYSTEM ERROR"} value={qualifierCode} label={"Code"}>
+                <ExceptionFieldTableRow badgeText={"System Error"} value={qualifierCode} label={"Code"}>
                   <ErrorPromptMessage message={qualifierErrorPrompt} />
                 </ExceptionFieldTableRow>
               ) : (
