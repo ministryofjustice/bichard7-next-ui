@@ -1,8 +1,7 @@
-import { Paragraph, Table } from "govuk-react"
+import { Paragraph } from "govuk-react"
 import { useRouter } from "next/router"
 import type { QueryOrder } from "types/CaseListQueryParams"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
-import { useCustomStyles } from "../../../styles/customStyles"
 import CourtCaseListEntry from "./CourtCaseListEntry/CourtCaseListEntry"
 import { CourtCaseListTableHeader } from "./CourtCaseListTableHeader"
 
@@ -29,23 +28,23 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) =>
     }, new Array<string>())
     .join("&")
 
-  const classes = useCustomStyles()
-
   return courtCases.length === 0 ? (
     <Paragraph>{"There are no court cases to show"}</Paragraph>
   ) : (
-    <Table head={<CourtCaseListTableHeader order={order} />}>
-      {courtCases.map((courtCase, index) => (
+    <table className="cases-list">
+      <thead>
+        <CourtCaseListTableHeader order={order} />
+      </thead>
+      {courtCases.map((courtCase) => (
         <CourtCaseListEntry
           courtCase={courtCase}
           exceptionHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedExceptionId}
           triggerHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedTriggerId}
-          key={`court-case-${courtCase.ptiurn}`}
-          entityClassName={index % 2 == 1 ? classes["light-grey-background"] : ""}
+          key={`court-case-${courtCase.errorId}`}
           previousPath={queryString}
         />
       ))}
-    </Table>
+    </table>
   )
 }
 

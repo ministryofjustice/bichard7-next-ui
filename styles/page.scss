@@ -4,3 +4,27 @@ body {
   font-family: $b7-font-family;
   font-size: $b7-default-font-size;
 }
+
+.cases-list {
+  border-spacing: 0;
+  border-collapse: separate;
+  tbody {
+    td {
+      border-color: $b7-row-border-color;
+      vertical-align: top;
+    }
+    tr:not(:last-child) td {
+      border-bottom: none;
+    }
+  }
+  tbody:nth-child(odd) {
+    tr {
+      background-color: $b7-light-grey-color;
+    }
+  }
+  .note-preview-row {
+    td {
+      padding-top: 0;
+    }
+  }
+}
