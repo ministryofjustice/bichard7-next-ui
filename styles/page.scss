@@ -8,6 +8,7 @@ body {
 .cases-list {
   border-spacing: 0;
   border-collapse: separate;
+  width: 100%;
   tbody {
     td {
       border-color: $b7-row-border-color;
