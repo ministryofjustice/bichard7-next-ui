@@ -2,8 +2,7 @@ import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/di
 import { format } from "date-fns"
 import { GenderCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/GenderCode"
 import { DefendantDetails } from "../../src/features/CourtCaseDetails/Tabs/Panels/DefendantDetails"
-import { CourtCaseContext, CourtCaseContextType } from "../../src/context/CourtCaseContext"
-import { createContext, useState } from "react"
+import { CourtCaseContext } from "../../src/context/CourtCaseContext"
 import { DisplayFullCourtCase } from "../../src/types/display/CourtCases"
 
 describe("Defendant Details", () => {
