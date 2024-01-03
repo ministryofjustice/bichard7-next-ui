@@ -29,8 +29,7 @@ const PreviewButton = ({ showPreview, onClick, previewLabel, className }: Previe
   return (
     <button
       type="button"
-      className={"govuk-accordion__show-all" + (className ? ` ${className}` : "")}
-      style={{ marginBottom: "0px" }}
+      className={"preview-button govuk-accordion__show-all" + (className ? ` ${className}` : "")}
       onClick={() => {
         onClick(!showPreview)
       }}

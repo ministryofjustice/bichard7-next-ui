@@ -5,8 +5,6 @@ import Image from "next/image"
 import { LOCKED_ICON_URL } from "utils/icons"
 
 interface ExtraReasonRowProps {
-  firstColumnClassName: string
-  rowClassName: string
   isLocked: boolean
   reasonCell: JSX.Element
   lockTag: JSX.Element
@@ -18,18 +16,12 @@ const useStyles = createUseStyles({
   }
 })
 
-export const ExtraReasonRow = ({
-  firstColumnClassName,
-  rowClassName,
-  isLocked,
-  reasonCell,
-  lockTag
-}: ExtraReasonRowProps) => {
+export const ExtraReasonRow = ({ isLocked, reasonCell, lockTag }: ExtraReasonRowProps) => {
   const classes = useStyles()
 
   return (
-    <Table.Row className={`${classes.extraReasonRow} ${rowClassName}`}>
-      <Table.Cell className={firstColumnClassName}>
+    <Table.Row className={`${classes.extraReasonRow}`}>
+      <Table.Cell>
         <ConditionalRender isRendered={isLocked}>
           <Image src={LOCKED_ICON_URL} priority width={20} height={20} alt="Lock icon" />
         </ConditionalRender>
