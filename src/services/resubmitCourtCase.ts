@@ -15,7 +15,7 @@ import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
 import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
 
-const resubmissionQueue = process.env.PHASE_1_RESUBMIT_QUEUE ?? "PHASE_1_RESUBMIT_QUEUE"
+const phase1ResubmissionQueue = process.env.PHASE_1_RESUBMIT_QUEUE_NAME ?? "PHASE_1_RESUBMIT_QUEUE"
 
 const resubmitCourtCase = async (
   dataSource: DataSource,
@@ -89,7 +89,7 @@ const resubmitCourtCase = async (
     }
 
     const generatedXml = convertAhoToXml(resultAho, false)
-    const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: resubmissionQueue })
+    const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: phase1ResubmissionQueue })
 
     if (isError(queueResult)) {
       return queueResult
