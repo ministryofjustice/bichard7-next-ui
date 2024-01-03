@@ -11,9 +11,9 @@ import { createUseStyles } from "react-jss"
 import type NavigationHandler from "types/NavigationHandler"
 import { triggersAreLockedByAnotherUser } from "utils/caseLocks"
 import Form from "../../../components/Form"
-import LockedTag from "../../../components/LockedTag"
 import Trigger from "./Trigger"
 import { useCurrentUser } from "context/CurrentUserContext"
+import LockStatusTag from "../LockStatusTag"
 
 interface Props {
   onNavigate: NavigationHandler
@@ -34,6 +34,12 @@ const useStyles = createUseStyles({
     "& #mark-triggers-complete-button": {
       marginBottom: 0
     }
+  },
+  lockStatusContainer: {
+    paddingTop: "20px",
+    display: "flex",
+    justifyContent: "flex-end",
+    marginBottom: "0"
   }
 })
 
@@ -113,9 +119,13 @@ const TriggersList = ({ onNavigate }: Props) => {
           </GridCol>
         </GridRow>
       </ConditionalRender>
-      <ConditionalRender isRendered={hasTriggers && triggersLockedByAnotherUser}>
-        <LockedTag lockName="Triggers" lockedBy={courtCase.triggerLockedByUserFullName ?? "Another user"} />
-      </ConditionalRender>
+      <div className={classes.lockStatusContainer}>
+        <LockStatusTag
+          isRendered={triggers.length > 0}
+          resolutionStatus={courtCase.triggerStatus}
+          lockName="Triggers"
+        />
+      </div>
     </Form>
   )
 }

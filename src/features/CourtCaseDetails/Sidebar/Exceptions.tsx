@@ -15,6 +15,7 @@ import PncException from "../../../components/Exception/PncException"
 import Form from "../../../components/Form"
 import { AmendmentRecords } from "../../../types/Amendments"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
+import LockStatusTag from "../LockStatusTag"
 
 const isPncException = (code: ExceptionCode) =>
   [ExceptionCode.HO100302, ExceptionCode.HO100314, ExceptionCode.HO100402, ExceptionCode.HO100404].includes(code)
@@ -57,7 +58,6 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
   const otherExceptions = courtCase.aho.Exceptions.filter(({ code }) => !isPncException(code))
   const csrfToken = useCsrfToken()
   const previousPath = usePreviousPath()
-
   const router = useRouter()
 
   let resolveLink = `${router.basePath}${usePathname()}/resolve`
@@ -103,6 +103,13 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
           </LinkButton>
         </div>
       </ConditionalRender>
+      <div className={classes.buttonContainer}>
+        <LockStatusTag
+          isRendered={courtCase.aho.Exceptions.length > 0}
+          resolutionStatus={courtCase.errorStatus}
+          lockName="Exceptions"
+        />
+      </div>
     </>
   )
 }
