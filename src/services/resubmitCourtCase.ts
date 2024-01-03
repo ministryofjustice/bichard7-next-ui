@@ -1,19 +1,21 @@
+import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
+import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/generate"
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import amendCourtCase from "services/amendCourtCase"
 import User from "services/entities/User"
+import insertNotes from "services/insertNotes"
+import sendToQueue from "services/mq/sendToQueue"
+import updateCourtCaseStatus from "services/updateCourtCaseStatus"
+import updateLockStatusToLocked from "services/updateLockStatusToLocked"
 import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import { DataSource } from "typeorm"
-import sendToQueue from "services/mq/sendToQueue"
-import { isError } from "types/Result"
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import type { Amendments } from "types/Amendments"
 import PromiseResult from "types/PromiseResult"
-import insertNotes from "services/insertNotes"
-import updateCourtCaseStatus from "services/updateCourtCaseStatus"
+import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import updateLockStatusToLocked from "services/updateLockStatusToLocked"
-import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
-import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/generate"
+
+const resubmissionQueue = process.env.PHASE_1_RESUBMIT_QUEUE ?? "PHASE_1_RESUBMIT_QUEUE"
 
 const resubmitCourtCase = async (
   dataSource: DataSource,
@@ -87,7 +89,7 @@ const resubmitCourtCase = async (
     }
 
     const generatedXml = convertAhoToXml(resultAho, false)
-    const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: "HEARING_OUTCOME_INPUT_QUEUE" })
+    const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: resubmissionQueue })
 
     if (isError(queueResult)) {
       return queueResult
