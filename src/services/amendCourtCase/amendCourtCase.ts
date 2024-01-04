@@ -19,11 +19,8 @@ const amendCourtCase = async (
   courtCase: CourtCase,
   userDetails: User
 ): Promise<AnnotatedHearingOutcome | Error> => {
-  if (
-    (courtCase.errorLockedByUsername && courtCase.errorLockedByUsername != userDetails.username) ||
-    (courtCase.triggerLockedByUsername && courtCase.triggerLockedByUsername != userDetails.username)
-  ) {
-    return new Error("Court case is locked by another user")
+  if (courtCase.errorLockedByUsername && courtCase.errorLockedByUsername != userDetails.username) {
+    return new Error("Exception is locked by another user")
   }
 
   // we need to parse the annotated message due to being xml in db
