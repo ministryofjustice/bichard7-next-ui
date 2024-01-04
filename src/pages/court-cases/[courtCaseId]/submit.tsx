@@ -36,7 +36,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
     const { currentUser, query, req, res, csrfToken } = context as AuthenticationServerSidePropsContext &
       CsrfServerSidePropsContext
-    console.log(currentUser)
+
     const { courtCaseId, previousPath } = query as {
       courtCaseId: string
       previousPath: string
@@ -65,7 +65,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase)
     }
-    console.log("====>", currentUser)
+
     if (isPost(req)) {
       const result = await resolveCourtCase(dataSource, courtCase, currentUser)
 
