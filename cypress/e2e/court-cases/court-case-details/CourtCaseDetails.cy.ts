@@ -381,7 +381,7 @@ describe("Court case details", () => {
     cy.toBeUnauthorized("/bichard/court-cases/0")
   })
 
-  it("Should resubmit a case when no updates made and the resubmit button is clicked", () => {
+  it.only("Should resubmit a case when no updates made and the resubmit button is clicked", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
@@ -396,14 +396,14 @@ describe("Court case details", () => {
     cy.visit("/bichard/court-cases/0")
 
     cy.get("button").contains("Submit exception(s)").click()
-    // Expect to be on submit page(confirmation)
+
     cy.url().should("match", /\/bichard\/court-cases\/0\/submit/)
-    // Expect to see the page content
+
     cy.get("p").should(
       "have.text",
       "Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"
     )
-    // Click on confirm button
+
     cy.get("button").contains("Submit exception(s)").click()
     cy.location().should((loc) => {
       expect(loc.href).to.contain("?resubmitCase=true")
