@@ -120,19 +120,20 @@ const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath }:
               </Heading>
             </HeaderRow>
           </HeaderContainer>
+          {/* Todo: add a helper function to handle condition of comparing event.aho and annotated event.aho */}
           <ConditionalRender isRendered={true}>
             <Paragraph>
               {"Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"}
             </Paragraph>
           </ConditionalRender>
+
           <ConditionalRender isRendered={false}>
             <Banner message="The case exception(s) have not been updated within Bichard."></Banner>
-
             <Paragraph>
               {"Do you want to submit case details to the PNC and mark the exception(s) as resolved?"}
             </Paragraph>
           </ConditionalRender>
-
+          {/* Add an onClick handler to submit the form */}
           <ButtonsGroup>
             <Button id="Submit" type="submit">
               {"Submit exception(s)"}
