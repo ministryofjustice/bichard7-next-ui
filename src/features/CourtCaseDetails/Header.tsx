@@ -3,8 +3,6 @@ import ConditionalRender from "components/ConditionalRender"
 import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
 import LinkButton from "components/LinkButton"
-import LockedTag from "components/LockedTag"
-import ResolvedTag from "components/ResolvedTag"
 import SecondaryButton from "components/SecondaryButton"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
@@ -17,19 +15,17 @@ import { createUseStyles } from "react-jss"
 import styled from "styled-components"
 import Permission from "types/Permission"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import {
-  exceptionsAreLockedByCurrentUser,
-  isLockedByCurrentUser,
-  triggersAreLockedByCurrentUser
-} from "utils/caseLocks"
+import { isLockedByCurrentUser } from "utils/caseLocks"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 import Form from "../../components/Form"
+import { ResolutionStatus } from "../../types/ResolutionStatus"
+import ResolutionStatusBadge from "../CourtCaseList/tags/ResolutionStatusBadge"
+import UrgentTag from "../CourtCaseList/tags/UrgentTag"
+import LockStatusTag from "./LockStatusTag"
 
 interface Props {
   canReallocate: boolean
 }
-
-type lockCheckFn = (courtCase: DisplayFullCourtCase, username: string) => boolean
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -55,6 +51,18 @@ const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
   return params
 }
 
+const getResolutionStatus = (courtCase: DisplayFullCourtCase): ResolutionStatus | undefined => {
+  if (courtCase.errorStatus === "Submitted") {
+    return "Submitted"
+  } else if (
+    (courtCase.errorStatus === "Resolved" && courtCase.triggerStatus === "Resolved") ||
+    (!courtCase.errorStatus && courtCase.triggerStatus === "Resolved") ||
+    (!courtCase.triggerStatus && courtCase.errorStatus === "Resolved")
+  ) {
+    return "Resolved"
+  }
+}
+
 const Header: React.FC<Props> = ({ canReallocate }: Props) => {
   const { basePath } = useRouter()
   const classes = useStyles()
@@ -76,66 +84,28 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
   const caseIsViewOnly = !isLockedByCurrentUser(courtCase, currentUser.username)
   const hasCaseLock = isLockedByCurrentUser(courtCase, currentUser.username)
 
-  const getLockHolder = (
-    username: string,
-    lockholder: string | null | undefined,
-    lockedByCurrentUserFn: lockCheckFn
-  ): string => {
-    const lockedByCurrentUser = lockedByCurrentUserFn(courtCase, username)
-
-    if (lockedByCurrentUser) {
-      return "Locked to you"
-    }
-
-    return lockholder || ""
-  }
-
-  const CaseDetailsLockTag = ({
-    isRendered,
-    isResolved,
-    lockName,
-    getLockHolderFn
-  }: {
-    isRendered: boolean
-    isResolved: boolean
-    lockName: string
-    getLockHolderFn: () => string
-  }) => {
-    if (!isRendered) {
-      return
-    }
-
-    return isResolved ? (
-      <ResolvedTag itemName={lockName} />
-    ) : (
-      <LockedTag lockName={lockName} lockedBy={getLockHolderFn()} />
-    )
-  }
-
   return (
     <HeaderContainer id="header-container">
       <HeaderRow>
         <Heading as="h1" size="LARGE">
           {"Case details"}
         </Heading>
-        <CaseDetailsLockTag
+        <LockStatusTag
           isRendered={currentUser.hasAccessTo[Permission.Exceptions]}
-          isResolved={courtCase.errorStatus === "Resolved"}
+          resolutionStatus={courtCase.errorStatus}
           lockName="Exceptions"
-          getLockHolderFn={() =>
-            getLockHolder(currentUser.username, courtCase.errorLockedByUserFullName, exceptionsAreLockedByCurrentUser)
-          }
         />
       </HeaderRow>
       <HeaderRow>
         <Heading as="h2" size="MEDIUM">
           {courtCase.defendantName}
-          <Badge
-            isRendered={courtCase.isUrgent}
-            label="Urgent"
-            colour="red"
-            className="govuk-!-static-margin-left-5 urgent-badge"
-          />
+          <span className={"govuk-!-static-margin-left-5"}>
+            {getResolutionStatus(courtCase) ? (
+              <ResolutionStatusBadge resolutionStatus={getResolutionStatus(courtCase) || "Unresolved"} />
+            ) : (
+              <UrgentTag isUrgent={courtCase.isUrgent} />
+            )}
+          </span>
           <Badge
             isRendered={caseIsViewOnly}
             label="View only"
@@ -143,13 +113,10 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
             className="govuk-!-static-margin-left-5 view-only-badge"
           />
         </Heading>
-        <CaseDetailsLockTag
+        <LockStatusTag
           isRendered={currentUser.hasAccessTo[Permission.Triggers]}
-          isResolved={courtCase.triggerStatus === "Resolved"}
+          resolutionStatus={courtCase.triggerStatus}
           lockName="Triggers"
-          getLockHolderFn={() =>
-            getLockHolder(currentUser.username, courtCase.triggerLockedByUserFullName, triggersAreLockedByCurrentUser)
-          }
         />
       </HeaderRow>
       <ButtonContainer>

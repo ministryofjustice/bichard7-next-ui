@@ -1,5 +1,5 @@
 import { createUseStyles } from "react-jss"
-import { darkGrey, blue, tagBlue, textBlue, yellow, lightGrey, gdsGrey, gdsBlack } from "../src/utils/colours"
+import { darkGrey, blue, tagBlue, textBlue, yellow, gdsBlack, gdsLightGrey } from "../src/utils/colours"
 
 export const useCustomStyles = createUseStyles({
   "button--tag": {
@@ -72,6 +72,11 @@ export const useCustomStyles = createUseStyles({
   "top-padding-none": {
     paddingTop: "0px"
   },
+  "row-top-padding-none": {
+    td: {
+      paddingTop: "0px"
+    }
+  },
   "margin-top-bottom": {
     margin: "12px 0"
   },
@@ -92,22 +97,10 @@ export const useCustomStyles = createUseStyles({
     display: "none"
   },
   "light-grey-background": {
-    backgroundColor: lightGrey
+    backgroundColor: gdsLightGrey
   },
   "border-bottom-none": {
     borderBottom: "none"
-  },
-  "limited-border-left": {
-    position: "relative",
-    "&:before": {
-      content: '""',
-      position: "absolute",
-      top: "50%",
-      transform: "translateY(-50%)",
-      height: "calc(100% - 10px)",
-      width: "1px",
-      backgroundColor: gdsGrey
-    }
   },
   "no-margin-bottom": {
     marginBottom: 0

@@ -2,6 +2,8 @@ import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/di
 import { format } from "date-fns"
 import { GenderCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/GenderCode"
 import { DefendantDetails } from "../../src/features/CourtCaseDetails/Tabs/Panels/DefendantDetails"
+import { CourtCaseContext } from "../../src/context/CourtCaseContext"
+import { DisplayFullCourtCase } from "../../src/types/display/CourtCases"
 
 describe("Defendant Details", () => {
   it("displays all defendant details", () => {
@@ -27,7 +29,25 @@ describe("Defendant Details", () => {
         Gender: GenderCode.MALE
       }
     }
-    cy.mount(<DefendantDetails defendant={data as HearingDefendant} />)
+
+    const courtCase = {
+      aho: {
+        AnnotatedHearingOutcome: {
+          HearingOutcome: {
+            Case: {
+              HearingDefendant: data
+            }
+          }
+        },
+        Exceptions: []
+      }
+    } as unknown as DisplayFullCourtCase
+
+    cy.mount(
+      <CourtCaseContext.Provider value={{ courtCase }}>
+        <DefendantDetails />
+      </CourtCaseContext.Provider>
+    )
 
     cy.contains("td", "PNC Check name").siblings().should("include.text", data.PNCCheckname)
     cy.contains("td", "Given name")
@@ -72,7 +92,25 @@ describe("Defendant Details", () => {
         Gender: GenderCode.MALE
       }
     }
-    cy.mount(<DefendantDetails defendant={data as HearingDefendant} />)
+
+    const courtCase = {
+      aho: {
+        AnnotatedHearingOutcome: {
+          HearingOutcome: {
+            Case: {
+              HearingDefendant: data
+            }
+          }
+        },
+        Exceptions: []
+      }
+    } as unknown as DisplayFullCourtCase
+
+    cy.mount(
+      <CourtCaseContext.Provider value={{ courtCase }}>
+        <DefendantDetails />
+      </CourtCaseContext.Provider>
+    )
 
     cy.contains("td", "Given name").siblings().should("include.text", "FirstName, MiddleName")
   })

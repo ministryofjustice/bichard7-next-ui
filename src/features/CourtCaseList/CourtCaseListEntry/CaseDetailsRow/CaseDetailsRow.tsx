@@ -1,86 +1,40 @@
 import ConditionalRender from "components/ConditionalRender"
 import DateTime from "components/DateTime"
-import {
-  filterUserNotes,
-  getMostRecentNote
-} from "features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/CourtCaseListEntryHelperFunction"
-import ResolvedTag from "features/CourtCaseList/tags/ResolvedTag"
+import { filterUserNotes } from "features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/CourtCaseListEntryHelperFunction"
+import ResolutionStatusBadge from "features/CourtCaseList/tags/ResolutionStatusBadge"
 import UrgentTag from "features/CourtCaseList/tags/UrgentTag"
 import { Link, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
-import { useState } from "react"
-import { createUseStyles } from "react-jss"
-import { DisplayNote } from "types/display/Notes"
 import { displayedDateFormat } from "utils/formattedDate"
 import { LOCKED_ICON_URL } from "utils/icons"
-import { useCustomStyles } from "../../../../../styles/customStyles"
-import { NotePreview, NotePreviewButton } from "./NotePreviewButton"
+import { NotePreviewButton } from "./NotePreviewButton"
+import { useState } from "react"
+import { NotePreviewRow } from "./NotePreviewRow"
+import { DisplayPartialCourtCase } from "types/display/CourtCases"
+import { ResolutionStatus } from "../../../../types/ResolutionStatus"
 
 interface CaseDetailsRowProps {
-  canCurrentUserUnlockCase: string | boolean | null | undefined
-  hasTriggers: boolean
-  courtDate: Date | null
-  courtName: string
-  defendantName: string | null
-  errorId: number
-  errorLockedByUsername: string | null | undefined
-  errorLockedByUserFullName: string | null | undefined
-  errorReport: string
-  firstColumnClassName: string
-  isCaseUnlocked: boolean
-  isResolved: boolean
-  isUrgent: boolean
-  notes: DisplayNote[]
-  ptiurn: string
-  rowClassName: string
-  unlockPath: string
-  reasonCell: JSX.Element
-  lockTag: JSX.Element
+  courtCase: DisplayPartialCourtCase
+  reasonCell?: JSX.Element
+  lockTag?: JSX.Element
+  resolutionStatus: ResolutionStatus
+
   previousPath: string | null
 }
 
-const useStyles = createUseStyles({
-  caseDetailsRow: {
-    verticalAlign: "top",
-    borderColor: "unset"
-  },
-  flexBox: {
-    display: "flex"
-  },
-  notesRow: {
-    borderTop: "white solid"
-  }
-})
-
 export const CaseDetailsRow = ({
-  hasTriggers,
-  courtDate,
-  courtName,
-  defendantName,
-  errorId,
-  errorLockedByUsername,
-  firstColumnClassName,
-  isResolved,
-  isUrgent,
-  notes,
-  ptiurn,
-  rowClassName,
+  courtCase,
   reasonCell,
   lockTag,
-  previousPath
+  previousPath,
+  resolutionStatus
 }: CaseDetailsRowProps) => {
-  const [showPreview, setShowPreview] = useState(true)
+  const { notes, errorLockedByUsername, defendantName, errorId, courtDate, courtName, ptiurn, isUrgent } = courtCase
   const { basePath } = useRouter()
+  const [showPreview, setShowPreview] = useState(true)
   const userNotes = filterUserNotes(notes)
-  const mostRecentUserNote = getMostRecentNote(userNotes)
   const numberOfNotes = userNotes.length
-
-  const classes = useStyles()
-  const customClasses = useCustomStyles()
-
-  const caseDetailsCellClass = !hasTriggers && showPreview ? "" : customClasses["border-bottom-none"]
-  const notePreviewCellClass = !hasTriggers && !showPreview ? "" : customClasses["border-bottom-none"]
 
   let previousPathWebSafe = ""
   if (previousPath) {
@@ -89,49 +43,34 @@ export const CaseDetailsRow = ({
 
   return (
     <>
-      <Table.Row className={`${classes.caseDetailsRow} ${rowClassName}`}>
-        <Table.Cell className={`${caseDetailsCellClass} ${firstColumnClassName}`}>
+      <Table.Row className="caseDetailsRow">
+        <Table.Cell>
           <ConditionalRender isRendered={!!errorLockedByUsername}>
             <Image src={LOCKED_ICON_URL} priority width={20} height={20} alt="Lock icon" />
           </ConditionalRender>
         </Table.Cell>
-        <Table.Cell className={caseDetailsCellClass}>
+        <Table.Cell>
           <Link href={`${basePath}/court-cases/${errorId}${previousPathWebSafe}`}>
             {defendantName}
             <br />
-            <ResolvedTag isResolved={isResolved} />
+            <ResolutionStatusBadge resolutionStatus={resolutionStatus} />
           </Link>
         </Table.Cell>
-        <Table.Cell className={caseDetailsCellClass}>
+        <Table.Cell>
           <DateTime date={courtDate} dateFormat={displayedDateFormat} />
         </Table.Cell>
-        <Table.Cell className={caseDetailsCellClass}>{courtName}</Table.Cell>
-        <Table.Cell className={caseDetailsCellClass}>{ptiurn}</Table.Cell>
-        <Table.Cell className={caseDetailsCellClass}>
+        <Table.Cell>{courtName}</Table.Cell>
+        <Table.Cell>{ptiurn}</Table.Cell>
+        <Table.Cell>
           <UrgentTag isUrgent={isUrgent} />
         </Table.Cell>
-        <Table.Cell className={caseDetailsCellClass}>
+        <Table.Cell>
           <NotePreviewButton previewState={showPreview} setShowPreview={setShowPreview} numberOfNotes={numberOfNotes} />
         </Table.Cell>
-        <Table.Cell className={caseDetailsCellClass}>{reasonCell}</Table.Cell>
-        <Table.Cell className={caseDetailsCellClass}>{lockTag}</Table.Cell>
+        <Table.Cell>{reasonCell}</Table.Cell>
+        <Table.Cell>{lockTag}</Table.Cell>
       </Table.Row>
-      {numberOfNotes != 0 && !showPreview && (
-        <Table.Row className={`${rowClassName}`}>
-          <Table.Cell
-            className={`${notePreviewCellClass} ${firstColumnClassName} ${customClasses["top-padding-none"]}`}
-          ></Table.Cell>
-          <Table.Cell className={`${notePreviewCellClass} ${customClasses["top-padding-none"]}`}></Table.Cell>
-          <Table.Cell className={`${notePreviewCellClass} ${customClasses["top-padding-none"]}`}></Table.Cell>
-          <Table.Cell className={`${notePreviewCellClass} ${customClasses["top-padding-none"]}`}></Table.Cell>
-          <Table.Cell className={`${notePreviewCellClass} ${customClasses["top-padding-none"]}`}></Table.Cell>
-          <Table.Cell className={`${notePreviewCellClass} ${customClasses["top-padding-none"]}`}></Table.Cell>
-          <Table.Cell className={`${notePreviewCellClass} ${customClasses["top-padding-none"]}`} colSpan={2}>
-            <NotePreview latestNote={mostRecentUserNote} numberOfNotes={numberOfNotes} />
-          </Table.Cell>
-          <Table.Cell className={`${notePreviewCellClass} ${customClasses["top-padding-none"]}`} />
-        </Table.Row>
-      )}
+      {notes.length > 0 && !showPreview && <NotePreviewRow notes={notes} />}
     </>
   )
 }

@@ -152,6 +152,26 @@ describe("Case list", () => {
       cy.get("tr").not(":first").eq(2).should("not.exist")
     })
 
+    it("Should display the submitted badge on cases marked as submitted", () => {
+      cy.task("insertCourtCasesWithFields", [
+        { errorStatus: "Submitted", orgForPoliceFilter: "01" },
+        { errorStatus: "Unresolved", orgForPoliceFilter: "01" },
+        { errorStatus: "Submitted", orgForPoliceFilter: "01" }
+      ])
+
+      loginAndGoToUrl()
+
+      cy.get("#filter-button").contains("Show search panel").click()
+      cy.get("#search").contains("Apply filters").click()
+
+      cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
+      cy.get("tr").not(":first").eq(0).contains(`Submitted`).should("exist")
+      cy.get("tr").not(":first").eq(1).get("td:nth-child(5)").contains(`Case00001`)
+      cy.get("tr").not(":first").eq(1).contains(`Submitted`).should("not.exist")
+      cy.get("tr").not(":first").eq(2).get("td:nth-child(5)").contains(`Case00002`)
+      cy.get("tr").not(":first").eq(2).contains(`Submitted`).should("exist")
+    })
+
     it("Should display the correct number of user-created notes on cases & allow the sort by the number of notes", () => {
       const caseNotes: { user: string; text: string }[][] = [
         [

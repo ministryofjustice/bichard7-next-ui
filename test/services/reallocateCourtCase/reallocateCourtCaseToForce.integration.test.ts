@@ -175,7 +175,7 @@ describe("reallocate court case to another force", () => {
       expect(events).toContainEqual(createUnlockedEvent("Trigger", user.username))
       expect(events).toContainEqual(
         createTriggersGeneratedEvent(
-          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004],
+          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004, TriggerCode.TRPR0010],
           true,
           user.username
         )
@@ -242,7 +242,7 @@ describe("reallocate court case to another force", () => {
       expect(events).toContainEqual(createUnlockedEvent("Trigger", user.username))
       expect(events).toContainEqual(
         createTriggersGeneratedEvent(
-          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004],
+          [TriggerCode.TRPR0003, TriggerCode.TRPR0004, TriggerCode.TRPR0004, TriggerCode.TRPR0010],
           true,
           user.username
         )
@@ -371,7 +371,7 @@ describe("reallocate court case to another force", () => {
       } as Partial<User> as User
 
       const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, "06").catch((error) => error)
-      expect(result).toEqual(Error(`Court case is locked by another user`))
+      expect(result).toEqual(Error(`Exception is locked by another user`))
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
       const actualCourtCase = record as CourtCase

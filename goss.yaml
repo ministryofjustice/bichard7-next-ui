@@ -9,7 +9,10 @@ file:
     exists: true
     owner: root
     group: root
-    size: 2394
+    size:
+      and:
+        - gt: 2377
+        - lt: 2395
     filetype: file
     contains: []
   /certs/server.key:

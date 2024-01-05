@@ -1,9 +1,48 @@
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import { defaultSetup, loginAndGoToUrl } from "../../support/helpers"
 
-const unlockCase = (caseToUnlockNumber: string, caseToUnlockText: string) => {
-  cy.get(`tbody tr:nth-child(${caseToUnlockNumber}) .locked-by-tag`).get("button").contains(caseToUnlockText).click()
+const unlockCase = (
+  caseToUnlockNumber: number,
+  caseToUnlockText: string,
+  unlockTriggersOrExceptions: "Exceptions" | "Triggers"
+) => {
+  cy.get("tbody")
+    .eq(caseToUnlockNumber - 1)
+    .find(`tr${unlockTriggersOrExceptions === "Exceptions" ? ":first-child" : ":last-child"} .locked-by-tag`)
+    .get("button")
+    .contains(caseToUnlockText)
+    .click()
   cy.get("button").contains("Unlock").click()
+}
+
+const checkLockStatus = (
+  caseNumber: number,
+  rowNumber: number,
+  lockedByText: string,
+  lockedByAssertion: [string, string | undefined],
+  lockedTagAssertion: [string, string | undefined]
+) => {
+  if (lockedByText) {
+    cy.get("tbody")
+      .eq(caseNumber)
+      .find(`tr:nth-child(${rowNumber}) .locked-by-tag`)
+      .get("button")
+      .contains(lockedByText)
+      .should(...lockedByAssertion)
+    cy.get("tbody")
+      .eq(caseNumber)
+      .find(`tr:nth-child(${rowNumber}) img[alt="Lock icon"]`)
+      .should(...lockedTagAssertion)
+  } else {
+    cy.get("tbody")
+      .eq(caseNumber)
+      .find(`tr:nth-child(${rowNumber}) .locked-by-tag`)
+      .should(...lockedByAssertion)
+    cy.get("tbody")
+      .eq(caseNumber)
+      .find(`tr:nth-child(${rowNumber}) img[alt="Lock icon"]`)
+      .should(...lockedTagAssertion)
+  }
 }
 
 describe("Case unlocked badge", () => {
@@ -94,30 +133,20 @@ describe("Case unlocked badge", () => {
     loginAndGoToUrl()
 
     // Exception lock
-    cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard Test User 01").should("exist")
-    cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
+    checkLockStatus(0, 1, "Bichard Test User 01", ["exist", undefined], ["exist", undefined])
     // Trigger lock
-    cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard Test User 01").should("exist")
-    cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
+    checkLockStatus(0, 2, "Bichard Test User 01", ["exist", undefined], ["exist", undefined])
     // User should not see unlock button when a case assigned to another user
-    cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard Test User 02").should("not.exist")
-    cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
-
+    checkLockStatus(1, 1, "Bichard Test User 02", ["not.exist", undefined], ["exist", undefined])
     // Unlock the exception assigned to the user
-    unlockCase("1", "Bichard Test User 01")
-    cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
-    cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
-    cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard Test User 01").should("exist")
-    cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
-    cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard Test User 02")
-    cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
-
+    unlockCase(1, "Bichard Test User 01", "Exceptions")
+    checkLockStatus(0, 1, "", ["not.exist", undefined], ["not.exist", undefined])
+    checkLockStatus(0, 2, "Bichard Test User 01", ["exist", undefined], ["exist", undefined])
+    checkLockStatus(1, 1, "", ["have.text", "Bichard Test User 02"], ["exist", undefined])
     // Unlock the trigger assigned to the user
-    unlockCase("2", "Bichard Test User 01")
-    cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("not.exist")
-    cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("not.exist")
-    cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("have.text", "Bichard Test User 02")
-    cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+    unlockCase(2, "Bichard Test User 01", "Triggers")
+    checkLockStatus(0, 2, "", ["not.exist", undefined], ["not.exist", undefined])
+    checkLockStatus(1, 1, "", ["have.text", "Bichard Test User 02"], ["exist", undefined])
   })
 
   it("shows who has locked a case in the 'locked by' column", () => {
@@ -145,18 +174,14 @@ describe("Case unlocked badge", () => {
 
     loginAndGoToUrl()
 
-    cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("have.text", "Bichard Test User 01")
-    cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
-    cy.get(`tbody tr:nth-child(1) td:nth-child(8)`).should("contain.text", "TRPR0001")
-    cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("have.text", "Bichard Test User 02")
-    cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
-    cy.get(`tbody tr:nth-child(2) td:nth-child(8)`).should("contain.text", "TRPR0001")
-    cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("not.exist")
-    cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("not.exist")
-    cy.get(`tbody tr:nth-child(3) td:nth-child(8)`).should("contain.text", "TRPR0001")
-    cy.get(`tbody tr:nth-child(4) .locked-by-tag`).should("have.text", "A Really Really Really Long Name")
-    cy.get(`tbody tr:nth-child(4) img[alt="Lock icon"]`).should("exist")
-    cy.get(`tbody tr:nth-child(4) td:nth-child(8)`).should("contain.text", "TRPR0001")
+    checkLockStatus(0, 1, "", ["have.text", "Bichard Test User 01"], ["exist", undefined])
+    cy.get("tbody").eq(0).find("tr:nth-child(1) td:nth-child(8)").should("contain.text", "TRPR0001")
+    checkLockStatus(1, 1, "", ["have.text", "Bichard Test User 02"], ["exist", undefined])
+    cy.get("tbody").eq(1).find("tr:nth-child(1) td:nth-child(8)").should("contain.text", "TRPR0001")
+    checkLockStatus(2, 1, "", ["not.exist", undefined], ["not.exist", undefined])
+    cy.get("tbody").eq(2).find(`tr:nth-child(1) td:nth-child(8)`).should("contain.text", "TRPR0001")
+    checkLockStatus(3, 1, "", ["have.text", "A Really Really Really Long Name"], ["exist", undefined])
+    cy.get("tbody").eq(3).find(`tr:nth-child(1) td:nth-child(8)`).should("contain.text", "TRPR0001")
   })
 
   it("Should unlock any case as a supervisor user", () => {
@@ -184,24 +209,17 @@ describe("Case unlocked badge", () => {
     cy.task("insertTriggers", { caseId: 0, triggers })
 
     loginAndGoToUrl("supervisor@example.com")
-
-    cy.get(`tbody tr:nth-child(1) .locked-by-tag`).get("button").contains("Bichard Test User 01").should("exist")
-    cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("exist")
-    cy.get(`tbody tr:nth-child(2) .locked-by-tag`).get("button").contains("Bichard Test User 01").should("exist")
-    cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("exist")
-    cy.get(`tbody tr:nth-child(3) .locked-by-tag`).get("button").contains("Bichard Test User 02").should("exist")
-    cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("exist")
+    checkLockStatus(0, 1, "Bichard Test User 01", ["exist", undefined], ["exist", undefined])
+    checkLockStatus(0, 2, "Bichard Test User 01", ["exist", undefined], ["exist", undefined])
+    checkLockStatus(1, 1, "Bichard Test User 01", ["exist", undefined], ["exist", undefined])
 
     // Unlock both cases
-    unlockCase("1", "Bichard Test User 01")
-    unlockCase("2", "Bichard Test User 01")
-    unlockCase("3", "Bichard Test User 02")
+    unlockCase(1, "Bichard Test User 01", "Exceptions")
+    unlockCase(1, "Bichard Test User 01", "Triggers")
+    unlockCase(2, "Bichard Test User 02", "Exceptions")
 
-    cy.get(`tbody tr:nth-child(1) .locked-by-tag`).should("not.exist")
-    cy.get(`tbody tr:nth-child(1) img[alt="Lock icon"]`).should("not.exist")
-    cy.get(`tbody tr:nth-child(2) .locked-by-tag`).should("not.exist")
-    cy.get(`tbody tr:nth-child(2) img[alt="Lock icon"]`).should("not.exist")
-    cy.get(`tbody tr:nth-child(3) .locked-by-tag`).should("not.exist")
-    cy.get(`tbody tr:nth-child(3) img[alt="Lock icon"]`).should("not.exist")
+    checkLockStatus(0, 1, "", ["not.exist", undefined], ["not.exist", undefined])
+    checkLockStatus(0, 2, "", ["not.exist", undefined], ["not.exist", undefined])
+    checkLockStatus(1, 1, "", ["not.exist", undefined], ["not.exist", undefined])
   })
 })
