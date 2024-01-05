@@ -381,7 +381,7 @@ describe("Court case details", () => {
     cy.toBeUnauthorized("/bichard/court-cases/0")
   })
 
-  it.only("Should resubmit a case when no updates made and the resubmit button is clicked", () => {
+  it("Should resubmit a case when no updates made and the resubmit button is clicked", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
