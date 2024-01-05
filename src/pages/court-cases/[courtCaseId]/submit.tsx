@@ -16,15 +16,13 @@ import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
-import resolveCourtCase from "services/resolveCourtCase"
+import resubmitCourtCase from "services/resubmitCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { ResolutionReasonKey } from "types/ManualResolution"
 import { isError } from "types/Result"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
-import { validateManualResolution } from "utils/validators/validateManualResolution"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import Permission from "../../../types/Permission"
@@ -34,9 +32,10 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
-    const { currentUser, query, req, res, csrfToken } = context as AuthenticationServerSidePropsContext &
+    const { currentUser, query, req, res, csrfToken, formData } = context as AuthenticationServerSidePropsContext &
       CsrfServerSidePropsContext
 
+    const { confirm } = query
     const { courtCaseId, previousPath } = query as {
       courtCaseId: string
       previousPath: string
@@ -44,6 +43,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const dataSource = await getDataSource()
     const courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
 
+    // validations and checks
     if (!courtCase) {
       return {
         notFound: true
@@ -59,18 +59,47 @@ export const getServerSideProps = withMultipleServerSideProps(
       return forbidden(res)
     }
 
+    // all ok... let's render the page
+
     const props: Props = {
       csrfToken,
       previousPath: previousPath ?? null,
       user: userToDisplayFullUserDto(currentUser),
-      courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase)
+      courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
+      hasAmendments: false
     }
 
-    if (isPost(req)) {
-      const result = await resolveCourtCase(dataSource, courtCase, currentUser)
+    console.log("confirm:", confirm)
 
-      if (isError(result)) {
-        throw result
+    if (isPost(req)) {
+      const { amendments } = formData as { amendments: string }
+
+      const parsedAmendments = JSON.parse(amendments)
+      console.log({ parsedAmendments })
+
+      const hasAmendments = Object.keys(parsedAmendments).length > 0;
+      props.hasAmendments = hasAmendments
+
+      // Todo: grab the amendments form fomrm data and do a post request to path/submit?confirm=true
+      console.log("Render confirmation page")
+    }
+
+    if (isPost(req) && confirm) {
+      const { amendments } = formData as { amendments: string }
+
+      const parsedAmendments = JSON.parse(amendments)
+
+      console.log("Resubmit here, parsedAmendments:", parsedAmendments)
+
+      const updatedAmendments =
+        Object.keys(parsedAmendments).length > 0 ? parsedAmendments : { noUpdatesResubmit: true }
+
+      console.log("updatedAmendments:", updatedAmendments)
+
+      const amendedCase = await resubmitCourtCase(dataSource, updatedAmendments, +courtCaseId, currentUser)
+
+      if (isError(amendedCase)) {
+        throw amendedCase
       }
 
       let redirectUrl = `/court-cases/${courtCase.errorId}`
@@ -81,9 +110,8 @@ export const getServerSideProps = withMultipleServerSideProps(
 
       if (!currentUser.hasAccessTo[Permission.Triggers] || courtCase.triggerStatus !== "Unresolved") {
         return redirectTo("/")
-      } else {
-        return redirectTo(redirectUrl)
       }
+      return redirectTo(redirectUrl)
     }
 
     return { props }
@@ -94,8 +122,9 @@ interface Props {
   courtCase: DisplayFullCourtCase
   csrfToken: string
   previousPath: string | null
+  hasAmendments?: boolean
 }
-const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath }: Props) => {
+const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath, hasAmendments = false }: Props) => {
   const { basePath } = useRouter()
   const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
   let backLink = `${basePath}/court-cases/${courtCase.errorId}`
@@ -121,14 +150,14 @@ const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath }:
             </HeaderRow>
           </HeaderContainer>
           {/* Todo: add a helper function to handle condition of comparing event.aho and annotated event.aho */}
-          <ConditionalRender isRendered={true}>
+          <ConditionalRender isRendered={hasAmendments}>
             <Paragraph>
               {"Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"}
             </Paragraph>
           </ConditionalRender>
 
-          <ConditionalRender isRendered={false}>
-            <Banner message="The case exception(s) have not been updated within Bichard."></Banner>
+          <ConditionalRender isRendered={!hasAmendments}>
+            <Banner message="The case exception(s) have not been updated within Bichard." />
             <Paragraph>
               {"Do you want to submit case details to the PNC and mark the exception(s) as resolved?"}
             </Paragraph>
