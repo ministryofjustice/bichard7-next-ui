@@ -1,6 +1,7 @@
 import Banner from "components/Banner"
 import ButtonsGroup from "components/ButtonsGroup"
 import ConditionalRender from "components/ConditionalRender"
+import Form from "components/Form"
 import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
 import Layout from "components/Layout"
@@ -66,7 +67,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       previousPath: previousPath ?? null,
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
-      hasAmendments: false
+      hasAmendments: false,
+      amendments: "{}"
     }
 
     console.log("confirm:", confirm)
@@ -77,8 +79,9 @@ export const getServerSideProps = withMultipleServerSideProps(
       const parsedAmendments = JSON.parse(amendments)
       console.log({ parsedAmendments })
 
-      const hasAmendments = Object.keys(parsedAmendments).length > 0;
+      const hasAmendments = Object.keys(parsedAmendments).length > 0
       props.hasAmendments = hasAmendments
+      props.amendments = amendments
 
       // Todo: grab the amendments form fomrm data and do a post request to path/submit?confirm=true
       console.log("Render confirmation page")
@@ -87,9 +90,11 @@ export const getServerSideProps = withMultipleServerSideProps(
     if (isPost(req) && confirm) {
       const { amendments } = formData as { amendments: string }
 
+      console.log({ formData })
       const parsedAmendments = JSON.parse(amendments)
 
-      console.log("Resubmit here, parsedAmendments:", parsedAmendments)
+      console.log("Resubmit here, parsedAmendments:")
+      console.log({ parsedAmendments })
 
       const updatedAmendments =
         Object.keys(parsedAmendments).length > 0 ? parsedAmendments : { noUpdatesResubmit: true }
@@ -123,14 +128,23 @@ interface Props {
   csrfToken: string
   previousPath: string | null
   hasAmendments?: boolean
+  amendments?: string
 }
-const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath, hasAmendments = false }: Props) => {
+const SubmitCourtCasePage: NextPage<Props> = ({
+  courtCase,
+  user,
+  previousPath,
+  hasAmendments = false,
+  amendments = "{}",
+  csrfToken
+}: Props) => {
   const { basePath } = useRouter()
   const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
   let backLink = `${basePath}/court-cases/${courtCase.errorId}`
   if (previousPath) {
     backLink += `?previousPath=${encodeURIComponent(previousPath)}`
   }
+  const confirmCasePath = `${basePath}/court-cases/${courtCase.errorId}/submit?confirm=true`
   return (
     <>
       <CurrentUserContext.Provider value={currentUserContext}>
@@ -158,17 +172,19 @@ const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath, h
 
           <ConditionalRender isRendered={!hasAmendments}>
             <Banner message="The case exception(s) have not been updated within Bichard." />
-            <Paragraph>
+            <Paragraph data-testid="example-test-id">
               {"Do you want to submit case details to the PNC and mark the exception(s) as resolved?"}
             </Paragraph>
           </ConditionalRender>
-          {/* Add an onClick handler to submit the form */}
-          <ButtonsGroup>
-            <Button id="Submit" type="submit">
-              {"Submit exception(s)"}
-            </Button>
-            <Link href={backLink}>{"Cancel"}</Link>
-          </ButtonsGroup>
+          <Form action={confirmCasePath} method="post" csrfToken={csrfToken}>
+            <input type="hidden" name="amendments" value={amendments} />
+            <ButtonsGroup>
+              <Button id="Submit" type="submit">
+                {"Submit exception(s)"}
+              </Button>
+              <Link href={backLink}>{"Cancel"}</Link>
+            </ButtonsGroup>
+          </Form>
         </Layout>
       </CurrentUserContext.Provider>
     </>
