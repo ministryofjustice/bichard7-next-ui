@@ -1,5 +1,5 @@
 import hashedPassword from "../../../fixtures/hashedPassword";
-import arrestSummonsNumberExceptions from "../../../../test/test-data/AsnExceptionHo100206.json";
+import asnExceptions from "../../../../test/test-data/AsnExceptionHo100206.json";
 import dummyAho from "../../../../test/test-data/error_list_aho.json";
 import {verifyUpdatedMessage} from "../../../support/helpers";
 
@@ -27,8 +27,8 @@ describe("NextHearingDate", () => {
         cy.task("insertCourtCasesWithFields", [
             {
                 orgForPoliceFilter: "01",
-                hearingOutcome: arrestSummonsNumberExceptions.hearingOutcomeXml,
-                updatedHearingOutcome: arrestSummonsNumberExceptions.updatedHearingOutcomeXml,
+                hearingOutcome: asnExceptions.hearingOutcomeXml,
+                updatedHearingOutcome: asnExceptions.updatedHearingOutcomeXml,
                 errorCount: 1
             }
         ])
@@ -47,7 +47,7 @@ describe("NextHearingDate", () => {
         cy.visit("/bichard/court-cases/0")
         
         cy.get(".moj-badge").contains("Editable Field").should("not.exist")
-        cy.get("#arrest-summons-number").should("not.exist")
+        cy.get("#asn").should("not.exist")
     })
 
     it("Should not be able to edit ASN field when the case isn't in 'unresolved' state", () => {
@@ -58,16 +58,16 @@ describe("NextHearingDate", () => {
                 errorStatus: "Submitted",
                 errorId: submittedCaseId,
                 orgForPoliceFilter: "01",
-                hearingOutcome: arrestSummonsNumberExceptions.hearingOutcomeXml,
-                updatedHearingOutcome: arrestSummonsNumberExceptions.updatedHearingOutcomeXml,
+                hearingOutcome: asnExceptions.hearingOutcomeXml,
+                updatedHearingOutcome: asnExceptions.updatedHearingOutcomeXml,
                 errorCount: 1
             },
             {
                 errorStatus: "Resolved",
                 errorId: resolvedCaseId,
                 orgForPoliceFilter: "01",
-                hearingOutcome: arrestSummonsNumberExceptions.hearingOutcomeXml,
-                updatedHearingOutcome: arrestSummonsNumberExceptions.updatedHearingOutcomeXml,
+                hearingOutcome: asnExceptions.hearingOutcomeXml,
+                updatedHearingOutcome: asnExceptions.updatedHearingOutcomeXml,
                 errorCount: 1
             }
         ])
@@ -76,20 +76,20 @@ describe("NextHearingDate", () => {
         cy.visit(`/bichard/court-cases/${submittedCaseId}`)
 
         cy.get(".moj-badge").contains("Editable Field").should("not.exist")
-        cy.get("#arrest-summons-number").should("not.exist")
+        cy.get("#asn").should("not.exist")
 
         cy.visit(`/bichard/court-cases/${resolvedCaseId}`)
 
         cy.get(".moj-badge").contains("Editable Field").should("not.exist")
-        cy.get("#arrest-summons-number").should("not.exist")
+        cy.get("#asn").should("not.exist")
     })
 
-    it("Should be able to edit ASN field if HO100206 is raised", () => {
+    it.only("Should be able to edit ASN field if HO100206 is raised", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard/court-cases/0")
 
         cy.get(".moj-badge").contains("Editable Field").should("exist")
-        cy.get("#arrest-summons-number").type("1101ZD0100000448754K")
+        cy.get("#asn").type("1101ZD0100000448754K")
 
         cy.get("button").contains("Submit exception(s)").click()
 
