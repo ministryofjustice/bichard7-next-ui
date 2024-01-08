@@ -166,65 +166,57 @@ export const OffenceDetails = ({
         {`Offence ${selectedOffenceIndex} of ${offencesCount}`}
       </Heading>
       <Table>
-        <div className="offences-table">
-          {
+        {
+          <>
+            {offenceCodeErrorPrompt ? (
+              <ExceptionFieldTableRow badgeText={"System Error"} value={offenceCode} label={"Offence code"}>
+                <ErrorPromptMessage message={offenceCodeErrorPrompt} />
+              </ExceptionFieldTableRow>
+            ) : (
+              <TableRow label="Offence code" value={offenceCode} />
+            )}
+          </>
+        }
+        <TableRow label="Title" value={offence.OffenceTitle} />
+        <TableRow label="Category" value={offenceCategoryWithDescription} />
+        <TableRow label="Arrest date" value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))} />
+        <TableRow label="Charge date" value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))} />
+        <TableRow label="Start date" value={<StartDate offence={offence} />} />
+        <TableRow label="Location" value={offence.LocationOfOffence} />
+        <TableRow label="Wording" value={offence.ActualOffenceWording} />
+        <TableRow label="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
+        <TableRow label="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
+        <TableRow label="Home Office classification" value={offence.HomeOfficeClassification} />
+        <TableRow
+          label="Conviction date"
+          value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
+        />
+        {offenceMatchingException ? (
+          <ExceptionFieldTableRow
+            badgeText={offenceMatchingException.badge}
+            label={"PNC sequence number"}
+            value={<Input type="text" maxLength={3} className={classes.pncSequenceNumber} />}
+          >
+            {" "}
             <>
-              {offenceCodeErrorPrompt ? (
-                <ExceptionFieldTableRow badgeText={"System Error"} value={offenceCode} label={"Offence code"}>
-                  <ErrorPromptMessage message={offenceCodeErrorPrompt} />
-                </ExceptionFieldTableRow>
-              ) : (
-                <TableRow label="Offence code" value={offenceCode} />
-              )}
+              {"Court Case Reference:"}
+              <br />
+              {courtCase.courtReference}
             </>
-          }
-          <TableRow label="Title" value={offence.OffenceTitle} />
-          <TableRow label="Category" value={offenceCategoryWithDescription} />
+          </ExceptionFieldTableRow>
+        ) : (
           <TableRow
-            label="Arrest date"
-            value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))}
-          />
-          <TableRow
-            label="Charge date"
-            value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))}
-          />
-          <TableRow label="Start date" value={<StartDate offence={offence} />} />
-          <TableRow label="Location" value={offence.LocationOfOffence} />
-          <TableRow label="Wording" value={offence.ActualOffenceWording} />
-          <TableRow label="Record on PNC" value={getYesOrNo(offence.RecordableOnPNCindicator)} />
-          <TableRow label="Notifiable to Home Office" value={getYesOrNo(offence.NotifiableToHOindicator)} />
-          <TableRow label="Home Office classification" value={offence.HomeOfficeClassification} />
-          <TableRow
-            label="Conviction date"
-            value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
-          />
-          {offenceMatchingException ? (
-            <ExceptionFieldTableRow
-              badgeText={offenceMatchingException.badge}
-              label={"PNC sequence number"}
-              value={<Input type="text" maxLength={3} className={classes.pncSequenceNumber} />}
-            >
-              {" "}
+            label="PNC sequence number"
+            value={
               <>
-                {"Court Case Reference:"}
-                <br />
-                {courtCase.courtReference}
+                <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
+                <Badge isRendered={true} colour="purple" label="Matched" />
               </>
-            </ExceptionFieldTableRow>
-          ) : (
-            <TableRow
-              label="PNC sequence number"
-              value={
-                <>
-                  <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
-                  <Badge isRendered={true} colour="purple" label="Matched" />
-                </>
-              }
-            />
-          )}
-          <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
-          <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
-        </div>
+            }
+          />
+        )}
+        <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
+        <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
       </Table>
       <div className="offence-results-table">
         <Heading as="h4" size="MEDIUM">
