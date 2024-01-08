@@ -44,7 +44,6 @@ export const getServerSideProps = withMultipleServerSideProps(
     const dataSource = await getDataSource()
     const courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
 
-    // validations and checks
     if (!courtCase) {
       return {
         notFound: true
@@ -80,7 +79,6 @@ export const getServerSideProps = withMultipleServerSideProps(
 
       return { props }
     } else {
-      // TODO: Check if this is the correct way to handle this
       redirectTo(previousPath ?? `/court-cases/${courtCase.errorId}`)
     }
 
