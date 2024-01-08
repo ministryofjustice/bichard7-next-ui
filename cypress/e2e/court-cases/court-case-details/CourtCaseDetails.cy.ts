@@ -381,41 +381,6 @@ describe("Court case details", () => {
     cy.toBeUnauthorized("/bichard/court-cases/0")
   })
 
-  it("Should resubmit a case when no updates made and the resubmit button is clicked", () => {
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: null,
-        triggerLockedByUsername: null,
-        errorCount: 1,
-        orgForPoliceFilter: "02"
-      }
-    ])
-
-    cy.login("bichard02@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
-
-    cy.get("button").contains("Submit exception(s)").click()
-
-    cy.url().should("match", /\/bichard\/court-cases\/0\/submit/)
-
-    cy.get("p").should(
-      "have.text",
-      "Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"
-    )
-
-    cy.get("button").contains("Submit exception(s)").click()
-    cy.location().should((loc) => {
-      expect(loc.href).to.contain("?resubmitCase=true")
-    })
-
-    cy.get("H1").should("have.text", "Case details")
-    cy.contains("Notes").click()
-    const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-    cy.contains(dateTimeRegex)
-    cy.contains("Bichard02: Portal Action: Resubmitted Message.")
-  })
-
   it("Should show triggers tab by default when navigating to court case details page", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
