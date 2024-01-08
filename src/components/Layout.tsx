@@ -29,7 +29,7 @@ interface BichardSwitchProps {
 
 const BichardSwitchButton: React.FC<BichardSwitchProps> = ({ href }: BichardSwitchProps) => {
   return (
-    <LinkButton className={"BichardSwitch"} style={{ marginBottom: 0 }} href={href}>
+    <LinkButton className={"BichardSwitch"} style={{ marginBottom: "10px" }} href={href}>
       {"Switch to old Bichard"}
     </LinkButton>
   )
@@ -68,7 +68,7 @@ const Layout = ({ children, bichardSwitch = { display: false, displaySwitchingSu
       />
       <PageTemplate>
         <Banner>
-          <PhaseBanner phase={"beta"} />
+          <PhaseBanner phase={"Beta"} />
 
           <ConditionalRender isRendered={bichardSwitch.display}>
             <BichardSwitchButton href={bichardSwitchUrl} />
