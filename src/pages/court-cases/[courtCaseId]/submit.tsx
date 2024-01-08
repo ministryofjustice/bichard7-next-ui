@@ -60,8 +60,6 @@ export const getServerSideProps = withMultipleServerSideProps(
       return forbidden(res)
     }
 
-    // all ok... let's render the page
-
     const props: Props = {
       csrfToken,
       previousPath: previousPath ?? null,
@@ -71,35 +69,28 @@ export const getServerSideProps = withMultipleServerSideProps(
       amendments: "{}"
     }
 
-    console.log("confirm:", confirm)
-
     if (isPost(req)) {
       const { amendments } = formData as { amendments: string }
 
       const parsedAmendments = JSON.parse(amendments)
-      console.log({ parsedAmendments })
 
       const hasAmendments = Object.keys(parsedAmendments).length > 0
       props.hasAmendments = hasAmendments
       props.amendments = amendments
 
-      // Todo: grab the amendments form fomrm data and do a post request to path/submit?confirm=true
-      console.log("Render confirmation page")
+      return { props }
+    } else {
+      // TODO: Check if this is the correct way to handle this
+      redirectTo(previousPath ?? `/court-cases/${courtCase.errorId}`)
     }
 
     if (isPost(req) && confirm) {
       const { amendments } = formData as { amendments: string }
 
-      console.log({ formData })
       const parsedAmendments = JSON.parse(amendments)
-
-      console.log("Resubmit here, parsedAmendments:")
-      console.log({ parsedAmendments })
 
       const updatedAmendments =
         Object.keys(parsedAmendments).length > 0 ? parsedAmendments : { noUpdatesResubmit: true }
-
-      console.log("updatedAmendments:", updatedAmendments)
 
       const amendedCase = await resubmitCourtCase(dataSource, updatedAmendments, +courtCaseId, currentUser)
 
@@ -118,7 +109,6 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
       return redirectTo(redirectUrl)
     }
-
     return { props }
   }
 )
@@ -144,7 +134,7 @@ const SubmitCourtCasePage: NextPage<Props> = ({
   if (previousPath) {
     backLink += `?previousPath=${encodeURIComponent(previousPath)}`
   }
-  const confirmCasePath = `${basePath}/court-cases/${courtCase.errorId}/submit?confirm=true`
+  const resubmitCasePath = `${basePath}/court-cases/${courtCase.errorId}?resubmitCase=true`
   return (
     <>
       <CurrentUserContext.Provider value={currentUserContext}>
@@ -163,7 +153,7 @@ const SubmitCourtCasePage: NextPage<Props> = ({
               </Heading>
             </HeaderRow>
           </HeaderContainer>
-          {/* Todo: add a helper function to handle condition of comparing event.aho and annotated event.aho */}
+
           <ConditionalRender isRendered={hasAmendments}>
             <Paragraph>
               {"Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"}
@@ -176,7 +166,7 @@ const SubmitCourtCasePage: NextPage<Props> = ({
               {"Do you want to submit case details to the PNC and mark the exception(s) as resolved?"}
             </Paragraph>
           </ConditionalRender>
-          <Form action={confirmCasePath} method="post" csrfToken={csrfToken}>
+          <Form action={resubmitCasePath} method="post" csrfToken={csrfToken}>
             <input type="hidden" name="amendments" value={amendments} />
             <ButtonsGroup>
               <Button id="Submit" type="submit">
