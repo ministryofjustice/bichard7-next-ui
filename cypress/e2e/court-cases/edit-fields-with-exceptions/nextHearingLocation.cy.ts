@@ -1,8 +1,13 @@
-import nextHearingLocationExceptions from "../../../../test/test-data/NextHearingLocationExceptions.json"
 import dummyAho from "../../../../test/test-data/HO100102_1.json"
+import nextHearingLocationExceptions from "../../../../test/test-data/NextHearingLocationExceptions.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import { verifyUpdatedMessage } from "../../../support/helpers"
 
+function submitAndConfirmExceptions() {
+  cy.get("button").contains("Submit exception(s)").click()
+  cy.url().should("match", /\/bichard\/court-cases\/[0-9]+\/submit$/)
+  cy.get("button").contains("Submit exception(s)").click()
+}
 describe("NextHearingLocation", () => {
   before(() => {
     cy.task("clearCourtCases")
@@ -73,7 +78,7 @@ describe("NextHearingLocation", () => {
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
     cy.get("#next-hearing-location").type("B01EF01")
 
-    cy.get("button").contains("Submit exception(s)").click()
+    submitAndConfirmExceptions()
 
     cy.location().should((loc) => {
       expect(loc.href).to.contain("?resubmitCase=true")
@@ -103,7 +108,7 @@ describe("NextHearingLocation", () => {
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
     cy.get("#next-hearing-location").type("B46DB00")
 
-    cy.get("button").contains("Submit exception(s)").click()
+    submitAndConfirmExceptions()
 
     cy.location().should((loc) => {
       expect(loc.href).to.contain("?resubmitCase=true")
@@ -135,7 +140,7 @@ describe("NextHearingLocation", () => {
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
     cy.get("#next-hearing-location").type("B01EF00")
 
-    cy.get("button").contains("Submit exception(s)").click()
+    submitAndConfirmExceptions()
 
     cy.location().should((loc) => {
       expect(loc.href).to.contain("?resubmitCase=true")
@@ -169,7 +174,7 @@ describe("NextHearingLocation", () => {
       .click()
     cy.get("#next-hearing-location").type("B46DB00")
 
-    cy.get("button").contains("Submit exception(s)").click()
+    submitAndConfirmExceptions()
 
     cy.get("H1").should("have.text", "Case details")
     cy.contains("Notes").click()
