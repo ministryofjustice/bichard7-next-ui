@@ -21,7 +21,7 @@ describe("Court cases - Submit exceptions", () => {
     cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
   })
 
-  it("Option 1 - When a user clicks on submit and has completed all exceptions in the case [inputed data into the editable fields] then the page will display", () => {
+  it("Should resubmit a case when edits are made and the submit button is clicked", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
@@ -60,7 +60,7 @@ describe("Court cases - Submit exceptions", () => {
     cy.contains("Bichard02: Portal Action: Resubmitted Message.")
   })
 
-  it("Option 2 - Should resubmit a case when no updates made and the resubmit button is clicked", () => {
+  it("Should resubmit a case when no updates made and the submit button is clicked", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
@@ -97,7 +97,7 @@ describe("Court cases - Submit exceptions", () => {
     cy.contains("Bichard02: Portal Action: Resubmitted Message.")
   })
 
-  it("Option 3 - Should not resubmit a case when cancel button is clicked", () => {
+  it("Should not resubmit a case when cancel button is clicked", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
