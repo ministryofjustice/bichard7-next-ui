@@ -1,13 +1,8 @@
 import dummyAho from "../../../../test/test-data/HO100102_1.json"
 import nextHearingLocationExceptions from "../../../../test/test-data/NextHearingLocationExceptions.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
-import { verifyUpdatedMessage } from "../../../support/helpers"
+import { submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../support/helpers"
 
-function submitAndConfirmExceptions() {
-  cy.get("button").contains("Submit exception(s)").click()
-  cy.url().should("match", /\/bichard\/court-cases\/[0-9]+\/submit$/)
-  cy.get("button").contains("Submit exception(s)").click()
-}
 describe("NextHearingLocation", () => {
   before(() => {
     cy.task("clearCourtCases")
