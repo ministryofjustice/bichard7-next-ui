@@ -13,7 +13,10 @@ import {
   HO100314,
   HO100321,
   HO100322,
-  HO100323
+  HO100323,
+  HO100325,
+  HO100402,
+  HO100404
 } from "./exceptions"
 
 const possibleExceptions: Record<string, (aho: AnnotatedHearingOutcome) => AnnotatedHearingOutcome> = {
@@ -32,10 +35,10 @@ const possibleExceptions: Record<string, (aho: AnnotatedHearingOutcome) => Annot
   HO100321: (aho) => HO100321(aho),
   HO100322: (aho) => HO100322(aho),
   HO100323: (aho) => HO100323(aho),
-  HO100324: (aho) => aho,
-  HO100325: (aho) => aho,
-  HO100402: (aho) => aho,
-  HO100404: (aho) => aho
+  HO100324: (aho) => HO100234(aho),
+  HO100325: (aho) => HO100325(aho),
+  HO100402: (aho) => HO100402(aho),
+  HO100404: (aho) => HO100404(aho)
 }
 const fields = [
   "ArrestSummonsNumber",
