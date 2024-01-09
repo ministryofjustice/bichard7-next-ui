@@ -3,22 +3,22 @@ import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/
 import { range } from "lodash"
 import sample from "lodash.sample"
 
+// lodash ranges are not inclusive of the end number
 const cjsResultCodeRanges = [
   ...range(4001, 4010),
   ...range(4011, 4018),
-  4020 - 4021,
-  ...range(4020, 4021),
-  ...range(4023, 4025),
-  ...range(4027, 4035),
-  ...range(4046, 4048),
+  ...range(4020, 4022),
+  ...range(4023, 4026),
+  ...range(4027, 4036),
+  ...range(4046, 4049),
   4050,
   4051,
-  ...range(4053, 4058),
+  ...range(4053, 4059),
   4506,
   4508,
-  ...range(4541, 4572),
+  ...range(4541, 4573),
   ...range(4574),
-  ...range(4587, 4589)
+  ...range(4587, 4590)
 ]
 
 export default function (aho: AnnotatedHearingOutcome): AnnotatedHearingOutcome {
