@@ -1,7 +1,7 @@
 import nextHearingDateExceptions from "../../../../test/test-data/NextHearingDateExceptions.json"
 import dummyAho from "../../../../test/test-data/error_list_aho.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
-import { verifyUpdatedMessage } from "../../../support/helpers"
+import { verifyUpdatedMessage, submitAndConfirmExceptions } from "../../../support/helpers"
 
 describe("NextHearingDate", () => {
   before(() => {
@@ -113,7 +113,7 @@ describe("NextHearingDate", () => {
     cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Editable Field")
     cy.get("#next-hearing-date").type("2024-01-01")
 
-    cy.get("button").contains("Submit exception(s)").click()
+    submitAndConfirmExceptions()
 
     cy.location().should((loc) => {
       expect(loc.href).to.contain("?resubmitCase=true")
@@ -143,7 +143,7 @@ describe("NextHearingDate", () => {
       .click()
     cy.contains("td", "Next hearing date").siblings().should("include.text", "")
     cy.get("#next-hearing-date").type("2023-12-24")
-    cy.get("button").contains("Submit exception(s)").click()
+    submitAndConfirmExceptions()
 
     cy.location().should((loc) => {
       expect(loc.href).to.contain("?resubmitCase=true")
@@ -177,7 +177,7 @@ describe("NextHearingDate", () => {
       .click()
     cy.get("#next-hearing-date").type("2023-12-24")
 
-    cy.get("button").contains("Submit exception(s)").click()
+    submitAndConfirmExceptions()
 
     cy.location().should((loc) => {
       expect(loc.href).to.contain("?resubmitCase=true")

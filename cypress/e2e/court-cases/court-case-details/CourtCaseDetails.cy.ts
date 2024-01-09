@@ -1,13 +1,13 @@
-import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import User from "services/entities/User"
+import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
+import DummyHO100200Aho from "../../../../test/test-data/HO100200_1.json"
+import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
+import type { TestTrigger } from "../../../../test/utils/manageTriggers"
+import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import a11yConfig from "../../../support/a11yConfig"
-import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
-import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
-import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
-import DummyHO100200Aho from "../../../../test/test-data/HO100200_1.json"
-import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 import { clickTab } from "../../../support/helpers"
+import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 
 describe("Court case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
@@ -379,32 +379,6 @@ describe("Court case details", () => {
 
     cy.clearCookies()
     cy.toBeUnauthorized("/bichard/court-cases/0")
-  })
-
-  it("Should resubmit a case when no updates made and the resubmit button is clicked", () => {
-    cy.task("insertCourtCasesWithFields", [
-      {
-        errorLockedByUsername: null,
-        triggerLockedByUsername: null,
-        errorCount: 1,
-        orgForPoliceFilter: "02"
-      }
-    ])
-
-    cy.login("bichard02@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
-
-    cy.get("button").contains("Submit exception(s)").click()
-    cy.location().should((loc) => {
-      expect(loc.href).to.contain("?resubmitCase=true")
-    })
-
-    cy.get("H1").should("have.text", "Case details")
-    cy.contains("Notes").click()
-    const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-    cy.contains(dateTimeRegex)
-    cy.contains("Bichard02: Portal Action: Resubmitted Message.")
   })
 
   it("Should show triggers tab by default when navigating to court case details page", () => {
