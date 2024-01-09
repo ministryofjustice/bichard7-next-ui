@@ -11,7 +11,7 @@ const semver = new RegExp(
   - next
     - 13.4.13 causes failures with fetch
 */
-const pinned = ["styled-components", "govuk-frontend", "date-fns"]
+const pinned = ["styled-components", "date-fns"]
 const ignored = []
 const skipped = [{ package: "next", version: "13.4.13" }]
 
