@@ -8,10 +8,14 @@ const StyledButtonsGroup = styled.div`
   display: flex;
   flex-direction: row;
   align-items: baseline;
-  gap: 30px;
+  gap: 50px;
 
   & > * {
     flex: 0 1 1%;
+  }
+
+  & > button {
+    white-space: nowrap;
   }
 `
 

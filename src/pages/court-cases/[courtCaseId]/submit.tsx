@@ -29,6 +29,9 @@ import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContex
 import Permission from "../../../types/Permission"
 import forbidden from "../../../utils/forbidden"
 
+const hasAmendments = (amendments: string | undefined): boolean =>
+  !!amendments && Object.keys(JSON.parse(amendments ?? "{}")).length > 0
+
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   withCsrf,
@@ -64,17 +67,11 @@ export const getServerSideProps = withMultipleServerSideProps(
       previousPath: previousPath ?? null,
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
-      hasAmendments: false,
       amendments: "{}"
     }
 
     if (isPost(req)) {
       const { amendments } = formData as { amendments: string }
-
-      const parsedAmendments = JSON.parse(amendments)
-
-      const hasAmendments = Object.keys(parsedAmendments).length > 0
-      props.hasAmendments = hasAmendments
       props.amendments = amendments
 
       return { props }
@@ -85,10 +82,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     if (isPost(req) && confirm) {
       const { amendments } = formData as { amendments: string }
 
-      const parsedAmendments = JSON.parse(amendments)
-
-      const updatedAmendments =
-        Object.keys(parsedAmendments).length > 0 ? parsedAmendments : { noUpdatesResubmit: true }
+      const updatedAmendments = hasAmendments(amendments) ? JSON.parse(amendments) : { noUpdatesResubmit: true }
 
       const amendedCase = await resubmitCourtCase(dataSource, updatedAmendments, +courtCaseId, currentUser)
 
@@ -115,17 +109,9 @@ interface Props {
   courtCase: DisplayFullCourtCase
   csrfToken: string
   previousPath: string | null
-  hasAmendments?: boolean
   amendments?: string
 }
-const SubmitCourtCasePage: NextPage<Props> = ({
-  courtCase,
-  user,
-  previousPath,
-  hasAmendments = false,
-  amendments = "{}",
-  csrfToken
-}: Props) => {
+const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath, amendments, csrfToken }: Props) => {
   const { basePath } = useRouter()
   const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
   let backLink = `${basePath}/court-cases/${courtCase.errorId}`
@@ -152,13 +138,13 @@ const SubmitCourtCasePage: NextPage<Props> = ({
             </HeaderRow>
           </HeaderContainer>
 
-          <ConditionalRender isRendered={hasAmendments}>
+          <ConditionalRender isRendered={hasAmendments(amendments)}>
             <Paragraph>
               {"Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"}
             </Paragraph>
           </ConditionalRender>
 
-          <ConditionalRender isRendered={!hasAmendments}>
+          <ConditionalRender isRendered={!hasAmendments(amendments)}>
             <Banner message="The case exception(s) have not been updated within Bichard." />
             <Paragraph data-testid="example-test-id">
               {"Do you want to submit case details to the PNC and mark the exception(s) as resolved?"}
