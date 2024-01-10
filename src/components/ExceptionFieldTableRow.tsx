@@ -7,7 +7,7 @@ import { useCourtCase } from "../context/CourtCaseContext"
 type Props = {
   badgeText: "System Error" | "Editable Field" | "Added by Court" | "Unmatched" | "Initial Value"
   value?: string | React.ReactNode
-  updatedValue?: string
+  updatedValue?: string | null
   badgeColour?: "red" | "blue" | "purple" | "grey"
   label: string
   children?: React.ReactNode
@@ -44,7 +44,7 @@ const ExceptionFieldTableRow = ({
 }: Props) => {
   const classes = useStyles()
   const isEditable = useCourtCase().errorStatus === "Unresolved"
-  const hasCorrection = value !== updatedValue
+  const hasCorrection = updatedValue && value !== updatedValue
 
   const labelField = (
     <>

@@ -181,32 +181,33 @@ export const HearingResult = ({
         </ExceptionFieldTableRow>
       </ConditionalRender>
       <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearingDateException}>
-        {nextHearingDateException ? (
-          <ExceptionFieldTableRow
-            badgeText="Editable Field"
-            label="Next hearing date"
-            value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
-          >
-            <HintText>{"Enter date"}</HintText>
-            <input
-              className="govuk-input"
-              type="date"
-              min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
-              id={"next-hearing-date"}
-              name={"next-hearing-date"}
-              value={getNextHearingDateValue(amendments, selectedOffenceIndex - 1, resultIndex)}
-              onChange={(event) => {
-                amendFn("nextHearingDate")({
-                  resultIndex: resultIndex,
-                  offenceIndex: selectedOffenceIndex - 1, //Displayed offence for navigation is not 0 indexed,
-                  updatedValue: event.target.value
-                })
-              }}
-            />
-          </ExceptionFieldTableRow>
-        ) : (
-          <TableRow label={"Next hearing date"} value={formatDisplayedDate(String(result.NextHearingDate))} />
-        )}
+        <ExceptionFieldTableRow
+          badgeText="Initial Value"
+          badgeColour="grey"
+          label="Next hearing date"
+          value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
+          updatedValue={
+            updatedResult && updatedResult.NextHearingDate && formatDisplayedDate(String(updatedResult.NextHearingDate))
+          }
+          hasException={nextHearingDateException}
+        >
+          <HintText>{"Enter date"}</HintText>
+          <input
+            className="govuk-input"
+            type="date"
+            min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
+            id={"next-hearing-date"}
+            name={"next-hearing-date"}
+            value={getNextHearingDateValue(amendments, selectedOffenceIndex - 1, resultIndex)}
+            onChange={(event) => {
+              amendFn("nextHearingDate")({
+                resultIndex: resultIndex,
+                offenceIndex: selectedOffenceIndex - 1, //Displayed offence for navigation is not 0 indexed,
+                updatedValue: event.target.value
+              })
+            }}
+          />
+        </ExceptionFieldTableRow>
       </ConditionalRender>
       <TableRow label="Plea" value={getPleaStatus(result.PleaStatus)} />
       <TableRow label="Verdict" value={getVerdict(result.Verdict)} />

@@ -200,4 +200,24 @@ describe("NextHearingDate", () => {
       ]
     })
   })
+
+  it("Should display corrections of edited next hearing date", () => {
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
+    cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Initial Value")
+    cy.get("#next-hearing-date").type("2024-01-01")
+
+    submitAndConfirmExceptions()
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
+    cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "1/01/2024")
+    cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Correction")
+  })
 })
