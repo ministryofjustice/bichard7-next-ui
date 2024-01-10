@@ -20,9 +20,6 @@ import {
 } from "./exceptions"
 
 const possibleExceptions: Record<string, (aho: AnnotatedHearingOutcome) => AnnotatedHearingOutcome> = {
-  HO100101: (aho) => aho,
-  HO100104: (aho) => aho,
-  HO100113: (aho) => aho,
   HO100206: (aho) => HO100206(aho),
   HO100212: (aho) => HO100212(aho),
   HO100234: (aho) => HO100234(aho),
