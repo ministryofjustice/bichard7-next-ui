@@ -84,7 +84,7 @@ describe("NextHearingDate", () => {
         cy.get("#asn").should("not.exist")
     })
 
-    it.only("Should be able to edit ASN field if HO100206 is raised", () => {
+    it("Should be able to edit ASN field if HO100206 is raised", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard/court-cases/0")
 
@@ -100,7 +100,7 @@ describe("NextHearingDate", () => {
         cy.get("H1").should("have.text", "Case details")
         cy.contains("Notes").click()
 
-        cy.contains("Bichard01: Portal Action: Update Applied. Element: arrestSummonsNumber. New Value: 1101ZD0100000448754K")
+        cy.contains("Bichard01: Portal Action: Update Applied. Element: asn. New Value: 1101ZD0100000448754K")
         cy.contains("Bichard01: Portal Action: Resubmitted Message.")
 
         verifyUpdatedMessage({
