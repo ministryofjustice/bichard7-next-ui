@@ -8,7 +8,6 @@ import ConditionalRender from "components/ConditionalRender"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { HintText, Label, Table } from "govuk-react"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
-import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
 import {
   AmendmentKeys,
   AmendmentRecords,
@@ -19,6 +18,7 @@ import {
 import { Exception } from "../../../../../../types/exceptions"
 import { TableRow } from "../../TableRow"
 import { useCourtCase } from "../../../../../../context/CourtCaseContext"
+import EditableFieldTableRow from "../../../../../../components/EditableFieldTableRow"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -158,9 +158,7 @@ export const HearingResult = ({
           )
         }
       >
-        <ExceptionFieldTableRow
-          badgeText="Initial Value"
-          badgeColour="grey"
+        <EditableFieldTableRow
           label="Next hearing location"
           value={result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode}
           updatedValue={updatedResult && updatedResult.NextResultSourceOrganisation?.OrganisationUnitCode}
@@ -178,12 +176,10 @@ export const HearingResult = ({
             resultIndex={resultIndex}
             offenceIndex={selectedOffenceIndex - 1}
           />
-        </ExceptionFieldTableRow>
+        </EditableFieldTableRow>
       </ConditionalRender>
       <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearingDateException}>
-        <ExceptionFieldTableRow
-          badgeText="Initial Value"
-          badgeColour="grey"
+        <EditableFieldTableRow
           label="Next hearing date"
           value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
           updatedValue={
@@ -207,7 +203,7 @@ export const HearingResult = ({
               })
             }}
           />
-        </ExceptionFieldTableRow>
+        </EditableFieldTableRow>
       </ConditionalRender>
       <TableRow label="Plea" value={getPleaStatus(result.PleaStatus)} />
       <TableRow label="Verdict" value={getVerdict(result.Verdict)} />
