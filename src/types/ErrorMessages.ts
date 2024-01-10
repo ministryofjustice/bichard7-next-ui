@@ -14,7 +14,7 @@ enum ErrorMessages {
 const findExceptions = (
   courtCase: DisplayFullCourtCase,
   ahoExceptions: Exception[],
-  ...exceptions: ExceptionCode[]
+  exceptions: ExceptionCode[]
 ) => {
   if (courtCase.errorStatus === "Resolved") {
     return undefined
