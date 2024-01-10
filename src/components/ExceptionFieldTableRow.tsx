@@ -2,14 +2,17 @@ import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
+import { useCourtCase } from "../context/CourtCaseContext"
 
 type Props = {
-  badgeText: "System Error" | "Editable Field" | "Added by Court" | "Unmatched"
+  badgeText: "System Error" | "Editable Field" | "Added by Court" | "Unmatched" | "Initial Value"
   value?: string | React.ReactNode
-  badgeColour?: "red" | "blue" | "purple"
+  updatedValue?: string
+  badgeColour?: "red" | "blue" | "purple" | "grey"
   label: string
   children?: React.ReactNode
   displayError?: boolean
+  hasException?: boolean
 }
 
 const useStyles = createUseStyles({
@@ -29,16 +32,23 @@ const useStyles = createUseStyles({
   }
 })
 
-const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, displayError, children }: Props) => {
+const ExceptionFieldTableRow = ({
+  badgeText,
+  badgeColour,
+  value,
+  updatedValue,
+  label,
+  displayError,
+  hasException,
+  children
+}: Props) => {
   const classes = useStyles()
+  const isEditable = useCourtCase().errorStatus === "Unresolved"
+  const hasCorrection = value !== updatedValue
+
   const labelField = (
     <>
       <div>{label}</div>
-      {displayError !== false && (
-        <div className="error-icon">
-          <ErrorIcon />
-        </div>
-      )}
     </>
   )
 
@@ -58,8 +68,33 @@ const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, displayE
     <Table.Row>
       <Table.Cell className={classes.label}>
         <b>{labelField}</b>
+        {!!displayError && !isEditable && (
+          <div className="error-icon">
+            <ErrorIcon />
+          </div>
+        )}
       </Table.Cell>
-      <Table.Cell>{cellContent}</Table.Cell>
+      {isEditable && hasException ? (
+        <Table.Cell>
+          {cellContent}
+          <Badge className="error-badge" isRendered={true} colour={"purple"} label={"Editable Field"} />
+        </Table.Cell>
+      ) : hasCorrection ? (
+        <>
+          <Table.Cell>
+            {value}
+            <br />
+            <Badge className="error-badge" isRendered={true} colour={"grey"} label={"Initial Value"} />
+            <br />
+            <br />
+            {updatedValue}
+            <br />
+            <Badge className="error-badge" isRendered={true} colour={"green"} label={"Correction"} />
+          </Table.Cell>
+        </>
+      ) : (
+        <Table.Cell>{value}</Table.Cell>
+      )}
     </Table.Row>
   )
 }

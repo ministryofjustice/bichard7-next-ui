@@ -18,6 +18,7 @@ import {
 } from "../../../../../../types/Amendments"
 import { Exception } from "../../../../../../types/exceptions"
 import { TableRow } from "../../TableRow"
+import { useCourtCase } from "../../../../../../context/CourtCaseContext"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -62,15 +63,11 @@ const getNextHearingLocationValue = (
   amendmentRecords: AmendmentRecords,
   offenceIndex: number,
   resultIndex: number
-): string => {
-  return (
-    (amendmentRecords?.nextSourceOrganisation &&
-      (amendmentRecords.nextSourceOrganisation as UpdatedOffenceResult[]).find(
-        (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
-      )?.updatedValue) ??
-    ""
-  )
-}
+): string | undefined =>
+  amendmentRecords?.nextSourceOrganisation &&
+  (amendmentRecords.nextSourceOrganisation as UpdatedOffenceResult[]).find(
+    (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
+  )?.updatedValue
 
 interface HearingResultProps {
   result: Result
@@ -89,6 +86,11 @@ export const HearingResult = ({
   amendments,
   amendFn
 }: HearingResultProps) => {
+  const updatedHearingOutcome = useCourtCase().updatedHearingOutcome
+  const updatedResult =
+    updatedHearingOutcome &&
+    updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[selectedOffenceIndex - 1]
+      .Result[resultIndex]
   const nextHearingDateException = exceptions.some(
     (exception) =>
       exception.path.join(".").endsWith(".NextHearingDate") &&
@@ -156,24 +158,27 @@ export const HearingResult = ({
           )
         }
       >
-        {nextHearingLocationException ? (
-          <ExceptionFieldTableRow
-            badgeText="Editable Field"
-            label="Next hearing location"
-            value={result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode}
-          >
-            <Label>{"Enter next hearing location"}</Label>
-            <HintText>{"OU code, 6-7 characters"}</HintText>
-            <OrganisationUnitTypeahead
-              value={getNextHearingLocationValue(amendments, selectedOffenceIndex - 1, resultIndex)}
-              amendFn={amendFn}
-              resultIndex={resultIndex}
-              offenceIndex={selectedOffenceIndex - 1}
-            />
-          </ExceptionFieldTableRow>
-        ) : (
-          <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
-        )}
+        <ExceptionFieldTableRow
+          badgeText="Initial Value"
+          badgeColour="grey"
+          label="Next hearing location"
+          value={result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode}
+          updatedValue={updatedResult && updatedResult.NextResultSourceOrganisation?.OrganisationUnitCode}
+          hasException={nextHearingLocationException}
+        >
+          <Label>{"Enter next hearing location"}</Label>
+          <HintText>{"OU code, 6-7 characters"}</HintText>
+          <OrganisationUnitTypeahead
+            value={
+              getNextHearingLocationValue(amendments, selectedOffenceIndex - 1, resultIndex) === undefined
+                ? updatedResult?.NextResultSourceOrganisation?.OrganisationUnitCode
+                : getNextHearingLocationValue(amendments, selectedOffenceIndex - 1, resultIndex)
+            }
+            amendFn={amendFn}
+            resultIndex={resultIndex}
+            offenceIndex={selectedOffenceIndex - 1}
+          />
+        </ExceptionFieldTableRow>
       </ConditionalRender>
       <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearingDateException}>
         {nextHearingDateException ? (
