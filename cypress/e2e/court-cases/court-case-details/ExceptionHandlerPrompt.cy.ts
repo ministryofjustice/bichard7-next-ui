@@ -1,6 +1,7 @@
 import ErrorMessages from "types/ErrorMessages"
-import HO100309 from "../../../../test/test-data/HO100309.json"
 import HO100306andHO100251 from "../../../../test/test-data/HO100306andHO100251.json"
+import HO100307 from "../../../../test/test-data/HO100307.json"
+import HO100309 from "../../../../test/test-data/HO100309.json"
 import HO200113 from "../../../../test/test-data/HO200113.json"
 import HO200114 from "../../../../test/test-data/HO200114.json"
 
@@ -10,6 +11,7 @@ describe("ExceptionHandlerPrompt", () => {
   const caseWithOffenceQualifierError = 0
   const caseWithOffenceCodeErrors = 1
   const caseWithNoError = 2
+  const caseWithCJSCodeError = 3
 
   before(() => {
     cy.task("clearCourtCases")
@@ -43,6 +45,13 @@ describe("ExceptionHandlerPrompt", () => {
         errorCount: 1,
         triggerCount: 1,
         hearingOutcome: HO100306andHO100251.hearingOutcomeXml
+      },
+      {
+        errorId: caseWithCJSCodeError,
+        orgForPoliceFilter: "01",
+        errorCount: 1,
+        triggerCount: 1,
+        hearingOutcome: HO100307.hearingOutcomeXml
       },
       {
         errorId: caseWithNoError,
@@ -243,6 +252,17 @@ describe("ExceptionHandlerPrompt", () => {
 
       cy.get(".field-value").contains("2300000000000532316D")
       cy.get(".error-prompt").contains(ErrorMessages.HO200114)
+    })
+  })
+
+  context.only("CJS Code Prompt", () => {
+    it("Should display an error prompt when a HO100307 is raised", () => {
+      cy.login("bichard01@example.com", "password")
+      cy.visit(`/bichard/court-cases/${caseWithCJSCodeError}`)
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Aid and abet theft").click()
+      cy.get(".table-row__cjs-code").contains("td", "CJS Code").siblings().should("include.text", "")
     })
   })
 })

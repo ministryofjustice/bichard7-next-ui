@@ -5,9 +5,14 @@ import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verd
 import { Durations } from "@moj-bichard7-developers/bichard7-next-data/dist/types/Duration"
 import { Duration } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import ConditionalRender from "components/ConditionalRender"
+import ErrorPromptMessage from "components/ErrorPromptMessage"
+import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
+import { useCourtCase } from "context/CourtCaseContext"
 import { HintText, Label, Table } from "govuk-react"
+import { findExceptions } from "types/ErrorMessages"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
+import EditableFieldTableRow from "../../../../../../components/EditableFieldTableRow"
 import {
   AmendmentKeys,
   AmendmentRecords,
@@ -15,10 +20,9 @@ import {
   UpdatedNextHearingDate,
   UpdatedOffenceResult
 } from "../../../../../../types/Amendments"
+import { ResolutionStatus } from "../../../../../../types/ResolutionStatus"
 import { Exception } from "../../../../../../types/exceptions"
 import { TableRow } from "../../TableRow"
-import EditableFieldTableRow from "../../../../../../components/EditableFieldTableRow"
-import { ResolutionStatus } from "../../../../../../types/ResolutionStatus"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -110,6 +114,9 @@ export const HearingResult = ({
   amendments,
   amendFn
 }: HearingResultProps) => {
+  const courtCase = useCourtCase()
+  const cjsErrorPrompt = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
+
   const offenceIndex = selectedOffenceIndex - 1
   const updatedNextHearingLocation = getNextHearingLocationValue(updatedFields, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(updatedFields, offenceIndex, resultIndex)
@@ -129,7 +136,13 @@ export const HearingResult = ({
 
   return (
     <Table>
-      <TableRow label="CJS Code" value={result.CJSresultCode} />
+      {cjsErrorPrompt ? (
+        <ExceptionFieldTableRow badgeText={"System Error"} value={result.CJSresultCode} label={"CJS code"}>
+          <ErrorPromptMessage message={cjsErrorPrompt} />
+        </ExceptionFieldTableRow>
+      ) : (
+        <TableRow label="CJS Code" value={result.CJSresultCode} />
+      )}
       <TableRow
         label="Result hearing type"
         value={result.ResultHearingType && capitaliseExpression(result.ResultHearingType)}
