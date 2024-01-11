@@ -1,8 +1,5 @@
 import errorPaths from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/errorPaths"
-import type {
-  AnnotatedHearingOutcome,
-  Offence
-} from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
@@ -11,7 +8,7 @@ import { Heading, Input, Table } from "govuk-react"
 import { isEqual } from "lodash"
 import { createUseStyles } from "react-jss"
 import ErrorMessages from "types/ErrorMessages"
-import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
 import Badge from "../../../../../../components/Badge"
 import ErrorPromptMessage from "../../../../../../components/ErrorPromptMessage"
@@ -22,52 +19,7 @@ import { TableRow } from "../../TableRow"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
-import setAmendedField from "../../../../../../utils/amendments/setAmendedField"
-
-const findUpdatedFields = (aho: AnnotatedHearingOutcome, updatedAho: AnnotatedHearingOutcome): AmendmentRecords => {
-  const updatedFields: AmendmentRecords = {}
-  if (!updatedAho) {
-    return updatedFields
-  }
-
-  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence.forEach((offence, offenceIndex) => {
-    offence.Result.forEach((result, resultIndex) => {
-      const updatedNextResultSourceOrganisation =
-        updatedAho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-          resultIndex
-        ].NextResultSourceOrganisation?.OrganisationUnitCode
-
-      const updatedNextHearingDate =
-        updatedAho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-          resultIndex
-        ].NextHearingDate
-      if (
-        updatedNextResultSourceOrganisation &&
-        result.NextResultSourceOrganisation?.OrganisationUnitCode !== updatedNextResultSourceOrganisation
-      ) {
-        setAmendedField(
-          "nextSourceOrganisation",
-          { resultIndex: 0, offenceIndex: 0, updatedValue: updatedNextResultSourceOrganisation },
-          updatedFields
-        )
-      }
-
-      if (updatedNextHearingDate && result.NextHearingDate !== updatedNextHearingDate) {
-        setAmendedField(
-          "nextHearingDate",
-          {
-            resultIndex: 0,
-            offenceIndex: 0,
-            updatedValue: formatFormInputDateString(new Date(updatedNextHearingDate))
-          },
-          updatedFields
-        )
-      }
-    })
-  })
-
-  return updatedFields
-}
+import getUpdatedFields from "../../../../../../utils/amendments/getUpdatedFields"
 
 interface OffenceDetailsProps {
   className: string
@@ -160,7 +112,7 @@ export const OffenceDetails = ({
   amendFn
 }: OffenceDetailsProps) => {
   const courtCase = useCourtCase()
-  const updatedFields = findUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
+  const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
   const classes = useStyles()
   const offenceCode = getOffenceCode(offence)
   const qualifierCode =
