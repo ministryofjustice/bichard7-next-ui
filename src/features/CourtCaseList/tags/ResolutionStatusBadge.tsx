@@ -1,3 +1,4 @@
+import Badge from "components/Badge"
 import { useCustomStyles } from "../../../../styles/customStyles"
 import { ResolutionStatus } from "../../../types/ResolutionStatus"
 
@@ -13,11 +14,12 @@ const ResolutionStatusBadge: React.FC<Props> = ({ resolutionStatus }: Props) => 
   }
 
   return (
-    <span
-      className={`moj-badge moj-badge-${resolutionStatus.toLowerCase()} moj-badge--${
-        resolutionStatus === "Resolved" ? "grey" : "blue"
-      } ${classes["margin-top-bottom"]}`}
-    >{`${resolutionStatus}`}</span>
+    <Badge
+      isRendered={true}
+      label={resolutionStatus}
+      colour={resolutionStatus === "Resolved" ? "grey" : "blue"}
+      className={`govuk-!-static-margin-left-5 moj-badge-${resolutionStatus.toLowerCase()}`}
+    />
   )
 }
 
