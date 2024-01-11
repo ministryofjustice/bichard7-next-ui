@@ -165,8 +165,8 @@ export const OffenceDetails = ({
       <Heading as="h3" size="MEDIUM">
         {`Offence ${selectedOffenceIndex} of ${offencesCount}`}
       </Heading>
-      <Table>
-        <div className="offences-table">
+      <div className="offences-table">
+        <Table>
           {
             <>
               {offenceCodeErrorPrompt ? (
@@ -224,8 +224,9 @@ export const OffenceDetails = ({
           )}
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
-        </div>
-      </Table>
+        </Table>
+      </div>
+
       <div className="offence-results-table">
         <Heading as="h4" size="MEDIUM">
           {"Hearing result"}
