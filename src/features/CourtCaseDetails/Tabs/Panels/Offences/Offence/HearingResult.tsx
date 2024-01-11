@@ -17,8 +17,8 @@ import {
 } from "../../../../../../types/Amendments"
 import { Exception } from "../../../../../../types/exceptions"
 import { TableRow } from "../../TableRow"
-import { useCourtCase } from "../../../../../../context/CourtCaseContext"
 import EditableFieldTableRow from "../../../../../../components/EditableFieldTableRow"
+import { ResolutionStatus } from "../../../../../../types/ResolutionStatus"
 
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
@@ -71,26 +71,27 @@ const getNextHearingLocationValue = (
 
 interface HearingResultProps {
   result: Result
+  updatedFields: AmendmentRecords
   exceptions: Exception[]
   resultIndex: number
   selectedOffenceIndex: number
   amendments: AmendmentRecords
+  errorStatus?: ResolutionStatus | null
   amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
 
 export const HearingResult = ({
   result,
+  updatedFields,
+  errorStatus,
   exceptions,
   resultIndex,
   selectedOffenceIndex,
   amendments,
   amendFn
 }: HearingResultProps) => {
-  const updatedHearingOutcome = useCourtCase().updatedHearingOutcome
-  const updatedResult =
-    updatedHearingOutcome &&
-    updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[selectedOffenceIndex - 1]
-      .Result[resultIndex]
+  const updatedNextHearingLocation = getNextHearingLocationValue(updatedFields, selectedOffenceIndex - 1, resultIndex)
+  const updatedNextHearingDate = getNextHearingDateValue(updatedFields, selectedOffenceIndex - 1, resultIndex)
   const nextHearingDateException = exceptions.some(
     (exception) =>
       exception.path.join(".").endsWith(".NextHearingDate") &&
@@ -161,7 +162,8 @@ export const HearingResult = ({
         <EditableFieldTableRow
           label="Next hearing location"
           value={result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode}
-          updatedValue={updatedResult && updatedResult.NextResultSourceOrganisation?.OrganisationUnitCode}
+          isEditable={errorStatus === "Unresolved"}
+          updatedValue={updatedNextHearingLocation}
           hasException={nextHearingLocationException}
         >
           <Label>{"Enter next hearing location"}</Label>
@@ -169,7 +171,7 @@ export const HearingResult = ({
           <OrganisationUnitTypeahead
             value={
               getNextHearingLocationValue(amendments, selectedOffenceIndex - 1, resultIndex) === undefined
-                ? updatedResult?.NextResultSourceOrganisation?.OrganisationUnitCode
+                ? updatedNextHearingLocation || result.NextResultSourceOrganisation?.OrganisationUnitCode
                 : getNextHearingLocationValue(amendments, selectedOffenceIndex - 1, resultIndex)
             }
             amendFn={amendFn}
@@ -182,9 +184,8 @@ export const HearingResult = ({
         <EditableFieldTableRow
           label="Next hearing date"
           value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
-          updatedValue={
-            updatedResult && updatedResult.NextHearingDate && formatDisplayedDate(String(updatedResult.NextHearingDate))
-          }
+          isEditable={errorStatus === "Unresolved"}
+          updatedValue={updatedNextHearingDate && formatDisplayedDate(updatedNextHearingDate)}
           hasException={nextHearingDateException}
         >
           <HintText>{"Enter date"}</HintText>

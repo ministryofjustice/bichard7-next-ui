@@ -2,12 +2,12 @@ import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
-import { useCourtCase } from "../context/CourtCaseContext"
 
 type Props = {
   value?: string | React.ReactNode
   updatedValue?: string | null
   label: string
+  isEditable: boolean
   children?: React.ReactNode
   displayError?: boolean
   hasException?: boolean
@@ -30,9 +30,16 @@ const useStyles = createUseStyles({
   }
 })
 
-const EditableFieldTableRow = ({ value, updatedValue, label, displayError, hasException, children }: Props) => {
+const EditableFieldTableRow = ({
+  value,
+  updatedValue,
+  label,
+  displayError,
+  hasException,
+  isEditable,
+  children
+}: Props) => {
   const classes = useStyles()
-  const isEditable = useCourtCase().errorStatus === "Unresolved"
   const hasCorrection = updatedValue && value !== updatedValue
 
   const labelField = (
