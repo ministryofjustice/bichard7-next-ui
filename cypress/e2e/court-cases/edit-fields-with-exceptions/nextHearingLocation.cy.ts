@@ -70,7 +70,10 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.get("#next-hearing-location").should("have.value", "B@1EF$1")
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
+    cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B01EF01")
 
     submitAndConfirmExceptions()
@@ -91,6 +94,13 @@ describe("NextHearingLocation", () => {
       updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100200">B@1EF$1</ds:OrganisationUnitCode>'],
       updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>"]
     })
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B01EF01")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 
   it("Should be able to edit field if HO100300 is raised", () => {
@@ -101,6 +111,7 @@ describe("NextHearingLocation", () => {
     cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B46AM03")
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
+    cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B46DB00")
 
     submitAndConfirmExceptions()
@@ -121,6 +132,13 @@ describe("NextHearingLocation", () => {
       updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100300">B46AM03</ds:OrganisationUnitCode>'],
       updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B46DB00</ds:OrganisationUnitCode>"]
     })
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B46AM03")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B46DB00")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 
   it("Should be able to edit field if HO100322 is raised", () => {
@@ -133,6 +151,7 @@ describe("NextHearingLocation", () => {
       .click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "")
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
+    cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B01EF00")
 
     submitAndConfirmExceptions()
@@ -151,8 +170,17 @@ describe("NextHearingLocation", () => {
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
       updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100322" />'],
-      updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B01EF01</ds:OrganisationUnitCode>"]
+      updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B01EF00</ds:OrganisationUnitCode>"]
     })
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link")
+      .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
+      .click()
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B01EF00")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 
   it("Should be able to edit multiple next hearing locations", () => {
@@ -161,12 +189,15 @@ describe("NextHearingLocation", () => {
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
+    cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B01EF00")
+
     cy.get("a.govuk-back-link").contains("Back to all offences").click()
 
     cy.get(".govuk-link")
       .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
       .click()
+    cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B46DB00")
 
     submitAndConfirmExceptions()
@@ -190,5 +221,21 @@ describe("NextHearingLocation", () => {
         "<ds:OrganisationUnitCode>B46DB00</ds:OrganisationUnitCode>"
       ]
     })
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B46AM03")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B01EF00")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
+
+    cy.get("a.govuk-back-link").contains("Back to all offences").click()
+    cy.get(".govuk-link")
+      .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
+      .click()
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B46DB00")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 })

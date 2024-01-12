@@ -41,4 +41,5 @@ export type DisplayFullCourtCase = Pick<CourtCase, FieldsForDisplayFullCourtCase
   resolutionTimestamp: string | null
   phase?: number | null
   aho: AnnotatedHearingOutcome
+  updatedHearingOutcome: AnnotatedHearingOutcome
 }

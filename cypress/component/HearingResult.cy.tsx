@@ -4,6 +4,7 @@ import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verd
 import ResultClass from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/ResultClass"
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import React from "react"
 
 describe("Hearing Result", () => {
   let result: Result
@@ -32,6 +33,7 @@ describe("Hearing Result", () => {
         resultIndex={dummyIndex}
         selectedOffenceIndex={dummyIndex}
         amendments={{}}
+        updatedFields={{}}
         amendFn={() => () => {}}
         exceptions={[]}
       />
@@ -66,6 +68,7 @@ describe("Hearing Result", () => {
           resultIndex={dummyIndex}
           selectedOffenceIndex={dummyIndex}
           amendments={{}}
+          updatedFields={{}}
           amendFn={() => () => {}}
           exceptions={[]}
         />
@@ -83,6 +86,7 @@ describe("Hearing Result", () => {
           resultIndex={dummyIndex}
           selectedOffenceIndex={dummyIndex}
           amendments={{}}
+          updatedFields={{}}
           amendFn={() => () => {}}
           exceptions={[]}
         />
@@ -110,6 +114,7 @@ describe("Hearing Result", () => {
           resultIndex={dummyIndex}
           selectedOffenceIndex={dummyIndex}
           amendments={{}}
+          updatedFields={{}}
           amendFn={() => () => {}}
           exceptions={[]}
         />
@@ -129,6 +134,7 @@ describe("Hearing Result", () => {
           resultIndex={0}
           selectedOffenceIndex={0}
           amendments={{}}
+          updatedFields={{}}
           amendFn={() => () => {}}
           exceptions={[]}
         />
@@ -146,6 +152,7 @@ describe("Hearing Result", () => {
           resultIndex={0}
           selectedOffenceIndex={0}
           amendments={{}}
+          updatedFields={{}}
           amendFn={() => () => {}}
           exceptions={[]}
         />
@@ -163,6 +170,7 @@ describe("Hearing Result", () => {
           resultIndex={0}
           selectedOffenceIndex={0}
           amendments={{}}
+          updatedFields={{}}
           amendFn={() => () => {}}
           exceptions={[{ path: ["dummyPath", "NextHearingDate"], code: ExceptionCode.HO100323 }]}
         />
@@ -180,6 +188,7 @@ describe("Hearing Result", () => {
           resultIndex={0}
           selectedOffenceIndex={0}
           amendments={{}}
+          updatedFields={{}}
           amendFn={() => () => {}}
           exceptions={[
             {
