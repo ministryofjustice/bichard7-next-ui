@@ -20,6 +20,7 @@ import { TableRow } from "../../TableRow"
 import EditableFieldTableRow from "../../../../../../components/EditableFieldTableRow"
 import { ResolutionStatus } from "../../../../../../types/ResolutionStatus"
 
+// TODO move these functions into files
 export const getYesOrNo = (code: boolean | undefined) => {
   return code === true ? "Y" : code === false ? "N" : undefined
 }
@@ -60,6 +61,7 @@ const getVerdict = (verdictCode: string | undefined) => {
   return verdictDescription
 }
 
+// TODO move these functions to amendment helper files
 const getNextHearingDateValue = (
   amendmentRecords: AmendmentRecords,
   offenceIndex: number,
@@ -113,13 +115,15 @@ export const HearingResult = ({
   const offenceIndex = selectedOffenceIndex - 1
   const updatedNextHearingLocation = getNextHearingLocationValue(updatedFields, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(updatedFields, offenceIndex, resultIndex)
-  const nextHearingDateException = exceptions.some(
+
+  // TODO move these functions into files
+  const hasNextHearingDateException = exceptions.some(
     (exception) =>
       exception.path.join(".").endsWith(".NextHearingDate") &&
       (exception.code === ExceptionCode.HO100102 || exception.code === ExceptionCode.HO100323)
   )
 
-  const nextHearingLocationException = exceptions.some(
+  const hasNextHearingLocationException = exceptions.some(
     (exception) =>
       exception.path.join(".").endsWith(".NextResultSourceOrganisation.OrganisationUnitCode") &&
       (exception.code === ExceptionCode.HO100200 ||
@@ -152,62 +156,50 @@ export const HearingResult = ({
           }
         />
       </ConditionalRender>
-      <ConditionalRender
-        isRendered={
-          !!(
-            (result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode) ||
-            updatedNextHearingLocation ||
-            nextHearingLocationException
-          )
-        }
+      <EditableFieldTableRow
+        label="Next hearing location"
+        hasExceptions={hasNextHearingLocationException}
+        errorStatus={errorStatus}
+        value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
+        updatedValue={updatedNextHearingLocation}
       >
-        <EditableFieldTableRow
-          label="Next hearing location"
-          isEditable={nextHearingLocationException && errorStatus === "Unresolved"}
-          value={result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode}
-          updatedValue={updatedNextHearingLocation}
-        >
-          <Label>{"Enter next hearing location"}</Label>
-          <HintText>{"OU code, 6-7 characters"}</HintText>
-          <OrganisationUnitTypeahead
-            value={
-              getNextHearingLocationValue(amendments, offenceIndex, resultIndex) === undefined
-                ? updatedNextHearingLocation || result.NextResultSourceOrganisation?.OrganisationUnitCode
-                : getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
-            }
-            amendFn={amendFn}
-            resultIndex={resultIndex}
-            offenceIndex={offenceIndex}
-          />
-        </EditableFieldTableRow>
-      </ConditionalRender>
-      <ConditionalRender
-        isRendered={!!result.NextHearingDate || !!updatedNextHearingDate || !!nextHearingDateException}
+        <Label>{"Enter next hearing location"}</Label>
+        <HintText>{"OU code, 6-7 characters"}</HintText>
+        <OrganisationUnitTypeahead
+          value={
+            getNextHearingLocationValue(amendments, offenceIndex, resultIndex) === undefined
+              ? updatedNextHearingLocation || result.NextResultSourceOrganisation?.OrganisationUnitCode
+              : getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
+          }
+          amendFn={amendFn}
+          resultIndex={resultIndex}
+          offenceIndex={offenceIndex}
+        />
+      </EditableFieldTableRow>
+      <EditableFieldTableRow
+        label="Next hearing date"
+        hasExceptions={hasNextHearingDateException}
+        errorStatus={errorStatus}
+        value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
+        updatedValue={updatedNextHearingDate && formatDisplayedDate(updatedNextHearingDate)}
       >
-        <EditableFieldTableRow
-          label="Next hearing date"
-          isEditable={nextHearingDateException && errorStatus === "Unresolved"}
-          value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
-          updatedValue={updatedNextHearingDate && formatDisplayedDate(updatedNextHearingDate)}
-        >
-          <HintText>{"Enter date"}</HintText>
-          <input
-            className="govuk-input"
-            type="date"
-            min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
-            id={"next-hearing-date"}
-            name={"next-hearing-date"}
-            value={getNextHearingDateValue(amendments, offenceIndex, resultIndex)}
-            onChange={(event) => {
-              amendFn("nextHearingDate")({
-                resultIndex: resultIndex,
-                offenceIndex: offenceIndex,
-                updatedValue: event.target.value
-              })
-            }}
-          />
-        </EditableFieldTableRow>
-      </ConditionalRender>
+        <HintText>{"Enter date"}</HintText>
+        <input
+          className="govuk-input"
+          type="date"
+          min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
+          id={"next-hearing-date"}
+          name={"next-hearing-date"}
+          value={getNextHearingDateValue(amendments, offenceIndex, resultIndex)}
+          onChange={(event) => {
+            amendFn("nextHearingDate")({
+              resultIndex: resultIndex,
+              offenceIndex: offenceIndex,
+              updatedValue: event.target.value
+            })
+          }}
+        />
+      </EditableFieldTableRow>
       <TableRow label="Plea" value={getPleaStatus(result.PleaStatus)} />
       <TableRow label="Verdict" value={getVerdict(result.Verdict)} />
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
