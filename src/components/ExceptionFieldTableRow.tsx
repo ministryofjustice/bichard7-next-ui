@@ -4,7 +4,7 @@ import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
 
 type Props = {
-  badgeText: "System Error" | "Editable Field" | "Added by Court" | "Unmatched"
+  badgeText: "System Error" | "Added by Court" | "Unmatched"
   value?: string | React.ReactNode
   badgeColour?: "red" | "blue" | "purple"
   label: string

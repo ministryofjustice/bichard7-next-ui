@@ -19,6 +19,7 @@ import { TableRow } from "../../TableRow"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
+import getUpdatedFields from "../../../../../../utils/updatedFields/getUpdatedFields"
 
 interface OffenceDetailsProps {
   className: string
@@ -111,7 +112,7 @@ export const OffenceDetails = ({
   amendFn
 }: OffenceDetailsProps) => {
   const courtCase = useCourtCase()
-
+  const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
   const classes = useStyles()
   const offenceCode = getOffenceCode(offence)
   const qualifierCode =
@@ -236,6 +237,7 @@ export const OffenceDetails = ({
             <HearingResult
               key={index}
               result={result}
+              updatedFields={updatedFields}
               exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>
                 resultException.path.join(">").startsWith(thisResultPath(index))
               )}
@@ -243,6 +245,7 @@ export const OffenceDetails = ({
               resultIndex={index}
               amendments={amendments}
               amendFn={amendFn}
+              errorStatus={courtCase.errorStatus}
             />
           )
         })}
