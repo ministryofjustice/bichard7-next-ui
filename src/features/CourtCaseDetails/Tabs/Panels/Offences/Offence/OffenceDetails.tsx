@@ -19,7 +19,7 @@ import { TableRow } from "../../TableRow"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
-import getUpdatedFields from "../../../../../../utils/amendments/getUpdatedFields"
+import getUpdatedFields from "../../../../../../utils/updatedFields/getUpdatedFields"
 
 interface OffenceDetailsProps {
   className: string
