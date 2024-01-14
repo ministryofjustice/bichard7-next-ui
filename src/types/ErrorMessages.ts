@@ -16,6 +16,7 @@ const findExceptions = (
   ahoExceptions: Exception[],
   ...exceptions: ExceptionCode[]
 ) => {
+  // exceptions: [H0100307]
   if (courtCase.errorStatus === "Resolved") {
     return undefined
   }
