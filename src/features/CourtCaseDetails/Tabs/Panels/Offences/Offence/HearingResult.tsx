@@ -115,7 +115,7 @@ export const HearingResult = ({
   amendFn
 }: HearingResultProps) => {
   const courtCase = useCourtCase()
-  const cjsErrorPrompt = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
+  const cjsErrorMessage = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
 
   const offenceIndex = selectedOffenceIndex - 1
   const updatedNextHearingLocation = getNextHearingLocationValue(updatedFields, offenceIndex, resultIndex)
@@ -136,9 +136,9 @@ export const HearingResult = ({
 
   return (
     <Table>
-      {cjsErrorPrompt ? (
-        <ExceptionFieldTableRow badgeText={"System Error"} value={result.CJSresultCode} label={"CJS code"}>
-          <ErrorPromptMessage message={cjsErrorPrompt} />
+      {cjsErrorMessage ? (
+        <ExceptionFieldTableRow badgeText={"System Error"} value={result.CJSresultCode} label={"CJS Code"}>
+          <ErrorPromptMessage message={cjsErrorMessage} />
         </ExceptionFieldTableRow>
       ) : (
         <TableRow label="CJS Code" value={result.CJSresultCode} />
