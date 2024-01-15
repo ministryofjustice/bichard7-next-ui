@@ -66,9 +66,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
     resolveLink += `?previousPath=${encodeURIComponent(previousPath)}`
   }
 
-  const submitCasePath = `${router.basePath}${usePathname()}?${new URLSearchParams({
-    resubmitCase: "true"
-  })}`
+  const submitCasePath = `${router.basePath}${usePathname()}/submit`
 
   return (
     <>

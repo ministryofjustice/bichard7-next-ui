@@ -37,6 +37,7 @@ export const courtCaseToDisplayPartialCourtCaseDto = (courtCase: CourtCase): Dis
 
 export const courtCaseToDisplayFullCourtCaseDto = (courtCase: CourtCase): DisplayFullCourtCase => {
   const annotatedHearingOutcome = parseHearingOutcome(courtCase.hearingOutcome)
+  const updatedHearingOutcome = courtCase.updatedHearingOutcome && parseHearingOutcome(courtCase.updatedHearingOutcome)
 
   const courtCaseInfo: DisplayFullCourtCase = {
     ...courtCaseToDisplayPartialCourtCaseDto(courtCase),
@@ -44,7 +45,8 @@ export const courtCaseToDisplayFullCourtCaseDto = (courtCase: CourtCase): Displa
     courtCode: courtCase.courtCode,
     courtReference: courtCase.courtReference,
     phase: courtCase.phase,
-    aho: JSON.parse(JSON.stringify(annotatedHearingOutcome))
+    aho: JSON.parse(JSON.stringify(annotatedHearingOutcome)),
+    updatedHearingOutcome: JSON.parse(JSON.stringify(updatedHearingOutcome))
   }
 
   return courtCaseInfo

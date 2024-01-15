@@ -19,6 +19,7 @@ import { TableRow } from "../../TableRow"
 import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
 import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
+import getUpdatedFields from "../../../../../../utils/updatedFields/getUpdatedFields"
 
 interface OffenceDetailsProps {
   className: string
@@ -111,7 +112,7 @@ export const OffenceDetails = ({
   amendFn
 }: OffenceDetailsProps) => {
   const courtCase = useCourtCase()
-
+  const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
   const classes = useStyles()
   const offenceCode = getOffenceCode(offence)
   const qualifierCode =
@@ -165,8 +166,8 @@ export const OffenceDetails = ({
       <Heading as="h3" size="MEDIUM">
         {`Offence ${selectedOffenceIndex} of ${offencesCount}`}
       </Heading>
-      <Table>
-        <div className="offences-table">
+      <div className="offences-table">
+        <Table>
           {
             <>
               {offenceCodeErrorPrompt ? (
@@ -224,8 +225,9 @@ export const OffenceDetails = ({
           )}
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
-        </div>
-      </Table>
+        </Table>
+      </div>
+
       <div className="offence-results-table">
         <Heading as="h4" size="MEDIUM">
           {"Hearing result"}
@@ -235,6 +237,7 @@ export const OffenceDetails = ({
             <HearingResult
               key={index}
               result={result}
+              updatedFields={updatedFields}
               exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>
                 resultException.path.join(">").startsWith(thisResultPath(index))
               )}
@@ -242,6 +245,7 @@ export const OffenceDetails = ({
               resultIndex={index}
               amendments={amendments}
               amendFn={amendFn}
+              errorStatus={courtCase.errorStatus}
             />
           )
         })}

@@ -99,13 +99,11 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
       <HeaderRow>
         <Heading as="h2" size="MEDIUM">
           {courtCase.defendantName}
-          <span className={"govuk-!-static-margin-left-5"}>
-            {getResolutionStatus(courtCase) ? (
-              <ResolutionStatusBadge resolutionStatus={getResolutionStatus(courtCase) || "Unresolved"} />
-            ) : (
-              <UrgentTag isUrgent={courtCase.isUrgent} />
-            )}
-          </span>
+          {getResolutionStatus(courtCase) ? (
+            <ResolutionStatusBadge resolutionStatus={getResolutionStatus(courtCase) || "Unresolved"} />
+          ) : (
+            <UrgentTag isUrgent={courtCase.isUrgent} />
+          )}
           <Badge
             isRendered={caseIsViewOnly}
             label="View only"
