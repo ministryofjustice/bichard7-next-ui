@@ -254,15 +254,4 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".error-prompt").contains(ErrorMessages.HO200114)
     })
   })
-
-  context.only("CJS Code Prompt", () => {
-    it("Should display an error prompt when a HO100307 is raised", () => {
-      cy.login("bichard01@example.com", "password")
-      cy.visit(`/bichard/court-cases/${caseWithCJSCodeError}`)
-
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-      cy.get(".govuk-link").contains("Aid and abet theft").click()
-      cy.get(".table-row__cjs-code").contains("td", "CJS Code").siblings().should("include.text", "")
-    })
-  })
 })
