@@ -3,11 +3,11 @@ import ConditionalRender from "components/ConditionalRender"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { HintText, Label, Table } from "govuk-react"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
-import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../../../types/Amendments"
-import { Exception } from "../../../../../../types/exceptions"
+import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
+import { Exception } from "types/exceptions"
 import { TableRow } from "../../TableRow"
-import EditableFieldTableRow from "../../../../../../components/EditableFieldTableRow"
-import { ResolutionStatus } from "../../../../../../types/ResolutionStatus"
+import EditableFieldTableRow from "components/EditableFieldTableRow"
+import { ResolutionStatus } from "types/ResolutionStatus"
 import {
   capitaliseExpression,
   formatDuration,
@@ -16,11 +16,11 @@ import {
   getUrgentYesOrNo,
   getVerdict,
   getYesOrNo
-} from "../../../../../../utils/valueTransformers"
-import getNextHearingDateValue from "../../../../../../utils/amendments/getAmendmentValues/getNextHearingDateValue"
-import getNextHearingLocationValue from "../../../../../../utils/amendments/getAmendmentValues/getNextHearingLocationValue"
-import hasNextHearingLocationException from "../../../../../../utils/exceptions/hasNextHearingLocationException"
-import hasNextHearingDateException from "../../../../../../utils/exceptions/hasNextHearingDateException"
+} from "utils/valueTransformers"
+import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
+import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
+import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
+import hasNextHearingDateException from "utils/exceptions/hasNextHearingDateException"
 
 interface HearingResultProps {
   result: Result

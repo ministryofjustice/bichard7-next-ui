@@ -1,4 +1,4 @@
-import { AmendmentRecords, UpdatedOffenceResult } from "../../../types/Amendments"
+import { AmendmentRecords, UpdatedOffenceResult } from "types/Amendments"
 
 const getNextHearingLocationValue = (
   amendmentRecords: AmendmentRecords,

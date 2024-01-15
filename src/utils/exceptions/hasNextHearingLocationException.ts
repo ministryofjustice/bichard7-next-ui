@@ -1,4 +1,4 @@
-import { Exception } from "../../types/exceptions"
+import { Exception } from "types/exceptions"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 const hasNextHearingLocationException = (exceptions: Exception[]): boolean =>

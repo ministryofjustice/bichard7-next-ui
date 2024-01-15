@@ -3,7 +3,7 @@ import { DateCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types
 import { DateCodes } from "@moj-bichard7-developers/bichard7-next-data/dist/types/DateCode"
 import { textSecondary } from "utils/colours"
 import { formatDisplayedDate } from "utils/formattedDate"
-import { capitalizeString } from "../../../../../../utils/valueTransformers"
+import { capitalizeString } from "utils/valueTransformers"
 
 interface StartDateProps {
   offence: Offence

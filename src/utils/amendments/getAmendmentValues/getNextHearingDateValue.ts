@@ -1,4 +1,4 @@
-import { AmendmentRecords, UpdatedNextHearingDate } from "../../../types/Amendments"
+import { AmendmentRecords, UpdatedNextHearingDate } from "types/Amendments"
 
 const getNextHearingDateValue = (
   amendmentRecords: AmendmentRecords,
