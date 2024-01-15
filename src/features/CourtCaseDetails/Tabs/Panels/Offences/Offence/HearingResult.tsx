@@ -1,16 +1,9 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ConditionalRender from "components/ConditionalRender"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { HintText, Label, Table } from "govuk-react"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
-import {
-  AmendmentKeys,
-  AmendmentRecords,
-  IndividualAmendmentValues,
-  UpdatedNextHearingDate,
-  UpdatedOffenceResult
-} from "../../../../../../types/Amendments"
+import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../../../types/Amendments"
 import { Exception } from "../../../../../../types/exceptions"
 import { TableRow } from "../../TableRow"
 import EditableFieldTableRow from "../../../../../../components/EditableFieldTableRow"
@@ -24,36 +17,10 @@ import {
   getVerdict,
   getYesOrNo
 } from "../../../../../../utils/valueTransformers"
-
-// TODO move these functions to amendment helper files
-const getNextHearingDateValue = (
-  amendmentRecords: AmendmentRecords,
-  offenceIndex: number,
-  resultIndex: number
-): string | undefined => {
-  const validDateFormat = /^20\d{2}-\d{2}-\d{2}$/
-  const nextHearingDateAmendment =
-    amendmentRecords?.nextHearingDate &&
-    (amendmentRecords.nextHearingDate as UpdatedNextHearingDate[]).find(
-      (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
-    )?.updatedValue
-
-  if (!nextHearingDateAmendment) {
-    return ""
-  }
-
-  return validDateFormat.test(nextHearingDateAmendment) ? nextHearingDateAmendment : undefined
-}
-
-const getNextHearingLocationValue = (
-  amendmentRecords: AmendmentRecords,
-  offenceIndex: number,
-  resultIndex: number
-): string | undefined =>
-  amendmentRecords?.nextSourceOrganisation &&
-  (amendmentRecords.nextSourceOrganisation as UpdatedOffenceResult[]).find(
-    (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
-  )?.updatedValue
+import getNextHearingDateValue from "../../../../../../utils/amendments/getAmendmentValues/getNextHearingDateValue"
+import getNextHearingLocationValue from "../../../../../../utils/amendments/getAmendmentValues/getNextHearingLocationValue"
+import hasNextHearingLocationException from "../../../../../../utils/exceptions/hasNextHearingLocationException"
+import hasNextHearingDateException from "../../../../../../utils/exceptions/hasNextHearingDateException"
 
 interface HearingResultProps {
   result: Result
@@ -77,23 +44,10 @@ export const HearingResult = ({
   amendFn
 }: HearingResultProps) => {
   const offenceIndex = selectedOffenceIndex - 1
+  const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
+  const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingLocation = getNextHearingLocationValue(updatedFields, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(updatedFields, offenceIndex, resultIndex)
-
-  // TODO move these functions into files
-  const hasNextHearingDateException = exceptions.some(
-    (exception) =>
-      exception.path.join(".").endsWith(".NextHearingDate") &&
-      (exception.code === ExceptionCode.HO100102 || exception.code === ExceptionCode.HO100323)
-  )
-
-  const hasNextHearingLocationException = exceptions.some(
-    (exception) =>
-      exception.path.join(".").endsWith(".NextResultSourceOrganisation.OrganisationUnitCode") &&
-      (exception.code === ExceptionCode.HO100200 ||
-        exception.code === ExceptionCode.HO100300 ||
-        exception.code === ExceptionCode.HO100322)
-  )
 
   return (
     <Table>
@@ -122,7 +76,7 @@ export const HearingResult = ({
       </ConditionalRender>
       <EditableFieldTableRow
         label="Next hearing location"
-        hasExceptions={hasNextHearingLocationException}
+        hasExceptions={hasNextHearingLocationException(exceptions)}
         errorStatus={errorStatus}
         value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
         updatedValue={updatedNextHearingLocation}
@@ -131,9 +85,9 @@ export const HearingResult = ({
         <HintText>{"OU code, 6-7 characters"}</HintText>
         <OrganisationUnitTypeahead
           value={
-            getNextHearingLocationValue(amendments, offenceIndex, resultIndex) === undefined
+            amendedNextHearingLocation === undefined
               ? updatedNextHearingLocation || result.NextResultSourceOrganisation?.OrganisationUnitCode
-              : getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
+              : amendedNextHearingLocation
           }
           amendFn={amendFn}
           resultIndex={resultIndex}
@@ -142,7 +96,7 @@ export const HearingResult = ({
       </EditableFieldTableRow>
       <EditableFieldTableRow
         label="Next hearing date"
-        hasExceptions={hasNextHearingDateException}
+        hasExceptions={hasNextHearingDateException(exceptions)}
         errorStatus={errorStatus}
         value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
         updatedValue={updatedNextHearingDate && formatDisplayedDate(updatedNextHearingDate)}
@@ -154,7 +108,7 @@ export const HearingResult = ({
           min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
           id={"next-hearing-date"}
           name={"next-hearing-date"}
-          value={getNextHearingDateValue(amendments, offenceIndex, resultIndex)}
+          value={amendedNextHearingDate}
           onChange={(event) => {
             amendFn("nextHearingDate")({
               resultIndex: resultIndex,
