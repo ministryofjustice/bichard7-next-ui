@@ -1,6 +1,5 @@
 import ErrorMessages from "types/ErrorMessages"
 import HO100306andHO100251 from "../../../../test/test-data/HO100306andHO100251.json"
-import HO100307 from "../../../../test/test-data/HO100307.json"
 import HO100309 from "../../../../test/test-data/HO100309.json"
 import HO200113 from "../../../../test/test-data/HO200113.json"
 import HO200114 from "../../../../test/test-data/HO200114.json"
@@ -11,7 +10,6 @@ describe("ExceptionHandlerPrompt", () => {
   const caseWithOffenceQualifierError = 0
   const caseWithOffenceCodeErrors = 1
   const caseWithNoError = 2
-  const caseWithCJSCodeError = 3
 
   before(() => {
     cy.task("clearCourtCases")
@@ -45,13 +43,6 @@ describe("ExceptionHandlerPrompt", () => {
         errorCount: 1,
         triggerCount: 1,
         hearingOutcome: HO100306andHO100251.hearingOutcomeXml
-      },
-      {
-        errorId: caseWithCJSCodeError,
-        orgForPoliceFilter: "01",
-        errorCount: 1,
-        triggerCount: 1,
-        hearingOutcome: HO100307.hearingOutcomeXml
       },
       {
         errorId: caseWithNoError,
