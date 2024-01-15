@@ -16,10 +16,11 @@ import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldT
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../../../types/Amendments"
 import { Exception } from "../../../../../../types/exceptions"
 import { TableRow } from "../../TableRow"
-import { HearingResult, capitaliseExpression, getYesOrNo } from "./HearingResult"
+import { HearingResult } from "./HearingResult"
 import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
 import getUpdatedFields from "../../../../../../utils/updatedFields/getUpdatedFields"
+import { capitaliseExpression, getYesOrNo } from "../../../../../../utils/valueTransformers"
 
 interface OffenceDetailsProps {
   className: string
