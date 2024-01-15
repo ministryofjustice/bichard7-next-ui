@@ -241,4 +241,29 @@ describe("Hearing Result", () => {
       cy.contains("td", "Next hearing location").siblings().should("include.text", "")
     })
   })
+
+  describe("CJS result code", () => {
+    it("Should display an error prompt when a HO100307 is raised", () => {
+      cy.mount(
+        <CourtCaseContext.Provider value={{ courtCase }}>
+          <HearingResult
+            result={result}
+            resultIndex={0}
+            selectedOffenceIndex={0}
+            amendments={{}}
+            updatedFields={{}}
+            amendFn={() => () => {}}
+            exceptions={[{ path: ["dummyPath", "CJSresultCode"], code: ExceptionCode.HO100307 }]}
+          />
+        </CourtCaseContext.Provider>
+      )
+
+      cy.contains("td", "CJS Code")
+        .siblings()
+        .should(
+          "include.text",
+          "This code could not be found via look-up, report the issue to Bichard 7 team and the courts for the correct so that they can investigate this issue and advise."
+        )
+    })
+  })
 })
