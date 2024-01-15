@@ -1,6 +1,6 @@
 import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../../types/Amendments"
-import { Exception } from "../../../../../types/exceptions"
+import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
+import { Exception } from "types/exceptions"
 import { OffenceDetails } from "./Offence/OffenceDetails"
 import { OffencesList } from "./OffencesList/OffencesList"
 
