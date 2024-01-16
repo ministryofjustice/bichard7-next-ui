@@ -1,9 +1,7 @@
-import ConditionalRender from "components/ConditionalRender"
+import Badge from "components/Badge"
 
 const UrgentTag: React.FC<{ isUrgent: boolean }> = (props: { isUrgent: boolean }) => (
-  <ConditionalRender isRendered={props.isUrgent}>
-    <span className={`moj-badge moj-badge--red moj-badge--large`}>{"Urgent"}</span>
-  </ConditionalRender>
+  <Badge isRendered={props.isUrgent} colour="red" label="Urgent" className="govuk-!-static-margin-left-5" />
 )
 
 export default UrgentTag
