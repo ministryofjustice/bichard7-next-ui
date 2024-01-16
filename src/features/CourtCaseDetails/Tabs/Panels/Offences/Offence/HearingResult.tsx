@@ -1,13 +1,21 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ConditionalRender from "components/ConditionalRender"
-import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
-import { HintText, Label, Table } from "govuk-react"
-import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
-import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
-import { Exception } from "types/exceptions"
-import { TableRow } from "../../TableRow"
 import EditableFieldTableRow from "components/EditableFieldTableRow"
+import ErrorPromptMessage from "components/ErrorPromptMessage"
+import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
+import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
+import { useCourtCase } from "context/CourtCaseContext"
+import { HintText, Label, Table } from "govuk-react"
+import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
+import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
+import { Exception } from "types/exceptions"
+import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
+import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
+import hasNextHearingDateException from "utils/exceptions/hasNextHearingDateException"
+import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
+import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
 import {
   capitaliseExpression,
   formatDuration,
@@ -17,10 +25,7 @@ import {
   getVerdict,
   getYesOrNo
 } from "utils/valueTransformers"
-import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
-import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
-import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
-import hasNextHearingDateException from "utils/exceptions/hasNextHearingDateException"
+import { TableRow } from "../../TableRow"
 
 interface HearingResultProps {
   result: Result
@@ -43,6 +48,9 @@ export const HearingResult = ({
   amendments,
   amendFn
 }: HearingResultProps) => {
+  const courtCase = useCourtCase()
+  const cjsErrorMessage = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
+
   const offenceIndex = selectedOffenceIndex - 1
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
@@ -51,7 +59,13 @@ export const HearingResult = ({
 
   return (
     <Table>
-      <TableRow label="CJS Code" value={result.CJSresultCode} />
+      {cjsErrorMessage ? (
+        <ExceptionFieldTableRow badgeText={"System Error"} value={result.CJSresultCode} label={"CJS Code"}>
+          <ErrorPromptMessage message={cjsErrorMessage} />
+        </ExceptionFieldTableRow>
+      ) : (
+        <TableRow label="CJS Code" value={result.CJSresultCode} />
+      )}
       <TableRow
         label="Result hearing type"
         value={result.ResultHearingType && capitaliseExpression(result.ResultHearingType)}
