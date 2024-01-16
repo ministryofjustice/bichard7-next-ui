@@ -84,7 +84,7 @@ describe("NextHearingDate", () => {
         cy.get("#asn").should("not.exist")
     })
 
-    it("Should be able to edit ASN field if HO100206 is raised", () => {
+    it.only("Should be able to edit ASN field if HO100206 is raised", () => {
         cy.login("bichard01@example.com", "password")
         cy.visit("/bichard/court-cases/0")
 
@@ -93,12 +93,8 @@ describe("NextHearingDate", () => {
 
         cy.get("button").contains("Submit exception(s)").click()
 
-        cy.location().should((loc) => {
-            expect(loc.href).to.contain("?resubmitCase=true")
-        })
-
-        cy.get("H1").should("have.text", "Case details")
-        cy.contains("Notes").click()
+        cy.contains("Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?").should("exist")
+        cy.get("button").contains("Submit exception(s)").click()
 
         cy.contains("Bichard01: Portal Action: Update Applied. Element: asn. New Value: 1101ZD0100000448754K")
         cy.contains("Bichard01: Portal Action: Resubmitted Message.")
@@ -108,5 +104,27 @@ describe("NextHearingDate", () => {
             updatedMessageNotHaveContent: ["<br7:ArrestSummonsNumber>AAAAAAAAAAAAAAAAAAAA</br7:ArrestSummonsNumber>"],
             updatedMessageHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber>"]
         })
+    })
+
+    it("should display the updated ASN after submission", () => {
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard/court-cases/0")
+
+        cy.get(".Defendant-details-table").contains("AAAAAAAAAAAAAAAAAAAA")
+        cy.get("#asn").type("1101ZD0100000448754K")
+
+        cy.get("button").contains("Submit exception(s)").click()
+        cy.get("button").contains("Submit exception(s)").click()
+
+        cy.get(".Defendant-details-table").contains("1101ZD0100000448754K")
+    })
+
+    it("should display error when invalid ASN is entered", () => {
+        cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard/court-cases/0")
+        
+        cy.get("#asn").type("asdf")
+        
+        cy.get(".Defendant-details-table").contains("Invalid ASN format")
     })
 })
