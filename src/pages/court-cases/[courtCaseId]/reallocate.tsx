@@ -30,6 +30,9 @@ import { useCustomStyles } from "../../../../styles/customStyles"
 import Form from "../../../components/Form"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
+import { CourtCaseContext, CourtCaseContextType } from "context/CourtCaseContext"
+import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
+import { UserNotes } from "features/CourtCaseDetails/Tabs/Panels/Notes/UserNotes"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -96,7 +99,7 @@ interface Props {
   previousPath: string
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({
+const ReallocateCasePage: NextPage<Props> = ({
   courtCase,
   user,
   lockedByAnotherUser,
@@ -112,6 +115,8 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
     setNoteRemainingLength(MAX_NOTE_LENGTH - event.currentTarget.value.length)
   }
   const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
+  const [courtCaseContext] = useState<CourtCaseContextType>({ courtCase: courtCase })
+  const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
 
   let backLink = `${basePath}/court-cases/${courtCase.errorId}`
 
@@ -126,57 +131,75 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
         <meta name="description" content="Case Reallocation | Bichard7" />
       </Head>
       <CurrentUserContext.Provider value={currentUserContext}>
-        <Layout>
-          <BackLink href={backLink} onClick={function noRefCheck() {}}>
-            {"Case Details"}
-          </BackLink>
-          <HeaderContainer id="header-container">
-            <HeaderRow>
-              <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
-                {"Case reallocation"}
-              </Heading>
-            </HeaderRow>
-          </HeaderContainer>
-          <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
-          <ConditionalRender isRendered={!lockedByAnotherUser}>
-            <Form method="POST" action="#" csrfToken={csrfToken}>
-              <Fieldset>
-                <FormGroup>
-                  <Label>{"Current force owner"}</Label>
-                  <span>{`${currentForce?.code} - ${currentForce?.name}`}</span>
-                </FormGroup>
-                <FormGroup>
-                  <Label>{"New force owner"}</Label>
-                  <Select input={{ name: "force" }} label={""}>
-                    {forcesForReallocation.map(({ code, name }) => (
-                      <option key={code} value={code}>
-                        {`${code} - ${name}`}
-                      </option>
-                    ))}
-                  </Select>
-                </FormGroup>
-                <FormGroup>
-                  <Label>{"Add a note (optional)"}</Label>
-                  <HintText className={classes["no-margin-bottom"]}>{"Input reason for case reallocation"}</HintText>
-                  <TextArea input={{ name: "note", rows: 5, maxLength: MAX_NOTE_LENGTH, onInput: handleOnNoteChange }}>
-                    {""}
-                  </TextArea>
-                  <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
-                </FormGroup>
+        <CourtCaseContext.Provider value={courtCaseContext}>
+          <CsrfTokenContext.Provider value={csrfTokenContext}>
+            <Layout>
+              <BackLink href={backLink} onClick={function noRefCheck() {}}>
+                {"Case Details"}
+              </BackLink>
+              <HeaderContainer id="header-container">
+                <HeaderRow>
+                  <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
+                    {"Case reallocation"}
+                  </Heading>
+                </HeaderRow>
+              </HeaderContainer>
+              <ConditionalRender isRendered={lockedByAnotherUser}>
+                {"Case is locked by another user."}
+              </ConditionalRender>
+              <ConditionalRender isRendered={!lockedByAnotherUser}>
+                <div style={{ display: "flex" }}>
+                  <Form method="POST" action="#" csrfToken={csrfToken}>
+                    <Fieldset>
+                      <FormGroup>
+                        <Label>{"Current force owner"}</Label>
+                        <span>{`${currentForce?.code} - ${currentForce?.name}`}</span>
+                      </FormGroup>
+                      <FormGroup>
+                        <Label>{"New force owner"}</Label>
+                        <Select input={{ name: "force" }} label={""}>
+                          {forcesForReallocation.map(({ code, name }) => (
+                            <option key={code} value={code}>
+                              {`${code} - ${name}`}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormGroup>
+                      <FormGroup>
+                        <Label>{"Add a note (optional)"}</Label>
+                        <HintText className={classes["no-margin-bottom"]}>
+                          {"Input reason for case reallocation"}
+                        </HintText>
+                        <TextArea
+                          input={{ name: "note", rows: 5, maxLength: MAX_NOTE_LENGTH, onInput: handleOnNoteChange }}
+                        >
+                          {""}
+                        </TextArea>
+                        <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
+                      </FormGroup>
 
-                <ButtonsGroup>
-                  <Button id="Reallocate" type="submit">
-                    {"Reallocate"}
-                  </Button>
-                  <Link href={backLink}>{"Cancel"}</Link>
-                </ButtonsGroup>
-              </Fieldset>
-            </Form>
-          </ConditionalRender>
-        </Layout>
+                      <ButtonsGroup>
+                        <Button id="Reallocate" type="submit">
+                          {"Reallocate"}
+                        </Button>
+                        <Link href={backLink}>{"Cancel"}</Link>
+                      </ButtonsGroup>
+                    </Fieldset>
+                  </Form>
+                  <div>
+                    <Heading as="h2" size="SMALL">
+                      {"Previous User Notes"}
+                    </Heading>
+                    <UserNotes />
+                  </div>
+                </div>
+              </ConditionalRender>
+            </Layout>
+          </CsrfTokenContext.Provider>
+        </CourtCaseContext.Provider>
       </CurrentUserContext.Provider>
     </>
   )
 }
 
-export default CourtCaseDetailsPage
+export default ReallocateCasePage
