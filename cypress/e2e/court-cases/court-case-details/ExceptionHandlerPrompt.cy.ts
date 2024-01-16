@@ -254,7 +254,7 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".error-prompt").contains(ErrorMessages.HO200114)
     })
   })
-  context("CJS Code Prompt", () => {
+  context.only("CJS Code Prompt", () => {
     it("Should display an error prompt when a HO100307 is raised", () => {
       cy.login("bichard01@example.com", "password")
       cy.visit(`/bichard/court-cases/${caseWithCJSCodeError}`)
@@ -268,6 +268,22 @@ describe("ExceptionHandlerPrompt", () => {
         .siblings()
         .should(
           "include.text",
+          "This code could not be found via look-up, report the issue to Bichard 7 team and the courts for the correct so that they can investigate this issue and advise."
+        )
+    })
+
+    it("Should not display an error prompt when a HO100307 is not raised", () => {
+      cy.login("bichard01@example.com", "password")
+      cy.visit(`/bichard/court-cases/${caseWithNoError}`)
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link")
+        .contains("Use a motor vehicle on a road / public place without third party insurance")
+        .click()
+      cy.get(".offence-results-table")
+        .contains("td", "CJS Code")
+        .siblings()
+        .should(
+          "not.include.text",
           "This code could not be found via look-up, report the issue to Bichard 7 team and the courts for the correct so that they can investigate this issue and advise."
         )
     })
