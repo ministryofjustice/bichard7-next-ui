@@ -254,7 +254,7 @@ describe("ExceptionHandlerPrompt", () => {
       cy.get(".error-prompt").contains(ErrorMessages.HO200114)
     })
   })
-  context.only("CJS Code Prompt", () => {
+  context("CJS Code Prompt", () => {
     it("Should display an error prompt when a HO100307 is raised", () => {
       cy.login("bichard01@example.com", "password")
       cy.visit(`/bichard/court-cases/${caseWithCJSCodeError}`)
