@@ -2,10 +2,13 @@ import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
+import { ResolutionStatus } from "../types/ResolutionStatus"
+import ConditionalRender from "./ConditionalRender"
 
 type Props = {
   label: string
-  isEditable: boolean
+  hasExceptions: boolean
+  errorStatus?: ResolutionStatus | null
   value?: string | React.ReactNode
   updatedValue?: string | null
   children?: React.ReactNode
@@ -28,60 +31,70 @@ const useStyles = createUseStyles({
   }
 })
 
-const initialValueBadge = <Badge className="error-badge" isRendered={true} colour={"grey"} label={"Initial Value"} />
-const editableFieldBadge = (
-  <Badge className="error-badge" isRendered={true} colour={"purple"} label={"Editable Field"} />
+const initialValueBadge = (
+  <div className="badge-wrapper">
+    <Badge className="error-badge" isRendered={true} colour={"grey"} label={"Initial Value"} />
+  </div>
 )
-const correctionBadge = <Badge className="error-badge" isRendered={true} colour={"green"} label={"Correction"} />
+const editableFieldBadge = (
+  <div className="badge-wrapper">
+    <Badge className="error-badge" isRendered={true} colour={"purple"} label={"Editable Field"} />
+  </div>
+)
+const correctionBadge = (
+  <div className="badge-wrapper">
+    <Badge className="error-badge" isRendered={true} colour={"green"} label={"Correction"} />
+  </div>
+)
 
-const EditableFieldTableRow = ({ value, updatedValue, label, isEditable, children }: Props) => {
+const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, errorStatus, children }: Props) => {
   const classes = useStyles()
+  const isRendered = !!(value || updatedValue || hasExceptions)
   const hasCorrection = updatedValue && value !== updatedValue
+  const isEditable = hasExceptions && errorStatus === "Unresolved"
 
   const labelField = (
     <>
-      <div>{label}</div>
+      <b>
+        <div>{label}</div>
+      </b>
+      {isEditable && (
+        <div className="error-icon">
+          <ErrorIcon />
+        </div>
+      )}
     </>
   )
 
   const inputField = (
-    <div className={classes.content}>
-      {value && <div className="field-value">{value}</div>}
-      {<div className="badge-wrapper">{initialValueBadge}</div>}
-      {children}
-      {<div className="badge-wrapper">{editableFieldBadge}</div>}
-    </div>
+    <>
+      <div className={classes.content}>
+        {value}
+        {initialValueBadge}
+        <br />
+        {children}
+        {editableFieldBadge}
+      </div>
+    </>
+  )
+
+  const initialValueAndCorrectionField = (
+    <>
+      {value}
+      {initialValueBadge}
+      <br />
+      {updatedValue}
+      {correctionBadge}
+    </>
   )
 
   return (
-    <Table.Row>
-      <Table.Cell className={classes.label}>
-        <b>{labelField}</b>
-        {!!isEditable && (
-          <div className="error-icon">
-            <ErrorIcon />
-          </div>
-        )}
-      </Table.Cell>
-      {isEditable ? (
-        <Table.Cell>{inputField}</Table.Cell>
-      ) : hasCorrection ? (
-        <>
-          <Table.Cell>
-            {value}
-            <br />
-            {initialValueBadge}
-            <br />
-            <br />
-            {updatedValue}
-            <br />
-            {correctionBadge}
-          </Table.Cell>
-        </>
-      ) : (
-        <Table.Cell>{value}</Table.Cell>
-      )}
-    </Table.Row>
+    <ConditionalRender isRendered={isRendered}>
+      <Table.Row>
+        <Table.Cell className={classes.label}>{labelField}</Table.Cell>
+        <Table.Cell>{isEditable ? inputField : hasCorrection ? initialValueAndCorrectionField : value}</Table.Cell>
+      </Table.Row>
+    </ConditionalRender>
   )
 }
 

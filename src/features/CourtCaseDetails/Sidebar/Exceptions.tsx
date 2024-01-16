@@ -13,7 +13,7 @@ import type NavigationHandler from "types/NavigationHandler"
 import DefaultException from "../../../components/Exception/DefaultException"
 import PncException from "../../../components/Exception/PncException"
 import Form from "../../../components/Form"
-import { AmendmentRecords } from "../../../types/Amendments"
+import { AmendmentRecords } from "types/Amendments"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
 import LockStatusTag from "../LockStatusTag"
 
