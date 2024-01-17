@@ -142,8 +142,8 @@ const ResolveCourtCasePage: NextPage<Props> = ({
       <CurrentUserContext.Provider value={currentUserContext}>
         <Layout>
           <Head>
-            <title>{"Resolve Case | Bichard7"}</title>
-            <meta name="description" content="Resolve Case | Bichard7" />
+            <title>{"Bichard7 | Resolve Case"}</title>
+            <meta name="description" content="Bichard7 | Resolve Case" />
           </Head>
           <BackLink href={backLink} onClick={function noRefCheck() {}}>
             {"Case Details"}
