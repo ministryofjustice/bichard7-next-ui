@@ -124,8 +124,8 @@ const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath, a
       <CurrentUserContext.Provider value={currentUserContext}>
         <Layout>
           <Head>
-            <title>{"Submit Case Exception(s) | Bichard7"}</title>
-            <meta name="description" content="Submit Case Exception(s) | Bichard7" />
+            <title>{"Bichard7 | Submit Case Exception(s)"}</title>
+            <meta name="description" content="Bichard7 | Submit Case Exception(s)" />
           </Head>
           <BackLink href={backLink} onClick={function noRefCheck() {}}>
             {"Case Details"}

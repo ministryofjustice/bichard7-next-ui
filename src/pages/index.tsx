@@ -266,8 +266,8 @@ const Home: NextPage<Props> = (props) => {
   return (
     <>
       <Head>
-        <title>{"Case List | Bichard7"}</title>
-        <meta name="description" content="Case List | Bichard7" />
+        <title>{"Bichard7 | Case List"}</title>
+        <meta name="description" content="Bichard7 | Case List" />
       </Head>
       <CsrfTokenContext.Provider value={csrfTokenContext}>
         <CurrentUserContext.Provider value={currentUserContext}>
