@@ -13,7 +13,7 @@ import ErrorPromptMessage from "components/ErrorPromptMessage"
 import { BailConditions } from "./BailConditions"
 import { createUseStyles } from "react-jss"
 import { useCourtCase } from "../../../../context/CourtCaseContext"
-import { useState } from "react"
+import React, { useState } from "react"
 import { isAsnFormatValid } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/isAsnValid"
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../types/Amendments"
 import EditableFieldTableRow from "../../../../components/EditableFieldTableRow"
@@ -46,12 +46,17 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
   const asnSystemErrorExceptions: ExceptionCode[] = [ExceptionCode.HO200113, ExceptionCode.HO200114]
   const asnEditableExceptions: ExceptionCode[] = [ExceptionCode.HO100206, ExceptionCode.HO100321]
-  const asnErrorPrompt = findExceptions(courtCase, courtCase.aho.Exceptions, asnSystemErrorExceptions)
+  const asnErrorPrompt = findExceptions(
+    courtCase,
+    courtCase.aho.Exceptions,
+    ExceptionCode.HO200113,
+    ExceptionCode.HO200114
+  )
   const updatedAsn =
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber
   const [isValidAsn, setIsValidAsn] = useState<boolean>(true)
-  const handleAsnChange = (event) => {
-    const asn = event.target.value.toUpperCase()
+  const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const asn = e.target.value.toUpperCase()
     setIsValidAsn(isAsnFormatValid(asn))
     amendFn("asn")(asn)
   }
@@ -116,7 +121,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
                 id={"asn"}
                 name={"asn"}
                 onChange={handleAsnChange}
-                value={amendmentRecords.asn ?? ""}
+                value={(amendmentRecords.asn as string) ?? ""}
                 error={!isValidAsn}
               />
             </div>
