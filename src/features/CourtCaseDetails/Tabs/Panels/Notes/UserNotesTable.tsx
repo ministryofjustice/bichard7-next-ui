@@ -7,7 +7,7 @@ interface Props {
   className?: string
 }
 
-export const UserNotes = ({ className }: Props) => {
+export const UserNotesTable = ({ className }: Props) => {
   const courtCase = useCourtCase()
   const notes: DisplayNote[] = courtCase.notes
 
