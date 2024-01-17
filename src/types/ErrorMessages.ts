@@ -11,7 +11,11 @@ enum ErrorMessages {
   HO100307 = "This code could not be found via look-up, report the issue to Bichard 7 team and the courts for the correct so that they can investigate this issue and advise."
 }
 
-const findExceptions = (courtCase: DisplayFullCourtCase, ahoExceptions: Exception[], exceptions: ExceptionCode[]) => {
+const findExceptions = (
+  courtCase: DisplayFullCourtCase,
+  ahoExceptions: Exception[],
+  ...exceptions: ExceptionCode[]
+) => {
   if (courtCase.errorStatus === "Resolved") {
     return undefined
   }
