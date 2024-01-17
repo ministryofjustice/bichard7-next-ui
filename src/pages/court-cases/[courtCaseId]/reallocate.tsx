@@ -148,8 +148,8 @@ const ReallocateCasePage: NextPage<Props> = ({
                 {"Case is locked by another user."}
               </ConditionalRender>
               <ConditionalRender isRendered={!lockedByAnotherUser}>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <Form method="POST" action="#" csrfToken={csrfToken}>
+                <div className="govuk-grid-row">
+                  <Form className="govuk-grid-column-one-half" method="POST" action="#" csrfToken={csrfToken}>
                     <Fieldset>
                       <FormGroup>
                         <Label>{"Current force owner"}</Label>
@@ -186,12 +186,7 @@ const ReallocateCasePage: NextPage<Props> = ({
                       </ButtonsGroup>
                     </Fieldset>
                   </Form>
-                  <div>
-                    <Heading as="h2" size="SMALL">
-                      {"Previous User Notes"}
-                    </Heading>
-                    <UserNotes />
-                  </div>
+                  <UserNotes className="govuk-grid-column-one-half" />
                 </div>
               </ConditionalRender>
             </Layout>
