@@ -148,7 +148,7 @@ const ReallocateCasePage: NextPage<Props> = ({
                 {"Case is locked by another user."}
               </ConditionalRender>
               <ConditionalRender isRendered={!lockedByAnotherUser}>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <Form method="POST" action="#" csrfToken={csrfToken}>
                     <Fieldset>
                       <FormGroup>
