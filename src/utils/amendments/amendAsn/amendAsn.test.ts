@@ -48,5 +48,4 @@ describe("asn amendments", () => {
         .DefendantOrOffender.DefendantOrOffenderSequenceNumber
     ).toEqual("00000448754")
   })
-  
 })
