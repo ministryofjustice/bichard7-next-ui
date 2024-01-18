@@ -31,6 +31,9 @@ import ReallocationNotesForm from "components/ReallocationNotesForm"
 import { DisplayNote } from "types/display/Notes"
 import ActionLink from "components/ActionLink"
 import { createUseStyles } from "react-jss"
+import CourtCaseDetailsSummaryBox from "features/CourtCaseDetails/CourtCaseDetailsSummaryBox"
+import Header from "features/CourtCaseDetails/Header"
+import { PreviousPathContext, PreviousPathContextType } from "context/PreviousPathContext"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -72,7 +75,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       previousPath: previousPath || "",
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
-      lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
+      lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username),
+      canReallocate: courtCase.canReallocate(currentUser.username)
     }
 
     if (isPost(req)) {
@@ -104,6 +108,7 @@ interface Props {
   noteTextError?: string
   csrfToken: string
   previousPath: string
+  canReallocate: boolean
 }
 
 const ReallocateCasePage: NextPage<Props> = ({
@@ -111,12 +116,15 @@ const ReallocateCasePage: NextPage<Props> = ({
   user,
   lockedByAnotherUser,
   csrfToken,
-  previousPath
+  previousPath,
+  canReallocate
 }: Props) => {
   const { basePath } = useRouter()
   const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
   const [courtCaseContext] = useState<CourtCaseContextType>({ courtCase: courtCase })
   const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
+  const [previousPathContext] = useState<PreviousPathContextType>({ previousPath })
+
   const classes = useStyles()
 
   const [showMore, setShowMore] = useState<boolean>(false)
@@ -143,42 +151,46 @@ const ReallocateCasePage: NextPage<Props> = ({
       <CurrentUserContext.Provider value={currentUserContext}>
         <CourtCaseContext.Provider value={courtCaseContext}>
           <CsrfTokenContext.Provider value={csrfTokenContext}>
-            <Layout>
-              <BackLink href={backLink} onClick={function noRefCheck() {}}>
-                {"Case Details"}
-              </BackLink>
-              <HeaderContainer id="header-container">
-                <HeaderRow>
-                  <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
-                    {"Case reallocation"}
-                  </Heading>
-                </HeaderRow>
-              </HeaderContainer>
-              <ConditionalRender isRendered={lockedByAnotherUser}>
-                {"Case is locked by another user."}
-              </ConditionalRender>
-              <ConditionalRender isRendered={!lockedByAnotherUser}>
-                <GridRow>
-                  <GridCol columnOneHalf>
-                    <ReallocationNotesForm csrfToken={csrfToken} courtCase={courtCase} backLink={backLink} />
-                  </GridCol>
-                  <GridCol columnOneHalf>
-                    <Heading as="h2" size="SMALL">
-                      {"Previous User Notes"}
+            <PreviousPathContext.Provider value={previousPathContext}>
+              <Layout>
+                <BackLink href={backLink} onClick={function noRefCheck() {}}>
+                  {"Case Details"}
+                </BackLink>
+                <HeaderContainer id="header-container">
+                  <Header canReallocate={canReallocate} />
+                  <CourtCaseDetailsSummaryBox />
+                  <HeaderRow>
+                    <Heading as="h2" size="MEDIUM" aria-label="Reallocate Case">
+                      {"Case reallocation"}
                     </Heading>
-                    <NotesTable notes={showMore ? userNotes : userNotes.slice(0, 1)} />
-                    <GridRow className={classes.showMoreContainer} >
-                      <ActionLink
-                        onClick={() => setShowMore(!showMore)}
-                        id={showMore ? "show-more-action" : "show-less-action"}
-                      >
-                        {showMore ? "show less" : "show more"}
-                      </ActionLink>
-                    </GridRow>
-                  </GridCol>
-                </GridRow>
-              </ConditionalRender>
-            </Layout>
+                  </HeaderRow>
+                </HeaderContainer>
+                <ConditionalRender isRendered={lockedByAnotherUser}>
+                  {"Case is locked by another user."}
+                </ConditionalRender>
+                <ConditionalRender isRendered={!lockedByAnotherUser}>
+                  <GridRow>
+                    <GridCol columnOneHalf>
+                      <ReallocationNotesForm csrfToken={csrfToken} courtCase={courtCase} backLink={backLink} />
+                    </GridCol>
+                    <GridCol columnOneHalf>
+                      <Heading as="h2" size="SMALL">
+                        {"Previous User Notes"}
+                      </Heading>
+                      <NotesTable notes={showMore ? userNotes : userNotes.slice(0, 1)} />
+                      <GridRow className={classes.showMoreContainer}>
+                        <ActionLink
+                          onClick={() => setShowMore(!showMore)}
+                          id={showMore ? "show-more-action" : "show-less-action"}
+                        >
+                          {showMore ? "show less" : "show more"}
+                        </ActionLink>
+                      </GridRow>
+                    </GridCol>
+                  </GridRow>
+                </ConditionalRender>
+              </Layout>
+            </PreviousPathContext.Provider>
           </CsrfTokenContext.Provider>
         </CourtCaseContext.Provider>
       </CurrentUserContext.Provider>

@@ -73,8 +73,14 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
 
   const leaveAndUnlockParams = getUnlockPath(courtCase)
 
-  let reallocatePath = `${basePath}${usePathname()}/reallocate`
+  const pathName = usePathname()
+
+  let reallocatePath = `${basePath}${pathName}`
   let leaveAndUnlockUrl = `${basePath}?${leaveAndUnlockParams.toString()}`
+
+  if (!pathName.includes("/reallocate")) {
+    reallocatePath += "/reallocate"
+  }
 
   if (previousPath) {
     leaveAndUnlockUrl += `&${previousPath}`
