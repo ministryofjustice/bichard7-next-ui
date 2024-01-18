@@ -1,13 +1,13 @@
 import ConditionalRender from "components/ConditionalRender"
-import DateTime from "components/DateTime"
 import NotesFilterOptions from "components/NotesFilterOptions"
 import { useCourtCase } from "context/CourtCaseContext"
-import { Paragraph, Table } from "govuk-react"
+import { Paragraph } from "govuk-react"
 import { useState } from "react"
 import type NotesViewOption from "types/NotesViewOption"
 import { DisplayNote } from "types/display/Notes"
 import { CourtCaseDetailsPanel } from "../../CourtCaseDetailsPanels"
 import AddNoteForm from "./AddNoteForm"
+import { NotesTable } from "./NotesTable"
 
 interface NotesProps {
   className: string
@@ -47,25 +47,7 @@ export const Notes = ({ className, isLockedByCurrentUser }: NotesProps) => {
     <CourtCaseDetailsPanel className={className} heading={"Notes"}>
       <NotesFilterOptions dispatch={setViewOption} selectedOption={viewOption} />
       <ConditionalRender isRendered={hasNotes}>
-        <Table
-          head={
-            <Table.Row>
-              <Table.CellHeader>{"User"}</Table.CellHeader>
-              <Table.CellHeader>{"Time"}</Table.CellHeader>
-              <Table.CellHeader>{"Note"}</Table.CellHeader>
-            </Table.Row>
-          }
-        >
-          {filteredNotes.map((note, index) => (
-            <Table.Row key={index}>
-              <Table.Cell>{note.userFullName}</Table.Cell>
-              <Table.Cell>
-                <DateTime date={note.createdAt} />
-              </Table.Cell>
-              <Table.Cell>{note.noteText}</Table.Cell>
-            </Table.Row>
-          ))}
-        </Table>
+        <NotesTable notes={filteredNotes} />
       </ConditionalRender>
       <ConditionalRender isRendered={!hasFilteredNotes}>
         <Paragraph>{`Case has no ${noNoteText}.`}</Paragraph>

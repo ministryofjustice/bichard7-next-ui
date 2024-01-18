@@ -26,8 +26,9 @@ import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import { CourtCaseContext, CourtCaseContextType } from "context/CourtCaseContext"
 import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
-import { UserNotesTable } from "features/CourtCaseDetails/Tabs/Panels/Notes/UserNotesTable"
+import { NotesTable } from "features/CourtCaseDetails/Tabs/Panels/Notes/NotesTable"
 import ReallocationNotesForm from "components/ReallocationNotesForm"
+import { DisplayNote } from "types/display/Notes"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -39,6 +40,8 @@ export const getServerSideProps = withMultipleServerSideProps(
       courtCaseId: string
       previousPath: string
     }
+
+    console.log("previousPath:", previousPath)
 
     const dataSource = await getDataSource()
     const courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
@@ -64,7 +67,7 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props = {
       csrfToken,
-      previousPath,
+      previousPath: previousPath || "",
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
@@ -106,11 +109,15 @@ const ReallocateCasePage: NextPage<Props> = ({
   const [courtCaseContext] = useState<CourtCaseContextType>({ courtCase: courtCase })
   const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
 
+  const notes: DisplayNote[] = courtCase.notes
+
   let backLink = `${basePath}/court-cases/${courtCase.errorId}`
 
   if (previousPath) {
     backLink += `?previousPath=${encodeURIComponent(previousPath)}`
   }
+
+  const userNotes = notes.filter(({ userId }) => userId !== "System")
 
   return (
     <>
@@ -137,8 +144,15 @@ const ReallocateCasePage: NextPage<Props> = ({
               </ConditionalRender>
               <ConditionalRender isRendered={!lockedByAnotherUser}>
                 <div className="govuk-grid-row">
-                  <ReallocationNotesForm csrfToken={csrfToken} courtCase={courtCase} backLink={backLink} />
-                  <UserNotesTable className="govuk-grid-column-one-half" />
+                  <div className="govuk-grid-column-one-half">
+                    <ReallocationNotesForm csrfToken={csrfToken} courtCase={courtCase} backLink={backLink} />
+                  </div>
+                  <div className="govuk-grid-column-one-half">
+                    <Heading as="h2" size="SMALL">
+                      {"Previous User Notes"}
+                    </Heading>
+                    <NotesTable notes={userNotes} />
+                  </div>
                 </div>
               </ConditionalRender>
             </Layout>

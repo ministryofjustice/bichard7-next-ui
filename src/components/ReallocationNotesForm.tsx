@@ -4,7 +4,6 @@ import ButtonsGroup from "./ButtonsGroup"
 import Form from "./Form"
 import { useCustomStyles } from "../../styles/customStyles"
 import { FormEventHandler, useState } from "react"
-import { useRouter } from "next/router"
 import { forces } from "@moj-bichard7-developers/bichard7-next-data"
 import getForcesForReallocation from "services/getForcesForReallocation"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
@@ -25,7 +24,7 @@ const ReallocationNotesForm = ({ courtCase, csrfToken, backLink }: Props) => {
   }
 
   return (
-    <Form className="govuk-grid-column-one-half" method="POST" action="#" csrfToken={csrfToken}>
+    <Form method="POST" action="#" csrfToken={csrfToken}>
       <Fieldset>
         <FormGroup>
           <Label className="govuk-heading-s">{"Current force owner"}</Label>
