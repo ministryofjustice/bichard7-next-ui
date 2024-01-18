@@ -3,7 +3,7 @@ import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
 import Layout from "components/Layout"
 import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
-import { BackLink, Heading } from "govuk-react"
+import { BackLink, GridCol, GridRow, Heading } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
@@ -26,9 +26,11 @@ import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import { CourtCaseContext, CourtCaseContextType } from "context/CourtCaseContext"
 import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
-import { NotesTable } from "features/CourtCaseDetails/Tabs/Panels/Notes/NotesTable"
+import { NotesTable } from "components/NotesTable"
 import ReallocationNotesForm from "components/ReallocationNotesForm"
 import { DisplayNote } from "types/display/Notes"
+import ActionLink from "components/ActionLink"
+import { createUseStyles } from "react-jss"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -88,6 +90,13 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
+const useStyles = createUseStyles({
+  showMoreContainer: {
+    justifyContent: "flex-end",
+    paddingRight: "15px"
+  }
+})
+
 interface Props {
   user: DisplayFullUser
   courtCase: DisplayFullCourtCase
@@ -108,6 +117,9 @@ const ReallocateCasePage: NextPage<Props> = ({
   const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
   const [courtCaseContext] = useState<CourtCaseContextType>({ courtCase: courtCase })
   const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
+  const classes = useStyles()
+
+  const [showMore, setShowMore] = useState<boolean>(false)
 
   const notes: DisplayNote[] = courtCase.notes
 
@@ -117,7 +129,10 @@ const ReallocateCasePage: NextPage<Props> = ({
     backLink += `?previousPath=${encodeURIComponent(previousPath)}`
   }
 
-  const userNotes = notes.filter(({ userId }) => userId !== "System")
+  const userNotes = notes
+    .filter(({ userId }) => userId !== "System")
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    .reverse()
 
   return (
     <>
@@ -143,17 +158,25 @@ const ReallocateCasePage: NextPage<Props> = ({
                 {"Case is locked by another user."}
               </ConditionalRender>
               <ConditionalRender isRendered={!lockedByAnotherUser}>
-                <div className="govuk-grid-row">
-                  <div className="govuk-grid-column-one-half">
+                <GridRow>
+                  <GridCol columnOneHalf>
                     <ReallocationNotesForm csrfToken={csrfToken} courtCase={courtCase} backLink={backLink} />
-                  </div>
-                  <div className="govuk-grid-column-one-half">
+                  </GridCol>
+                  <GridCol columnOneHalf>
                     <Heading as="h2" size="SMALL">
                       {"Previous User Notes"}
                     </Heading>
-                    <NotesTable notes={userNotes} />
-                  </div>
-                </div>
+                    <NotesTable notes={showMore ? userNotes : userNotes.slice(0, 1)} />
+                    <GridRow className={classes.showMoreContainer} >
+                      <ActionLink
+                        onClick={() => setShowMore(!showMore)}
+                        id={showMore ? "show-more-action" : "show-less-action"}
+                      >
+                        {showMore ? "show less" : "show more"}
+                      </ActionLink>
+                    </GridRow>
+                  </GridCol>
+                </GridRow>
               </ConditionalRender>
             </Layout>
           </CsrfTokenContext.Provider>

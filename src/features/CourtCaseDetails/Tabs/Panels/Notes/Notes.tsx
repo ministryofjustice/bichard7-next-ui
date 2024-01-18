@@ -7,7 +7,7 @@ import type NotesViewOption from "types/NotesViewOption"
 import { DisplayNote } from "types/display/Notes"
 import { CourtCaseDetailsPanel } from "../../CourtCaseDetailsPanels"
 import AddNoteForm from "./AddNoteForm"
-import { NotesTable } from "./NotesTable"
+import { NotesTable } from "../../../../../components/NotesTable"
 
 interface NotesProps {
   className: string
