@@ -186,8 +186,8 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
     <CurrentUserContext.Provider value={currentUserContext}>
       <Layout>
         <Head>
-          <title>{"Report an issue using new Bichard | Bichard7"}</title>
-          <meta name="description" content="user switching version feedback| Bichard7" />
+          <title>{"Bichard7 | Report an issue using new Bichard"}</title>
+          <meta name="description" content="Bichard7 | User switching version feedback" />
         </Head>
 
         <FeedbackHeaderLinks

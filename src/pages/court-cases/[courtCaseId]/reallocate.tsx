@@ -122,8 +122,8 @@ const ReallocateCasePage: NextPage<Props> = ({
   return (
     <>
       <Head>
-        <title>{"Case Reallocation | Bichard7"}</title>
-        <meta name="description" content="Case Reallocation | Bichard7" />
+        <title>{"Bichard7 | Case Reallocation"}</title>
+        <meta name="description" content="Bichard7 | Case Reallocation" />
       </Head>
       <CurrentUserContext.Provider value={currentUserContext}>
         <CourtCaseContext.Provider value={courtCaseContext}>
