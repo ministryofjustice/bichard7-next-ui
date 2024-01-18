@@ -146,7 +146,7 @@ describe("NextHearingDate", () => {
     cy.login("bichard01@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
-    cy.get(".Defendant-details-table").contains("AAAAAAAAAAAAAAAAAAAA")
+    cy.get(".Defendant-details-table").contains("AAAAAAAAAAAAAAAAAAA")
     cy.get("#asn").type("1101ZD0100000448754K")
 
     cy.get("button").contains("Submit exception(s)").click()
