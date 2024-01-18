@@ -45,14 +45,20 @@ describe("Defendant Details", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={{ courtCase }}>
-        <DefendantDetails />
+        <DefendantDetails amendFn={() => () => {}} amendmentRecords={{}} />
       </CourtCaseContext.Provider>
     )
 
     cy.contains("td", "PNC Check name").siblings().should("include.text", data.PNCCheckname)
-    cy.contains("td", "Given name").siblings().should("include.text", data.DefendantDetail?.PersonName.GivenName)
-    cy.contains("td", "Family name").siblings().should("include.text", data.DefendantDetail?.PersonName.FamilyName)
-    cy.contains("td", "Title").siblings().should("include.text", data.DefendantDetail?.PersonName.Title)
+    cy.contains("td", "Given name")
+      .siblings()
+      .should("include.text", data.DefendantDetail?.PersonName.GivenName)
+    cy.contains("td", "Family name")
+      .siblings()
+      .should("include.text", data.DefendantDetail?.PersonName.FamilyName)
+    cy.contains("td", "Title")
+      .siblings()
+      .should("include.text", data.DefendantDetail?.PersonName.Title)
     cy.contains("td", "Date of birth")
       .siblings()
       .should("include.text", format(data.DefendantDetail?.BirthDate as Date, "dd/MM/yyyy"))
@@ -66,7 +72,9 @@ describe("Defendant Details", () => {
       .should("include.text", data.Address?.AddressLine4)
       .should("include.text", data.Address?.AddressLine5)
 
-    cy.contains("td", "PNC file name").siblings().should("include.text", data.DefendantDetail?.GeneratedPNCFilename)
+    cy.contains("td", "PNC file name")
+      .siblings()
+      .should("include.text", data.DefendantDetail?.GeneratedPNCFilename)
     cy.contains("td", "Remand status").siblings().contains("Unconditional bail")
   })
 
@@ -100,7 +108,7 @@ describe("Defendant Details", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={{ courtCase }}>
-        <DefendantDetails />
+        <DefendantDetails amendFn={() => () => {}} amendmentRecords={{}} />
       </CourtCaseContext.Provider>
     )
 
