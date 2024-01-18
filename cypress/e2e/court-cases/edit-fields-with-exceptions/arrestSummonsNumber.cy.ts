@@ -1,7 +1,7 @@
-import hashedPassword from "../../../fixtures/hashedPassword"
 import AsnExceptionHo100206 from "../../../../test/test-data/AsnExceptionHo100206.json"
 import AsnExceptionHo100321 from "../../../../test/test-data/AsnExceptionHo100321.json"
 import dummyAho from "../../../../test/test-data/error_list_aho.json"
+import hashedPassword from "../../../fixtures/hashedPassword"
 import { verifyUpdatedMessage } from "../../../support/helpers"
 
 describe("NextHearingDate", () => {
