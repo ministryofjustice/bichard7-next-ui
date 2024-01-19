@@ -9,7 +9,6 @@ commands:
     steps:
       - checkout
       - node_install
-      - run: rm -rf ~/.npm
       - node/install-packages:
           include-branch-in-cache-key: true
       - run:
@@ -105,6 +104,24 @@ commands:
 #################################################################################
 
 jobs:
+  build-ui:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: xlarge
+    steps:
+      - checkout
+      - run: ./.circleci/scripts/build-ui.sh
+      - run:
+          name: Save Docker image
+          command: |
+            mkdir -p images
+            docker image save -o "images/ui:latest" "ui:latest"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+            - images
+
   lint:
     machine:
       image: ubuntu-2204:2023.07.2
@@ -204,6 +221,12 @@ jobs:
     resource_class: xlarge
     parallelism: 5
     steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Load image
+          command: |
+            docker image load < "images/ui:latest"
       - setup
       - run:
           command: ./.circleci/scripts/install-cypress.sh 2>&1
@@ -212,7 +235,6 @@ jobs:
       - fetch_images:
           IMAGES: nodejs-20-2023
       - build_audit_logging_images
-      - run: ./.circleci/scripts/build-ui.sh
       - run:
           name: Wait for cypress install to finish
           command: until [ -f cypressInstalled ]; do sleep 1; done
@@ -255,11 +277,16 @@ jobs:
       WORKSPACE: local-next
       AUTH_TYPE: user-service
     steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Load image
+          command: |
+            docker image load < "images/ui:latest"
+      - setup
       - run:
           name: Clone bichard7-next-tests
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
-      - setup
-      - run: ./.circleci/scripts/build-ui.sh
       - node/install-packages:
           app-dir: ~/bichard7-next-tests
           cache-path: ~/bichard7-next-tests/node_modules
@@ -278,8 +305,13 @@ jobs:
       docker_layer_caching: true
     resource_class: xlarge
     steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Load image
+          command: |
+            docker image load < "images/ui:latest"
       - setup
-      - run: ./.circleci/scripts/build-ui.sh
       - fetch_images:
           IMAGES: nodejs-20-2023
       - build_audit_logging_images
@@ -300,12 +332,20 @@ jobs:
 workflows:
   build-and-test:
     jobs:
+      - build-ui
+
       - lint
       - unit_test
       - integration_test
       - cypress_component_test
       - seed_data
 
-      - cypress_e2e_tests
-      - cucumber_e2e_tests
-      - zap_scanner
+      - cypress_e2e_tests:
+          requires:
+            - build-ui
+      - cucumber_e2e_tests:
+          requires:
+            - build-ui
+      - zap_scanner:
+          requires:
+            - build-ui
