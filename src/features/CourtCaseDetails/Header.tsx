@@ -124,7 +124,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
         />
       </HeaderRow>
       <ButtonContainer>
-        <ConditionalRender isRendered={canReallocate && courtCase.phase === 1}>
+        <ConditionalRender isRendered={canReallocate && courtCase.phase === 1 && !pathName.includes("/reallocate")}>
           <LinkButton
             href={reallocatePath}
             className="b7-reallocate-button"

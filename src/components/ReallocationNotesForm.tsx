@@ -57,7 +57,7 @@ const ReallocationNotesForm = ({ courtCase, backLink }: Props) => {
 
         <ButtonsGroup>
           <Button id="Reallocate" type="submit">
-            {"Reallocate"}
+            {"Reallocate Case"}
           </Button>
           <Link href={backLink}>{"Cancel"}</Link>
         </ButtonsGroup>

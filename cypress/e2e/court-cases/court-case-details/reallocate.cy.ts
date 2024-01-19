@@ -44,7 +44,7 @@ describe("Case details", () => {
     cy.findByText("NAME Defendant").click()
 
     cy.get("button").contains("Reallocate Case").click()
-    cy.get("H1").should("have.text", "Case reallocation")
+    cy.contains("H2", "Case reallocation").should("exist")
 
     cy.findByText("Cancel").should("have.attr", "href", "/bichard/court-cases/0")
 
@@ -90,7 +90,7 @@ describe("Case details", () => {
     cy.findByText("NAME Defendant").click()
 
     cy.get("button").contains("Reallocate Case").click()
-    cy.get("H1").should("have.text", "Case reallocation")
+    cy.contains("H2", "Case reallocation").should("exist")
     cy.findByText("Cancel").should("have.attr", "href", "/bichard/court-cases/0")
 
     cy.get('select[name="force"]').select("03 - Cumbria")
@@ -133,7 +133,7 @@ describe("Case details", () => {
     cy.findByText("NAME Defendant").click()
 
     cy.get("button").contains("Reallocate Case").click()
-    cy.get("H1").should("have.text", "Case reallocation")
+    cy.contains("H2", "Case reallocation").should("exist")
     cy.findByText("Cancel").should("have.attr", "href", "/bichard/court-cases/0")
 
     cy.get('select[name="force"]').select("03 - Cumbria")

@@ -3,7 +3,7 @@ import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
 import Layout from "components/Layout"
 import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
-import { BackLink, GridCol, GridRow, Heading } from "govuk-react"
+import { GridCol, GridRow, Heading } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
@@ -153,9 +153,6 @@ const ReallocateCasePage: NextPage<Props> = ({
           <CsrfTokenContext.Provider value={csrfTokenContext}>
             <PreviousPathContext.Provider value={previousPathContext}>
               <Layout>
-                <BackLink href={backLink} onClick={function noRefCheck() {}}>
-                  {"Case Details"}
-                </BackLink>
                 <HeaderContainer id="header-container">
                   <Header canReallocate={canReallocate} />
                   <CourtCaseDetailsSummaryBox />
