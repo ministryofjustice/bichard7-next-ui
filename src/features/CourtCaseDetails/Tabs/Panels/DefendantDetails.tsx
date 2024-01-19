@@ -53,7 +53,8 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     ExceptionCode.HO200114
   )
   const updatedAsn =
-    courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber
+    courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
+      ?.ArrestSummonsNumber
   const [isValidAsn, setIsValidAsn] = useState<boolean>(true)
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const asn = e.target.value.toUpperCase()
