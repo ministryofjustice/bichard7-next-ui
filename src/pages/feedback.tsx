@@ -131,8 +131,8 @@ const FeedbackPage: NextPage<Props> = ({ user, previousPath, fields, csrfToken }
       <CurrentUserContext.Provider value={currentUserContext}>
         <Layout>
           <Head>
-            <title>{"Report an issue | Bichard7"}</title>
-            <meta name="description" content="User feedback | Bichard7" />
+            <title>{"Bichard7 | Report an issue"}</title>
+            <meta name="description" content="Bichard7 | User feedback" />
           </Head>
           <BackLink href={`${router.basePath}` + previousPath} onClick={function noRefCheck() {}}>
             {"Back"}
