@@ -224,8 +224,8 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   return (
     <>
       <Head>
-        <title>{"Case Details | Bichard7"}</title>
-        <meta name="description" content="Case Details | Bichard7" />
+        <title>{"Bichard7 | Case Details"}</title>
+        <meta name="description" content="Bichard7 | Case Details" />
       </Head>
       <CsrfTokenContext.Provider value={csrfTokenContext}>
         <CurrentUserContext.Provider value={currentUserContext}>

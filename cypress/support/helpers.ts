@@ -19,6 +19,11 @@ export const confirmMultipleFieldsDisplayed = (fields: string[]) => {
     cy.contains(field)
   })
 }
+export const submitAndConfirmExceptions = () => {
+  cy.get("button").contains("Submit exception(s)").click()
+  cy.url().should("match", /\/bichard\/court-cases\/[0-9]+\/submit$/)
+  cy.get("button").contains("Submit exception(s)").click()
+}
 
 export const confirmMultipleFieldsNotDisplayed = (fields: string[]) => {
   fields.forEach((field) => {

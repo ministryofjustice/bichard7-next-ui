@@ -1,9 +1,8 @@
 import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
-import { format } from "date-fns"
 import { GenderCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/GenderCode"
+import { format } from "date-fns"
+import { CourtCaseContext } from "../../src/context/CourtCaseContext"
 import { DefendantDetails } from "../../src/features/CourtCaseDetails/Tabs/Panels/DefendantDetails"
-import { CourtCaseContext, CourtCaseContextType } from "../../src/context/CourtCaseContext"
-import { createContext, useState } from "react"
 import { DisplayFullCourtCase } from "../../src/types/display/CourtCases"
 
 describe("Defendant Details", () => {
@@ -51,15 +50,9 @@ describe("Defendant Details", () => {
     )
 
     cy.contains("td", "PNC Check name").siblings().should("include.text", data.PNCCheckname)
-    cy.contains("td", "Given name")
-      .siblings()
-      .should("include.text", data.DefendantDetail?.PersonName.GivenName)
-    cy.contains("td", "Family name")
-      .siblings()
-      .should("include.text", data.DefendantDetail?.PersonName.FamilyName)
-    cy.contains("td", "Title")
-      .siblings()
-      .should("include.text", data.DefendantDetail?.PersonName.Title)
+    cy.contains("td", "Given name").siblings().should("include.text", data.DefendantDetail?.PersonName.GivenName)
+    cy.contains("td", "Family name").siblings().should("include.text", data.DefendantDetail?.PersonName.FamilyName)
+    cy.contains("td", "Title").siblings().should("include.text", data.DefendantDetail?.PersonName.Title)
     cy.contains("td", "Date of birth")
       .siblings()
       .should("include.text", format(data.DefendantDetail?.BirthDate as Date, "dd/MM/yyyy"))
@@ -73,9 +66,7 @@ describe("Defendant Details", () => {
       .should("include.text", data.Address?.AddressLine4)
       .should("include.text", data.Address?.AddressLine5)
 
-    cy.contains("td", "PNC file name")
-      .siblings()
-      .should("include.text", data.DefendantDetail?.GeneratedPNCFilename)
+    cy.contains("td", "PNC file name").siblings().should("include.text", data.DefendantDetail?.GeneratedPNCFilename)
     cy.contains("td", "Remand status").siblings().contains("Unconditional bail")
   })
 

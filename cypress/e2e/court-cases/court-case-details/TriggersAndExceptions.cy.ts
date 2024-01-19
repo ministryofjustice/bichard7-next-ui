@@ -178,23 +178,46 @@ describe("Triggers and exceptions", () => {
   })
 
   describe("Locked icon", () => {
-    it("Should be shown if somebody else has the triggers locked", () => {
+    it("Should display the trigger lock tag if the triggers or exceptions locked", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "another.user",
+          triggerLockedByUsername: "some.user",
+          errorLockedByUsername: "some.user",
           orgForPoliceFilter: "01"
         }
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
       cy.get("section#triggers").find("#triggers-locked-tag").should("exist")
+      cy.get("section#exceptions").find("#exceptions-locked-tag").should("exist")
     })
 
-    it("Should not be shown if the visiting user holds the trigger lock", () => {
+    it("Should display the resolution status if the triggers or exceptions are resolved", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorStatus: "Resolved",
+          triggerStatus: "Resolved",
+          orgForPoliceFilter: "01"
+        }
+      ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("section#triggers").find("#triggers-locked-tag").should("not.exist")
+      cy.get("section#triggers").find("#triggers-resolved-tag").should("exist")
+      cy.get("section#exceptions").find("#exceptions-resolved-tag").should("exist")
+    })
+
+    it("Should display the submitted status when exceptions are submitted", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          errorStatus: "Submitted",
+          orgForPoliceFilter: "01"
+        }
+      ])
+      cy.visit(caseURL)
+      cy.get("section#exceptions").find("#exceptions-submitted-tag").should("exist")
     })
 
     it("Should display a lock icon when someone else has the triggers locked", () => {

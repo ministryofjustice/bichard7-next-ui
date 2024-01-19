@@ -1,131 +1,71 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import pleaStatus from "@moj-bichard7-developers/bichard7-next-data/dist/data/plea-status.json"
-import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
-import { Durations } from "@moj-bichard7-developers/bichard7-next-data/dist/types/Duration"
-import { Duration } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import ConditionalRender from "components/ConditionalRender"
+import EditableFieldTableRow from "components/EditableFieldTableRow"
+import ErrorPromptMessage from "components/ErrorPromptMessage"
+import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
+import { useCourtCase } from "context/CourtCaseContext"
 import { HintText, Label, Table } from "govuk-react"
+import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
+import { findExceptions } from "types/ErrorMessages"
+import { ResolutionStatus } from "types/ResolutionStatus"
+import { Exception } from "types/exceptions"
+import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
+import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
+import hasNextHearingDateException from "utils/exceptions/hasNextHearingDateException"
+import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
-import ExceptionFieldTableRow from "../../../../../../components/ExceptionFieldTableRow"
 import {
-  AmendmentKeys,
-  AmendmentRecords,
-  IndividualAmendmentValues,
-  UpdatedNextHearingDate,
-  UpdatedOffenceResult
-} from "../../../../../../types/Amendments"
-import { Exception } from "../../../../../../types/exceptions"
+  capitaliseExpression,
+  formatDuration,
+  getNumberOfHours,
+  getPleaStatus,
+  getUrgentYesOrNo,
+  getVerdict,
+  getYesOrNo
+} from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
-
-export const getYesOrNo = (code: boolean | undefined) => {
-  return code === true ? "Y" : code === false ? "N" : undefined
-}
-
-export const capitaliseExpression = (expression: string) => {
-  return expression.charAt(0).toUpperCase() + expression.slice(1).toLowerCase()
-}
-
-export const getUrgentYesOrNo = (urgent: boolean | undefined): string => {
-  return urgent === true ? "Y" : "N"
-}
-
-export const getNumberOfHours = (hours: number | undefined): string | undefined => {
-  return hours ? `${hours} Hours` : undefined
-}
-
-export const formatDuration = (durationLength: number, durationUnit: string): string => {
-  return `${durationLength} ${Durations[durationUnit as Duration]}`
-}
-
-const getNextHearingDateValue = (
-  amendmentRecords: AmendmentRecords,
-  offenceIndex: number,
-  resultIndex: number
-): string | undefined => {
-  const validDateFormat = /^20\d{2}-\d{2}-\d{2}$/
-  const nextHearingDateAmendment =
-    amendmentRecords?.nextHearingDate &&
-    (amendmentRecords.nextHearingDate as UpdatedNextHearingDate[]).find(
-      (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
-    )?.updatedValue
-
-  if (!nextHearingDateAmendment) {
-    return ""
-  }
-
-  return validDateFormat.test(nextHearingDateAmendment) ? nextHearingDateAmendment : undefined
-}
-
-const getNextHearingLocationValue = (
-  amendmentRecords: AmendmentRecords,
-  offenceIndex: number,
-  resultIndex: number
-): string => {
-  return (
-    (amendmentRecords?.nextSourceOrganisation &&
-      (amendmentRecords.nextSourceOrganisation as UpdatedOffenceResult[]).find(
-        (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
-      )?.updatedValue) ??
-    ""
-  )
-}
 
 interface HearingResultProps {
   result: Result
+  updatedFields: AmendmentRecords
   exceptions: Exception[]
   resultIndex: number
   selectedOffenceIndex: number
   amendments: AmendmentRecords
+  errorStatus?: ResolutionStatus | null
   amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
 
 export const HearingResult = ({
   result,
+  updatedFields,
+  errorStatus,
   exceptions,
   resultIndex,
   selectedOffenceIndex,
   amendments,
   amendFn
 }: HearingResultProps) => {
-  const nextHearingDateException = exceptions.some(
-    (exception) =>
-      exception.path.join(".").endsWith(".NextHearingDate") &&
-      (exception.code === ExceptionCode.HO100102 || exception.code === ExceptionCode.HO100323)
-  )
+  const courtCase = useCourtCase()
+  const cjsErrorMessage = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
 
-  const nextHearingLocationException = exceptions.some(
-    (exception) =>
-      exception.path.join(".").endsWith(".NextResultSourceOrganisation.OrganisationUnitCode") &&
-      (exception.code === ExceptionCode.HO100200 ||
-        exception.code === ExceptionCode.HO100300 ||
-        exception.code === ExceptionCode.HO100322)
-  )
-
-  const getPleaStatus = (pleaCode: string | undefined) => {
-    let pleaStatusDescription = pleaCode
-    pleaStatus.forEach((plea) => {
-      if (plea.cjsCode === pleaCode) {
-        pleaStatusDescription = `${pleaCode} (${capitaliseExpression(plea.description)})`
-      }
-    })
-    return pleaStatusDescription
-  }
-
-  const getVerdict = (verdictCode: string | undefined) => {
-    let verdictDescription = verdictCode
-    verdicts.forEach((verdict) => {
-      if (verdict.cjsCode === verdictCode) {
-        verdictDescription = `${verdictCode} (${capitaliseExpression(verdict.description)})`
-      }
-    })
-    return verdictDescription
-  }
+  const offenceIndex = selectedOffenceIndex - 1
+  const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
+  const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
+  const updatedNextHearingLocation = getNextHearingLocationValue(updatedFields, offenceIndex, resultIndex)
+  const updatedNextHearingDate = getNextHearingDateValue(updatedFields, offenceIndex, resultIndex)
 
   return (
     <Table>
-      <TableRow label="CJS Code" value={result.CJSresultCode} />
+      {cjsErrorMessage ? (
+        <ExceptionFieldTableRow badgeText={"System Error"} value={result.CJSresultCode} label={"CJS Code"}>
+          <ErrorPromptMessage message={cjsErrorMessage} />
+        </ExceptionFieldTableRow>
+      ) : (
+        <TableRow label="CJS Code" value={result.CJSresultCode} />
+      )}
       <TableRow
         label="Result hearing type"
         value={result.ResultHearingType && capitaliseExpression(result.ResultHearingType)}
@@ -148,61 +88,50 @@ export const HearingResult = ({
           }
         />
       </ConditionalRender>
-      <ConditionalRender
-        isRendered={
-          !!(
-            (result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode) ||
-            nextHearingLocationException
-          )
-        }
+      <EditableFieldTableRow
+        label="Next hearing location"
+        hasExceptions={hasNextHearingLocationException(exceptions)}
+        errorStatus={errorStatus}
+        value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
+        updatedValue={updatedNextHearingLocation}
       >
-        {nextHearingLocationException ? (
-          <ExceptionFieldTableRow
-            badgeText="Editable Field"
-            label="Next hearing location"
-            value={result.NextResultSourceOrganisation && result.NextResultSourceOrganisation?.OrganisationUnitCode}
-          >
-            <Label>{"Enter next hearing location"}</Label>
-            <HintText>{"OU code, 6-7 characters"}</HintText>
-            <OrganisationUnitTypeahead
-              value={getNextHearingLocationValue(amendments, selectedOffenceIndex - 1, resultIndex)}
-              amendFn={amendFn}
-              resultIndex={resultIndex}
-              offenceIndex={selectedOffenceIndex - 1}
-            />
-          </ExceptionFieldTableRow>
-        ) : (
-          <TableRow label="Next hearing location" value={result.NextResultSourceOrganisation?.OrganisationUnitCode} />
-        )}
-      </ConditionalRender>
-      <ConditionalRender isRendered={!!result.NextHearingDate || !!nextHearingDateException}>
-        {nextHearingDateException ? (
-          <ExceptionFieldTableRow
-            badgeText="Editable Field"
-            label="Next hearing date"
-            value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
-          >
-            <HintText>{"Enter date"}</HintText>
-            <input
-              className="govuk-input"
-              type="date"
-              min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
-              id={"next-hearing-date"}
-              name={"next-hearing-date"}
-              value={getNextHearingDateValue(amendments, selectedOffenceIndex - 1, resultIndex)}
-              onChange={(event) => {
-                amendFn("nextHearingDate")({
-                  resultIndex: resultIndex,
-                  offenceIndex: selectedOffenceIndex - 1, //Displayed offence for navigation is not 0 indexed,
-                  updatedValue: event.target.value
-                })
-              }}
-            />
-          </ExceptionFieldTableRow>
-        ) : (
-          <TableRow label={"Next hearing date"} value={formatDisplayedDate(String(result.NextHearingDate))} />
-        )}
-      </ConditionalRender>
+        <Label>{"Enter next hearing location"}</Label>
+        <HintText>{"OU code, 6-7 characters"}</HintText>
+        <OrganisationUnitTypeahead
+          value={
+            amendedNextHearingLocation === undefined
+              ? updatedNextHearingLocation || result.NextResultSourceOrganisation?.OrganisationUnitCode
+              : amendedNextHearingLocation
+          }
+          amendFn={amendFn}
+          resultIndex={resultIndex}
+          offenceIndex={offenceIndex}
+        />
+      </EditableFieldTableRow>
+      <EditableFieldTableRow
+        label="Next hearing date"
+        hasExceptions={hasNextHearingDateException(exceptions)}
+        errorStatus={errorStatus}
+        value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
+        updatedValue={updatedNextHearingDate && formatDisplayedDate(updatedNextHearingDate)}
+      >
+        <HintText>{"Enter date"}</HintText>
+        <input
+          className="govuk-input"
+          type="date"
+          min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
+          id={"next-hearing-date"}
+          name={"next-hearing-date"}
+          value={amendedNextHearingDate}
+          onChange={(event) => {
+            amendFn("nextHearingDate")({
+              resultIndex: resultIndex,
+              offenceIndex: offenceIndex,
+              updatedValue: event.target.value
+            })
+          }}
+        />
+      </EditableFieldTableRow>
       <TableRow label="Plea" value={getPleaStatus(result.PleaStatus)} />
       <TableRow label="Verdict" value={getVerdict(result.Verdict)} />
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />

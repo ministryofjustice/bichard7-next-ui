@@ -1,4 +1,5 @@
 import { subDays } from "date-fns"
+import fs from "fs"
 import CourtCase from "../src/services/entities/CourtCase"
 import { default as Note, default as Trigger } from "../src/services/entities/Trigger"
 import getDataSource from "../src/services/getDataSource"
@@ -22,6 +23,8 @@ const maxCaseAge = -12 * 30
 const numCasesRange = maxCases - minCases
 const numCases = Math.round(Math.random() * numCasesRange) + minCases
 
+const ahoXml = fs.readFileSync("test/test-data/AnnotatedHOTemplate.xml").toString()
+
 console.log(`Seeding ${numCases} cases for force ID ${forceId}`)
 
 getDataSource().then(async (dataSource) => {
@@ -31,7 +34,7 @@ getDataSource().then(async (dataSource) => {
 
   const courtCases = await Promise.all(
     new Array(numCases).fill(0).map(async (_, idx) => {
-      const courtCase = await createDummyCase(dataSource, idx, forceId, subDays(new Date(), maxCaseAge))
+      const courtCase = await createDummyCase(dataSource, idx, forceId, ahoXml, subDays(new Date(), maxCaseAge))
       auditLogs.push(createAuditLogRecord(courtCase))
       return courtCase
     })
