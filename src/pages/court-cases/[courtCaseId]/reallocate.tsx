@@ -171,7 +171,7 @@ const ReallocateCasePage: NextPage<Props> = ({
                 <ConditionalRender isRendered={!lockedByAnotherUser}>
                   <GridRow>
                     <GridCol columnOneHalf>
-                      <ReallocationNotesForm csrfToken={csrfToken} courtCase={courtCase} backLink={backLink} />
+                      <ReallocationNotesForm courtCase={courtCase} backLink={backLink} />
                     </GridCol>
                     <GridCol columnOneHalf>
                       <Heading as="h2" size="SMALL">
