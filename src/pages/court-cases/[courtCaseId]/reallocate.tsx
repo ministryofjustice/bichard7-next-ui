@@ -95,9 +95,14 @@ export const getServerSideProps = withMultipleServerSideProps(
 )
 
 const useStyles = createUseStyles({
+  notesTableContainer: {
+    maxHeight: "368px",
+    overflow: "auto"
+  },
   showMoreContainer: {
     justifyContent: "flex-end",
-    paddingRight: "15px"
+    paddingRight: "15px",
+    marginTop: "15px"
   }
 })
 
@@ -174,7 +179,9 @@ const ReallocateCasePage: NextPage<Props> = ({
                       <Heading as="h2" size="SMALL">
                         {"Previous User Notes"}
                       </Heading>
-                      <NotesTable notes={showMore ? userNotes : userNotes.slice(0, 1)} />
+                      <div className={classes.notesTableContainer}>
+                        <NotesTable notes={showMore ? userNotes : userNotes.slice(0, 1)} />
+                      </div>
                       <GridRow className={classes.showMoreContainer}>
                         <ActionLink
                           onClick={() => setShowMore(!showMore)}
