@@ -46,8 +46,6 @@ export const getServerSideProps = withMultipleServerSideProps(
       previousPath: string
     }
 
-    console.log("previousPath:", previousPath)
-
     const dataSource = await getDataSource()
     const courtCase = await getCourtCaseByOrganisationUnit(dataSource, +courtCaseId, currentUser)
 
