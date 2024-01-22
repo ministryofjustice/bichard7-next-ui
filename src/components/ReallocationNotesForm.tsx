@@ -3,30 +3,30 @@ import { Fieldset, FormGroup, Label, Select, HintText, TextArea, Button, Link, L
 import ButtonsGroup from "./ButtonsGroup"
 import Form from "./Form"
 import { useCustomStyles } from "../../styles/customStyles"
-import { FormEventHandler, useContext, useState } from "react"
+import { FormEventHandler, useState } from "react"
 import { forces } from "@moj-bichard7-developers/bichard7-next-data"
 import getForcesForReallocation from "services/getForcesForReallocation"
-import { DisplayFullCourtCase } from "types/display/CourtCases"
-import { CsrfTokenContext } from "context/CsrfTokenContext"
+import { useCsrfToken } from "context/CsrfTokenContext"
+import { useCourtCase } from "context/CourtCaseContext"
 
 interface Props {
-  courtCase: DisplayFullCourtCase
   backLink: string
 }
 
-const ReallocationNotesForm = ({ courtCase, backLink }: Props) => {
+const ReallocationNotesForm = ({ backLink }: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
   const classes = useCustomStyles()
+  const courtCase = useCourtCase()
   const currentForce = forces.find((force) => force.code === courtCase.orgForPoliceFilter?.substring(0, 2))
   const forcesForReallocation = getForcesForReallocation(currentForce?.code)
   const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
     setNoteRemainingLength(MAX_NOTE_LENGTH - event.currentTarget.value.length)
   }
 
-  const csrfToken = useContext(CsrfTokenContext)
+  const csrfToken = useCsrfToken()
 
   return (
-    <Form method="POST" action="#" csrfToken={csrfToken?.csrfToken || ""}>
+    <Form method="POST" action="#" csrfToken={csrfToken || ""}>
       <Fieldset>
         <FormGroup>
           <Label>

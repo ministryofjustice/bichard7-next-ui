@@ -2,7 +2,7 @@ import ConditionalRender from "components/ConditionalRender"
 import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
 import Layout from "components/Layout"
-import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
+import { CurrentUserContext } from "context/CurrentUserContext"
 import { GridCol, GridRow, Heading } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -24,8 +24,8 @@ import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
-import { CourtCaseContext, CourtCaseContextType } from "context/CourtCaseContext"
-import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
+import { CourtCaseContext } from "context/CourtCaseContext"
+import { CsrfTokenContext } from "context/CsrfTokenContext"
 import { NotesTable } from "components/NotesTable"
 import ReallocationNotesForm from "components/ReallocationNotesForm"
 import { DisplayNote } from "types/display/Notes"
@@ -33,7 +33,7 @@ import ActionLink from "components/ActionLink"
 import { createUseStyles } from "react-jss"
 import CourtCaseDetailsSummaryBox from "features/CourtCaseDetails/CourtCaseDetailsSummaryBox"
 import Header from "features/CourtCaseDetails/Header"
-import { PreviousPathContext, PreviousPathContextType } from "context/PreviousPathContext"
+import { PreviousPathContext } from "context/PreviousPathContext"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -123,11 +123,6 @@ const ReallocateCasePage: NextPage<Props> = ({
   canReallocate
 }: Props) => {
   const { basePath } = useRouter()
-  const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
-  const [courtCaseContext] = useState<CourtCaseContextType>({ courtCase: courtCase })
-  const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
-  const [previousPathContext] = useState<PreviousPathContextType>({ previousPath })
-
   const classes = useStyles()
 
   const [showMore, setShowMore] = useState<boolean>(false)
@@ -151,10 +146,10 @@ const ReallocateCasePage: NextPage<Props> = ({
         <title>{"Bichard7 | Case Reallocation"}</title>
         <meta name="description" content="Bichard7 | Case Reallocation" />
       </Head>
-      <CurrentUserContext.Provider value={currentUserContext}>
-        <CourtCaseContext.Provider value={courtCaseContext}>
-          <CsrfTokenContext.Provider value={csrfTokenContext}>
-            <PreviousPathContext.Provider value={previousPathContext}>
+      <CurrentUserContext.Provider value={{ currentUser: user }}>
+        <CourtCaseContext.Provider value={{ courtCase }}>
+          <CsrfTokenContext.Provider value={{ csrfToken }}>
+            <PreviousPathContext.Provider value={{ previousPath }}>
               <Layout>
                 <HeaderContainer id="header-container">
                   <Header canReallocate={canReallocate} />
@@ -171,7 +166,7 @@ const ReallocateCasePage: NextPage<Props> = ({
                 <ConditionalRender isRendered={!lockedByAnotherUser}>
                   <GridRow>
                     <GridCol setWidth="oneHalf">
-                      <ReallocationNotesForm courtCase={courtCase} backLink={backLink} />
+                      <ReallocationNotesForm backLink={backLink} />
                     </GridCol>
                     <GridCol setWidth="oneHalf">
                       <Heading as="h2" size="SMALL">
