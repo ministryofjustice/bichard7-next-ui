@@ -73,8 +73,14 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
 
   const leaveAndUnlockParams = getUnlockPath(courtCase)
 
-  let reallocatePath = `${basePath}${usePathname()}/reallocate`
+  const pathName = usePathname()
+
+  let reallocatePath = `${basePath}${pathName}`
   let leaveAndUnlockUrl = `${basePath}?${leaveAndUnlockParams.toString()}`
+
+  if (!pathName.includes("/reallocate")) {
+    reallocatePath += "/reallocate"
+  }
 
   if (previousPath) {
     leaveAndUnlockUrl += `&${previousPath}`
@@ -118,7 +124,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
         />
       </HeaderRow>
       <ButtonContainer>
-        <ConditionalRender isRendered={canReallocate && courtCase.phase === 1}>
+        <ConditionalRender isRendered={canReallocate && courtCase.phase === 1 && !pathName.includes("/reallocate")}>
           <LinkButton
             href={reallocatePath}
             className="b7-reallocate-button"
