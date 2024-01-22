@@ -172,10 +172,10 @@ const ReallocateCasePage: NextPage<Props> = ({
                 </ConditionalRender>
                 <ConditionalRender isRendered={!lockedByAnotherUser}>
                   <GridRow>
-                    <GridCol columnOneHalf>
+                    <GridCol setWidth="oneHalf">
                       <ReallocationNotesForm courtCase={courtCase} backLink={backLink} />
                     </GridCol>
-                    <GridCol columnOneHalf>
+                    <GridCol setWidth="oneHalf">
                       <Heading as="h2" size="SMALL">
                         {"Previous User Notes"}
                       </Heading>
