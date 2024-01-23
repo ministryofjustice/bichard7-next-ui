@@ -7,13 +7,14 @@ interface Props {
   method: string
   action?: string
   onSubmit?: FormEventHandler<HTMLFormElement>
+  className?: string
 }
 
-const Form = ({ children, csrfToken, method, action, onSubmit }: Props) => {
+const Form = ({ children, csrfToken, method, action, onSubmit, className }: Props) => {
   const { tokenName } = CSRF
 
   return (
-    <form method={method} action={action} onSubmit={onSubmit}>
+    <form method={method} action={action} onSubmit={onSubmit} className={className}>
       <input type="hidden" name={tokenName} value={csrfToken} />
       {children}
     </form>

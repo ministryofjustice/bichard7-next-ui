@@ -1,23 +1,19 @@
-import { forces } from "@moj-bichard7-developers/bichard7-next-data"
-import ButtonsGroup from "components/ButtonsGroup"
 import ConditionalRender from "components/ConditionalRender"
 import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
 import Layout from "components/Layout"
-import { MAX_NOTE_LENGTH } from "config"
-import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
-import { BackLink, Button, Fieldset, FormGroup, Heading, HintText, Label, Link, Select, TextArea } from "govuk-react"
+import { CurrentUserContext } from "context/CurrentUserContext"
+import { GridCol, GridRow, Heading } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
-import { FormEventHandler, useState } from "react"
+import { useState } from "react"
 import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
 import getDataSource from "services/getDataSource"
-import getForcesForReallocation from "services/getForcesForReallocation"
 import reallocateCourtCase from "services/reallocateCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
@@ -26,10 +22,18 @@ import { DisplayFullUser } from "types/display/Users"
 import forbidden from "utils/forbidden"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
-import { useCustomStyles } from "../../../../styles/customStyles"
-import Form from "../../../components/Form"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
+import { CourtCaseContext } from "context/CourtCaseContext"
+import { CsrfTokenContext } from "context/CsrfTokenContext"
+import { NotesTable } from "components/NotesTable"
+import ReallocationNotesForm from "components/ReallocationNotesForm"
+import { DisplayNote } from "types/display/Notes"
+import ActionLink from "components/ActionLink"
+import { createUseStyles } from "react-jss"
+import CourtCaseDetailsSummaryBox from "features/CourtCaseDetails/CourtCaseDetailsSummaryBox"
+import Header from "features/CourtCaseDetails/Header"
+import { PreviousPathContext } from "context/PreviousPathContext"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -66,10 +70,11 @@ export const getServerSideProps = withMultipleServerSideProps(
 
     const props = {
       csrfToken,
-      previousPath,
+      previousPath: previousPath || "",
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
-      lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
+      lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username),
+      canReallocate: courtCase.canReallocate(currentUser.username)
     }
 
     if (isPost(req)) {
@@ -87,6 +92,18 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
+const useStyles = createUseStyles({
+  notesTableContainer: {
+    maxHeight: "368px",
+    overflow: "auto"
+  },
+  showMoreContainer: {
+    justifyContent: "flex-end",
+    paddingRight: "15px",
+    marginTop: "15px"
+  }
+})
+
 interface Props {
   user: DisplayFullUser
   courtCase: DisplayFullCourtCase
@@ -94,24 +111,23 @@ interface Props {
   noteTextError?: string
   csrfToken: string
   previousPath: string
+  canReallocate: boolean
 }
 
-const CourtCaseDetailsPage: NextPage<Props> = ({
+const ReallocateCasePage: NextPage<Props> = ({
   courtCase,
   user,
   lockedByAnotherUser,
   csrfToken,
-  previousPath
+  previousPath,
+  canReallocate
 }: Props) => {
-  const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
-  const classes = useCustomStyles()
   const { basePath } = useRouter()
-  const currentForce = forces.find((force) => force.code === courtCase.orgForPoliceFilter?.substring(0, 2))
-  const forcesForReallocation = getForcesForReallocation(currentForce?.code)
-  const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
-    setNoteRemainingLength(MAX_NOTE_LENGTH - event.currentTarget.value.length)
-  }
-  const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
+  const classes = useStyles()
+
+  const [showMore, setShowMore] = useState<boolean>(false)
+
+  const notes: DisplayNote[] = courtCase.notes
 
   let backLink = `${basePath}/court-cases/${courtCase.errorId}`
 
@@ -119,64 +135,64 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
     backLink += `?previousPath=${encodeURIComponent(previousPath)}`
   }
 
+  const userNotes = notes
+    .filter(({ userId }) => userId !== "System")
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    .reverse()
+
   return (
     <>
       <Head>
         <title>{"Bichard7 | Case Reallocation"}</title>
         <meta name="description" content="Bichard7 | Case Reallocation" />
       </Head>
-      <CurrentUserContext.Provider value={currentUserContext}>
-        <Layout>
-          <BackLink href={backLink} onClick={function noRefCheck() {}}>
-            {"Case Details"}
-          </BackLink>
-          <HeaderContainer id="header-container">
-            <HeaderRow>
-              <Heading as="h1" size="LARGE" aria-label="Reallocate Case">
-                {"Case reallocation"}
-              </Heading>
-            </HeaderRow>
-          </HeaderContainer>
-          <ConditionalRender isRendered={lockedByAnotherUser}>{"Case is locked by another user."}</ConditionalRender>
-          <ConditionalRender isRendered={!lockedByAnotherUser}>
-            <Form method="POST" action="#" csrfToken={csrfToken}>
-              <Fieldset>
-                <FormGroup>
-                  <Label>{"Current force owner"}</Label>
-                  <span>{`${currentForce?.code} - ${currentForce?.name}`}</span>
-                </FormGroup>
-                <FormGroup>
-                  <Label>{"New force owner"}</Label>
-                  <Select input={{ name: "force" }} label={""}>
-                    {forcesForReallocation.map(({ code, name }) => (
-                      <option key={code} value={code}>
-                        {`${code} - ${name}`}
-                      </option>
-                    ))}
-                  </Select>
-                </FormGroup>
-                <FormGroup>
-                  <Label>{"Add a note (optional)"}</Label>
-                  <HintText className={classes["no-margin-bottom"]}>{"Input reason for case reallocation"}</HintText>
-                  <TextArea input={{ name: "note", rows: 5, maxLength: MAX_NOTE_LENGTH, onInput: handleOnNoteChange }}>
-                    {""}
-                  </TextArea>
-                  <HintText>{`You have ${noteRemainingLength} characters remaining`}</HintText>
-                </FormGroup>
-
-                <ButtonsGroup>
-                  <Button id="Reallocate" type="submit">
-                    {"Reallocate"}
-                  </Button>
-                  <Link href={backLink}>{"Cancel"}</Link>
-                </ButtonsGroup>
-              </Fieldset>
-            </Form>
-          </ConditionalRender>
-        </Layout>
+      <CurrentUserContext.Provider value={{ currentUser: user }}>
+        <CourtCaseContext.Provider value={{ courtCase }}>
+          <CsrfTokenContext.Provider value={{ csrfToken }}>
+            <PreviousPathContext.Provider value={{ previousPath }}>
+              <Layout>
+                <HeaderContainer id="header-container">
+                  <Header canReallocate={canReallocate} />
+                  <CourtCaseDetailsSummaryBox />
+                  <HeaderRow>
+                    <Heading as="h2" size="MEDIUM" aria-label="Reallocate Case">
+                      {"Case reallocation"}
+                    </Heading>
+                  </HeaderRow>
+                </HeaderContainer>
+                <ConditionalRender isRendered={lockedByAnotherUser}>
+                  {"Case is locked by another user."}
+                </ConditionalRender>
+                <ConditionalRender isRendered={!lockedByAnotherUser}>
+                  <GridRow>
+                    <GridCol setWidth="oneHalf">
+                      <ReallocationNotesForm backLink={backLink} />
+                    </GridCol>
+                    <GridCol setWidth="oneHalf">
+                      <Heading as="h2" size="SMALL">
+                        {"Previous User Notes"}
+                      </Heading>
+                      <div className={classes.notesTableContainer}>
+                        <NotesTable notes={showMore ? userNotes : userNotes.slice(0, 1)} />
+                      </div>
+                      <GridRow className={classes.showMoreContainer}>
+                        <ActionLink
+                          onClick={() => setShowMore(!showMore)}
+                          id={showMore ? "show-more-action" : "show-less-action"}
+                        >
+                          {showMore ? "show less" : "show more"}
+                        </ActionLink>
+                      </GridRow>
+                    </GridCol>
+                  </GridRow>
+                </ConditionalRender>
+              </Layout>
+            </PreviousPathContext.Provider>
+          </CsrfTokenContext.Provider>
+        </CourtCaseContext.Provider>
       </CurrentUserContext.Provider>
     </>
   )
 }
 
-export default CourtCaseDetailsPage
+export default ReallocateCasePage

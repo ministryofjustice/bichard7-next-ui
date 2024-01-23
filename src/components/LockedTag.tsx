@@ -9,6 +9,7 @@ const Lockee = styled.span`
 
   & > img {
     margin-right: 5px;
+    margin-bottom: 20px;
   }
 `
 
@@ -24,10 +25,10 @@ interface LockedTagProps extends StyledComponentPropsWithRef<typeof LockedTagCon
 
 const LockedTag = ({ lockName, lockedBy, ...rest }: LockedTagProps) => (
   <LockedTagContainer {...rest} id={`${lockName.toLowerCase()}-locked-tag`}>
-    {lockName}
+    <span className="govuk-body">{lockName}</span>
     <Lockee id={`${lockName.toLowerCase()}-locked-tag-lockee`}>
       <Image src={LOCKED_ICON_URL} priority width={18} height={18} alt="Lock icon" />
-      {lockedBy}
+      <span className="govuk-body">{lockedBy}</span>
     </Lockee>
   </LockedTagContainer>
 )

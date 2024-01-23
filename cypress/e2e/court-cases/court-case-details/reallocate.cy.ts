@@ -44,7 +44,7 @@ describe("Case details", () => {
     cy.findByText("NAME Defendant").click()
 
     cy.get("button").contains("Reallocate Case").click()
-    cy.get("H1").should("have.text", "Case reallocation")
+    cy.contains("H2", "Case reallocation").should("exist")
 
     cy.findByText("Cancel").should("have.attr", "href", "/bichard/court-cases/0")
 
@@ -90,7 +90,7 @@ describe("Case details", () => {
     cy.findByText("NAME Defendant").click()
 
     cy.get("button").contains("Reallocate Case").click()
-    cy.get("H1").should("have.text", "Case reallocation")
+    cy.contains("H2", "Case reallocation").should("exist")
     cy.findByText("Cancel").should("have.attr", "href", "/bichard/court-cases/0")
 
     cy.get('select[name="force"]').select("03 - Cumbria")
@@ -133,7 +133,7 @@ describe("Case details", () => {
     cy.findByText("NAME Defendant").click()
 
     cy.get("button").contains("Reallocate Case").click()
-    cy.get("H1").should("have.text", "Case reallocation")
+    cy.contains("H2", "Case reallocation").should("exist")
     cy.findByText("Cancel").should("have.attr", "href", "/bichard/court-cases/0")
 
     cy.get('select[name="force"]').select("03 - Cumbria")
@@ -249,6 +249,96 @@ describe("Case details", () => {
 
     cy.visit("/bichard/court-cases/1/reallocate")
     cy.url().should("match", /\/court-cases\/\d+/)
+  })
+
+  it('should display the most recent user note when "show more" is visible', () => {
+    cy.task("insertCourtCasesWithNotes", {
+      caseNotes: [
+        [
+          {
+            user: "another.user1",
+            text: "Test note 1"
+          },
+          {
+            user: "another.user2",
+            text: "Test note 2"
+          }
+        ]
+      ],
+      force: "01"
+    })
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+    cy.get("button").contains("Reallocate Case").click()
+
+    cy.contains("Another User2")
+    cy.contains("Test note 2")
+
+    cy.contains("Another User1").should("not.exist")
+    cy.contains("Test note 1").should("not.exist")
+  })
+
+  it("should not display system notes", () => {
+    cy.task("insertCourtCasesWithNotes", {
+      caseNotes: [
+        [
+          {
+            user: "System",
+            text: "Test note 1"
+          },
+          {
+            user: "another.user2",
+            text: "Test note 2"
+          }
+        ]
+      ],
+      force: "01"
+    })
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+    cy.get("button").contains("Reallocate Case").click()
+
+    cy.contains("Another User2")
+    cy.contains("Test note 2")
+
+    cy.contains("System").should("not.exist")
+    cy.contains("Test note 1").should("not.exist")
+  })
+
+  it('should display all user notes when "show less" is visible', () => {
+    cy.task("insertCourtCasesWithNotes", {
+      caseNotes: [
+        [
+          {
+            user: "another.user1",
+            text: "Test note 1"
+          },
+          {
+            user: "another.user2",
+            text: "Test note 2"
+          }
+        ]
+      ],
+      force: "01"
+    })
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+    cy.get("button").contains("Reallocate Case").click()
+    cy.get("button").contains("show more").click()
+
+    cy.contains("Another User2")
+    cy.contains("Test note 2")
+
+    cy.contains("Another User1")
+    cy.contains("Test note 1")
+
+    cy.get("button").contains("show less").click()
+
+    cy.contains("Another User1").should("not.exist")
+    cy.contains("Test note 1").should("not.exist")
   })
 })
 
