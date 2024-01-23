@@ -227,14 +227,10 @@ export const OffenceDetails = ({
           )}
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
-          <ConditionalRender
-            isRendered={
-              offence.Result.length > 0 &&
-              offence.Result[0].PleaStatus !== undefined &&
-              offence.Result[0].Verdict !== undefined
-            }
-          >
+          <ConditionalRender isRendered={offence.Result.length > 0 && offence.Result[0].PleaStatus !== undefined}>
             <TableRow label="Plea" value={getPleaStatus(offence.Result[0].PleaStatus)} />
+          </ConditionalRender>
+          <ConditionalRender isRendered={offence.Result.length > 0 && offence.Result[0].Verdict !== undefined}>
             <TableRow label="Verdict" value={getVerdict(offence.Result[0].Verdict)} />
           </ConditionalRender>
         </Table>
