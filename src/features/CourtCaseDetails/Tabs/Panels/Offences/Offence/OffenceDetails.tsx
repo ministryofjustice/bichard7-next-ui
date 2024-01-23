@@ -1,9 +1,10 @@
 import errorPaths from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/errorPaths"
-import type { Offence, Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
 import Badge from "components/Badge"
+import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { useCourtCase } from "context/CourtCaseContext"
@@ -25,7 +26,6 @@ import { StartDate } from "./StartDate"
 interface OffenceDetailsProps {
   className: string
   offence: Offence
-  result: Result
   offencesCount: number
   onBackToAllOffences: () => void
   onNextClick: () => void
@@ -104,7 +104,6 @@ const getOffenceMatchingException = (
 export const OffenceDetails = ({
   className,
   offence,
-  result,
   offencesCount,
   onBackToAllOffences,
   onNextClick,
@@ -228,8 +227,16 @@ export const OffenceDetails = ({
           )}
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
-          <TableRow label="Plea" value={getPleaStatus(result.PleaStatus)} />
-          <TableRow label="Verdict" value={getVerdict(result.Verdict)} />
+          <ConditionalRender
+            isRendered={
+              offence.Result.length > 0 &&
+              offence.Result[0].PleaStatus !== undefined &&
+              offence.Result[0].Verdict !== undefined
+            }
+          >
+            <TableRow label="Plea" value={getPleaStatus(offence.Result[0].PleaStatus)} />
+            <TableRow label="Verdict" value={getVerdict(offence.Result[0].Verdict)} />
+          </ConditionalRender>
         </Table>
       </div>
 
@@ -237,11 +244,11 @@ export const OffenceDetails = ({
         <Heading as="h4" size="MEDIUM">
           {"Hearing result"}
         </Heading>
-        {offence.Result.map((results, index) => {
+        {offence.Result.map((result, index) => {
           return (
             <HearingResult
               key={index}
-              result={results}
+              result={result}
               updatedFields={updatedFields}
               exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>
                 resultException.path.join(">").startsWith(thisResultPath(index))
