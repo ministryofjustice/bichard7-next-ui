@@ -20,9 +20,7 @@ import {
   capitaliseExpression,
   formatDuration,
   getNumberOfHours,
-  getPleaStatus,
   getUrgentYesOrNo,
-  getVerdict,
   getYesOrNo
 } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
@@ -132,8 +130,6 @@ export const HearingResult = ({
           }}
         />
       </EditableFieldTableRow>
-      <TableRow label="Plea" value={getPleaStatus(result.PleaStatus)} />
-      <TableRow label="Verdict" value={getVerdict(result.Verdict)} />
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
       <TableRow label="Hearing result text" value={result.ResultVariableText} />
       <TableRow label="PNC disposal type" value={result.PNCDisposalType} />
