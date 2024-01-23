@@ -1,30 +1,31 @@
 import errorPaths from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/errorPaths"
-import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import type { Offence, Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
+import Badge from "components/Badge"
+import ErrorPromptMessage from "components/ErrorPromptMessage"
+import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { useCourtCase } from "context/CourtCaseContext"
 import { Heading, Input, Table } from "govuk-react"
 import { isEqual } from "lodash"
 import { createUseStyles } from "react-jss"
+import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
 import ErrorMessages from "types/ErrorMessages"
+import { Exception } from "types/exceptions"
 import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
-import Badge from "components/Badge"
-import ErrorPromptMessage from "components/ErrorPromptMessage"
-import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
-import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
-import { Exception } from "types/exceptions"
+import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
+import { capitaliseExpression, getPleaStatus, getVerdict, getYesOrNo } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
 import { HearingResult } from "./HearingResult"
 import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
-import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
-import { capitaliseExpression, getYesOrNo } from "utils/valueTransformers"
 
 interface OffenceDetailsProps {
   className: string
   offence: Offence
+  result: Result
   offencesCount: number
   onBackToAllOffences: () => void
   onNextClick: () => void
@@ -103,6 +104,7 @@ const getOffenceMatchingException = (
 export const OffenceDetails = ({
   className,
   offence,
+  result,
   offencesCount,
   onBackToAllOffences,
   onNextClick,
@@ -226,6 +228,8 @@ export const OffenceDetails = ({
           )}
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
+          <TableRow label="Plea" value={getPleaStatus(result.PleaStatus)} />
+          <TableRow label="Verdict" value={getVerdict(result.Verdict)} />
         </Table>
       </div>
 
@@ -233,11 +237,11 @@ export const OffenceDetails = ({
         <Heading as="h4" size="MEDIUM">
           {"Hearing result"}
         </Heading>
-        {offence.Result.map((result, index) => {
+        {offence.Result.map((results, index) => {
           return (
             <HearingResult
               key={index}
-              result={result}
+              result={results}
               updatedFields={updatedFields}
               exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>
                 resultException.path.join(">").startsWith(thisResultPath(index))
