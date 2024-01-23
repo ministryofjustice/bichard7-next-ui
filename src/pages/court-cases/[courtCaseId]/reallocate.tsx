@@ -9,7 +9,7 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
@@ -34,6 +34,7 @@ import { createUseStyles } from "react-jss"
 import CourtCaseDetailsSummaryBox from "features/CourtCaseDetails/CourtCaseDetailsSummaryBox"
 import Header from "features/CourtCaseDetails/Header"
 import { PreviousPathContext } from "context/PreviousPathContext"
+import type { Property } from "csstype"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -126,6 +127,9 @@ const ReallocateCasePage: NextPage<Props> = ({
   const classes = useStyles()
 
   const [showMore, setShowMore] = useState<boolean>(false)
+  const [reallocateFormWidth, setReallocateFormWidth] = useState<string>("two-thirds")
+  const [userNotesWidth, setUserNotesWidth] = useState<string>("one-third")
+  const [flexDirection, setFlexDirection] = useState<Property.FlexDirection>("row")
 
   const notes: DisplayNote[] = courtCase.notes
 
@@ -139,6 +143,32 @@ const ReallocateCasePage: NextPage<Props> = ({
     .filter(({ userId }) => userId !== "System")
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
     .reverse()
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1280) {
+        setReallocateFormWidth("two-thirds")
+        setUserNotesWidth("one-third")
+      } else {
+        setReallocateFormWidth("one-half")
+        setUserNotesWidth("one-half")
+      }
+
+      if (window.innerWidth < 768) {
+        setFlexDirection("column")
+        setReallocateFormWidth("full")
+        setUserNotesWidth("full")
+      } else {
+        setFlexDirection("row")
+      }
+    }
+
+    window.addEventListener("resize", handleResize)
+
+    return () => {
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [])
 
   return (
     <>
@@ -164,11 +194,11 @@ const ReallocateCasePage: NextPage<Props> = ({
                   {"Case is locked by another user."}
                 </ConditionalRender>
                 <ConditionalRender isRendered={!lockedByAnotherUser}>
-                  <GridRow>
-                    <GridCol setWidth="oneHalf">
+                  <GridRow style={{ flexDirection: flexDirection }}>
+                    <GridCol setWidth={reallocateFormWidth}>
                       <ReallocationNotesForm backLink={backLink} />
                     </GridCol>
-                    <GridCol setWidth="oneHalf">
+                    <GridCol setWidth={userNotesWidth}>
                       <Heading as="h2" size="SMALL">
                         {"Previous User Notes"}
                       </Heading>
