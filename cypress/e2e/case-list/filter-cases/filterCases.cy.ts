@@ -1,16 +1,16 @@
 import { addDays, format, subDays } from "date-fns"
-import { BailCodes } from "../../../src/utils/bailCodes"
-import { TestTrigger } from "../../../test/utils/manageTriggers"
-import hashedPassword from "../../fixtures/hashedPassword"
-import a11yConfig from "../../support/a11yConfig"
+import { BailCodes } from "../../../../src/utils/bailCodes"
+import { TestTrigger } from "../../../../test/utils/manageTriggers"
+import hashedPassword from "../../../fixtures/hashedPassword"
+import a11yConfig from "../../../support/a11yConfig"
 import {
   confirmFiltersAppliedContains,
   confirmMultipleFieldsDisplayed,
   confirmMultipleFieldsNotDisplayed,
   exactMatch,
   filterByCaseAge
-} from "../../support/helpers"
-import logAccessibilityViolations from "../../support/logAccessibilityViolations"
+} from "../../../support/helpers"
+import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 
 function visitBasePathAndShowFilters() {
   cy.visit("/bichard")

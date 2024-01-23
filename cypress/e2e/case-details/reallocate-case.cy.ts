@@ -1,8 +1,8 @@
 import User from "services/entities/User"
-import { TestTrigger } from "../../../../test/utils/manageTriggers"
-import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
-import hashedPassword from "../../../fixtures/hashedPassword"
-import { clickTab } from "../../../support/helpers"
+import { TestTrigger } from "../../../test/utils/manageTriggers"
+import canReallocateTestData from "../../fixtures/canReallocateTestData.json"
+import hashedPassword from "../../fixtures/hashedPassword"
+import { clickTab } from "../../support/helpers"
 
 describe("Case details", () => {
   const defaultUsers: Partial<User>[] = Array.from(Array(4)).map((_value, idx) => {
@@ -204,6 +204,9 @@ describe("Case details", () => {
         ])
 
         cy.login("bichard01@example.com", "password")
+        cy.visit("/bichard/court-cases/0")
+
+        cy.get("button.b7-reallocate-button").should(canReallocate ? "exist" : "not.exist")
 
         cy.request({
           failOnStatusCode: false,
