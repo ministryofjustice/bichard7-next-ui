@@ -63,7 +63,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
   return (
     <div className={`Defendant-details-table ${classes.wrapper}`}>
       <Table>
-        {!!asnSystemErrorExceptionPrompt ? (
+        {asnSystemErrorExceptionPrompt ? (
           <ExceptionFieldTableRow
             badgeText={"System Error"}
             value={defendant.ArrestSummonsNumber}
