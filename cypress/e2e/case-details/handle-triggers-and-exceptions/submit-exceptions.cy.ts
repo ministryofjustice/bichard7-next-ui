@@ -1,5 +1,5 @@
 import User from "services/entities/User"
-import hashedPassword from "../../fixtures/hashedPassword"
+import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("Court cases - Submit exceptions", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
