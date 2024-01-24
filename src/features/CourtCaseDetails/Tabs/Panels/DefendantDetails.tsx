@@ -17,15 +17,11 @@ import React, { useState } from "react"
 import { isAsnFormatValid } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/isAsnValid"
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../types/Amendments"
 import EditableFieldTableRow from "../../../../components/EditableFieldTableRow"
+import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 
 interface DefendantDetailsProps {
   amendmentRecords: AmendmentRecords
   amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
-}
-
-type ExceptionCodeMap = {
-  asnSystemErrorException?: ExceptionCode
-  asnEditableException?: ExceptionCode
 }
 
 const useStyles = createUseStyles({
@@ -44,9 +40,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
   const classes = useStyles()
   const courtCase = useCourtCase()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
-  const asnSystemErrorExceptions: ExceptionCode[] = [ExceptionCode.HO200113, ExceptionCode.HO200114]
-  const asnEditableExceptions: ExceptionCode[] = [ExceptionCode.HO100206, ExceptionCode.HO100321]
-  const asnErrorPrompt = findExceptions(
+  const asnSystemErrorExceptionPrompt = findExceptions(
     courtCase,
     courtCase.aho.Exceptions,
     ExceptionCode.HO200113,
@@ -62,46 +56,29 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     amendFn("asn")(asn)
   }
 
-  const exceptionFromCourtCase = () => {
-    const exception: ExceptionCodeMap = {
-      asnSystemErrorException: undefined,
-      asnEditableException: undefined
-    }
-
-    courtCase.aho.Exceptions.forEach(({ code }) => {
-      if (asnSystemErrorExceptions.includes(code)) {
-        exception.asnSystemErrorException = code
-      }
-
-      if (asnEditableExceptions.includes(code)) {
-        exception.asnEditableException = code
-      }
-    })
-    return exception
-  }
-
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
-  const exception = exceptionFromCourtCase()
+  const isAsnEditable =
+    courtCase.canUserEditExceptions && courtCase.aho.Exceptions.length > 0 && courtCase.phase === Phase.HEARING_OUTCOME
 
   return (
     <div className={`Defendant-details-table ${classes.wrapper}`}>
       <Table>
-        {exception.asnSystemErrorException ? (
+        {!!asnSystemErrorExceptionPrompt ? (
           <ExceptionFieldTableRow
             badgeText={"System Error"}
             value={defendant.ArrestSummonsNumber}
             badgeColour={"purple"}
             label={"ASN"}
-            displayError={!!asnErrorPrompt}
+            displayError={!!asnSystemErrorExceptionPrompt}
           >
-            <ErrorPromptMessage message={asnErrorPrompt} />
+            <ErrorPromptMessage message={asnSystemErrorExceptionPrompt} />
           </ExceptionFieldTableRow>
         ) : (
           <EditableFieldTableRow
             value={defendant.ArrestSummonsNumber}
             updatedValue={updatedAsn}
             label="ASN"
-            hasExceptions={Boolean(exception.asnEditableException)}
+            hasExceptions={isAsnEditable}
             errorStatus={courtCase.errorStatus}
           >
             <Label>{"Enter the ASN"}</Label>

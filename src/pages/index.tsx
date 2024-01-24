@@ -192,7 +192,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       props: {
         csrfToken: csrfToken,
         user: userToDisplayFullUserDto(currentUser),
-        courtCases: courtCases.result.map(courtCaseToDisplayPartialCourtCaseDto),
+        courtCases: courtCases.result.map((courtCase) => courtCaseToDisplayPartialCourtCaseDto(courtCase, currentUser)),
         displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0)),
         order: oppositeOrder,
         searchOrder: validatedOrder === "asc" ? "asc" : "desc",
