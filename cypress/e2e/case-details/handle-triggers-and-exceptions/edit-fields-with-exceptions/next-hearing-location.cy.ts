@@ -1,7 +1,7 @@
-import dummyAho from "../../../../test/test-data/HO100102_1.json"
-import nextHearingLocationExceptions from "../../../../test/test-data/NextHearingLocationExceptions.json"
-import hashedPassword from "../../../fixtures/hashedPassword"
-import { submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../support/helpers"
+import dummyAho from "../../../../../test/test-data/HO100102_1.json"
+import nextHearingLocationExceptions from "../../../../../test/test-data/NextHearingLocationExceptions.json"
+import hashedPassword from "../../../../fixtures/hashedPassword"
+import { submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
 
 describe("NextHearingLocation", () => {
   before(() => {
