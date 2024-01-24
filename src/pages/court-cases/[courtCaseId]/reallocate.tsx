@@ -74,8 +74,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       previousPath: previousPath || "",
       user: userToDisplayFullUserDto(currentUser),
       courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
-      lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username),
-      canReallocate: courtCase.canReallocate(currentUser.username)
+      lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
     }
 
     if (isPost(req)) {
