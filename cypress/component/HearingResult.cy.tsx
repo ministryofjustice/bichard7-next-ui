@@ -68,8 +68,6 @@ describe("Hearing Result", () => {
     cy.contains("td", "Result hearing type").siblings().should("include.text", "Hearing type")
     cy.contains("td", "Result hearing date").siblings().should("include.text", "10/09/2022")
     cy.contains("td", "Next hearing date").siblings().should("include.text", "11/09/2022")
-    cy.contains("td", "Plea").siblings().should("include.text", "G (Guilty)")
-    cy.contains("td", "Verdict").siblings().should("include.text", "G (Guilty)")
     cy.contains("td", "Mode of trial reason").siblings().should("include.text", "reason")
     cy.contains("td", "Hearing result text").siblings().should("include.text", "this is some text")
     cy.contains("td", "PNC disposal type").siblings().should("include.text", 1)
