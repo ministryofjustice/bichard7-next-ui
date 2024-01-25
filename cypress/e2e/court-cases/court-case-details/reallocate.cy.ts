@@ -279,6 +279,28 @@ describe("Case details", () => {
     cy.contains("Test note 1").should("not.exist")
   })
 
+  it("should display the force code of the note user", () => {
+    cy.task("insertCourtCasesWithNotes", {
+      caseNotes: [
+        [
+          {
+            user: "another.user",
+            text: "Test note"
+          }
+        ]
+      ],
+      force: "01"
+    })
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+    cy.get("button").contains("Reallocate Case").click()
+
+    cy.contains("Another User")
+    cy.contains("Test note")
+    cy.contains("(01)")
+  })
+
   it("should not display system notes", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [
