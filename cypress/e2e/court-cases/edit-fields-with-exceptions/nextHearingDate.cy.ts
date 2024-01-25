@@ -93,7 +93,7 @@ describe("NextHearingDate", () => {
     cy.get("#next-hearing-date").should("not.exist")
   })
 
-  it.only("Shouldn't see editable next hearing date when it has no value", () => {
+  it("Shouldn't see editable next hearing date when it has no value", () => {
     cy.login("bichard01@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
