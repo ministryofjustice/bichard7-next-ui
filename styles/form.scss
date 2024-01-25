@@ -2,7 +2,6 @@
 
 form {
   & > fieldset {
-    width: 66%;
 
     @media only screen and (max-width: $b7-landscape-tablet-width) {
       width: 100%;
@@ -19,6 +18,10 @@ form {
       min-width: 100%;
     }
   }
+}
+
+.b7-swtiching-feedback-form {
+  width: 66%;
 }
 
 .b7-form-label-lg {

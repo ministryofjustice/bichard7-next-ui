@@ -3,24 +3,25 @@ import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/t
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
+import Badge from "components/Badge"
+import ConditionalRender from "components/ConditionalRender"
+import ErrorPromptMessage from "components/ErrorPromptMessage"
+import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { useCourtCase } from "context/CourtCaseContext"
 import { Heading, Input, Table } from "govuk-react"
 import { isEqual } from "lodash"
 import { createUseStyles } from "react-jss"
+import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
 import ErrorMessages from "types/ErrorMessages"
+import { Exception } from "types/exceptions"
 import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
-import Badge from "components/Badge"
-import ErrorPromptMessage from "components/ErrorPromptMessage"
-import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
-import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
-import { Exception } from "types/exceptions"
+import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
+import { capitaliseExpression, getPleaStatus, getVerdict, getYesOrNo } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
 import { HearingResult } from "./HearingResult"
 import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
-import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
-import { capitaliseExpression, getYesOrNo } from "utils/valueTransformers"
 
 interface OffenceDetailsProps {
   className: string
@@ -226,6 +227,12 @@ export const OffenceDetails = ({
           )}
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
+          <ConditionalRender isRendered={offence.Result.length > 0 && offence.Result[0].PleaStatus !== undefined}>
+            <TableRow label="Plea" value={getPleaStatus(offence.Result[0].PleaStatus)} />
+          </ConditionalRender>
+          <ConditionalRender isRendered={offence.Result.length > 0 && offence.Result[0].Verdict !== undefined}>
+            <TableRow label="Verdict" value={getVerdict(offence.Result[0].Verdict)} />
+          </ConditionalRender>
         </Table>
       </div>
 
