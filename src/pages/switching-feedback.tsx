@@ -198,7 +198,7 @@ const SwitchingFeedbackPage: NextPage<Props> = ({ user, previousPath, fields, cs
 
         <Heading as="h1">{"Share your feedback"}</Heading>
 
-        <Form className="b7-swtiching-feedback-form" method="POST" action={"#"} csrfToken={csrfToken}>
+        <Form className="b7-switching-feedback-form" method="POST" action={"#"} csrfToken={csrfToken}>
           <Fieldset>
             <p className="govuk-body">
               {
