@@ -85,7 +85,7 @@ describe("ASN", () => {
     cy.get("#asn").should("not.exist")
   })
 
-  it("Should be able to edit ASN field if any exceptions is raised", () => {
+  it("Should be able to edit ASN field if any exceptions are raised", () => {
     cy.login("bichard01@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
@@ -133,6 +133,23 @@ describe("ASN", () => {
     cy.get(".Defendant-details-table").contains("Invalid ASN format")
   })
 
+  it("Should not be able to edit ASN field if case is not locked by the current user", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: AsnExceptionHo100206.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHo100206.updatedHearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard02"
+      }
+    ])
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
+  })
+
   it("Should not be able to edit ASN field if user is not exception-handler", () => {
     cy.task("clearUsers")
     cy.task("insertUsers", {
@@ -149,23 +166,6 @@ describe("ASN", () => {
       userGroups: ["B7NewUI_grp", "B7TriggerHandler_grp"]
     })
     cy.login("triggerhandler@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
-  })
-
-  it("Should not be able to edit ASN field if case is not locked by the current user", () => {
-    cy.task("clearCourtCases")
-    cy.task("insertCourtCasesWithFields", [
-      {
-        orgForPoliceFilter: "01",
-        hearingOutcome: AsnExceptionHo100206.hearingOutcomeXml,
-        updatedHearingOutcome: AsnExceptionHo100206.updatedHearingOutcomeXml,
-        errorCount: 1,
-        errorLockedByUsername: "Bichard02"
-      }
-    ])
-    cy.login("bichard01@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
     cy.get(".moj-badge").contains("Editable Field").should("not.exist")
