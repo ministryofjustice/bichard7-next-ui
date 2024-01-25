@@ -22,7 +22,8 @@ export const userToDisplayPartialUserDto = (user: User): DisplayPartialUser => {
   const currentUser: DisplayPartialUser = {
     username: user.username,
     forenames: user.forenames,
-    surname: user.surname
+    surname: user.surname,
+    visibleForces: user.visibleForces
   }
 
   return currentUser

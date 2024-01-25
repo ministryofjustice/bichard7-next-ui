@@ -203,7 +203,7 @@ const ReallocateCasePage: NextPage<Props> = ({
                         {"Previous User Notes"}
                       </Heading>
                       <div className={classes.notesTableContainer}>
-                        <NotesTable notes={showMore ? userNotes : userNotes.slice(0, 1)} />
+                        <NotesTable displayForce notes={showMore ? userNotes : userNotes.slice(0, 1)} />
                       </div>
                       <GridRow className={classes.showMoreContainer}>
                         <ActionLink

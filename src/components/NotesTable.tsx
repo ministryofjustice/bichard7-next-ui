@@ -5,26 +5,42 @@ import { DisplayNote } from "types/display/Notes"
 interface Props {
   className?: string
   notes: DisplayNote[]
+  displayForce?: boolean
 }
 
-export const NotesTable = ({ notes }: Props) => (
-  <Table
-    head={
-      <Table.Row>
-        <Table.CellHeader>{"User"}</Table.CellHeader>
-        <Table.CellHeader>{"Time"}</Table.CellHeader>
-        <Table.CellHeader>{"Note"}</Table.CellHeader>
-      </Table.Row>
-    }
-  >
-    {notes.map((note, index) => (
-      <Table.Row key={index}>
-        <Table.Cell>{note.userFullName}</Table.Cell>
-        <Table.Cell>
-          <DateTime date={note.createdAt} />
-        </Table.Cell>
-        <Table.Cell>{note.noteText}</Table.Cell>
-      </Table.Row>
-    ))}
-  </Table>
-)
+export const NotesTable = ({ notes, displayForce }: Props) => {
+  return (
+    <Table
+      head={
+        <Table.Row>
+          <Table.CellHeader>{"User"}</Table.CellHeader>
+          <Table.CellHeader>{"Time"}</Table.CellHeader>
+          <Table.CellHeader>{"Note"}</Table.CellHeader>
+        </Table.Row>
+      }
+    >
+      {notes.map((note, index) => {
+        const userName = note.userFullName
+        const userForces = `(${note.user?.visibleForces.slice(0, 3).join(", ")})`
+
+        return (
+          <Table.Row key={index}>
+            <Table.Cell>
+              <span>{userName}</span>
+              {displayForce && (
+                <>
+                  <br />
+                  <span>{userForces}</span>
+                </>
+              )}
+            </Table.Cell>
+            <Table.Cell>
+              <DateTime date={note.createdAt} />
+            </Table.Cell>
+            <Table.Cell>{note.noteText}</Table.Cell>
+          </Table.Row>
+        )
+      })}
+    </Table>
+  )
+}
