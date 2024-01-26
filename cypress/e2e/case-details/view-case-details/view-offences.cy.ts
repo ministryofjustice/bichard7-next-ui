@@ -24,6 +24,7 @@ describe("“next offence” and “previous offence” buttons", () => {
     cy.task("clearTriggers")
     cy.task("clearCourtCases")
   })
+
   it("Should show next offence when next button is clicked if its not the last offence", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 1, force: "01" })
     cy.visit("/bichard/court-cases/0")

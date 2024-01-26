@@ -1,7 +1,7 @@
 import User from "../../../../src/services/entities/User"
 import hashedPassword from "../../../fixtures/hashedPassword"
 
-describe("Court case details header", () => {
+describe("View court case details header", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,

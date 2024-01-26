@@ -34,7 +34,7 @@ const insertCaseWithTriggerAndException = (courtCase?: Partial<CourtCase>) => {
   cy.task("insertException", exception)
 }
 
-describe("Court case details", () => {
+describe("View notes", () => {
   const users: Partial<User>[] = Array.from(Array(3)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,

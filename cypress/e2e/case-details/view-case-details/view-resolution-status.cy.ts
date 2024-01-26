@@ -1,7 +1,7 @@
 import User from "../../../../src/services/entities/User"
 import hashedPassword from "../../../fixtures/hashedPassword"
 
-describe("Court case details header", () => {
+describe("View resolution status", () => {
   before(() => {
     cy.task("clearCourtCases")
     cy.task("clearUsers")
