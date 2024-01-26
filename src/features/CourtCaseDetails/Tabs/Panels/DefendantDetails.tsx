@@ -18,6 +18,8 @@ import { isAsnFormatValid } from "@moj-bichard7-developers/bichard7-next-core/co
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../types/Amendments"
 import EditableFieldTableRow from "../../../../components/EditableFieldTableRow"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
+import { hasAccessToExceptions } from "../../../../utils/userPermissions"
+import { useCurrentUser } from "../../../../context/CurrentUserContext"
 
 interface DefendantDetailsProps {
   amendmentRecords: AmendmentRecords
@@ -57,8 +59,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
   }
 
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
-  const isAsnEditable =
-    courtCase.canUserEditExceptions && courtCase.aho.Exceptions.length > 0 && courtCase.phase === Phase.HEARING_OUTCOME
+  const isAsnEditable = courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
 
   return (
     <div className={`Defendant-details-table ${classes.wrapper}`}>
