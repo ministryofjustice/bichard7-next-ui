@@ -18,8 +18,6 @@ import { isAsnFormatValid } from "@moj-bichard7-developers/bichard7-next-core/co
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../types/Amendments"
 import EditableFieldTableRow from "../../../../components/EditableFieldTableRow"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
-import { hasAccessToExceptions } from "../../../../utils/userPermissions"
-import { useCurrentUser } from "../../../../context/CurrentUserContext"
 
 interface DefendantDetailsProps {
   amendmentRecords: AmendmentRecords

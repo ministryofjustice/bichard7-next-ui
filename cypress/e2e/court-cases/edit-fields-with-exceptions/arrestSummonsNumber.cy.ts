@@ -35,7 +35,7 @@ describe("ASN", () => {
     ])
   })
 
-  it.only("Should not be able to edit ASN field when there is no exception", () => {
+  it("Should not be able to edit ASN field when there is no exception", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
