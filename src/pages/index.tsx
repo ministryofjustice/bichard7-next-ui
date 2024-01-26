@@ -43,6 +43,7 @@ import { validateQueryParams } from "utils/validators/validateQueryParams"
 import withCsrf from "../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import shouldShowSwitchingFeedbackForm from "../utils/shouldShowSwitchingFeedbackForm"
+import { logUiDetails } from "utils/logUiDetails"
 
 interface Props {
   csrfToken: string
@@ -251,6 +252,7 @@ const Home: NextPage<Props> = (props) => {
   } = props
 
   useEffect(() => {
+    logUiDetails()
     const nonSavedParams = ["unlockTrigger", "unlockException"]
     const [, queryString] = router.asPath.split("?")
 
