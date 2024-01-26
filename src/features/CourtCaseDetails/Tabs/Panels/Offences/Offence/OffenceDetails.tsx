@@ -237,24 +237,26 @@ export const OffenceDetails = ({
       </div>
 
       <div className="offence-results-table">
-        <Heading as="h4" size="MEDIUM">
-          {"Hearing result"}
-        </Heading>
         {offence.Result.map((result, index) => {
           return (
-            <HearingResult
-              key={index}
-              result={result}
-              updatedFields={updatedFields}
-              exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>
-                resultException.path.join(">").startsWith(thisResultPath(index))
-              )}
-              selectedOffenceIndex={selectedOffenceIndex}
-              resultIndex={index}
-              amendments={amendments}
-              amendFn={amendFn}
-              errorStatus={courtCase.errorStatus}
-            />
+            <>
+              <Heading as="h4" size="MEDIUM">
+                {"Hearing result"}
+              </Heading>
+              <HearingResult
+                key={index}
+                result={result}
+                updatedFields={updatedFields}
+                exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>
+                  resultException.path.join(">").startsWith(thisResultPath(index))
+                )}
+                selectedOffenceIndex={selectedOffenceIndex}
+                resultIndex={index}
+                amendments={amendments}
+                amendFn={amendFn}
+                errorStatus={courtCase.errorStatus}
+              />
+            </>
           )
         })}
       </div>
