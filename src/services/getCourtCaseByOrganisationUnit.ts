@@ -27,7 +27,7 @@ const getCourtCaseByOrganisationUnit = (
   leftJoinAndSelectTriggersQuery(query, user.excludedTriggers)
     .leftJoinAndSelect("courtCase.notes", "note")
     .leftJoin("note.user", "user")
-    .addSelect(["user.forenames", "user.surname"])
+    .addSelect(["user.forenames", "user.surname", "user.visibleForces", "user.username"])
     .addOrderBy("note.createdAt", "ASC")
 
   return query.getOne().catch((error) => error)
