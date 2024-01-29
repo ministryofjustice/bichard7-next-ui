@@ -14,7 +14,7 @@ import { Exception } from "types/exceptions"
 import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
 import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
 import hasNextHearingDateException from "utils/exceptions/hasNextHearingDateException"
-import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
+import isNextHearingLocationEditable from "utils/exceptions/isNextHearingLocationEditable"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
 import {
   capitaliseExpression,
@@ -88,7 +88,7 @@ export const HearingResult = ({
       </ConditionalRender>
       <EditableFieldTableRow
         label="Next hearing location"
-        hasExceptions={hasNextHearingLocationException(exceptions)}
+        hasExceptions={isNextHearingLocationEditable(exceptions, courtCase)}
         errorStatus={errorStatus}
         value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
         updatedValue={updatedNextHearingLocation}
