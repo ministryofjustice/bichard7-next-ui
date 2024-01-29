@@ -73,7 +73,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       csrfToken,
       previousPath: previousPath || "",
       user: userToDisplayFullUserDto(currentUser),
-      courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
+      courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase, currentUser),
       lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username),
       canReallocate: courtCase.canReallocate(currentUser.username)
     }

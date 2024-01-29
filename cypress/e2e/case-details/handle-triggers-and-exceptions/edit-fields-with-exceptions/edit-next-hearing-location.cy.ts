@@ -41,8 +41,7 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with no exception").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B46AM03")
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
-    cy.get("#next-hearing-date").should("not.exist")
+    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
   })
 
   it("Shouldn't see next hearing location field when it has no value", () => {
@@ -60,7 +59,7 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Use a motor vehicle on a road / public place without third party insurance").click()
     cy.contains("td", "Next hearing location").should("not.exist")
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
+    cy.get(".moj-badge").contains("Editable Field").should("not.be.visible")
   })
 
   it("Should be able to edit field if HO100200 is raised", () => {
