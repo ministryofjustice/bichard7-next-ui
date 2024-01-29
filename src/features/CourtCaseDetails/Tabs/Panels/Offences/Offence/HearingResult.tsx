@@ -55,8 +55,11 @@ export const HearingResult = ({
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingLocation = getNextHearingLocationValue(updatedFields, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(updatedFields, offenceIndex, resultIndex)
-  const isEditable = (hasException: (exceptions: Exception[]) => {}): boolean =>
-    hasException(exceptions) && courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
+  const isEditable = (hasException: (exceptions: Exception[]) => boolean): boolean =>
+    hasException(exceptions) &&
+    courtCase.canUserEditExceptions &&
+    courtCase.phase === Phase.HEARING_OUTCOME &&
+    errorStatus === "Unresolved"
 
   return (
     <Table>
@@ -91,10 +94,10 @@ export const HearingResult = ({
       </ConditionalRender>
       <EditableFieldTableRow
         label="Next hearing location"
-        hasExceptions={isEditable(hasNextHearingLocationException)}
-        errorStatus={errorStatus}
+        hasExceptions={hasNextHearingLocationException(exceptions)}
         value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
         updatedValue={updatedNextHearingLocation}
+        isEditable={isEditable(hasNextHearingLocationException)}
       >
         <Label>{"Enter next hearing location"}</Label>
         <HintText>{"OU code, 6-7 characters"}</HintText>
@@ -111,10 +114,10 @@ export const HearingResult = ({
       </EditableFieldTableRow>
       <EditableFieldTableRow
         label="Next hearing date"
-        hasExceptions={isEditable(hasNextHearingDateException)}
-        errorStatus={errorStatus}
+        hasExceptions={hasNextHearingDateException(exceptions)}
         value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
         updatedValue={updatedNextHearingDate && formatDisplayedDate(updatedNextHearingDate)}
+        isEditable={isEditable(hasNextHearingDateException)}
       >
         <HintText>{"Enter date"}</HintText>
         <input

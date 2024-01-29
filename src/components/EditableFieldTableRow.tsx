@@ -47,11 +47,10 @@ const correctionBadge = (
   </div>
 )
 
-const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, errorStatus, children }: Props) => {
+const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEditable, children }: Props) => {
   const classes = useStyles()
   const isRendered = !!(value || updatedValue || hasExceptions)
   const hasCorrection = updatedValue && value !== updatedValue
-  const isEditable = hasExceptions && errorStatus === "Unresolved"
 
   const labelField = (
     <>
