@@ -124,7 +124,7 @@ jobs:
 
   lint:
     machine:
-      image: ubuntu-2204:2023.07.2
+      image: ubuntu-2204:current
     resource_class: xlarge
     steps:
       - checkout
@@ -137,7 +137,7 @@ jobs:
 
   unit_test:
     machine:
-      image: ubuntu-2204:2023.07.2
+      image: ubuntu-2204:current
     resource_class: xlarge
     steps:
       - checkout
@@ -150,7 +150,7 @@ jobs:
 
   cypress_component_test:
     machine:
-      image: ubuntu-2204:2023.07.2
+      image: ubuntu-2204:current
     resource_class: xlarge
     steps:
       - checkout
