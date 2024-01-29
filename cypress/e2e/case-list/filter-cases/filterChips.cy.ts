@@ -1,10 +1,10 @@
-import hashedPassword from "../../fixtures/hashedPassword"
+import hashedPassword from "../../../fixtures/hashedPassword"
 import {
   confirmFiltersAppliedContains,
   filterByCaseAge,
   filterByDateRange,
   removeFilterChip
-} from "../../support/helpers"
+} from "../../../support/helpers"
 
 describe("Case list", () => {
   context("When filters applied", () => {

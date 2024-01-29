@@ -3,13 +3,12 @@ import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/Annotate
 import DummyHO100200Aho from "../../../../test/test-data/HO100200_1.json"
 import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
-import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import a11yConfig from "../../../support/a11yConfig"
-import { clickTab } from "../../../support/helpers"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
+import { clickTab } from "../../../support/helpers"
 
-describe("Court case details", () => {
+describe("View case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
@@ -55,6 +54,47 @@ describe("Court case details", () => {
     cy.get("h1")
 
     cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
+  })
+
+  it("Should return 404 for a case that this user can not see", () => {
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
+    cy.login("bichard01@example.com", "password")
+
+    cy.request({
+      failOnStatusCode: false,
+      url: "/bichard/court-cases/0"
+    }).then((response) => {
+      expect(response.status).to.eq(404)
+    })
+  })
+
+  it("Should return 404 for a case that does not exist", () => {
+    cy.login("bichard01@example.com", "password")
+
+    cy.request({
+      failOnStatusCode: false,
+      url: "/court-cases/1"
+    }).then((response) => {
+      expect(response.status).to.eq(404)
+    })
+  })
+
+  it("Should return 401 if there is no auth token in the cookies(this will redirect to the user-service)", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01"
+      }
+    ])
+    cy.login("bichard01@example.com", "password")
+    cy.request({
+      failOnStatusCode: false,
+      url: "/bichard/court-cases/0"
+    }).then((response) => {
+      expect(response.status).to.eq(200)
+    })
+
+    cy.clearCookies()
+    cy.toBeUnauthorized("/bichard/court-cases/0")
   })
 
   it("Should load case details for the case that this user can see", () => {
@@ -341,47 +381,6 @@ describe("Court case details", () => {
     cy.contains("td", "PNC adjudication exists").siblings().contains("N")
   })
 
-  it("Should return 404 for a case that this user can not see", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
-    cy.login("bichard01@example.com", "password")
-
-    cy.request({
-      failOnStatusCode: false,
-      url: "/bichard/court-cases/0"
-    }).then((response) => {
-      expect(response.status).to.eq(404)
-    })
-  })
-
-  it("Should return 404 for a case that does not exist", () => {
-    cy.login("bichard01@example.com", "password")
-
-    cy.request({
-      failOnStatusCode: false,
-      url: "/court-cases/1"
-    }).then((response) => {
-      expect(response.status).to.eq(404)
-    })
-  })
-
-  it("Should return 401 if there is no auth token in the cookies(this will redirect to the user-service)", () => {
-    cy.task("insertCourtCasesWithFields", [
-      {
-        orgForPoliceFilter: "01"
-      }
-    ])
-    cy.login("bichard01@example.com", "password")
-    cy.request({
-      failOnStatusCode: false,
-      url: "/bichard/court-cases/0"
-    }).then((response) => {
-      expect(response.status).to.eq(200)
-    })
-
-    cy.clearCookies()
-    cy.toBeUnauthorized("/bichard/court-cases/0")
-  })
-
   it("Should show triggers tab by default when navigating to court case details page", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
@@ -651,31 +650,6 @@ describe("Court case details", () => {
 
     cy.get("#triggers span").contains("Complete").should("exist")
   })
-
-  canReallocateTestData.forEach(
-    ({ canReallocate, triggers, exceptions, triggersLockedByAnotherUser, exceptionLockedByAnotherUser }) => {
-      it(`should show Reallocate button when triggers are ${triggers} and ${
-        triggersLockedByAnotherUser ? "" : "NOT"
-      } locked by another user, and exceptions are ${exceptions} and ${
-        exceptionLockedByAnotherUser ? "" : "NOT"
-      } locked by another user`, () => {
-        cy.task("insertCourtCasesWithFields", [
-          {
-            orgForPoliceFilter: "01",
-            triggerStatus: triggers,
-            errorStatus: exceptions,
-            triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "Bichard03" : null,
-            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : null
-          }
-        ])
-
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard/court-cases/0")
-
-        cy.get("button.b7-reallocate-button").should(canReallocate ? "exist" : "not.exist")
-      })
-    }
-  )
 })
 
 export {}

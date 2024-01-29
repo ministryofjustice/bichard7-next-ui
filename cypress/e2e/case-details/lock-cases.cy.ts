@@ -1,7 +1,7 @@
 import User from "services/entities/User"
-import hashedPassword from "../../../fixtures/hashedPassword"
+import hashedPassword from "../../fixtures/hashedPassword"
 import { UserGroup } from "types/UserGroup"
-import { newUserLogin } from "../../../support/helpers"
+import { newUserLogin } from "../../support/helpers"
 
 describe("Lock court cases", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {

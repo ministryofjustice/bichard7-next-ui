@@ -1,5 +1,5 @@
 import { UserGroup } from "types/UserGroup"
-import { newUserLogin } from "../../support/helpers"
+import { newUserLogin } from "../../../support/helpers"
 
 const navigateAndShowFilters = () => {
   cy.visit("/bichard")
