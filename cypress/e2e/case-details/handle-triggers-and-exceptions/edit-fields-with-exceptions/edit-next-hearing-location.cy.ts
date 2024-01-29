@@ -29,7 +29,8 @@ describe("NextHearingLocation", () => {
         orgForPoliceFilter: "01",
         hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
         updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
-        errorCount: 1
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
       }
     ])
   })
@@ -236,5 +237,110 @@ describe("NextHearingLocation", () => {
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B46DB00")
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
+  })
+
+  it("Should not be able to edit next hearing location field when the case isn't in 'unresolved' state", () => {
+    const submittedCaseId = 0
+    const resolvedCaseId = 1
+    cy.task("insertCourtCasesWithFields", [
+      {
+        errorStatus: "Submitted",
+        errorId: submittedCaseId,
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
+        updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
+      },
+      {
+        errorStatus: "Resolved",
+        errorId: resolvedCaseId,
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
+        updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
+      }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit(`/bichard/court-cases/${submittedCaseId}`)
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
+
+    cy.visit(`/bichard/court-cases/${resolvedCaseId}`)
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
+    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
+  })
+
+  it("Should not be able to edit next hearing location field when exception is not locked by current user", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
+        updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "bichard02"
+      }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
+    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
+  })
+
+  it("Should not be able to edit next hearing location field when phase is not hearing outcome", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
+        updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
+        errorCount: 1,
+        phase: 2
+      }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
+    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
+  })
+
+  it("Should not be able to edit next hearing location field when user is not exception-handler", () => {
+    cy.task("clearUsers")
+    cy.task("insertUsers", {
+      users: [
+        {
+          username: "triggerHandler",
+          visibleForces: ["001"],
+          forenames: "triggerHandler Test User",
+          surname: "01",
+          email: "triggerhandler@example.com",
+          password: hashedPassword
+        }
+      ],
+      userGroups: ["B7NewUI_grp", "B7TriggerHandler_grp"]
+    })
+
+    cy.login("triggerhandler@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
+    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
   })
 })
