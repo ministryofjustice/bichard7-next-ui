@@ -1,4 +1,4 @@
-import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/dist/types/AnnotatedHearingOutcome"
+import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { GenderCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/GenderCode"
 import { format } from "date-fns"
 import { CourtCaseContext } from "../../src/context/CourtCaseContext"
@@ -45,7 +45,7 @@ describe("Defendant Details", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={{ courtCase }}>
-        <DefendantDetails />
+        <DefendantDetails amendFn={() => () => {}} amendmentRecords={{}} />
       </CourtCaseContext.Provider>
     )
 
@@ -100,7 +100,7 @@ describe("Defendant Details", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={{ courtCase }}>
-        <DefendantDetails />
+        <DefendantDetails amendFn={() => () => {}} amendmentRecords={{}} />
       </CourtCaseContext.Provider>
     )
 

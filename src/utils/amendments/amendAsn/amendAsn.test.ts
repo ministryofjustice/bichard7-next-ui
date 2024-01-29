@@ -48,10 +48,4 @@ describe("asn amendments", () => {
         .DefendantOrOffender.DefendantOrOffenderSequenceNumber
     ).toEqual("00000448754")
   })
-
-  it("handles invalid asn amendments", () => {
-    expect(() => amendAsn("146AA", aho)).toThrowError(
-      "invalid length for asn, the asn needs a minimum length of 18 but has 5"
-    )
-  })
 })

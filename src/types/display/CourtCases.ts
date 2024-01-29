@@ -20,6 +20,7 @@ type FieldsForDisplayPartialCourtCase =
 export type DisplayPartialCourtCase = Pick<CourtCase, FieldsForDisplayPartialCourtCase> & {
   courtDate?: string
   errorLockedByUserFullName?: string
+  canUserEditExceptions: boolean
   triggerLockedByUserFullName?: string
   notes: DisplayNote[]
   triggers: DisplayTrigger[]
@@ -32,14 +33,9 @@ type FieldsForDisplayFullCourtCase =
   | "courtCode"
   | "courtReference"
 
-export type DisplayFullCourtCase = Pick<CourtCase, FieldsForDisplayFullCourtCase> & {
-  courtDate?: string
-  errorLockedByUserFullName?: string
-  triggerLockedByUserFullName?: string
-  notes: DisplayNote[]
-  triggers: DisplayTrigger[]
-  resolutionTimestamp: string | null
-  phase?: number | null
-  aho: AnnotatedHearingOutcome
-  updatedHearingOutcome: AnnotatedHearingOutcome
-}
+export type DisplayFullCourtCase = Pick<CourtCase, FieldsForDisplayFullCourtCase> &
+  DisplayPartialCourtCase & {
+    phase?: number | null
+    aho: AnnotatedHearingOutcome
+    updatedHearingOutcome: AnnotatedHearingOutcome
+  }

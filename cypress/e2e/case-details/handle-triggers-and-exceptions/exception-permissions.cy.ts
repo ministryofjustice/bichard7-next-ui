@@ -1,5 +1,5 @@
-import hashedPassword from "../../fixtures/hashedPassword"
-import canManuallyResolveAndSubmitTestData from "../../fixtures/canManuallyResolveAndSubmitTestData.json"
+import hashedPassword from "../../../fixtures/hashedPassword"
+import canManuallyResolveAndSubmitTestData from "../../../fixtures/canManuallyResolveAndSubmitTestData.json"
 
 describe("Exception permissions", () => {
   const insertUsers = (userRoles: string[]) => {

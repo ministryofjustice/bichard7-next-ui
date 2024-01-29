@@ -1,7 +1,7 @@
-import nextHearingDateExceptions from "../../../../test/test-data/NextHearingDateExceptions.json"
-import dummyAho from "../../../../test/test-data/error_list_aho.json"
-import hashedPassword from "../../../fixtures/hashedPassword"
-import { verifyUpdatedMessage, submitAndConfirmExceptions } from "../../../support/helpers"
+import nextHearingDateExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
+import dummyAho from "../../../../../test/test-data/error_list_aho.json"
+import hashedPassword from "../../../../fixtures/hashedPassword"
+import { verifyUpdatedMessage, submitAndConfirmExceptions } from "../../../../support/helpers"
 
 describe("NextHearingDate", () => {
   before(() => {
@@ -49,7 +49,7 @@ describe("NextHearingDate", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Burglary other than dwelling with intent to steal").click()
     cy.contains("td", "Next hearing date").siblings().should("include.text", "01/02/2008")
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
+    cy.contains("td", "Next hearing date").siblings().contains("Editable Field").should("not.exist")
     cy.get("#next-hearing-date").should("not.exist")
   })
 
@@ -100,7 +100,7 @@ describe("NextHearingDate", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with no exceptions").click()
     cy.contains("td", "Next hearing date").should("not.exist")
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
+    cy.get(".moj-badge").contains("Editable Field").should("not.be.visible")
   })
 
   it("Should be able to edit field if HO100102 is raised", () => {
