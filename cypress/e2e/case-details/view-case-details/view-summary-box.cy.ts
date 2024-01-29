@@ -3,7 +3,7 @@ import dummyAho from "../../../../test/test-data/error_list_aho.json"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
 import { defaultSetup } from "../../../support/helpers"
 
-describe("Court Case Details Summary Box", () => {
+describe("View Court Case Details Summary Box", () => {
   const trigger: TestTrigger = {
     triggerId: 0,
     triggerCode: "TRPR0001",

@@ -7,7 +7,7 @@ import HO200114 from "../../../../test/test-data/HO200114.json"
 
 import hashedPassword from "../../../fixtures/hashedPassword"
 
-describe("ExceptionHandlerPrompt", () => {
+describe("View Exception Handler Prompts", () => {
   const caseWithOffenceQualifierError = 0
   const caseWithOffenceCodeErrors = 1
   const caseWithNoError = 2

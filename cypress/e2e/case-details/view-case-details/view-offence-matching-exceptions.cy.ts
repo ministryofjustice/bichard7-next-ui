@@ -3,7 +3,7 @@ import hashedPassword from "../../../fixtures/hashedPassword"
 import { clickTab } from "../../../support/helpers"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
-describe("Court case details", () => {
+describe("View offence matching exceptions", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,

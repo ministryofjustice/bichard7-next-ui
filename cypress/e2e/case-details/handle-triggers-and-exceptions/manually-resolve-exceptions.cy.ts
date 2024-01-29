@@ -1,6 +1,6 @@
-import hashedPassword from "../../fixtures/hashedPassword"
+import hashedPassword from "../../../fixtures/hashedPassword"
 
-describe("Manually resolve a case", () => {
+describe("Manually resolve exceptions", () => {
   const insertUsers = (userRoles: string[]) => {
     userRoles.forEach((userRole: string) => {
       cy.task("insertUsers", {
