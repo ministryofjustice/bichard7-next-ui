@@ -14,7 +14,7 @@ import { Exception } from "types/exceptions"
 import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
 import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
 import hasNextHearingDateException from "utils/exceptions/hasNextHearingDateException"
-import isNextHearingLocationEditable from "utils/exceptions/isNextHearingLocationEditable"
+import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
 import {
   capitaliseExpression,
@@ -24,6 +24,7 @@ import {
   getYesOrNo
 } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
+import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 
 interface HearingResultProps {
   result: Result
@@ -54,6 +55,10 @@ export const HearingResult = ({
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingLocation = getNextHearingLocationValue(updatedFields, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(updatedFields, offenceIndex, resultIndex)
+  const isNextHearingLocationEditable =
+    hasNextHearingLocationException(exceptions) &&
+    courtCase.canUserEditExceptions &&
+    courtCase.phase === Phase.HEARING_OUTCOME
 
   return (
     <Table>
@@ -88,7 +93,7 @@ export const HearingResult = ({
       </ConditionalRender>
       <EditableFieldTableRow
         label="Next hearing location"
-        hasExceptions={isNextHearingLocationEditable(exceptions, courtCase)}
+        hasExceptions={isNextHearingLocationEditable}
         errorStatus={errorStatus}
         value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
         updatedValue={updatedNextHearingLocation}
