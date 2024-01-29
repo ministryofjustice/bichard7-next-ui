@@ -55,10 +55,9 @@ export const HearingResult = ({
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingLocation = getNextHearingLocationValue(updatedFields, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(updatedFields, offenceIndex, resultIndex)
-  const isNextHearingLocationEditable =
-    hasNextHearingLocationException(exceptions) &&
-    courtCase.canUserEditExceptions &&
-    courtCase.phase === Phase.HEARING_OUTCOME
+  const isEditable = (hasException: (exceptions: Exception[]) => {}): boolean => {
+    return hasException(exceptions) && courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
+  }
 
   return (
     <Table>
@@ -93,7 +92,7 @@ export const HearingResult = ({
       </ConditionalRender>
       <EditableFieldTableRow
         label="Next hearing location"
-        hasExceptions={isNextHearingLocationEditable}
+        hasExceptions={isEditable(hasNextHearingLocationException)}
         errorStatus={errorStatus}
         value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
         updatedValue={updatedNextHearingLocation}
@@ -113,7 +112,7 @@ export const HearingResult = ({
       </EditableFieldTableRow>
       <EditableFieldTableRow
         label="Next hearing date"
-        hasExceptions={hasNextHearingDateException(exceptions)}
+        hasExceptions={isEditable(hasNextHearingDateException)}
         errorStatus={errorStatus}
         value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
         updatedValue={updatedNextHearingDate && formatDisplayedDate(updatedNextHearingDate)}
