@@ -55,9 +55,8 @@ export const HearingResult = ({
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingLocation = getNextHearingLocationValue(updatedFields, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(updatedFields, offenceIndex, resultIndex)
-  const isEditable = (hasException: (exceptions: Exception[]) => {}): boolean => {
-    return hasException(exceptions) && courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
-  }
+  const isEditable = (hasException: (exceptions: Exception[]) => {}): boolean =>
+    hasException(exceptions) && courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
 
   return (
     <Table>
