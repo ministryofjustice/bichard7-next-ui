@@ -1,7 +1,5 @@
 import { Exception } from "types/exceptions"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import { DisplayFullCourtCase } from "../../types/display/CourtCases"
-import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 
 const hasNextHearingLocationException = (exceptions: Exception[]): boolean =>
   exceptions.some(
