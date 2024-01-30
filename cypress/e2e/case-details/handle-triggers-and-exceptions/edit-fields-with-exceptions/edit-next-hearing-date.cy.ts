@@ -234,4 +234,68 @@ describe("NextHearingDate", () => {
     cy.contains("td", "Next hearing date").siblings().should("include.text", "24/12/2023")
     cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Correction")
   })
+
+  it("Should not be able to edit next hearing date field when exception is not locked by current user", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXml,
+        updatedHearingOutcome: nextHearingDateExceptions.updatedHearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "bichard02"
+      }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
+  })
+
+  it("Should not be able to edit next hearing date field when phase is not hearing outcome", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXml,
+        updatedHearingOutcome: nextHearingDateExceptions.updatedHearingOutcomeXml,
+        errorCount: 1,
+        phase: 2
+      }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
+  })
+
+  it("Should not be able to edit next hearing date field when user is not exception-handler", () => {
+    cy.task("clearUsers")
+    cy.task("insertUsers", {
+      users: [
+        {
+          username: "triggerHandler",
+          visibleForces: ["001"],
+          forenames: "triggerHandler Test User",
+          surname: "01",
+          email: "triggerhandler@example.com",
+          password: hashedPassword
+        }
+      ],
+      userGroups: ["B7NewUI_grp", "B7TriggerHandler_grp"]
+    })
+
+    cy.login("triggerhandler@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
+  })
 })

@@ -2,15 +2,14 @@ import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
-import { ResolutionStatus } from "../types/ResolutionStatus"
 import ConditionalRender from "./ConditionalRender"
 
 type Props = {
   label: string
   hasExceptions: boolean
-  errorStatus?: ResolutionStatus | null
   value?: string | React.ReactNode
   updatedValue?: string | null
+  isEditable: boolean
   children?: React.ReactNode
 }
 
@@ -47,11 +46,10 @@ const correctionBadge = (
   </div>
 )
 
-const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, errorStatus, children }: Props) => {
+const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEditable, children }: Props) => {
   const classes = useStyles()
   const isRendered = !!(value || updatedValue || hasExceptions)
   const hasCorrection = updatedValue && value !== updatedValue
-  const isEditable = hasExceptions && errorStatus === "Unresolved"
 
   const labelField = (
     <>
