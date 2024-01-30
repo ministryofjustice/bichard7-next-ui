@@ -6,7 +6,7 @@ import { DefendantDetails } from "../../src/features/CourtCaseDetails/Tabs/Panel
 import { DisplayFullCourtCase } from "../../src/types/display/CourtCases"
 
 describe("Defendant Details", () => {
-  it.only("displays all defendant details", () => {
+  it("displays all defendant details", () => {
     const dob = new Date()
     const data: Partial<HearingDefendant> = {
       ArrestSummonsNumber: "1101ZD01000004487545",
