@@ -1,7 +1,7 @@
-export function logUiDetails(): void {
+export function logUiDetails(environment: string = "local", build: string = "local"): void {
   console.clear()
   console.table({
-    environment: process.env.NEXT_PUBLIC_WORKSPACE || "local",
-    build: process.env.NEXT_PUBLIC_BUILD || "local"
+    environment,
+    build
   })
 }
