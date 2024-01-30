@@ -69,6 +69,8 @@ interface Props {
   displaySwitchingSurveyFeedback: boolean
   searchOrder: string | null
   orderBy: string | null
+  environment?: string
+  build?: string
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
@@ -217,7 +219,9 @@ export const getServerSideProps = withMultipleServerSideProps(
         locked: validatedLocked ? validatedLocked : null,
         caseState: validatedCaseState ? validatedCaseState : null,
         myCases: !!validatedMyCases,
-        queryStringCookieName
+        queryStringCookieName,
+        environment: process.env.NEXT_PUBLIC_WORKSPACE,
+        build: process.env.NEXT_PUBLIC_BUILD
       }
     }
   }
