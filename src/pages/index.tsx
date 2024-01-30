@@ -69,8 +69,8 @@ interface Props {
   displaySwitchingSurveyFeedback: boolean
   searchOrder: string | null
   orderBy: string | null
-  environment?: string
-  build?: string
+  environment: string | null
+  build: string | null
 }
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
@@ -220,8 +220,8 @@ export const getServerSideProps = withMultipleServerSideProps(
         caseState: validatedCaseState ? validatedCaseState : null,
         myCases: !!validatedMyCases,
         queryStringCookieName,
-        environment: process.env.NEXT_PUBLIC_WORKSPACE,
-        build: process.env.NEXT_PUBLIC_BUILD
+        environment: process.env.NEXT_PUBLIC_WORKSPACE || null,
+        build: process.env.NEXT_PUBLIC_BUILD || null
       }
     }
   }
@@ -252,11 +252,13 @@ const Home: NextPage<Props> = (props) => {
     queryStringCookieName,
     displaySwitchingSurveyFeedback,
     searchOrder,
-    orderBy
+    orderBy,
+    environment,
+    build
   } = props
 
   useEffect(() => {
-    logUiDetails()
+    logUiDetails(environment, build)
     const nonSavedParams = ["unlockTrigger", "unlockException"]
     const [, queryString] = router.asPath.split("?")
 
