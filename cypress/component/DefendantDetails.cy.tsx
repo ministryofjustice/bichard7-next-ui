@@ -6,9 +6,10 @@ import { DefendantDetails } from "../../src/features/CourtCaseDetails/Tabs/Panel
 import { DisplayFullCourtCase } from "../../src/types/display/CourtCases"
 
 describe("Defendant Details", () => {
-  it("displays all defendant details", () => {
+  it.only("displays all defendant details", () => {
     const dob = new Date()
     const data: Partial<HearingDefendant> = {
+      ArrestSummonsNumber: "1101ZD01000004487545",
       PNCCheckname: "PNCCheckName",
       Address: {
         AddressLine1: "AddressLine1",
@@ -49,6 +50,7 @@ describe("Defendant Details", () => {
       </CourtCaseContext.Provider>
     )
 
+    cy.contains("td", "ASN").siblings().should("include.text", data.ArrestSummonsNumber)
     cy.contains("td", "PNC Check name").siblings().should("include.text", data.PNCCheckname)
     cy.contains("td", "Given name").siblings().should("include.text", data.DefendantDetail?.PersonName.GivenName)
     cy.contains("td", "Family name").siblings().should("include.text", data.DefendantDetail?.PersonName.FamilyName)
