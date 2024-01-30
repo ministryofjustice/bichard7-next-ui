@@ -2,15 +2,14 @@ import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
-import { ResolutionStatus } from "../types/ResolutionStatus"
 import ConditionalRender from "./ConditionalRender"
 
 type Props = {
   label: string
   hasExceptions: boolean
-  errorStatus?: ResolutionStatus | null
   value?: string | React.ReactNode
   updatedValue?: string | null
+  isEditable: boolean
   children?: React.ReactNode
 }
 
