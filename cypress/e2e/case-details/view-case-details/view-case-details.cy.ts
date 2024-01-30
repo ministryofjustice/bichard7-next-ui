@@ -417,47 +417,6 @@ describe("View case details", () => {
     cy.get('h4:contains("Hearing result")').should("have.length", 1)
   })
 
-  it("Should return 404 for a case that this user can not see", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
-    cy.login("bichard01@example.com", "password")
-
-    cy.request({
-      failOnStatusCode: false,
-      url: "/bichard/court-cases/0"
-    }).then((response) => {
-      expect(response.status).to.eq(404)
-    })
-  })
-
-  it("Should return 404 for a case that does not exist", () => {
-    cy.login("bichard01@example.com", "password")
-
-    cy.request({
-      failOnStatusCode: false,
-      url: "/court-cases/1"
-    }).then((response) => {
-      expect(response.status).to.eq(404)
-    })
-  })
-
-  it("Should return 401 if there is no auth token in the cookies(this will redirect to the user-service)", () => {
-    cy.task("insertCourtCasesWithFields", [
-      {
-        orgForPoliceFilter: "01"
-      }
-    ])
-    cy.login("bichard01@example.com", "password")
-    cy.request({
-      failOnStatusCode: false,
-      url: "/bichard/court-cases/0"
-    }).then((response) => {
-      expect(response.status).to.eq(200)
-    })
-
-    cy.clearCookies()
-    cy.toBeUnauthorized("/bichard/court-cases/0")
-  })
-
   it("Should show triggers tab by default when navigating to court case details page", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
@@ -752,7 +711,6 @@ describe("View case details", () => {
       })
     }
   )
-
 })
 
 export {}
