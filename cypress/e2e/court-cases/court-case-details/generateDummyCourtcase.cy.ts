@@ -1,4 +1,3 @@
-import nextHearingDateExceptions from "../../../../test/test-data/NextHearingDateExceptions.json"
 import dummyAho from "../../../../test/test-data/multipleHearingResultsOnOffence.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
 
@@ -21,19 +20,7 @@ describe("NextHearingDate", () => {
     })
   })
 
-  beforeEach(() => {
-    cy.task("clearCourtCases")
-    cy.task("insertCourtCasesWithFields", [
-      {
-        orgForPoliceFilter: "01",
-        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXml,
-        updatedHearingOutcome: nextHearingDateExceptions.updatedHearingOutcomeXml,
-        errorCount: 1
-      }
-    ])
-  })
-
-  it("Should not be able to edit next hearing date field there is no exception", () => {
+  it("Should be able to see 'Hearing result' heading before every hearing result", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
