@@ -73,8 +73,9 @@ export const getServerSideProps = withMultipleServerSideProps(
       csrfToken,
       previousPath: previousPath || "",
       user: userToDisplayFullUserDto(currentUser),
-      courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase),
-      lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username)
+      courtCase: courtCaseToDisplayFullCourtCaseDto(courtCase, currentUser),
+      lockedByAnotherUser: courtCase.isLockedByAnotherUser(currentUser.username),
+      canReallocate: courtCase.canReallocate(currentUser.username)
     }
 
     if (isPost(req)) {

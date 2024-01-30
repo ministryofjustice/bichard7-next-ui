@@ -1,7 +1,7 @@
-import AsnExceptionHo100206 from "../../../../test/test-data/AsnExceptionHo100206.json"
-import AnnotatedHO from "../../../../test/test-data/AnnotatedHO1.json"
-import hashedPassword from "../../../fixtures/hashedPassword"
-import { verifyUpdatedMessage } from "../../../support/helpers"
+import AsnExceptionHo100206 from "../../../../../test/test-data/AsnExceptionHo100206.json"
+import AnnotatedHO from "../../../../../test/test-data/AnnotatedHO1.json"
+import hashedPassword from "../../../../fixtures/hashedPassword"
+import { verifyUpdatedMessage } from "../../../../support/helpers"
 
 describe("ASN", () => {
   before(() => {
