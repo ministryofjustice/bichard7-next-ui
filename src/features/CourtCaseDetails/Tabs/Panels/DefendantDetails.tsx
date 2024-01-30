@@ -78,7 +78,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
             updatedValue={updatedAsn}
             label="ASN"
             hasExceptions={isAsnEditable}
-            errorStatus={courtCase.errorStatus}
+            isEditable={isAsnEditable}
           >
             <Label>{"Enter the ASN"}</Label>
             <HintText>
