@@ -2,13 +2,13 @@ import User from "services/entities/User"
 import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
 import DummyHO100200Aho from "../../../../test/test-data/HO100200_1.json"
 import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
+import dummyMultipleHearingResultsAho from "../../../../test/test-data/multipleHearingResultsOnOffence.json"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import a11yConfig from "../../../support/a11yConfig"
 import { clickTab } from "../../../support/helpers"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
-import dummyMultipleHearingResultsAho from "../../../../test/test-data/multipleHearingResultsOnOffence.json"
 
 describe("View case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
@@ -417,6 +417,39 @@ describe("View case details", () => {
     cy.get('h4:contains("Hearing result")').should("have.length", 1)
   })
 
+  it("Should be able to see 'Hearing result' heading before every hearing result, when there are multiple", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: dummyMultipleHearingResultsAho.hearingOutcomeXml,
+        errorCount: 1
+      }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+    clickTab("Offences")
+    cy.get("tbody tr:nth-child(1) td:nth-child(4) a").click()
+
+    cy.get('h4:contains("Hearing result")').should("have.length", 6)
+  })
+
+  it("Should be able to see 'Hearing result' heading before every hearing result, when there is one", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: DummyHO100200Aho.hearingOutcomeXml,
+        errorCount: 1
+      }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+    clickTab("Offences")
+    cy.get("tbody tr:nth-child(1) td:nth-child(4) a").click()
+
+    cy.get('h4:contains("Hearing result")').should("have.length", 1)
+  })
   it("Should show triggers tab by default when navigating to court case details page", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
