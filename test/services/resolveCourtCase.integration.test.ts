@@ -1,30 +1,29 @@
-import axios from "axios"
-import { differenceInMilliseconds } from "date-fns"
 import User from "services/entities/User"
-import insertNotes from "services/insertNotes"
-import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import storeAuditLogEvents from "services/storeAuditLogEvents"
-import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
 import { DataSource, UpdateQueryBuilder } from "typeorm"
-import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { isError } from "types/Result"
-import { AUDIT_LOG_API_URL, AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
 import getDataSource from "../../src/services/getDataSource"
 import resolveCourtCase from "../../src/services/resolveCourtCase"
-import { hasAccessToAll } from "../helpers/hasAccessTo"
-import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
+import { differenceInMilliseconds } from "date-fns"
+import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
+import insertNotes from "services/insertNotes"
+import updateLockStatusToUnlocked from "services/updateLockStatusToUnlocked"
+import storeAuditLogEvents from "services/storeAuditLogEvents"
+import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
+import { AUDIT_LOG_API_URL, AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
+import axios from "axios"
+import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
 
 jest.setTimeout(100000)
 jest.mock("services/insertNotes")
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
-jest.mock("services/conductor/continueConductorWorkflow")
 
 const expectToBeUnresolved = (courtCase: CourtCase) => {
   expect(courtCase.errorStatus).toEqual("Unresolved")
@@ -481,10 +480,12 @@ describe("resolveCourtCase", () => {
     it("Should return the error if fails to create notes", async () => {
       ;(insertNotes as jest.Mock).mockImplementationOnce(() => new Error(`Error while creating notes`))
 
-      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
-        (error) => error as Error
-      )
-
+      let result
+      try {
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
+      } catch (error) {
+        result = error as Error
+      }
       expect(result).toEqual(Error(`Error while creating notes`))
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
@@ -498,9 +499,12 @@ describe("resolveCourtCase", () => {
         () => new Error(`Error while unlocking the case`)
       )
 
-      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
-        (error) => error as Error
-      )
+      let result
+      try {
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
+      } catch (error) {
+        result = error as Error
+      }
 
       expect(result).toEqual(Error(`Error while unlocking the case`))
 
@@ -510,30 +514,17 @@ describe("resolveCourtCase", () => {
       expectToBeUnresolved(actualCourtCase)
     })
 
-    it("Should return the error if fails to update the conductor workflow", async () => {
+    it("Should return the error if fails to store audit logs", async () => {
       ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(`Error while calling audit log API`))
 
-      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
-        (error) => error as Error
-      )
+      let result
+      try {
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
+      } catch (error) {
+        result = error as Error
+      }
 
       expect(result).toEqual(Error(`Error while calling audit log API`))
-
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
-      const actualCourtCase = record as CourtCase
-
-      expectToBeUnresolved(actualCourtCase)
-    })
-
-    it("Should return the error if fails to store audit logs", async () => {
-      const expectedError = `Error while calling audit log API`
-      ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(expectedError))
-
-      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
-        (error) => error as Error
-      )
-
-      expect(result).toEqual(Error(expectedError))
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
       const actualCourtCase = record as CourtCase
@@ -546,10 +537,12 @@ describe("resolveCourtCase", () => {
         .spyOn(UpdateQueryBuilder.prototype, "execute")
         .mockRejectedValue(Error("Failed to update record with some error"))
 
-      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
-        (error) => error as Error
-      )
-
+      let result
+      try {
+        result = await resolveCourtCase(dataSource, courtCases[0], resolution, user)
+      } catch (error) {
+        result = error as Error
+      }
       expect(result).toEqual(Error(`Failed to update record with some error`))
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
