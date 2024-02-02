@@ -248,10 +248,6 @@ jobs:
           command: npm run ui
           working_directory: ~/bichard7-next-core
       - run:
-          name: Run fake conductor service
-          command: node .circleci/fakes/conductor
-          background: true
-      - run:
           name: Run UI tests
           command: |
             TEST_FILES="$(circleci tests glob "cypress/e2e/**/*.cy.ts" | circleci tests split --split-by=timings)"

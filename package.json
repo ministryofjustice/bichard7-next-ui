@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "@govuk-react/select": "^0.10.6",
-    "@io-orkes/conductor-javascript": "^2.0.0",
     "@ministryofjustice/frontend": "^2.0.0",
     "@moj-bichard7-developers/bichard7-next-core": "^2.0.5",
     "@moj-bichard7-developers/bichard7-next-data": "*",
