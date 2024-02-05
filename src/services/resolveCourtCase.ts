@@ -3,8 +3,6 @@ import { DataSource, EntityManager, UpdateResult } from "typeorm"
 import { ManualResolution } from "types/ManualResolution"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
-import { ENABLE_CORE_PHASE1 } from "../config"
-import { continueConductorWorkflow } from "./conductor"
 import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import insertNotes from "./insertNotes"
@@ -53,21 +51,10 @@ const resolveCourtCase = async (
       throw addNoteResult
     }
 
-    if (ENABLE_CORE_PHASE1 === "false") {
-      // push audit log events
-      const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
-      if (isError(storeAuditLogResponse)) {
-        throw storeAuditLogResponse
-      }
-    } else {
-      // complete human task step in conductor workflow
-      const continueConductorWorkflowResult = await continueConductorWorkflow(courtCase, {
-        status: "manually_resolved",
-        auditLogEvents: events
-      })
-      if (isError(continueConductorWorkflowResult)) {
-        throw continueConductorWorkflowResult
-      }
+    // push audit log events
+    const storeAuditLogResponse = await storeAuditLogEvents(courtCase.messageId, events)
+    if (isError(storeAuditLogResponse)) {
+      throw storeAuditLogResponse
     }
 
     return resolveErrorResult

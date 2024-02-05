@@ -24,7 +24,6 @@ jest.mock("services/insertNotes")
 jest.mock("services/updateLockStatusToUnlocked")
 jest.mock("services/storeAuditLogEvents")
 jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
-jest.mock("services/conductor/continueConductorWorkflow")
 
 const expectToBeUnresolved = (courtCase: CourtCase) => {
   expect(courtCase.errorStatus).toEqual("Unresolved")
@@ -503,21 +502,6 @@ describe("resolveCourtCase", () => {
       )
 
       expect(result).toEqual(Error(`Error while unlocking the case`))
-
-      const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
-      const actualCourtCase = record as CourtCase
-
-      expectToBeUnresolved(actualCourtCase)
-    })
-
-    it("Should return the error if fails to update the conductor workflow", async () => {
-      ;(storeAuditLogEvents as jest.Mock).mockImplementationOnce(() => new Error(`Error while calling audit log API`))
-
-      const result = await resolveCourtCase(dataSource, courtCases[0], resolution, user).catch(
-        (error) => error as Error
-      )
-
-      expect(result).toEqual(Error(`Error while calling audit log API`))
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: 0 } })
       const actualCourtCase = record as CourtCase
