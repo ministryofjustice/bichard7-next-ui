@@ -1,4 +1,4 @@
-import AsnExceptionHo100206 from "../../../../../test/test-data/AsnExceptionHo100206.json"
+import AsnException from "../../../../../test/test-data/AsnException.json"
 import AnnotatedHO from "../../../../../test/test-data/AnnotatedHO1.json"
 import hashedPassword from "../../../../fixtures/hashedPassword"
 import { verifyUpdatedMessage } from "../../../../support/helpers"
@@ -27,8 +27,8 @@ describe("ASN", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
-        hearingOutcome: AsnExceptionHo100206.hearingOutcomeXml,
-        updatedHearingOutcome: AsnExceptionHo100206.updatedHearingOutcomeXml,
+        hearingOutcome: AsnException.hearingOutcomeXml,
+        updatedHearingOutcome: AsnException.hearingOutcomeXml,
         errorCount: 1,
         errorLockedByUsername: "Bichard01"
       }
@@ -60,16 +60,16 @@ describe("ASN", () => {
         errorStatus: "Submitted",
         errorId: submittedCaseId,
         orgForPoliceFilter: "01",
-        hearingOutcome: AsnExceptionHo100206.hearingOutcomeXml,
-        updatedHearingOutcome: AsnExceptionHo100206.updatedHearingOutcomeXml,
+        hearingOutcome: AsnException.hearingOutcomeXml,
+        updatedHearingOutcome: AsnException.hearingOutcomeXml,
         errorCount: 1
       },
       {
         errorStatus: "Resolved",
         errorId: resolvedCaseId,
         orgForPoliceFilter: "01",
-        hearingOutcome: AsnExceptionHo100206.hearingOutcomeXml,
-        updatedHearingOutcome: AsnExceptionHo100206.updatedHearingOutcomeXml,
+        hearingOutcome: AsnException.hearingOutcomeXml,
+        updatedHearingOutcome: AsnException.hearingOutcomeXml,
         errorCount: 1
       }
     ])
@@ -139,8 +139,8 @@ describe("ASN", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
-        hearingOutcome: AsnExceptionHo100206.hearingOutcomeXml,
-        updatedHearingOutcome: AsnExceptionHo100206.updatedHearingOutcomeXml,
+        hearingOutcome: AsnException.hearingOutcomeXml,
+        updatedHearingOutcome: AsnException.hearingOutcomeXml,
         errorCount: 1,
         errorLockedByUsername: "Bichard02"
       }
