@@ -25,7 +25,7 @@ const useStyles = createUseStyles({
     rowGap: "12px",
     padding: "30px",
     "& div": {
-      fontSize: "19px",
+      fontSize: "16px",
       lineHeight: "25px"
     }
   }

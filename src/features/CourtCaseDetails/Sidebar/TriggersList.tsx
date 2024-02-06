@@ -25,7 +25,7 @@ const useStyles = createUseStyles({
     paddingBottom: "20px",
     "#select-all-action": {
       cursor: "pointer",
-      fontSize: "19px"
+      fontSize: "16px"
     }
   },
   markCompleteContainer: {
