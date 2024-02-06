@@ -1,6 +1,6 @@
 import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 
-export const MAX_NOTE_LENGTH = 1000
+export const MAX_NOTE_LENGTH = 2000
 export const MAX_FEEDBACK_LENGTH = 2000
 export const AUDIT_LOG_API_URL = process.env.AUDIT_LOG_API_URL ?? "http://localhost:7010"
 export const AUDIT_LOG_API_KEY = process.env.AUDIT_LOG_API_KEY ?? "dummy_api_key"
