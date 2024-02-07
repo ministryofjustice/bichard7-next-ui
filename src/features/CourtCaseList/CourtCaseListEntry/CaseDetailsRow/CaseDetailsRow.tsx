@@ -2,7 +2,6 @@ import ConditionalRender from "components/ConditionalRender"
 import DateTime from "components/DateTime"
 import { filterUserNotes } from "features/CourtCaseList/CourtCaseListEntry/CaseDetailsRow/CourtCaseListEntryHelperFunction"
 import ResolutionStatusBadge from "features/CourtCaseList/tags/ResolutionStatusBadge"
-import UrgentTag from "features/CourtCaseList/tags/UrgentTag"
 import { Link, Table } from "govuk-react"
 import Image from "next/image"
 import { useRouter } from "next/router"
@@ -61,9 +60,6 @@ export const CaseDetailsRow = ({
         </Table.Cell>
         <Table.Cell>{courtName}</Table.Cell>
         <Table.Cell>{ptiurn}</Table.Cell>
-        <Table.Cell>
-          <UrgentTag isUrgent={isUrgent} />
-        </Table.Cell>
         <Table.Cell>
           <NotePreviewButton previewState={showPreview} setShowPreview={setShowPreview} numberOfNotes={numberOfNotes} />
         </Table.Cell>
