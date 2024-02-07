@@ -29,7 +29,7 @@ export const CaseDetailsRow = ({
   previousPath,
   resolutionStatus
 }: CaseDetailsRowProps) => {
-  const { notes, errorLockedByUsername, defendantName, errorId, courtDate, courtName, ptiurn, isUrgent } = courtCase
+  const { notes, errorLockedByUsername, defendantName, errorId, courtDate, courtName, ptiurn } = courtCase
   const { basePath } = useRouter()
   const [showPreview, setShowPreview] = useState(true)
   const userNotes = filterUserNotes(notes)
