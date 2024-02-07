@@ -1,7 +1,6 @@
 import ConditionalRender from "components/ConditionalRender"
 import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions/ReasonFilterOptions"
-import UrgencyFilterOptions from "components/FilterOptions/UrgencyFilterOptions"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
