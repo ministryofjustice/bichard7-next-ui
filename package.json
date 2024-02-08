@@ -135,6 +135,7 @@
     "wait-on": "^7.2.0"
   },
   "lint-staged": {
-    ".{js,ts,tsx}": "eslint --cache --fix --max-warnings 0"
+    "*.{js,ts,tsx}": "eslint --cache --fix --max-warnings 0"
   }
 }
+
