@@ -8,28 +8,60 @@ interface CourtCaseDetailsSummaryBoxFieldProps {
   value: string | null | undefined
 }
 
-const CourtCaseDetailsSummaryBoxField = ({ label, value }: CourtCaseDetailsSummaryBoxFieldProps) => (
-  <>
-    <div>
-      <b className="govuk-!-static-padding-right-3">{label}</b>
-    </div>
-    <div>{value}</div>
-  </>
-)
-
 const useStyles = createUseStyles({
   "court-case-details-summary-box": {
     display: "grid",
-    gridTemplateColumns: "repeat(3, max-content auto)",
-    backgroundColor: gdsLightGrey,
+    gridTemplateColumns: "repeat(3, auto)",
+    gridAutoFlow: "row dense",
     rowGap: "12px",
-    padding: "30px",
-    "& div": {
-      fontSize: "19px",
-      lineHeight: "25px"
+    backgroundColor: gdsLightGrey,
+    padding: "25px"
+  },
+  detail: {},
+  detail__label: {
+    display: "inline-block",
+    marginRight: "10px"
+  },
+  detail__value: {
+    display: "inline-block",
+    marginRight: "15px"
+  },
+  "@media (min-width: 1680px)": {
+    "court-case-details-summary-box": {
+      display: "flex",
+      padding: "25px"
+    },
+    detail: {
+      display: "block",
+      paddingRight: "35px",
+      "&:last-child": {
+        paddingRight: 0
+      }
+    },
+    detail__label: {
+      display: "flex",
+      minWidth: "inherit"
+    },
+    detail__value: {
+      display: "flex",
+      marginRight: 0,
+      marginLeft: 0
     }
   }
 })
+
+const CourtCaseDetailsSummaryBoxField = ({ label, value }: CourtCaseDetailsSummaryBoxFieldProps) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classes.detail}>
+      <div className={classes.detail__label}>
+        <b>{label}</b>
+      </div>
+      <div className={classes.detail__value}>{value}</div>
+    </div>
+  )
+}
 
 const CourtCaseDetailsSummaryBox = () => {
   const classes = useStyles()
