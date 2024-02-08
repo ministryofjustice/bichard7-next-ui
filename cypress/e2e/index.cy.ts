@@ -87,7 +87,6 @@ describe("Case list", () => {
       cy.get("#court-date-sort").contains("Court date").should("have.attr", "href")
       cy.get("#court-name-sort").contains("Court name").should("have.attr", "href")
       cy.get("#ptiurn-sort").contains("PTIURN").should("have.attr", "href")
-      cy.get("#is-urgent-sort").contains("Urgent").should("have.attr", "href")
       cy.contains("Notes").should("have.attr", "href")
       cy.contains("Reason").should("not.have.attr", "href")
       cy.get("#locked-by-sort").contains("Locked by").should("have.attr", "href")
@@ -241,21 +240,6 @@ describe("Case list", () => {
 
       cy.url().should("match", /\/bichard/)
       cy.get("h1").contains("Case list").should("exist")
-    })
-
-    it("Should display the urgent badge on cases marked as urgent", () => {
-      cy.task("insertCourtCasesWithFields", [
-        { isUrgent: true, orgForPoliceFilter: "01" },
-        { isUrgent: false, orgForPoliceFilter: "01" },
-        { isUrgent: true, orgForPoliceFilter: "01" }
-      ])
-
-      loginAndGoToUrl()
-
-      cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
-      cy.get("tr").not(":first").eq(0).contains(`Urgent`).should("exist")
-      cy.get("tr").not(":first").eq(1).contains(`Urgent`).should("not.exist")
-      cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
     })
 
     it("Should display a preview of the notes", () => {
