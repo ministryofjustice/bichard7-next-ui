@@ -138,6 +138,6 @@
   },
   "lint-staged": {
     ".{js,ts,tsx}": "eslint --cache --fix --max-warnings 0",
-    ".css": "stylelint './styles/*.scss'"
+    "*.scss": "stylelint './styles/*.scss' --fix"
   }
 }
