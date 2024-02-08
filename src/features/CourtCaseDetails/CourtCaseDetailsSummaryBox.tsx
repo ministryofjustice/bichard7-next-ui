@@ -56,7 +56,6 @@ const CourtCaseDetailsSummaryBox = () => {
         label="Court code (LJA)"
         value={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.CourtHouseCode.toString()}
       />
-      <CourtCaseDetailsSummaryBoxField label="Court case reference" value={courtCase.courtReference} />
       <CourtCaseDetailsSummaryBoxField label="Court name" value={courtCase.courtName} />
     </div>
   )
