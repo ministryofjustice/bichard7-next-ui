@@ -1,4 +1,6 @@
-import AsnException from "../../../../../test/test-data/AsnException.json"
+import AsnExceptionHO100206 from "../../../../../test/test-data/AsnExceptionHo100206.json"
+import AsnExceptionHO100321 from "../../../../../test/test-data/AsnExceptionHo100321.json"
+import ExceptionHO100239 from "../../../../../test/test-data/HO100239_1.json"
 import AnnotatedHO from "../../../../../test/test-data/AnnotatedHO1.json"
 import hashedPassword from "../../../../fixtures/hashedPassword"
 import { verifyUpdatedMessage } from "../../../../support/helpers"
@@ -27,8 +29,8 @@ describe("ASN", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
-        hearingOutcome: AsnException.hearingOutcomeXml,
-        updatedHearingOutcome: AsnException.hearingOutcomeXml,
+        hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
         errorCount: 1,
         errorLockedByUsername: "Bichard01"
       }
@@ -60,16 +62,16 @@ describe("ASN", () => {
         errorStatus: "Submitted",
         errorId: submittedCaseId,
         orgForPoliceFilter: "01",
-        hearingOutcome: AsnException.hearingOutcomeXml,
-        updatedHearingOutcome: AsnException.hearingOutcomeXml,
+        hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
         errorCount: 1
       },
       {
         errorStatus: "Resolved",
         errorId: resolvedCaseId,
         orgForPoliceFilter: "01",
-        hearingOutcome: AsnException.hearingOutcomeXml,
-        updatedHearingOutcome: AsnException.hearingOutcomeXml,
+        hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
         errorCount: 1
       }
     ])
@@ -87,6 +89,87 @@ describe("ASN", () => {
   })
 
   it("Should be able to edit ASN field if any exceptions are raised", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: ExceptionHO100239.hearingOutcomeXml,
+        updatedHearingOutcome: ExceptionHO100239.hearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
+      }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get(".moj-badge").contains("Editable Field").should("exist")
+    cy.get("#asn").type("1101ZD0100000448754K")
+
+    cy.get("button").contains("Submit exception(s)").click()
+
+    cy.contains(
+      "Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"
+    ).should("exist")
+    cy.get("button").contains("Submit exception(s)").click()
+
+    cy.contains("Bichard01: Portal Action: Update Applied. Element: asn. New Value: 1101ZD0100000448754K")
+    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+
+    verifyUpdatedMessage({
+      expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
+      updatedMessageNotHaveContent: ["<br7:ArrestSummonsNumber>AAAAAAAAAAAAAAAAAAAA</br7:ArrestSummonsNumber>"],
+      updatedMessageHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber>"]
+    })
+  })
+
+  it("Should be able to edit ASN field if HO100206 is raised", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
+      }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get(".moj-badge").contains("Editable Field").should("exist")
+    cy.get("#asn").type("1101ZD0100000448754K")
+
+    cy.get("button").contains("Submit exception(s)").click()
+
+    cy.contains(
+      "Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"
+    ).should("exist")
+    cy.get("button").contains("Submit exception(s)").click()
+
+    cy.contains("Bichard01: Portal Action: Update Applied. Element: asn. New Value: 1101ZD0100000448754K")
+    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+
+    verifyUpdatedMessage({
+      expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
+      updatedMessageNotHaveContent: ["<br7:ArrestSummonsNumber>AAAAAAAAAAAAAAAAAAAA</br7:ArrestSummonsNumber>"],
+      updatedMessageHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber>"]
+    })
+  })
+
+  it("Should be able to edit ASN field if HO100321 is raised", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
+      }
+    ])
+
     cy.login("bichard01@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
@@ -139,8 +222,8 @@ describe("ASN", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
-        hearingOutcome: AsnException.hearingOutcomeXml,
-        updatedHearingOutcome: AsnException.hearingOutcomeXml,
+        hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
         errorCount: 1,
         errorLockedByUsername: "Bichard02"
       }
