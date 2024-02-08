@@ -26,4 +26,11 @@ body {
       background-color: $b7-light-grey-color;
     }
   }
+
+  // stylelint-disable no-descending-specificity -- error thrown regardless of order
+  .note-preview-row {
+    td {
+      padding-top: 0;
+    }
+  }
 }
