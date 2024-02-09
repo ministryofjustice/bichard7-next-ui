@@ -1,3 +1,6 @@
+// stylelint-disable selector-class-pattern -- mixed kebab/snake name classes come from govuk
+// stylelint-disable scss/at-extend-no-missing-placeholder -- extended class declarations come form govuk
+
 @import "variables";
 
 /* B7 Inset Text */
@@ -7,7 +10,7 @@
   font-size: 1rem;
   padding: 0.9375rem 1.25rem;
   background: var(--other-light-grey, $b7-light-grey-color);
-  box-shadow: 5px 0px 0px 0px $b7-dark-grey-color inset;
+  box-shadow: 5px 0 0 0 $b7-dark-grey-color inset;
 
   .b7-inset-text__heading {
     display: block;
@@ -26,6 +29,7 @@
 
   .b7-accordion__header {
     @extend .govuk-accordion__section-header;
+
     margin-bottom: 0.5rem;
 
     .b7-accordion__heading {
@@ -75,6 +79,6 @@
 }
 
 .preview-button {
-  margin-Bottom: 0px;
+  margin-bottom: 0;
   white-space: nowrap;
 }

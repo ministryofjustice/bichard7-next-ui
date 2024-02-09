@@ -127,6 +127,8 @@
     "pg-promise": "^11.5.4",
     "prettier": "^3.2.5",
     "sass": "^1.70.0",
+    "stylelint": "^16.2.1",
+    "stylelint-config-standard-scss": "^13.0.0",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
@@ -135,6 +137,7 @@
     "wait-on": "^7.2.0"
   },
   "lint-staged": {
-    ".{js,ts,tsx}": "eslint --cache --fix --max-warnings 0"
+    ".{js,ts,tsx}": "eslint --cache --fix --max-warnings 0",
+    "*.scss": "stylelint './styles/*.scss' --fix"
   }
 }
