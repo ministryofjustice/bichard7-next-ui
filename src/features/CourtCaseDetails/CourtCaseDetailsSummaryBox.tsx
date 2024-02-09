@@ -38,7 +38,7 @@ const useStyles = createUseStyles({
     display: "inline-block",
     marginRight: "15px"
   },
-  "@media (min-width: 1280px) and (max-width: 1680px)": {
+  "@media (min-width: 1280px) and (max-width: 1679px)": {
     detail__label: {
       width: "180px"
     }
