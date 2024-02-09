@@ -9,20 +9,25 @@ body {
   border-spacing: 0;
   border-collapse: separate;
   width: 100%;
+
   tbody {
     td {
       border-color: $b7-row-border-color;
       vertical-align: top;
     }
+
     tr:not(:last-child) td {
       border-bottom: none;
     }
   }
+
   tbody:nth-child(odd) {
     tr {
       background-color: $b7-light-grey-color;
     }
   }
+
+  // stylelint-disable no-descending-specificity -- error thrown regardless of order
   .note-preview-row {
     td {
       padding-top: 0;
