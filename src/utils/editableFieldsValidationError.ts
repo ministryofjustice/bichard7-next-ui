@@ -6,20 +6,32 @@ import hasNextHearingLocationException from "./exceptions/hasNextHearingLocation
 import { isAsnFormatValid } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/isAsnValid"
 import { DisplayFullCourtCase } from "../types/display/CourtCases"
 import { Exception } from "../types/exceptions"
+import hasAsnException from "./exceptions/hasAsnException"
 
 const nextHearingDateExceptions = [ExceptionCode.HO100102, ExceptionCode.HO100323]
 const nextHearingLocationExceptions = [ExceptionCode.HO100200, ExceptionCode.HO100300, ExceptionCode.HO100322]
 
+///// If there is ASN exception
+// return true when field is empty
+// return true when invalid value is entered
+
+///// If there is no exception
+// return false when field is empty
+// return true when invalid value is entered
+
+// if (amendments.asn) {
+//   return !isAsnFormatValid(amendments?.asn as string) || isEmptyOrWhiteSpace(amendments?.asn as string)
+// }
 const asnValidationError = (exceptions: Exception[], amendments: AmendmentRecords): boolean => {
   if (exceptions.length === 0) {
     return false
   }
 
-  if (amendments.asn) {
-    return !isAsnFormatValid(amendments?.asn as string) || isEmptyOrWhiteSpace(amendments?.asn as string)
+  if (hasAsnException(exceptions)) {
+    return amendments.asn ? !isAsnFormatValid(amendments?.asn as string) : true
   }
 
-  return true
+  return Boolean(amendments.asn) && !isAsnFormatValid(amendments?.asn as string)
 }
 
 const nextHearingLocationValidationError = (exceptions: Exception[], amendments: AmendmentRecords): boolean => {
@@ -66,7 +78,7 @@ const editableFieldsValidationError = (courtCase: DisplayFullCourtCase, amendmen
   }
 
   return (
-    Object.entries(amendments).length === 0 ||
+    // Object.entries(amendments).length === 0 ||
     nextHearingDateValidationError(exceptions, amendments) ||
     nextHearingLocationValidationError(exceptions, amendments) ||
     asnValidationError(exceptions, amendments)
