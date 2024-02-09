@@ -104,6 +104,16 @@ describe("NextHearingDate", () => {
   })
 
   it("Should be able to edit field if HO100102 is raised", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+        errorCount: 1
+      }
+    ])
+
     cy.login("bichard01@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
@@ -141,6 +151,15 @@ describe("NextHearingDate", () => {
   })
 
   it("Should be able to edit field if HO100323 is raised", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        errorCount: 1
+      }
+    ])
     cy.login("bichard01@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
@@ -192,6 +211,8 @@ describe("NextHearingDate", () => {
     cy.get(".govuk-link")
       .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
       .click()
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("B01EF01")
     cy.get("#next-hearing-date").type("2023-12-24")
 
     submitAndConfirmExceptions()
