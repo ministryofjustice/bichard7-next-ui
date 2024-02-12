@@ -175,13 +175,13 @@ describe("Case unlocked badge", () => {
     loginAndGoToUrl()
 
     checkLockStatus(0, 1, "", ["have.text", "Bichard Test User 01"], ["exist", undefined])
-    cy.get("tbody").eq(0).find("tr:nth-child(1) td:nth-child(8)").should("contain.text", "TRPR0001")
+    cy.get("tbody").eq(0).find("tr:nth-child(1) td:nth-child(7)").should("contain.text", "TRPR0001")
     checkLockStatus(1, 1, "", ["have.text", "Bichard Test User 02"], ["exist", undefined])
-    cy.get("tbody").eq(1).find("tr:nth-child(1) td:nth-child(8)").should("contain.text", "TRPR0001")
+    cy.get("tbody").eq(1).find("tr:nth-child(1) td:nth-child(7)").should("contain.text", "TRPR0001")
     checkLockStatus(2, 1, "", ["not.exist", undefined], ["not.exist", undefined])
-    cy.get("tbody").eq(2).find(`tr:nth-child(1) td:nth-child(8)`).should("contain.text", "TRPR0001")
+    cy.get("tbody").eq(2).find(`tr:nth-child(1) td:nth-child(7)`).should("contain.text", "TRPR0001")
     checkLockStatus(3, 1, "", ["have.text", "A Really Really Really Long Name"], ["exist", undefined])
-    cy.get("tbody").eq(3).find(`tr:nth-child(1) td:nth-child(8)`).should("contain.text", "TRPR0001")
+    cy.get("tbody").eq(3).find(`tr:nth-child(1) td:nth-child(7)`).should("contain.text", "TRPR0001")
   })
 
   it("Should unlock any case as a supervisor user", () => {

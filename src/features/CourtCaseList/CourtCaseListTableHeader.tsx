@@ -53,12 +53,6 @@ export const CourtCaseListTableHeader = ({ order }: CourtCaseListTableHeaderProp
         </Link>
       </CellHeader>
       <CellHeader className={classes["table-column-header-cell"]}>
-        <Link className={classes["table-column-header-link"]} href={orderByParams("isUrgent")} id="is-urgent-sort">
-          {"Urgent"}
-          <ColumnOrderIcons columnName={"isUrgent"} currentOrder={query.order} orderBy={query.orderBy} />
-        </Link>
-      </CellHeader>
-      <CellHeader className={classes["table-column-header-cell"]}>
         <Link className={classes["table-column-header-link"]} href={orderByParams("notes")} id="notes-sort">
           {"Notes"}
           <ColumnOrderIcons columnName={"notes"} currentOrder={query.order} orderBy={query.orderBy} />
