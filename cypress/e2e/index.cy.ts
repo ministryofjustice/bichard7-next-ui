@@ -213,9 +213,9 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
-      cy.get("tr").not(":first").eq(0).get("td:nth-child(7)").should("be.empty")
-      cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`1`).should("exist")
-      cy.get("tr").not(":first").eq(2).get("td:nth-child(7)").contains(`3`).should("exist")
+      cy.get("tr").not(":first").eq(0).get("td:nth-child(6)").should("be.empty")
+      cy.get("tr").not(":first").eq(1).get("td:nth-child(6)").contains(`1`).should("exist")
+      cy.get("tr").not(":first").eq(2).get("td:nth-child(6)").contains(`3`).should("exist")
 
       cy.get("#notes-sort").click()
       cy.get("tr").not(":first").eq(2).get("td:nth-child(5)").contains(`Case00002`)
@@ -283,7 +283,7 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`Preview`).should("exist").trigger("click")
+      cy.get("tr").not(":first").eq(1).get("td:nth-child(6)").contains(`Preview`).should("exist").trigger("click")
       cy.contains(`Test note 1`).should("exist")
     })
 
@@ -324,8 +324,8 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      cy.get("tr").not(":first").get("td:nth-child(8)").contains("HO100310 (2)")
-      cy.get("tr").not(":first").get("td:nth-child(8)").contains("HO100322")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100310 (2)")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100322")
       cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0010 - Conditional bail")
       cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0015 - Personal details changed")
     })
