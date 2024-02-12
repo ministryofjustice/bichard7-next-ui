@@ -31,7 +31,6 @@ export const ExtraReasonRow = ({ isLocked, reasonCell, lockTag }: ExtraReasonRow
       <Table.Cell />
       <Table.Cell />
       <Table.Cell />
-      <Table.Cell />
       <Table.Cell>{reasonCell}</Table.Cell>
       <Table.Cell>{lockTag}</Table.Cell>
     </Table.Row>
