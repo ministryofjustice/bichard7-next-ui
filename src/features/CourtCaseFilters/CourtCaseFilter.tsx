@@ -1,7 +1,6 @@
 import ConditionalRender from "components/ConditionalRender"
 import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions/ReasonFilterOptions"
-import UrgencyFilterOptions from "components/FilterOptions/UrgencyFilterOptions"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
@@ -185,9 +184,6 @@ const CourtCaseFilter: React.FC<Props> = ({
           </ConditionalRender>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Urgency"}>
-              <UrgencyFilterOptions urgency={state.urgentFilter.value} dispatch={dispatch} />
-            </ExpandingFilters>
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
