@@ -183,30 +183,6 @@ describe("Case list", () => {
       })
     })
 
-    describe("Urgency", () => {
-      it("Should apply the 'Non-urgent cases only' filter chip", () => {
-        cy.get("#filter-button").click()
-        cy.get("#non-urgent").click()
-
-        cy.get(".govuk-heading-s").contains("Urgency").should("exist")
-        cy.get(".moj-filter__tag").contains("Non-urgent").should("exist")
-        cy.get(".moj-filter__tag").contains("Urgent").should("not.exist")
-      })
-
-      it("Should apply the 'Urgent cases only' radio button and cancel it when the 'X' is clicked", () => {
-        cy.get("#filter-button").click()
-        cy.get("#urgent").click()
-
-        cy.get(".govuk-heading-s").contains("Urgency").should("exist")
-        cy.get(".moj-filter__tag").contains("Urgent").should("exist")
-        cy.get(".moj-filter__tag").contains("Non-urgent").should("not.exist")
-
-        // Removes the urgent filter chips
-        cy.get("li button.moj-filter__tag").contains("Urgent").trigger("click")
-        cy.get(".moj-filter__tag").should("not.exist")
-      })
-    })
-
     describe("Case state", () => {
       it("Should apply the 'Resolved cases' filter chip when resolved cases checkbox seltected and cancels it when the 'X' is clicked", () => {
         cy.get("#filter-button").click()
@@ -289,23 +265,22 @@ describe("Case list", () => {
     })
 
     describe("Selecting multiple filter chips", () => {
-      it("Should allow you to select 'Trigger', 'Last week', 'non-urgent'. This should display relevant header for each filter chip", () => {
+      it("Should allow you to select 'Trigger', 'Case age', 'Cases locked to me'. This should display relevant header for each filter chip", () => {
         // Open filters and build filter chip query
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
 
         filterByCaseAge("#case-age-day-2")
-        cy.get("#non-urgent").click()
+        cy.get("#my-cases-filter").click()
 
         // Check that relevant chips and headers are present on screen
         // Reason
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
-        // Urgency
-        cy.get(".govuk-heading-s").contains("Urgency").should("exist")
-        cy.get(".moj-filter__tag").contains("Non-urgent").should("exist")
-        cy.get(".moj-filter__tag").contains("Urgent").should("not.exist")
+        // Cases locked to me
+        cy.get(".govuk-heading-s").contains("My cases").should("exist")
+        cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist")
         // Case Age (SLA)
         cy.get(".govuk-heading-s").contains("Case age (SLA)").should("exist")
         cy.get(".moj-filter__tag").contains("Day 2").should("exist")
@@ -316,47 +291,8 @@ describe("Case list", () => {
         // submit query and display filter chips in filters applied section
         cy.get("#search").contains("Apply filters").click()
         cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Triggers").should("exist")
-        cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Non-urgent").should("exist")
+        cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Cases locked to me").should("exist")
         cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Day 2").should("exist")
-      })
-
-      it("Should allow a user to apply 'Trigger' and 'Urgent cases only' filter, under the Applied filters section. Then selecting 'Non urgent cases only' and see the previous urgent filter removed", () => {
-        cy.get(".moj-action-bar button").click()
-        cy.get(".govuk-checkboxes__item").contains("Triggers").click()
-        cy.get("#non-urgent").click()
-
-        cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
-        cy.get(".govuk-heading-m").contains("Applied filters").should("not.exist")
-        cy.get(".govuk-heading-s").contains("Reason").should("exist")
-        cy.get(".moj-filter__tag").contains("Triggers").should("exist")
-
-        cy.get(".govuk-heading-s").contains("Urgency").should("exist")
-        cy.get(".moj-filter__tag").contains("Non-urgent").should("exist")
-        cy.get("#search").contains("Apply filters").click()
-
-        cy.get(".moj-action-bar button").click()
-
-        cy.get(".govuk-heading-m + p").should("contain.text", "No filters selected")
-        cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
-        cy.get(".govuk-heading-s").contains("Urgency").should("exist")
-        cy.get(".govuk-heading-s").contains("Reason").should("exist")
-        cy.get(".moj-filter__tag").contains("Triggers").should("exist")
-        cy.get(".moj-filter__tag").contains("Non-urgent").should("exist")
-
-        cy.get("#urgent").click()
-        cy.get(".govuk-heading-m").contains("Applied filters").should("exist")
-        cy.get(".govuk-heading-s").contains("Urgency").should("exist")
-        cy.get("#filter-panel .moj-filter__tag").contains("Non-urgent").should("not.exist")
-        cy.get(".govuk-heading-m").contains("Selected filters").should("exist")
-        cy.get(".moj-filter__tag").contains("Urgent").should("exist")
-        cy.get(".moj-filter__tag")
-          .contains("Urgent")
-          .parent()
-          .parent()
-          .prev()
-          .prev()
-          .contains("Selected filters")
-          .should("exist")
       })
     })
 
@@ -379,50 +315,50 @@ describe("Case list", () => {
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").should("not.be.checked")
       })
-    })
 
-    it("Should display the 'Locked to me' filter chip when selected", () => {
-      cy.get("#filter-button").click()
-      cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
+      it("Should display the 'Locked to me' filter chip when selected", () => {
+        cy.get("#filter-button").click()
+        cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
 
-      // Check if the correct heading and filter label are applied
-      cy.get(".govuk-heading-s").contains("My cases").should("exist")
-      cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist")
+        // Check if the correct heading and filter label are applied
+        cy.get(".govuk-heading-s").contains("My cases").should("exist")
+        cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist")
 
-      // Check if the filter chip is applied to the "Filters applied" section at the top of the case list
-      cy.contains("Apply filters").click()
-      cy.get(".moj-filter-tags").children().contains("Cases locked to me").should("exist")
-      cy.get("#filter-button").contains("Show search panel").click()
-      cy.get("#my-cases-filter").should("be.checked")
+        // Check if the filter chip is applied to the "Filters applied" section at the top of the case list
+        cy.contains("Apply filters").click()
+        cy.get(".moj-filter-tags").children().contains("Cases locked to me").should("exist")
+        cy.get("#filter-button").contains("Show search panel").click()
+        cy.get("#my-cases-filter").should("be.checked")
 
-      // Clears filter chip using `Clear filters` button and check the checkbox is deselected
-      cy.contains("Hide search panel").click()
-      cy.get(".moj-filter-tags").contains("Clear filters").click()
-      cy.get("#filter-button").contains("Show search panel").click()
-      cy.get("#my-cases-filter").should("not.be.checked")
-    })
+        // Clears filter chip using `Clear filters` button and check the checkbox is deselected
+        cy.contains("Hide search panel").click()
+        cy.get(".moj-filter-tags").contains("Clear filters").click()
+        cy.get("#filter-button").contains("Show search panel").click()
+        cy.get("#my-cases-filter").should("not.be.checked")
+      })
 
-    it("Should select the 'Locked to me' filter chip then remove this chip to the original state", () => {
-      cy.get("#filter-button").click()
-      cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
+      it("Should select the 'Locked to me' filter chip then remove this chip to the original state", () => {
+        cy.get("#filter-button").click()
+        cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
 
-      // Removal by clicking filter chip
-      cy.get(".govuk-heading-s").contains("My cases").should("exist")
-      cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist").trigger("click")
+        // Removal by clicking filter chip
+        cy.get(".govuk-heading-s").contains("My cases").should("exist")
+        cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist").trigger("click")
 
-      cy.get(".govuk-checkboxes__item").contains("View cases locked to me").should("not.be.checked")
-    })
+        cy.get(".govuk-checkboxes__item").contains("View cases locked to me").should("not.be.checked")
+      })
 
-    it("Should remove applied `Locked to me` filter by clicking the filter chips ", () => {
-      //removal through filter panel
-      cy.get("#filter-button").click()
-      cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
-      cy.contains("Apply filters").click()
-      cy.get("#filter-button").click()
-      cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist").trigger("click")
-      cy.contains("Apply filters").click()
+      it("Should remove applied `Locked to me` filter by clicking the filter chips ", () => {
+        //removal through filter panel
+        cy.get("#filter-button").click()
+        cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
+        cy.contains("Apply filters").click()
+        cy.get("#filter-button").click()
+        cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist").trigger("click")
+        cy.contains("Apply filters").click()
 
-      cy.contains("Cases locked to me").should("not.exist")
+        cy.contains("Cases locked to me").should("not.exist")
+      })
     })
   })
 })

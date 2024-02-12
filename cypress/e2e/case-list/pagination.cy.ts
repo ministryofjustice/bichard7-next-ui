@@ -165,17 +165,24 @@ describe("Pagination", () => {
   })
 
   it("keeps other filters applied when changing pages", () => {
-    cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
+    cy.task("insertMultipleDummyCourtCases", {
+      numToInsert: 100,
+      force: "01",
+      otherFields: {
+        errorLockedByUsername: "Bichard01",
+        triggerLockedByUsername: "Bichard01"
+      }
+    })
 
     loginAndGoToUrl()
 
     cy.get("#filter-button").click()
-    cy.get("#urgent").click()
+    cy.get("#my-cases-filter").click()
     cy.get("#search").click()
 
-    confirmFiltersAppliedContains("Urgent")
+    confirmFiltersAppliedContains("Cases locked to me")
 
     cy.get("li.moj-pagination__item").contains("Next").click()
-    confirmFiltersAppliedContains("Urgent")
+    confirmFiltersAppliedContains("Cases locked to me")
   })
 })
