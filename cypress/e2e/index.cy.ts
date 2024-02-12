@@ -326,8 +326,8 @@ describe("Case list", () => {
 
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100310 (2)")
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100322")
-      cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0010 - Conditional bail")
-      cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0015 - Personal details changed")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0010 - Conditional bail")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0015 - Personal details changed")
     })
   })
 })
