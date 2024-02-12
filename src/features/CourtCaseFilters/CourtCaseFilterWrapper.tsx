@@ -1,6 +1,4 @@
-import { Heading } from "govuk-react"
 import { useState } from "react"
-import { useCustomStyles } from "../../../styles/customStyles"
 
 interface Props {
   filter: React.ReactNode
@@ -18,7 +16,6 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
   paginationBottom
 }: Props) => {
   const [areAppliedFiltersShown, setAreAppliedFiltersShown] = useState(false)
-  const classes = useCustomStyles()
   return (
     <>
       <div className="moj-filter-layout__filter">
