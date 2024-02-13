@@ -145,27 +145,6 @@ describe("Sorting cases", () => {
     checkPtiurnOrder(descending)
   })
 
-  it("Should sort by urgency", () => {
-    const urgencies = [true, false, true, false]
-    cy.task(
-      "insertCourtCasesWithFields",
-      urgencies.map((urgent) => ({
-        isUrgent: urgent,
-        orgForPoliceFilter: "011111"
-      }))
-    )
-
-    loginAndGoToUrl()
-
-    // Sort ascending by urgency
-    cy.get("#is-urgent-sort").find(".unorderedArrow").click()
-    checkCasesOrder([0, 2, 1, 3])
-
-    // Sort descending by urgency
-    cy.get("#is-urgent-sort").click()
-    checkCasesOrder([1, 3, 0, 2])
-  })
-
   it("Should sort by who has a case locked", () => {
     const usernames = ["alan.smith", "sarah.mcneil", "charlie.rhys", "bea.goddard"]
     cy.task(
@@ -210,36 +189,5 @@ describe("Sorting cases", () => {
     // Sort descending
     cy.get("#locked-by-sort").find(".upArrow").click()
     checkCasesOrder([2, 1, 0, 3])
-  })
-
-  it("can display cases ordered by urgency", () => {
-    const force = "011111"
-    cy.task(
-      "insertCourtCasesWithFields",
-      times(50).map((i: number) => ({
-        isUrgent: i % 2 === 0,
-        orgForPoliceFilter: force
-      }))
-    )
-    loginAndGoToUrl()
-
-    cy.get("#is-urgent-sort").click()
-    cy.get(".cases-per-page").first().select("25")
-    cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 50 cases")
-
-    cy.get("tr")
-      .not(":first")
-      .each((row) => {
-        cy.wrap(row).contains(`Urgent`).should("exist")
-      })
-
-    cy.get("#is-urgent-sort").find(".upArrow").click()
-    cy.get(".cases-per-page").first().select("25")
-    cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 1 to 25 of 50 cases")
-    cy.get("tr")
-      .not(":first")
-      .each((row) => {
-        cy.wrap(row).contains(`Urgent`).should("not.exist")
-      })
   })
 })

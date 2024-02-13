@@ -115,11 +115,6 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </ConditionalRender>
-          <ConditionalRender isRendered={!!filters.urgency}>
-            <li>
-              <FilterTag tag={filters.urgency ?? ""} href={removeFilterFromPath({ urgency: filters.urgency ?? "" })} />
-            </li>
-          </ConditionalRender>
           <ConditionalRender isRendered={!!filters.myCases}>
             <li>
               <FilterTag

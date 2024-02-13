@@ -87,7 +87,6 @@ describe("Case list", () => {
       cy.get("#court-date-sort").contains("Court date").should("have.attr", "href")
       cy.get("#court-name-sort").contains("Court name").should("have.attr", "href")
       cy.get("#ptiurn-sort").contains("PTIURN").should("have.attr", "href")
-      cy.get("#is-urgent-sort").contains("Urgent").should("have.attr", "href")
       cy.contains("Notes").should("have.attr", "href")
       cy.contains("Reason").should("not.have.attr", "href")
       cy.get("#locked-by-sort").contains("Locked by").should("have.attr", "href")
@@ -214,9 +213,9 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
-      cy.get("tr").not(":first").eq(0).get("td:nth-child(7)").should("be.empty")
-      cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`1`).should("exist")
-      cy.get("tr").not(":first").eq(2).get("td:nth-child(7)").contains(`3`).should("exist")
+      cy.get("tr").not(":first").eq(0).get("td:nth-child(6)").should("be.empty")
+      cy.get("tr").not(":first").eq(1).get("td:nth-child(6)").contains(`1`).should("exist")
+      cy.get("tr").not(":first").eq(2).get("td:nth-child(6)").contains(`3`).should("exist")
 
       cy.get("#notes-sort").click()
       cy.get("tr").not(":first").eq(2).get("td:nth-child(5)").contains(`Case00002`)
@@ -241,21 +240,6 @@ describe("Case list", () => {
 
       cy.url().should("match", /\/bichard/)
       cy.get("h1").contains("Case list").should("exist")
-    })
-
-    it("Should display the urgent badge on cases marked as urgent", () => {
-      cy.task("insertCourtCasesWithFields", [
-        { isUrgent: true, orgForPoliceFilter: "01" },
-        { isUrgent: false, orgForPoliceFilter: "01" },
-        { isUrgent: true, orgForPoliceFilter: "01" }
-      ])
-
-      loginAndGoToUrl()
-
-      cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
-      cy.get("tr").not(":first").eq(0).contains(`Urgent`).should("exist")
-      cy.get("tr").not(":first").eq(1).contains(`Urgent`).should("not.exist")
-      cy.get("tr").not(":first").eq(2).contains(`Urgent`).should("exist")
     })
 
     it("Should display a preview of the notes", () => {
@@ -299,7 +283,7 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      cy.get("tr").not(":first").eq(1).get("td:nth-child(7)").contains(`Preview`).should("exist").trigger("click")
+      cy.get("tr").not(":first").eq(1).get("td:nth-child(6)").contains(`Preview`).should("exist").trigger("click")
       cy.contains(`Test note 1`).should("exist")
     })
 
@@ -340,10 +324,10 @@ describe("Case list", () => {
 
       loginAndGoToUrl()
 
-      cy.get("tr").not(":first").get("td:nth-child(8)").contains("HO100310 (2)")
-      cy.get("tr").not(":first").get("td:nth-child(8)").contains("HO100322")
-      cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0010 - Conditional bail")
-      cy.get("tr").not(":first").get("td:nth-child(8)").contains("TRPR0015 - Personal details changed")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100310 (2)")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100322")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0010 - Conditional bail")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0015 - Personal details changed")
     })
   })
 })

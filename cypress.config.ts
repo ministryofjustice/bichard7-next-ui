@@ -59,8 +59,8 @@ export default defineConfig({
           return null
         },
 
-        insertMultipleDummyCourtCases(params: { numToInsert: number; force: string }) {
-          return insertMultipleDummyCourtCases(params.numToInsert, params.force)
+        insertMultipleDummyCourtCases(params: { numToInsert: number; force: string; otherFields: Partial<CourtCase> }) {
+          return insertMultipleDummyCourtCases(params.numToInsert, params.force, params.otherFields)
         },
 
         insertDummyCourtCasesWithTriggers(params: {

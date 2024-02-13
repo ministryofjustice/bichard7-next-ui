@@ -161,15 +161,6 @@ describe("Filtering cases", () => {
     cy.get("#date-range").should("be.checked")
   })
 
-  it("Should expand and collapse urgency filter navigation", () => {
-    visitBasePathAndShowFilters()
-
-    cy.contains("Urgent cases only")
-
-    collapseFilterSection("Urgency", "#urgent")
-    expandFilterSection("Urgency", "#urgent")
-  })
-
   it("Should expand and collapse locked state filter navigation", () => {
     visitBasePathAndShowFilters()
 
@@ -617,44 +608,6 @@ describe("Filtering cases", () => {
 
     removeFilterTag("Bails")
     confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
-  })
-
-  it("Should filter cases by urgency", () => {
-    const force = "011111"
-    cy.task(
-      "insertCourtCasesWithFields",
-      [true, false, true, true].map((urgency) => ({
-        isUrgent: urgency,
-        orgForPoliceFilter: force
-      }))
-    )
-
-    visitBasePathAndShowFilters()
-    cy.get("#urgent").click()
-    cy.get("button[id=search]").click()
-
-    cy.get(".moj-scrollable-pane tbody tr").should("have.length", 3)
-    cy.get("tr")
-      .not(":first")
-      .each((row) => {
-        cy.wrap(row).contains("Urgent").should("exist")
-      })
-
-    // Removing urgent filter tag all case should be shown with the filter disabled
-    removeFilterTag("Urgent")
-    cy.get(".moj-scrollable-pane tbody tr").should("have.length", 4)
-
-    // Filter for non-urgent cases
-    cy.get("button[id=filter-button]").click()
-    cy.get("#non-urgent").click()
-    cy.get("button[id=search]").click()
-
-    cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
-    cy.contains("Case00001")
-
-    // Removing non-urgent filter tag all case should be shown with the filter disabled
-    removeFilterTag("Non-urgent")
-    cy.get(".moj-scrollable-pane tbody tr").should("have.length", 4)
   })
 
   it("Should filter cases by case state", () => {
