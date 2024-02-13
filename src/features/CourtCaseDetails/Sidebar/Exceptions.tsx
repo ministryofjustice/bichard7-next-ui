@@ -16,6 +16,7 @@ import Form from "../../../components/Form"
 import { AmendmentRecords } from "types/Amendments"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
 import LockStatusTag from "../LockStatusTag"
+import editableFieldsValidationError from "../../../utils/editableFieldsValidationError"
 
 const isPncException = (code: ExceptionCode) =>
   [ExceptionCode.HO100302, ExceptionCode.HO100314, ExceptionCode.HO100402, ExceptionCode.HO100404].includes(code)
@@ -59,6 +60,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
   const csrfToken = useCsrfToken()
   const previousPath = usePreviousPath()
   const router = useRouter()
+  const disable = editableFieldsValidationError(courtCase, amendments)
 
   let resolveLink = `${router.basePath}${usePathname()}/resolve`
 
@@ -86,7 +88,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
         <div className={classes.buttonContainer}>
           <Form method="post" action={submitCasePath} csrfToken={csrfToken}>
             <input type="hidden" name="amendments" value={JSON.stringify(amendments)} />
-            <Button id="submit" type="submit">
+            <Button id="submit" type="submit" disabled={disable}>
               {"Submit exception(s)"}
             </Button>
           </Form>
