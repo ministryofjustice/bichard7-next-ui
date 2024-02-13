@@ -22,7 +22,6 @@ describe("View Court Case Details Summary Box", () => {
       courtCase ?? {
         ptiurn: "ptirn-value",
         asn: "asn-value",
-        courtReference: "cRef-value",
         courtName: "cName-value",
         orgForPoliceFilter: "01",
         hearingOutcome: dummyAho.hearingOutcomeXml.replace("9625UC0000000118191Z", "asn-value")
@@ -54,9 +53,6 @@ describe("View Court Case Details Summary Box", () => {
 
     cy.contains("Court name")
     cy.contains("cName-value")
-
-    cy.contains("Court case reference")
-    cy.contains("cRef-value")
 
     cy.contains("PNCID")
     cy.contains("2706/1234567P")
