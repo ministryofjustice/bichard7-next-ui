@@ -114,7 +114,7 @@ describe("addNote", () => {
     expect(insertNotes).toHaveBeenCalledTimes(0)
   })
 
-  it("Should add multiple notes when note text length is more than the 1000 characters", async () => {
+  it("Should add multiple notes when note text length is more than the 2000 characters", async () => {
     await insertCourtCasesWithFields([
       { messageId: uuid(), ...existingCourtCasesDbObject, errorLockedByUsername: currentUsername }
     ])
@@ -124,8 +124,8 @@ describe("addNote", () => {
 
     expect(insertNotes).toHaveBeenCalledTimes(1)
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
-      { errorId: 0, noteText: "A".repeat(1000), userId: currentUsername },
-      { errorId: 0, noteText: "A".repeat(1000), userId: currentUsername },
+      { errorId: 0, noteText: "A".repeat(2000), userId: currentUsername },
+      { errorId: 0, noteText: "A".repeat(2000), userId: currentUsername },
       { errorId: 0, noteText: "A".repeat(503), userId: currentUsername }
     ])
   })
