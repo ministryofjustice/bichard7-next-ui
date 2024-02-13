@@ -1,47 +1,16 @@
-import { DisplayFullCourtCase } from "../types/display/CourtCases"
 import { AmendmentRecords } from "../types/Amendments"
 import nextHearingLocationValidationError from "./nextHearingLocationValidationError"
+import createDummyAho from "../../test/helpers/createDummyAho"
+import HO100300 from "../../test/helpers/exceptions/HO100300"
+import HO100322 from "../../test/helpers/exceptions/HO100322"
 
 describe("nextHearingLocationValidationError", () => {
-  const exceptionHO100300 = {
-    code: "HO100300",
-    path: [
-      "AnnotatedHearingOutcome",
-      "HearingOutcome",
-      "Case",
-      "HearingDefendant",
-      "Offence",
-      2,
-      "Result",
-      1,
-      "NextResultSourceOrganisation",
-      "OrganisationUnitCode"
-    ]
-  }
-
-  const exceptionHO100322 = {
-    code: "HO100322",
-    path: [
-      "AnnotatedHearingOutcome",
-      "HearingOutcome",
-      "Case",
-      "HearingDefendant",
-      "Offence",
-      1,
-      "Result",
-      0,
-      "NextResultSourceOrganisation",
-      "OrganisationUnitCode"
-    ]
-  }
-
-  const courtCase = {
-    aho: {
-      Exceptions: [exceptionHO100300]
-    }
-  } as unknown as DisplayFullCourtCase
+  const dummyAho = createDummyAho()
 
   it("should return true if next hearing location editable field is empty", () => {
+    dummyAho.Exceptions.length = 0
+    HO100300(dummyAho)
+
     const amendments = {
       asn: "1101ZD0100000448754K",
       nextSourceOrganisation: [
@@ -52,12 +21,15 @@ describe("nextHearingLocationValidationError", () => {
         }
       ]
     } as unknown as AmendmentRecords
-    const result = nextHearingLocationValidationError(courtCase.aho.Exceptions, amendments)
+    const result = nextHearingLocationValidationError(dummyAho.Exceptions, amendments)
 
     expect(result).toBe(true)
   })
 
   it("should return false if a value is entered into the next hearing date editable field", () => {
+    dummyAho.Exceptions.length = 0
+    HO100300(dummyAho)
+
     const amendments = {
       asn: "1101ZD0100000448754K",
       nextSourceOrganisation: [
@@ -68,17 +40,15 @@ describe("nextHearingLocationValidationError", () => {
         }
       ]
     } as unknown as AmendmentRecords
-    const result = nextHearingLocationValidationError(courtCase.aho.Exceptions, amendments)
+    const result = nextHearingLocationValidationError(dummyAho.Exceptions, amendments)
 
     expect(result).toBe(false)
   })
 
   it("should return true if one of the next hearing location editable fields remained empty", () => {
-    const courtCaseWithMultipleExceptions = {
-      aho: {
-        Exceptions: [exceptionHO100300, exceptionHO100322]
-      }
-    } as unknown as DisplayFullCourtCase
+    dummyAho.Exceptions.length = 0
+    HO100300(dummyAho)
+    HO100322(dummyAho)
 
     const amendments = {
       asn: "1101ZD0100000448754K",
@@ -95,17 +65,15 @@ describe("nextHearingLocationValidationError", () => {
         }
       ]
     } as unknown as AmendmentRecords
-    const result = nextHearingLocationValidationError(courtCaseWithMultipleExceptions.aho.Exceptions, amendments)
+    const result = nextHearingLocationValidationError(dummyAho.Exceptions, amendments)
 
     expect(result).toBe(true)
   })
 
   it("should return false if multiple hearing location editable fields have values", () => {
-    const courtCaseWithMultipleExceptions = {
-      aho: {
-        Exceptions: [exceptionHO100300, exceptionHO100322]
-      }
-    } as unknown as DisplayFullCourtCase
+    dummyAho.Exceptions.length = 0
+    HO100300(dummyAho)
+    HO100322(dummyAho)
 
     const amendments = {
       asn: "1101ZD0100000448754K",
@@ -122,7 +90,7 @@ describe("nextHearingLocationValidationError", () => {
         }
       ]
     } as unknown as AmendmentRecords
-    const result = nextHearingLocationValidationError(courtCaseWithMultipleExceptions.aho.Exceptions, amendments)
+    const result = nextHearingLocationValidationError(dummyAho.Exceptions, amendments)
 
     expect(result).toBe(false)
   })

@@ -1,33 +1,13 @@
 import { AmendmentRecords } from "types/Amendments"
-import { DisplayFullCourtCase } from "types/display/CourtCases"
 import asnValidationError from "./asnValidationError"
+import createDummyAho from "../../test/helpers/createDummyAho"
+import HO100102 from "../../test/helpers/exceptions/HO100102"
+import HO100206 from "../../test/helpers/exceptions/HO100206"
 
 describe("asnValidationError", () => {
-  const exceptionHO100102 = {
-    code: "HO100102",
-    path: [
-      "AnnotatedHearingOutcome",
-      "HearingOutcome",
-      "Case",
-      "HearingDefendant",
-      "Offence",
-      0,
-      "Result",
-      0,
-      "NextHearingDate"
-    ]
-  }
-
-  const exceptionHO100206 = {
-    code: "HO100206",
-    path: ["AnnotatedHearingOutcome", "HearingOutcome", "Case", "HearingDefendant", "ArrestSummonsNumber"]
-  }
-
-  const courtCase = {
-    aho: {
-      Exceptions: [exceptionHO100102]
-    }
-  } as unknown as DisplayFullCourtCase
+  const dummyAho = createDummyAho()
+  dummyAho.Exceptions.length = 0
+  HO100102(dummyAho)
 
   it("should return false when ASN editable field is empty and ASN exception is not raised", () => {
     const amendments = {
@@ -41,17 +21,15 @@ describe("asnValidationError", () => {
       ]
     } as unknown as AmendmentRecords
 
-    const result = asnValidationError(courtCase.aho.Exceptions, amendments)
+    const result = asnValidationError(dummyAho.Exceptions, amendments)
 
     expect(result).toBe(false)
   })
 
   it("should return true when ASN editable field is empty and ASN exception is raised", () => {
-    const courtCaseWithAsnException = {
-      aho: {
-        Exceptions: [exceptionHO100206]
-      }
-    } as unknown as DisplayFullCourtCase
+    dummyAho.Exceptions.length = 0
+    HO100206(dummyAho)
+
     const amendments = {
       asn: "",
       nextHearingDate: [
@@ -63,7 +41,7 @@ describe("asnValidationError", () => {
       ]
     } as unknown as AmendmentRecords
 
-    const result = asnValidationError(courtCaseWithAsnException.aho.Exceptions, amendments)
+    const result = asnValidationError(dummyAho.Exceptions, amendments)
 
     expect(result).toBe(true)
   })
@@ -80,7 +58,7 @@ describe("asnValidationError", () => {
       ]
     } as unknown as AmendmentRecords
 
-    const result = asnValidationError(courtCase.aho.Exceptions, amendments)
+    const result = asnValidationError(dummyAho.Exceptions, amendments)
 
     expect(result).toBe(true)
   })
@@ -97,7 +75,7 @@ describe("asnValidationError", () => {
       ]
     } as unknown as AmendmentRecords
 
-    const result = asnValidationError(courtCase.aho.Exceptions, amendments)
+    const result = asnValidationError(dummyAho.Exceptions, amendments)
 
     expect(result).toBe(false)
   })
