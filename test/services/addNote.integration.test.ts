@@ -119,7 +119,7 @@ describe("addNote", () => {
       { messageId: uuid(), ...existingCourtCasesDbObject, errorLockedByUsername: currentUsername }
     ])
 
-    const result = await addNote(dataSource, 0, currentUsername, "A".repeat(2503))
+    const result = await addNote(dataSource, 0, currentUsername, "A".repeat(4503))
     expect(result).toStrictEqual({ isSuccessful: true })
 
     expect(insertNotes).toHaveBeenCalledTimes(1)
