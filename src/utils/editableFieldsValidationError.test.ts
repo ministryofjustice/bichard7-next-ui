@@ -1,42 +1,12 @@
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import editableFieldsValidationError from "./editableFieldsValidationError"
+import createDummyAho from "../../test/helpers/createDummyAho"
+import HO100102 from "../../test/helpers/exceptions/HO100102"
+import HO100300 from "../../test/helpers/exceptions/HO100300"
+import HO100206 from "../../test/helpers/exceptions/HO100206"
 
 describe("EditableFieldsValidationError", () => {
-  const exceptionHO100102 = {
-    code: "HO100102",
-    path: [
-      "AnnotatedHearingOutcome",
-      "HearingOutcome",
-      "Case",
-      "HearingDefendant",
-      "Offence",
-      0,
-      "Result",
-      0,
-      "NextHearingDate"
-    ]
-  }
-
-  const exceptionHO100300 = {
-    code: "HO100300",
-    path: [
-      "AnnotatedHearingOutcome",
-      "HearingOutcome",
-      "Case",
-      "HearingDefendant",
-      "Offence",
-      2,
-      "Result",
-      1,
-      "NextResultSourceOrganisation",
-      "OrganisationUnitCode"
-    ]
-  }
-
-  const exceptionHO100206 = {
-    code: "HO100206",
-    path: ["AnnotatedHearingOutcome", "HearingOutcome", "Case", "HearingDefendant", "ArrestSummonsNumber"]
-  }
+  const dummyAho = createDummyAho()
 
   it.each([
     ["1101ZD0100000448754K", "B21XA00", "2025-02-10", false],
@@ -50,10 +20,11 @@ describe("EditableFieldsValidationError", () => {
   ])(
     "should return validation error according to value entered into editable fields",
     (asn: string, nextHearingLocationUpdatedValue: string, nextHearingDateUpdatedValue: string, hasError: boolean) => {
+      dummyAho.Exceptions.length = 0
+      HO100102(dummyAho)
+      HO100300(dummyAho)
       const courtCase = {
-        aho: {
-          Exceptions: [exceptionHO100102, exceptionHO100300]
-        }
+        aho: dummyAho
       } as unknown as DisplayFullCourtCase
 
       const amendments = {
@@ -81,10 +52,11 @@ describe("EditableFieldsValidationError", () => {
   )
 
   it("Should return true when ASN exception and Next-hearing-date exceptions are raised and both editable fields are empty", () => {
+    dummyAho.Exceptions.length = 0
+    HO100206(dummyAho)
+    HO100102(dummyAho)
     const courtCase = {
-      aho: {
-        Exceptions: [exceptionHO100206, exceptionHO100102]
-      }
+      aho: dummyAho
     } as unknown as DisplayFullCourtCase
 
     const amendments = {
@@ -104,10 +76,10 @@ describe("EditableFieldsValidationError", () => {
   })
 
   it("Should return false when Next-hearing-date exception is raised and asn editable fields is empty", () => {
+    dummyAho.Exceptions.length = 0
+    HO100102(dummyAho)
     const courtCase = {
-      aho: {
-        Exceptions: [exceptionHO100102]
-      }
+      aho: dummyAho
     } as unknown as DisplayFullCourtCase
 
     const amendments = {
@@ -127,10 +99,10 @@ describe("EditableFieldsValidationError", () => {
   })
 
   it("Should return false when Next-hearing-location exception is raised and asn editable fields is empty", () => {
+    dummyAho.Exceptions.length = 0
+    HO100300(dummyAho)
     const courtCase = {
-      aho: {
-        Exceptions: [exceptionHO100300]
-      }
+      aho: dummyAho
     } as unknown as DisplayFullCourtCase
 
     const amendments = {
