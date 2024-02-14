@@ -25,7 +25,7 @@ describe("Case details", () => {
     cy.task("clearCourtCases")
   })
 
-  it.only("Should be able to reallocate a case is visible to the user and not locked by another user", () => {
+  it("Should be able to reallocate a case is visible to the user and not locked by another user", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
       {
