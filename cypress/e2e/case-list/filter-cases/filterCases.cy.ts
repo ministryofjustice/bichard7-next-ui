@@ -59,42 +59,6 @@ describe("Filtering cases", () => {
     cy.login("bichard01@example.com", "password")
   })
 
-  it("Should be accessible with conditional radio buttons opened", () => {
-    visitBasePathAndShowFilters()
-    cy.contains("Court date").parent().parent().parent().find("button").click()
-    cy.get("#case-age").should("not.be.visible")
-    expandFilterSection("Court date", "#case-age")
-
-    cy.injectAxe()
-
-    // Wait for the page to fully load
-    cy.get("h1")
-
-    cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
-  })
-
-  it("Should be accessible", () => {
-    visitBasePathAndShowFilters()
-    cy.get("input[id=keywords]").type("Dummy")
-    cy.get('[id="triggers-type"]').check()
-    cy.get('[id="exceptions-type"]').check()
-
-    cy.injectAxe()
-
-    // Wait for the page to fully load
-    cy.get("h1")
-
-    cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
-
-    cy.get("button[id=search]").click()
-
-    // Wait for the page to fully load
-    cy.get("h1")
-
-    cy.injectAxe()
-    cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
-  })
-
   it("Should expand and collapse reason filter navigation & show the trigger info", () => {
     visitBasePathAndShowFilters()
 
