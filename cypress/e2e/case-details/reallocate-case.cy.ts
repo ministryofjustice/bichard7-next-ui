@@ -145,7 +145,7 @@ describe("Case details", () => {
     cy.get("span").should("contain", "You have 990 characters remaining")
     cy.get("button").contains("Reallocate").click()
 
-    cy.get("H1").should("have.text", "Case list")
+    cy.get("button").contains("Show search panel").should("exist")
     cy.contains("NAME Defendant").should("not.exist")
 
     cy.login("bichard03@example.com", "password")
