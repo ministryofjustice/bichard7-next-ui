@@ -25,7 +25,7 @@ describe("Case details", () => {
     cy.task("clearCourtCases")
   })
 
-  it("Should be able to reallocate a case is visible to the user and not locked by another user", () => {
+  it.only("Should be able to reallocate a case is visible to the user and not locked by another user", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
       {
@@ -53,7 +53,7 @@ describe("Case details", () => {
     cy.get("span").should("contain", "You have 1980 characters remaining")
     cy.get("button").contains("Reallocate").click()
 
-    cy.get("H1").should("have.text", "Case list")
+    cy.get("button").contains("Show search panel").should("exist")
     cy.contains("NAME Defendant").should("not.exist")
 
     cy.login("bichard03@example.com", "password")

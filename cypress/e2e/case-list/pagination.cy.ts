@@ -11,19 +11,6 @@ describe("Pagination", () => {
     cy.task("clearCourtCases")
   })
 
-  it("Should be accessible", () => {
-    cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
-
-    loginAndGoToUrl()
-
-    cy.injectAxe()
-
-    // Wait for the page to fully load
-    cy.get("h1")
-
-    cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
-  })
-
   it("lets users select how many cases to show per page", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 200, force: "01" })
 

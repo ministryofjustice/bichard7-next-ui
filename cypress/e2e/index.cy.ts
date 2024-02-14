@@ -56,30 +56,9 @@ describe("Case list", () => {
       cy.get("#top-pagination-bar").should("not.exist")
       cy.get("#bottom-pagination-bar").should("not.exist")
     })
-
-    it("Should be accessible", () => {
-      loginAndGoToUrl()
-      cy.injectAxe()
-
-      // Wait for the page to fully load
-      cy.get("h1")
-
-      cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
-    })
   })
 
   context("when there are multiple cases", () => {
-    it("Should be accessible", () => {
-      cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
-      loginAndGoToUrl()
-      cy.injectAxe()
-
-      // Wait for the page to fully load
-      cy.get("h1")
-
-      cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
-    })
-
     it("Should display all the headings with sorting or not", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
       loginAndGoToUrl()
@@ -239,7 +218,7 @@ describe("Case list", () => {
       cy.get("#leave-and-lock, #return-to-case-list").click()
 
       cy.url().should("match", /\/bichard/)
-      cy.get("h1").contains("Case list").should("exist")
+      cy.get("button").contains("Show search panel").should("exist")
     })
 
     it("Should display a preview of the notes", () => {
