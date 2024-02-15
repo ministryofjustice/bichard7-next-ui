@@ -5,6 +5,13 @@ body {
   font-size: $b7-default-font-size;
 }
 
+.hidden-header {
+  position: fixed;
+  left: -100vw;
+  top: -100vh;
+  font-size: 1px;
+}
+
 .cases-list {
   border-spacing: 0;
   border-collapse: separate;
