@@ -46,7 +46,7 @@ const useStyles = createUseStyles({
   "@media (min-width: 1680px)": {
     "court-case-details-summary-box-grid": {
       display: "flex",
-      fontSize: "19px"
+      fontSize: "19px" // overide default font size at larger screen width
     },
     detail: {
       display: "block",
