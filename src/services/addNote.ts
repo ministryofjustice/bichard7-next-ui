@@ -4,7 +4,7 @@ import { ServiceResultPromise } from "types/ServiceResult"
 import CourtCase from "./entities/CourtCase"
 import insertNotes from "./insertNotes"
 
-const MaxNoteLength = 1000
+const MaxNoteLength = 2000
 const notesRegex = new RegExp(`(.{1,${MaxNoteLength}})`, "g")
 
 const addNote = async (

@@ -218,7 +218,7 @@ describe("View notes", () => {
     clickTab("Notes")
     cy.get("label").contains("Add a new note")
     cy.get("textarea").should("be.visible")
-    cy.get("span").contains("You have 1000 characters remaining")
+    cy.get("span").contains("You have 2000 characters remaining")
   })
 
   it("Should be able to add a note when case is visible to the user and not locked by another user", () => {
