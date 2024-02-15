@@ -17,7 +17,7 @@ const SkipLink = styled.button`
   background: transparent;
   border: none;
   font-family: "nta", Arial, sans-serif;
-  font-size: 1rem;
+  font-size: 1em;
   position: relative;
   line-height: 1.25;
 

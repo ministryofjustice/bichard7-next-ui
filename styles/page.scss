@@ -1,7 +1,11 @@
 @import "variables";
 
-body {
+html {
   font-family: $b7-font-family;
+  font-size: $b7-default-font-size;
+}
+
+tr td {
   font-size: $b7-default-font-size;
 }
 
