@@ -28,7 +28,7 @@ const ListWrapper = styled.div`
   span {
     padding-top: 0px;
     display: block;
-    font-size: 16px;
+    font-size: 1em;
   }
 `
 

@@ -1,8 +1,12 @@
 @import "variables";
 
-* {
+html {
   font-family: $b7-font-family;
   font-size: $b7-default-font-size;
+}
+
+.govuk-body{
+  font-size: $b7-default-font-size;;
 }
 
 .cases-list {
