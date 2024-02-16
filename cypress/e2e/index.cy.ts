@@ -57,7 +57,7 @@ describe("Case list", () => {
       cy.get("#bottom-pagination-bar").should("not.exist")
     })
 
-    it.only("Should be accessible", () => {
+    it("Should be accessible", () => {
       loginAndGoToUrl()
       cy.injectAxe()
 
