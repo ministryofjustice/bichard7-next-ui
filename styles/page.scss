@@ -5,11 +5,11 @@ html {
   font-size: $b7-default-font-size;
 }
 
-
 .hidden-header {
   position: fixed;
   left: -100vw;
   top: -100vh;
+}
 
 tr td {
   font-size: $b7-default-font-size;
