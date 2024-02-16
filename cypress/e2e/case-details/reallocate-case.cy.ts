@@ -50,7 +50,7 @@ describe("Case details", () => {
 
     cy.get('select[name="force"]').select("03 - Cumbria")
     cy.get('textarea[name="note"]').type("This is a dummy note")
-    cy.get("span").should("contain", "You have 980 characters remaining")
+    cy.get("span").should("contain", "You have 1980 characters remaining")
     cy.get("button").contains("Reallocate").click()
 
     cy.get("H1").should("have.text", "Case list")
@@ -94,7 +94,7 @@ describe("Case details", () => {
     cy.findByText("Cancel").should("have.attr", "href", "/bichard/court-cases/0")
 
     cy.get('select[name="force"]').select("03 - Cumbria")
-    cy.get("span").should("contain", "You have 1000 characters remaining")
+    cy.get("span").should("contain", "You have 2000 characters remaining")
     cy.get("button").contains("Reallocate").click()
 
     cy.get("H1").should("have.text", "Case list")
@@ -114,7 +114,7 @@ describe("Case details", () => {
     cy.get("table tbody tr:visible").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
   })
 
-  it("Should not accept more than 1000 characters in note text field", () => {
+  it("Should not accept more than 2000 characters in note text field", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const triggers: TestTrigger[] = [
       {
@@ -141,7 +141,8 @@ describe("Case details", () => {
       element[0].textContent = "a".repeat(990)
     })
     cy.get('textarea[name="note"]').type("a".repeat(20))
-    cy.get("span").should("contain", "You have 0 characters remaining")
+
+    cy.get("span").should("contain", "You have 990 characters remaining")
     cy.get("button").contains("Reallocate").click()
 
     cy.get("H1").should("have.text", "Case list")
@@ -159,8 +160,8 @@ describe("Case details", () => {
       "Bichard01: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
     )
     cy.get("table tbody tr:visible").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
-    cy.get("table tbody tr:visible").should("not.contain", "a".repeat(1001))
-    cy.get("table tbody tr:visible").should("contain", "a".repeat(1000))
+    cy.get("table tbody tr:visible").should("not.contain", "a".repeat(2001))
+    cy.get("table tbody tr:visible").should("contain", "a".repeat(1010))
   })
 
   it("Should return 404 for a case that this user can not see", () => {

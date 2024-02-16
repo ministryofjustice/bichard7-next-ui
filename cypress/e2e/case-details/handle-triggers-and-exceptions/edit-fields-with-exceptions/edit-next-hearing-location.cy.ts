@@ -64,6 +64,17 @@ describe("NextHearingLocation", () => {
   })
 
   it("Should be able to edit field if HO100200 is raised", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+        updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
+      }
+    ])
+
     cy.login("bichard01@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
@@ -104,6 +115,17 @@ describe("NextHearingLocation", () => {
   })
 
   it("Should be able to edit field if HO100300 is raised", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100300,
+        updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100300,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
+      }
+    ])
+
     cy.login("bichard01@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
@@ -142,6 +164,17 @@ describe("NextHearingLocation", () => {
   })
 
   it("Should be able to edit field if HO100322 is raised", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100322,
+        updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100322,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
+      }
+    ])
+
     cy.login("bichard01@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
@@ -194,6 +227,12 @@ describe("NextHearingLocation", () => {
 
     cy.get("a.govuk-back-link").contains("Back to all offences").click()
 
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("B21XA00")
+
+    cy.get("a.govuk-back-link").contains("Back to all offences").click()
+
     cy.get(".govuk-link")
       .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
       .click()
@@ -214,11 +253,13 @@ describe("NextHearingLocation", () => {
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
       updatedMessageNotHaveContent: [
         '<ds:OrganisationUnitCode Error="HO100300">B46AM03</ds:OrganisationUnitCode>',
-        '<ds:OrganisationUnitCode Error="HO100322" />'
+        '<ds:OrganisationUnitCode Error="HO100322" />',
+        '<ds:OrganisationUnitCode Error="HO100200">B@1EF$1</ds:OrganisationUnitCode>'
       ],
       updatedMessageHaveContent: [
         "<ds:OrganisationUnitCode>B01EF00</ds:OrganisationUnitCode>",
-        "<ds:OrganisationUnitCode>B46DB00</ds:OrganisationUnitCode>"
+        "<ds:OrganisationUnitCode>B46DB00</ds:OrganisationUnitCode>",
+        "<ds:OrganisationUnitCode>B21XA00</ds:OrganisationUnitCode>"
       ]
     })
 
@@ -236,6 +277,13 @@ describe("NextHearingLocation", () => {
     cy.contains("td", "Next hearing location").siblings().should("include.text", "")
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B46DB00")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
+
+    cy.get("a.govuk-back-link").contains("Back to all offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B21XA00")
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 
