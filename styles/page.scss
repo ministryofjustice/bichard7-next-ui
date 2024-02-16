@@ -1,15 +1,18 @@
 @import "variables";
 
-body {
+html {
   font-family: $b7-font-family;
   font-size: $b7-default-font-size;
 }
+
 
 .hidden-header {
   position: fixed;
   left: -100vw;
   top: -100vh;
-  font-size: 1px;
+
+tr td {
+  font-size: $b7-default-font-size;
 }
 
 .cases-list {
