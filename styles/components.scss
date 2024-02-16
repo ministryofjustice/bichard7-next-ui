@@ -7,7 +7,7 @@
 .b7-inset-text {
   display: block;
   font-weight: 300;
-  font-size: 1rem;
+  font-size: $b7-default-font-size;
   padding: 0.9375rem 1.25rem;
   background: var(--other-light-grey, $b7-light-grey-color);
   box-shadow: 5px 0 0 0 $b7-dark-grey-color inset;
