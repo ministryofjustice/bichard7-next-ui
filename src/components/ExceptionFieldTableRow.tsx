@@ -16,15 +16,19 @@ const useStyles = createUseStyles({
   label: {
     verticalAlign: "top",
     "& .error-icon": {
-      paddingTop: ".62rem"
+      padding: ".62rem 0 .62rem 0"
     }
   },
   content: {
+    verticalAlign: "top",
     "& .badge-wrapper": {
-      padding: ".94rem 0 .62rem 0",
+      paddingBottom: ".62rem",
       display: "flex",
       gap: ".62rem",
       alignItems: "center"
+    },
+    "& .field-value": {
+      paddingBottom: ".62rem"
     }
   }
 })
@@ -33,33 +37,33 @@ const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, displayE
   const classes = useStyles()
   const labelField = (
     <>
-      <div>{label}</div>
+      <b>{label}</b>
       {displayError !== false && (
-        <div className="error-icon">
-          <ErrorIcon />
-        </div>
+        <>
+          <div className="error-icon">
+            <ErrorIcon />
+          </div>
+          {children}
+        </>
       )}
     </>
   )
 
   const cellContent = (
-    <div className={classes.content}>
+    <div>
       {value && <div className="field-value">{value}</div>}
       {badgeText && displayError !== false && (
         <div className="badge-wrapper">
           <Badge className="error-badge" isRendered={true} colour={badgeColour ?? "purple"} label={badgeText} />
         </div>
       )}
-      {displayError !== false && children}
     </div>
   )
 
   return (
     <Table.Row>
-      <Table.Cell className={classes.label}>
-        <b>{labelField}</b>
-      </Table.Cell>
-      <Table.Cell>{cellContent}</Table.Cell>
+      <Table.Cell className={classes.label}>{labelField}</Table.Cell>
+      <Table.Cell className={classes.content}>{cellContent}</Table.Cell>
     </Table.Row>
   )
 }
