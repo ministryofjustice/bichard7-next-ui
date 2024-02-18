@@ -1,5 +1,6 @@
 import DateInput from "components/CustomDateInput/DateInput"
 import RadioButton from "components/RadioButton/RadioButton"
+import { formatDistance } from "date-fns"
 import type { Dispatch } from "react"
 import { createUseStyles } from "react-jss"
 import { SerializedCourtDateRange } from "types/CaseListQueryParams"
@@ -33,9 +34,9 @@ const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
 
   const dateRange = [caseAge].flat()[0]
 
-  return namedCaseAge === "15 days ago and older"
-    ? `${namedCaseAge} (up to ${formatDisplayedDate(dateRange.to)})`
-    : `${namedCaseAge} (${formatDisplayedDate(dateRange.from)})`
+  return namedCaseAge === "Day 15 and older"
+    ? `15 days ago and older (up to ${formatDisplayedDate(dateRange.to)})`
+    : `${formatDistance(dateRange.from, new Date())} ago (${formatDisplayedDate(dateRange.from)})`
 }
 
 const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: Record<string, number>): string => {
