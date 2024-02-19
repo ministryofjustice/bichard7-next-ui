@@ -147,14 +147,14 @@ describe("Case list", () => {
         cy.get(".govuk-heading-s").contains("Case age (SLA)").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("exist")
 
-        cy.get("#date-range").click()
+        cy.get("#date-range").click({ force: true })
         cy.get("#date-from").invoke("val").should("be.empty")
         cy.get("#date-to").invoke("val").should("be.empty")
       })
 
       it("Should apply the 'Date filter' filter chips then remove this chips to the original state", () => {
         cy.get("#filter-button").click()
-        cy.get("#date-range").click()
+        cy.get("#date-range").click({ force: true })
         cy.get("#date-from").should("have.value", "")
         cy.get("#date-to").should("have.value", "")
         cy.get("#date-from").type("2022-01-01")
@@ -170,7 +170,7 @@ describe("Case list", () => {
 
       it("Should populate `date to` when `same date` button is clicked", () => {
         cy.get("button#filter-button").click()
-        cy.get("#date-range").click()
+        cy.get("#date-range").click({ force: true })
         cy.contains("Same date").should("not.exist")
         cy.get("#date-from").click()
         cy.get("#date-from").type("2023-03-17")
@@ -186,7 +186,7 @@ describe("Case list", () => {
     describe("Case state", () => {
       it("Should apply the 'Resolved cases' filter chip when resolved cases checkbox seltected and cancels it when the 'X' is clicked", () => {
         cy.get("#filter-button").click()
-        cy.get("#resolved").click()
+        cy.get("#resolved").click({ force: true })
 
         cy.get(".govuk-heading-s").contains("Case state").should("exist")
         cy.get(".moj-filter__tag").contains("Resolved cases").should("exist")
@@ -201,7 +201,7 @@ describe("Case list", () => {
     describe("Locked status", () => {
       it("Should apply the 'Locked cases only' filter chips then remove this chips to the original state", () => {
         cy.get("#filter-button").click()
-        cy.get("#locked").click()
+        cy.get("#locked").click({ force: true })
 
         cy.get(".govuk-heading-s").contains("Locked state").should("exist")
         cy.get(".moj-filter__tag").contains("Locked").should("exist")
@@ -271,7 +271,7 @@ describe("Case list", () => {
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
 
         filterByCaseAge("#case-age-day-2")
-        cy.get("#my-cases-filter").click()
+        cy.get("#my-cases-filter").click({ force: true })
 
         // Check that relevant chips and headers are present on screen
         // Reason

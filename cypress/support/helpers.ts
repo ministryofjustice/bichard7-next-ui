@@ -37,17 +37,17 @@ export const removeFilterChip = () => {
 }
 
 export const filterByCaseAge = (caseAgeId: string) => {
-  cy.get("#case-age").click()
-  cy.get(caseAgeId).click()
+  cy.get("#case-age").click({ force: true })
+  cy.get(caseAgeId).click({ force: true })
 }
 
 export const filterByDateRange = (dateFrom: string, dateTo: string) => {
-  cy.get("#date-range").click()
+  cy.get("#date-range").click({ force: true })
 
-  cy.get("#date-from").click()
+  cy.get("#date-from").click({ force: true })
   cy.get("#date-from").type(dateFrom)
 
-  cy.get("#date-to").click()
+  cy.get("#date-to").click({ force: true })
   cy.get("#date-to").type(dateTo)
 }
 

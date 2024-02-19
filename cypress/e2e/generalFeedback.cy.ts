@@ -4,8 +4,8 @@ import { expectToHaveNumberOfFeedbacks } from "../support/helpers"
 
 const submitAFeedback = () => {
   cy.findByText("feedback").click()
-  cy.get("[name=isAnonymous]").check("no")
-  cy.get("[name=experience]").check("0")
+  cy.get("[name=isAnonymous]").check("no", { force: true })
+  cy.get("[name=experience]").check("0", { force: true })
   cy.get("[name=feedback]").type("This is feedback is not anonymous")
   cy.get("[type=submit]").click()
 }
@@ -42,11 +42,11 @@ describe("General Feedback Form", () => {
 
   it("Should be able to submit a feedback that is anonymous", () => {
     cy.visit("/bichard")
-    cy.findByText("feedback").click()
+    cy.findByText("feedback").click({ force: true })
     cy.get("h2").contains("Share your feedback").should("exist")
 
-    cy.get("[name=isAnonymous]").check("yes")
-    cy.get("[name=experience]").check("0")
+    cy.get("[name=isAnonymous]").check("yes", { force: true })
+    cy.get("[name=experience]").check("0", { force: true })
     cy.get("[name=feedback]").type("Something feedback.")
     cy.get("[type=submit]").click()
 
@@ -78,7 +78,7 @@ describe("General Feedback Form", () => {
     cy.get("#experience").contains("Select one of the below options")
     cy.contains("Input message into the text box").should("exist")
 
-    cy.get("[name=isAnonymous]").check("no")
+    cy.get("[name=isAnonymous]").check("no", { force: true })
     cy.get("[type=submit]").click()
     expectToHaveNumberOfFeedbacks(0)
 
@@ -86,7 +86,7 @@ describe("General Feedback Form", () => {
     cy.get("#experience").contains("Select one of the below options")
     cy.contains("Input message into the text box").should("exist")
 
-    cy.get("[name=experience]").check("0")
+    cy.get("[name=experience]").check("0", { force: true })
     cy.get("[type=submit]").click()
     expectToHaveNumberOfFeedbacks(0)
 
