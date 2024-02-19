@@ -71,10 +71,10 @@ describe("listCourtCases", () => {
 
     expect(result.Today).toEqual("4")
     expect(result.Yesterday).toEqual("3")
-    expect(result["Day 2"]).toEqual("2")
-    expect(result["Day 3"]).toEqual("1")
-    expect(result["Day 14"]).toEqual("1")
-    expect(result["Day 15 and older"]).toEqual("3")
+    expect(result["2 days ago"]).toEqual("2")
+    expect(result["3 days ago"]).toEqual("1")
+    expect(result["14 days ago"]).toEqual("1")
+    expect(result["15 days ago and older"]).toEqual("3")
   })
 
   it("Should ignore resolved cases", async () => {
@@ -128,10 +128,10 @@ describe("listCourtCases", () => {
 
       expect(result.Today).toEqual("0")
       expect(result.Yesterday).toEqual("0")
-      expect(result["Day 2"]).toEqual("0")
-      expect(result["Day 3"]).toEqual("0")
-      expect(result["Day 14"]).toEqual("0")
-      expect(result["Day 15 and older"]).toEqual("0")
+      expect(result["2 days ago"]).toEqual("0")
+      expect(result["3 days ago"]).toEqual("0")
+      expect(result["14 days ago"]).toEqual("0")
+      expect(result["15 days ago and older"]).toEqual("0")
     })
   })
 
