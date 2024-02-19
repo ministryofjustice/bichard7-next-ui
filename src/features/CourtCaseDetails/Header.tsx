@@ -93,13 +93,15 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
   return (
     <HeaderContainer id="header-container">
       <HeaderRow>
-        <Heading as="h1" size="LARGE">
-          {"Case details"}
-        </Heading>
         <LockStatusTag
           isRendered={currentUser.hasAccessTo[Permission.Exceptions]}
           resolutionStatus={courtCase.errorStatus}
           lockName="Exceptions"
+        />
+        <LockStatusTag
+          isRendered={currentUser.hasAccessTo[Permission.Triggers]}
+          resolutionStatus={courtCase.triggerStatus}
+          lockName="Triggers"
         />
       </HeaderRow>
       <HeaderRow>
@@ -107,9 +109,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
           {courtCase.defendantName}
           {getResolutionStatus(courtCase) ? (
             <ResolutionStatusBadge resolutionStatus={getResolutionStatus(courtCase) || "Unresolved"} />
-          ) : (
-            <UrgentTag isUrgent={courtCase.isUrgent} />
-          )}
+          ) : null}
           <Badge
             isRendered={caseIsViewOnly}
             label="View only"
@@ -117,11 +117,6 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
             className="govuk-!-static-margin-left-5 view-only-badge"
           />
         </Heading>
-        <LockStatusTag
-          isRendered={currentUser.hasAccessTo[Permission.Triggers]}
-          resolutionStatus={courtCase.triggerStatus}
-          lockName="Triggers"
-        />
       </HeaderRow>
       <ButtonContainer>
         <ConditionalRender isRendered={canReallocate && courtCase.phase === 1 && !pathName.includes("/reallocate")}>
