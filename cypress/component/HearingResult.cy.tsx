@@ -256,12 +256,10 @@ describe("Hearing Result", () => {
         </CourtCaseContext.Provider>
       )
 
-      cy.contains("td", "CJS Code")
-        .siblings()
-        .should(
-          "include.text",
-          "This code could not be found via look-up, report the issue to Bichard 7 team and the courts for the correct so that they can investigate this issue and advise."
-        )
+      cy.contains("td", "CJS Code").should(
+        "include.text",
+        "This code could not be found via look-up, report the issue to Bichard 7 team and the courts for the correct so that they can investigate this issue and advise."
+      )
     })
   })
 })
