@@ -19,7 +19,7 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
   const [areAppliedFiltersShown, setAreAppliedFiltersShown] = useState(false)
   return (
     <>
-      <div className={` moj-filter-layout`}>
+      <div className={`moj-filter-layout`}>
         <div className="moj-filter-layout__filter">
           <div className={areAppliedFiltersShown ? "moj-filter" : "moj-filter moj-hidden"}>{filter}</div>
         </div>
