@@ -62,7 +62,7 @@ describe("Only shows relevant resolved cases to the user", () => {
     loginAndGoToUrl("supervisor@example.com")
 
     cy.get("#filter-button").click()
-    cy.get("#resolved").click()
+    cy.get(`label[for="resolved"]`).click()
     cy.get("#search").click()
 
     confirmMultipleFieldsDisplayed(["Case00000", "Case00001"])
@@ -125,7 +125,7 @@ describe("Only shows relevant resolved cases to the user", () => {
     loginAndGoToUrl()
 
     cy.get("#filter-button").click()
-    cy.get("#resolved").click()
+    cy.get(`label[for="resolved"]`).click()
     cy.get("#search").click()
 
     confirmMultipleFieldsDisplayed(["Case00001", "Case00006"])
@@ -205,7 +205,7 @@ describe("Only shows relevant resolved cases to the user", () => {
     loginAndGoToUrl()
 
     cy.get("#filter-button").click()
-    cy.get("#resolved").click()
+    cy.get(`label[for="resolved"]`).click()
     cy.get("#search").click()
 
     confirmMultipleFieldsDisplayed(["Case00001", "Case00006"])
