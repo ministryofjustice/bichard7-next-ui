@@ -24,23 +24,23 @@ describe("mapCaseAges", () => {
     expect(result).toEqual({ from: dateYesterday, to: dateYesterday })
   })
 
-  it("Should return a date range for 'Day 2'", () => {
+  it("Should return a date range for '2 days ago'", () => {
     const dateToday = new Date("2022-11-15T12:30")
     const dateDay2 = subDays(dateToday, 2)
 
     MockDate.set(dateToday)
 
-    const result = mapCaseAges("Day 2")
+    const result = mapCaseAges("2 days ago")
     expect(result).toEqual({ from: dateDay2, to: dateDay2 })
   })
 
-  it("Should return a date range for 'Day 3'", () => {
+  it("Should return a date range for '3 days ago'", () => {
     const dateToday = new Date("2022-11-15T12:30")
     const dateDay3 = subDays(dateToday, 3)
 
     MockDate.set(dateToday)
 
-    const result = mapCaseAges("Day 3")
+    const result = mapCaseAges("3 days ago")
     expect(result).toEqual({ from: dateDay3, to: dateDay3 })
   })
 
@@ -54,7 +54,7 @@ describe("mapCaseAges", () => {
 
     MockDate.set(dateToday)
 
-    const result = mapCaseAges(["Today", "Day 2", "Should ignore invalid key"])
+    const result = mapCaseAges(["Today", "2 days ago", "Should ignore invalid key"])
     expect(result).toEqual([
       { from: dateToday, to: dateToday },
       { from: dateDay2, to: dateDay2 }
@@ -71,8 +71,8 @@ describe("validateCaseAgeKeys", () => {
   it.each([
     { input: "Today", expected: true },
     { input: "Yesterday", expected: true },
-    { input: "Day 2", expected: true },
-    { input: "Day 3", expected: true },
+    { input: "2 days ago", expected: true },
+    { input: "3 days ago", expected: true },
     { input: "Invalid Date Range", expected: false }
   ])("check whether '$input' is a valid date range", ({ input, expected }) => {
     expect(validateCaseAgeKeys(input)).toBe(expected)
