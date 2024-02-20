@@ -372,7 +372,7 @@ describe("Filtering cases", () => {
     // Tests for "2 days ago"
     cy.get("button#filter-button").click()
     cy.get('label[for="case-age-2-days-ago"]').should("have.text", `2 days ago (${day2DateString}) (1)`)
-    filterByCaseAge("#case-age-2-days-ago")
+    filterByCaseAge(`label[for="case-age-2-days-ago"]`)
     cy.get("button#search").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
@@ -388,7 +388,7 @@ describe("Filtering cases", () => {
     // Tests for "3 days ago"
     cy.get("button#filter-button").click()
     cy.get('label[for="case-age-3-days-ago"]').should("have.text", `3 days ago (${day3DateString}) (3)`)
-    filterByCaseAge("#case-age-3-days-ago")
+    filterByCaseAge(`label[for="case-age-3-days-ago"]`)
     cy.get("button#search").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 3)
@@ -404,7 +404,9 @@ describe("Filtering cases", () => {
       "have.text",
       `15 days ago and older (up to ${day15DateString}) (1)`
     )
-    filterByCaseAge("#case-age-15-days-ago-and-older")
+
+    filterByCaseAge(`label[for="case-age-15-days-ago-and-older"]`)
+
     cy.get("button#search").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
@@ -424,8 +426,10 @@ describe("Filtering cases", () => {
 
     // Test for multiple SLA
     cy.get("button#filter-button").click()
-    filterByCaseAge("#case-age-today")
-    filterByCaseAge("#case-age-3-days-ago")
+
+    filterByCaseAge(`label[for="case-age-today"]`)
+    filterByCaseAge(`label[for="case-age-3-days-ago"]`)
+
     cy.get("button#search").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 4)
