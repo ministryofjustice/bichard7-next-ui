@@ -177,7 +177,7 @@ describe("Pagination", () => {
     loginAndGoToUrl()
 
     cy.get("#filter-button").click()
-    cy.get("#my-cases-filter").click()
+    cy.get("label[for='my-cases-filter']").click()
     cy.get("#search").click()
 
     confirmFiltersAppliedContains("Cases locked to me")
