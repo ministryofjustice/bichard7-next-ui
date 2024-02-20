@@ -239,7 +239,7 @@ describe("Case list", () => {
       cy.get("#leave-and-lock, #return-to-case-list").click()
 
       cy.url().should("match", /\/bichard/)
-      cy.get("h1").contains("Case list").should("exist")
+      cy.get("button").contains("Show search panel").should("exist")
     })
 
     it("Should display a preview of the notes", () => {

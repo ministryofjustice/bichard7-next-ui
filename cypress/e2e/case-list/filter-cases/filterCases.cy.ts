@@ -94,7 +94,6 @@ describe("Filtering cases", () => {
     cy.injectAxe()
     cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
   })
-
   it("Should expand and collapse reason filter navigation & show the trigger info", () => {
     visitBasePathAndShowFilters()
 
