@@ -103,8 +103,8 @@ describe("Case list", () => {
         cy.get(".govuk-heading-s").contains("Case age (SLA)").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("exist")
         cy.get(".moj-filter__tag").contains("Yesterday").should("not.exist")
-        cy.get(".moj-filter__tag").contains("Day 2").should("not.exist")
-        cy.get(".moj-filter__tag").contains("Day 3").should("not.exist")
+        cy.get(".moj-filter__tag").contains("2 days ago").should("not.exist")
+        cy.get(".moj-filter__tag").contains("3 days ago").should("not.exist")
       })
 
       it("Should remove the case age filter chip when date range is selected", () => {
@@ -270,8 +270,8 @@ describe("Case list", () => {
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
 
-        filterByCaseAge(`label[for="case-age-day-2"]`)
-        cy.get(`label[for="my-cases-filter"]`).click()
+        filterByCaseAge("#case-age-2-days-ago")
+        cy.get("#my-cases-filter").click()
 
         // Check that relevant chips and headers are present on screen
         // Reason
@@ -283,16 +283,16 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist")
         // Case Age (SLA)
         cy.get(".govuk-heading-s").contains("Case age (SLA)").should("exist")
-        cy.get(".moj-filter__tag").contains("Day 2").should("exist")
+        cy.get(".moj-filter__tag").contains("2 days ago").should("exist")
         cy.get(".moj-filter__tag").contains("Today").should("not.exist")
         cy.get(".moj-filter__tag").contains("Yesterday").should("not.exist")
-        cy.get(".moj-filter__tag").contains("Day 3").should("not.exist")
+        cy.get(".moj-filter__tag").contains("3 days ago").should("not.exist")
 
         // submit query and display filter chips in filters applied section
         cy.get("#search").contains("Apply filters").click()
         cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Triggers").should("exist")
         cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Cases locked to me").should("exist")
-        cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Day 2").should("exist")
+        cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("2 days ago").should("exist")
       })
     })
 
