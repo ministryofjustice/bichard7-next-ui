@@ -12,7 +12,7 @@ import { Heading, Input, Table } from "govuk-react"
 import { isEqual } from "lodash"
 import { createUseStyles } from "react-jss"
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
-import ErrorMessages from "types/ErrorMessages"
+import ErrorMessages, { findExceptions } from "types/ErrorMessages"
 import { Exception } from "types/exceptions"
 import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
@@ -126,6 +126,8 @@ export const OffenceDetails = ({
   }`
   const thisResultPath = (resultIndex: number) => `${thisOffencePath}>Result>${resultIndex}`
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex)
+  const offenceMatchingExceptionMessage = findExceptions(courtCase, courtCase.aho.Exceptions, ExceptionCode.HO100304)
+
   const unresolvedExceptionsOnThisOffence = !isCaseUnresolved
     ? []
     : exceptions.filter((exception) => exception.path.join(">").startsWith(thisOffencePath))
@@ -201,6 +203,17 @@ export const OffenceDetails = ({
             label="Conviction date"
             value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
           />
+
+          {offenceMatchingException && (
+            <ExceptionFieldTableRow
+              badgeText={offenceMatchingException.badge}
+              label={"Matched PNC offence"}
+              displayError={Boolean(offenceMatchingException)}
+            >
+              <ErrorPromptMessage message={offenceMatchingExceptionMessage} />
+            </ExceptionFieldTableRow>
+          )}
+
           {offenceMatchingException ? (
             <ExceptionFieldTableRow
               badgeText={offenceMatchingException.badge}
