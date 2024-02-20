@@ -1,10 +1,10 @@
-import { UserGroup } from "types/UserGroup"
-import hashedPassword from "../fixtures/hashedPassword"
-import CaseDetailsTab from "types/CaseDetailsTab"
-import { userAccess } from "utils/userPermissions"
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import User from "services/entities/User"
+import CaseDetailsTab from "types/CaseDetailsTab"
+import { UserGroup } from "types/UserGroup"
+import { userAccess } from "utils/userPermissions"
 import CourtCase from "../../src/services/entities/CourtCase"
+import hashedPassword from "../fixtures/hashedPassword"
 
 export function confirmFiltersAppliedContains(filterTag: string) {
   cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag)
@@ -37,18 +37,18 @@ export const removeFilterChip = () => {
 }
 
 export const filterByCaseAge = (caseAgeId: string) => {
-  cy.get("#case-age").click()
+  cy.get(`label[for="case-age"]`).click()
   cy.get(caseAgeId).click()
 }
 
 export const filterByDateRange = (dateFrom: string, dateTo: string) => {
-  cy.get("#date-range").click()
+  cy.get(`label[for="date-range"]`).click()
 
-  cy.get("#date-from").click()
-  cy.get("#date-from").type(dateFrom)
+  cy.get(`label[for="date-from"]`).click()
+  cy.get(`label[for="date-from"]`).type(dateFrom)
 
-  cy.get("#date-to").click()
-  cy.get("#date-to").type(dateTo)
+  cy.get(`label[for="date-to"]`).click()
+  cy.get(`label[for="date-to"]`).type(dateTo)
 }
 
 export const loginAndGoToUrl = (emailAddress = "bichard01@example.com", url = "/bichard") => {
