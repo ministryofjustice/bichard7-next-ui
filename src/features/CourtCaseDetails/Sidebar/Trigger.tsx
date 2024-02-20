@@ -38,7 +38,7 @@ const useStyles = createUseStyles({
     right: "22px"
   },
   cjsResultCode: {
-    fontSize: "16px",
+    fontSize: "1em",
     lineHeight: "1.25"
   }
 })

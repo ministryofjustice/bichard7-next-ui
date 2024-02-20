@@ -12,7 +12,7 @@ export const useCustomStyles = createUseStyles({
     gap: "11px",
     backgroundColor: tagBlue,
     color: textBlue,
-    fontSize: "16px",
+    fontSize: "1em",
     textDecoration: "underline",
     cursor: "pointer",
     "&:hover": {
@@ -40,7 +40,7 @@ export const useCustomStyles = createUseStyles({
     backgroundColor: "white",
     gap: "11px",
     color: blue,
-    fontSize: "16px",
+    fontSize: "1em",
     textDecoration: "underline",
     cursor: "pointer",
     "&:hover": {

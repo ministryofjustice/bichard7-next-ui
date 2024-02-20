@@ -76,8 +76,8 @@ describe("Filtering cases", () => {
   it("Should be accessible", () => {
     visitBasePathAndShowFilters()
     cy.get("input[id=keywords]").type("Dummy")
-    cy.get('[id="triggers-type"]').check()
-    cy.get('[id="exceptions-type"]').check()
+    cy.get(`label[for="triggers-type"]`).click()
+    cy.get(`label[for="exceptions-type"]`).click()
 
     cy.injectAxe()
 
@@ -94,7 +94,6 @@ describe("Filtering cases", () => {
     cy.injectAxe()
     cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
   })
-
   it("Should expand and collapse reason filter navigation & show the trigger info", () => {
     visitBasePathAndShowFilters()
 
@@ -118,30 +117,30 @@ describe("Filtering cases", () => {
     expandFilterSection("Court date", "#case-age")
 
     // Date range & case ages are collapsed
-    cy.get("#date-from").should("not.be.visible")
-    cy.get("#case-age-yesterday").should("not.be.visible")
+    cy.get(`label[for="date-from"]`).should("not.be.visible")
+    cy.get(`label[for="case-age-yesterday"]`).should("not.be.visible")
     // Opening date range collapses case age & opens date range
-    cy.get("#date-range").click()
-    cy.get("#date-from").should("be.visible")
-    cy.get("#case-age-yesterday").should("not.be.visible")
+    cy.get(`label[for="date-range"]`).click()
+    cy.get(`label[for="date-from"]`).should("be.visible")
+    cy.get(`label[for="case-age-yesterday"]`).should("not.be.visible")
   })
 
   it("Should remove the selection of the case age when it's been changed to the date range", () => {
     visitBasePathAndShowFilters()
-    filterByCaseAge("#case-age-yesterday")
+    filterByCaseAge(`label[for="case-age-yesterday"]`)
     cy.get("#case-age-yesterday").should("be.checked")
-    cy.get("#date-range").click()
-    cy.get("#case-age").click()
+    cy.get(`label[for="date-range"]`).click()
+    cy.get(`label[for="case-age"]`).click()
     cy.get("#case-age-yesterday").should("not.be.checked")
   })
 
   it("Should remove the selection of the date range when it's been changed to the case age", () => {
     visitBasePathAndShowFilters()
-    cy.get("#date-range").click()
-    cy.get("#date-from").type("2022-01-01")
-    cy.get("#date-to").type("2022-12-31")
+    cy.get("label[for=date-range]").click()
+    cy.get("label[for=date-from]").type("2022-01-01")
+    cy.get("label[for=date-to]").type("2022-12-31")
     cy.get("#date-range").should("be.checked")
-    filterByCaseAge("#case-age-yesterday")
+    filterByCaseAge(`label[for="case-age-yesterday"]`)
     cy.get("#case-age").should("be.checked")
     cy.get("#case-age-yesterday").should("be.checked")
   })
@@ -152,11 +151,11 @@ describe("Filtering cases", () => {
     cy.get("#case-age").should("not.be.checked")
     cy.get("#date-range").should("not.be.checked")
     // #case-age-yesterday selected, #case-age is checked
-    filterByCaseAge("#case-age-yesterday")
+    filterByCaseAge(`label[for="case-age-yesterday"]`)
     cy.get("#case-age").should("be.checked")
     cy.get("#date-range").should("not.be.checked")
     // #date-range, ##date-range is checked
-    cy.get("#date-range").click()
+    cy.get(`label[for="date-range"]`).click()
     cy.get("#case-age").should("not.be.checked")
     cy.get("#date-range").should("be.checked")
   })
@@ -342,7 +341,7 @@ describe("Filtering cases", () => {
     visitBasePathAndShowFilters()
 
     // Tests for "Today"
-    filterByCaseAge("#case-age-today")
+    filterByCaseAge(`label[for="case-age-today"]`)
     cy.get('label[for="case-age-today"]').should("have.text", "Today (1)")
     cy.get("button#search").click()
 
@@ -358,7 +357,7 @@ describe("Filtering cases", () => {
 
     // Tests for "yesterday"
     cy.get("button#filter-button").click()
-    filterByCaseAge("#case-age-yesterday")
+    filterByCaseAge(`label[for="case-age-yesterday"]`)
     cy.get('label[for="case-age-yesterday"]').should("have.text", "Yesterday (2)")
     cy.get("button#search").click()
 
@@ -369,10 +368,10 @@ describe("Filtering cases", () => {
     removeFilterTag("Yesterday")
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 8)
 
-    // Tests for "Day 2"
+    // Tests for "2 days ago"
     cy.get("button#filter-button").click()
-    cy.get('label[for="case-age-day-2"]').should("have.text", `Day 2 (${day2DateString}) (1)`)
-    filterByCaseAge("#case-age-day-2")
+    cy.get('label[for="case-age-2-days-ago"]').should("have.text", `2 days ago (${day2DateString}) (1)`)
+    filterByCaseAge(`label[for="case-age-2-days-ago"]`)
     cy.get("button#search").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
@@ -382,29 +381,31 @@ describe("Filtering cases", () => {
         cy.wrap(row).contains("Case00003").should("exist")
       })
 
-    removeFilterTag("Day 2")
+    removeFilterTag("2 days ago")
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 8)
 
-    // Tests for "Day 3"
+    // Tests for "3 days ago"
     cy.get("button#filter-button").click()
-    cy.get('label[for="case-age-day-3"]').should("have.text", `Day 3 (${day3DateString}) (3)`)
-    filterByCaseAge("#case-age-day-3")
+    cy.get('label[for="case-age-3-days-ago"]').should("have.text", `3 days ago (${day3DateString}) (3)`)
+    filterByCaseAge(`label[for="case-age-3-days-ago"]`)
     cy.get("button#search").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 3)
     confirmMultipleFieldsDisplayed(["Case00004", "Case00005", "Case00006"])
     confirmMultipleFieldsNotDisplayed(["Case00000", "Case00001", "Case00002", "Case00003", "Case00007"])
 
-    removeFilterTag("Day 3")
+    removeFilterTag("3 days ago")
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 8)
 
-    // Tests for "Day 15 and older"
+    // Tests for "15 days ago and older"
     cy.get("button#filter-button").click()
-    cy.get('label[for="case-age-day-15-and-older"]').should(
+    cy.get('label[for="case-age-15-days-ago-and-older"]').should(
       "have.text",
-      `Day 15 and older (up to ${day15DateString}) (1)`
+      `15 days ago and older (up to ${day15DateString}) (1)`
     )
-    filterByCaseAge("#case-age-day-15-and-older")
+
+    filterByCaseAge(`label[for="case-age-15-days-ago-and-older"]`)
+
     cy.get("button#search").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
@@ -419,20 +420,22 @@ describe("Filtering cases", () => {
       "Case00006"
     ])
 
-    removeFilterTag("Day 15 and older")
+    removeFilterTag("15 days ago and older")
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 8)
 
     // Test for multiple SLA
     cy.get("button#filter-button").click()
-    filterByCaseAge("#case-age-today")
-    filterByCaseAge("#case-age-day-3")
+
+    filterByCaseAge(`label[for="case-age-today"]`)
+    filterByCaseAge(`label[for="case-age-3-days-ago"]`)
+
     cy.get("button#search").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 4)
     confirmMultipleFieldsDisplayed(["Case00000", "Case00004", "Case00005", "Case00006"])
     confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002", "Case00003", "Case00007"])
 
-    removeFilterTag("Day 3")
+    removeFilterTag("3 days ago")
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
     removeFilterTag("Today")
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 8)
@@ -460,15 +463,15 @@ describe("Filtering cases", () => {
     cy.visit("/bichard")
 
     cy.get("button#filter-button").click()
-    cy.get("#date-range").click()
-    cy.get("#date-from").type("2022-01-01")
-    cy.get("#date-to").type("2022-12-31")
+    cy.get(`label[for="date-range"]`).click()
+    cy.get(`label[for="date-from"]`).type("2022-01-01")
+    cy.get(`label[for="date-to"]`).type("2022-12-31")
     cy.get(".govuk-heading-s").contains("Date range").should("exist")
     cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
     cy.get("button#search").click()
 
     cy.get("button#filter-button").click()
-    cy.get("#date-range").click()
+    cy.get(`label[for="date-range"]`).click()
     cy.get("#date-range").should("be.checked")
     cy.get("#date-from").should("have.value", "2022-01-01")
     cy.get("#date-to").should("have.value", "2022-12-31")
@@ -485,15 +488,15 @@ describe("Filtering cases", () => {
   it("Should update 'selected filter' chip when changing date range filter", () => {
     cy.visit("/bichard")
     cy.get("button#filter-button").click()
-    cy.get("#date-range").click()
+    cy.get(`label[for="date-range"]`).click()
 
-    cy.get("#date-from").type("1999-01-01")
-    cy.get("#date-to").type("2000-12-31")
+    cy.get(`label[for="date-from"]`).type("1999-01-01")
+    cy.get(`label[for="date-to"]`).type("2000-12-31")
     cy.get(".govuk-heading-s").contains("Date range").should("exist")
     cy.get(".moj-filter__tag").contains("01/01/1999 - 31/12/2000")
 
-    cy.get("#date-from").type("2022-01-01")
-    cy.get("#date-to").type("2022-12-31")
+    cy.get(`label[for="date-from"]`).type("2022-01-01")
+    cy.get(`label[for="date-to"]`).type("2022-12-31")
     cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
   })
 
@@ -536,7 +539,7 @@ describe("Filtering cases", () => {
 
     // Filtering by having triggers
     cy.get("button[id=filter-button]").click()
-    cy.get('[id="triggers-type"]').check()
+    cy.get(`label[for="triggers-type"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
@@ -547,7 +550,7 @@ describe("Filtering cases", () => {
     // Filtering by having exceptions
     removeFilterTag("Triggers")
     cy.get("button[id=filter-button]").click()
-    cy.get('[id="exceptions-type"]').check()
+    cy.get(`label[for="exceptions-type"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
@@ -555,10 +558,12 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed([`Case00000`, `Case00002`])
     confirmMultipleFieldsNotDisplayed([`Case00001`, `Case00003`])
 
+    removeFilterTag("Exceptions")
+
     // Filter for both triggers and exceptions
     cy.get("button[id=filter-button]").click()
-    cy.get('[id="triggers-type"]').check()
-    cy.get('[id="exceptions-type"]').check()
+    cy.get(`label[for="triggers-type"]`).click()
+    cy.get(`label[for="exceptions-type"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
@@ -598,7 +603,7 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
 
     cy.get("button[id=filter-button]").click()
-    cy.get('[id="bails-type"]').check()
+    cy.get(`label[for="bails-type"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get('*[class^="moj-filter-tags"]').contains("Bails")
@@ -626,7 +631,7 @@ describe("Filtering cases", () => {
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
 
     // Filter for resolved cases
-    cy.get("#resolved").click()
+    cy.get(`label[for="resolved"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 3)
@@ -645,7 +650,7 @@ describe("Filtering cases", () => {
 
     visitBasePathAndShowFilters()
     // Filter for locked cases
-    cy.get("#locked").click()
+    cy.get(`label[for="locked"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
@@ -657,7 +662,7 @@ describe("Filtering cases", () => {
 
     // Filter for unlocked cases
     cy.get("button[id=filter-button]").click()
-    cy.get("#unlocked").click()
+    cy.get(`label[for="unlocked"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
@@ -671,8 +676,8 @@ describe("Filtering cases", () => {
   it("Should clear filters when clicked on the link outside of the filter panel", () => {
     visitBasePathAndShowFilters()
     cy.get("input[id=keywords]").type("Dummy")
-    cy.get('[id="triggers-type"]').check()
-    cy.get('[id="exceptions-type"]').check()
+    cy.get('label[for="triggers-type"]').click()
+    cy.get('label[for="exceptions-type"]').click()
     cy.get("button[id=search]").click()
 
     cy.get('*[class^="moj-filter-tags"]').contains("Dummy")
@@ -690,8 +695,8 @@ describe("Filtering cases", () => {
   it("Should clear filters when clicked on the link inside the filter panel", () => {
     visitBasePathAndShowFilters()
     cy.get("input[id=keywords]").type("Dummy")
-    cy.get('[id="triggers-type"]').check()
-    cy.get('[id="exceptions-type"]').check()
+    cy.get('label[for="triggers-type"]').click()
+    cy.get('label[for="exceptions-type"]').click()
     cy.get("button[id=search]").click()
 
     cy.get('*[class^="moj-filter-tags"]').contains("Dummy")
@@ -719,7 +724,7 @@ describe("Filtering cases", () => {
 
       visitBasePathAndShowFilters()
 
-      cy.get("#my-cases-filter").click()
+      cy.get(`label[for="my-cases-filter"]`).click()
       cy.contains("Selected filters")
       cy.contains("My cases")
 
