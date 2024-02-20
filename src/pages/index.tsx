@@ -281,7 +281,6 @@ const Home: NextPage<Props> = (props) => {
         <CurrentUserContext.Provider value={currentUserContext}>
           <Layout bichardSwitch={{ display: true, displaySwitchingSurveyFeedback }}>
             <Main />
-            <h1 className="hidden-header">{"Case list"}</h1>
             <CourtCaseWrapper
               filter={
                 <CourtCaseFilter

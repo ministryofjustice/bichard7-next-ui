@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Heading } from "govuk-react"
 
 interface Props {
   filter: React.ReactNode
@@ -22,6 +23,9 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
         <div className="moj-filter-layout__filter">
           <div className={areAppliedFiltersShown ? "moj-filter" : "moj-filter moj-hidden"}>{filter}</div>
         </div>
+        <Heading className="hidden-header" as="h1" size="LARGE">
+          {"Case list"}
+        </Heading>
         <div className="moj-filter-layout__content">
           <div className="moj-button-menu">
             <div className="moj-action-bar">
