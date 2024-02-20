@@ -67,7 +67,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
     courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
-    reasonCode: reasonCode !== null ? { value: reasonCode, state: "Applied", label: reasonCode } : {},
+    reasonCodes: reasonCode !== null ? [{ value: reasonCode, state: "Applied", label: reasonCode }] : [],
     ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
     reasonFilter: reasons.map((reason) => {
       return { value: reason, state: "Applied" }
@@ -139,10 +139,10 @@ const CourtCaseFilter: React.FC<Props> = ({
                 />
               </label>
               <label className="govuk-label govuk-label--s" htmlFor="reason-code">
-                <LabelText>{"Reason code"}</LabelText>
+                <LabelText>{"Reason codes"}</LabelText>
                 <input
                   className="govuk-input"
-                  value={state.reasonCode.value}
+                  value={state.reasonCodes.map((reason) => reason.value).join(" ")}
                   id="reason-code"
                   name="reasonCode"
                   type="text"

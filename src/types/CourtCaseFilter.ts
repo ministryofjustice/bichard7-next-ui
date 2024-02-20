@@ -71,11 +71,11 @@ export type Filter = {
     state?: FilterState
     label?: string
   }
-  reasonCode: {
+  reasonCodes: {
     value?: string
     state?: FilterState
     label?: string
-  }
+  }[]
   ptiurnSearch: {
     value?: string
     state?: FilterState

@@ -95,19 +95,20 @@ const FilterChipSection: React.FC<Props> = ({
           value={state.courtNameSearch.value!}
         />
 
-        <FilterChipRow
-          chipLabel={state.reasonCode.label!}
-          condition={
-            state.reasonCode.value !== undefined &&
-            state.reasonCode.label !== undefined &&
-            state.reasonCode.state === sectionState
-          }
-          dispatch={dispatch}
-          type="reasonCode"
-          label="Reason code"
-          state={state.reasonCode.state || sectionState}
-          value={state.reasonCode.value!}
-        />
+        {state.reasonCodes.map((reasonCode, index) => (
+          <FilterChipRow
+            key={`filter-chip${reasonCode.value}`}
+            chipLabel={reasonCode.label!}
+            condition={
+              reasonCode.value !== undefined && reasonCode.label !== undefined && reasonCode.state === sectionState
+            }
+            dispatch={dispatch}
+            type="reasonCode"
+            label={index === 0 ? "Reason codes" : ""}
+            state={reasonCode.state || sectionState}
+            value={reasonCode.value!}
+          />
+        ))}
 
         <ConditionalRender
           isRendered={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}
