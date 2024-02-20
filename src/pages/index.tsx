@@ -54,7 +54,7 @@ interface Props {
   keywords: string[]
   ptiurn: string | null
   courtName: string | null
-  reasonCode: string | null
+  reasonCodes: string[]
   urgent: string | null
   caseAge: string[]
   caseAgeCounts: Record<string, number>
@@ -84,7 +84,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const queryStringCookieName = getQueryStringCookieName(currentUser.username)
     // prettier-ignore
     const {
-      orderBy, page, type, keywords, courtName, reasonCode, ptiurn, maxPageItems, order,
+      orderBy, page, type, keywords, courtName, reasonCodes, ptiurn, maxPageItems, order,
       urgency, caseAge, from, to, locked, state, myCases, unlockException, unlockTrigger
     } = query
     const reasons = [type].flat().filter((t) => reasonOptions.includes(String(t) as Reason)) as Reason[]
@@ -102,7 +102,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     })
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
-    const validatedreasonCode = validateQueryParams(reasonCode) ? reasonCode : undefined
+    const validatedreasonCodes = validateQueryParams(reasonCodes) ? reasonCodes.split(" ") : []
     const validatedPtiurn = validateQueryParams(ptiurn) ? ptiurn : undefined
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLocked = validateQueryParams(locked) ? locked : undefined
@@ -151,7 +151,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       {
         ...(validatedDefendantName && { defendantName: validatedDefendantName }),
         ...(validatedCourtName && { courtName: validatedCourtName }),
-        ...(validatedreasonCode && { reasonCode: validatedreasonCode }),
+        ...(validatedreasonCodes && { reasonCode: validatedreasonCodes[0] }),
         ...(validatedPtiurn && { ptiurn: validatedPtiurn }),
         reasons: reasons,
         urgent: validatedUrgent,
@@ -205,7 +205,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         reasons: reasons,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         courtName: validatedCourtName ? validatedCourtName : null,
-        reasonCode: validatedreasonCode ? validatedreasonCode : null,
+        reasonCodes: validatedreasonCodes,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
         caseAge: caseAges,
         dateRange: validatedDateRange
@@ -240,7 +240,7 @@ const Home: NextPage<Props> = (props) => {
     reasons,
     keywords,
     courtName,
-    reasonCode,
+    reasonCodes,
     ptiurn,
     caseAge,
     caseAgeCounts,
@@ -287,7 +287,7 @@ const Home: NextPage<Props> = (props) => {
                   reasons={reasons}
                   defendantName={keywords[0]}
                   courtName={courtName}
-                  reasonCode={reasonCode}
+                  reasonCode={reasonCodes[0]}
                   ptiurn={ptiurn}
                   caseAge={caseAge}
                   caseAgeCounts={caseAgeCounts}
@@ -306,7 +306,7 @@ const Home: NextPage<Props> = (props) => {
                     reasons,
                     keywords,
                     courtName,
-                    reasonCode,
+                    reasonCodes,
                     ptiurn,
                     caseAge,
                     dateRange: dateRange,

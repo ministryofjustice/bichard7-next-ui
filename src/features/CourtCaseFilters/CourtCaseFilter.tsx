@@ -143,8 +143,8 @@ const CourtCaseFilter: React.FC<Props> = ({
                 <input
                   className="govuk-input"
                   value={state.reasonCodes.map((reason) => reason.value).join(" ")}
-                  id="reason-code"
-                  name="reasonCode"
+                  id="reason-codes"
+                  name="reasonCodes"
                   type="text"
                   onChange={(event) => {
                     dispatch({ method: "add", type: "reasonCode", value: event.currentTarget.value })

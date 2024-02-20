@@ -12,7 +12,7 @@ interface Props {
     reasons?: Reason[]
     keywords?: string[]
     courtName?: string | null
-    reasonCode?: string | null
+    reasonCodes?: string[]
     ptiurn?: string | null
     caseAge?: string[]
     dateRange?: SerializedCourtDateRange | null
@@ -31,7 +31,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     (filters.keywords && filters.keywords.length > 0) ||
     (filters.caseAge && filters.caseAge.length > 0) ||
     !!filters.courtName ||
-    !!filters.reasonCode ||
+    !!filters.reasonCodes ||
     !!filters.ptiurn ||
     !!filters.urgency ||
     !!filters.dateRange?.from ||
@@ -84,12 +84,15 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </ConditionalRender>
-          <ConditionalRender isRendered={!!filters.reasonCode}>
+          <ConditionalRender isRendered={!!filters.reasonCodes}>
             <li>
-              <FilterTag
-                tag={filters.reasonCode ?? ""}
-                href={removeFilterFromPath({ reasonCode: filters.reasonCode ?? "" })}
-              />
+              {filters.reasonCodes?.map((reasonCode) => (
+                <FilterTag
+                  key={`applied-filter-${reasonCode}`}
+                  tag={reasonCode}
+                  href={removeFilterFromPath({ reasonCode })}
+                />
+              ))}
             </li>
           </ConditionalRender>
           <ConditionalRender isRendered={!!filters.ptiurn}>
