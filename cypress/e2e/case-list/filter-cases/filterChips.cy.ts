@@ -270,9 +270,8 @@ describe("Case list", () => {
         cy.get("#filter-button").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").click()
 
-
-        filterByCaseAge("#case-age-2-days-ago")
-        cy.get("#my-cases-filter").click()
+        filterByCaseAge(`label[for="case-age-2-days-ago"]`)
+        cy.get(`label[for="my-cases-filter"]`).click()
 
         // Check that relevant chips and headers are present on screen
         // Reason
