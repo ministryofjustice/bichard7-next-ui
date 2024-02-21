@@ -1,4 +1,3 @@
-import times from "lodash/times"
 import { defaultSetup, loginAndGoToUrl } from "../../support/helpers"
 
 const checkCasesOrder = (expectedOrder: number[]) => {

@@ -53,7 +53,7 @@ describe("Case details", () => {
     cy.get("span").should("contain", "You have 1980 characters remaining")
     cy.get("button").contains("Reallocate").click()
 
-    cy.get("button").contains("Show search panel").should("exist")
+    cy.get("H1").should("have.text", "Case list")
     cy.contains("NAME Defendant").should("not.exist")
 
     cy.login("bichard03@example.com", "password")
@@ -97,7 +97,7 @@ describe("Case details", () => {
     cy.get("span").should("contain", "You have 2000 characters remaining")
     cy.get("button").contains("Reallocate").click()
 
-    cy.get("button").contains("Show search panel").should("exist")
+    cy.get("H1").should("have.text", "Case list")
     cy.contains("NAME Defendant").should("not.exist")
 
     cy.login("bichard03@example.com", "password")
@@ -145,7 +145,7 @@ describe("Case details", () => {
     cy.get("span").should("contain", "You have 990 characters remaining")
     cy.get("button").contains("Reallocate").click()
 
-    cy.get("button").contains("Show search panel").should("exist")
+    cy.get("H1").should("have.text", "Case list")
     cy.contains("NAME Defendant").should("not.exist")
 
     cy.login("bichard03@example.com", "password")

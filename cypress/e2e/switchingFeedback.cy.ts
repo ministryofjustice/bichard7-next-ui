@@ -121,6 +121,7 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.get("a").contains("Back").click()
 
     cy.url().should("match", /\/bichard/)
+    cy.get("H1").should("have.text", "Case list")
   })
 
   it("will go back to the case details page when I press the back button", () => {

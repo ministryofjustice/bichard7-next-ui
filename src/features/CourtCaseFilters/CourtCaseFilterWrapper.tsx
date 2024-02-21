@@ -20,15 +20,16 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
   const user = useCurrentUser()
   const filterPanelKey = `is-filter-panel-visible-${user.username}`
   const [areAppliedFiltersShown, setAreAppliedFiltersShown] = useState(false)
+  const dateTime = new Date().getTime()
 
   useEffect(() => {
     setAreAppliedFiltersShown(localStorage.getItem(filterPanelKey) === "true")
-  }, [])
+  }, [filterPanelKey])
 
   return (
     <>
       <div className="moj-filter-layout__filter">
-        <div className={areAppliedFiltersShown ? "moj-filter" : "moj-filter moj-hidden"}>{filter}</div>
+        <div className={!areAppliedFiltersShown ? "moj-filter" : "moj-filter moj-hidden"}>{filter}</div>
       </div>
       <Heading className="hidden-header" as="h1" size="LARGE">
         {"Case list"}
@@ -46,10 +47,11 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
               onClick={() => {
                 const newValue = !areAppliedFiltersShown
                 localStorage.setItem(filterPanelKey, newValue.toString())
+                localStorage.setItem("dateTime", JSON.stringify(dateTime))
                 setAreAppliedFiltersShown(newValue)
               }}
             >
-              {areAppliedFiltersShown ? "Hide search panel" : "Show search panel"}
+              {areAppliedFiltersShown ? "Show search panel" : "Hide search panel"}
             </button>
             {!areAppliedFiltersShown && <div className="moj-button-menu__wrapper">{appliedFilters}</div>}
           </div>
