@@ -830,7 +830,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasonCode: triggerToInclude.triggerCode
+          reasonCodes: [triggerToInclude.triggerCode]
         },
         testUser
       )
@@ -846,7 +846,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasonCode: errorToInclude
+          reasonCodes: [errorToInclude]
         },
         testUser
       )
@@ -862,7 +862,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasonCode: "2222"
+          reasonCodes: ["2222"]
         },
         testUser
       )
@@ -890,7 +890,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasonCode: errorToInclude
+          reasonCodes: [errorToInclude]
         },
         testUser
       )
@@ -907,7 +907,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasonCode: anotherErrorToInclude
+          reasonCodes: [anotherErrorToInclude]
         },
         testUser
       )

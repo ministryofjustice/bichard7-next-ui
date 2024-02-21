@@ -602,7 +602,7 @@ describe("Filter cases by resolution status", () => {
           "Should only see trigger that is resolved by themselves when searching a bails trigger code as a trigger handler",
         filters: {
           caseState: "Resolved",
-          reasonCode: bailsTriggerCode
+          reasonCodes: [bailsTriggerCode]
         },
         user: triggerHandler,
         expectedCases: ["No exceptions/Bails Trigger Resolved by triggerHandler"]
@@ -612,7 +612,7 @@ describe("Filter cases by resolution status", () => {
           "Should only see exception that is resolved by themselves when searching an exception code as an exception handler",
         filters: {
           caseState: "Resolved",
-          reasonCode: "HO100"
+          reasonCodes: ["HO100"]
         },
         user: exceptionHandler,
         expectedCases: [
@@ -625,7 +625,7 @@ describe("Filter cases by resolution status", () => {
           "Should only see exception that has unresolved exception when searching a trigger code as an exception handler",
         filters: {
           caseState: "Unresolved",
-          reasonCode: "TRP"
+          reasonCodes: ["TRP"]
         },
         user: exceptionHandler,
         expectedCases: ["Exceptions Unresolved/Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
@@ -635,7 +635,7 @@ describe("Filter cases by resolution status", () => {
           "Should only see exception that has exception resolved by themselves when searching a trigger code as an exception handler",
         filters: {
           caseState: "Resolved",
-          reasonCode: "TRP"
+          reasonCodes: ["TRP"]
         },
         user: exceptionHandler,
         expectedCases: ["Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"]
