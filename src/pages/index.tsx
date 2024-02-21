@@ -151,7 +151,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       {
         ...(validatedDefendantName && { defendantName: validatedDefendantName }),
         ...(validatedCourtName && { courtName: validatedCourtName }),
-        ...(validatedreasonCodes && { reasonCode: validatedreasonCodes[0] }),
+        ...(validatedreasonCodes && { reasonCodes: validatedreasonCodes }),
         ...(validatedPtiurn && { ptiurn: validatedPtiurn }),
         reasons: reasons,
         urgent: validatedUrgent,

@@ -34,6 +34,6 @@ export type CaseListQueryParams = {
   locked?: boolean
   caseState?: CaseState
   allocatedToUserName?: string
-  reasonCode?: string
+  reasonCodes?: string[]
   resolvedByUsername?: string
 }
