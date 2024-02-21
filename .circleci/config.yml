@@ -32,8 +32,7 @@ commands:
     steps:
       - run:
           name: Build message forwarder image
-          working_directory: ~/bichard7-next-core
-          command: docker compose -f environment/docker-compose.yml build message-forwarder
+          command: bash ./script/build-message-forwarder.sh
 
   build_audit_logging_images:
     steps:
