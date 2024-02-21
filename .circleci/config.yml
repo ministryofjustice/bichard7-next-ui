@@ -32,7 +32,7 @@ commands:
     steps:
       - run:
           name: Build message forwarder image
-          command: bash ./script/build-message-forwarder.sh
+          command: bash ./scripts/build-message-forwarder.sh
 
   build_audit_logging_images:
     steps:
