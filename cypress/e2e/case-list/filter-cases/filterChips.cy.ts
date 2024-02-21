@@ -243,7 +243,7 @@ describe("Case list", () => {
         cy.get("#filter-button").click()
         cy.get("input[id=reason-code]").type("Bar")
 
-        cy.get(".govuk-heading-s").contains("Reason code").should("exist")
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Bar").should("exist")
 
         cy.get("li button.moj-filter__tag").contains("Bar").trigger("click")
