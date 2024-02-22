@@ -17,7 +17,7 @@ import { filtersReducer } from "./reducers/filters"
 interface Props {
   defendantName: string | null
   courtName: string | null
-  reasonCode: string | null
+  reasonCodes: string[]
   ptiurn: string | null
   reasons: Reason[]
   caseAge: string[]
@@ -45,7 +45,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   defendantName,
   ptiurn,
   courtName,
-  reasonCode,
+  reasonCodes,
   caseAge,
   caseAgeCounts,
   dateRange,
@@ -67,7 +67,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
     courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
-    reasonCodes: reasonCode !== null ? [{ value: reasonCode, state: "Applied", label: reasonCode }] : [],
+    reasonCodes: reasonCodes.map((reasonCode) => ({ value: reasonCode, state: "Applied", label: reasonCode })),
     ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
     reasonFilter: reasons.map((reason) => {
       return { value: reason, state: "Applied" }

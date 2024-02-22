@@ -90,7 +90,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
                 <FilterTag
                   key={`applied-filter-${reasonCode}`}
                   tag={reasonCode}
-                  href={removeFilterFromPath({ reasonCode })}
+                  href={removeQueryParamsByName(["reasonCodes"])}
                 />
               ))}
             </li>

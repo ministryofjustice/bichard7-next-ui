@@ -287,7 +287,7 @@ const Home: NextPage<Props> = (props) => {
                   reasons={reasons}
                   defendantName={keywords[0]}
                   courtName={courtName}
-                  reasonCode={reasonCodes[0]}
+                  reasonCodes={reasonCodes}
                   ptiurn={ptiurn}
                   caseAge={caseAge}
                   caseAgeCounts={caseAgeCounts}
