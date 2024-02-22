@@ -20,7 +20,6 @@ import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 import Form from "../../components/Form"
 import { ResolutionStatus } from "../../types/ResolutionStatus"
 import ResolutionStatusBadge from "../CourtCaseList/tags/ResolutionStatusBadge"
-import UrgentTag from "../CourtCaseList/tags/UrgentTag"
 import LockStatusTag from "./LockStatusTag"
 
 interface Props {
@@ -93,18 +92,6 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
   return (
     <HeaderContainer id="header-container">
       <HeaderRow>
-        <LockStatusTag
-          isRendered={currentUser.hasAccessTo[Permission.Exceptions]}
-          resolutionStatus={courtCase.errorStatus}
-          lockName="Exceptions"
-        />
-        <LockStatusTag
-          isRendered={currentUser.hasAccessTo[Permission.Triggers]}
-          resolutionStatus={courtCase.triggerStatus}
-          lockName="Triggers"
-        />
-      </HeaderRow>
-      <HeaderRow>
         <Heading as="h2" size="MEDIUM">
           {courtCase.defendantName}
           {getResolutionStatus(courtCase) ? (
@@ -117,7 +104,20 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
             className="govuk-!-static-margin-left-5 view-only-badge"
           />
         </Heading>
+        <div>
+          <LockStatusTag
+            isRendered={currentUser.hasAccessTo[Permission.Exceptions]}
+            resolutionStatus={courtCase.errorStatus}
+            lockName="Exceptions"
+          />
+          <LockStatusTag
+            isRendered={currentUser.hasAccessTo[Permission.Triggers]}
+            resolutionStatus={courtCase.triggerStatus}
+            lockName="Triggers"
+          />
+        </div>
       </HeaderRow>
+
       <ButtonContainer>
         <ConditionalRender isRendered={canReallocate && courtCase.phase === 1 && !pathName.includes("/reallocate")}>
           <LinkButton
