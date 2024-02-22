@@ -103,7 +103,7 @@ const FilterChipSection: React.FC<Props> = ({
               reasonCode.value !== undefined && reasonCode.label !== undefined && reasonCode.state === sectionState
             }
             dispatch={dispatch}
-            type="reasonCode"
+            type="reasonCodes"
             label={index === 0 ? "Reason" : ""}
             state={reasonCode.state || sectionState}
             value={reasonCode.value!}
