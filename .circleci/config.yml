@@ -26,13 +26,15 @@ commands:
     steps:
       - run:
           name: "Fetch images: <<parameters.IMAGES>>"
-          command: bash ./scripts/fetch-docker-images.sh <<parameters.IMAGES>>
+          working_directory: ~/bichard7-next-core
+          command: bash .circleci/scripts/fetch-docker-images.sh <<parameters.IMAGES>>
 
   build_message_forwarder:
     steps:
       - run:
           name: Build message forwarder image
-          command: bash ./scripts/build-message-forwarder.sh
+          working_directory: ~/bichard7-next-core
+          command: bash .circleci/scripts/build-message-forwarder.sh
 
   build_audit_logging_images:
     steps:
@@ -78,7 +80,8 @@ commands:
       - build_audit_logging_images
       - run:
           name: Start bichard7 legacy
-          command: bash ./scripts/run-infrastructure.sh
+          working_directory: ~/bichard7-next-core
+          command: bash .circleci/scripts/run-infrastructure.sh ui all-legacy
 
   start_services:
     parameters:
