@@ -246,7 +246,7 @@ describe("Filtering cases", () => {
 
     visitBasePathAndShowFilters()
 
-    inputAndSearch("reason-code", "TRPR0107")
+    inputAndSearch("reason-codes", "TRPR0107")
     cy.contains("Case00000")
     confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
     cy.get("tbody tr").should("have.length", 1)
@@ -255,7 +255,7 @@ describe("Filtering cases", () => {
 
     cy.get("button[id=filter-button]").click()
 
-    inputAndSearch("reason-code", "HO200212")
+    inputAndSearch("reason-codes", "HO200212")
     cy.contains("Case00001")
     confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002"])
     cy.get("tr").should("have.length", 2)
@@ -307,7 +307,7 @@ describe("Filtering cases", () => {
     removeFilterTag("Case0000")
 
     cy.get("button[id=filter-button]").click()
-    inputAndSearch("reason-code", "HO200212")
+    inputAndSearch("reason-codes", "HO200212")
     confirmMultipleFieldsNotDisplayed(["GORDON Bruce", "PENNYWORTH Bruce", "PENNYWORTH Alfred"])
     cy.get("tr").should("have.length", 2)
     confirmMultipleFieldsDisplayed(["WAYNE Bruce"])

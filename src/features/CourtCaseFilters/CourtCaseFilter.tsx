@@ -138,8 +138,8 @@ const CourtCaseFilter: React.FC<Props> = ({
                   }}
                 />
               </label>
-              <label className="govuk-label govuk-label--s" htmlFor="reason-code">
-                <LabelText>{"Reason"}</LabelText>
+              <label className="govuk-label govuk-label--s" htmlFor="reason-codes">
+                <LabelText>{"Reason Codes"}</LabelText>
                 <input
                   className="govuk-input"
                   value={state.reasonCodes.map((reason) => reason.value).join(" ")}

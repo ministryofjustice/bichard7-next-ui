@@ -31,7 +31,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     (filters.keywords && filters.keywords.length > 0) ||
     (filters.caseAge && filters.caseAge.length > 0) ||
     !!filters.courtName ||
-    !!filters.reasonCodes ||
+    !!filters.reasonCodes?.length ||
     !!filters.ptiurn ||
     !!filters.urgency ||
     !!filters.dateRange?.from ||
