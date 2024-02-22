@@ -1,6 +1,5 @@
-import { Heading } from "govuk-react"
 import { useState } from "react"
-import { useCustomStyles } from "../../../styles/customStyles"
+import { Heading } from "govuk-react"
 
 interface Props {
   filter: React.ReactNode
@@ -18,14 +17,13 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
   paginationBottom
 }: Props) => {
   const [areAppliedFiltersShown, setAreAppliedFiltersShown] = useState(false)
-  const classes = useCustomStyles()
   return (
     <>
-      <div className={`${classes["top-padding"]} moj-filter-layout`}>
+      <div className={`moj-filter-layout`}>
         <div className="moj-filter-layout__filter">
           <div className={areAppliedFiltersShown ? "moj-filter" : "moj-filter moj-hidden"}>{filter}</div>
         </div>
-        <Heading as="h1" size="LARGE">
+        <Heading className="hidden-header" as="h1" size="LARGE">
           {"Case list"}
         </Heading>
         <div className="moj-filter-layout__content">

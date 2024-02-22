@@ -7,7 +7,7 @@ import CourtCase from "./entities/CourtCase"
 import User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 
-const asKey = (caseAgeOption: string) => caseAgeOption.toLowerCase().replace(/ /g, "")
+const asKey = (caseAgeOption: string) => "_" + caseAgeOption.toLowerCase().replace(/ /g, "")
 
 const getCountOfCasesByCaseAge = async (connection: DataSource, user: User): PromiseResult<Record<string, number>> => {
   const repository = connection.getRepository(CourtCase)

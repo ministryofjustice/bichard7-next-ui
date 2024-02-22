@@ -142,7 +142,7 @@ describe("Case list", () => {
       loginAndGoToUrl()
 
       cy.get("#filter-button").contains("Show search panel").click()
-      cy.get("#resolved").click()
+      cy.get(`label[for="resolved"]`).click()
       cy.get("#search").contains("Apply filters").click()
 
       cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
@@ -239,7 +239,7 @@ describe("Case list", () => {
       cy.get("#leave-and-lock, #return-to-case-list").click()
 
       cy.url().should("match", /\/bichard/)
-      cy.get("h1").contains("Case list").should("exist")
+      cy.get("button").contains("Show search panel").should("exist")
     })
 
     it("Should display a preview of the notes", () => {
