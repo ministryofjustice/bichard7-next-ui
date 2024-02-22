@@ -32,6 +32,10 @@ const ButtonContainer = styled.div`
   margin-bottom: 24px;
   gap: 12px;
 `
+const LockedTagContainer = styled.div`
+  display: flex;
+  gap: 2.5rem;
+`
 
 const useStyles = createUseStyles({
   button: {
@@ -104,7 +108,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
             className="govuk-!-static-margin-left-5 view-only-badge"
           />
         </Heading>
-        <div>
+        <LockedTagContainer>
           <LockStatusTag
             isRendered={currentUser.hasAccessTo[Permission.Exceptions]}
             resolutionStatus={courtCase.errorStatus}
@@ -115,7 +119,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
             resolutionStatus={courtCase.triggerStatus}
             lockName="Triggers"
           />
-        </div>
+        </LockedTagContainer>
       </HeaderRow>
 
       <ButtonContainer>
