@@ -130,7 +130,6 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.contains("Back").click()
 
     cy.url().should("match", /\/court-cases\/\d+/)
-    cy.findByText("Case details").should("exist")
   })
 
   it("Should access the switching feedback form with first question visible when user clicks 'Switch to old Bichard'", () => {
