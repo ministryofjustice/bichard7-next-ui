@@ -263,7 +263,7 @@ describe("View notes", () => {
   it("Should be able to add a long note", () => {
     insertCaseWithTriggerAndException()
     loginAndGoToNotes()
-    cy.contains("h3", "Notes")
+    cy.contains("h2", "Notes")
 
     cy.get("textarea").type("A ".repeat(500), { delay: 0 })
     cy.get("button").contains("Add note").click()
@@ -289,7 +289,7 @@ describe("View notes", () => {
     insertCaseWithTriggerAndException()
     loginAndGoToNotes()
 
-    cy.get("H3").contains("Notes")
+    cy.get("H2").contains("Notes")
     cy.get("button").contains("Add note").click()
     cy.get("form span").contains("The note cannot be empty")
     cy.get("textarea[name=noteText]").type("dummy note")
