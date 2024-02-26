@@ -167,7 +167,7 @@ export const OffenceDetails = ({
         onNextClick={() => onNextClick()}
         offencesCount={offencesCount}
       />
-      <Heading as="h3" size="MEDIUM">
+      <Heading as="h2" size="MEDIUM">
         {`Offence ${selectedOffenceIndex} of ${offencesCount}`}
       </Heading>
       <div className="offences-table">
