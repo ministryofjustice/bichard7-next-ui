@@ -96,7 +96,10 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
   return (
     <HeaderContainer id="header-container">
       <HeaderRow>
-        <Heading as="h1" size="MEDIUM">
+        <Heading className="hidden-header" as="h1" size="LARGE">
+          {"Case details"}
+        </Heading>
+        <Heading as="h2" size="MEDIUM">
           {courtCase.defendantName}
           {getResolutionStatus(courtCase) ? (
             <ResolutionStatusBadge resolutionStatus={getResolutionStatus(courtCase) || "Unresolved"} />
