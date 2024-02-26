@@ -61,7 +61,7 @@ describe("View offence matching exceptions", () => {
 
       cy.get("tbody tr:nth-child(1) td:nth-child(4) a").click()
 
-      cy.contains("h3", "Offence 1 of 2")
+      cy.contains("h2", "Offence 1 of 2")
       cy.contains("td", "Offence code").siblings().contains("TH68010")
       cy.contains("td", "PNC sequence number").siblings().contains(badge)
     })
