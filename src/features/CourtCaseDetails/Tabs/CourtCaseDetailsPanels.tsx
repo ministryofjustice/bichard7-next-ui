@@ -10,7 +10,7 @@ interface CourtCaseDetailsPanelProps {
 export const CourtCaseDetailsPanel = ({ className, children, heading }: CourtCaseDetailsPanelProps) => {
   return (
     <div className={className}>
-      <Heading as="h3" size="MEDIUM">
+      <Heading as="h2" size="MEDIUM">
         {heading}
       </Heading>
       {children}
