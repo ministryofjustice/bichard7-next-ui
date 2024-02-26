@@ -350,6 +350,30 @@ describe("Filtering cases", () => {
     tableRowShouldNotContain(2, "HO200247", "HO200212", "TRPR0107")
   })
 
+  it("Should display 0 cases when cases filtered with short-hand reason code", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" }
+    ])
+
+    const triggers: TestTrigger[] = [
+      {
+        triggerId: 0,
+        triggerCode: "TRPR0107",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+    cy.task("insertTriggers", { caseId: 0, triggers })
+    cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+
+    visitBasePathAndShowFilters()
+    inputAndSearch("reason-code", "PR04")
+    confirmFiltersAppliedContains("PR04")
+    cy.findByText("There are no court cases to show").should("exist")
+  })
+
   it("Should let users use all search fields", () => {
     cy.task("insertCourtCasesWithFields", [
       { defendantName: "WAYNE Bruce", courtName: "London Court", ptiurn: "Case00001", orgForPoliceFilter: "011111" },
