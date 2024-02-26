@@ -124,7 +124,7 @@
       }
     },
     {
-      "files": ["**/.ncurc.js"],
+      "files": [".ncurc.js"],
       "rules": {
         "no-console": "off"
       }

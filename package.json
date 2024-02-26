@@ -137,7 +137,7 @@
     "wait-on": "^7.2.0"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": "eslint --cache --fix --max-warnings 0 --ignore-pattern !config/.ncurc.js",
+    "*.{js,ts,tsx}": "eslint --cache --fix --max-warnings 0 --ignore-pattern !.ncurc.js",
     "*.scss": "stylelint './styles/*.scss' --fix"
   }
 }
