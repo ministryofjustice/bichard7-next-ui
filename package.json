@@ -25,7 +25,7 @@
     "test:file": "jest --runInBand --testPathPattern",
     "test:ui:e2e": "concurrently --kill-others --success first \"npm run start\" \"npm run cypress:run\"",
     "install:hooks": "./scripts/install-git-hooks.sh",
-    "update-deps": "ncu -u -x next -x cypress -x @typescript-eslint/eslint-plugin -x @typescript-eslint/parser && npm install",
+    "update-deps": "ncu -u && npm install",
     "seed-data": "ts-node ./scripts/seed-data.ts",
     "prepare": "husky",
     "zap": "./scripts/zap/zap-scan.sh"
@@ -137,7 +137,7 @@
     "wait-on": "^7.2.0"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": "eslint --cache --fix --max-warnings 0 --no-ignore",
+    "*.{js,ts,tsx}": "eslint --cache --fix --max-warnings 0 --ignore-pattern !config/.ncurc.js",
     "*.scss": "stylelint './styles/*.scss' --fix"
   }
 }

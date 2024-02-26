@@ -1,11 +1,12 @@
-// const semver = new RegExp(
-//   /(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?/
-// ) // https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
-
 /*
   Pinned:
   - styled-components
     - Conflict with GDS
+  - @typescript-eslint/eslint-plugin
+    - Another package does not yet support the latest version
+  - @typescript-eslint/parser
+    - Another package does not yet support the latest version
+
 
   Skipped:
   - next
@@ -19,7 +20,7 @@ module.exports = {
   target: (pkg) => {
     if (pinned.some((pin) => pin === pkg)) {
       const res = "minor"
-      console.debug(` ${pkg} is pinned to ${res} upgrades only (.ncurc.js)`)
+      console.log(` ${pkg} is pinned to ${res} upgrades only (.ncurc.js)`)
       return res
     }
     return "latest"
@@ -27,10 +28,10 @@ module.exports = {
 
   filterResults: (pkg, { upgradedVersion }) => {
     if (ignored.some((ignore) => ignore.pkg === pkg)) {
-      return null
+      return false
     }
     if (skipped.some((skip) => skip.pkg === pkg && skip.version === upgradedVersion)) {
-      return null
+      return false
     }
     return true
   }
