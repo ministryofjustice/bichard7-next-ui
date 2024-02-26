@@ -131,15 +131,15 @@ describe("View case details", () => {
     cy.visit("/bichard/court-cases/0")
 
     clickTab("Defendant")
-    cy.get("H2").contains("Defendant details")
+    cy.get("H3").contains("Defendant details")
     clickTab("Hearing")
-    cy.get("H2").contains("Hearing details")
+    cy.get("H3").contains("Hearing details")
     clickTab("Case")
-    cy.get("H2").contains("Case")
+    cy.get("H3").contains("Case")
     clickTab("Offences")
-    cy.get("H2").contains("Offences")
+    cy.get("H3").contains("Offences")
     clickTab("Notes")
-    cy.get("H2").contains("Notes")
+    cy.get("H3").contains("Notes")
   })
 
   it("Should display the content of the Defendant tab", () => {
@@ -172,7 +172,7 @@ describe("View case details", () => {
 
     cy.contains("td", "PNC file name").siblings().contains("SEXOFFENCE/TRPRFOUR")
     cy.contains("td", "Remand status").siblings().contains("Unconditional bail")
-    cy.get("H2").contains("Notes")
+    cy.get("H3").contains("Notes")
     cy.contains("td", "Exclusion").siblings().contains("Exclusion: text describing exclusion")
     cy.contains("td", "Other")
       .siblings()
@@ -273,7 +273,7 @@ describe("View case details", () => {
     // Checking the first offence details
     cy.get("tbody tr:nth-child(1) td:nth-child(4) a").click()
 
-    cy.contains("h2", "Offence 1 of 3")
+    cy.contains("h3", "Offence 1 of 3")
     cy.contains("td", "Offence code").siblings().contains("SX03001A")
     cy.contains("td:visible", "Title")
       .siblings()
@@ -314,7 +314,7 @@ describe("View case details", () => {
     cy.contains("a", "Back to all offences").click()
     cy.get("tbody tr:nth-child(2) td:nth-child(4) a").click()
 
-    cy.contains("h2", "Offence 2 of 3")
+    cy.contains("h3", "Offence 2 of 3")
     cy.contains("td", "Offence code").siblings().contains("SX03001")
     cy.contains("td:visible", "Title").siblings().contains("Rape a girl aged 13 / 14 / 15 - SOA 2003")
     cy.contains("td", "Category").siblings().contains("CI (indictable)")
@@ -350,7 +350,7 @@ describe("View case details", () => {
     cy.contains("a", "Back to all offences").click()
     cy.get("tbody tr:nth-child(3) td:nth-child(4) a").click()
 
-    cy.contains("h2", "Offence 3 of 3")
+    cy.contains("h3", "Offence 3 of 3")
     cy.contains("td", "Offence code").siblings().contains("RT88191")
     cy.contains("td:visible", "Title")
       .siblings()
@@ -541,9 +541,9 @@ describe("View case details", () => {
 
     cy.get("h3").should("not.have.text", "Offence 1 of 3")
     cy.get(".moj-tab-panel-triggers .trigger-header button").eq(0).contains("Offence 1").click()
-    cy.get("h2:visible").should("have.text", "Offence 1 of 3")
+    cy.get("h3:visible").should("have.text", "Offence 1 of 3")
     cy.get(".moj-tab-panel-triggers .trigger-header button").eq(1).contains("Offence 2").click()
-    cy.get("h2:visible").should("have.text", "Offence 2 of 3")
+    cy.get("h3:visible").should("have.text", "Offence 2 of 3")
   })
 
   it("Should take the user to offence tab when exception is clicked", () => {
@@ -557,7 +557,7 @@ describe("View case details", () => {
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Next hearing date / Offence 1")
     cy.get(".exception-header .exception-location").click()
-    cy.get("h2:visible").should("have.text", "Offence 1 of 3")
+    cy.get("h3:visible").should("have.text", "Offence 1 of 3")
   })
 
   it("Should be able to refresh after I click 'Back to all offences'", () => {
@@ -567,11 +567,11 @@ describe("View case details", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("h2").should("not.have.text", "Offence 1 of 3")
+    cy.get("h3").should("not.have.text", "Offence 1 of 3")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Next hearing date / Offence 1")
     cy.get(".exception-header .exception-location").click()
-    cy.get("h2:visible").should("have.text", "Offence 1 of 3")
+    cy.get("h3:visible").should("have.text", "Offence 1 of 3")
 
     cy.contains("Back to all offences").click()
     cy.reload()
@@ -586,11 +586,11 @@ describe("View case details", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("h2").should("not.have.text", "Case")
+    cy.get("h3").should("not.have.text", "Case")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
     cy.get(".moj-tab-panel-exceptions .moj-exception-row").eq(0).contains("Organisation unit code / Case Details")
     cy.get(".exception-header .exception-location").click()
-    cy.get("h2:visible").should("have.text", "Case")
+    cy.get("h3:visible").should("have.text", "Case")
   })
 
   it("Should show contextual help for a trigger when the accordion button is clicked", () => {
@@ -642,7 +642,7 @@ describe("View case details", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("h2").should("not.have.text", "Case")
+    cy.get("h3").should("not.have.text", "Case")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
     cy.get(".exception-help a")
       .contains("More information")
@@ -659,7 +659,7 @@ describe("View case details", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("h2").should("not.have.text", "Case")
+    cy.get("h3").should("not.have.text", "Case")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
     cy.get(".exception-row__help a")
       .contains("More information")

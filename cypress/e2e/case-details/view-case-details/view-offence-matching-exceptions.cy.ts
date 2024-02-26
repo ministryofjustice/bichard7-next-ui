@@ -1,7 +1,7 @@
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import User from "services/entities/User"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import { clickTab } from "../../../support/helpers"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 describe("View offence matching exceptions", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
@@ -61,7 +61,7 @@ describe("View offence matching exceptions", () => {
 
       cy.get("tbody tr:nth-child(1) td:nth-child(4) a").click()
 
-      cy.contains("h2", "Offence 1 of 2")
+      cy.contains("h3", "Offence 1 of 2")
       cy.contains("td", "Offence code").siblings().contains("TH68010")
       cy.contains("td", "PNC sequence number").siblings().contains(badge)
     })
