@@ -23,8 +23,20 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
   const dateTime = new Date().getTime()
 
   useEffect(() => {
-    setAreAppliedFiltersShown(localStorage.getItem(filterPanelKey) === "true")
-  }, [filterPanelKey])
+    const storedValue = localStorage.getItem(filterPanelKey)
+    if (storedValue) {
+      const storedTimeString = localStorage.getItem("dateTime")
+      const storedTime = storedTimeString ? JSON.parse(storedTimeString) : 0
+      const timeDifference = dateTime - storedTime
+      if (timeDifference < 7 * 24 * 60 * 60 * 1000) {
+        setAreAppliedFiltersShown(storedValue === "true")
+      } else {
+        localStorage.removeItem(filterPanelKey)
+        localStorage.removeItem("dateTime")
+        setAreAppliedFiltersShown(false)
+      }
+    }
+  }, [filterPanelKey, dateTime])
 
   return (
     <>
@@ -43,7 +55,7 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
               className="govuk-button govuk-button--secondary govuk-!-margin-bottom-0"
               type="button"
               aria-haspopup="true"
-              aria-expanded="false"
+              aria-expanded={areAppliedFiltersShown === true}
               onClick={() => {
                 const newValue = !areAppliedFiltersShown
                 localStorage.setItem(filterPanelKey, newValue.toString())
@@ -51,7 +63,7 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
                 setAreAppliedFiltersShown(newValue)
               }}
             >
-              {areAppliedFiltersShown ? "Show search panel" : "Hide search panel"}
+              {areAppliedFiltersShown ? "Hide search panel" : "Show search panel"}
             </button>
             {!areAppliedFiltersShown && <div className="moj-button-menu__wrapper">{appliedFilters}</div>}
           </div>
