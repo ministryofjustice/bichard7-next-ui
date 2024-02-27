@@ -14,7 +14,6 @@ describe("Persist applied filters", () => {
 
     loginAndGoToUrl()
 
-    cy.get("#filter-button").click()
     cy.get("#keywords").type("Defendant Name")
     cy.get("#search").click()
 
@@ -22,7 +21,6 @@ describe("Persist applied filters", () => {
     cy.get(".moj-pagination__item--active").contains("2")
 
     cy.visit("/bichard")
-    cy.get("#filter-button").click()
     cy.get("#keywords").should("have.value", "Defendant Name")
     cy.get(".moj-pagination__item--active").contains("2")
   })
@@ -32,7 +30,6 @@ describe("Persist applied filters", () => {
 
     loginAndGoToUrl()
 
-    cy.get("#filter-button").click()
     cy.get("#keywords").type("Defendant Name")
     cy.get("#search").click()
 
@@ -40,7 +37,6 @@ describe("Persist applied filters", () => {
     cy.get(".moj-pagination__item--active").contains("2")
 
     cy.visit("/bichard")
-    cy.get("#filter-button").click()
     cy.get("#keywords").should("have.value", "Defendant Name")
     cy.get(".moj-pagination__item--active").contains("2")
 
@@ -48,7 +44,6 @@ describe("Persist applied filters", () => {
     cy.reload()
 
     cy.visit("/bichard")
-    cy.get("#filter-button").click()
     cy.get("#keywords").should("not.have.value", "Defendant Name")
     cy.get(".moj-pagination__item--active").contains("1")
   })

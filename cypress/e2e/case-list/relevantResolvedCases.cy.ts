@@ -61,7 +61,6 @@ describe("Only shows relevant resolved cases to the user", () => {
 
     loginAndGoToUrl("supervisor@example.com")
 
-    cy.get("#filter-button").click()
     cy.get(`label[for="resolved"]`).click()
     cy.get("#search").click()
 
@@ -124,7 +123,6 @@ describe("Only shows relevant resolved cases to the user", () => {
 
     loginAndGoToUrl()
 
-    cy.get("#filter-button").click()
     cy.get(`label[for="resolved"]`).click()
     cy.get("#search").click()
 
@@ -204,7 +202,6 @@ describe("Only shows relevant resolved cases to the user", () => {
 
     loginAndGoToUrl()
 
-    cy.get("#filter-button").click()
     cy.get(`label[for="resolved"]`).click()
     cy.get("#search").click()
 

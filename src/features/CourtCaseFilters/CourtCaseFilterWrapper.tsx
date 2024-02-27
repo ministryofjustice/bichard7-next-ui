@@ -63,9 +63,9 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
                 setAreAppliedFiltersShown(newValue)
               }}
             >
-              {areAppliedFiltersShown ? "Hide search panel" : "Show search panel"}
+              {areAppliedFiltersShown ? "Show search panel" : "Hide search panel"}
             </button>
-            {!areAppliedFiltersShown && <div className="moj-button-menu__wrapper">{appliedFilters}</div>}
+            {areAppliedFiltersShown && <div className="moj-button-menu__wrapper">{appliedFilters}</div>}
           </div>
         </div>
 
