@@ -8,6 +8,7 @@ import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
 import CourtCaseList from "features/CourtCaseList/CourtCaseList"
 import { Main } from "govuk-react"
+import { isEqual } from "lodash"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
 import Head from "next/head"
@@ -33,9 +34,11 @@ import caseStateFilters from "utils/caseStateFilters"
 import { formatFormInputDateString } from "utils/formattedDate"
 import getQueryStringCookieName from "utils/getQueryStringCookieName"
 import { isPost } from "utils/http"
+import { logUiDetails } from "utils/logUiDetails"
 import { calculateLastPossiblePageNumber } from "utils/pagination/calculateLastPossiblePageNumber"
 import { reasonOptions } from "utils/reasonOptions"
 import redirectTo from "utils/redirectTo"
+import removeBlankQueryParams from "utils/deleteQueryParam/removeBlankQueryParams"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
@@ -43,7 +46,6 @@ import { validateQueryParams } from "utils/validators/validateQueryParams"
 import withCsrf from "../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import shouldShowSwitchingFeedbackForm from "../utils/shouldShowSwitchingFeedbackForm"
-import { logUiDetails } from "utils/logUiDetails"
 
 interface Props {
   csrfToken: string
@@ -266,7 +268,15 @@ const Home: NextPage<Props> = (props) => {
     nonSavedParams.map((param) => queryParams.delete(param))
 
     setCookie(queryStringCookieName, queryParams.toString(), { path: "/" })
-  }, [router, queryStringCookieName])
+
+    const { pathname } = router
+    const newQueryParams = removeBlankQueryParams(queryParams)
+    nonSavedParams.map((param) => newQueryParams.delete(param))
+
+    if (!isEqual(newQueryParams.toString(), queryParams.toString())) {
+      router.push({ pathname, query: newQueryParams.toString() }, undefined, { shallow: true })
+    }
+  }, [router, queryStringCookieName, environment, build])
 
   const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
   const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
