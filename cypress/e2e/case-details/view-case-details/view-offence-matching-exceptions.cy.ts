@@ -1,7 +1,7 @@
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import User from "services/entities/User"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import { clickTab } from "../../../support/helpers"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 describe("View offence matching exceptions", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
