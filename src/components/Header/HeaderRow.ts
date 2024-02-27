@@ -7,10 +7,6 @@ const HeaderRow = styled.div`
   gap: 12px;
   magin: 10px;
   padding: 10px;
-  & > #exceptions-locked-tag {
-  }
-  & > #trigger-locked-tag {
-  }
 `
 
 export default HeaderRow
