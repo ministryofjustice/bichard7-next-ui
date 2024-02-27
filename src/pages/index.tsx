@@ -102,7 +102,9 @@ export const getServerSideProps = withMultipleServerSideProps(
     })
     const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
     const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
-    const validatedreasonCodes = validateQueryParams(reasonCodes) ? reasonCodes.split(" ") : []
+    const validatedreasonCodes = validateQueryParams(reasonCodes)
+      ? reasonCodes.split(" ").filter((reasonCode) => reasonCode != "")
+      : [] // TODO: we should be able to remove the filter once empty params are remove from query
     const validatedPtiurn = validateQueryParams(ptiurn) ? ptiurn : undefined
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLocked = validateQueryParams(locked) ? locked : undefined
