@@ -58,7 +58,6 @@ describe("Court cases - Submit exceptions", () => {
       expect(loc.href).to.contain("/bichard/court-cases/0")
     })
 
-    cy.get("H1").should("have.text", "Case details")
     cy.contains("Notes").click()
     cy.contains("Bichard02: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-12-12")
     cy.contains("Bichard02: Portal Action: Resubmitted Message.")
@@ -106,7 +105,6 @@ describe("Court cases - Submit exceptions", () => {
       expect(loc.href).to.contain("/bichard/court-cases/0")
     })
 
-    cy.get("H1").should("have.text", "Case details")
     cy.contains("Notes").click()
     cy.get("form label").contains("Add a new note")
 

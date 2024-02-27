@@ -1,10 +1,10 @@
 import User from "services/entities/User"
+import CourtCase from "../../../../src/services/entities/CourtCase"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import a11yConfig from "../../../support/a11yConfig"
 import { clickTab, loginAndGoToUrl } from "../../../support/helpers"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
-import CourtCase from "../../../../src/services/entities/CourtCase"
 
 const loginAndGoToNotes = () => {
   loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
@@ -278,7 +278,6 @@ describe("View notes", () => {
     cy.get("textarea").type("C ".repeat(100), { delay: 0 })
     cy.get("button").contains("Add note").click()
 
-    cy.get("H1").should("have.text", "Case details")
     clickTab("Notes")
 
     cy.contains("A ".repeat(500))
@@ -305,7 +304,6 @@ describe("View notes", () => {
     loginAndGoToNotes()
 
     cy.url().should("match", /.*\/court-cases\/0/)
-    cy.get("H1").should("have.text", "Case details")
     clickTab("Notes")
     cy.findByText("Case has no notes.").should("exist")
   })

@@ -20,7 +20,6 @@ import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 import Form from "../../components/Form"
 import { ResolutionStatus } from "../../types/ResolutionStatus"
 import ResolutionStatusBadge from "../CourtCaseList/tags/ResolutionStatusBadge"
-import UrgentTag from "../CourtCaseList/tags/UrgentTag"
 import LockStatusTag from "./LockStatusTag"
 
 interface Props {
@@ -32,6 +31,10 @@ const ButtonContainer = styled.div`
   justify-content: flex-end;
   margin-bottom: 24px;
   gap: 12px;
+`
+const LockedTagContainer = styled.div`
+  display: flex;
+  gap: 2.5rem;
 `
 
 const useStyles = createUseStyles({
@@ -93,23 +96,14 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
   return (
     <HeaderContainer id="header-container">
       <HeaderRow>
-        <Heading as="h1" size="LARGE">
+        <Heading className="hidden-header" as="h1" size="LARGE">
           {"Case details"}
         </Heading>
-        <LockStatusTag
-          isRendered={currentUser.hasAccessTo[Permission.Exceptions]}
-          resolutionStatus={courtCase.errorStatus}
-          lockName="Exceptions"
-        />
-      </HeaderRow>
-      <HeaderRow>
         <Heading as="h2" size="MEDIUM">
           {courtCase.defendantName}
           {getResolutionStatus(courtCase) ? (
             <ResolutionStatusBadge resolutionStatus={getResolutionStatus(courtCase) || "Unresolved"} />
-          ) : (
-            <UrgentTag isUrgent={courtCase.isUrgent} />
-          )}
+          ) : null}
           <Badge
             isRendered={caseIsViewOnly}
             label="View only"
@@ -117,12 +111,20 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
             className="govuk-!-static-margin-left-5 view-only-badge"
           />
         </Heading>
-        <LockStatusTag
-          isRendered={currentUser.hasAccessTo[Permission.Triggers]}
-          resolutionStatus={courtCase.triggerStatus}
-          lockName="Triggers"
-        />
+        <LockedTagContainer>
+          <LockStatusTag
+            isRendered={currentUser.hasAccessTo[Permission.Exceptions]}
+            resolutionStatus={courtCase.errorStatus}
+            lockName="Exceptions"
+          />
+          <LockStatusTag
+            isRendered={currentUser.hasAccessTo[Permission.Triggers]}
+            resolutionStatus={courtCase.triggerStatus}
+            lockName="Triggers"
+          />
+        </LockedTagContainer>
       </HeaderRow>
+
       <ButtonContainer>
         <ConditionalRender isRendered={canReallocate && courtCase.phase === 1 && !pathName.includes("/reallocate")}>
           <LinkButton
