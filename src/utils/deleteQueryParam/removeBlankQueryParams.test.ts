@@ -9,7 +9,7 @@ describe("removeBlankQueryParams", () => {
     expect(newQueryParams.toString()).toBe("")
   })
 
-  it("will won't remove a populated key value pair", () => {
+  it("will not remove a populated key value pair", () => {
     const queryParams = new URLSearchParams("page=2")
     const newQueryParams = removeBlankQueryParams(queryParams)
 
