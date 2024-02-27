@@ -85,15 +85,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
             </li>
           </ConditionalRender>
           <ConditionalRender isRendered={!!filters.reasonCodes}>
-            <li>
-              {filters.reasonCodes?.map((reasonCode) => (
-                <FilterTag
-                  key={`applied-filter-${reasonCode}`}
-                  tag={reasonCode}
-                  href={removeQueryParamsByName(["reasonCodes"])}
-                />
-              ))}
-            </li>
+            {filters.reasonCodes?.map((reasonCode) => (
+              <li key={`applied-filter-${reasonCode}`}>
+                <FilterTag tag={reasonCode} href={removeQueryParamsByName(["reasonCodes"])} />
+              </li>
+            ))}
           </ConditionalRender>
           <ConditionalRender isRendered={!!filters.ptiurn}>
             <li>
