@@ -112,57 +112,129 @@ const CourtCaseFilter: React.FC<Props> = ({
           <div className={classes["govuk-form-group"]}>
             <label className="govuk-label govuk-label--m">{"Search"}</label>
             <div>
+              <label className="govuk-label govuk-label--s" htmlFor="reason-code">
+                <LabelText>{"Reason code"}</LabelText>
+                <div className="govuk-input__wrapper">
+                  <div className="govuk-input__prefix" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M9.6999 10.6C12.0747 10.6 13.9999 8.67482 13.9999 6.3C13.9999 3.92518 12.0747 2 9.6999 2C7.32508 2 5.3999 3.92518 5.3999 6.3C5.3999 8.67482 7.32508 10.6 9.6999 10.6ZM9.6999 12.6C13.1793 12.6 15.9999 9.77939 15.9999 6.3C15.9999 2.82061 13.1793 0 9.6999 0C6.22051 0 3.3999 2.82061 3.3999 6.3C3.3999 9.77939 6.22051 12.6 9.6999 12.6Z"
+                        fill="#0B0C0C"
+                      />
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M6.70706 10.7071L1.70706 15.7071L0.292847 14.2929L5.29285 9.29289L6.70706 10.7071Z"
+                        fill="#0B0C0C"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    className="govuk-input"
+                    value={state.reasonCodes.map((reason) => reason.value).join(" ")}
+                    id="reason-codes"
+                    name="reasonCodes"
+                    type="text"
+                    onChange={(event) => {
+                      dispatch({ method: "add", type: "reasonCodes", value: event.currentTarget.value })
+                    }}
+                  />
+                </div>
+              </label>
               <label className="govuk-label govuk-label--s" htmlFor="keywords">
                 <LabelText>{"Defendant name"}</LabelText>
-                <input
-                  className="govuk-input"
-                  value={state.defendantNameSearch.value}
-                  id="keywords"
-                  name="keywords"
-                  type="text"
-                  onChange={(event) => {
-                    dispatch({ method: "add", type: "defendantName", value: event.currentTarget.value })
-                  }}
-                />
+                <div className="govuk-input__wrapper">
+                  <div className="govuk-input__prefix" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M9.6999 10.6C12.0747 10.6 13.9999 8.67482 13.9999 6.3C13.9999 3.92518 12.0747 2 9.6999 2C7.32508 2 5.3999 3.92518 5.3999 6.3C5.3999 8.67482 7.32508 10.6 9.6999 10.6ZM9.6999 12.6C13.1793 12.6 15.9999 9.77939 15.9999 6.3C15.9999 2.82061 13.1793 0 9.6999 0C6.22051 0 3.3999 2.82061 3.3999 6.3C3.3999 9.77939 6.22051 12.6 9.6999 12.6Z"
+                        fill="#0B0C0C"
+                      />
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M6.70706 10.7071L1.70706 15.7071L0.292847 14.2929L5.29285 9.29289L6.70706 10.7071Z"
+                        fill="#0B0C0C"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    className="govuk-input"
+                    value={state.defendantNameSearch.value}
+                    id="keywords"
+                    name="keywords"
+                    type="text"
+                    onChange={(event) => {
+                      dispatch({ method: "add", type: "defendantName", value: event.currentTarget.value })
+                    }}
+                  />
+                </div>
               </label>
               <label className="govuk-label govuk-label--s" htmlFor="court-name">
                 <LabelText>{"Court name"}</LabelText>
-                <input
-                  className="govuk-input"
-                  value={state.courtNameSearch.value}
-                  id="court-name"
-                  name="courtName"
-                  type="text"
-                  onChange={(event) => {
-                    dispatch({ method: "add", type: "courtName", value: event.currentTarget.value })
-                  }}
-                />
-              </label>
-              <label className="govuk-label govuk-label--s" htmlFor="reason-codes">
-                <LabelText>{"Reason Codes"}</LabelText>
-                <input
-                  className="govuk-input"
-                  value={state.reasonCodes.map((reason) => reason.value).join(" ")}
-                  id="reason-codes"
-                  name="reasonCodes"
-                  type="text"
-                  onChange={(event) => {
-                    dispatch({ method: "add", type: "reasonCodes", value: event.currentTarget.value })
-                  }}
-                />
+                <div className="govuk-input__wrapper">
+                  <div className="govuk-input__prefix" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M9.6999 10.6C12.0747 10.6 13.9999 8.67482 13.9999 6.3C13.9999 3.92518 12.0747 2 9.6999 2C7.32508 2 5.3999 3.92518 5.3999 6.3C5.3999 8.67482 7.32508 10.6 9.6999 10.6ZM9.6999 12.6C13.1793 12.6 15.9999 9.77939 15.9999 6.3C15.9999 2.82061 13.1793 0 9.6999 0C6.22051 0 3.3999 2.82061 3.3999 6.3C3.3999 9.77939 6.22051 12.6 9.6999 12.6Z"
+                        fill="#0B0C0C"
+                      />
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M6.70706 10.7071L1.70706 15.7071L0.292847 14.2929L5.29285 9.29289L6.70706 10.7071Z"
+                        fill="#0B0C0C"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    className="govuk-input"
+                    value={state.courtNameSearch.value}
+                    id="court-name"
+                    name="courtName"
+                    type="text"
+                    onChange={(event) => {
+                      dispatch({ method: "add", type: "courtName", value: event.currentTarget.value })
+                    }}
+                  />
+                </div>
               </label>
               <label className="govuk-label govuk-label--s" htmlFor="ptiurn">
                 <LabelText>{"PTIURN"}</LabelText>
-                <input
-                  className="govuk-input"
-                  value={state.ptiurnSearch.value}
-                  id="ptiurn"
-                  name="ptiurn"
-                  type="text"
-                  onChange={(event) => {
-                    dispatch({ method: "add", type: "ptiurn", value: event.currentTarget.value })
-                  }}
-                />
+                <div className="govuk-input__wrapper">
+                  <div className="govuk-input__prefix" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M9.6999 10.6C12.0747 10.6 13.9999 8.67482 13.9999 6.3C13.9999 3.92518 12.0747 2 9.6999 2C7.32508 2 5.3999 3.92518 5.3999 6.3C5.3999 8.67482 7.32508 10.6 9.6999 10.6ZM9.6999 12.6C13.1793 12.6 15.9999 9.77939 15.9999 6.3C15.9999 2.82061 13.1793 0 9.6999 0C6.22051 0 3.3999 2.82061 3.3999 6.3C3.3999 9.77939 6.22051 12.6 9.6999 12.6Z"
+                        fill="#0B0C0C"
+                      />
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M6.70706 10.7071L1.70706 15.7071L0.292847 14.2929L5.29285 9.29289L6.70706 10.7071Z"
+                        fill="#0B0C0C"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    className="govuk-input"
+                    value={state.ptiurnSearch.value}
+                    id="ptiurn"
+                    name="ptiurn"
+                    type="text"
+                    onChange={(event) => {
+                      dispatch({ method: "add", type: "ptiurn", value: event.currentTarget.value })
+                    }}
+                  />
+                </div>
               </label>
             </div>
           </div>
