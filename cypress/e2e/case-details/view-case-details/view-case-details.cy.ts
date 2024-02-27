@@ -2,13 +2,13 @@ import User from "services/entities/User"
 import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
 import DummyHO100200Aho from "../../../../test/test-data/HO100200_1.json"
 import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
+import dummyMultipleHearingResultsAho from "../../../../test/test-data/multipleHearingResultsOnOffence.json"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import a11yConfig from "../../../support/a11yConfig"
 import { clickTab } from "../../../support/helpers"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
-import dummyMultipleHearingResultsAho from "../../../../test/test-data/multipleHearingResultsOnOffence.json"
 
 describe("View case details", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {

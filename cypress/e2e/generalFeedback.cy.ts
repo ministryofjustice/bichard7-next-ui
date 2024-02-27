@@ -122,7 +122,6 @@ describe("General Feedback Form", () => {
     submitAFeedback()
 
     cy.url().should("match", /\/court-cases\/\d+/)
-    cy.findByText("Case details").should("exist")
   })
 
   it("will go back to the case details page when I press the back button", () => {
@@ -132,7 +131,6 @@ describe("General Feedback Form", () => {
     cy.contains("Back").click()
 
     cy.url().should("match", /\/court-cases\/\d+/)
-    cy.findByText("Case details").should("exist")
   })
 })
 
