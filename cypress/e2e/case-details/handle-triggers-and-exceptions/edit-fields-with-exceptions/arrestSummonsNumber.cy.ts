@@ -252,6 +252,6 @@ describe("ASN", () => {
     cy.login("triggerhandler@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
+    cy.get(".moj-badge").should("not.exist")
   })
 })
