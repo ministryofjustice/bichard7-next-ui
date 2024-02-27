@@ -139,7 +139,7 @@ describe("Filter cases by resolution status", () => {
         await insertException(
           args.caseId,
           "HO100300",
-          "HO100300",
+          "HO100300||b7.errorReport",
           args.exception.exceptionResolvedBy ? "Resolved" : "Unresolved",
           args.exception.exceptionResolvedBy
         )
@@ -612,7 +612,7 @@ describe("Filter cases by resolution status", () => {
           "Should only see exception that is resolved by themselves when searching an exception code as an exception handler",
         filters: {
           caseState: "Resolved",
-          reasonCodes: ["HO100"]
+          reasonCodes: ["HO100300"]
         },
         user: exceptionHandler,
         expectedCases: [
@@ -625,7 +625,7 @@ describe("Filter cases by resolution status", () => {
           "Should only see exception that has unresolved exception when searching a trigger code as an exception handler",
         filters: {
           caseState: "Unresolved",
-          reasonCodes: ["TRP"]
+          reasonCodes: [dummyTriggerCode, bailsTriggerCode]
         },
         user: exceptionHandler,
         expectedCases: ["Exceptions Unresolved/Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
@@ -635,7 +635,7 @@ describe("Filter cases by resolution status", () => {
           "Should only see exception that has exception resolved by themselves when searching a trigger code as an exception handler",
         filters: {
           caseState: "Resolved",
-          reasonCodes: ["TRP"]
+          reasonCodes: ["TRPR0001"]
         },
         user: exceptionHandler,
         expectedCases: ["Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"]
