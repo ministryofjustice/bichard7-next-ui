@@ -1,16 +1,10 @@
 {
-  "extends": [
-    "plugin:@next/next/recommended",
-    "eslint:recommended"
-  ],
+  "extends": ["plugin:@next/next/recommended", "eslint:recommended"],
   "env": {
     "es6": true
   },
   "rules": {
-    "semi": [
-      "error",
-      "never"
-    ],
+    "semi": ["error", "never"],
     "quotes": [
       "error",
       "double",
@@ -22,29 +16,17 @@
   },
   "overrides": [
     {
-      "files": [
-        "**/*.js"
-      ],
-      "extends": [
-        "airbnb",
-        "prettier",
-        "plugin:prettier/recommended"
-      ],
+      "files": ["**/*.js"],
+      "extends": ["airbnb", "prettier", "plugin:prettier/recommended"],
       "rules": {
         "@typescript-eslint/no-var-requires": "off",
-        "curly": [
-          "error",
-          "all"
-        ],
+        "curly": ["error", "all"],
         "no-useless-escape": "off",
         "import/no-import-module-exports": "off"
       }
     },
     {
-      "files": [
-        "**/*.ts",
-        "**/*.tsx"
-      ],
+      "files": ["**/*.ts", "**/*.tsx"],
       "extends": [
         "airbnb-typescript",
         "next",
@@ -53,23 +35,15 @@
         "plugin:prettier/recommended"
       ],
       "parserOptions": {
+        "parserOptions": {
+          "sourceType": "module"
+        },
         "ecmaVersion": 2020,
-        "project": [
-          "tsconfig.json",
-          "cypress/tsconfig.json",
-          "cypress/*.cy.tsx"
-        ]
+        "project": ["tsconfig.json", "cypress/tsconfig.json", "cypress/*.cy.tsx"]
       },
-      "plugins": [
-        "@typescript-eslint",
-        "filenames",
-        "no-only-tests"
-      ],
+      "plugins": ["@typescript-eslint", "filenames", "no-only-tests"],
       "rules": {
-        "curly": [
-          "error",
-          "all"
-        ],
+        "curly": ["error", "all"],
         "no-console": "off",
         "no-plusplus": "off",
         "no-useless-escape": "off",
@@ -79,9 +53,7 @@
         "import/no-cycle": "error",
         "import/no-anonymous-default-export": "off",
         "import/prefer-default-export": "off",
-        "prettier/prettier": [
-          "error"
-        ],
+        "prettier/prettier": ["error"],
         "react/jsx-curly-brace-presence": [
           "error",
           {
@@ -89,23 +61,15 @@
             "children": "always"
           }
         ],
-        "react/require-default-props": [
-          "off"
-        ],
+        "react/require-default-props": ["off"],
         "@next/next/no-html-link-for-pages": "off",
         "@typescript-eslint/ban-ts-comment": "off",
-        "@typescript-eslint/explicit-module-boundary-types": [
-          "off"
-        ],
+        "@typescript-eslint/explicit-module-boundary-types": ["off"],
         "@typescript-eslint/naming-convention": [
           "warn",
           {
             "selector": "variableLike",
-            "format": [
-              "StrictPascalCase",
-              "strictCamelCase",
-              "UPPER_CASE"
-            ],
+            "format": ["StrictPascalCase", "strictCamelCase", "UPPER_CASE"],
             "filter": {
               "regex": "^_+$",
               "match": false
@@ -123,15 +87,8 @@
         "no-only-tests/no-only-tests": [
           "error",
           {
-            "block": [
-              "test",
-              "it",
-              "assert"
-            ],
-            "focus": [
-              "only",
-              "focus"
-            ]
+            "block": ["test", "it", "assert"],
+            "focus": ["only", "focus"]
           }
         ]
       }
@@ -150,28 +107,26 @@
       }
     },
     {
-      "files": [
-        "**/*.test.*"
-      ],
+      "files": ["**/*.test.*"],
       "rules": {
         "@typescript-eslint/no-explicit-any": "off"
       }
     },
     {
-      "files": [
-        "cypress/**/*.ts",
-        "cypress/**/*.tsx",
-        "**/*.test.*"
-      ],
-      "extends": [
-        "plugin:cypress/recommended"
-      ],
+      "files": ["cypress/**/*.ts", "cypress/**/*.tsx", "**/*.test.*"],
+      "extends": ["plugin:cypress/recommended"],
       "rules": {
         "no-console": "off",
         "no-unused-expressions": "off",
         "@typescript-eslint/naming-convention": "off",
         "no-unused-vars": "off",
         "@typescript-eslint/no-non-null-assertion": "off"
+      }
+    },
+    {
+      "files": [".ncurc.js"],
+      "rules": {
+        "no-console": "off"
       }
     }
   ]
