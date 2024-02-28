@@ -265,6 +265,35 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
   })
 
+  it("Should display cases filtered by multiple reason code", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" }
+    ])
+
+    const triggers: TestTrigger[] = [
+      {
+        triggerId: 0,
+        triggerCode: "TRPR0107",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+    cy.task("insertTriggers", { caseId: 0, triggers })
+    cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+
+    visitBasePathAndShowFilters()
+
+    inputAndSearch("reason-codes", "TRPR0107 HO200212")
+    cy.contains("Case00000")
+    cy.contains("Case00001")
+    confirmMultipleFieldsNotDisplayed(["Case00002"])
+    cy.get("tbody tr").should("have.length", 2)
+    confirmFiltersAppliedContains("TRPR0107")
+    confirmFiltersAppliedContains("HO200212")
+  })
+
   it("Should let users use all search fields", () => {
     cy.task("insertCourtCasesWithFields", [
       { defendantName: "WAYNE Bruce", courtName: "London Court", ptiurn: "Case00001", orgForPoliceFilter: "011111" },
@@ -758,6 +787,27 @@ describe("Filtering cases", () => {
       cy.contains("Filters applied").should("not.exist")
       cy.get(".moj-filter-tags").contains("Clear filters").should("not.exist")
       cy.contains("Applied filters")
+    })
+
+    it("Should remove filters when they are clicked", () => {
+      visitBasePathAndShowFilters()
+      cy.get("input[id=reason-codes]").type("Reason1 Reason2")
+      cy.get("input[id=keywords]").type("Dummy")
+      cy.get('label[for="triggers-type"]').click()
+      cy.get('label[for="exceptions-type"]').click()
+      cy.get("button[id=search]").click()
+
+      cy.contains("a", "Reason1").click()
+      cy.contains("a", "Dummy").click()
+      cy.contains("a", "Triggers").click()
+      cy.contains("a", "Exceptions").click()
+
+      cy.contains("a", "Reason1").should("not.exist")
+      cy.contains("a", "Dummy").should("not.exist")
+      cy.contains("a", "Triggers").should("not.exist")
+      cy.contains("a", "Exceptions").should("not.exist")
+
+      cy.contains("a", "Reason2").should("exist")
     })
   })
 })

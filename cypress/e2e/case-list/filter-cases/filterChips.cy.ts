@@ -249,6 +249,17 @@ describe("Case list", () => {
         cy.get("li button.moj-filter__tag").contains("Bar").trigger("click")
         cy.get(".moj-filter__tag").should("not.exist")
       })
+
+      it("Should be able to remove individual reason code filter chips", () => {
+        cy.get("#filter-button").click()
+        cy.get("input[id=reason-codes]").type("Foo Bar")
+
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
+        cy.get(".moj-filter__tag").contains("Bar").should("exist")
+
+        cy.get("li button.moj-filter__tag").contains("Bar").trigger("click")
+        cy.get(".moj-filter__tag").contains("Bar").should("not.exist")
+      })
     })
 
     describe("PTIURN", () => {

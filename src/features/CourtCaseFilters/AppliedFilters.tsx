@@ -53,6 +53,21 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     return `${basePath}/?${searchParams}`
   }
 
+  const removeQueryFromArray = (key: string, value: string) => {
+    const searchParams = new URLSearchParams(encode(query))
+    const array = searchParams.get(key)
+
+    if (array) {
+      const newArray = array
+        .split(" ")
+        .filter((param) => param !== value)
+        .join(" ")
+
+      searchParams.set(key, newArray)
+    }
+    return `${basePath}/?${searchParams}`
+  }
+
   return (
     <div>
       <ConditionalRender isRendered={hasAnyAppliedFilters()}>
@@ -87,7 +102,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
           <ConditionalRender isRendered={!!filters.reasonCodes}>
             {filters.reasonCodes?.map((reasonCode) => (
               <li key={`applied-filter-${reasonCode}`}>
-                <FilterTag tag={reasonCode} href={removeQueryParamsByName(["reasonCodes"])} />
+                <FilterTag tag={reasonCode} href={removeQueryFromArray("reasonCodes", reasonCode)} />
               </li>
             ))}
           </ConditionalRender>

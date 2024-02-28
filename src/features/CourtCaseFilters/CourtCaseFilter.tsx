@@ -112,8 +112,8 @@ const CourtCaseFilter: React.FC<Props> = ({
           <div className={classes["govuk-form-group"]}>
             <label className="govuk-label govuk-label--m">{"Search"}</label>
             <div>
-              <label className="govuk-label govuk-label--s" htmlFor="reason-code">
-                <LabelText>{"Reason code"}</LabelText>
+              <label className="govuk-label govuk-label--s" htmlFor="reason-codes">
+                <LabelText>{"Reason codes"}</LabelText>
                 <div className="govuk-input__wrapper">
                   <div className="govuk-input__prefix" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
