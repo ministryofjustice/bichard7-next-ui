@@ -1,5 +1,5 @@
 import { createUseStyles } from "react-jss"
-import { darkGrey, blue, tagBlue, textBlue, yellow, gdsBlack, gdsLightGrey } from "../src/utils/colours"
+import { blue, darkGrey, gdsBlack, gdsLightGrey, tagBlue, textBlue, yellow } from "../src/utils/colours"
 
 export const useCustomStyles = createUseStyles({
   "button--tag": {
@@ -104,28 +104,5 @@ export const useCustomStyles = createUseStyles({
   },
   "no-margin-bottom": {
     marginBottom: 0
-  },
-
-  "table-column-header-link": {
-    color: blue,
-    display: "flex",
-    alignItems: "center",
-    "&:focus": {
-      maxWidth: "fit-content"
-    },
-    "&:active": {
-      color: blue
-    },
-    "&:visited": {
-      color: blue
-    },
-    "&:hover": {
-      color: blue
-    }
-  },
-
-  "table-column-header-cell": {
-    height: "100%",
-    verticalAlign: "bottom"
   }
 })
