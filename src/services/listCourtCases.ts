@@ -134,10 +134,10 @@ const listCourtCases = async (
           trigger: reasonCode
         })
           .orWhere("courtCase.error_report ilike :firstException || '%'", {
-            firstException: reasonCode + "||"
+            firstException: `${reasonCode}||`
           })
           .orWhere("courtCase.error_report ilike '%' || :exception || '%'", {
-            exception: " " + reasonCode + "||"
+            exception: ` ${reasonCode}||`
           })
       })
     )
