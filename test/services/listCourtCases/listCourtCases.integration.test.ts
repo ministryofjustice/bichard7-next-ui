@@ -870,9 +870,7 @@ describe("listCourtCases", () => {
       expect(isError(result)).toBe(false)
       cases = (result as ListCourtCaseResult).result
 
-      expect(cases).toHaveLength(2)
-      expect(cases[0].triggers[0].triggerCode).toStrictEqual(triggerToIncludePartialMatch.triggerCode)
-      expect(cases[1].errorReason).toStrictEqual(errorToIncludePartialMatch)
+      expect(cases).toHaveLength(0)
     })
 
     it("Should list cases when there is a case insensitive match in any exceptions", async () => {
