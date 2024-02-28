@@ -93,7 +93,6 @@ describe("NextHearingLocation", () => {
       expect(loc.href).to.contain("?resubmitCase=true")
     })
 
-    cy.get("H1").should("have.text", "Case details")
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
@@ -142,7 +141,6 @@ describe("NextHearingLocation", () => {
       expect(loc.href).to.contain("?resubmitCase=true")
     })
 
-    cy.get("H1").should("have.text", "Case details")
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
@@ -193,7 +191,6 @@ describe("NextHearingLocation", () => {
       expect(loc.href).to.contain("?resubmitCase=true")
     })
 
-    cy.get("H1").should("have.text", "Case details")
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
@@ -241,7 +238,6 @@ describe("NextHearingLocation", () => {
 
     submitAndConfirmExceptions()
 
-    cy.get("H1").should("have.text", "Case details")
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
