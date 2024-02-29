@@ -241,7 +241,7 @@ const CourtCaseFilter: React.FC<Props> = ({
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
             <div className={`${classes["govuk-form-group"]} reasons`}>
               <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-              <ExpandingFilters filterName={"Reason"}>
+              <ExpandingFilters filterName={"Reason"} classNames="filters-reason">
                 <ReasonFilterOptions
                   reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
                   reasonOptions={
@@ -259,7 +259,7 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Court date"}>
+            <ExpandingFilters filterName={"Court date"} classNames="filters-court-date">
               <CourtDateFilterOptions
                 caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
                 caseAgeCounts={caseAgeCounts}
@@ -298,7 +298,7 @@ const CourtCaseFilter: React.FC<Props> = ({
           </div>
           <div>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Locked state"}>
+            <ExpandingFilters filterName={"Locked state"} classNames="filters-locked-state">
               <LockedFilterOptions locked={state.lockedFilter.value} dispatch={dispatch} />
             </ExpandingFilters>
           </div>

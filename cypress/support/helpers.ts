@@ -7,7 +7,7 @@ import CourtCase from "../../src/services/entities/CourtCase"
 import hashedPassword from "../fixtures/hashedPassword"
 
 export function confirmFiltersAppliedContains(filterTag: string) {
-  cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag)
+  cy.get(".moj-filter-tags").contains(filterTag)
 }
 
 export const exactMatch = (keyword: string): RegExp => {
