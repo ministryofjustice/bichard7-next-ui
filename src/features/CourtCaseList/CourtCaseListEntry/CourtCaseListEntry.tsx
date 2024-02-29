@@ -15,15 +15,13 @@ interface Props {
   exceptionHasBeenRecentlyUnlocked: boolean
   triggerHasBeenRecentlyUnlocked: boolean
   previousPath: string | null
-  reasonCode: string | null
 }
 
 const CourtCaseListEntry: React.FC<Props> = ({
   courtCase,
   exceptionHasBeenRecentlyUnlocked,
   triggerHasBeenRecentlyUnlocked,
-  previousPath,
-  reasonCode
+  previousPath
 }: Props) => {
   const {
     errorId,
@@ -56,7 +54,13 @@ const CourtCaseListEntry: React.FC<Props> = ({
 
   let exceptionsReasonCell, exceptionsLockTag, triggersReasonCell, triggersLockTag
   if (hasExceptions && currentUser.hasAccessTo[Permission.Exceptions]) {
-    exceptionsReasonCell = <ExceptionsReasonCell exceptionCounts={groupErrorsFromReport(errorReport)} />
+    const exceptions = groupErrorsFromReport(errorReport)
+    const filteredExceptions = Object.fromEntries(
+      Object.entries(exceptions).filter(([error]) => query.reasonCodes?.includes(error))
+    )
+    exceptionsReasonCell = (
+      <ExceptionsReasonCell exceptionCounts={query.reasonCodes ? filteredExceptions : exceptions} />
+    )
     exceptionsLockTag = (
       <ExceptionsLockTag
         errorLockedByUsername={errorLockedByUsername}
@@ -68,7 +72,13 @@ const CourtCaseListEntry: React.FC<Props> = ({
     )
   }
   if (hasTriggers && currentUser.hasAccessTo[Permission.Triggers]) {
-    triggersReasonCell = <TriggersReasonCell triggers={triggers} />
+    triggersReasonCell = (
+      <TriggersReasonCell
+        triggers={
+          query.reasonCodes ? triggers.filter((trigger) => query.reasonCodes?.includes(trigger.triggerCode)) : triggers
+        }
+      />
+    )
     triggersLockTag = (
       <TriggersLockTag
         triggersLockedByUsername={triggerLockedByUsername}
@@ -84,12 +94,12 @@ const CourtCaseListEntry: React.FC<Props> = ({
     <tbody>
       <CaseDetailsRow
         courtCase={courtCase}
-        reasonCell={reasonCode || exceptionsReasonCell || triggersReasonCell}
+        reasonCell={exceptionsReasonCell || triggersReasonCell}
         lockTag={exceptionsLockTag || triggersLockTag}
         resolutionStatus={errorStatus ?? "Unresolved"}
         previousPath={previousPath}
       />
-      {!reasonCode && exceptionsLockTag && triggersLockTag && triggersReasonCell && (
+      {exceptionsLockTag && triggersLockTag && triggersReasonCell && (
         <ExtraReasonRow
           isLocked={!!triggerLockedByUsername}
           reasonCell={triggersReasonCell}

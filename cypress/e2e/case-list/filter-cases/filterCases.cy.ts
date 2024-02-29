@@ -259,7 +259,7 @@ describe("Filtering cases", () => {
 
     visitBasePathAndShowFilters()
 
-    inputAndSearch("reason-code", "TRPR0107")
+    inputAndSearch("reason-codes", "TRPR0107")
     cy.contains("Case00000")
     confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
     cy.get("tbody tr").should("have.length", 1)
@@ -268,7 +268,7 @@ describe("Filtering cases", () => {
 
     cy.get("button[id=filter-button]").click()
 
-    inputAndSearch("reason-code", "HO200212")
+    inputAndSearch("reason-codes", "HO200212")
     cy.contains("Case00001")
     confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002"])
     cy.get("tr").should("have.length", 2)
@@ -284,7 +284,6 @@ describe("Filtering cases", () => {
       { orgForPoliceFilter: "011111" },
       { orgForPoliceFilter: "011111" }
     ])
-
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
@@ -319,28 +318,28 @@ describe("Filtering cases", () => {
     tableRowShouldContain(2, "HO200247", "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
 
     visitBasePathAndShowFilters()
-    inputAndSearch("reason-code", "HO200212")
+    inputAndSearch("reason-codes", "HO200212")
     confirmFiltersAppliedContains("HO200212")
     tableRowShouldContain(0, "HO200212")
     tableRowShouldNotContain(0, "HO200200", "TRPR0015 - Personal details changed", "TRPR0107")
     removeFilterTag("HO200212")
 
     visitBasePathAndShowFilters()
-    inputAndSearch("reason-code", "HO200200")
+    inputAndSearch("reason-codes", "HO200200")
     confirmFiltersAppliedContains("HO200200")
     tableRowShouldContain(0, "HO200200")
     tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
     removeFilterTag("HO200200")
 
     visitBasePathAndShowFilters()
-    inputAndSearch("reason-code", "HO200247")
+    inputAndSearch("reason-codes", "HO200247")
     confirmFiltersAppliedContains("HO200247")
     tableRowShouldContain(0, "HO200247")
     tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
     removeFilterTag("HO200247")
 
     visitBasePathAndShowFilters()
-    inputAndSearch("reason-code", "TRPR0015")
+    inputAndSearch("reason-codes", "TRPR0015")
     confirmFiltersAppliedContains("TRPR0015")
     tableRowShouldContain(0, "TRPR0015")
     tableRowShouldContain(1, "TRPR0015")
@@ -369,9 +368,38 @@ describe("Filtering cases", () => {
     cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
 
     visitBasePathAndShowFilters()
-    inputAndSearch("reason-code", "PR04")
+    inputAndSearch("reason-codes", "PR04")
     confirmFiltersAppliedContains("PR04")
     cy.findByText("There are no court cases to show").should("exist")
+  })
+
+  it("Should display cases filtered by multiple reason codes", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" }
+    ])
+
+    const triggers: TestTrigger[] = [
+      {
+        triggerId: 0,
+        triggerCode: "TRPR0107",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+    cy.task("insertTriggers", { caseId: 0, triggers })
+    cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+
+    visitBasePathAndShowFilters()
+
+    inputAndSearch("reason-codes", "TRPR0107 HO200212")
+    cy.contains("Case00000")
+    cy.contains("Case00001")
+    confirmMultipleFieldsNotDisplayed(["Case00002"])
+    cy.get("tbody tr").should("have.length", 2)
+    confirmFiltersAppliedContains("TRPR0107")
+    confirmFiltersAppliedContains("HO200212")
   })
 
   it("Should let users use all search fields", () => {
@@ -416,7 +444,7 @@ describe("Filtering cases", () => {
     removeFilterTag("Case0000")
 
     cy.get("button[id=filter-button]").click()
-    inputAndSearch("reason-code", "HO200212")
+    inputAndSearch("reason-codes", "HO200212")
     confirmMultipleFieldsNotDisplayed(["GORDON Bruce", "PENNYWORTH Bruce", "PENNYWORTH Alfred"])
     cy.get("tr").should("have.length", 2)
     confirmMultipleFieldsDisplayed(["WAYNE Bruce"])
@@ -867,6 +895,29 @@ describe("Filtering cases", () => {
       cy.contains("Filters applied").should("not.exist")
       cy.get(".moj-filter-tags").contains("Clear filters").should("not.exist")
       cy.contains("Applied filters")
+    })
+
+    it("Should remove filters when they are clicked", () => {
+      visitBasePathAndShowFilters()
+      cy.get("input[id=reason-codes]").type("Reason1 Reason2")
+      cy.get("input[id=keywords]").type("Dummy")
+      cy.get('label[for="triggers-type"]').click()
+      cy.get("button[id=search]").click()
+
+      cy.get(`a[id="filter-tag-reason1"]`).should("exist")
+      cy.get(`a[id="filter-tag-dummy"]`).should("exist")
+      cy.get(`a[id="filter-tag-triggers"]`).should("exist")
+      cy.get(`a[id="filter-tag-reason2"]`).should("exist")
+
+      cy.get(`a[id="filter-tag-reason1"]`).click()
+      cy.get(`a[id="filter-tag-dummy"]`).click()
+      cy.get(`a[id="filter-tag-triggers"]`).click()
+
+      cy.get(`a[id="filter-tag-reason1"]`).should("not.exist")
+      cy.get(`a[id="filter-tag-dummy"]`).should("not.exist")
+      cy.get(`a[id="filter-tag-triggers"]`).should("not.exist")
+
+      cy.get(`a[id="filter-tag-reason2"]`).should("exist")
     })
   })
 })

@@ -37,7 +37,7 @@ const listCourtCases = async (
     locked,
     caseState,
     allocatedToUserName,
-    reasonCode,
+    reasonCodes,
     resolvedByUsername
   }: CaseListQueryParams,
   user: User
@@ -127,17 +127,19 @@ const listCourtCases = async (
     query.andWhere(ptiurnLike)
   }
 
-  if (reasonCode) {
+  if (reasonCodes?.length) {
     query.andWhere(
       new Brackets((qb) => {
-        qb.where("trigger.trigger_code ilike :trigger", {
-          trigger: reasonCode
+        qb.where("trigger.trigger_code ilike any(array[:...triggers])", {
+          triggers: reasonCodes
         })
-          .orWhere("courtCase.error_report ilike :firstException || '%'", {
-            firstException: `${reasonCode}||`
+          // match exceptions at the start of the error_report
+          .orWhere("courtCase.error_report ilike any(array[:...firstExceptions])", {
+            firstExceptions: reasonCodes.map((reasonCode) => `${reasonCode}||%`)
           })
-          .orWhere("courtCase.error_report ilike '%' || :exception || '%'", {
-            exception: ` ${reasonCode}||`
+          // match exceptions ins the middle of the error report
+          .orWhere("courtCase.error_report ilike any(array[:...exceptions])", {
+            exceptions: reasonCodes.map((reasonCode) => `% ${reasonCode}||%`)
           })
       })
     )

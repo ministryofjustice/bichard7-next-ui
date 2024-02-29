@@ -12,7 +12,7 @@ interface Props {
     reasons?: Reason[]
     keywords?: string[]
     courtName?: string | null
-    reasonCode?: string | null
+    reasonCodes?: string[]
     ptiurn?: string | null
     caseAge?: string[]
     dateRange?: SerializedCourtDateRange | null
@@ -31,7 +31,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     (filters.keywords && filters.keywords.length > 0) ||
     (filters.caseAge && filters.caseAge.length > 0) ||
     !!filters.courtName ||
-    !!filters.reasonCode ||
+    !!filters.reasonCodes?.length ||
     !!filters.ptiurn ||
     !!filters.urgency ||
     !!filters.dateRange?.from ||
@@ -50,6 +50,21 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
   const removeQueryParamsByName = (paramsToRemove: string[]): string => {
     let searchParams = new URLSearchParams(encode(query))
     searchParams = deleteQueryParamsByName(paramsToRemove, searchParams)
+    return `${basePath}/?${searchParams}`
+  }
+
+  const removeQueryFromArray = (key: string, value: string) => {
+    const searchParams = new URLSearchParams(encode(query))
+    const array = searchParams.get(key)
+
+    if (array) {
+      const newArray = array
+        .split(" ")
+        .filter((param) => param !== value)
+        .join(" ")
+
+      searchParams.set(key, newArray)
+    }
     return `${basePath}/?${searchParams}`
   }
 
@@ -84,13 +99,12 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </ConditionalRender>
-          <ConditionalRender isRendered={!!filters.reasonCode}>
-            <li>
-              <FilterTag
-                tag={filters.reasonCode ?? ""}
-                href={removeFilterFromPath({ reasonCode: filters.reasonCode ?? "" })}
-              />
-            </li>
+          <ConditionalRender isRendered={!!filters.reasonCodes}>
+            {filters.reasonCodes?.map((reasonCode) => (
+              <li key={`applied-filter-${reasonCode}`}>
+                <FilterTag tag={reasonCode} href={removeQueryFromArray("reasonCodes", reasonCode)} />
+              </li>
+            ))}
           </ConditionalRender>
           <ConditionalRender isRendered={!!filters.ptiurn}>
             <li>
