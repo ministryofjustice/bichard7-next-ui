@@ -138,8 +138,8 @@ const listCourtCases = async (
             firstExceptions: reasonCodes.map((reasonCode) => `${reasonCode}||%`)
           })
           // match exceptions ins the middle of the error report
-          .orWhere("courtCase.error_report ilike '%' || :exception || '%'", {
-            exception: reasonCodes.map((reasonCode) => ` ${reasonCode}||%`)
+          .orWhere("courtCase.error_report ilike any(array[:...exceptions])", {
+            exceptions: reasonCodes.map((reasonCode) => `% ${reasonCode}||%`)
           })
       })
     )
