@@ -139,7 +139,7 @@ describe("Filter cases by resolution status", () => {
         await insertException(
           args.caseId,
           "HO100300",
-          "HO100300",
+          "HO100300||b7.errorReport",
           args.exception.exceptionResolvedBy ? "Resolved" : "Unresolved",
           args.exception.exceptionResolvedBy
         )
@@ -602,7 +602,7 @@ describe("Filter cases by resolution status", () => {
           "Should only see trigger that is resolved by themselves when searching a bails trigger code as a trigger handler",
         filters: {
           caseState: "Resolved",
-          reasonCode: bailsTriggerCode
+          reasonCodes: [bailsTriggerCode]
         },
         user: triggerHandler,
         expectedCases: ["No exceptions/Bails Trigger Resolved by triggerHandler"]
@@ -612,30 +612,33 @@ describe("Filter cases by resolution status", () => {
           "Should only see exception that is resolved by themselves when searching an exception code as an exception handler",
         filters: {
           caseState: "Resolved",
-          reasonCode: "HO100"
+          reasonCodes: ["HO100300"]
         },
         user: exceptionHandler,
-        expectedCases: []
+        expectedCases: [
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"
+        ]
       },
       {
         description:
           "Should only see exception that has unresolved exception when searching a trigger code as an exception handler",
         filters: {
           caseState: "Unresolved",
-          reasonCode: "TRP"
+          reasonCodes: [dummyTriggerCode, bailsTriggerCode]
         },
         user: exceptionHandler,
-        expectedCases: []
+        expectedCases: ["Exceptions Unresolved/Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
       },
       {
         description:
           "Should only see exception that has exception resolved by themselves when searching a trigger code as an exception handler",
         filters: {
           caseState: "Resolved",
-          reasonCode: "TRP"
+          reasonCodes: ["TRPR0001"]
         },
         user: exceptionHandler,
-        expectedCases: []
+        expectedCases: ["Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"]
       },
       {
         description: "Should only see unresolved triggers when case state is not set as a trigger handler",

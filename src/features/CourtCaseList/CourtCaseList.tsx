@@ -8,10 +8,9 @@ import { CourtCaseListTableHeader } from "./CourtCaseListTableHeader"
 interface Props {
   courtCases: DisplayPartialCourtCase[]
   order?: QueryOrder
-  reasonCode: string | null
 }
 
-const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", reasonCode }: Props) => {
+const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc" }: Props) => {
   const { query } = useRouter()
 
   const recentlyUnlockedExceptionId = query.unlockException
@@ -43,7 +42,6 @@ const CourtCaseList: React.FC<Props> = ({ courtCases, order = "asc", reasonCode 
           triggerHasBeenRecentlyUnlocked={courtCase.errorId.toString() === recentlyUnlockedTriggerId}
           key={`court-case-${courtCase.errorId}`}
           previousPath={queryString}
-          reasonCode={reasonCode}
         />
       ))}
     </table>

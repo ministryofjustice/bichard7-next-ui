@@ -3,7 +3,7 @@ import { CaseState, Reason } from "./CaseListQueryParams"
 export type FilterAction =
   | { method: FilterMethod; type: "defendantName"; value: string }
   | { method: FilterMethod; type: "courtName"; value: string }
-  | { method: FilterMethod; type: "reasonCode"; value: string }
+  | { method: FilterMethod; type: "reasonCodes"; value: string }
   | { method: FilterMethod; type: "ptiurn"; value: string }
   | { method: FilterMethod; type: "urgency"; value: boolean }
   | { method: FilterMethod; type: "caseAge"; value: string }
@@ -18,7 +18,7 @@ export type FilterAction =
 export type FilterType =
   | "defendantName"
   | "courtName"
-  | "reasonCode"
+  | "reasonCodes"
   | "ptiurn"
   | "urgency"
   | "caseAge"
@@ -71,11 +71,11 @@ export type Filter = {
     state?: FilterState
     label?: string
   }
-  reasonCode: {
+  reasonCodes: {
     value?: string
     state?: FilterState
     label?: string
-  }
+  }[]
   ptiurnSearch: {
     value?: string
     state?: FilterState
