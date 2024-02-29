@@ -10,12 +10,12 @@ const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
       state.caseStateFilter,
       state.defendantNameSearch,
       state.courtNameSearch,
-      state.reasonCode,
+      state.reasonCodes[0],
       state.ptiurnSearch,
       state.myCasesFilter
     ]
       .map((filter): number => {
-        return filter.value !== undefined &&
+        return filter?.value !== undefined &&
           filter.value !== "" &&
           (countOfState === undefined || filter.state === countOfState)
           ? 1

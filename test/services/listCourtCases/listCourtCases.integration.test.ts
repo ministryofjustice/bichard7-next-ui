@@ -816,12 +816,10 @@ describe("listCourtCases", () => {
       }
 
       const errorToInclude = "HO00001"
-      const errorToIncludePartialMatch = "HO002222"
       const errorNotToInclude = "HO999999"
 
       await insertTriggers(0, [triggerToInclude, triggerToIncludePartialMatch])
       await insertException(1, errorToInclude, `${errorToInclude}||ds:XMLField`)
-      await insertException(2, errorToIncludePartialMatch, `${errorToIncludePartialMatch}||ds:XMLField`)
       await insertException(3, errorNotToInclude, `${errorNotToInclude}||ds:XMLField`)
       await insertTriggers(3, [triggerNotToInclude])
 
@@ -830,7 +828,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasonCode: triggerToInclude.triggerCode
+          reasonCodes: [triggerToInclude.triggerCode]
         },
         testUser
       )
@@ -846,7 +844,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasonCode: errorToInclude
+          reasonCodes: [errorToInclude]
         },
         testUser
       )
@@ -856,21 +854,6 @@ describe("listCourtCases", () => {
 
       expect(cases).toHaveLength(1)
       expect(cases[0].errorReason).toStrictEqual(errorToInclude)
-
-      // Searching for a partial match error/trigger code
-      result = await listCourtCases(
-        dataSource,
-        {
-          maxPageItems: "100",
-          reasonCode: "2222"
-        },
-        testUser
-      )
-
-      expect(isError(result)).toBe(false)
-      cases = (result as ListCourtCaseResult).result
-
-      expect(cases).toHaveLength(0)
     })
 
     it("Should list cases when there is a case insensitive match in any exceptions", async () => {
@@ -888,7 +871,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasonCode: errorToInclude
+          reasonCodes: [errorToInclude]
         },
         testUser
       )
@@ -905,7 +888,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          reasonCode: anotherErrorToInclude
+          reasonCodes: [anotherErrorToInclude]
         },
         testUser
       )
@@ -917,6 +900,48 @@ describe("listCourtCases", () => {
       expect(cases[0].errorReport).toStrictEqual(
         `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
       )
+    })
+
+    it("Should list cases when multiple triggers or exceptions are provided", async () => {
+      await insertCourtCasesWithFields(Array.from({ length: 4 }, () => ({ orgForPoliceFilter: orgCode })))
+
+      const triggerToInclude: TestTrigger = {
+        triggerId: 0,
+        triggerCode: "TRPR0111",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      const triggerNotToInclude: TestTrigger = {
+        triggerId: 2,
+        triggerCode: "TRPR9999",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+
+      const errorToInclude = "HO00001"
+      const errorNotToInclude = "HO999999"
+
+      await insertTriggers(0, [triggerToInclude])
+      await insertException(1, errorToInclude, `${errorToInclude}||ds:XMLField`)
+      await insertException(3, errorNotToInclude, `${errorNotToInclude}||ds:XMLField`)
+      await insertTriggers(3, [triggerNotToInclude])
+
+      const result = await listCourtCases(
+        dataSource,
+        {
+          maxPageItems: "100",
+          reasonCodes: [triggerToInclude.triggerCode, errorToInclude]
+        },
+        testUser
+      )
+
+      expect(isError(result)).toBe(false)
+      const { result: cases } = result as ListCourtCaseResult
+
+      expect(cases).toHaveLength(2)
+      expect(cases[0].triggers[0].triggerCode).toStrictEqual(triggerToInclude.triggerCode)
+      expect(cases[1].errorReason).toEqual(errorToInclude)
     })
   })
 

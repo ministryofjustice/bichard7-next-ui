@@ -63,10 +63,13 @@ const handleAddingFilters = (newState: Filter, action: FilterAction) => {
       newState.courtNameSearch.state = "Selected"
       break
     }
-    case "reasonCode": {
-      newState.reasonCode.value = action.value
-      newState.reasonCode.label = action.value
-      newState.reasonCode.state = "Selected"
+    case "reasonCodes": {
+      newState.reasonCodes = action.value.split(" ").map((reason: string) => ({
+        value: reason,
+        label: reason,
+        state: "Selected"
+      }))
+
       break
     }
     case "ptiurn": {
@@ -127,9 +130,8 @@ const handleRemovingFilters = (newState: Filter, action: FilterAction) => {
       newState.courtNameSearch.label = undefined
       break
     }
-    case "reasonCode": {
-      newState.reasonCode.value = ""
-      newState.reasonCode.label = undefined
+    case "reasonCodes": {
+      newState.reasonCodes = newState.reasonCodes.filter((reasonCode) => reasonCode.value !== action.value)
       break
     }
     case "ptiurn": {

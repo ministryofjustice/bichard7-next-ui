@@ -17,7 +17,7 @@ import { filtersReducer } from "./reducers/filters"
 interface Props {
   defendantName: string | null
   courtName: string | null
-  reasonCode: string | null
+  reasonCodes: string[]
   ptiurn: string | null
   reasons: Reason[]
   caseAge: string[]
@@ -45,7 +45,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   defendantName,
   ptiurn,
   courtName,
-  reasonCode,
+  reasonCodes,
   caseAge,
   caseAgeCounts,
   dateRange,
@@ -67,7 +67,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
     courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
-    reasonCode: reasonCode !== null ? { value: reasonCode, state: "Applied", label: reasonCode } : {},
+    reasonCodes: reasonCodes.map((reasonCode) => ({ value: reasonCode, state: "Applied", label: reasonCode })),
     ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
     reasonFilter: reasons.map((reason) => {
       return { value: reason, state: "Applied" }
@@ -112,8 +112,8 @@ const CourtCaseFilter: React.FC<Props> = ({
           <div className={classes["govuk-form-group"]}>
             <label className="govuk-label govuk-label--m">{"Search"}</label>
             <div>
-              <label className="govuk-label govuk-label--s" htmlFor="reason-code">
-                <LabelText>{"Reason code"}</LabelText>
+              <label className="govuk-label govuk-label--s" htmlFor="reason-codes">
+                <LabelText>{"Reason codes"}</LabelText>
                 <div className="govuk-input__wrapper">
                   <div className="govuk-input__prefix" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -133,12 +133,12 @@ const CourtCaseFilter: React.FC<Props> = ({
                   </div>
                   <input
                     className="govuk-input"
-                    value={state.reasonCode.value}
-                    id="reason-code"
-                    name="reasonCode"
+                    value={state.reasonCodes.map((reason) => reason.value).join(" ")}
+                    id="reason-codes"
+                    name="reasonCodes"
                     type="text"
                     onChange={(event) => {
-                      dispatch({ method: "add", type: "reasonCode", value: event.currentTarget.value.toUpperCase() })
+                      dispatch({ method: "add", type: "reasonCodes", value: event.currentTarget.value })
                     }}
                   />
                 </div>

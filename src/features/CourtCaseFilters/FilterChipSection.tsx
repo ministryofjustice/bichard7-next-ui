@@ -8,6 +8,7 @@ import FilterChipRow from "./FilterChipRow"
 import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
 import { Link } from "govuk-react"
 import { createUseStyles } from "react-jss"
+import FilterChipContainer from "./FilterChipContainer"
 
 interface Props {
   state: Filter
@@ -95,19 +96,19 @@ const FilterChipSection: React.FC<Props> = ({
           value={state.courtNameSearch.value!}
         />
 
-        <FilterChipRow
-          chipLabel={state.reasonCode.label!}
-          condition={
-            state.reasonCode.value !== undefined &&
-            state.reasonCode.label !== undefined &&
-            state.reasonCode.state === sectionState
-          }
-          dispatch={dispatch}
-          type="reasonCode"
-          label="Reason code"
-          state={state.reasonCode.state || sectionState}
-          value={state.reasonCode.value!}
-        />
+        <FilterChipContainer label="Reason codes" condition={state.reasonCodes.length > 0}>
+          {state.reasonCodes.map((reasonCode) => (
+            <FilterChip
+              key={`filter-chip${reasonCode.value}`}
+              chipLabel={reasonCode.label!}
+              dispatch={dispatch}
+              removeAction={() => {
+                return { method: "remove", type: "reasonCodes", value: reasonCode.value } as FilterAction
+              }}
+              state={reasonCode.state || sectionState}
+            />
+          ))}
+        </FilterChipContainer>
 
         <ConditionalRender
           isRendered={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}
