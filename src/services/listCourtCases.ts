@@ -132,9 +132,15 @@ const listCourtCases = async (
       new Brackets((qb) => {
         qb.where("trigger.trigger_code ilike any(array[:...triggers])", {
           triggers: reasonCodes
-        }).orWhere("courtCase.error_report ilike any(array[:...exceptions])", {
-          exceptions: reasonCodes.map((reasonCode) => `%${reasonCode}||%`)
         })
+          // match exceptions at the start of the error_report
+          .orWhere("courtCase.error_report ilike any(array[:...firstExceptions])", {
+            firstExceptions: reasonCodes.map((reasonCode) => `${reasonCode}||%`)
+          })
+          // match exceptions ins the middle of the error report
+          .orWhere("courtCase.error_report ilike '%' || :exception || '%'", {
+            exception: reasonCodes.map((reasonCode) => ` ${reasonCode}||%`)
+          })
       })
     )
   }

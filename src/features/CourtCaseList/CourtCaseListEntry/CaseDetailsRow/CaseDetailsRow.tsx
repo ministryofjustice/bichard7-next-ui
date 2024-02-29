@@ -15,7 +15,7 @@ import { ResolutionStatus } from "../../../../types/ResolutionStatus"
 
 interface CaseDetailsRowProps {
   courtCase: DisplayPartialCourtCase
-  reasonCell?: JSX.Element
+  reasonCell?: JSX.Element | string
   lockTag?: JSX.Element
   resolutionStatus: ResolutionStatus
 

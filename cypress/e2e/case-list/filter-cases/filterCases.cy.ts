@@ -32,6 +32,7 @@ function removeFilterTag(filterTag: string) {
 }
 
 function inputAndSearch(inputId: string, phrase: string) {
+  cy.get(`input[id=${inputId}]`).clear()
   cy.get(`input[id=${inputId}]`).type(phrase)
   cy.get("button[id=search]").click()
 }
