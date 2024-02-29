@@ -373,7 +373,7 @@ describe("Filtering cases", () => {
     cy.findByText("There are no court cases to show").should("exist")
   })
 
-  it("Should display cases filtered by multiple reason code", () => {
+  it("Should display cases filtered by multiple reason codes", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "011111" },
       { orgForPoliceFilter: "011111" },

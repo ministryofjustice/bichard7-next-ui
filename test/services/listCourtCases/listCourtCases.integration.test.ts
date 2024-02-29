@@ -902,7 +902,7 @@ describe("listCourtCases", () => {
       )
     })
 
-    it("Should list cases when when multiple triggers or exceptions are provided", async () => {
+    it("Should list cases when multiple triggers or exceptions are provided", async () => {
       await insertCourtCasesWithFields(Array.from({ length: 4 }, () => ({ orgForPoliceFilter: orgCode })))
 
       const triggerToInclude: TestTrigger = {
