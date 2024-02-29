@@ -21,9 +21,9 @@ import generateAho from "./generateAho"
 const randomBoolean = (): boolean => sample([true, false]) ?? true
 
 const randomUsername = (): string =>
-  `${faker.person.firstName().toLowerCase()}.${faker.person.lastName().toLowerCase()}`
+  `${faker.person.firstName().toLowerCase()}.${faker.person.lastName().toLowerCase()}`.slice(0, 31)
 
-const randomName = (): string => `${faker.person.lastName().toUpperCase()} ${faker.person.firstName()}`
+const randomName = (): string => `${faker.person.lastName().toUpperCase()} ${faker.person.firstName()}`.slice(0, 31)
 
 export default async (
   dataSource: DataSource | EntityManager,
