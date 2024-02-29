@@ -329,7 +329,7 @@ const Home: NextPage<Props> = (props) => {
                   }}
                 />
               }
-              courtCaseList={<CourtCaseList courtCases={courtCases} order={order} reasonCode={reasonCode} />}
+              courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
               paginationTop={
                 <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />
               }
