@@ -615,7 +615,10 @@ describe("Filter cases by resolution status", () => {
           reasonCodes: ["HO100300"]
         },
         user: exceptionHandler,
-        expectedCases: []
+        expectedCases: [
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"
+        ]
       },
       {
         description:
@@ -625,7 +628,7 @@ describe("Filter cases by resolution status", () => {
           reasonCodes: [dummyTriggerCode, bailsTriggerCode]
         },
         user: exceptionHandler,
-        expectedCases: []
+        expectedCases: ["Exceptions Unresolved/Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
       },
       {
         description:
@@ -635,7 +638,7 @@ describe("Filter cases by resolution status", () => {
           reasonCodes: ["TRPR0001"]
         },
         user: exceptionHandler,
-        expectedCases: []
+        expectedCases: ["Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler"]
       },
       {
         description: "Should only see unresolved triggers when case state is not set as a trigger handler",
