@@ -272,9 +272,9 @@ describe("Case list", () => {
 
         // submit query and display filter chips in filters applied section
         cy.get("#search").contains("Apply filters").click()
-        cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Triggers").should("exist")
-        cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("Cases locked to me").should("exist")
-        cy.get(".moj-button-menu__wrapper .moj-filter__tag").contains("2 days ago").should("exist")
+        cy.get(".moj-filter__tag").contains("Triggers").should("exist")
+        cy.get(".moj-filter__tag").contains("Cases locked to me").should("exist")
+        cy.get(".moj-filter__tag").contains("2 days ago").should("exist")
       })
     })
 
@@ -292,7 +292,7 @@ describe("Case list", () => {
         cy.get(".moj-filter-tags").contains("Triggers").should("exist")
 
         // Clears filter chip and check the checkbox is deselected
-        cy.get(".moj-filter-tags").contains("Clear filters").click()
+        cy.get('a[href*="/bichard?keywords="]').contains("Clear filters").click()
         cy.get(".govuk-checkboxes__item").contains("Triggers").should("not.be.checked")
       })
 
