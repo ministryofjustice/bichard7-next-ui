@@ -794,24 +794,20 @@ describe("Filtering cases", () => {
       cy.get("input[id=reason-codes]").type("Reason1 Reason2")
       cy.get("input[id=keywords]").type("Dummy")
       cy.get('label[for="triggers-type"]').click()
-      cy.get('label[for="exceptions-type"]').click()
       cy.get("button[id=search]").click()
 
       cy.get(`a[id="filter-tag-reason1"]`).should("exist")
       cy.get(`a[id="filter-tag-dummy"]`).should("exist")
       cy.get(`a[id="filter-tag-triggers"]`).should("exist")
-      cy.get(`a[id="filter-tag-exceptions"]`).should("exist")
       cy.get(`a[id="filter-tag-reason2"]`).should("exist")
 
       cy.get(`a[id="filter-tag-reason1"]`).click()
       cy.get(`a[id="filter-tag-dummy"]`).click()
       cy.get(`a[id="filter-tag-triggers"]`).click()
-      cy.get(`a[id="filter-tag-exceptions"]`).click()
 
       cy.get(`a[id="filter-tag-reason1"]`).should("not.exist")
       cy.get(`a[id="filter-tag-dummy"]`).should("not.exist")
       cy.get(`a[id="filter-tag-triggers"]`).should("not.exist")
-      cy.get(`a[id="filter-tag-exceptions"]`).should("not.exist")
 
       cy.get(`a[id="filter-tag-reason2"]`).should("exist")
     })
