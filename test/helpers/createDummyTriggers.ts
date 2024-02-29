@@ -3,8 +3,8 @@ import exponential from "@stdlib/random-base-exponential"
 import sample from "@stdlib/random-sample"
 import { DataSource, EntityManager } from "typeorm"
 import Trigger from "../../src/services/entities/Trigger"
-import createResolutionStatus from "./createResolutionStatus"
 import randomDate from "./createRandomDate"
+import createResolutionStatus from "./createResolutionStatus"
 
 const triggerFrequency = {
   TRPR0015: 112166,
@@ -67,7 +67,7 @@ export default (
       createdAt: creationDate,
       resolvedBy:
         thisTriggerStatus === "Resolved"
-          ? `${faker.person.firstName().toLowerCase()}.${faker.person.lastName().toLowerCase()}`
+          ? `${faker.person.firstName().toLowerCase()}.${faker.person.lastName().toLowerCase()}`.slice(0, 31)
           : null,
       triggerItemIdentity: idx,
       resolvedAt: thisTriggerStatus === "Resolved" ? randomDate(creationDate, dateTo || new Date()) : null
