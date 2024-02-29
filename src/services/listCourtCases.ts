@@ -130,11 +130,15 @@ const listCourtCases = async (
   if (reasonCode) {
     query.andWhere(
       new Brackets((qb) => {
-        qb.where("trigger.trigger_code ilike '%' || :reason || '%'", {
-          reason: reasonCode
-        }).orWhere("courtCase.error_report ilike '%' || :reason || '%'", {
-          reason: reasonCode
+        qb.where("trigger.trigger_code ilike :trigger", {
+          trigger: reasonCode
         })
+          .orWhere("courtCase.error_report ilike :firstException || '%'", {
+            firstException: `${reasonCode}||`
+          })
+          .orWhere("courtCase.error_report ilike '%' || :exception || '%'", {
+            exception: ` ${reasonCode}||`
+          })
       })
     )
   }

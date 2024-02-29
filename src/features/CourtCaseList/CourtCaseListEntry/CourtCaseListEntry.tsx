@@ -15,13 +15,15 @@ interface Props {
   exceptionHasBeenRecentlyUnlocked: boolean
   triggerHasBeenRecentlyUnlocked: boolean
   previousPath: string | null
+  reasonCode: string | null
 }
 
 const CourtCaseListEntry: React.FC<Props> = ({
   courtCase,
   exceptionHasBeenRecentlyUnlocked,
   triggerHasBeenRecentlyUnlocked,
-  previousPath
+  previousPath,
+  reasonCode
 }: Props) => {
   const {
     errorId,
@@ -82,12 +84,12 @@ const CourtCaseListEntry: React.FC<Props> = ({
     <tbody>
       <CaseDetailsRow
         courtCase={courtCase}
-        reasonCell={exceptionsReasonCell || triggersReasonCell}
+        reasonCell={reasonCode || exceptionsReasonCell || triggersReasonCell}
         lockTag={exceptionsLockTag || triggersLockTag}
         resolutionStatus={errorStatus ?? "Unresolved"}
         previousPath={previousPath}
       />
-      {exceptionsLockTag && triggersLockTag && triggersReasonCell && (
+      {!reasonCode && exceptionsLockTag && triggersLockTag && triggersReasonCell && (
         <ExtraReasonRow
           isLocked={!!triggerLockedByUsername}
           reasonCell={triggersReasonCell}

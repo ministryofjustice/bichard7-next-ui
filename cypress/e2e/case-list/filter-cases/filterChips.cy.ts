@@ -228,9 +228,9 @@ describe("Case list", () => {
         cy.get("input[id=reason-code]").type("Bar")
 
         cy.get(".govuk-heading-s").contains("Reason code").should("exist")
-        cy.get(".moj-filter__tag").contains("Bar").should("exist")
+        cy.get(".moj-filter__tag").contains("BAR").should("exist")
 
-        cy.get("li button.moj-filter__tag").contains("Bar").trigger("click")
+        cy.get("li button.moj-filter__tag").contains("BAR").trigger("click")
         cy.get(".moj-filter__tag").should("not.exist")
       })
     })

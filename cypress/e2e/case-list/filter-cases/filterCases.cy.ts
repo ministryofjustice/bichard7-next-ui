@@ -30,8 +30,21 @@ function removeFilterTag(filterTag: string) {
 }
 
 function inputAndSearch(inputId: string, phrase: string) {
+  cy.get(`input[id=${inputId}]`).clear()
   cy.get(`input[id=${inputId}]`).type(phrase)
   cy.get("button[id=search]").click()
+}
+
+function tableRowShouldContain(tableRow: number, ...reasonCodes: string[]) {
+  reasonCodes.forEach((reasonCode) => {
+    cy.get("tbody").eq(tableRow).contains(reasonCode)
+  })
+}
+
+function tableRowShouldNotContain(tableRow: number, ...reasonCodes: string[]) {
+  reasonCodes.forEach((reasonCode) => {
+    cy.get("tbody").eq(tableRow).contains(reasonCode).should("not.exist")
+  })
 }
 
 describe("Filtering cases", () => {
@@ -276,6 +289,102 @@ describe("Filtering cases", () => {
     removeFilterTag("HO200212")
 
     confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
+  })
+
+  it("Should display only filtered reason in the reason column", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" }
+    ])
+
+    const triggers: TestTrigger[] = [
+      {
+        triggerId: 0,
+        triggerCode: "TRPR0107",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      },
+      {
+        triggerId: 1,
+        triggerCode: "TRPR0015",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+
+    cy.task("insertTriggers", { caseId: 0, triggers })
+    cy.task("insertException", { caseId: 0, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+    cy.task("insertException", { caseId: 0, exceptionCode: "HO200200", errorReport: "HO200200||ds:Reason" })
+
+    cy.task("insertTriggers", { caseId: 1, triggers })
+    cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+    cy.task("insertException", { caseId: 1, exceptionCode: "HO200239", errorReport: "HO200239||ds:Reason" })
+
+    cy.task("insertTriggers", { caseId: 2, triggers })
+    cy.task("insertException", { caseId: 2, exceptionCode: "HO200247", errorReport: "HO200247||ds:Reason" })
+    cy.task("insertException", { caseId: 2, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+
+    cy.visit("/bichard")
+
+    tableRowShouldContain(0, "HO200212", "HO200200", "TRPR0015 - Personal details changed", "TRPR0107")
+    tableRowShouldContain(1, "HO200212", "HO200239", "TRPR0015 - Personal details changed", "TRPR0107")
+    tableRowShouldContain(2, "HO200247", "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
+
+    visitBasePathAndShowFilters()
+    inputAndSearch("reason-code", "HO200212")
+    confirmFiltersAppliedContains("HO200212")
+    tableRowShouldContain(0, "HO200212")
+    tableRowShouldNotContain(0, "HO200200", "TRPR0015 - Personal details changed", "TRPR0107")
+    removeFilterTag("HO200212")
+
+    visitBasePathAndShowFilters()
+    inputAndSearch("reason-code", "HO200200")
+    confirmFiltersAppliedContains("HO200200")
+    tableRowShouldContain(0, "HO200200")
+    tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
+    removeFilterTag("HO200200")
+
+    visitBasePathAndShowFilters()
+    inputAndSearch("reason-code", "HO200247")
+    confirmFiltersAppliedContains("HO200247")
+    tableRowShouldContain(0, "HO200247")
+    tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
+    removeFilterTag("HO200247")
+
+    visitBasePathAndShowFilters()
+    inputAndSearch("reason-code", "TRPR0015")
+    confirmFiltersAppliedContains("TRPR0015")
+    tableRowShouldContain(0, "TRPR0015")
+    tableRowShouldContain(1, "TRPR0015")
+    tableRowShouldContain(2, "TRPR0015")
+    tableRowShouldNotContain(0, "HO200212", "HO200200", "TRPR0107")
+    tableRowShouldNotContain(1, "HO200212", "HO200239", "TRPR0107")
+    tableRowShouldNotContain(2, "HO200247", "HO200212", "TRPR0107")
+  })
+
+  it("Should display 0 cases when cases filtered with short-hand reason code", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" }
+    ])
+
+    const triggers: TestTrigger[] = [
+      {
+        triggerId: 0,
+        triggerCode: "TRPR0107",
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+    cy.task("insertTriggers", { caseId: 0, triggers })
+    cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+
+    visitBasePathAndShowFilters()
+    inputAndSearch("reason-code", "PR04")
+    confirmFiltersAppliedContains("PR04")
+    cy.findByText("There are no court cases to show").should("exist")
   })
 
   it("Should let users use all search fields", () => {

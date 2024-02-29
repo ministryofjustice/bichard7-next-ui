@@ -138,7 +138,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                     name="reasonCode"
                     type="text"
                     onChange={(event) => {
-                      dispatch({ method: "add", type: "reasonCode", value: event.currentTarget.value })
+                      dispatch({ method: "add", type: "reasonCode", value: event.currentTarget.value.toUpperCase() })
                     }}
                   />
                 </div>

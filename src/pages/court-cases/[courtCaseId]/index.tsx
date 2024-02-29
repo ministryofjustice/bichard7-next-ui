@@ -196,11 +196,17 @@ interface Props {
 const useStyles = createUseStyles({
   attentionContainer: {
     marginTop: "0.3rem",
-    width: "100%"
+    maxWidth: "calc(100% - 8px)",
+    paddingRight: 0,
+    "&> .govuk-tag": {
+      paddingLeft: 0,
+      paddingRight: "8px"
+    }
   },
   attentionBanner: {
     textTransform: "none",
-    fontWeight: 300
+    fontWeight: 300,
+    maxWidth: "100%"
   }
 })
 
