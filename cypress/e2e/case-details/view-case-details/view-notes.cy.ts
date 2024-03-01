@@ -307,6 +307,24 @@ describe("View notes", () => {
     clickTab("Notes")
     cy.findByText("Case has no notes.").should("exist")
   })
+
+  it("Should alert you when making a change and not saving", () => {
+    insertCaseWithTriggerAndException()
+    loginAndGoToNotes()
+
+    cy.get("H3").contains("Notes")
+    cy.get("button").contains("Add note").click()
+    cy.get("form span").contains("The note cannot be empty")
+    cy.get("textarea[name=noteText]").type("dummy note")
+    cy.get("form span").should("not.contain", "The note cannot be empty")
+
+    cy.on("window:confirm", (txt) => {
+      //Assertion
+      expect(txt).to.contains("I am an alert box!")
+    })
+
+    cy.reload()
+  })
 })
 
 export {}
