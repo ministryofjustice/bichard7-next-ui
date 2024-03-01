@@ -4,6 +4,7 @@ import { useCustomStyles } from "../../../styles/customStyles"
 interface NavItemProps {
   name: string
   link: string
+  newTab?: boolean
 }
 
 interface NavBarProps {
@@ -11,13 +12,18 @@ interface NavBarProps {
   hasAccessToReports: boolean
 }
 
-const NavItem: React.FC<NavItemProps> = ({ name, link }: NavItemProps) => {
+const NavItem: React.FC<NavItemProps> = ({ name, link, newTab }: NavItemProps) => {
   const { basePath } = useRouter()
   const ariaCurrent = link === basePath + "/" ? "page" : undefined
 
   return (
     <li className="moj-primary-navigation__item">
-      <a aria-current={ariaCurrent} className="moj-primary-navigation__link" href={link}>
+      <a
+        aria-current={ariaCurrent}
+        className="moj-primary-navigation__link"
+        href={link}
+        target={newTab ? "_blank" : "_self"}
+      >
         {name}
       </a>
     </li>
@@ -35,7 +41,7 @@ const NavBar: React.FC<NavBarProps> = ({ hasAccessToUserManagement, hasAccessToR
               <NavItem name={"Case list"} link={"/bichard/"} />
               {hasAccessToReports && <NavItem name={"Reports"} link={"/bichard-ui/ReturnToReportIndex"} />}
               {hasAccessToUserManagement && <NavItem name={"User management"} link={"/users/users/"} />}
-              <NavItem name={"Help"} link={"/help/"} />
+              <NavItem name={"Help"} link={"/help/"} newTab />
             </ul>
           </nav>
         </div>
