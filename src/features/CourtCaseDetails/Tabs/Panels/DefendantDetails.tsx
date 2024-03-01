@@ -7,6 +7,7 @@ import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { HintText, Input, Label, Table } from "govuk-react"
 import React, { useState } from "react"
+import { useBeforeunload } from "react-beforeunload"
 import { createUseStyles } from "react-jss"
 import { findExceptions } from "types/ErrorMessages"
 import { formatDisplayedDate } from "utils/formattedDate"
@@ -49,12 +50,19 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
   const updatedAsn =
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
       ?.ArrestSummonsNumber
+
   const [isValidAsn, setIsValidAsn] = useState<boolean>(true)
+
+  const [isAsnChanged, setIsAsnChanged] = useState<boolean>(false)
+
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const asn = e.target.value.toUpperCase()
     setIsValidAsn(isAsnFormatValid(asn))
+    setIsAsnChanged(true)
     amendFn("asn")(asn)
   }
+
+  useBeforeunload(isAsnChanged ? (event: BeforeUnloadEvent) => event.preventDefault() : undefined)
 
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
   const isAsnEditable = courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
