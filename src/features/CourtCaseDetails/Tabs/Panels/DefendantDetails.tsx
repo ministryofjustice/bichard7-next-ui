@@ -7,7 +7,8 @@ import axios from "axios"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { HintText, Input, Label, Table } from "govuk-react"
-import React, { useCallback, useEffect, useState } from "react"
+import { default as React, useCallback, useEffect, useState } from "react"
+import { useBeforeunload } from "react-beforeunload"
 import { createUseStyles } from "react-jss"
 import Asn from "services/Asn"
 import { findExceptions } from "types/ErrorMessages"
@@ -53,15 +54,9 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
       ?.ArrestSummonsNumber
 
+  const [isAsnChanged, setIsAsnChanged] = useState<boolean>(false)
   const [isValidAsn, setIsValidAsn] = useState<boolean>(false)
   const [asnString, setAsnString] = useState<string>("")
-
-  const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const asnStringInput = e.target.value.toUpperCase()
-    setIsValidAsn(isAsnFormatValid(asnStringInput))
-    setAsnString(asnStringInput)
-    amendFn("asn")(asnStringInput)
-  }
 
   const saveAsn = useCallback(
     async (asn: Asn) => {
@@ -78,6 +73,16 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
       saveAsn(new Asn(asnString))
     }
   }, [asnString, isValidAsn, saveAsn])
+
+  const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const asn = e.target.value.toUpperCase()
+    setIsValidAsn(isAsnFormatValid(asn))
+    setIsAsnChanged(true)
+    setAsnString(asn)
+    amendFn("asn")(asn)
+  }
+
+  useBeforeunload(isAsnChanged ? (event: BeforeUnloadEvent) => event.preventDefault() : undefined)
 
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
 
