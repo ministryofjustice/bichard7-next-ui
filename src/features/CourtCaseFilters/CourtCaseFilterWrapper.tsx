@@ -19,29 +19,27 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
 }: Props) => {
   const user = useCurrentUser()
   const filterPanelKey = `is-filter-panel-visible-${user.username}`
-  const [areAppliedFiltersShown, setAreAppliedFiltersShown] = useState(false)
-  const dateTime = new Date().getTime()
+  const [isSearchPanelShown, setIsSearchPanelShown] = useState(true)
+  console.log(new Date())
 
   useEffect(() => {
-    const storedValue = localStorage.getItem(filterPanelKey)
-    if (storedValue) {
-      const storedTimeString = localStorage.getItem("dateTime")
-      const storedTime = storedTimeString ? JSON.parse(storedTimeString) : 0
-      const timeDifference = dateTime - storedTime
-      if (timeDifference < 7 * 24 * 60 * 60 * 1000) {
-        setAreAppliedFiltersShown(storedValue === "true")
+    const filterPanelValue = localStorage.getItem(filterPanelKey)
+    if (filterPanelValue) {
+      const storedDate = new Date(filterPanelValue)
+      storedDate.setDate(storedDate.getDate() + 7)
+      if (storedDate > new Date()) {
+        setIsSearchPanelShown(false)
       } else {
         localStorage.removeItem(filterPanelKey)
-        localStorage.removeItem("dateTime")
-        setAreAppliedFiltersShown(false)
+        setIsSearchPanelShown(true)
       }
     }
-  }, [filterPanelKey, dateTime])
+  }, [filterPanelKey])
 
   return (
     <>
       <div className="moj-filter-layout__filter">
-        <div className={!areAppliedFiltersShown ? "moj-filter" : "moj-filter moj-hidden"}>{filter}</div>
+        <div className={isSearchPanelShown ? "moj-filter" : "moj-filter moj-hidden"}>{filter}</div>
       </div>
       <Heading className="hidden-header" as="h1" size="LARGE">
         {"Case list"}
@@ -55,17 +53,20 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
               className="govuk-button govuk-button--secondary govuk-!-margin-bottom-0"
               type="button"
               aria-haspopup="true"
-              aria-expanded={areAppliedFiltersShown === true}
+              aria-expanded={isSearchPanelShown === true}
               onClick={() => {
-                const newValue = !areAppliedFiltersShown
-                localStorage.setItem(filterPanelKey, newValue.toString())
-                localStorage.setItem("dateTime", JSON.stringify(dateTime))
-                setAreAppliedFiltersShown(newValue)
+                const newValue = !isSearchPanelShown
+                if (!newValue) {
+                  localStorage.setItem(filterPanelKey, new Date().toISOString())
+                } else {
+                  localStorage.removeItem(filterPanelKey)
+                }
+                setIsSearchPanelShown(newValue)
               }}
             >
-              {areAppliedFiltersShown ? "Show search panel" : "Hide search panel"}
+              {isSearchPanelShown ? "Hide search panel" : "Show search panel"}
             </button>
-            {areAppliedFiltersShown && <div className="moj-button-menu__wrapper">{appliedFilters}</div>}
+            {!isSearchPanelShown && <div className="moj-button-menu__wrapper">{appliedFilters}</div>}
           </div>
         </div>
 

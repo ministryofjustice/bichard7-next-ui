@@ -266,10 +266,9 @@ describe("Filtering cases", () => {
 
     visitBasePath()
 
-
     inputAndSearch("reason-code", "TRPR0107")
     cy.contains("Hide search panel").click()
-    
+
     cy.contains("Case00000")
     confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
     cy.get("tbody tr").should("have.length", 1)
@@ -354,7 +353,7 @@ describe("Filtering cases", () => {
     tableRowShouldContain(0, "HO200247")
     tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
     removeFilterTag("HO200247")
-    
+
     visitBasePath()
     inputAndSearch("reason-code", "TRPR0015")
 
@@ -410,7 +409,7 @@ describe("Filtering cases", () => {
     cy.task("insertTriggers", { caseId: 0, triggers })
     cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     inputAndSearch("reason-codes", "TRPR0107 HO200212")
     cy.contains("Case00000")
@@ -910,7 +909,7 @@ describe("Filtering cases", () => {
     })
 
     it("Should remove filters when they are clicked", () => {
-      visitBasePathAndShowFilters()
+      visitBasePath()
       cy.get("input[id=reason-codes]").type("Reason1 Reason2")
       cy.get("input[id=keywords]").type("Dummy")
       cy.get('label[for="triggers-type"]').click()
