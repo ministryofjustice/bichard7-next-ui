@@ -8,7 +8,8 @@ import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { ReactiveLinkButton } from "components/LinkButton"
 import { HintText, Input, Label, Table } from "govuk-react"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useState } from "react"
+import { useBeforeunload } from "react-beforeunload"
 import { createUseStyles } from "react-jss"
 import Asn from "services/Asn"
 import { findExceptions } from "types/ErrorMessages"
@@ -59,49 +60,19 @@ export const DefendantDetails = ({ amendFn, amendmentRecords, stopLeavingFn }: D
   const [updatedAhoAsn, setUpdatedAhoAsn] = useState<string>(
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
       ?.ArrestSummonsNumber
-  )
+
+  const [isValidAsn, setIsValidAsn] = useState<boolean>(true)
+
   const [isAsnChanged, setIsAsnChanged] = useState<boolean>(false)
-  const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(updatedAhoAsn))
-  const [savedAsn, setSavedAsn] = useState<boolean>(false)
-  const [asnString, setAsnString] = useState<string>(updatedAhoAsn ?? "")
-  const [pageLoad, setPageLoad] = useState<boolean>(false)
-
-  const saveAsn = useCallback(
-    async (asn: Asn) => {
-      await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
-      setSavedAsn(false)
-    },
-    [courtCase.errorId]
-  )
-
-  const handleAsnSave = (): void => {
-    if (isValidAsn) {
-      setSavedAsn(true)
-
-      saveAsn(new Asn(asnString))
-    }
-  }
-
-  useEffect(() => {
-    if (!pageLoad) {
-      amendmentRecords.asn = updatedAhoAsn ?? ""
-      setPageLoad(true)
-    }
-
-    if (savedAsn) {
-      setUpdatedAhoAsn(asnString)
-    }
-
-    stopLeavingFn(!savedAsn && isAsnChanged && updatedAhoAsn !== asnString)
-  }, [savedAsn, asnString, pageLoad, amendmentRecords, updatedAhoAsn, stopLeavingFn, isAsnChanged])
 
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const asn = e.target.value.toUpperCase()
     setIsValidAsn(isAsnFormatValid(asn))
     setIsAsnChanged(true)
-    setAsnString(asn)
     amendFn("asn")(asn)
   }
+
+  useBeforeunload(isAsnChanged ? (event: BeforeUnloadEvent) => event.preventDefault() : undefined)
 
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
 
