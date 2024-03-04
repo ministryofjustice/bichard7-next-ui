@@ -225,7 +225,7 @@ describe("Case list", () => {
 
     describe("Reason code", () => {
       it("Should apply the 'Court name' filter chips then remove this chips to the original state", () => {
-        cy.get("input[id=reason-code]").type("Bar")
+        cy.get("input[id=reason-codes]").type("Bar")
 
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Bar").should("exist")
@@ -235,7 +235,6 @@ describe("Case list", () => {
       })
 
       it("Should be able to remove individual reason code filter chips", () => {
-        cy.get("#filter-button").click()
         cy.get("input[id=reason-codes]").type("Foo Bar")
 
         cy.get(".govuk-heading-s").contains("Reason").should("exist")

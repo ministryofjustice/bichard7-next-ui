@@ -25,7 +25,7 @@ function expandFilterSection(sectionToBeExpanded: string, optionToBeExpanded: st
   cy.get(optionToBeExpanded).should("exist")
 }
 
-function removeFilterTag(filterTag: string) {
+function removeFilterTagWhilstSearchPanelIsHidden(filterTag: string) {
   cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag).click({ force: true })
 }
 
@@ -197,7 +197,7 @@ describe("Filtering cases", () => {
     cy.get("tr").should("have.length", 2)
     confirmFiltersAppliedContains("WAYNE Bruce")
 
-    removeFilterTag("WAYNE Bruce")
+    removeFilterTagWhilstSearchPanelIsHidden("WAYNE Bruce")
 
     confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Barbara", "PENNYWORTH Alfred"])
   })
@@ -219,7 +219,7 @@ describe("Filtering cases", () => {
     cy.get("tr").should("have.length", 2)
     confirmFiltersAppliedContains("Manchester Court")
 
-    removeFilterTag("Manchester Court")
+    removeFilterTagWhilstSearchPanelIsHidden("Manchester Court")
 
     confirmMultipleFieldsDisplayed(["Manchester Court", "London Court", "Bristol Court"])
   })
@@ -241,7 +241,7 @@ describe("Filtering cases", () => {
     cy.get("tr").should("have.length", 2)
     confirmFiltersAppliedContains("Case00001")
 
-    removeFilterTag("Case00001")
+    removeFilterTagWhilstSearchPanelIsHidden("Case00001")
 
     confirmMultipleFieldsDisplayed(["Case00001", "Case00002", "Case00003"])
   })
@@ -266,18 +266,18 @@ describe("Filtering cases", () => {
 
     visitBasePath()
 
-    inputAndSearch("reason-code", "TRPR0107")
+    inputAndSearch("reason-codes", "TRPR0107")
     cy.contains("Hide search panel").click()
 
     cy.contains("Case00000")
     confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
     cy.get("tbody tr").should("have.length", 1)
     confirmFiltersAppliedContains("TRPR0107")
-    removeFilterTag("TRPR0107")
+    removeFilterTagWhilstSearchPanelIsHidden("TRPR0107")
 
     cy.contains("Show search panel").click()
 
-    inputAndSearch("reason-code", "HO200212")
+    inputAndSearch("reason-codes", "HO200212")
     cy.contains("Hide search panel").click()
 
     cy.contains("Case00001")
@@ -286,7 +286,7 @@ describe("Filtering cases", () => {
 
     confirmFiltersAppliedContains("HO200212")
 
-    removeFilterTag("HO200212")
+    removeFilterTagWhilstSearchPanelIsHidden("HO200212")
 
     confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
   })
@@ -331,31 +331,31 @@ describe("Filtering cases", () => {
     tableRowShouldContain(2, "HO200247", "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
 
     visitBasePath()
-    inputAndSearch("reason-code", "HO200212")
+    inputAndSearch("reason-codes", "HO200212")
 
     confirmFiltersAppliedContains("HO200212")
     tableRowShouldContain(0, "HO200212")
     tableRowShouldNotContain(0, "HO200200", "TRPR0015 - Personal details changed", "TRPR0107")
-    removeFilterTag("HO200212")
+    cy.get(".moj-filter-tags").contains("HO200212").click({ force: true })
 
     visitBasePath()
-    inputAndSearch("reason-code", "HO200200")
+    inputAndSearch("reason-codes", "HO200200")
 
     confirmFiltersAppliedContains("HO200200")
     tableRowShouldContain(0, "HO200200")
     tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
-    removeFilterTag("HO200200")
+    cy.get(".moj-filter-tags").contains("HO200200").click({ force: true })
 
     visitBasePath()
-    inputAndSearch("reason-code", "HO200247")
+    inputAndSearch("reason-codes", "HO200247")
 
     confirmFiltersAppliedContains("HO200247")
     tableRowShouldContain(0, "HO200247")
     tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
-    removeFilterTag("HO200247")
+    cy.get(".moj-filter-tags").contains("HO200247").click({ force: true })
 
     visitBasePath()
-    inputAndSearch("reason-code", "TRPR0015")
+    inputAndSearch("reason-codes", "TRPR0015")
 
     confirmFiltersAppliedContains("TRPR0015")
     tableRowShouldContain(0, "TRPR0015")
@@ -385,7 +385,7 @@ describe("Filtering cases", () => {
     cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
 
     visitBasePath()
-    inputAndSearch("reason-code", "PR04")
+    inputAndSearch("reason-codes", "PR04")
 
     confirmFiltersAppliedContains("PR04")
     cy.findByText("There are no court cases to show").should("exist")
@@ -459,7 +459,7 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Bruce"])
     cy.get(".moj-filter__tag").contains("Case0000").click()
 
-    inputAndSearch("reason-code", "HO200212")
+    inputAndSearch("reason-codes", "HO200212")
 
     confirmMultipleFieldsNotDisplayed(["GORDON Bruce", "PENNYWORTH Bruce", "PENNYWORTH Alfred"])
     cy.get("tr").should("have.length", 2)
@@ -636,7 +636,7 @@ describe("Filtering cases", () => {
     cy.contains("Hide search panel").click()
 
     confirmFiltersAppliedContains("01/01/2022 - 31/12/2022")
-    removeFilterTag("01/01/2022 - 31/12/2022")
+    removeFilterTagWhilstSearchPanelIsHidden("01/01/2022 - 31/12/2022")
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 13)
   })
 
@@ -914,6 +914,7 @@ describe("Filtering cases", () => {
       cy.get("input[id=keywords]").type("Dummy")
       cy.get('label[for="triggers-type"]').click()
       cy.get("button[id=search]").click()
+      cy.get("#filter-button").contains("Hide search panel").click()
 
       cy.get(`a[id="filter-tag-reason1"]`).should("exist")
       cy.get(`a[id="filter-tag-dummy"]`).should("exist")
