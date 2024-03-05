@@ -1,8 +1,8 @@
 import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Badge from "./Badge"
-import ErrorIcon from "./ErrorIcon"
 import ConditionalRender from "./ConditionalRender"
+import ErrorIcon from "./ErrorIcon"
 
 type Props = {
   label: string
