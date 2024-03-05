@@ -47,11 +47,11 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
 
-  const [amendments, setAmendements] = useState<AmendmentRecords>({})
+  const [amendments, setAmendments] = useState<AmendmentRecords>({})
 
   const amendFn = useCallback(
     (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => {
-      setAmendements((previousAmendments) => ({ ...setAmendedFields(keyToAmend, newValue, previousAmendments) }))
+      setAmendments((previousAmendments) => ({ ...setAmendedFields(keyToAmend, newValue, previousAmendments) }))
     },
     []
   )
