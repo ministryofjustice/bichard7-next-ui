@@ -4,7 +4,7 @@ import amendCourtCase from "services/amendCourtCase/amendCourtCase"
 import CourtCase from "services/entities/CourtCase"
 import getDataSource from "services/getDataSource"
 
-export default async function something(request: NextApiRequest, response: NextApiResponse) {
+export default async (request: NextApiRequest, response: NextApiResponse) => {
   const allowedMethods = ["PATCH", "PUT", "POST"]
 
   const auth = await withApiAuthentication(request, response, allowedMethods)
