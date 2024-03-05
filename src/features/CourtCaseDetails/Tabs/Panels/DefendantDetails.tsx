@@ -3,11 +3,13 @@ import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import { GenderCodes } from "@moj-bichard7-developers/bichard7-next-data/dist/types/GenderCode"
 import { RemandStatuses } from "@moj-bichard7-developers/bichard7-next-data/dist/types/RemandStatusCode"
 import { GenderCode, RemandStatusCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
+import axios from "axios"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { HintText, Input, Label, Table } from "govuk-react"
-import React, { useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
+import Asn from "services/Asn"
 import { findExceptions } from "types/ErrorMessages"
 import { formatDisplayedDate } from "utils/formattedDate"
 import isAsnFormatValid from "utils/isAsnFormatValid"
@@ -46,17 +48,47 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     ExceptionCode.HO200113,
     ExceptionCode.HO200114
   )
+
   const updatedAsn =
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
       ?.ArrestSummonsNumber
-  const [isValidAsn, setIsValidAsn] = useState<boolean>(true)
+
+  const [isValidAsn, setIsValidAsn] = useState<boolean>(false)
+  const [asnString, setAsnString] = useState<string>("")
+
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const asn = e.target.value.toUpperCase()
-    setIsValidAsn(isAsnFormatValid(asn))
-    amendFn("asn")(asn)
+    const asnStringInput = e.target.value.toUpperCase()
+    setIsValidAsn(isAsnFormatValid(asnStringInput))
+    setAsnString(asnStringInput)
+    amendFn("asn")(asnStringInput)
   }
 
+  const saveAsn = useCallback(
+    async (asn: Asn) => {
+      await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
+    },
+    [courtCase.errorId]
+  )
+
+  useEffect(() => {
+    if (isValidAsn) {
+      console.log("Valid, can be saved")
+
+      console.log("Saving...")
+      saveAsn(new Asn(asnString))
+    }
+  }, [asnString, isValidAsn, saveAsn])
+
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
+
+  const hideError = (): boolean => {
+    if (asnString.length === 0) {
+      return true
+    } else {
+      return isValidAsn
+    }
+  }
+
   const isAsnEditable = courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
 
   return (
@@ -87,8 +119,8 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
               }
             </HintText>
             <HintText>{"Example: 22 49AB 49 1234 C"}</HintText>
-            <div className={`${asnFormGroupError}`}>
-              {!isValidAsn && (
+            <div className={!hideError() ? `${asnFormGroupError}` : ""}>
+              {!hideError() && (
                 <p id="event-name-error" className="govuk-error-message">
                   <span className="govuk-visually-hidden">{"Error:"}</span> {"Invalid ASN format"}
                 </p>
@@ -99,7 +131,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
                 name={"asn"}
                 onChange={handleAsnChange}
                 value={(amendmentRecords.asn as string) ?? ""}
-                error={!isValidAsn}
+                error={!hideError()}
               />
             </div>
           </EditableFieldTableRow>
