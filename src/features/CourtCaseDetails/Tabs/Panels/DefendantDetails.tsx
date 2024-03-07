@@ -75,7 +75,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
       console.log("Valid, can be saved")
 
       console.log("Saving...")
-      // saveAsn(new Asn(asnString))
+      saveAsn(new Asn(asnString))
     }
   }, [asnString, isValidAsn, saveAsn])
 
