@@ -6,8 +6,9 @@ import { GenderCode, RemandStatusCode } from "@moj-bichard7-developers/bichard7-
 import axios from "axios"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
+import { ReactiveLinkButton } from "components/LinkButton"
 import { HintText, Input, Label, Table } from "govuk-react"
-import { default as React, useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { useBeforeunload } from "react-beforeunload"
 import { createUseStyles } from "react-jss"
 import Asn from "services/Asn"
@@ -64,6 +65,17 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     },
     [courtCase.errorId]
   )
+
+  // Disable save button if ASN is not valid
+
+  // If ASN is valid enable save button
+  // Set state of click in React
+  // Disable save button
+  // Trigger save function
+
+  const handleAsnSave = (): void => {
+    console.log("Clicked save")
+  }
 
   useEffect(() => {
     if (isValidAsn) {
@@ -139,6 +151,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
                 error={!hideError()}
               />
             </div>
+            <ReactiveLinkButton onClick={handleAsnSave}>{"Save correction"}</ReactiveLinkButton>
           </EditableFieldTableRow>
         )}
 
