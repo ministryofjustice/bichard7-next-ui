@@ -8,7 +8,7 @@ import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { ReactiveLinkButton } from "components/LinkButton"
 import { HintText, Input, Label, Table } from "govuk-react"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useState } from "react"
 import { useBeforeunload } from "react-beforeunload"
 import { createUseStyles } from "react-jss"
 import Asn from "services/Asn"
@@ -57,6 +57,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
 
   const [isAsnChanged, setIsAsnChanged] = useState<boolean>(false)
   const [isValidAsn, setIsValidAsn] = useState<boolean>(false)
+  const [savedAsn, setSavedAsn] = useState<boolean>(false)
   const [asnString, setAsnString] = useState<string>("")
 
   const saveAsn = useCallback(
@@ -66,25 +67,15 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     [courtCase.errorId]
   )
 
-  // Disable save button if ASN is not valid
-
-  // If ASN is valid enable save button
-  // Set state of click in React
-  // Disable save button
-  // Trigger save function
-
   const handleAsnSave = (): void => {
-    console.log("Clicked save")
-  }
-
-  useEffect(() => {
     if (isValidAsn) {
+      setSavedAsn(true)
       console.log("Valid, can be saved")
 
       console.log("Saving...")
       saveAsn(new Asn(asnString))
     }
-  }, [asnString, isValidAsn, saveAsn])
+  }
 
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const asn = e.target.value.toUpperCase()
@@ -94,7 +85,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     amendFn("asn")(asn)
   }
 
-  useBeforeunload(isAsnChanged ? (event: BeforeUnloadEvent) => event.preventDefault() : undefined)
+  useBeforeunload(!savedAsn && isAsnChanged ? (event: BeforeUnloadEvent) => event.preventDefault() : undefined)
 
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
 
@@ -103,6 +94,18 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
       return true
     } else {
       return isValidAsn
+    }
+  }
+
+  const isSaveAsnBtnDisabled = (): boolean => {
+    if (isValidAsn && savedAsn) {
+      return true
+    } else if (!isValidAsn) {
+      return true
+    } else if (savedAsn) {
+      return true
+    } else {
+      return false
     }
   }
 
@@ -151,7 +154,9 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
                 error={!hideError()}
               />
             </div>
-            <ReactiveLinkButton onClick={handleAsnSave}>{"Save correction"}</ReactiveLinkButton>
+            <ReactiveLinkButton onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()}>
+              {"Save correction"}
+            </ReactiveLinkButton>
           </EditableFieldTableRow>
         )}
 
