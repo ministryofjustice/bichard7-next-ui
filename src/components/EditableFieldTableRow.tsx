@@ -3,6 +3,7 @@ import { createUseStyles } from "react-jss"
 import Badge from "./Badge"
 import ConditionalRender from "./ConditionalRender"
 import ErrorIcon from "./ErrorIcon"
+import { ReactiveLinkButton } from "./LinkButton"
 
 type Props = {
   label: string
@@ -11,6 +12,8 @@ type Props = {
   updatedValue?: string | null
   isEditable: boolean
   children?: React.ReactNode
+  handleEditBtn: () => void
+  isCorrectionEdit: boolean
 }
 
 const useStyles = createUseStyles({
@@ -46,21 +49,39 @@ const correctionBadge = (
   </div>
 )
 
-const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEditable, children }: Props) => {
+const EditableFieldTableRow = ({
+  value,
+  updatedValue,
+  label,
+  hasExceptions,
+  isEditable,
+  children,
+  handleEditBtn,
+  isCorrectionEdit
+}: Props) => {
   const classes = useStyles()
   const isRendered = !!(value || updatedValue || hasExceptions)
-  const hasCorrection = updatedValue && value !== updatedValue
+  const hasCorrection = updatedValue && value !== updatedValue && !isCorrectionEdit
+
+  // console.log(
+  //   updatedValue && value !== updatedValue && !isCorrectionEdit,
+  //   updatedValue,
+  //   value,
+  //   updatedValue,
+  //   !isCorrectionEdit
+  // )
 
   const labelField = (
     <>
       <b>
         <div>{label}</div>
       </b>
-      {isEditable && (
+      {!hasCorrection && isEditable && (
         <div className="error-icon">
           <ErrorIcon />
         </div>
       )}
+      {hasCorrection && isEditable && <div className="tick-icon">{/* <TickIcon /> */}</div>}
     </>
   )
 
@@ -83,6 +104,9 @@ const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEd
       <br />
       {updatedValue}
       {correctionBadge}
+      <ReactiveLinkButton id={"edit-asn"} onClick={handleEditBtn}>
+        {"Edit"}
+      </ReactiveLinkButton>
     </>
   )
 
@@ -90,7 +114,7 @@ const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEd
     <ConditionalRender isRendered={isRendered}>
       <Table.Row>
         <Table.Cell className={classes.label}>{labelField}</Table.Cell>
-        <Table.Cell>{isEditable ? inputField : hasCorrection ? initialValueAndCorrectionField : value}</Table.Cell>
+        <Table.Cell>{hasCorrection ? initialValueAndCorrectionField : isEditable ? inputField : value}</Table.Cell>
       </Table.Row>
     </ConditionalRender>
   )

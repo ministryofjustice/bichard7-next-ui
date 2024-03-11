@@ -8,7 +8,7 @@ import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { ReactiveLinkButton } from "components/LinkButton"
 import { HintText, Input, Label, Table } from "govuk-react"
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { useBeforeunload } from "react-beforeunload"
 import { createUseStyles } from "react-jss"
 import Asn from "services/Asn"
@@ -51,18 +51,20 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     ExceptionCode.HO200114
   )
 
-  const updatedAsn =
+  const [updatedAhoAsn, setUpdatedAhoAsn] = useState<string>(
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
       ?.ArrestSummonsNumber
-
+  )
   const [isAsnChanged, setIsAsnChanged] = useState<boolean>(false)
-  const [isValidAsn, setIsValidAsn] = useState<boolean>(false)
+  const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(updatedAhoAsn))
   const [savedAsn, setSavedAsn] = useState<boolean>(false)
-  const [asnString, setAsnString] = useState<string>("")
+  const [asnString, setAsnString] = useState<string>(updatedAhoAsn ?? "")
+  const [editAsn, setEditAsn] = useState<boolean>(false)
 
   const saveAsn = useCallback(
     async (asn: Asn) => {
       await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
+      setEditAsn(false)
     },
     [courtCase.errorId]
   )
@@ -70,12 +72,16 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
   const handleAsnSave = (): void => {
     if (isValidAsn) {
       setSavedAsn(true)
-      console.log("Valid, can be saved")
 
-      console.log("Saving...")
       saveAsn(new Asn(asnString))
     }
   }
+
+  useEffect(() => {
+    if (savedAsn) {
+      setUpdatedAhoAsn(asnString)
+    }
+  }, [savedAsn, asnString])
 
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const asn = e.target.value.toUpperCase()
@@ -85,7 +91,11 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     amendFn("asn")(asn)
   }
 
-  useBeforeunload(!savedAsn && isAsnChanged ? (event: BeforeUnloadEvent) => event.preventDefault() : undefined)
+  useBeforeunload(
+    !savedAsn && isAsnChanged && updatedAhoAsn !== asnString
+      ? (event: BeforeUnloadEvent) => event.preventDefault()
+      : undefined
+  )
 
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
 
@@ -98,15 +108,37 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
   }
 
   const isSaveAsnBtnDisabled = (): boolean => {
-    if (isValidAsn && savedAsn) {
+    if (updatedAhoAsn === asnString) {
+      return true
+    } else if (isValidAsn && savedAsn) {
       return true
     } else if (!isValidAsn) {
       return true
     } else if (savedAsn) {
       return true
+    } else if (asnString === "") {
+      return true
+    } else if (!isAsnChanged) {
+      return true
     } else {
       return false
     }
+  }
+
+  const handleEditAsnBtn = (): void => {
+    setEditAsn(true)
+    if (updatedAhoAsn === asnString) {
+      setAsnString(updatedAhoAsn)
+      setIsAsnChanged(false)
+      amendmentRecords.asn = updatedAhoAsn ?? ""
+    }
+  }
+
+  const handleBackAsn = (): void => {
+    setEditAsn(false)
+    setAsnString(updatedAhoAsn)
+    setIsAsnChanged(false)
+    amendmentRecords.asn = updatedAhoAsn ?? ""
   }
 
   const isAsnEditable = courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
@@ -127,10 +159,12 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
         ) : (
           <EditableFieldTableRow
             value={defendant.ArrestSummonsNumber}
-            updatedValue={updatedAsn}
+            updatedValue={updatedAhoAsn}
             label="ASN"
             hasExceptions={isAsnEditable}
             isEditable={isAsnEditable}
+            handleEditBtn={handleEditAsnBtn}
+            isCorrectionEdit={editAsn}
           >
             <Label>{"Enter the ASN"}</Label>
             <HintText>
@@ -154,8 +188,11 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
                 error={!hideError()}
               />
             </div>
-            <ReactiveLinkButton onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()}>
+            <ReactiveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()}>
               {"Save correction"}
+            </ReactiveLinkButton>
+            <ReactiveLinkButton id={"stop-editing-asn"} onClick={handleBackAsn}>
+              {"Back"}
             </ReactiveLinkButton>
           </EditableFieldTableRow>
         )}
