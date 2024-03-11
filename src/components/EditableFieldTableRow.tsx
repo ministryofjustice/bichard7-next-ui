@@ -12,8 +12,8 @@ type Props = {
   updatedValue?: string | null
   isEditable: boolean
   children?: React.ReactNode
-  handleEditBtn: () => void
-  isCorrectionEdit: boolean
+  handleEditBtn?: () => void
+  isCorrectionEdit?: boolean
 }
 
 const useStyles = createUseStyles({
@@ -63,13 +63,12 @@ const EditableFieldTableRow = ({
   const isRendered = !!(value || updatedValue || hasExceptions)
   const hasCorrection = updatedValue && value !== updatedValue && !isCorrectionEdit
 
-  // console.log(
-  //   updatedValue && value !== updatedValue && !isCorrectionEdit,
-  //   updatedValue,
-  //   value,
-  //   updatedValue,
-  //   !isCorrectionEdit
-  // )
+  const handleEdit = handleEditBtn ? true : false
+  const handleClick = () => {
+    if (handleEditBtn) {
+      handleEditBtn()
+    }
+  }
 
   const labelField = (
     <>
@@ -104,9 +103,11 @@ const EditableFieldTableRow = ({
       <br />
       {updatedValue}
       {correctionBadge}
-      <ReactiveLinkButton id={"edit-asn"} onClick={handleEditBtn}>
-        {"Edit"}
-      </ReactiveLinkButton>
+      <ConditionalRender isRendered={handleEdit}>
+        <ReactiveLinkButton id={"edit-asn"} onClick={handleClick}>
+          {"Edit"}
+        </ReactiveLinkButton>
+      </ConditionalRender>
     </>
   )
 
