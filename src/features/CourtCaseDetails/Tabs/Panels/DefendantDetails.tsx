@@ -4,7 +4,6 @@ import { GenderCodes } from "@moj-bichard7-developers/bichard7-next-data/dist/ty
 import { RemandStatuses } from "@moj-bichard7-developers/bichard7-next-data/dist/types/RemandStatusCode"
 import { GenderCode, RemandStatusCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import axios from "axios"
-import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { ReactiveLinkButton } from "components/LinkButton"
@@ -60,12 +59,11 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
   const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(updatedAhoAsn))
   const [savedAsn, setSavedAsn] = useState<boolean>(false)
   const [asnString, setAsnString] = useState<string>(updatedAhoAsn ?? "")
-  const [editAsn, setEditAsn] = useState<boolean>(false)
+  const [pageLoad, setPageLoad] = useState<boolean>(false)
 
   const saveAsn = useCallback(
     async (asn: Asn) => {
       await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
-      setEditAsn(false)
       setSavedAsn(false)
     },
     [courtCase.errorId]
@@ -80,10 +78,15 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
   }
 
   useEffect(() => {
+    if (!pageLoad) {
+      amendmentRecords.asn = updatedAhoAsn ?? ""
+      setPageLoad(true)
+    }
+
     if (savedAsn) {
       setUpdatedAhoAsn(asnString)
     }
-  }, [savedAsn, asnString])
+  }, [savedAsn, asnString, pageLoad, amendmentRecords, updatedAhoAsn])
 
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const asn = e.target.value.toUpperCase()
@@ -119,36 +122,17 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     return false
   }
 
-  const isBackAsnBtnDisabled = (): boolean => {
-    if (savedAsn) {
-      return true
-    } else {
-      return false
-    }
-  }
-
-  const isBackBtnRendered = (): boolean => {
-    return !savedAsn || !(amendmentRecords.asn !== "" && updatedAhoAsn === asnString)
-  }
-
-  const handleEditAsnBtn = (): void => {
-    setEditAsn(true)
-    if (updatedAhoAsn === asnString) {
-      setAsnString(updatedAhoAsn)
-      setIsValidAsn(isAsnFormatValid(updatedAhoAsn))
-      setIsAsnChanged(false)
-      amendmentRecords.asn = updatedAhoAsn ?? ""
-    }
-  }
-
-  const handleBackAsn = (): void => {
-    setEditAsn(false)
-    setAsnString(updatedAhoAsn)
-    setIsAsnChanged(false)
-    amendmentRecords.asn = updatedAhoAsn ?? ""
-  }
-
   const isAsnEditable = courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
+
+  const defendantAsn = (): string => {
+    const possibleAsn = courtCase.errorStatus === "Unresolved" ? defendant.ArrestSummonsNumber : updatedAhoAsn
+
+    if (possibleAsn) {
+      return possibleAsn
+    }
+
+    return defendant.ArrestSummonsNumber
+  }
 
   return (
     <div className={`Defendant-details-table ${classes.wrapper}`}>
@@ -165,13 +149,11 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
           </ExceptionFieldTableRow>
         ) : (
           <EditableFieldTableRow
-            value={defendant.ArrestSummonsNumber}
+            value={defendantAsn()}
             updatedValue={updatedAhoAsn}
             label="ASN"
             hasExceptions={isAsnEditable}
             isEditable={isAsnEditable}
-            handleEditBtn={handleEditAsnBtn}
-            isCorrectionEdit={editAsn}
           >
             <Label>{"Enter the ASN"}</Label>
             <HintText>
@@ -198,11 +180,6 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
             <ReactiveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()}>
               {"Save correction"}
             </ReactiveLinkButton>
-            <ConditionalRender isRendered={isBackBtnRendered()}>
-              <ReactiveLinkButton id={"back-asn"} onClick={handleBackAsn} disabled={isBackAsnBtnDisabled()}>
-                {"Back"}
-              </ReactiveLinkButton>
-            </ConditionalRender>
           </EditableFieldTableRow>
         )}
 

@@ -13,7 +13,7 @@ const editableFieldsValidationError = (courtCase: DisplayFullCourtCase, amendmen
   return (
     nextHearingDateValidationError(exceptions, amendments) ||
     nextHearingLocationValidationError(exceptions, amendments) ||
-    asnValidationError(exceptions, amendments, courtCase)
+    asnValidationError(exceptions, amendments)
   )
 }
 
