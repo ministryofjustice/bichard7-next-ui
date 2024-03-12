@@ -283,7 +283,7 @@ jobs:
       - setup
       - run:
           name: Clone bichard7-next-tests
-          command: git clone --depth 1 -b update-html-selector https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
+          command: git clone --depth 1 -b https://github.com/ministryofjustice/bichard7-next-tests.git ~/bichard7-next-tests
       - node/install-packages:
           app-dir: ~/bichard7-next-tests
           cache-path: ~/bichard7-next-tests/node_modules
