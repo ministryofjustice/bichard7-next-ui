@@ -20,7 +20,6 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
   const user = useCurrentUser()
   const filterPanelKey = `is-filter-panel-visible-${user.username}`
   const [isSearchPanelShown, setIsSearchPanelShown] = useState(true)
-  console.log(new Date())
 
   useEffect(() => {
     const filterPanelValue = localStorage.getItem(filterPanelKey)
@@ -55,13 +54,13 @@ const CourtCaseFilterWrapper: React.FC<Props> = ({
               aria-haspopup="true"
               aria-expanded={isSearchPanelShown === true}
               onClick={() => {
-                const newValue = !isSearchPanelShown
-                if (!newValue) {
+                const showSearchPanel = !isSearchPanelShown
+                if (!showSearchPanel) {
                   localStorage.setItem(filterPanelKey, new Date().toISOString())
                 } else {
                   localStorage.removeItem(filterPanelKey)
                 }
-                setIsSearchPanelShown(newValue)
+                setIsSearchPanelShown(showSearchPanel)
               }}
             >
               {isSearchPanelShown ? "Hide search panel" : "Show search panel"}

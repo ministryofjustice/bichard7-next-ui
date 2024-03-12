@@ -846,7 +846,7 @@ describe("Filtering cases", () => {
     cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
     cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
 
-    cy.get('a[href*="/bichard?keywords="]').contains("Clear filters").click()
+    cy.get("#clear-filters").click()
 
     cy.get('*[class^="moj-filter-tags"]').should("not.exist")
     cy.location().should((loc) => {

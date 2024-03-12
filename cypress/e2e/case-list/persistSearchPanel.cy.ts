@@ -24,7 +24,7 @@ it("Should show search panel by default after logging in", () => {
   cy.contains("Apply filters")
 })
 
-it("Should persist the closure of the side panel when the user refreshes the page", () => {
+it("When the user refreshes the page, the search panel should stay closed", () => {
   loginAndGoToUrl()
   cy.get("#filter-button").contains("Hide search panel").click()
   cy.get("#filter-button").contains("Show search panel")
