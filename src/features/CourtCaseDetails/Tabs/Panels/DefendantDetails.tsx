@@ -4,6 +4,7 @@ import { GenderCodes } from "@moj-bichard7-developers/bichard7-next-data/dist/ty
 import { RemandStatuses } from "@moj-bichard7-developers/bichard7-next-data/dist/types/RemandStatusCode"
 import { GenderCode, RemandStatusCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import axios from "axios"
+import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { ReactiveLinkButton } from "components/LinkButton"
@@ -65,6 +66,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     async (asn: Asn) => {
       await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
       setEditAsn(false)
+      setSavedAsn(false)
     },
     [courtCase.errorId]
   )
@@ -110,25 +112,30 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
   const isSaveAsnBtnDisabled = (): boolean => {
     if (updatedAhoAsn === asnString) {
       return true
-    } else if (isValidAsn && savedAsn) {
-      return true
     } else if (!isValidAsn) {
       return true
-    } else if (savedAsn) {
-      return true
-    } else if (asnString === "") {
-      return true
-    } else if (!isAsnChanged) {
+    }
+
+    return false
+  }
+
+  const isBackAsnBtnDisabled = (): boolean => {
+    if (savedAsn) {
       return true
     } else {
       return false
     }
   }
 
+  const isBackBtnRendered = (): boolean => {
+    return !savedAsn || !(amendmentRecords.asn !== "" && updatedAhoAsn === asnString)
+  }
+
   const handleEditAsnBtn = (): void => {
     setEditAsn(true)
     if (updatedAhoAsn === asnString) {
       setAsnString(updatedAhoAsn)
+      setIsValidAsn(isAsnFormatValid(updatedAhoAsn))
       setIsAsnChanged(false)
       amendmentRecords.asn = updatedAhoAsn ?? ""
     }
@@ -191,9 +198,11 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
             <ReactiveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()}>
               {"Save correction"}
             </ReactiveLinkButton>
-            <ReactiveLinkButton id={"stop-editing-asn"} onClick={handleBackAsn}>
-              {"Back"}
-            </ReactiveLinkButton>
+            <ConditionalRender isRendered={isBackBtnRendered()}>
+              <ReactiveLinkButton id={"back-asn"} onClick={handleBackAsn} disabled={isBackAsnBtnDisabled()}>
+                {"Back"}
+              </ReactiveLinkButton>
+            </ConditionalRender>
           </EditableFieldTableRow>
         )}
 
