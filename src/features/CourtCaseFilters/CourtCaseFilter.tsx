@@ -256,9 +256,6 @@ const CourtCaseFilter: React.FC<Props> = ({
           </ConditionalRender>
           <div className={classes["govuk-form-group"]}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-          </div>
-          <div className={classes["govuk-form-group"]}>
-            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"} classNames="filters-court-date">
               <CourtDateFilterOptions
                 caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}

@@ -33,7 +33,7 @@ it("Should persist the closure of the side panel when the user refreshes the pag
   cy.get("#filter-button").contains("Show search panel")
 })
 
-it("Should persist the state of the side panel when the user applies a filter", () => {
+it("When the user applies a filter, the search panel should stay open", () => {
   cy.task("insertDummyCourtCasesWithTriggers", {
     caseTriggers,
     orgCode: "01",
