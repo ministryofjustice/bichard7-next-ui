@@ -38,4 +38,9 @@ const getExceptionsCount = (exceptions: Exception[], updatedFields: AmendmentRec
   ]
 }
 
-export default getExceptionsCount
+export {
+  getExceptionsCount,
+  getAsnExceptionCount,
+  getNextHearingLocationExceptionsCount,
+  getNextHearingDateExceptionsCount
+}

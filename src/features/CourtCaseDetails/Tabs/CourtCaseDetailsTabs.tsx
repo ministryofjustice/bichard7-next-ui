@@ -2,7 +2,7 @@ import { useCourtCase } from "context/CourtCaseContext"
 import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
-import getExceptionsCount from "utils/getExceptionsCount"
+import { getExceptionsCount } from "utils/getExceptionsCount"
 import { CourtCaseDetailsSingleTab } from "./CourtCaseDetailsSingleTab"
 
 interface CourtCaseDetailsTabsProps {
