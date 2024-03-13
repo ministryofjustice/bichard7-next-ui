@@ -49,9 +49,10 @@ const DownArrow: React.FC = () => (
 interface Props {
   filterName: string
   children: ReactNode
+  classNames?: string
 }
 
-const ExpandingFilters: React.FC<Props> = ({ filterName, children }: Props) => {
+const ExpandingFilters: React.FC<Props> = ({ filterName, classNames, children }: Props) => {
   const [caseTypeIsVisible, setCaseTypeVisible] = useState(true)
   const classes = useStyles()
   return (
@@ -62,7 +63,11 @@ const ExpandingFilters: React.FC<Props> = ({ filterName, children }: Props) => {
           setCaseTypeVisible(!caseTypeIsVisible)
         }}
       >
-        <button type="button" className={classes.iconButton} aria-label={`${filterName} filter options`}>
+        <button
+          type="button"
+          className={`${classes.iconButton} ${classNames}`}
+          aria-label={`${filterName} filter options`}
+        >
           {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
         </button>
         <div className={classes.legendContainer}>

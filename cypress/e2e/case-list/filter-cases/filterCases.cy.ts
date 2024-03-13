@@ -7,27 +7,25 @@ import {
   confirmFiltersAppliedContains,
   confirmMultipleFieldsDisplayed,
   confirmMultipleFieldsNotDisplayed,
-  exactMatch,
   filterByCaseAge
 } from "../../../support/helpers"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 
-function visitBasePathAndShowFilters() {
+function visitBasePath() {
   cy.visit("/bichard")
-  cy.get("button[id=filter-button]").click()
 }
 
 function collapseFilterSection(sectionToBeCollapsed: string, optionToBeCollapsed: string) {
-  cy.contains(exactMatch(sectionToBeCollapsed), { matchCase: true }).parent().parent().parent().find("button").click()
+  cy.get(`button${sectionToBeCollapsed}`).click()
   cy.get(optionToBeCollapsed).should("not.be.visible")
 }
 
 function expandFilterSection(sectionToBeExpanded: string, optionToBeExpanded: string) {
-  cy.contains(exactMatch(sectionToBeExpanded), { matchCase: true }).parent().parent().parent().find("button").click()
+  cy.get(`button${sectionToBeExpanded}`).click()
   cy.get(optionToBeExpanded).should("exist")
 }
 
-function removeFilterTag(filterTag: string) {
+function removeFilterTagWhilstSearchPanelIsHidden(filterTag: string) {
   cy.get(".moj-filter-tags a.moj-filter__tag").contains(filterTag).click({ force: true })
 }
 
@@ -73,10 +71,10 @@ describe("Filtering cases", () => {
   })
 
   it("Should be accessible with conditional radio buttons opened", () => {
-    visitBasePathAndShowFilters()
+    visitBasePath()
     cy.contains("Court date").parent().parent().parent().find("button").click()
     cy.get("#case-age").should("not.be.visible")
-    expandFilterSection("Court date", "#case-age")
+    expandFilterSection(".filters-court-date", "#case-age")
 
     cy.injectAxe()
 
@@ -87,7 +85,7 @@ describe("Filtering cases", () => {
   })
 
   it("Should be accessible", () => {
-    visitBasePathAndShowFilters()
+    visitBasePath()
     cy.get("input[id=keywords]").type("Dummy")
     cy.get(`label[for="triggers-type"]`).click()
     cy.get(`label[for="exceptions-type"]`).click()
@@ -108,12 +106,12 @@ describe("Filtering cases", () => {
     cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
   })
   it("Should expand and collapse reason filter navigation & show the trigger info", () => {
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     cy.contains("Exceptions")
 
-    collapseFilterSection("Reason", "#exceptions-type")
-    expandFilterSection("Reason", "#exceptions-type")
+    collapseFilterSection(".filters-reason", "#exceptions-type")
+    expandFilterSection(".filters-reason", "#exceptions-type")
 
     cy.get("#warningIcon").click()
     cy.contains("Included triggers")
@@ -121,13 +119,13 @@ describe("Filtering cases", () => {
   })
 
   it("Should expand and collapse court date filter navigation with the ratio conditional sections collapsed after the second expand", () => {
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     cy.contains("Date range")
 
     cy.contains("Court date").parent().parent().parent().find("button").click()
     cy.get("#case-age").should("not.be.visible")
-    expandFilterSection("Court date", "#case-age")
+    expandFilterSection(".filters-court-date", "#case-age")
 
     // Date range & case ages are collapsed
     cy.get(`label[for="date-from"]`).should("not.be.visible")
@@ -139,7 +137,7 @@ describe("Filtering cases", () => {
   })
 
   it("Should remove the selection of the case age when it's been changed to the date range", () => {
-    visitBasePathAndShowFilters()
+    visitBasePath()
     filterByCaseAge(`label[for="case-age-yesterday"]`)
     cy.get("#case-age-yesterday").should("be.checked")
     cy.get(`label[for="date-range"]`).click()
@@ -148,7 +146,7 @@ describe("Filtering cases", () => {
   })
 
   it("Should remove the selection of the date range when it's been changed to the case age", () => {
-    visitBasePathAndShowFilters()
+    visitBasePath()
     cy.get("label[for=date-range]").click()
     cy.get("label[for=date-from]").type("2022-01-01")
     cy.get("label[for=date-to]").type("2022-12-31")
@@ -159,7 +157,7 @@ describe("Filtering cases", () => {
   })
 
   it("Should only have the checked attribute for the selected case age ratio button", () => {
-    visitBasePathAndShowFilters()
+    visitBasePath()
     // no selection, nothing is checked
     cy.get("#case-age").should("not.be.checked")
     cy.get("#date-range").should("not.be.checked")
@@ -174,12 +172,12 @@ describe("Filtering cases", () => {
   })
 
   it("Should expand and collapse locked state filter navigation", () => {
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     cy.contains("Locked cases only")
 
-    collapseFilterSection("Locked state", "#locked")
-    expandFilterSection("Locked state", "#locked")
+    collapseFilterSection(".filters-locked-state", "#locked")
+    expandFilterSection(".filters-locked-state", "#locked")
   })
 
   it("Should display cases filtered by defendant name", () => {
@@ -189,15 +187,18 @@ describe("Filtering cases", () => {
       { defendantName: "PENNYWORTH Alfred", orgForPoliceFilter: "011111" }
     ])
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     inputAndSearch("keywords", "WAYNE Bruce")
+    cy.contains("Hide search panel").click()
+
     cy.contains("WAYNE Bruce")
     confirmMultipleFieldsNotDisplayed(["GORDON Barbara", "PENNYWORTH Alfred"])
     cy.get("tr").should("have.length", 2)
     confirmFiltersAppliedContains("WAYNE Bruce")
 
-    removeFilterTag("WAYNE Bruce")
+    removeFilterTagWhilstSearchPanelIsHidden("WAYNE Bruce")
+
     confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Barbara", "PENNYWORTH Alfred"])
   })
 
@@ -208,15 +209,18 @@ describe("Filtering cases", () => {
       { courtName: "Bristol Court", orgForPoliceFilter: "011111" }
     ])
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     inputAndSearch("court-name", "Manchester Court")
+    cy.contains("Hide search panel").click()
+
     cy.contains("Manchester Court")
     confirmMultipleFieldsNotDisplayed(["London Court", "Bristol Court"])
     cy.get("tr").should("have.length", 2)
     confirmFiltersAppliedContains("Manchester Court")
 
-    removeFilterTag("Manchester Court")
+    removeFilterTagWhilstSearchPanelIsHidden("Manchester Court")
+
     confirmMultipleFieldsDisplayed(["Manchester Court", "London Court", "Bristol Court"])
   })
 
@@ -227,15 +231,18 @@ describe("Filtering cases", () => {
       { ptiurn: "Case00003", orgForPoliceFilter: "011111" }
     ])
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     inputAndSearch("ptiurn", "Case00001")
+    cy.contains("Hide search panel").click()
+
     cy.contains("Case00001")
     confirmMultipleFieldsNotDisplayed(["Case00002", "Case00003"])
     cy.get("tr").should("have.length", 2)
     confirmFiltersAppliedContains("Case00001")
 
-    removeFilterTag("Case00001")
+    removeFilterTagWhilstSearchPanelIsHidden("Case00001")
+
     confirmMultipleFieldsDisplayed(["Case00001", "Case00002", "Case00003"])
   })
 
@@ -257,24 +264,30 @@ describe("Filtering cases", () => {
     cy.task("insertTriggers", { caseId: 0, triggers })
     cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     inputAndSearch("reason-codes", "TRPR0107")
+    cy.contains("Hide search panel").click()
+
     cy.contains("Case00000")
     confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
     cy.get("tbody tr").should("have.length", 1)
     confirmFiltersAppliedContains("TRPR0107")
-    removeFilterTag("TRPR0107")
+    removeFilterTagWhilstSearchPanelIsHidden("TRPR0107")
 
-    cy.get("button[id=filter-button]").click()
+    cy.contains("Show search panel").click()
 
     inputAndSearch("reason-codes", "HO200212")
+    cy.contains("Hide search panel").click()
+
     cy.contains("Case00001")
     confirmMultipleFieldsNotDisplayed(["Case00000", "Case00002"])
     cy.get("tr").should("have.length", 2)
+
     confirmFiltersAppliedContains("HO200212")
 
-    removeFilterTag("HO200212")
+    removeFilterTagWhilstSearchPanelIsHidden("HO200212")
+
     confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
   })
 
@@ -317,29 +330,33 @@ describe("Filtering cases", () => {
     tableRowShouldContain(1, "HO200212", "HO200239", "TRPR0015 - Personal details changed", "TRPR0107")
     tableRowShouldContain(2, "HO200247", "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
     inputAndSearch("reason-codes", "HO200212")
+
     confirmFiltersAppliedContains("HO200212")
     tableRowShouldContain(0, "HO200212")
     tableRowShouldNotContain(0, "HO200200", "TRPR0015 - Personal details changed", "TRPR0107")
-    removeFilterTag("HO200212")
+    cy.get(".moj-filter-tags").contains("HO200212").click({ force: true })
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
     inputAndSearch("reason-codes", "HO200200")
+
     confirmFiltersAppliedContains("HO200200")
     tableRowShouldContain(0, "HO200200")
     tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
-    removeFilterTag("HO200200")
+    cy.get(".moj-filter-tags").contains("HO200200").click({ force: true })
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
     inputAndSearch("reason-codes", "HO200247")
+
     confirmFiltersAppliedContains("HO200247")
     tableRowShouldContain(0, "HO200247")
     tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
-    removeFilterTag("HO200247")
+    cy.get(".moj-filter-tags").contains("HO200247").click({ force: true })
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
     inputAndSearch("reason-codes", "TRPR0015")
+
     confirmFiltersAppliedContains("TRPR0015")
     tableRowShouldContain(0, "TRPR0015")
     tableRowShouldContain(1, "TRPR0015")
@@ -367,8 +384,9 @@ describe("Filtering cases", () => {
     cy.task("insertTriggers", { caseId: 0, triggers })
     cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
     inputAndSearch("reason-codes", "PR04")
+
     confirmFiltersAppliedContains("PR04")
     cy.findByText("There are no court cases to show").should("exist")
   })
@@ -391,7 +409,7 @@ describe("Filtering cases", () => {
     cy.task("insertTriggers", { caseId: 0, triggers })
     cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     inputAndSearch("reason-codes", "TRPR0107 HO200212")
     cy.contains("Case00000")
@@ -423,28 +441,26 @@ describe("Filtering cases", () => {
     cy.task("insertException", { caseId: 1, exceptionCode: "HO200213", errorReport: "HO200213||ds:Reason" })
     cy.task("insertException", { caseId: 2, exceptionCode: "HO200214", errorReport: "HO200214||ds:Reason" })
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     inputAndSearch("keywords", "Bruce")
     confirmMultipleFieldsNotDisplayed(["PENNYWORTH Alfred"])
     cy.get("tr").should("have.length", 4)
     confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Bruce", "PENNYWORTH Bruce"])
 
-    cy.get("button[id=filter-button]").click()
     inputAndSearch("court-name", "London Court")
     confirmMultipleFieldsNotDisplayed(["PENNYWORTH Bruce", "PENNYWORTH Alfred"])
     cy.get("tr").should("have.length", 3)
     confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Bruce"])
 
-    cy.get("button[id=filter-button]").click()
     inputAndSearch("ptiurn", "Case0000")
     confirmMultipleFieldsNotDisplayed(["PENNYWORTH Bruce", "PENNYWORTH Alfred"])
     cy.get("tr").should("have.length", 3)
     confirmMultipleFieldsDisplayed(["WAYNE Bruce", "GORDON Bruce"])
-    removeFilterTag("Case0000")
+    cy.get(".moj-filter__tag").contains("Case0000").click()
 
-    cy.get("button[id=filter-button]").click()
     inputAndSearch("reason-codes", "HO200212")
+
     confirmMultipleFieldsNotDisplayed(["GORDON Bruce", "PENNYWORTH Bruce", "PENNYWORTH Alfred"])
     cy.get("tr").should("have.length", 2)
     confirmMultipleFieldsDisplayed(["WAYNE Bruce"])
@@ -475,7 +491,7 @@ describe("Filtering cases", () => {
       { courtDate: aLongTimeAgoDate, orgForPoliceFilter: force }
     ])
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     // Tests for "Today"
     filterByCaseAge(`label[for="case-age-today"]`)
@@ -489,11 +505,12 @@ describe("Filtering cases", () => {
         cy.wrap(row).contains("Case00000").should("exist")
       })
 
-    removeFilterTag("Today")
+    cy.get(".moj-filter__tag").contains("Today").click()
+    cy.get("button#search").click()
+
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 8)
 
     // Tests for "yesterday"
-    cy.get("button#filter-button").click()
     filterByCaseAge(`label[for="case-age-yesterday"]`)
     cy.get('label[for="case-age-yesterday"]').should("have.text", "Yesterday (2)")
     cy.get("button#search").click()
@@ -502,11 +519,11 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed(["Case00001", "Case00002"])
     confirmMultipleFieldsNotDisplayed(["Case00000", "Case00003", "Case00004", "Case00005", "Case00006", "Case00007"])
 
-    removeFilterTag("Yesterday")
+    cy.get(".moj-filter__tag").contains("Yesterday").click()
+    cy.get("button#search").click()
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 8)
 
-    // Tests for "2 days ago"
-    cy.get("button#filter-button").click()
+    // // Tests for "2 days ago"
     cy.get('label[for="case-age-2-days-ago"]').should("have.text", `2 days ago (${day2DateString}) (1)`)
     filterByCaseAge(`label[for="case-age-2-days-ago"]`)
     cy.get("button#search").click()
@@ -518,11 +535,11 @@ describe("Filtering cases", () => {
         cy.wrap(row).contains("Case00003").should("exist")
       })
 
-    removeFilterTag("2 days ago")
+    cy.get(".moj-filter__tag").contains("2 days ago").click()
+    cy.get("button#search").click()
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 8)
 
-    // Tests for "3 days ago"
-    cy.get("button#filter-button").click()
+    // // Tests for "3 days ago"
     cy.get('label[for="case-age-3-days-ago"]').should("have.text", `3 days ago (${day3DateString}) (3)`)
     filterByCaseAge(`label[for="case-age-3-days-ago"]`)
     cy.get("button#search").click()
@@ -531,11 +548,11 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed(["Case00004", "Case00005", "Case00006"])
     confirmMultipleFieldsNotDisplayed(["Case00000", "Case00001", "Case00002", "Case00003", "Case00007"])
 
-    removeFilterTag("3 days ago")
+    cy.get(".moj-filter__tag").contains("3 days ago").click()
+    cy.get("button#search").click()
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 8)
 
-    // Tests for "15 days ago and older"
-    cy.get("button#filter-button").click()
+    // // Tests for "15 days ago and older"
     cy.get('label[for="case-age-15-days-ago-and-older"]').should(
       "have.text",
       `15 days ago and older (up to ${day15DateString}) (1)`
@@ -557,11 +574,11 @@ describe("Filtering cases", () => {
       "Case00006"
     ])
 
-    removeFilterTag("15 days ago and older")
+    cy.get(".moj-filter__tag").contains("15 days ago and older").click()
+    cy.get("button#search").click()
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 8)
 
-    // Test for multiple SLA
-    cy.get("button#filter-button").click()
+    // // Test for multiple SLA
 
     filterByCaseAge(`label[for="case-age-today"]`)
     filterByCaseAge(`label[for="case-age-3-days-ago"]`)
@@ -572,9 +589,12 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed(["Case00000", "Case00004", "Case00005", "Case00006"])
     confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002", "Case00003", "Case00007"])
 
-    removeFilterTag("3 days ago")
+    cy.get(".moj-filter__tag").contains("3 days ago").click()
+    cy.get("button#search").click()
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
-    removeFilterTag("Today")
+
+    cy.get(".moj-filter__tag").contains("Today").click()
+    cy.get("button#search").click()
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 8)
   })
 
@@ -599,7 +619,6 @@ describe("Filtering cases", () => {
 
     cy.visit("/bichard")
 
-    cy.get("button#filter-button").click()
     cy.get(`label[for="date-range"]`).click()
     cy.get(`label[for="date-from"]`).type("2022-01-01")
     cy.get(`label[for="date-to"]`).type("2022-12-31")
@@ -607,7 +626,6 @@ describe("Filtering cases", () => {
     cy.get(".moj-filter__tag").contains("01/01/2022 - 31/12/2022")
     cy.get("button#search").click()
 
-    cy.get("button#filter-button").click()
     cy.get(`label[for="date-range"]`).click()
     cy.get("#date-range").should("be.checked")
     cy.get("#date-from").should("have.value", "2022-01-01")
@@ -618,13 +636,12 @@ describe("Filtering cases", () => {
     cy.contains("Hide search panel").click()
 
     confirmFiltersAppliedContains("01/01/2022 - 31/12/2022")
-    removeFilterTag("01/01/2022 - 31/12/2022")
+    removeFilterTagWhilstSearchPanelIsHidden("01/01/2022 - 31/12/2022")
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 13)
   })
 
   it("Should update 'selected filter' chip when changing date range filter", () => {
     cy.visit("/bichard")
-    cy.get("button#filter-button").click()
     cy.get(`label[for="date-range"]`).click()
 
     cy.get(`label[for="date-from"]`).type("1999-01-01")
@@ -675,7 +692,7 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`, `Case00003`])
 
     // Filtering by having triggers
-    cy.get("button[id=filter-button]").click()
+
     cy.get(`label[for="triggers-type"]`).click()
     cy.get("button[id=search]").click()
 
@@ -684,9 +701,10 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`])
     confirmMultipleFieldsNotDisplayed(["Case00002", "Case00003"])
 
-    // Filtering by having exceptions
-    removeFilterTag("Triggers")
-    cy.get("button[id=filter-button]").click()
+    // // Filtering by having exceptions
+    cy.get(".moj-filter__tag").contains("Triggers").click()
+    cy.get("button[id=search]").click()
+
     cy.get(`label[for="exceptions-type"]`).click()
     cy.get("button[id=search]").click()
 
@@ -695,10 +713,10 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed([`Case00000`, `Case00002`])
     confirmMultipleFieldsNotDisplayed([`Case00001`, `Case00003`])
 
-    removeFilterTag("Exceptions")
+    cy.get(".moj-filter__tag").contains("Exceptions").click()
 
-    // Filter for both triggers and exceptions
-    cy.get("button[id=filter-button]").click()
+    // // Filter for both triggers and exceptions
+
     cy.get(`label[for="triggers-type"]`).click()
     cy.get(`label[for="exceptions-type"]`).click()
     cy.get("button[id=search]").click()
@@ -708,13 +726,16 @@ describe("Filtering cases", () => {
 
     confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`])
 
-    // Removing exceptions filter tag
-    removeFilterTag("Exceptions")
+    // // Removing exceptions filter tag
+    cy.get(".moj-filter__tag").contains("Exceptions").click()
+    cy.get("button[id=search]").click()
+
     confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`])
     confirmMultipleFieldsNotDisplayed([`Case00002`, `Case00003`])
 
-    // Removing triggers filter tag
-    removeFilterTag("Triggers")
+    // // Removing triggers filter tag
+    cy.get(".moj-filter__tag").contains("Triggers").click()
+    cy.get("button[id=search]").click()
     confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`, `Case00003`])
   })
 
@@ -739,7 +760,6 @@ describe("Filtering cases", () => {
 
     confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
 
-    cy.get("button[id=filter-button]").click()
     cy.get(`label[for="bails-type"]`).click()
     cy.get("button[id=search]").click()
 
@@ -748,7 +768,8 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed(["Case00000"])
     confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
 
-    removeFilterTag("Bails")
+    cy.get(".moj-filter__tag").contains("Bails").click()
+    cy.get("button[id=search]").click()
     confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
   })
 
@@ -762,7 +783,7 @@ describe("Filtering cases", () => {
       { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force, errorResolvedBy: "Bichard01" }
     ])
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
 
     // Filter for unresolved cases by default
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
@@ -775,7 +796,8 @@ describe("Filtering cases", () => {
     cy.contains("Case00001")
 
     // Removing case state filter tag unresolved cases should be shown with the filter disabled
-    removeFilterTag("Resolved cases")
+    cy.get(".moj-filter__tag").contains("Resolved").click()
+    cy.get("button[id=search]").click()
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
   })
 
@@ -785,7 +807,7 @@ describe("Filtering cases", () => {
       { orgForPoliceFilter: "011111" }
     ])
 
-    visitBasePathAndShowFilters()
+    visitBasePath()
     // Filter for locked cases
     cy.get(`label[for="locked"]`).click()
     cy.get("button[id=search]").click()
@@ -794,11 +816,13 @@ describe("Filtering cases", () => {
     cy.contains("Case00000")
 
     // Removing locked filter tag all case should be shown with the filter disabled
-    removeFilterTag("Locked")
+    cy.get(".moj-filter__tag").contains("Locked").click()
+    cy.get("button[id=search]").click()
+
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 2)
 
     // Filter for unlocked cases
-    cy.get("button[id=filter-button]").click()
+
     cy.get(`label[for="unlocked"]`).click()
     cy.get("button[id=search]").click()
 
@@ -806,12 +830,13 @@ describe("Filtering cases", () => {
     cy.contains("Case00001")
 
     // Removing unlocked filter tag all case should be shown with the filter disabled
-    removeFilterTag("Unlocked")
+    cy.get(".moj-filter__tag").contains("Unlocked").click()
+    cy.get("button[id=search]").click()
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 2)
   })
 
   it("Should clear filters when clicked on the link outside of the filter panel", () => {
-    visitBasePathAndShowFilters()
+    visitBasePath()
     cy.get("input[id=keywords]").type("Dummy")
     cy.get('label[for="triggers-type"]').click()
     cy.get('label[for="exceptions-type"]').click()
@@ -821,7 +846,7 @@ describe("Filtering cases", () => {
     cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
     cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
 
-    cy.get(".moj-filter-tags a").contains("Clear filters").click()
+    cy.get("#clear-filters").click()
 
     cy.get('*[class^="moj-filter-tags"]').should("not.exist")
     cy.location().should((loc) => {
@@ -830,7 +855,7 @@ describe("Filtering cases", () => {
   })
 
   it("Should clear filters when clicked on the link inside the filter panel", () => {
-    visitBasePathAndShowFilters()
+    visitBasePath()
     cy.get("input[id=keywords]").type("Dummy")
     cy.get('label[for="triggers-type"]').click()
     cy.get('label[for="exceptions-type"]').click()
@@ -839,8 +864,6 @@ describe("Filtering cases", () => {
     cy.get('*[class^="moj-filter-tags"]').contains("Dummy")
     cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
     cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
-
-    cy.get("button[id=filter-button]").click()
 
     cy.get(".moj-filter__heading-title a").contains("Clear filters").click()
 
@@ -859,7 +882,7 @@ describe("Filtering cases", () => {
         { orgForPoliceFilter: "011111" }
       ])
 
-      visitBasePathAndShowFilters()
+      visitBasePath()
 
       cy.get(`label[for="my-cases-filter"]`).click()
       cy.contains("Selected filters")
@@ -874,22 +897,10 @@ describe("Filtering cases", () => {
   })
 
   describe("Applied filter section", () => {
-    it("Should show the applied filter section when the filter panel is hidden", () => {
-      visitBasePathAndShowFilters()
+    it("Searching for a keyword should not change the state of the search panel visibility", () => {
+      visitBasePath()
       inputAndSearch("keywords", "WAYNE Bruce")
 
-      cy.contains("Show search panel")
-      cy.contains("Hide search panel").should("not.exist")
-      cy.get(".moj-filter-tags").contains("Filters applied")
-      cy.get(".moj-filter-tags").contains("Clear filters")
-    })
-
-    it("Should hide the applied filter section when the filter panel is shown", () => {
-      visitBasePathAndShowFilters()
-      inputAndSearch("keywords", "WAYNE Bruce")
-
-      cy.contains("Show search panel")
-      cy.contains("Show search panel").click()
       cy.contains("Show search panel").should("not.exist")
       cy.contains("Hide search panel")
       cy.contains("Filters applied").should("not.exist")
@@ -898,11 +909,12 @@ describe("Filtering cases", () => {
     })
 
     it("Should remove filters when they are clicked", () => {
-      visitBasePathAndShowFilters()
+      visitBasePath()
       cy.get("input[id=reason-codes]").type("Reason1 Reason2")
       cy.get("input[id=keywords]").type("Dummy")
       cy.get('label[for="triggers-type"]').click()
       cy.get("button[id=search]").click()
+      cy.get("#filter-button").contains("Hide search panel").click()
 
       cy.get(`a[id="filter-tag-reason1"]`).should("exist")
       cy.get(`a[id="filter-tag-dummy"]`).should("exist")

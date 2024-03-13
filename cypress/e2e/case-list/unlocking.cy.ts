@@ -67,7 +67,6 @@ describe("Case unlocked badge", () => {
 
     loginAndGoToUrl("exceptionhandler@example.com")
 
-    cy.get("#filter-button").click()
     cy.get("#keywords").type("NAME Defendant")
     cy.contains("Apply filters").click()
 
@@ -98,7 +97,6 @@ describe("Case unlocked badge", () => {
 
     loginAndGoToUrl("triggerhandler@example.com")
 
-    cy.get("#filter-button").click()
     cy.get("#keywords").type("NAME Defendant")
     cy.contains("Apply filters").click()
 

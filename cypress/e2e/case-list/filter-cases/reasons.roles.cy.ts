@@ -3,7 +3,6 @@ import { newUserLogin } from "../../../support/helpers"
 
 const navigateAndShowFilters = () => {
   cy.visit("/bichard")
-  cy.get("button[id=filter-button]").click()
 }
 
 describe("Reasons filters", () => {

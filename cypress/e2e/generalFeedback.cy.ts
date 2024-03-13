@@ -104,7 +104,7 @@ describe("General Feedback Form", () => {
     submitAFeedback()
 
     cy.url().should("match", /\/bichard/)
-    cy.get("button").contains("Show search panel").should("exist")
+    cy.get("H1").should("have.text", "Case list")
   })
 
   it("will go back to the case list page when I press the back button", () => {
@@ -113,7 +113,7 @@ describe("General Feedback Form", () => {
     cy.contains("Back").click()
 
     cy.url().should("match", /\/bichard/)
-    cy.get("button").contains("Show search panel").should("exist")
+    cy.get("H1").should("have.text", "Case list")
   })
 
   it("Should redirect back to case details page", () => {
