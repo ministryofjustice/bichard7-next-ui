@@ -141,7 +141,6 @@ describe("ASN", () => {
 
     cy.get(".moj-badge").contains("Editable Field").should("exist")
     // error message should be displayed when ASN is not entered
-    cy.get("#asn").clear()
     cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
     cy.get("#event-name-error").should("exist")
     // Submit exception(s) button should be disabled
@@ -159,7 +158,7 @@ describe("ASN", () => {
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
-      updatedMessageNotHaveContent: ["<br7:ArrestSummonsNumber>AAAAAAAAAAAAAAAAAAAA</br7:ArrestSummonsNumber>"],
+      updatedMessageNotHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber>"],
       updatedMessageHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000410836V</br7:ArrestSummonsNumber>"]
     })
   })
