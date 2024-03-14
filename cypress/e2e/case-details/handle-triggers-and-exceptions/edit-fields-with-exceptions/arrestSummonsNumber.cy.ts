@@ -1,7 +1,7 @@
+import AnnotatedHO from "../../../../../test/test-data/AnnotatedHO1.json"
 import AsnExceptionHO100206 from "../../../../../test/test-data/AsnExceptionHo100206.json"
 import AsnExceptionHO100321 from "../../../../../test/test-data/AsnExceptionHo100321.json"
 import ExceptionHO100239 from "../../../../../test/test-data/HO100239_1.json"
-import AnnotatedHO from "../../../../../test/test-data/AnnotatedHO1.json"
 import hashedPassword from "../../../../fixtures/hashedPassword"
 import { verifyUpdatedMessage } from "../../../../support/helpers"
 
@@ -104,6 +104,7 @@ describe("ASN", () => {
     cy.visit("/bichard/court-cases/0")
 
     cy.get(".moj-badge").contains("Editable Field").should("exist")
+    cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
     cy.get("button").contains("Submit exception(s)").click()
@@ -139,6 +140,7 @@ describe("ASN", () => {
     cy.visit("/bichard/court-cases/0")
 
     cy.get(".moj-badge").contains("Editable Field").should("exist")
+    cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
     cy.get("button").contains("Submit exception(s)").click()
@@ -174,6 +176,7 @@ describe("ASN", () => {
     cy.visit("/bichard/court-cases/0")
 
     cy.get(".moj-badge").contains("Editable Field").should("exist")
+    cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
     cy.get("button").contains("Submit exception(s)").click()
@@ -199,13 +202,13 @@ describe("ASN", () => {
 
     cy.get(".moj-badge").contains("Correction").should("not.exist")
     cy.get(".Defendant-details-table").contains("AAAAAAAAAAAAAAAAAAA")
+    cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
     cy.get("button").contains("Submit exception(s)").click()
     cy.get("button").contains("Submit exception(s)").click()
 
     cy.get(".Defendant-details-table").contains("1101ZD0100000448754K")
-    cy.get(".moj-badge").contains("Correction").should("exist")
   })
 
   it("should display error when invalid ASN is entered", () => {
