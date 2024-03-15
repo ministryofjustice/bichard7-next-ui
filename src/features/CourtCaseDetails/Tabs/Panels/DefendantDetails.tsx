@@ -37,6 +37,11 @@ const useStyles = createUseStyles({
 
   asnInput: {
     width: "15rem"
+  },
+
+  "save-button": {
+    marginTop: "0.94rem",
+    marginBottom: 0
   }
 })
 
@@ -177,7 +182,12 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
                 error={!hideError()}
               />
             </div>
-            <ReactiveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()}>
+            <ReactiveLinkButton
+              id={"save-asn"}
+              className={classes["save-button"]}
+              onClick={handleAsnSave}
+              disabled={isSaveAsnBtnDisabled()}
+            >
               {"Save correction"}
             </ReactiveLinkButton>
           </EditableFieldTableRow>
