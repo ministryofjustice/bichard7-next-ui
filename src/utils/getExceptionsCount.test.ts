@@ -255,7 +255,8 @@ describe("getExceptionsCount", () => {
     ["Offences", 2, "next-hearing-date", [HO100102, HO100323], 1],
     ["Offences", 1, "next-hearing-location", [HO100200], 1],
     ["Offences", 2, "next-hearing-location", [HO100200, HO100300], 1],
-    ["Offences", 3, "next-hearing-location", [HO100200, HO100300, HO100322], 1]
+    ["Offences", 3, "next-hearing-location", [HO100200, HO100300, HO100322], 1],
+    ["Offences", 4, "next-hearing-date and next-hearing-location", [HO100200, HO100300, HO100322, HO100102], 1]
   ])(
     "Should return %s as a tab and %s as exceptionCount when %s exception(s) are raised",
     (tab: string, exceptionsCount: number, typeOfException: string, exceptions, index: number) => {
