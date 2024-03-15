@@ -15,16 +15,7 @@ interface CourtCaseDetailsTabsProps {
 const useStyles = createUseStyles({
   nav: ({ width }: { width: string }) => ({
     width
-  }),
-  roundIcon: {
-    fontSize: "0.8em",
-    background: "#d4351c",
-    border: "3px solid #d4351c",
-    minWidth: "25px",
-    minHeight: "25px",
-    lineHeight: "20px",
-    position: "relative"
-  }
+  })
 })
 
 export const CourtCaseDetailsTabs = ({ tabs, activeTab, onTabClick, width }: CourtCaseDetailsTabsProps) => {

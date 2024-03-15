@@ -1,4 +1,3 @@
-import { createUseStyles } from "react-jss"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import { ExceptionIconDetails } from "utils/getExceptionsCount"
 
@@ -9,21 +8,7 @@ interface CourtCaseDetailsSingleTabProps {
   exceptions: ExceptionIconDetails[]
 }
 
-const useStyles = createUseStyles({
-  roundIcon: {
-    fontSize: "0.8em",
-    background: "#d4351c",
-    border: "3px solid #d4351c",
-    minWidth: "25px",
-    minHeight: "25px",
-    lineHeight: "20px",
-    position: "relative"
-  }
-})
-
 export const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick, exceptions }: CourtCaseDetailsSingleTabProps) => {
-  const classes = useStyles()
-
   return (
     <li className="moj-sub-navigation__item">
       <a
@@ -40,7 +25,7 @@ export const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick, exceptions }
           (exception) =>
             exception.tab === tab &&
             exception.exceptionsCount > 0 && (
-              <span key={exception.tab} id="notifications" className={`govuk-warning-text__icon ${classes.roundIcon}`}>
+              <span key={exception.tab} id="notifications" className="moj-notification-badge">
                 {exception.exceptionsCount}
               </span>
             )
