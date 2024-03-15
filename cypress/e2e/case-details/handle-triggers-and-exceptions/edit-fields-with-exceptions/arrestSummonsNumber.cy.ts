@@ -162,6 +162,7 @@ describe("ASN", () => {
       updatedMessageHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000410836V</br7:ArrestSummonsNumber>"]
     })
   })
+
   it("Should be able to edit ASN field if HO100206 is raised", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
