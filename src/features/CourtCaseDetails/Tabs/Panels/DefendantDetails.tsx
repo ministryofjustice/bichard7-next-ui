@@ -9,7 +9,6 @@ import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { ReactiveLinkButton } from "components/LinkButton"
 import { HintText, Input, Label, Table } from "govuk-react"
 import React, { useCallback, useEffect, useState } from "react"
-import { useBeforeunload } from "react-beforeunload"
 import { createUseStyles } from "react-jss"
 import Asn from "services/Asn"
 import { findExceptions } from "types/ErrorMessages"
@@ -26,6 +25,7 @@ import { TableRow } from "./TableRow"
 interface DefendantDetailsProps {
   amendmentRecords: AmendmentRecords
   amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
+  stopLeavingFn: (newValue: boolean) => void
 }
 
 const useStyles = createUseStyles({
@@ -45,7 +45,7 @@ const useStyles = createUseStyles({
   }
 })
 
-export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetailsProps) => {
+export const DefendantDetails = ({ amendFn, amendmentRecords, stopLeavingFn }: DefendantDetailsProps) => {
   const classes = useStyles()
   const courtCase = useCourtCase()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
@@ -91,7 +91,9 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     if (savedAsn) {
       setUpdatedAhoAsn(asnString)
     }
-  }, [savedAsn, asnString, pageLoad, amendmentRecords, updatedAhoAsn])
+
+    stopLeavingFn(!savedAsn && isAsnChanged && updatedAhoAsn !== asnString)
+  }, [savedAsn, asnString, pageLoad, amendmentRecords, updatedAhoAsn, stopLeavingFn, isAsnChanged])
 
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const asn = e.target.value.toUpperCase()
@@ -100,12 +102,6 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
     setAsnString(asn)
     amendFn("asn")(asn)
   }
-
-  useBeforeunload(
-    !savedAsn && isAsnChanged && updatedAhoAsn !== asnString
-      ? (event: BeforeUnloadEvent) => event.preventDefault()
-      : undefined
-  )
 
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
 
