@@ -108,9 +108,9 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
-    // cy.contains("td", "Next hearing location").siblings().should("include.text", "B01EF01")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B01EF01")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 
   it("Should be able to edit field if HO100300 is raised", () => {
@@ -156,9 +156,9 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B46AM03")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
-    // cy.contains("td", "Next hearing location").siblings().should("include.text", "B46DB00")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B46DB00")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 
   it("Should be able to edit field if HO100322 is raised", () => {
@@ -208,9 +208,9 @@ describe("NextHearingLocation", () => {
       .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
       .click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
-    // cy.contains("td", "Next hearing location").siblings().should("include.text", "B01EF00")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B01EF00")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 
   it("Should be able to edit multiple next hearing locations", () => {
@@ -262,25 +262,25 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B46AM03")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
-    // cy.contains("td", "Next hearing location").siblings().should("include.text", "B01EF00")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B01EF00")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
 
     cy.get("a.govuk-back-link").contains("Back to all offences").click()
     cy.get(".govuk-link")
       .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
       .click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
-    // cy.contains("td", "Next hearing location").siblings().should("include.text", "B46DB00")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B46DB00")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
 
     cy.get("a.govuk-back-link").contains("Back to all offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
-    // cy.contains("td", "Next hearing location").siblings().should("include.text", "B21XA00")
-    // cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "B21XA00")
+    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 
   it("Should not be able to edit next hearing location field when the case isn't in 'unresolved' state", () => {
