@@ -2,7 +2,7 @@ import { useCourtCase } from "context/CourtCaseContext"
 import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
-import { getExceptionsCount } from "utils/getExceptionsCount"
+import { getExceptionsNotifications } from "utils/getExceptionsNotifications"
 import { CourtCaseDetailsSingleTab } from "./CourtCaseDetailsSingleTab"
 
 interface CourtCaseDetailsTabsProps {
@@ -22,7 +22,7 @@ export const CourtCaseDetailsTabs = ({ tabs, activeTab, onTabClick, width }: Cou
   const classes = useStyles({ width })
   const courtCase = useCourtCase()
   const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
-  const exceptions = getExceptionsCount(courtCase.aho.Exceptions, updatedFields)
+  const exceptions = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
 
   return (
     <nav className={`moj-sub-navigation ${classes.nav}`} aria-label="Sub navigation">
