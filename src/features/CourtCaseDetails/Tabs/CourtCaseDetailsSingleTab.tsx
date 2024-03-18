@@ -1,5 +1,8 @@
 import CaseDetailsTab from "types/CaseDetailsTab"
-import { ExceptionIconDetails } from "utils/getExceptionsCount"
+import { ExceptionIconDetails } from "utils/getExceptionsNotifications"
+import { CHECKMARK_ICON_URL } from "utils/icons"
+import Image from "next/image"
+import { createUseStyles } from "react-jss"
 
 interface CourtCaseDetailsSingleTabProps {
   tab: CaseDetailsTab
@@ -8,7 +11,15 @@ interface CourtCaseDetailsSingleTabProps {
   exceptions: ExceptionIconDetails[]
 }
 
+const useStyles = createUseStyles({
+  checkmark: {
+    display: "inline-block",
+    verticalAlign: "bottom"
+  }
+})
+
 export const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick, exceptions }: CourtCaseDetailsSingleTabProps) => {
+  const classes = useStyles()
   return (
     <li className="moj-sub-navigation__item">
       <a
@@ -21,14 +32,24 @@ export const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick, exceptions }
         }}
       >
         {tab} <span />
-        {exceptions.map(
-          (exception) =>
+        {exceptions.map((exception) =>
+          exception.tab === tab && exception.isResolved ? (
+            <Image
+              className={`${classes.checkmark}`}
+              key={exception.tab}
+              src={CHECKMARK_ICON_URL}
+              width={30}
+              height={30}
+              alt="Checkmark icon"
+            />
+          ) : (
             exception.tab === tab &&
             exception.exceptionsCount > 0 && (
               <span key={exception.tab} id="notifications" className="moj-notification-badge">
                 {exception.exceptionsCount}
               </span>
             )
+          )
         )}
       </a>
     </li>
