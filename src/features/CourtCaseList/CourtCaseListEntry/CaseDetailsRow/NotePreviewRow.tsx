@@ -24,10 +24,10 @@ export const NotePreviewRow = ({ notes, className }: NotePreviewRowProps) => {
         <Table.Cell />
         <Table.Cell />
         <Table.Cell />
-        <Table.Cell />
         <Table.Cell colSpan={2}>
           <NotePreview latestNote={mostRecentUserNote} numberOfNotes={numberOfNotes} />
         </Table.Cell>
+        <Table.Cell />
         <Table.Cell />
       </Table.Row>
     </>

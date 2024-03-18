@@ -9,11 +9,11 @@ const Preview = (props: { label: string }) => {
   )
 }
 
-const Hide = () => {
+const Hide = (props: { label: string }) => {
   return (
     <>
       <span className="govuk-accordion-nav__chevron"></span>
-      <span className="govuk-accordion__show-all-text">{"Hide"}</span>
+      <span className="govuk-accordion__show-all-text">{props.label}</span>
     </>
   )
 }
@@ -22,10 +22,11 @@ interface PreviewButtonProps {
   showPreview: boolean
   onClick: Dispatch<SetStateAction<boolean>>
   previewLabel: string
+  hideLabel?: string
   className?: string
 }
 
-const PreviewButton = ({ showPreview, onClick, previewLabel, className }: PreviewButtonProps) => {
+const PreviewButton = ({ showPreview, onClick, previewLabel, hideLabel, className }: PreviewButtonProps) => {
   return (
     <button
       type="button"
@@ -34,7 +35,7 @@ const PreviewButton = ({ showPreview, onClick, previewLabel, className }: Previe
         onClick(!showPreview)
       }}
     >
-      {showPreview ? <Preview label={previewLabel} /> : <Hide />}
+      {showPreview ? <Preview label={previewLabel} /> : <Hide label={hideLabel ?? "Hide"} />}
     </button>
   )
 }
