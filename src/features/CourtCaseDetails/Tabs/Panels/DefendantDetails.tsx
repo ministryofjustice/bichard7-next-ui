@@ -129,16 +129,6 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
 
   const isAsnEditable = courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
 
-  const defendantAsn = (): string => {
-    const possibleAsn = courtCase.errorStatus === "Unresolved" ? defendant.ArrestSummonsNumber : updatedAhoAsn
-
-    if (possibleAsn) {
-      return possibleAsn
-    }
-
-    return defendant.ArrestSummonsNumber
-  }
-
   return (
     <div className={`Defendant-details-table ${classes.wrapper}`}>
       <Table>
@@ -154,7 +144,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords }: DefendantDetails
           </ExceptionFieldTableRow>
         ) : (
           <EditableFieldTableRow
-            value={defendantAsn()}
+            value={defendant.ArrestSummonsNumber}
             updatedValue={updatedAhoAsn}
             label="ASN"
             hasExceptions={isAsnEditable}
