@@ -40,10 +40,16 @@ const editableFieldBadge = (
     <Badge className="error-badge" isRendered={true} colour={"purple"} label={"Editable Field"} />
   </div>
 )
+const correctionBadge = (
+  <div className="badge-wrapper">
+    <Badge className="error-badge" isRendered={true} colour={"green"} label={"Correction"} />
+  </div>
+)
 
 const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEditable, children }: Props) => {
   const classes = useStyles()
   const isRendered = !!(value || updatedValue || hasExceptions)
+  const hasCorrection = updatedValue && value !== updatedValue
 
   const labelField = (
     <>
@@ -70,11 +76,31 @@ const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEd
     </>
   )
 
+  const initialValueAndCorrectionField = (
+    <>
+      {value}
+      {initialValueBadge}
+      <br />
+      {updatedValue}
+      {correctionBadge}
+    </>
+  )
+
+  const fieldToRender = (): React.ReactNode => {
+    if (isEditable) {
+      return inputField
+    } else if (hasCorrection) {
+      return initialValueAndCorrectionField
+    } else {
+      return value
+    }
+  }
+
   return (
     <ConditionalRender isRendered={isRendered}>
       <Table.Row>
         <Table.Cell className={classes.label}>{labelField}</Table.Cell>
-        <Table.Cell>{isEditable ? inputField : value}</Table.Cell>
+        <Table.Cell>{fieldToRender()}</Table.Cell>
       </Table.Row>
     </ConditionalRender>
   )
