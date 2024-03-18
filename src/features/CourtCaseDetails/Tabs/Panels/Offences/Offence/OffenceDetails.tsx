@@ -71,8 +71,7 @@ const offenceMatchingExceptions = {
   ]
 }
 
-const getOffenceReasonSequencePath = (offenceIndex: number) =>
-  errorPaths.offence(offenceIndex).reasonSequence.filter((path) => path !== "AnnotatedHearingOutcome")
+const getOffenceReasonSequencePath = (offenceIndex: number) => errorPaths.offence(offenceIndex).reasonSequence
 
 type GetOffenceMatchingExceptionResult =
   | {
@@ -125,7 +124,7 @@ export const OffenceDetails = ({
     selectedOffenceIndex - 1
   }`
   const thisResultPath = (resultIndex: number) => `${thisOffencePath}>Result>${resultIndex}`
-  const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex)
+  const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex - 1)
   const offenceMatchingExceptionMessage = findExceptions(courtCase, courtCase.aho.Exceptions, ExceptionCode.HO100304)
 
   const unresolvedExceptionsOnThisOffence = !isCaseUnresolved
