@@ -105,11 +105,11 @@ export const DefendantDetails = ({ amendFn, amendmentRecords, stopLeavingFn }: D
 
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
 
-  const hideError = (): boolean => {
+  const showError = (): boolean => {
     if (asnString.length === 0) {
       return true
     } else {
-      return isValidAsn
+      return !isValidAsn
     }
   }
 
@@ -153,8 +153,8 @@ export const DefendantDetails = ({ amendFn, amendmentRecords, stopLeavingFn }: D
               }
             </HintText>
             <HintText>{"Example: 22 49AB 49 1234 C"}</HintText>
-            <div className={!hideError() ? `${asnFormGroupError}` : ""}>
-              {!hideError() && (
+            <div className={showError() ? `${asnFormGroupError}` : ""}>
+              {showError() && (
                 <p id="event-name-error" className="govuk-error-message">
                   <span className="govuk-visually-hidden">{"Error:"}</span> {"Invalid ASN format"}
                 </p>
@@ -165,7 +165,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords, stopLeavingFn }: D
                 name={"asn"}
                 onChange={handleAsnChange}
                 value={(amendmentRecords.asn as string) ?? ""}
-                error={!hideError()}
+                error={!isValidAsn}
               />
             </div>
             <ReactiveLinkButton
