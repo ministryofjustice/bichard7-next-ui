@@ -41,7 +41,7 @@ export const NotePreview = ({ latestNote, numberOfNotes }: NotePreviewProps) => 
         {numberOfNotes > 1 ? `Most recent note added ${displayDate}` : `Note added ${displayDate}`}
       </p>
       <p className={`note-preview-body ${classes.notePreviewBody}`}>
-        {truncate(latestNote?.noteText, { length: 100 })}
+        {truncate(latestNote?.noteText, { length: 103 })}
       </p>
     </Preview>
   )
