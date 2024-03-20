@@ -19,6 +19,7 @@ export const OffencesList = ({ className, offences, setDetailedOffenceIndex }: O
       <Table
         head={
           <Table.Row>
+            <Table.CellHeader></Table.CellHeader>
             <Table.CellHeader>{"Offence number"}</Table.CellHeader>
             <Table.CellHeader>{"Date"}</Table.CellHeader>
             <Table.CellHeader>{"Code"}</Table.CellHeader>
