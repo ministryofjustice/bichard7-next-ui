@@ -21,7 +21,8 @@ interface NotePreviewButtonProps {
 const useStyles = createUseStyles({
   notePreview: {
     "&.govuk-accordion__show-all": {
-      fontSize: "16px"
+      fontSize: "16px",
+      padding: "2px 5px 0"
     }
   },
   notePreviewHeading: {
