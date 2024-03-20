@@ -1,10 +1,10 @@
+import axios from "axios"
 import { useCombobox } from "downshift"
 import { Input } from "govuk-react"
 import { useCallback, useEffect, useState } from "react"
 import styled from "styled-components"
 import { AmendmentKeys, IndividualAmendmentValues, UpdatedOffenceResult } from "../types/Amendments"
 import OrganisationUnitApiResponse from "../types/OrganisationUnitApiResponse"
-import axios from "axios"
 import { isError } from "../types/Result"
 
 const ListWrapper = styled.div`
@@ -84,14 +84,14 @@ const OrganisationUnitTypeahead: React.FC<Props> = ({ value, amendFn, resultInde
           className: "govuk-input",
           id: "next-hearing-location",
           name: "next-hearing-location",
-          value: value
+          value
         })}
       />
-      {isOpen && inputItems.length > 0 && (
-        <ListWrapper>
-          <ul {...getMenuProps()}>
-            {isOpen &&
-              inputItems.map((item, index) => (
+
+      <ListWrapper>
+        <ul {...getMenuProps()}>
+          {isOpen
+            ? inputItems.map((item, index) => (
                 <li
                   style={highlightedIndex === index ? { backgroundColor: "#bde4ff" } : {}}
                   key={`${item}${index}`}
@@ -100,10 +100,10 @@ const OrganisationUnitTypeahead: React.FC<Props> = ({ value, amendFn, resultInde
                   {item.fullOrganisationCode}
                   <span>{item.fullOrganisationName}</span>
                 </li>
-              ))}
-          </ul>
-        </ListWrapper>
-      )}
+              ))
+            : null}
+        </ul>
+      </ListWrapper>
     </div>
   )
 }
