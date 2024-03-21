@@ -251,12 +251,11 @@ export const OffenceDetails = ({
       <div className="offence-results-table">
         {offence.Result.map((result, index) => {
           return (
-            <>
+            <div key={index}>
               <Heading as="h4" size="MEDIUM">
                 {"Hearing result"}
               </Heading>
               <HearingResult
-                key={index}
                 result={result}
                 updatedFields={updatedFields}
                 exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>
@@ -268,7 +267,7 @@ export const OffenceDetails = ({
                 amendFn={amendFn}
                 errorStatus={courtCase.errorStatus}
               />
-            </>
+            </div>
           )
         })}
       </div>

@@ -22,6 +22,7 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
+import editableFieldsValidationError from "utils/editableFieldsValidationError"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
@@ -119,6 +120,8 @@ const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath, a
     backLink += `?previousPath=${encodeURIComponent(previousPath)}`
   }
   const resubmitCasePath = `${basePath}/court-cases/${courtCase.errorId}?resubmitCase=true`
+  const validAmendments = editableFieldsValidationError(courtCase, JSON.parse(amendments ?? "{}"))
+
   return (
     <>
       <CurrentUserContext.Provider value={currentUserContext}>
@@ -138,13 +141,13 @@ const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath, a
             </HeaderRow>
           </HeaderContainer>
 
-          <ConditionalRender isRendered={hasAmendments(amendments)}>
+          <ConditionalRender isRendered={hasAmendments(amendments) || !validAmendments}>
             <Paragraph>
               {"Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"}
             </Paragraph>
           </ConditionalRender>
 
-          <ConditionalRender isRendered={!hasAmendments(amendments)}>
+          <ConditionalRender isRendered={!hasAmendments(amendments) && validAmendments}>
             <Banner message="The case exception(s) have not been updated within Bichard." />
             <Paragraph data-testid="example-test-id">
               {"Do you want to submit case details to the PNC and mark the exception(s) as resolved?"}

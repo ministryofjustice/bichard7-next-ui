@@ -1,8 +1,8 @@
 import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
 import Badge from "./Badge"
-import ErrorIcon from "./ErrorIcon"
 import ConditionalRender from "./ConditionalRender"
+import ErrorIcon from "./ErrorIcon"
 
 type Props = {
   label: string
@@ -86,11 +86,21 @@ const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEd
     </>
   )
 
+  const fieldToRender = (): React.ReactNode => {
+    if (isEditable) {
+      return inputField
+    } else if (hasCorrection) {
+      return initialValueAndCorrectionField
+    } else {
+      return value
+    }
+  }
+
   return (
     <ConditionalRender isRendered={isRendered}>
       <Table.Row>
         <Table.Cell className={classes.label}>{labelField}</Table.Cell>
-        <Table.Cell>{isEditable ? inputField : hasCorrection ? initialValueAndCorrectionField : value}</Table.Cell>
+        <Table.Cell>{fieldToRender()}</Table.Cell>
       </Table.Row>
     </ConditionalRender>
   )

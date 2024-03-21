@@ -1,7 +1,7 @@
 import nextHearingDateExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import dummyAho from "../../../../../test/test-data/error_list_aho.json"
 import hashedPassword from "../../../../fixtures/hashedPassword"
-import { verifyUpdatedMessage, submitAndConfirmExceptions } from "../../../../support/helpers"
+import { submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
 
 describe("NextHearingDate", () => {
   before(() => {
