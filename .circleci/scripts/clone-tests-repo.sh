@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -e
-
 success=false
 max_attempts=1
 attempt_num=1
