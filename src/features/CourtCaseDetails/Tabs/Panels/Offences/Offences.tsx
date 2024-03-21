@@ -24,20 +24,18 @@ export const Offences = ({
   amendFn
 }: OffencesProps) => {
   return selectedOffenceIndex !== undefined && offences[selectedOffenceIndex - 1] !== undefined ? (
-    <>
-      <OffenceDetails
-        className={className}
-        offence={offences[selectedOffenceIndex - 1]}
-        offencesCount={offences.length}
-        onBackToAllOffences={() => onOffenceSelected(undefined)}
-        onNextClick={() => onOffenceSelected(selectedOffenceIndex + 1)}
-        onPreviousClick={() => onOffenceSelected(selectedOffenceIndex - 1)}
-        selectedOffenceIndex={selectedOffenceIndex}
-        exceptions={exceptions}
-        amendments={amendments}
-        amendFn={amendFn}
-      />
-    </>
+    <OffenceDetails
+      className={className}
+      offence={offences[selectedOffenceIndex - 1]}
+      offencesCount={offences.length}
+      onBackToAllOffences={() => onOffenceSelected(undefined)}
+      onNextClick={() => onOffenceSelected(selectedOffenceIndex + 1)}
+      onPreviousClick={() => onOffenceSelected(selectedOffenceIndex - 1)}
+      selectedOffenceIndex={selectedOffenceIndex}
+      exceptions={exceptions}
+      amendments={amendments}
+      amendFn={amendFn}
+    />
   ) : (
     <OffencesList className={className} offences={offences} setDetailedOffenceIndex={onOffenceSelected} />
   )

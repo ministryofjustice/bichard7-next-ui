@@ -7,8 +7,9 @@ import Badge from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
+import { OffenceMatcher } from "components/OffenceMatcher"
 import { useCourtCase } from "context/CourtCaseContext"
-import { Heading, Input, Table } from "govuk-react"
+import { Heading, Table } from "govuk-react"
 import { isEqual } from "lodash"
 import { createUseStyles } from "react-jss"
 import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
@@ -203,22 +204,17 @@ export const OffenceDetails = ({
             value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
           />
 
+          {/* Matched PNC offence */}
+          {/* TODO: only enable for 310s */}
           {offenceMatchingException && (
-            <ExceptionFieldTableRow
-              badgeText={offenceMatchingException.badge}
-              label={"Matched PNC offence"}
-              displayError={Boolean(offenceMatchingException)}
-            >
+            <ExceptionFieldTableRow label={"Matched PNC offence"} value={<OffenceMatcher offence={offence} />}>
               <ErrorPromptMessage message={offenceMatchingExceptionMessage} />
             </ExceptionFieldTableRow>
           )}
 
+          {/* PNC sequence number */}
           {offenceMatchingException ? (
-            <ExceptionFieldTableRow
-              badgeText={offenceMatchingException.badge}
-              label={"PNC sequence number"}
-              value={<Input type="text" maxLength={3} className={classes.pncSequenceNumber} />}
-            >
+            <ExceptionFieldTableRow badgeText={offenceMatchingException.badge} label={"PNC sequence number"}>
               {" "}
               <>
                 {"Court Case Reference:"}
@@ -237,6 +233,7 @@ export const OffenceDetails = ({
               }
             />
           )}
+
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />
           <ConditionalRender isRendered={offence.Result.length > 0 && offence.Result[0].PleaStatus !== undefined}>

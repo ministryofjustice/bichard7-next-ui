@@ -116,6 +116,7 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
             className={activeTab === "Offences" ? classes.visible : classes.notVisible}
             exceptions={courtCase.aho.Exceptions}
             offences={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
+            pncQuery={courtCase.aho.PncQuery}
             onOffenceSelected={(offenceIndex) => {
               setSelectedOffenceIndex(offenceIndex)
             }}
