@@ -19,7 +19,7 @@ const amendCourtCase = async (
   courtCase: CourtCase,
   userDetails: User
 ): Promise<AnnotatedHearingOutcome | Error> => {
-  if (courtCase.errorLockedByUsername && courtCase.errorLockedByUsername != userDetails.username) {
+  if (courtCase.errorLockedByUsername && courtCase.errorLockedByUsername !== userDetails.username) {
     return new Error("Exception is locked by another user")
   }
 

@@ -1,6 +1,7 @@
 import { useCourtCase } from "context/CourtCaseContext"
 import { GridCol, GridRow } from "govuk-react"
 import { useCallback, useState } from "react"
+import { useBeforeunload } from "react-beforeunload"
 import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
@@ -47,14 +48,21 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
 
-  const [amendments, setAmendements] = useState<AmendmentRecords>({})
+  const [amendments, setAmendments] = useState<AmendmentRecords>({})
+  const [useBeforeUnload, setUseBeforeUnload] = useState<boolean>(false)
 
   const amendFn = useCallback(
     (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => {
-      setAmendements((previousAmendments) => ({ ...setAmendedFields(keyToAmend, newValue, previousAmendments) }))
+      setAmendments((previousAmendments) => ({ ...setAmendedFields(keyToAmend, newValue, previousAmendments) }))
     },
     []
   )
+
+  const stopLeavingFn = useCallback((newValue: boolean) => {
+    setUseBeforeUnload(newValue)
+  }, [])
+
+  useBeforeunload(useBeforeUnload ? (event: BeforeUnloadEvent) => event.preventDefault() : undefined)
 
   const handleNavigation: NavigationHandler = ({ location, args }) => {
     switch (location) {
@@ -87,7 +95,7 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
             className={activeTab === "Defendant" ? classes.visible : classes.notVisible}
             heading={"Defendant details"}
           >
-            <DefendantDetails amendmentRecords={amendments} amendFn={amendFn} />
+            <DefendantDetails amendmentRecords={amendments} amendFn={amendFn} stopLeavingFn={stopLeavingFn} />
           </CourtCaseDetailsPanel>
 
           <CourtCaseDetailsPanel
@@ -127,6 +135,7 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}
             amendments={amendments}
+            stopLeavingFn={stopLeavingFn}
           />
         </GridCol>
       </GridRow>

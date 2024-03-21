@@ -1,7 +1,7 @@
+import AnnotatedHO from "../../../../../test/test-data/AnnotatedHO1.json"
 import AsnExceptionHO100206 from "../../../../../test/test-data/AsnExceptionHo100206.json"
 import AsnExceptionHO100321 from "../../../../../test/test-data/AsnExceptionHo100321.json"
 import ExceptionHO100239 from "../../../../../test/test-data/HO100239_1.json"
-import AnnotatedHO from "../../../../../test/test-data/AnnotatedHO1.json"
 import hashedPassword from "../../../../fixtures/hashedPassword"
 import { verifyUpdatedMessage } from "../../../../support/helpers"
 
@@ -104,6 +104,7 @@ describe("ASN", () => {
     cy.visit("/bichard/court-cases/0")
 
     cy.get(".moj-badge").contains("Editable Field").should("exist")
+    cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
     cy.get("button").contains("Submit exception(s)").click()
@@ -123,6 +124,45 @@ describe("ASN", () => {
     })
   })
 
+  it("Should validate ASN correction and save to updated message in the database", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: ExceptionHO100239.hearingOutcomeXml,
+        updatedHearingOutcome: ExceptionHO100239.hearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
+      }
+    ])
+
+    cy.login("bichard01@example.com", "password")
+    cy.visit("/bichard/court-cases/0")
+
+    cy.get(".moj-badge").contains("Editable Field").should("exist")
+    // error message should be displayed when ASN is not entered
+    cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
+    cy.get("#event-name-error").should("exist")
+    // Submit exception(s) button should be disabled
+    cy.get("button").contains("Submit exception(s)").should("be.disabled")
+    // Save correction button should be disabled
+    cy.get("button").contains("Save correction").should("be.disabled")
+    cy.get("#asn").clear()
+    cy.get("#asn").type("1101ZD0100000410836V")
+    // Submit exception(s) button should be enabled
+    cy.get("button").contains("Submit exception(s)").should("be.enabled")
+    // Save correction button should be enabled
+    cy.get("#event-name-error").should("not.exist")
+
+    cy.get("button").contains("Save correction").click()
+
+    verifyUpdatedMessage({
+      expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
+      updatedMessageNotHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber>"],
+      updatedMessageHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000410836V</br7:ArrestSummonsNumber>"]
+    })
+  })
+
   it("Should be able to edit ASN field if HO100206 is raised", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
@@ -139,6 +179,7 @@ describe("ASN", () => {
     cy.visit("/bichard/court-cases/0")
 
     cy.get(".moj-badge").contains("Editable Field").should("exist")
+    cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
     cy.get("button").contains("Submit exception(s)").click()
@@ -174,6 +215,7 @@ describe("ASN", () => {
     cy.visit("/bichard/court-cases/0")
 
     cy.get(".moj-badge").contains("Editable Field").should("exist")
+    cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
     cy.get("button").contains("Submit exception(s)").click()
@@ -199,6 +241,7 @@ describe("ASN", () => {
 
     cy.get(".moj-badge").contains("Correction").should("not.exist")
     cy.get(".Defendant-details-table").contains("AAAAAAAAAAAAAAAAAAA")
+    cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
     cy.get("button").contains("Submit exception(s)").click()

@@ -9,14 +9,14 @@ import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
 import styled from "styled-components"
+import { AmendmentRecords } from "types/Amendments"
 import type NavigationHandler from "types/NavigationHandler"
 import DefaultException from "../../../components/Exception/DefaultException"
 import PncException from "../../../components/Exception/PncException"
 import Form from "../../../components/Form"
-import { AmendmentRecords } from "types/Amendments"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
-import LockStatusTag from "../LockStatusTag"
 import editableFieldsValidationError from "../../../utils/editableFieldsValidationError"
+import LockStatusTag from "../LockStatusTag"
 
 const isPncException = (code: ExceptionCode) =>
   [ExceptionCode.HO100302, ExceptionCode.HO100314, ExceptionCode.HO100402, ExceptionCode.HO100404].includes(code)
@@ -25,6 +25,7 @@ interface Props {
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
   amendments: AmendmentRecords
+  stopLeavingFn: (newValue: boolean) => void
 }
 
 const useStyles = createUseStyles({
@@ -52,7 +53,7 @@ const SeparatorLine = styled.div`
   }
 `
 
-const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
+const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments, stopLeavingFn }: Props) => {
   const classes = useStyles()
   const courtCase = useCourtCase()
   const pncExceptions = courtCase.aho.Exceptions.filter(({ code }) => isPncException(code))
@@ -69,6 +70,10 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
   }
 
   const submitCasePath = `${router.basePath}${usePathname()}/submit`
+
+  const handleClick = () => {
+    stopLeavingFn(false)
+  }
 
   return (
     <>
@@ -88,7 +93,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments }: Props) => {
         <div className={classes.buttonContainer}>
           <Form method="post" action={submitCasePath} csrfToken={csrfToken}>
             <input type="hidden" name="amendments" value={JSON.stringify(amendments)} />
-            <Button id="submit" type="submit" disabled={disable}>
+            <Button id="submit" type="submit" disabled={disable} onClick={handleClick}>
               {"Submit exception(s)"}
             </Button>
           </Form>

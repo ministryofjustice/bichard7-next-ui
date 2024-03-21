@@ -1,11 +1,22 @@
+import withApiAuthentication from "middleware/withApiAuthentication/withApiAuthentication"
 import type { NextApiRequest, NextApiResponse } from "next"
-import OrganisationUnitApiResponse from "../../types/OrganisationUnitApiResponse"
 import searchCourtOrganisationUnits, {
   getFullOrganisationCode,
   getFullOrganisationName
 } from "../../services/searchCourtOrganisationUnits"
+import OrganisationUnitApiResponse from "../../types/OrganisationUnitApiResponse"
 
-export default (req: NextApiRequest, res: NextApiResponse<OrganisationUnitApiResponse>) => {
+export default async (request: NextApiRequest, response: NextApiResponse<OrganisationUnitApiResponse>) => {
+  const allowedMethods = ["GET"]
+
+  const auth = await withApiAuthentication(request, response, allowedMethods)
+
+  if (!auth) {
+    return
+  }
+
+  const { req, res } = auth
+
   const searchQueryString = ((req.query.search as string) || "").toLowerCase()
 
   const filteredItems = searchCourtOrganisationUnits(searchQueryString).map((ou) => ({

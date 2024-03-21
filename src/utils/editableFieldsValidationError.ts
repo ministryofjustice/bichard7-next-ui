@@ -1,8 +1,8 @@
 import { AmendmentRecords } from "../types/Amendments"
 import { DisplayFullCourtCase } from "../types/display/CourtCases"
 import asnValidationError from "./asnValidationError"
-import nextHearingLocationValidationError from "./nextHearingLocationValidationError"
 import nextHearingDateValidationError from "./nextHearingDateValidationError"
+import nextHearingLocationValidationError from "./nextHearingLocationValidationError"
 
 const editableFieldsValidationError = (courtCase: DisplayFullCourtCase, amendments: AmendmentRecords): boolean => {
   const exceptions = courtCase.aho.Exceptions
