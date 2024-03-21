@@ -103,7 +103,7 @@ const CourtCaseDetailsSummaryBoxField = ({
 
 const CourtCaseDetailsSummaryBox = () => {
   const classes = useStyles()
-  const courtCase = useCourtCase()
+  const { courtCase } = useCourtCase()
 
   const formattedHearingDate = formatDisplayedDate(
     courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing.toString() || ""

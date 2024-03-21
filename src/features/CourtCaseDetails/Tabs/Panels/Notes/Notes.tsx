@@ -5,9 +5,9 @@ import { Paragraph } from "govuk-react"
 import { useState } from "react"
 import type NotesViewOption from "types/NotesViewOption"
 import { DisplayNote } from "types/display/Notes"
+import { NotesTable } from "../../../../../components/NotesTable"
 import { CourtCaseDetailsPanel } from "../../CourtCaseDetailsPanels"
 import AddNoteForm from "./AddNoteForm"
-import { NotesTable } from "../../../../../components/NotesTable"
 
 interface NotesProps {
   className: string
@@ -35,7 +35,7 @@ const filterNotes = (notes: DisplayNote[], viewOption?: NotesViewOption) => {
 }
 
 export const Notes = ({ className, isLockedByCurrentUser }: NotesProps) => {
-  const courtCase = useCourtCase()
+  const { courtCase } = useCourtCase()
   const notes: DisplayNote[] = courtCase.notes
 
   const [viewOption, setViewOption] = useState<NotesViewOption | undefined>()

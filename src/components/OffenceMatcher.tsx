@@ -3,20 +3,32 @@ import { useCourtCase } from "context/CourtCaseContext"
 import getOffenceCode from "utils/getOffenceCode"
 
 interface Props {
+  offenceIndex: number
   offence: Offence
 }
 
-export const OffenceMatcher = ({ offence }: Props) => {
+export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
   const {
-    aho: { PncQuery: pncQuery }
+    courtCase: {
+      aho: { PncQuery: pncQuery }
+    },
+    amend
   } = useCourtCase()
 
   const offenceCode = getOffenceCode(offence)
 
+  const onOffenceChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    amend("offenceReasonSequence")({
+      offenceIndex,
+      updatedValue: e.target.value
+    })
+  }
+
+  // TODO: load manually selected value if exists (just load updated aho always?)
   // TODO: prevent matching twice
   // TODO: match dates
   return (
-    <select className="govuk-select">
+    <select className="govuk-select" onChange={onOffenceChanged}>
       <option disabled selected hidden></option>
       {pncQuery?.courtCases?.map((c) => {
         return (

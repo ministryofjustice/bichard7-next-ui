@@ -13,6 +13,8 @@ export type Amendments = {
   noUpdatesResubmit?: boolean
 }
 
+export type Amender = (AmendmentKeys: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
+
 export type AmendmentKeys = keyof Amendments
 
 export type AmendmentValues =

@@ -5,8 +5,6 @@ import { useBeforeunload } from "react-beforeunload"
 import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
-import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../types/Amendments"
-import setAmendedFields from "../../utils/amendments/setAmendedField"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
@@ -43,20 +41,12 @@ const sideBarWidth = "33%"
 const contentWidth = "67%"
 
 const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAndSubmit }) => {
-  const courtCase = useCourtCase()
+  const { courtCase } = useCourtCase()
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
   const classes = useStyles()
 
-  const [amendments, setAmendments] = useState<AmendmentRecords>({})
   const [useBeforeUnload, setUseBeforeUnload] = useState<boolean>(false)
-
-  const amendFn = useCallback(
-    (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => {
-      setAmendments((previousAmendments) => ({ ...setAmendedFields(keyToAmend, newValue, previousAmendments) }))
-    },
-    []
-  )
 
   const stopLeavingFn = useCallback((newValue: boolean) => {
     setUseBeforeUnload(newValue)
@@ -95,7 +85,7 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
             className={activeTab === "Defendant" ? classes.visible : classes.notVisible}
             heading={"Defendant details"}
           >
-            <DefendantDetails amendmentRecords={amendments} amendFn={amendFn} stopLeavingFn={stopLeavingFn} />
+            <DefendantDetails stopLeavingFn={stopLeavingFn} />
           </CourtCaseDetailsPanel>
 
           <CourtCaseDetailsPanel
@@ -116,13 +106,10 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
             className={activeTab === "Offences" ? classes.visible : classes.notVisible}
             exceptions={courtCase.aho.Exceptions}
             offences={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
-            pncQuery={courtCase.aho.PncQuery}
             onOffenceSelected={(offenceIndex) => {
               setSelectedOffenceIndex(offenceIndex)
             }}
             selectedOffenceIndex={selectedOffenceIndex}
-            amendments={amendments}
-            amendFn={amendFn}
           />
 
           <Notes
@@ -135,7 +122,6 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
           <TriggersAndExceptions
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}
-            amendments={amendments}
             stopLeavingFn={stopLeavingFn}
           />
         </GridCol>

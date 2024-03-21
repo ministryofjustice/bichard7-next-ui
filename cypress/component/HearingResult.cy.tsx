@@ -4,7 +4,6 @@ import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/A
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 import { CourtCaseContext } from "context/CourtCaseContext"
-import React from "react"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { HearingResult } from "../../src/features/CourtCaseDetails/Tabs/Panels/Offences/Offence/HearingResult"
 
@@ -56,9 +55,7 @@ describe("Hearing Result", () => {
           result={result}
           resultIndex={dummyIndex}
           selectedOffenceIndex={dummyIndex}
-          amendments={{}}
           updatedFields={{}}
-          amendFn={() => () => {}}
           exceptions={[]}
         />
       </CourtCaseContext.Provider>
@@ -91,9 +88,7 @@ describe("Hearing Result", () => {
             result={result}
             resultIndex={dummyIndex}
             selectedOffenceIndex={dummyIndex}
-            amendments={{}}
             updatedFields={{}}
-            amendFn={() => () => {}}
             exceptions={[]}
           />
         </CourtCaseContext.Provider>
@@ -111,9 +106,7 @@ describe("Hearing Result", () => {
             result={result}
             resultIndex={dummyIndex}
             selectedOffenceIndex={dummyIndex}
-            amendments={{}}
             updatedFields={{}}
-            amendFn={() => () => {}}
             exceptions={[]}
           />
         </CourtCaseContext.Provider>
@@ -141,9 +134,7 @@ describe("Hearing Result", () => {
             result={result}
             resultIndex={dummyIndex}
             selectedOffenceIndex={dummyIndex}
-            amendments={{}}
             updatedFields={{}}
-            amendFn={() => () => {}}
             exceptions={[]}
           />
         </CourtCaseContext.Provider>
@@ -163,9 +154,7 @@ describe("Hearing Result", () => {
             result={result}
             resultIndex={dummyIndex}
             selectedOffenceIndex={dummyIndex}
-            amendments={{}}
             updatedFields={{}}
-            amendFn={() => () => {}}
             exceptions={[]}
           />
         </CourtCaseContext.Provider>
@@ -183,9 +172,7 @@ describe("Hearing Result", () => {
             result={result}
             resultIndex={dummyIndex}
             selectedOffenceIndex={dummyIndex}
-            amendments={{}}
             updatedFields={{}}
-            amendFn={() => () => {}}
             exceptions={[]}
           />
         </CourtCaseContext.Provider>
@@ -203,9 +190,7 @@ describe("Hearing Result", () => {
             result={result}
             resultIndex={0}
             selectedOffenceIndex={0}
-            amendments={{}}
             updatedFields={{}}
-            amendFn={() => () => {}}
             exceptions={[{ path: ["dummyPath", "NextHearingDate"], code: ExceptionCode.HO100323 }]}
           />
         </CourtCaseContext.Provider>
@@ -223,9 +208,7 @@ describe("Hearing Result", () => {
             result={result}
             resultIndex={0}
             selectedOffenceIndex={0}
-            amendments={{}}
             updatedFields={{}}
-            amendFn={() => () => {}}
             exceptions={[
               {
                 path: ["dummyPath", "NextResultSourceOrganisation", "OrganisationUnitCode"],
@@ -248,9 +231,7 @@ describe("Hearing Result", () => {
             result={result}
             resultIndex={0}
             selectedOffenceIndex={0}
-            amendments={{}}
             updatedFields={{}}
-            amendFn={() => () => {}}
             exceptions={[{ path: ["dummyPath", "CJSresultCode"], code: ExceptionCode.HO100307 }]}
           />
         </CourtCaseContext.Provider>

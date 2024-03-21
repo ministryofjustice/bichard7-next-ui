@@ -12,7 +12,6 @@ import { useCourtCase } from "context/CourtCaseContext"
 import { Heading, Table } from "govuk-react"
 import { isEqual } from "lodash"
 import { createUseStyles } from "react-jss"
-import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
 import ErrorMessages, { findExceptions } from "types/ErrorMessages"
 import { Exception } from "types/exceptions"
 import { formatDisplayedDate } from "utils/formattedDate"
@@ -33,8 +32,6 @@ interface OffenceDetailsProps {
   onPreviousClick: () => void
   selectedOffenceIndex: number
   exceptions: Exception[]
-  amendments: AmendmentRecords
-  amendFn: (AmendmentKeys: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
 
 const useStyles = createUseStyles({
@@ -109,11 +106,9 @@ export const OffenceDetails = ({
   onNextClick,
   onPreviousClick,
   selectedOffenceIndex,
-  exceptions,
-  amendments,
-  amendFn
+  exceptions
 }: OffenceDetailsProps) => {
-  const courtCase = useCourtCase()
+  const { courtCase } = useCourtCase()
   const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
   const classes = useStyles()
   const offenceCode = getOffenceCode(offence)
@@ -207,7 +202,10 @@ export const OffenceDetails = ({
           {/* Matched PNC offence */}
           {/* TODO: only enable for 310s */}
           {offenceMatchingException && (
-            <ExceptionFieldTableRow label={"Matched PNC offence"} value={<OffenceMatcher offence={offence} />}>
+            <ExceptionFieldTableRow
+              label={"Matched PNC offence"}
+              value={<OffenceMatcher offenceIndex={selectedOffenceIndex} offence={offence} />}
+            >
               <ErrorPromptMessage message={offenceMatchingExceptionMessage} />
             </ExceptionFieldTableRow>
           )}
@@ -248,7 +246,7 @@ export const OffenceDetails = ({
       <div className="offence-results-table">
         {offence.Result.map((result, index) => {
           return (
-            <div key={index}>
+            <div key={result.CJSresultCode}>
               <Heading as="h4" size="MEDIUM">
                 {"Hearing result"}
               </Heading>
@@ -260,8 +258,6 @@ export const OffenceDetails = ({
                 )}
                 selectedOffenceIndex={selectedOffenceIndex}
                 resultIndex={index}
-                amendments={amendments}
-                amendFn={amendFn}
                 errorStatus={courtCase.errorStatus}
               />
             </div>
@@ -269,22 +265,20 @@ export const OffenceDetails = ({
         })}
       </div>
       {qualifierCode && (
-        <>
-          <div className="qualifier-code-table">
-            <Heading as="h4" size="MEDIUM">
-              {"Qualifier"}
-            </Heading>
-            <Table>
-              {qualifierErrorPrompt ? (
-                <ExceptionFieldTableRow badgeText={"System Error"} value={qualifierCode} label={"Code"}>
-                  <ErrorPromptMessage message={qualifierErrorPrompt} />
-                </ExceptionFieldTableRow>
-              ) : (
-                <TableRow label={"Code"} value={qualifierCode} />
-              )}
-            </Table>
-          </div>
-        </>
+        <div className="qualifier-code-table">
+          <Heading as="h4" size="MEDIUM">
+            {"Qualifier"}
+          </Heading>
+          <Table>
+            {qualifierErrorPrompt ? (
+              <ExceptionFieldTableRow badgeText={"System Error"} value={qualifierCode} label={"Code"}>
+                <ErrorPromptMessage message={qualifierErrorPrompt} />
+              </ExceptionFieldTableRow>
+            ) : (
+              <TableRow label={"Code"} value={qualifierCode} />
+            )}
+          </Table>
+        </div>
       )}
       <OffenceNavigation
         onBackToAllOffences={() => onBackToAllOffences()}

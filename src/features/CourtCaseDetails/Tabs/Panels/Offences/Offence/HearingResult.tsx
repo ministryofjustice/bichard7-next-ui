@@ -1,5 +1,6 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import ConditionalRender from "components/ConditionalRender"
 import EditableFieldTableRow from "components/EditableFieldTableRow"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
@@ -7,7 +8,7 @@ import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { useCourtCase } from "context/CourtCaseContext"
 import { HintText, Label, Table } from "govuk-react"
-import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "types/Amendments"
+import { AmendmentRecords } from "types/Amendments"
 import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
@@ -24,7 +25,6 @@ import {
   getYesOrNo
 } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
-import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 
 interface HearingResultProps {
   result: Result
@@ -32,9 +32,7 @@ interface HearingResultProps {
   exceptions: Exception[]
   resultIndex: number
   selectedOffenceIndex: number
-  amendments: AmendmentRecords
   errorStatus?: ResolutionStatus | null
-  amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
 }
 
 export const HearingResult = ({
@@ -43,11 +41,9 @@ export const HearingResult = ({
   errorStatus,
   exceptions,
   resultIndex,
-  selectedOffenceIndex,
-  amendments,
-  amendFn
+  selectedOffenceIndex
 }: HearingResultProps) => {
-  const courtCase = useCourtCase()
+  const { courtCase, amendments, amend } = useCourtCase()
   const cjsErrorMessage = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
 
   const offenceIndex = selectedOffenceIndex - 1
@@ -103,11 +99,10 @@ export const HearingResult = ({
         <HintText>{"OU code, 6-7 characters"}</HintText>
         <OrganisationUnitTypeahead
           value={
-            amendedNextHearingLocation === undefined
-              ? updatedNextHearingLocation || result.NextResultSourceOrganisation?.OrganisationUnitCode
-              : amendedNextHearingLocation
+            amendedNextHearingLocation ??
+            updatedNextHearingLocation ??
+            result.NextResultSourceOrganisation?.OrganisationUnitCode
           }
-          amendFn={amendFn}
           resultIndex={resultIndex}
           offenceIndex={offenceIndex}
         />
@@ -128,7 +123,7 @@ export const HearingResult = ({
           name={"next-hearing-date"}
           value={amendedNextHearingDate}
           onChange={(event) => {
-            amendFn("nextHearingDate")({
+            amend("nextHearingDate")({
               resultIndex: resultIndex,
               offenceIndex: offenceIndex,
               updatedValue: event.target.value

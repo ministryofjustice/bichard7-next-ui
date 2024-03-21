@@ -1,13 +1,13 @@
+import { forces } from "@moj-bichard7-developers/bichard7-next-data"
 import { MAX_NOTE_LENGTH } from "config"
-import { Fieldset, FormGroup, Label, Select, HintText, TextArea, Button, Link, LabelText } from "govuk-react"
+import { useCourtCase } from "context/CourtCaseContext"
+import { useCsrfToken } from "context/CsrfTokenContext"
+import { Button, Fieldset, FormGroup, HintText, Label, LabelText, Link, Select, TextArea } from "govuk-react"
+import { FormEventHandler, useState } from "react"
+import getForcesForReallocation from "services/getForcesForReallocation"
+import { useCustomStyles } from "../../styles/customStyles"
 import ButtonsGroup from "./ButtonsGroup"
 import Form from "./Form"
-import { useCustomStyles } from "../../styles/customStyles"
-import { FormEventHandler, useState } from "react"
-import { forces } from "@moj-bichard7-developers/bichard7-next-data"
-import getForcesForReallocation from "services/getForcesForReallocation"
-import { useCsrfToken } from "context/CsrfTokenContext"
-import { useCourtCase } from "context/CourtCaseContext"
 
 interface Props {
   backLink: string
@@ -16,7 +16,7 @@ interface Props {
 const ReallocationNotesForm = ({ backLink }: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
   const classes = useCustomStyles()
-  const courtCase = useCourtCase()
+  const { courtCase } = useCourtCase()
   const currentForce = forces.find((force) => force.code === courtCase.orgForPoliceFilter?.substring(0, 2))
   const forcesForReallocation = getForcesForReallocation(currentForce?.code)
   const handleOnNoteChange: FormEventHandler<HTMLTextAreaElement> = (event) => {
