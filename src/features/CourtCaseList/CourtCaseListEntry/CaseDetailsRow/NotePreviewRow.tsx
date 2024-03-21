@@ -15,10 +15,15 @@ export const NotePreviewRow = ({ notes, className }: NotePreviewRowProps) => {
   const userNotes = filterUserNotes(notes)
   const mostRecentUserNote = getMostRecentNote(userNotes)
   const numberOfNotes = userNotes.length
+  const classes = ["note-preview-row"]
+
+  if (className) {
+    classes.push(className)
+  }
 
   return (
     <>
-      <Table.Row className={`note-preview-row ${className}`}>
+      <Table.Row className={classes.join(" ")}>
         <Table.Cell />
         <Table.Cell />
         <Table.Cell />
