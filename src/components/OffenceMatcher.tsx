@@ -12,16 +12,30 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
     courtCase: {
       aho: { PncQuery: pncQuery }
     },
-    amend
+    amend,
+    amendments
   } = useCourtCase()
 
   const offenceCode = getOffenceCode(offence)
 
   const onOffenceChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    amend("offenceReasonSequence")({
-      offenceIndex,
-      updatedValue: e.target.value
-    })
+    amend("offenceReasonSequence")([
+      ...amendments.offenceReasonSequence,
+      {
+        offenceIndex,
+        updatedValue: e.target.value
+      }
+    ])
+  }
+
+  const isAlreadySelected = (sequenceNumber: number): boolean => {
+    const selected = amendments.offenceReasonSequence
+    console.log(selected)
+    if (!selected) {
+      return false
+    }
+
+    return !!selected?.find((s) => s.updatedValue === sequenceNumber && s.offenceIndex !== offenceIndex)
   }
 
   // TODO: load manually selected value if exists (just load updated aho always?)
@@ -34,11 +48,15 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
         return (
           <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
             {c.offences
-              .filter((o) => o.offence.cjsOffenceCode === offenceCode)
-              .map((o) => {
+              .filter((pnc) => pnc.offence.cjsOffenceCode === offenceCode)
+              .map((pnc) => {
                 return (
-                  <option key={o.offence.cjsOffenceCode} value={o.offence.sequenceNumber}>
-                    {`${String(o.offence.sequenceNumber).padStart(3, "0")} - ${o.offence.cjsOffenceCode}`}
+                  <option
+                    key={pnc.offence.cjsOffenceCode}
+                    value={pnc.offence.sequenceNumber}
+                    disabled={isAlreadySelected(pnc.offence.sequenceNumber)}
+                  >
+                    {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
                   </option>
                 )
               })}

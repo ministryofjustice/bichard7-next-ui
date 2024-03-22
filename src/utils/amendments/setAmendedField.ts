@@ -17,12 +17,12 @@ const findExistingAmendment = (
       (update as UpdatedNextHearingDate).resultIndex === newValue.resultIndex
   )
 
-const setNextHearingDate = (newValue: IndividualAmendmentValues, amendments: AmendmentRecords): AmendmentRecords => {
-  const nextHearingDate = amendments.nextHearingDate as UpdatedNextHearingDate[]
-  const newHearingDate = newValue as UpdatedNextHearingDate
+const setNextHearingDate = (newValue: UpdatedNextHearingDate, amendments: AmendmentRecords): AmendmentRecords => {
+  const nextHearingDate = amendments.nextHearingDate
+  const newHearingDate = newValue
 
   if (!nextHearingDate) {
-    amendments.nextHearingDate = [newValue] as AmendmentValues
+    amendments.nextHearingDate = [newValue]
 
     return amendments
   }
@@ -38,15 +38,12 @@ const setNextHearingDate = (newValue: IndividualAmendmentValues, amendments: Ame
   return amendments
 }
 
-const setNextSourceOrganisation = (
-  newValue: IndividualAmendmentValues,
-  amendments: AmendmentRecords
-): AmendmentRecords => {
-  const nextSourceOrganisation = amendments.nextSourceOrganisation as UpdatedOffenceResult[]
-  const newNextSourceOrganisation = newValue as UpdatedOffenceResult
+const setNextSourceOrganisation = (newValue: UpdatedOffenceResult, amendments: AmendmentRecords): AmendmentRecords => {
+  const nextSourceOrganisation = amendments.nextSourceOrganisation
+  const newNextSourceOrganisation = newValue
 
   if (!nextSourceOrganisation) {
-    amendments.nextSourceOrganisation = [newValue] as AmendmentValues
+    amendments.nextSourceOrganisation = [newValue]
 
     return amendments
   }

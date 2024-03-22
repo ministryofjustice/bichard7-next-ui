@@ -1,39 +1,20 @@
 export type Amendments = {
-  asn: string
-  offenceReasonSequence: UpdatedOffenceValue[]
-  courtCaseReference: UpdatedOffenceValue[]
-  disposalQualifierCode: UpdatedDisposalQualifierCode[]
-  nextSourceOrganisation: UpdatedOffenceResult[]
-  nextHearingDate: UpdatedNextHearingDate[]
-  courtPNCIdentifier: string
-  resultVariableText: UpdatedOffenceResult[]
-  courtReference: string
-  courtOffenceSequenceNumber: UpdatedCourtOffenceSequenceNumber[]
-  forceOwner: string
+  asn?: string
+  offenceReasonSequence?: OffenceField<number>[]
+  courtCaseReference?: OffenceField<string>[]
+  disposalQualifierCode?: UpdatedDisposalQualifierCode[]
+  nextSourceOrganisation?: ResultField<string>[]
+  nextHearingDate?: UpdatedNextHearingDate[]
+  courtPNCIdentifier?: string
+  resultVariableText?: UpdatedOffenceResult[]
+  courtReference?: string
+  courtOffenceSequenceNumber?: UpdatedCourtOffenceSequenceNumber[]
+  forceOwner?: string
   noUpdatesResubmit?: boolean
 }
 
-export type Amender = (AmendmentKeys: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
-
 export type AmendmentKeys = keyof Amendments
-
-export type AmendmentValues =
-  | string
-  | UpdatedOffenceValue[]
-  | UpdatedDisposalQualifierCode[]
-  | UpdatedOffenceResult[]
-  | UpdatedNextHearingDate[]
-  | UpdatedCourtOffenceSequenceNumber[]
-
-export type AmendmentRecords = Record<string, AmendmentValues>
-
-export type IndividualAmendmentValues =
-  | string
-  | UpdatedOffenceValue
-  | UpdatedDisposalQualifierCode
-  | UpdatedOffenceResult
-  | UpdatedNextHearingDate
-  | UpdatedCourtOffenceSequenceNumber
+export type Amender = <T extends AmendmentKeys>(amendmentKey: T) => (newValue: Amendments[T]) => void
 
 export type RelevantIndexes = {
   offenceIndex: number
@@ -68,6 +49,15 @@ export type UpdatedNextHearingDate = {
 
 export type UpdatedOffence = {
   offenceIndex: number
+  resultIndex: number
+}
+
+export type OffenceField<TValue> = {
+  offenceIndex: number
+  value: TValue
+}
+
+export type ResultField<TValue> = OffenceField<TValue> & {
   resultIndex: number
 }
 
