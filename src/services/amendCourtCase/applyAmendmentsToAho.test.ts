@@ -8,9 +8,8 @@ import cloneDeep from "lodash.clonedeep"
 import amendAsn from "utils/amendments/amendAsn"
 import amendCourtCaseReference from "utils/amendments/amendCourtCaseReference"
 import amendCourtOffenceSequenceNumber from "utils/amendments/amendCourtOffenceSequenceNumber"
-import amendCourtPNCIdentifier from "utils/amendments/amendCourtPncIdentifier"
 import amendCourtReference from "utils/amendments/amendCourtReference"
-import amendDisposalQualifierCode from "utils/amendments/amendDisposalQualifierCode"
+import amendResultQualifierCode from "utils/amendments/amendResultQualifierCode"
 import amendForceOwner from "utils/amendments/amendForceOwner"
 import amendNextHearingDate from "utils/amendments/amendNextHearingDate"
 import amendNextResultSourceOrganisation from "utils/amendments/amendNextResultSourceOrganisation"
@@ -24,10 +23,9 @@ import type { Amendments } from "types/Amendments"
 jest.mock("utils/amendments/amendAsn/amendAsn")
 jest.mock("utils/amendments/amendOffenceReasonSequence/amendOffenceReasonSequence")
 jest.mock("utils/amendments/amendCourtCaseReference/amendCourtCaseReference")
-jest.mock("utils/amendments/amendDisposalQualifierCode/amendDisposalQualifierCode")
+jest.mock("utils/amendments/amendResultQualifierCode/amendResultQualifierCode")
 jest.mock("utils/amendments/amendNextResultSourceOrganisation/amendNextResultSourceOrganisation")
 jest.mock("utils/amendments/amendNextHearingDate/amendNextHearingDate")
-jest.mock("utils/amendments/amendCourtPncIdentifier/amendCourtPncIdentifier")
 jest.mock("utils/amendments/amendResultVariableText/amendResultVariableText")
 jest.mock("utils/amendments/amendCourtReference/amendCourtReference")
 jest.mock("utils/amendments/amendCourtOffenceSequenceNumber/amendCourtOffenceSequenceNumber")
@@ -95,7 +93,7 @@ describe("applyAmendmentsToAho", () => {
       offenceReasonSequence: [
         {
           offenceIndex,
-          updatedValue: "newOffenceReasonSequenceValue"
+          value: "newOffenceReasonSequenceValue"
         }
       ]
     } as Amendments
@@ -119,7 +117,7 @@ describe("applyAmendmentsToAho", () => {
       courtCaseReference: [
         {
           offenceIndex,
-          updatedValue: "newCourtCaseReference"
+          value: "newCourtCaseReference"
         }
       ]
     } as Amendments
@@ -136,14 +134,14 @@ describe("applyAmendmentsToAho", () => {
     expect(amendCourtCaseReference).toHaveBeenCalledWith(amendments.courtCaseReference, aho)
   })
 
-  it("applies DisposalQualiferCode amendments to aho", () => {
+  it("applies ResultQualiferCode amendments to aho", () => {
     const offenceIndex = 0
     const resultIndex = 0
     const amendments = {
-      disposalQualifierCode: [
+      resultQualifierCode: [
         {
           offenceIndex,
-          updatedValue: "newQualifierCode",
+          value: "newQualifierCode",
           resultQualifierIndex: 0,
           resultIndex
         }
@@ -158,17 +156,17 @@ describe("applyAmendmentsToAho", () => {
     ]
 
     applyAmendmentsToAho(amendments, aho)
-    expect(amendDisposalQualifierCode).toHaveBeenCalledTimes(1)
-    expect(amendDisposalQualifierCode).toHaveBeenCalledWith(amendments.disposalQualifierCode, aho)
+    expect(amendResultQualifierCode).toHaveBeenCalledTimes(1)
+    expect(amendResultQualifierCode).toHaveBeenCalledWith(amendments.resultQualifierCode, aho)
   })
 
-  it("removes empty DisposalQualiferCode from the aho", () => {
+  it("removes empty ResultQualiferCode from the aho", () => {
     const offenceIndex = 2
     const amendments = {
-      disposalQualifierCode: [
+      resultQualifierCode: [
         {
           offenceIndex,
-          updatedValue: "",
+          value: "",
           resultQualifierIndex: 2,
           resultIndex: 0
         }
@@ -183,7 +181,7 @@ describe("applyAmendmentsToAho", () => {
     ]
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].Result[
-      amendments.disposalQualifierCode[0].resultIndex || 0
+      amendments.resultQualifierCode?.[0].resultIndex || 0
     ].ResultQualifierVariable = [
       ...dummyResultQualifierVariable,
       ...dummyResultQualifierVariable,
@@ -202,7 +200,7 @@ describe("applyAmendmentsToAho", () => {
       nextSourceOrganisation: [
         {
           offenceIndex,
-          updatedValue: "RANDOM_TEST_STRING",
+          value: "RANDOM_TEST_STRING",
           resultIndex: 0
         }
       ]
@@ -226,7 +224,7 @@ describe("applyAmendmentsToAho", () => {
       nextHearingDate: [
         {
           offenceIndex,
-          updatedValue: "2022-08-24",
+          value: "2022-08-24",
           resultIndex: 0
         }
       ]
@@ -250,8 +248,9 @@ describe("applyAmendmentsToAho", () => {
     } as Amendments
 
     applyAmendmentsToAho(amendments, aho)
-    expect(amendCourtPNCIdentifier).toHaveBeenCalledTimes(1)
-    expect(amendCourtPNCIdentifier).toHaveBeenCalledWith(amendments.courtPNCIdentifier, aho)
+    expect(aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.CourtPNCIdentifier).toBe(
+      amendments.courtPNCIdentifier
+    )
   })
 
   it("applies ResultVariableText amendments to aho", () => {
@@ -260,7 +259,7 @@ describe("applyAmendmentsToAho", () => {
       resultVariableText: [
         {
           offenceIndex,
-          updatedValue: "random_string",
+          value: "random_string",
           resultIndex: 0
         }
       ]
@@ -293,7 +292,7 @@ describe("applyAmendmentsToAho", () => {
       courtOffenceSequenceNumber: [
         {
           offenceIndex,
-          updatedValue: 1111
+          value: 1111
         }
       ]
     } as Amendments

@@ -18,7 +18,7 @@ describe("amend fresult variable text", () => {
 
   it("amend valid result variable text to defendant result", () => {
     const offenceIndex = -1
-    const updatedValue = "random_string"
+    const value = "random_string"
     const resultIndex = 0
 
     expect(aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Result?.ResultVariableText).toBe(undefined)
@@ -27,7 +27,7 @@ describe("amend fresult variable text", () => {
       [
         {
           offenceIndex,
-          updatedValue,
+          value,
           resultIndex
         }
       ],
@@ -37,12 +37,12 @@ describe("amend fresult variable text", () => {
     const actualResultVariableText =
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Result?.ResultVariableText
 
-    expect(actualResultVariableText).toEqual(updatedValue)
+    expect(actualResultVariableText).toEqual(value)
   })
 
   it("amend valid result variable text to offender result", () => {
     const offenceIndex = 0
-    const updatedValue = "random_string"
+    const value = "random_string"
     const resultIndex = 0
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
@@ -61,7 +61,7 @@ describe("amend fresult variable text", () => {
       [
         {
           offenceIndex,
-          updatedValue,
+          value,
           resultIndex
         }
       ],
@@ -71,12 +71,12 @@ describe("amend fresult variable text", () => {
     expect(
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex]?.Result[resultIndex]
         .ResultVariableText
-    ).toEqual(updatedValue)
+    ).toEqual(value)
   })
 
   it("throws an error as defendant Result is undefined", () => {
     const offenceIndex = -1
-    const updatedValue = "random_string"
+    const value = "random_string"
     const resultIndex = 0
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Result = undefined
@@ -86,7 +86,7 @@ describe("amend fresult variable text", () => {
         [
           {
             offenceIndex,
-            updatedValue,
+            value,
             resultIndex
           }
         ],
@@ -97,7 +97,7 @@ describe("amend fresult variable text", () => {
 
   it("throws an error if result is out of range", () => {
     const offenceIndex = 0
-    const updatedValue = "random_string"
+    const value = "random_string"
     const resultIndex = 2
 
     expect(() =>
@@ -105,7 +105,7 @@ describe("amend fresult variable text", () => {
         [
           {
             offenceIndex,
-            updatedValue,
+            value,
             resultIndex
           }
         ],
@@ -116,7 +116,7 @@ describe("amend fresult variable text", () => {
 
   it("throws an error if offence is out of range", () => {
     const offenceIndex = 1
-    const updatedValue = "random_string"
+    const value = "random_string"
     const resultIndex = 0
 
     expect(() =>
@@ -124,7 +124,7 @@ describe("amend fresult variable text", () => {
         [
           {
             offenceIndex,
-            updatedValue,
+            value,
             resultIndex
           }
         ],
@@ -137,12 +137,12 @@ describe("amend fresult variable text", () => {
     const amendments = [
       {
         offenceIndex: 0,
-        updatedValue: "random_string_0",
+        value: "random_string_0",
         resultIndex: 0
       },
       {
         offenceIndex: 2,
-        updatedValue: "random_string_2",
+        value: "random_string_2",
         resultIndex: 0
       }
     ]
@@ -163,11 +163,11 @@ describe("amend fresult variable text", () => {
 
     amendResultVariableText(amendments, aho)
 
-    amendments.forEach(({ offenceIndex, resultIndex, updatedValue }) => {
+    amendments.forEach(({ offenceIndex, resultIndex, value }) => {
       expect(
         aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex]?.Result[resultIndex]
           .ResultVariableText
-      ).toEqual(updatedValue)
+      ).toEqual(value)
     })
   })
 
@@ -175,12 +175,12 @@ describe("amend fresult variable text", () => {
     const amendments = [
       {
         offenceIndex: 0,
-        updatedValue: "random_string_0",
+        value: "random_string_0",
         resultIndex: 0
       },
       {
         offenceIndex: 0,
-        updatedValue: "random_string_1",
+        value: "random_string_1",
         resultIndex: 1
       }
     ]
@@ -201,11 +201,11 @@ describe("amend fresult variable text", () => {
 
     amendResultVariableText(amendments, aho)
 
-    amendments.forEach(({ offenceIndex, resultIndex, updatedValue }) => {
+    amendments.forEach(({ offenceIndex, resultIndex, value }) => {
       expect(
         aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex]?.Result[resultIndex]
           .ResultVariableText
-      ).toEqual(updatedValue)
+      ).toEqual(value)
     })
   })
 })

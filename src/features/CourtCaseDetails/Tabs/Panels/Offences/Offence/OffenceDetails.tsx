@@ -16,7 +16,6 @@ import ErrorMessages, { findExceptions } from "types/ErrorMessages"
 import { Exception } from "types/exceptions"
 import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
-import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
 import { capitaliseExpression, getPleaStatus, getVerdict, getYesOrNo } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
 import { HearingResult } from "./HearingResult"
@@ -109,7 +108,6 @@ export const OffenceDetails = ({
   exceptions
 }: OffenceDetailsProps) => {
   const { courtCase } = useCourtCase()
-  const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
   const classes = useStyles()
   const offenceCode = getOffenceCode(offence)
   const qualifierCode =
@@ -252,7 +250,6 @@ export const OffenceDetails = ({
               </Heading>
               <HearingResult
                 result={result}
-                updatedFields={updatedFields}
                 exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>
                   resultException.path.join(">").startsWith(thisResultPath(index))
                 )}

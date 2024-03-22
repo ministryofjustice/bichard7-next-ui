@@ -19,24 +19,14 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
   const offenceCode = getOffenceCode(offence)
 
   const onOffenceChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    amend("offenceReasonSequence")([
-      ...amendments.offenceReasonSequence,
-      {
-        offenceIndex,
-        updatedValue: e.target.value
-      }
-    ])
+    amend("offenceReasonSequence")({
+      offenceIndex,
+      value: e.target.value
+    })
   }
 
-  const isAlreadySelected = (sequenceNumber: number): boolean => {
-    const selected = amendments.offenceReasonSequence
-    console.log(selected)
-    if (!selected) {
-      return false
-    }
-
-    return !!selected?.find((s) => s.updatedValue === sequenceNumber && s.offenceIndex !== offenceIndex)
-  }
+  const isAlreadySelected = (sequenceNumber: string) =>
+    !!amendments.offenceReasonSequence?.find((x) => x.value === sequenceNumber && x.offenceIndex !== offenceIndex)
 
   // TODO: load manually selected value if exists (just load updated aho always?)
   // TODO: prevent matching twice
@@ -54,7 +44,7 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
                   <option
                     key={pnc.offence.cjsOffenceCode}
                     value={pnc.offence.sequenceNumber}
-                    disabled={isAlreadySelected(pnc.offence.sequenceNumber)}
+                    disabled={isAlreadySelected(String(pnc.offence.sequenceNumber))}
                   >
                     {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
                   </option>

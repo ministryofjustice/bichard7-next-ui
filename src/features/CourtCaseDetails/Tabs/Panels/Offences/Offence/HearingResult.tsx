@@ -8,13 +8,11 @@ import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { useCourtCase } from "context/CourtCaseContext"
 import { HintText, Label, Table } from "govuk-react"
-import { AmendmentRecords } from "types/Amendments"
 import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
 import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
 import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
-import hasNextHearingDateException from "utils/exceptions/hasNextHearingDateException"
 import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
 import {
@@ -25,10 +23,10 @@ import {
   getYesOrNo
 } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
+import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExceptions"
 
 interface HearingResultProps {
   result: Result
-  updatedFields: AmendmentRecords
   exceptions: Exception[]
   resultIndex: number
   selectedOffenceIndex: number
@@ -37,7 +35,6 @@ interface HearingResultProps {
 
 export const HearingResult = ({
   result,
-  updatedFields,
   errorStatus,
   exceptions,
   resultIndex,
@@ -49,13 +46,10 @@ export const HearingResult = ({
   const offenceIndex = selectedOffenceIndex - 1
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
-  const updatedNextHearingLocation = getNextHearingLocationValue(updatedFields, offenceIndex, resultIndex)
-  const updatedNextHearingDate = getNextHearingDateValue(updatedFields, offenceIndex, resultIndex)
-  const isEditable = (hasException: (exceptions: Exception[]) => boolean): boolean =>
-    hasException(exceptions) &&
-    courtCase.canUserEditExceptions &&
-    courtCase.phase === Phase.HEARING_OUTCOME &&
-    errorStatus === "Unresolved"
+  const updatedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
+  const updatedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
+  const isCaseEditable =
+    courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME && errorStatus === "Unresolved"
 
   return (
     <Table>
@@ -93,7 +87,7 @@ export const HearingResult = ({
         hasExceptions={hasNextHearingLocationException(exceptions)}
         value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
         updatedValue={updatedNextHearingLocation}
-        isEditable={isEditable(hasNextHearingLocationException)}
+        isEditable={isCaseEditable && hasNextHearingLocationException(exceptions)}
       >
         <Label>{"Enter next hearing location"}</Label>
         <HintText>{"OU code, 6-7 characters"}</HintText>
@@ -109,10 +103,10 @@ export const HearingResult = ({
       </EditableFieldTableRow>
       <EditableFieldTableRow
         label="Next hearing date"
-        hasExceptions={hasNextHearingDateException(exceptions)}
+        hasExceptions={hasNextHearingDateExceptions(exceptions)}
         value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
         updatedValue={updatedNextHearingDate && formatDisplayedDate(updatedNextHearingDate)}
-        isEditable={isEditable(hasNextHearingDateException)}
+        isEditable={isCaseEditable && hasNextHearingDateExceptions(exceptions)}
       >
         <HintText>{"Enter date"}</HintText>
         <input
@@ -126,7 +120,7 @@ export const HearingResult = ({
             amend("nextHearingDate")({
               resultIndex: resultIndex,
               offenceIndex: offenceIndex,
-              updatedValue: event.target.value
+              value: event.target.value
             })
           }}
         />

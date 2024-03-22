@@ -1,18 +1,16 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { UpdatedOffenceValue } from "types/Amendments"
+import { Amendments } from "types/Amendments"
 
-const amendCourtCaseReference = (updatedOffenceValue: UpdatedOffenceValue[], aho: AnnotatedHearingOutcome) => {
-  updatedOffenceValue.forEach(({ offenceIndex, updatedValue }: UpdatedOffenceValue) => {
-    if (updatedValue.length === 0) {
-      aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].CourtCaseReferenceNumber =
-        null
-      return
-    }
+const amendCourtCaseReference = (
+  updatedOffenceValue: Amendments["courtCaseReference"],
+  aho: AnnotatedHearingOutcome
+) => {
+  updatedOffenceValue?.forEach(({ offenceIndex, value }) => {
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].CourtCaseReferenceNumber =
-      updatedValue
+      value?.length ? value : null
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualCourtCaseReference =
-      true
+      !!value?.length
   })
 }
 

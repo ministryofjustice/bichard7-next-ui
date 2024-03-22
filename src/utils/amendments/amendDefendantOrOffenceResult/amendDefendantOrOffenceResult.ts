@@ -2,10 +2,11 @@ import {
   AnnotatedHearingOutcome,
   OrganisationUnitCodes
 } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { ValidProperties, UpdatedOffence } from "types/Amendments"
+import { ValidProperties } from "types/Amendments"
 
 const amendDefendantOrOffenceResult = (
-  { offenceIndex, resultIndex }: UpdatedOffence,
+  offenceIndex: number,
+  resultIndex: number,
   aho: AnnotatedHearingOutcome,
   propertyToAmend: ValidProperties,
   valueToAmend: OrganisationUnitCodes | Date | string

@@ -30,7 +30,7 @@ describe("amend offence reason sequence", () => {
       [
         {
           offenceIndex,
-          updatedValue: "newOffenceReasonSequenceValue"
+          value: "newOffenceReasonSequenceValue"
         }
       ],
       aho
@@ -55,25 +55,25 @@ describe("amend offence reason sequence", () => {
     const amendments = [
       {
         offenceIndex: 0,
-        updatedValue: "firstOffenceReasonSequenceValue"
+        value: "firstOffenceReasonSequenceValue"
       },
       {
         offenceIndex: 1,
-        updatedValue: "secondOffenceReasonSequenceValue"
+        value: "secondOffenceReasonSequenceValue"
       },
       {
         offenceIndex: 2,
-        updatedValue: "thirdOffenceReasonSequenceValue"
+        value: "thirdOffenceReasonSequenceValue"
       }
     ]
 
     amendOffenceReasonSequence(amendments, aho)
 
-    amendments.forEach(({ updatedValue, offenceIndex }) => {
+    amendments.forEach(({ value, offenceIndex }) => {
       expect(
         aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
           .CriminalProsecutionReference.OffenceReasonSequence
-      ).toEqual(updatedValue)
+      ).toEqual(value)
       expect(
         aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualSequenceNumber
       ).toBe(true)

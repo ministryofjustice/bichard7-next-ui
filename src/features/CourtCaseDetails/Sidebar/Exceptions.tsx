@@ -14,7 +14,7 @@ import DefaultException from "../../../components/Exception/DefaultException"
 import PncException from "../../../components/Exception/PncException"
 import Form from "../../../components/Form"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
-import editableFieldsValidationError from "../../../utils/editableFieldsValidationError"
+import areEditableFieldsValid from "../../../utils/areEditableFieldsValid"
 import LockStatusTag from "../LockStatusTag"
 
 const isPncException = (code: ExceptionCode) =>
@@ -59,7 +59,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) =
   const csrfToken = useCsrfToken()
   const previousPath = usePreviousPath()
   const router = useRouter()
-  const disable = editableFieldsValidationError(courtCase, amendments)
+  const disable = !areEditableFieldsValid(courtCase, amendments)
 
   let resolveLink = `${router.basePath}${usePathname()}/resolve`
 

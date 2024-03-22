@@ -1,64 +1,36 @@
 export type Amendments = {
   asn?: string
-  offenceReasonSequence?: OffenceField<number>[]
+  offenceReasonSequence?: OffenceField<string>[]
   courtCaseReference?: OffenceField<string>[]
-  disposalQualifierCode?: UpdatedDisposalQualifierCode[]
+  resultQualifierCode?: ResultQualifierCode[]
   nextSourceOrganisation?: ResultField<string>[]
-  nextHearingDate?: UpdatedNextHearingDate[]
+  nextHearingDate?: ResultField<string>[]
   courtPNCIdentifier?: string
-  resultVariableText?: UpdatedOffenceResult[]
+  resultVariableText?: ResultField<string>[]
   courtReference?: string
-  courtOffenceSequenceNumber?: UpdatedCourtOffenceSequenceNumber[]
+  courtOffenceSequenceNumber?: OffenceField<number>[]
   forceOwner?: string
   noUpdatesResubmit?: boolean
 }
 
 export type AmendmentKeys = keyof Amendments
-export type Amender = <T extends AmendmentKeys>(amendmentKey: T) => (newValue: Amendments[T]) => void
 
-export type RelevantIndexes = {
+type Unpacked<T> = T extends (infer U)[] ? U : T
+
+export type Amender = <T extends AmendmentKeys>(amendmentKey: T) => (newValue: Unpacked<Amendments[T]>) => void
+
+type OffenceField<T> = {
   offenceIndex: number
-  resultIndex?: number
-  resultQualifierIndex?: number
+  value?: T
 }
 
-export type UpdatedOffenceValue = {
-  offenceIndex: number
-  updatedValue: string
+type ResultField<T> = OffenceField<T> & {
+  resultIndex: number
 }
 
-export type UpdatedCourtOffenceSequenceNumber = {
-  offenceIndex: number
-  updatedValue: number
-}
-
-export type UpdatedDisposalQualifierCode = UpdatedOffenceValue & {
+type ResultQualifierCode = OffenceField<string> & {
   resultIndex?: number
   resultQualifierIndex: number
-}
-
-export type UpdatedOffenceResult = UpdatedOffenceValue & {
-  resultIndex: number
-}
-
-export type UpdatedNextHearingDate = {
-  offenceIndex: number
-  resultIndex: number
-  updatedValue: string
-}
-
-export type UpdatedOffence = {
-  offenceIndex: number
-  resultIndex: number
-}
-
-export type OffenceField<TValue> = {
-  offenceIndex: number
-  value: TValue
-}
-
-export type ResultField<TValue> = OffenceField<TValue> & {
-  resultIndex: number
 }
 
 export enum ValidProperties {

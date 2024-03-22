@@ -125,11 +125,11 @@ describe("amend court case", () => {
         courtOffenceSequenceNumber: [
           {
             offenceIndex: 0,
-            updatedValue: 3333
+            value: 3333
           },
           {
             offenceIndex: 1,
-            updatedValue: 1111
+            value: 1111
           }
         ]
       },

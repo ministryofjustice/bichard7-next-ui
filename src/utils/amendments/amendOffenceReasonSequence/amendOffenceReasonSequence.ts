@@ -1,11 +1,14 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { UpdatedOffenceValue } from "types/Amendments"
+import { Amendments } from "types/Amendments"
 
-const amendOffenceReasonSequence = (newOffenceReasonSequence: UpdatedOffenceValue[], aho: AnnotatedHearingOutcome) => {
-  newOffenceReasonSequence.forEach(({ updatedValue, offenceIndex }: UpdatedOffenceValue) => {
+const amendOffenceReasonSequence = (
+  newOffenceReasonSequence: Amendments["offenceReasonSequence"],
+  aho: AnnotatedHearingOutcome
+) => {
+  newOffenceReasonSequence?.forEach(({ value, offenceIndex }) => {
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
       offenceIndex
-    ].CriminalProsecutionReference.OffenceReasonSequence = updatedValue
+    ].CriminalProsecutionReference.OffenceReasonSequence = value
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualSequenceNumber = true
   })

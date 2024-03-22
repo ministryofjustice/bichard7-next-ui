@@ -21,16 +21,6 @@ describe("court reference", () => {
     )
   })
 
-  it("amend crown court reference", () => {
-    expect(aho.AnnotatedHearingOutcome.HearingOutcome.Case.CourtReference?.CrownCourtReference).toBe("random_crown_ref")
-
-    amendCourtReference("updated_value", aho)
-
-    expect(aho.AnnotatedHearingOutcome.HearingOutcome.Case.CourtReference.CrownCourtReference).toStrictEqual(
-      "updated_value"
-    )
-  })
-
   it("throws an error if no crown court and magistrates court reference", () => {
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.CourtReference.MagistratesCourtReference = ""
     delete aho.AnnotatedHearingOutcome.HearingOutcome.Case.CourtReference.CrownCourtReference

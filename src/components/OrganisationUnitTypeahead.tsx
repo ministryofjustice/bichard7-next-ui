@@ -3,7 +3,6 @@ import { useCombobox } from "downshift"
 import { Input } from "govuk-react"
 import { useCallback, useEffect, useState } from "react"
 import styled from "styled-components"
-import { UpdatedOffenceResult } from "../types/Amendments"
 import OrganisationUnitApiResponse from "../types/OrganisationUnitApiResponse"
 import { isError } from "../types/Result"
 import { useCourtCase } from "context/CourtCaseContext"
@@ -67,8 +66,8 @@ const OrganisationUnitTypeahead: React.FC<Props> = ({ value, resultIndex, offenc
       amend("nextSourceOrganisation")({
         resultIndex: resultIndex,
         offenceIndex: offenceIndex,
-        updatedValue: inputValue
-      } as UpdatedOffenceResult)
+        value: inputValue
+      })
     },
     initialInputValue: value,
     itemToString: (item) => item?.fullOrganisationCode ?? ""

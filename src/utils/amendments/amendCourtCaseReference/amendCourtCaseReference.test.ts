@@ -29,7 +29,7 @@ describe("court case reference", () => {
       [
         {
           offenceIndex,
-          updatedValue: "newCourtCaseReference"
+          value: "newCourtCaseReference"
         }
       ],
       aho
@@ -48,7 +48,7 @@ describe("court case reference", () => {
       [
         {
           offenceIndex: 0,
-          updatedValue: ""
+          value: ""
         }
       ],
       aho
@@ -70,24 +70,24 @@ describe("court case reference", () => {
     const amendments = [
       {
         offenceIndex: 3,
-        updatedValue: "newCourtCaseReference3"
+        value: "newCourtCaseReference3"
       },
       {
         offenceIndex: 2,
-        updatedValue: "newCourtCaseReference2"
+        value: "newCourtCaseReference2"
       },
       {
         offenceIndex: 0,
-        updatedValue: "newCourtCaseReference0"
+        value: "newCourtCaseReference0"
       }
     ]
 
     amendCourtCaseReference(amendments, aho)
 
-    amendments.forEach(({ updatedValue, offenceIndex }) => {
+    amendments.forEach(({ value, offenceIndex }) => {
       expect(
         aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].CourtCaseReferenceNumber
-      ).toEqual(updatedValue)
+      ).toEqual(value)
       expect(
         aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualCourtCaseReference
       ).toBe(true)
