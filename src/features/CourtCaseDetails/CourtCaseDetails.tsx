@@ -25,7 +25,18 @@ const useStyles = createUseStyles({
   },
   sideBarContainer: {
     minWidth: "320px",
-    maxWidth: "430px"
+    maxWidth: "430px",
+    "@media (max-width: 768px)": {
+      paddingTop: "50px"
+    }
+  },
+  smallScreen: {
+    "@media (max-width: 768px)": {
+      maxWidth: "100%",
+      minWidth: "100%",
+      width: "100%",
+      display: "block"
+    }
   },
   visible: {
     visibility: "visible",
@@ -78,8 +89,8 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
         width={contentWidth}
       />
 
-      <GridRow>
-        <GridCol setWidth={contentWidth} className={classes.contentColumn}>
+      <GridRow className={classes.smallScreen}>
+        <GridCol setWidth={contentWidth} className={`${classes.contentColumn} ${classes.smallScreen}`}>
           <CourtCaseDetailsPanel
             className={activeTab === "Defendant" ? classes.visible : classes.notVisible}
             heading={"Defendant details"}
@@ -117,7 +128,7 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
           />
         </GridCol>
 
-        <GridCol setWidth={sideBarWidth} className={classes.sideBarContainer}>
+        <GridCol setWidth={sideBarWidth} className={`${classes.sideBarContainer} ${classes.smallScreen}`}>
           <TriggersAndExceptions
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}
