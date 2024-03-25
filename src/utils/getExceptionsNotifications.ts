@@ -71,7 +71,7 @@ const getExceptionsNotifications = (
       exceptionsCount:
         nextHearingDateExceptionsDetails.ExceptionsCount + nextHearingLocationExceptionsNotification.ExceptionsCount,
       isResolved:
-        nextHearingDateExceptionsDetails.ExceptionsResolved ||
+        nextHearingDateExceptionsDetails.ExceptionsResolved &&
         nextHearingLocationExceptionsNotification.ExceptionsResolved
     },
     {

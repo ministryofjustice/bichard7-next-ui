@@ -8,7 +8,7 @@ interface CourtCaseDetailsSingleTabProps {
   tab: CaseDetailsTab
   isActive: boolean
   onClick: (tab: CaseDetailsTab) => void
-  exceptions: ExceptionIconDetails[]
+  exceptionsNotifications: ExceptionIconDetails[]
 }
 
 const useStyles = createUseStyles({
@@ -18,7 +18,12 @@ const useStyles = createUseStyles({
   }
 })
 
-export const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick, exceptions }: CourtCaseDetailsSingleTabProps) => {
+export const CourtCaseDetailsSingleTab = ({
+  tab,
+  isActive,
+  onClick,
+  exceptionsNotifications
+}: CourtCaseDetailsSingleTabProps) => {
   const classes = useStyles()
   return (
     <li className="moj-sub-navigation__item">
@@ -32,7 +37,7 @@ export const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick, exceptions }
         }}
       >
         {tab} <span />
-        {exceptions.map((exception) =>
+        {exceptionsNotifications.map((exception) =>
           exception.tab === tab && exception.isResolved ? (
             <Image
               className={`${classes.checkmark}`}

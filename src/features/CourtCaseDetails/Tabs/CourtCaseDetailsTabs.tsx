@@ -22,7 +22,7 @@ export const CourtCaseDetailsTabs = ({ tabs, activeTab, onTabClick, width }: Cou
   const classes = useStyles({ width })
   const courtCase = useCourtCase()
   const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
-  const exceptions = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
+  const exceptionsNotifications = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
 
   return (
     <nav className={`moj-sub-navigation ${classes.nav}`} aria-label="Sub navigation">
@@ -33,7 +33,7 @@ export const CourtCaseDetailsTabs = ({ tabs, activeTab, onTabClick, width }: Cou
             isActive={tab === activeTab}
             key={tab}
             onClick={onTabClick}
-            exceptions={exceptions}
+            exceptionsNotifications={exceptionsNotifications}
           />
         ))}
       </ul>
