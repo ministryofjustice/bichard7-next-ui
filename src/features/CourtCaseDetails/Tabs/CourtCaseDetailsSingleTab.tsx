@@ -1,14 +1,15 @@
 import CaseDetailsTab from "types/CaseDetailsTab"
-import { ExceptionIconDetails } from "utils/getExceptionsNotifications"
+import { getExceptionsNotifications } from "utils/getExceptionsNotifications"
 import { CHECKMARK_ICON_URL } from "utils/icons"
 import Image from "next/image"
 import { createUseStyles } from "react-jss"
+import { useCourtCase } from "context/CourtCaseContext"
+import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
 
 interface CourtCaseDetailsSingleTabProps {
   tab: CaseDetailsTab
   isActive: boolean
   onClick: (tab: CaseDetailsTab) => void
-  exceptionsNotifications: ExceptionIconDetails[]
 }
 
 const useStyles = createUseStyles({
@@ -18,13 +19,11 @@ const useStyles = createUseStyles({
   }
 })
 
-export const CourtCaseDetailsSingleTab = ({
-  tab,
-  isActive,
-  onClick,
-  exceptionsNotifications
-}: CourtCaseDetailsSingleTabProps) => {
+export const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick }: CourtCaseDetailsSingleTabProps) => {
   const classes = useStyles()
+  const courtCase = useCourtCase()
+  const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
+  const exceptionsNotifications = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
   return (
     <li className="moj-sub-navigation__item">
       <a
@@ -40,7 +39,7 @@ export const CourtCaseDetailsSingleTab = ({
         {exceptionsNotifications.map((exception) =>
           exception.tab === tab && exception.isResolved ? (
             <Image
-              className={`${classes.checkmark}`}
+              className={`checkmark-icon ${classes.checkmark}`}
               key={exception.tab}
               src={CHECKMARK_ICON_URL}
               width={30}
