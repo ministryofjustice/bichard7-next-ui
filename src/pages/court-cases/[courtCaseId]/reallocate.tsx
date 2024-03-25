@@ -24,7 +24,7 @@ import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
-import { CourtCaseContext } from "context/CourtCaseContext"
+import { CourtCaseContext, useCourtCaseContextState } from "context/CourtCaseContext"
 import { CsrfTokenContext } from "context/CsrfTokenContext"
 import { NotesTable } from "components/NotesTable"
 import ReallocationNotesForm from "components/ReallocationNotesForm"
@@ -130,6 +130,7 @@ const ReallocateCasePage: NextPage<Props> = ({
   const [reallocateFormWidth, setReallocateFormWidth] = useState<string>("two-thirds")
   const [userNotesWidth, setUserNotesWidth] = useState<string>("one-third")
   const [flexDirection, setFlexDirection] = useState<Property.FlexDirection>("row")
+  const courtCaseContext = useCourtCaseContextState(courtCase)
 
   const notes: DisplayNote[] = courtCase.notes
 
@@ -177,7 +178,7 @@ const ReallocateCasePage: NextPage<Props> = ({
         <meta name="description" content="Bichard7 | Case Reallocation" />
       </Head>
       <CurrentUserContext.Provider value={{ currentUser: user }}>
-        <CourtCaseContext.Provider value={{ courtCase }}>
+        <CourtCaseContext.Provider value={courtCaseContext}>
           <CsrfTokenContext.Provider value={{ csrfToken }}>
             <PreviousPathContext.Provider value={{ previousPath }}>
               <Layout>

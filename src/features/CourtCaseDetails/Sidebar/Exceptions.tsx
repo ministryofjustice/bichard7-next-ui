@@ -59,7 +59,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) =
   const csrfToken = useCsrfToken()
   const previousPath = usePreviousPath()
   const router = useRouter()
-  const disable = !areEditableFieldsValid(courtCase, amendments)
+  const enableSubmitExceptions = areEditableFieldsValid(courtCase, amendments)
 
   let resolveLink = `${router.basePath}${usePathname()}/resolve`
 
@@ -91,7 +91,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) =
         <div className={classes.buttonContainer}>
           <Form method="post" action={submitCasePath} csrfToken={csrfToken}>
             <input type="hidden" name="amendments" value={JSON.stringify(amendments)} />
-            <Button id="submit" type="submit" disabled={disable} onClick={handleClick}>
+            <Button id="submit" type="submit" disabled={!enableSubmitExceptions} onClick={handleClick}>
               {"Submit exception(s)"}
             </Button>
           </Form>

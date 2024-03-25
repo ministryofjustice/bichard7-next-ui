@@ -50,14 +50,8 @@ describe("Hearing Result", () => {
 
   it("displays all mandatory fields", () => {
     cy.mount(
-      <CourtCaseContext.Provider value={{ courtCase }}>
-        <HearingResult
-          result={result}
-          resultIndex={dummyIndex}
-          selectedOffenceIndex={dummyIndex}
-          updatedFields={{}}
-          exceptions={[]}
-        />
+      <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
+        <HearingResult result={result} resultIndex={dummyIndex} selectedOffenceIndex={dummyIndex} exceptions={[]} />
       </CourtCaseContext.Provider>
     )
 
@@ -83,14 +77,8 @@ describe("Hearing Result", () => {
       ]
 
       cy.mount(
-        <CourtCaseContext.Provider value={{ courtCase }}>
-          <HearingResult
-            result={result}
-            resultIndex={dummyIndex}
-            selectedOffenceIndex={dummyIndex}
-            updatedFields={{}}
-            exceptions={[]}
-          />
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
+          <HearingResult result={result} resultIndex={dummyIndex} selectedOffenceIndex={dummyIndex} exceptions={[]} />
         </CourtCaseContext.Provider>
       )
 
@@ -101,14 +89,8 @@ describe("Hearing Result", () => {
       result.Duration = undefined
 
       cy.mount(
-        <CourtCaseContext.Provider value={{ courtCase }}>
-          <HearingResult
-            result={result}
-            resultIndex={dummyIndex}
-            selectedOffenceIndex={dummyIndex}
-            updatedFields={{}}
-            exceptions={[]}
-          />
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
+          <HearingResult result={result} resultIndex={dummyIndex} selectedOffenceIndex={dummyIndex} exceptions={[]} />
         </CourtCaseContext.Provider>
       )
 
@@ -129,14 +111,8 @@ describe("Hearing Result", () => {
         }
       ]
       cy.mount(
-        <CourtCaseContext.Provider value={{ courtCase }}>
-          <HearingResult
-            result={result}
-            resultIndex={dummyIndex}
-            selectedOffenceIndex={dummyIndex}
-            updatedFields={{}}
-            exceptions={[]}
-          />
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
+          <HearingResult result={result} resultIndex={dummyIndex} selectedOffenceIndex={dummyIndex} exceptions={[]} />
         </CourtCaseContext.Provider>
       )
       cy.contains("td", "Duration").siblings().should("include.text", "3 years")
@@ -149,14 +125,8 @@ describe("Hearing Result", () => {
       result.NextHearingDate = undefined
 
       cy.mount(
-        <CourtCaseContext.Provider value={{ courtCase }}>
-          <HearingResult
-            result={result}
-            resultIndex={dummyIndex}
-            selectedOffenceIndex={dummyIndex}
-            updatedFields={{}}
-            exceptions={[]}
-          />
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
+          <HearingResult result={result} resultIndex={dummyIndex} selectedOffenceIndex={dummyIndex} exceptions={[]} />
         </CourtCaseContext.Provider>
       )
 
@@ -167,14 +137,8 @@ describe("Hearing Result", () => {
       result.NextHearingDate = "false"
 
       cy.mount(
-        <CourtCaseContext.Provider value={{ courtCase }}>
-          <HearingResult
-            result={result}
-            resultIndex={dummyIndex}
-            selectedOffenceIndex={dummyIndex}
-            updatedFields={{}}
-            exceptions={[]}
-          />
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
+          <HearingResult result={result} resultIndex={dummyIndex} selectedOffenceIndex={dummyIndex} exceptions={[]} />
         </CourtCaseContext.Provider>
       )
 
@@ -185,12 +149,11 @@ describe("Hearing Result", () => {
       result.NextHearingDate = undefined
 
       cy.mount(
-        <CourtCaseContext.Provider value={{ courtCase }}>
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
           <HearingResult
             result={result}
             resultIndex={0}
             selectedOffenceIndex={0}
-            updatedFields={{}}
             exceptions={[{ path: ["dummyPath", "NextHearingDate"], code: ExceptionCode.HO100323 }]}
           />
         </CourtCaseContext.Provider>
@@ -203,12 +166,11 @@ describe("Hearing Result", () => {
       result.NextResultSourceOrganisation = undefined
 
       cy.mount(
-        <CourtCaseContext.Provider value={{ courtCase }}>
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
           <HearingResult
             result={result}
             resultIndex={0}
             selectedOffenceIndex={0}
-            updatedFields={{}}
             exceptions={[
               {
                 path: ["dummyPath", "NextResultSourceOrganisation", "OrganisationUnitCode"],
@@ -226,12 +188,11 @@ describe("Hearing Result", () => {
   describe("CJS result code", () => {
     it("Should display an error prompt when a HO100307 is raised", () => {
       cy.mount(
-        <CourtCaseContext.Provider value={{ courtCase }}>
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
           <HearingResult
             result={result}
             resultIndex={0}
             selectedOffenceIndex={0}
-            updatedFields={{}}
             exceptions={[{ path: ["dummyPath", "CJSresultCode"], code: ExceptionCode.HO100307 }]}
           />
         </CourtCaseContext.Provider>

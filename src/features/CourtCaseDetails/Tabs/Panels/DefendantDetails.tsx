@@ -81,7 +81,7 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
 
   useEffect(() => {
     if (!pageLoad) {
-      amendments.asn = updatedAhoAsn ?? ""
+      amend("asn")(updatedAhoAsn ?? "")
       setPageLoad(true)
     }
 
@@ -90,7 +90,7 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
     }
 
     stopLeavingFn(!savedAsn && isAsnChanged && updatedAhoAsn !== asnString)
-  }, [savedAsn, asnString, pageLoad, amendments, updatedAhoAsn, stopLeavingFn, isAsnChanged])
+  }, [savedAsn, asnString, pageLoad, amendments, updatedAhoAsn, stopLeavingFn, isAsnChanged, amend])
 
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const asn = e.target.value.toUpperCase()
@@ -162,7 +162,7 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
                 id={"asn"}
                 name={"asn"}
                 onChange={handleAsnChange}
-                value={(amendments.asn as string) ?? ""}
+                value={amendments.asn ?? ""}
                 error={!isValidAsn}
               />
             </div>

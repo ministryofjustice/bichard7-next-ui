@@ -8,11 +8,11 @@ const isAmendedNextHearingLocationValid = (exceptions: Exception[], amendments: 
     return true
   }
 
-  const updatedNextSourceOrganisation = amendments.nextSourceOrganisation
+  const updatedNextSourceOrganisation = amendments.nextSourceOrganisation || []
 
   return (
-    nextHearingLocationException.length === updatedNextSourceOrganisation?.length &&
-    !updatedNextSourceOrganisation?.some((el) => !el.value?.trim())
+    nextHearingLocationException.length === updatedNextSourceOrganisation.length &&
+    !updatedNextSourceOrganisation.some((el) => !el.value?.trim())
   )
 }
 
