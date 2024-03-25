@@ -57,9 +57,6 @@ export const OffencesListRow = ({ offence, onClick }: OffencesListRowProps) => {
     }
   })
 
-  console.log("Alert: ", offenceAlerts)
-  console.log("Icon: ", offenceAlertIcon)
-
   return (
     <Table.Row>
       <Table.Cell>{offenceAlertIcon}</Table.Cell>

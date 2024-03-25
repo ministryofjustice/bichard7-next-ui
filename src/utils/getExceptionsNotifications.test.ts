@@ -287,4 +287,76 @@ describe("getExceptionsNotifications", () => {
       expect(exceptionType).toBe(typeOfException)
     }
   )
+
+  it("Should return isResolved:true for offences tab when next-hearing-date exception is resolved", () => {
+    dummyAho.Exceptions.length = 0
+    HO100102(dummyAho)
+    const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
+    const updatedFields = {
+      nextHearingDate: [
+        {
+          resultIndex: 0,
+          offenceIndex: 0,
+          updatedValue: "2002-10-10"
+        }
+      ]
+    } as AmendmentRecords
+
+    const exceptionsNotifications = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
+
+    expect(exceptionsNotifications[3].tab).toBe("Offences")
+    expect(exceptionsNotifications[3].exceptionsCount).toBe(0)
+    expect(exceptionsNotifications[3].isResolved).toBe(true)
+  })
+
+  it("Should return isResolved:false for offences tab when multiple exceptions are raised and only one of them is resolved ", () => {
+    dummyAho.Exceptions.length = 0
+    HO100102(dummyAho)
+    HO100200(dummyAho)
+    const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
+    const updatedFields = {
+      nextHearingDate: [
+        {
+          resultIndex: 0,
+          offenceIndex: 0,
+          updatedValue: "2002-10-10"
+        }
+      ]
+    } as AmendmentRecords
+
+    const exceptionsNotifications = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
+
+    expect(exceptionsNotifications[3].tab).toBe("Offences")
+    expect(exceptionsNotifications[3].exceptionsCount).toBe(1)
+    expect(exceptionsNotifications[3].isResolved).toBe(false)
+  })
+
+  it("Should return isResolved:true for offences tab when multiple exceptions are raised and all of them are resolved ", () => {
+    dummyAho.Exceptions.length = 0
+    HO100102(dummyAho)
+    HO100200(dummyAho)
+    const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
+    const updatedFields = {
+      nextHearingDate: [
+        {
+          resultIndex: 0,
+          offenceIndex: 0,
+          updatedValue: "2002-10-10"
+        }
+      ],
+      nextSourceOrganisation: [
+        {
+          resultIndex: 0,
+          offenceIndex: 1,
+          updatedValue: "B21XA00"
+        }
+      ]
+    } as AmendmentRecords
+
+    const exceptionsNotifications = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
+
+    expect(exceptionsNotifications[3].tab).toBe("Offences")
+    expect(exceptionsNotifications[3].exceptionsCount).toBe(0)
+    expect(exceptionsNotifications[3].isResolved).toBe(true)
+  })
 })

@@ -44,7 +44,7 @@ const nextHearingLocationExceptionResolvedFn = (
 const getOffenceAlertsDetails = (exceptions: Exception[], updatedFields: AmendmentRecords): OffenceAlert[] => {
   const offenceAlerts: OffenceAlert[] = []
 
-  exceptions.map((exception) => {
+  exceptions.forEach((exception) => {
     const offenceIndex = exception.path[EXCEPTION_OFFENCE_INDEX]
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(updatedFields, exception, +offenceIndex)
     const nextHearingLocationExceptionResolved = nextHearingLocationExceptionResolvedFn(

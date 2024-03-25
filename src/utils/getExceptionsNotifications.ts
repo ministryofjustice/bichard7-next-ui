@@ -3,11 +3,22 @@ import getNextHearingDateExceptions from "./exceptions/getNextHearingDateExcepti
 import { Exception } from "types/exceptions"
 import getNextHearingLocationExceptions from "./exceptions/getNextHearingLocationExceptions"
 import hasAsnException from "./exceptions/hasAsnException"
+import hasNextHearingDateException from "./exceptions/hasNextHearingDateException"
+import hasNextHearingLocationException from "./exceptions/hasNextHearingLocationException"
 
 export type ExceptionIconDetails = {
   tab: "Defendant" | "Hearing" | "Case" | "Offences" | "Notes"
   exceptionsCount: number
   isResolved: boolean
+}
+
+const getAsnExceptionDetails = (exceptions: Exception[], updatedFields: AmendmentRecords) => {
+  const asnExceptionCount = +hasAsnException(exceptions)
+  const asnExceptionCountFromUpdatedFields = updatedFields?.asn ? 1 : 0
+  return {
+    ExceptionsCount: asnExceptionCount - asnExceptionCountFromUpdatedFields,
+    ExceptionsResolved: asnExceptionCount > 0 && asnExceptionCount === asnExceptionCountFromUpdatedFields
+  }
 }
 
 const getNextHearingDateExceptionsDetails = (exceptions: Exception[], updatedFields: AmendmentRecords) => {
@@ -33,22 +44,24 @@ const getNextHearingLocationExceptionsDetails = (exceptions: Exception[], update
   }
 }
 
-const getAsnExceptionDetails = (exceptions: Exception[], updatedFields: AmendmentRecords) => {
-  const asnExceptionCount = +hasAsnException(exceptions)
-  const asnExceptionCountFromUpdatedFields = updatedFields?.asn ? 1 : 0
-  return {
-    ExceptionsCount: asnExceptionCount - asnExceptionCountFromUpdatedFields,
-    ExceptionsResolved: asnExceptionCount > 0 && asnExceptionCount === asnExceptionCountFromUpdatedFields
-  }
-}
-
 const getExceptionsNotifications = (
   exceptions: Exception[],
   updatedFields: AmendmentRecords
 ): ExceptionIconDetails[] => {
   const nextHearingDateExceptionsDetails = getNextHearingDateExceptionsDetails(exceptions, updatedFields)
-  const nextHearingLocationExceptionsNotification = getNextHearingLocationExceptionsDetails(exceptions, updatedFields)
+  const nextHearingLocationExceptionsDetails = getNextHearingLocationExceptionsDetails(exceptions, updatedFields)
   const asnExceptionDetails = getAsnExceptionDetails(exceptions, updatedFields)
+
+  let offencesExceptionsResolved = false
+
+  if (hasNextHearingDateException(exceptions) && hasNextHearingLocationException(exceptions)) {
+    offencesExceptionsResolved =
+      nextHearingDateExceptionsDetails.ExceptionsResolved && nextHearingLocationExceptionsDetails.ExceptionsResolved
+  } else if (hasNextHearingDateException(exceptions)) {
+    offencesExceptionsResolved = nextHearingDateExceptionsDetails.ExceptionsResolved
+  } else if (hasNextHearingLocationException(exceptions)) {
+    offencesExceptionsResolved = nextHearingLocationExceptionsDetails.ExceptionsResolved
+  }
 
   return [
     {
@@ -69,10 +82,8 @@ const getExceptionsNotifications = (
     {
       tab: "Offences",
       exceptionsCount:
-        nextHearingDateExceptionsDetails.ExceptionsCount + nextHearingLocationExceptionsNotification.ExceptionsCount,
-      isResolved:
-        nextHearingDateExceptionsDetails.ExceptionsResolved &&
-        nextHearingLocationExceptionsNotification.ExceptionsResolved
+        nextHearingDateExceptionsDetails.ExceptionsCount + nextHearingLocationExceptionsDetails.ExceptionsCount,
+      isResolved: offencesExceptionsResolved
     },
     {
       tab: "Notes",
