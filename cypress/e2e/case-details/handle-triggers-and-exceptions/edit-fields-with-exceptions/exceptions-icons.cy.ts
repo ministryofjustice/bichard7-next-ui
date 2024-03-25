@@ -3,8 +3,9 @@ import AsnExceptionHO100206 from "../../../../../test/test-data/AsnExceptionHo10
 import AsnExceptionHO100321 from "../../../../../test/test-data/AsnExceptionHo100321.json"
 import nextHearingDateExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import nextHearingLocationExceptions from "../../../../../test/test-data/NextHearingLocationExceptions.json"
+import { submitAndConfirmExceptions, loginAndGoToUrl } from "../../../../support/helpers"
 
-describe("Number of exceptions icon", () => {
+describe("Tabs exceptions icons", () => {
   before(() => {
     cy.task("clearCourtCases")
     cy.task("clearUsers")
@@ -171,5 +172,77 @@ describe("Number of exceptions icon", () => {
       cy.get("ul.moj-sub-navigation__list>li").eq(2).contains("Case").contains("3").should("not.exist")
       cy.get("ul.moj-sub-navigation__list>li").eq(4).contains("Notes").contains("3").should("not.exist")
     })
+  })
+})
+
+describe("Offences exceptions icons", () => {
+  it("Should display a warning icon in front of the first offence when exception is raised and checkmark icon when exception is resolved", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
+      }
+    ])
+
+    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get("tbody>tr:nth-child(1)").find(".warning-icon").should("exist")
+    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
+    cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Editable Field")
+    cy.get("#next-hearing-date").type("2028-01-01")
+
+    submitAndConfirmExceptions()
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get("tbody>tr:nth-child(1)").find(".warning-icon").should("not.exist")
+    cy.get("tbody>tr:nth-child(1)").find(".checkmark-icon").should("exist")
+  })
+
+  it("Should display warning icons for the first and second offences when exceptions are raised. Once the exceptions for these offences are resolved, replace the warning icons with checkmark icons", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXml,
+        updatedHearingOutcome: nextHearingDateExceptions.updatedHearingOutcomeXml,
+        errorCount: 1
+      }
+    ])
+
+    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get("tbody tr:nth-child(1)").find(".warning-icon").should("exist")
+    cy.get("tbody tr:nth-child(2)").find(".warning-icon").should("exist")
+    cy.get("tbody tr:nth-child(3)").find(".warning-icon").should("not.exist")
+
+    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
+    cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Editable Field")
+    cy.get("#next-hearing-date").type("2026-01-01")
+
+    cy.get("button").contains("Next offence").click()
+
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("B01EF01")
+    cy.get("#next-hearing-date").type("2027-01-01")
+
+    submitAndConfirmExceptions()
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get("tbody tr:nth-child(1)").find(".warning-icon").should("not.exist")
+    cy.get("tbody tr:nth-child(1)").find(".checkmark-icon").should("exist")
+
+    cy.get("tbody tr:nth-child(2)").find(".warning-icon").should("not.exist")
+    cy.get("tbody tr:nth-child(2)").find(".checkmark-icon").should("exist")
+
+    cy.get("tbody tr:nth-child(3)").find(".warning-icon").should("not.exist")
+    cy.get("tbody tr:nth-child(3)").find(".checkmark-icon").should("not.exist")
   })
 })
