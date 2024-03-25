@@ -29,27 +29,23 @@ const getAmendmentsByComparison = (aho: AnnotatedHearingOutcome, updatedAho?: An
       const nextResultSourceOrganisation = result.NextResultSourceOrganisation?.OrganisationUnitCode
       const updatedNextResultSourceOrganisation =
         updatedOffenceResult?.NextResultSourceOrganisation?.OrganisationUnitCode
-      if (
-        nextResultSourceOrganisation &&
-        updatedNextResultSourceOrganisation &&
-        nextResultSourceOrganisation !== updatedNextResultSourceOrganisation
-      ) {
+      if (updatedNextResultSourceOrganisation && nextResultSourceOrganisation !== updatedNextResultSourceOrganisation) {
         amendments.nextSourceOrganisation = amendments.nextSourceOrganisation || []
         amendments.nextSourceOrganisation.push({
           resultIndex,
           offenceIndex,
-          value: updatedNextResultSourceOrganisation!
+          value: updatedNextResultSourceOrganisation
         })
       }
 
       const updatedNextHearingDate = updatedOffenceResult?.NextHearingDate
       const nextHearingDate = result.NextHearingDate
-      if (updatedNextHearingDate && nextHearingDate && updatedNextHearingDate !== nextHearingDate) {
+      if (updatedNextHearingDate && updatedNextHearingDate !== nextHearingDate) {
         amendments.nextHearingDate = amendments.nextHearingDate || []
         amendments.nextHearingDate.push({
           resultIndex,
           offenceIndex,
-          value: formatFormInputDateString(new Date(updatedNextHearingDate!))
+          value: formatFormInputDateString(new Date(updatedNextHearingDate))
         })
       }
     })

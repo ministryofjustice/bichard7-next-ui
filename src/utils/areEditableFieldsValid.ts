@@ -13,7 +13,7 @@ const areEditableFieldsValid = (courtCase: DisplayFullCourtCase, amendments: Ame
   return (
     isNextHearingDateValid(exceptions, amendments) &&
     isAmendedNextHearingLocationValid(exceptions, amendments) &&
-    isAsnValid(exceptions, amendments)
+    isAsnValid(amendments)
   )
 }
 
