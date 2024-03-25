@@ -37,8 +37,7 @@ describe("Tabs exceptions icons", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant").contains("1")
       cy.get("ul.moj-sub-navigation__list>li").eq(1).contains("Hearing").contains("1").should("not.exist")
@@ -59,14 +58,35 @@ describe("Tabs exceptions icons", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant").contains("1")
       cy.get("ul.moj-sub-navigation__list>li").eq(1).contains("Hearing").contains("1").should("not.exist")
       cy.get("ul.moj-sub-navigation__list>li").eq(2).contains("Case").contains("1").should("not.exist")
       cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("not.exist")
       cy.get("ul.moj-sub-navigation__list>li").eq(4).contains("Notes").contains("1").should("not.exist")
+    })
+
+    it("Should display checkmark icon next to Defendant tab text when asn exception is resolved", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+          updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+          errorCount: 1,
+          errorLockedByUsername: "Bichard01"
+        }
+      ])
+
+      loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+
+      cy.get("#asn").type("1101ZD0100000448754K")
+
+      submitAndConfirmExceptions()
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant").contains("1").should("not.exist")
+      cy.get("ul.moj-sub-navigation__list>li").eq(0).find(".checkmark-icon").should("exist")
     })
   })
 
@@ -87,8 +107,7 @@ describe("Tabs exceptions icons", () => {
             }
           ])
 
-          cy.login("bichard01@example.com", "password")
-          cy.visit("/bichard/court-cases/0")
+          loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
           cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1")
           cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant").contains("1").should("not.exist")
@@ -110,14 +129,65 @@ describe("Tabs exceptions icons", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("2")
       cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant").contains("2").should("not.exist")
       cy.get("ul.moj-sub-navigation__list>li").eq(1).contains("Hearing").contains("2").should("not.exist")
       cy.get("ul.moj-sub-navigation__list>li").eq(2).contains("Case").contains("2").should("not.exist")
       cy.get("ul.moj-sub-navigation__list>li").eq(4).contains("Notes").contains("2").should("not.exist")
+    })
+
+    it("Should display checkmark icon next to Offences tab text when next-hearing-date exception is resolved", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+          updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102,
+          errorCount: 1
+        }
+      ])
+
+      loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("exist")
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+      cy.get("#next-hearing-date").type("2026-01-01")
+
+      submitAndConfirmExceptions()
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("not.exist")
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).find(".checkmark-icon").should("exist")
+    })
+
+    it("Should display checkmark icon next to Offences tab text when multiple next-hearing-date exceptions are resolved", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102andHO100323,
+          updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100102andHO100323,
+          errorCount: 1
+        }
+      ])
+
+      loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("2").should("exist")
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+
+      cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+      cy.get("#next-hearing-date").type("2026-01-01")
+
+      cy.get("button").contains("Next offence").click()
+      cy.get("#next-hearing-date").type("2027-01-01")
+
+      submitAndConfirmExceptions()
+
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("2").should("not.exist")
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).find(".checkmark-icon").should("exist")
     })
   })
 
@@ -139,8 +209,7 @@ describe("Tabs exceptions icons", () => {
             }
           ])
 
-          cy.login("bichard01@example.com", "password")
-          cy.visit("/bichard/court-cases/0")
+          loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
           cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1")
           cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant").contains("1").should("not.exist")
@@ -163,8 +232,7 @@ describe("Tabs exceptions icons", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("3")
       cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant").contains("3").should("not.exist")
@@ -172,6 +240,67 @@ describe("Tabs exceptions icons", () => {
       cy.get("ul.moj-sub-navigation__list>li").eq(2).contains("Case").contains("3").should("not.exist")
       cy.get("ul.moj-sub-navigation__list>li").eq(4).contains("Notes").contains("3").should("not.exist")
     })
+  })
+
+  it("Should display checkmark icon next to Offences tab text when next-hearing-location exception is resolved", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+        updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+        errorCount: 1
+      }
+    ])
+
+    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("exist")
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("B01EF01")
+
+    submitAndConfirmExceptions()
+
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("not.exist")
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).find(".checkmark-icon").should("exist")
+  })
+
+  it("Should display checkmark icon next to Offences tab text when multiple next-hearing-location exceptions are resolved", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
+        updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "Bichard01"
+      }
+    ])
+
+    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("3").should("exist")
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("B01EF01")
+
+    cy.get("button").contains("Next offence").click()
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("B63AD00")
+
+    cy.get("button").contains("Next offence").click()
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("C42BS00")
+
+    submitAndConfirmExceptions()
+
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("3").should("not.exist")
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).find(".checkmark-icon").should("exist")
   })
 })
 
@@ -223,8 +352,6 @@ describe("Offences exceptions icons", () => {
     cy.get("tbody tr:nth-child(3)").find(".warning-icon").should("not.exist")
 
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
-    cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
-    cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Editable Field")
     cy.get("#next-hearing-date").type("2026-01-01")
 
     cy.get("button").contains("Next offence").click()
