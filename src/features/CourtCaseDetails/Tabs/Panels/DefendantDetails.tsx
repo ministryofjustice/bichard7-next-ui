@@ -144,12 +144,13 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
             isEditable={isAsnEditable}
           >
             <Label>{"Enter the ASN"}</Label>
-            <HintText>
+            <HintText>{"Long form ASN"}</HintText>
+            {/* <HintText>
               {
                 "Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 digits / 1 check letter "
               }
             </HintText>
-            <HintText>{"Example: 22 49AB 49 1234 C"}</HintText>
+            <HintText>{"Example: 22 49AB 49 1234 C"}</HintText> */}
             <div className={showError() ? `${asnFormGroupError}` : ""}>
               {showError() && (
                 <p id="event-name-error" className="govuk-error-message">

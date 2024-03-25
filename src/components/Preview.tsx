@@ -1,11 +1,13 @@
 import { ReactNode } from "react"
 import { createUseStyles } from "react-jss"
-import { gdsLightGrey } from "utils/colours"
+import { gdsMidGrey } from "utils/colours"
 
 const useStyles = createUseStyles({
   previewContainer: {
-    backgroundColor: gdsLightGrey,
-    borderLeft: "5px solid #b1b4b6",
+    borderColor: gdsMidGrey,
+    backgroundColor: "white",
+    border: "1px solid",
+    borderLeft: "5px solid",
     padding: "15px 20px"
   }
 })
