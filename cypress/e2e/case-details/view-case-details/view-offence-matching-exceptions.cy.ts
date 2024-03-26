@@ -59,7 +59,8 @@ describe("View offence matching exceptions", () => {
 
       clickTab("Offences")
 
-      cy.get("tbody tr:nth-child(1) td:nth-child(4) a").click()
+      cy.get("tbody tr:nth-child(1) td:nth-child(5) a").click()
+
       cy.contains("h3", "Offence 1 of 2")
       cy.contains("td", "Offence code").siblings().contains("TH68010")
       cy.contains("td", "PNC sequence number").siblings().contains(firstOffenceBadge)

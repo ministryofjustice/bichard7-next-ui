@@ -81,7 +81,9 @@ describe("Tabs exceptions icons", () => {
 
       loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
+      cy.get("#asn").clear()
       cy.get("#asn").type("1101ZD0100000448754K")
+      cy.get("#save-asn").click()
 
       submitAndConfirmExceptions()
 
