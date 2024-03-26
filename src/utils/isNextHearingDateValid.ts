@@ -2,6 +2,7 @@ import { Amendments } from "types/Amendments"
 import { Exception } from "types/exceptions"
 import { filterNextHearingDateExceptions } from "./exceptions/hasNextHearingDateExceptions"
 
+// TODO: nextHearingDate should be Date type
 const isNextHearingDateValid = (exceptions: Exception[], nextHearingDate: Amendments["nextHearingDate"]): boolean => {
   const nextHearingDateExceptions = filterNextHearingDateExceptions(exceptions)
   if (!nextHearingDateExceptions.length) {
