@@ -25,13 +25,13 @@ const useStyles = createUseStyles({
   },
   sideBarContainer: {
     minWidth: "320px",
-    maxWidth: "430px",
-    "@media (max-width: 768px)": {
+    maxWidth: "100%",
+    "@media (max-width: 1024px)": {
       paddingTop: "50px"
     }
   },
   smallScreen: {
-    "@media (max-width: 768px)": {
+    "@media (max-width: 1024px)": {
       maxWidth: "100%",
       minWidth: "100%",
       width: "100%",
