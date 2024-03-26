@@ -9,7 +9,6 @@ const amendAsn = (newAsn: Amendments["asn"], aho: AnnotatedHearingOutcome): bool
   }
 
   const fullAsn = convertAsnToLongFormat(newAsn)
-
   if (!isAsnFormatValid(fullAsn)) {
     console.error("ASN not valid; not updating")
     return false
