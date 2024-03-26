@@ -20,41 +20,22 @@ export const OffencesListRow = ({ offence, onClick }: OffencesListRowProps) => {
   const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
   const offenceAlerts = getOffenceAlertsDetails(exceptions, updatedFields)
   const checkmarkIcon = (
-    <div className={"checkmark-icon"}>
-      <Image
-        key={offence.CourtOffenceSequenceNumber}
-        src={CHECKMARK_ICON_URL}
-        width={30}
-        height={30}
-        alt="Checkmark icon"
-      />
+    <div className={"checkmark-icon"} key={offence.CourtOffenceSequenceNumber}>
+      <Image src={CHECKMARK_ICON_URL} width={30} height={30} alt="Checkmark icon" />
     </div>
   )
   const warningIcon = (
-    <div className={"warning-icon"}>
-      <WarningIcon key={offence.CourtOffenceSequenceNumber} />
+    <div className={"warning-icon"} key={offence.CourtOffenceSequenceNumber}>
+      <WarningIcon />
     </div>
   )
 
-  const offenceAlertIcon = offenceAlerts.map((offenceAlert, index) => {
-    const currentOffence = offenceAlert
-    const nextOffence = offenceAlerts[index + 1]
-    const prevOffence = offenceAlerts[index - 1]
-    const isMatchingOffenceException = currentOffence.offenceIndex === offence.CourtOffenceSequenceNumber - 1
-
+  const offenceAlertIcon = offenceAlerts.map((offenceAlert) => {
+    const isMatchingOffenceException = offenceAlert.offenceIndex === offence.CourtOffenceSequenceNumber - 1
     if (!isMatchingOffenceException) {
       return undefined
     }
-
-    if (index === 0) {
-      return currentOffence.isResolved ? checkmarkIcon : warningIcon
-    } else if (currentOffence.offenceIndex === nextOffence?.offenceIndex) {
-      return currentOffence.isResolved && nextOffence.isResolved ? checkmarkIcon : warningIcon
-    } else if (currentOffence.offenceIndex === prevOffence.offenceIndex) {
-      return undefined
-    } else {
-      return currentOffence.isResolved ? checkmarkIcon : warningIcon
-    }
+    return offenceAlert.isResolved ? checkmarkIcon : warningIcon
   })
 
   return (

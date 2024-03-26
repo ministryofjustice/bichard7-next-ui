@@ -242,67 +242,67 @@ describe("Tabs exceptions icons", () => {
       cy.get("ul.moj-sub-navigation__list>li").eq(2).contains("Case").contains("3").should("not.exist")
       cy.get("ul.moj-sub-navigation__list>li").eq(4).contains("Notes").contains("3").should("not.exist")
     })
-  })
 
-  it("Should display checkmark icon next to Offences tab text when next-hearing-location exception is resolved", () => {
-    cy.task("clearCourtCases")
-    cy.task("insertCourtCasesWithFields", [
-      {
-        orgForPoliceFilter: "01",
-        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-        updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-        errorCount: 1
-      }
-    ])
+    it("Should display checkmark icon next to Offences tab text when next-hearing-location exception is resolved", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          errorCount: 1
+        }
+      ])
 
-    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+      loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
-    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("exist")
-    clickTab("Offences")
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("exist")
+      clickTab("Offences")
 
-    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
-    cy.get("#next-hearing-location").clear()
-    cy.get("#next-hearing-location").type("B01EF01")
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B01EF01")
 
-    submitAndConfirmExceptions()
+      submitAndConfirmExceptions()
 
-    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("not.exist")
-    cy.get("ul.moj-sub-navigation__list>li").eq(3).find(".checkmark-icon").should("exist")
-  })
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("not.exist")
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).find(".checkmark-icon").should("exist")
+    })
 
-  it("Should display checkmark icon next to Offences tab text when multiple next-hearing-location exceptions are resolved", () => {
-    cy.task("clearCourtCases")
-    cy.task("insertCourtCasesWithFields", [
-      {
-        orgForPoliceFilter: "01",
-        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
-        updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
-        errorCount: 1,
-        errorLockedByUsername: "Bichard01"
-      }
-    ])
+    it("Should display checkmark icon next to Offences tab text when multiple next-hearing-location exceptions are resolved", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
+          updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
+          errorCount: 1,
+          errorLockedByUsername: "Bichard01"
+        }
+      ])
 
-    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+      loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
-    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("3").should("exist")
-    clickTab("Offences")
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("3").should("exist")
+      clickTab("Offences")
 
-    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
-    cy.get("#next-hearing-location").clear()
-    cy.get("#next-hearing-location").type("B01EF01")
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B01EF01")
 
-    cy.get("button").contains("Next offence").click()
-    cy.get("#next-hearing-location").clear()
-    cy.get("#next-hearing-location").type("B63AD00")
+      cy.get("button").contains("Next offence").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B63AD00")
 
-    cy.get("button").contains("Next offence").click()
-    cy.get("#next-hearing-location").clear()
-    cy.get("#next-hearing-location").type("C42BS00")
+      cy.get("button").contains("Next offence").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("C42BS00")
 
-    submitAndConfirmExceptions()
+      submitAndConfirmExceptions()
 
-    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("3").should("not.exist")
-    cy.get("ul.moj-sub-navigation__list>li").eq(3).find(".checkmark-icon").should("exist")
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("3").should("not.exist")
+      cy.get("ul.moj-sub-navigation__list>li").eq(3).find(".checkmark-icon").should("exist")
+    })
   })
 })
 

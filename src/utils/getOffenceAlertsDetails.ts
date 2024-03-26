@@ -54,10 +54,18 @@ const getOffenceAlertsDetails = (exceptions: Exception[], updatedFields: Amendme
     )
     const isResolved = nextHearingDateExceptionResolved || nextHearingLocationExceptionResolved
 
-    offenceAlerts.push({
-      offenceIndex,
-      isResolved
-    })
+    if (offenceAlerts.length > 1) {
+      offenceAlerts.find((offenceAlert, index) => {
+        if (offenceAlert.offenceIndex === offenceIndex) {
+          offenceAlerts[index] = { offenceIndex, isResolved: offenceAlert.isResolved && isResolved }
+        }
+      })
+    } else {
+      offenceAlerts.push({
+        offenceIndex,
+        isResolved
+      })
+    }
   })
 
   return offenceAlerts
