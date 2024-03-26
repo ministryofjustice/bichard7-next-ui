@@ -4,7 +4,7 @@ import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import ConditionalRender from "components/ConditionalRender"
 import EditableFieldTableRow from "components/EditableFieldTableRow"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
-import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
+import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { useCourtCase } from "context/CourtCaseContext"
 import { HintText, Label, Table } from "govuk-react"
@@ -13,6 +13,7 @@ import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
 import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
 import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
+import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExceptions"
 import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
 import {
@@ -23,7 +24,6 @@ import {
   getYesOrNo
 } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
-import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExceptions"
 
 interface HearingResultProps {
   result: Result
@@ -54,7 +54,11 @@ export const HearingResult = ({
   return (
     <Table>
       {cjsErrorMessage ? (
-        <ExceptionFieldTableRow badgeText={"System Error"} value={result.CJSresultCode} label={"CJS Code"}>
+        <ExceptionFieldTableRow
+          badgeText={ExceptionBadgeType.SystemError}
+          value={result.CJSresultCode}
+          label={"CJS Code"}
+        >
           <ErrorPromptMessage message={cjsErrorMessage} />
         </ExceptionFieldTableRow>
       ) : (

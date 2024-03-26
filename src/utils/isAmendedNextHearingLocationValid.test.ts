@@ -1,8 +1,8 @@
-import isAmendedNextHearingLocationValid from "./isAmendedNextHearingLocationValid"
+import { Amendments } from "types/Amendments"
 import createDummyAho from "../../test/helpers/createDummyAho"
 import HO100300 from "../../test/helpers/exceptions/HO100300"
 import HO100322 from "../../test/helpers/exceptions/HO100322"
-import { Amendments } from "types/Amendments"
+import isAmendedNextHearingLocationValid from "./isAmendedNextHearingLocationValid"
 
 describe("nextHearingLocationValidationError", () => {
   const dummyAho = createDummyAho()
@@ -21,7 +21,7 @@ describe("nextHearingLocationValidationError", () => {
         }
       ]
     }
-    const result = isAmendedNextHearingLocationValid(dummyAho.Exceptions, amendments)
+    const result = isAmendedNextHearingLocationValid(dummyAho.Exceptions, amendments.nextSourceOrganisation)
 
     expect(result).toBe(false)
   })
@@ -40,7 +40,7 @@ describe("nextHearingLocationValidationError", () => {
         }
       ]
     }
-    const result = isAmendedNextHearingLocationValid(dummyAho.Exceptions, amendments)
+    const result = isAmendedNextHearingLocationValid(dummyAho.Exceptions, amendments.nextSourceOrganisation)
 
     expect(result).toBe(true)
   })
@@ -65,7 +65,7 @@ describe("nextHearingLocationValidationError", () => {
         }
       ]
     }
-    const result = isAmendedNextHearingLocationValid(dummyAho.Exceptions, amendments)
+    const result = isAmendedNextHearingLocationValid(dummyAho.Exceptions, amendments.nextSourceOrganisation)
 
     expect(result).toBe(false)
   })
@@ -90,7 +90,7 @@ describe("nextHearingLocationValidationError", () => {
         }
       ]
     }
-    const result = isAmendedNextHearingLocationValid(dummyAho.Exceptions, amendments)
+    const result = isAmendedNextHearingLocationValid(dummyAho.Exceptions, amendments.nextSourceOrganisation)
 
     expect(result).toBe(true)
   })

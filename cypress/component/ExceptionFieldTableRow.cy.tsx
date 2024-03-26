@@ -1,6 +1,6 @@
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import ErrorPromptMessage from "../../src/components/ErrorPromptMessage"
-import ExceptionFieldTableRow from "../../src/components/ExceptionFieldTableRow"
+import ExceptionFieldTableRow, { ExceptionBadgeType } from "../../src/components/ExceptionFieldTableRow"
 import ErrorMessage from "../../src/types/ErrorMessages"
 
 describe("Uneditable Fields", () => {
@@ -9,7 +9,7 @@ describe("Uneditable Fields", () => {
       title: "Disposal Qualifier",
       label: "Code",
       exception: ExceptionCode.HO100309,
-      badge: "System Error",
+      badge: ExceptionBadgeType.SystemError,
       message: ErrorMessage.QualifierCode,
       value: "XX"
     },
@@ -17,7 +17,7 @@ describe("Uneditable Fields", () => {
       title: "ASN",
       label: "ASN",
       exception: ExceptionCode.HO200113,
-      badge: "System Error",
+      badge: ExceptionBadgeType.SystemError,
       message: ErrorMessage.HO200113,
       value: "2300000000000942133G"
     },
@@ -25,7 +25,7 @@ describe("Uneditable Fields", () => {
       title: "ASN",
       label: "ASN",
       exception: ExceptionCode.HO200114,
-      badge: "System Error",
+      badge: ExceptionBadgeType.SystemError,
       message: ErrorMessage.HO200114,
       value: "2200000000001145631B"
     },
@@ -33,7 +33,7 @@ describe("Uneditable Fields", () => {
       title: "CJS Code",
       label: "Code",
       exception: ExceptionCode.HO100307,
-      badge: "System Error",
+      badge: ExceptionBadgeType.SystemError,
       message: ErrorMessage.HO100307,
       value: "BadCJSCode"
     }

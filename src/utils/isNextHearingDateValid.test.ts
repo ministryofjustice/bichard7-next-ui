@@ -21,7 +21,7 @@ describe("nextHearingDateValidationError", () => {
         }
       ]
     }
-    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments)
+    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments.nextHearingDate)
 
     expect(result).toBe(false)
   })
@@ -41,7 +41,7 @@ describe("nextHearingDateValidationError", () => {
       ]
     }
 
-    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments)
+    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments.nextHearingDate)
 
     expect(result).toBe(true)
   })
@@ -67,7 +67,7 @@ describe("nextHearingDateValidationError", () => {
       ]
     }
 
-    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments)
+    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments.nextHearingDate)
 
     expect(result).toBe(false)
   })
@@ -93,7 +93,7 @@ describe("nextHearingDateValidationError", () => {
       ]
     }
 
-    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments)
+    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments.nextHearingDate)
 
     expect(result).toBe(true)
   })

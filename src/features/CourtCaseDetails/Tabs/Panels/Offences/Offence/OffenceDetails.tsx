@@ -6,7 +6,7 @@ import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.
 import Badge from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
-import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
+import ExceptionFieldTableRow, { ExceptionBadgeType as ExceptionBadge } from "components/ExceptionFieldTableRow"
 import { OffenceMatcher } from "components/OffenceMatcher"
 import { useCourtCase } from "context/CourtCaseContext"
 import { Heading, Table } from "govuk-react"
@@ -73,7 +73,7 @@ const getOffenceReasonSequencePath = (offenceIndex: number) => errorPaths.offenc
 type GetOffenceMatchingExceptionResult =
   | {
       code: ExceptionCode
-      badge: "Added by Court" | "Unmatched"
+      badge: ExceptionBadge.AddedByCourt | ExceptionBadge.Unmatched
     }
   | undefined
 const getOffenceMatchingException = (
@@ -93,7 +93,8 @@ const getOffenceMatchingException = (
 
   return {
     code: offenceMatchingException.code,
-    badge: offenceMatchingException.code === ExceptionCode.HO100507 ? "Added by Court" : "Unmatched"
+    badge:
+      offenceMatchingException.code === ExceptionCode.HO100507 ? ExceptionBadge.AddedByCourt : ExceptionBadge.Unmatched
   }
 }
 
@@ -168,7 +169,11 @@ export const OffenceDetails = ({
           {
             <>
               {offenceCodeErrorPrompt ? (
-                <ExceptionFieldTableRow badgeText={"System Error"} value={offenceCode} label={"Offence code"}>
+                <ExceptionFieldTableRow
+                  badgeText={ExceptionBadge.SystemError}
+                  value={offenceCode}
+                  label={"Offence code"}
+                >
                   <ErrorPromptMessage message={offenceCodeErrorPrompt} />
                 </ExceptionFieldTableRow>
               ) : (
@@ -268,7 +273,7 @@ export const OffenceDetails = ({
           </Heading>
           <Table>
             {qualifierErrorPrompt ? (
-              <ExceptionFieldTableRow badgeText={"System Error"} value={qualifierCode} label={"Code"}>
+              <ExceptionFieldTableRow badgeText={ExceptionBadge.SystemError} value={qualifierCode} label={"Code"}>
                 <ErrorPromptMessage message={qualifierErrorPrompt} />
               </ExceptionFieldTableRow>
             ) : (
