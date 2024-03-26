@@ -2,13 +2,16 @@ import { Exception } from "../types/exceptions"
 import { filterNextHearingLocationException } from "./exceptions/hasNextHearingLocationException"
 import { Amendments } from "types/Amendments"
 
-const isAmendedNextHearingLocationValid = (exceptions: Exception[], amendments: Amendments): boolean => {
+const isAmendedNextHearingLocationValid = (
+  exceptions: Exception[],
+  nextSourceOrganisation: Amendments["nextSourceOrganisation"]
+): boolean => {
   const nextHearingLocationException = filterNextHearingLocationException(exceptions)
   if (!nextHearingLocationException.length) {
     return true
   }
 
-  const updatedNextSourceOrganisation = amendments.nextSourceOrganisation || []
+  const updatedNextSourceOrganisation = nextSourceOrganisation || []
 
   return (
     nextHearingLocationException.length === updatedNextSourceOrganisation.length &&

@@ -21,7 +21,7 @@ describe("asnValidationError", () => {
       ]
     }
 
-    const result = isAsnValid(dummyAho.Exceptions, amendments)
+    const result = isAsnValid(amendments)
 
     expect(result).toBe(true)
   })
@@ -41,7 +41,7 @@ describe("asnValidationError", () => {
       ]
     }
 
-    const result = isAsnValid(dummyAho.Exceptions, amendments)
+    const result = isAsnValid(amendments)
 
     expect(result).toBe(false)
   })
@@ -58,7 +58,7 @@ describe("asnValidationError", () => {
       ]
     }
 
-    const result = isAsnValid(dummyAho.Exceptions, amendments)
+    const result = isAsnValid(amendments)
 
     expect(result).toBe(false)
   })
@@ -75,7 +75,7 @@ describe("asnValidationError", () => {
       ]
     }
 
-    const result = isAsnValid(dummyAho.Exceptions, amendments)
+    const result = isAsnValid(amendments)
 
     expect(result).toBe(true)
   })

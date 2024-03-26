@@ -2,13 +2,13 @@ import { Amendments } from "types/Amendments"
 import { Exception } from "types/exceptions"
 import { filterNextHearingDateExceptions } from "./exceptions/hasNextHearingDateExceptions"
 
-const isNextHearingDateValid = (exceptions: Exception[], amendments: Amendments): boolean => {
+const isNextHearingDateValid = (exceptions: Exception[], nextHearingDate: Amendments["nextHearingDate"]): boolean => {
   const nextHearingDateExceptions = filterNextHearingDateExceptions(exceptions)
   if (!nextHearingDateExceptions.length) {
     return true
   }
 
-  const updatedNextHearingDate = amendments.nextHearingDate ?? []
+  const updatedNextHearingDate = nextHearingDate ?? []
 
   return (
     nextHearingDateExceptions.length === updatedNextHearingDate.length &&
