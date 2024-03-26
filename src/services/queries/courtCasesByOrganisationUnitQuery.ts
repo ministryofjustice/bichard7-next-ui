@@ -1,19 +1,18 @@
-import CourtCase from "../entities/CourtCase"
-import { Brackets, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
 import User from "services/entities/User"
-import courtCasesByVisibleForcesQuery from "./courtCasesByVisibleForcesQuery"
+import { Brackets, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
+import CourtCase from "../entities/CourtCase"
 import courtCasesByVisibleCourtsQuery from "./courtCasesByVisibleCourtsQuery"
+import courtCasesByVisibleForcesQuery from "./courtCasesByVisibleForcesQuery"
 
 const courtCasesByOrganisationUnitQuery = (
   query: SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase>,
   user: User
 ): SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> => {
   const { visibleForces, visibleCourts } = user
-  const inclusionList = visibleCourts.concat(visibleForces)
   query.where(
     new Brackets((qb) => {
-      courtCasesByVisibleCourtsQuery(qb, inclusionList)
-      courtCasesByVisibleForcesQuery(qb, inclusionList)
+      courtCasesByVisibleCourtsQuery(qb, visibleCourts)
+      courtCasesByVisibleForcesQuery(qb, visibleForces)
     })
   )
   return query

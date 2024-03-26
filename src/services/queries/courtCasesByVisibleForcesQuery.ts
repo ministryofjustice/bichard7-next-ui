@@ -1,37 +1,13 @@
+import { Brackets, SelectQueryBuilder, UpdateQueryBuilder, WhereExpressionBuilder } from "typeorm"
 import CourtCase from "../entities/CourtCase"
-import { Brackets, In, Like, SelectQueryBuilder, UpdateQueryBuilder, WhereExpressionBuilder } from "typeorm"
-
-const removeLeadingZeroes = (code: string): string =>
-  code.length > 2 && code.startsWith("0") ? code.substring(1) : code
 
 const courtCasesByVisibleForcesQuery = (
   query: SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> | WhereExpressionBuilder,
-  forces: string[]
+  forces: number[]
 ): SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> | WhereExpressionBuilder => {
   query.orWhere(
     new Brackets((qb) => {
-      if (forces.length < 1) {
-        qb.where("FALSE") // prevent returning cases when there are no visible forces
-        return query
-      }
-
-      forces.forEach((force) => {
-        force = removeLeadingZeroes(force)
-        if (force.length === 1) {
-          const condition = { orgForPoliceFilter: Like(`${force}__%`) }
-          qb.where(condition)
-        } else {
-          const condition = { orgForPoliceFilter: Like(`${force}%`) }
-          qb.orWhere(condition)
-        }
-
-        if (force.length > 3) {
-          const subCodes = Array.from([...force].keys())
-            .splice(4)
-            .map((index) => force.substring(0, index))
-          qb.orWhere({ orgForPoliceFilter: In(subCodes) })
-        }
-      })
+      qb.where("br7own.force_code(org_for_police_filter) IN (:...forces)", { forces })
     })
   )
 
