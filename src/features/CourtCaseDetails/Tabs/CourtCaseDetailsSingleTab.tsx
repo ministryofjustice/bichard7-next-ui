@@ -1,9 +1,9 @@
+import { useCourtCase } from "context/CourtCaseContext"
+import Image from "next/image"
+import { createUseStyles } from "react-jss"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import { getExceptionsNotifications } from "utils/getExceptionsNotifications"
 import { CHECKMARK_ICON_URL } from "utils/icons"
-import Image from "next/image"
-import { createUseStyles } from "react-jss"
-import { useCourtCase } from "context/CourtCaseContext"
 import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
 
 interface CourtCaseDetailsSingleTabProps {
@@ -15,7 +15,8 @@ interface CourtCaseDetailsSingleTabProps {
 const useStyles = createUseStyles({
   checkmark: {
     display: "inline-block",
-    verticalAlign: "bottom"
+    verticalAlign: "bottom",
+    marginBottom: "-2px"
   }
 })
 
@@ -24,6 +25,7 @@ export const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick }: CourtCaseD
   const courtCase = useCourtCase()
   const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
   const exceptionsNotifications = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
+
   return (
     <li className="moj-sub-navigation__item">
       <a

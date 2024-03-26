@@ -1,31 +1,41 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { Table } from "govuk-react"
-import { formatDisplayedDate } from "utils/formattedDate"
-import getOffenceCode from "utils/getOffenceCode"
 import WarningIcon from "components/WarningIcon"
 import { useCourtCase } from "context/CourtCaseContext"
-import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
-import { CHECKMARK_ICON_URL } from "utils/icons"
+import { Table } from "govuk-react"
 import Image from "next/image"
+import { createUseStyles } from "react-jss"
+import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceAlertsDetails from "utils/getOffenceAlertsDetails"
+import getOffenceCode from "utils/getOffenceCode"
+import { CHECKMARK_ICON_URL } from "utils/icons"
+import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
 
 interface OffencesListRowProps {
   offence: Offence
   onClick: (offence: Offence) => void
 }
 
+const useStyles = createUseStyles({
+  icon: {
+    lineHeight: "11px"
+  }
+})
+
 export const OffencesListRow = ({ offence, onClick }: OffencesListRowProps) => {
+  const classes = useStyles()
+
   const courtCase = useCourtCase()
   const exceptions = courtCase.aho.Exceptions
   const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
   const offenceAlerts = getOffenceAlertsDetails(exceptions, updatedFields)
+
   const checkmarkIcon = (
-    <div className={"checkmark-icon"} key={offence.CourtOffenceSequenceNumber}>
+    <div className={`${classes.icon} checkmark-icon`} key={offence.CourtOffenceSequenceNumber}>
       <Image src={CHECKMARK_ICON_URL} width={30} height={30} alt="Checkmark icon" />
     </div>
   )
   const warningIcon = (
-    <div className={"warning-icon"} key={offence.CourtOffenceSequenceNumber}>
+    <div className={`${classes.icon} warning-icon`} key={offence.CourtOffenceSequenceNumber}>
       <WarningIcon />
     </div>
   )
