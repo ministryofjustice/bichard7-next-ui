@@ -3,7 +3,7 @@ import AsnExceptionHO100206 from "../../../../../test/test-data/AsnExceptionHo10
 import AsnExceptionHO100321 from "../../../../../test/test-data/AsnExceptionHo100321.json"
 import nextHearingDateExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import nextHearingLocationExceptions from "../../../../../test/test-data/NextHearingLocationExceptions.json"
-import { submitAndConfirmExceptions, loginAndGoToUrl } from "../../../../support/helpers"
+import { submitAndConfirmExceptions, loginAndGoToUrl, clickTab } from "../../../../support/helpers"
 
 describe("Tabs exceptions icons", () => {
   before(() => {
@@ -154,7 +154,7 @@ describe("Tabs exceptions icons", () => {
       loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("exist")
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      clickTab("Offences")
       cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
       cy.get("#next-hearing-date").type("2026-01-01")
 
@@ -178,7 +178,7 @@ describe("Tabs exceptions icons", () => {
       loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("2").should("exist")
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      clickTab("Offences")
 
       cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
       cy.get("#next-hearing-date").type("2026-01-01")
@@ -258,7 +258,7 @@ describe("Tabs exceptions icons", () => {
     loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("exist")
-    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    clickTab("Offences")
 
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.get("#next-hearing-location").clear()
@@ -285,7 +285,7 @@ describe("Tabs exceptions icons", () => {
     loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("3").should("exist")
-    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    clickTab("Offences")
 
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.get("#next-hearing-location").clear()
@@ -321,7 +321,7 @@ describe("Offences exceptions icons", () => {
 
     loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
-    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    clickTab("Offences")
     cy.get("tbody>tr:nth-child(1)").find(".warning-icon").should("exist")
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
     cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
@@ -330,7 +330,7 @@ describe("Offences exceptions icons", () => {
 
     submitAndConfirmExceptions()
 
-    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    clickTab("Offences")
     cy.get("tbody>tr:nth-child(1)").find(".warning-icon").should("not.exist")
     cy.get("tbody>tr:nth-child(1)").find(".checkmark-icon").should("exist")
   })
@@ -348,7 +348,7 @@ describe("Offences exceptions icons", () => {
 
     loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
 
-    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    clickTab("Offences")
     cy.get("tbody tr:nth-child(1)").find(".warning-icon").should("exist")
     cy.get("tbody tr:nth-child(2)").find(".warning-icon").should("exist")
     cy.get("tbody tr:nth-child(3)").find(".warning-icon").should("not.exist")
@@ -364,7 +364,7 @@ describe("Offences exceptions icons", () => {
 
     submitAndConfirmExceptions()
 
-    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    clickTab("Offences")
     cy.get("tbody tr:nth-child(1)").find(".warning-icon").should("not.exist")
     cy.get("tbody tr:nth-child(1)").find(".checkmark-icon").should("exist")
 
