@@ -12,7 +12,12 @@ export type TabDetails = {
   exceptionsResolved: boolean
 }
 
-const getAsnExceptionDetails = (exceptions: Exception[], updatedFields: AmendmentRecords) => {
+type ExceptionDetails = {
+  ExceptionsCount: number
+  ExceptionsResolved: boolean
+}
+
+const getAsnExceptionDetails = (exceptions: Exception[], updatedFields: AmendmentRecords): ExceptionDetails => {
   const asnExceptionCount = +hasAsnException(exceptions)
   const asnExceptionCountFromUpdatedFields = updatedFields?.asn ? 1 : 0
   return {
@@ -21,7 +26,10 @@ const getAsnExceptionDetails = (exceptions: Exception[], updatedFields: Amendmen
   }
 }
 
-const getNextHearingDateExceptionsDetails = (exceptions: Exception[], updatedFields: AmendmentRecords) => {
+const getNextHearingDateExceptionsDetails = (
+  exceptions: Exception[],
+  updatedFields: AmendmentRecords
+): ExceptionDetails => {
   const nextHearingDateExceptionsCount = getNextHearingDateExceptions(exceptions).length
   const nextHearingDateExceptionsCountFromUpdatedFields = updatedFields?.nextHearingDate?.length || 0
 
@@ -33,7 +41,10 @@ const getNextHearingDateExceptionsDetails = (exceptions: Exception[], updatedFie
   }
 }
 
-const getNextHearingLocationExceptionsDetails = (exceptions: Exception[], updatedFields: AmendmentRecords) => {
+const getNextHearingLocationExceptionsDetails = (
+  exceptions: Exception[],
+  updatedFields: AmendmentRecords
+): ExceptionDetails => {
   const nextHearingLocationExceptionsCount = getNextHearingLocationExceptions(exceptions).length
   const nextHearingLocationExceptionsCountFromUpdatedFields = updatedFields?.nextSourceOrganisation?.length || 0
   return {
