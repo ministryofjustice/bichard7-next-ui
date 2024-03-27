@@ -71,7 +71,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
   const classes = useStyles()
   const csrfToken = useCsrfToken()
   const currentUser = useCurrentUser()
-  const courtCase = useCourtCase()
+  const { courtCase } = useCourtCase()
   const previousPath = usePreviousPath()
 
   const leaveAndUnlockParams = getUnlockPath(courtCase)

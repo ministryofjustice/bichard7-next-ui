@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import ConditionalDisplay from "components/ConditionalDisplay"
 import Layout from "components/Layout"
-import { CourtCaseContext, CourtCaseContextType } from "context/CourtCaseContext"
+import { CourtCaseContext, useCourtCaseContextState } from "context/CourtCaseContext"
 import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
 import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
 import { PreviousPathContext, PreviousPathContextType } from "context/PreviousPathContext"
@@ -224,7 +224,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
 
   const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
   const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
-  const [courtCaseContext] = useState<CourtCaseContextType>({ courtCase })
+  const courtCaseContext = useCourtCaseContextState(courtCase)
   const [previousPathContext] = useState<PreviousPathContextType>({ previousPath })
 
   return (

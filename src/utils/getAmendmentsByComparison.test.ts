@@ -3,10 +3,10 @@ import {
   Offence,
   Result
 } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import getUpdatedFields from "./getUpdatedFields"
+import getAmendmentsByComparison from "./getAmendmentsByComparison"
 import { cloneDeep } from "lodash"
 
-describe("getUpdatedFields", () => {
+describe("getAmendmentsByComparison", () => {
   const updatedNextHearingDateValue = "2012-12-13"
   const updatedOrganisationUnitCode = "Updated OU code"
   const updatedAsn = "Updated ASN"
@@ -39,12 +39,12 @@ describe("getUpdatedFields", () => {
   it("shouldn't return an updated value when the updates message has no amendments", () => {
     const updatedAho = {} as AnnotatedHearingOutcome
 
-    expect(getUpdatedFields(aho, undefined)).toEqual({})
-    expect(getUpdatedFields(aho, updatedAho)).toEqual({})
+    expect(getAmendmentsByComparison(aho, undefined)).toEqual({})
+    expect(getAmendmentsByComparison(aho, updatedAho)).toEqual({})
   })
 
   it("shouldn't return updates when the original and updated aho is the same", () => {
-    expect(getUpdatedFields(aho, aho)).toEqual({})
+    expect(getAmendmentsByComparison(aho, aho)).toEqual({})
   })
 
   it("should return the updated nextHearingDate field with the correct indexes", () => {
@@ -60,8 +60,8 @@ describe("getUpdatedFields", () => {
       } as Offence
     ]
 
-    expect(getUpdatedFields(aho, updatedAho)).toEqual({
-      nextHearingDate: [{ offenceIndex: 1, resultIndex: 0, updatedValue: updatedNextHearingDateValue }]
+    expect(getAmendmentsByComparison(aho, updatedAho)).toEqual({
+      nextHearingDate: [{ offenceIndex: 1, resultIndex: 0, value: updatedNextHearingDateValue }]
     })
   })
 
@@ -78,8 +78,8 @@ describe("getUpdatedFields", () => {
         ]
       } as Offence
     ]
-    expect(getUpdatedFields(aho, updatedAho)).toEqual({
-      nextSourceOrganisation: [{ offenceIndex: 0, resultIndex: 2, updatedValue: updatedOrganisationUnitCode }]
+    expect(getAmendmentsByComparison(aho, updatedAho)).toEqual({
+      nextSourceOrganisation: [{ offenceIndex: 0, resultIndex: 2, value: updatedOrganisationUnitCode }]
     })
   })
 
@@ -87,7 +87,7 @@ describe("getUpdatedFields", () => {
     const updatedAho = cloneDeep(aho)
     updatedAho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber = updatedAsn
 
-    expect(getUpdatedFields(aho, updatedAho)).toEqual({
+    expect(getAmendmentsByComparison(aho, updatedAho)).toEqual({
       asn: updatedAsn
     })
   })
@@ -107,10 +107,10 @@ describe("getUpdatedFields", () => {
       } as Offence
     ]
 
-    expect(getUpdatedFields(aho, updatedAho)).toEqual({
+    expect(getAmendmentsByComparison(aho, updatedAho)).toEqual({
       asn: updatedAsn,
-      nextHearingDate: [{ offenceIndex: 1, resultIndex: 0, updatedValue: updatedNextHearingDateValue }],
-      nextSourceOrganisation: [{ offenceIndex: 1, resultIndex: 0, updatedValue: updatedOrganisationUnitCode }]
+      nextHearingDate: [{ offenceIndex: 1, resultIndex: 0, value: updatedNextHearingDateValue }],
+      nextSourceOrganisation: [{ offenceIndex: 1, resultIndex: 0, value: updatedOrganisationUnitCode }]
     })
   })
 })

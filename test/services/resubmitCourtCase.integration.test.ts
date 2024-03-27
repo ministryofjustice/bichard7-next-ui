@@ -114,7 +114,7 @@ describe("resubmit court case", () => {
 
     const result = await resubmitCourtCase(
       dataSource,
-      { courtOffenceSequenceNumber: [{ offenceIndex: 0, updatedValue: 1234 }] },
+      { courtOffenceSequenceNumber: [{ offenceIndex: 0, value: 1234 }] },
       inputCourtCase.errorId,
       {
         username: userName,
@@ -156,8 +156,8 @@ describe("resubmit court case", () => {
 
   it("Should resubmit a court case with updates to multiple offences", async () => {
     const amendments = [
-      { offenceIndex: 0, updatedValue: 1234 },
-      { offenceIndex: 1, updatedValue: 1234 }
+      { offenceIndex: 0, value: 1234 },
+      { offenceIndex: 1, value: 1234 }
     ]
 
     // set up court case in the right format to insert into the db
@@ -184,12 +184,12 @@ describe("resubmit court case", () => {
 
     expect(input).not.toBeInstanceOf(Error)
 
-    amendments.forEach(({ offenceIndex, updatedValue }) => {
+    amendments.forEach(({ offenceIndex, value }) => {
       expect(
         (input as AnnotatedHearingOutcome).AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
           offenceIndex
         ].CourtOffenceSequenceNumber
-      ).not.toEqual(updatedValue)
+      ).not.toEqual(value)
     })
 
     const result = await resubmitCourtCase(
@@ -225,17 +225,17 @@ describe("resubmit court case", () => {
 
     expect(parsedCase).not.toBeInstanceOf(Error)
 
-    amendments.forEach(({ offenceIndex, updatedValue }) => {
+    amendments.forEach(({ offenceIndex, value }) => {
       expect(
         (parsedCase as AnnotatedHearingOutcome).AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
           offenceIndex
         ].CourtOffenceSequenceNumber
-      ).toEqual(updatedValue)
+      ).toEqual(value)
       expect(
         (parsedCase as AnnotatedHearingOutcome).AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
           offenceIndex
         ].CourtOffenceSequenceNumber
-      ).toEqual(updatedValue)
+      ).toEqual(value)
     })
 
     // assert that the xml in the db is as we expect

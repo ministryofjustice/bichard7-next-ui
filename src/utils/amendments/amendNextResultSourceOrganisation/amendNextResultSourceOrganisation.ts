@@ -1,19 +1,27 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import amendDefendantOrOffenceResult from "../amendDefendantOrOffenceResult"
-import { UpdatedOffenceResult, ValidProperties } from "types/Amendments"
+import { Amendments, ValidProperties } from "types/Amendments"
 
-const amendNextResultSourceOrganisation = (offences: UpdatedOffenceResult[], aho: AnnotatedHearingOutcome) => {
-  offences.forEach(({ updatedValue, resultIndex, offenceIndex }: UpdatedOffenceResult) => {
+const amendNextResultSourceOrganisation = (
+  offences: Amendments["nextSourceOrganisation"],
+  aho: AnnotatedHearingOutcome
+) => {
+  offences?.forEach(({ value, resultIndex, offenceIndex }) => {
+    if (value === undefined) {
+      return
+    }
+
     const amendedSourceOrganisation = {
-      ...(updatedValue.length >= 1 && { TopLevelCode: updatedValue.substring(0, 1) }),
-      SecondLevelCode: updatedValue.length >= 3 ? updatedValue.substring(1, 3) : null,
-      ThirdLevelCode: updatedValue.length >= 5 ? updatedValue.substring(3, 5) : null,
-      BottomLevelCode: updatedValue.length >= 6 ? updatedValue.substring(5, 6) : null,
-      OrganisationUnitCode: updatedValue
+      ...(value.length >= 1 && { TopLevelCode: value.substring(0, 1) }),
+      SecondLevelCode: value.length >= 3 ? value.substring(1, 3) : null,
+      ThirdLevelCode: value.length >= 5 ? value.substring(3, 5) : null,
+      BottomLevelCode: value.length >= 6 ? value.substring(5, 6) : null,
+      OrganisationUnitCode: value
     }
 
     return amendDefendantOrOffenceResult(
-      { offenceIndex, resultIndex },
+      offenceIndex,
+      resultIndex,
       aho,
       ValidProperties.NextResultSourceOrganisation,
       amendedSourceOrganisation

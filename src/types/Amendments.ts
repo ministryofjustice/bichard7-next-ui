@@ -1,72 +1,36 @@
 export type Amendments = {
-  asn: string
-  offenceReasonSequence: UpdatedOffenceValue[]
-  courtCaseReference: UpdatedOffenceValue[]
-  disposalQualifierCode: UpdatedDisposalQualifierCode[]
-  nextSourceOrganisation: UpdatedOffenceResult[]
-  nextHearingDate: UpdatedNextHearingDate[]
-  courtPNCIdentifier: string
-  resultVariableText: UpdatedOffenceResult[]
-  courtReference: string
-  courtOffenceSequenceNumber: UpdatedCourtOffenceSequenceNumber[]
-  forceOwner: string
+  asn?: string
+  offenceReasonSequence?: OffenceField<string>[]
+  courtCaseReference?: OffenceField<string>[]
+  resultQualifierCode?: ResultQualifierCode[]
+  nextSourceOrganisation?: ResultField<string>[]
+  nextHearingDate?: ResultField<string>[]
+  courtPNCIdentifier?: string
+  resultVariableText?: ResultField<string>[]
+  courtReference?: string
+  courtOffenceSequenceNumber?: OffenceField<number>[]
+  forceOwner?: string
   noUpdatesResubmit?: boolean
 }
 
 export type AmendmentKeys = keyof Amendments
 
-export type AmendmentValues =
-  | string
-  | UpdatedOffenceValue[]
-  | UpdatedDisposalQualifierCode[]
-  | UpdatedOffenceResult[]
-  | UpdatedNextHearingDate[]
-  | UpdatedCourtOffenceSequenceNumber[]
+type Unpacked<T> = T extends (infer U)[] ? U : T
 
-export type AmendmentRecords = Record<string, AmendmentValues>
+export type Amender = <T extends AmendmentKeys>(amendmentKey: T) => (newValue: Unpacked<Amendments[T]>) => void
 
-export type IndividualAmendmentValues =
-  | string
-  | UpdatedOffenceValue
-  | UpdatedDisposalQualifierCode
-  | UpdatedOffenceResult
-  | UpdatedNextHearingDate
-  | UpdatedCourtOffenceSequenceNumber
-
-export type RelevantIndexes = {
+type OffenceField<T> = {
   offenceIndex: number
-  resultIndex?: number
-  resultQualifierIndex?: number
+  value?: T
 }
 
-export type UpdatedOffenceValue = {
-  offenceIndex: number
-  updatedValue: string
+type ResultField<T> = OffenceField<T> & {
+  resultIndex: number
 }
 
-export type UpdatedCourtOffenceSequenceNumber = {
-  offenceIndex: number
-  updatedValue: number
-}
-
-export type UpdatedDisposalQualifierCode = UpdatedOffenceValue & {
+type ResultQualifierCode = OffenceField<string> & {
   resultIndex?: number
   resultQualifierIndex: number
-}
-
-export type UpdatedOffenceResult = UpdatedOffenceValue & {
-  resultIndex: number
-}
-
-export type UpdatedNextHearingDate = {
-  offenceIndex: number
-  resultIndex: number
-  updatedValue: string
-}
-
-export type UpdatedOffence = {
-  offenceIndex: number
-  resultIndex: number
 }
 
 export enum ValidProperties {

@@ -34,7 +34,7 @@ describe("court offence sequence number", () => {
       [
         {
           offenceIndex,
-          updatedValue: 1111
+          value: 1111
         }
       ],
       aho
@@ -51,23 +51,23 @@ describe("court offence sequence number", () => {
         [
           {
             offenceIndex: 1,
-            updatedValue: 1111
+            value: 1111
           }
         ],
         aho
       )
-    ).toThrowError("Cannot update the CourtOffenceSequenceNumber; Offence index is out of range")
+    ).toThrow("Cannot update the CourtOffenceSequenceNumber; Offence index is out of range")
   })
 
   it("amend a court offence sequence number on multiple offences", () => {
     const amendments = [
       {
         offenceIndex: 3,
-        updatedValue: 3333
+        value: 3333
       },
       {
         offenceIndex: 0,
-        updatedValue: 1111
+        value: 1111
       }
     ]
 
@@ -87,11 +87,11 @@ describe("court offence sequence number", () => {
 
     amendCourtOffenceSequenceNumber(amendments, aho)
 
-    amendments.forEach(({ offenceIndex, updatedValue }) => {
+    amendments.forEach(({ offenceIndex, value }) => {
       expect(
         aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex]
           .CourtOffenceSequenceNumber
-      ).toEqual(updatedValue)
+      ).toEqual(value)
     })
   })
 })

@@ -3,8 +3,14 @@ import { createUseStyles } from "react-jss"
 import Badge from "./Badge"
 import ErrorIcon from "./ErrorIcon"
 
+export enum ExceptionBadgeType {
+  SystemError = "System Error",
+  AddedByCourt = "Added by Court",
+  Unmatched = "Unmatched"
+}
+
 type Props = {
-  badgeText: "System Error" | "Added by Court" | "Unmatched"
+  badgeText?: ExceptionBadgeType
   value?: string | React.ReactNode
   badgeColour?: "red" | "blue" | "purple"
   label: string

@@ -1,21 +1,64 @@
-import { createContext, useContext } from "react"
+import { createContext, Dispatch, SetStateAction, useCallback, useContext, useState } from "react"
+import { Amender, Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
+import getAmendmentsByComparison from "utils/getAmendmentsByComparison"
 
-interface CourtCaseContextType {
+export interface CourtCaseContextType {
   courtCase: DisplayFullCourtCase
+  amendments: Amendments
 }
 
-const CourtCaseContext = createContext<CourtCaseContextType | null>(null)
+export interface CourtCaseContextResult {
+  courtCase: DisplayFullCourtCase
+  amendments: Amendments
+  amend: Amender
+}
 
-const useCourtCase = (): DisplayFullCourtCase => {
-  const courtCaseContext = useContext(CourtCaseContext)
+type CourtCaseContextInput = [CourtCaseContextType, Dispatch<SetStateAction<CourtCaseContextType>>]
 
-  if (!courtCaseContext) {
+const upsertAmendments = <T extends Record<string, unknown>>(previousValues: T[], value: T): T[] => {
+  const keys = Object.keys(value).filter((key) => key !== "value")
+  const hasValue = (previousValue: T, newValue: T) =>
+    keys.filter((key) => previousValue?.[key] === newValue[key]).length === keys.length
+  const amendmentsWithoutOldValue = (previousValues || []).filter((previousValue) => !hasValue(previousValue, value))
+
+  return [...amendmentsWithoutOldValue, value]
+}
+
+const CourtCaseContext = createContext<CourtCaseContextInput | null>(null)
+
+const useCourtCase = (): CourtCaseContextResult => {
+  const courtCaseContextState = useContext(CourtCaseContext)
+
+  if (!courtCaseContextState) {
     throw new Error("courtCase has to be used within <CourtCaseContext.Provider>")
   }
 
-  return courtCaseContext.courtCase
+  const [context, setContext] = courtCaseContextState
+
+  const amend: Amender = useCallback(
+    (key) => (newValue) => {
+      setContext((previousContext) => {
+        const { amendments } = previousContext
+        const value =
+          typeof newValue === "object"
+            ? upsertAmendments(amendments[key] as Record<string, unknown>[], newValue)
+            : newValue
+        const newAmendments = { ...amendments, [key]: value }
+
+        return { ...previousContext, amendments: newAmendments }
+      })
+    },
+    [setContext]
+  )
+
+  return { courtCase: context.courtCase, amendments: context.amendments, amend }
 }
 
-export { CourtCaseContext, useCourtCase }
-export type { CourtCaseContextType }
+const useCourtCaseContextState = (courtCase: DisplayFullCourtCase) =>
+  useState<CourtCaseContextType>({
+    courtCase,
+    amendments: getAmendmentsByComparison(courtCase.aho, courtCase.updatedHearingOutcome)
+  })
+
+export { CourtCaseContext, useCourtCase, useCourtCaseContextState }

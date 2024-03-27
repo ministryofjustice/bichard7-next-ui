@@ -37,19 +37,19 @@ describe("getSystemNotes", () => {
           offenceReasonSequence: [
             {
               offenceIndex: 0,
-              updatedValue: "newOffenceReasonSequenceValue"
+              value: "newOffenceReasonSequenceValue"
             }
           ],
           courtOffenceSequenceNumber: [
             {
               offenceIndex: 0,
-              updatedValue: 12345
+              value: 12345
             }
           ],
-          disposalQualifierCode: [
+          resultQualifierCode: [
             {
               offenceIndex: 0,
-              updatedValue: "newDisposalQualifierCodeValue",
+              value: "newResultQualifierCodeValue",
               resultIndex: 1,
               resultQualifierIndex: 2
             }
@@ -71,7 +71,7 @@ describe("getSystemNotes", () => {
       },
       {
         errorId: dummyErrorId,
-        noteText: `${user.username}: Portal Action: Update Applied. Element: disposalQualifierCode. New Value: newDisposalQualifierCodeValue`,
+        noteText: `${user.username}: Portal Action: Update Applied. Element: resultQualifierCode. New Value: newResultQualifierCodeValue`,
         userId: "System"
       }
     ])
@@ -85,7 +85,7 @@ describe("getSystemNotes", () => {
           nextHearingDate: [
             {
               offenceIndex: 0,
-              updatedValue: updatedDate,
+              value: updatedDate,
               resultIndex: 1
             }
           ]

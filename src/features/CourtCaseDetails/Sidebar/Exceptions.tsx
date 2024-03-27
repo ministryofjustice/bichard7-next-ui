@@ -9,13 +9,12 @@ import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
 import { createUseStyles } from "react-jss"
 import styled from "styled-components"
-import { AmendmentRecords } from "types/Amendments"
 import type NavigationHandler from "types/NavigationHandler"
 import DefaultException from "../../../components/Exception/DefaultException"
 import PncException from "../../../components/Exception/PncException"
 import Form from "../../../components/Form"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
-import editableFieldsValidationError from "../../../utils/editableFieldsValidationError"
+import areEditableFieldsValid from "../../../utils/areEditableFieldsValid"
 import LockStatusTag from "../LockStatusTag"
 
 const isPncException = (code: ExceptionCode) =>
@@ -24,7 +23,6 @@ const isPncException = (code: ExceptionCode) =>
 interface Props {
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
-  amendments: AmendmentRecords
   stopLeavingFn: (newValue: boolean) => void
 }
 
@@ -53,15 +51,15 @@ const SeparatorLine = styled.div`
   }
 `
 
-const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments, stopLeavingFn }: Props) => {
+const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
   const classes = useStyles()
-  const courtCase = useCourtCase()
+  const { courtCase, amendments } = useCourtCase()
   const pncExceptions = courtCase.aho.Exceptions.filter(({ code }) => isPncException(code))
   const otherExceptions = courtCase.aho.Exceptions.filter(({ code }) => !isPncException(code))
   const csrfToken = useCsrfToken()
   const previousPath = usePreviousPath()
   const router = useRouter()
-  const disable = editableFieldsValidationError(courtCase, amendments)
+  const enableSubmitExceptions = areEditableFieldsValid(courtCase, amendments)
 
   let resolveLink = `${router.basePath}${usePathname()}/resolve`
 
@@ -93,7 +91,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, amendments, stopLeavingFn
         <div className={classes.buttonContainer}>
           <Form method="post" action={submitCasePath} csrfToken={csrfToken}>
             <input type="hidden" name="amendments" value={JSON.stringify(amendments)} />
-            <Button id="submit" type="submit" disabled={disable} onClick={handleClick}>
+            <Button id="submit" type="submit" disabled={!enableSubmitExceptions} onClick={handleClick}>
               {"Submit exception(s)"}
             </Button>
           </Form>

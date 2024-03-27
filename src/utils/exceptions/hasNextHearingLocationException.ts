@@ -1,13 +1,17 @@
 import { Exception } from "types/exceptions"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
-const hasNextHearingLocationException = (exceptions: Exception[]): boolean =>
-  exceptions.some(
+const nextHearingLocationExceptions = [ExceptionCode.HO100200, ExceptionCode.HO100300, ExceptionCode.HO100322]
+
+const filterNextHearingLocationException = (exceptions: Exception[]) =>
+  exceptions.filter(
     (exception) =>
       exception.path.join(".").endsWith(".NextResultSourceOrganisation.OrganisationUnitCode") &&
-      (exception.code === ExceptionCode.HO100200 ||
-        exception.code === ExceptionCode.HO100300 ||
-        exception.code === ExceptionCode.HO100322)
+      nextHearingLocationExceptions.includes(exception.code)
   )
 
+const hasNextHearingLocationException = (exceptions: Exception[]) =>
+  filterNextHearingLocationException(exceptions).length > 0
+
+export { filterNextHearingLocationException }
 export default hasNextHearingLocationException

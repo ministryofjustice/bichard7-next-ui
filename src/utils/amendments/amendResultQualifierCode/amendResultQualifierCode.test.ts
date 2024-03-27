@@ -3,10 +3,10 @@ import {
   Offence
 } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import cloneDeep from "lodash.clonedeep"
-import { UpdatedDisposalQualifierCode } from "types/Amendments"
 import createDummyAho from "../../../../test/helpers/createDummyAho"
 import createDummyOffence from "../../../../test/helpers/createDummyOffence"
-import amendDisposalQualifierCode from "./amendDisposalQualifierCode"
+import amendResultQualifierCode from "./amendResultQualifierCode"
+import { Amendments } from "types/Amendments"
 
 describe("disposal qualifier code", () => {
   let aho: AnnotatedHearingOutcome
@@ -18,17 +18,17 @@ describe("disposal qualifier code", () => {
   })
 
   it("amends result qualifier variable code to defendant", () => {
-    const updatedValue = "newQualifierCode"
+    const value = "newQualifierCode"
     const offenceIndex = -1
     expect(
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Result?.ResultQualifierVariable[0].Code
     ).not.toBe("newQualifierCode")
 
-    amendDisposalQualifierCode(
+    amendResultQualifierCode(
       [
         {
           offenceIndex,
-          updatedValue,
+          value,
           resultQualifierIndex: 0
         }
       ],
@@ -41,7 +41,7 @@ describe("disposal qualifier code", () => {
   })
 
   it("amends result qualifier variable code to offence", () => {
-    const updatedValue = "newQualifierCode"
+    const value = "newQualifierCode"
     const offenceIndex = 0
     const resultIndex = 0
     const resultQualifierIndex = 0
@@ -58,16 +58,16 @@ describe("disposal qualifier code", () => {
         .ResultQualifierVariable[resultQualifierIndex].Code
     ).not.toBe(0)
 
-    amendDisposalQualifierCode([{ offenceIndex, updatedValue, resultQualifierIndex, resultIndex }], aho)
+    amendResultQualifierCode([{ offenceIndex, value, resultQualifierIndex, resultIndex }], aho)
 
     expect(
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex].Result[resultIndex]
         .ResultQualifierVariable[resultQualifierIndex].Code
-    ).toBe(updatedValue)
+    ).toBe(value)
   })
 
   it("creates result qualifier variable code on offence, if it doesn't already exist", () => {
-    const updatedValue = "newQualifierCode"
+    const value = "newQualifierCode"
     const offenceIndex = 0
     const resultIndex = 0
     const resultQualifierIndex = 4
@@ -84,11 +84,11 @@ describe("disposal qualifier code", () => {
         .ResultQualifierVariable[resultQualifierIndex]
     ).toBe(undefined)
 
-    amendDisposalQualifierCode(
+    amendResultQualifierCode(
       [
         {
           offenceIndex,
-          updatedValue,
+          value,
           resultQualifierIndex,
           resultIndex
         }
@@ -99,11 +99,11 @@ describe("disposal qualifier code", () => {
     expect(
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex].Result[resultIndex]
         .ResultQualifierVariable[1].Code
-    ).toBe(updatedValue)
+    ).toBe(value)
   })
 
   it("creates result qualifier variable code on defendant, if it doesn't already exist", () => {
-    const updatedValue = "newQualifierCode"
+    const value = "newQualifierCode"
     const offenceIndex = -1
     const resultQualifierIndex = 4
 
@@ -113,11 +113,11 @@ describe("disposal qualifier code", () => {
       ]
     ).toBe(undefined)
 
-    amendDisposalQualifierCode(
+    amendResultQualifierCode(
       [
         {
           offenceIndex,
-          updatedValue,
+          value,
           resultQualifierIndex
         }
       ],
@@ -126,11 +126,11 @@ describe("disposal qualifier code", () => {
 
     expect(
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Result?.ResultQualifierVariable[1].Code
-    ).toBe(updatedValue)
+    ).toBe(value)
   })
 
   it("throws an error if there is no Result key on HearingDefendant", () => {
-    const updatedValue = "newQualifierCode"
+    const value = "newQualifierCode"
     const offenceIndex = -1
     const resultQualifierIndex = 4
 
@@ -139,11 +139,11 @@ describe("disposal qualifier code", () => {
     expect(aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Result).toBe(undefined)
 
     expect(() =>
-      amendDisposalQualifierCode(
+      amendResultQualifierCode(
         [
           {
             offenceIndex,
-            updatedValue,
+            value,
             resultQualifierIndex
           }
         ],
@@ -153,16 +153,16 @@ describe("disposal qualifier code", () => {
   })
 
   it("throw error if there is no ResultIndex key is passing to an offence update", () => {
-    const updatedValue = "newQualifierCode"
+    const value = "newQualifierCode"
     const offenceIndex = 0
     const resultQualifierIndex = 4
 
     expect(() =>
-      amendDisposalQualifierCode(
+      amendResultQualifierCode(
         [
           {
             offenceIndex,
-            updatedValue,
+            value,
             resultQualifierIndex
           }
         ],
@@ -172,15 +172,15 @@ describe("disposal qualifier code", () => {
   })
 
   it("throw error if the offence index is out of the range of the Offence array", () => {
-    const updatedValue = "newQualifierCode"
+    const value = "newQualifierCode"
     const offenceIndex = 9
 
     expect(() =>
-      amendDisposalQualifierCode(
+      amendResultQualifierCode(
         [
           {
             offenceIndex,
-            updatedValue,
+            value,
             resultQualifierIndex: 4
           }
         ],
@@ -190,23 +190,23 @@ describe("disposal qualifier code", () => {
   })
 
   it("amends result qualifier variable code to multiple offences", () => {
-    const amendments: UpdatedDisposalQualifierCode[] = [
+    const amendments: Amendments["resultQualifierCode"] = [
       {
         offenceIndex: 0,
         resultIndex: 0,
-        updatedValue: "new0",
+        value: "new0",
         resultQualifierIndex: 0
       },
       {
         offenceIndex: 2,
         resultIndex: 0,
-        updatedValue: "new1",
+        value: "new1",
         resultQualifierIndex: 0
       },
       {
         offenceIndex: 3,
         resultIndex: 0,
-        updatedValue: "new2",
+        value: "new2",
         resultQualifierIndex: 0
       }
     ]
@@ -225,28 +225,28 @@ describe("disposal qualifier code", () => {
       ).not.toBe(0)
     })
 
-    amendDisposalQualifierCode(amendments, aho)
+    amendResultQualifierCode(amendments, aho)
 
-    amendments.forEach(({ offenceIndex, resultIndex, resultQualifierIndex, updatedValue }) => {
+    amendments.forEach(({ offenceIndex, resultIndex, resultQualifierIndex, value }) => {
       expect(
         aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex].Result[resultIndex || 0]
           .ResultQualifierVariable[resultQualifierIndex].Code
-      ).toBe(updatedValue)
+      ).toBe(value)
     })
   })
 
   it("amends result qualifier variable code on multiple results in an offence", () => {
-    const amendments: UpdatedDisposalQualifierCode[] = [
+    const amendments: Amendments["resultQualifierCode"] = [
       {
         offenceIndex: 0,
         resultIndex: 0,
-        updatedValue: "new0",
+        value: "new0",
         resultQualifierIndex: 0
       },
       {
         offenceIndex: 0,
         resultIndex: 1,
-        updatedValue: "new1",
+        value: "new1",
         resultQualifierIndex: 0
       }
     ]
@@ -265,13 +265,13 @@ describe("disposal qualifier code", () => {
       ).not.toBe(0)
     })
 
-    amendDisposalQualifierCode(amendments, aho)
+    amendResultQualifierCode(amendments, aho)
 
-    amendments.forEach(({ offenceIndex, resultIndex, resultQualifierIndex, updatedValue }) => {
+    amendments.forEach(({ offenceIndex, resultIndex, resultQualifierIndex, value }) => {
       expect(
         aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant?.Offence[offenceIndex].Result[resultIndex || 0]
           .ResultQualifierVariable[resultQualifierIndex].Code
-      ).toBe(updatedValue)
+      ).toBe(value)
     })
   })
 })

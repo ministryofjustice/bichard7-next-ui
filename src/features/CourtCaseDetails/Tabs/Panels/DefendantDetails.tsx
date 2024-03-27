@@ -5,7 +5,7 @@ import { RemandStatuses } from "@moj-bichard7-developers/bichard7-next-data/dist
 import { GenderCode, RemandStatusCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import axios from "axios"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
-import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
+import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
 import { ReactiveLinkButton } from "components/LinkButton"
 import { HintText, Input, Label, Table } from "govuk-react"
 import React, { useCallback, useEffect, useState } from "react"
@@ -17,14 +17,11 @@ import isAsnFormatValid from "utils/isAsnFormatValid"
 import { capitalizeString } from "utils/valueTransformers"
 import EditableFieldTableRow from "../../../../components/EditableFieldTableRow"
 import { useCourtCase } from "../../../../context/CourtCaseContext"
-import { AmendmentKeys, AmendmentRecords, IndividualAmendmentValues } from "../../../../types/Amendments"
 import { AddressCell } from "./AddressCell"
 import { BailConditions } from "./BailConditions"
 import { TableRow } from "./TableRow"
 
 interface DefendantDetailsProps {
-  amendmentRecords: AmendmentRecords
-  amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
   stopLeavingFn: (newValue: boolean) => void
 }
 
@@ -45,9 +42,9 @@ const useStyles = createUseStyles({
   }
 })
 
-export const DefendantDetails = ({ amendFn, amendmentRecords, stopLeavingFn }: DefendantDetailsProps) => {
+export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
   const classes = useStyles()
-  const courtCase = useCourtCase()
+  const { courtCase, amendments, amend } = useCourtCase()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
   const asnSystemErrorExceptionPrompt = findExceptions(
     courtCase,
@@ -84,7 +81,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords, stopLeavingFn }: D
 
   useEffect(() => {
     if (!pageLoad) {
-      amendmentRecords.asn = updatedAhoAsn ?? ""
+      amend("asn")(updatedAhoAsn ?? "")
       setPageLoad(true)
     }
 
@@ -93,14 +90,14 @@ export const DefendantDetails = ({ amendFn, amendmentRecords, stopLeavingFn }: D
     }
 
     stopLeavingFn(!savedAsn && isAsnChanged && updatedAhoAsn !== asnString)
-  }, [savedAsn, asnString, pageLoad, amendmentRecords, updatedAhoAsn, stopLeavingFn, isAsnChanged])
+  }, [savedAsn, asnString, pageLoad, amendments, updatedAhoAsn, stopLeavingFn, isAsnChanged, amend])
 
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const asn = e.target.value.toUpperCase()
     setIsValidAsn(isAsnFormatValid(asn))
     setIsAsnChanged(true)
     setAsnString(asn)
-    amendFn("asn")(asn)
+    amend("asn")(asn)
   }
 
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
@@ -130,7 +127,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords, stopLeavingFn }: D
       <Table>
         {asnSystemErrorExceptionPrompt ? (
           <ExceptionFieldTableRow
-            badgeText={"System Error"}
+            badgeText={ExceptionBadgeType.SystemError}
             value={defendant.ArrestSummonsNumber}
             badgeColour={"purple"}
             label={"ASN"}
@@ -165,7 +162,7 @@ export const DefendantDetails = ({ amendFn, amendmentRecords, stopLeavingFn }: D
                 id={"asn"}
                 name={"asn"}
                 onChange={handleAsnChange}
-                value={(amendmentRecords.asn as string) ?? ""}
+                value={amendments.asn ?? ""}
                 error={!isValidAsn}
               />
             </div>

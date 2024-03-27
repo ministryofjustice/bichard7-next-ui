@@ -1,9 +1,9 @@
 import User from "services/entities/User"
-import hashedPassword from "../../../fixtures/hashedPassword"
+import AsnExceptionHO100206 from "../../../../test/test-data/AsnExceptionHo100206.json"
 import multipleExceptions from "../../../../test/test-data/MultipleExceptions.json"
 import nextHearingDateExceptions from "../../../../test/test-data/NextHearingDateExceptions.json"
 import nextHearingLocationExceptions from "../../../../test/test-data/NextHearingLocationExceptions.json"
-import AsnExceptionHO100206 from "../../../../test/test-data/AsnExceptionHo100206.json"
+import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("Court cases - Submit exceptions", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {

@@ -14,7 +14,7 @@ const LockStatusTag = ({
   lockName: "Triggers" | "Exceptions"
 }) => {
   const currentUser = useCurrentUser()
-  const courtCase = useCourtCase()
+  const { courtCase } = useCourtCase()
   const lockedByUserName =
     lockName === "Exceptions" ? courtCase.errorLockedByUsername : courtCase.triggerLockedByUsername
   const displayLockUserName =

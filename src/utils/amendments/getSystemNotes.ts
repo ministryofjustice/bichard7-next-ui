@@ -19,8 +19,12 @@ const getSystemNotes = (amendments: Partial<Amendments>, userDetails: User, cour
 
     if (Array.isArray(value)) {
       value.forEach((field) => {
+        if (!field.value) {
+          return
+        }
+
         notes.push({
-          noteText: noteText + formatValueOfUpdatedElement(field.updatedValue),
+          noteText: noteText + formatValueOfUpdatedElement(field.value),
           errorId: courtCaseId,
           userId: "System"
         })

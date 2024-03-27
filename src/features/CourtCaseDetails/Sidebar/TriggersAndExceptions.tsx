@@ -5,7 +5,6 @@ import { Tabs } from "govuk-react"
 import { useState } from "react"
 import { createUseStyles } from "react-jss"
 import styled from "styled-components"
-import { AmendmentRecords } from "types/Amendments"
 import type NavigationHandler from "types/NavigationHandler"
 import Permission from "types/Permission"
 import Exceptions from "./Exceptions"
@@ -27,7 +26,6 @@ const useStyles = createUseStyles({
 interface Props {
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
-  amendments: AmendmentRecords
   stopLeavingFn: (newValue: boolean) => void
 }
 
@@ -45,9 +43,9 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, amendments, stopLeavingFn }: Props) => {
+const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
   const currentUser = useCurrentUser()
-  const courtCase = useCourtCase()
+  const { courtCase } = useCourtCase()
 
   const availableTabs = [Permission.Triggers, Permission.Exceptions].filter((tab) => currentUser.hasAccessTo[tab])
   const defaultTab =
@@ -106,7 +104,6 @@ const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, amendments, st
               <Exceptions
                 onNavigate={onNavigate}
                 canResolveAndSubmit={canResolveAndSubmit}
-                amendments={amendments}
                 stopLeavingFn={stopLeavingFn}
               />
             </Tabs.Panel>

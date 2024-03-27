@@ -3,9 +3,9 @@ import { useCombobox } from "downshift"
 import { Input } from "govuk-react"
 import { useCallback, useEffect, useState } from "react"
 import styled from "styled-components"
-import { AmendmentKeys, IndividualAmendmentValues, UpdatedOffenceResult } from "../types/Amendments"
 import OrganisationUnitApiResponse from "../types/OrganisationUnitApiResponse"
 import { isError } from "../types/Result"
+import { useCourtCase } from "context/CourtCaseContext"
 
 const ListWrapper = styled.div`
   max-height: 20rem;
@@ -33,13 +33,13 @@ const ListWrapper = styled.div`
 `
 
 interface Props {
-  amendFn: (keyToAmend: AmendmentKeys) => (newValue: IndividualAmendmentValues) => void
   resultIndex: number
   offenceIndex: number
   value?: string
 }
 
-const OrganisationUnitTypeahead: React.FC<Props> = ({ value, amendFn, resultIndex, offenceIndex }: Props) => {
+const OrganisationUnitTypeahead: React.FC<Props> = ({ value, resultIndex, offenceIndex }: Props) => {
+  const { amend } = useCourtCase()
   const [inputItems, setInputItems] = useState<OrganisationUnitApiResponse>([])
 
   const fetchItems = useCallback(async (searchStringParam?: string) => {
@@ -63,11 +63,11 @@ const OrganisationUnitTypeahead: React.FC<Props> = ({ value, amendFn, resultInde
     items: inputItems,
     // eslint-disable-next-line @typescript-eslint/no-shadow
     onInputValueChange: ({ inputValue }) => {
-      amendFn("nextSourceOrganisation")({
+      amend("nextSourceOrganisation")({
         resultIndex: resultIndex,
         offenceIndex: offenceIndex,
-        updatedValue: inputValue
-      } as UpdatedOffenceResult)
+        value: inputValue
+      })
     },
     initialInputValue: value,
     itemToString: (item) => item?.fullOrganisationCode ?? ""

@@ -45,8 +45,8 @@ describe("Defendant Details", () => {
     } as unknown as DisplayFullCourtCase
 
     cy.mount(
-      <CourtCaseContext.Provider value={{ courtCase }}>
-        <DefendantDetails amendFn={() => () => {}} amendmentRecords={{}} stopLeavingFn={() => {}} />
+      <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
+        <DefendantDetails stopLeavingFn={() => {}} />
       </CourtCaseContext.Provider>
     )
 
@@ -101,8 +101,8 @@ describe("Defendant Details", () => {
     } as unknown as DisplayFullCourtCase
 
     cy.mount(
-      <CourtCaseContext.Provider value={{ courtCase }}>
-        <DefendantDetails amendFn={() => () => {}} amendmentRecords={{}} stopLeavingFn={() => {}} />
+      <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
+        <DefendantDetails stopLeavingFn={() => {}} />
       </CourtCaseContext.Provider>
     )
 

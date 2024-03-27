@@ -1,16 +1,16 @@
-import { AmendmentRecords, UpdatedNextHearingDate } from "types/Amendments"
+import { Amendments } from "types/Amendments"
 
 const getNextHearingDateValue = (
-  amendmentRecords: AmendmentRecords,
+  amendments: Amendments,
   offenceIndex: number,
   resultIndex: number
 ): string | undefined => {
   const validDateFormat = /^20\d{2}-\d{2}-\d{2}$/
   const nextHearingDateAmendment =
-    amendmentRecords?.nextHearingDate &&
-    (amendmentRecords.nextHearingDate as UpdatedNextHearingDate[]).find(
+    amendments?.nextHearingDate &&
+    amendments.nextHearingDate.find(
       (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
-    )?.updatedValue
+    )?.value
 
   if (!nextHearingDateAmendment) {
     return ""

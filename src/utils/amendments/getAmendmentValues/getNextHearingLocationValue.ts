@@ -1,13 +1,13 @@
-import { AmendmentRecords, UpdatedOffenceResult } from "types/Amendments"
+import { Amendments } from "types/Amendments"
 
 const getNextHearingLocationValue = (
-  amendmentRecords: AmendmentRecords,
+  amendmentRecords: Amendments,
   offenceIndex: number,
   resultIndex: number
 ): string | undefined =>
   amendmentRecords?.nextSourceOrganisation &&
-  (amendmentRecords.nextSourceOrganisation as UpdatedOffenceResult[]).find(
+  amendmentRecords.nextSourceOrganisation.find(
     (record) => record.offenceIndex === offenceIndex && record.resultIndex === resultIndex
-  )?.updatedValue
+  )?.value
 
 export default getNextHearingLocationValue

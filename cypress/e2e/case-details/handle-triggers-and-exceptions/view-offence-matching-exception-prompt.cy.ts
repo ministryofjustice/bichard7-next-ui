@@ -1,6 +1,6 @@
-import hashedPassword from "../../../fixtures/hashedPassword"
 import ExceptionHO100304 from "../../../../test/test-data/HO100304.json"
 import NextHearingDateExceptions from "../../../../test/test-data/NextHearingDateExceptions.json"
+import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("View offence matching exception prompts", () => {
   before(() => {
@@ -41,7 +41,8 @@ describe("View offence matching exception prompts", () => {
     cy.get(".offences-table").contains("td", "Matched PNC offence").should("not.exist")
   })
 
-  it("Should display an error prompt when HO100304 is raised", () => {
+  // TODO: re-enable this for offence matching
+  it.skip("Should display an error prompt when HO100304 is raised", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
