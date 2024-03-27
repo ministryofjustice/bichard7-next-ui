@@ -8,7 +8,6 @@ import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceAlertsDetails from "utils/getOffenceAlertsDetails"
 import getOffenceCode from "utils/getOffenceCode"
 import { CHECKMARK_ICON_URL } from "utils/icons"
-import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
 
 interface OffencesListRowProps {
   offence: Offence
@@ -24,10 +23,10 @@ const useStyles = createUseStyles({
 export const OffencesListRow = ({ offence, onClick }: OffencesListRowProps) => {
   const classes = useStyles()
 
-  const courtCase = useCourtCase()
+  const { courtCase, amendments } = useCourtCase()
   const exceptions = courtCase.aho.Exceptions
-  const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
-  const offenceAlerts = getOffenceAlertsDetails(exceptions, updatedFields)
+
+  const offenceAlerts = getOffenceAlertsDetails(exceptions, amendments)
 
   const checkmarkIcon = (
     <div className={`${classes.icon} checkmark-icon`} key={offence.CourtOffenceSequenceNumber}>

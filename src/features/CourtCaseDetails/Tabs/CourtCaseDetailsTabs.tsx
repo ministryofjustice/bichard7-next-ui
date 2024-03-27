@@ -2,7 +2,6 @@ import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import { CourtCaseDetailsSingleTab } from "./CourtCaseDetailsSingleTab"
 import { useCourtCase } from "context/CourtCaseContext"
-import getUpdatedFields from "utils/updatedFields/getUpdatedFields"
 import { getTabDetails } from "utils/getTabDetails"
 
 interface CourtCaseDetailsTabsProps {
@@ -19,9 +18,8 @@ const useStyles = createUseStyles({
 
 export const CourtCaseDetailsTabs = ({ activeTab, onTabClick, width }: CourtCaseDetailsTabsProps) => {
   const classes = useStyles({ width })
-  const courtCase = useCourtCase()
-  const updatedFields = getUpdatedFields(courtCase.aho, courtCase.updatedHearingOutcome)
-  const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
+  const { courtCase, amendments } = useCourtCase()
+  const tabDetails = getTabDetails(courtCase.aho.Exceptions, amendments)
 
   return (
     <nav className={`moj-sub-navigation ${classes.nav}`} aria-label="Sub navigation">

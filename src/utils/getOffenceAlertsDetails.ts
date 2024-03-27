@@ -1,6 +1,6 @@
-import { AmendmentRecords, UpdatedNextHearingDate } from "types/Amendments"
+import { Amendments } from "types/Amendments"
 import { Exception } from "types/exceptions"
-import hasNextHearingDateException from "./exceptions/hasNextHearingDateException"
+import hasNextHearingDateExceptions from "./exceptions/hasNextHearingDateExceptions"
 import hasNextHearingLocationException from "./exceptions/hasNextHearingLocationException"
 import { EXCEPTION_OFFENCE_INDEX } from "config"
 
@@ -10,15 +10,13 @@ export type OffenceAlert = {
 }
 
 const nextHearingDateExceptionResolvedFn = (
-  updatedFields: AmendmentRecords,
+  updatedFields: Amendments,
   exception: Exception,
   offenceIndex: number
 ): boolean => {
-  if (hasNextHearingDateException([exception])) {
+  if (hasNextHearingDateExceptions([exception])) {
     return Boolean(
-      (updatedFields?.nextHearingDate as UpdatedNextHearingDate[])?.some(
-        (nextHearingDate) => nextHearingDate.offenceIndex === offenceIndex
-      )
+      updatedFields?.nextHearingDate?.some((nextHearingDate) => nextHearingDate.offenceIndex === offenceIndex)
     )
   } else {
     return false
@@ -26,13 +24,13 @@ const nextHearingDateExceptionResolvedFn = (
 }
 
 const nextHearingLocationExceptionResolvedFn = (
-  updatedFields: AmendmentRecords,
+  updatedFields: Amendments,
   exception: Exception,
   offenceIndex: number
 ): boolean => {
   if (hasNextHearingLocationException([exception])) {
     return Boolean(
-      (updatedFields?.nextSourceOrganisation as UpdatedNextHearingDate[])?.some(
+      updatedFields?.nextSourceOrganisation?.some(
         (nextSourceOrganisation) => nextSourceOrganisation.offenceIndex === offenceIndex
       )
     )
@@ -41,7 +39,7 @@ const nextHearingLocationExceptionResolvedFn = (
   }
 }
 
-const getOffenceAlertsDetails = (exceptions: Exception[], updatedFields: AmendmentRecords): OffenceAlert[] => {
+const getOffenceAlertsDetails = (exceptions: Exception[], updatedFields: Amendments): OffenceAlert[] => {
   const offenceAlerts: OffenceAlert[] = []
 
   exceptions.forEach((exception) => {
