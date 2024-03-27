@@ -8,7 +8,8 @@ const filterNextHearingDateExceptions = (exceptions: Exception[]): Exception[] =
     ({ code, path }) => path.join(".").endsWith(".NextHearingDate") && nextHearingDateExceptions.includes(code)
   )
 
-const hasNextHearingDateExceptions = (exceptions: Exception[]) => filterNextHearingDateExceptions(exceptions).length > 0
+const hasNextHearingDateExceptions = (exceptions: Exception[]): boolean =>
+  filterNextHearingDateExceptions(exceptions).length > 0
 
 export { filterNextHearingDateExceptions }
 export default hasNextHearingDateExceptions

@@ -1,12 +1,10 @@
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import { Amendments } from "types/Amendments"
 import { Exception } from "types/exceptions"
 import isAsnFormatValid from "./isAsnFormatValid"
-
-const asnExceptions = [ExceptionCode.HO100206, ExceptionCode.HO100321]
+import isAsnException from "./exceptions/isException/isAsnException"
 
 const isAsnValid = (exceptions: Exception[], asn: Amendments["asn"]) => {
-  const hasAsnException = exceptions.some((exception) => asnExceptions.includes(exception.code))
+  const hasAsnException = isAsnException(exceptions)
   if (hasAsnException) {
     return !!asn && isAsnFormatValid(asn)
   }
