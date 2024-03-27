@@ -1,11 +1,11 @@
 import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { AmendmentRecords } from "types/Amendments"
 import {
   getAsnExceptionDetails,
-  getExceptionsNotifications,
   getNextHearingDateExceptionsDetails,
-  getNextHearingLocationExceptionsDetails
-} from "./getExceptionsNotifications"
-import { AmendmentRecords } from "types/Amendments"
+  getNextHearingLocationExceptionsDetails,
+  getTabDetails
+} from "./getTabDetails"
 import createDummyAho from "../../test/helpers/createDummyAho"
 import HO100206 from "../../test/helpers/exceptions/HO100206"
 import HO100321 from "../../test/helpers/exceptions/HO100321"
@@ -262,7 +262,7 @@ describe("getNextHearingLocationExceptionsDetails", () => {
   })
 })
 
-describe("getExceptionsNotifications", () => {
+describe("getTabDetails", () => {
   it.each([
     ["Defendant", 1, "asn", [HO100206], 0],
     ["Offences", 1, "next-hearing-date", [HO100102], 3],
@@ -273,17 +273,17 @@ describe("getExceptionsNotifications", () => {
     ["Offences", 4, "next-hearing-date and next-hearing-location", [HO100200, HO100300, HO100322, HO100102], 3]
   ])(
     "Should return %s as a tab and %s as exceptionCount when %s exception(s) are raised",
-    (tab: string, exceptionsCount: number, typeOfException: string, exceptions, index: number) => {
+    (tabName: string, exceptionsCount: number, typeOfException: string, exceptions, index: number) => {
       const exceptionType = typeOfException
       dummyAho.Exceptions.length = 0
       exceptions.map((exception) => exception(dummyAho))
       const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
       const updatedFields = {} as AmendmentRecords
 
-      const exceptionsDetails = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
+      const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
 
-      expect(exceptionsDetails[index].tab).toBe(tab)
-      expect(exceptionsDetails[index].exceptionsCount).toBe(exceptionsCount)
+      expect(tabDetails[index].name).toBe(tabName)
+      expect(tabDetails[index].exceptionsCount).toBe(exceptionsCount)
       expect(exceptionType).toBe(typeOfException)
     }
   )
@@ -302,11 +302,11 @@ describe("getExceptionsNotifications", () => {
       ]
     } as AmendmentRecords
 
-    const exceptionsNotifications = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
 
-    expect(exceptionsNotifications[3].tab).toBe("Offences")
-    expect(exceptionsNotifications[3].exceptionsCount).toBe(0)
-    expect(exceptionsNotifications[3].isResolved).toBe(true)
+    expect(tabDetails[3].name).toBe("Offences")
+    expect(tabDetails[3].exceptionsCount).toBe(0)
+    expect(tabDetails[3].exceptionsResolved).toBe(true)
   })
 
   it("Should return isResolved:false for offences tab when multiple exceptions are raised and only one of them is resolved ", () => {
@@ -324,11 +324,11 @@ describe("getExceptionsNotifications", () => {
       ]
     } as AmendmentRecords
 
-    const exceptionsNotifications = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
 
-    expect(exceptionsNotifications[3].tab).toBe("Offences")
-    expect(exceptionsNotifications[3].exceptionsCount).toBe(1)
-    expect(exceptionsNotifications[3].isResolved).toBe(false)
+    expect(tabDetails[3].name).toBe("Offences")
+    expect(tabDetails[3].exceptionsCount).toBe(1)
+    expect(tabDetails[3].exceptionsResolved).toBe(false)
   })
 
   it("Should return isResolved:true for offences tab when multiple exceptions are raised and all of them are resolved ", () => {
@@ -353,10 +353,10 @@ describe("getExceptionsNotifications", () => {
       ]
     } as AmendmentRecords
 
-    const exceptionsNotifications = getExceptionsNotifications(courtCase.aho.Exceptions, updatedFields)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
 
-    expect(exceptionsNotifications[3].tab).toBe("Offences")
-    expect(exceptionsNotifications[3].exceptionsCount).toBe(0)
-    expect(exceptionsNotifications[3].isResolved).toBe(true)
+    expect(tabDetails[3].name).toBe("Offences")
+    expect(tabDetails[3].exceptionsCount).toBe(0)
+    expect(tabDetails[3].exceptionsResolved).toBe(true)
   })
 })

@@ -75,7 +75,6 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
         onTabClick={(tab) => {
           setActiveTab(tab)
         }}
-        tabs={["Defendant", "Hearing", "Case", "Offences", "Notes"]}
         width={contentWidth}
       />
 

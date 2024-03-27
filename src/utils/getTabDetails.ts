@@ -6,10 +6,10 @@ import hasAsnException from "./exceptions/hasAsnException"
 import hasNextHearingDateException from "./exceptions/hasNextHearingDateException"
 import hasNextHearingLocationException from "./exceptions/hasNextHearingLocationException"
 
-export type ExceptionIconDetails = {
-  tab: "Defendant" | "Hearing" | "Case" | "Offences" | "Notes"
+export type TabDetails = {
+  name: "Defendant" | "Hearing" | "Case" | "Offences" | "Notes"
   exceptionsCount: number
-  isResolved: boolean
+  exceptionsResolved: boolean
 }
 
 const getAsnExceptionDetails = (exceptions: Exception[], updatedFields: AmendmentRecords) => {
@@ -44,10 +44,7 @@ const getNextHearingLocationExceptionsDetails = (exceptions: Exception[], update
   }
 }
 
-const getExceptionsNotifications = (
-  exceptions: Exception[],
-  updatedFields: AmendmentRecords
-): ExceptionIconDetails[] => {
+const getTabDetails = (exceptions: Exception[], updatedFields: AmendmentRecords): TabDetails[] => {
   const nextHearingDateExceptionsDetails = getNextHearingDateExceptionsDetails(exceptions, updatedFields)
   const nextHearingLocationExceptionsDetails = getNextHearingLocationExceptionsDetails(exceptions, updatedFields)
   const asnExceptionDetails = getAsnExceptionDetails(exceptions, updatedFields)
@@ -65,36 +62,36 @@ const getExceptionsNotifications = (
 
   return [
     {
-      tab: "Defendant",
+      name: "Defendant",
       exceptionsCount: asnExceptionDetails.ExceptionsCount,
-      isResolved: asnExceptionDetails.ExceptionsResolved
+      exceptionsResolved: asnExceptionDetails.ExceptionsResolved
     },
     {
-      tab: "Hearing",
+      name: "Hearing",
       exceptionsCount: 0,
-      isResolved: false
+      exceptionsResolved: false
     },
     {
-      tab: "Case",
+      name: "Case",
       exceptionsCount: 0,
-      isResolved: false
+      exceptionsResolved: false
     },
     {
-      tab: "Offences",
+      name: "Offences",
       exceptionsCount:
         nextHearingDateExceptionsDetails.ExceptionsCount + nextHearingLocationExceptionsDetails.ExceptionsCount,
-      isResolved: offencesExceptionsResolved
+      exceptionsResolved: offencesExceptionsResolved
     },
     {
-      tab: "Notes",
+      name: "Notes",
       exceptionsCount: 0,
-      isResolved: false
+      exceptionsResolved: false
     }
   ]
 }
 
 export {
-  getExceptionsNotifications,
+  getTabDetails,
   getAsnExceptionDetails,
   getNextHearingLocationExceptionsDetails,
   getNextHearingDateExceptionsDetails
