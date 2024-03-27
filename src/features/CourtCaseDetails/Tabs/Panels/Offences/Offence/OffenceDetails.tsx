@@ -9,7 +9,7 @@ import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType as ExceptionBadge } from "components/ExceptionFieldTableRow"
 import { OffenceMatcher } from "components/OffenceMatcher"
 import { useCourtCase } from "context/CourtCaseContext"
-import { Heading, Table } from "govuk-react"
+import { Heading, Input, Table } from "govuk-react"
 import { isEqual } from "lodash"
 import { createUseStyles } from "react-jss"
 import ErrorMessages, { findExceptions } from "types/ErrorMessages"
@@ -210,7 +210,8 @@ export const OffenceDetails = ({
 
           {/* Matched PNC offence */}
           {/* TODO: only enable for 310s */}
-          {offenceMatchingException && (
+          {/* TODO: reenable this in offence matching PR */}
+          {false && (
             <ExceptionFieldTableRow
               label={"Matched PNC offence"}
               value={<OffenceMatcher offenceIndex={selectedOffenceIndex} offence={offence} />}
@@ -221,7 +222,11 @@ export const OffenceDetails = ({
 
           {/* PNC sequence number */}
           {offenceMatchingException ? (
-            <ExceptionFieldTableRow badgeText={offenceMatchingException.badge} label={"PNC sequence number"}>
+            <ExceptionFieldTableRow
+              badgeText={offenceMatchingException.badge}
+              label={"PNC sequence number"}
+              value={<Input type="text" maxLength={3} className={classes.pncSequenceNumber} />} // TODO: remove this for offence matching
+            >
               {" "}
               <>
                 {"Court Case Reference:"}
