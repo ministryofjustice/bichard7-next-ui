@@ -14,7 +14,7 @@ describe("Home", () => {
           users: [
             {
               username: `generalhandler2`,
-              visibleForces: [`01`],
+              visibleForces: [1],
               forenames: "Bichard Test User",
               surname: `01`,
               email: `generalhandler2@example.com`,
@@ -39,7 +39,7 @@ describe("Home", () => {
           users: [
             {
               username: `Bichard01`,
-              visibleForces: [`01`],
+              visibleForces: [1],
               forenames: "Bichard Test User",
               surname: `01`,
               email: `bichard01@example.com`,
@@ -63,7 +63,7 @@ describe("Home", () => {
           users: [
             {
               username: `supervisorUser`,
-              visibleForces: [`01`],
+              visibleForces: [1],
               forenames: "Bichard Test User",
               surname: `01`,
               email: `supervisorUser@example.com`,
@@ -88,7 +88,7 @@ describe("Home", () => {
           users: [
             {
               username: `notSupervisorUser`,
-              visibleForces: [`01`],
+              visibleForces: [1],
               forenames: "Bichard Test User",
               surname: `01`,
               email: `notSupervisorUser@example.com`,
@@ -119,7 +119,7 @@ describe("Home", () => {
           users: [
             {
               username: `notUserManager`,
-              visibleForces: [`01`],
+              visibleForces: [1],
               forenames: "Bichard Test User",
               surname: `01`,
               email: `notUserManager@example.com`,
@@ -150,7 +150,7 @@ describe("Home", () => {
           users: [
             {
               username: `generalhandler2`,
-              visibleForces: [`01`],
+              visibleForces: [1],
               forenames: "Bichard Test User",
               surname: `01`,
               email: `generalhandler2@example.com`,

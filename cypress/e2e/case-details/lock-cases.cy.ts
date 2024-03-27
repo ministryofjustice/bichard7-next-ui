@@ -1,13 +1,13 @@
 import User from "services/entities/User"
-import hashedPassword from "../../fixtures/hashedPassword"
 import { UserGroup } from "types/UserGroup"
+import hashedPassword from "../../fixtures/hashedPassword"
 import { newUserLogin } from "../../support/helpers"
 
 describe("Lock court cases", () => {
   const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
-      visibleForces: [`0${idx}`],
+      visibleForces: [idx],
       forenames: "Bichard Test User",
       surname: `0${idx}`,
       email: `bichard0${idx}@example.com`,

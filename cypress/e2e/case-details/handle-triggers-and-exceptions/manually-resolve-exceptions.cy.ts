@@ -7,7 +7,7 @@ describe("Manually resolve exceptions", () => {
         users: [
           {
             username: `${userRole} username`,
-            visibleForces: ["01"],
+            visibleForces: [1],
             forenames: `${userRole}'s forename`,
             surname: `${userRole}surname`,
             email: `${userRole}@example.com`,

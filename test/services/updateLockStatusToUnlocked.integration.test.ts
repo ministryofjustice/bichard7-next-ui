@@ -1,17 +1,17 @@
+import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import User from "services/entities/User"
 import { DataSource, UpdateQueryBuilder } from "typeorm"
+import UnlockReason from "types/UnlockReason"
+import { userAccess } from "utils/userPermissions"
+import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import updateLockStatusToUnlocked from "../../src/services/updateLockStatusToUnlocked"
 import { isError } from "../../src/types/Result"
+import { UserGroup } from "../../src/types/UserGroup"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
-import UnlockReason from "types/UnlockReason"
-import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
-import { UserGroup } from "../../src/types/UserGroup"
-import { userAccess } from "utils/userPermissions"
-import { hasAccessToAll } from "../helpers/hasAccessTo"
 
 const exceptionUnlockedEvent = (username = "current user") => ({
   category: "information",
@@ -427,7 +427,7 @@ describe("Unlock court case", () => {
 
       const user = {
         username: "current user",
-        visibleForces: ["36FPA1"],
+        visibleForces: [36],
         visibleCourts: [],
         hasAccessTo: userAccess({ groups: [currentUserGroup] })
       } as Partial<User> as User
@@ -473,7 +473,7 @@ describe("Unlock court case", () => {
 
       const user = {
         username: "dummy username",
-        visibleForces: ["36FPA1"],
+        visibleForces: [36],
         visibleCourts: [],
         hasAccessTo: hasAccessToAll
       } as Partial<User> as User

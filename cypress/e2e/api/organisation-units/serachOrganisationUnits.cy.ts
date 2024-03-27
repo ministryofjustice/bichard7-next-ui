@@ -1,6 +1,6 @@
-import hashedPassword from "../../../fixtures/hashedPassword"
 import User from "../../../../src/services/entities/User"
 import OrganisationUnitApiResponse from "../../../../src/types/OrganisationUnitApiResponse"
+import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("Organiation Units API endpoint", () => {
   before(() => {
@@ -9,7 +9,7 @@ describe("Organiation Units API endpoint", () => {
       users: [
         {
           username: "Bichard01",
-          visibleForces: ["01"],
+          visibleForces: [1],
           forenames: "Bichard Test User",
           surname: "Bichard user",
           email: "bichard01@example.com",

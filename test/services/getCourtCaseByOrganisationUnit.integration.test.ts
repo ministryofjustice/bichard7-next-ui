@@ -1,19 +1,20 @@
+import Trigger from "services/entities/Trigger"
+import User from "services/entities/User"
+import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import { DataSource } from "typeorm"
 import CourtCase from "../../src/services/entities/CourtCase"
-import getDataSource from "../../src/services/getDataSource"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
+import getDataSource from "../../src/services/getDataSource"
 import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import User from "services/entities/User"
-import Trigger from "services/entities/Trigger"
-import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 
 jest.mock("services/queries/leftJoinAndSelectTriggersQuery")
 
 describe("getCourtCaseByOrganisationUnits", () => {
   let dataSource: DataSource
   const orgCode = "36FPA1"
+  const forceCode = 36
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -39,7 +40,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
     const dummyErrorId = 0
     const dummyExcludedTriggers = ["TRPDUMMY"]
     await getCourtCaseByOrganisationUnit(dataSource, dummyErrorId, {
-      visibleForces: [orgCode],
+      visibleForces: [forceCode],
       visibleCourts: [],
       excludedTriggers: dummyExcludedTriggers
     } as Partial<User> as User)
@@ -55,7 +56,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
     await insertCourtCases(inputCourtCase)
 
     let result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
-      visibleForces: [orgCode],
+      visibleForces: [forceCode],
       visibleCourts: []
     } as Partial<User> as User)
     expect(isError(result)).toBe(false)
@@ -64,7 +65,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
 
     result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
-      visibleForces: [orgCode.substring(0, 2)],
+      visibleForces: [forceCode],
       visibleCourts: []
     } as Partial<User> as User)
     expect(isError(result)).toBe(false)
@@ -73,43 +74,9 @@ describe("getCourtCaseByOrganisationUnits", () => {
     expect(actualCourtCase).toStrictEqual(inputCourtCase)
   })
 
-  // Old Bichard generates inclusion list from visibleForces and visibleCourts
-  // then checks these against both orgForPoliceFilter and courtCode
-  it("Should return a case where the users' visibleForce matches the courtCode", async () => {
-    const inputCourtCase = await getDummyCourtCase({
-      courtCode: orgCode.padEnd(6, " "),
-      orgForPoliceFilter: null
-    })
-    await insertCourtCases(inputCourtCase)
-    const result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
-      visibleForces: [orgCode.substring(0, 2)],
-      visibleCourts: []
-    } as Partial<User> as User)
-    expect(isError(result)).toBe(false)
-
-    const actualCourtCase = result as CourtCase
-    expect(actualCourtCase).toStrictEqual(inputCourtCase)
-  })
-
-  it("Should return a case where the users' visibleCourt matches the orgForPoliceFilter", async () => {
-    const inputCourtCase = await getDummyCourtCase({
-      courtCode: null,
-      orgForPoliceFilter: orgCode.padEnd(6, " ")
-    })
-    await insertCourtCases(inputCourtCase)
-    const result = await getCourtCaseByOrganisationUnit(dataSource, inputCourtCase.errorId, {
-      visibleForces: [],
-      visibleCourts: [orgCode.substring(0, 2)]
-    } as Partial<User> as User)
-    expect(isError(result)).toBe(false)
-
-    const actualCourtCase = result as CourtCase
-    expect(actualCourtCase).toStrictEqual(inputCourtCase)
-  })
-
   it("Should return null if the court case doesn't exist", async () => {
     const result = await getCourtCaseByOrganisationUnit(dataSource, 0, {
-      visibleForces: [orgCode],
+      visibleForces: [forceCode],
       visibleCourts: []
     } as Partial<User> as User)
 
@@ -117,7 +84,7 @@ describe("getCourtCaseByOrganisationUnits", () => {
   })
 
   it("Should return null when record exists and is not visible to the specified forces", async () => {
-    const differentOrgCode = "36FPA3"
+    const differentOrgCode = 36
     const inputCourtCase = await getDummyCourtCase({
       orgForPoliceFilter: orgCode.padEnd(6, " ")
     })

@@ -102,7 +102,7 @@ describe("Switching Bichard Version Feedback Form", () => {
         {
           id: expectedUserId,
           username: "Bichard01",
-          visibleForces: ["01"],
+          visibleForces: [1],
           forenames: "Bichard Test User",
           surname: "01",
           email: "bichard01@example.com",

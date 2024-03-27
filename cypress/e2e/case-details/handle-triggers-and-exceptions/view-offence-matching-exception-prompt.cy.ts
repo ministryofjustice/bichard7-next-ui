@@ -1,6 +1,6 @@
-import hashedPassword from "../../../fixtures/hashedPassword"
 import ExceptionHO100304 from "../../../../test/test-data/HO100304.json"
 import NextHearingDateExceptions from "../../../../test/test-data/NextHearingDateExceptions.json"
+import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("View offence matching exception prompts", () => {
   before(() => {
@@ -10,7 +10,7 @@ describe("View offence matching exception prompts", () => {
       users: [
         {
           username: "Bichard01",
-          visibleForces: ["001"],
+          visibleForces: [1],
           forenames: "Bichard Test User",
           surname: "01",
           email: "bichard01@example.com",

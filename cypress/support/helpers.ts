@@ -68,7 +68,7 @@ export const newUserLogin = ({ user, groups }: { user?: string; groups?: UserGro
     users: [
       {
         username: user,
-        visibleForces: ["01"],
+        visibleForces: [1],
         forenames: "Bichard Test User",
         surname: "01",
         email: email,
@@ -109,7 +109,7 @@ export const setupDefaultUsers = () => {
   const defaultUsers: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
-      visibleForces: [`00${idx}`],
+      visibleForces: [idx],
       visibleCourts: [`${idx}C`],
       forenames: "Bichard Test User",
       surname: `0${idx}`,
@@ -119,7 +119,7 @@ export const setupDefaultUsers = () => {
   })
   defaultUsers.push({
     username: `Bichard011111`,
-    visibleForces: [`0011111`],
+    visibleForces: [11111],
     forenames: "Bichard Test User",
     surname: `011111`,
     email: `bichard011111@example.com`,
@@ -127,7 +127,7 @@ export const setupDefaultUsers = () => {
   })
   defaultUsers.push({
     username: `TriggerHandler`,
-    visibleForces: [`0011111`],
+    visibleForces: [11111],
     forenames: "Trigger Handler User",
     surname: `011111`,
     email: `triggerhandler@example.com`,
@@ -135,7 +135,7 @@ export const setupDefaultUsers = () => {
   })
   defaultUsers.push({
     username: `ExceptionHandler`,
-    visibleForces: [`0011111`],
+    visibleForces: [11111],
     forenames: "Exception Handler User",
     surname: `011111`,
     email: `exceptionhandler@example.com`,
@@ -143,7 +143,7 @@ export const setupDefaultUsers = () => {
   })
   defaultUsers.push({
     username: `GeneralHandler`,
-    visibleForces: [`0011111`],
+    visibleForces: [11111],
     forenames: "General Handler User",
     surname: `011111`,
     email: `generalhandler@example.com`,
@@ -151,7 +151,7 @@ export const setupDefaultUsers = () => {
   })
   defaultUsers.push({
     username: `Supervisor`,
-    visibleForces: [`0011111`],
+    visibleForces: [11111],
     forenames: "Sup",
     surname: "User",
     email: "supervisor@example.com",
@@ -159,7 +159,7 @@ export const setupDefaultUsers = () => {
   })
   defaultUsers.push({
     username: `NoGroups`,
-    visibleForces: [`0011111`],
+    visibleForces: [11111],
     forenames: "No",
     surname: "Groups",
     email: "nogroups@example.com",

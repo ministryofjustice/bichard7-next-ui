@@ -1,17 +1,17 @@
+import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import User from "services/entities/User"
 import { DataSource } from "typeorm"
+import { userAccess } from "utils/userPermissions"
+import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import CourtCase from "../../src/services/entities/CourtCase"
+import getCourtCase from "../../src/services/getCourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import updateLockStatusToLocked from "../../src/services/updateLockStatusToLocked"
+import { ResolutionStatus } from "../../src/types/ResolutionStatus"
 import { isError } from "../../src/types/Result"
+import { UserGroup } from "../../src/types/UserGroup"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
-import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
-import { UserGroup } from "../../src/types/UserGroup"
-import getCourtCase from "../../src/services/getCourtCase"
-import { ResolutionStatus } from "../../src/types/ResolutionStatus"
-import { userAccess } from "utils/userPermissions"
 
 describe("Update lock status to locked", () => {
   let dataSource: DataSource
@@ -232,7 +232,7 @@ describe("Update lock status to locked", () => {
 
       const user = {
         username: "current user",
-        visibleForces: ["36"],
+        visibleForces: [36],
         visibleCourts: [],
         hasAccessTo: userAccess({ groups: [currentUserGroup] })
       } as Partial<User> as User

@@ -29,8 +29,9 @@ jest.setTimeout(100000)
 describe("listCourtCases", () => {
   let dataSource: DataSource
   const orgCode = "36FPA1"
+  const forceCode = 36
   const testUser = {
-    visibleForces: [orgCode],
+    visibleForces: [forceCode],
     visibleCourts: [],
     hasAccessTo: hasAccessToAll
   } as Partial<User> as User
@@ -179,7 +180,7 @@ describe("listCourtCases", () => {
       await insertDummyCourtCasesWithNotes(caseNotes, "01")
 
       const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
-        visibleForces: ["01"],
+        visibleForces: [1],
         visibleCourts: [],
         hasAccessTo: hasAccessToAll
       } as Partial<User> as User)
@@ -211,7 +212,7 @@ describe("listCourtCases", () => {
       await insertDummyCourtCasesWithTriggers(caseTriggers, "01")
 
       const result = await listCourtCases(dataSource, { maxPageItems: "10" }, {
-        visibleForces: ["01"],
+        visibleForces: [1],
         visibleCourts: [],
         hasAccessTo: hasAccessToAll
       } as Partial<User> as User)
@@ -228,7 +229,7 @@ describe("listCourtCases", () => {
       await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
       const result = await listCourtCases(dataSource, { maxPageItems: "10", pageNum: "2" }, {
-        visibleForces: ["36FPA1"],
+        visibleForces: [36],
         visibleCourts: [],
         hasAccessTo: hasAccessToAll
       } as Partial<User> as User)

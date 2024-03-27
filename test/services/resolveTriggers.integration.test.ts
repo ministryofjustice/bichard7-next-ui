@@ -8,12 +8,12 @@ import Trigger from "../../src/services/entities/Trigger"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
 import getDataSource from "../../src/services/getDataSource"
 import resolveTriggers from "../../src/services/resolveTriggers"
-import insertException from "../utils/manageExceptions"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
 import { hasAccessToAll } from "../helpers/hasAccessTo"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
+import insertException from "../utils/manageExceptions"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 
 jest.setTimeout(100000)
@@ -82,7 +82,7 @@ describe("resolveTriggers", () => {
 
   describe("Mark trigger as resolved", () => {
     const resolverUsername = "triggerResolver01"
-    const visibleForce = "36"
+    const visibleForce = 36
     const user = {
       visibleCourts: [],
       visibleForces: [visibleForce],
@@ -94,7 +94,7 @@ describe("resolveTriggers", () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce.toString()
         }
       ])
       const trigger: TestTrigger = {
@@ -155,7 +155,7 @@ describe("resolveTriggers", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce.toString()
         }
       ])
 
@@ -192,7 +192,7 @@ describe("resolveTriggers", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce.toString()
         }
       ])
 
@@ -256,7 +256,7 @@ describe("resolveTriggers", () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: user.username,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce.toString()
         }
       ])
 
@@ -302,7 +302,7 @@ describe("resolveTriggers", () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: lockHolderUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce.toString()
         }
       ])
 
@@ -368,7 +368,7 @@ describe("resolveTriggers", () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce.toString()
         }
       ])
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId, index) => {
@@ -445,7 +445,7 @@ describe("resolveTriggers", () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce.toString()
         }
       ])
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId, index) => {
@@ -490,7 +490,7 @@ describe("resolveTriggers", () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce.toString()
         }
       ])
       const triggers: TestTrigger[] = [0, 1, 2, 3, 4].map((triggerId, index) => {
@@ -538,7 +538,7 @@ describe("resolveTriggers", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce.toString()
         }
       ])
 
@@ -580,7 +580,7 @@ describe("resolveTriggers", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce.toString()
         }
       ])
 

@@ -54,7 +54,7 @@ describe("Filtering cases", () => {
       users: [
         {
           username: "Bichard01",
-          visibleForces: ["0011111"],
+          visibleForces: [11111],
           forenames: "Bichard Test User",
           surname: "01",
           email: "bichard01@example.com",

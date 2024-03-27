@@ -38,7 +38,7 @@ const expectToBeUnresolved = (courtCase: CourtCase) => {
 
 describe("resolveCourtCase", () => {
   let dataSource: DataSource
-  const visibleForce = "36"
+  const visibleForce = 36
   const resolverUsername = "Resolver User"
   const user = {
     visibleCourts: [],
@@ -76,7 +76,7 @@ describe("resolveCourtCase", () => {
       {
         errorLockedByUsername: resolverUsername,
         triggerLockedByUsername: resolverUsername,
-        orgForPoliceFilter: visibleForce,
+        orgForPoliceFilter: visibleForce.toString(),
         errorStatus: "Unresolved",
         errorCount: 4
       }
@@ -100,7 +100,7 @@ describe("resolveCourtCase", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce,
+          orgForPoliceFilter: visibleForce.toString(),
           errorStatus: "Unresolved",
           errorCount: 4
         }
@@ -202,7 +202,7 @@ describe("resolveCourtCase", () => {
           errorId: firstCaseId,
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce,
+          orgForPoliceFilter: visibleForce.toString(),
           errorStatus: "Unresolved",
           errorCount: 1
         },
@@ -210,7 +210,7 @@ describe("resolveCourtCase", () => {
           errorId: secondCaseId,
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce,
+          orgForPoliceFilter: visibleForce.toString(),
           errorStatus: "Unresolved",
           errorCount: 1
         }
@@ -276,7 +276,7 @@ describe("resolveCourtCase", () => {
         {
           errorLockedByUsername: anotherUser,
           triggerLockedByUsername: anotherUser,
-          orgForPoliceFilter: visibleForce,
+          orgForPoliceFilter: visibleForce.toString(),
           errorStatus: "Unresolved",
           errorCount: 1
         }
@@ -303,7 +303,7 @@ describe("resolveCourtCase", () => {
         {
           errorLockedByUsername: null,
           triggerLockedByUsername: null,
-          orgForPoliceFilter: visibleForce,
+          orgForPoliceFilter: visibleForce.toString(),
           errorStatus: "Unresolved",
           errorCount: 1
         }
@@ -330,7 +330,7 @@ describe("resolveCourtCase", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce,
+          orgForPoliceFilter: visibleForce.toString(),
           errorStatus: "Unresolved",
           errorCount: 1
         }
@@ -368,7 +368,7 @@ describe("resolveCourtCase", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce,
+          orgForPoliceFilter: visibleForce.toString(),
           errorStatus: "Unresolved",
           errorCount: 1
         }
@@ -421,7 +421,7 @@ describe("resolveCourtCase", () => {
           triggerLockedByUsername: resolverUsername,
           errorStatus: null,
           errorCount: 0,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce.toString()
         }
       ])
 
@@ -470,7 +470,7 @@ describe("resolveCourtCase", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce,
+          orgForPoliceFilter: visibleForce.toString(),
           errorStatus: "Unresolved",
           errorCount: 1
         }

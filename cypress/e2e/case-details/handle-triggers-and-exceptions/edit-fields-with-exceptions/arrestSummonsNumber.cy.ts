@@ -13,7 +13,7 @@ describe("ASN", () => {
       users: [
         {
           username: "Bichard01",
-          visibleForces: ["001"],
+          visibleForces: [1],
           forenames: "Bichard Test User",
           surname: "01",
           email: "bichard01@example.com",
@@ -283,7 +283,7 @@ describe("ASN", () => {
       users: [
         {
           username: "Bichard01",
-          visibleForces: ["001"],
+          visibleForces: [1],
           forenames: "triggerHandler Test User",
           surname: "01",
           email: "triggerhandler@example.com",

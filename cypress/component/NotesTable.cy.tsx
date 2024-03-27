@@ -36,21 +36,21 @@ describe("NotesTable", () => {
         userFullName: "note user 1",
         userId: "1",
         noteText: "this is a note",
-        user: { visibleForces: ["01"], username: "note.user1" },
+        user: { visibleForces: [1], username: "note.user1" },
         createdAt: date
       },
       {
         userFullName: "note user 2",
         userId: "1",
         noteText: "this is a different note",
-        user: { visibleForces: ["01", "02", "03", "04"], username: "note.user2" },
+        user: { visibleForces: [1, 2, 3, 4], username: "note.user2" },
         createdAt: date
       }
     ]
 
     cy.mount(<NotesTable displayForce notes={notes} />)
 
-    cy.contains("(01)")
-    cy.contains("(01, 02, 03)")
+    cy.contains("(1)")
+    cy.contains("(1, 2, 3)")
   })
 })
