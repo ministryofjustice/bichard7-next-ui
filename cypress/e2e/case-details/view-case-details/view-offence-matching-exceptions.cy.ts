@@ -29,7 +29,7 @@ describe("View offence matching exceptions", () => {
   })
   ;[
     { asn: ExceptionCode.HO100304, firstOffenceBadge: "Unmatched" },
-    { asn: ExceptionCode.HO100328, firstOffenceBadge: "Unmatched" }, // TODO: make sure both offences are actually unmatched
+    { asn: ExceptionCode.HO100328, firstOffenceBadge: "Unmatched" },
     { asn: ExceptionCode.HO100507, firstOffenceBadge: "Added by Court", secondOffenceBadge: "Added by Court" },
     { offenceReasonSequence: ExceptionCode.HO100203 },
     { offenceReasonSequence: ExceptionCode.HO100228 },
