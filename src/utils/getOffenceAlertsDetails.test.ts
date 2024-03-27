@@ -1,4 +1,4 @@
-import { AmendmentRecords } from "types/Amendments"
+import { Amendments } from "types/Amendments"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import { nextHearingDateExceptionResolvedFn, nextHearingLocationExceptionResolvedFn } from "./getOffenceAlertsDetails"
 
@@ -40,10 +40,10 @@ describe("nextHearingDateExceptionResolvedFn", () => {
         {
           resultIndex: 0,
           offenceIndex: 0,
-          updatedValue: "2024-03-30"
+          value: "2024-03-30"
         }
       ]
-    } as AmendmentRecords
+    } as Amendments
 
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
@@ -55,7 +55,7 @@ describe("nextHearingDateExceptionResolvedFn", () => {
   })
 
   it("Should return false when exception is not resolved", () => {
-    const updatedFields = {} as AmendmentRecords
+    const updatedFields = {} as Amendments
 
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
@@ -72,10 +72,10 @@ describe("nextHearingDateExceptionResolvedFn", () => {
         {
           resultIndex: 0,
           offenceIndex: 0,
-          updatedValue: "B21XA00"
+          value: "B21XA00"
         }
       ]
-    } as AmendmentRecords
+    } as Amendments
 
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
@@ -92,10 +92,10 @@ describe("nextHearingDateExceptionResolvedFn", () => {
         {
           resultIndex: 0,
           offenceIndex: 1,
-          updatedValue: "2024-03-30"
+          value: "2024-03-30"
         }
       ]
-    } as AmendmentRecords
+    } as Amendments
 
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
@@ -109,7 +109,7 @@ describe("nextHearingDateExceptionResolvedFn", () => {
   it("Should return false when currepted data is found in updatedFields", () => {
     const updatedFields = {
       nextHearingDate: undefined
-    } as unknown as AmendmentRecords
+    } as unknown as Amendments
 
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
@@ -126,10 +126,10 @@ describe("nextHearingDateExceptionResolvedFn", () => {
         {
           resultIndex: 0,
           offenceIndex: undefined,
-          updatedValue: "2024-03-30"
+          value: "2024-03-30"
         }
       ]
-    } as unknown as AmendmentRecords
+    } as unknown as Amendments
 
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
@@ -148,10 +148,10 @@ describe("nextHearingLocationExceptionResolvedFn", () => {
         {
           resultIndex: 0,
           offenceIndex: 0,
-          updatedValue: "B21XA00"
+          value: "B21XA00"
         }
       ]
-    } as AmendmentRecords
+    } as Amendments
 
     const nextHearingLocationResolved = nextHearingLocationExceptionResolvedFn(
       updatedFields,
@@ -163,7 +163,7 @@ describe("nextHearingLocationExceptionResolvedFn", () => {
   })
 
   it("Should return false when exception is not resolved", () => {
-    const updatedFields = {} as AmendmentRecords
+    const updatedFields = {} as Amendments
 
     const nextHearingLocationResolved = nextHearingLocationExceptionResolvedFn(
       updatedFields,
@@ -180,10 +180,10 @@ describe("nextHearingLocationExceptionResolvedFn", () => {
         {
           resultIndex: 0,
           offenceIndex: 0,
-          updatedValue: "2024-03-30"
+          value: "2024-03-30"
         }
       ]
-    } as AmendmentRecords
+    } as Amendments
 
     const nextHearingLocationResolved = nextHearingLocationExceptionResolvedFn(
       updatedFields,
@@ -201,10 +201,10 @@ describe("nextHearingLocationExceptionResolvedFn", () => {
         {
           resultIndex: 0,
           offenceIndex: 1,
-          updatedValue: "B21XA00"
+          value: "B21XA00"
         }
       ]
-    } as AmendmentRecords
+    } as Amendments
 
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(updatedFields, exception, 0)
 
@@ -214,7 +214,7 @@ describe("nextHearingLocationExceptionResolvedFn", () => {
   it("Should return false when currepted data is found in updatedFields", () => {
     const updatedFields = {
       nextSourceOrganisation: undefined
-    } as unknown as AmendmentRecords
+    } as unknown as Amendments
 
     const nextHearingLocationResolved = nextHearingLocationExceptionResolvedFn(
       updatedFields,
@@ -231,10 +231,10 @@ describe("nextHearingLocationExceptionResolvedFn", () => {
         {
           resultIndex: 0,
           offenceIndex: 1,
-          updatedValue: "B21XA00"
+          value: "B21XA00"
         }
       ]
-    } as unknown as AmendmentRecords
+    } as Amendments
 
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
