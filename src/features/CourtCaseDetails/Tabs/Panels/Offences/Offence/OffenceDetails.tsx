@@ -128,7 +128,6 @@ export const OffenceDetails = ({
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex - 1)
   const offenceMatchingExceptionMessage = findExceptions(courtCase, courtCase.aho.Exceptions, ExceptionCode.HO100304)
 
-  console.log("=========", offenceMatchingException, selectedOffenceIndex)
   const unresolvedExceptionsOnThisOffence = !isCaseUnresolved
     ? []
     : exceptions.filter((exception) => exception.path.join(">").startsWith(thisOffencePath))
