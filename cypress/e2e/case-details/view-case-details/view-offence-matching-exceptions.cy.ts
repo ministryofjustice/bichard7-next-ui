@@ -28,19 +28,19 @@ describe("View offence matching exceptions", () => {
     cy.task("clearCourtCases")
   })
   ;[
-    { asn: ExceptionCode.HO100304, badge: "Unmatched" },
-    { asn: ExceptionCode.HO100328, badge: "Unmatched" },
-    { asn: ExceptionCode.HO100507, badge: "Added by Court" },
-    { offenceReasonSequence: ExceptionCode.HO100203, badge: "Unmatched" },
-    { offenceReasonSequence: ExceptionCode.HO100228, badge: "Unmatched" },
-    { offenceReasonSequence: ExceptionCode.HO100310, badge: "Unmatched" },
-    { offenceReasonSequence: ExceptionCode.HO100311, badge: "Unmatched" },
-    { offenceReasonSequence: ExceptionCode.HO100312, badge: "Unmatched" },
-    { offenceReasonSequence: ExceptionCode.HO100320, badge: "Unmatched" },
-    { offenceReasonSequence: ExceptionCode.HO100329, badge: "Unmatched" },
-    { offenceReasonSequence: ExceptionCode.HO100332, badge: "Unmatched" },
-    { offenceReasonSequence: ExceptionCode.HO100333, badge: "Unmatched" }
-  ].forEach(({ offenceReasonSequence, asn, badge }) => {
+    { asn: ExceptionCode.HO100304, firstOffenceBadge: "Unmatched" },
+    { asn: ExceptionCode.HO100328, firstOffenceBadge: "Unmatched" }, // TODO: make sure both offences are actually unmatched
+    { asn: ExceptionCode.HO100507, firstOffenceBadge: "Added by Court", secondOffenceBadge: "Added by Court" },
+    { offenceReasonSequence: ExceptionCode.HO100203 },
+    { offenceReasonSequence: ExceptionCode.HO100228 },
+    { offenceReasonSequence: ExceptionCode.HO100310 },
+    { offenceReasonSequence: ExceptionCode.HO100311 },
+    { offenceReasonSequence: ExceptionCode.HO100312 },
+    { offenceReasonSequence: ExceptionCode.HO100320 },
+    { offenceReasonSequence: ExceptionCode.HO100329 },
+    { offenceReasonSequence: ExceptionCode.HO100332 },
+    { offenceReasonSequence: ExceptionCode.HO100333 }
+  ].forEach(({ asn, offenceReasonSequence, firstOffenceBadge = "Matched", secondOffenceBadge = "Unmatched" }) => {
     it(`Should display the correct error for ${asn ?? offenceReasonSequence}`, () => {
       cy.task("insertCourtCaseWithFieldsWithExceptions", {
         case: {
@@ -60,10 +60,14 @@ describe("View offence matching exceptions", () => {
       clickTab("Offences")
 
       cy.get("tbody tr:nth-child(1) td:nth-child(4) a").click()
-
       cy.contains("h3", "Offence 1 of 2")
       cy.contains("td", "Offence code").siblings().contains("TH68010")
-      cy.contains("td", "PNC sequence number").siblings().contains(badge)
+      cy.contains("td", "PNC sequence number").siblings().contains(firstOffenceBadge)
+
+      cy.get("button").contains("Next offence").click()
+      cy.contains("h3", "Offence 2 of 2")
+      cy.contains("td", "Offence code").siblings().contains("TH68010")
+      cy.contains("td", "PNC sequence number").siblings().contains(secondOffenceBadge)
     })
   })
 })

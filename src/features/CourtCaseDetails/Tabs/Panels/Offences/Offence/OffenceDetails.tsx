@@ -80,12 +80,18 @@ const getOffenceMatchingException = (
   exceptions: Exception[],
   offenceIndex: number
 ): GetOffenceMatchingExceptionResult => {
-  const offenceMatchingException = exceptions.find(
-    (exception) =>
+  const offenceMatchingException = exceptions.find((exception) => {
+    const sequencePath = getOffenceReasonSequencePath(offenceIndex)
+
+    const exceptionPath = exception.path.slice(exception.path.indexOf("HearingOutcome"))
+    const hearingOutcomePath = sequencePath.slice(sequencePath.indexOf("HearingOutcome"))
+
+    return (
       offenceMatchingExceptions.noOffencesMatched.includes(exception.code) ||
       (offenceMatchingExceptions.offenceNotMatched.includes(exception.code) &&
-        isEqual(exception.path, getOffenceReasonSequencePath(offenceIndex)))
-  )
+        isEqual(exceptionPath, hearingOutcomePath))
+    )
+  })
 
   if (!offenceMatchingException) {
     return undefined
@@ -122,6 +128,7 @@ export const OffenceDetails = ({
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex - 1)
   const offenceMatchingExceptionMessage = findExceptions(courtCase, courtCase.aho.Exceptions, ExceptionCode.HO100304)
 
+  console.log("=========", offenceMatchingException, selectedOffenceIndex)
   const unresolvedExceptionsOnThisOffence = !isCaseUnresolved
     ? []
     : exceptions.filter((exception) => exception.path.join(">").startsWith(thisOffencePath))
