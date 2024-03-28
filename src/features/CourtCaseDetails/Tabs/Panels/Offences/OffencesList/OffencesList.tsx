@@ -12,7 +12,7 @@ interface OffencesListProps {
 
 export const OffencesList = ({ className, offences, setDetailedOffenceIndex }: OffencesListProps) => {
   return (
-    <div className={className}>
+    <div id={"offences"} className={className}>
       <Heading as="h3" size="MEDIUM">
         {"Offences"}
       </Heading>
