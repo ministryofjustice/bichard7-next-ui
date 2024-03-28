@@ -1,9 +1,8 @@
 import { Table } from "govuk-react"
-import { useCustomStyles } from "../../../styles/customStyles"
-import { BadgeColours } from "../Badge"
-import ConditionalRender from "../ConditionalRender"
-import ErrorIcon from "../ErrorIcon"
-import BadgeWrapper from "./EditableBadgeWrapper"
+import { createUseStyles } from "react-jss"
+import InitialValueAndCorrectionField from "./InitialValueAndCorrectionField"
+import InputField from "./InputField"
+import LabelField from "./LabelField"
 
 type Props = {
   label: string
@@ -14,67 +13,41 @@ type Props = {
   children?: React.ReactNode
 }
 
-const initialValueBadge = <BadgeWrapper colour={BadgeColours.Grey} label={"Initial Value"} />
-const editableFieldBadge = <BadgeWrapper colour={BadgeColours.Purple} label={"Editable Field"} />
-const correctionBadge = <BadgeWrapper colour={BadgeColours.Green} label={"Correction"} />
+const useStyles = createUseStyles({
+  "editable-field__label": {
+    verticalAlign: "top",
+    "& .error-icon": {
+      paddingTop: ".62rem"
+    }
+  }
+})
 
 const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEditable, children }: Props) => {
-  const classes = useCustomStyles()
+  const classes = useStyles()
   const isRendered = !!(value || updatedValue || hasExceptions)
   const hasCorrection = updatedValue && value !== updatedValue
 
-  const labelField = (
-    <>
-      <b>
-        <div>{label}</div>
-      </b>
-      {isEditable && (
-        <div className="error-icon">
-          <ErrorIcon />
-        </div>
-      )}
-    </>
-  )
-
-  const inputField = (
-    <>
-      <div className={classes["editable-field__content"]}>
-        {value}
-        {initialValueBadge}
-        <br />
-        {children}
-        {editableFieldBadge}
-      </div>
-    </>
-  )
-
-  const initialValueAndCorrectionField = (
-    <>
-      {value}
-      {initialValueBadge}
-      <br />
-      {updatedValue}
-      {correctionBadge}
-    </>
-  )
+  if (!isRendered) {
+    return
+  }
 
   const fieldToRender = (): React.ReactNode => {
     if (isEditable) {
-      return inputField
+      return <InputField value={value}>{children}</InputField>
     } else if (hasCorrection) {
-      return initialValueAndCorrectionField
+      return <InitialValueAndCorrectionField value={value} updatedValue={updatedValue} />
     } else {
       return value
     }
   }
 
   return (
-    <ConditionalRender isRendered={isRendered}>
-      <Table.Row>
-        <Table.Cell className={classes["editable-field__label"]}>{labelField}</Table.Cell>
-        <Table.Cell>{fieldToRender()}</Table.Cell>
-      </Table.Row>
-    </ConditionalRender>
+    <Table.Row>
+      <Table.Cell className={classes["editable-field__label"]}>
+        <LabelField label={label} isEditable={isEditable} />
+      </Table.Cell>
+      <Table.Cell>{fieldToRender()}</Table.Cell>
+    </Table.Row>
   )
 }
 
