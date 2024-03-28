@@ -15,3 +15,4 @@ export const CSRF = {
   formSecret: process.env.CSRF_FORM_SECRET ?? "OliverTwist2",
   maximumTokenAgeInSeconds: parseInt(process.env.CSRF_TOKEN_MAX_AGE ?? "600", 10)
 }
+export const EXCEPTION_OFFENCE_INDEX = 5

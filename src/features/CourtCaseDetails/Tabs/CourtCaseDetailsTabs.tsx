@@ -1,30 +1,11 @@
 import { createUseStyles } from "react-jss"
 import type CaseDetailsTab from "types/CaseDetailsTab"
-interface CourtCaseDetailsSingleTabProps {
-  tab: CaseDetailsTab
-  isActive: boolean
-  onClick: (tab: CaseDetailsTab) => void
-}
-
-const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick }: CourtCaseDetailsSingleTabProps) => (
-  <li className="moj-sub-navigation__item">
-    <a
-      className="moj-sub-navigation__link"
-      aria-current={isActive ? "page" : undefined}
-      href="/"
-      onClick={(e) => {
-        e.preventDefault()
-        onClick(tab)
-      }}
-    >
-      {tab}
-    </a>
-  </li>
-)
+import { CourtCaseDetailsSingleTab } from "./CourtCaseDetailsSingleTab"
+import { useCourtCase } from "context/CourtCaseContext"
+import { getTabDetails } from "utils/getTabDetails"
 
 interface CourtCaseDetailsTabsProps {
   activeTab: CaseDetailsTab
-  tabs: CaseDetailsTab[]
   onTabClick: (tab: CaseDetailsTab) => void
   width: string
 }
@@ -35,15 +16,24 @@ const useStyles = createUseStyles({
   })
 })
 
-export const CourtCaseDetailsTabs = ({ tabs, activeTab, onTabClick, width }: CourtCaseDetailsTabsProps) => {
+export const CourtCaseDetailsTabs = ({ activeTab, onTabClick, width }: CourtCaseDetailsTabsProps) => {
   const classes = useStyles({ width })
+  const { courtCase, amendments } = useCourtCase()
+  const tabDetails = getTabDetails(courtCase.aho.Exceptions, amendments)
 
   return (
     <nav className={`moj-sub-navigation ${classes.nav}`} aria-label="Sub navigation">
       <ul className="moj-sub-navigation__list">
-        {tabs.map((tab) => (
-          <CourtCaseDetailsSingleTab tab={tab} isActive={tab === activeTab} key={tab} onClick={onTabClick} />
-        ))}
+        {tabDetails.map((tab) => {
+          return (
+            <CourtCaseDetailsSingleTab
+              tab={tab}
+              isActive={tab.name === activeTab}
+              key={tab.name}
+              onClick={onTabClick}
+            />
+          )
+        })}
       </ul>
     </nav>
   )
