@@ -4,6 +4,7 @@ import { GenderCodes } from "@moj-bichard7-developers/bichard7-next-data/dist/ty
 import { RemandStatuses } from "@moj-bichard7-developers/bichard7-next-data/dist/types/RemandStatusCode"
 import { GenderCode, RemandStatusCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import axios from "axios"
+import { BadgeColours } from "components/Badge"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
 import { ReactiveLinkButton } from "components/LinkButton"
@@ -129,7 +130,7 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
           <ExceptionFieldTableRow
             badgeText={ExceptionBadgeType.SystemError}
             value={defendant.ArrestSummonsNumber}
-            badgeColour={"purple"}
+            badgeColour={BadgeColours.Purple}
             label={"ASN"}
             displayError={!!asnSystemErrorExceptionPrompt}
           >

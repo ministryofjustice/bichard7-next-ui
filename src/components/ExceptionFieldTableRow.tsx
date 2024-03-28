@@ -1,6 +1,6 @@
 import { Table } from "govuk-react"
 import { createUseStyles } from "react-jss"
-import Badge from "./Badge"
+import Badge, { BadgeColours } from "./Badge"
 import ErrorIcon from "./ErrorIcon"
 
 export enum ExceptionBadgeType {
@@ -12,7 +12,7 @@ export enum ExceptionBadgeType {
 type Props = {
   badgeText?: ExceptionBadgeType
   value?: string | React.ReactNode
-  badgeColour?: "red" | "blue" | "purple"
+  badgeColour?: BadgeColours
   label: string
   children?: React.ReactNode
   displayError?: boolean
@@ -60,7 +60,12 @@ const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, displayE
       {value && <div className="field-value">{value}</div>}
       {badgeText && displayError !== false && (
         <div className="badge-wrapper">
-          <Badge className="error-badge" isRendered={true} colour={badgeColour ?? "purple"} label={badgeText} />
+          <Badge
+            className="error-badge"
+            isRendered={true}
+            colour={badgeColour ?? BadgeColours.Purple}
+            label={badgeText}
+          />
         </div>
       )}
     </div>

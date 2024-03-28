@@ -1,8 +1,9 @@
 import { Table } from "govuk-react"
 import { useCustomStyles } from "../../../styles/customStyles"
-import Badge from "../Badge"
+import { BadgeColours } from "../Badge"
 import ConditionalRender from "../ConditionalRender"
 import ErrorIcon from "../ErrorIcon"
+import BadgeWrapper from "./EditableBadgeWrapper"
 
 type Props = {
   label: string
@@ -13,21 +14,9 @@ type Props = {
   children?: React.ReactNode
 }
 
-const initialValueBadge = (
-  <div className="badge-wrapper">
-    <Badge className="error-badge" isRendered={true} colour={"grey"} label={"Initial Value"} />
-  </div>
-)
-const editableFieldBadge = (
-  <div className="badge-wrapper">
-    <Badge className="error-badge" isRendered={true} colour={"purple"} label={"Editable Field"} />
-  </div>
-)
-const correctionBadge = (
-  <div className="badge-wrapper">
-    <Badge className="error-badge" isRendered={true} colour={"green"} label={"Correction"} />
-  </div>
-)
+const initialValueBadge = <BadgeWrapper colour={BadgeColours.Grey} label={"Initial Value"} />
+const editableFieldBadge = <BadgeWrapper colour={BadgeColours.Purple} label={"Editable Field"} />
+const correctionBadge = <BadgeWrapper colour={BadgeColours.Green} label={"Correction"} />
 
 const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEditable, children }: Props) => {
   const classes = useCustomStyles()
