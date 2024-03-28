@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import CourtCase from "services/entities/CourtCase"
 import Trigger from "services/entities/Trigger"
 import getDataSource from "services/getDataSource"
@@ -152,7 +153,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
     })
 
     it("Should only include resolved triggers when case state is 'Resolved'", async () => {
-      const resolvedTriggerCode = "TRPR0002"
+      const resolvedTriggerCode = TriggerCode.TRPR0002
 
       const firstResolvedTrigger: TestTrigger = {
         triggerId: 0,
@@ -171,14 +172,14 @@ describe("leftJoinAndSelectTriggersQuery", () => {
       const firstUnresolvedTrigger: TestTrigger = {
         triggerId: 2,
         status: "Unresolved",
-        triggerCode: "TRPR0009",
+        triggerCode: TriggerCode.TRPR0008,
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
 
       const secondUnresolvedTrigger: TestTrigger = {
         triggerId: 3,
         status: "Unresolved",
-        triggerCode: "TRPR0009",
+        triggerCode: TriggerCode.TRPR0008,
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
 

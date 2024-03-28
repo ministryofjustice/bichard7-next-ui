@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import { differenceInMinutes } from "date-fns"
 import User from "services/entities/User"
 import { DataSource } from "typeorm"
@@ -8,12 +9,12 @@ import Trigger from "../../src/services/entities/Trigger"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
 import getDataSource from "../../src/services/getDataSource"
 import resolveTriggers from "../../src/services/resolveTriggers"
-import insertException from "../utils/manageExceptions"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
 import { hasAccessToAll } from "../helpers/hasAccessTo"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
+import insertException from "../utils/manageExceptions"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 
 jest.setTimeout(100000)
@@ -99,7 +100,7 @@ describe("resolveTriggers", () => {
       ])
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
@@ -161,7 +162,7 @@ describe("resolveTriggers", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         triggerItemIdentity: 1,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
@@ -198,13 +199,13 @@ describe("resolveTriggers", () => {
 
       const triggerNotToBeResolved: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
       const triggerToBeResolved: TestTrigger = {
         triggerId: 1,
-        triggerCode: "TRPR0002",
+        triggerCode: TriggerCode.TRPR0002,
         triggerItemIdentity: 2,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
@@ -262,7 +263,7 @@ describe("resolveTriggers", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         triggerItemIdentity: 0,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
@@ -308,7 +309,7 @@ describe("resolveTriggers", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
@@ -338,7 +339,7 @@ describe("resolveTriggers", () => {
       const [courtCase] = await insertCourtCasesWithFields([{ orgForPoliceFilter: "36" }])
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
@@ -374,7 +375,7 @@ describe("resolveTriggers", () => {
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId, index) => {
         return {
           triggerId,
-          triggerCode: `TRPR000${index + 1}`,
+          triggerCode: `TRPR000${index + 1}` as TriggerCode,
           status: "Unresolved",
           createdAt: new Date("2022-07-15T10:22:34.000Z")
         }
@@ -451,7 +452,7 @@ describe("resolveTriggers", () => {
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId, index) => {
         return {
           triggerId,
-          triggerCode: `TRPR000${index + 1}`,
+          triggerCode: `TRPR000${index + 1}` as TriggerCode,
           status: "Unresolved",
           createdAt: new Date("2022-07-15T10:22:34.000Z")
         }
@@ -496,7 +497,7 @@ describe("resolveTriggers", () => {
       const triggers: TestTrigger[] = [0, 1, 2, 3, 4].map((triggerId, index) => {
         return {
           triggerId,
-          triggerCode: `TRPR000${index + 2}`,
+          triggerCode: `TRPR000${index + 2}` as TriggerCode,
           status: "Unresolved",
           createdAt: new Date("2022-07-15T10:22:34.000Z")
         }
@@ -544,7 +545,7 @@ describe("resolveTriggers", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
@@ -586,7 +587,7 @@ describe("resolveTriggers", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
