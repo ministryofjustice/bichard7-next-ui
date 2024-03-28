@@ -25,10 +25,11 @@ jest.setTimeout(100000)
 describe("Filter cases by resolution status", () => {
   let dataSource: DataSource
   const orgCode = "36FPA1"
+  const forceCode = 36
   const anotherUserName = "someoneElse"
 
   const noGroupsUser = {
-    visibleForces: [orgCode],
+    visibleForces: [forceCode],
     visibleCourts: [],
     groups: [],
     hasAccessTo: hasAccessToNone
@@ -36,28 +37,28 @@ describe("Filter cases by resolution status", () => {
 
   const exceptionHandler = {
     username: "exceptionHandler",
-    visibleForces: [orgCode],
+    visibleForces: [forceCode],
     visibleCourts: [],
     hasAccessTo: exceptionHandlerHasAccessTo
   } as Partial<User> as User
 
   const triggerHandler = {
     username: "triggerHandler",
-    visibleForces: [orgCode],
+    visibleForces: [forceCode],
     visibleCourts: [],
     hasAccessTo: triggerHandlerHasAccessTo
   } as Partial<User> as User
 
   const generalHandler = {
     username: "generalHandler",
-    visibleForces: [orgCode],
+    visibleForces: [forceCode],
     visibleCourts: [],
     hasAccessTo: generalHandlerHasAccessTo
   } as Partial<User> as User
 
   const supervisor = {
     username: "generalHandler",
-    visibleForces: [orgCode],
+    visibleForces: [forceCode],
     visibleCourts: [],
     hasAccessTo: supervisorHasAccessTo
   } as Partial<User> as User

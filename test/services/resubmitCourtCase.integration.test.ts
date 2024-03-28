@@ -7,10 +7,10 @@ import insertNotes from "services/insertNotes"
 import sendToQueue from "services/mq/sendToQueue"
 import resubmitCourtCase from "services/resubmitCourtCase"
 import { DataSource } from "typeorm"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
 import offenceSequenceException from "../test-data/HO100302_1.json"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import { hasAccessToAll } from "../helpers/hasAccessTo"
 
 jest.mock("services/mq/sendToQueue")
 jest.mock("services/insertNotes")
@@ -46,7 +46,7 @@ describe("resubmit court case", () => {
       phase: 1,
       hearingOutcome: offenceSequenceException.hearingOutcomeXml,
       updatedHearingOutcome: offenceSequenceException.updatedHearingOutcomeXml,
-      orgForPoliceFilter: "1"
+      orgForPoliceFilter: "01"
     })
 
     // insert the record to the db
@@ -57,7 +57,7 @@ describe("resubmit court case", () => {
 
     const result = await resubmitCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
       username: userName,
-      visibleForces: ["1"],
+      visibleForces: [1],
       visibleCourts: [],
       hasAccessTo: hasAccessToAll
     } as Partial<User> as User)
@@ -118,7 +118,7 @@ describe("resubmit court case", () => {
       inputCourtCase.errorId,
       {
         username: userName,
-        visibleForces: ["1111"],
+        visibleForces: [11],
         visibleCourts: [],
         hasAccessTo: hasAccessToAll
       } as Partial<User> as User
@@ -200,7 +200,7 @@ describe("resubmit court case", () => {
       inputCourtCase.errorId,
       {
         username: userName,
-        visibleForces: ["1111"],
+        visibleForces: [11],
         visibleCourts: [],
         hasAccessTo: hasAccessToAll
       } as Partial<User> as User

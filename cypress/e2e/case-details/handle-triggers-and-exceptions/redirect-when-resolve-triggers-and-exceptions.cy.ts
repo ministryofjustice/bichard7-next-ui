@@ -19,7 +19,7 @@ describe("Redirect when resolve triggers and exceptions", () => {
           users: [
             {
               username: `${loggedInAs} username`,
-              visibleForces: ["01"],
+              visibleForces: [1],
               forenames: `${loggedInAs}'s forename`,
               surname: `${loggedInAs}surname`,
               email: `${loggedInAs}@example.com`,

@@ -1,5 +1,5 @@
-import hashedPassword from "../../../fixtures/hashedPassword"
 import canManuallyResolveAndSubmitTestData from "../../../fixtures/canManuallyResolveAndSubmitTestData.json"
+import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("Exception permissions", () => {
   const insertUsers = (userRoles: string[]) => {
@@ -8,7 +8,7 @@ describe("Exception permissions", () => {
         users: [
           {
             username: `${userRole} username`,
-            visibleForces: ["01"],
+            visibleForces: [1],
             forenames: `${userRole}'s forename`,
             surname: `${userRole}surname`,
             email: `${userRole}@example.com`,
@@ -50,7 +50,7 @@ describe("Exception permissions", () => {
             users: [
               {
                 username: `${loggedInAs} username`,
-                visibleForces: ["01"],
+                visibleForces: [1],
                 forenames: `${loggedInAs}'s forename`,
                 surname: `${loggedInAs}surname`,
                 email: `${loggedInAs}@example.com`,

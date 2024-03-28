@@ -32,9 +32,9 @@ const filterIfUnresolved = (
   reasons: Reason[]
 ): SelectQueryBuilder<CourtCase> => {
   return query.andWhere({
-    ...(shouldFilterForTriggers(user, reasons) ? { triggerResolvedTimestamp: IsNull() } : {}),
-    ...(shouldFilterForExceptions(user, reasons) ? { errorResolvedTimestamp: IsNull() } : {}),
-    ...(canSeeTriggersAndException(user, reasons) ? { resolutionTimestamp: IsNull() } : {})
+    ...(shouldFilterForTriggers(user, reasons) ? { triggerStatus: "Unresolved" } : {}),
+    ...(shouldFilterForExceptions(user, reasons) ? { errorStatus: "Unresolved" } : {}),
+    ...(canSeeTriggersAndException(user, reasons) ? { triggerStatus: "Unresolved", errorStatus: "Unresolved" } : {})
   })
 }
 
@@ -45,9 +45,9 @@ const filterIfResolved = (
   resolvedByUsername?: string
 ) => {
   query.andWhere({
-    ...(shouldFilterForTriggers(user, reasons) ? { triggerResolvedTimestamp: Not(IsNull()) } : {}),
-    ...(shouldFilterForExceptions(user, reasons) ? { errorResolvedTimestamp: Not(IsNull()) } : {}),
-    ...(canSeeTriggersAndException(user, reasons) ? { resolutionTimestamp: Not(IsNull()) } : {})
+    ...(shouldFilterForTriggers(user, reasons) ? { triggerStatus: "Resolved" } : {}),
+    ...(shouldFilterForExceptions(user, reasons) ? { errorStatus: "Resolved" } : {}),
+    ...(canSeeTriggersAndException(user, reasons) ? { triggerStatus: "Resolved", errorStatus: "Resolved" } : {})
   })
 
   if (resolvedByUsername || !user.hasAccessTo[Permission.ListAllCases]) {

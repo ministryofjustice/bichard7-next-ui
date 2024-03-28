@@ -6,6 +6,7 @@ import delimitedString from "./transformers/delimitedString"
 import jsonTransformer from "./transformers/jsonTransformer"
 // eslint-disable-next-line import/no-cycle
 import Note from "./Note"
+import delimitedNumberString from "./transformers/delimitedNumberString"
 
 @Entity({ name: "users" })
 export default class User {
@@ -27,8 +28,8 @@ export default class User {
   @Column()
   surname?: string
 
-  @Column({ name: "visible_forces", transformer: delimitedString(","), type: "varchar" })
-  visibleForces!: string[]
+  @Column({ name: "visible_forces", transformer: delimitedNumberString(","), type: "varchar" })
+  visibleForces!: number[]
 
   @Column({ name: "visible_courts", transformer: delimitedString(","), type: "varchar" })
   visibleCourts!: string[]

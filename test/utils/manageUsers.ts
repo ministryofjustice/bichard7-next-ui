@@ -1,10 +1,10 @@
+import { InsertResult } from "typeorm"
 import User from "../../src/services/entities/User"
 import getDataSource from "../../src/services/getDataSource"
-import { InsertResult } from "typeorm"
 
 const TemplateUser: Partial<User> = {
   username: `Bichard01`,
-  visibleForces: [`01`],
+  visibleForces: [1],
   visibleCourts: [],
   excludedTriggers: [],
   forenames: "Bichard Test User",
@@ -87,4 +87,4 @@ const deleteUsers = async (): Promise<InsertResult> => {
   return dataSource.manager.query(`DELETE FROM br7own.users_groups; DELETE FROM br7own.users`)
 }
 
-export { getDummyUser, insertUsers, insertUsersWithOverrides, deleteUsers, insertUserIntoGroup, runQuery }
+export { deleteUsers, getDummyUser, insertUserIntoGroup, insertUsers, insertUsersWithOverrides, runQuery }

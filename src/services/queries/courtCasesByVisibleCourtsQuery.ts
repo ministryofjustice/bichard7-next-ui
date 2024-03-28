@@ -1,5 +1,5 @@
-import CourtCase from "../entities/CourtCase"
 import { Brackets, Like, SelectQueryBuilder, UpdateQueryBuilder, WhereExpressionBuilder } from "typeorm"
+import CourtCase from "../entities/CourtCase"
 
 const courtCasesByVisibleCourtsQuery = (
   query: SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> | WhereExpressionBuilder,
@@ -9,7 +9,7 @@ const courtCasesByVisibleCourtsQuery = (
     new Brackets((qb) => {
       if (courts.length < 1) {
         qb.where("FALSE") // prevent returning cases when there are no visible courts
-        return query
+        return
       }
 
       courts.forEach((code) => {

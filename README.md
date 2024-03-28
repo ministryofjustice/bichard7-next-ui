@@ -48,6 +48,14 @@ Once the dependencies have run follow these login instruction:
 | middleware | Code run by our next.js while rendering our pages                             |
 | services   | Data access and transformations                                               |
 
+### Seeding data
+
+To seed some test data for development, use:
+
+```
+DEPLOY_NAME='e2e-test' npm run seed-data
+```
+
 ## Testing
 
 To run the tests, ensure that you have a local postgres instance running (run `npm run ui` from the `bichard7-next-core` repo),

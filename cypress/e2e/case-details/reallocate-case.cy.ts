@@ -8,7 +8,7 @@ describe("Case details", () => {
   const defaultUsers: Partial<User>[] = Array.from(Array(4)).map((_value, idx) => {
     return {
       username: `Bichard0${idx}`,
-      visibleForces: [`0${idx}`],
+      visibleForces: [idx],
       forenames: "Bichard Test User",
       surname: `0${idx}`,
       email: `bichard0${idx}@example.com`,

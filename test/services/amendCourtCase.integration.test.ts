@@ -1,3 +1,4 @@
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
 import fs from "fs"
 import amendCourtCase from "services/amendCourtCase"
 import CourtCase from "services/entities/CourtCase"
@@ -10,7 +11,6 @@ import createForceOwner from "utils/createForceOwner"
 import getCourtCase from "../../src/services/getCourtCase"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
 
 jest.mock("services/getCourtCase")
 jest.mock("services/updateCourtCaseAho")
@@ -22,9 +22,10 @@ jest.setTimeout(60 * 60 * 1000)
 describe("amend court case", () => {
   const userName = "Bichard01"
   const orgCode = "36FPA1"
+  const forceCode = 36
   const user = {
     username: userName,
-    visibleForces: [orgCode],
+    visibleForces: [forceCode],
     visibleCourts: []
   } as Partial<User> as User
   let dataSource: DataSource

@@ -24,7 +24,7 @@ describe("lock court case", () => {
   const lockedByName = "some user"
   const user = {
     username: lockedByName,
-    visibleForces: ["36FPA1"],
+    visibleForces: [36],
     visibleCourts: [],
     hasAccessTo: hasAccessToAll
   } as Partial<User> as User

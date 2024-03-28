@@ -81,7 +81,8 @@ const createTriggersGeneratedEvent = (triggers: string[], hasUnresolvedException
 
 describe("reallocate court case to another force", () => {
   const courtCaseId = 1
-  const oldForceCode = "01"
+  const oldForceCode = 1
+  const orgForPoliceFilter = oldForceCode.toString().padStart(2, "0").padEnd(6, " ")
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -123,7 +124,7 @@ describe("reallocate court case to another force", () => {
       const userName = "UserName"
       const [courtCase] = await insertCourtCasesWithFields([
         {
-          orgForPoliceFilter: oldForceCode,
+          orgForPoliceFilter,
           errorId: courtCaseId,
           errorLockedByUsername: userName,
           triggerLockedByUsername: userName
@@ -188,7 +189,7 @@ describe("reallocate court case to another force", () => {
       const userName = "UserName"
       const [courtCase] = await insertCourtCasesWithFields([
         {
-          orgForPoliceFilter: oldForceCode,
+          orgForPoliceFilter,
           errorId: courtCaseId,
           errorLockedByUsername: userName,
           triggerLockedByUsername: userName
@@ -255,7 +256,7 @@ describe("reallocate court case to another force", () => {
     const userName = "UserName"
     await insertCourtCasesWithFields([
       {
-        orgForPoliceFilter: oldForceCode,
+        orgForPoliceFilter,
         errorId: courtCaseId,
         errorLockedByUsername: null,
         triggerLockedByUsername: userName,
@@ -293,7 +294,7 @@ describe("reallocate court case to another force", () => {
     const userName = "UserName"
     await insertCourtCasesWithFields([
       {
-        orgForPoliceFilter: oldForceCode,
+        orgForPoliceFilter,
         errorId: courtCaseId,
         errorLockedByUsername: null,
         triggerLockedByUsername: userName,
@@ -356,7 +357,7 @@ describe("reallocate court case to another force", () => {
       const anotherUser = "Someone Else"
       const [courtCase] = await insertCourtCasesWithFields([
         {
-          orgForPoliceFilter: oldForceCode,
+          orgForPoliceFilter,
           errorId: courtCaseId,
           errorLockedByUsername: anotherUser,
           triggerLockedByUsername: anotherUser
@@ -375,7 +376,7 @@ describe("reallocate court case to another force", () => {
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
       const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(`${oldForceCode}    `)
+      expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(orgForPoliceFilter)
       expect(actualCourtCase.errorLockedByUsername).toStrictEqual("Someone Else")
       expect(actualCourtCase.triggerLockedByUsername).toStrictEqual("Someone Else")
       expect(actualCourtCase.updatedHearingOutcome).toBeNull()
@@ -397,7 +398,7 @@ describe("reallocate court case to another force", () => {
     it("should return error when case is recordable, in PNC update phase, and exceptions are resolved", async () => {
       await insertCourtCasesWithFields([
         {
-          orgForPoliceFilter: oldForceCode,
+          orgForPoliceFilter,
           errorId: courtCaseId,
           phase: Phase.PNC_UPDATE,
           errorStatus: "Resolved",
@@ -413,7 +414,7 @@ describe("reallocate court case to another force", () => {
     it("should return error when case is recordable, in PNC update phase, and there are no exceptions", async () => {
       await insertCourtCasesWithFields([
         {
-          orgForPoliceFilter: oldForceCode,
+          orgForPoliceFilter,
           errorId: courtCaseId,
           phase: Phase.PNC_UPDATE,
           errorStatus: null,
@@ -429,7 +430,7 @@ describe("reallocate court case to another force", () => {
     it("Should return error if fails to update triggers", async () => {
       await insertCourtCasesWithFields([
         {
-          orgForPoliceFilter: oldForceCode,
+          orgForPoliceFilter,
           errorId: courtCaseId,
           errorLockedByUsername: user.username,
           triggerLockedByUsername: user.username
@@ -444,7 +445,7 @@ describe("reallocate court case to another force", () => {
     it("Should return the error if fails to amend court case", async () => {
       await insertCourtCasesWithFields([
         {
-          orgForPoliceFilter: oldForceCode,
+          orgForPoliceFilter,
           errorId: courtCaseId,
           errorLockedByUsername: user.username,
           triggerLockedByUsername: user.username
@@ -459,7 +460,7 @@ describe("reallocate court case to another force", () => {
     it("Should return error if fails to update court case", async () => {
       await insertCourtCasesWithFields([
         {
-          orgForPoliceFilter: oldForceCode,
+          orgForPoliceFilter,
           errorId: courtCaseId,
           errorLockedByUsername: user.username,
           triggerLockedByUsername: user.username
@@ -474,7 +475,7 @@ describe("reallocate court case to another force", () => {
     it("Should return the error if fails to create notes", async () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
-          orgForPoliceFilter: oldForceCode,
+          orgForPoliceFilter,
           errorId: courtCaseId
         }
       ])
@@ -486,7 +487,7 @@ describe("reallocate court case to another force", () => {
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
       const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(`${oldForceCode}    `)
+      expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(orgForPoliceFilter)
       expect(actualCourtCase.errorLockedByUsername).toBeNull()
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
       expect(actualCourtCase.updatedHearingOutcome).toBeNull()
@@ -499,7 +500,7 @@ describe("reallocate court case to another force", () => {
     it("Should return error when fails to update orgForPoliceFilter", async () => {
       const [courtCase] = await insertCourtCasesWithFields([
         {
-          orgForPoliceFilter: oldForceCode,
+          orgForPoliceFilter,
           errorId: courtCaseId
         }
       ])
@@ -513,7 +514,7 @@ describe("reallocate court case to another force", () => {
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
       const actualCourtCase = record as CourtCase
-      expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(`${oldForceCode}    `)
+      expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(orgForPoliceFilter)
       expect(actualCourtCase.errorLockedByUsername).toBeNull()
       expect(actualCourtCase.triggerLockedByUsername).toBeNull()
       expect(actualCourtCase.updatedHearingOutcome).toBeNull()

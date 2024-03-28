@@ -1,13 +1,13 @@
 import CourtCase from "services/entities/CourtCase"
-import getDataSource from "services/getDataSource"
-import { DataSource, Repository, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
-import deleteFromEntity from "../utils/deleteFromEntity"
-import courtCasesByVisibleCourtsQuery from "services/queries/courtCasesByVisibleCourtsQuery"
-import courtCasesByVisibleForcesQuery from "../../src/services/queries/courtCasesByVisibleForcesQuery"
-import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import { isError } from "types/Result"
 import User from "services/entities/User"
+import getDataSource from "services/getDataSource"
+import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
+import courtCasesByVisibleCourtsQuery from "services/queries/courtCasesByVisibleCourtsQuery"
+import { DataSource, Repository, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
+import { isError } from "types/Result"
+import courtCasesByVisibleForcesQuery from "../../src/services/queries/courtCasesByVisibleForcesQuery"
+import deleteFromEntity from "../utils/deleteFromEntity"
+import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 
 jest.mock("services/queries/courtCasesByVisibleCourtsQuery")
 jest.mock("services/queries/courtCasesByVisibleForcesQuery")
@@ -44,24 +44,24 @@ describe("courtCasesByOrganisationUnitQuery", () => {
   it("Should call both visible courts and visible forces queries", async () => {
     const dummyCode = "dummyForceCode"
     const user: Partial<User> = {
-      visibleForces: [dummyCode],
+      visibleForces: [1],
       visibleCourts: [dummyCode]
     }
 
     courtCasesByOrganisationUnitQuery(query, user as User)
 
     expect(courtCasesByVisibleCourtsQuery).toHaveBeenCalledTimes(1)
-    expect(courtCasesByVisibleCourtsQuery).toHaveBeenCalledWith(expect.any(Object), [dummyCode, dummyCode])
+    expect(courtCasesByVisibleCourtsQuery).toHaveBeenCalledWith(expect.any(Object), [dummyCode])
 
     expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledTimes(1)
-    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [dummyCode, dummyCode])
+    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [1])
   })
 
   it("Should select all visible cases when its a select query", async () => {
     const expectedOrgCodes = ["12GHA ", "12GHAB", "13BR  ", "14AT  "]
     const otherOrgCodes = ["15AA", "16AA"]
     const user: Partial<User> = {
-      visibleForces: ["12GHA"],
+      visibleForces: [12],
       visibleCourts: ["13BR", "14AT"]
     }
     await insertCourtCasesWithFields(
@@ -83,7 +83,7 @@ describe("courtCasesByOrganisationUnitQuery", () => {
     const expectedOrgCodes = ["12GHA ", "12GHAB", "13BR  "]
     const otherOrgCodes = ["14AT  ", "15AA", "16AA"]
     const user: Partial<User> = {
-      visibleForces: ["12GHA"],
+      visibleForces: [12],
       visibleCourts: ["13BR"]
     }
     await insertCourtCasesWithFields(

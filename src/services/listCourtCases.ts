@@ -73,7 +73,9 @@ const listCourtCases = async (
       "courtCase.errorLockedByUsername",
       "courtCase.triggerLockedByUsername"
     ])
+
   query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
+
   leftJoinAndSelectTriggersQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
     .leftJoinAndSelect("courtCase.notes", "note")
     .leftJoin("courtCase.errorLockedByUser", "errorLockedByUser")

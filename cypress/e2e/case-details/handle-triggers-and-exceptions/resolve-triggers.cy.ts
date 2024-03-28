@@ -1,9 +1,9 @@
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { UserGroup } from "types/UserGroup"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import { newUserLogin } from "../../../support/helpers"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 const caseURL = "/bichard/court-cases/0"
 
@@ -36,7 +36,7 @@ describe("Triggers and exceptions", () => {
       users: [
         {
           username: "Bichard01",
-          visibleForces: ["01"],
+          visibleForces: [1],
           forenames: "Bichard Test User",
           surname: "01",
           email: "bichard01@example.com",
