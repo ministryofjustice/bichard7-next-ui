@@ -52,7 +52,7 @@ const getOffenceAlertsDetails = (exceptions: Exception[], updatedFields: Amendme
     )
     const isResolved = nextHearingDateExceptionResolved || nextHearingLocationExceptionResolved
 
-    if (offenceAlerts.length > 1) {
+    if (offenceAlerts.length > 0) {
       const existingAlert = offenceAlerts.find((alert) => alert.offenceIndex === offenceIndex)
       if (existingAlert) {
         existingAlert.isResolved = existingAlert.isResolved && isResolved
