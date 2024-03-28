@@ -104,5 +104,19 @@ export const useCustomStyles = createUseStyles({
   },
   "no-margin-bottom": {
     marginBottom: 0
+  },
+  "editable-field__label": {
+    verticalAlign: "top",
+    "& .error-icon": {
+      paddingTop: ".62rem"
+    }
+  },
+  "editable-field__content": {
+    "& .badge-wrapper": {
+      padding: ".94rem 0 .62rem 0",
+      display: "flex",
+      gap: ".62rem",
+      alignItems: "center"
+    }
   }
 })

@@ -1,5 +1,5 @@
 import { Table } from "govuk-react"
-import { createUseStyles } from "react-jss"
+import { useCustomStyles } from "../../../styles/customStyles"
 import Badge from "../Badge"
 import ConditionalRender from "../ConditionalRender"
 import ErrorIcon from "../ErrorIcon"
@@ -12,23 +12,6 @@ type Props = {
   isEditable: boolean
   children?: React.ReactNode
 }
-
-const useStyles = createUseStyles({
-  label: {
-    verticalAlign: "top",
-    "& .error-icon": {
-      paddingTop: ".62rem"
-    }
-  },
-  content: {
-    "& .badge-wrapper": {
-      padding: ".94rem 0 .62rem 0",
-      display: "flex",
-      gap: ".62rem",
-      alignItems: "center"
-    }
-  }
-})
 
 const initialValueBadge = (
   <div className="badge-wrapper">
@@ -47,7 +30,7 @@ const correctionBadge = (
 )
 
 const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEditable, children }: Props) => {
-  const classes = useStyles()
+  const classes = useCustomStyles()
   const isRendered = !!(value || updatedValue || hasExceptions)
   const hasCorrection = updatedValue && value !== updatedValue
 
@@ -66,7 +49,7 @@ const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEd
 
   const inputField = (
     <>
-      <div className={classes.content}>
+      <div className={classes["editable-field__content"]}>
         {value}
         {initialValueBadge}
         <br />
@@ -99,7 +82,7 @@ const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEd
   return (
     <ConditionalRender isRendered={isRendered}>
       <Table.Row>
-        <Table.Cell className={classes.label}>{labelField}</Table.Cell>
+        <Table.Cell className={classes["editable-field__label"]}>{labelField}</Table.Cell>
         <Table.Cell>{fieldToRender()}</Table.Cell>
       </Table.Row>
     </ConditionalRender>
