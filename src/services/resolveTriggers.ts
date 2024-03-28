@@ -14,15 +14,12 @@ import updateLockStatusToUnlocked from "./updateLockStatusToUnlocked"
 import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
 
 const generateTriggersAttributes = (triggers: Trigger[]) =>
-  triggers.reduce(
-    (acc, trigger, index) => {
-      const offenceNumberText =
-        trigger.triggerItemIdentity && trigger.triggerItemIdentity > 0 ? ` (${trigger.triggerItemIdentity})` : ""
-      acc[`Trigger ${index + 1} Details`] = `${trigger.triggerCode}${offenceNumberText}`
-      return acc
-    },
-    {} as Record<string, unknown>
-  )
+  triggers.reduce((acc: Record<string, unknown>, trigger, index) => {
+    const offenceNumberText =
+      trigger.triggerItemIdentity && trigger.triggerItemIdentity > 0 ? ` (${trigger.triggerItemIdentity})` : ""
+    acc[`Trigger ${index + 1} Details`] = `${trigger.triggerCode}${offenceNumberText}`
+    return acc
+  }, {})
 
 const resolveTriggers = async (
   dataSource: DataSource,

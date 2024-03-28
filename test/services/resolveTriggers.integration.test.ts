@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import { differenceInMinutes } from "date-fns"
 import User from "services/entities/User"
 import { DataSource } from "typeorm"
@@ -8,12 +9,12 @@ import Trigger from "../../src/services/entities/Trigger"
 import getCourtCaseByOrganisationUnit from "../../src/services/getCourtCaseByOrganisationUnit"
 import getDataSource from "../../src/services/getDataSource"
 import resolveTriggers from "../../src/services/resolveTriggers"
-import insertException from "../utils/manageExceptions"
 import fetchAuditLogEvents from "../helpers/fetchAuditLogEvents"
 import { hasAccessToAll } from "../helpers/hasAccessTo"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
+import insertException from "../utils/manageExceptions"
 import { insertTriggers, TestTrigger } from "../utils/manageTriggers"
 
 jest.setTimeout(100000)
@@ -99,7 +100,7 @@ describe("resolveTriggers", () => {
       ])
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
@@ -119,7 +120,7 @@ describe("resolveTriggers", () => {
         .getRepository(Trigger)
         .findOne({ where: { triggerId: trigger.triggerId } })
       expect(retrievedTrigger).not.toBeNull()
-      const updatedTrigger = retrievedTrigger as Trigger
+      const updatedTrigger = retrievedTrigger!
 
       expect(updatedTrigger.resolvedAt).not.toBeNull()
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -161,7 +162,7 @@ describe("resolveTriggers", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         triggerItemIdentity: 1,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
@@ -198,13 +199,13 @@ describe("resolveTriggers", () => {
 
       const triggerNotToBeResolved: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
       const triggerToBeResolved: TestTrigger = {
         triggerId: 1,
-        triggerCode: "TRPR0002",
+        triggerCode: TriggerCode.TRPR0002,
         triggerItemIdentity: 2,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
@@ -229,14 +230,14 @@ describe("resolveTriggers", () => {
 
       const triggerNotToBeResolvedAfterResolving = (await dataSource
         .getRepository(Trigger)
-        .findOne({ where: { triggerId: triggerNotToBeResolved.triggerId } })) as Trigger
+        .findOne({ where: { triggerId: triggerNotToBeResolved.triggerId } }))!
       expect(triggerNotToBeResolvedAfterResolving).not.toBeNull()
       expect(triggerNotToBeResolvedAfterResolving.resolvedBy).toBeNull()
       expect(triggerNotToBeResolvedAfterResolving.resolvedAt).toBeNull()
 
       const triggerToBeResolvedAfterResolving = (await dataSource
         .getRepository(Trigger)
-        .findOne({ where: { triggerId: triggerToBeResolved.triggerId } })) as Trigger
+        .findOne({ where: { triggerId: triggerToBeResolved.triggerId } }))!
       expect(triggerToBeResolvedAfterResolving).not.toBeNull()
       expect(triggerToBeResolvedAfterResolving.resolvedBy).toBe(user.username)
       expect(triggerToBeResolvedAfterResolving.resolvedAt).not.toBeNull()
@@ -262,7 +263,7 @@ describe("resolveTriggers", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         triggerItemIdentity: 0,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
@@ -285,7 +286,7 @@ describe("resolveTriggers", () => {
 
       const updatedTrigger = (await dataSource
         .getRepository(Trigger)
-        .findOne({ where: { triggerId: trigger.triggerId } })) as Trigger
+        .findOne({ where: { triggerId: trigger.triggerId } }))!
       expect(updatedTrigger).not.toBeNull()
       expect(updatedTrigger.resolvedAt).not.toBeNull()
       expect(updatedTrigger.resolvedBy).toBe(user.username)
@@ -308,7 +309,7 @@ describe("resolveTriggers", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
@@ -325,7 +326,7 @@ describe("resolveTriggers", () => {
         .getRepository(Trigger)
         .findOne({ where: { triggerId: trigger.triggerId } })
       expect(retrievedTrigger).not.toBeNull()
-      const updatedTrigger = retrievedTrigger as Trigger
+      const updatedTrigger = retrievedTrigger!
 
       expect(updatedTrigger.resolvedAt).toBeNull()
       expect(updatedTrigger.resolvedBy).toBeNull()
@@ -338,7 +339,7 @@ describe("resolveTriggers", () => {
       const [courtCase] = await insertCourtCasesWithFields([{ orgForPoliceFilter: "36" }])
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
@@ -355,7 +356,7 @@ describe("resolveTriggers", () => {
         .getRepository(Trigger)
         .findOne({ where: { triggerId: trigger.triggerId } })
       expect(retrievedTrigger).not.toBeNull()
-      const updatedTrigger = retrievedTrigger as Trigger
+      const updatedTrigger = retrievedTrigger!
 
       expect(updatedTrigger.resolvedAt).toBeNull()
       expect(updatedTrigger.resolvedBy).toBeNull()
@@ -374,7 +375,7 @@ describe("resolveTriggers", () => {
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId, index) => {
         return {
           triggerId,
-          triggerCode: `TRPR000${index + 1}`,
+          triggerCode: [TriggerCode.TRPR0001, TriggerCode.TRPR0002, TriggerCode.TRPR0003][index],
           status: "Unresolved",
           createdAt: new Date("2022-07-15T10:22:34.000Z")
         }
@@ -451,7 +452,7 @@ describe("resolveTriggers", () => {
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId, index) => {
         return {
           triggerId,
-          triggerCode: `TRPR000${index + 1}`,
+          triggerCode: [TriggerCode.TRPR0001, TriggerCode.TRPR0002, TriggerCode.TRPR0003][index],
           status: "Unresolved",
           createdAt: new Date("2022-07-15T10:22:34.000Z")
         }
@@ -496,7 +497,13 @@ describe("resolveTriggers", () => {
       const triggers: TestTrigger[] = [0, 1, 2, 3, 4].map((triggerId, index) => {
         return {
           triggerId,
-          triggerCode: `TRPR000${index + 2}`,
+          triggerCode: [
+            TriggerCode.TRPR0001,
+            TriggerCode.TRPR0002,
+            TriggerCode.TRPR0003,
+            TriggerCode.TRPR0004,
+            TriggerCode.TRPR0005
+          ][index],
           status: "Unresolved",
           createdAt: new Date("2022-07-15T10:22:34.000Z")
         }
@@ -544,7 +551,7 @@ describe("resolveTriggers", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
@@ -586,7 +593,7 @@ describe("resolveTriggers", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }

@@ -1,7 +1,7 @@
 import CourtCase from "services/entities/CourtCase"
 import getDataSource from "services/getDataSource"
 import courtCasesByVisibleCourtsQuery from "services/queries/courtCasesByVisibleCourtsQuery"
-import { DataSource, Repository, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
+import { DataSource, Repository, SelectQueryBuilder } from "typeorm"
 import { isError } from "types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
@@ -31,7 +31,7 @@ describe("courtCasesByVisibleCourtsQuery", () => {
     const courtCodes = ["3", "36", "36AAAA"]
     await insertCourtCasesWithFields(courtCodes.map((courtCode) => ({ courtCode: courtCode })))
 
-    const result = await (courtCasesByVisibleCourtsQuery(query, ["36AAAA"]) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleCourtsQuery(query, ["36AAAA"])
       .getMany()
       .catch((error: Error) => error)
 
@@ -51,7 +51,7 @@ describe("courtCasesByVisibleCourtsQuery", () => {
       courtCodesForVisibleCourts.concat(otherCourtCodes).map((courtCode) => ({ courtCode: courtCode }))
     )
 
-    const result = await (courtCasesByVisibleCourtsQuery(query, ["36F", "13GH"]) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleCourtsQuery(query, ["36F", "13GH"])
       .getMany()
       .catch((error: Error) => error)
 
@@ -68,7 +68,7 @@ describe("courtCasesByVisibleCourtsQuery", () => {
     const courtCodesForNoVisibleCases = ["36", "36F", "36FP", "36FPA"]
     await insertCourtCasesWithFields(courtCodesForNoVisibleCases.map((courtCode) => ({ courtCode: courtCode })))
 
-    const result = await (courtCasesByVisibleCourtsQuery(query, []) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleCourtsQuery(query, [])
       .getMany()
       .catch((error: Error) => error)
 
@@ -84,7 +84,7 @@ describe("courtCasesByVisibleCourtsQuery", () => {
 
     const updateQuery = query.update(CourtCase)
 
-    const result = await (courtCasesByVisibleCourtsQuery(updateQuery, ["013"]) as UpdateQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleCourtsQuery(updateQuery, ["013"])
       .set({
         errorLockedByUsername: "DummyUser"
       })

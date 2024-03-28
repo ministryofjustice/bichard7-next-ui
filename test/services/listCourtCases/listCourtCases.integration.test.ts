@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import "reflect-metadata"
 import Note from "services/entities/Note"
 import User from "services/entities/User"
@@ -796,21 +797,21 @@ describe("listCourtCases", () => {
 
       const triggerToInclude: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0111",
+        triggerCode: TriggerCode.TRPR0010,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
 
       const triggerToIncludePartialMatch: TestTrigger = {
         triggerId: 1,
-        triggerCode: "TRPR2222",
+        triggerCode: TriggerCode.TRPR0012,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
 
       const triggerNotToInclude: TestTrigger = {
         triggerId: 2,
-        triggerCode: "TRPR9999",
+        triggerCode: TriggerCode.TRPR0008,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -907,14 +908,14 @@ describe("listCourtCases", () => {
 
       const triggerToInclude: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0111",
+        triggerCode: TriggerCode.TRPR0010,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
 
       const triggerNotToInclude: TestTrigger = {
         triggerId: 2,
-        triggerCode: "TRPR9999",
+        triggerCode: TriggerCode.TRPR0008,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }

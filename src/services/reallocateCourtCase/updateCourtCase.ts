@@ -1,9 +1,9 @@
+import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { EntityManager } from "typeorm"
 import { isError } from "../../types/Result"
-import CourtCase from "../entities/CourtCase"
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import Trigger from "../entities/Trigger"
 import { TriggerQualityCheckStatus } from "../../utils/triggerQualityCheckStatus"
+import CourtCase from "../entities/CourtCase"
+import Trigger from "../entities/Trigger"
 
 const updateCourtCase = async (
   entityManager: EntityManager,
@@ -15,7 +15,7 @@ const updateCourtCase = async (
   const triggers = await entityManager
     .getRepository(Trigger)
     .findBy({ errorId: courtCase.errorId })
-    .catch((error) => error as Error)
+    .catch((error: Error) => error)
 
   if (isError(triggers)) {
     throw triggers
@@ -72,7 +72,7 @@ const updateCourtCase = async (
     .set({ ...updateParameters, ...triggerParameters })
     .where({ errorId: courtCase.errorId })
     .execute()
-    .catch((error) => error as Error)
+    .catch((error: Error) => error)
 
   if (isError(updateResult)) {
     return updateResult

@@ -1,14 +1,4 @@
-import {
-  Brackets,
-  DataSource,
-  ILike,
-  IsNull,
-  LessThanOrEqual,
-  MoreThan,
-  MoreThanOrEqual,
-  Not,
-  SelectQueryBuilder
-} from "typeorm"
+import { Brackets, DataSource, ILike, IsNull, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not } from "typeorm"
 import { CaseListQueryParams } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import Permission from "types/Permission"
@@ -73,7 +63,7 @@ const listCourtCases = async (
       "courtCase.errorLockedByUsername",
       "courtCase.triggerLockedByUsername"
     ])
-  query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
+  query = courtCasesByOrganisationUnitQuery(query, user)
   leftJoinAndSelectTriggersQuery(query, user.excludedTriggers, caseState ?? "Unresolved")
     .leftJoinAndSelect("courtCase.notes", "note")
     .leftJoin("courtCase.errorLockedByUser", "errorLockedByUser")

@@ -1,13 +1,11 @@
-import CourtCase from "../entities/CourtCase"
-import { Brackets, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
 import User from "services/entities/User"
-import courtCasesByVisibleForcesQuery from "./courtCasesByVisibleForcesQuery"
+import { Brackets } from "typeorm"
+import { DatabaseQuery } from "types/DatabaseQuery"
+import CourtCase from "../entities/CourtCase"
 import courtCasesByVisibleCourtsQuery from "./courtCasesByVisibleCourtsQuery"
+import courtCasesByVisibleForcesQuery from "./courtCasesByVisibleForcesQuery"
 
-const courtCasesByOrganisationUnitQuery = (
-  query: SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase>,
-  user: User
-): SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> => {
+const courtCasesByOrganisationUnitQuery = <T extends DatabaseQuery<CourtCase>>(query: T, user: User): T => {
   const { visibleForces, visibleCourts } = user
   const inclusionList = visibleCourts.concat(visibleForces)
   query.where(
@@ -16,6 +14,7 @@ const courtCasesByOrganisationUnitQuery = (
       courtCasesByVisibleForcesQuery(qb, inclusionList)
     })
   )
+
   return query
 }
 

@@ -31,7 +31,7 @@ const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
     return namedCaseAge
   }
 
-  const dateRange = [caseAge].flat()[0]
+  const dateRange = caseAge[0]
 
   return namedCaseAge === "15 days ago and older"
     ? `15 days ago and older (up to ${formatDisplayedDate(dateRange.to)})`

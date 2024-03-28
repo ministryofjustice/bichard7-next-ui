@@ -1,9 +1,9 @@
-import { Brackets, DataSource, EntityManager, UpdateResult } from "typeorm"
-import { ResolutionStatus } from "types/ResolutionStatus"
-import { RecordType } from "types/RecordType"
-import { UpdateResolutionStatus } from "types/UpdateResolutionStatus"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
+import { Brackets, DataSource, EntityManager, UpdateResult } from "typeorm"
+import { RecordType } from "types/RecordType"
+import { ResolutionStatus } from "types/ResolutionStatus"
+import { UpdateResolutionStatus } from "types/UpdateResolutionStatus"
 
 const isErrorUpdate = (recordType: RecordType) => recordType === "Error"
 const isResolved = (resolutionStatus: ResolutionStatus) => resolutionStatus === "Resolved"
@@ -44,25 +44,24 @@ const updateCourtCaseStatus = async (
     updatedField = "trigger"
   }
 
-  try {
-    const query = courtCaseRepository
-      .createQueryBuilder()
-      .update(CourtCase)
-      .set(updateResolutionStatus)
-      .where("error_id = :id", { id: courtCase.errorId })
-      .andWhere(`${updatedField}_status is NOT NULL`)
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(`${updatedField}_locked_by_id = :user`, { user: username }).orWhere(
-            `${updatedField}_locked_by_id is NULL`
-          )
-        })
-      )
+  const query = courtCaseRepository
+    .createQueryBuilder()
+    .update(CourtCase)
+    .set(updateResolutionStatus)
+    .where("error_id = :id", { id: courtCase.errorId })
+    .andWhere(`${updatedField}_status is NOT NULL`)
+    .andWhere(
+      new Brackets((qb) => {
+        qb.where(`${updatedField}_locked_by_id = :user`, { user: username }).orWhere(
+          `${updatedField}_locked_by_id is NULL`
+        )
+      })
+    )
 
-    return await query.returning("*").execute()
-  } catch (error) {
-    return error as Error
-  }
+  return query
+    .returning("*")
+    .execute()
+    .catch((error: Error) => error)
 }
 
 export default updateCourtCaseStatus

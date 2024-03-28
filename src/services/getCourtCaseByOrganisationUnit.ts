@@ -1,4 +1,4 @@
-import { DataSource, EntityManager, SelectQueryBuilder } from "typeorm"
+import { DataSource, EntityManager } from "typeorm"
 import CourtCase from "./entities/CourtCase"
 import PromiseResult from "../types/PromiseResult"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
@@ -13,8 +13,7 @@ const getCourtCaseByOrganisationUnit = (
 ): PromiseResult<CourtCase | null> => {
   const courtCaseRepository = dataSource.getRepository(CourtCase)
   let query = courtCaseRepository.createQueryBuilder("courtCase")
-  query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
-  query = query.andWhere({ errorId: courtCaseId })
+  query = courtCasesByOrganisationUnitQuery(query, user).andWhere({ errorId: courtCaseId })
 
   if (loadLockUsers) {
     query

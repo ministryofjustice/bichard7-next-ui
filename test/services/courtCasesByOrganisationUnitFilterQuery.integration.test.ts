@@ -1,13 +1,13 @@
 import CourtCase from "services/entities/CourtCase"
-import getDataSource from "services/getDataSource"
-import { DataSource, Repository, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
-import deleteFromEntity from "../utils/deleteFromEntity"
-import courtCasesByVisibleCourtsQuery from "services/queries/courtCasesByVisibleCourtsQuery"
-import courtCasesByVisibleForcesQuery from "../../src/services/queries/courtCasesByVisibleForcesQuery"
-import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
-import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import { isError } from "types/Result"
 import User from "services/entities/User"
+import getDataSource from "services/getDataSource"
+import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
+import courtCasesByVisibleCourtsQuery from "services/queries/courtCasesByVisibleCourtsQuery"
+import { DataSource, Repository, SelectQueryBuilder } from "typeorm"
+import { isError } from "types/Result"
+import courtCasesByVisibleForcesQuery from "../../src/services/queries/courtCasesByVisibleForcesQuery"
+import deleteFromEntity from "../utils/deleteFromEntity"
+import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 
 jest.mock("services/queries/courtCasesByVisibleCourtsQuery")
 jest.mock("services/queries/courtCasesByVisibleForcesQuery")
@@ -68,7 +68,7 @@ describe("courtCasesByOrganisationUnitQuery", () => {
       expectedOrgCodes.concat(otherOrgCodes).map((orgCode) => ({ orgForPoliceFilter: orgCode, courtCode: orgCode }))
     )
 
-    const result = await (courtCasesByOrganisationUnitQuery(query, user as User) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByOrganisationUnitQuery(query, user as User)
       .getMany()
       .catch((error: Error) => error)
 
@@ -92,7 +92,7 @@ describe("courtCasesByOrganisationUnitQuery", () => {
 
     const updateQuery = query.update(CourtCase)
 
-    const result = await (courtCasesByOrganisationUnitQuery(updateQuery, user as User) as UpdateQueryBuilder<CourtCase>)
+    const result = await courtCasesByOrganisationUnitQuery(updateQuery, user as User)
       .set({
         errorLockedByUsername: "DummyUser"
       })

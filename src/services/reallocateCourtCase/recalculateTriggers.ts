@@ -5,6 +5,8 @@ import { default as TriggerEntity } from "../entities/Trigger"
 import { isEmpty } from "lodash"
 import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 
+type PartialTriggerEntity = Pick<TriggerEntity, "triggerCode" | "triggerItemIdentity" | "status">
+
 const reallocateCaseTrigger = { code: REALLOCATE_CASE_TRIGGER_CODE }
 const outOfAreaCaseTrigger = { code: OUT_OF_AREA_TRIGGER_CODE }
 
@@ -15,19 +17,19 @@ const containsTrigger = (triggers: Trigger[], trigger?: Trigger): boolean => {
   return triggers.some((t) => t.code === trigger.code && t.offenceSequenceNumber === trigger.offenceSequenceNumber)
 }
 
-const asTrigger = (triggerEntity: TriggerEntity): Trigger => {
+const asTrigger = (triggerEntity: PartialTriggerEntity): Trigger => {
   return {
     code: triggerEntity.triggerCode,
     offenceSequenceNumber: triggerEntity.triggerItemIdentity
-  } as Trigger
+  }
 }
 
-const asTriggerEntity = (trigger: Trigger): TriggerEntity => {
+const asTriggerEntity = (trigger: Trigger): PartialTriggerEntity => {
   return {
     triggerCode: trigger.code,
     triggerItemIdentity: trigger.offenceSequenceNumber,
     status: "Unresolved"
-  } as TriggerEntity
+  }
 }
 
 const sameTriggers = (existingTriggers: TriggerEntity[], triggers: Trigger[]): boolean => {
@@ -75,8 +77,9 @@ const updateOutOfAreaTriggers = (triggersOutcome: TriggersOutcome, existingTrigg
 }
 
 const updateReallocateTriggers = (triggersOutcome: TriggersOutcome, existingTriggers: TriggerEntity[]) => {
-  const sumOfTriggers = existingTriggers
-    .concat(triggersOutcome.triggersToAdd.map((triggerToAdd) => asTriggerEntity(triggerToAdd)))
+  const sumOfTriggers = triggersOutcome.triggersToAdd
+    .map((triggerToAdd) => asTriggerEntity(triggerToAdd))
+    .concat(existingTriggers)
     .filter((trigger) => !containsTrigger(triggersOutcome.triggersToDelete, asTrigger(trigger)))
 
   const existingReallocateTriggerIsResolved =
@@ -139,10 +142,10 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
 
   const existingUnresolvedTriggerNotInNewTriggersList = existingUnresolvedTriggers
     .filter((unresolvedTrigger) => !containsTrigger(triggers, asTrigger(unresolvedTrigger)))
-    .map(
-      (triggerEntity) =>
-        ({ code: triggerEntity.triggerCode, offenceSequenceNumber: triggerEntity.triggerItemIdentity }) as Trigger
-    )
+    .map((triggerEntity) => ({
+      code: triggerEntity.triggerCode,
+      offenceSequenceNumber: triggerEntity.triggerItemIdentity
+    }))
 
   const triggersOutcome: TriggersOutcome = {
     triggersToAdd: newTriggersThatAreNotOnTheCase.concat(newOutOfAreaTriggers),

@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import axios from "axios"
 import { differenceInMilliseconds } from "date-fns"
 import User from "services/entities/User"
@@ -376,7 +377,7 @@ describe("resolveCourtCase", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }
@@ -427,7 +428,7 @@ describe("resolveCourtCase", () => {
 
       const trigger: TestTrigger = {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-12T10:22:34.000Z")
       }

@@ -4,15 +4,18 @@ import updateLockStatusToLocked from "./updateLockStatusToLocked"
 import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import { isError } from "types/Result"
 import storeAuditLogEvents from "./storeAuditLogEvents"
-import type CourtCase from "./entities/CourtCase"
 import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
 
 const lockCourtCase = async (dataSource: DataSource, courtCaseId: number, user: User): Promise<UpdateResult | Error> =>
   dataSource.transaction("SERIALIZABLE", async (entityManager) => {
-    const courtCase = (await getCourtCaseByOrganisationUnit(entityManager, courtCaseId, user)) as CourtCase
+    const courtCase = await getCourtCaseByOrganisationUnit(entityManager, courtCaseId, user)
 
     if (!courtCase) {
       throw new Error("Failed to unlock: Case not found")
+    }
+
+    if (isError(courtCase)) {
+      throw new Error(`Failed to unlock: ${courtCase.message}`)
     }
 
     const events: AuditLogEvent[] = []
