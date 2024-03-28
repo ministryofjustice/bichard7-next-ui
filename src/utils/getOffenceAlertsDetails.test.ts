@@ -1,6 +1,12 @@
 import { Amendments } from "types/Amendments"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import { nextHearingDateExceptionResolvedFn, nextHearingLocationExceptionResolvedFn } from "./getOffenceAlertsDetails"
+import getOffenceAlertsDetails, {
+  nextHearingDateExceptionResolvedFn,
+  nextHearingLocationExceptionResolvedFn
+} from "./getOffenceAlertsDetails"
+import createDummyAho from "../../test/helpers/createDummyAho"
+import { HO100102, HO100322 } from "../../test/helpers/exceptions"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
 
 const nextHearingDateException = {
   code: ExceptionCode.HO100102,
@@ -243,5 +249,108 @@ describe("nextHearingLocationExceptionResolvedFn", () => {
     )
 
     expect(nextHearingDateExceptionResolved).toBe(false)
+  })
+})
+
+describe("getOffenceAlertDetails", () => {
+  const dummyAho = createDummyAho()
+
+  it("Should return only one element when both exceptions have same offence indexes", () => {
+    dummyAho.Exceptions.length = 0
+    HO100102(dummyAho)
+    HO100322(dummyAho)
+    const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
+    const updatedFields = {} as Amendments
+
+    const offenceAlertDetails = getOffenceAlertsDetails(courtCase.aho.Exceptions, updatedFields)
+
+    expect(offenceAlertDetails.length).toBe(1)
+    expect(offenceAlertDetails[0].offenceIndex).toBe(0)
+    expect(offenceAlertDetails[0].isResolved).toBe(false)
+  })
+
+  it("Should return two elements when both exceptions have different offence indexes", () => {
+    const exceptions = [nextHearingDateException, nextHearingLocationException]
+    const updatedFields = {} as Amendments
+
+    const offenceAlertDetails = getOffenceAlertsDetails(exceptions, updatedFields)
+
+    expect(offenceAlertDetails.length).toBe(2)
+    expect(offenceAlertDetails[0].offenceIndex).toBe(0)
+    expect(offenceAlertDetails[0].isResolved).toBe(false)
+    expect(offenceAlertDetails[1].offenceIndex).toBe(1)
+    expect(offenceAlertDetails[1].isResolved).toBe(false)
+  })
+
+  it("Should return isResolved:true for the first offence when only first one is resolved out of the two with different offence indexes", () => {
+    const exceptions = [nextHearingDateException, nextHearingLocationException]
+    const updatedFields = {
+      nextHearingDate: [
+        {
+          resultIndex: 0,
+          offenceIndex: 0,
+          value: "2002-10-10"
+        }
+      ]
+    } as Amendments
+
+    const offenceAlertDetails = getOffenceAlertsDetails(exceptions, updatedFields)
+
+    expect(offenceAlertDetails.length).toBe(2)
+    expect(offenceAlertDetails[0].offenceIndex).toBe(0)
+    expect(offenceAlertDetails[0].isResolved).toBe(true)
+    expect(offenceAlertDetails[1].offenceIndex).toBe(1)
+    expect(offenceAlertDetails[1].isResolved).toBe(false)
+  })
+
+  it("Should return isResolved:false when only one exception is resolved out of two having same indexes", () => {
+    dummyAho.Exceptions.length = 0
+    HO100102(dummyAho)
+    HO100322(dummyAho)
+    const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
+    const updatedFields = {
+      nextHearingDate: [
+        {
+          resultIndex: 0,
+          offenceIndex: 0,
+          value: "2002-10-10"
+        }
+      ]
+    } as Amendments
+
+    const offenceAlertDetails = getOffenceAlertsDetails(courtCase.aho.Exceptions, updatedFields)
+
+    expect(offenceAlertDetails.length).toBe(1)
+    expect(offenceAlertDetails[0].offenceIndex).toBe(0)
+    expect(offenceAlertDetails[0].isResolved).toBe(false)
+  })
+
+  it("Should return isResolved:true when both of the exceptions having same indexes are resolved", () => {
+    dummyAho.Exceptions.length = 0
+    HO100102(dummyAho)
+    HO100322(dummyAho)
+    const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
+    const updatedFields = {
+      nextHearingDate: [
+        {
+          resultIndex: 0,
+          offenceIndex: 0,
+          value: "2002-10-10"
+        }
+      ],
+      nextSourceOrganisation: [
+        {
+          resultIndex: 0,
+          offenceIndex: 0,
+          value: "B21XA00"
+        }
+      ]
+    } as Amendments
+
+    const offenceAlertDetails = getOffenceAlertsDetails(courtCase.aho.Exceptions, updatedFields)
+
+    expect(offenceAlertDetails.length).toBe(1)
+    expect(offenceAlertDetails[0].offenceIndex).toBe(0)
+    expect(offenceAlertDetails[0].isResolved).toBe(true)
   })
 })
