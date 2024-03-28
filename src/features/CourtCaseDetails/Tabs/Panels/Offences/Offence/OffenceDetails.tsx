@@ -3,7 +3,7 @@ import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/t
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
-import Badge from "components/Badge"
+import Badge, { BadgeColours } from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType as ExceptionBadge } from "components/ExceptionFieldTableRow"
@@ -240,7 +240,7 @@ export const OffenceDetails = ({
               value={
                 <>
                   <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
-                  <Badge isRendered={true} colour="purple" label="Matched" />
+                  <Badge isRendered={true} colour={BadgeColours.Purple} label="Matched" />
                 </>
               }
             />

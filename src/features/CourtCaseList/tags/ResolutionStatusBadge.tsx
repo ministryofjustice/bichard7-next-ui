@@ -1,4 +1,4 @@
-import Badge from "components/Badge"
+import Badge, { BadgeColours } from "components/Badge"
 import { ResolutionStatus } from "../../../types/ResolutionStatus"
 
 interface Props {
@@ -11,7 +11,7 @@ const ResolutionStatusBadge: React.FC<Props> = ({ resolutionStatus }: Props) => 
       <Badge
         isRendered={true}
         label={resolutionStatus}
-        colour={resolutionStatus === "Resolved" ? "grey" : "blue"}
+        colour={resolutionStatus === "Resolved" ? BadgeColours.Grey : BadgeColours.Blue}
         className={`govuk-!-static-margin-left-5 moj-badge-${resolutionStatus.toLowerCase()}`}
       />
     )}

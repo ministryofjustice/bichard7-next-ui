@@ -1,11 +1,11 @@
 import axios from "axios"
+import { useCourtCase } from "context/CourtCaseContext"
 import { useCombobox } from "downshift"
 import { Input } from "govuk-react"
 import { useCallback, useEffect, useState } from "react"
 import styled from "styled-components"
 import OrganisationUnitApiResponse from "../types/OrganisationUnitApiResponse"
 import { isError } from "../types/Result"
-import { useCourtCase } from "context/CourtCaseContext"
 
 const ListWrapper = styled.div`
   max-height: 20rem;
@@ -16,6 +16,7 @@ const ListWrapper = styled.div`
   ul {
     margin-top: 0;
     padding-left: 0;
+    margin-bottom: 0;
   }
 
   li {

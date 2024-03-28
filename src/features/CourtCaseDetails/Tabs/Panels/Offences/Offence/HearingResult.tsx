@@ -2,7 +2,7 @@ import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/A
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import ConditionalRender from "components/ConditionalRender"
-import EditableFieldTableRow from "components/EditableFieldTableRow"
+import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
