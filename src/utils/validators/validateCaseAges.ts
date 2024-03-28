@@ -1,15 +1,16 @@
 import { CourtDateRange } from "types/CaseListQueryParams"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 
-export const validateCaseAgeKeys = (caseAge: string): boolean => Object.keys(CaseAgeOptions).includes(caseAge)
-
-export const mapCaseAges = (caseAge: string | string[] | undefined): CourtDateRange[] => {
+export const mapCaseAges = (caseAge: string | string[] | undefined): CourtDateRange[] | undefined => {
   if (!caseAge) {
-    return []
+    return undefined
   }
 
-  return [caseAge]
-    .flat()
-    .filter(validateCaseAgeKeys)
-    .map((name) => CaseAgeOptions[name]())
+  const allCaseAgeKeys = Object.keys(CaseAgeOptions)
+  const validCaseAgeKeys = [caseAge].flat().filter((caseAgeKey) => allCaseAgeKeys.includes(caseAgeKey))
+  if (!validCaseAgeKeys.length) {
+    return undefined
+  }
+
+  return validCaseAgeKeys.map((caseAgeKey) => CaseAgeOptions[caseAgeKey]())
 }

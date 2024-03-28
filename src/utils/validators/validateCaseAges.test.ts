@@ -1,6 +1,6 @@
 import { subDays } from "date-fns"
 import MockDate from "mockdate"
-import { mapCaseAges, validateCaseAgeKeys } from "./validateCaseAges"
+import { mapCaseAges } from "./validateCaseAges"
 
 describe("mapCaseAges", () => {
   afterEach(() => {
@@ -12,7 +12,7 @@ describe("mapCaseAges", () => {
     MockDate.set(dateToday)
 
     const result = mapCaseAges("Today")
-    expect(result).toEqual({ from: dateToday, to: dateToday })
+    expect(result).toEqual([{ from: dateToday, to: dateToday }])
   })
 
   it("Should return a date range for 'Yesterday'", () => {
@@ -21,7 +21,7 @@ describe("mapCaseAges", () => {
     MockDate.set(dateToday)
 
     const result = mapCaseAges("Yesterday")
-    expect(result).toEqual({ from: dateYesterday, to: dateYesterday })
+    expect(result).toEqual([{ from: dateYesterday, to: dateYesterday }])
   })
 
   it("Should return a date range for '2 days ago'", () => {
@@ -31,7 +31,7 @@ describe("mapCaseAges", () => {
     MockDate.set(dateToday)
 
     const result = mapCaseAges("2 days ago")
-    expect(result).toEqual({ from: dateDay2, to: dateDay2 })
+    expect(result).toEqual([{ from: dateDay2, to: dateDay2 }])
   })
 
   it("Should return a date range for '3 days ago'", () => {
@@ -41,7 +41,7 @@ describe("mapCaseAges", () => {
     MockDate.set(dateToday)
 
     const result = mapCaseAges("3 days ago")
-    expect(result).toEqual({ from: dateDay3, to: dateDay3 })
+    expect(result).toEqual([{ from: dateDay3, to: dateDay3 }])
   })
 
   it("Should return undefined for an invalid key", () => {
@@ -64,17 +64,5 @@ describe("mapCaseAges", () => {
   it("Should return undefined for an invalid key", () => {
     expect(mapCaseAges(["invalid key"])).toBeUndefined()
     expect(mapCaseAges("invalid key")).toBeUndefined()
-  })
-})
-
-describe("validateCaseAgeKeys", () => {
-  it.each([
-    { input: "Today", expected: true },
-    { input: "Yesterday", expected: true },
-    { input: "2 days ago", expected: true },
-    { input: "3 days ago", expected: true },
-    { input: "Invalid Date Range", expected: false }
-  ])("check whether '$input' is a valid date range", ({ input, expected }) => {
-    expect(validateCaseAgeKeys(input)).toBe(expected)
   })
 })
