@@ -1,4 +1,4 @@
-import { DataSource, IsNull, SelectQueryBuilder } from "typeorm"
+import { DataSource, IsNull } from "typeorm"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
@@ -12,7 +12,7 @@ const asKey = (caseAgeOption: string) => "_" + caseAgeOption.toLowerCase().repla
 const getCountOfCasesByCaseAge = async (connection: DataSource, user: User): PromiseResult<Record<string, number>> => {
   const repository = connection.getRepository(CourtCase)
   let query = repository.createQueryBuilder()
-  query = courtCasesByOrganisationUnitQuery(query, user) as SelectQueryBuilder<CourtCase>
+  query = courtCasesByOrganisationUnitQuery(query, user)
 
   Object.keys(CaseAgeOptions).forEach((slaCaseAgeOption, i) => {
     const key = asKey(slaCaseAgeOption)

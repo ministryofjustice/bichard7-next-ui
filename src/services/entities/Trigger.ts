@@ -7,6 +7,7 @@ import CourtCase from "./CourtCase"
 import dateTransformer from "./transformers/dateTransformer"
 import getShortTriggerCode from "./transformers/getShortTriggerCode"
 import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 
 @Entity({ name: "error_list_triggers" })
 export default class Trigger {
@@ -14,7 +15,7 @@ export default class Trigger {
   triggerId!: number
 
   @Column({ name: "trigger_code" })
-  triggerCode!: string
+  triggerCode!: TriggerCode
 
   @Column({ name: "error_id" })
   errorId!: number

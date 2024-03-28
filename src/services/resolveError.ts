@@ -2,7 +2,7 @@ import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/commo
 import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
 import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
-import { EntityManager, MoreThan, Not, UpdateQueryBuilder, UpdateResult } from "typeorm"
+import { EntityManager, MoreThan, Not, UpdateResult } from "typeorm"
 import { ManualResolution, ResolutionReasonCode } from "types/ManualResolution"
 import { isError } from "types/Result"
 import { validateManualResolution } from "utils/validators/validateManualResolution"
@@ -30,7 +30,7 @@ const resolveError = async (
   const query = courtCasesByOrganisationUnitQuery(
     entityManager.getRepository(CourtCase).createQueryBuilder().update(CourtCase),
     user
-  ) as UpdateQueryBuilder<CourtCase>
+  )
 
   const queryParams: Record<string, unknown> = {
     errorStatus: "Resolved",

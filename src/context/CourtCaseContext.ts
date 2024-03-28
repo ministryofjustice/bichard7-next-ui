@@ -40,10 +40,7 @@ const useCourtCase = (): CourtCaseContextResult => {
     (key) => (newValue) => {
       setContext((previousContext) => {
         const { amendments } = previousContext
-        const value =
-          typeof newValue === "object"
-            ? upsertAmendments(amendments[key] as Record<string, unknown>[], newValue)
-            : newValue
+        const value = typeof newValue === "object" ? upsertAmendments(amendments[key] as [], newValue) : newValue
         const newAmendments = { ...amendments, [key]: value }
 
         return { ...previousContext, amendments: newAmendments }

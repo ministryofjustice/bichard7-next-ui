@@ -1,13 +1,13 @@
-import { EntityManager, FindOperator, IsNull, MoreThan, Repository, UpdateResult } from "typeorm"
-import CourtCase from "./entities/CourtCase"
-import User from "./entities/User"
 import { type AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
+import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
+import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
 import getAuditLogEvent from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/auditLog/getAuditLogEvent"
+import { EntityManager, FindOperator, IsNull, MoreThan, Repository, UpdateResult } from "typeorm"
+import Permission from "types/Permission"
 import { isError } from "types/Result"
 import { AUDIT_LOG_EVENT_SOURCE } from "../config"
-import EventCategory from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCategory"
-import Permission from "types/Permission"
-import EventCode from "@moj-bichard7-developers/bichard7-next-core/common/types/EventCode"
+import CourtCase from "./entities/CourtCase"
+import User from "./entities/User"
 
 type LockReason = "Trigger" | "Exception"
 type WhereClause<T> = {
@@ -48,7 +48,7 @@ const lock = async (
     .set(setClause)
     .andWhere(whereClause)
     .execute()
-    .catch((error) => error as Error)
+    .catch((error: Error) => error)
 
   if (!result) {
     return new Error(`Failed to lock ${lockReason}`)

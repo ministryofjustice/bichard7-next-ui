@@ -27,7 +27,7 @@ const useStyles = createUseStyles({
 
 const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
   const caseAge = mapCaseAges(namedCaseAge)
-  if (!caseAge) {
+  if (caseAge.length === 0) {
     return namedCaseAge
   }
 
