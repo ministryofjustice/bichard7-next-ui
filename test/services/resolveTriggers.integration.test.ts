@@ -120,7 +120,7 @@ describe("resolveTriggers", () => {
         .getRepository(Trigger)
         .findOne({ where: { triggerId: trigger.triggerId } })
       expect(retrievedTrigger).not.toBeNull()
-      const updatedTrigger = retrievedTrigger as Trigger
+      const updatedTrigger = retrievedTrigger!
 
       expect(updatedTrigger.resolvedAt).not.toBeNull()
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -230,14 +230,14 @@ describe("resolveTriggers", () => {
 
       const triggerNotToBeResolvedAfterResolving = (await dataSource
         .getRepository(Trigger)
-        .findOne({ where: { triggerId: triggerNotToBeResolved.triggerId } })) as Trigger
+        .findOne({ where: { triggerId: triggerNotToBeResolved.triggerId } }))!
       expect(triggerNotToBeResolvedAfterResolving).not.toBeNull()
       expect(triggerNotToBeResolvedAfterResolving.resolvedBy).toBeNull()
       expect(triggerNotToBeResolvedAfterResolving.resolvedAt).toBeNull()
 
       const triggerToBeResolvedAfterResolving = (await dataSource
         .getRepository(Trigger)
-        .findOne({ where: { triggerId: triggerToBeResolved.triggerId } })) as Trigger
+        .findOne({ where: { triggerId: triggerToBeResolved.triggerId } }))!
       expect(triggerToBeResolvedAfterResolving).not.toBeNull()
       expect(triggerToBeResolvedAfterResolving.resolvedBy).toBe(user.username)
       expect(triggerToBeResolvedAfterResolving.resolvedAt).not.toBeNull()
@@ -286,7 +286,7 @@ describe("resolveTriggers", () => {
 
       const updatedTrigger = (await dataSource
         .getRepository(Trigger)
-        .findOne({ where: { triggerId: trigger.triggerId } })) as Trigger
+        .findOne({ where: { triggerId: trigger.triggerId } }))!
       expect(updatedTrigger).not.toBeNull()
       expect(updatedTrigger.resolvedAt).not.toBeNull()
       expect(updatedTrigger.resolvedBy).toBe(user.username)
@@ -326,7 +326,7 @@ describe("resolveTriggers", () => {
         .getRepository(Trigger)
         .findOne({ where: { triggerId: trigger.triggerId } })
       expect(retrievedTrigger).not.toBeNull()
-      const updatedTrigger = retrievedTrigger as Trigger
+      const updatedTrigger = retrievedTrigger!
 
       expect(updatedTrigger.resolvedAt).toBeNull()
       expect(updatedTrigger.resolvedBy).toBeNull()
@@ -356,7 +356,7 @@ describe("resolveTriggers", () => {
         .getRepository(Trigger)
         .findOne({ where: { triggerId: trigger.triggerId } })
       expect(retrievedTrigger).not.toBeNull()
-      const updatedTrigger = retrievedTrigger as Trigger
+      const updatedTrigger = retrievedTrigger!
 
       expect(updatedTrigger.resolvedAt).toBeNull()
       expect(updatedTrigger.resolvedBy).toBeNull()
@@ -375,7 +375,7 @@ describe("resolveTriggers", () => {
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId, index) => {
         return {
           triggerId,
-          triggerCode: `TRPR000${index + 1}` as TriggerCode,
+          triggerCode: [TriggerCode.TRPR0001, TriggerCode.TRPR0002, TriggerCode.TRPR0003][index],
           status: "Unresolved",
           createdAt: new Date("2022-07-15T10:22:34.000Z")
         }
@@ -452,7 +452,7 @@ describe("resolveTriggers", () => {
       const triggers: TestTrigger[] = [0, 1, 2].map((triggerId, index) => {
         return {
           triggerId,
-          triggerCode: `TRPR000${index + 1}` as TriggerCode,
+          triggerCode: [TriggerCode.TRPR0001, TriggerCode.TRPR0002, TriggerCode.TRPR0003][index],
           status: "Unresolved",
           createdAt: new Date("2022-07-15T10:22:34.000Z")
         }
@@ -497,7 +497,13 @@ describe("resolveTriggers", () => {
       const triggers: TestTrigger[] = [0, 1, 2, 3, 4].map((triggerId, index) => {
         return {
           triggerId,
-          triggerCode: `TRPR000${index + 2}` as TriggerCode,
+          triggerCode: [
+            TriggerCode.TRPR0001,
+            TriggerCode.TRPR0002,
+            TriggerCode.TRPR0003,
+            TriggerCode.TRPR0004,
+            TriggerCode.TRPR0005
+          ][index],
           status: "Unresolved",
           createdAt: new Date("2022-07-15T10:22:34.000Z")
         }
