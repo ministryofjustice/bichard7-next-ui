@@ -1,9 +1,17 @@
 import ConditionalRender from "components/ConditionalRender"
 
+export enum BadgeColours {
+  Red = "red",
+  Blue = "blue",
+  Purple = "purple",
+  Grey = "grey",
+  Green = "green"
+}
+
 interface BadgeProps {
   isRendered: boolean
   className?: string
-  colour: "red" | "blue" | "purple" | "grey" | "green"
+  colour: BadgeColours
   label: string
 }
 

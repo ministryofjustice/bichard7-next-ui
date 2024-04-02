@@ -12,13 +12,14 @@ interface OffencesListProps {
 
 export const OffencesList = ({ className, offences, setDetailedOffenceIndex }: OffencesListProps) => {
   return (
-    <div className={className}>
+    <div id={"offences"} className={className}>
       <Heading as="h3" size="MEDIUM">
         {"Offences"}
       </Heading>
       <Table
         head={
           <Table.Row>
+            <Table.CellHeader></Table.CellHeader>
             <Table.CellHeader>{"Offence number"}</Table.CellHeader>
             <Table.CellHeader>{"Date"}</Table.CellHeader>
             <Table.CellHeader>{"Code"}</Table.CellHeader>

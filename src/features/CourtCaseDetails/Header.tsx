@@ -1,4 +1,4 @@
-import Badge from "components/Badge"
+import Badge, { BadgeColours } from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
 import HeaderContainer from "components/Header/HeaderContainer"
 import HeaderRow from "components/Header/HeaderRow"
@@ -107,7 +107,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
           <Badge
             isRendered={caseIsViewOnly}
             label="View only"
-            colour="blue"
+            colour={BadgeColours.Blue}
             className="govuk-!-static-margin-left-5 view-only-badge"
           />
         </Heading>

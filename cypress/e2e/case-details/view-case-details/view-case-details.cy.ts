@@ -7,7 +7,7 @@ import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
 import hashedPassword from "../../../fixtures/hashedPassword"
 import a11yConfig from "../../../support/a11yConfig"
-import { clickTab } from "../../../support/helpers"
+import { clickTab, loginAndGoToUrl } from "../../../support/helpers"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 
 describe("View case details", () => {
@@ -244,34 +244,32 @@ describe("View case details", () => {
         orgForPoliceFilter: "02"
       }
     ])
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-
+    loginAndGoToUrl("bichard02@example.com", "/bichard/court-cases/0")
     clickTab("Offences")
 
-    cy.contains("tbody tr:nth-child(1) td:nth-child(1)", "1")
-    cy.contains("tbody tr:nth-child(1) td:nth-child(2)", "28/11/2010")
-    cy.contains("tbody tr:nth-child(1) td:nth-child(3)", "SX03001A")
+    cy.contains("tbody tr:nth-child(1) td:nth-child(2)", "1")
+    cy.contains("tbody tr:nth-child(1) td:nth-child(3)", "28/11/2010")
+    cy.contains("tbody tr:nth-child(1) td:nth-child(4)", "SX03001A")
     cy.contains(
-      "tbody tr:nth-child(1) td:nth-child(4) a",
+      "tbody tr:nth-child(1) td:nth-child(5) a",
       "Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003"
     )
 
-    cy.contains("tbody tr:nth-child(2) td:nth-child(1)", "3")
-    cy.contains("tbody tr:nth-child(2) td:nth-child(2)", "28/11/2010")
-    cy.contains("tbody tr:nth-child(2) td:nth-child(3)", "SX03001")
-    cy.contains("tbody tr:nth-child(2) td:nth-child(4) a", "Rape a girl aged 13 / 14 / 15 - SOA 2003")
+    cy.contains("tbody tr:nth-child(2) td:nth-child(2)", "3")
+    cy.contains("tbody tr:nth-child(2) td:nth-child(3)", "28/11/2010")
+    cy.contains("tbody tr:nth-child(2) td:nth-child(4)", "SX03001")
+    cy.contains("tbody tr:nth-child(2) td:nth-child(5) a", "Rape a girl aged 13 / 14 / 15 - SOA 2003")
 
-    cy.contains("tbody tr:nth-child(3) td:nth-child(1)", "5")
-    cy.contains("tbody tr:nth-child(3) td:nth-child(2)", "28/11/2010")
-    cy.contains("tbody tr:nth-child(3) td:nth-child(3)", "RT88191")
+    cy.contains("tbody tr:nth-child(3) td:nth-child(2)", "5")
+    cy.contains("tbody tr:nth-child(3) td:nth-child(3)", "28/11/2010")
+    cy.contains("tbody tr:nth-child(3) td:nth-child(4)", "RT88191")
     cy.contains(
-      "tbody tr:nth-child(3) td:nth-child(4) a",
+      "tbody tr:nth-child(3) td:nth-child(5) a",
       "Use a motor vehicle on a road / public place without third party insurance"
     )
 
     // Checking the first offence details
-    cy.get("tbody tr:nth-child(1) td:nth-child(4) a").click()
+    cy.get("tbody tr:nth-child(1) td:nth-child(5) a").click()
 
     cy.contains("h3", "Offence 1 of 3")
     cy.contains("td", "Offence code").siblings().contains("SX03001A")
@@ -312,7 +310,7 @@ describe("View case details", () => {
 
     // Checking the second offence details
     cy.contains("a", "Back to all offences").click()
-    cy.get("tbody tr:nth-child(2) td:nth-child(4) a").click()
+    cy.get("tbody tr:nth-child(2) td:nth-child(5) a").click()
 
     cy.contains("h3", "Offence 2 of 3")
     cy.contains("td", "Offence code").siblings().contains("SX03001")
@@ -348,7 +346,7 @@ describe("View case details", () => {
 
     // Checking the third offence details
     cy.contains("a", "Back to all offences").click()
-    cy.get("tbody tr:nth-child(3) td:nth-child(4) a").click()
+    cy.get("tbody tr:nth-child(3) td:nth-child(5) a").click()
 
     cy.contains("h3", "Offence 3 of 3")
     cy.contains("td", "Offence code").siblings().contains("RT88191")
@@ -392,10 +390,9 @@ describe("View case details", () => {
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
     clickTab("Offences")
-    cy.get("tbody tr:nth-child(1) td:nth-child(4) a").click()
+    cy.get("tbody tr:nth-child(1) td:nth-child(5) a").click()
 
     cy.get('h4:contains("Hearing result")').should("have.length", 6)
   })
@@ -409,10 +406,9 @@ describe("View case details", () => {
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
     clickTab("Offences")
-    cy.get("tbody tr:nth-child(1) td:nth-child(4) a").click()
+    cy.get("tbody tr:nth-child(1) td:nth-child(5) a").click()
 
     cy.get('h4:contains("Hearing result")').should("have.length", 1)
   })
