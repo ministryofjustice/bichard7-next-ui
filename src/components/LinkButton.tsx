@@ -1,6 +1,7 @@
 import { Button } from "govuk-react"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
+import { createUseStyles } from "react-jss"
 
 interface LinkButtonProps extends React.ComponentProps<"button"> {
   children: ReactNode
@@ -17,6 +18,17 @@ interface ReactiveLinkButtonProps extends React.ComponentProps<"button"> {
   buttonShadowColour?: string
   onClick: (event: React.MouseEvent<HTMLElement>) => void
 }
+
+interface SaveLinkButtonProps extends React.ComponentProps<"button"> {
+  onClick: (event: React.MouseEvent<HTMLElement>) => void
+}
+
+const useStyles = createUseStyles({
+  "save-button": {
+    marginTop: "0.94rem",
+    marginBottom: 0
+  }
+})
 
 const LinkButton: React.FC<LinkButtonProps> = ({
   children,
@@ -69,5 +81,15 @@ const ReactiveLinkButton: React.FC<ReactiveLinkButtonProps> = ({
   )
 }
 
-export { LinkButton, ReactiveLinkButton }
+const SaveLinkButton: React.FC<SaveLinkButtonProps> = ({ onClick, ...buttonProps }: SaveLinkButtonProps) => {
+  const classes = useStyles()
+
+  return (
+    <ReactiveLinkButton {...buttonProps} onClick={onClick} className={`${classes["save-button"]}`}>
+      {"Save Correction"}
+    </ReactiveLinkButton>
+  )
+}
+
+export { LinkButton, ReactiveLinkButton, SaveLinkButton }
 export default LinkButton
