@@ -7,7 +7,7 @@ import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { useCourtCase } from "context/CourtCaseContext"
-import { HintText, Label, Table } from "govuk-react"
+import { Table } from "govuk-react"
 import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
@@ -92,9 +92,9 @@ export const HearingResult = ({
         value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
         updatedValue={updatedNextHearingLocation}
         isEditable={isCaseEditable && hasNextHearingLocationException(exceptions)}
+        inputLabel="Enter next hearing location"
+        hintText="OU code, 6-7 characters"
       >
-        <Label>{"Enter next hearing location"}</Label>
-        <HintText>{"OU code, 6-7 characters"}</HintText>
         <OrganisationUnitTypeahead
           value={
             amendedNextHearingLocation ??
@@ -111,8 +111,9 @@ export const HearingResult = ({
         value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
         updatedValue={updatedNextHearingDate && formatDisplayedDate(updatedNextHearingDate)}
         isEditable={isCaseEditable && hasNextHearingDateExceptions(exceptions)}
+        inputLabel="Enter next hearing date"
+        hintText="Enter date"
       >
-        <HintText>{"Enter date"}</HintText>
         <input
           className="govuk-input"
           type="date"
