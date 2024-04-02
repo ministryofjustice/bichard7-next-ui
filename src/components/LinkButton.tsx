@@ -13,9 +13,6 @@ interface LinkButtonProps extends React.ComponentProps<"button"> {
 
 interface ReactiveLinkButtonProps extends React.ComponentProps<"button"> {
   children: ReactNode
-  buttonColour?: string
-  buttonTextColour?: string
-  buttonShadowColour?: string
   onClick: (event: React.MouseEvent<HTMLElement>) => void
 }
 
@@ -56,9 +53,6 @@ const LinkButton: React.FC<LinkButtonProps> = ({
 
 const ReactiveLinkButton: React.FC<ReactiveLinkButtonProps> = ({
   children,
-  buttonColour,
-  buttonShadowColour,
-  buttonTextColour,
   onClick,
   ...buttonProps
 }: ReactiveLinkButtonProps) => {
@@ -68,14 +62,7 @@ const ReactiveLinkButton: React.FC<ReactiveLinkButtonProps> = ({
   }
 
   return (
-    <LinkButton
-      href={"#"}
-      onClick={handleOnClick}
-      buttonColour={buttonColour}
-      buttonTextColour={buttonTextColour}
-      buttonShadowColour={buttonShadowColour}
-      {...buttonProps}
-    >
+    <LinkButton href={"#"} onClick={handleOnClick} {...buttonProps}>
       {children}
     </LinkButton>
   )
