@@ -4,6 +4,7 @@ import { GenderCodes } from "@moj-bichard7-developers/bichard7-next-data/dist/ty
 import { RemandStatuses } from "@moj-bichard7-developers/bichard7-next-data/dist/types/RemandStatusCode"
 import { GenderCode, RemandStatusCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import axios from "axios"
+import { BadgeColours } from "components/Badge"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
 import { ReactiveLinkButton } from "components/LinkButton"
@@ -15,7 +16,7 @@ import { findExceptions } from "types/ErrorMessages"
 import { formatDisplayedDate } from "utils/formattedDate"
 import isAsnFormatValid from "utils/isAsnFormatValid"
 import { capitalizeString } from "utils/valueTransformers"
-import EditableFieldTableRow from "../../../../components/EditableFieldTableRow"
+import EditableFieldTableRow from "../../../../components/EditableFields/EditableFieldTableRow"
 import { useCourtCase } from "../../../../context/CourtCaseContext"
 import { AddressCell } from "./AddressCell"
 import { BailConditions } from "./BailConditions"
@@ -129,7 +130,7 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
           <ExceptionFieldTableRow
             badgeText={ExceptionBadgeType.SystemError}
             value={defendant.ArrestSummonsNumber}
-            badgeColour={"purple"}
+            badgeColour={BadgeColours.Purple}
             label={"ASN"}
             displayError={!!asnSystemErrorExceptionPrompt}
           >
