@@ -7,7 +7,7 @@ import axios from "axios"
 import { BadgeColours } from "components/Badge"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
-import { ReactiveLinkButton } from "components/LinkButton"
+import { SaveLinkButton } from "components/LinkButton"
 import { Input, Table } from "govuk-react"
 import React, { useCallback, useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
@@ -35,11 +35,6 @@ const useStyles = createUseStyles({
 
   asnInput: {
     width: "15rem"
-  },
-
-  "save-button": {
-    marginTop: "0.94rem",
-    marginBottom: 0
   }
 })
 
@@ -198,14 +193,7 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
                 error={!isValidAsn}
               />
             </div>
-            <ReactiveLinkButton
-              id={"save-asn"}
-              className={classes["save-button"]}
-              onClick={handleAsnSave}
-              disabled={isSaveAsnBtnDisabled()}
-            >
-              {"Save correction"}
-            </ReactiveLinkButton>
+            <SaveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()} />
           </EditableFieldTableRow>
         )}
 
