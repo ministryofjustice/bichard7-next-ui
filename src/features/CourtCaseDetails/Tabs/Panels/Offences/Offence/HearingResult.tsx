@@ -5,6 +5,7 @@ import ConditionalRender from "components/ConditionalRender"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
+import { SaveLinkButton } from "components/LinkButton"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { useCourtCase } from "context/CourtCaseContext"
 import { Table } from "govuk-react"
@@ -31,6 +32,16 @@ interface HearingResultProps {
   resultIndex: number
   selectedOffenceIndex: number
   errorStatus?: ResolutionStatus | null
+}
+
+const handleNhdSave = () => {
+  console.log("handleNhdSave")
+}
+
+const isSaveNhdBtnDisabled = (): boolean => {
+  console.log("isSaveNhdBtnDisabled")
+
+  return true
 }
 
 export const HearingResult = ({
@@ -129,6 +140,16 @@ export const HearingResult = ({
             })
           }}
         />
+
+        <SaveLinkButton id={"save-next-hearing-date"} onClick={handleNhdSave} disabled={isSaveNhdBtnDisabled()} />
+
+        {/*
+          Save button
+            - Valid date is in the future
+            - Axois request
+              - Can we create a pattern to handle all updates e.g. ASN
+              - Doesn't all amendemts, only saves the one we press
+        */}
       </EditableFieldTableRow>
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
       <TableRow label="Hearing result text" value={result.ResultVariableText} />
