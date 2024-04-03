@@ -1,14 +1,19 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
+import axios from "axios"
 import ConditionalRender from "components/ConditionalRender"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
 import { SaveLinkButton } from "components/LinkButton"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
+import { DATE_FNS } from "config"
 import { useCourtCase } from "context/CourtCaseContext"
+import compareAsc from "date-fns/compareAsc"
 import { Table } from "govuk-react"
+import { useCallback, useState } from "react"
+import { Amendments } from "types/Amendments"
 import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
@@ -25,8 +30,6 @@ import {
   getYesOrNo
 } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
-import { compareAsc } from "date-fns"
-import { DATE_FNS } from "config"
 
 interface HearingResultProps {
   result: Result
@@ -36,14 +39,23 @@ interface HearingResultProps {
   errorStatus?: ResolutionStatus | null
 }
 
-const handleNhdSave = () => {
-  console.log("handleNhdSave")
-}
+const isValidDate = (
+  amendedNextHearingDate: string | undefined,
+  resultHearingDate: Date | string | undefined
+): boolean => {
+  let formattedNextHearingDate
 
-const isSaveNhdBtnDisabled = (): boolean => {
-  console.log("isSaveNhdBtnDisabled")
+  if (amendedNextHearingDate) {
+    formattedNextHearingDate = new Date(amendedNextHearingDate)
+  } else {
+    formattedNextHearingDate = new Date("1970-01-01")
+  }
 
-  return true
+  if (resultHearingDate) {
+    return compareAsc(formattedNextHearingDate, new Date(resultHearingDate)) === DATE_FNS.dateInFuture
+  } else {
+    return false
+  }
 }
 
 export const HearingResult = ({
@@ -61,14 +73,31 @@ export const HearingResult = ({
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
+
   const isCaseEditable =
     courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME && errorStatus === "Unresolved"
 
-  const formattedNextHearingDate = amendedNextHearingDate ? new Date(amendedNextHearingDate) : new Date("1970-01-01")
-  const currentDate = new Date()
-  const isValidDate: boolean = compareAsc(formattedNextHearingDate, currentDate) === DATE_FNS.dateInFuture
+  const [isNhdSaved, setIsNhdSaved] = useState<boolean>(false)
+  const [nextHearingDateChanged, setNextHearingDateChanged] = useState<boolean>(false)
 
-  console.log("isValidDate: ", isValidDate)
+  const saveNhd = useCallback(
+    async (nhd: Amendments) => {
+      await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { nextHearingDate: nhd.nextHearingDate })
+      setIsNhdSaved(true)
+      setNextHearingDateChanged(false)
+    },
+    [courtCase.errorId]
+  )
+
+  const isSaveNhdBtnDisabled = (): boolean => {
+    return !isValidDate(amendedNextHearingDate, result.ResultHearingDate) || isNhdSaved || !nextHearingDateChanged
+  }
+
+  const handleNhdSave = () => {
+    if (isValidDate(amendedNextHearingDate, result.ResultHearingDate)) {
+      saveNhd(amendments)
+    }
+  }
 
   return (
     <Table>
@@ -141,6 +170,8 @@ export const HearingResult = ({
           name={"next-hearing-date"}
           value={amendedNextHearingDate}
           onChange={(event) => {
+            setNextHearingDateChanged(true)
+            setIsNhdSaved(false)
             amend("nextHearingDate")({
               resultIndex: resultIndex,
               offenceIndex: offenceIndex,
