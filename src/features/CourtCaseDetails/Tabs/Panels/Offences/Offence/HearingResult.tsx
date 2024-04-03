@@ -25,6 +25,8 @@ import {
   getYesOrNo
 } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
+import { compareAsc } from "date-fns"
+import { DATE_FNS } from "config"
 
 interface HearingResultProps {
   result: Result
@@ -61,6 +63,12 @@ export const HearingResult = ({
   const updatedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const isCaseEditable =
     courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME && errorStatus === "Unresolved"
+
+  const formattedNextHearingDate = amendedNextHearingDate ? new Date(amendedNextHearingDate) : new Date("1970-01-01")
+  const currentDate = new Date()
+  const isValidDate: boolean = compareAsc(formattedNextHearingDate, currentDate) === DATE_FNS.dateInFuture
+
+  console.log("isValidDate: ", isValidDate)
 
   return (
     <Table>
