@@ -1,10 +1,8 @@
+import { DatabaseQuery } from "types/DatabaseQuery"
 import CourtCase from "../entities/CourtCase"
-import { Brackets, Like, SelectQueryBuilder, UpdateQueryBuilder, WhereExpressionBuilder } from "typeorm"
+import { Brackets, Like } from "typeorm"
 
-const courtCasesByVisibleCourtsQuery = (
-  query: SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> | WhereExpressionBuilder,
-  courts: string[]
-): SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> | WhereExpressionBuilder => {
+const courtCasesByVisibleCourtsQuery = <T extends DatabaseQuery<CourtCase>>(query: T, courts: string[]): T => {
   query.orWhere(
     new Brackets((qb) => {
       if (courts.length < 1) {

@@ -104,9 +104,10 @@ export default class StompitMqGateway implements MqGateway {
     return new Promise<void>((resolve, reject) => {
       if (this.client === null) {
         reject("Cannot disconnect. Client is undefined")
+        return
       }
 
-      ;(this.client as Client).disconnect((error: Error | null) => {
+      this.client.disconnect((error: Error | null) => {
         if (error) {
           reject(error)
         } else {

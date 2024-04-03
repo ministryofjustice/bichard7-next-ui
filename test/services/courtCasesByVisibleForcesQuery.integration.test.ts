@@ -1,6 +1,6 @@
 import CourtCase from "services/entities/CourtCase"
 import getDataSource from "services/getDataSource"
-import { DataSource, Repository, SelectQueryBuilder, UpdateQueryBuilder } from "typeorm"
+import { DataSource, Repository, SelectQueryBuilder } from "typeorm"
 import { isError } from "types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
@@ -33,7 +33,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     const expectedPtiurn = "0123"
     await insertCourtCasesWithFields([{ orgForPoliceFilter: "93YZ", ptiurn: expectedPtiurn }])
 
-    const result = await (courtCasesByVisibleForcesQuery(query, ["093"]) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleForcesQuery(query, ["093"])
       .getMany()
       .catch((error: Error) => error)
 
@@ -63,7 +63,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     ]
     await insertCourtCasesWithFields(orgCodesForceCodeLen1.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await (courtCasesByVisibleForcesQuery(query, ["3"]) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleForcesQuery(query, ["3"])
       .getMany()
       .catch((error: Error) => error)
 
@@ -80,7 +80,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
   it("Should return a list of cases when the force code length is 2", async () => {
     await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await (courtCasesByVisibleForcesQuery(query, ["36"]) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleForcesQuery(query, ["36"])
       .getMany()
       .catch((error: Error) => error)
 
@@ -97,7 +97,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
   it("Should return a list of cases when the force code length is 3", async () => {
     await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await (courtCasesByVisibleForcesQuery(query, ["36F"]) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleForcesQuery(query, ["36F"])
       .getMany()
       .catch((error: Error) => error)
 
@@ -114,7 +114,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
   it("Should return a list of cases when the force code length is 4", async () => {
     await insertCourtCasesWithFields(orgCodes.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await (courtCasesByVisibleForcesQuery(query, ["36FP"]) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleForcesQuery(query, ["36FP"])
       .getMany()
       .catch((error: Error) => error)
 
@@ -130,7 +130,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     const orgCodesForVisibleForceLen5 = ["12GH", "12LK", "12G", "12GHB", "12GHA", "12GHAB", "12GHAC", "13BR", "14AT"]
     await insertCourtCasesWithFields(orgCodesForVisibleForceLen5.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await (courtCasesByVisibleForcesQuery(query, ["12GHA"]) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleForcesQuery(query, ["12GHA"])
       .getMany()
       .catch((error: Error) => error)
 
@@ -163,7 +163,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     ]
     await insertCourtCasesWithFields(orgCodesForNonVisibleCases.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await (courtCasesByVisibleForcesQuery(query, ["36FPA1"]) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleForcesQuery(query, ["36FPA1"])
       .getMany()
       .catch((error: Error) => error)
 
@@ -200,7 +200,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
 
     await insertCourtCasesWithFields(orgCodesForAllVisibleForces.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await (courtCasesByVisibleForcesQuery(query, ["36FPA1", "13GH"]) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleForcesQuery(query, ["36FPA1", "13GH"])
       .getMany()
       .catch((error: Error) => error)
 
@@ -238,7 +238,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
     ]
     await insertCourtCasesWithFields(orgCodesForNoVisibleCases.map((orgCode) => ({ orgForPoliceFilter: orgCode })))
 
-    const result = await (courtCasesByVisibleForcesQuery(query, []) as SelectQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleForcesQuery(query, [])
       .getMany()
       .catch((error: Error) => error)
 
@@ -254,7 +254,7 @@ describe("courtCaseByVisibleForcesQuery", () => {
 
     const updateQuery = query.update(CourtCase)
 
-    const result = await (courtCasesByVisibleForcesQuery(updateQuery, ["12GHA"]) as UpdateQueryBuilder<CourtCase>)
+    const result = await courtCasesByVisibleForcesQuery(updateQuery, ["12GHA"])
       .set({
         errorLockedByUsername: "DummyUser"
       })

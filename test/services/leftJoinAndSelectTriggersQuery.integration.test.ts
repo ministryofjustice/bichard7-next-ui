@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import CourtCase from "services/entities/CourtCase"
 import Trigger from "services/entities/Trigger"
 import getDataSource from "services/getDataSource"
@@ -43,7 +44,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
         dummyOrgCode
       )
 
-      const result = await (leftJoinAndSelectTriggersQuery(query, []) as SelectQueryBuilder<CourtCase>)
+      const result = await leftJoinAndSelectTriggersQuery(query, [])
         .orderBy("courtCase.errorId")
         .getMany()
         .catch((error: Error) => error)
@@ -60,7 +61,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
     it("Should return a list of cases with triggers are undefined", async () => {
       await insertDummyCourtCasesWithTriggers([[testTrigger, testTrigger]], dummyOrgCode)
 
-      const result = await (leftJoinAndSelectTriggersQuery(query, undefined) as SelectQueryBuilder<CourtCase>)
+      const result = await leftJoinAndSelectTriggersQuery(query, undefined)
         .getMany()
         .catch((error: Error) => error)
 
@@ -102,9 +103,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
       ]
       await insertDummyCourtCasesWithTriggers([caseOneTriggers, caseTwoTriggers], dummyOrgCode)
 
-      const result = await (
-        leftJoinAndSelectTriggersQuery(query, excludedTriggerCodes) as SelectQueryBuilder<CourtCase>
-      )
+      const result = await leftJoinAndSelectTriggersQuery(query, excludedTriggerCodes)
         .orderBy("courtCase.errorId")
         .getMany()
         .catch((error: Error) => error)
@@ -140,7 +139,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
       ]
       await insertDummyCourtCasesWithTriggers([caseOneTriggers, caseTwoTriggers], dummyOrgCode)
 
-      const result = await (leftJoinAndSelectTriggersQuery(query, [], "Unresolved") as SelectQueryBuilder<CourtCase>)
+      const result = await leftJoinAndSelectTriggersQuery(query, [], "Unresolved")
         .orderBy("courtCase.errorId")
         .getMany()
         .catch((error: Error) => error)
@@ -154,7 +153,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
     })
 
     it("Should only include resolved triggers when case state is 'Resolved'", async () => {
-      const resolvedTriggerCode = "TRPR0002"
+      const resolvedTriggerCode = TriggerCode.TRPR0002
 
       const firstResolvedTrigger: TestTrigger = {
         triggerId: 0,
@@ -173,14 +172,14 @@ describe("leftJoinAndSelectTriggersQuery", () => {
       const firstUnresolvedTrigger: TestTrigger = {
         triggerId: 2,
         status: "Unresolved",
-        triggerCode: "TRPR0009",
+        triggerCode: TriggerCode.TRPR0008,
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
 
       const secondUnresolvedTrigger: TestTrigger = {
         triggerId: 3,
         status: "Unresolved",
-        triggerCode: "TRPR0009",
+        triggerCode: TriggerCode.TRPR0008,
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
 
@@ -188,7 +187,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
       await insertTriggers(0, [firstResolvedTrigger, firstUnresolvedTrigger])
       await insertTriggers(1, [secondResolvedTrigger, secondUnresolvedTrigger])
 
-      const result = await (leftJoinAndSelectTriggersQuery(query, [], "Resolved") as SelectQueryBuilder<CourtCase>)
+      const result = await leftJoinAndSelectTriggersQuery(query, [], "Resolved")
         .orderBy("courtCase.errorId")
         .getMany()
         .catch((error: Error) => error)
@@ -216,7 +215,7 @@ describe("leftJoinAndSelectTriggersQuery", () => {
       ]
       await insertDummyCourtCasesWithTriggers([triggers, triggers], dummyOrgCode)
 
-      const result = await (leftJoinAndSelectTriggersQuery(query, []) as SelectQueryBuilder<CourtCase>)
+      const result = await leftJoinAndSelectTriggersQuery(query, [])
         .orderBy("courtCase.errorId")
         .getMany()
         .catch((error: Error) => error)
