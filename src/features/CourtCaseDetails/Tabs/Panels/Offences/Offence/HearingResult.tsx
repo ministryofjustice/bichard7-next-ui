@@ -8,9 +8,7 @@ import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
 import { SaveLinkButton } from "components/LinkButton"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
-import { DATE_FNS } from "config"
 import { useCourtCase } from "context/CourtCaseContext"
-import compareAsc from "date-fns/compareAsc"
 import { Table } from "govuk-react"
 import { useCallback, useState } from "react"
 import { Amendments } from "types/Amendments"
@@ -22,6 +20,7 @@ import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/get
 import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExceptions"
 import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
+import isValidNextHearingDate from "utils/validators/isValidNextHearingDate"
 import {
   capitaliseExpression,
   formatDuration,
@@ -37,25 +36,6 @@ interface HearingResultProps {
   resultIndex: number
   selectedOffenceIndex: number
   errorStatus?: ResolutionStatus | null
-}
-
-const isValidDate = (
-  amendedNextHearingDate: string | undefined,
-  resultHearingDate: Date | string | undefined
-): boolean => {
-  let formattedNextHearingDate
-
-  if (amendedNextHearingDate) {
-    formattedNextHearingDate = new Date(amendedNextHearingDate)
-  } else {
-    formattedNextHearingDate = new Date("1970-01-01")
-  }
-
-  if (resultHearingDate) {
-    return compareAsc(formattedNextHearingDate, new Date(resultHearingDate)) === DATE_FNS.dateInFuture
-  } else {
-    return false
-  }
 }
 
 export const HearingResult = ({
@@ -90,11 +70,13 @@ export const HearingResult = ({
   )
 
   const isSaveNhdBtnDisabled = (): boolean => {
-    return !isValidDate(amendedNextHearingDate, result.ResultHearingDate) || isNhdSaved || !nextHearingDateChanged
+    return (
+      !isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate) || isNhdSaved || !nextHearingDateChanged
+    )
   }
 
   const handleNhdSave = () => {
-    if (isValidDate(amendedNextHearingDate, result.ResultHearingDate)) {
+    if (isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)) {
       saveNhd(amendments)
     }
   }
