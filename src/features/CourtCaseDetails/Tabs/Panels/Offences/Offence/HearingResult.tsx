@@ -163,14 +163,6 @@ export const HearingResult = ({
         />
 
         <SaveLinkButton id={"save-next-hearing-date"} onClick={handleNhdSave} disabled={isSaveNhdBtnDisabled()} />
-
-        {/*
-          Save button
-            - Valid date is in the future
-            - Axois request
-              - Can we create a pattern to handle all updates e.g. ASN
-              - Doesn't all amendemts, only saves the one we press
-        */}
       </EditableFieldTableRow>
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
       <TableRow label="Hearing result text" value={result.ResultVariableText} />
