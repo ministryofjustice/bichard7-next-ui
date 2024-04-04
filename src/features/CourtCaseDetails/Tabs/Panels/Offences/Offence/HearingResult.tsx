@@ -24,6 +24,7 @@ import {
   getYesOrNo
 } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
+import DOMPurify from "dompurify"
 
 interface HearingResultProps {
   result: Result
@@ -134,8 +135,8 @@ export const HearingResult = ({
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
       <TableRow
         label="Hearing result text"
-        value={<div dangerouslySetInnerHTML={{ __html: formattedResult }} />}
-      />{" "}
+        value={<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formattedResult) }} />}
+      />
       <TableRow label="PNC disposal type" value={result.PNCDisposalType} />
       <TableRow label="Result class" value={result.ResultClass} />
       <TableRow label="PNC adjudication exists" value={getYesOrNo(result.PNCAdjudicationExists)} />
