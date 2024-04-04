@@ -1,3 +1,4 @@
+import { Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
 
@@ -44,11 +45,8 @@ const handleAddingFilters = (newState: Filter, action: FilterAction) => {
       break
     }
     case "reason": {
-      // React might invoke our reducer more than once for a single event,
-      // so avoid duplicating reason filters
-      if (newState.reasonFilter.filter((reasonFilter) => reasonFilter.value === action.value).length < 1) {
-        newState.reasonFilter.push({ value: action.value, state: "Selected" })
-      }
+      newState.reasonFilter.value = action.value
+      newState.reasonFilter.state = "Selected"
       break
     }
     case "defendantName": {
@@ -117,7 +115,8 @@ const handleRemovingFilters = (newState: Filter, action: FilterAction) => {
       break
     }
     case "reason": {
-      newState.reasonFilter = newState.reasonFilter.filter((reasonFilter) => reasonFilter.value !== action.value)
+      newState.reasonFilter.value = Reason.All
+      newState.reasonFilter.state = "Selected"
       break
     }
     case "defendantName": {

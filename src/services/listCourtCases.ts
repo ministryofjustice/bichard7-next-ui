@@ -20,7 +20,7 @@ const listCourtCases = async (
     defendantName,
     courtName,
     ptiurn,
-    reasons,
+    reason,
     urgent,
     courtDateRange,
     locked,
@@ -143,7 +143,7 @@ const listCourtCases = async (
     }
   }
 
-  query = filterByReasonAndResolutionStatus(query, user, reasons, caseState, resolvedByUsername)
+  query = filterByReasonAndResolutionStatus(query, user, reason, caseState, resolvedByUsername)
 
   if (allocatedToUserName) {
     query.andWhere(
