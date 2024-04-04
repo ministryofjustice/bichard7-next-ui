@@ -88,7 +88,7 @@ describe("Case list", () => {
       cy.get("#ptiurn-sort").contains("PTIURN").should("have.attr", "href")
       cy.contains("Notes").should("not.have.attr", "href")
       cy.contains("Reason").should("not.have.attr", "href")
-      cy.get("#locked-by-sort").contains("Locked by").should("have.attr", "href")
+      cy.contains("Locked by").should("not.have.attr", "href")
     })
 
     it("Should display multiple cases", () => {

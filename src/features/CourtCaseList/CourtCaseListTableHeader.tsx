@@ -79,10 +79,7 @@ export const CourtCaseListTableHeader = ({ order }: CourtCaseListTableHeaderProp
         <ColumnHeading>{"Reason"}</ColumnHeading>
       </Table.CellHeader>
       <Table.CellHeader className={classes["table-column-header-cell"]}>
-        <Link className={classes["table-column-header-link"]} href={orderByParams("lockedBy")} id="locked-by-sort">
-          {"Locked by"}
-          <ColumnOrderIcons columnName={"lockedBy"} currentOrder={query.order} orderBy={query.orderBy} />
-        </Link>
+        <ColumnHeading>{"Locked by"}</ColumnHeading>
       </Table.CellHeader>
     </Table.Row>
   )

@@ -72,10 +72,6 @@ const listCourtCases = async (
   // Primary sorts
   if (orderBy === "reason") {
     query.orderBy("courtCase.errorReason", sortOrder).addOrderBy("courtCase.triggerReason", sortOrder)
-  } else if (orderBy === "lockedBy") {
-    query
-      .orderBy("courtCase.errorLockedByUsername", sortOrder)
-      .addOrderBy("courtCase.triggerLockedByUsername", sortOrder)
   } else if (orderBy === "isUrgent") {
     query.orderBy("courtCase.isUrgent", sortOrder === "ASC" ? "DESC" : "ASC")
   } else {
