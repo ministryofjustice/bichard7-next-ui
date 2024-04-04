@@ -9,6 +9,7 @@ import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQuery
 import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
 import { anyFilterChips } from "utils/filterChips"
+import { reasonOptions } from "utils/reasonOptions"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
@@ -19,7 +20,7 @@ interface Props {
   courtName: string | null
   reasonCodes: string[]
   ptiurn: string | null
-  reasons: Reason[]
+  reason: Reason | null
   caseAge: string[]
   caseAgeCounts: Record<string, number>
   dateRange: SerializedCourtDateRange | null
@@ -41,7 +42,7 @@ const useStyles = createUseStyles({
 })
 
 const CourtCaseFilter: React.FC<Props> = ({
-  reasons,
+  reason,
   defendantName,
   ptiurn,
   courtName,
@@ -69,9 +70,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
     reasonCodes: reasonCodes.map((reasonCode) => ({ value: reasonCode, state: "Applied", label: reasonCode })),
     ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
-    reasonFilter: reasons.map((reason) => {
-      return { value: reason, state: "Applied" }
-    }),
+    reasonFilter: reason !== null ? { value: reason, state: "Applied" } : {},
     myCasesFilter: myCases ? { value: true, state: "Applied", label: "Cases locked to me" } : {}
   }
   const [state, dispatch] = useReducer(filtersReducer, initialFilterState)
@@ -133,7 +132,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                   </div>
                   <input
                     className="govuk-input"
-                    value={state.reasonCodes.map((reason) => reason.value).join(" ")}
+                    value={state.reasonCodes.map((reasonCode) => reasonCode.value).join(" ")}
                     id="reason-codes"
                     name="reasonCodes"
                     type="text"
@@ -243,12 +242,8 @@ const CourtCaseFilter: React.FC<Props> = ({
               <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"} classNames="filters-reason">
                 <ReasonFilterOptions
-                  reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
-                  reasonOptions={
-                    currentUser.hasAccessTo[Permission.Triggers] && !currentUser.hasAccessTo[Permission.Exceptions]
-                      ? [Reason.Bails]
-                      : undefined
-                  }
+                  reason={state.reasonFilter.value}
+                  reasonOptions={reasonOptions}
                   dispatch={dispatch}
                 />
               </ExpandingFilters>

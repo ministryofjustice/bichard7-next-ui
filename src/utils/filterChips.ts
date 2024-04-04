@@ -1,3 +1,4 @@
+import { Reason } from "types/CaseListQueryParams"
 import { Filter, FilterState } from "types/CourtCaseFilter"
 
 const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
@@ -13,18 +14,14 @@ const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
       state.reasonCodes[0],
       state.ptiurnSearch,
       state.myCasesFilter
-    ]
-      .map((filter): number => {
-        return filter?.value !== undefined &&
-          filter.value !== "" &&
-          (countOfState === undefined || filter.state === countOfState)
-          ? 1
-          : 0
-      })
-      .reduce((x, y) => x + y, 0) +
-      state.reasonFilter.filter((filter) => countOfState === undefined || filter.state === countOfState).length +
-      state.caseAgeFilter.filter((filter) => countOfState === undefined || filter.state === countOfState).length >
-    0
+    ].some(
+      (filter): boolean =>
+        filter?.value !== undefined &&
+        filter.value !== "" &&
+        (countOfState === undefined || filter.state === countOfState)
+    ) ||
+    state.caseAgeFilter.some((filter) => countOfState === undefined || filter.state === countOfState) ||
+    (!!state.reasonFilter && state.reasonFilter.value !== Reason.All && state.reasonFilter.state === countOfState)
   )
 }
 

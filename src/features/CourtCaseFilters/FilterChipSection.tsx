@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import FilterChip from "components/FilterChip"
 import ConditionalRender from "components/ConditionalRender"
+import FilterChip from "components/FilterChip"
+import { Link } from "govuk-react"
 import { Dispatch } from "react"
+import { createUseStyles } from "react-jss"
+import { Reason } from "types/CaseListQueryParams"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
-import FilterChipRow from "./FilterChipRow"
 import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
-import { Link } from "govuk-react"
-import { createUseStyles } from "react-jss"
 import FilterChipContainer from "./FilterChipContainer"
+import FilterChipRow from "./FilterChipRow"
 
 interface Props {
   state: Filter
@@ -113,23 +114,23 @@ const FilterChipSection: React.FC<Props> = ({
         </FilterChipContainer>
 
         <ConditionalRender
-          isRendered={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}
+          isRendered={
+            !!state.reasonFilter &&
+            state.reasonFilter?.value !== Reason.All &&
+            state.reasonFilter?.state === sectionState
+          }
         >
           <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
           <ul className="moj-filter-tags govuk-!-margin-bottom-0">
-            {state.reasonFilter
-              .filter((reasonFilter) => reasonFilter.state === sectionState)
-              .map((reasonFilter) => (
-                <FilterChip
-                  key={reasonFilter.value}
-                  chipLabel={reasonFilter.value}
-                  dispatch={dispatch}
-                  removeAction={() => {
-                    return { method: "remove", type: "reason", value: reasonFilter.value }
-                  }}
-                  state={reasonFilter.state}
-                />
-              ))}
+            <FilterChip
+              key={state.reasonFilter.value}
+              chipLabel={state.reasonFilter.value ?? ""}
+              dispatch={dispatch}
+              removeAction={() => {
+                return { method: "remove", type: "reason", value: state.reasonFilter.value } as FilterAction
+              }}
+              state={state.reasonFilter.state ?? "Applied"}
+            />
           </ul>
         </ConditionalRender>
 

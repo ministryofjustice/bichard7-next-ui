@@ -3,61 +3,57 @@ import User from "services/entities/User"
 import { Brackets, FindOperator, IsNull, MoreThan, Not, SelectQueryBuilder } from "typeorm"
 import { CaseState, Reason } from "types/CaseListQueryParams"
 import Permission from "types/Permission"
-import { BailCodes } from "../../utils/bailCodes"
 
-const reasonFilterOnlyIncludesTriggers = (reasons: Reason[]): boolean =>
-  (reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)) && !reasons?.includes(Reason.Exceptions)
+const reasonFilterOnlyIncludesTriggers = (reason?: Reason): boolean => reason === Reason.Triggers
 
-const reasonFilterOnlyIncludesExceptions = (reasons: Reason[]): boolean =>
-  reasons?.includes(Reason.Exceptions) && !(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails))
+const reasonFilterOnlyIncludesExceptions = (reason?: Reason): boolean => reason === Reason.Exceptions
 
-const shouldFilterForExceptions = (user: User, reasons: Reason[]): boolean =>
+const shouldFilterForExceptions = (user: User, reason?: Reason): boolean =>
   (user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]) ||
-  reasonFilterOnlyIncludesExceptions(reasons)
+  reasonFilterOnlyIncludesExceptions(reason)
 
-const shouldFilterForTriggers = (user: User, reasons: Reason[]): boolean =>
+const shouldFilterForTriggers = (user: User, reason?: Reason): boolean =>
   (user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]) ||
-  reasonFilterOnlyIncludesTriggers(reasons)
+  reasonFilterOnlyIncludesTriggers(reason)
 
-const canSeeTriggersAndException = (user: User, reasons: Reason[]): boolean =>
+const canSeeTriggersAndException = (user: User, reason?: Reason): boolean =>
   user.hasAccessTo[Permission.Exceptions] &&
   user.hasAccessTo[Permission.Triggers] &&
-  (!reasons ||
-    reasons.length === 0 ||
-    (reasons?.includes(Reason.Exceptions) && reasons?.includes(Reason.Triggers) && reasons?.includes(Reason.Bails)))
+  reason !== Reason.Triggers &&
+  reason !== Reason.Exceptions
 
 const filterIfUnresolved = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
-  reasons: Reason[]
+  reason?: Reason
 ): SelectQueryBuilder<CourtCase> => {
   return query.andWhere({
-    ...(shouldFilterForTriggers(user, reasons) ? { triggerResolvedTimestamp: IsNull() } : {}),
-    ...(shouldFilterForExceptions(user, reasons) ? { errorResolvedTimestamp: IsNull() } : {}),
-    ...(canSeeTriggersAndException(user, reasons) ? { resolutionTimestamp: IsNull() } : {})
+    ...(shouldFilterForTriggers(user, reason) ? { triggerResolvedTimestamp: IsNull() } : {}),
+    ...(shouldFilterForExceptions(user, reason) ? { errorResolvedTimestamp: IsNull() } : {}),
+    ...(canSeeTriggersAndException(user, reason) ? { resolutionTimestamp: IsNull() } : {})
   })
 }
 
 const filterIfResolved = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
-  reasons: Reason[],
+  reason?: Reason,
   resolvedByUsername?: string
 ) => {
   query.andWhere({
-    ...(shouldFilterForTriggers(user, reasons) ? { triggerResolvedTimestamp: Not(IsNull()) } : {}),
-    ...(shouldFilterForExceptions(user, reasons) ? { errorResolvedTimestamp: Not(IsNull()) } : {}),
-    ...(canSeeTriggersAndException(user, reasons) ? { resolutionTimestamp: Not(IsNull()) } : {})
+    ...(shouldFilterForTriggers(user, reason) ? { triggerResolvedTimestamp: Not(IsNull()) } : {}),
+    ...(shouldFilterForExceptions(user, reason) ? { errorResolvedTimestamp: Not(IsNull()) } : {}),
+    ...(canSeeTriggersAndException(user, reason) ? { resolutionTimestamp: Not(IsNull()) } : {})
   })
 
   if (resolvedByUsername || !user.hasAccessTo[Permission.ListAllCases]) {
     query.andWhere(
       new Brackets((qb) => {
-        if (reasonFilterOnlyIncludesTriggers(reasons)) {
+        if (reasonFilterOnlyIncludesTriggers(reason)) {
           qb.where({
             triggerResolvedBy: resolvedByUsername ?? user.username
           })
-        } else if (reasonFilterOnlyIncludesExceptions(reasons)) {
+        } else if (reasonFilterOnlyIncludesExceptions(reason)) {
           qb.where({
             errorResolvedBy: resolvedByUsername ?? user.username
           })
@@ -80,31 +76,22 @@ const filterIfResolved = (
 
 const filterByReasons = (
   query: SelectQueryBuilder<CourtCase>,
-  reasons: Reason[],
+  reason?: Reason,
   resolvedOrUnresolved?: FindOperator<null>
 ): SelectQueryBuilder<CourtCase> => {
   query.andWhere(
     new Brackets((qb) => {
-      if (reasons?.includes(Reason.Triggers)) {
+      if (reason?.includes(Reason.Triggers)) {
         qb.where({
           triggerCount: MoreThan(0),
           triggerResolvedTimestamp: resolvedOrUnresolved
         })
       }
 
-      if (reasons?.includes(Reason.Exceptions)) {
+      if (reason?.includes(Reason.Exceptions)) {
         qb.orWhere({
           errorCount: MoreThan(0),
           errorResolvedTimestamp: resolvedOrUnresolved
-        })
-      }
-
-      if (reasons?.includes(Reason.Bails)) {
-        Object.keys(BailCodes).forEach((triggerCode, i) => {
-          const paramName = `bails${i}`
-          qb.orWhere(`trigger.trigger_code ilike '%' || :${paramName} || '%'`, {
-            [paramName]: triggerCode
-          })
         })
       }
     })
@@ -115,21 +102,20 @@ const filterByReasons = (
 const filterByReasonAndResolutionStatus = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
-  reasons?: Reason[],
+  reason?: Reason,
   caseState?: CaseState,
   resolvedByUsername?: string
 ): SelectQueryBuilder<CourtCase> => {
-  reasons = reasons ?? []
   caseState = caseState ?? "Unresolved"
 
-  if (reasons) {
-    query = filterByReasons(query, reasons, caseState === "Unresolved" ? IsNull() : Not(IsNull()))
+  if (reason) {
+    query = filterByReasons(query, reason, caseState === "Unresolved" ? IsNull() : Not(IsNull()))
   }
 
   if (caseState === "Unresolved") {
-    query = filterIfUnresolved(query, user, reasons)
+    query = filterIfUnresolved(query, user, reason)
   } else if (caseState === "Resolved") {
-    query = filterIfResolved(query, user, reasons, resolvedByUsername)
+    query = filterIfResolved(query, user, reason, resolvedByUsername)
   }
 
   return query

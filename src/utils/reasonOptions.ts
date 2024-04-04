@@ -1,3 +1,3 @@
 import { Reason } from "types/CaseListQueryParams"
 
-export const reasonOptions: Reason[] = [Reason.Bails, Reason.Exceptions, Reason.Triggers]
+export const reasonOptions: Reason[] = [Reason.All, Reason.Exceptions, Reason.Triggers]
