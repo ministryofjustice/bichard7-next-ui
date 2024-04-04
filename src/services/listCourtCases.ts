@@ -15,7 +15,6 @@ import Permission from "types/Permission"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import CourtCase from "./entities/CourtCase"
-import Note from "./entities/Note"
 import User from "./entities/User"
 import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
@@ -31,8 +30,7 @@ const listCourtCases = async (
     defendantName,
     courtName,
     ptiurn,
-    reasons,
-    urgent,
+    recordType,
     courtDateRange,
     locked,
     caseState,
@@ -45,11 +43,7 @@ const listCourtCases = async (
   const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
   const maxPageItemsValidated = maxPageItems ? parseInt(maxPageItems, 10) : 25
   const repository = connection.getRepository(CourtCase)
-  const subquery = connection
-    .getRepository(Note)
-    .createQueryBuilder("notes")
-    .select("COUNT(note_id)")
-    .where("error_id = courtCase.errorId")
+
   let query = repository
     .createQueryBuilder("courtCase")
     .select([
@@ -87,23 +81,9 @@ const listCourtCases = async (
 
   const sortOrder = order === "desc" ? "DESC" : "ASC"
 
-  // Primary sorts
-  if (orderBy === "reason") {
-    query.orderBy("courtCase.errorReason", sortOrder).addOrderBy("courtCase.triggerReason", sortOrder)
-  } else if (orderBy === "lockedBy") {
-    query
-      .orderBy("courtCase.errorLockedByUsername", sortOrder)
-      .addOrderBy("courtCase.triggerLockedByUsername", sortOrder)
-  } else if (orderBy === "isUrgent") {
-    query.orderBy("courtCase.isUrgent", sortOrder === "ASC" ? "DESC" : "ASC")
-  } else if (orderBy === "notes") {
-    query
-      .addSelect(`(${subquery.getQuery()})`, "note_count")
-      .orderBy("note_count", sortOrder === "ASC" ? "ASC" : "DESC")
-  } else {
-    const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
-    query.orderBy(orderByQuery, sortOrder)
-  }
+  // Primary sort
+  const orderByQuery = `courtCase.${orderBy ?? "errorId"}`
+  query.orderBy(orderByQuery, sortOrder)
 
   // Secondary sorts
   if (orderBy !== "courtDate") {
@@ -147,12 +127,6 @@ const listCourtCases = async (
     )
   }
 
-  if (urgent === "Urgent") {
-    query.andWhere({ isUrgent: MoreThan(0) })
-  } else if (urgent === "Non-urgent") {
-    query.andWhere({ isUrgent: 0 })
-  }
-
   if (courtDateRange) {
     if (Array.isArray(courtDateRange)) {
       query.andWhere(
@@ -175,7 +149,7 @@ const listCourtCases = async (
     }
   }
 
-  query = filterByReasonAndResolutionStatus(query, user, reasons, caseState, resolvedByUsername)
+  query = filterByReasonAndResolutionStatus(query, user, recordType, caseState, resolvedByUsername)
 
   if (allocatedToUserName) {
     query.andWhere(

@@ -1,40 +1,39 @@
 import type { Dispatch } from "react"
-import { Reason } from "types/CaseListQueryParams"
-import { reasonOptions as defaultReasonOptions } from "utils/reasonOptions"
+import { RecordType } from "types/CaseListQueryParams"
 import type { FilterAction } from "types/CourtCaseFilter"
-import ConditionalRender from "components/ConditionalRender"
-import TriggersAccordion from "./TriggersAccordion/TriggersAccordion"
+import { recordTypeOptions as defaultRecordTypeOptions } from "utils/reasonOptions"
 
 interface Props {
-  reasons?: Reason[]
-  reasonOptions?: Reason[]
+  recordTypeValue?: RecordType
+  recordTypeOptions?: RecordType[]
   dispatch: Dispatch<FilterAction>
 }
 
-const ReasonFilterOptions: React.FC<Props> = ({ reasons, reasonOptions = defaultReasonOptions, dispatch }: Props) => {
+const ReasonFilterOptions: React.FC<Props> = ({
+  recordTypeValue: reasonValue,
+  recordTypeOptions: recordTypeOptions = defaultRecordTypeOptions,
+  dispatch
+}: Props) => {
   return (
     <fieldset className="govuk-fieldset">
-      <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-        {reasonOptions.map((reason) => (
-          <div className={`govuk-checkboxes__item ${reason.toLowerCase()}`} key={reason}>
+      <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+        {recordTypeOptions.map((recordType) => (
+          <div className={`govuk-radios__item ${recordType.toLowerCase()}`} key={recordType}>
             <input
-              className="govuk-checkboxes__input"
-              id={`${reason.toLowerCase()}-type`}
-              name="type"
-              type="checkbox"
-              value={reason}
-              checked={reasons && reasons.includes(reason as Reason)}
+              className="govuk-radios__input"
+              id={`${recordType.toLowerCase()}-type`}
+              name="recordType"
+              type="radio"
+              value={recordType}
+              checked={reasonValue && reasonValue == recordType}
               onChange={(event) => {
-                const value = event.currentTarget.value as Reason
-                dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "reason", value })
+                const value = event.currentTarget.value as RecordType
+                dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "recordType", value })
               }}
             ></input>
-            <label className="govuk-label govuk-checkboxes__label" htmlFor={`${reason.toLowerCase()}-type`}>
-              {reason}
+            <label className="govuk-label govuk-radios__label" htmlFor={`${recordType.toLowerCase()}-type`}>
+              {recordType}
             </label>
-            <ConditionalRender isRendered={reason === "Bails"}>
-              <TriggersAccordion />
-            </ConditionalRender>
           </div>
         ))}
       </div>

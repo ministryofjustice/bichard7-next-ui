@@ -1,7 +1,6 @@
 export type QueryOrder = "asc" | "desc"
 
-export enum Reason {
-  Bails = "Bails",
+export enum RecordType {
   Exceptions = "Exceptions",
   Triggers = "Triggers"
 }
@@ -23,7 +22,7 @@ export type Urgency = "Urgent" | "Non-urgent" | undefined
 export type CaseListQueryParams = {
   orderBy?: string
   order?: QueryOrder
-  reasons?: Reason[]
+  recordType?: RecordType | null
   defendantName?: string
   courtName?: string
   ptiurn?: string

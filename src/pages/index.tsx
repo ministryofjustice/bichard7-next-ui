@@ -23,7 +23,7 @@ import getLastSwitchingFormSubmission from "services/getLastSwitchingFormSubmiss
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CaseState, QueryOrder, Reason, SerializedCourtDateRange, Urgency } from "types/CaseListQueryParams"
+import { CaseState, QueryOrder, RecordType, SerializedCourtDateRange, Urgency } from "types/CaseListQueryParams"
 import Permission from "types/Permission"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
@@ -31,14 +31,13 @@ import { DisplayPartialCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import caseStateFilters from "utils/caseStateFilters"
+import removeBlankQueryParams from "utils/deleteQueryParam/removeBlankQueryParams"
 import { formatFormInputDateString } from "utils/formattedDate"
 import getQueryStringCookieName from "utils/getQueryStringCookieName"
 import { isPost } from "utils/http"
 import { logUiDetails } from "utils/logUiDetails"
 import { calculateLastPossiblePageNumber } from "utils/pagination/calculateLastPossiblePageNumber"
-import { reasonOptions } from "utils/reasonOptions"
 import redirectTo from "utils/redirectTo"
-import removeBlankQueryParams from "utils/deleteQueryParam/removeBlankQueryParams"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { validateDateRange } from "utils/validators/validateDateRange"
 import { mapLockFilter } from "utils/validators/validateLockFilter"
@@ -52,7 +51,7 @@ interface Props {
   user: DisplayFullUser
   courtCases: DisplayPartialCourtCase[]
   order: QueryOrder
-  reasons: Reason[]
+  recordType: RecordType | null
   keywords: string[]
   ptiurn: string | null
   courtName: string | null
@@ -77,6 +76,16 @@ interface Props {
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
 
+const validateRecordType = (recordType?: string | string[]): RecordType | null => {
+  if (typeof recordType !== "string") {
+    return null
+  }
+  if (recordType !== RecordType.Exceptions && recordType !== RecordType.Triggers) {
+    return null
+  }
+  return recordType as RecordType
+}
+
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   withCsrf,
@@ -86,13 +95,13 @@ export const getServerSideProps = withMultipleServerSideProps(
     const queryStringCookieName = getQueryStringCookieName(currentUser.username)
     // prettier-ignore
     const {
-      orderBy, page, type, keywords, courtName, reasonCodes, ptiurn, maxPageItems, order,
+      orderBy, page, recordType, keywords, courtName, reasonCodes, ptiurn, maxPageItems, order,
       urgency, caseAge, from, to, locked, state, myCases, unlockException, unlockTrigger
     } = query
-    const reasons = [type].flat().filter((t) => reasonOptions.includes(String(t) as Reason)) as Reason[]
     const caseAges = [caseAge]
       .flat()
       .filter((t) => Object.keys(CaseAgeOptions).includes(String(t) as string)) as string[]
+    const validatedRecordType = validateRecordType(recordType)
     const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "50"
     const validatedPageNum = validateQueryParams(page) ? page : "1"
     const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "courtDate"
@@ -157,7 +166,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         ...(validatedCourtName && { courtName: validatedCourtName }),
         ...(validatedreasonCodes && { reasonCodes: validatedreasonCodes }),
         ...(validatedPtiurn && { ptiurn: validatedPtiurn }),
-        reasons: reasons,
+        recordType: validatedRecordType,
         urgent: validatedUrgent,
         maxPageItems: validatedMaxPageItems,
         pageNum: validatedPageNum,
@@ -206,7 +215,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,
         casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,
-        reasons: reasons,
+        recordType: validatedRecordType,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         courtName: validatedCourtName ? validatedCourtName : null,
         reasonCodes: validatedreasonCodes,
@@ -241,7 +250,7 @@ const Home: NextPage<Props> = (props) => {
     page,
     casesPerPage,
     totalCases,
-    reasons,
+    recordType,
     keywords,
     courtName,
     reasonCodes,
@@ -296,7 +305,7 @@ const Home: NextPage<Props> = (props) => {
             <CourtCaseWrapper
               filter={
                 <CourtCaseFilter
-                  reasons={reasons}
+                  recordType={recordType}
                   defendantName={keywords[0]}
                   courtName={courtName}
                   reasonCodes={reasonCodes}
@@ -315,7 +324,7 @@ const Home: NextPage<Props> = (props) => {
               appliedFilters={
                 <AppliedFilters
                   filters={{
-                    reasons,
+                    recordType,
                     keywords,
                     courtName,
                     reasonCodes,

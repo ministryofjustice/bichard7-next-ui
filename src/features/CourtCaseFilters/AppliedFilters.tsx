@@ -1,15 +1,15 @@
-import FilterTag from "components/FilterTag/FilterTag"
 import ConditionalRender from "components/ConditionalRender"
+import FilterTag from "components/FilterTag/FilterTag"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
-import { Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { RecordType, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
 import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
 
 interface Props {
   filters: {
-    reasons?: Reason[]
+    recordType: RecordType | null
     keywords?: string[]
     courtName?: string | null
     reasonCodes?: string[]
@@ -27,7 +27,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
   const { basePath, query } = useRouter()
 
   const hasAnyAppliedFilters = (): boolean =>
-    (filters.reasons && filters.reasons.length > 0) ||
+    !!filters.recordType ||
     (filters.keywords && filters.keywords.length > 0) ||
     (filters.caseAge && filters.caseAge.length > 0) ||
     !!filters.courtName ||
@@ -75,14 +75,14 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
           <li>
             <p className="govuk-heading-s govuk-!-margin-bottom-0">{"Filters applied:"}</p>
           </li>
-          {filters.reasons &&
-            filters.reasons.map((reason) => {
-              return (
-                <li key={`${reason}`}>
-                  <FilterTag tag={reason} href={removeFilterFromPath({ type: reason })} />
-                </li>
-              )
-            })}
+          <ConditionalRender isRendered={!!filters.recordType}>
+            <li key={`${filters.recordType}`}>
+              <FilterTag
+                tag={filters.recordType ?? ""}
+                href={removeFilterFromPath({ recordType: filters.recordType ?? "" })}
+              />
+            </li>
+          </ConditionalRender>
           {filters.keywords &&
             filters.keywords.map((keyword) => {
               return (

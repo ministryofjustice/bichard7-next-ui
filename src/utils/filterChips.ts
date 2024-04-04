@@ -12,7 +12,8 @@ const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
       state.courtNameSearch,
       state.reasonCodes[0],
       state.ptiurnSearch,
-      state.myCasesFilter
+      state.myCasesFilter,
+      state.recordTypeFilter
     ]
       .map((filter): number => {
         return filter?.value !== undefined &&
@@ -22,7 +23,6 @@ const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
           : 0
       })
       .reduce((x, y) => x + y, 0) +
-      state.reasonFilter.filter((filter) => countOfState === undefined || filter.state === countOfState).length +
       state.caseAgeFilter.filter((filter) => countOfState === undefined || filter.state === countOfState).length >
     0
   )

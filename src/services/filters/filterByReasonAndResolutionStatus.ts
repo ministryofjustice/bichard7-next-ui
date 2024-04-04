@@ -1,63 +1,71 @@
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
-import { Brackets, FindOperator, IsNull, MoreThan, Not, SelectQueryBuilder } from "typeorm"
-import { CaseState, Reason } from "types/CaseListQueryParams"
+import { Brackets, FindOperator, IsNull, Not, SelectQueryBuilder } from "typeorm"
+import { CaseState, RecordType } from "types/CaseListQueryParams"
 import Permission from "types/Permission"
-import { BailCodes } from "../../utils/bailCodes"
 
-const reasonFilterOnlyIncludesTriggers = (reasons: Reason[]): boolean =>
-  (reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails)) && !reasons?.includes(Reason.Exceptions)
+const recordTypeFilterOnlyIncludesTriggers = (recordType?: RecordType | null): boolean =>
+  recordType == RecordType.Triggers
 
-const reasonFilterOnlyIncludesExceptions = (reasons: Reason[]): boolean =>
-  reasons?.includes(Reason.Exceptions) && !(reasons?.includes(Reason.Triggers) || reasons?.includes(Reason.Bails))
+const recordTypeFilterOnlyIncludesExceptions = (recordType?: RecordType | null): boolean =>
+  recordType == RecordType.Exceptions
 
-const shouldFilterForExceptions = (user: User, reasons: Reason[]): boolean =>
+const shouldFilterForExceptions = (user: User, recordType?: RecordType | null): boolean =>
   (user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]) ||
-  reasonFilterOnlyIncludesExceptions(reasons)
+  recordTypeFilterOnlyIncludesExceptions(recordType)
 
-const shouldFilterForTriggers = (user: User, reasons: Reason[]): boolean =>
+const shouldFilterForTriggers = (user: User, recordType?: RecordType | null): boolean =>
   (user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]) ||
-  reasonFilterOnlyIncludesTriggers(reasons)
+  recordTypeFilterOnlyIncludesTriggers(recordType)
 
-const canSeeTriggersAndException = (user: User, reasons: Reason[]): boolean =>
-  user.hasAccessTo[Permission.Exceptions] &&
-  user.hasAccessTo[Permission.Triggers] &&
-  (!reasons ||
-    reasons.length === 0 ||
-    (reasons?.includes(Reason.Exceptions) && reasons?.includes(Reason.Triggers) && reasons?.includes(Reason.Bails)))
+const canSeeTriggersAndException = (user: User, recordType?: RecordType | null): boolean =>
+  user.hasAccessTo[Permission.Exceptions] && user.hasAccessTo[Permission.Triggers] && recordType === undefined
 
 const filterIfUnresolved = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
-  reasons: Reason[]
+  recordType?: RecordType | null
 ): SelectQueryBuilder<CourtCase> => {
-  return query.andWhere({
-    ...(shouldFilterForTriggers(user, reasons) ? { triggerStatus: "Unresolved" } : {}),
-    ...(shouldFilterForExceptions(user, reasons) ? { errorStatus: "Unresolved" } : {}),
-    ...(canSeeTriggersAndException(user, reasons) ? { triggerStatus: "Unresolved", errorStatus: "Unresolved" } : {})
-  })
+  if (shouldFilterForTriggers(user, recordType)) {
+    query.andWhere({ triggerStatus: "Unresolved" })
+  } else if (shouldFilterForExceptions(user, recordType)) {
+    query.andWhere({ errorStatus: "Unresolved" })
+  } else if (canSeeTriggersAndException(user, recordType)) {
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where({ triggerStatus: "Unresolved" }).orWhere({ errorStatus: "Unresolved" })
+      })
+    )
+  }
+  return query
 }
 
 const filterIfResolved = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
-  reasons: Reason[],
+  recordType?: RecordType | null,
   resolvedByUsername?: string
 ) => {
-  query.andWhere({
-    ...(shouldFilterForTriggers(user, reasons) ? { triggerStatus: "Resolved" } : {}),
-    ...(shouldFilterForExceptions(user, reasons) ? { errorStatus: "Resolved" } : {}),
-    ...(canSeeTriggersAndException(user, reasons) ? { triggerStatus: "Resolved", errorStatus: "Resolved" } : {})
-  })
+  if (shouldFilterForTriggers(user, recordType)) {
+    query.andWhere({ triggerStatus: "Resolved" })
+  } else if (shouldFilterForExceptions(user, recordType)) {
+    query.andWhere({ errorStatus: "Resolved" })
+  } else if (canSeeTriggersAndException(user, recordType)) {
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where({ triggerStatus: Not("Unresolved") }).andWhere({ errorStatus: Not("Unresolved") })
+      })
+    )
+  }
 
   if (resolvedByUsername || !user.hasAccessTo[Permission.ListAllCases]) {
     query.andWhere(
       new Brackets((qb) => {
-        if (reasonFilterOnlyIncludesTriggers(reasons)) {
+        if (recordTypeFilterOnlyIncludesTriggers(recordType)) {
           qb.where({
             triggerResolvedBy: resolvedByUsername ?? user.username
           })
-        } else if (reasonFilterOnlyIncludesExceptions(reasons)) {
+        } else if (recordTypeFilterOnlyIncludesExceptions(recordType)) {
           qb.where({
             errorResolvedBy: resolvedByUsername ?? user.username
           })
@@ -78,35 +86,36 @@ const filterIfResolved = (
   return query
 }
 
-const filterByReasons = (
+const filterByReason = (
   query: SelectQueryBuilder<CourtCase>,
-  reasons: Reason[],
+  reason: RecordType,
   resolvedOrUnresolved?: FindOperator<null>
 ): SelectQueryBuilder<CourtCase> => {
+  console.log(null && resolvedOrUnresolved)
   query.andWhere(
     new Brackets((qb) => {
-      if (reasons?.includes(Reason.Triggers)) {
+      if (reason === RecordType.Triggers) {
         qb.where({
-          triggerCount: MoreThan(0),
+          triggerStatus: Not(null),
           triggerResolvedTimestamp: resolvedOrUnresolved
         })
       }
 
-      if (reasons?.includes(Reason.Exceptions)) {
+      if (reason === RecordType.Exceptions) {
         qb.orWhere({
-          errorCount: MoreThan(0),
+          errorStatus: Not(null),
           errorResolvedTimestamp: resolvedOrUnresolved
         })
       }
 
-      if (reasons?.includes(Reason.Bails)) {
-        Object.keys(BailCodes).forEach((triggerCode, i) => {
-          const paramName = `bails${i}`
-          qb.orWhere(`trigger.trigger_code ilike '%' || :${paramName} || '%'`, {
-            [paramName]: triggerCode
-          })
-        })
-      }
+      // if (reasons?.includes(Reason.Bails)) {
+      //   Object.keys(BailCodes).forEach((triggerCode, i) => {
+      //     const paramName = `bails${i}`
+      //     qb.orWhere(`trigger.trigger_code ilike '%' || :${paramName} || '%'`, {
+      //       [paramName]: triggerCode
+      //     })
+      //   })
+      // }
     })
   )
   return query
@@ -115,21 +124,20 @@ const filterByReasons = (
 const filterByReasonAndResolutionStatus = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
-  reasons?: Reason[],
+  recordType?: RecordType | null,
   caseState?: CaseState,
   resolvedByUsername?: string
 ): SelectQueryBuilder<CourtCase> => {
-  reasons = reasons ?? []
   caseState = caseState ?? "Unresolved"
 
-  if (reasons) {
-    query = filterByReasons(query, reasons, caseState === "Unresolved" ? IsNull() : Not(IsNull()))
+  if (recordType) {
+    query = filterByReason(query, recordType, caseState === "Unresolved" ? IsNull() : Not(IsNull()))
   }
 
   if (caseState === "Unresolved") {
-    query = filterIfUnresolved(query, user, reasons)
+    query = filterIfUnresolved(query, user, recordType)
   } else if (caseState === "Resolved") {
-    query = filterIfResolved(query, user, reasons, resolvedByUsername)
+    query = filterIfResolved(query, user, recordType, resolvedByUsername)
   }
 
   return query

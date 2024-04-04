@@ -5,7 +5,7 @@ import { useCurrentUser } from "context/CurrentUserContext"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { createUseStyles } from "react-jss"
-import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { CaseState, RecordType, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
 import { anyFilterChips } from "utils/filterChips"
@@ -19,7 +19,7 @@ interface Props {
   courtName: string | null
   reasonCodes: string[]
   ptiurn: string | null
-  reasons: Reason[]
+  recordType: RecordType | null
   caseAge: string[]
   caseAgeCounts: Record<string, number>
   dateRange: SerializedCourtDateRange | null
@@ -41,7 +41,7 @@ const useStyles = createUseStyles({
 })
 
 const CourtCaseFilter: React.FC<Props> = ({
-  reasons,
+  recordType,
   defendantName,
   ptiurn,
   courtName,
@@ -69,9 +69,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
     reasonCodes: reasonCodes.map((reasonCode) => ({ value: reasonCode, state: "Applied", label: reasonCode })),
     ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
-    reasonFilter: reasons.map((reason) => {
-      return { value: reason, state: "Applied" }
-    }),
+    recordTypeFilter: recordType !== null ? { value: recordType, state: "Applied" } : {},
     myCasesFilter: myCases ? { value: true, state: "Applied", label: "Cases locked to me" } : {}
   }
   const [state, dispatch] = useReducer(filtersReducer, initialFilterState)
@@ -243,12 +241,8 @@ const CourtCaseFilter: React.FC<Props> = ({
               <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"} classNames="filters-reason">
                 <ReasonFilterOptions
-                  reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
-                  reasonOptions={
-                    currentUser.hasAccessTo[Permission.Triggers] && !currentUser.hasAccessTo[Permission.Exceptions]
-                      ? [Reason.Bails]
-                      : undefined
-                  }
+                  recordTypeValue={state.recordTypeFilter.value}
+                  recordTypeOptions={undefined}
                   dispatch={dispatch}
                 />
               </ExpandingFilters>

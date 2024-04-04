@@ -1,3 +1,3 @@
-import { Reason } from "types/CaseListQueryParams"
+import { RecordType } from "types/CaseListQueryParams"
 
-export const reasonOptions: Reason[] = [Reason.Bails, Reason.Exceptions, Reason.Triggers]
+export const recordTypeOptions: RecordType[] = [RecordType.Exceptions, RecordType.Triggers]
