@@ -1,4 +1,6 @@
 import hashedPassword from "../../../fixtures/hashedPassword"
+import dummyMultipleHearingResultsAho from "../../../../test/test-data/multipleHearingResultsOnOffence.json"
+import { clickTab, loginAndGoToUrl } from "../../../support/helpers"
 
 describe("“next offence” and “previous offence” buttons", () => {
   before(() => {
@@ -63,5 +65,18 @@ describe("“next offence” and “previous offence” buttons", () => {
     cy.get("tbody tr:first-child a.govuk-link").click()
     cy.get("button").should("not.contain.text", "Previous offence")
     cy.get("button").should("not.contain.text", "Next offence")
+  })
+
+  it("Should show new lines in hearing result text", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: dummyMultipleHearingResultsAho.hearingOutcomeXml,
+        errorCount: 1
+      }
+    ])
+
+    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+    clickTab("Offences")
   })
 })

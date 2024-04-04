@@ -50,6 +50,8 @@ export const HearingResult = ({
   const updatedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const isCaseEditable =
     courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME && errorStatus === "Unresolved"
+  const text = result.ResultVariableText
+  const formattedResult = text ? text.replace(/\.(?!$)/g, ".<br/><br/>") : ""
 
   return (
     <Table>
@@ -130,11 +132,13 @@ export const HearingResult = ({
         />
       </EditableFieldTableRow>
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
-      <TableRow label="Hearing result text" value={result.ResultVariableText} />
+      <TableRow
+        label="Hearing result text"
+        value={<div dangerouslySetInnerHTML={{ __html: formattedResult }} />}
+      />{" "}
       <TableRow label="PNC disposal type" value={result.PNCDisposalType} />
       <TableRow label="Result class" value={result.ResultClass} />
       <TableRow label="PNC adjudication exists" value={getYesOrNo(result.PNCAdjudicationExists)} />
-
       <ConditionalRender isRendered={typeof result.Urgent !== "undefined"}>
         <TableRow label="Urgent" value={getUrgentYesOrNo(result.Urgent?.urgent)} />
         <TableRow label="Urgency" value={getNumberOfHours(result.Urgent?.urgency)} />
