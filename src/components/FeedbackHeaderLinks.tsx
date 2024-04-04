@@ -65,7 +65,9 @@ const FeedbackHeaderLinks = ({ csrfToken, backLinkUrl, skipLinkUrl }: Props) => 
         </BackLink>
       </BackLinkWrapper>
       <Form method="POST" action={skipLinkUrl} csrfToken={csrfToken}>
-        <SkipLink type="submit">{"Skip feedback"}</SkipLink>
+        <SkipLink id="skip-feedback" type="submit">
+          {"Skip feedback"}
+        </SkipLink>
       </Form>
     </LinksRow>
   )
