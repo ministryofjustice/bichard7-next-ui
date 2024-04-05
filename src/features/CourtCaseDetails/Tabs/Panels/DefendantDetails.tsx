@@ -43,6 +43,21 @@ const useStyles = createUseStyles({
   }
 })
 
+const formatAsn = (input: string) => {
+  const sanitized = input.replace(/[^\dA-Z]/gi, "").toUpperCase()
+  const regex = /(\d{2})([\dA-Z]{4})(\d{2})(\d{4})([A-Z]{1})/
+  const match = sanitized.match(regex)
+
+  console.log({ sanitized, match })
+
+  if (match) {
+    console.log("match found")
+    return match.slice(1).join("/")
+  }
+  console.log("no match")
+  return input
+}
+
 export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
   const classes = useStyles()
   const { courtCase, amendments, amend } = useCourtCase()
@@ -95,10 +110,11 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
 
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const asn = e.target.value.toUpperCase()
-    setIsValidAsn(isAsnFormatValid(asn))
+    const sanitized = asn.replace(/[^\dA-Z]/gi, "").toUpperCase()
+    setIsValidAsn(isAsnFormatValid(sanitized))
     setIsAsnChanged(true)
-    setAsnString(asn)
-    amend("asn")(asn)
+    setAsnString(sanitized)
+    amend("asn")(sanitized)
   }
 
   const asnFormGroupError = isValidAsn ? "" : "govuk-form-group--error"
@@ -146,12 +162,12 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
           >
             <Label>{"Enter the ASN"}</Label>
             <HintText>{"Long form ASN"}</HintText>
-            {/* <HintText>
+            <HintText>
               {
                 "Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 digits / 1 check letter "
               }
             </HintText>
-            <HintText>{"Example: 22 49AB 49 1234 C"}</HintText> */}
+            <HintText>{"Example: 22 49AB 49 1234 C"}</HintText>
             <div className={showError() ? `${asnFormGroupError}` : ""}>
               {showError() && (
                 <p id="event-name-error" className="govuk-error-message">
@@ -159,11 +175,14 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
                 </p>
               )}
               <Input
+                placeholder="22 / 49AB / 49 / 1234 / C"
+                type="text"
+                inputMode="text"
                 className={`${classes.asnInput}`}
                 id={"asn"}
                 name={"asn"}
                 onChange={handleAsnChange}
-                value={amendments.asn ?? ""}
+                value={formatAsn(amendments.asn ?? "")}
                 error={!isValidAsn}
               />
             </div>
