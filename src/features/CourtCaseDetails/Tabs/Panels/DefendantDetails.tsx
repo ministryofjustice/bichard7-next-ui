@@ -35,38 +35,26 @@ const useStyles = createUseStyles({
 
   asnInput: {
     width: "15rem"
+  },
+  "save-button": {
+    marginTop: "0.94rem",
+    marginBottom: 0
   }
 })
 
 const formatAsn = (input: string) => {
   const sanitized = input.replace(/[^\dA-Z]/gi, "").toUpperCase()
-  // example number: 22 / 49AB / 49 / 1234 / C
-  // TODO: this is a bit of a hack, but it works for now. We should probably use a regex to format the ASN. Refactor this when we have time.
-  let formatted = sanitized
-  if (sanitized.length > 2) {
-    formatted = `${formatted.slice(0, 2)} / ${formatted.slice(2)}`
-  }
-  if (sanitized.length > 6) {
-    formatted = `${formatted.slice(0, 9)} / ${formatted.slice(9)}`
-  }
-  if (sanitized.length > 8) {
-    formatted = `${formatted.slice(0, 14)} / ${formatted.slice(14)}`
-  }
-  if (sanitized.length > 12) {
-    formatted = `${formatted.slice(0, formatted.length - 1)} / ${formatted.slice(formatted.length - 1)}`
-  }
+  const regex = /(\d{2})([\dA-Z]{4})(\d{2})(\d{4})([A-Z]{1})/
+  const match = sanitized.match(regex)
 
-  // const regex = /(\d{1,2})?([\dA-Z]{1,4})?(\d{1,2})?(\d{1,4})?([A-Z]{1})?/
-  // const match = sanitized.match(regex)
+  console.log({ sanitized, match })
 
-  // console.log({ sanitized, match })
-
-  // if (match) {
-  //   console.log("match found")
-  //   return match.slice(1).filter(a => a !== undefined).join("/")
-  // }
-  // console.log("no match")
-  return formatted
+  if (match) {
+    console.log("match found")
+    return match.slice(1).join("/")
+  }
+  console.log("no match")
+  return input
 }
 
 export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
@@ -170,11 +158,15 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
             label="ASN"
             hasExceptions={isAsnEditable}
             isEditable={isAsnEditable}
-            inputLabel={"Enter the ASN"}
-            // hintText={`Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 \
-            // digits / 1 check letter\nExample: 22 49AB 49 1234 C`}
-            hintText="Long form ASN"
           >
+            <Label>{"Enter the ASN"}</Label>
+            <HintText>{"Long form ASN"}</HintText>
+            <HintText>
+              {
+                "Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 digits / 1 check letter "
+              }
+            </HintText>
+            <HintText>{"Example: 22 49AB 49 1234 C"}</HintText>
             <div className={showError() ? `${asnFormGroupError}` : ""}>
               {showError() && (
                 <p id="event-name-error" className="govuk-error-message">
