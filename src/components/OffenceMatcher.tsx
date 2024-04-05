@@ -18,7 +18,7 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
 
   const offenceCode = getOffenceCode(offence)
 
-  const onOffenceChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const onSelectionChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
     amend("offenceReasonSequence")({
       offenceIndex,
       value: e.target.value
@@ -32,8 +32,8 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
   // TODO: prevent matching twice
   // TODO: match dates
   return (
-    <select className="govuk-select" onChange={onOffenceChanged}>
-      <option disabled selected hidden></option>
+    <select className="govuk-select" onChange={onSelectionChanged}>
+      <option disabled selected hidden value=""></option>
       {pncQuery?.courtCases?.map((c) => {
         return (
           <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>

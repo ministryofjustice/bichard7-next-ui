@@ -158,6 +158,9 @@ export const OffenceDetails = ({
     return committedOnBailWithDescription
   }
 
+  const displayOffenceMatcher =
+    !!offenceMatchingException && exceptions.some((e) => [ExceptionCode.HO100310].includes(e.code))
+
   return (
     <div className={`${className} ${classes.wrapper}`}>
       <OffenceNavigation
@@ -208,10 +211,12 @@ export const OffenceDetails = ({
             value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
           />
 
-          {/* Matched PNC offence */}
-          {/* TODO: only enable for 310s */}
-          {/* TODO: reenable this in offence matching PR */}
-          {false && (
+          {/* 
+              If we don't display the exception matcher, 
+              we should display the PNC sequence number
+              input box below.
+          */}
+          {offenceMatchingException && displayOffenceMatcher && (
             <ExceptionFieldTableRow
               label={"Matched PNC offence"}
               value={<OffenceMatcher offenceIndex={selectedOffenceIndex} offence={offence} />}
@@ -225,7 +230,9 @@ export const OffenceDetails = ({
             <ExceptionFieldTableRow
               badgeText={offenceMatchingException.badge}
               label={"PNC sequence number"}
-              value={<Input type="text" maxLength={3} className={classes.pncSequenceNumber} />} // TODO: remove this for offence matching
+              value={
+                !displayOffenceMatcher && <Input type="text" maxLength={3} className={classes.pncSequenceNumber} />
+              }
             >
               {" "}
               <>
