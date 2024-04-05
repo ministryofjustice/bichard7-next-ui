@@ -33,14 +33,15 @@ describe("Case list", () => {
     it("Should display no filters chips and a placeholder message as the default state", () => {
       cy.get(".moj-filter__tag").should("not.exist")
       cy.get(".govuk-checkboxes__item").should("not.be.checked")
-      cy.get(".govuk-radios__input").should("not.be.checked")
+      cy.get(".govuk-radios__input[name='reason']").should("be.checked")
+      cy.get(".govuk-radios__input").not("[name='reason']").should("not.be.checked")
 
       cy.get(".moj-filter__selected").should("exist").should("contain.text", "No filters selected")
     })
 
     describe("Reason", () => {
-      it("Should display the Trigger filter chip when selected", () => {
-        cy.get(".govuk-checkboxes__item").contains("Triggers").click()
+      it("Should display the Triggers filter chip when selected", () => {
+        cy.get(".govuk-radios__item").contains("Triggers").click()
 
         // Check if the correct heading and filter label are applied
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
@@ -48,8 +49,8 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
       })
 
-      it("Should remove the Trigger filter chip when the chip is clicked and remove the selected option in the filter panel", () => {
-        cy.get(".govuk-checkboxes__item").contains("Triggers").click()
+      it("Should remove the Triggers filter chip when the chip is clicked and select All in the filter panel", () => {
+        cy.get(".govuk-radios__item").contains("Triggers").click()
 
         // Check if the correct heading and filter label are applied
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
@@ -57,34 +58,32 @@ describe("Case list", () => {
         cy.get(".moj-filter__tag").contains("Exceptions").should("not.exist")
 
         removeFilterChip()
+
+        cy.get("input#triggers-reason").should("not.be.checked")
+        cy.get("input#all-reason").should("be.checked")
       })
 
-      it("Should display Trigger and Exception filter chips when selected", () => {
-        // Shows filters and clicks both options
-        cy.get(".govuk-checkboxes__item").contains("Triggers").click()
-        cy.get(".govuk-checkboxes__item").contains("Exception").click()
+      it("Should display the Exceptions filter chip when selected", () => {
+        cy.get(".govuk-radios__item").contains("Exceptions").click()
 
-        // Check if the correct heading for chips and filter labels are applied
-        cy.get("h3.govuk-heading-s").contains("Reason").should("exist")
-        cy.get(".moj-filter__tag").contains("Trigger").should("exist")
-        cy.get(".moj-filter__tag").contains("Exception").should("exist")
+        // Check if the correct heading and filter label are applied
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
+        cy.get(".moj-filter__tag").contains("Triggers").should("not.exist")
+        cy.get(".moj-filter__tag").contains("Exceptions").should("exist")
       })
 
-      it("Should remove the Trigger and Exception filter chips when both chips are clicked and remove the selected option in the filter panel", () => {
-        // Shows filters and clicks both options
-        cy.get(".govuk-checkboxes__item").contains("Triggers").click()
-        cy.get(".govuk-checkboxes__item").contains("Exception").click()
+      it("Should remove the Exceptions filter chip when the chip is clicked and select All in the filter panel", () => {
+        cy.get(".govuk-radios__item").contains("Exceptions").click()
 
-        // Check if the correct heading for chips and filter labels are applied
-        cy.get("h3.govuk-heading-s").contains("Reason").should("exist")
-        cy.get(".moj-filter__tag").contains("Triggers").should("exist")
-        cy.get(".moj-filter__tag").contains("Exception").should("exist")
-        cy.get(".moj-filter-tags").children().should("have.length", 2)
+        // Check if the correct heading and filter label are applied
+        cy.get(".govuk-heading-s").contains("Reason").should("exist")
+        cy.get(".moj-filter__tag").contains("Triggers").should("not.exist")
+        cy.get(".moj-filter__tag").contains("Exceptions").should("exist")
 
-        // Removes the two filter chips
-        cy.get("li button.moj-filter__tag").contains("Triggers").trigger("click")
-        cy.get("li button.moj-filter__tag").contains("Exception").trigger("click")
-        cy.get(".moj-filter__tag").should("not.exist")
+        removeFilterChip()
+
+        cy.get("input#exceptions-reason").should("not.be.checked")
+        cy.get("input#all-reason").should("be.checked")
       })
     })
 
@@ -260,7 +259,7 @@ describe("Case list", () => {
     describe("Selecting multiple filter chips", () => {
       it("Should allow you to select 'Trigger', 'Case age', 'Cases locked to me'. This should display relevant header for each filter chip", () => {
         // Open filters and build filter chip query
-        cy.get(".govuk-checkboxes__item").contains("Triggers").click()
+        cy.get(".govuk-radios__item").contains("Triggers").click()
 
         filterByCaseAge(`label[for="case-age-2-days-ago"]`)
         cy.get(`label[for="my-cases-filter"]`).click()
@@ -290,7 +289,7 @@ describe("Case list", () => {
 
     describe('Applied filter chips to "Filter applied" section', () => {
       it("Should display the Trigger filter chip when selected", () => {
-        cy.get(".govuk-checkboxes__item").contains("Triggers").click()
+        cy.get(".govuk-radios__item").contains("Triggers").click()
 
         // Check if the correct heading and filter label are applied
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
@@ -303,7 +302,7 @@ describe("Case list", () => {
 
         // Clears filter chip and check the checkbox is deselected
         cy.get('a[href*="/bichard?keywords="]').contains("Clear filters").click()
-        cy.get(".govuk-checkboxes__item").contains("Triggers").should("not.be.checked")
+        cy.get(".govuk-radios__item").contains("Triggers").should("not.be.checked")
       })
 
       it("Should display the 'Locked to me' filter chip when selected", () => {
