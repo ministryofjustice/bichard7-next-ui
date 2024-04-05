@@ -293,7 +293,7 @@ describe("Filter cases by resolution status", () => {
       {
         description: "Shouldn't show cases to a user with no permissions when a reason filter is passed",
         filters: {
-          reasons: [Reason.Triggers]
+          reason: Reason.Triggers
         },
         user: noGroupsUser,
         expectedCases: []
@@ -422,7 +422,7 @@ describe("Filter cases by resolution status", () => {
           "Should return cases with unresolved triggers when filtering for unresolved triggers as general handler",
         filters: {
           caseState: "Unresolved",
-          reasons: [Reason.Triggers]
+          reason: Reason.Triggers
         },
         user: generalHandler,
         expectedCases: [
@@ -437,7 +437,7 @@ describe("Filter cases by resolution status", () => {
           "Should return cases with resolved triggers when filtering for resolved triggers as a general handler",
         filters: {
           caseState: "Resolved",
-          reasons: [Reason.Triggers]
+          reason: Reason.Triggers
         },
         user: generalHandler,
         expectedCases: [
@@ -451,7 +451,7 @@ describe("Filter cases by resolution status", () => {
           "Should return cases with unresolved exceptions when filtering for unresolved exceptions as a general handler",
         filters: {
           caseState: "Unresolved",
-          reasons: [Reason.Exceptions]
+          reason: Reason.Exceptions
         },
         user: generalHandler,
         expectedCases: [
@@ -466,7 +466,7 @@ describe("Filter cases by resolution status", () => {
           "Should return cases with resolved exceptions when filtering for resolved exceptions as a general handler",
         filters: {
           caseState: "Resolved",
-          reasons: [Reason.Exceptions]
+          reason: Reason.Exceptions
         },
         user: generalHandler,
         expectedCases: [
@@ -477,74 +477,10 @@ describe("Filter cases by resolution status", () => {
         ]
       },
       {
-        description:
-          "Should return cases that have resolved bails when filtering for resolved bails as a general handler",
-        filters: {
-          caseState: "Resolved",
-          reasons: [Reason.Bails]
-        },
-        user: generalHandler,
-        expectedCases: ["No exceptions/Bails Trigger Resolved by generalHandler"]
-      },
-      {
-        description:
-          "Should return cases that have unresolved bails when filtering for unresolved bails as a general handler",
-        filters: {
-          caseState: "Unresolved",
-          reasons: [Reason.Bails]
-        },
-        user: generalHandler,
-        expectedCases: ["No exceptions/Bails Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
-      },
-      {
-        description:
-          "Should return cases that have resolved bails when filtering for resolved bails as a trigger handler",
-        filters: {
-          caseState: "Resolved",
-          reasons: [Reason.Bails]
-        },
-        user: triggerHandler,
-        expectedCases: ["No exceptions/Bails Trigger Resolved by triggerHandler"]
-      },
-      {
-        description:
-          "Should return cases that have unresolved bails when filtering for unresolved bails as a trigger handler",
-        filters: {
-          caseState: "Unresolved",
-          reasons: [Reason.Bails]
-        },
-        user: triggerHandler,
-        expectedCases: ["No exceptions/Bails Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
-      },
-      {
-        description: "Should return cases that have resolved bails when filtering for resolved bails as a supervisor",
-        filters: {
-          caseState: "Resolved",
-          reasons: [Reason.Bails]
-        },
-        user: supervisor,
-        expectedCases: [
-          "No exceptions/Bails Trigger Resolved by someoneElse",
-          "No exceptions/Bails Trigger Resolved by triggerHandler",
-          "No exceptions/Bails Trigger Resolved by generalHandler",
-          "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse"
-        ]
-      },
-      {
-        description:
-          "Should return cases that have unresolved bails when filtering for unresolved bails as a supervisor",
-        filters: {
-          caseState: "Unresolved",
-          reasons: [Reason.Bails]
-        },
-        user: supervisor,
-        expectedCases: ["No exceptions/Bails Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
-      },
-      {
         description: "Should see no cases when filtering for resolved exceptions as a trigger handler",
         filters: {
           caseState: "Resolved",
-          reasons: [Reason.Exceptions]
+          reason: Reason.Exceptions
         },
         user: triggerHandler,
         expectedCases: []
@@ -554,7 +490,7 @@ describe("Filter cases by resolution status", () => {
           "Should only see cases with unresolved triggers when filtering for unresolved exceptions as a trigger handler",
         filters: {
           caseState: "Unresolved",
-          reasons: [Reason.Exceptions]
+          reason: Reason.Exceptions
         },
         user: triggerHandler,
         expectedCases: ["Exceptions Unresolved/Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
@@ -563,7 +499,7 @@ describe("Filter cases by resolution status", () => {
         description: "Should see no cases when filtering for resolved triggers as a exception handler",
         filters: {
           caseState: "Resolved",
-          reasons: [Reason.Triggers]
+          reason: Reason.Triggers
         },
         user: exceptionHandler,
         expectedCases: []
@@ -573,29 +509,10 @@ describe("Filter cases by resolution status", () => {
           "Should only see cases with unresolved exceptions when filtering for unresolved triggers as a exception handler",
         filters: {
           caseState: "Unresolved",
-          reasons: [Reason.Triggers]
+          reason: Reason.Triggers
         },
         user: exceptionHandler,
         expectedCases: ["Exceptions Unresolved/Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
-      },
-      {
-        description: "Should see no cases when filtering for resolved bails as a exception handler",
-        filters: {
-          caseState: "Resolved",
-          reasons: [Reason.Bails]
-        },
-        user: exceptionHandler,
-        expectedCases: []
-      },
-      {
-        description:
-          "Should only see cases with unresolved exceptions when filtering for unresolved bails as an exception handler",
-        filters: {
-          caseState: "Unresolved",
-          reasons: [Reason.Bails]
-        },
-        user: exceptionHandler,
-        expectedCases: ["Exceptions Unresolved/Bails Trigger Unresolved"]
       },
       {
         description:
@@ -692,7 +609,7 @@ describe("Filter cases by resolution status", () => {
         description: "Should be able to combine multiple resolution filters as a general handler",
         filters: {
           caseState: "Unresolved",
-          reasons: [Reason.Exceptions, Reason.Triggers, Reason.Bails]
+          reason: Reason.All
         },
         user: generalHandler,
         expectedCases: [
@@ -708,7 +625,7 @@ describe("Filter cases by resolution status", () => {
         description: "Should be able to combine multiple resolution filters with resolved filter as a general handler",
         filters: {
           caseState: "Resolved",
-          reasons: [Reason.Exceptions, Reason.Triggers, Reason.Bails]
+          reason: Reason.All
         },
         user: generalHandler,
         expectedCases: [
@@ -724,7 +641,7 @@ describe("Filter cases by resolution status", () => {
         description: "Should be able to combine multiple resolution filters with unresolved filter as a supervisor",
         filters: {
           caseState: "Unresolved",
-          reasons: [Reason.Exceptions, Reason.Triggers, Reason.Bails]
+          reason: Reason.All
         },
         user: supervisor,
         expectedCases: [
@@ -740,7 +657,7 @@ describe("Filter cases by resolution status", () => {
         description: "Should be able to combine multiple resolution filters with resolved filter as a supervisor",
         filters: {
           caseState: "Resolved",
-          reasons: [Reason.Exceptions, Reason.Triggers, Reason.Bails]
+          reason: Reason.All
         },
         user: supervisor,
         expectedCases: [
@@ -759,7 +676,7 @@ describe("Filter cases by resolution status", () => {
         description: "Should be able to combine Exceptions and Triggers filters as a general handler",
         filters: {
           caseState: "Unresolved",
-          reasons: [Reason.Exceptions, Reason.Triggers]
+          reason: Reason.All
         },
         user: generalHandler,
         expectedCases: [
@@ -775,7 +692,7 @@ describe("Filter cases by resolution status", () => {
         description: "Should be able to combine Exceptions and Triggers with resolved filter as a general handler",
         filters: {
           caseState: "Resolved",
-          reasons: [Reason.Exceptions, Reason.Triggers]
+          reason: Reason.All
         },
         user: generalHandler,
         expectedCases: [
@@ -791,7 +708,7 @@ describe("Filter cases by resolution status", () => {
         description: "Should be able to combine Exceptions and Triggers filters as a supervisor",
         filters: {
           caseState: "Unresolved",
-          reasons: [Reason.Exceptions, Reason.Triggers]
+          reason: Reason.All
         },
         user: supervisor,
         expectedCases: [
@@ -807,77 +724,11 @@ describe("Filter cases by resolution status", () => {
         description: "Should be able to combine Exceptions and Triggers with resolved filter as a supervisor",
         filters: {
           caseState: "Resolved",
-          reasons: [Reason.Exceptions, Reason.Triggers]
+          reason: Reason.All
         },
         user: supervisor,
         expectedCases: [
           "Exceptions Unresolved/Trigger Resolved by someoneElse",
-          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
-          "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler",
-          "Exceptions Resolved by someoneElse/Trigger Resolved by generalHandler",
-          "Exceptions Resolved by generalHandler/Trigger Resolved by someoneElse",
-          "Exceptions Resolved by generalHandler/Trigger Resolved by generalHandler",
-          "No exceptions/Bails Trigger Resolved by someoneElse",
-          "No exceptions/Bails Trigger Resolved by triggerHandler",
-          "Exceptions Resolved by generalHandler/No triggers",
-          "No exceptions/Bails Trigger Resolved by generalHandler",
-          "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse"
-        ]
-      },
-      {
-        description: "Should be able to combine Exceptions and Bails filters as a general handler",
-        filters: {
-          caseState: "Unresolved",
-          reasons: [Reason.Exceptions, Reason.Bails]
-        },
-        user: generalHandler,
-        expectedCases: [
-          "Exceptions Unresolved/Trigger Resolved by someoneElse",
-          "Exceptions Unresolved/Trigger Unresolved",
-          "No exceptions/Bails Trigger Unresolved",
-          "Exceptions Unresolved/No triggers",
-          "Exceptions Unresolved/Bails Trigger Unresolved"
-        ]
-      },
-      {
-        description: "Should be able to combine Exceptions and Bails with resolved filter as a general handler",
-        filters: {
-          caseState: "Resolved",
-          reasons: [Reason.Exceptions, Reason.Bails]
-        },
-        user: generalHandler,
-        expectedCases: [
-          "Exceptions Resolved by someoneElse/Trigger Resolved by generalHandler",
-          "Exceptions Resolved by generalHandler/Trigger Resolved by someoneElse",
-          "Exceptions Resolved by generalHandler/Trigger Resolved by generalHandler",
-          "Exceptions Resolved by generalHandler/No triggers",
-          "No exceptions/Bails Trigger Resolved by generalHandler",
-          "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse"
-        ]
-      },
-      {
-        description: "Should be able to combine Exceptions and Bails filters as a supervisor",
-        filters: {
-          caseState: "Unresolved",
-          reasons: [Reason.Exceptions, Reason.Bails]
-        },
-        user: supervisor,
-        expectedCases: [
-          "Exceptions Unresolved/Trigger Resolved by someoneElse",
-          "Exceptions Unresolved/Trigger Unresolved",
-          "No exceptions/Bails Trigger Unresolved",
-          "Exceptions Unresolved/No triggers",
-          "Exceptions Unresolved/Bails Trigger Unresolved"
-        ]
-      },
-      {
-        description: "Should be able to combine Exceptions and Bails with resolved filter as a supervisor",
-        filters: {
-          caseState: "Resolved",
-          reasons: [Reason.Exceptions, Reason.Bails]
-        },
-        user: supervisor,
-        expectedCases: [
           "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
           "Exceptions Resolved by exceptionHandler/Trigger Resolved by triggerHandler",
           "Exceptions Resolved by someoneElse/Trigger Resolved by generalHandler",
