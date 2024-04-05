@@ -1,5 +1,6 @@
 import { DATE_FNS } from "config"
-import { compareAsc } from "date-fns"
+import { compareAsc, parse } from "date-fns"
+import { enGB } from "date-fns/locale"
 
 const isValidNextHearingDate = (
   amendedNextHearingDate: string | undefined,
@@ -9,23 +10,14 @@ const isValidNextHearingDate = (
     return false
   }
 
-  const parsedDate = amendedNextHearingDate.match(/(\d{4})-(\d{2})-(\d{2})/)
+  const parsedDate = parse(amendedNextHearingDate, "yyyy-MM-dd", new Date(), { locale: enGB })
 
   if (!parsedDate) {
     return false
   }
 
-  const formattedNextHearingDate = new Date()
-  formattedNextHearingDate.setFullYear(
-    parseInt(parsedDate[1], 10),
-    // Month is 0 index. Go figure.
-    parseInt(parsedDate[2], 10) - 1,
-    parseInt(parsedDate[3], 10)
-  )
-  formattedNextHearingDate.setHours(0, 0, 0, 0)
-
   if (resultHearingDate) {
-    return compareAsc(formattedNextHearingDate, new Date(resultHearingDate)) === DATE_FNS.dateInFuture
+    return compareAsc(parsedDate, new Date(resultHearingDate)) === DATE_FNS.dateInFuture
   } else {
     return false
   }
