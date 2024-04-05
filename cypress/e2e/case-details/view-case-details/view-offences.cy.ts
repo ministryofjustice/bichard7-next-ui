@@ -66,17 +66,25 @@ describe("“next offence” and “previous offence” buttons", () => {
     cy.get("button").should("not.contain.text", "Previous offence")
     cy.get("button").should("not.contain.text", "Next offence")
   })
+})
 
-  it("Should show new lines in hearing result text", () => {
-    cy.task("insertCourtCasesWithFields", [
-      {
-        orgForPoliceFilter: "01",
-        hearingOutcome: dummyMultipleHearingResultsAho.hearingOutcomeXml,
-        errorCount: 1
-      }
-    ])
+it("Should show line breaks in hearing result text", () => {
+  cy.task("insertCourtCasesWithFields", [
+    {
+      orgForPoliceFilter: "01",
+      hearingOutcome: dummyMultipleHearingResultsAho.hearingOutcomeXml,
+      errorCount: 1
+    }
+  ])
 
-    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
-    clickTab("Offences")
-  })
+  loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+  clickTab("Offences")
+
+  cy.get("tbody tr:first-child a.govuk-link").click()
+  cy.get(".result-text .row-value")
+    .eq(3)
+    .should(
+      "have.text",
+      "Disqualified for holding or obtaining a driving licence for 12 month(s).\n\nDisqualification obligatory for the offence.\n\n Driving record endorsed.\n\n Section 34(1) Road Traffic Offenders Act 1988."
+    )
 })

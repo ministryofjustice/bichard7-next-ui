@@ -24,7 +24,7 @@ import {
   getYesOrNo
 } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
-import DOMPurify from "dompurify"
+import { createUseStyles } from "react-jss"
 
 interface HearingResultProps {
   result: Result
@@ -34,6 +34,14 @@ interface HearingResultProps {
   errorStatus?: ResolutionStatus | null
 }
 
+const useStyles = createUseStyles({
+  resultText: {
+    "& .row-value": {
+      whiteSpace: "pre-line"
+    }
+  }
+})
+
 export const HearingResult = ({
   result,
   errorStatus,
@@ -41,6 +49,7 @@ export const HearingResult = ({
   resultIndex,
   selectedOffenceIndex
 }: HearingResultProps) => {
+  const classes = useStyles()
   const { courtCase, amendments, amend } = useCourtCase()
   const cjsErrorMessage = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
 
@@ -52,7 +61,7 @@ export const HearingResult = ({
   const isCaseEditable =
     courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME && errorStatus === "Unresolved"
   const text = result.ResultVariableText
-  const formattedResult = text ? text.replace(/\.(?!$)/g, ".<br/><br/>") : ""
+  const formattedResult = text?.replace(/([^\d])\.([^\d\n])/g, "$1.\n\n$2")
 
   return (
     <Table>
@@ -133,10 +142,7 @@ export const HearingResult = ({
         />
       </EditableFieldTableRow>
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
-      <TableRow
-        label="Hearing result text"
-        value={<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formattedResult) }} />}
-      />
+      <TableRow label="Hearing result text" value={formattedResult} className={`result-text ${classes.resultText}`} />
       <TableRow label="PNC disposal type" value={result.PNCDisposalType} />
       <TableRow label="Result class" value={result.ResultClass} />
       <TableRow label="PNC adjudication exists" value={getYesOrNo(result.PNCAdjudicationExists)} />

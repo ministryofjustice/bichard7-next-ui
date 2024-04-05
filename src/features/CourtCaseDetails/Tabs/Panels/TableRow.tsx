@@ -23,12 +23,12 @@ export const TableRow = ({ label, value, hintText, className }: TableRowProps) =
   const classes = useStyles()
   const rowClassName = `table-row__${label.replaceAll(/ /g, "-").toLowerCase()}`
   return (
-    <Table.Row className={`table-row ${rowClassName} ${classes.row} `}>
-      <Table.Cell>
+    <Table.Row className={`table-row ${rowClassName} ${classes.row} ${className}`}>
+      <Table.Cell className="row-label">
         <b>{label}</b>
         {hintText && <HintText className={classes.hintText}>{hintText}</HintText>}
       </Table.Cell>
-      <Table.Cell className={className}>{value}</Table.Cell>
+      <Table.Cell className="row-value">{value}</Table.Cell>
     </Table.Row>
   )
 }
