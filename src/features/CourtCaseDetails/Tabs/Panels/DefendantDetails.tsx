@@ -45,17 +45,32 @@ const useStyles = createUseStyles({
 
 const formatAsn = (input: string) => {
   const sanitized = input.replace(/[^\dA-Z]/gi, "").toUpperCase()
-  const regex = /(\d{2})([\dA-Z]{4})(\d{2})(\d{4})([A-Z]{1})/
-  const match = sanitized.match(regex)
-
-  console.log({ sanitized, match })
-
-  if (match) {
-    console.log("match found")
-    return match.slice(1).join("/")
+  // example number: 22 / 49AB / 49 / 1234 / C
+  let formatted = sanitized
+  if (sanitized.length > 2) {
+    formatted = `${formatted.slice(0, 2)} / ${formatted.slice(2)}`
   }
-  console.log("no match")
-  return input
+  if (sanitized.length > 6) {
+    formatted = `${formatted.slice(0, 9)} / ${formatted.slice(9)}`
+  }
+  if (sanitized.length > 8) {
+    formatted = `${formatted.slice(0, 14)} / ${formatted.slice(14)}`
+  }
+  if (sanitized.length > 12) {
+    formatted = `${formatted.slice(0, formatted.length - 1)} / ${formatted.slice(formatted.length - 1)}`
+  }
+
+  // const regex = /(\d{1,2})?([\dA-Z]{1,4})?(\d{1,2})?(\d{1,4})?([A-Z]{1})?/
+  // const match = sanitized.match(regex)
+
+  // console.log({ sanitized, match })
+
+  // if (match) {
+  //   console.log("match found")
+  //   return match.slice(1).filter(a => a !== undefined).join("/")
+  // }
+  // console.log("no match")
+  return formatted
 }
 
 export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
@@ -161,7 +176,7 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
             isEditable={isAsnEditable}
           >
             <Label>{"Enter the ASN"}</Label>
-            <HintText>{"Long form ASN"}</HintText>
+            {/* <HintText>{"Long form ASN"}</HintText> */}
             <HintText>
               {
                 "Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 digits / 1 check letter "
