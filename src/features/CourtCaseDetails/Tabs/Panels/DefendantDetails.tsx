@@ -21,7 +21,7 @@ import { useCourtCase } from "../../../../context/CourtCaseContext"
 import { AddressCell } from "./AddressCell"
 import { BailConditions } from "./BailConditions"
 import { TableRow } from "./TableRow"
-
+// TODO: import input mask to format ASN https://www.dhiwise.com/post/react-input-mask-creating-user-friendly-form-inputs & https://npmjs.com/package/react-input-mask
 interface DefendantDetailsProps {
   stopLeavingFn: (newValue: boolean) => void
 }
@@ -46,6 +46,7 @@ const useStyles = createUseStyles({
 const formatAsn = (input: string) => {
   const sanitized = input.replace(/[^\dA-Z]/gi, "").toUpperCase()
   // example number: 22 / 49AB / 49 / 1234 / C
+  // TODO: this is a bit of a hack, but it works for now. We should probably use a regex to format the ASN. Refactor this when we have time.
   let formatted = sanitized
   if (sanitized.length > 2) {
     formatted = `${formatted.slice(0, 2)} / ${formatted.slice(2)}`
