@@ -74,24 +74,30 @@ const filterIfResolved = (
   return query
 }
 
-const filterByReasons = (
+const filterByReason = (
   query: SelectQueryBuilder<CourtCase>,
   reason?: Reason,
   resolvedOrUnresolved?: FindOperator<null>
 ): SelectQueryBuilder<CourtCase> => {
   query.andWhere(
     new Brackets((qb) => {
-      if (reason?.includes(Reason.Triggers)) {
+      if (reason === Reason.Triggers) {
         qb.where({
           triggerCount: MoreThan(0),
           triggerResolvedTimestamp: resolvedOrUnresolved
         })
-      }
-
-      if (reason?.includes(Reason.Exceptions)) {
-        qb.orWhere({
+      } else if (reason === Reason.Exceptions) {
+        qb.where({
           errorCount: MoreThan(0),
           errorResolvedTimestamp: resolvedOrUnresolved
+        })
+      } else {
+        qb.where({
+          errorCount: MoreThan(0),
+          errorResolvedTimestamp: resolvedOrUnresolved
+        }).orWhere({
+          triggerCount: MoreThan(0),
+          triggerResolvedTimestamp: resolvedOrUnresolved
         })
       }
     })
@@ -109,7 +115,7 @@ const filterByReasonAndResolutionStatus = (
   caseState = caseState ?? "Unresolved"
 
   if (reason) {
-    query = filterByReasons(query, reason, caseState === "Unresolved" ? IsNull() : Not(IsNull()))
+    query = filterByReason(query, reason, caseState === "Unresolved" ? IsNull() : Not(IsNull()))
   }
 
   if (caseState === "Unresolved") {
