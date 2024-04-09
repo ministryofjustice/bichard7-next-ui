@@ -18,48 +18,30 @@ describe("Only shows relevant resolved cases to the user", () => {
 
   it("shows supervisors all resolved cases from their force", () => {
     const casesConfig = [
-      {
-        force: "011111",
-        resolved: true,
-        id: 0
-      },
-      {
-        force: "011111",
-        resolved: true,
-        id: 1
-      },
-      {
-        force: "011111",
-        resolved: false,
-        id: 2
-      },
-      {
-        force: "02",
-        resolved: true,
-        id: 3
-      },
-      {
-        force: "03",
-        resolved: false,
-        id: 4
-      },
-      {
-        force: "011111",
-        resolved: false,
-        id: 5
-      }
+      { force: "011111", resolved: true },
+      { force: "011111", resolved: true },
+      { force: "011111", resolved: false },
+      { force: "02", resolved: true },
+      { force: "03", resolved: false },
+      { force: "011111", resolved: false }
     ]
-    const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig) => {
+    const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig, index) => {
       const resolutionDate = subHours(new Date(), Math.random() * 100)
       return {
-        errorId: caseConfig.id,
+        errorId: index,
         orgForPoliceFilter: caseConfig.force,
-        resolutionTimestamp: caseConfig.resolved ? resolutionDate : null
+        resolutionTimestamp: caseConfig.resolved ? resolutionDate : null,
+        errorResolvedTimestamp: caseConfig.resolved ? resolutionDate : null,
+        errorStatus: caseConfig.resolved ? "Resolved" : "Unresolved",
+        errorCount: 1
       }
     })
     cy.task("insertCourtCasesWithFields", cases)
 
     loginAndGoToUrl("supervisor@example.com")
+
+    confirmMultipleFieldsDisplayed(["Case00002", "Case00005"])
+    confirmMultipleFieldsNotDisplayed(["Case00000", "Case00001", "Case00003", "Case00004"])
 
     cy.get(`label[for="resolved"]`).click()
     cy.get("#search").click()
@@ -70,52 +52,23 @@ describe("Only shows relevant resolved cases to the user", () => {
 
   it("shows handlers resolved cases that only they resolved exceptions for", () => {
     const casesConfig = [
-      {
-        force: "011111",
-        resolved: true,
-        resolvedBy: "Supervisor",
-        id: 0
-      },
-      {
-        force: "011111",
-        resolved: true,
-        resolvedBy: "Bichard01",
-        id: 1
-      },
-      {
-        force: "011111",
-        resolved: false,
-        id: 2
-      },
-      {
-        force: "02",
-        resolved: true,
-        resolvedBy: "Bichard02",
-        id: 3
-      },
-      {
-        force: "03",
-        resolved: false,
-        id: 4
-      },
-      {
-        force: "011111",
-        resolved: false,
-        id: 5
-      },
-      {
-        force: "011111",
-        resolved: true,
-        resolvedBy: "Bichard01",
-        id: 6
-      }
+      { force: "011111", resolved: true, resolvedBy: "Supervisor" },
+      { force: "011111", resolved: true, resolvedBy: "Bichard01" },
+      { force: "011111", resolved: false },
+      { force: "02", resolved: true, resolvedBy: "Bichard02" },
+      { force: "03", resolved: false },
+      { force: "011111", resolved: false },
+      { force: "011111", resolved: true, resolvedBy: "Bichard01" }
     ]
-    const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig) => {
+    const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig, errorId) => {
       const resolutionDate = subHours(new Date(), Math.random() * 100)
       return {
-        errorId: caseConfig.id,
+        errorId,
         orgForPoliceFilter: caseConfig.force,
         resolutionTimestamp: caseConfig.resolved ? resolutionDate : null,
+        errorCount: 1,
+        errorResolvedTimestamp: caseConfig.resolved ? resolutionDate : null,
+        errorStatus: caseConfig.resolved ? "Resolved" : "Unresolved",
         errorResolvedBy: caseConfig.resolvedBy ?? null
       }
     })
@@ -132,68 +85,40 @@ describe("Only shows relevant resolved cases to the user", () => {
 
   it("shows handlers resolved cases that only they resolved triggers for", () => {
     const casesConfig = [
-      {
-        force: "011111",
-        resolved: true,
-        resolvedBy: "Supervisor",
-        id: 0
-      },
-      {
-        force: "011111",
-        resolved: true,
-        resolvedBy: "Bichard01",
-        id: 1
-      },
-      {
-        force: "011111",
-        resolved: false,
-        id: 2
-      },
-      {
-        force: "02",
-        resolved: true,
-        resolvedBy: "Bichard02",
-        id: 3
-      },
-      {
-        force: "03",
-        resolved: false,
-        id: 4
-      },
-      {
-        force: "011111",
-        resolved: false,
-        id: 5
-      },
-      {
-        force: "011111",
-        resolved: true,
-        resolvedBy: "Bichard01",
-        id: 6
-      }
+      { force: "011111", resolved: true, resolvedBy: "Supervisor" },
+      { force: "011111", resolved: true, resolvedBy: "Bichard01" },
+      { force: "011111", resolved: false },
+      { force: "02", resolved: true, resolvedBy: "Bichard02" },
+      { force: "03", resolved: false },
+      { force: "011111", resolved: false },
+      { force: "011111", resolved: true, resolvedBy: "Bichard01" }
     ]
-    const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig) => {
+    const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig, errorId) => {
       const resolutionDate = subHours(new Date(), Math.random() * 100)
       return {
-        errorId: caseConfig.id,
+        errorId,
         orgForPoliceFilter: caseConfig.force,
-        resolutionTimestamp: caseConfig.resolved ? resolutionDate : null
+        resolutionTimestamp: caseConfig.resolved ? resolutionDate : null,
+        triggerCount: 1,
+        triggerResolvedTimestamp: caseConfig.resolved ? resolutionDate : null,
+        triggerStatus: caseConfig.resolved ? "Resolved" : "Unresolved",
+        triggerResolvedBy: caseConfig.resolvedBy ?? null
       }
     })
     cy.task("insertCourtCasesWithFields", cases)
 
-    casesConfig
-      .filter((c) => !!c.resolvedBy)
+    cases
+      .filter((c) => !!c.triggerResolvedBy)
       .forEach((caseConfig) => {
         cy.task("insertTriggers", {
-          caseId: caseConfig.id,
+          caseId: caseConfig.errorId,
           triggers: [
             {
-              triggerId: caseConfig.id,
+              triggerId: caseConfig.errorId,
               triggerCode: "TRPR0010",
               status: "Resolved",
               createdAt: new Date("2023-03-07T10:22:34.000Z"),
-              resolvedBy: caseConfig.resolvedBy,
+              resolvedBy: caseConfig.triggerResolvedBy,
               resolvedAt: new Date("2023-03-07T12:22:34.000Z")
             }
           ]
