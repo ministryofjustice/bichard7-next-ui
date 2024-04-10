@@ -1,5 +1,5 @@
 import { Table } from "govuk-react"
-import { createUseStyles } from "react-jss"
+import styled from "styled-components"
 import Badge, { BadgeColours } from "./Badge"
 import ErrorIcon from "./ErrorIcon"
 
@@ -18,63 +18,56 @@ type Props = {
   displayError?: boolean
 }
 
-const useStyles = createUseStyles({
-  label: {
-    verticalAlign: "top",
-    "& .error-icon": {
-      padding: ".62rem 0 .62rem 0"
-    }
-  },
-  content: {
-    verticalAlign: "top",
-    "& .badge-wrapper": {
-      paddingBottom: ".62rem",
-      display: "flex",
-      gap: ".62rem",
-      alignItems: "center"
-    },
-    "& .field-value": {
-      paddingBottom: ".62rem"
-    }
+const Label = styled(Table.Cell)`
+  vertical-align: top;
+
+  & .error-icon: {
+    padding: 0.62rem 0 0.62rem 0;
   }
-})
+`
+
+const Content = styled(Table.Cell)`
+  vertical-align: top;
+
+  & .badge-wrapper: {
+    padding-bottom: 0.62rem;
+    display: flex;
+    gap: 0.62rem;
+    align-items: center;
+  }
+
+  & .field-value: {
+    padding-bottom: 0.62rem;
+  }
+`
 
 const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, displayError, children }: Props) => {
-  const classes = useStyles()
-  const labelField = (
-    <>
-      <b>{label}</b>
-      {displayError !== false && (
-        <>
-          <div className="error-icon">
-            <ErrorIcon />
-          </div>
-          {children}
-        </>
-      )}
-    </>
-  )
-
-  const cellContent = (
-    <div>
-      {value && <div className="field-value">{value}</div>}
-      {badgeText && displayError !== false && (
-        <div className="badge-wrapper">
-          <Badge
-            className="error-badge"
-            isRendered={true}
-            colour={badgeColour ?? BadgeColours.Purple}
-            label={badgeText}
-          />
-        </div>
-      )}
-    </div>
-  )
-
   return (
     <Table.Row>
-      <Table.Cell className={classes.label}>{labelField}</Table.Cell>
-      <Table.Cell className={classes.content}>{cellContent}</Table.Cell>
+      <Label>
+        <b>{label}</b>
+        {displayError !== false && (
+          <>
+            <div className="error-icon">
+              <ErrorIcon />
+            </div>
+            {children}
+          </>
+        )}
+      </Label>
+      <Content>
+        {value && <div className="field-value">{value}</div>}
+        {badgeText && displayError !== false && (
+          <div className="badge-wrapper">
+            <Badge
+              className="error-badge"
+              isRendered={true}
+              colour={badgeColour ?? BadgeColours.Purple}
+              label={badgeText}
+            />
+          </div>
+        )}
+      </Content>
     </Table.Row>
   )
 }

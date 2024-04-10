@@ -1,4 +1,4 @@
-import { createUseStyles } from "react-jss"
+import styled from "styled-components"
 import { EditableFieldBadge, InitialInputValueBadge } from "./Badges"
 
 interface EditableInputFieldProps {
@@ -6,28 +6,26 @@ interface EditableInputFieldProps {
   children?: React.ReactNode
 }
 
-const useStyles = createUseStyles({
-  "editable-field__content": {
-    "& .badge-wrapper": {
-      padding: ".94rem 0 .62rem 0",
-      display: "flex",
-      gap: ".62rem",
-      alignItems: "center"
+const S = {
+  InputField: styled.div`
+    & .badge-wrapper: {
+      padding: 0.94rem 0 0.62rem 0;
+      display: flex;
+      gap: 0.62rem;
+      align-items: center;
     }
-  }
-})
+  `
+}
 
 const InputField: React.FC<EditableInputFieldProps> = ({ value, children }) => {
-  const classes = useStyles()
-
   return (
-    <div className={classes["editable-field__content"]}>
+    <S.InputField>
       {value}
       <InitialInputValueBadge />
       <br />
       {children}
       <EditableFieldBadge />
-    </div>
+    </S.InputField>
   )
 }
 

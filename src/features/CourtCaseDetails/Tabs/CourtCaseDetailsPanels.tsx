@@ -2,14 +2,14 @@ import { Heading } from "govuk-react"
 import { ReactNode } from "react"
 
 interface CourtCaseDetailsPanelProps {
-  className: string
   children: ReactNode
   heading: string
+  visible: boolean
 }
 
-export const CourtCaseDetailsPanel = ({ className, children, heading }: CourtCaseDetailsPanelProps) => {
+export const CourtCaseDetailsPanel = ({ children, heading, visible }: CourtCaseDetailsPanelProps) => {
   return (
-    <div className={className}>
+    <div hidden={!visible}>
       <Heading as="h3" size="MEDIUM">
         {heading}
       </Heading>
