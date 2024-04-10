@@ -4,7 +4,7 @@ import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions/Re
 import { useCurrentUser } from "context/CurrentUserContext"
 import { LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
-import { createUseStyles } from "react-jss"
+import styled from "styled-components"
 import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
@@ -32,14 +32,13 @@ interface Props {
   orderBy: string | null
 }
 
-const useStyles = createUseStyles({
-  "govuk-form-group": {
-    marginBottom: "0"
-  },
-  selectedFiltersContainer: {
-    display: "block"
-  }
-})
+const FormGroup = styled.div`
+  margin-bottom: 0;
+`
+
+const SelectedFiltersContainer = styled.div`
+  display: block;
+`
 
 const CourtCaseFilter: React.FC<Props> = ({
   reason,
@@ -74,7 +73,6 @@ const CourtCaseFilter: React.FC<Props> = ({
     myCasesFilter: myCases ? { value: true, state: "Applied", label: "Cases locked to me" } : {}
   }
   const [state, dispatch] = useReducer(filtersReducer, initialFilterState)
-  const classes = useStyles()
   const currentUser = useCurrentUser()
 
   return (
@@ -88,7 +86,7 @@ const CourtCaseFilter: React.FC<Props> = ({
       <div className="moj-filter__content">
         <div className="moj-filter__selected">
           <div className="moj-filter__selected-heading">
-            <div className={`moj-filter__heading-title ${classes.selectedFiltersContainer}`}>
+            <SelectedFiltersContainer className={`moj-filter__heading-title`}>
               <FilterChipSection state={state} dispatch={dispatch} sectionState={"Applied"} marginTop={false} />
               <FilterChipSection
                 state={state}
@@ -97,7 +95,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                 marginTop={anyFilterChips(state, "Applied")}
                 placeholderMessage={"No filters selected"}
               />
-            </div>
+            </SelectedFiltersContainer>
           </div>
         </div>
         <div className="moj-filter__options">
@@ -108,7 +106,7 @@ const CourtCaseFilter: React.FC<Props> = ({
           <input type="hidden" id="order" name="order" value={order || ""} />
           <input type="hidden" id="orderBy" name="orderBy" value={orderBy || ""} />
 
-          <div className={classes["govuk-form-group"]}>
+          <FormGroup className={"govuk-form-group"}>
             <label className="govuk-label govuk-label--m">{"Search"}</label>
             <div>
               <label className="govuk-label govuk-label--s" htmlFor="reason-codes">
@@ -236,9 +234,9 @@ const CourtCaseFilter: React.FC<Props> = ({
                 </div>
               </label>
             </div>
-          </div>
+          </FormGroup>
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
-            <div className={`${classes["govuk-form-group"]} reasons`}>
+            <FormGroup className={`govuk-form-group reasons`}>
               <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"} classNames="filters-reason">
                 <ReasonFilterOptions
@@ -247,9 +245,9 @@ const CourtCaseFilter: React.FC<Props> = ({
                   dispatch={dispatch}
                 />
               </ExpandingFilters>
-            </div>
+            </FormGroup>
           </ConditionalRender>
-          <div className={classes["govuk-form-group"]}>
+          <FormGroup className={"govuk-form-group"}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"} classNames="filters-court-date">
               <CourtDateFilterOptions
@@ -259,7 +257,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                 dateRange={{ from: state.dateFrom.value, to: state.dateTo.value }}
               />
             </ExpandingFilters>
-          </div>
+          </FormGroup>
           <div>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <fieldset className="govuk-fieldset">

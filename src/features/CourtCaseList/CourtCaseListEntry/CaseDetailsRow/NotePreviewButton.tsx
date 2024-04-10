@@ -1,11 +1,11 @@
 import { Preview } from "components/Preview"
 import { truncate } from "lodash"
 import { Dispatch, SetStateAction } from "react"
+import styled from "styled-components"
 import { DisplayNote } from "types/display/Notes"
 import ConditionalRender from "../../../../components/ConditionalRender"
 import PreviewButton from "../../../../components/PreviewButton"
 import { validateMostRecentNoteDate } from "./CourtCaseListEntryHelperFunction"
-import { createUseStyles } from "react-jss"
 
 interface NotePreviewProps {
   latestNote: DisplayNote
@@ -18,48 +18,46 @@ interface NotePreviewButtonProps {
   numberOfNotes: number
 }
 
-const useStyles = createUseStyles({
-  notePreview: {
-    "&.govuk-accordion__show-all": {
-      fontSize: "16px",
-      padding: "2px 5px 0"
-    }
-  },
-  notePreviewHeading: {
-    fontSize: "14px"
-  },
-  notePreviewBody: {
-    fontSize: "16px"
+const NotePreviewHeader = styled.p`
+  font-size: 14px;
+`
+const NotePreviewBody = styled.p`
+  font-size: 16px;
+`
+
+const StyledPreviewButton = styled(PreviewButton)`
+  &.govuk-accordion__show-all {
+    font-size: 16px;
+    padding: 2px 5px 0;
   }
-})
+`
+
 export const NotePreview = ({ latestNote, numberOfNotes }: NotePreviewProps) => {
   const displayDate = validateMostRecentNoteDate(latestNote)
-  const classes = useStyles()
 
   return (
     <Preview>
-      <p className={`govuk-body govuk-!-font-weight-bold note-preview-heading ${classes.notePreviewHeading}`}>
+      <NotePreviewHeader className={`govuk-body govuk-!-font-weight-bold note-preview-heading`}>
         {numberOfNotes > 1 ? `Most recent note added ${displayDate}` : `Note added ${displayDate}`}
-      </p>
-      <p className={`note-preview-body ${classes.notePreviewBody}`}>
+      </NotePreviewHeader>
+      <NotePreviewBody className={`note-preview-body`}>
         {truncate(latestNote?.noteText, { length: 103 })}
-      </p>
+      </NotePreviewBody>
     </Preview>
   )
 }
 
 export const NotePreviewButton: React.FC<NotePreviewButtonProps> = (props: NotePreviewButtonProps) => {
-  const classes = useStyles()
   const buttonText = props.numberOfNotes > 1 ? `${props.numberOfNotes} notes` : `${props.numberOfNotes} note`
+
   return (
     <>
       <ConditionalRender isRendered={props.numberOfNotes > 0}>
-        <PreviewButton
+        <StyledPreviewButton
           showPreview={props.previewState}
           onClick={props.setShowPreview}
           previewLabel={buttonText}
           hideLabel={buttonText}
-          className={classes.notePreview}
         />
       </ConditionalRender>
     </>

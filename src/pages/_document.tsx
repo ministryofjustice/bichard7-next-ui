@@ -1,6 +1,4 @@
-import Document, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document"
-import React from "react"
-import { createGenerateId, JssProvider, SheetsRegistry } from "react-jss"
+import Document, { DocumentContext, DocumentInitialProps, Head, Html, Main, NextScript } from "next/document"
 import { ServerStyleSheet } from "styled-components"
 import generateCsp from "utils/generateCsp"
 import generateNonce from "utils/generateNonce"
@@ -57,32 +55,16 @@ class GovUkDocument extends Document<DocumentProps> {
     const sheet = new ServerStyleSheet()
     const originalRenderPage = ctx.renderPage
 
-    // react-jss
-    const registry = new SheetsRegistry()
-    const generateId = createGenerateId()
-
     // include styles from both styled-components and react-jss
     try {
       ctx.renderPage = () => {
-        return originalRenderPage({
-          enhanceApp: (App) => (props) => (
-            <JssProvider registry={registry} generateId={generateId}>
-              {sheet.collectStyles(<App {...props} />)}
-            </JssProvider>
-          )
-        })
+        return originalRenderPage({})
       }
 
       const initialProps = await Document.getInitialProps(ctx)
       const additionalProps = {
         nonce,
-        styles: [
-          initialProps.styles,
-          sheet.getStyleElement(),
-          <style key="react-jss" id="server-side-styles-react-jss">
-            {registry.toString()}
-          </style>
-        ]
+        styles: [initialProps.styles, sheet.getStyleElement()]
       }
 
       return {

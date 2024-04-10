@@ -3,8 +3,8 @@ import ConditionalRender from "components/ConditionalRender"
 import FilterChip from "components/FilterChip"
 import { Link } from "govuk-react"
 import { Dispatch } from "react"
-import { createUseStyles } from "react-jss"
 import { Reason } from "types/CaseListQueryParams"
+import styled from "styled-components"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
 import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
@@ -19,16 +19,14 @@ interface Props {
   placeholderMessage?: string
 }
 
-const useStyles = createUseStyles({
-  headerRow: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    "& div:nth-child(1)": {
-      flex: 1
-    }
+const HeaderRow = styled.div`
+  display: "flex";
+  flex-direction: "row";
+  align-items: "center";
+  & div:nth-child(1): {
+    flex: 1;
   }
-})
+`
 
 const FilterChipSection: React.FC<Props> = ({
   state,
@@ -37,14 +35,14 @@ const FilterChipSection: React.FC<Props> = ({
   marginTop,
   placeholderMessage
 }: Props) => {
-  const classes = useStyles()
   const dateRangeLabel = `${formatStringDateAsDisplayedDate(state.dateFrom.value)} - ${formatStringDateAsDisplayedDate(
     state.dateTo.value
   )}`
+
   return (
     <>
       <ConditionalRender isRendered={anyFilterChips(state, sectionState)}>
-        <div className={classes.headerRow}>
+        <HeaderRow className={`header-row`}>
           <div>
             <h2
               className={"govuk-heading-m govuk-!-margin-bottom-0" + (marginTop ? " govuk-!-margin-top-2" : "")}
@@ -55,7 +53,7 @@ const FilterChipSection: React.FC<Props> = ({
               {"Clear filters"}
             </Link>
           </div>
-        </div>
+        </HeaderRow>
 
         <FilterChipRow
           chipLabel={state.defendantNameSearch.label!}

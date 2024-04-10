@@ -1,4 +1,9 @@
-import { useCustomStyles } from "../../../styles/customStyles"
+import styled from "styled-components"
+
+const MojHeaderContainer = styled.div`
+  max-width: 100%;
+  padding: 0 40px;
+`
 
 interface HeaderProps {
   serviceName: string
@@ -7,11 +12,10 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ organisationName, serviceName, userName }: HeaderProps) => {
-  const classes = useCustomStyles()
   return (
     <>
       <header className="moj-header" role="banner">
-        <div className={`${classes["max-width"]} moj-header__container`}>
+        <MojHeaderContainer className={`moj-header__container`}>
           <div className="moj-header__logo">
             <svg
               aria-hidden="true"
@@ -52,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({ organisationName, serviceName, userName
               </ul>
             </nav>
           </div>
-        </div>
+        </MojHeaderContainer>
       </header>
     </>
   )

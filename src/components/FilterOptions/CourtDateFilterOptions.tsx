@@ -1,7 +1,7 @@
 import DateInput from "components/CustomDateInput/DateInput"
 import RadioButton from "components/RadioButton/RadioButton"
 import type { Dispatch } from "react"
-import { createUseStyles } from "react-jss"
+import styled from "styled-components"
 import { SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { FilterAction } from "types/CourtCaseFilter"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
@@ -15,15 +15,14 @@ interface Props {
   dateRange: SerializedCourtDateRange | undefined
 }
 
-const useStyles = createUseStyles({
-  "scrollable-case-ages": {
-    height: "180px",
-    overflow: "auto"
-  },
-  "case-age-option": {
-    padding: "0 0 0 10px"
-  }
-})
+const ScrollableCaseAgesContainer = styled.div`
+  height: 180px;
+  overflow: auto;
+`
+
+const CaseAgeContainter = styled.div`
+  padding: 0 0 0 10px;
+`
 
 const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
   const caseAge = mapCaseAges(namedCaseAge)
@@ -49,8 +48,6 @@ const labelForCaseAge = (namedCaseAge: string, caseAgeCounts: Record<string, num
 const caseAgeId = (caseAge: string): string => `case-age-${caseAge.toLowerCase().replace(/ /g, "-")}`
 
 const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, dispatch, dateRange }: Props) => {
-  const classes = useStyles()
-
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
@@ -76,10 +73,10 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, disp
           label={"Case Received"}
         />
         <div className="govuk-radios__conditional" id="conditional-case-age">
-          <div className={classes["scrollable-case-ages"]}>
+          <ScrollableCaseAgesContainer className={"scrollable-case-ages"}>
             <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
               {Object.keys(CaseAgeOptions).map((namedCaseAge) => (
-                <div className={classes["case-age-option"]} key={namedCaseAge}>
+                <CaseAgeContainter className={"case-age-option"} key={namedCaseAge}>
                   <div className="govuk-checkboxes__item">
                     <input
                       className="govuk-checkboxes__input"
@@ -103,10 +100,10 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, disp
                       {labelForCaseAge(namedCaseAge, caseAgeCounts)}
                     </label>
                   </div>
-                </div>
+                </CaseAgeContainter>
               ))}
             </div>
-          </div>
+          </ScrollableCaseAgesContainer>
         </div>
       </div>
     </fieldset>
