@@ -6,7 +6,9 @@ import styled from "styled-components"
 import type { QueryOrder } from "types/CaseListQueryParams"
 import { blue } from "utils/colours"
 
-const HeaderCellAlt = styled(Table.Cell)``
+const HeaderCellAlt = styled(Table.Cell)`
+  border-color: var(--border-input);
+`
 const HeaderCell = styled(Table.CellHeader)`
   height: 100%;
   vertical-align: bottom;
