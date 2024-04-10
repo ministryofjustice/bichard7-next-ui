@@ -11,7 +11,7 @@ interface ExtraReasonRowProps {
 }
 
 const StyledExtraReasonRow = styled(Table.Row)`
-  vertical-align: "top";
+  vertical-align: top;
 `
 
 export const ExtraReasonRow = ({ isLocked, reasonCell, lockTag }: ExtraReasonRowProps) => {
