@@ -73,7 +73,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, disp
           id={"case-age"}
           dataAriaControls={"conditional-case-age"}
           defaultChecked={caseAges && caseAges.length > 0 ? true : false}
-          label={"Case Recieved"}
+          label={"Case Received"}
         />
         <div className="govuk-radios__conditional" id="conditional-case-age">
           <div className={classes["scrollable-case-ages"]}>
