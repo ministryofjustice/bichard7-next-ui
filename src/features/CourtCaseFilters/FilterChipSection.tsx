@@ -20,9 +20,9 @@ interface Props {
 }
 
 const HeaderRow = styled.div`
-  display: "flex";
-  flex-direction: "row";
-  align-items: "center";
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   & div:nth-child(1): {
     flex: 1;
   }

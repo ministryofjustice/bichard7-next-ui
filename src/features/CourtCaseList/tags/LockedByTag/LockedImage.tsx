@@ -14,9 +14,9 @@ interface LockedImageProps {
 const LockedImage = ({ unlockPath }: LockedImageProps) => {
   let image
   if (unlockPath) {
-    image = <LockedIcon src={LOCKED_ICON_URL} priority width={18} height={18} alt="Lock icon" />
+    image = <LockedIcon src={LOCKED_ICON_URL} width={18} height={18} alt="Lock icon" />
   } else {
-    image = <Image src={LOCKED_ICON_URL} priority width={18} height={18} alt="Lock icon" />
+    image = <Image src={LOCKED_ICON_URL} width={18} height={18} alt="Lock icon" />
   }
 
   return image

@@ -10,23 +10,23 @@ const Legend = styled.div`
 `
 
 const LegendContainer = styled.div`
-  margin-top: "8px";
+  margin-top: 8px;
 `
 
 const IconButton = styled.button`
-  border: "3px solid transparent";
-  backgroundcolor: "transparent";
+  border: 3px solid transparent;
+  background-color: transparent;
   &:active: {
-    backgroundcolor: ${grey};
+    background-color: ${grey};
   }
 `
 
 const Container = styled.div`
-  margin-left: "-10px";
-  width: "fit-content";
-  padding-right: "10px";
-  display: "flex";
-  background-color: "transparent";
+  margin-left: -10px;
+  width: fit-content;
+  padding-right: 10px;
+  display: flex;
+  background-color: transparent;
   &:hover: {
     background-color: ${grey};
   }

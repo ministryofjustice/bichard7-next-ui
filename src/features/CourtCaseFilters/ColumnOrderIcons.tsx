@@ -5,22 +5,22 @@ import styled from "styled-components"
 import { blue } from "../../utils/colours"
 
 const IconContainer = styled.div`
-  width: "fit-content";
-  display: "flex";
-  align-items: "flex-end";
+  width: fit-content;
+  display: flex;
+  align-items: flex-end;
 `
 
 const Content = styled.div`
-  display: "inline-block";
-  vertical-align: "bottom";
-  margin-bottom: "7px";
+  display: inline-block;
+  vertical-align: bottom;
+  margin-bottom: 7px;
 `
 
 const Icon = styled.div`
-  display: "inline-block";
-  padding-left: "2px";
-  vertical-align: "bottom";
-  padding-top: "10px";
+  display: inline-block;
+  padding-left: 2px;
+  vertical-align: bottom;
+  padding-top: 10px;
 `
 
 interface Props {
