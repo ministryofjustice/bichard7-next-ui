@@ -56,18 +56,18 @@ const StyledLockedByButton = styled.button`
   font-size: 1em;
   text-decoration: underline;
   cursor: pointer;
-  &:hover: {
+  &:hover {
     color: white;
     background: ${blue};
   }
-  &:hover img: {
+  &:hover img {
     filter: invert(1);
   }
-  &:focus: {
+  &:focus {
     color: ${gdsBlack};
     background: ${yellow};
   }
-  &:focus img: {
+  &:focus img {
     filter: contrast(1);
   }
 `

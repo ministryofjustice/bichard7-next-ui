@@ -1,6 +1,22 @@
-import type { Dispatch } from "react"
-import type { FilterAction, FilterState } from "types/CourtCaseFilter"
-import { useCustomStyles } from "../../styles/customStyles"
+import { Dispatch } from "react"
+import styled from "styled-components"
+import { FilterAction, FilterState } from "types/CourtCaseFilter"
+import { darkGrey } from "utils/colours"
+
+const Button = styled.button``
+const ButtonAlt = styled.button`
+  background: ${darkGrey};
+  color: white;
+  &:visited {
+    color: white;
+  }
+  &:after {
+    background-image: url(/bichard/moj_assets/images/icon-tag-remove-cross-white.svg);
+  }
+  &:link {
+    color: white;
+  }
+`
 
 interface Props {
   chipLabel: string
@@ -10,19 +26,33 @@ interface Props {
 }
 
 const FilterChip: React.FC<Props> = ({ chipLabel, dispatch, removeAction, state }: Props) => {
-  const classes = useCustomStyles()
-  const buttonClass = "moj-filter__tag " + (state === "Applied" ? classes["dark-grey-filter-tag"] : "")
+  if (state === "Applied") {
+    return (
+      <li>
+        <ButtonAlt
+          type="button"
+          className={"moj-filter__tag"}
+          onClick={() => dispatch(removeAction())}
+          style={{ cursor: "pointer" }}
+        >
+          <span className="govuk-visually-hidden">{"Remove this filter"}</span>
+          {chipLabel}
+        </ButtonAlt>
+      </li>
+    )
+  }
+
   return (
     <li>
-      <button
+      <Button
         type="button"
-        className={buttonClass}
+        className={"moj-filter__tag"}
         onClick={() => dispatch(removeAction())}
         style={{ cursor: "pointer" }}
       >
         <span className="govuk-visually-hidden">{"Remove this filter"}</span>
         {chipLabel}
-      </button>
+      </Button>
     </li>
   )
 }

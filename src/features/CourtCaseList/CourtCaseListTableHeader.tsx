@@ -16,16 +16,16 @@ const HeaderLink = styled(Link)`
   color: ${blue};
   display: flex;
   align-items: center;
-  &:focus: {
+  &:focus {
     max-width: fit-content;
   }
-  &:active: {
+  &:active {
     color: ${blue};
   }
-  &:visited: {
+  &:visited {
     color: ${blue};
   }
-  &:hover: {
+  &:hover {
     color: ${blue};
   }
 `

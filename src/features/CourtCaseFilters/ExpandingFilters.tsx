@@ -16,7 +16,7 @@ const LegendContainer = styled.div`
 const IconButton = styled.button`
   border: 3px solid transparent;
   background-color: transparent;
-  &:active: {
+  &:active {
     background-color: ${grey};
   }
 `
@@ -27,10 +27,11 @@ const Container = styled.div`
   padding-right: 10px;
   display: flex;
   background-color: transparent;
-  &:hover: {
+  cursor: pointer;
+  &:hover {
     background-color: ${grey};
   }
-  &:active: {
+  &:active {
     background-color: ${grey};
   }
 `
