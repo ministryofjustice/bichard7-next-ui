@@ -156,7 +156,10 @@ describe("resolveTriggers", () => {
         {
           errorLockedByUsername: resolverUsername,
           triggerLockedByUsername: resolverUsername,
-          orgForPoliceFilter: visibleForce
+          orgForPoliceFilter: visibleForce,
+          errorCount: 0,
+          errorReport: "",
+          errorReason: ""
         }
       ])
 
@@ -564,7 +567,7 @@ describe("resolveTriggers", () => {
       expect(courtCaseBeforeResolvingTrigger.errorResolvedTimestamp).toBeNull()
       expect(courtCaseBeforeResolvingTrigger.triggerResolvedTimestamp).toBeNull()
       expect(courtCaseBeforeResolvingTrigger.triggerCount).toBe(1)
-      expect(courtCaseBeforeResolvingTrigger.errorCount).toBe(1)
+      expect(courtCaseBeforeResolvingTrigger.errorCount).toBe(2)
 
       const resolveTriggersResult = await resolveTriggers(
         dataSource,
@@ -579,7 +582,7 @@ describe("resolveTriggers", () => {
       expect(courtCaseAfterResolvingTrigger.errorResolvedTimestamp).toBeNull()
       expect(courtCaseAfterResolvingTrigger.triggerResolvedTimestamp).not.toBeNull()
       expect(courtCaseAfterResolvingTrigger.triggerCount).toBe(1)
-      expect(courtCaseAfterResolvingTrigger.errorCount).toBe(1)
+      expect(courtCaseAfterResolvingTrigger.errorCount).toBe(2)
     })
 
     it("Should set resolution timestamp when a case has resolved exceptions", async () => {
@@ -606,7 +609,7 @@ describe("resolveTriggers", () => {
       expect(courtCaseBeforeResolvingTrigger.errorResolvedTimestamp).not.toBeNull()
       expect(courtCaseBeforeResolvingTrigger.triggerResolvedTimestamp).toBeNull()
       expect(courtCaseBeforeResolvingTrigger.triggerCount).toBe(1)
-      expect(courtCaseBeforeResolvingTrigger.errorCount).toBe(1)
+      expect(courtCaseBeforeResolvingTrigger.errorCount).toBe(2)
 
       const resolveTriggersResult = await resolveTriggers(
         dataSource,
@@ -621,7 +624,7 @@ describe("resolveTriggers", () => {
       expect(courtCaseAfterResolvingTrigger.errorResolvedTimestamp).not.toBeNull()
       expect(courtCaseAfterResolvingTrigger.triggerResolvedTimestamp).not.toBeNull()
       expect(courtCaseAfterResolvingTrigger.triggerCount).toBe(1)
-      expect(courtCaseAfterResolvingTrigger.errorCount).toBe(1)
+      expect(courtCaseAfterResolvingTrigger.errorCount).toBe(2)
     })
   })
 })

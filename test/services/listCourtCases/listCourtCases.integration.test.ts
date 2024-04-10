@@ -686,7 +686,7 @@ describe("listCourtCases", () => {
 
       expect(cases).toHaveLength(1)
       expect(cases[0].errorReport).toStrictEqual(
-        `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
+        `HO100102||ds:NextHearingDate, ${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
       )
 
       result = await listCourtCases(
@@ -703,7 +703,7 @@ describe("listCourtCases", () => {
 
       expect(cases).toHaveLength(1)
       expect(cases[0].errorReport).toStrictEqual(
-        `${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
+        `HO100102||ds:NextHearingDate, ${errorToInclude}||ds:OrganisationUnitCode, ${anotherErrorToInclude}||ds:NextHearingDate`
       )
     })
 
