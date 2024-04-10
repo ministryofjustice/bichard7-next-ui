@@ -2,7 +2,7 @@ import { useCourtCase } from "context/CourtCaseContext"
 import { GridCol, GridRow } from "govuk-react"
 import { useCallback, useState } from "react"
 import { useBeforeunload } from "react-beforeunload"
-import { createUseStyles } from "react-jss"
+import styled from "styled-components"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
@@ -19,44 +19,45 @@ interface Props {
   canResolveAndSubmit: boolean
 }
 
-const useStyles = createUseStyles({
-  contentColumn: {
-    overflowX: "scroll"
-  },
-  sideBarContainer: {
-    minWidth: "320px",
-    maxWidth: "100%",
-    "@media (max-width: 1024px)": {
-      paddingTop: "50px"
-    }
-  },
-  smallScreen: {
-    "@media (max-width: 1024px)": {
-      maxWidth: "100%",
-      minWidth: "100%",
-      width: "100%",
-      display: "block"
-    }
-  },
-  visible: {
-    visibility: "visible",
-    display: "block"
-  },
-  notVisible: {
-    visibility: "hidden",
-    display: "none"
-  }
-})
-
 const sideBarWidth = "33%"
 const contentWidth = "67%"
+
+const PanelsGridRow = styled(GridRow)`
+  @media (max-width: 1024px) : {
+    max-width: 100%;
+    min-width: 100%;
+    width: 100%;
+    display: block;
+  }
+`
+
+const PanelsGridCol = styled(GridCol)`
+  overflow-x: scroll;
+
+  @media (max-width: 1024px) : {
+    max-width: 100%;
+    min-width: 100%;
+    width: 100%;
+    display: block;
+  }
+`
+
+const SideBar = styled(GridCol)`
+  min-width: 320px;
+  max-width: 100%;
+  @media (max-width: 1024px) : {
+    padding-top: 50px;
+    max-width: 100%;
+    min-width: 100%;
+    width: 100%;
+    display: block;
+  }
+`
 
 const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAndSubmit }) => {
   const { courtCase } = useCourtCase()
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
-  const classes = useStyles()
-
   const [useBeforeUnload, setUseBeforeUnload] = useState<boolean>(false)
 
   const stopLeavingFn = useCallback((newValue: boolean) => {
@@ -89,31 +90,22 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
         width={contentWidth}
       />
 
-      <GridRow className={classes.smallScreen}>
-        <GridCol setWidth={contentWidth} className={`${classes.contentColumn} ${classes.smallScreen}`}>
-          <CourtCaseDetailsPanel
-            className={activeTab === "Defendant" ? classes.visible : classes.notVisible}
-            heading={"Defendant details"}
-          >
+      <PanelsGridRow>
+        <PanelsGridCol setWidth={contentWidth}>
+          <CourtCaseDetailsPanel visible={activeTab === "Defendant"} heading={"Defendant details"}>
             <DefendantDetails stopLeavingFn={stopLeavingFn} />
           </CourtCaseDetailsPanel>
 
-          <CourtCaseDetailsPanel
-            className={activeTab === "Hearing" ? classes.visible : classes.notVisible}
-            heading={"Hearing details"}
-          >
+          <CourtCaseDetailsPanel visible={activeTab === "Hearing"} heading={"Hearing details"}>
             <HearingDetails hearing={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing} />
           </CourtCaseDetailsPanel>
 
-          <CourtCaseDetailsPanel
-            className={activeTab === "Case" ? classes.visible : classes.notVisible}
-            heading={"Case"}
-          >
+          <CourtCaseDetailsPanel visible={activeTab === "Case"} heading={"Case"}>
             <CaseInformation caseInformation={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case} />
           </CourtCaseDetailsPanel>
 
           <Offences
-            className={activeTab === "Offences" ? classes.visible : classes.notVisible}
+            visible={activeTab === "Offences"}
             exceptions={courtCase.aho.Exceptions}
             offences={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
             onOffenceSelected={(offenceIndex) => {
@@ -122,20 +114,17 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
             selectedOffenceIndex={selectedOffenceIndex}
           />
 
-          <Notes
-            className={activeTab === "Notes" ? classes.visible : classes.notVisible}
-            isLockedByCurrentUser={isLockedByCurrentUser}
-          />
-        </GridCol>
+          <Notes visible={activeTab === "Notes"} isLockedByCurrentUser={isLockedByCurrentUser} />
+        </PanelsGridCol>
 
-        <GridCol setWidth={sideBarWidth} className={`${classes.sideBarContainer} ${classes.smallScreen}`}>
+        <SideBar setWidth={sideBarWidth}>
           <TriggersAndExceptions
             onNavigate={handleNavigation}
             canResolveAndSubmit={canResolveAndSubmit}
             stopLeavingFn={stopLeavingFn}
           />
-        </GridCol>
-      </GridRow>
+        </SideBar>
+      </PanelsGridRow>
     </>
   )
 }

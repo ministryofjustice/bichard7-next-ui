@@ -1,5 +1,5 @@
 import { Table } from "govuk-react"
-import { createUseStyles } from "react-jss"
+import styled from "styled-components"
 import InitialValueAndCorrectionField from "./InitialValueAndCorrectionField"
 import InputField from "./InputField"
 import LabelField from "./LabelField"
@@ -13,17 +13,14 @@ type Props = {
   children?: React.ReactNode
 }
 
-const useStyles = createUseStyles({
-  "editable-field__label": {
-    verticalAlign: "top",
-    "& .error-icon": {
-      paddingTop: ".62rem"
-    }
+const LabelCell = styled(Table.Cell)`
+  vertical-align: top;
+  & .error-icon: {
+    padding-top: 0.62rem;
   }
-})
+`
 
 const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEditable, children }: Props) => {
-  const classes = useStyles()
   const isRendered = !!(value || updatedValue || hasExceptions)
   const hasCorrection = updatedValue && value !== updatedValue
 
@@ -43,9 +40,9 @@ const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEd
 
   return (
     <Table.Row>
-      <Table.Cell className={classes["editable-field__label"]}>
+      <LabelCell>
         <LabelField label={label} isEditable={isEditable} />
-      </Table.Cell>
+      </LabelCell>
       <Table.Cell>{fieldToRender()}</Table.Cell>
     </Table.Row>
   )

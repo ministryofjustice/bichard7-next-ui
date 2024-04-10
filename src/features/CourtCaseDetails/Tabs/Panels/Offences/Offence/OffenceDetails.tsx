@@ -23,7 +23,6 @@ import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
 
 interface OffenceDetailsProps {
-  className: string
   offence: Offence
   offencesCount: number
   onBackToAllOffences: () => void
@@ -105,7 +104,6 @@ const getOffenceMatchingException = (
 }
 
 export const OffenceDetails = ({
-  className,
   offence,
   offencesCount,
   onBackToAllOffences,
@@ -159,7 +157,7 @@ export const OffenceDetails = ({
   }
 
   return (
-    <div className={`${className} ${classes.wrapper}`}>
+    <div className={`${classes.wrapper}`}>
       <OffenceNavigation
         onBackToAllOffences={() => onBackToAllOffences()}
         selectedOffenceIndex={selectedOffenceIndex}

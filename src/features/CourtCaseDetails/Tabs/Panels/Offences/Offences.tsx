@@ -4,32 +4,29 @@ import { OffenceDetails } from "./Offence/OffenceDetails"
 import { OffencesList } from "./OffencesList/OffencesList"
 
 interface OffencesProps {
-  className: string
+  visible: boolean
   offences: Offence[]
   onOffenceSelected: (offenceIndex?: number) => void
   selectedOffenceIndex?: number
   exceptions: Exception[]
 }
 
-export const Offences = ({
-  className,
-  offences,
-  onOffenceSelected,
-  selectedOffenceIndex,
-  exceptions
-}: OffencesProps) => {
-  return selectedOffenceIndex !== undefined && offences[selectedOffenceIndex - 1] !== undefined ? (
-    <OffenceDetails
-      className={className}
-      offence={offences[selectedOffenceIndex - 1]}
-      offencesCount={offences.length}
-      onBackToAllOffences={() => onOffenceSelected(undefined)}
-      onNextClick={() => onOffenceSelected(selectedOffenceIndex + 1)}
-      onPreviousClick={() => onOffenceSelected(selectedOffenceIndex - 1)}
-      selectedOffenceIndex={selectedOffenceIndex}
-      exceptions={exceptions}
-    />
-  ) : (
-    <OffencesList className={className} offences={offences} setDetailedOffenceIndex={onOffenceSelected} />
+export const Offences = ({ visible, offences, onOffenceSelected, selectedOffenceIndex, exceptions }: OffencesProps) => {
+  return (
+    <div hidden={!visible}>
+      {selectedOffenceIndex !== undefined && offences[selectedOffenceIndex - 1] !== undefined ? (
+        <OffenceDetails
+          offence={offences[selectedOffenceIndex - 1]}
+          offencesCount={offences.length}
+          onBackToAllOffences={() => onOffenceSelected(undefined)}
+          onNextClick={() => onOffenceSelected(selectedOffenceIndex + 1)}
+          onPreviousClick={() => onOffenceSelected(selectedOffenceIndex - 1)}
+          selectedOffenceIndex={selectedOffenceIndex}
+          exceptions={exceptions}
+        />
+      ) : (
+        <OffencesList offences={offences} setDetailedOffenceIndex={onOffenceSelected} />
+      )}
+    </div>
   )
 }
