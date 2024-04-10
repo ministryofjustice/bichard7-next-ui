@@ -43,6 +43,9 @@ const getDummyCourtCase = async (overrides?: Partial<CourtCase>): Promise<CourtC
   (await getDataSource()).getRepository(CourtCase).create({
     ...DummyCourtCase,
     hearingOutcome: DummyMultipleOffencesAho.hearingOutcomeXml,
+    errorCount: 1,
+    errorReason: "HO100102",
+    errorReport: "HO100102||ds:NextHearingDate",
     ...overrides
   } as CourtCase)
 
