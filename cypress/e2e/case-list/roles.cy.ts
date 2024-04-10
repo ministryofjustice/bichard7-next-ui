@@ -12,12 +12,6 @@ describe("Shows relevant information to a user's role", () => {
     {
       orgForPoliceFilter: "011111",
       errorId: 0,
-      exceptions: [],
-      triggers: []
-    },
-    {
-      orgForPoliceFilter: "011111",
-      errorId: 1,
       exceptions: [
         {
           code: "HO100310",
@@ -32,7 +26,9 @@ describe("Shows relevant information to a user's role", () => {
     },
     {
       orgForPoliceFilter: "011111",
-      errorId: 2,
+      errorId: 1,
+      errorCount: 0,
+      errorReason: "",
       exceptions: [],
       triggers: [
         {
@@ -51,7 +47,7 @@ describe("Shows relevant information to a user's role", () => {
     },
     {
       orgForPoliceFilter: "011111",
-      errorId: 3,
+      errorId: 2,
       exceptions: [
         {
           code: "HO100310",
@@ -89,7 +85,9 @@ describe("Shows relevant information to a user's role", () => {
       mixedReasonCases.map((courtCase) => {
         return {
           errorId: courtCase.errorId,
-          orgForPoliceFilter: courtCase.orgForPoliceFilter
+          orgForPoliceFilter: courtCase.orgForPoliceFilter,
+          errorCount: courtCase.errorCount,
+          errorReason: courtCase.errorReason
         }
       })
     )
@@ -116,21 +114,19 @@ describe("Shows relevant information to a user's role", () => {
   it("Should only show cases with triggers to a trigger handler", () => {
     loginAndGoToUrl("triggerhandler@example.com")
 
+    confirmCaseDisplayed("Case00001")
     confirmCaseDisplayed("Case00002")
-    confirmCaseDisplayed("Case00003")
 
     confirmCaseNotDisplayed("Case00000")
-    confirmCaseNotDisplayed("Case00001")
   })
 
   it("Should only show cases with exceptions to an exception handler", () => {
     loginAndGoToUrl("exceptionhandler@example.com")
 
-    confirmCaseDisplayed("Case00001")
-    confirmCaseDisplayed("Case00003")
+    confirmCaseDisplayed("Case00000")
+    confirmCaseDisplayed("Case00002")
 
-    confirmCaseNotDisplayed("Case00000")
-    confirmCaseNotDisplayed("Case00002")
+    confirmCaseNotDisplayed("Case00001")
   })
 
   it("Should show all cases to a general handler", () => {
@@ -139,7 +135,6 @@ describe("Shows relevant information to a user's role", () => {
     confirmCaseDisplayed("Case00000")
     confirmCaseDisplayed("Case00001")
     confirmCaseDisplayed("Case00002")
-    confirmCaseDisplayed("Case00003")
   })
 
   it("Should show all cases to a supervisor", () => {
@@ -148,7 +143,6 @@ describe("Shows relevant information to a user's role", () => {
     confirmCaseDisplayed("Case00000")
     confirmCaseDisplayed("Case00001")
     confirmCaseDisplayed("Case00002")
-    confirmCaseDisplayed("Case00003")
   })
 
   it("Should only show triggers in the reason column to a trigger handler", () => {
