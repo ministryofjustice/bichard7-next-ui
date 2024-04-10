@@ -115,6 +115,9 @@ describe("Filter cases by resolution status", () => {
           triggerResolvedBy: args.trigger?.triggerResolvedBy,
           triggerResolvedTimestamp: args.trigger?.triggerResolvedBy ? new Date() : null,
           triggerStatus: args.trigger?.triggerResolvedBy ? "Resolved" : "Unresolved",
+          errorStatus: args.exception?.exceptionResolvedBy ? "Resolved" : "Unresolved",
+          errorResolvedTimestamp: args.exception?.exceptionResolvedBy ? new Date() : null,
+          triggerCount: args.trigger ? 1 : 0,
           resolutionTimestamp:
             (args.trigger?.triggerResolvedBy && args.exception?.exceptionResolvedBy) ||
             (args.trigger?.triggerResolvedBy && !args.exception) ||
@@ -414,7 +417,9 @@ describe("Filter cases by resolution status", () => {
           "No exceptions/Bails Trigger Resolved by triggerHandler",
           "Exceptions Resolved by generalHandler/No triggers",
           "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse",
-          "No exceptions/Bails Trigger Resolved by generalHandler"
+          "No exceptions/Bails Trigger Resolved by generalHandler",
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved"
         ]
       },
       {
@@ -669,7 +674,9 @@ describe("Filter cases by resolution status", () => {
           "No exceptions/Bails Trigger Resolved by someoneElse",
           "No exceptions/Bails Trigger Resolved by triggerHandler",
           "No exceptions/Bails Trigger Resolved by generalHandler",
-          "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse"
+          "Exceptions Resolved by generalHandler/Bails Trigger Resolved by someoneElse",
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved"
         ]
       },
       {

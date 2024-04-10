@@ -40,11 +40,17 @@ const filterIfResolved = (
   reason?: Reason,
   resolvedByUsername?: string
 ) => {
-  query.andWhere({
-    ...(shouldFilterForTriggers(user, reason) ? { triggerResolvedTimestamp: Not(IsNull()) } : {}),
-    ...(shouldFilterForExceptions(user, reason) ? { errorResolvedTimestamp: Not(IsNull()) } : {}),
-    ...(canSeeTriggersAndException(user, reason) ? { resolutionTimestamp: Not(IsNull()) } : {})
-  })
+  if (shouldFilterForTriggers(user, reason)) {
+    query.andWhere({ triggerResolvedTimestamp: Not(IsNull()) })
+  } else if (shouldFilterForExceptions(user, reason)) {
+    query.andWhere({ errorResolvedTimestamp: Not(IsNull()) })
+  } else if (canSeeTriggersAndException(user, reason)) {
+    query.andWhere(
+      new Brackets((qb) =>
+        qb.where({ errorResolvedTimestamp: Not(IsNull()) }).orWhere({ triggerResolvedTimestamp: Not(IsNull()) })
+      )
+    )
+  }
 
   if (resolvedByUsername || !user.hasAccessTo[Permission.ListAllCases]) {
     query.andWhere(
