@@ -1,27 +1,27 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { ReactNode } from "react"
-import { createUseStyles } from "react-jss"
+import styled from "styled-components"
 import { blue } from "../../utils/colours"
 
-const useStyles = createUseStyles({
-  container: {
-    width: "fit-content",
-    display: "flex",
-    alignItems: "flex-end"
-  },
-  content: {
-    display: "inline-block",
-    verticalAlign: "bottom",
-    marginBottom: "7px"
-  },
-  icon: {
-    display: "inline-block",
-    paddingLeft: "2px",
-    verticalAlign: "bottom",
-    paddingTop: "10px"
-  }
-})
+const IconContainer = styled.div`
+  width: "fit-content";
+  display: "flex";
+  align-items: "flex-end";
+`
+
+const Content = styled.div`
+  display: "inline-block";
+  vertical-align: "bottom";
+  margin-bottom: "7px";
+`
+
+const Icon = styled.div`
+  display: "inline-block";
+  padding-left: "2px";
+  vertical-align: "bottom";
+  padding-top: "10px";
+`
 
 interface Props {
   orderBy: string | string[] | undefined
@@ -62,7 +62,6 @@ const Unordered: React.FC = () => {
 }
 
 const ColumnOrderIcons: React.FC<Props> = ({ orderBy, currentOrder, columnName, children }) => {
-  const classes = useStyles()
   let arrow: JSX.Element | undefined = undefined
 
   if (orderBy === undefined || orderBy !== columnName) {
@@ -80,10 +79,10 @@ const ColumnOrderIcons: React.FC<Props> = ({ orderBy, currentOrder, columnName, 
   }
 
   return (
-    <div className={classes.container}>
-      <div className={classes.content}>{children}</div>
-      <div className={classes.icon}>{arrow}</div>
-    </div>
+    <IconContainer>
+      <Content>{children}</Content>
+      <Icon>{arrow}</Icon>
+    </IconContainer>
   )
 }
 

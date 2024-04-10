@@ -1,18 +1,22 @@
 import { ReactNode } from "react"
-import { useCustomStyles } from "../../styles/customStyles"
+import styled from "styled-components"
+
+const GovukWidthContainer = styled.div`
+  max-width: 100%;
+  padding: 30px 40px;
+`
 
 interface Props {
   children: ReactNode
 }
 
 const PageTemplate = ({ children }: Props) => {
-  const classes = useCustomStyles()
   return (
-    <div className={classes["govuk-width-container"]}>
+    <GovukWidthContainer className={"govuk-width-container"}>
       <main id="main-content" role="main">
         {children}
       </main>
-    </div>
+    </GovukWidthContainer>
   )
 }
 

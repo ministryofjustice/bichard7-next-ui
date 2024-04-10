@@ -1,30 +1,27 @@
 import { ReactNode } from "react"
-import { createUseStyles } from "react-jss"
+import styled from "styled-components"
 
-const useStyles = createUseStyles({
-  container: {
-    width: "fit-content",
-    display: "flex",
-    alignItems: "flex-end"
-  },
-  content: {
-    display: "inline-block",
-    verticalAlign: "bottom",
-    marginBottom: "7px"
-  }
-})
+const ColumnContainer = styled.div`
+  width: fit-content;
+  display: flex;
+  align-items: flex-end;
+`
+
+const ColumnContent = styled.div`
+  display: inline-block;
+  vertical-align: bottom;
+  margin-bottom: 7px;
+`
 
 interface Props {
   children?: ReactNode
 }
 
 const ColumnHeading: React.FC<Props> = ({ children }) => {
-  const classes = useStyles()
-
   return (
-    <div className={classes.container}>
-      <div className={classes.content}>{children}</div>
-    </div>
+    <ColumnContainer className={"container"}>
+      <ColumnContent className={"content"}>{children}</ColumnContent>
+    </ColumnContainer>
   )
 }
 

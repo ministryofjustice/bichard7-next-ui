@@ -2,37 +2,38 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import ConditionalDisplay from "components/ConditionalDisplay"
 import { ReactNode, useState } from "react"
-import { createUseStyles } from "react-jss"
-import { blue } from "../../utils/colours"
+import styled from "styled-components"
+import { blue, grey } from "../../utils/colours"
 
-const useStyles = createUseStyles({
-  legendColour: {
-    color: blue
-  },
-  legendContainer: {
-    marginTop: "8px"
-  },
-  iconButton: {
-    border: "3px solid transparent",
-    backgroundColor: "transparent",
-    "&:active": {
-      backgroundColor: "#b0b4b6"
-    }
-  },
-  container: {
-    marginLeft: "-10px",
-    width: "fit-content",
-    paddingRight: "10px",
-    display: "flex",
-    backgroundColor: "transparent",
-    "&:hover": {
-      backgroundColor: "#b0b4b6"
-    },
-    "&:active": {
-      backgroundColor: "#b0b4b6"
-    }
+const Legend = styled.div`
+  color: ${blue};
+`
+
+const LegendContainer = styled.div`
+  margin-top: "8px";
+`
+
+const IconButton = styled.button`
+  border: "3px solid transparent";
+  backgroundcolor: "transparent";
+  &:active: {
+    backgroundcolor: ${grey};
   }
-})
+`
+
+const Container = styled.div`
+  margin-left: "-10px";
+  width: "fit-content";
+  padding-right: "10px";
+  display: "flex";
+  background-color: "transparent";
+  &:hover: {
+    background-color: ${grey};
+  }
+  &:active: {
+    background-color: ${grey};
+  }
+`
 
 const UpArrow: React.FC = () => (
   <svg width={18} height={10} viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -54,28 +55,24 @@ interface Props {
 
 const ExpandingFilters: React.FC<Props> = ({ filterName, classNames, children }: Props) => {
   const [caseTypeIsVisible, setCaseTypeVisible] = useState(true)
-  const classes = useStyles()
+
   return (
     <fieldset className="govuk-fieldset">
-      <div
-        className={classes.container}
+      <Container
+        className={"container"}
         onClick={() => {
           setCaseTypeVisible(!caseTypeIsVisible)
         }}
       >
-        <button
-          type="button"
-          className={`${classes.iconButton} ${classNames}`}
-          aria-label={`${filterName} filter options`}
-        >
+        <IconButton type="button" className={`icon-button ${classNames}`} aria-label={`${filterName} filter options`}>
           {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
-        </button>
-        <div className={classes.legendContainer}>
+        </IconButton>
+        <LegendContainer className={"legend-container"}>
           <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
-            <div className={classes.legendColour}>{filterName}</div>
+            <Legend>{filterName}</Legend>
           </legend>
-        </div>
-      </div>
+        </LegendContainer>
+      </Container>
       <ConditionalDisplay isDisplayed={caseTypeIsVisible}>{children}</ConditionalDisplay>
     </fieldset>
   )
