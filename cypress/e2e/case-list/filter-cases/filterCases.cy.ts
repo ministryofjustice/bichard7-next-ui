@@ -269,7 +269,7 @@ describe("Filtering cases", () => {
 
     cy.contains("Case00000")
     confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
-    cy.get("tbody tr").should("have.length", 1)
+    cy.get("tbody tr.caseDetailsRow").should("have.length", 1)
     confirmFiltersAppliedContains("TRPR0017")
     removeFilterTagWhilstSearchPanelIsHidden("TRPR0017")
 
@@ -413,7 +413,7 @@ describe("Filtering cases", () => {
     cy.contains("Case00000")
     cy.contains("Case00001")
     confirmMultipleFieldsNotDisplayed(["Case00002"])
-    cy.get("tbody tr").should("have.length", 2)
+    cy.get("tbody tr.caseDetailsRow").should("have.length", 2)
     confirmFiltersAppliedContains("TRPR0017")
     confirmFiltersAppliedContains("HO200212")
   })
@@ -667,8 +667,7 @@ describe("Filtering cases", () => {
   it("Should filter cases by whether they have triggers and exceptions", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "011111" },
-      { orgForPoliceFilter: "011111" },
-      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111", errorCount: 0, errorReason: "", errorReport: "" },
       { orgForPoliceFilter: "011111" }
     ])
     const triggers: TestTrigger[] = [
@@ -687,7 +686,7 @@ describe("Filtering cases", () => {
     cy.visit("/bichard")
 
     // Default: no filter, all cases shown
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`, `Case00003`])
+    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`])
 
     // Filtering with triggers
     cy.get(`label[for="triggers-reason"]`).click()
@@ -702,7 +701,7 @@ describe("Filtering cases", () => {
     cy.get(".moj-filter__tag").contains("Triggers").click()
     cy.get("button[id=search]").click()
 
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`, `Case00003`])
+    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`])
 
     // Filtering with exceptions
     cy.get(`label[for="exceptions-reason"]`).click()
@@ -719,7 +718,7 @@ describe("Filtering cases", () => {
 
     cy.contains('*[class^="moj-filter-tags"]').should("not.exist")
 
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`, `Case00003`])
+    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`])
   })
 
   it("Should filter cases by case state", () => {
@@ -727,21 +726,26 @@ describe("Filtering cases", () => {
     const force = "011111"
     cy.task("insertCourtCasesWithFields", [
       { resolutionTimestamp: null, orgForPoliceFilter: force },
-      { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force, errorResolvedBy: "Bichard01" },
-      { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force, errorResolvedBy: "Bichard01" },
-      { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force, errorResolvedBy: "Bichard01" }
+      {
+        resolutionTimestamp,
+        errorResolvedTimestamp: resolutionTimestamp,
+        orgForPoliceFilter: force,
+        errorResolvedBy: "Bichard01",
+        errorStatus: "Resolved"
+      }
     ])
 
     visitBasePath()
 
     // Filter for unresolved cases by default
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
+    cy.contains("Case00000")
 
     // Filter for resolved cases
     cy.get(`label[for="resolved"]`).click()
     cy.get("button[id=search]").click()
 
-    cy.get(".moj-scrollable-pane tbody tr").should("have.length", 3)
+    cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
     cy.contains("Case00001")
 
     // Removing case state filter tag unresolved cases should be shown with the filter disabled

@@ -36,7 +36,7 @@ describe("View case details", () => {
   })
 
   it("Should be accessible", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01", errorCount: 0 }])
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
