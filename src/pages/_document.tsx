@@ -55,7 +55,7 @@ class GovUkDocument extends Document<DocumentProps> {
     const sheet = new ServerStyleSheet()
     const originalRenderPage = ctx.renderPage
 
-    // include styles from both styled-components and react-jss
+    // include styles from both styled-components
     try {
       ctx.renderPage = () => {
         return originalRenderPage({})
