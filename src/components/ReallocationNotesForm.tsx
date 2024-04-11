@@ -5,9 +5,9 @@ import { useCsrfToken } from "context/CsrfTokenContext"
 import { Button, Fieldset, FormGroup, HintText, Label, LabelText, Link, Select, TextArea } from "govuk-react"
 import { FormEventHandler, useState } from "react"
 import getForcesForReallocation from "services/getForcesForReallocation"
-import { useCustomStyles } from "../../styles/customStyles"
 import ButtonsGroup from "./ButtonsGroup"
 import Form from "./Form"
+import { StyledHintText } from "./ReallocationNotesForm.styles"
 
 interface Props {
   backLink: string
@@ -15,7 +15,6 @@ interface Props {
 
 const ReallocationNotesForm = ({ backLink }: Props) => {
   const [noteRemainingLength, setNoteRemainingLength] = useState(MAX_NOTE_LENGTH)
-  const classes = useCustomStyles()
   const { courtCase } = useCourtCase()
   const currentForce = forces.find((force) => force.code === courtCase.orgForPoliceFilter?.substring(0, 2))
   const forcesForReallocation = getForcesForReallocation(currentForce?.code)
@@ -48,7 +47,7 @@ const ReallocationNotesForm = ({ backLink }: Props) => {
         </FormGroup>
         <FormGroup>
           <Label className="govuk-heading-s">{"Add a note (optional)"}</Label>
-          <HintText className={classes["no-margin-bottom"]}>{"Input reason for case reallocation"}</HintText>
+          <StyledHintText className={"no-margin-bottom"}>{"Input reason for case reallocation"}</StyledHintText>
           <TextArea input={{ name: "note", rows: 5, maxLength: MAX_NOTE_LENGTH, onInput: handleOnNoteChange }}>
             {""}
           </TextArea>
