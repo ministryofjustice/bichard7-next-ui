@@ -1,5 +1,5 @@
 import { Table } from "govuk-react"
-import styled from "styled-components"
+import { LabelCell } from "./EditableFieldTableRow.styles"
 import InitialValueAndCorrectionField from "./InitialValueAndCorrectionField"
 import InputField from "./InputField"
 import LabelField from "./LabelField"
@@ -12,13 +12,6 @@ type Props = {
   isEditable: boolean
   children?: React.ReactNode
 }
-
-const LabelCell = styled(Table.Cell)`
-  vertical-align: top;
-  & .error-icon: {
-    padding-top: 0.62rem;
-  }
-`
 
 const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEditable, children }: Props) => {
   const isRendered = !!(value || updatedValue || hasExceptions)

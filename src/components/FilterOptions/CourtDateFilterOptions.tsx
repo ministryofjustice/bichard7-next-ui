@@ -1,12 +1,12 @@
 import DateInput from "components/CustomDateInput/DateInput"
 import RadioButton from "components/RadioButton/RadioButton"
 import type { Dispatch } from "react"
-import styled from "styled-components"
 import { SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { FilterAction } from "types/CourtCaseFilter"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import { formatDisplayedDate } from "utils/formattedDate"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
+import { CaseAgeContainter, ScrollableCaseAgesContainer } from "./CourtDateFilterOptions.styles"
 
 interface Props {
   caseAges?: string[]
@@ -14,15 +14,6 @@ interface Props {
   dispatch: Dispatch<FilterAction>
   dateRange: SerializedCourtDateRange | undefined
 }
-
-const ScrollableCaseAgesContainer = styled.div`
-  height: 180px;
-  overflow: auto;
-`
-
-const CaseAgeContainter = styled.div`
-  padding: 0 0 0 10px;
-`
 
 const getCaseAgeWithFormattedDate = (namedCaseAge: string): string => {
   const caseAge = mapCaseAges(namedCaseAge)

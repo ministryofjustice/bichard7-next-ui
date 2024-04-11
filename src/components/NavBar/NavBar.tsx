@@ -1,10 +1,5 @@
 import { useRouter } from "next/router"
-import styled from "styled-components"
-
-const MojNavContainer = styled.div`
-  max-width: 100%;
-  padding: 0 40px;
-`
+import { MojNavContainer } from "./NavBar.styles"
 
 interface NavItemProps {
   name: string

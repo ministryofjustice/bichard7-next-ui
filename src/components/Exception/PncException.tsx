@@ -2,7 +2,7 @@ import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/
 import { GridCol, GridRow, Link } from "govuk-react"
 import Accordion from "../Accordion"
 import Badge, { BadgeColours } from "../Badge"
-import * as S from "./styles"
+import * as S from "./Exception.styles"
 
 type Props = {
   code: ExceptionCode

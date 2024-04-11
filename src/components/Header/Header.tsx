@@ -1,9 +1,4 @@
-import styled from "styled-components"
-
-const MojHeaderContainer = styled.div`
-  max-width: 100%;
-  padding: 0 40px;
-`
+import { MojHeaderContainer } from "./Header.styles"
 
 interface HeaderProps {
   serviceName: string
