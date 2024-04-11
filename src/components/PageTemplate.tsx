@@ -1,10 +1,5 @@
 import { ReactNode } from "react"
-import styled from "styled-components"
-
-const GovukWidthContainer = styled.div`
-  max-width: 100%;
-  padding: 30px 40px;
-`
+import { GovukWidthContainer } from "./PageTemplate.styles"
 
 interface Props {
   children: ReactNode
