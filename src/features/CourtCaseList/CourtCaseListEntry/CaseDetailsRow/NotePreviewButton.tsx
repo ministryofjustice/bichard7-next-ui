@@ -1,11 +1,10 @@
 import { Preview } from "components/Preview"
 import { truncate } from "lodash"
 import { Dispatch, SetStateAction } from "react"
-import styled from "styled-components"
 import { DisplayNote } from "types/display/Notes"
 import ConditionalRender from "../../../../components/ConditionalRender"
-import PreviewButton from "../../../../components/PreviewButton"
 import { validateMostRecentNoteDate } from "./CourtCaseListEntryHelperFunction"
+import { NotePreviewBody, NotePreviewHeader, StyledPreviewButton } from "./NotePreviewButton.styles"
 
 interface NotePreviewProps {
   latestNote: DisplayNote
@@ -17,20 +16,6 @@ interface NotePreviewButtonProps {
   setShowPreview: Dispatch<SetStateAction<boolean>>
   numberOfNotes: number
 }
-
-const NotePreviewHeader = styled.p`
-  font-size: 14px;
-`
-const NotePreviewBody = styled.p`
-  font-size: 16px;
-`
-
-const StyledPreviewButton = styled(PreviewButton)`
-  &.govuk-accordion__show-all {
-    font-size: 16px;
-    padding: 2px 5px 0;
-  }
-`
 
 export const NotePreview = ({ latestNote, numberOfNotes }: NotePreviewProps) => {
   const displayDate = validateMostRecentNoteDate(latestNote)
