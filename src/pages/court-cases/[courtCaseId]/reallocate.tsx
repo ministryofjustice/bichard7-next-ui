@@ -18,7 +18,6 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import { ParsedUrlQuery } from "querystring"
 import { useEffect, useState } from "react"
-import { createUseStyles } from "react-jss"
 import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
 import getCourtCaseByOrganisationUnit from "services/getCourtCaseByOrganisationUnit"
@@ -34,6 +33,7 @@ import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
+import { NotesTableContainer, ShowMoreContainer } from "./reallocate.styles"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -92,18 +92,6 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const useStyles = createUseStyles({
-  notesTableContainer: {
-    maxHeight: "368px",
-    overflow: "auto"
-  },
-  showMoreContainer: {
-    justifyContent: "flex-end",
-    paddingRight: "15px",
-    marginTop: "15px"
-  }
-})
-
 interface Props {
   user: DisplayFullUser
   courtCase: DisplayFullCourtCase
@@ -123,7 +111,6 @@ const ReallocateCasePage: NextPage<Props> = ({
   canReallocate
 }: Props) => {
   const { basePath } = useRouter()
-  const classes = useStyles()
 
   const [showMore, setShowMore] = useState<boolean>(false)
   const [reallocateFormWidth, setReallocateFormWidth] = useState<string>("two-thirds")
@@ -202,17 +189,17 @@ const ReallocateCasePage: NextPage<Props> = ({
                       <Heading as="h2" size="SMALL">
                         {"Previous User Notes"}
                       </Heading>
-                      <div className={classes.notesTableContainer}>
+                      <NotesTableContainer className={"notes-table-container"}>
                         <NotesTable displayForce notes={showMore ? userNotes : userNotes.slice(0, 1)} />
-                      </div>
-                      <GridRow className={classes.showMoreContainer}>
+                      </NotesTableContainer>
+                      <ShowMoreContainer className={"show-more-container"}>
                         <ActionLink
                           onClick={() => setShowMore(!showMore)}
                           id={showMore ? "show-more-action" : "show-less-action"}
                         >
                           {showMore ? "show less" : "show more"}
                         </ActionLink>
-                      </GridRow>
+                      </ShowMoreContainer>
                     </GridCol>
                   </GridRow>
                 </ConditionalRender>
