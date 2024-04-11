@@ -32,8 +32,8 @@ import forbidden from "utils/forbidden"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
+import { NotesTableContainer, ShowMoreContainer } from "../../../styles/reallocate.styles"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
-import { NotesTableContainer, ShowMoreContainer } from "./reallocate.styles"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,

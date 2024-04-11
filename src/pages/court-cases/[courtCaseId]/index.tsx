@@ -35,10 +35,10 @@ import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CourtCase from "../../../services/entities/CourtCase"
 import User from "../../../services/entities/User"
 import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
+import { AttentionBanner, AttentionContainer } from "../../../styles/index.styles"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import Permission from "../../../types/Permission"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
-import { AttentionBanner, AttentionContainer } from "./index.styles"
 
 const allIssuesCleared = (courtCase: CourtCase, triggerToResolve: number[], user: User) => {
   const triggersResolved = user.hasAccessTo[Permission.Triggers]
