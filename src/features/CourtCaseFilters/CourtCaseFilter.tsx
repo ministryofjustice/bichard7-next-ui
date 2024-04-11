@@ -2,14 +2,14 @@ import ConditionalRender from "components/ConditionalRender"
 import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
 import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions/ReasonFilterOptions"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { LabelText } from "govuk-react"
+import { FormGroup, LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
-import styled from "styled-components"
 import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
 import { anyFilterChips } from "utils/filterChips"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
+import { SelectedFiltersContainer } from "./CourtCaseFilter.styles"
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 import { filtersReducer } from "./reducers/filters"
@@ -30,14 +30,6 @@ interface Props {
   order: string | null
   orderBy: string | null
 }
-
-const FormGroup = styled.div`
-  margin-bottom: 0;
-`
-
-const SelectedFiltersContainer = styled.div`
-  display: block;
-`
 
 const CourtCaseFilter: React.FC<Props> = ({
   reasons,

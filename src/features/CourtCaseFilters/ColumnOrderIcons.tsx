@@ -1,27 +1,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { ReactNode } from "react"
-import styled from "styled-components"
 import { blue } from "../../utils/colours"
-
-const IconContainer = styled.div`
-  width: fit-content;
-  display: flex;
-  align-items: flex-end;
-`
-
-const Content = styled.div`
-  display: inline-block;
-  vertical-align: bottom;
-  margin-bottom: 7px;
-`
-
-const Icon = styled.div`
-  display: inline-block;
-  padding-left: 2px;
-  vertical-align: bottom;
-  padding-top: 10px;
-`
+import { Content, Icon, IconContainer } from "./ColumnOrderIcons.styles"
 
 interface Props {
   orderBy: string | string[] | undefined

@@ -3,12 +3,12 @@ import ConditionalRender from "components/ConditionalRender"
 import FilterChip from "components/FilterChip"
 import { Link } from "govuk-react"
 import { Dispatch } from "react"
-import styled from "styled-components"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
 import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
 import FilterChipContainer from "./FilterChipContainer"
 import FilterChipRow from "./FilterChipRow"
+import { HeaderRow } from "./FilterChipSection.styles"
 
 interface Props {
   state: Filter
@@ -17,15 +17,6 @@ interface Props {
   marginTop: boolean
   placeholderMessage?: string
 }
-
-const HeaderRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  & div:nth-child(1) {
-    flex: 1;
-  }
-`
 
 const FilterChipSection: React.FC<Props> = ({
   state,

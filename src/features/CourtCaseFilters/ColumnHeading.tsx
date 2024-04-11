@@ -1,17 +1,5 @@
 import { ReactNode } from "react"
-import styled from "styled-components"
-
-const ColumnContainer = styled.div`
-  width: fit-content;
-  display: flex;
-  align-items: flex-end;
-`
-
-const ColumnContent = styled.div`
-  display: inline-block;
-  vertical-align: bottom;
-  margin-bottom: 7px;
-`
+import { ColumnContainer, ColumnContent } from "./ColumnHeading.styles"
 
 interface Props {
   children?: ReactNode

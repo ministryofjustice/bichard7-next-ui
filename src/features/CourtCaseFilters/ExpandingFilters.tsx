@@ -2,39 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import ConditionalDisplay from "components/ConditionalDisplay"
 import { ReactNode, useState } from "react"
-import styled from "styled-components"
-import { blue, grey } from "../../utils/colours"
-
-const Legend = styled.div`
-  color: ${blue};
-`
-
-const LegendContainer = styled.div`
-  margin-top: 8px;
-`
-
-const IconButton = styled.button`
-  border: 3px solid transparent;
-  background-color: transparent;
-  &:active {
-    background-color: ${grey};
-  }
-`
-
-const Container = styled.div`
-  margin-left: -10px;
-  width: fit-content;
-  padding-right: 10px;
-  display: flex;
-  background-color: transparent;
-  cursor: pointer;
-  &:hover {
-    background-color: ${grey};
-  }
-  &:active {
-    background-color: ${grey};
-  }
-`
+import { Container, IconButton, Legend, LegendContainer } from "./ExpandingFilters.styles"
 
 const UpArrow: React.FC = () => (
   <svg width={18} height={10} viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
