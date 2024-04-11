@@ -1,23 +1,7 @@
 import { Tag } from "govuk-react"
-import styled from "styled-components"
-import { gdsBlack, tagBlue, textBlue } from "../../../../utils/colours"
+import { tagBlue, textBlue } from "../../../../utils/colours"
+import { LockedByTag, LockedByTextSpan } from "./LockedByText.styles"
 import LockedImage from "./LockedImage"
-
-const LockedByTag = styled.div`
-  display: inline-flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 5;
-`
-const LockedByTextSpan = styled.span`
-  margin-top: 4;
-  margin-bottom: 2;
-  font-weight: normal;
-  color: ${gdsBlack};
-  letter-spacing: 0.5px;
-  text-transform: none;
-`
 
 interface LockedByTextProps {
   lockedBy?: string | null

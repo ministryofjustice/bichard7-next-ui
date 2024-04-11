@@ -1,36 +1,9 @@
 import ColumnHeading from "features/CourtCaseFilters/ColumnHeading"
 import ColumnOrderIcons from "features/CourtCaseFilters/ColumnOrderIcons"
-import { Link, Table } from "govuk-react"
+import { Table } from "govuk-react"
 import { useRouter } from "next/router"
-import styled from "styled-components"
 import type { QueryOrder } from "types/CaseListQueryParams"
-import { blue } from "utils/colours"
-
-const HeaderCellAlt = styled(Table.Cell)`
-  border-color: var(--border-input);
-`
-const HeaderCell = styled(Table.CellHeader)`
-  height: 100%;
-  vertical-align: bottom;
-  border-color: var(--border-input);
-`
-const HeaderLink = styled(Link)`
-  color: ${blue};
-  display: flex;
-  align-items: center;
-  &:focus {
-    max-width: fit-content;
-  }
-  &:active {
-    color: ${blue};
-  }
-  &:visited {
-    color: ${blue};
-  }
-  &:hover {
-    color: ${blue};
-  }
-`
+import { HeaderCell, HeaderCellAlt, HeaderLink } from "./CourtCaseListTableHeader.styles"
 
 interface CourtCaseListTableHeaderProps {
   order: QueryOrder
