@@ -1,7 +1,7 @@
 import { Table } from "govuk-react"
-import styled from "styled-components"
 import Badge, { BadgeColours } from "./Badge"
 import ErrorIcon from "./ErrorIcon"
+import { Content, Label } from "./ExceptionFieldTableRow.styles"
 
 export enum ExceptionBadgeType {
   SystemError = "System Error",
@@ -17,29 +17,6 @@ type Props = {
   children?: React.ReactNode
   displayError?: boolean
 }
-
-const Label = styled(Table.Cell)`
-  vertical-align: top;
-
-  & .error-icon: {
-    padding: 0.62rem 0 0.62rem 0;
-  }
-`
-
-const Content = styled(Table.Cell)`
-  vertical-align: top;
-
-  & .badge-wrapper: {
-    padding-bottom: 0.62rem;
-    display: flex;
-    gap: 0.62rem;
-    align-items: center;
-  }
-
-  & .field-value: {
-    padding-bottom: 0.62rem;
-  }
-`
 
 const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, displayError, children }: Props) => {
   return (

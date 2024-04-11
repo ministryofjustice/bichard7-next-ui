@@ -4,7 +4,7 @@ import NavigationHandler from "../../types/NavigationHandler"
 import getExceptionDefinition from "../../utils/getExceptionDefinition"
 import getExceptionPathDetails from "../../utils/getExceptionPathDetails"
 import ActionLink from "../ActionLink"
-import * as S from "./styles"
+import * as S from "./Exception.styles"
 
 type Props = {
   onNavigate: NavigationHandler

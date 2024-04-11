@@ -1,6 +1,5 @@
-import { SelectInput } from "@govuk-react/select"
 import { useRouter } from "next/router"
-import styled from "styled-components"
+import { CasesPerPagePicker } from "./CasesPerPage.styles"
 
 interface Props {
   options: number[]
@@ -8,10 +7,6 @@ interface Props {
   pageNum: number
   casesPerPage: number
 }
-
-const CasesPerPagePicker = styled(SelectInput)`
-  width: auto;
-`
 
 const CasesPerPage: React.FC<Props> = ({ options, selected, pageNum, casesPerPage }: Props) => {
   const router = useRouter()

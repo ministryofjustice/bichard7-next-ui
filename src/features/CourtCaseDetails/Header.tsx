@@ -1,18 +1,14 @@
 import Badge, { BadgeColours } from "components/Badge"
 import ConditionalRender from "components/ConditionalRender"
-import HeaderContainer from "components/Header/HeaderContainer"
-import HeaderRow from "components/Header/HeaderRow"
+import { HeaderContainer, HeaderRow } from "components/Header/Header.styles"
 import LinkButton from "components/LinkButton"
-import SecondaryButton from "components/SecondaryButton"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCsrfToken } from "context/CsrfTokenContext"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { usePreviousPath } from "context/PreviousPathContext"
-import { Button, Heading } from "govuk-react"
+import { Heading } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
-import { createUseStyles } from "react-jss"
-import styled from "styled-components"
 import Permission from "types/Permission"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { isLockedByCurrentUser } from "utils/caseLocks"
@@ -20,28 +16,12 @@ import { gdsLightGrey, gdsMidGrey, textPrimary } from "utils/colours"
 import Form from "../../components/Form"
 import { ResolutionStatus } from "../../types/ResolutionStatus"
 import ResolutionStatusBadge from "../CourtCaseList/tags/ResolutionStatusBadge"
+import { ButtonContainer, LockedTagContainer, StyledButton, StyledSecondaryButton } from "./Header.styles"
 import LockStatusTag from "./LockStatusTag"
 
 interface Props {
   canReallocate: boolean
 }
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 24px;
-  gap: 12px;
-`
-const LockedTagContainer = styled.div`
-  display: flex;
-  gap: 2.5rem;
-`
-
-const useStyles = createUseStyles({
-  button: {
-    marginBottom: 0
-  }
-})
 
 const getUnlockPath = (courtCase: DisplayFullCourtCase): URLSearchParams => {
   const params = new URLSearchParams()
@@ -68,7 +48,6 @@ const getResolutionStatus = (courtCase: DisplayFullCourtCase): ResolutionStatus 
 
 const Header: React.FC<Props> = ({ canReallocate }: Props) => {
   const { basePath } = useRouter()
-  const classes = useStyles()
   const csrfToken = useCsrfToken()
   const currentUser = useCurrentUser()
   const { courtCase } = useCourtCase()
@@ -139,21 +118,21 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
         </ConditionalRender>
         <ConditionalRender isRendered={hasCaseLock}>
           <a href={basePath}>
-            <Button id="leave-and-lock" className={classes.button}>
+            <StyledButton id="leave-and-lock" className={`button`}>
               {"Leave and lock"}
-            </Button>
+            </StyledButton>
           </a>
           <Form method="post" action={leaveAndUnlockUrl} csrfToken={csrfToken}>
-            <Button id="leave-and-unlock" className={classes.button} type="submit">
+            <StyledButton id="leave-and-unlock" className={`button`} type="submit">
               {"Leave and unlock"}
-            </Button>
+            </StyledButton>
           </Form>
         </ConditionalRender>
         <ConditionalRender isRendered={!hasCaseLock}>
           <a href={basePath}>
-            <SecondaryButton id="return-to-case-list" className={classes.button}>
+            <StyledSecondaryButton id="return-to-case-list" className={`button`}>
               {"Return to case list"}
-            </SecondaryButton>
+            </StyledSecondaryButton>
           </a>
         </ConditionalRender>
       </ButtonContainer>

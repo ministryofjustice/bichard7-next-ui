@@ -1,6 +1,6 @@
-import styled from "styled-components"
 import ConditionalRender from "../ConditionalRender"
 import CasesPerPage from "./CasesPerPage"
+import { PaginationBar } from "./Pagination.styles"
 import PaginationNavigation from "./PaginationNavigation"
 import PaginationResults from "./PaginationResults"
 
@@ -10,14 +10,6 @@ interface Props {
   totalCases: number
   name?: string
 }
-
-const PaginationBar = styled.div`
-  display: inline-flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: center;
-  width: 99%;
-`
 
 const Pagination: React.FC<Props> = ({ pageNum, casesPerPage, totalCases, name }: Props) => {
   return (
