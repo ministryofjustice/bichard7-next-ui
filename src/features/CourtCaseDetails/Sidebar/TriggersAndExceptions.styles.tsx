@@ -16,16 +16,20 @@ const TabList = styled(Tabs.List)`
 `
 
 const SideBar = styled.div`
-  margin-top: 41px;
+  margin-top: -41px;
 `
 
-const StyledTab = styled(Tabs)`
+const TabContent = styled.div`
   cursor: pointer;
   font-weight: bold;
+`
+
+const TabContainer = styled.div`
+  cursor: pointer;
 `
 
 const TablePanel = styled(Tabs.Panel)`
   padding-top: 10px;
 `
 
-export { SideBar, StyledTab, TabList, TablePanel }
+export { SideBar, TabContainer, TabContent, TabList, TablePanel }
