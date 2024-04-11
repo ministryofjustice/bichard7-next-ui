@@ -8,6 +8,72 @@ import {
 } from "./CourtCaseDetailsSummaryBox.styles"
 import CourtCaseDetailsSummaryBoxField from "./CourtCaseDetailsSummaryBoxField"
 
+// const useStyles = createUseStyles({
+//   "court-case-details-summary-box": {
+//     backgroundColor: gdsLightGrey,
+//     padding: "25px"
+//   },
+//   "court-case-details-summary-box-grid": {
+//     display: "grid",
+//     gridTemplateColumns: "repeat(3, auto)",
+//     gridAutoFlow: "row dense",
+//     rowGap: "12px"
+//   },
+//   detail: {},
+//   "detail__court-name-inside": {
+//     display: "none",
+//     visibility: "hidden"
+//   },
+//   "detail__court-name-outside": {
+//     display: "inline-block",
+//     visibility: "visible",
+//     marginTop: "12px"
+//   },
+//   detail__label: {
+//     display: "inline-block",
+//     marginRight: "10px"
+//   },
+//   detail__value: {
+//     display: "inline-block",
+//     marginRight: "15px"
+//   },
+//   "@media (min-width: 1280px) and (max-width: 1679px)": {
+//     detail__label: {
+//       width: "180px"
+//     }
+//   },
+//   "@media (min-width: 1680px)": {
+//     "court-case-details-summary-box-grid": {
+//       display: "flex",
+//       fontSize: "19px" // overide default font size at larger screen width
+//     },
+//     detail: {
+//       display: "block",
+//       paddingRight: "35px",
+//       "&:last-child": {
+//         paddingRight: 0
+//       }
+//     },
+//     "detail__court-name-inside": {
+//       display: "block",
+//       visibility: "visible"
+//     },
+//     "detail__court-name-outside": {
+//       display: "none",
+//       visibility: "hidden"
+//     },
+//     detail__label: {
+//       display: "flex",
+//       minWidth: "inherit"
+//     },
+//     detail__value: {
+//       display: "flex",
+//       marginRight: 0,
+//       marginLeft: 0
+//     }
+//   }
+// })
+
 const CourtCaseDetailsSummaryBox = () => {
   const { courtCase } = useCourtCase()
 
