@@ -2,7 +2,7 @@ import styled from "styled-components"
 import { gdsLightGrey } from "utils/colours"
 
 const SummaryBox = styled.div`
-  backgroundcolor: ${gdsLightGrey};
+  background-color: ${gdsLightGrey};
   padding: 25px;
 `
 
