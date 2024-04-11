@@ -1,22 +1,13 @@
-import {
-  confirmMultipleFieldsDisplayed,
-  confirmMultipleFieldsNotDisplayed,
-  defaultSetup,
-  loginAndGoToUrl
-} from "../../support/helpers"
+import { confirmMultipleFieldsDisplayed, confirmMultipleFieldsNotDisplayed, loginAndVisit } from "../../support/helpers"
 
 describe("How orgs and forces are presented", () => {
-  before(() => {
-    defaultSetup()
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
 
   it("Should display a case for the user's org", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get("tr").not(":first").get("td:nth-child(5)").contains(`Case00000`)
   })
@@ -32,7 +23,7 @@ describe("How orgs and forces are presented", () => {
       { orgForPoliceFilter: caseNotVisible, ptiurn: "NotExpected" }
     ])
 
-    loginAndGoToUrl("bichard02@example.com")
+    loginAndVisit("BichardForce02")
 
     confirmMultipleFieldsDisplayed(["expected1", "expected2", "expected3"])
     confirmMultipleFieldsNotDisplayed(["NotExpected"])
@@ -48,7 +39,7 @@ describe("How orgs and forces are presented", () => {
       { orgForPoliceFilter: caseNotVisible, ptiurn: "NotExpected" }
     ])
 
-    loginAndGoToUrl("bichard02@example.com")
+    loginAndVisit("BichardForce02")
 
     confirmMultipleFieldsDisplayed(["expected"])
     confirmMultipleFieldsNotDisplayed(["NotExpected"])
@@ -62,7 +53,7 @@ describe("How orgs and forces are presented", () => {
       { courtCode: caseNotVisible, ptiurn: "NotExpected" }
     ])
 
-    loginAndGoToUrl("bichard02@example.com")
+    loginAndVisit("BichardForce02")
 
     confirmMultipleFieldsDisplayed(["expected"])
     confirmMultipleFieldsNotDisplayed(["NotExpected"])
@@ -76,7 +67,7 @@ describe("How orgs and forces are presented", () => {
       { orgForPoliceFilter: "013A1" }
     ])
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00000")
     cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00001")
@@ -93,7 +84,7 @@ describe("How orgs and forces are presented", () => {
       { orgForPoliceFilter: "011111" }
     ])
 
-    loginAndGoToUrl("bichard011111@example.com")
+    loginAndVisit("Bichard011111")
 
     cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00000").should("not.exist")
     cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00001").should("not.exist")

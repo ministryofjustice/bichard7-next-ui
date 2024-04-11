@@ -1,16 +1,16 @@
+import MockDate from "mockdate"
+import User from "services/entities/User"
+import { isError } from "services/mq/types/Result"
+import updateCourtCaseStatus from "services/updateCourtCaseStatus"
 import { DataSource, UpdateResult } from "typeorm"
+import { ResolutionStatus } from "types/ResolutionStatus"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import updateCourtCaseStatus from "services/updateCourtCaseStatus"
-import { isError } from "services/mq/types/Result"
-import { ResolutionStatus } from "types/ResolutionStatus"
-import User from "services/entities/User"
-import MockDate from "mockdate"
 
 const courtCaseId = 0
-const testUser = { username: "Test user" } as User
+const testUser = { username: "GeneralHandler" } as User
 
 const insertRecord = async (
   errorLockedByUsername: string | null = null,
@@ -65,7 +65,7 @@ describe("updateCourtCaseStatus", () => {
 
   describe("Updating error status", () => {
     it("Should not update the case if its locked by another user", async () => {
-      const errorLockedByUsername = "Another User"
+      const errorLockedByUsername = "BichardForce02"
       const [courtCase] = await insertRecord(errorLockedByUsername)
 
       const result = await updateCourtCaseStatus(dataSource, courtCase, "Error", "Submitted", testUser)

@@ -26,7 +26,7 @@ describe("resolveTriggers", () => {
     eventCode: string,
     eventType: string,
     triggers: string[],
-    username = "triggerResolver01"
+    username = "TriggerHandler"
   ) => {
     return {
       category: "information",
@@ -49,10 +49,10 @@ describe("resolveTriggers", () => {
     }
   }
 
-  const createTriggersResolvedEvent = (triggers: string[], username = "triggerResolver01") =>
+  const createTriggersResolvedEvent = (triggers: string[], username = "TriggerHandler") =>
     createTriggersEvent("triggers.resolved", "Trigger marked as resolved by user", triggers, username)
 
-  const createAllTriggersResolvedEvent = (triggers: string[], username = "triggerResolver01") =>
+  const createAllTriggersResolvedEvent = (triggers: string[], username = "TriggerHandler") =>
     createTriggersEvent("triggers.all-resolved", "All triggers marked as resolved", triggers, username)
 
   const triggerUnlockedEvent = {
@@ -60,7 +60,7 @@ describe("resolveTriggers", () => {
     eventSource: AUDIT_LOG_EVENT_SOURCE,
     eventType: "Trigger unlocked",
     timestamp: expect.anything(),
-    user: "triggerResolver01",
+    user: "TriggerHandler",
     eventCode: "triggers.unlocked",
     attributes: {
       auditLogVersion: 2
@@ -82,7 +82,7 @@ describe("resolveTriggers", () => {
   })
 
   describe("Mark trigger as resolved", () => {
-    const resolverUsername = "triggerResolver01"
+    const resolverUsername = "TriggerHandler"
     const visibleForce = "36"
     const user = {
       visibleCourts: [],
@@ -253,7 +253,7 @@ describe("resolveTriggers", () => {
       const reResolverUser = {
         visibleCourts: [],
         visibleForces: [visibleForce],
-        username: "triggerResolver02",
+        username: "BichardForce02",
         hasAccessTo: hasAccessToAll
       } as Partial<User> as User
 
@@ -302,7 +302,7 @@ describe("resolveTriggers", () => {
     })
 
     it("Shouldn't resolve a trigger locked by someone else", async () => {
-      const lockHolderUsername = "triggerResolver02"
+      const lockHolderUsername = "BichardForce02"
       const [courtCase] = await insertCourtCasesWithFields([
         {
           triggerLockedByUsername: lockHolderUsername,

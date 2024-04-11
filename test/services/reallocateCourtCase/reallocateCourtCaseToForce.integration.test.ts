@@ -120,7 +120,7 @@ describe("reallocate court case to another force", () => {
     it("Should reallocate the case to a new force, generate system notes and unlock the case", async () => {
       const newForceCode = "04"
       const expectedForceOwner = `${newForceCode}YZ00`
-      const userName = "UserName"
+      const userName = "GeneralHandler"
       const [courtCase] = await insertCourtCasesWithFields([
         {
           orgForPoliceFilter: oldForceCode,
@@ -185,7 +185,7 @@ describe("reallocate court case to another force", () => {
     it("Should reallocate the case to a new force, generate system notes, user note, and unlock the case", async () => {
       const newForceCode = "04"
       const expectedForceOwner = `${newForceCode}YZ00`
-      const userName = "UserName"
+      const userName = "GeneralHandler"
       const [courtCase] = await insertCourtCasesWithFields([
         {
           orgForPoliceFilter: oldForceCode,
@@ -202,7 +202,13 @@ describe("reallocate court case to another force", () => {
         hasAccessTo: hasAccessToAll
       } as Partial<User> as User
 
-      const result = await reallocateCourtCaseToForce(dataSource, courtCaseId, user, newForceCode, "Dummy user note")
+      const result = await reallocateCourtCaseToForce(
+        dataSource,
+        courtCaseId,
+        user,
+        newForceCode,
+        "GeneralHandler note"
+      )
       expect(isError(result)).toBe(false)
 
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
@@ -233,7 +239,7 @@ describe("reallocate court case to another force", () => {
       expect(notes[1].noteText).toEqual(`${userName}: Case reallocated to new force owner: ${expectedForceOwner}`)
 
       expect(notes[2].userId).toEqual(userName)
-      expect(notes[2].noteText).toEqual("Dummy user note")
+      expect(notes[2].noteText).toEqual("GeneralHandler note")
 
       const events = await fetchAuditLogEvents(courtCase.messageId)
       expect(events).toHaveLength(4)
@@ -252,7 +258,7 @@ describe("reallocate court case to another force", () => {
 
   it("Should call functions in order", async () => {
     const newForceCode = "04"
-    const userName = "UserName"
+    const userName = "GeneralHandler"
     await insertCourtCasesWithFields([
       {
         orgForPoliceFilter: oldForceCode,
@@ -290,7 +296,7 @@ describe("reallocate court case to another force", () => {
 
   it("Should not add reallocation trigger (TRPR0028) when case has unresolved exceptions", async () => {
     const newForceCode = "04"
-    const userName = "UserName"
+    const userName = "GeneralHandler"
     await insertCourtCasesWithFields([
       {
         orgForPoliceFilter: oldForceCode,
@@ -329,7 +335,7 @@ describe("reallocate court case to another force", () => {
       ])
 
       const user = {
-        username: "Dummy User",
+        username: "GeneralHandler",
         visibleForces: [oldForceCode],
         visibleCourts: [],
         hasAccessTo: hasAccessToAll
@@ -353,7 +359,7 @@ describe("reallocate court case to another force", () => {
 
   describe("when the case is locked by another user", () => {
     it("Should return an error and not perform any of reallocation steps", async () => {
-      const anotherUser = "Someone Else"
+      const anotherUser = "BichardForce02"
       const [courtCase] = await insertCourtCasesWithFields([
         {
           orgForPoliceFilter: oldForceCode,
@@ -364,7 +370,7 @@ describe("reallocate court case to another force", () => {
       ])
 
       const user = {
-        username: "Dummy User",
+        username: "GeneralHandler",
         visibleForces: [oldForceCode],
         visibleCourts: [],
         hasAccessTo: hasAccessToAll
@@ -376,8 +382,8 @@ describe("reallocate court case to another force", () => {
       const record = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: courtCaseId } })
       const actualCourtCase = record as CourtCase
       expect(actualCourtCase.orgForPoliceFilter).toStrictEqual(`${oldForceCode}    `)
-      expect(actualCourtCase.errorLockedByUsername).toStrictEqual("Someone Else")
-      expect(actualCourtCase.triggerLockedByUsername).toStrictEqual("Someone Else")
+      expect(actualCourtCase.errorLockedByUsername).toStrictEqual(anotherUser)
+      expect(actualCourtCase.triggerLockedByUsername).toStrictEqual(anotherUser)
       expect(actualCourtCase.updatedHearingOutcome).toBeNull()
       expect(actualCourtCase.notes).toHaveLength(0)
 
@@ -388,7 +394,7 @@ describe("reallocate court case to another force", () => {
 
   describe("when there is an unexpected error", () => {
     const user = {
-      username: "Dummy User",
+      username: "GeneralHandler",
       visibleForces: [oldForceCode],
       visibleCourts: [],
       hasAccessTo: hasAccessToAll

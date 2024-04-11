@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import fs from "fs"
 import Note from "services/entities/Note"
 import Trigger from "services/entities/Trigger"
 import { ResolutionStatus } from "types/ResolutionStatus"
@@ -7,15 +9,13 @@ import { v4 as uuid } from "uuid"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import createAuditLogRecord from "../helpers/createAuditLogRecord"
+import CustomExceptions from "../test-data/CustomExceptions.json"
 import DummyMultipleOffencesAho from "../test-data/HO100102_1.json"
 import DummyCustomOffences from "../test-data/HO100102_1_multiple_offences.json"
-import CustomExceptions from "../test-data/CustomExceptions.json"
 import DummyCourtCase from "./DummyCourtCase"
 import { insertLockUsers } from "./insertLockUsers"
 import insertManyIntoDynamoTable from "./insertManyIntoDynamoTable"
 import { insertNoteUser } from "./insertNoteUser"
-import fs from "fs"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 
 const getAhoWithMultipleOffences = (offenceCount: number) => {
   const offenceXml = fs.readFileSync("test/test-data/offence.xml").toString()
@@ -119,8 +119,8 @@ const insertDummyCourtCasesWithNotesAndLock = async (
   return insertCourtCasesWithFields(
     caseNotes.map((notes, index) => ({
       orgForPoliceFilter: orgCode,
-      errorLockedByUsername: "random user",
-      triggerLockedByUsername: "another random user",
+      errorLockedByUsername: "BichardForce03",
+      triggerLockedByUsername: "BichardForce03",
       notes: notes.map(
         (note, _) =>
           ({
@@ -158,9 +158,9 @@ const insertDummyCourtCasesWithTriggers = async (
 }
 
 export {
-  getDummyCourtCase,
-  getAhoWithMultipleOffences,
   getAhoWithCustomExceptions,
+  getAhoWithMultipleOffences,
+  getDummyCourtCase,
   insertCourtCases,
   insertCourtCasesWithFields,
   insertDummyCourtCasesWithNotes,
