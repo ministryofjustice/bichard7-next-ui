@@ -27,7 +27,6 @@ describe("Reasons filters", () => {
     })
     navigateAndShowFilters()
 
-    cy.get("#filter-panel .reasons .bails").should("exist")
     cy.get("#filter-panel .reasons .triggers").should("exist")
     cy.get("#filter-panel .reasons .exceptions").should("exist")
   })
@@ -36,18 +35,8 @@ describe("Reasons filters", () => {
     newUserLogin({ groups: [UserGroup.GeneralHandler] })
     navigateAndShowFilters()
 
-    cy.get("#filter-panel .reasons .bails").should("exist")
     cy.get("#filter-panel .reasons .triggers").should("exist")
     cy.get("#filter-panel .reasons .exceptions").should("exist")
-  })
-
-  it("should only display 'Bails' for trigger handlers", () => {
-    newUserLogin({ groups: [UserGroup.TriggerHandler] })
-    navigateAndShowFilters()
-
-    cy.get("#filter-panel .reasons .bails").should("exist")
-    cy.get("#filter-panel .reasons .triggers").should("not.exist")
-    cy.get("#filter-panel .reasons .exceptions").should("not.exist")
   })
 
   it("should not render the reasons component for exception handlers", () => {
@@ -63,7 +52,6 @@ describe("Reasons filters", () => {
     })
     navigateAndShowFilters()
 
-    cy.get("#filter-panel .reasons .bails").should("exist")
     cy.get("#filter-panel .reasons .triggers").should("exist")
     cy.get("#filter-panel .reasons .exceptions").should("exist")
   })

@@ -82,9 +82,9 @@ export type Filter = {
     label?: string
   }
   reasonFilter: {
-    value: Reason
-    state: FilterState
-  }[]
+    value?: Reason
+    state?: FilterState
+  }
   myCasesFilter: {
     value?: boolean
     state?: FilterState

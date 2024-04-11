@@ -1,5 +1,5 @@
-import FilterTag from "components/FilterTag/FilterTag"
 import ConditionalRender from "components/ConditionalRender"
+import FilterTag from "components/FilterTag/FilterTag"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
 import { Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
@@ -9,7 +9,7 @@ import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
 
 interface Props {
   filters: {
-    reasons?: Reason[]
+    reason?: Reason | null
     keywords?: string[]
     courtName?: string | null
     reasonCodes?: string[]
@@ -27,7 +27,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
   const { basePath, query } = useRouter()
 
   const hasAnyAppliedFilters = (): boolean =>
-    (filters.reasons && filters.reasons.length > 0) ||
+    (!!filters.reason && filters.reason !== Reason.All) ||
     (filters.keywords && filters.keywords.length > 0) ||
     (filters.caseAge && filters.caseAge.length > 0) ||
     !!filters.courtName ||
@@ -75,14 +75,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
           <li>
             <p className="govuk-heading-s govuk-!-margin-bottom-0">{"Filters applied:"}</p>
           </li>
-          {filters.reasons &&
-            filters.reasons.map((reason) => {
-              return (
-                <li key={`${reason}`}>
-                  <FilterTag tag={reason} href={removeFilterFromPath({ type: reason })} />
-                </li>
-              )
-            })}
+          <ConditionalRender isRendered={!!filters.reason && filters.reason !== Reason.All}>
+            <li key={`${filters.reason}`}>
+              <FilterTag tag={filters.reason ?? ""} href={removeFilterFromPath({ type: filters.reason ?? "" })} />
+            </li>
+          </ConditionalRender>
           {filters.keywords &&
             filters.keywords.map((keyword) => {
               return (
