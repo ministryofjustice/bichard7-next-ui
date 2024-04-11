@@ -1,10 +1,9 @@
 import { useCourtCase } from "context/CourtCaseContext"
-import { GridCol, GridRow } from "govuk-react"
 import { useCallback, useState } from "react"
 import { useBeforeunload } from "react-beforeunload"
-import styled from "styled-components"
 import type CaseDetailsTab from "types/CaseDetailsTab"
 import type NavigationHandler from "types/NavigationHandler"
+import { PanelsGridCol, PanelsGridRow, SideBar } from "./CourtCaseDetails.styles"
 import TriggersAndExceptions from "./Sidebar/TriggersAndExceptions"
 import { CourtCaseDetailsPanel } from "./Tabs/CourtCaseDetailsPanels"
 import { CourtCaseDetailsTabs } from "./Tabs/CourtCaseDetailsTabs"
@@ -21,38 +20,6 @@ interface Props {
 
 const sideBarWidth = "33%"
 const contentWidth = "67%"
-
-const PanelsGridRow = styled(GridRow)`
-  @media (max-width: 1024px) : {
-    max-width: 100%;
-    min-width: 100%;
-    width: 100%;
-    display: block;
-  }
-`
-
-const PanelsGridCol = styled(GridCol)`
-  overflow-x: scroll;
-
-  @media (max-width: 1024px) : {
-    max-width: 100%;
-    min-width: 100%;
-    width: 100%;
-    display: block;
-  }
-`
-
-const SideBar = styled(GridCol)`
-  min-width: 320px;
-  max-width: 100%;
-  @media (max-width: 1024px) : {
-    padding-top: 50px;
-    max-width: 100%;
-    min-width: 100%;
-    width: 100%;
-    display: block;
-  }
-`
 
 const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAndSubmit }) => {
   const { courtCase } = useCourtCase()

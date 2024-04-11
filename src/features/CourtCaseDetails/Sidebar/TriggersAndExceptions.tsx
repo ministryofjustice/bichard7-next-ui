@@ -3,45 +3,17 @@ import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { Tabs } from "govuk-react"
 import { useState } from "react"
-import { createUseStyles } from "react-jss"
-import styled from "styled-components"
 import type NavigationHandler from "types/NavigationHandler"
 import Permission from "types/Permission"
 import Exceptions from "./Exceptions"
+import { SideBar, StyledTab, TabList, TablePanel } from "./TriggersAndExceptions.styles"
 import TriggersList from "./TriggersList"
-
-const useStyles = createUseStyles({
-  sideBar: {
-    marginTop: "-41px"
-  },
-  tabPanelTriggers: {
-    paddingTop: "10px"
-  },
-  tab: {
-    cursor: "pointer",
-    fontWeight: "bold"
-  }
-})
 
 interface Props {
   onNavigate: NavigationHandler
   canResolveAndSubmit: boolean
   stopLeavingFn: (newValue: boolean) => void
 }
-
-const TabList = styled(Tabs.List)`
-  & > li:only-child {
-    display: flex;
-    border-bottom: 1px solid #bfc1c3;
-
-    a {
-      flex-grow: 1;
-      margin-right: 0;
-      cursor: default;
-      pointer-events: none;
-    }
-  }
-`
 
 const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
   const currentUser = useCurrentUser()
@@ -55,44 +27,43 @@ const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn 
         : availableTabs[0]
       : undefined
   const [selectedTab, setSelectedTab] = useState(defaultTab)
-  const classes = useStyles()
 
   return (
-    <div className={`${classes.sideBar} triggers-and-exceptions-sidebar`}>
+    <SideBar className={`side-bar triggers-and-exceptions-sidebar`}>
       <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.CaseDetailsSidebar]}>
         <Tabs>
           <TabList>
             <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
-              <Tabs.Tab
+              <StyledTab.Tab
                 id="triggers-tab"
-                className={classes.tab}
+                className={"tab"}
                 onClick={() => setSelectedTab(Permission.Triggers)}
                 selected={selectedTab === Permission.Triggers}
               >
                 {`Triggers`}
-              </Tabs.Tab>
+              </StyledTab.Tab>
             </ConditionalRender>
 
             <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Exceptions]}>
-              <Tabs.Tab
+              <StyledTab.Tab
                 id="exceptions-tab"
-                className={classes.tab}
+                className={"tab"}
                 onClick={() => setSelectedTab(Permission.Exceptions)}
                 selected={selectedTab === Permission.Exceptions}
               >
                 {`Exceptions`}
-              </Tabs.Tab>
+              </StyledTab.Tab>
             </ConditionalRender>
           </TabList>
 
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
-            <Tabs.Panel
+            <TablePanel
               id="triggers"
               selected={selectedTab === Permission.Triggers}
-              className={`moj-tab-panel-triggers ${classes.tabPanelTriggers}`}
+              className={`moj-tab-panel-triggers tab-panel-triggers`}
             >
               <TriggersList onNavigate={onNavigate} />
-            </Tabs.Panel>
+            </TablePanel>
           </ConditionalRender>
 
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Exceptions]}>
@@ -110,7 +81,7 @@ const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn 
           </ConditionalRender>
         </Tabs>
       </ConditionalRender>
-    </div>
+    </SideBar>
   )
 }
 

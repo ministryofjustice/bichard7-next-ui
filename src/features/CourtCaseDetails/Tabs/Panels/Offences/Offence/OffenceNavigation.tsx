@@ -1,7 +1,7 @@
-import SecondaryButton from "components/SecondaryButton"
+import { SecondaryButton } from "components/Buttons"
 import { GridCol, GridRow } from "govuk-react"
-import { createUseStyles } from "react-jss"
 import { BackToAllOffencesLink } from "./BackToAllOffencesLink"
+import { PreviousButton, NextButton } from "./OffenceNavigation.styles"
 
 interface OffenceNavigationProps {
   onBackToAllOffences: () => void
@@ -10,15 +10,6 @@ interface OffenceNavigationProps {
   onNextClick: () => void
   offencesCount: number
 }
-const useStyles = createUseStyles({
-  button: {
-    textAlign: "right"
-  },
-
-  nextButton: {
-    marginLeft: "30px"
-  }
-})
 
 export const OffenceNavigation = ({
   onBackToAllOffences,
@@ -27,21 +18,22 @@ export const OffenceNavigation = ({
   onNextClick,
   offencesCount
 }: OffenceNavigationProps) => {
-  const classes = useStyles()
   return (
     <GridRow>
       <GridCol>
         <BackToAllOffencesLink onClick={() => onBackToAllOffences()} />
       </GridCol>
-      <GridCol className={classes.button}>
-        {selectedOffenceIndex !== 1 && (
-          <SecondaryButton onClick={() => onPreviousClick()}>{"Previous offence"}</SecondaryButton>
-        )}
-        {selectedOffenceIndex !== offencesCount && (
-          <SecondaryButton className={classes.nextButton} onClick={() => onNextClick()}>
-            {"Next offence"}
-          </SecondaryButton>
-        )}
+      <GridCol>
+        <PreviousButton>
+          {selectedOffenceIndex !== 1 && (
+            <SecondaryButton onClick={() => onPreviousClick()}>{"Previous offence"}</SecondaryButton>
+          )}
+          {selectedOffenceIndex !== offencesCount && (
+            <NextButton>
+              <SecondaryButton onClick={() => onNextClick()}>{"Next offence"}</SecondaryButton>
+            </NextButton>
+          )}
+        </PreviousButton>
       </GridCol>
     </GridRow>
   )

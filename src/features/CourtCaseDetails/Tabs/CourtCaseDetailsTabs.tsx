@@ -1,8 +1,8 @@
-import { createUseStyles } from "react-jss"
-import type CaseDetailsTab from "types/CaseDetailsTab"
-import { CourtCaseDetailsSingleTab } from "./CourtCaseDetailsSingleTab"
 import { useCourtCase } from "context/CourtCaseContext"
+import type CaseDetailsTab from "types/CaseDetailsTab"
 import { getTabDetails } from "utils/getTabDetails"
+import { CourtCaseDetailsSingleTab } from "./CourtCaseDetailsSingleTab"
+import { StyledNav } from "./CourtCaseDetailsTabs.styles"
 
 interface CourtCaseDetailsTabsProps {
   activeTab: CaseDetailsTab
@@ -10,19 +10,12 @@ interface CourtCaseDetailsTabsProps {
   width: string
 }
 
-const useStyles = createUseStyles({
-  nav: ({ width }: { width: string }) => ({
-    width
-  })
-})
-
 export const CourtCaseDetailsTabs = ({ activeTab, onTabClick, width }: CourtCaseDetailsTabsProps) => {
-  const classes = useStyles({ width })
   const { courtCase, amendments } = useCourtCase()
   const tabDetails = getTabDetails(courtCase.aho.Exceptions, amendments)
 
   return (
-    <nav className={`moj-sub-navigation ${classes.nav}`} aria-label="Sub navigation">
+    <StyledNav width={width} className={`moj-sub-navigation nav`} aria-label="Sub navigation">
       <ul className="moj-sub-navigation__list">
         {tabDetails.map((tab) => {
           return (
@@ -35,6 +28,6 @@ export const CourtCaseDetailsTabs = ({ activeTab, onTabClick, width }: CourtCase
           )
         })}
       </ul>
-    </nav>
+    </StyledNav>
   )
 }

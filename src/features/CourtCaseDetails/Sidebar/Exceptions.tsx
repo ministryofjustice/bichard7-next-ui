@@ -7,15 +7,14 @@ import { usePreviousPath } from "context/PreviousPathContext"
 import { Button } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
-import { createUseStyles } from "react-jss"
-import styled from "styled-components"
 import type NavigationHandler from "types/NavigationHandler"
 import DefaultException from "../../../components/Exception/DefaultException"
 import PncException from "../../../components/Exception/PncException"
 import Form from "../../../components/Form"
-import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
 import areEditableFieldsValid from "../../../utils/areEditableFieldsValid"
+import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
 import LockStatusTag from "../LockStatusTag"
+import { ButtonContainer, SeparatorLine } from "./Exceptions.styles"
 
 const isPncException = (code: ExceptionCode) =>
   [ExceptionCode.HO100302, ExceptionCode.HO100314, ExceptionCode.HO100402, ExceptionCode.HO100404].includes(code)
@@ -26,33 +25,7 @@ interface Props {
   stopLeavingFn: (newValue: boolean) => void
 }
 
-const useStyles = createUseStyles({
-  buttonContainer: {
-    display: "flex",
-    justifyContent: "flex-end",
-    marginBottom: "0"
-  }
-})
-
-const SeparatorLine = styled.div`
-  position: relative;
-  display: block;
-  margin-bottom: 1.25rem;
-  width: 100%;
-  height: 2px;
-
-  &:after {
-    content: " ";
-    position: absolute;
-    height: 2px;
-    width: calc(100% + (1.2625rem * 2));
-    background: #b1b4b6;
-    left: -1.2625rem;
-  }
-`
-
 const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
-  const classes = useStyles()
   const { courtCase, amendments } = useCourtCase()
   const pncExceptions = courtCase.aho.Exceptions.filter(({ code }) => isPncException(code))
   const otherExceptions = courtCase.aho.Exceptions.filter(({ code }) => !isPncException(code))
@@ -88,15 +61,15 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) =
       ))}
 
       <ConditionalRender isRendered={canResolveAndSubmit && courtCase.aho.Exceptions.length > 0}>
-        <div className={classes.buttonContainer}>
+        <ButtonContainer className={"buttonContainer"}>
           <Form method="post" action={submitCasePath} csrfToken={csrfToken}>
             <input type="hidden" name="amendments" value={JSON.stringify(amendments)} />
             <Button id="submit" type="submit" disabled={!enableSubmitExceptions} onClick={handleClick}>
               {"Submit exception(s)"}
             </Button>
           </Form>
-        </div>
-        <div className={classes.buttonContainer}>
+        </ButtonContainer>
+        <ButtonContainer className={"buttonContainer"}>
           <LinkButton
             href={resolveLink}
             className="b7-manually-resolve-button"
@@ -106,15 +79,15 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) =
           >
             {"Mark as manually resolved"}
           </LinkButton>
-        </div>
+        </ButtonContainer>
       </ConditionalRender>
-      <div className={classes.buttonContainer}>
+      <ButtonContainer className={"buttonContainer"}>
         <LockStatusTag
           isRendered={courtCase.aho.Exceptions.length > 0}
           resolutionStatus={courtCase.errorStatus}
           lockName="Exceptions"
         />
-      </div>
+      </ButtonContainer>
     </>
   )
 }

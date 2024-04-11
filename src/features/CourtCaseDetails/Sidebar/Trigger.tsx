@@ -5,10 +5,16 @@ import { Preview } from "components/Preview"
 import PreviewButton from "components/PreviewButton"
 import { GridCol, GridRow, Heading, Paragraph } from "govuk-react"
 import { ChangeEvent, SyntheticEvent, useState } from "react"
-import { createUseStyles } from "react-jss"
-import styled from "styled-components"
 import { DisplayTrigger } from "types/display/Triggers"
 import getTriggerDefinition from "utils/getTriggerDefinition"
+import {
+  CjsResultCode,
+  TriggerCodeLabel,
+  TriggerContainer,
+  TriggerDefinition,
+  TriggerHeaderRow,
+  TriggerStatus
+} from "./Trigger.styles"
 
 interface Props {
   trigger: DisplayTrigger
@@ -18,58 +24,22 @@ interface Props {
   disabled?: boolean
 }
 
-const useStyles = createUseStyles({
-  triggerContainer: {
-    "&:first-child": {
-      marginTop: "20px"
-    },
-    "&:not(:last-child)": {
-      marginBottom: "30px"
-    }
-  },
-  triggerHeaderRow: {
-    maxHeight: "25px"
-  },
-  triggerCode: {
-    fontWeight: "bold"
-  },
-  triggerCheckbox: {
-    position: "absolute",
-    right: "22px"
-  },
-  cjsResultCode: {
-    fontSize: "1em",
-    lineHeight: "1.25"
-  }
-})
-
-const TriggerDefinition = styled.div`
-  margin-top: 10px;
-`
-
-const TriggerStatus = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-`
-
 const TriggerCompleteBadge = () => <span className="moj-badge moj-badge--green">{"Complete"}</span>
 
 const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection, disabled }: Props) => {
   const triggerDefinition = getTriggerDefinition(trigger.triggerCode)
   const [showHelpBox, setShowHelpBox] = useState(false)
-  const classes = useStyles()
 
   const checkBoxId = `trigger_${trigger.triggerId}`
   const isResolved = trigger.status === "Resolved"
 
   return (
-    <div key={trigger.triggerId} className={`moj-trigger-row ${classes.triggerContainer}`}>
-      <GridRow className={`trigger-header ${classes.triggerHeaderRow}`}>
+    <TriggerContainer key={trigger.triggerId} className={`moj-trigger-row trigger-container`}>
+      <TriggerHeaderRow className={`trigger-header trigger-header-row`}>
         <GridCol className="trigger-details-column" setWidth="85%">
-          <label className={`trigger-code ${classes.triggerCode}`} htmlFor={checkBoxId}>
+          <TriggerCodeLabel className={`trigger-code trigger-code`} htmlFor={checkBoxId}>
             {trigger.shortTriggerCode}
-          </label>
+          </TriggerCodeLabel>
           {(trigger.triggerItemIdentity ?? 0) > 0 && (
             <>
               <b>{" / "}</b>
@@ -99,7 +69,7 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection, di
             </ConditionalRender>
           </TriggerStatus>
         </GridCol>
-      </GridRow>
+      </TriggerHeaderRow>
       <GridRow>
         <GridCol>
           <TriggerDefinition>{triggerDefinition?.description}</TriggerDefinition>
@@ -122,15 +92,15 @@ const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection, di
               <Heading as="h3" size="SMALL">
                 {"CJS result code"}
               </Heading>
-              <div
-                className={classes.cjsResultCode}
+              <CjsResultCode
+                className={"cjs-result-code"}
                 dangerouslySetInnerHTML={{ __html: triggerDefinition?.cjsResultCode ?? "" }}
-              ></div>
+              ></CjsResultCode>
             </Preview>
           </ConditionalRender>
         </GridCol>
       </GridRow>
-    </div>
+    </TriggerContainer>
   )
 }
 
