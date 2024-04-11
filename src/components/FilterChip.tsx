@@ -1,22 +1,7 @@
+import { Button } from "govuk-react"
 import { Dispatch } from "react"
-import styled from "styled-components"
 import { FilterAction, FilterState } from "types/CourtCaseFilter"
-import { darkGrey } from "utils/colours"
-
-const Button = styled.button``
-const ButtonAlt = styled.button`
-  background: ${darkGrey};
-  color: white;
-  &:visited {
-    color: white;
-  }
-  &:after {
-    background-image: url(/bichard/moj_assets/images/icon-tag-remove-cross-white.svg);
-  }
-  &:link {
-    color: white;
-  }
-`
+import { ButtonAlt } from "./FilterChip.styles"
 
 interface Props {
   chipLabel: string
