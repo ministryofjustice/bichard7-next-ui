@@ -4,7 +4,7 @@ import NavigationHandler from "../../types/NavigationHandler"
 import getExceptionDefinition from "../../utils/getExceptionDefinition"
 import getExceptionPathDetails from "../../utils/getExceptionPathDetails"
 import ActionLink from "../ActionLink"
-import * as S from "./Exception.styles"
+import { ExceptionRow, ExceptionRowHelp } from "./Exception.styles"
 
 type Props = {
   onNavigate: NavigationHandler
@@ -28,7 +28,7 @@ const DefaultException = ({ path, code, onNavigate }: Props) => {
   }
 
   return (
-    <S.ExceptionRow className={`moj-exception-row`}>
+    <ExceptionRow className={`moj-exception-row`}>
       <GridRow className="exception-header">
         <GridCol>
           <b>
@@ -48,14 +48,14 @@ const DefaultException = ({ path, code, onNavigate }: Props) => {
         </GridCol>
       </GridRow>
 
-      <S.ExceptionRowHelp className={`exception-help`}>
+      <ExceptionRowHelp className={`exception-help`}>
         <GridCol>
           <Link href={`/help/bichard-functionality/exceptions/resolution.html#${code}`} target="_blank">
             {"More information"}
           </Link>
         </GridCol>
-      </S.ExceptionRowHelp>
-    </S.ExceptionRow>
+      </ExceptionRowHelp>
+    </ExceptionRow>
   )
 }
 
