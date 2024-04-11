@@ -6,7 +6,7 @@ import { useState } from "react"
 import type NavigationHandler from "types/NavigationHandler"
 import Permission from "types/Permission"
 import Exceptions from "./Exceptions"
-import { SideBar, StyledTab, TabList, TablePanel } from "./TriggersAndExceptions.styles"
+import { SideBar, TabContainer, TabContent, TabList, TablePanel } from "./TriggersAndExceptions.styles"
 import TriggersList from "./TriggersList"
 
 interface Props {
@@ -34,25 +34,29 @@ const TriggersAndExceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn 
         <Tabs>
           <TabList>
             <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
-              <StyledTab.Tab
-                id="triggers-tab"
-                className={"tab"}
-                onClick={() => setSelectedTab(Permission.Triggers)}
-                selected={selectedTab === Permission.Triggers}
-              >
-                {`Triggers`}
-              </StyledTab.Tab>
+              <TabContainer>
+                <Tabs.Tab
+                  id="triggers-tab"
+                  className={"tab"}
+                  onClick={() => setSelectedTab(Permission.Triggers)}
+                  selected={selectedTab === Permission.Triggers}
+                >
+                  <TabContent>{`Triggers`}</TabContent>
+                </Tabs.Tab>
+              </TabContainer>
             </ConditionalRender>
 
             <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Exceptions]}>
-              <StyledTab.Tab
-                id="exceptions-tab"
-                className={"tab"}
-                onClick={() => setSelectedTab(Permission.Exceptions)}
-                selected={selectedTab === Permission.Exceptions}
-              >
-                {`Exceptions`}
-              </StyledTab.Tab>
+              <TabContainer>
+                <Tabs.Tab
+                  id="exceptions-tab"
+                  className={"tab"}
+                  onClick={() => setSelectedTab(Permission.Exceptions)}
+                  selected={selectedTab === Permission.Exceptions}
+                >
+                  <TabContent>{`Exceptions`}</TabContent>
+                </Tabs.Tab>
+              </TabContainer>
             </ConditionalRender>
           </TabList>
 
