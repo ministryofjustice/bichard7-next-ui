@@ -5,7 +5,7 @@ const SummaryBoxDetail = styled.div`
     display: block;
     padding-right: 35px;
     &:last-child {
-      paddingright: 0;
+      padding-right: 0;
     }
   }
 `
