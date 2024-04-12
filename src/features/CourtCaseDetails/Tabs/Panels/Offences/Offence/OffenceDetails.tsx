@@ -217,7 +217,7 @@ export const OffenceDetails = ({
               value={
                 <>
                   <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
-                  <Badge isRendered={true} colour={BadgeColours.Purple} label="Matched" />
+                  <Badge isRendered={true} colour={BadgeColours.Purple} label="Matched" className="moj-badge--large" />
                 </>
               }
             />

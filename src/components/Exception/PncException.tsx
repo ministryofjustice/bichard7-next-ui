@@ -44,7 +44,7 @@ const PncException = ({ code, message }: Props) => {
     <ExceptionRow className={`moj-exception-row`}>
       <GridRow className="exception-row exception-row__header">
         <GridCol>
-          <Badge isRendered={true} colour={BadgeColours.Red} label={"PNC Error"} />
+          <Badge isRendered={true} colour={BadgeColours.Red} label={"PNC Error"} className="moj-badge--large" />
         </GridCol>
       </GridRow>
 

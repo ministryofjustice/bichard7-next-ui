@@ -37,7 +37,7 @@ const ExceptionFieldTableRow = ({ badgeText, badgeColour, value, label, displayE
         {badgeText && displayError !== false && (
           <div className="badge-wrapper">
             <Badge
-              className="error-badge"
+              className="error-badge moj-badge--large"
               isRendered={true}
               colour={badgeColour ?? BadgeColours.Purple}
               label={badgeText}

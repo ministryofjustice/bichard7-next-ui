@@ -87,7 +87,7 @@ const Header: React.FC<Props> = ({ canReallocate }: Props) => {
             isRendered={caseIsViewOnly}
             label="View only"
             colour={BadgeColours.Blue}
-            className="govuk-!-static-margin-left-5 view-only-badge"
+            className="govuk-!-static-margin-left-5 view-only-badge moj-badge--large"
           />
         </Heading>
         <LockedTagContainer>

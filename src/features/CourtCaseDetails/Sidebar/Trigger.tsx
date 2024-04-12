@@ -1,4 +1,5 @@
 import ActionLink from "components/ActionLink"
+import Badge, { BadgeColours } from "components/Badge"
 import Checkbox from "components/Checkbox"
 import ConditionalRender from "components/ConditionalRender"
 import { Preview } from "components/Preview"
@@ -24,7 +25,7 @@ interface Props {
   disabled?: boolean
 }
 
-const TriggerCompleteBadge = () => <span className="moj-badge moj-badge--green">{"Complete"}</span>
+const TriggerCompleteBadge = () => <Badge isRendered={true} colour={BadgeColours.Green} label={"Complete"} />
 
 const Trigger = ({ trigger, onClick, selectedTriggerIds, setTriggerSelection, disabled }: Props) => {
   const triggerDefinition = getTriggerDefinition(trigger.triggerCode)

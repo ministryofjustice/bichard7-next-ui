@@ -5,7 +5,7 @@ const UrgentTag: React.FC<{ isUrgent: boolean }> = (props: { isUrgent: boolean }
     isRendered={props.isUrgent}
     colour={BadgeColours.Red}
     label="Urgent"
-    className="govuk-!-static-margin-left-5"
+    className="govuk-!-static-margin-left-5 moj-badge--large"
   />
 )
 

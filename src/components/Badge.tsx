@@ -19,7 +19,7 @@ interface BadgeProps {
 const Badge = ({ isRendered, className, colour, label }: BadgeProps) => {
   return (
     <ConditionalRender isRendered={isRendered}>
-      <StyledBadge className={`moj-badge moj-badge--${colour} moj-badge--large ${className}`}>{label}</StyledBadge>
+      <StyledBadge className={`moj-badge moj-badge--${colour} ${className}`}>{label}</StyledBadge>
     </ConditionalRender>
   )
 }
