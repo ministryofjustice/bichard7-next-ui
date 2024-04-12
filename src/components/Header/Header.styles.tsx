@@ -14,7 +14,7 @@ const HeaderRow = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  magin: 10px;
+  margin: 10px;
   padding: 10px;
 `
 
