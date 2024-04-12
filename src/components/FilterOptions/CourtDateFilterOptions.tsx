@@ -6,7 +6,7 @@ import type { FilterAction } from "types/CourtCaseFilter"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import { formatDisplayedDate } from "utils/formattedDate"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
-import { CaseAgeContainter, ScrollableCaseAgesContainer } from "./CourtDateFilterOptions.styles"
+import { CaseAgeContainer, ScrollableCaseAgesContainer } from "./CourtDateFilterOptions.styles"
 
 interface Props {
   caseAges?: string[]
@@ -67,7 +67,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, disp
           <ScrollableCaseAgesContainer className={"scrollable-case-ages"}>
             <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
               {Object.keys(CaseAgeOptions).map((namedCaseAge) => (
-                <CaseAgeContainter className={"case-age-option"} key={namedCaseAge}>
+                <CaseAgeContainer className={"case-age-option"} key={namedCaseAge}>
                   <div className="govuk-checkboxes__item">
                     <input
                       className="govuk-checkboxes__input"
@@ -91,7 +91,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, disp
                       {labelForCaseAge(namedCaseAge, caseAgeCounts)}
                     </label>
                   </div>
-                </CaseAgeContainter>
+                </CaseAgeContainer>
               ))}
             </div>
           </ScrollableCaseAgesContainer>

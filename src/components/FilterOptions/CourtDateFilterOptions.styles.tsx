@@ -5,8 +5,8 @@ const ScrollableCaseAgesContainer = styled.div`
   overflow: auto;
 `
 
-const CaseAgeContainter = styled.div`
+const CaseAgeContainer = styled.div`
   padding: 0 0 0 10px;
 `
 
-export { CaseAgeContainter, ScrollableCaseAgesContainer }
+export { CaseAgeContainer, ScrollableCaseAgesContainer }
