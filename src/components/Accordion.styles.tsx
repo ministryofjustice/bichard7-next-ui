@@ -6,7 +6,6 @@ const accordionCss = css`
   border: none;
 `
 
-// margin-bottom: 0.5rem;
 const AccordionHeader = styled.div`
   ${accordionCss}
 `

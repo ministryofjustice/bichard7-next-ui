@@ -3,6 +3,7 @@ import { GridCol, GridRow, Link } from "govuk-react"
 import Accordion from "../Accordion"
 import Badge, { BadgeColours } from "../Badge"
 import { ExceptionRow } from "./Exception.styles"
+import { InsetText, InsetTextHeading } from "./PncException.styles"
 
 type Props = {
   code: ExceptionCode
@@ -58,10 +59,10 @@ const PncException = ({ code, message }: Props) => {
         <GridCol>
           {description && (
             <Accordion id={`exception-${code.toLocaleLowerCase()}`} heading="PNC error message">
-              <div className="b7-inset-text">
-                <span className="b7-inset-text__heading">{"PNC error message"}</span>
+              <InsetText className="b7-inset-text">
+                <InsetTextHeading className="b7-inset-text__heading">{"PNC error message"}</InsetTextHeading>
                 <span className="b7-inset-text__content">{description}</span>
-              </div>
+              </InsetText>
             </Accordion>
           )}
           <Link href={`/help/bichard-functionality/exceptions/resolution.html#${code}`} target="_blank">
