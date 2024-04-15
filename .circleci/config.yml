@@ -15,6 +15,10 @@ commands:
           name: Clone bichard7-next-core
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-core.git ~/bichard7-next-core
       - run:
+          name: Set GB locale
+          working_directory: ~/bichard7-next-core
+          command: bash .circleci/scripts/set-locale.sh
+      - run:
           name: Clone bichard7-next-audit-logging
           command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git ~/bichard7-next-audit-logging
 
@@ -273,6 +277,7 @@ jobs:
       STACK_TYPE: next
       WORKSPACE: local-next
       AUTH_TYPE: user-service
+      TZ: "Europe/London"
     steps:
       - attach_workspace:
           at: .

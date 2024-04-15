@@ -11,6 +11,8 @@ type Props = {
   updatedValue?: string | null
   isEditable: boolean
   children?: React.ReactNode
+  inputLabel: string
+  hintText: string
 }
 
 const useStyles = createUseStyles({
@@ -22,7 +24,16 @@ const useStyles = createUseStyles({
   }
 })
 
-const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEditable, children }: Props) => {
+const EditableFieldTableRow = ({
+  value,
+  updatedValue,
+  label,
+  hasExceptions,
+  isEditable,
+  inputLabel,
+  hintText,
+  children
+}: Props) => {
   const classes = useStyles()
   const isRendered = !!(value || updatedValue || hasExceptions)
   const hasCorrection = updatedValue && value !== updatedValue
@@ -33,7 +44,11 @@ const EditableFieldTableRow = ({ value, updatedValue, label, hasExceptions, isEd
 
   const fieldToRender = (): React.ReactNode => {
     if (isEditable) {
-      return <InputField value={value}>{children}</InputField>
+      return (
+        <InputField value={value} inputLabel={inputLabel} hintText={hintText}>
+          {children}
+        </InputField>
+      )
     } else if (hasCorrection) {
       return <InitialValueAndCorrectionField value={value} updatedValue={updatedValue} />
     } else {

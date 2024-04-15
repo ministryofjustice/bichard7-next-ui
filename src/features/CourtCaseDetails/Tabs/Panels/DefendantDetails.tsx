@@ -7,8 +7,8 @@ import axios from "axios"
 import { BadgeColours } from "components/Badge"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
-import { ReactiveLinkButton } from "components/LinkButton"
-import { HintText, Input, Label, Table } from "govuk-react"
+import { SaveLinkButton } from "components/LinkButton"
+import { Input, Table } from "govuk-react"
 import React, { useCallback, useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
 import Asn from "services/Asn"
@@ -35,11 +35,6 @@ const useStyles = createUseStyles({
 
   asnInput: {
     width: "15rem"
-  },
-
-  "save-button": {
-    marginTop: "0.94rem",
-    marginBottom: 0
   }
 })
 
@@ -143,15 +138,11 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
             label="ASN"
             hasExceptions={isAsnEditable}
             isEditable={isAsnEditable}
+            inputLabel={"Enter the ASN"}
+            // hintText={`Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 \
+            // digits / 1 check letter\nExample: 22 49AB 49 1234 C`}
+            hintText="Long form ASN"
           >
-            <Label>{"Enter the ASN"}</Label>
-            <HintText>{"Long form ASN"}</HintText>
-            {/* <HintText>
-              {
-                "Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 digits / 1 check letter "
-              }
-            </HintText>
-            <HintText>{"Example: 22 49AB 49 1234 C"}</HintText> */}
             <div className={showError() ? `${asnFormGroupError}` : ""}>
               {showError() && (
                 <p id="event-name-error" className="govuk-error-message">
@@ -167,14 +158,7 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
                 error={!isValidAsn}
               />
             </div>
-            <ReactiveLinkButton
-              id={"save-asn"}
-              className={classes["save-button"]}
-              onClick={handleAsnSave}
-              disabled={isSaveAsnBtnDisabled()}
-            >
-              {"Save correction"}
-            </ReactiveLinkButton>
+            <SaveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()} />
           </EditableFieldTableRow>
         )}
 

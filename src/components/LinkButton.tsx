@@ -1,6 +1,7 @@
 import { Button } from "govuk-react"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
+import { createUseStyles } from "react-jss"
 
 interface LinkButtonProps extends React.ComponentProps<"button"> {
   children: ReactNode
@@ -12,11 +13,19 @@ interface LinkButtonProps extends React.ComponentProps<"button"> {
 
 interface ReactiveLinkButtonProps extends React.ComponentProps<"button"> {
   children: ReactNode
-  buttonColour?: string
-  buttonTextColour?: string
-  buttonShadowColour?: string
   onClick: (event: React.MouseEvent<HTMLElement>) => void
 }
+
+interface SaveLinkButtonProps extends React.ComponentProps<"button"> {
+  onClick: (event: React.MouseEvent<HTMLElement>) => void
+}
+
+const useStyles = createUseStyles({
+  "save-button": {
+    marginTop: "0.94rem",
+    marginBottom: 0
+  }
+})
 
 const LinkButton: React.FC<LinkButtonProps> = ({
   children,
@@ -44,9 +53,6 @@ const LinkButton: React.FC<LinkButtonProps> = ({
 
 const ReactiveLinkButton: React.FC<ReactiveLinkButtonProps> = ({
   children,
-  buttonColour,
-  buttonShadowColour,
-  buttonTextColour,
   onClick,
   ...buttonProps
 }: ReactiveLinkButtonProps) => {
@@ -56,18 +62,21 @@ const ReactiveLinkButton: React.FC<ReactiveLinkButtonProps> = ({
   }
 
   return (
-    <LinkButton
-      href={"#"}
-      onClick={handleOnClick}
-      buttonColour={buttonColour}
-      buttonTextColour={buttonTextColour}
-      buttonShadowColour={buttonShadowColour}
-      {...buttonProps}
-    >
+    <LinkButton href={"#"} onClick={handleOnClick} {...buttonProps}>
       {children}
     </LinkButton>
   )
 }
 
-export { LinkButton, ReactiveLinkButton }
+const SaveLinkButton: React.FC<SaveLinkButtonProps> = ({ onClick, ...buttonProps }: SaveLinkButtonProps) => {
+  const classes = useStyles()
+
+  return (
+    <ReactiveLinkButton {...buttonProps} onClick={onClick} className={`${classes["save-button"]}`}>
+      {"Save Correction"}
+    </ReactiveLinkButton>
+  )
+}
+
+export { LinkButton, ReactiveLinkButton, SaveLinkButton }
 export default LinkButton
