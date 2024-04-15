@@ -1,6 +1,7 @@
 import { Button } from "govuk-react"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
+import { StyledSaveLinkButton } from "./LinkButton.styles"
 
 interface LinkButtonProps extends React.ComponentProps<"button"> {
   children: ReactNode
@@ -10,12 +11,9 @@ interface LinkButtonProps extends React.ComponentProps<"button"> {
   buttonShadowColour?: string
 }
 
-interface ReactiveLinkButtonProps extends React.ComponentProps<"button"> {
-  children: ReactNode
-  buttonColour?: string
-  buttonTextColour?: string
-  buttonShadowColour?: string
+interface SaveLinkButtonProps {
   onClick: (event: React.MouseEvent<HTMLElement>) => void
+  as?: keyof JSX.IntrinsicElements
 }
 
 const LinkButton: React.FC<LinkButtonProps> = ({
@@ -42,32 +40,18 @@ const LinkButton: React.FC<LinkButtonProps> = ({
   )
 }
 
-const ReactiveLinkButton: React.FC<ReactiveLinkButtonProps> = ({
-  children,
-  buttonColour,
-  buttonShadowColour,
-  buttonTextColour,
-  onClick,
-  ...buttonProps
-}: ReactiveLinkButtonProps) => {
+const SaveLinkButton: React.FC<SaveLinkButtonProps> = ({ onClick, ...buttonProps }: SaveLinkButtonProps) => {
   const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault()
     onClick(event)
   }
 
   return (
-    <LinkButton
-      href={"#"}
-      onClick={handleOnClick}
-      buttonColour={buttonColour}
-      buttonTextColour={buttonTextColour}
-      buttonShadowColour={buttonShadowColour}
-      {...buttonProps}
-    >
-      {children}
-    </LinkButton>
+    <StyledSaveLinkButton onClick={handleOnClick} {...buttonProps}>
+      {"Save Correction"}
+    </StyledSaveLinkButton>
   )
 }
 
-export { LinkButton, ReactiveLinkButton }
+export { LinkButton, SaveLinkButton }
 export default LinkButton
