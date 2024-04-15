@@ -38,6 +38,7 @@ RUN useradd nextjs && \
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV TZ="Europe/London"
 
 WORKDIR /app
 
