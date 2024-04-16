@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
-import ConditionalDisplay from "components/ConditionalDisplay"
+import ConditionalRender from "components/ConditionalRender"
 import Layout from "components/Layout"
 import { CourtCaseContext, useCourtCaseContextState } from "context/CourtCaseContext"
 import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
@@ -225,7 +225,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
                   displaySwitchingSurveyFeedback
                 }}
               >
-                <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
+                <ConditionalRender isRendered={courtCase.phase !== 1}>
                   <AttentionContainer className={`attention-container govuk-tag govuk-!-width-full`}>
                     <div className="govuk-tag">{"Attention:"}</div>
                     <AttentionBanner className={`attention-banner govuk-tag`}>
@@ -234,7 +234,7 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
                       }
                     </AttentionBanner>
                   </AttentionContainer>
-                </ConditionalDisplay>
+                </ConditionalRender>
                 <Header canReallocate={canReallocate} />
                 <CourtCaseDetailsSummaryBox />
                 <CourtCaseDetails
