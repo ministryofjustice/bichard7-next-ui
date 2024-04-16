@@ -1,13 +1,11 @@
-import User from "services/entities/User"
 import CourtCase from "../../../../src/services/entities/CourtCase"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
-import hashedPassword from "../../../fixtures/hashedPassword"
 import a11yConfig from "../../../support/a11yConfig"
-import { clickTab, loginAndGoToUrl } from "../../../support/helpers"
+import { clickTab, loginAndVisit } from "../../../support/helpers"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 
 const loginAndGoToNotes = () => {
-  loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+  loginAndVisit("/bichard/court-cases/0")
   cy.contains("Notes").click()
 }
 
@@ -35,27 +33,6 @@ const insertCaseWithTriggerAndException = (courtCase?: Partial<CourtCase>) => {
 }
 
 describe("View notes", () => {
-  const users: Partial<User>[] = Array.from(Array(3)).map((_value, idx) => {
-    return {
-      username: `Bichard0${idx}`,
-      visibleForces: [`0${idx}`],
-      forenames: "Bichard Test User",
-      surname: `0${idx}`,
-      email: `bichard0${idx}@example.com`,
-      password: hashedPassword
-    }
-  })
-
-  before(() => {
-    cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
-    cy.clearCookies()
-    cy.viewport(1800, 720)
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
@@ -76,24 +53,16 @@ describe("View notes", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [
         [
-          {
-            user: "another.user",
-            text: "Test note 1"
-          },
-          {
-            user: "System",
-            text: "Test note 2"
-          }
+          { user: "GeneralHandler", text: "Test note 1" },
+          { user: "System", text: "Test note 2" }
         ]
       ],
-      force: "02"
+      force: "01"
     })
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
 
-    clickTab("Notes")
+    loginAndGoToNotes()
 
-    cy.contains("Another User")
+    cy.contains("General Handler User")
     cy.contains("Test note 1")
     cy.contains("System")
     cy.contains("Test note 2")
@@ -103,25 +72,17 @@ describe("View notes", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [
         [
-          {
-            user: "another.user",
-            text: "Test note 1"
-          },
-          {
-            user: "System",
-            text: "Test note 2"
-          }
+          { user: "GeneralHandler", text: "Test note 1" },
+          { user: "System", text: "Test note 2" }
         ]
       ],
-      force: "02"
+      force: "01"
     })
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
 
-    clickTab("Notes")
+    loginAndGoToNotes()
 
     cy.findByText("View system notes").click()
-    cy.should("not.contain", "bichard01")
+    cy.should("not.contain", "General Handler User")
     cy.should("not.contain", "Test note 1")
     cy.contains("System")
     cy.contains("Test note 2")
@@ -129,26 +90,17 @@ describe("View notes", () => {
     cy.findByText("View user notes").click()
     cy.should("not.contain", "System")
     cy.should("not.contain", "Test note 2")
-    cy.contains("Another User")
+    cy.contains("General Handler User")
     cy.contains("Test note 1")
   })
 
   it("Should display no user notes message", () => {
     cy.task("insertCourtCasesWithNotes", {
-      caseNotes: [
-        [
-          {
-            user: "System",
-            text: "Test note 2"
-          }
-        ]
-      ],
-      force: "02"
+      caseNotes: [[{ user: "System", text: "Test note 2" }]],
+      force: "01"
     })
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
 
-    clickTab("Notes")
+    loginAndGoToNotes()
     cy.findByText("View user notes").click()
 
     cy.should("not.contain", "System")
@@ -158,23 +110,14 @@ describe("View notes", () => {
 
   it("Should display no system notes message", () => {
     cy.task("insertCourtCasesWithNotes", {
-      caseNotes: [
-        [
-          {
-            user: "bichard01",
-            text: "Test note 1"
-          }
-        ]
-      ],
-      force: "02"
+      caseNotes: [[{ user: "GeneralHandler", text: "Test note 1" }]],
+      force: "01"
     })
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
 
-    clickTab("Notes")
+    loginAndGoToNotes()
     cy.findByText("View system notes").click()
 
-    cy.should("not.contain", "bichard01")
+    cy.should("not.contain", "General Handler User")
     cy.should("not.contain", "Test note 1")
     cy.contains("Case has no system notes.")
   })
@@ -182,24 +125,20 @@ describe("View notes", () => {
   it("Should display no notes message", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [[]],
-      force: "02"
+      force: "01"
     })
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
 
-    clickTab("Notes")
+    loginAndGoToNotes()
     cy.contains("Case has no notes.")
   })
 
   it("Should not display the notes text area if the case is locked to another users", () => {
     cy.task("insertCourtCasesWithNotesAndLock", {
       caseNotes: [[]],
-      force: "02"
+      force: "01"
     })
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
 
-    clickTab("Notes")
+    loginAndGoToNotes()
     cy.contains("Case has no notes.")
     cy.get("#note-text").should("not.exist")
     cy.get("#add-note-button").should("not.exist")
@@ -208,14 +147,11 @@ describe("View notes", () => {
   it("Should display the notes text area if the case is locked by the user", () => {
     cy.task("insertCourtCasesWithNotes", {
       caseNotes: [[]],
-      force: "02"
+      force: "01"
     })
     cy.task("insertException", exception)
 
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
-
-    clickTab("Notes")
+    loginAndGoToNotes()
     cy.get("label").contains("Add a new note")
     cy.get("textarea").should("be.visible")
     cy.get("span").contains("You have 2000 characters remaining")
@@ -235,7 +171,7 @@ describe("View notes", () => {
   })
 
   it("Should be able to add a note when case is visible to the user and error locked by another user", () => {
-    insertCaseWithTriggerAndException({ orgForPoliceFilter: "01", errorLockedByUsername: "someone.else" })
+    insertCaseWithTriggerAndException({ orgForPoliceFilter: "01", errorLockedByUsername: "BichardForce01" })
     loginAndGoToNotes()
     cy.get("textarea").type("Dummy note")
     cy.get("button").contains("Add note").click()
@@ -248,7 +184,7 @@ describe("View notes", () => {
   })
 
   it("Should be able to add a note when case is visible to the user and trigger locked by another user", () => {
-    insertCaseWithTriggerAndException({ orgForPoliceFilter: "01", triggerLockedByUsername: "someone.else" })
+    insertCaseWithTriggerAndException({ orgForPoliceFilter: "01", triggerLockedByUsername: "BichardForce01" })
     loginAndGoToNotes()
     cy.get("textarea").type("Dummy note")
     cy.get("button").contains("Add note").click()

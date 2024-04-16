@@ -52,7 +52,7 @@
     "canManuallyResolveAndSubmit": false,
     "exceptionLockedByAnotherUser": false,
     "exceptionStatus": "Unresolved",
-    "loggedInAs": "GeneralHandler",
+    "loggedInAs": "NoExceptionsFeatureFlag",
     "exceptionsFeatureFlagEnabled": false
   }
 ]

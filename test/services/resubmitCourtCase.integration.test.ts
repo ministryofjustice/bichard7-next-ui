@@ -7,10 +7,10 @@ import insertNotes from "services/insertNotes"
 import sendToQueue from "services/mq/sendToQueue"
 import resubmitCourtCase from "services/resubmitCourtCase"
 import { DataSource } from "typeorm"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
 import offenceSequenceException from "../test-data/HO100302_1.json"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases } from "../utils/insertCourtCases"
-import { hasAccessToAll } from "../helpers/hasAccessTo"
 
 jest.mock("services/mq/sendToQueue")
 jest.mock("services/insertNotes")
@@ -18,7 +18,7 @@ jest.mock("services/insertNotes")
 jest.setTimeout(60 * 60 * 1000)
 
 describe("resubmit court case", () => {
-  const userName = "UserName"
+  const userName = "GeneralHandler"
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -73,7 +73,11 @@ describe("resubmit court case", () => {
     expect(sendToQueue).toHaveBeenCalledTimes(1)
     expect(insertNotes).toHaveBeenCalledTimes(2)
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
-      { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
+      {
+        errorId: inputCourtCase.errorId,
+        noteText: "GeneralHandler: Portal Action: Resubmitted Message.",
+        userId: "System"
+      }
     ])
 
     // assert that the xml in the db is as we expect
@@ -135,7 +139,11 @@ describe("resubmit court case", () => {
     expect(sendToQueue).toHaveBeenCalledTimes(1)
     expect(insertNotes).toHaveBeenCalledTimes(2)
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
-      { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
+      {
+        errorId: inputCourtCase.errorId,
+        noteText: "GeneralHandler: Portal Action: Resubmitted Message.",
+        userId: "System"
+      }
     ])
 
     // parse the retreived case to aho format so we can assert on the values
@@ -217,7 +225,11 @@ describe("resubmit court case", () => {
     expect(sendToQueue).toHaveBeenCalledTimes(1)
     expect(insertNotes).toHaveBeenCalledTimes(2)
     expect(insertNotes).toHaveBeenCalledWith(expect.anything(), [
-      { errorId: inputCourtCase.errorId, noteText: "UserName: Portal Action: Resubmitted Message.", userId: "System" }
+      {
+        errorId: inputCourtCase.errorId,
+        noteText: "GeneralHandler: Portal Action: Resubmitted Message.",
+        userId: "System"
+      }
     ])
 
     // parse the retreived case to aho format so we can assert on the values

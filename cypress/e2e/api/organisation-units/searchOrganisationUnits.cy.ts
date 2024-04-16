@@ -1,29 +1,11 @@
-import hashedPassword from "../../../fixtures/hashedPassword"
-import User from "../../../../src/services/entities/User"
 import OrganisationUnitApiResponse from "../../../../src/types/OrganisationUnitApiResponse"
 
-describe("Organiation Units API endpoint", () => {
-  before(() => {
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "Bichard01",
-          visibleForces: ["01"],
-          forenames: "Bichard Test User",
-          surname: "Bichard user",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        } as Partial<User>
-      ],
-      userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
-    })
-    cy.clearCookies()
+describe("Organisation Units API endpoint", () => {
+  beforeEach(() => {
+    cy.loginAs("GeneralHandler")
   })
 
   it("returns a list of organisations that matches the search keyword", () => {
-    cy.login("bichard01@example.com", "password")
-
     const searchKeyword = "croydon"
     cy.request({
       method: "GET",
@@ -40,8 +22,6 @@ describe("Organiation Units API endpoint", () => {
   })
 
   it("returns one item in a list for when search keyword is an exact match", () => {
-    cy.login("bichard01@example.com", "password")
-
     const searchKeyword = "B01EF00"
     cy.request({
       method: "GET",

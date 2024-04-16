@@ -6,6 +6,8 @@ import delimitedString from "./transformers/delimitedString"
 import jsonTransformer from "./transformers/jsonTransformer"
 // eslint-disable-next-line import/no-cycle
 import Note from "./Note"
+// eslint-disable-next-line import/no-cycle
+import SurveyFeedback from "./SurveyFeedback"
 
 @Entity({ name: "users" })
 export default class User {
@@ -42,6 +44,10 @@ export default class User {
   @OneToMany(() => Note, (note) => note.user)
   @JoinColumn({ name: "user_id" })
   notes!: Relation<Note>[]
+
+  @OneToMany(() => SurveyFeedback, (surveyFeedback) => surveyFeedback.user)
+  @JoinColumn({ name: "user_id" })
+  surveyFeedback!: Relation<User>[]
 
   groups: UserGroup[] = []
 

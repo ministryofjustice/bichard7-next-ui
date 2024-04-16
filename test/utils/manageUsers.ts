@@ -1,4 +1,5 @@
 import { InsertResult } from "typeorm"
+import users from "../../cypress/fixtures/users"
 import User from "../../src/services/entities/User"
 import getDataSource from "../../src/services/getDataSource"
 
@@ -55,22 +56,51 @@ const sanitiseGroupName = (name: string) => {
   return `B7${name}_grp`
 }
 
-const insertUsers = async (users: User | User[], userGroups?: string[]): Promise<InsertResult> => {
+export const insertUser = async (user: User, userGroups?: string[]): Promise<InsertResult | void> => {
   const dataSource = await getDataSource()
-  const result = await dataSource.createQueryBuilder().insert().into(User).values(users).orIgnore().execute()
+  const userRepository = dataSource.getRepository(User)
+
+  // Only add user to database if necessary
+  const userExists = (await userRepository.findBy({ username: user.username })).length === 1
+
+  if (userExists) {
+    return
+  }
+
+  const result = await dataSource.createQueryBuilder().insert().into(User).values(user).orIgnore().execute()
 
   if (!userGroups?.length) {
     return result
   }
 
   await Promise.all(
-    userGroups.flatMap((userGroup) => {
+    userGroups.map((userGroup) => {
       const group = sanitiseGroupName(userGroup)
-      return [users].flat().map((user) => insertUserIntoGroup(user.email, group))
+      return insertUserIntoGroup(user.email, group)
     })
   )
+}
 
-  return result
+export const createUser = async (type: string): Promise<User | null> => {
+  const user = users[type]
+
+  if (!user) {
+    throw new Error(`Could not find user: ${type}`)
+  }
+
+  const newUser = await getDummyUser({ ...user })
+  await insertUser(newUser, newUser.groups)
+
+  const dataSource = await getDataSource()
+  const userRepository = dataSource.getRepository(User)
+  return userRepository.findOneBy({ username: user.username })
+}
+
+const insertUsers = async (userData: User | User[], userGroups?: string[]): Promise<null> => {
+  const userArray: User[] = Array.isArray(userData) ? userData : [userData]
+
+  await Promise.all(userArray.map((u) => insertUser(u, userGroups)))
+  return null
 }
 
 const insertUsersWithOverrides = async (userOverrides: Partial<User>[], userGroups?: string[]) => {
@@ -82,9 +112,4 @@ const insertUsersWithOverrides = async (userOverrides: Partial<User>[], userGrou
   return insertUsers(usersToInsert, userGroups)
 }
 
-const deleteUsers = async (): Promise<InsertResult> => {
-  const dataSource = await getDataSource()
-  return dataSource.manager.query(`DELETE FROM br7own.users_groups; DELETE FROM br7own.users`)
-}
-
-export { deleteUsers, getDummyUser, insertUserIntoGroup, insertUsers, insertUsersWithOverrides, runQuery }
+export { getDummyUser, insertUserIntoGroup, insertUsers, insertUsersWithOverrides, runQuery }

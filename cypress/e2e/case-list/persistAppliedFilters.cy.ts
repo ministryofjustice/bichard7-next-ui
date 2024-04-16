@@ -1,10 +1,6 @@
-import { defaultSetup, loginAndGoToUrl } from "../../support/helpers"
+import { loginAndVisit } from "../../support/helpers"
 
 describe("Persist applied filters", () => {
-  before(() => {
-    defaultSetup()
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
@@ -12,7 +8,7 @@ describe("Persist applied filters", () => {
   it("Should persist applied filters", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get("#keywords").type("Defendant Name")
     cy.get("#search").click()
@@ -28,7 +24,7 @@ describe("Persist applied filters", () => {
   it("Should clear the applied filters", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get("#keywords").type("Defendant Name")
     cy.get("#search").click()

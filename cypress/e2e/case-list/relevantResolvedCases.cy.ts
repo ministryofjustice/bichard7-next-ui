@@ -1,17 +1,8 @@
 import { subHours } from "date-fns"
 import CourtCase from "services/entities/CourtCase"
-import {
-  confirmMultipleFieldsDisplayed,
-  confirmMultipleFieldsNotDisplayed,
-  defaultSetup,
-  loginAndGoToUrl
-} from "../../support/helpers"
+import { confirmMultipleFieldsDisplayed, confirmMultipleFieldsNotDisplayed, loginAndVisit } from "../../support/helpers"
 
 describe("Only shows relevant resolved cases to the user", () => {
-  before(() => {
-    defaultSetup()
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
@@ -38,7 +29,7 @@ describe("Only shows relevant resolved cases to the user", () => {
     })
     cy.task("insertCourtCasesWithFields", cases)
 
-    loginAndGoToUrl("supervisor@example.com")
+    loginAndVisit("Supervisor")
 
     confirmMultipleFieldsDisplayed(["Case00002", "Case00005"])
     confirmMultipleFieldsNotDisplayed(["Case00000", "Case00001", "Case00003", "Case00004"])
@@ -53,12 +44,12 @@ describe("Only shows relevant resolved cases to the user", () => {
   it("shows handlers resolved cases that only they resolved exceptions for", () => {
     const casesConfig = [
       { force: "011111", resolved: true, resolvedBy: "Supervisor" },
-      { force: "011111", resolved: true, resolvedBy: "Bichard01" },
+      { force: "011111", resolved: true, resolvedBy: "GeneralHandler" },
       { force: "011111", resolved: false },
-      { force: "02", resolved: true, resolvedBy: "Bichard02" },
+      { force: "02", resolved: true, resolvedBy: "BichardForce02" },
       { force: "03", resolved: false },
       { force: "011111", resolved: false },
-      { force: "011111", resolved: true, resolvedBy: "Bichard01" }
+      { force: "011111", resolved: true, resolvedBy: "GeneralHandler" }
     ]
     const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig, errorId) => {
       const resolutionDate = subHours(new Date(), Math.random() * 100)
@@ -74,7 +65,7 @@ describe("Only shows relevant resolved cases to the user", () => {
     })
     cy.task("insertCourtCasesWithFields", cases)
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get(`label[for="resolved"]`).click()
     cy.get("#search").click()
@@ -85,13 +76,13 @@ describe("Only shows relevant resolved cases to the user", () => {
 
   it("shows handlers resolved cases that only they resolved triggers for", () => {
     const casesConfig = [
-      { force: "011111", resolved: true, resolvedBy: "Supervisor" },
-      { force: "011111", resolved: true, resolvedBy: "Bichard01" },
-      { force: "011111", resolved: false },
-      { force: "02", resolved: true, resolvedBy: "Bichard02" },
+      { force: "01", resolved: true, resolvedBy: "Supervisor" },
+      { force: "01", resolved: true, resolvedBy: "GeneralHandler" },
+      { force: "01", resolved: false },
+      { force: "02", resolved: true, resolvedBy: "BichardForce02" },
       { force: "03", resolved: false },
-      { force: "011111", resolved: false },
-      { force: "011111", resolved: true, resolvedBy: "Bichard01" }
+      { force: "01", resolved: false },
+      { force: "01", resolved: true, resolvedBy: "GeneralHandler" }
     ]
     const cases: Partial<CourtCase>[] = casesConfig.map((caseConfig, errorId) => {
       const resolutionDate = subHours(new Date(), Math.random() * 100)
@@ -114,7 +105,6 @@ describe("Only shows relevant resolved cases to the user", () => {
           caseId: caseConfig.errorId,
           triggers: [
             {
-              triggerId: caseConfig.errorId,
               triggerCode: "TRPR0010",
               status: "Resolved",
               createdAt: new Date("2023-03-07T10:22:34.000Z"),
@@ -125,7 +115,7 @@ describe("Only shows relevant resolved cases to the user", () => {
         })
       })
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get(`label[for="resolved"]`).click()
     cy.get("#search").click()

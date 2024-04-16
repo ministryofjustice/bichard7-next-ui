@@ -1,6 +1,6 @@
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
-import hashedPassword from "../../../fixtures/hashedPassword"
 import redirectWhenResolveTriggersAndExceptions from "../../../fixtures/redirectWhenResolveTriggersAndExceptions.json"
+import { loginAndVisit } from "../../../support/helpers"
 
 describe("Redirect when resolve triggers and exceptions", () => {
   beforeEach(() => {
@@ -14,22 +14,6 @@ describe("Redirect when resolve triggers and exceptions", () => {
       } ${hasExceptions && hasTriggers ? "and" : ""} ${hasTriggers ? "unresolved triggers" : ""} and ${loggedInAs} ${
         resolveExceptions ? "resolves exceptions" : ""
       } ${resolveExceptions && resolveTriggers ? "and" : ""} ${resolveTriggers ? "resolves triggers" : ""}`, () => {
-        cy.task("clearUsers")
-        cy.task("insertUsers", {
-          users: [
-            {
-              username: `${loggedInAs} username`,
-              visibleForces: ["01"],
-              forenames: `${loggedInAs}'s forename`,
-              surname: `${loggedInAs}surname`,
-              email: `${loggedInAs}@example.com`,
-              password: hashedPassword,
-              featureFlags: { exceptionsEnabled: true }
-            }
-          ],
-          userGroups: ["B7NewUI_grp", `B7${loggedInAs}_grp`]
-        })
-
         cy.task("clearCourtCases")
         cy.task("insertCourtCasesWithFields", [
           {
@@ -51,8 +35,7 @@ describe("Redirect when resolve triggers and exceptions", () => {
           cy.task("insertTriggers", { caseId: 0, triggers: caseTriggers })
         }
 
-        cy.login(`${loggedInAs}@example.com`, "password")
-        cy.visit("/bichard/court-cases/0")
+        loginAndVisit(loggedInAs, "/bichard/court-cases/0")
 
         if (resolveExceptions) {
           if (loggedInAs === "GeneralHandler") {

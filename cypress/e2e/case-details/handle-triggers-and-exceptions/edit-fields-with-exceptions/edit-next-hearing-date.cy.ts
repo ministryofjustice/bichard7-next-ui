@@ -1,27 +1,8 @@
 import nextHearingDateExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import dummyAho from "../../../../../test/test-data/error_list_aho.json"
-import hashedPassword from "../../../../fixtures/hashedPassword"
-import { submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
+import { loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
 
 describe("NextHearingDate", () => {
-  before(() => {
-    cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "Bichard01",
-          visibleForces: ["001"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
-    })
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
@@ -43,8 +24,7 @@ describe("NextHearingDate", () => {
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Burglary other than dwelling with intent to steal").click()
@@ -75,8 +55,7 @@ describe("NextHearingDate", () => {
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit(`/bichard/court-cases/${submittedCaseId}`)
+    loginAndVisit(`/bichard/court-cases/${submittedCaseId}`)
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
@@ -94,8 +73,7 @@ describe("NextHearingDate", () => {
   })
 
   it("Shouldn't see editable next hearing date when it has no value", () => {
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with no exceptions").click()
@@ -114,8 +92,7 @@ describe("NextHearingDate", () => {
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
@@ -132,8 +109,8 @@ describe("NextHearingDate", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-01-01")
-    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-01-01")
+    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
@@ -159,8 +136,7 @@ describe("NextHearingDate", () => {
         errorCount: 1
       }
     ])
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link")
@@ -177,8 +153,8 @@ describe("NextHearingDate", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24")
-    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24")
+    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
@@ -198,8 +174,7 @@ describe("NextHearingDate", () => {
   })
 
   it("Should be able to edit and submit multiple next hearing dates", () => {
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
@@ -222,9 +197,9 @@ describe("NextHearingDate", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-01-01")
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24")
-    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-01-01")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24")
+    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
@@ -261,12 +236,11 @@ describe("NextHearingDate", () => {
         hearingOutcome: nextHearingDateExceptions.hearingOutcomeXml,
         updatedHearingOutcome: nextHearingDateExceptions.updatedHearingOutcomeXml,
         errorCount: 1,
-        errorLockedByUsername: "bichard02"
+        errorLockedByUsername: "BichardForce02"
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
@@ -285,8 +259,7 @@ describe("NextHearingDate", () => {
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
@@ -294,23 +267,7 @@ describe("NextHearingDate", () => {
   })
 
   it("Should not be able to edit next hearing date field when user is not exception-handler", () => {
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "triggerHandler",
-          visibleForces: ["001"],
-          forenames: "triggerHandler Test User",
-          surname: "01",
-          email: "triggerhandler@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp", "B7TriggerHandler_grp"]
-    })
-
-    cy.login("triggerhandler@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("TriggerHandler", "/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()

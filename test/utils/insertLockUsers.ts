@@ -1,36 +1,34 @@
-import { InsertResult } from "typeorm"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
-import { getDummyUser } from "./manageUsers"
-import { insertUsersWithOverrides } from "./manageUsers"
-import { formatForenames, formatSurname } from "./userName"
+import users from "../../cypress/fixtures/users"
+import { UserGroup } from "../../src/types/UserGroup"
+import { getDummyUser, insertUsersWithOverrides } from "./manageUsers"
 
-export const insertLockUsers = async (lockedCase: CourtCase): Promise<InsertResult> => {
-  const users: User[] = []
+const insertLockUser = async (name: string, createFakeUser: boolean) => {
+  let user: Partial<User>
+  let groups: UserGroup[]
 
+  if (users[name]) {
+    user = users[name]
+    groups = users[name].groups
+  } else {
+    if (createFakeUser) {
+      user = await getDummyUser()
+      groups = [UserGroup.NewUI, UserGroup.GeneralHandler]
+    } else {
+      throw new Error(`Invalid lock username provided: ${name}`)
+    }
+  }
+
+  await insertUsersWithOverrides([user], groups)
+}
+
+export const insertLockUsers = async (lockedCase: CourtCase, createFakeUser = false): Promise<void> => {
   if (lockedCase.errorLockedByUsername) {
-    const username = lockedCase.errorLockedByUsername
-    const [forenames, surname] = username.split(".")
-    const user = await getDummyUser({
-      username,
-      forenames: formatForenames(forenames),
-      surname: formatSurname(surname),
-      email: `${username}@example.com`
-    })
-    users.push(user)
+    insertLockUser(lockedCase.errorLockedByUsername, createFakeUser)
   }
 
   if (lockedCase.triggerLockedByUsername) {
-    const username = lockedCase.triggerLockedByUsername
-    const [forenames, surname] = username.split(".")
-    const user = await getDummyUser({
-      username,
-      forenames: formatForenames(forenames),
-      surname: formatSurname(surname),
-      email: `${username}@example.com`
-    })
-    users.push(user)
+    insertLockUser(lockedCase.triggerLockedByUsername, createFakeUser)
   }
-
-  return insertUsersWithOverrides(users)
 }

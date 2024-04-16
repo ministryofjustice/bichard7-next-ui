@@ -1,33 +1,15 @@
-import hashedPassword from "../../../fixtures/hashedPassword"
 import {
   confirmFiltersAppliedContains,
   filterByCaseAge,
   filterByDateRange,
+  loginAndVisit,
   removeFilterChip
 } from "../../../support/helpers"
 
 describe("Case list", () => {
   context("When filters applied", () => {
-    before(() => {
-      cy.task("clearUsers")
-      cy.task("insertUsers", {
-        users: [
-          {
-            username: "Bichard01",
-            visibleForces: ["011111"],
-            forenames: "Bichard Test User",
-            surname: "01",
-            email: "bichard01@example.com",
-            password: hashedPassword
-          }
-        ],
-        userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
-      })
-    })
-
     beforeEach(() => {
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard")
+      loginAndVisit()
     })
 
     it("Should display no filters chips and a placeholder message as the default state", () => {

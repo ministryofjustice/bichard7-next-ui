@@ -1,28 +1,9 @@
-import hashedPassword from "../../../fixtures/hashedPassword"
-
 describe("“next offence” and “previous offence” buttons", () => {
-  before(() => {
-    cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "Bichard01",
-          visibleForces: ["01"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
-    })
-  })
-
   beforeEach(() => {
-    cy.login("bichard01@example.com", "password")
+    cy.task("clearCourtCases")
     cy.task("clearTriggers")
     cy.task("clearCourtCases")
+    cy.loginAs("GeneralHandler")
   })
 
   it("Should show next offence when next button is clicked if its not the last offence", () => {
