@@ -19,13 +19,13 @@ const Accordion = ({ id, heading, children }: Props) => {
   const toggleContentVisibility = () => setIsContentVisible((previousValue) => !previousValue)
 
   return (
-    <div className="govuk-accordion__section">
+    <div id={id} className="govuk-accordion__section b7-accordion">
       <AccordionHeader className="govuk-accordion__section-header">
         <AccordionHeading className="govuk-accordion__section-heading">
           <AccordionButton
             type="button"
             aria-controls={`${id}-content`}
-            className="govuk-accordion__section-button"
+            className="govuk-accordion__section-button b7-accordion__button"
             aria-expanded="false"
             aria-label={heading}
             onClick={toggleContentVisibility}

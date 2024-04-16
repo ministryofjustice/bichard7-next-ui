@@ -482,7 +482,7 @@ describe("PNC Exceptions", () => {
     cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
     cy.get(".triggers-and-exceptions-sidebar #exceptions .moj-badge").should("have.text", "PNC Error")
     cy.get(".b7-accordion__button").should("have.text", "PNC error message").click()
-    cy.get(".b7-accordion__content .b7-inset-text__content").should(
+    cy.get(".accordion__content .b7-inset-text__content").should(
       "have.text",
       "Create DH page on PNC, then Submit the case on Bichard 7"
     )
