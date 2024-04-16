@@ -2,6 +2,10 @@ import { Tabs } from "govuk-react"
 import styled from "styled-components"
 
 const TabList = styled(Tabs.List)`
+  li {
+    cursor: pointer;
+  }
+
   & > li:only-child {
     display: flex;
     border-bottom: 1px solid #bfc1c3;
@@ -9,7 +13,7 @@ const TabList = styled(Tabs.List)`
     a {
       flex-grow: 1;
       margin-right: 0;
-      cursor: default;
+      cursor: pointer;
       pointer-events: none;
     }
   }
@@ -24,12 +28,8 @@ const TabContent = styled.div`
   font-weight: bold;
 `
 
-const TabContainer = styled.div`
-  cursor: pointer;
-`
-
 const TablePanel = styled(Tabs.Panel)`
   padding-top: 10px;
 `
 
-export { SideBar, TabContainer, TabContent, TabList, TablePanel }
+export { SideBar, TabContent, TabList, TablePanel }
