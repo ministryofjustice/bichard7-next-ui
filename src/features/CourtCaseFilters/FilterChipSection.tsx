@@ -4,7 +4,7 @@ import FilterChip from "components/FilterChip"
 import { Link } from "govuk-react"
 import { Dispatch } from "react"
 import { createUseStyles } from "react-jss"
-import { Reason } from "types/CaseListQueryParams"
+import { LockedState, Reason } from "types/CaseListQueryParams"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
 import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
@@ -199,31 +199,18 @@ const FilterChipSection: React.FC<Props> = ({
         />
 
         <FilterChipRow
-          chipLabel={state.lockedFilter.label!}
+          chipLabel={state.lockedStateFilter.label!}
           condition={
-            state.lockedFilter.value !== undefined &&
-            state.lockedFilter.label !== undefined &&
-            state.lockedFilter.state === sectionState
+            state.lockedStateFilter.value !== undefined &&
+            state.lockedStateFilter.label !== undefined &&
+            state.lockedStateFilter.state === sectionState &&
+            state.lockedStateFilter?.value !== LockedState.All
           }
           dispatch={dispatch}
-          type="locked"
+          type="lockedState"
           label="Locked state"
-          state={state.lockedFilter.state || sectionState}
-          value={state.lockedFilter.value!}
-        />
-
-        <FilterChipRow
-          chipLabel={state.myCasesFilter.label!}
-          condition={
-            state.myCasesFilter.value !== undefined &&
-            state.myCasesFilter.label !== undefined &&
-            state.myCasesFilter.state === sectionState
-          }
-          dispatch={dispatch}
-          type="myCases"
-          label="My cases"
-          state={state.myCasesFilter.state || sectionState}
-          value={state.myCasesFilter.value!}
+          state={state.lockedStateFilter.state || sectionState}
+          value={state.lockedStateFilter.value!}
         />
       </ConditionalRender>
       <ConditionalRender isRendered={!anyFilterChips(state, sectionState) && placeholderMessage !== undefined}>

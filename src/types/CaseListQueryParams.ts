@@ -6,6 +6,13 @@ export enum Reason {
   Triggers = "Triggers"
 }
 
+export enum LockedState {
+  All = "All",
+  Locked = "Locked",
+  Unlocked = "Unlocked",
+  LockedToMe = "LockedToMe"
+}
+
 export type CourtDateRange = {
   from: Date
   to: Date
@@ -31,7 +38,7 @@ export type CaseListQueryParams = {
   pageNum?: string
   maxPageItems: string
   courtDateRange?: CourtDateRange | CourtDateRange[]
-  locked?: boolean
+  lockedState?: string
   caseState?: CaseState
   allocatedToUserName?: string
   reasonCodes?: string[]

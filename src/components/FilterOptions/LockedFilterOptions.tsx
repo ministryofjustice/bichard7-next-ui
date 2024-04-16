@@ -1,32 +1,43 @@
 import RadioButton from "components/RadioButton/RadioButton"
 import type { ChangeEvent, Dispatch } from "react"
+import { LockedState } from "types/CaseListQueryParams"
 import type { FilterAction } from "types/CourtCaseFilter"
-import lockedFilters from "utils/lockedFilters"
 
 interface Props {
-  locked?: boolean
+  lockedState?: string
   dispatch: Dispatch<FilterAction>
 }
 
-const LockedOptions: Record<string, boolean> = {
-  Locked: true,
-  Unlocked: false
+const lockedStateOptions = [LockedState.All, LockedState.Locked, LockedState.Unlocked, LockedState.LockedToMe]
+
+export const lockedStateShortLabels: Record<string, string> = {
+  [LockedState.All]: "All",
+  [LockedState.Locked]: "Locked",
+  [LockedState.Unlocked]: "Unlocked",
+  [LockedState.LockedToMe]: "Locked to me"
 }
 
-const LockedFilterOptions: React.FC<Props> = ({ locked, dispatch }: Props) => {
+const lockedStateLongLabels = {
+  [LockedState.All]: "All cases",
+  [LockedState.Locked]: "Locked cases",
+  [LockedState.Unlocked]: "Unlocked cases",
+  [LockedState.LockedToMe]: "Cases locked to me"
+}
+
+const LockedFilterOptions: React.FC<Props> = ({ lockedState, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-        {lockedFilters.map((optionName) => (
+        {lockedStateOptions.map((optionName) => (
           <RadioButton
-            name={"locked"}
+            name={"lockedState"}
             key={optionName.toLowerCase()}
-            id={optionName.toLowerCase()}
-            checked={locked === LockedOptions[optionName]}
+            id={`locked-state-${optionName.toLowerCase()}`}
+            checked={lockedState === optionName}
             value={optionName}
-            label={optionName + " cases only"}
+            label={lockedStateLongLabels[optionName]}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              dispatch({ method: "add", type: "locked", value: LockedOptions[event.target.value] })
+              dispatch({ method: "add", type: "lockedState", value: event.target.value })
             }}
           />
         ))}

@@ -172,12 +172,12 @@ describe("Pagination", () => {
 
     loginAndVisit()
 
-    cy.get("label[for='my-cases-filter']").click()
+    cy.get("label[for='locked-state-lockedtome']").click()
     cy.get("#search").click()
 
-    confirmFiltersAppliedContains("Cases locked to me")
+    confirmFiltersAppliedContains("Locked to me")
 
     cy.get("li.moj-pagination__item").contains("Next").click()
-    confirmFiltersAppliedContains("Cases locked to me")
+    confirmFiltersAppliedContains("Locked to me")
   })
 })

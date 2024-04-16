@@ -1,5 +1,5 @@
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import { clickTab } from "../../../support/helpers"
+import { clickTab, loginAndVisit } from "../../../support/helpers"
 
 describe("View offence matching exceptions", () => {
   ;[
@@ -30,8 +30,7 @@ describe("View offence matching exceptions", () => {
         }
       })
 
-      cy.loginAs("Supervisor")
-      cy.visit("/bichard/court-cases/0")
+      loginAndVisit("Supervisor", "/bichard/court-cases/0")
 
       clickTab("Offences")
 
