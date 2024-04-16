@@ -16,7 +16,7 @@ function visitBasePath() {
 
 function collapseFilterSection(sectionToBeCollapsed: string, optionToBeCollapsed: string) {
   cy.get(`button${sectionToBeCollapsed}`).click()
-  cy.get(optionToBeCollapsed).should("not.be.visible")
+  cy.get(optionToBeCollapsed).should("not.exist")
 }
 
 function expandFilterSection(sectionToBeExpanded: string, optionToBeExpanded: string) {
@@ -55,7 +55,7 @@ describe("Filtering cases", () => {
   it("Should be accessible with conditional radio buttons opened", () => {
     visitBasePath()
     cy.contains("Court date").parent().parent().parent().find("button").click()
-    cy.get("#case-age").should("not.be.visible")
+    cy.get("#case-age").should("not.exist")
     expandFilterSection(".filters-court-date", "#case-age")
 
     cy.injectAxe()
@@ -97,22 +97,24 @@ describe("Filtering cases", () => {
     expandFilterSection(".filters-reason", "#exceptions-reason")
   })
 
-  it("Should expand and collapse court date filter navigation with the ratio conditional sections collapsed after the second expand", () => {
+  it("Should expand and collapse court date filter navigation with the radio conditional sections collapsed after the second expand", () => {
     visitBasePath()
 
     cy.contains("Date range")
 
-    cy.contains("Court date").parent().parent().parent().find("button").click()
-    cy.get("#case-age").should("not.be.visible")
-    expandFilterSection(".filters-court-date", "#case-age")
-
-    // Date range & case ages are collapsed
-    cy.get(`label[for="date-from"]`).should("not.be.visible")
-    cy.get(`label[for="case-age-yesterday"]`).should("not.be.visible")
-    // Opening date range collapses case age & opens date range
+    // Opening date range collapses case age & opens date
     cy.get(`label[for="date-range"]`).click()
     cy.get(`label[for="date-from"]`).should("be.visible")
     cy.get(`label[for="case-age-yesterday"]`).should("not.be.visible")
+
+    cy.contains("Court date").parent().parent().parent().find("button").click()
+    cy.get("#case-age").should("not.exist")
+    expandFilterSection(".filters-court-date", "#case-age")
+
+    // Date range & case ages are collapsed
+    collapseFilterSection(".filters-court-date", "#date-range")
+    cy.get(`label[for="date-from"]`).should("not.exist")
+    cy.get(`label[for="case-age-yesterday"]`).should("not.exist")
   })
 
   it("Should remove the selection of the case age when it's been changed to the date range", () => {
