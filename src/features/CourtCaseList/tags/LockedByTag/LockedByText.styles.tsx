@@ -11,6 +11,7 @@ const LockedByTag = styled.div`
 const LockedByTextSpan = styled.span`
   margin-top: 4;
   margin-bottom: 2;
+  padding-left: 10px;
   font-weight: normal;
   color: ${gdsBlack};
   letter-spacing: 0.5px;

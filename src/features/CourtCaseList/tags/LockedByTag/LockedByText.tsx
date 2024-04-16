@@ -11,7 +11,7 @@ interface LockedByTextProps {
 const LockedByText = ({ lockedBy, unlockPath }: LockedByTextProps) => {
   return (
     <Tag backgroundColor={tagBlue} color={textBlue} className={`locked-by-tag`}>
-      <LockedByTag className={`locked-by-tag`}>
+      <LockedByTag>
         <LockedImage unlockPath={unlockPath} />
         <LockedByTextSpan className={`locked-by-text`}>{lockedBy}</LockedByTextSpan>
       </LockedByTag>
