@@ -99,7 +99,7 @@ const CourtCaseFilter: React.FC<Props> = ({
           <input type="hidden" id="orderBy" name="orderBy" value={orderBy || ""} />
 
           <FormGroup className={"govuk-form-group"}>
-            <label className="govuk-label govuk-label--m">{"Search"}</label>
+            <h2 className="govuk-heading-m">{"Search"}</h2>
             <div>
               <label className="govuk-label govuk-label--s" htmlFor="reason-codes">
                 <LabelText>{"Reason codes"}</LabelText>

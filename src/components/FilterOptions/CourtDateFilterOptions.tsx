@@ -51,7 +51,7 @@ const CourtDateFilterOptions: React.FC<Props> = ({ caseAges, caseAgeCounts, disp
           onChange={(event) => dispatch({ method: "remove", type: "caseAge", value: event.target.value as string })}
         />
         <div className="govuk-radios__conditional" id="conditional-date-range">
-          <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+          <div className="govuk-radios govuk-radios--small">
             <DateInput dateType="from" dispatch={dispatch} value={dateRange?.from ?? ""} dateRange={dateRange} />
             <DateInput dateType="to" dispatch={dispatch} value={dateRange?.to ?? ""} dateRange={dateRange} />
           </div>
