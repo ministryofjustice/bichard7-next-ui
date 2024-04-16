@@ -1,30 +1,7 @@
-import hashedPassword from "../../../fixtures/hashedPassword"
 import canManuallyResolveAndSubmitTestData from "../../../fixtures/canManuallyResolveAndSubmitTestData.json"
+import { loginAndVisit } from "../../../support/helpers"
 
 describe("Exception permissions", () => {
-  const insertUsers = (userRoles: string[]) => {
-    userRoles.forEach((userRole: string) => {
-      cy.task("insertUsers", {
-        users: [
-          {
-            username: `${userRole} username`,
-            visibleForces: ["01"],
-            forenames: `${userRole}'s forename`,
-            surname: `${userRole}surname`,
-            email: `${userRole}@example.com`,
-            password: hashedPassword
-          }
-        ],
-        userGroups: ["B7NewUI_grp", `B7${userRole}_grp`]
-      })
-    })
-  }
-
-  before(() => {
-    cy.task("clearUsers")
-    insertUsers(["GeneralHandler", "ExceptionHandler", "TriggerHandler", "Supervisor"])
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
@@ -44,32 +21,14 @@ describe("Exception permissions", () => {
       } and user is a ${loggedInAs} ${
         !exceptionsFeatureFlagEnabled ? "and exceptions feature flag is disabled" : ""
       }`, () => {
-        if (!exceptionsFeatureFlagEnabled) {
-          cy.task("clearUsers")
-          cy.task("insertUsers", {
-            users: [
-              {
-                username: `${loggedInAs} username`,
-                visibleForces: ["01"],
-                forenames: `${loggedInAs}'s forename`,
-                surname: `${loggedInAs}surname`,
-                email: `${loggedInAs}@example.com`,
-                password: hashedPassword,
-                featureFlags: { exceptionsEnabled: false }
-              }
-            ],
-            userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
-          })
-        }
         cy.task("insertCourtCasesWithFields", [
           {
             orgForPoliceFilter: "01",
             errorStatus: exceptionStatus,
-            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : `${loggedInAs} username`
+            errorLockedByUsername: exceptionLockedByAnotherUser ? "BichardForce03" : loggedInAs
           }
         ])
-        cy.login(`${loggedInAs}@example.com`, "password")
-        cy.visit("/bichard/court-cases/0")
+        loginAndVisit(loggedInAs, "/bichard/court-cases/0")
 
         if (loggedInAs === "GeneralHandler") {
           cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()

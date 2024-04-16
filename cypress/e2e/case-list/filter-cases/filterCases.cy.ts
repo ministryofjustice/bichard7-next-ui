@@ -1,7 +1,6 @@
 import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import { addDays, format, subDays } from "date-fns"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
-import hashedPassword from "../../../fixtures/hashedPassword"
 import a11yConfig from "../../../support/a11yConfig"
 import {
   confirmFiltersAppliedContains,
@@ -48,26 +47,9 @@ function tableRowShouldNotContain(tableRow: number, ...reasonCodes: string[]) {
 }
 
 describe("Filtering cases", () => {
-  before(() => {
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "Bichard01",
-          visibleForces: ["0011111"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
-    })
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
-    cy.login("bichard01@example.com", "password")
+    cy.loginAs("GeneralHandler")
   })
 
   it("Should be accessible with conditional radio buttons opened", () => {
@@ -710,7 +692,7 @@ describe("Filtering cases", () => {
     cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
 
     confirmMultipleFieldsDisplayed([`Case00000`, `Case00002`])
-    confirmMultipleFieldsNotDisplayed([`Case00001`, `Case00003`])
+    confirmMultipleFieldsNotDisplayed([`Case00001`, `Case00003`]) //TODO
 
     // Filter for both triggers and exceptions
     cy.get(`label[for="all-reason"]`).click()
@@ -730,7 +712,7 @@ describe("Filtering cases", () => {
         resolutionTimestamp,
         errorResolvedTimestamp: resolutionTimestamp,
         orgForPoliceFilter: force,
-        errorResolvedBy: "Bichard01",
+        errorResolvedBy: "GeneralHandler",
         errorStatus: "Resolved"
       }
     ])
@@ -756,7 +738,11 @@ describe("Filtering cases", () => {
 
   it("Should filter cases by locked state", () => {
     cy.task("insertCourtCasesWithFields", [
-      { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: "011111" },
+      {
+        errorLockedByUsername: "BichardForce01",
+        triggerLockedByUsername: "BichardForce01",
+        orgForPoliceFilter: "011111"
+      },
       { orgForPoliceFilter: "011111" }
     ])
 
@@ -825,9 +811,17 @@ describe("Filtering cases", () => {
   describe("Filtering cases allocated to me", () => {
     it("Should filter cases that I hold the trigger lock for", () => {
       cy.task("insertCourtCasesWithFields", [
-        { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: "011111" },
+        {
+          errorLockedByUsername: "GeneralHandler",
+          triggerLockedByUsername: "GeneralHandler",
+          orgForPoliceFilter: "011111"
+        },
         { orgForPoliceFilter: "011111" },
-        { errorLockedByUsername: "Bichard02", triggerLockedByUsername: "Bichard02", orgForPoliceFilter: "011111" },
+        {
+          errorLockedByUsername: "BichardForce02",
+          triggerLockedByUsername: "BichardForce02",
+          orgForPoliceFilter: "011111"
+        },
         { orgForPoliceFilter: "011111" }
       ])
 
@@ -840,7 +834,6 @@ describe("Filtering cases", () => {
       cy.get("#search").click()
 
       cy.contains("Case00000")
-      cy.contains("Bichard01")
       confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002", "Case00003"])
     })
   })

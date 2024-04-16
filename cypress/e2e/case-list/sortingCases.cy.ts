@@ -1,4 +1,4 @@
-import { defaultSetup, loginAndGoToUrl } from "../../support/helpers"
+import { loginAndVisit } from "../../support/helpers"
 
 const checkCasesOrder = (expectedOrder: number[]) => {
   cy.get("tbody td:nth-child(5)").each((element, index) => {
@@ -13,10 +13,6 @@ const checkPtiurnOrder = (expectedOrder: string[]) => {
 }
 
 describe("Sorting cases", () => {
-  before(() => {
-    defaultSetup()
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
@@ -36,7 +32,7 @@ describe("Sorting cases", () => {
       }))
     ])
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     // Sorted by court date
     checkCasesOrder([1, 4, 0, 3, 2, 5])
@@ -50,7 +46,7 @@ describe("Sorting cases", () => {
       { courtName: "CCCC", orgForPoliceFilter: "011111" }
     ])
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get("#court-name-sort").find(".unorderedArrow").click()
     cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".upArrow").should("exist")
@@ -88,7 +84,7 @@ describe("Sorting cases", () => {
       }))
     ])
 
-    loginAndGoToUrl()
+    loginAndVisit()
     // Sort ascending by defendant name
     cy.get("#defendant-name-sort").click()
 
@@ -105,7 +101,7 @@ describe("Sorting cases", () => {
       }))
     )
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     // Sort ascending by court name
     cy.get("#court-name-sort").click()
@@ -132,7 +128,7 @@ describe("Sorting cases", () => {
       }))
     )
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     // Sort ascending by PTIURN
     cy.get("#ptiurn-sort").find(".unorderedArrow").click()

@@ -4,8 +4,7 @@ import HO100307 from "../../../../test/test-data/HO100307.json"
 import HO100309 from "../../../../test/test-data/HO100309.json"
 import HO200113 from "../../../../test/test-data/HO200113.json"
 import HO200114 from "../../../../test/test-data/HO200114.json"
-
-import hashedPassword from "../../../fixtures/hashedPassword"
+import { loginAndVisit } from "../../../support/helpers"
 
 describe("View Exception Handler Prompts", () => {
   const caseWithOffenceQualifierError = 0
@@ -14,22 +13,6 @@ describe("View Exception Handler Prompts", () => {
   const caseWithCJSCodeError = 3
 
   before(() => {
-    cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "Bichard01",
-          visibleForces: ["001"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
-    })
-
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
@@ -62,8 +45,7 @@ describe("View Exception Handler Prompts", () => {
 
   context("Result Code Qualifier not found - HO100309", () => {
     it("Should display no error prompt if a HO100309 is not raised", () => {
-      cy.login("bichard01@example.com", "password")
-      cy.visit(`/bichard/court-cases/${caseWithNoError}`)
+      loginAndVisit(`/bichard/court-cases/${caseWithNoError}`)
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003").click()
@@ -71,8 +53,7 @@ describe("View Exception Handler Prompts", () => {
     })
 
     it("Should display an error prompt when a HO100309 is raised", () => {
-      cy.login("bichard01@example.com", "password")
-      cy.visit(`/bichard/court-cases/${caseWithOffenceQualifierError}`)
+      loginAndVisit(`/bichard/court-cases/${caseWithOffenceQualifierError}`)
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Aid and abet theft").click()
@@ -88,8 +69,7 @@ describe("View Exception Handler Prompts", () => {
     })
 
     it("Should not display any error prompts when exceptions are marked as manually resolved", () => {
-      cy.login("bichard01@example.com", "password")
-      cy.visit(`/bichard/court-cases/${caseWithOffenceQualifierError}`)
+      loginAndVisit(`/bichard/court-cases/${caseWithOffenceQualifierError}`)
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Aid and abet theft").click()
@@ -112,8 +92,7 @@ describe("View Exception Handler Prompts", () => {
 
   context("Offence code error prompts for OffenceCode errors", () => {
     beforeEach(() => {
-      cy.login("bichard01@example.com", "password")
-      cy.visit(`/bichard/court-cases/${caseWithOffenceCodeErrors}`)
+      loginAndVisit(`/bichard/court-cases/${caseWithOffenceCodeErrors}`)
     })
 
     it("Should display no error prompt if HO100306 or HO100251 are not raised", () => {
@@ -197,8 +176,7 @@ describe("View Exception Handler Prompts", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      loginAndVisit("/bichard/court-cases/0")
 
       cy.get(".Defendant-details-table").contains("1101ZD0100000448754K")
       cy.get(".error-prompt-message").should("not.exist")
@@ -214,8 +192,7 @@ describe("View Exception Handler Prompts", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      loginAndVisit("/bichard/court-cases/0")
 
       cy.get(".field-value").contains("2300000000000942133G")
       cy.get(".error-prompt").contains(ErrorMessages.HO200113)
@@ -230,8 +207,7 @@ describe("View Exception Handler Prompts", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      loginAndVisit("/bichard/court-cases/0")
 
       cy.get(".Defendant-details-table").contains("1101ZD0100000448754K")
       cy.get(".error-prompt-message").should("not.exist")
@@ -247,8 +223,7 @@ describe("View Exception Handler Prompts", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      loginAndVisit("/bichard/court-cases/0")
 
       cy.get(".field-value").contains("2300000000000532316D")
       cy.get(".error-prompt").contains(ErrorMessages.HO200114)
@@ -256,8 +231,7 @@ describe("View Exception Handler Prompts", () => {
   })
   context("CJS Code Prompt", () => {
     it("Should display an error prompt when a HO100307 is raised", () => {
-      cy.login("bichard01@example.com", "password")
-      cy.visit(`/bichard/court-cases/${caseWithCJSCodeError}`)
+      loginAndVisit(`/bichard/court-cases/${caseWithCJSCodeError}`)
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link")
         .contains("Use a motor vehicle on a road / public place without third party insurance")
@@ -272,8 +246,7 @@ describe("View Exception Handler Prompts", () => {
     })
 
     it("Should not display an error prompt when a HO100307 is not raised", () => {
-      cy.login("bichard01@example.com", "password")
-      cy.visit(`/bichard/court-cases/${caseWithNoError}`)
+      loginAndVisit(`/bichard/court-cases/${caseWithNoError}`)
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link")
         .contains("Use a motor vehicle on a road / public place without third party insurance")

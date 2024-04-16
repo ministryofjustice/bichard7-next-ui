@@ -1,3 +1,5 @@
+import users from "../fixtures/users"
+
 const runningWithProxy = (): boolean => {
   if (Cypress.config("baseUrl") === "https://localhost:4443") {
     console.log(`Running with proxy: ${Cypress.config("baseUrl")}`)
@@ -19,9 +21,23 @@ const login = ({ emailAddress, password }: { emailAddress: string; password: str
   })
 }
 
+Cypress.Commands.add("loginAs", (type: string) => {
+  const user = users[type]
+
+  if (!user) {
+    throw new Error(`Could not find user: ${type}`)
+  }
+
+  cy.task("insertUsers", {
+    users: [user],
+    userGroups: user.groups
+  })
+  cy.login(user.email!, "password")
+})
+
 Cypress.Commands.add("login", (emailAddress, password) => {
   cy.session(
-    [emailAddress, password],
+    emailAddress,
     () => {
       cy.intercept("GET", "http://bichard7.service.justice.gov.uk/forces.js?forceID=***", {})
 
@@ -84,6 +100,7 @@ declare global {
     interface Chainable {
       findByText(text: string): Chainable<Element>
       login(emailAddress: string, password: string): Chainable<Element>
+      loginAs(type: string): Chainable<Element>
       checkCsrf(url: string): Chainable<Element>
       toBeUnauthorized(url: string): Chainable<Element>
     }

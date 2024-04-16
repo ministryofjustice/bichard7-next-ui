@@ -1,11 +1,9 @@
-import { defaultSetup } from "../../../support/helpers"
+import { loginAndVisit } from "../../../support/helpers"
 
 describe("Case list", () => {
   context("search panel", () => {
     it("Should correctly show chips when the panel is hidden and visible", () => {
-      defaultSetup()
-      cy.login("bichard01@example.com", "password")
-      cy.visit("/bichard")
+      loginAndVisit()
 
       // Check that no chips exist on load
       cy.get("#filter-button").contains("Hide search panel").should("exist")

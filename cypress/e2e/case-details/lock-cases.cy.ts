@@ -1,30 +1,6 @@
-import User from "services/entities/User"
-import hashedPassword from "../../fixtures/hashedPassword"
-import { UserGroup } from "types/UserGroup"
-import { newUserLogin } from "../../support/helpers"
+import { loginAndVisit } from "../../support/helpers"
 
 describe("Lock court cases", () => {
-  const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
-    return {
-      username: `Bichard0${idx}`,
-      visibleForces: [`0${idx}`],
-      forenames: "Bichard Test User",
-      surname: `0${idx}`,
-      email: `bichard0${idx}@example.com`,
-      password: hashedPassword
-    }
-  })
-
-  before(() => {
-    cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7ExceptionHandler_grp" })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard03@example.com", groupName: "B7Supervisor_grp" })
-    cy.clearCookies()
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
@@ -34,14 +10,13 @@ describe("Lock court cases", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "03",
+        orgForPoliceFilter: "01",
         errorCount: 1,
         triggerCount: 1
       }
     ])
 
-    cy.login("bichard03@example.com", "password")
-    cy.visit("/bichard")
+    loginAndVisit()
 
     cy.contains("a", "NAME Defendant").click()
 
@@ -53,26 +28,25 @@ describe("Lock court cases", () => {
   })
 
   it("should not lock a case that is already locked to another user", () => {
-    const existingUserLock = "Another.name"
+    const existingUserLock = "BichardForce04"
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: existingUserLock,
         triggerLockedByUsername: existingUserLock,
-        orgForPoliceFilter: "03",
+        orgForPoliceFilter: "01",
         errorCount: 1,
         triggerCount: 1
       }
     ])
 
-    cy.login("bichard03@example.com", "password")
-    cy.visit("/bichard")
+    loginAndVisit()
     cy.findByText("NAME Defendant").click()
 
     cy.get(".view-only-badge").should("exist")
     cy.get("#triggers-locked-tag").should("exist")
-    cy.get("#triggers-locked-tag-lockee").should("contain.text", "Another Name")
+    cy.get("#triggers-locked-tag-lockee").should("contain.text", "Bichard Test User Force 04")
     cy.get("#exceptions-locked-tag").should("exist")
-    cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Another Name")
+    cy.get("#exceptions-locked-tag-lockee").should("contain.text", "Bichard Test User Force 04")
   })
 
   it("should not lock exceptions when a trigger handler clicks into a case", () => {
@@ -84,8 +58,7 @@ describe("Lock court cases", () => {
       }
     ])
 
-    newUserLogin({ user: "trigger-handler-user", groups: [UserGroup.TriggerHandler] })
-
+    loginAndVisit("TriggerHandler")
     cy.visit("/bichard")
     cy.findByText("NAME Defendant").click()
 
@@ -97,7 +70,7 @@ describe("Lock court cases", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "03",
+        orgForPoliceFilter: "01",
         errorCount: 1,
         errorStatus: "Unresolved",
         triggerCount: 1,
@@ -105,8 +78,7 @@ describe("Lock court cases", () => {
       }
     ])
 
-    cy.login("bichard03@example.com", "password")
-    cy.visit("/bichard")
+    loginAndVisit()
     cy.findByText("NAME Defendant").click()
 
     cy.get("#triggers-resolved-tag").should("exist").should("contain.text", "Resolved")
@@ -120,7 +92,7 @@ describe("Lock court cases", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "03",
+        orgForPoliceFilter: "01",
         errorCount: 1,
         errorStatus: "Resolved",
         triggerCount: 1,
@@ -128,8 +100,7 @@ describe("Lock court cases", () => {
       }
     ])
 
-    cy.login("bichard03@example.com", "password")
-    cy.visit("/bichard")
+    loginAndVisit()
     cy.findByText("NAME Defendant").click()
 
     cy.get("#exceptions-resolved-tag").should("exist").should("contain.text", "Resolved")
@@ -143,7 +114,7 @@ describe("Lock court cases", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "03",
+        orgForPoliceFilter: "01",
         errorCount: 1,
         errorStatus: "Submitted",
         triggerCount: 1,
@@ -151,8 +122,7 @@ describe("Lock court cases", () => {
       }
     ])
 
-    cy.login("bichard03@example.com", "password")
-    cy.visit("/bichard")
+    loginAndVisit()
     cy.findByText("NAME Defendant").click()
 
     cy.get("#exceptions-submitted-tag").should("exist").should("contain.text", "Submitted")
@@ -166,7 +136,7 @@ describe("Lock court cases", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "03",
+        orgForPoliceFilter: "01",
         errorCount: 1,
         errorStatus: "Submitted",
         triggerCount: 1,
@@ -174,8 +144,7 @@ describe("Lock court cases", () => {
       }
     ])
 
-    cy.login("bichard03@example.com", "password")
-    cy.visit("/bichard")
+    loginAndVisit()
     cy.findByText("NAME Defendant").click()
 
     cy.get("#exceptions-submitted-tag").should("exist").should("contain.text", "Submitted")
@@ -189,7 +158,7 @@ describe("Lock court cases", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "03",
+        orgForPoliceFilter: "01",
         errorCount: 1,
         errorStatus: "Resolved",
         triggerCount: 1,
@@ -197,8 +166,7 @@ describe("Lock court cases", () => {
       }
     ])
 
-    cy.login("bichard03@example.com", "password")
-    cy.visit("/bichard")
+    loginAndVisit()
     cy.findByText("NAME Defendant").click()
 
     cy.get("#exceptions-resolved-tag").should("exist").should("contain.text", "Resolved")

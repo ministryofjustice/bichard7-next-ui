@@ -1,12 +1,8 @@
 import a11yConfig from "../../support/a11yConfig"
-import { confirmFiltersAppliedContains, defaultSetup, loginAndGoToUrl } from "../../support/helpers"
+import { confirmFiltersAppliedContains, loginAndVisit } from "../../support/helpers"
 import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 
 describe("Pagination", () => {
-  before(() => {
-    defaultSetup()
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
@@ -14,7 +10,7 @@ describe("Pagination", () => {
   it("Should be accessible", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.injectAxe()
 
@@ -27,7 +23,7 @@ describe("Pagination", () => {
   it("lets users select how many cases to show per page", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 200, force: "01" })
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get("tbody tr").should("have.length", 50)
     cy.get("tr").contains("Case00000").should("exist")
@@ -56,7 +52,7 @@ describe("Pagination", () => {
   it("keeps roughly the same position in the case list when changing page size", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 100, force: "01" })
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get(".cases-per-page").first().select("50")
     cy.get("tbody tr").should("have.length", 50)
@@ -80,14 +76,14 @@ describe("Pagination", () => {
       { orgForPoliceFilter: "011111" },
       { orgForPoliceFilter: "011111" }
     ])
-    loginAndGoToUrl(undefined, "/bichard?page=5")
+    loginAndVisit("/bichard?page=5")
     cy.url().should("match", /\/bichard\?page=1/)
   })
 
   it("doesn't show navigation options when there is only one page", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get(".moj-pagination__list li").should("not.exist")
   })
@@ -95,7 +91,7 @@ describe("Pagination", () => {
   it("has correct pagination information when there is only one page", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get("p.moj-pagination__results").should("contain.text", "Showing 1 to 3 of 3 cases")
   })
@@ -103,7 +99,7 @@ describe("Pagination", () => {
   it("lets users navigate back and forth between pages using the page numbers", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get(".cases-per-page").first().select("25")
 
@@ -130,7 +126,7 @@ describe("Pagination", () => {
   it("lets users navigate back and forth between pages using the next and previous arrows", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get(".cases-per-page").first().select("25")
 
@@ -157,7 +153,7 @@ describe("Pagination", () => {
   it("has correct pagination information on page 3 out of 5", () => {
     cy.task("insertMultipleDummyCourtCases", { numToInsert: 250, force: "01" })
 
-    loginAndGoToUrl(undefined, "/bichard?page=3")
+    loginAndVisit("/bichard?page=3")
 
     cy.get("p.moj-pagination__results").first().should("contain.text", "Showing 101 to 150 of 250 cases")
     cy.get("tr").contains("Case00100").should("exist")
@@ -169,12 +165,12 @@ describe("Pagination", () => {
       numToInsert: 100,
       force: "01",
       otherFields: {
-        errorLockedByUsername: "Bichard01",
-        triggerLockedByUsername: "Bichard01"
+        errorLockedByUsername: "GeneralHandler",
+        triggerLockedByUsername: "GeneralHandler"
       }
     })
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get("label[for='my-cases-filter']").click()
     cy.get("#search").click()
