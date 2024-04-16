@@ -1,5 +1,5 @@
-import { BackLink, SkipLink } from "govuk-react"
-import { BackLinkWrapper, LinksRow } from "./FeedbackHeaderLinks.styles"
+import { BackLink } from "govuk-react"
+import { BackLinkWrapper, LinksRow, SkipLink } from "./FeedbackHeaderLinks.styles"
 import Form from "./Form"
 
 type Props = {
