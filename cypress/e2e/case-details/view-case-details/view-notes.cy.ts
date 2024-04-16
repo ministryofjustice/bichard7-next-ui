@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import User from "services/entities/User"
 import CourtCase from "../../../../src/services/entities/CourtCase"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
@@ -13,7 +14,7 @@ const loginAndGoToNotes = () => {
 
 const trigger: TestTrigger = {
   triggerId: 0,
-  triggerCode: "TRPR0001",
+  triggerCode: TriggerCode.TRPR0001,
   status: "Unresolved",
   createdAt: new Date("2022-07-09T10:22:34.000Z")
 }
