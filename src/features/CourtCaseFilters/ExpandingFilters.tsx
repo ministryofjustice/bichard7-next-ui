@@ -23,18 +23,18 @@ interface Props {
 }
 
 const ExpandingFilters: React.FC<Props> = ({ filterName, classNames, children }: Props) => {
-  const [caseTypeIsVisible, setCaseTypeVisible] = useState(true)
+  const [isVisible, setVisible] = useState(true)
 
   return (
     <fieldset className="govuk-fieldset">
       <Container
         className={"container"}
         onClick={() => {
-          setCaseTypeVisible(!caseTypeIsVisible)
+          setVisible(!isVisible)
         }}
       >
         <IconButton type="button" className={`icon-button ${classNames}`} aria-label={`${filterName} filter options`}>
-          {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
+          {isVisible ? <UpArrow /> : <DownArrow />}
         </IconButton>
         <LegendContainer className={"legend-container"}>
           <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
@@ -42,7 +42,7 @@ const ExpandingFilters: React.FC<Props> = ({ filterName, classNames, children }:
           </legend>
         </LegendContainer>
       </Container>
-      <ConditionalRender isRendered={caseTypeIsVisible}>{children}</ConditionalRender>
+      <ConditionalRender isRendered={isVisible}>{children}</ConditionalRender>
     </fieldset>
   )
 }
