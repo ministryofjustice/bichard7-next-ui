@@ -1,17 +1,17 @@
 import ConditionalRender from "components/ConditionalRender"
-import LockedFilterOptions, { lockedStateShortLabels } from "components/FilterOptions/LockedFilterOptions"
-import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions/ReasonFilterOptions"
+import LockedFilter, { lockedStateShortLabels } from "components/SearchFilters/LockedFilter"
+import ReasonFilter from "components/SearchFilters/ReasonFilterOptions/ReasonFilter"
+import TextFilter from "components/SearchFilters/TextFilter"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { FormGroup, LabelText } from "govuk-react"
+import { FormGroup } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
 import { CaseState, LockedState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
 import { anyFilterChips } from "utils/filterChips"
 import { reasonOptions } from "utils/reasonOptions"
-import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
+import CourtDateFilter from "../../components/SearchFilters/CourtDateFilter"
 import { SelectedFiltersContainer } from "./CourtCaseFilter.styles"
-import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 import { filtersReducer } from "./reducers/filters"
 
@@ -30,6 +30,10 @@ interface Props {
   order: string | null
   orderBy: string | null
 }
+
+const Divider = () => (
+  <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
+)
 
 const CourtCaseFilter: React.FC<Props> = ({
   reason,
@@ -102,189 +106,65 @@ const CourtCaseFilter: React.FC<Props> = ({
           <FormGroup className={"govuk-form-group"}>
             <h2 className="govuk-heading-m">{"Search"}</h2>
             <div>
-              <label className="govuk-label govuk-label--s" htmlFor="reason-codes">
-                <LabelText>{"Reason codes"}</LabelText>
-                <div className="govuk-input__wrapper">
-                  <div className="govuk-input__prefix" aria-hidden="true">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M9.6999 10.6C12.0747 10.6 13.9999 8.67482 13.9999 6.3C13.9999 3.92518 12.0747 2 9.6999 2C7.32508 2 5.3999 3.92518 5.3999 6.3C5.3999 8.67482 7.32508 10.6 9.6999 10.6ZM9.6999 12.6C13.1793 12.6 15.9999 9.77939 15.9999 6.3C15.9999 2.82061 13.1793 0 9.6999 0C6.22051 0 3.3999 2.82061 3.3999 6.3C3.3999 9.77939 6.22051 12.6 9.6999 12.6Z"
-                        fill="#0B0C0C"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M6.70706 10.7071L1.70706 15.7071L0.292847 14.2929L5.29285 9.29289L6.70706 10.7071Z"
-                        fill="#0B0C0C"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    className="govuk-input"
-                    value={state.reasonCodes.map((reasonCode) => reasonCode.value).join(" ")}
-                    id="reason-codes"
-                    name="reasonCodes"
-                    type="text"
-                    onChange={(event) => {
-                      dispatch({ method: "add", type: "reasonCodes", value: event.currentTarget.value })
-                    }}
-                  />
-                </div>
-              </label>
-              <label className="govuk-label govuk-label--s" htmlFor="keywords">
-                <LabelText>{"Defendant name"}</LabelText>
-                <div className="govuk-input__wrapper">
-                  <div className="govuk-input__prefix" aria-hidden="true">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M9.6999 10.6C12.0747 10.6 13.9999 8.67482 13.9999 6.3C13.9999 3.92518 12.0747 2 9.6999 2C7.32508 2 5.3999 3.92518 5.3999 6.3C5.3999 8.67482 7.32508 10.6 9.6999 10.6ZM9.6999 12.6C13.1793 12.6 15.9999 9.77939 15.9999 6.3C15.9999 2.82061 13.1793 0 9.6999 0C6.22051 0 3.3999 2.82061 3.3999 6.3C3.3999 9.77939 6.22051 12.6 9.6999 12.6Z"
-                        fill="#0B0C0C"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M6.70706 10.7071L1.70706 15.7071L0.292847 14.2929L5.29285 9.29289L6.70706 10.7071Z"
-                        fill="#0B0C0C"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    className="govuk-input"
-                    value={state.defendantNameSearch.value}
-                    id="keywords"
-                    name="keywords"
-                    type="text"
-                    onChange={(event) => {
-                      dispatch({ method: "add", type: "defendantName", value: event.currentTarget.value })
-                    }}
-                  />
-                </div>
-              </label>
-              <label className="govuk-label govuk-label--s" htmlFor="court-name">
-                <LabelText>{"Court name"}</LabelText>
-                <div className="govuk-input__wrapper">
-                  <div className="govuk-input__prefix" aria-hidden="true">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M9.6999 10.6C12.0747 10.6 13.9999 8.67482 13.9999 6.3C13.9999 3.92518 12.0747 2 9.6999 2C7.32508 2 5.3999 3.92518 5.3999 6.3C5.3999 8.67482 7.32508 10.6 9.6999 10.6ZM9.6999 12.6C13.1793 12.6 15.9999 9.77939 15.9999 6.3C15.9999 2.82061 13.1793 0 9.6999 0C6.22051 0 3.3999 2.82061 3.3999 6.3C3.3999 9.77939 6.22051 12.6 9.6999 12.6Z"
-                        fill="#0B0C0C"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M6.70706 10.7071L1.70706 15.7071L0.292847 14.2929L5.29285 9.29289L6.70706 10.7071Z"
-                        fill="#0B0C0C"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    className="govuk-input"
-                    value={state.courtNameSearch.value}
-                    id="court-name"
-                    name="courtName"
-                    type="text"
-                    onChange={(event) => {
-                      dispatch({ method: "add", type: "courtName", value: event.currentTarget.value })
-                    }}
-                  />
-                </div>
-              </label>
-              <label className="govuk-label govuk-label--s" htmlFor="ptiurn">
-                <LabelText>{"PTIURN"}</LabelText>
-                <div className="govuk-input__wrapper">
-                  <div className="govuk-input__prefix" aria-hidden="true">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M9.6999 10.6C12.0747 10.6 13.9999 8.67482 13.9999 6.3C13.9999 3.92518 12.0747 2 9.6999 2C7.32508 2 5.3999 3.92518 5.3999 6.3C5.3999 8.67482 7.32508 10.6 9.6999 10.6ZM9.6999 12.6C13.1793 12.6 15.9999 9.77939 15.9999 6.3C15.9999 2.82061 13.1793 0 9.6999 0C6.22051 0 3.3999 2.82061 3.3999 6.3C3.3999 9.77939 6.22051 12.6 9.6999 12.6Z"
-                        fill="#0B0C0C"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M6.70706 10.7071L1.70706 15.7071L0.292847 14.2929L5.29285 9.29289L6.70706 10.7071Z"
-                        fill="#0B0C0C"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    className="govuk-input"
-                    value={state.ptiurnSearch.value}
-                    id="ptiurn"
-                    name="ptiurn"
-                    type="text"
-                    onChange={(event) => {
-                      dispatch({ method: "add", type: "ptiurn", value: event.currentTarget.value })
-                    }}
-                  />
-                </div>
-              </label>
+              <TextFilter
+                label="Reason codes"
+                id="reasonCodes"
+                value={state.reasonCodes.map((reasonCode) => reasonCode.value).join(" ")}
+                dispatch={dispatch}
+              />
+              <TextFilter
+                label="Defendant name"
+                id="defendantName"
+                value={state.defendantNameSearch.value}
+                dispatch={dispatch}
+              />
+              <TextFilter label="Court name" id="courtName" value={state.courtNameSearch.value} dispatch={dispatch} />
+              <TextFilter label="PTIURN" id="ptiurn" value={state.ptiurnSearch.value} dispatch={dispatch} />
             </div>
           </FormGroup>
+
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
-            <FormGroup className={`govuk-form-group reasons`}>
-              <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-              <ExpandingFilters filterName={"Reason"} classNames="filters-reason">
-                <ReasonFilterOptions
-                  reason={state.reasonFilter.value}
-                  reasonOptions={reasonOptions}
-                  dispatch={dispatch}
-                />
-              </ExpandingFilters>
-            </FormGroup>
+            <Divider />
+            <ReasonFilter reason={state.reasonFilter.value} reasonOptions={reasonOptions} dispatch={dispatch} />
           </ConditionalRender>
-          <FormGroup className={"govuk-form-group"}>
-            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Court date"} classNames="filters-court-date">
-              <CourtDateFilterOptions
-                caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
-                caseAgeCounts={caseAgeCounts}
-                dispatch={dispatch}
-                dateRange={{ from: state.dateFrom.value, to: state.dateTo.value }}
-              />
-            </ExpandingFilters>
-          </FormGroup>
-          <div>
-            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <fieldset className="govuk-fieldset">
-              <legend className="govuk-fieldset__legend govuk-body">{"Case state"}</legend>
-              <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                <div className="govuk-checkboxes__item">
-                  <input
-                    className="govuk-checkboxes__input"
-                    id="resolved"
-                    name="state"
-                    type="checkbox"
-                    value={state.caseStateFilter.value}
-                    checked={state.caseStateFilter.value == "Resolved"}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                      dispatch({
-                        method: event.currentTarget.checked ? "add" : "remove",
-                        type: "caseState",
-                        value: "Resolved"
-                      })
-                    }}
-                  ></input>
-                  <label className="govuk-label govuk-checkboxes__label" htmlFor="resolved">
-                    {"View resolved cases"}
-                  </label>
-                </div>
+
+          <Divider />
+          <CourtDateFilter
+            caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
+            caseAgeCounts={caseAgeCounts}
+            dispatch={dispatch}
+            dateRange={{ from: state.dateFrom.value, to: state.dateTo.value }}
+          />
+
+          <Divider />
+          <fieldset className="govuk-fieldset">
+            <legend className="govuk-fieldset__legend govuk-body">{"Case state"}</legend>
+            <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+              <div className="govuk-checkboxes__item">
+                <input
+                  className="govuk-checkboxes__input"
+                  id="resolved"
+                  name="state"
+                  type="checkbox"
+                  value={state.caseStateFilter.value}
+                  checked={state.caseStateFilter.value == "Resolved"}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    dispatch({
+                      method: event.currentTarget.checked ? "add" : "remove",
+                      type: "caseState",
+                      value: "Resolved"
+                    })
+                  }}
+                ></input>
+                <label className="govuk-label govuk-checkboxes__label" htmlFor="resolved">
+                  {"View resolved cases"}
+                </label>
               </div>
-            </fieldset>
-          </div>
-          <div>
-            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <ExpandingFilters filterName={"Locked state"} classNames="filters-locked-state">
-              <LockedFilterOptions lockedState={state.lockedStateFilter.value} dispatch={dispatch} />
-            </ExpandingFilters>
-          </div>
+            </div>
+          </fieldset>
+
+          <Divider />
+          <LockedFilter lockedState={state.lockedStateFilter.value} dispatch={dispatch} />
         </div>
       </div>
     </form>
