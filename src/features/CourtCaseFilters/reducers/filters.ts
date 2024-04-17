@@ -1,4 +1,4 @@
-import { lockedStateShortLabels } from "components/FilterOptions/LockedFilterOptions"
+import { lockedStateShortLabels } from "components/SearchFilters/LockedFilter"
 import { Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"

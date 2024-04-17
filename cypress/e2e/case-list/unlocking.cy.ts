@@ -64,7 +64,7 @@ describe("Case unlocked badge", () => {
 
     loginAndVisit("ExceptionHandler")
 
-    cy.get("#keywords").type("NAME Defendant")
+    cy.get("#defendantName").type("NAME Defendant")
     cy.contains("Apply filters").click()
 
     cy.get("button.locked-by-tag").contains("Exception Handler User").click()
@@ -94,7 +94,7 @@ describe("Case unlocked badge", () => {
 
     loginAndVisit("TriggerHandler")
 
-    cy.get("#keywords").type("NAME Defendant")
+    cy.get("#defendantName").type("NAME Defendant")
     cy.contains("Apply filters").click()
 
     cy.get("button.locked-by-tag").contains("Trigger Handler User").click()
