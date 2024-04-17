@@ -10,10 +10,9 @@ export type FilterAction =
   | { method: "add"; type: "dateFrom"; value: string }
   | { method: "add"; type: "dateTo"; value: string }
   | { method: "remove"; type: "dateRange"; value: string }
-  | { method: FilterMethod; type: "locked"; value: boolean }
+  | { method: FilterMethod; type: "lockedState"; value: string }
   | { method: FilterMethod; type: "reason"; value: Reason }
   | { method: FilterMethod; type: "caseState"; value: CaseState }
-  | { method: FilterMethod; type: "myCases"; value: boolean }
 
 export type FilterType =
   | "defendantName"
@@ -25,10 +24,9 @@ export type FilterType =
   | "dateFrom"
   | "dateTo"
   | "dateRange"
-  | "locked"
+  | "lockedState"
   | "reason"
   | "caseState"
-  | "myCases"
 
 export type FilterMethod = "add" | "remove"
 export type FilterValue = boolean | string | Reason
@@ -51,8 +49,8 @@ export type Filter = {
     value?: string
     state?: FilterState
   }
-  lockedFilter: {
-    value?: boolean
+  lockedStateFilter: {
+    value?: string
     state?: FilterState
     label?: string
   }
@@ -84,10 +82,5 @@ export type Filter = {
   reasonFilter: {
     value?: Reason
     state?: FilterState
-  }
-  myCasesFilter: {
-    value?: boolean
-    state?: FilterState
-    label?: string
   }
 }

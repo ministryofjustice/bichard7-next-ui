@@ -153,10 +153,10 @@ describe("Filtering cases", () => {
   it("Should expand and collapse locked state filter navigation", () => {
     visitBasePath()
 
-    cy.contains("Locked cases only")
+    cy.contains("Locked cases")
 
-    collapseFilterSection(".filters-locked-state", "#locked")
-    expandFilterSection(".filters-locked-state", "#locked")
+    collapseFilterSection(".filters-locked-state", "#locked-state-locked")
+    expandFilterSection(".filters-locked-state", "#locked-state-locked")
   })
 
   it("Should display cases filtered by defendant name", () => {
@@ -748,7 +748,7 @@ describe("Filtering cases", () => {
 
     visitBasePath()
     // Filter for locked cases
-    cy.get(`label[for="locked"]`).click()
+    cy.get(`label[for="locked-state-locked"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
@@ -761,8 +761,7 @@ describe("Filtering cases", () => {
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 2)
 
     // Filter for unlocked cases
-
-    cy.get(`label[for="unlocked"]`).click()
+    cy.get(`label[for="locked-state-unlocked"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
@@ -808,33 +807,74 @@ describe("Filtering cases", () => {
     })
   })
 
-  describe("Filtering cases allocated to me", () => {
-    it("Should filter cases that I hold the trigger lock for", () => {
+  describe("Filtering cases by locked status", () => {
+    beforeEach(() => {
       cy.task("insertCourtCasesWithFields", [
         {
           errorLockedByUsername: "GeneralHandler",
           triggerLockedByUsername: "GeneralHandler",
-          orgForPoliceFilter: "011111"
+          orgForPoliceFilter: "01XY"
         },
-        { orgForPoliceFilter: "011111" },
+        {
+          orgForPoliceFilter: "01XY",
+          triggerLockedByUsername: "GeneralHandler"
+        },
+        {
+          orgForPoliceFilter: "01XY",
+          errorLockedByUsername: "GeneralHandler"
+        },
         {
           errorLockedByUsername: "BichardForce02",
           triggerLockedByUsername: "BichardForce02",
-          orgForPoliceFilter: "011111"
+          orgForPoliceFilter: "01XY"
         },
-        { orgForPoliceFilter: "011111" }
+        { orgForPoliceFilter: "01XY" }
       ])
 
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: TriggerCode.TRPR0001,
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("insertTriggers", { caseId: 1, triggers })
       visitBasePath()
+    })
 
-      cy.get(`label[for="my-cases-filter"]`).click()
+    it("Should filter locked cases", () => {
+      cy.get(`label[for="locked-state-locked"]`).click()
       cy.contains("Selected filters")
-      cy.contains("My cases")
+      cy.contains("Locked")
 
       cy.get("#search").click()
 
-      cy.contains("Case00000")
-      confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002", "Case00003"])
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002", "Case00003"])
+      confirmMultipleFieldsNotDisplayed(["Case00004"])
+    })
+
+    it("Should filter unlocked cases", () => {
+      cy.get(`label[for="locked-state-unlocked"]`).click()
+      cy.contains("Selected filters")
+      cy.contains("Locked")
+
+      cy.get("#search").click()
+
+      confirmMultipleFieldsDisplayed(["Case00004"])
+      confirmMultipleFieldsNotDisplayed(["Case00000", "Case00001", "Case00002", "Case00003"])
+    })
+
+    it("Should filter cases that I hold the lock for", () => {
+      cy.get(`label[for="locked-state-lockedtome"]`).click()
+      cy.contains("Selected filters")
+      cy.contains("Locked to me")
+
+      cy.get("#search").click()
+
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
+      confirmMultipleFieldsNotDisplayed(["Case00003", "Case00004"])
     })
   })
 

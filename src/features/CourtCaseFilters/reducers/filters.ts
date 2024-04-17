@@ -1,3 +1,4 @@
+import { lockedStateShortLabels } from "components/FilterOptions/LockedFilterOptions"
 import { Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
@@ -32,16 +33,10 @@ const handleAddingFilters = (newState: Filter, action: FilterAction) => {
       newState.caseStateFilter.state = "Selected"
       break
     }
-    case "locked": {
-      newState.lockedFilter.value = action.value
-      newState.lockedFilter.label = action.value ? "Locked" : "Unlocked"
-      newState.lockedFilter.state = "Selected"
-      break
-    }
-    case "myCases": {
-      newState.myCasesFilter.value = action.value
-      newState.myCasesFilter.label = action.value ? "Cases locked to me" : undefined
-      newState.myCasesFilter.state = "Selected"
+    case "lockedState": {
+      newState.lockedStateFilter.value = action.value
+      newState.lockedStateFilter.label = lockedStateShortLabels[action.value]
+      newState.lockedStateFilter.state = "Selected"
       break
     }
     case "reason": {
@@ -104,14 +99,9 @@ const handleRemovingFilters = (newState: Filter, action: FilterAction) => {
       newState.caseStateFilter.label = undefined
       break
     }
-    case "locked": {
-      newState.lockedFilter.value = undefined
-      newState.lockedFilter.label = undefined
-      break
-    }
-    case "myCases": {
-      newState.myCasesFilter.value = undefined
-      newState.myCasesFilter.label = undefined
+    case "lockedState": {
+      newState.lockedStateFilter.value = undefined
+      newState.lockedStateFilter.label = undefined
       break
     }
     case "reason": {

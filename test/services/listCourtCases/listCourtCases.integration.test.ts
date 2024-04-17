@@ -6,6 +6,7 @@ import User from "services/entities/User"
 import courtCasesByOrganisationUnitQuery from "services/queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "services/queries/leftJoinAndSelectTriggersQuery"
 import { DataSource } from "typeorm"
+import { LockedState } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import CourtCase from "../../../src/services/entities/CourtCase"
@@ -912,7 +913,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          locked: true
+          lockedState: LockedState.Locked
         },
         testUser
       )
@@ -940,7 +941,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          locked: false
+          lockedState: LockedState.Unlocked
         },
         testUser
       )
@@ -971,7 +972,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          locked: true
+          lockedState: LockedState.Locked
         },
         testUser
       )
@@ -986,7 +987,7 @@ describe("listCourtCases", () => {
         dataSource,
         {
           maxPageItems: "100",
-          locked: false
+          lockedState: LockedState.Unlocked
         },
         testUser
       )

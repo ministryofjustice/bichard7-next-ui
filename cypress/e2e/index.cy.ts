@@ -43,7 +43,7 @@ describe("Case list", () => {
 
       loginAndVisit()
 
-      cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
+      cy.get(".govuk-radios__item").contains("Cases locked to me").click()
       cy.contains("Apply filters").click()
 
       cy.findByText("Previous page").should("not.exist")
