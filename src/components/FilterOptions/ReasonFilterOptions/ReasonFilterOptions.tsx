@@ -1,40 +1,34 @@
 import type { Dispatch } from "react"
 import { Reason } from "types/CaseListQueryParams"
-import { reasonOptions as defaultReasonOptions } from "utils/reasonOptions"
 import type { FilterAction } from "types/CourtCaseFilter"
-import ConditionalRender from "components/ConditionalRender"
-import TriggersAccordion from "./TriggersAccordion/TriggersAccordion"
 
 interface Props {
-  reasons?: Reason[]
-  reasonOptions?: Reason[]
+  reason?: Reason
+  reasonOptions: Reason[]
   dispatch: Dispatch<FilterAction>
 }
 
-const ReasonFilterOptions: React.FC<Props> = ({ reasons, reasonOptions = defaultReasonOptions, dispatch }: Props) => {
+const ReasonFilterOptions: React.FC<Props> = ({ reason, reasonOptions, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
-      <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-        {reasonOptions.map((reason) => (
-          <div className={`govuk-checkboxes__item ${reason.toLowerCase()}`} key={reason}>
+      <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+        {reasonOptions.map((reasonOption) => (
+          <div className={`govuk-radios__item ${reasonOption.toLowerCase()}`} key={reasonOption}>
             <input
-              className="govuk-checkboxes__input"
-              id={`${reason.toLowerCase()}-type`}
-              name="type"
-              type="checkbox"
-              value={reason}
-              checked={reasons && reasons.includes(reason as Reason)}
+              className="govuk-radios__input"
+              id={`${reasonOption.toLowerCase()}-reason`}
+              name="reason"
+              type="radio"
+              value={reasonOption}
+              checked={reason === reasonOption}
               onChange={(event) => {
                 const value = event.currentTarget.value as Reason
                 dispatch({ method: event.currentTarget.checked ? "add" : "remove", type: "reason", value })
               }}
             ></input>
-            <label className="govuk-label govuk-checkboxes__label" htmlFor={`${reason.toLowerCase()}-type`}>
-              {reason}
+            <label className="govuk-label govuk-radios__label" htmlFor={`${reasonOption.toLowerCase()}-reason`}>
+              {reasonOption}
             </label>
-            <ConditionalRender isRendered={reason === "Bails"}>
-              <TriggersAccordion />
-            </ConditionalRender>
           </div>
         ))}
       </div>

@@ -1,13 +1,17 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
+import axios from "axios"
 import ConditionalRender from "components/ConditionalRender"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
+import { SaveLinkButton } from "components/LinkButton"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { useCourtCase } from "context/CourtCaseContext"
-import { HintText, Label, Table } from "govuk-react"
+import { Table } from "govuk-react"
+import { useCallback, useState } from "react"
+import { Amendments } from "types/Amendments"
 import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
@@ -16,6 +20,7 @@ import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/get
 import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExceptions"
 import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
+import isValidNextHearingDate from "utils/validators/isValidNextHearingDate"
 import {
   capitaliseExpression,
   formatDuration,
@@ -58,10 +63,35 @@ export const HearingResult = ({
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
+
   const isCaseEditable =
     courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME && errorStatus === "Unresolved"
   const text = result.ResultVariableText
   const formattedResult = text?.replace(/([^\d])\.([^\d\n])/g, "$1.\n\n$2")
+
+  const [isNhdSaved, setIsNhdSaved] = useState<boolean>(false)
+  const [nextHearingDateChanged, setNextHearingDateChanged] = useState<boolean>(false)
+
+  const saveNhd = useCallback(
+    async (nhd: Amendments) => {
+      await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { nextHearingDate: nhd.nextHearingDate })
+      setIsNhdSaved(true)
+      setNextHearingDateChanged(false)
+    },
+    [courtCase.errorId]
+  )
+
+  const isSaveNhdBtnDisabled = (): boolean => {
+    return (
+      !isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate) || isNhdSaved || !nextHearingDateChanged
+    )
+  }
+
+  const handleNhdSave = () => {
+    if (isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)) {
+      saveNhd(amendments)
+    }
+  }
 
   return (
     <Table>
@@ -104,9 +134,9 @@ export const HearingResult = ({
         value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
         updatedValue={updatedNextHearingLocation}
         isEditable={isCaseEditable && hasNextHearingLocationException(exceptions)}
+        inputLabel="Enter next hearing location"
+        hintText="OU code, 6-7 characters"
       >
-        <Label>{"Enter next hearing location"}</Label>
-        <HintText>{"OU code, 6-7 characters"}</HintText>
         <OrganisationUnitTypeahead
           value={
             amendedNextHearingLocation ??
@@ -123,8 +153,9 @@ export const HearingResult = ({
         value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
         updatedValue={updatedNextHearingDate && formatDisplayedDate(updatedNextHearingDate)}
         isEditable={isCaseEditable && hasNextHearingDateExceptions(exceptions)}
+        inputLabel="Enter next hearing date"
+        hintText="Enter date"
       >
-        <HintText>{"Enter date"}</HintText>
         <input
           className="govuk-input"
           type="date"
@@ -133,6 +164,8 @@ export const HearingResult = ({
           name={"next-hearing-date"}
           value={amendedNextHearingDate}
           onChange={(event) => {
+            setNextHearingDateChanged(true)
+            setIsNhdSaved(false)
             amend("nextHearingDate")({
               resultIndex: resultIndex,
               offenceIndex: offenceIndex,
@@ -140,6 +173,8 @@ export const HearingResult = ({
             })
           }}
         />
+
+        <SaveLinkButton id={"save-next-hearing-date"} onClick={handleNhdSave} disabled={isSaveNhdBtnDisabled()} />
       </EditableFieldTableRow>
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
       <TableRow label="Hearing result text" value={formattedResult} className={`result-text ${classes.resultText}`} />

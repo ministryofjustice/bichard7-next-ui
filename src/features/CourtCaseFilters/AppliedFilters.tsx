@@ -1,15 +1,15 @@
-import FilterTag from "components/FilterTag/FilterTag"
 import ConditionalRender from "components/ConditionalRender"
+import FilterTag from "components/FilterTag/FilterTag"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
-import { Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { LockedState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
 import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
 
 interface Props {
   filters: {
-    reasons?: Reason[]
+    reason?: Reason | null
     keywords?: string[]
     courtName?: string | null
     reasonCodes?: string[]
@@ -17,9 +17,8 @@ interface Props {
     caseAge?: string[]
     dateRange?: SerializedCourtDateRange | null
     urgency?: string | null
-    locked?: string | null
+    lockedState?: string | null
     caseState?: string | null
-    myCases?: boolean
   }
 }
 
@@ -27,7 +26,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
   const { basePath, query } = useRouter()
 
   const hasAnyAppliedFilters = (): boolean =>
-    (filters.reasons && filters.reasons.length > 0) ||
+    (!!filters.reason && filters.reason !== Reason.All) ||
     (filters.keywords && filters.keywords.length > 0) ||
     (filters.caseAge && filters.caseAge.length > 0) ||
     !!filters.courtName ||
@@ -36,9 +35,8 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.urgency ||
     !!filters.dateRange?.from ||
     !!filters.dateRange?.to ||
-    !!filters.locked ||
-    !!filters.caseState ||
-    !!filters.myCases
+    (!!filters.lockedState && filters.lockedState !== LockedState.All) ||
+    !!filters.caseState
 
   const removeFilterFromPath = (paramToRemove: { [key: string]: string }): string => {
     let searchParams = deleteQueryParam(paramToRemove, query)
@@ -75,14 +73,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
           <li>
             <p className="govuk-heading-s govuk-!-margin-bottom-0">{"Filters applied:"}</p>
           </li>
-          {filters.reasons &&
-            filters.reasons.map((reason) => {
-              return (
-                <li key={`${reason}`}>
-                  <FilterTag tag={reason} href={removeFilterFromPath({ type: reason })} />
-                </li>
-              )
-            })}
+          <ConditionalRender isRendered={!!filters.reason && filters.reason !== Reason.All}>
+            <li key={`${filters.reason}`}>
+              <FilterTag tag={filters.reason ?? ""} href={removeFilterFromPath({ type: filters.reason ?? "" })} />
+            </li>
+          </ConditionalRender>
           {filters.keywords &&
             filters.keywords.map((keyword) => {
               return (
@@ -129,17 +124,12 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </ConditionalRender>
-          <ConditionalRender isRendered={!!filters.myCases}>
+          <ConditionalRender isRendered={!!filters.lockedState}>
             <li>
               <FilterTag
-                tag={"Cases locked to me" ?? ""}
-                href={removeFilterFromPath({ myCases: String(filters.myCases) })}
+                tag={filters.lockedState ?? ""}
+                href={removeFilterFromPath({ locked: filters.lockedState ?? "" })}
               />
-            </li>
-          </ConditionalRender>
-          <ConditionalRender isRendered={!!filters.locked}>
-            <li>
-              <FilterTag tag={filters.locked ?? ""} href={removeFilterFromPath({ locked: filters.locked ?? "" })} />
             </li>
           </ConditionalRender>
           <ConditionalRender isRendered={!!filters.caseState}>

@@ -1,4 +1,4 @@
-import { defaultSetup, loginAndGoToUrl } from "../../support/helpers"
+import { loginAndVisit } from "../../support/helpers"
 
 const checkCasesOrder = (expectedOrder: number[]) => {
   cy.get("tbody td:nth-child(5)").each((element, index) => {
@@ -13,10 +13,6 @@ const checkPtiurnOrder = (expectedOrder: string[]) => {
 }
 
 describe("Sorting cases", () => {
-  before(() => {
-    defaultSetup()
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
@@ -36,7 +32,7 @@ describe("Sorting cases", () => {
       }))
     ])
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     // Sorted by court date
     checkCasesOrder([1, 4, 0, 3, 2, 5])
@@ -50,10 +46,10 @@ describe("Sorting cases", () => {
       { courtName: "CCCC", orgForPoliceFilter: "011111" }
     ])
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.get("#court-name-sort").find(".unorderedArrow").click()
-    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".upArrow").should("exist")
+    cy.get("#court-name-sort").get(".upArrow").should("exist")
 
     cy.get("tr")
       .not(":first")
@@ -63,7 +59,7 @@ describe("Sorting cases", () => {
       })
 
     cy.get("#court-name-sort").click()
-    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".downArrow").should("exist")
+    cy.get("#court-name-sort").get(".downArrow").should("exist")
 
     cy.get("tr")
       .not(":first")
@@ -88,7 +84,7 @@ describe("Sorting cases", () => {
       }))
     ])
 
-    loginAndGoToUrl()
+    loginAndVisit()
     // Sort ascending by defendant name
     cy.get("#defendant-name-sort").click()
 
@@ -105,7 +101,7 @@ describe("Sorting cases", () => {
       }))
     )
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     // Sort ascending by court name
     cy.get("#court-name-sort").click()
@@ -132,7 +128,7 @@ describe("Sorting cases", () => {
       }))
     )
 
-    loginAndGoToUrl()
+    loginAndVisit()
 
     // Sort ascending by PTIURN
     cy.get("#ptiurn-sort").find(".unorderedArrow").click()
@@ -142,51 +138,5 @@ describe("Sorting cases", () => {
     // Sort descending by PTIURN
     cy.get("#ptiurn-sort").click()
     checkPtiurnOrder(descending)
-  })
-
-  it("Should sort by who has a case locked", () => {
-    const usernames = ["alan.smith", "sarah.mcneil", "charlie.rhys", "bea.goddard"]
-    cy.task(
-      "insertCourtCasesWithFields",
-      usernames.map((username) => ({
-        errorLockedByUsername: username,
-        orgForPoliceFilter: "011111"
-      }))
-    )
-
-    loginAndGoToUrl()
-
-    // Sort ascending by lock holder
-    cy.get("#locked-by-sort").click()
-    checkCasesOrder([0, 3, 2, 1])
-
-    // Sort descending by lock holder
-    cy.get("#locked-by-sort").find(".upArrow").click()
-    checkCasesOrder([1, 2, 3, 0])
-  })
-
-  it("can sort cases by who has locked it", () => {
-    const lockUsernames = ["Bichard01", "Bichard02", null, "A really really really long.name"]
-    cy.task(
-      "insertCourtCasesWithFields",
-      lockUsernames.map((username) => ({
-        errorLockedByUsername: username,
-        triggerLockedByUsername: username,
-        orgForPoliceFilter: "011111"
-      }))
-    )
-
-    loginAndGoToUrl()
-
-    // Default: sorted by case ID
-    checkCasesOrder([0, 1, 2, 3])
-
-    // Sort ascending
-    cy.get("#locked-by-sort").click()
-    checkCasesOrder([3, 0, 1, 2])
-
-    // Sort descending
-    cy.get("#locked-by-sort").find(".upArrow").click()
-    checkCasesOrder([2, 1, 0, 3])
   })
 })

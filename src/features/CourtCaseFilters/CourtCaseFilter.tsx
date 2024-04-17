@@ -1,15 +1,16 @@
 import ConditionalRender from "components/ConditionalRender"
-import LockedFilterOptions from "components/FilterOptions/LockedFilterOptions"
+import LockedFilterOptions, { lockedStateShortLabels } from "components/FilterOptions/LockedFilterOptions"
 import ReasonFilterOptions from "components/FilterOptions/ReasonFilterOptions/ReasonFilterOptions"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { LabelText } from "govuk-react"
+import { FormGroup, LabelText } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
-import { createUseStyles } from "react-jss"
-import { CaseState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { CaseState, LockedState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
 import { anyFilterChips } from "utils/filterChips"
+import { reasonOptions } from "utils/reasonOptions"
 import CourtDateFilterOptions from "../../components/FilterOptions/CourtDateFilterOptions"
+import { SelectedFiltersContainer } from "./CourtCaseFilter.styles"
 import ExpandingFilters from "./ExpandingFilters"
 import FilterChipSection from "./FilterChipSection"
 import { filtersReducer } from "./reducers/filters"
@@ -19,29 +20,19 @@ interface Props {
   courtName: string | null
   reasonCodes: string[]
   ptiurn: string | null
-  reasons: Reason[]
+  reason: Reason | null
   caseAge: string[]
   caseAgeCounts: Record<string, number>
   dateRange: SerializedCourtDateRange | null
   urgency: string | null
-  locked: string | null
+  lockedState: string | null
   caseState: CaseState | null
-  myCases: boolean
   order: string | null
   orderBy: string | null
 }
 
-const useStyles = createUseStyles({
-  "govuk-form-group": {
-    marginBottom: "0"
-  },
-  selectedFiltersContainer: {
-    display: "block"
-  }
-})
-
 const CourtCaseFilter: React.FC<Props> = ({
-  reasons,
+  reason,
   defendantName,
   ptiurn,
   courtName,
@@ -50,12 +41,12 @@ const CourtCaseFilter: React.FC<Props> = ({
   caseAgeCounts,
   dateRange,
   urgency,
-  locked,
+  lockedState,
   caseState,
-  myCases,
   order,
   orderBy
 }: Props) => {
+  const lockedStateValue = lockedState ?? LockedState.All
   const initialFilterState: Filter = {
     urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
     caseAgeFilter: caseAge.map((slaDate) => {
@@ -63,19 +54,18 @@ const CourtCaseFilter: React.FC<Props> = ({
     }),
     dateFrom: dateRange !== null ? { value: dateRange.from, state: "Applied" } : {},
     dateTo: dateRange !== null ? { value: dateRange.to, state: "Applied" } : {},
-    lockedFilter: locked !== null ? { value: locked === "Locked", state: "Applied", label: locked } : {},
+    lockedStateFilter:
+      lockedState !== null
+        ? { value: lockedStateValue, state: "Applied", label: lockedStateShortLabels[lockedStateValue] }
+        : {},
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
     courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
     reasonCodes: reasonCodes.map((reasonCode) => ({ value: reasonCode, state: "Applied", label: reasonCode })),
     ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
-    reasonFilter: reasons.map((reason) => {
-      return { value: reason, state: "Applied" }
-    }),
-    myCasesFilter: myCases ? { value: true, state: "Applied", label: "Cases locked to me" } : {}
+    reasonFilter: reason !== null ? { value: reason, state: "Applied" } : {}
   }
   const [state, dispatch] = useReducer(filtersReducer, initialFilterState)
-  const classes = useStyles()
   const currentUser = useCurrentUser()
 
   return (
@@ -89,7 +79,7 @@ const CourtCaseFilter: React.FC<Props> = ({
       <div className="moj-filter__content">
         <div className="moj-filter__selected">
           <div className="moj-filter__selected-heading">
-            <div className={`moj-filter__heading-title ${classes.selectedFiltersContainer}`}>
+            <SelectedFiltersContainer className={`moj-filter__heading-title`}>
               <FilterChipSection state={state} dispatch={dispatch} sectionState={"Applied"} marginTop={false} />
               <FilterChipSection
                 state={state}
@@ -98,7 +88,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                 marginTop={anyFilterChips(state, "Applied")}
                 placeholderMessage={"No filters selected"}
               />
-            </div>
+            </SelectedFiltersContainer>
           </div>
         </div>
         <div className="moj-filter__options">
@@ -109,8 +99,8 @@ const CourtCaseFilter: React.FC<Props> = ({
           <input type="hidden" id="order" name="order" value={order || ""} />
           <input type="hidden" id="orderBy" name="orderBy" value={orderBy || ""} />
 
-          <div className={classes["govuk-form-group"]}>
-            <label className="govuk-label govuk-label--m">{"Search"}</label>
+          <FormGroup className={"govuk-form-group"}>
+            <h2 className="govuk-heading-m">{"Search"}</h2>
             <div>
               <label className="govuk-label govuk-label--s" htmlFor="reason-codes">
                 <LabelText>{"Reason codes"}</LabelText>
@@ -133,7 +123,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                   </div>
                   <input
                     className="govuk-input"
-                    value={state.reasonCodes.map((reason) => reason.value).join(" ")}
+                    value={state.reasonCodes.map((reasonCode) => reasonCode.value).join(" ")}
                     id="reason-codes"
                     name="reasonCodes"
                     type="text"
@@ -237,24 +227,20 @@ const CourtCaseFilter: React.FC<Props> = ({
                 </div>
               </label>
             </div>
-          </div>
+          </FormGroup>
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
-            <div className={`${classes["govuk-form-group"]} reasons`}>
+            <FormGroup className={`govuk-form-group reasons`}>
               <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"} classNames="filters-reason">
                 <ReasonFilterOptions
-                  reasons={state.reasonFilter.map((reasonFilter) => reasonFilter.value)}
-                  reasonOptions={
-                    currentUser.hasAccessTo[Permission.Triggers] && !currentUser.hasAccessTo[Permission.Exceptions]
-                      ? [Reason.Bails]
-                      : undefined
-                  }
+                  reason={state.reasonFilter.value}
+                  reasonOptions={reasonOptions}
                   dispatch={dispatch}
                 />
               </ExpandingFilters>
-            </div>
+            </FormGroup>
           </ConditionalRender>
-          <div className={classes["govuk-form-group"]}>
+          <FormGroup className={"govuk-form-group"}>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"} classNames="filters-court-date">
               <CourtDateFilterOptions
@@ -264,7 +250,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                 dateRange={{ from: state.dateFrom.value, to: state.dateTo.value }}
               />
             </ExpandingFilters>
-          </div>
+          </FormGroup>
           <div>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <fieldset className="govuk-fieldset">
@@ -296,36 +282,8 @@ const CourtCaseFilter: React.FC<Props> = ({
           <div>
             <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Locked state"} classNames="filters-locked-state">
-              <LockedFilterOptions locked={state.lockedFilter.value} dispatch={dispatch} />
+              <LockedFilterOptions lockedState={state.lockedStateFilter.value} dispatch={dispatch} />
             </ExpandingFilters>
-          </div>
-          <div>
-            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-            <fieldset className="govuk-fieldset">
-              <legend className="govuk-fieldset__legend govuk-body">{"My cases"}</legend>
-              <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                <div className="govuk-checkboxes__item">
-                  <input
-                    className="govuk-checkboxes__input"
-                    id="my-cases-filter"
-                    name="myCases"
-                    type="checkbox"
-                    value={"true"}
-                    checked={!!state.myCasesFilter.value}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                      dispatch({
-                        method: "add",
-                        type: "myCases",
-                        value: event.currentTarget.checked
-                      })
-                    }}
-                  ></input>
-                  <label className="govuk-label govuk-checkboxes__label" htmlFor="my-cases-filter">
-                    {"View cases locked to me"}
-                  </label>
-                </div>
-              </div>
-            </fieldset>
           </div>
         </div>
       </div>

@@ -1,29 +1,14 @@
-import hashedPassword from "../fixtures/hashedPassword"
+import { loginAndVisit } from "../support/helpers"
 
 describe("GOV.UK Assets", () => {
   beforeEach(() => {
     cy.viewport(1280, 720)
     cy.task("clearCourtCases")
-    cy.task("clearUsers")
 
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "Bichard01",
-          visibleForces: ["01"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp"]
-    })
-    cy.login("bichard01@example.com", "password")
+    loginAndVisit()
   })
 
   it("Should provide copyright logo", () => {
-    cy.visit("/bichard")
     cy.get(
       "a[href='https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/']"
     )
@@ -32,7 +17,6 @@ describe("GOV.UK Assets", () => {
   })
 
   it("Should provide favicon icon that loads correctly", () => {
-    cy.visit("/bichard")
     cy.get("link[rel='shortcut icon']")
       .should("have.attr", "href")
       .then((iconHref) => {

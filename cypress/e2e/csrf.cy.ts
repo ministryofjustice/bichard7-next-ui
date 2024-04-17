@@ -1,16 +1,12 @@
-import { defaultSetup, loginAndGoToUrl } from "../support/helpers"
+import { loginAndVisit } from "../support/helpers"
 
 describe("Case list", () => {
-  before(() => {
-    defaultSetup()
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
 
   it("should respond with forbidden response code when CSRF tokens are invalid", () => {
-    loginAndGoToUrl()
+    loginAndVisit()
     cy.checkCsrf("/bichard")
     cy.checkCsrf("/bichard/court-cases/0")
     cy.checkCsrf("/bichard/court-cases/0/reallocate")

@@ -1,32 +1,7 @@
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import User from "services/entities/User"
-import hashedPassword from "../../../fixtures/hashedPassword"
-import { clickTab } from "../../../support/helpers"
+import { clickTab, loginAndVisit } from "../../../support/helpers"
 
 describe("View offence matching exceptions", () => {
-  const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
-    return {
-      username: `Bichard0${idx}`,
-      visibleForces: [`0${idx}`],
-      forenames: "Bichard Test User",
-      surname: `0${idx}`,
-      email: `bichard0${idx}@example.com`,
-      password: hashedPassword
-    }
-  })
-
-  before(() => {
-    cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
-    cy.clearCookies()
-  })
-
-  beforeEach(() => {
-    cy.task("clearCourtCases")
-  })
   ;[
     { asn: ExceptionCode.HO100304, firstOffenceBadge: "Unmatched" },
     { asn: ExceptionCode.HO100328, firstOffenceBadge: "Unmatched" },
@@ -42,11 +17,12 @@ describe("View offence matching exceptions", () => {
     { offenceReasonSequence: ExceptionCode.HO100333 }
   ].forEach(({ asn, offenceReasonSequence, firstOffenceBadge = "Matched", secondOffenceBadge = "Unmatched" }) => {
     it(`Should display the correct error for ${asn ?? offenceReasonSequence}`, () => {
+      cy.task("clearCourtCases")
       cy.task("insertCourtCaseWithFieldsWithExceptions", {
         case: {
           errorLockedByUsername: null,
           triggerLockedByUsername: null,
-          orgForPoliceFilter: "02"
+          orgForPoliceFilter: "01"
         },
         exceptions: {
           asn,
@@ -54,8 +30,7 @@ describe("View offence matching exceptions", () => {
         }
       })
 
-      cy.login("bichard02@example.com", "password")
-      cy.visit("/bichard/court-cases/0")
+      loginAndVisit("Supervisor", "/bichard/court-cases/0")
 
       clickTab("Offences")
 

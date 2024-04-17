@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
+import { StyledPreviewButton } from "./PreviewButton.styles"
 
 const Preview = (props: { label: string }) => {
   return (
@@ -28,7 +29,7 @@ interface PreviewButtonProps {
 
 const PreviewButton = ({ showPreview, onClick, previewLabel, hideLabel, className }: PreviewButtonProps) => {
   return (
-    <button
+    <StyledPreviewButton
       type="button"
       className={"preview-button govuk-accordion__show-all" + (className ? ` ${className}` : "")}
       onClick={() => {
@@ -36,7 +37,7 @@ const PreviewButton = ({ showPreview, onClick, previewLabel, hideLabel, classNam
       }}
     >
       {showPreview ? <Preview label={previewLabel} /> : <Hide label={hideLabel ?? "Hide"} />}
-    </button>
+    </StyledPreviewButton>
   )
 }
 

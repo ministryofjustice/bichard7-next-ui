@@ -1,19 +1,19 @@
+import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import User from "services/entities/User"
 import { DataSource, UpdateQueryBuilder } from "typeorm"
+import UnlockReason from "types/UnlockReason"
+import { userAccess } from "utils/userPermissions"
+import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
 import CourtCase from "../../src/services/entities/CourtCase"
 import getDataSource from "../../src/services/getDataSource"
 import updateLockStatusToUnlocked from "../../src/services/updateLockStatusToUnlocked"
 import { isError } from "../../src/types/Result"
+import { UserGroup } from "../../src/types/UserGroup"
+import { hasAccessToAll } from "../helpers/hasAccessTo"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import type { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
-import UnlockReason from "types/UnlockReason"
-import { AUDIT_LOG_EVENT_SOURCE } from "../../src/config"
-import { UserGroup } from "../../src/types/UserGroup"
-import { userAccess } from "utils/userPermissions"
-import { hasAccessToAll } from "../helpers/hasAccessTo"
 
-const exceptionUnlockedEvent = (username = "current user") => ({
+const exceptionUnlockedEvent = (username = "GeneralHandler") => ({
   category: "information",
   eventSource: AUDIT_LOG_EVENT_SOURCE,
   eventType: "Exception unlocked",
@@ -25,7 +25,7 @@ const exceptionUnlockedEvent = (username = "current user") => ({
   }
 })
 
-const triggerUnlockedEvent = (username = "current user") => ({
+const triggerUnlockedEvent = (username = "GeneralHandler") => ({
   category: "information",
   eventSource: AUDIT_LOG_EVENT_SOURCE,
   eventType: "Trigger unlocked",
@@ -40,28 +40,28 @@ const triggerUnlockedEvent = (username = "current user") => ({
 const testCases = [
   {
     description: "Trigger handler can only unlock triggers when unlock reason is TriggerAndException",
-    triggerLockedBy: "current user",
-    exceptionLockedBy: "another user",
+    triggerLockedBy: "GeneralHandler",
+    exceptionLockedBy: "BichardForce02",
     currentUserGroup: UserGroup.TriggerHandler,
     unlockReason: UnlockReason.TriggerAndException,
     expectTriggersToBeLockedBy: null,
-    expectExceptionsToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: "BichardForce02",
     expectedEvents: [triggerUnlockedEvent()]
   },
   {
     description: "Trigger handler can unlock triggers when unlock reason is Trigger",
-    triggerLockedBy: "current user",
-    exceptionLockedBy: "another user",
+    triggerLockedBy: "GeneralHandler",
+    exceptionLockedBy: "BichardForce02",
     currentUserGroup: UserGroup.TriggerHandler,
     unlockReason: UnlockReason.Trigger,
     expectTriggersToBeLockedBy: null,
-    expectExceptionsToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: "BichardForce02",
     expectedEvents: [triggerUnlockedEvent()]
   },
   {
     description:
       "Trigger handler can unlock triggers when the exception is not locked and unlock reason is TriggerAndException",
-    triggerLockedBy: "current user",
+    triggerLockedBy: "GeneralHandler",
     exceptionLockedBy: null,
     currentUserGroup: UserGroup.TriggerHandler,
     unlockReason: UnlockReason.TriggerAndException,
@@ -71,23 +71,23 @@ const testCases = [
   },
   {
     description: "Trigger handler cannot unlock the case when unlock reason is Exception",
-    triggerLockedBy: "current user",
-    exceptionLockedBy: "another user",
+    triggerLockedBy: "GeneralHandler",
+    exceptionLockedBy: "BichardForce02",
     currentUserGroup: UserGroup.TriggerHandler,
     unlockReason: UnlockReason.Exception,
-    expectTriggersToBeLockedBy: "current user",
-    expectExceptionsToBeLockedBy: "another user",
+    expectTriggersToBeLockedBy: "GeneralHandler",
+    expectExceptionsToBeLockedBy: "BichardForce02",
     expectError: "User hasn't got permission to unlock the case",
     expectedEvents: []
   },
   {
-    description: "Trigger handler cannot unlock the case when its locked by another user",
-    triggerLockedBy: "another user",
-    exceptionLockedBy: "another user",
+    description: "Trigger handler cannot unlock the case when its locked by BichardForce02",
+    triggerLockedBy: "BichardForce02",
+    exceptionLockedBy: "BichardForce02",
     currentUserGroup: UserGroup.TriggerHandler,
     unlockReason: UnlockReason.TriggerAndException,
-    expectTriggersToBeLockedBy: "another user",
-    expectExceptionsToBeLockedBy: "another user",
+    expectTriggersToBeLockedBy: "BichardForce02",
+    expectExceptionsToBeLockedBy: "BichardForce02",
     expectedEvents: []
   },
   {
@@ -104,31 +104,31 @@ const testCases = [
   {
     description: "Trigger handler cannot unlock a case that has lock on exceptions",
     triggerLockedBy: null,
-    exceptionLockedBy: "other user",
+    exceptionLockedBy: "BichardForce02",
     currentUserGroup: UserGroup.TriggerHandler,
     unlockReason: UnlockReason.TriggerAndException,
     expectTriggersToBeLockedBy: null,
-    expectExceptionsToBeLockedBy: "other user",
+    expectExceptionsToBeLockedBy: "BichardForce02",
     expectError: "Case is not locked",
     expectedEvents: []
   },
   {
     description: "Exception handler can unlock exception when unlock reason is TriggerAndException",
-    triggerLockedBy: "another user",
-    exceptionLockedBy: "current user",
+    triggerLockedBy: "BichardForce02",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.ExceptionHandler,
     unlockReason: UnlockReason.TriggerAndException,
-    expectTriggersToBeLockedBy: "another user",
+    expectTriggersToBeLockedBy: "BichardForce02",
     expectExceptionsToBeLockedBy: null,
     expectedEvents: [exceptionUnlockedEvent()]
   },
   {
     description: "Exception handler can unlock exception when unlock reason is Exception",
-    triggerLockedBy: "another user",
-    exceptionLockedBy: "current user",
+    triggerLockedBy: "BichardForce02",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.ExceptionHandler,
     unlockReason: UnlockReason.Exception,
-    expectTriggersToBeLockedBy: "another user",
+    expectTriggersToBeLockedBy: "BichardForce02",
     expectExceptionsToBeLockedBy: null,
     expectedEvents: [exceptionUnlockedEvent()]
   },
@@ -136,7 +136,7 @@ const testCases = [
     description:
       "Exception handler can unlock exception when the trigger is not locked and unlock reason is TriggerAndException",
     triggerLockedBy: null,
-    exceptionLockedBy: "current user",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.ExceptionHandler,
     unlockReason: UnlockReason.TriggerAndException,
     expectTriggersToBeLockedBy: null,
@@ -145,23 +145,23 @@ const testCases = [
   },
   {
     description: "Exception handler cannot unlock the case when unlock reason is Trigger",
-    triggerLockedBy: "another user",
-    exceptionLockedBy: "current user",
+    triggerLockedBy: "BichardForce02",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.ExceptionHandler,
     unlockReason: UnlockReason.Trigger,
-    expectTriggersToBeLockedBy: "another user",
-    expectExceptionsToBeLockedBy: "current user",
+    expectTriggersToBeLockedBy: "BichardForce02",
+    expectExceptionsToBeLockedBy: "GeneralHandler",
     expectError: "User hasn't got permission to unlock the case",
     expectedEvents: []
   },
   {
-    description: "Exception handler cannot unlock the case when its locked by another user",
-    triggerLockedBy: "another user",
-    exceptionLockedBy: "another user",
+    description: "Exception handler cannot unlock the case when its locked by BichardForce02",
+    triggerLockedBy: "BichardForce02",
+    exceptionLockedBy: "BichardForce02",
     currentUserGroup: UserGroup.ExceptionHandler,
     unlockReason: UnlockReason.TriggerAndException,
-    expectTriggersToBeLockedBy: "another user",
-    expectExceptionsToBeLockedBy: "another user",
+    expectTriggersToBeLockedBy: "BichardForce02",
+    expectExceptionsToBeLockedBy: "BichardForce02",
     expectedEvents: []
   },
   {
@@ -177,19 +177,19 @@ const testCases = [
   },
   {
     description: "Exception handler cannot unlock a case that has lock on triggers",
-    triggerLockedBy: "other user",
+    triggerLockedBy: "BichardForce02",
     exceptionLockedBy: null,
     currentUserGroup: UserGroup.ExceptionHandler,
     unlockReason: UnlockReason.TriggerAndException,
-    expectTriggersToBeLockedBy: "other user",
+    expectTriggersToBeLockedBy: "BichardForce02",
     expectExceptionsToBeLockedBy: null,
     expectError: "Case is not locked",
     expectedEvents: []
   },
   {
     description: "General handler can unlock both triggers and exception when unlock reason is TriggerAndException",
-    triggerLockedBy: "current user",
-    exceptionLockedBy: "current user",
+    triggerLockedBy: "GeneralHandler",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.GeneralHandler,
     unlockReason: UnlockReason.TriggerAndException,
     expectTriggersToBeLockedBy: null,
@@ -198,18 +198,18 @@ const testCases = [
   },
   {
     description: "General handler can unlock triggers when unlock reason is Trigger",
-    triggerLockedBy: "current user",
-    exceptionLockedBy: "current user",
+    triggerLockedBy: "GeneralHandler",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.GeneralHandler,
     unlockReason: UnlockReason.Trigger,
     expectTriggersToBeLockedBy: null,
-    expectExceptionsToBeLockedBy: "current user",
+    expectExceptionsToBeLockedBy: "GeneralHandler",
     expectedEvents: [triggerUnlockedEvent()]
   },
   {
     description:
       "General handler can unlock triggers when the exception is not locked and unlock reason is TriggerAndException",
-    triggerLockedBy: "current user",
+    triggerLockedBy: "GeneralHandler",
     exceptionLockedBy: null,
     currentUserGroup: UserGroup.GeneralHandler,
     unlockReason: UnlockReason.TriggerAndException,
@@ -221,7 +221,7 @@ const testCases = [
     description:
       "General handler can unlock exception when the trigger is not locked and unlock reason is TriggerAndException",
     triggerLockedBy: null,
-    exceptionLockedBy: "current user",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.GeneralHandler,
     unlockReason: UnlockReason.TriggerAndException,
     expectTriggersToBeLockedBy: null,
@@ -230,44 +230,44 @@ const testCases = [
   },
   {
     description: "General handler can unlock exception when unlock reason is Exception",
-    triggerLockedBy: "current user",
-    exceptionLockedBy: "current user",
+    triggerLockedBy: "GeneralHandler",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.GeneralHandler,
     unlockReason: UnlockReason.Exception,
-    expectTriggersToBeLockedBy: "current user",
+    expectTriggersToBeLockedBy: "GeneralHandler",
     expectExceptionsToBeLockedBy: null,
     expectedEvents: [exceptionUnlockedEvent()]
   },
   {
     description:
-      "General handler can only unlock exception when unlock reason is TriggerAndException and trigger is locked by another user",
-    triggerLockedBy: "another user",
-    exceptionLockedBy: "current user",
+      "General handler can only unlock exception when unlock reason is TriggerAndException and trigger is locked by BichardForce02",
+    triggerLockedBy: "BichardForce02",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.GeneralHandler,
     unlockReason: UnlockReason.TriggerAndException,
-    expectTriggersToBeLockedBy: "another user",
+    expectTriggersToBeLockedBy: "BichardForce02",
     expectExceptionsToBeLockedBy: null,
     expectedEvents: [exceptionUnlockedEvent()]
   },
   {
     description:
-      "General handler can only unlock trigger when unlock reason is TriggerAndException and exception is locked by another user",
-    triggerLockedBy: "current user",
-    exceptionLockedBy: "another user",
+      "General handler can only unlock trigger when unlock reason is TriggerAndException and exception is locked by BichardForce02",
+    triggerLockedBy: "GeneralHandler",
+    exceptionLockedBy: "BichardForce02",
     currentUserGroup: UserGroup.GeneralHandler,
     unlockReason: UnlockReason.TriggerAndException,
     expectTriggersToBeLockedBy: null,
-    expectExceptionsToBeLockedBy: "another user",
+    expectExceptionsToBeLockedBy: "BichardForce02",
     expectedEvents: [triggerUnlockedEvent()]
   },
   {
-    description: "General handler cannot unlock the case when its locked by another user",
-    triggerLockedBy: "another user",
-    exceptionLockedBy: "another user",
+    description: "General handler cannot unlock the case when its locked by BichardForce02",
+    triggerLockedBy: "BichardForce02",
+    exceptionLockedBy: "BichardForce02",
     currentUserGroup: UserGroup.GeneralHandler,
     unlockReason: UnlockReason.TriggerAndException,
-    expectTriggersToBeLockedBy: "another user",
-    expectExceptionsToBeLockedBy: "another user",
+    expectTriggersToBeLockedBy: "BichardForce02",
+    expectExceptionsToBeLockedBy: "BichardForce02",
     expectedEvents: []
   },
   {
@@ -283,8 +283,8 @@ const testCases = [
   },
   {
     description: "Supervisor can unlock both triggers and exception when unlock reason is TriggerAndException",
-    triggerLockedBy: "current user",
-    exceptionLockedBy: "current user",
+    triggerLockedBy: "GeneralHandler",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.Supervisor,
     unlockReason: UnlockReason.TriggerAndException,
     expectTriggersToBeLockedBy: null,
@@ -293,29 +293,29 @@ const testCases = [
   },
   {
     description: "Supervisor can unlock triggers when unlock reason is Trigger",
-    triggerLockedBy: "current user",
-    exceptionLockedBy: "current user",
+    triggerLockedBy: "GeneralHandler",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.Supervisor,
     unlockReason: UnlockReason.Trigger,
     expectTriggersToBeLockedBy: null,
-    expectExceptionsToBeLockedBy: "current user",
+    expectExceptionsToBeLockedBy: "GeneralHandler",
     expectedEvents: [triggerUnlockedEvent()]
   },
   {
     description: "Supervisor can unlock exception when unlock reason is Exception",
-    triggerLockedBy: "current user",
-    exceptionLockedBy: "current user",
+    triggerLockedBy: "GeneralHandler",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.Supervisor,
     unlockReason: UnlockReason.Exception,
-    expectTriggersToBeLockedBy: "current user",
+    expectTriggersToBeLockedBy: "GeneralHandler",
     expectExceptionsToBeLockedBy: null,
     expectedEvents: [exceptionUnlockedEvent()]
   },
   {
     description:
-      "Supervisor can unlock both triggers and exceptions when unlock reason is TriggerAndException and trigger is locked by another user",
-    triggerLockedBy: "another user",
-    exceptionLockedBy: "current user",
+      "Supervisor can unlock both triggers and exceptions when unlock reason is TriggerAndException and trigger is locked by BichardForce02",
+    triggerLockedBy: "BichardForce02",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.Supervisor,
     unlockReason: UnlockReason.TriggerAndException,
     expectTriggersToBeLockedBy: null,
@@ -324,9 +324,9 @@ const testCases = [
   },
   {
     description:
-      "Supervisor can unlock both triggers and exceptions when unlock reason is TriggerAndException and exception is locked by another user",
-    triggerLockedBy: "current user",
-    exceptionLockedBy: "another user",
+      "Supervisor can unlock both triggers and exceptions when unlock reason is TriggerAndException and exception is locked by BichardForce02",
+    triggerLockedBy: "GeneralHandler",
+    exceptionLockedBy: "BichardForce02",
     currentUserGroup: UserGroup.Supervisor,
     unlockReason: UnlockReason.TriggerAndException,
     expectTriggersToBeLockedBy: null,
@@ -334,9 +334,9 @@ const testCases = [
     expectedEvents: [exceptionUnlockedEvent(), triggerUnlockedEvent()]
   },
   {
-    description: "Supervisor can unlock the case when its locked by another user",
-    triggerLockedBy: "another user",
-    exceptionLockedBy: "another user",
+    description: "Supervisor can unlock the case when its locked by BichardForce02",
+    triggerLockedBy: "BichardForce02",
+    exceptionLockedBy: "BichardForce02",
     currentUserGroup: UserGroup.Supervisor,
     unlockReason: UnlockReason.TriggerAndException,
     expectTriggersToBeLockedBy: null,
@@ -346,7 +346,7 @@ const testCases = [
   {
     description:
       "Supervisor can unlock triggers when the exception is not locked and unlock reason is TriggerAndException",
-    triggerLockedBy: "current user",
+    triggerLockedBy: "GeneralHandler",
     exceptionLockedBy: null,
     currentUserGroup: UserGroup.Supervisor,
     unlockReason: UnlockReason.TriggerAndException,
@@ -358,7 +358,7 @@ const testCases = [
     description:
       "Supervisor can unlock exception when the trigger is not locked and unlock reason is TriggerAndException",
     triggerLockedBy: null,
-    exceptionLockedBy: "current user",
+    exceptionLockedBy: "GeneralHandler",
     currentUserGroup: UserGroup.Supervisor,
     unlockReason: UnlockReason.TriggerAndException,
     expectTriggersToBeLockedBy: null,
@@ -426,7 +426,7 @@ describe("Unlock court case", () => {
       ])
 
       const user = {
-        username: "current user",
+        username: "GeneralHandler",
         visibleForces: ["36FPA1"],
         visibleCourts: [],
         hasAccessTo: userAccess({ groups: [currentUserGroup] })
@@ -466,8 +466,8 @@ describe("Unlock court case", () => {
 
       const [lockedCourtCase] = await insertCourtCases(
         await getDummyCourtCase({
-          errorLockedByUsername: "dummy",
-          triggerLockedByUsername: "dummy"
+          errorLockedByUsername: "BichardForce04",
+          triggerLockedByUsername: "BichardForce04"
         })
       )
 

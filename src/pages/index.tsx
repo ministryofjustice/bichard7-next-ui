@@ -23,7 +23,14 @@ import getLastSwitchingFormSubmission from "services/getLastSwitchingFormSubmiss
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CaseState, QueryOrder, Reason, SerializedCourtDateRange, Urgency } from "types/CaseListQueryParams"
+import {
+  CaseState,
+  LockedState,
+  QueryOrder,
+  Reason,
+  SerializedCourtDateRange,
+  Urgency
+} from "types/CaseListQueryParams"
 import Permission from "types/Permission"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
@@ -31,6 +38,7 @@ import { DisplayPartialCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import caseStateFilters from "utils/caseStateFilters"
+import removeBlankQueryParams from "utils/deleteQueryParam/removeBlankQueryParams"
 import { formatFormInputDateString } from "utils/formattedDate"
 import getQueryStringCookieName from "utils/getQueryStringCookieName"
 import { isPost } from "utils/http"
@@ -38,10 +46,8 @@ import { logUiDetails } from "utils/logUiDetails"
 import { calculateLastPossiblePageNumber } from "utils/pagination/calculateLastPossiblePageNumber"
 import { reasonOptions } from "utils/reasonOptions"
 import redirectTo from "utils/redirectTo"
-import removeBlankQueryParams from "utils/deleteQueryParam/removeBlankQueryParams"
 import { mapCaseAges } from "utils/validators/validateCaseAges"
 import { validateDateRange } from "utils/validators/validateDateRange"
-import { mapLockFilter } from "utils/validators/validateLockFilter"
 import { validateQueryParams } from "utils/validators/validateQueryParams"
 import withCsrf from "../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
@@ -52,7 +58,7 @@ interface Props {
   user: DisplayFullUser
   courtCases: DisplayPartialCourtCase[]
   order: QueryOrder
-  reasons: Reason[]
+  reason: Reason | null
   keywords: string[]
   ptiurn: string | null
   courtName: string | null
@@ -64,9 +70,8 @@ interface Props {
   page: number
   casesPerPage: number
   totalCases: number
-  locked: string | null
+  lockedState: string | null
   caseState: CaseState | null
-  myCases: boolean
   queryStringCookieName: string
   displaySwitchingSurveyFeedback: boolean
   searchOrder: string | null
@@ -86,10 +91,14 @@ export const getServerSideProps = withMultipleServerSideProps(
     const queryStringCookieName = getQueryStringCookieName(currentUser.username)
     // prettier-ignore
     const {
-      orderBy, page, type, keywords, courtName, reasonCodes, ptiurn, maxPageItems, order,
-      urgency, caseAge, from, to, locked, state, myCases, unlockException, unlockTrigger
+      orderBy, page, reason, keywords, courtName, reasonCodes, ptiurn, maxPageItems, order,
+      urgency, caseAge, from, to, lockedState, state, unlockException, unlockTrigger
     } = query
-    const reasons = [type].flat().filter((t) => reasonOptions.includes(String(t) as Reason)) as Reason[]
+
+    const validatedReason =
+      reason && validateQueryParams(reason) && reasonOptions.includes(reason as Reason)
+        ? (reason as Reason)
+        : Reason.All
     const caseAges = [caseAge]
       .flat()
       .filter((t) => Object.keys(CaseAgeOptions).includes(String(t) as string)) as string[]
@@ -109,10 +118,11 @@ export const getServerSideProps = withMultipleServerSideProps(
       : []
     const validatedPtiurn = validateQueryParams(ptiurn) ? ptiurn : undefined
     const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
-    const validatedLocked = validateQueryParams(locked) ? locked : undefined
+    const validatedLockedState: LockedState = validateQueryParams(lockedState)
+      ? (lockedState as LockedState)
+      : LockedState.All
+    const allocatedToUserName = validatedLockedState === LockedState.LockedToMe ? currentUser.username : undefined
     const validatedCaseState = caseStateFilters.includes(String(state)) ? (state as CaseState) : undefined
-    const validatedMyCases = validateQueryParams(myCases) ? currentUser.username : undefined
-    const lockedFilter = mapLockFilter(locked)
     const dataSource = await getDataSource()
 
     if (isPost(req) && typeof unlockException === "string") {
@@ -157,17 +167,17 @@ export const getServerSideProps = withMultipleServerSideProps(
         ...(validatedCourtName && { courtName: validatedCourtName }),
         ...(validatedreasonCodes && { reasonCodes: validatedreasonCodes }),
         ...(validatedPtiurn && { ptiurn: validatedPtiurn }),
-        reasons: reasons,
+        reason: validatedReason,
         urgent: validatedUrgent,
         maxPageItems: validatedMaxPageItems,
         pageNum: validatedPageNum,
         orderBy: validatedOrderBy,
         order: validatedOrder,
         courtDateRange: validatedCaseAges || validatedDateRange,
-        locked: lockedFilter,
+        lockedState: validatedLockedState,
         caseState: validatedCaseState,
-        allocatedToUserName: validatedMyCases,
-        resolvedByUsername
+        resolvedByUsername,
+        allocatedToUserName
       },
       currentUser
     )
@@ -206,7 +216,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         totalCases: courtCases.totalCases,
         page: parseInt(validatedPageNum, 10) || 1,
         casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,
-        reasons: reasons,
+        reason: validatedReason,
         keywords: validatedDefendantName ? [validatedDefendantName] : [],
         courtName: validatedCourtName ? validatedCourtName : null,
         reasonCodes: validatedreasonCodes,
@@ -220,9 +230,8 @@ export const getServerSideProps = withMultipleServerSideProps(
           : null,
         caseAgeCounts: caseAgeCounts,
         urgent: validatedUrgent ? validatedUrgent : null,
-        locked: validatedLocked ? validatedLocked : null,
+        lockedState: validatedLockedState ? validatedLockedState : null,
         caseState: validatedCaseState ? validatedCaseState : null,
-        myCases: !!validatedMyCases,
         queryStringCookieName,
         environment: process.env.NEXT_PUBLIC_WORKSPACE || null,
         build: process.env.NEXT_PUBLIC_BUILD || null
@@ -241,7 +250,7 @@ const Home: NextPage<Props> = (props) => {
     page,
     casesPerPage,
     totalCases,
-    reasons,
+    reason,
     keywords,
     courtName,
     reasonCodes,
@@ -250,9 +259,8 @@ const Home: NextPage<Props> = (props) => {
     caseAgeCounts,
     dateRange,
     urgent,
-    locked,
+    lockedState,
     caseState,
-    myCases,
     queryStringCookieName,
     displaySwitchingSurveyFeedback,
     searchOrder,
@@ -296,7 +304,7 @@ const Home: NextPage<Props> = (props) => {
             <CourtCaseWrapper
               filter={
                 <CourtCaseFilter
-                  reasons={reasons}
+                  reason={reason}
                   defendantName={keywords[0]}
                   courtName={courtName}
                   reasonCodes={reasonCodes}
@@ -305,9 +313,8 @@ const Home: NextPage<Props> = (props) => {
                   caseAgeCounts={caseAgeCounts}
                   dateRange={dateRange}
                   urgency={urgent}
-                  locked={locked}
+                  lockedState={lockedState}
                   caseState={caseState}
-                  myCases={myCases}
                   order={searchOrder}
                   orderBy={orderBy}
                 />
@@ -315,17 +322,16 @@ const Home: NextPage<Props> = (props) => {
               appliedFilters={
                 <AppliedFilters
                   filters={{
-                    reasons,
+                    reason,
                     keywords,
                     courtName,
                     reasonCodes,
                     ptiurn,
                     caseAge,
-                    dateRange: dateRange,
+                    dateRange,
                     urgency: urgent,
-                    locked: locked,
-                    caseState: caseState,
-                    myCases
+                    lockedState,
+                    caseState
                   }}
                 />
               }

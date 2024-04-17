@@ -5,9 +5,9 @@ import User from "./src/services/entities/User"
 import deleteFromEntity from "./test/utils/deleteFromEntity"
 import { getCourtCaseById } from "./test/utils/getCourtCaseById"
 import {
+  getAhoWithCustomExceptions,
   getAhoWithMultipleOffences,
   insertCourtCasesWithFields,
-  getAhoWithCustomExceptions,
   insertDummyCourtCasesWithNotes,
   insertDummyCourtCasesWithNotesAndLock,
   insertDummyCourtCasesWithTriggers,
@@ -15,15 +15,15 @@ import {
 } from "./test/utils/insertCourtCases"
 import { deleteFeedback, getAllFeedbacksFromDatabase, insertFeedback } from "./test/utils/manageFeedbackSurveys"
 
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import { ResolutionStatus } from "types/ResolutionStatus"
-import insertException from "./test/utils/manageExceptions"
-import { deleteTriggers, insertTriggers } from "./test/utils/manageTriggers"
-import { deleteUsers, insertUsersWithOverrides } from "./test/utils/manageUsers"
 import generateAhoWithPncException, {
   GenerateAhoWithPncExceptionParams
 } from "./test/helpers/generateAhoWithPncException"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import insertException from "./test/utils/manageExceptions"
+import { deleteTriggers, insertTriggers } from "./test/utils/manageTriggers"
+import { insertUsersWithOverrides } from "./test/utils/manageUsers"
 
 export default defineConfig({
   e2e: {
@@ -131,11 +131,6 @@ export default defineConfig({
 
         insertUsers(params: { users: Partial<User>[]; userGroups?: string[] }) {
           return insertUsersWithOverrides(params.users, params.userGroups)
-        },
-
-        async clearUsers() {
-          await deleteUsers()
-          return true
         },
 
         insertTriggers(args) {

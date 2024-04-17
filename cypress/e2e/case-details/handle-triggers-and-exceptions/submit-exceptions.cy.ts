@@ -1,28 +1,12 @@
-import User from "services/entities/User"
 import AsnExceptionHO100206 from "../../../../test/test-data/AsnExceptionHo100206.json"
 import multipleExceptions from "../../../../test/test-data/MultipleExceptions.json"
 import nextHearingDateExceptions from "../../../../test/test-data/NextHearingDateExceptions.json"
 import nextHearingLocationExceptions from "../../../../test/test-data/NextHearingLocationExceptions.json"
-import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("Court cases - Submit exceptions", () => {
-  const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
-    return {
-      username: `Bichard0${idx}`,
-      visibleForces: [`00${idx}`],
-      forenames: "Bichard Test User",
-      surname: `0${idx}`,
-      email: `bichard0${idx}@example.com`,
-      password: hashedPassword
-    }
-  })
-
   beforeEach(() => {
-    cy.clearCookies()
     cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
+    cy.loginAs("GeneralHandler")
   })
 
   it("Should resubmit a case when edits are made and the submit button is clicked", () => {
@@ -31,11 +15,9 @@ describe("Court cases - Submit exceptions", () => {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
         errorCount: 1,
-        orgForPoliceFilter: "02"
+        orgForPoliceFilter: "01"
       }
     ])
-
-    cy.login("bichard02@example.com", "password")
 
     cy.visit("/bichard/court-cases/0")
 
@@ -59,8 +41,8 @@ describe("Court cases - Submit exceptions", () => {
     })
 
     cy.contains("Notes").click()
-    cy.contains("Bichard02: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-12-12")
-    cy.contains("Bichard02: Portal Action: Resubmitted Message.")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-12-12")
+    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
   })
 
   it("Should not resubmit a case when no updates made on editable field", () => {
@@ -69,11 +51,9 @@ describe("Court cases - Submit exceptions", () => {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
         errorCount: 1,
-        orgForPoliceFilter: "02"
+        orgForPoliceFilter: "01"
       }
     ])
-
-    cy.login("bichard02@example.com", "password")
 
     cy.visit("/bichard/court-cases/0")
 
@@ -86,11 +66,10 @@ describe("Court cases - Submit exceptions", () => {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
         errorCount: 1,
-        orgForPoliceFilter: "02"
+        orgForPoliceFilter: "01"
       }
     ])
 
-    cy.login("bichard02@example.com", "password")
     cy.visit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
@@ -133,7 +112,7 @@ describe("Court cases - Submit exceptions", () => {
     const insertCourtCase = (hearingOutcomeXml: string): void => {
       cy.task("insertCourtCasesWithFields", [
         {
-          orgForPoliceFilter: "02",
+          orgForPoliceFilter: "01",
           hearingOutcome: hearingOutcomeXml,
           errorCount: 1,
           errorLockedByUsername: null,
@@ -143,7 +122,7 @@ describe("Court cases - Submit exceptions", () => {
     }
     it("Should be disabled when multiple exceptions are raised and not all the editable fields are updated", () => {
       insertCourtCase(multipleExceptions.hearingOutcomeXml)
-      cy.login("bichard02@example.com", "password")
+
       cy.visit("/bichard/court-cases/0")
 
       insertNextHearingDate("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION")
@@ -165,7 +144,7 @@ describe("Court cases - Submit exceptions", () => {
 
     it("Should be enabled when multiple exceptions are raised and all the editable fields are updated", () => {
       insertCourtCase(multipleExceptions.hearingOutcomeXml)
-      cy.login("bichard02@example.com", "password")
+
       cy.visit("/bichard/court-cases/0")
 
       insertNextHearingDate("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION")
@@ -181,7 +160,7 @@ describe("Court cases - Submit exceptions", () => {
 
     it("Should be enabled when only next-hearing-date exception is raised and ASN editable field is not updated", () => {
       insertCourtCase(nextHearingDateExceptions.hearingOutcomeXmlHO100102)
-      cy.login("bichard02@example.com", "password")
+
       cy.visit("/bichard/court-cases/0")
 
       insertNextHearingDate("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION")
@@ -190,7 +169,7 @@ describe("Court cases - Submit exceptions", () => {
 
     it("Should be enabled when only next-hearing-location exception is raised and ASN editable field is not updated", () => {
       insertCourtCase(nextHearingLocationExceptions.hearingOutcomeXmlHO100200)
-      cy.login("bichard02@example.com", "password")
+
       cy.visit("/bichard/court-cases/0")
 
       insertNextHearingLocation("Offence with HO100200 - Unrecognised Force or Station Code")
@@ -199,7 +178,7 @@ describe("Court cases - Submit exceptions", () => {
 
     it("Should be disabled when ASN exception is raised and ASN editable field is not updated", () => {
       insertCourtCase(AsnExceptionHO100206.hearingOutcomeXml)
-      cy.login("bichard02@example.com", "password")
+
       cy.visit("/bichard/court-cases/0")
 
       cy.get("button").contains("Submit exception(s)").should("be.disabled")
@@ -207,7 +186,7 @@ describe("Court cases - Submit exceptions", () => {
 
     it("Should be disabled when ASN exception is not raised and ASN editable field is updated with invalid value", () => {
       insertCourtCase(AsnExceptionHO100206.hearingOutcomeXml)
-      cy.login("bichard02@example.com", "password")
+
       cy.visit("/bichard/court-cases/0")
 
       insertAsn("1101ZD010000044875")

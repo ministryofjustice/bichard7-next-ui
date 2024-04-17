@@ -1,4 +1,4 @@
-import { useCustomStyles } from "../../../styles/customStyles"
+import { StyledA } from "./FilterTag.styles"
 
 interface Props {
   tag: string
@@ -6,14 +6,13 @@ interface Props {
 }
 
 const FilterTag: React.FC<Props> = ({ tag, href }: Props) => {
-  const classes = useCustomStyles()
   const tagId = `filter-tag-${tag.replace(" ", "-").toLowerCase()}`
 
   return (
-    <a id={tagId} className={`moj-filter__tag ${classes["dark-grey-filter-tag"]}`} href={href}>
+    <StyledA id={tagId} className={`moj-filter__tag dark-grey-filter-tag`} href={href}>
       <span className="govuk-visually-hidden">{`Remove ${tag} filter`}</span>
       {tag}
-    </a>
+    </StyledA>
   )
 }
 

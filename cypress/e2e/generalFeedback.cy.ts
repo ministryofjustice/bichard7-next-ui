@@ -1,6 +1,5 @@
 import SurveyFeedback from "services/entities/SurveyFeedback"
-import hashedPassword from "../fixtures/hashedPassword"
-import { expectToHaveNumberOfFeedbacks } from "../support/helpers"
+import { expectToHaveNumberOfFeedbacks, loginAndVisit } from "../support/helpers"
 
 const submitAFeedback = () => {
   cy.findByText("feedback").click()
@@ -11,37 +10,14 @@ const submitAFeedback = () => {
 }
 
 describe("General Feedback Form", () => {
-  const expectedUserId = 0
-
   beforeEach(() => {
     cy.viewport(1280, 720)
     cy.task("clearAllFeedbacksFromDatabase")
-    cy.task("clearUsers")
 
-    cy.task("insertUsers", {
-      users: [
-        {
-          id: expectedUserId,
-          username: "Bichard01",
-          visibleForces: ["01"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp"]
-    })
-    cy.login("bichard01@example.com", "password")
-  })
-
-  afterEach(() => {
-    cy.task("clearAllFeedbacksFromDatabase")
-    cy.task("clearUsers")
+    loginAndVisit()
   })
 
   it("Should be able to submit a feedback that is anonymous", () => {
-    cy.visit("/bichard")
     cy.findByText("feedback").click()
     cy.get("h2").contains("Share your feedback").should("exist")
 
@@ -59,13 +35,12 @@ describe("General Feedback Form", () => {
   })
 
   it("Should be able to submit a feedback that is not anonymous", () => {
-    cy.visit("/bichard")
     submitAFeedback()
     cy.task("getAllFeedbacksFromDatabase").then((result) => {
       const feedbackResults = result as SurveyFeedback[]
       const feedback = feedbackResults[0]
       expect(feedback.feedbackType).equal(0)
-      expect(feedback.userId).equal(expectedUserId)
+      expect(feedback.user.username).equal("GeneralHandler")
     })
   })
 

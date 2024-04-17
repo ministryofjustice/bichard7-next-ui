@@ -16,3 +16,8 @@ export const CSRF = {
   maximumTokenAgeInSeconds: parseInt(process.env.CSRF_TOKEN_MAX_AGE ?? "600", 10)
 }
 export const EXCEPTION_OFFENCE_INDEX = 5
+export const DATE_FNS = {
+  dateInFuture: 1,
+  currentDate: 0,
+  dateInPast: -1
+}

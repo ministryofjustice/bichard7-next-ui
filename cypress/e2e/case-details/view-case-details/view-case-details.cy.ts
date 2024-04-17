@@ -1,42 +1,20 @@
-import User from "services/entities/User"
 import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
 import DummyHO100200Aho from "../../../../test/test-data/HO100200_1.json"
 import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
 import dummyMultipleHearingResultsAho from "../../../../test/test-data/multipleHearingResultsOnOffence.json"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import canReallocateTestData from "../../../fixtures/canReallocateTestData.json"
-import hashedPassword from "../../../fixtures/hashedPassword"
 import a11yConfig from "../../../support/a11yConfig"
-import { clickTab, loginAndGoToUrl } from "../../../support/helpers"
+import { clickTab, loginAndVisit } from "../../../support/helpers"
 import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
 
 describe("View case details", () => {
-  const users: Partial<User>[] = Array.from(Array(5)).map((_value, idx) => {
-    return {
-      username: `Bichard0${idx}`,
-      visibleForces: [`00${idx}`],
-      forenames: "Bichard Test User",
-      surname: `0${idx}`,
-      email: `bichard0${idx}@example.com`,
-      password: hashedPassword
-    }
-  })
-
-  before(() => {
-    cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", { users, userGroups: ["B7NewUI_grp"] })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7GeneralHandler_grp" })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard02@example.com", groupName: "B7Supervisor_grp" })
-    cy.clearCookies()
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
 
   it("Should be accessible", () => {
-    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
+    cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01", errorCount: 0 }])
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
@@ -46,9 +24,8 @@ describe("View case details", () => {
       }
     ]
     cy.task("insertTriggers", { caseId: 0, triggers })
-    cy.login("bichard01@example.com", "password")
 
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.injectAxe()
 
@@ -60,7 +37,7 @@ describe("View case details", () => {
 
   it("Should return 404 for a case that this user can not see", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
-    cy.login("bichard01@example.com", "password")
+    cy.loginAs("GeneralHandler")
 
     cy.request({
       failOnStatusCode: false,
@@ -71,7 +48,7 @@ describe("View case details", () => {
   })
 
   it("Should return 404 for a case that does not exist", () => {
-    cy.login("bichard01@example.com", "password")
+    cy.loginAs("GeneralHandler")
 
     cy.request({
       failOnStatusCode: false,
@@ -87,7 +64,7 @@ describe("View case details", () => {
         orgForPoliceFilter: "01"
       }
     ])
-    cy.login("bichard01@example.com", "password")
+    cy.loginAs("GeneralHandler")
     cy.request({
       failOnStatusCode: false,
       url: "/bichard/court-cases/0"
@@ -111,9 +88,7 @@ describe("View case details", () => {
     ]
     cy.task("insertTriggers", { caseId: 0, triggers })
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.contains("Case00000")
     cy.contains("Magistrates' Courts Essex Basildon")
@@ -124,11 +99,10 @@ describe("View case details", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "02"
+        orgForPoliceFilter: "01"
       }
     ])
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     clickTab("Defendant")
     cy.get("H3").contains("Defendant details")
@@ -150,8 +124,7 @@ describe("View case details", () => {
         orgForPoliceFilter: "01"
       }
     ])
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     clickTab("Defendant")
     cy.contains("td", "ASN").siblings().contains("1101ZD0100000448754K")
@@ -189,11 +162,11 @@ describe("View case details", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "02"
+        orgForPoliceFilter: "01"
       }
     ])
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+
+    loginAndVisit("/bichard/court-cases/0")
 
     clickTab("Case")
     const expectedRows = [
@@ -215,11 +188,11 @@ describe("View case details", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "02"
+        orgForPoliceFilter: "01"
       }
     ])
-    cy.login("bichard02@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+
+    loginAndVisit("/bichard/court-cases/0")
 
     clickTab("Hearing")
     cy.contains("td", "Court location").siblings().contains("B01EF01")
@@ -241,10 +214,10 @@ describe("View case details", () => {
       {
         errorLockedByUsername: null,
         triggerLockedByUsername: null,
-        orgForPoliceFilter: "02"
+        orgForPoliceFilter: "01"
       }
     ])
-    loginAndGoToUrl("bichard02@example.com", "/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
     clickTab("Offences")
 
     cy.contains("tbody tr:nth-child(1) td:nth-child(2)", "1")
@@ -390,7 +363,7 @@ describe("View case details", () => {
       }
     ])
 
-    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
     clickTab("Offences")
     cy.get("tbody tr:nth-child(1) td:nth-child(5) a").click()
 
@@ -406,7 +379,7 @@ describe("View case details", () => {
       }
     ])
 
-    loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
     clickTab("Offences")
     cy.get("tbody tr:nth-child(1) td:nth-child(5) a").click()
 
@@ -433,9 +406,7 @@ describe("View case details", () => {
     ]
     cy.task("insertTriggers", { caseId: 0, triggers })
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get(".moj-tab-panel-triggers").should("be.visible")
     cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
@@ -454,8 +425,7 @@ describe("View case details", () => {
   it("Should display a message when case has no triggers", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get(".moj-tab-panel-triggers").should("not.be.visible")
     cy.get(".moj-tab-panel-exceptions").should("be.visible")
@@ -477,9 +447,8 @@ describe("View case details", () => {
       }
     ]
     cy.task("insertTriggers", { caseId: 0, triggers })
-    cy.login("bichard01@example.com", "password")
 
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get(".moj-tab-panel-triggers").should("be.visible")
     cy.get(".moj-tab-panel-exceptions").should("not.be.visible")
@@ -498,9 +467,7 @@ describe("View case details", () => {
       { orgForPoliceFilter: "01", hearingOutcome: DummyMultipleOffencesNoErrorAho.hearingOutcomeXml }
     ])
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
 
@@ -531,9 +498,7 @@ describe("View case details", () => {
     ]
     cy.task("insertTriggers", { caseId: 0, triggers })
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Offence 1 of 3")
     cy.get(".moj-tab-panel-triggers .trigger-header button").eq(0).contains("Offence 1").click()
@@ -545,9 +510,7 @@ describe("View case details", () => {
   it("Should take the user to offence tab when exception is clicked", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Offence 1 of 3")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
@@ -559,9 +522,7 @@ describe("View case details", () => {
   it("Should be able to refresh after I click 'Back to all offences'", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Offence 1 of 3")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
@@ -578,9 +539,7 @@ describe("View case details", () => {
       { orgForPoliceFilter: "01", hearingOutcome: DummyHO100200Aho.hearingOutcomeXml }
     ])
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Case")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
@@ -599,8 +558,7 @@ describe("View case details", () => {
     }
     cy.task("insertTriggers", { caseId: 0, triggers: [trigger] })
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get(".triggers-help-preview").should("have.text", "More information")
     cy.get(".triggers-help-preview").click()
@@ -634,9 +592,7 @@ describe("View case details", () => {
       { orgForPoliceFilter: "01", hearingOutcome: DummyHO100200Aho.hearingOutcomeXml }
     ])
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Case")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
@@ -651,9 +607,7 @@ describe("View case details", () => {
       { orgForPoliceFilter: "01", hearingOutcome: DummyHO100302Aho.hearingOutcomeXml }
     ])
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("h3").should("not.have.text", "Case")
     cy.get(".triggers-and-exceptions-sidebar a").contains("Exceptions").click()
@@ -673,12 +627,11 @@ describe("View case details", () => {
       status: "Resolved",
       createdAt: new Date(),
       resolvedAt: new Date(),
-      resolvedBy: "Bichard01"
+      resolvedBy: "BichardForce01"
     }
     cy.task("insertTriggers", { caseId: 0, triggers: [trigger] })
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("#triggers span").contains("Complete").should("exist")
   })
@@ -695,13 +648,12 @@ describe("View case details", () => {
             orgForPoliceFilter: "01",
             triggerStatus: triggers,
             errorStatus: exceptions,
-            triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "Bichard03" : null,
-            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : null
+            triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "BichardForce03" : null,
+            errorLockedByUsername: exceptionLockedByAnotherUser ? "BichardForce03" : null
           }
         ])
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard/court-cases/0")
+        loginAndVisit("/bichard/court-cases/0")
 
         cy.get("button.b7-reallocate-button").should(canReallocate ? "exist" : "not.exist")
       })

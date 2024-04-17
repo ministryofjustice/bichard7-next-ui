@@ -1,69 +1,35 @@
-import { UserGroup } from "types/UserGroup"
-import { newUserLogin } from "../../../support/helpers"
-
-const navigateAndShowFilters = () => {
-  cy.visit("/bichard")
-}
+import { loginAndVisit } from "../../../support/helpers"
 
 describe("Reasons filters", () => {
-  before(() => {
-    cy.task("clearUsers")
-  })
-
-  afterEach(() => {
-    cy.task("clearUsers")
-  })
-
   it("should not render the reasons component if no user group is specified", () => {
-    newUserLogin({})
-    navigateAndShowFilters()
+    loginAndVisit("NoGroups")
 
     cy.get("#filter-panel .reasons").should("not.exist")
   })
 
   it("should display all options for supervisors", () => {
-    newUserLogin({
-      groups: [UserGroup.Supervisor]
-    })
-    navigateAndShowFilters()
+    loginAndVisit("Supervisor")
 
-    cy.get("#filter-panel .reasons .bails").should("exist")
     cy.get("#filter-panel .reasons .triggers").should("exist")
     cy.get("#filter-panel .reasons .exceptions").should("exist")
   })
 
   it("should display all options for general handlers", () => {
-    newUserLogin({ groups: [UserGroup.GeneralHandler] })
-    navigateAndShowFilters()
+    loginAndVisit()
 
-    cy.get("#filter-panel .reasons .bails").should("exist")
     cy.get("#filter-panel .reasons .triggers").should("exist")
     cy.get("#filter-panel .reasons .exceptions").should("exist")
   })
 
-  it("should only display 'Bails' for trigger handlers", () => {
-    newUserLogin({ groups: [UserGroup.TriggerHandler] })
-    navigateAndShowFilters()
-
-    cy.get("#filter-panel .reasons .bails").should("exist")
-    cy.get("#filter-panel .reasons .triggers").should("not.exist")
-    cy.get("#filter-panel .reasons .exceptions").should("not.exist")
-  })
-
   it("should not render the reasons component for exception handlers", () => {
-    newUserLogin({ groups: [UserGroup.ExceptionHandler] })
-    navigateAndShowFilters()
+    loginAndVisit("ExceptionHandler")
 
     cy.get("#filter-panel .reasons").should("not.exist")
   })
 
   it("should render the correct reasons if a user has conflicting groups", () => {
-    newUserLogin({
-      groups: [UserGroup.Supervisor, UserGroup.ExceptionHandler]
-    })
-    navigateAndShowFilters()
+    loginAndVisit("MultigroupSupervisor")
 
-    cy.get("#filter-panel .reasons .bails").should("exist")
     cy.get("#filter-panel .reasons .triggers").should("exist")
     cy.get("#filter-panel .reasons .exceptions").should("exist")
   })

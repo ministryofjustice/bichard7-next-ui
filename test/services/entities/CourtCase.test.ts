@@ -98,10 +98,10 @@ describe("CourtCase", () => {
       const courtCase = new CourtCase()
       courtCase.triggerStatus = triggers as ResolutionStatus
       courtCase.errorStatus = exceptions as ResolutionStatus
-      courtCase.triggerLockedByUsername = triggersLockedByAnotherUser === "are" ? "Bichard02" : ""
-      courtCase.errorLockedByUsername = exceptionLockedByAnotherUser === "are" ? "Bichard02" : ""
+      courtCase.triggerLockedByUsername = triggersLockedByAnotherUser === "are" ? "BichardForce02" : ""
+      courtCase.errorLockedByUsername = exceptionLockedByAnotherUser === "are" ? "BichardForce02" : ""
 
-      const result = courtCase.canReallocate("Bichard01")
+      const result = courtCase.canReallocate("BichardForce01")
 
       expect(result).toBe(expectedResult)
     }

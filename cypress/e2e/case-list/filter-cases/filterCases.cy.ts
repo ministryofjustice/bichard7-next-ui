@@ -1,7 +1,6 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import { addDays, format, subDays } from "date-fns"
-import { BailCodes } from "../../../../src/utils/bailCodes"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
-import hashedPassword from "../../../fixtures/hashedPassword"
 import a11yConfig from "../../../support/a11yConfig"
 import {
   confirmFiltersAppliedContains,
@@ -17,7 +16,7 @@ function visitBasePath() {
 
 function collapseFilterSection(sectionToBeCollapsed: string, optionToBeCollapsed: string) {
   cy.get(`button${sectionToBeCollapsed}`).click()
-  cy.get(optionToBeCollapsed).should("not.be.visible")
+  cy.get(optionToBeCollapsed).should("not.exist")
 }
 
 function expandFilterSection(sectionToBeExpanded: string, optionToBeExpanded: string) {
@@ -48,32 +47,15 @@ function tableRowShouldNotContain(tableRow: number, ...reasonCodes: string[]) {
 }
 
 describe("Filtering cases", () => {
-  before(() => {
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "Bichard01",
-          visibleForces: ["0011111"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
-    })
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
-    cy.login("bichard01@example.com", "password")
+    cy.loginAs("GeneralHandler")
   })
 
   it("Should be accessible with conditional radio buttons opened", () => {
     visitBasePath()
     cy.contains("Court date").parent().parent().parent().find("button").click()
-    cy.get("#case-age").should("not.be.visible")
+    cy.get("#case-age").should("not.exist")
     expandFilterSection(".filters-court-date", "#case-age")
 
     cy.injectAxe()
@@ -87,8 +69,8 @@ describe("Filtering cases", () => {
   it("Should be accessible", () => {
     visitBasePath()
     cy.get("input[id=keywords]").type("Dummy")
-    cy.get(`label[for="triggers-type"]`).click()
-    cy.get(`label[for="exceptions-type"]`).click()
+    cy.get(`label[for="triggers-reason"]`).click()
+    cy.get(`label[for="exceptions-reason"]`).click()
 
     cy.injectAxe()
 
@@ -105,35 +87,34 @@ describe("Filtering cases", () => {
     cy.injectAxe()
     cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
   })
-  it("Should expand and collapse reason filter navigation & show the trigger info", () => {
+
+  it("Should expand and collapse reason filter navigation", () => {
     visitBasePath()
 
     cy.contains("Exceptions")
 
-    collapseFilterSection(".filters-reason", "#exceptions-type")
-    expandFilterSection(".filters-reason", "#exceptions-type")
-
-    cy.get("#warningIcon").click()
-    cy.contains("Included triggers")
-    Object.entries(BailCodes).map(([bailCode, bailName]) => cy.contains(`${bailCode} - ${bailName}`))
+    collapseFilterSection(".filters-reason", "#exceptions-reason")
+    expandFilterSection(".filters-reason", "#exceptions-reason")
   })
 
-  it("Should expand and collapse court date filter navigation with the ratio conditional sections collapsed after the second expand", () => {
+  it("Should expand and collapse court date filter navigation with the radio conditional sections collapsed after the second expand", () => {
     visitBasePath()
 
     cy.contains("Date range")
 
-    cy.contains("Court date").parent().parent().parent().find("button").click()
-    cy.get("#case-age").should("not.be.visible")
-    expandFilterSection(".filters-court-date", "#case-age")
-
-    // Date range & case ages are collapsed
-    cy.get(`label[for="date-from"]`).should("not.be.visible")
-    cy.get(`label[for="case-age-yesterday"]`).should("not.be.visible")
-    // Opening date range collapses case age & opens date range
+    // Opening date range collapses case age & opens date
     cy.get(`label[for="date-range"]`).click()
     cy.get(`label[for="date-from"]`).should("be.visible")
     cy.get(`label[for="case-age-yesterday"]`).should("not.be.visible")
+
+    cy.contains("Court date").parent().parent().parent().find("button").click()
+    cy.get("#case-age").should("not.exist")
+    expandFilterSection(".filters-court-date", "#case-age")
+
+    // Date range & case ages are collapsed
+    collapseFilterSection(".filters-court-date", "#date-range")
+    cy.get(`label[for="date-from"]`).should("not.exist")
+    cy.get(`label[for="case-age-yesterday"]`).should("not.exist")
   })
 
   it("Should remove the selection of the case age when it's been changed to the date range", () => {
@@ -174,10 +155,10 @@ describe("Filtering cases", () => {
   it("Should expand and collapse locked state filter navigation", () => {
     visitBasePath()
 
-    cy.contains("Locked cases only")
+    cy.contains("Locked cases")
 
-    collapseFilterSection(".filters-locked-state", "#locked")
-    expandFilterSection(".filters-locked-state", "#locked")
+    collapseFilterSection(".filters-locked-state", "#locked-state-locked")
+    expandFilterSection(".filters-locked-state", "#locked-state-locked")
   })
 
   it("Should display cases filtered by defendant name", () => {
@@ -256,7 +237,7 @@ describe("Filtering cases", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0107",
+        triggerCode: TriggerCode.TRPR0017,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -266,14 +247,15 @@ describe("Filtering cases", () => {
 
     visitBasePath()
 
-    inputAndSearch("reason-codes", "TRPR0107")
+    confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
+    inputAndSearch("reason-codes", "TRPR0017")
     cy.contains("Hide search panel").click()
 
     cy.contains("Case00000")
     confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
-    cy.get("tbody tr").should("have.length", 1)
-    confirmFiltersAppliedContains("TRPR0107")
-    removeFilterTagWhilstSearchPanelIsHidden("TRPR0107")
+    cy.get("tbody tr.caseDetailsRow").should("have.length", 1)
+    confirmFiltersAppliedContains("TRPR0017")
+    removeFilterTagWhilstSearchPanelIsHidden("TRPR0017")
 
     cy.contains("Show search panel").click()
 
@@ -300,13 +282,13 @@ describe("Filtering cases", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0107",
+        triggerCode: TriggerCode.TRPR0017,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       },
       {
         triggerId: 1,
-        triggerCode: "TRPR0015",
+        triggerCode: TriggerCode.TRPR0015,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -326,16 +308,16 @@ describe("Filtering cases", () => {
 
     cy.visit("/bichard")
 
-    tableRowShouldContain(0, "HO200212", "HO200200", "TRPR0015 - Personal details changed", "TRPR0107")
-    tableRowShouldContain(1, "HO200212", "HO200239", "TRPR0015 - Personal details changed", "TRPR0107")
-    tableRowShouldContain(2, "HO200247", "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
+    tableRowShouldContain(0, "HO200212", "HO200200", "TRPR0015 - Personal details changed", "TRPR0017")
+    tableRowShouldContain(1, "HO200212", "HO200239", "TRPR0015 - Personal details changed", "TRPR0017")
+    tableRowShouldContain(2, "HO200247", "HO200212", "TRPR0015 - Personal details changed", "TRPR0017")
 
     visitBasePath()
     inputAndSearch("reason-codes", "HO200212")
 
     confirmFiltersAppliedContains("HO200212")
     tableRowShouldContain(0, "HO200212")
-    tableRowShouldNotContain(0, "HO200200", "TRPR0015 - Personal details changed", "TRPR0107")
+    tableRowShouldNotContain(0, "HO200200", "TRPR0015 - Personal details changed", "TRPR0017")
     cy.get(".moj-filter-tags").contains("HO200212").click({ force: true })
 
     visitBasePath()
@@ -343,7 +325,7 @@ describe("Filtering cases", () => {
 
     confirmFiltersAppliedContains("HO200200")
     tableRowShouldContain(0, "HO200200")
-    tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
+    tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0017")
     cy.get(".moj-filter-tags").contains("HO200200").click({ force: true })
 
     visitBasePath()
@@ -351,7 +333,7 @@ describe("Filtering cases", () => {
 
     confirmFiltersAppliedContains("HO200247")
     tableRowShouldContain(0, "HO200247")
-    tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0107")
+    tableRowShouldNotContain(0, "HO200212", "TRPR0015 - Personal details changed", "TRPR0017")
     cy.get(".moj-filter-tags").contains("HO200247").click({ force: true })
 
     visitBasePath()
@@ -361,9 +343,9 @@ describe("Filtering cases", () => {
     tableRowShouldContain(0, "TRPR0015")
     tableRowShouldContain(1, "TRPR0015")
     tableRowShouldContain(2, "TRPR0015")
-    tableRowShouldNotContain(0, "HO200212", "HO200200", "TRPR0107")
-    tableRowShouldNotContain(1, "HO200212", "HO200239", "TRPR0107")
-    tableRowShouldNotContain(2, "HO200247", "HO200212", "TRPR0107")
+    tableRowShouldNotContain(0, "HO200212", "HO200200", "TRPR0017")
+    tableRowShouldNotContain(1, "HO200212", "HO200239", "TRPR0017")
+    tableRowShouldNotContain(2, "HO200247", "HO200212", "TRPR0017")
   })
 
   it("Should display 0 cases when cases filtered with short-hand reason code", () => {
@@ -376,7 +358,7 @@ describe("Filtering cases", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0107",
+        triggerCode: TriggerCode.TRPR0017,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -401,7 +383,7 @@ describe("Filtering cases", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0107",
+        triggerCode: TriggerCode.TRPR0017,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -411,12 +393,12 @@ describe("Filtering cases", () => {
 
     visitBasePath()
 
-    inputAndSearch("reason-codes", "TRPR0107 HO200212")
+    inputAndSearch("reason-codes", "TRPR0017 HO200212")
     cy.contains("Case00000")
     cy.contains("Case00001")
     confirmMultipleFieldsNotDisplayed(["Case00002"])
-    cy.get("tbody tr").should("have.length", 2)
-    confirmFiltersAppliedContains("TRPR0107")
+    cy.get("tbody tr.caseDetailsRow").should("have.length", 2)
+    confirmFiltersAppliedContains("TRPR0017")
     confirmFiltersAppliedContains("HO200212")
   })
 
@@ -669,14 +651,13 @@ describe("Filtering cases", () => {
   it("Should filter cases by whether they have triggers and exceptions", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "011111" },
-      { orgForPoliceFilter: "011111" },
-      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111", errorCount: 0, errorReason: "", errorReport: "" },
       { orgForPoliceFilter: "011111" }
     ])
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -689,11 +670,10 @@ describe("Filtering cases", () => {
     cy.visit("/bichard")
 
     // Default: no filter, all cases shown
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`, `Case00003`])
+    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`])
 
-    // Filtering by having triggers
-
-    cy.get(`label[for="triggers-type"]`).click()
+    // Filtering with triggers
+    cy.get(`label[for="triggers-reason"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
@@ -701,76 +681,28 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`])
     confirmMultipleFieldsNotDisplayed(["Case00002", "Case00003"])
 
-    // // Filtering by having exceptions
+    // Removing the trigger filter tag
     cy.get(".moj-filter__tag").contains("Triggers").click()
     cy.get("button[id=search]").click()
 
-    cy.get(`label[for="exceptions-type"]`).click()
+    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`])
+
+    // Filtering with exceptions
+    cy.get(`label[for="exceptions-reason"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
 
     confirmMultipleFieldsDisplayed([`Case00000`, `Case00002`])
-    confirmMultipleFieldsNotDisplayed([`Case00001`, `Case00003`])
+    confirmMultipleFieldsNotDisplayed([`Case00001`, `Case00003`]) //TODO
 
-    cy.get(".moj-filter__tag").contains("Exceptions").click()
-
-    // // Filter for both triggers and exceptions
-
-    cy.get(`label[for="triggers-type"]`).click()
-    cy.get(`label[for="exceptions-type"]`).click()
+    // Filter for both triggers and exceptions
+    cy.get(`label[for="all-reason"]`).click()
     cy.get("button[id=search]").click()
 
-    cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
-    cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
+    cy.contains('*[class^="moj-filter-tags"]').should("not.exist")
 
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`])
-
-    // // Removing exceptions filter tag
-    cy.get(".moj-filter__tag").contains("Exceptions").click()
-    cy.get("button[id=search]").click()
-
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`])
-    confirmMultipleFieldsNotDisplayed([`Case00002`, `Case00003`])
-
-    // // Removing triggers filter tag
-    cy.get(".moj-filter__tag").contains("Triggers").click()
-    cy.get("button[id=search]").click()
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`, `Case00003`])
-  })
-
-  it("Should filter cases that has Bails", () => {
-    cy.task("insertCourtCasesWithFields", [
-      { orgForPoliceFilter: "011111" },
-      { orgForPoliceFilter: "011111" },
-      { orgForPoliceFilter: "011111" }
-    ])
-    const conditionalBailCode = "TRPR0010"
-    const conditionalBailTrigger: TestTrigger = {
-      triggerId: 0,
-      triggerCode: conditionalBailCode,
-      status: "Unresolved",
-      createdAt: new Date("2022-07-09T10:22:34.000Z")
-    }
-    cy.task("insertTriggers", { caseId: 0, triggers: [conditionalBailTrigger] })
-    cy.task("insertException", { caseId: 1, exceptionCode: "HO100206" })
-    cy.task("insertException", { caseId: 2, exceptionCode: "HO100206" })
-
-    cy.visit("/bichard")
-
-    confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
-
-    cy.get(`label[for="bails-type"]`).click()
-    cy.get("button[id=search]").click()
-
-    cy.get('*[class^="moj-filter-tags"]').contains("Bails")
-
-    confirmMultipleFieldsDisplayed(["Case00000"])
-    confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
-
-    cy.get(".moj-filter__tag").contains("Bails").click()
-    cy.get("button[id=search]").click()
-    confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
+    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`])
   })
 
   it("Should filter cases by case state", () => {
@@ -778,21 +710,26 @@ describe("Filtering cases", () => {
     const force = "011111"
     cy.task("insertCourtCasesWithFields", [
       { resolutionTimestamp: null, orgForPoliceFilter: force },
-      { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force, errorResolvedBy: "Bichard01" },
-      { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force, errorResolvedBy: "Bichard01" },
-      { resolutionTimestamp: resolutionTimestamp, orgForPoliceFilter: force, errorResolvedBy: "Bichard01" }
+      {
+        resolutionTimestamp,
+        errorResolvedTimestamp: resolutionTimestamp,
+        orgForPoliceFilter: force,
+        errorResolvedBy: "GeneralHandler",
+        errorStatus: "Resolved"
+      }
     ])
 
     visitBasePath()
 
     // Filter for unresolved cases by default
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
+    cy.contains("Case00000")
 
     // Filter for resolved cases
     cy.get(`label[for="resolved"]`).click()
     cy.get("button[id=search]").click()
 
-    cy.get(".moj-scrollable-pane tbody tr").should("have.length", 3)
+    cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
     cy.contains("Case00001")
 
     // Removing case state filter tag unresolved cases should be shown with the filter disabled
@@ -803,13 +740,17 @@ describe("Filtering cases", () => {
 
   it("Should filter cases by locked state", () => {
     cy.task("insertCourtCasesWithFields", [
-      { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: "011111" },
+      {
+        errorLockedByUsername: "BichardForce01",
+        triggerLockedByUsername: "BichardForce01",
+        orgForPoliceFilter: "011111"
+      },
       { orgForPoliceFilter: "011111" }
     ])
 
     visitBasePath()
     // Filter for locked cases
-    cy.get(`label[for="locked"]`).click()
+    cy.get(`label[for="locked-state-locked"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
@@ -822,8 +763,7 @@ describe("Filtering cases", () => {
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 2)
 
     // Filter for unlocked cases
-
-    cy.get(`label[for="unlocked"]`).click()
+    cy.get(`label[for="locked-state-unlocked"]`).click()
     cy.get("button[id=search]").click()
 
     cy.get(".moj-scrollable-pane tbody tr").should("have.length", 1)
@@ -838,13 +778,11 @@ describe("Filtering cases", () => {
   it("Should clear filters when clicked on the link outside of the filter panel", () => {
     visitBasePath()
     cy.get("input[id=keywords]").type("Dummy")
-    cy.get('label[for="triggers-type"]').click()
-    cy.get('label[for="exceptions-type"]').click()
+    cy.get('label[for="exceptions-reason"]').click()
     cy.get("button[id=search]").click()
 
     cy.get('*[class^="moj-filter-tags"]').contains("Dummy")
     cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
-    cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
 
     cy.get("#clear-filters").click()
 
@@ -857,12 +795,10 @@ describe("Filtering cases", () => {
   it("Should clear filters when clicked on the link inside the filter panel", () => {
     visitBasePath()
     cy.get("input[id=keywords]").type("Dummy")
-    cy.get('label[for="triggers-type"]').click()
-    cy.get('label[for="exceptions-type"]').click()
+    cy.get('label[for="triggers-reason"]').click()
     cy.get("button[id=search]").click()
 
     cy.get('*[class^="moj-filter-tags"]').contains("Dummy")
-    cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
     cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
 
     cy.get(".moj-filter__heading-title a").contains("Clear filters").click()
@@ -873,26 +809,74 @@ describe("Filtering cases", () => {
     })
   })
 
-  describe("Filtering cases allocated to me", () => {
-    it("Should filter cases that I hold the trigger lock for", () => {
+  describe("Filtering cases by locked status", () => {
+    beforeEach(() => {
       cy.task("insertCourtCasesWithFields", [
-        { errorLockedByUsername: "Bichard01", triggerLockedByUsername: "Bichard01", orgForPoliceFilter: "011111" },
-        { orgForPoliceFilter: "011111" },
-        { errorLockedByUsername: "Bichard02", triggerLockedByUsername: "Bichard02", orgForPoliceFilter: "011111" },
-        { orgForPoliceFilter: "011111" }
+        {
+          errorLockedByUsername: "GeneralHandler",
+          triggerLockedByUsername: "GeneralHandler",
+          orgForPoliceFilter: "01XY"
+        },
+        {
+          orgForPoliceFilter: "01XY",
+          triggerLockedByUsername: "GeneralHandler"
+        },
+        {
+          orgForPoliceFilter: "01XY",
+          errorLockedByUsername: "GeneralHandler"
+        },
+        {
+          errorLockedByUsername: "BichardForce02",
+          triggerLockedByUsername: "BichardForce02",
+          orgForPoliceFilter: "01XY"
+        },
+        { orgForPoliceFilter: "01XY" }
       ])
 
+      const triggers: TestTrigger[] = [
+        {
+          triggerId: 0,
+          triggerCode: TriggerCode.TRPR0001,
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+      cy.task("insertTriggers", { caseId: 0, triggers })
+      cy.task("insertTriggers", { caseId: 1, triggers })
       visitBasePath()
+    })
 
-      cy.get(`label[for="my-cases-filter"]`).click()
+    it("Should filter locked cases", () => {
+      cy.get(`label[for="locked-state-locked"]`).click()
       cy.contains("Selected filters")
-      cy.contains("My cases")
+      cy.contains("Locked")
 
       cy.get("#search").click()
 
-      cy.contains("Case00000")
-      cy.contains("Bichard01")
-      confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002", "Case00003"])
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002", "Case00003"])
+      confirmMultipleFieldsNotDisplayed(["Case00004"])
+    })
+
+    it("Should filter unlocked cases", () => {
+      cy.get(`label[for="locked-state-unlocked"]`).click()
+      cy.contains("Selected filters")
+      cy.contains("Locked")
+
+      cy.get("#search").click()
+
+      confirmMultipleFieldsDisplayed(["Case00004"])
+      confirmMultipleFieldsNotDisplayed(["Case00000", "Case00001", "Case00002", "Case00003"])
+    })
+
+    it("Should filter cases that I hold the lock for", () => {
+      cy.get(`label[for="locked-state-lockedtome"]`).click()
+      cy.contains("Selected filters")
+      cy.contains("Locked to me")
+
+      cy.get("#search").click()
+
+      confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
+      confirmMultipleFieldsNotDisplayed(["Case00003", "Case00004"])
     })
   })
 
@@ -912,7 +896,7 @@ describe("Filtering cases", () => {
       visitBasePath()
       cy.get("input[id=reason-codes]").type("Reason1 Reason2")
       cy.get("input[id=keywords]").type("Dummy")
-      cy.get('label[for="triggers-type"]').click()
+      cy.get('label[for="triggers-reason"]').click()
       cy.get("button[id=search]").click()
       cy.get("#filter-button").contains("Hide search panel").click()
 

@@ -25,16 +25,17 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[], username?
     .values(
       triggers.map((t) => ({
         resolvedAt: t.status === "Resolved" ? new Date() : null,
-        resolvedBy: t.status === "Resolved" ? username ?? "Dummy User" : null,
+        resolvedBy: t.status === "Resolved" ? username ?? "GeneralHandler" : null,
         errorId: caseId,
         ...t
       }))
     )
     .execute()
 
+  const triggerResolutionUser = triggers.map((t) => t.resolvedBy)[0] ?? "GeneralHandler"
   const allResolvedTriggers = triggers.filter((t) => t.status === "Resolved")
   const allTriggersResolved = allResolvedTriggers.length === triggers.length
-  const triggerResolvedBy = allTriggersResolved ? username ?? "Dummy User" : null
+  const triggerResolvedBy = allTriggersResolved ? username ?? triggerResolutionUser : null
 
   await dataSource
     .createQueryBuilder()

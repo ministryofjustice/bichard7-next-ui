@@ -1,9 +1,16 @@
 export type QueryOrder = "asc" | "desc"
 
 export enum Reason {
-  Bails = "Bails",
+  All = "All",
   Exceptions = "Exceptions",
   Triggers = "Triggers"
+}
+
+export enum LockedState {
+  All = "All",
+  Locked = "Locked",
+  Unlocked = "Unlocked",
+  LockedToMe = "LockedToMe"
 }
 
 export type CourtDateRange = {
@@ -23,7 +30,7 @@ export type Urgency = "Urgent" | "Non-urgent" | undefined
 export type CaseListQueryParams = {
   orderBy?: string
   order?: QueryOrder
-  reasons?: Reason[]
+  reason?: Reason
   defendantName?: string
   courtName?: string
   ptiurn?: string
@@ -31,7 +38,7 @@ export type CaseListQueryParams = {
   pageNum?: string
   maxPageItems: string
   courtDateRange?: CourtDateRange | CourtDateRange[]
-  locked?: boolean
+  lockedState?: string
   caseState?: CaseState
   allocatedToUserName?: string
   reasonCodes?: string[]
