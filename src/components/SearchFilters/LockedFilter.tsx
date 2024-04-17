@@ -24,7 +24,7 @@ const lockedStateLongLabels = {
   [LockedState.LockedToMe]: "Cases locked to me"
 }
 
-const LockedFilterOptions: React.FC<Props> = ({ lockedState, dispatch }: Props) => {
+const LockedFilter: React.FC<Props> = ({ lockedState, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
@@ -46,4 +46,4 @@ const LockedFilterOptions: React.FC<Props> = ({ lockedState, dispatch }: Props) 
   )
 }
 
-export default LockedFilterOptions
+export default LockedFilter

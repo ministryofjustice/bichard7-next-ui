@@ -8,7 +8,7 @@ interface Props {
   dispatch: Dispatch<FilterAction>
 }
 
-const ReasonFilterOptions: React.FC<Props> = ({ reason, reasonOptions, dispatch }: Props) => {
+const ReasonFilter: React.FC<Props> = ({ reason, reasonOptions, dispatch }: Props) => {
   return (
     <fieldset className="govuk-fieldset">
       <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
@@ -36,4 +36,4 @@ const ReasonFilterOptions: React.FC<Props> = ({ reason, reasonOptions, dispatch 
   )
 }
 
-export default ReasonFilterOptions
+export default ReasonFilter

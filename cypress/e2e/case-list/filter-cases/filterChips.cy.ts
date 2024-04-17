@@ -183,7 +183,7 @@ describe("Case list", () => {
 
     describe("Defendant name", () => {
       it("Should apply the 'Defendant name' filter chips then remove this chips to the original state", () => {
-        cy.get("input[id=keywords]").type("Foo")
+        cy.get("input[id=defendantName]").type("Foo")
 
         cy.get(".govuk-heading-s").contains("Defendant name").should("exist")
         cy.get(".moj-filter__tag").contains("Foo").should("exist")
@@ -195,7 +195,7 @@ describe("Case list", () => {
 
     describe("Court name", () => {
       it("Should apply the 'Court name' filter chips then remove this chips to the original state", () => {
-        cy.get("input[id=court-name]").type("Bar")
+        cy.get("input[id=courtName]").type("Bar")
 
         cy.get(".govuk-heading-s").contains("Court name").should("exist")
         cy.get(".moj-filter__tag").contains("Bar").should("exist")
@@ -207,7 +207,7 @@ describe("Case list", () => {
 
     describe("Reason code", () => {
       it("Should apply the 'Court name' filter chips then remove this chips to the original state", () => {
-        cy.get("input[id=reason-codes]").type("Bar")
+        cy.get("input[id=reasonCodes]").type("Bar")
 
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Bar").should("exist")
@@ -217,7 +217,7 @@ describe("Case list", () => {
       })
 
       it("Should be able to remove individual reason code filter chips", () => {
-        cy.get("input[id=reason-codes]").type("Foo Bar")
+        cy.get("input[id=reasonCodes]").type("Foo Bar")
 
         cy.get(".govuk-heading-s").contains("Reason").should("exist")
         cy.get(".moj-filter__tag").contains("Bar").should("exist")
