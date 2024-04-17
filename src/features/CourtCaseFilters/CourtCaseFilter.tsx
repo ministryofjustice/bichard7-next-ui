@@ -32,6 +32,10 @@ interface Props {
   orderBy: string | null
 }
 
+const HR = () => (
+  <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
+)
+
 const CourtCaseFilter: React.FC<Props> = ({
   reason,
   defendantName,
@@ -120,15 +124,15 @@ const CourtCaseFilter: React.FC<Props> = ({
             </div>
           </FormGroup>
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
+            <HR />
             <FormGroup className={`govuk-form-group reasons`}>
-              <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
               <ExpandingFilters filterName={"Reason"} classNames="filters-reason">
                 <ReasonFilter reason={state.reasonFilter.value} reasonOptions={reasonOptions} dispatch={dispatch} />
               </ExpandingFilters>
             </FormGroup>
+            <HR />
           </ConditionalRender>
           <FormGroup className={"govuk-form-group"}>
-            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
             <ExpandingFilters filterName={"Court date"} classNames="filters-court-date">
               <CourtDateFilter
                 caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
@@ -139,7 +143,7 @@ const CourtCaseFilter: React.FC<Props> = ({
             </ExpandingFilters>
           </FormGroup>
           <div>
-            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
+            <HR />
             <fieldset className="govuk-fieldset">
               <legend className="govuk-fieldset__legend govuk-body">{"Case state"}</legend>
               <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
@@ -167,7 +171,7 @@ const CourtCaseFilter: React.FC<Props> = ({
             </fieldset>
           </div>
           <div>
-            <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
+            <HR />
             <ExpandingFilters filterName={"Locked state"} classNames="filters-locked-state">
               <LockedFilter lockedState={state.lockedStateFilter.value} dispatch={dispatch} />
             </ExpandingFilters>
