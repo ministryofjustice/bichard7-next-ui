@@ -51,7 +51,8 @@ const handleAddingFilters = (newState: Filter, action: FilterAction) => {
       break
     }
     case "reasonCodes": {
-      newState.reasonCodes = action.value.split(" ").map((reason: string) => ({
+      const values = Array.isArray(action.value) ? action.value : [action.value]
+      newState.reasonCodes = values.map((reason: string) => ({
         value: reason,
         label: reason,
         state: "Selected"

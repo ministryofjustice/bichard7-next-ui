@@ -1,5 +1,6 @@
 import ConditionalRender from "components/ConditionalRender"
 import LockedFilter, { lockedStateShortLabels } from "components/SearchFilters/LockedFilter"
+import ReasonCodeFilter from "components/SearchFilters/ReasonCodeFilter"
 import ReasonFilter from "components/SearchFilters/ReasonFilterOptions/ReasonFilter"
 import TextFilter from "components/SearchFilters/TextFilter"
 import { useCurrentUser } from "context/CurrentUserContext"
@@ -103,12 +104,7 @@ const CourtCaseFilter: React.FC<Props> = ({
           <FormGroup className={"govuk-form-group"}>
             <h2 className="govuk-heading-m">{"Search"}</h2>
             <div>
-              <TextFilter
-                label="Reason codes"
-                id="reasonCodes"
-                value={state.reasonCodes.map((reasonCode) => reasonCode.value).join(" ")}
-                dispatch={dispatch}
-              />
+              <ReasonCodeFilter value={state.reasonCodes} dispatch={dispatch} />
               <TextFilter
                 label="Defendant name"
                 id="defendantName"
