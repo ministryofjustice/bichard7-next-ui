@@ -1,4 +1,5 @@
 import RadioButton from "components/RadioButton/RadioButton"
+import ExpandingFilters from "features/CourtCaseFilters/ExpandingFilters"
 import type { ChangeEvent, Dispatch } from "react"
 import { LockedState } from "types/CaseListQueryParams"
 import type { FilterAction } from "types/CourtCaseFilter"
@@ -26,23 +27,25 @@ const lockedStateLongLabels = {
 
 const LockedFilter: React.FC<Props> = ({ lockedState, dispatch }: Props) => {
   return (
-    <fieldset className="govuk-fieldset">
-      <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
-        {lockedStateOptions.map((optionName) => (
-          <RadioButton
-            name={"lockedState"}
-            key={optionName.toLowerCase()}
-            id={`locked-state-${optionName.toLowerCase()}`}
-            checked={lockedState === optionName}
-            value={optionName}
-            label={lockedStateLongLabels[optionName]}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              dispatch({ method: "add", type: "lockedState", value: event.target.value })
-            }}
-          />
-        ))}
-      </div>
-    </fieldset>
+    <ExpandingFilters filterName={"Locked state"} classNames="filters-locked-state">
+      <fieldset className="govuk-fieldset">
+        <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+          {lockedStateOptions.map((optionName) => (
+            <RadioButton
+              name={"lockedState"}
+              key={optionName.toLowerCase()}
+              id={`locked-state-${optionName.toLowerCase()}`}
+              checked={lockedState === optionName}
+              value={optionName}
+              label={lockedStateLongLabels[optionName]}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                dispatch({ method: "add", type: "lockedState", value: event.target.value })
+              }}
+            />
+          ))}
+        </div>
+      </fieldset>
+    </ExpandingFilters>
   )
 }
 
