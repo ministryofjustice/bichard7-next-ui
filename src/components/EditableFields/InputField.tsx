@@ -1,6 +1,6 @@
 import { HintText, Label } from "govuk-react"
-import { createUseStyles } from "react-jss"
 import { EditableFieldBadge, InitialInputValueBadge } from "./Badges"
+import { StyledInputField } from "./InputField.styles"
 
 interface EditableInputFieldProps {
   value?: string | React.ReactNode
@@ -9,22 +9,9 @@ interface EditableInputFieldProps {
   hintText: string
 }
 
-const useStyles = createUseStyles({
-  "editable-field__content": {
-    "& .badge-wrapper": {
-      padding: ".94rem 0 .62rem 0",
-      display: "flex",
-      gap: ".62rem",
-      alignItems: "center"
-    }
-  }
-})
-
 const InputField: React.FC<EditableInputFieldProps> = ({ value, inputLabel, hintText, children }) => {
-  const classes = useStyles()
-
   return (
-    <div className={classes["editable-field__content"]}>
+    <StyledInputField>
       {value}
       <InitialInputValueBadge />
       <br />
@@ -35,7 +22,7 @@ const InputField: React.FC<EditableInputFieldProps> = ({ value, inputLabel, hint
         })}
       {children}
       <EditableFieldBadge />
-    </div>
+    </StyledInputField>
   )
 }
 

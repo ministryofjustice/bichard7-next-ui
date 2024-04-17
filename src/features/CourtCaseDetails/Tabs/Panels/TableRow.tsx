@@ -1,5 +1,5 @@
-import { HintText, Table } from "govuk-react"
-import { createUseStyles } from "react-jss"
+import { Table } from "govuk-react"
+import { StyledHintText, StyledTableRow } from "./TableRow.styles"
 
 interface TableRowProps {
   label: string
@@ -8,27 +8,15 @@ interface TableRowProps {
   className?: string
 }
 
-const useStyles = createUseStyles({
-  row: {
-    "& td": {
-      verticalAlign: "top"
-    }
-  },
-  hintText: {
-    marginBottom: "0"
-  }
-})
-
 export const TableRow = ({ label, value, hintText }: TableRowProps) => {
-  const classes = useStyles()
   const rowClassName = `table-row__${label.replaceAll(/ /g, "-").toLowerCase()}`
   return (
-    <Table.Row className={`table-row ${rowClassName} ${classes.row}`}>
+    <StyledTableRow className={`table-row ${rowClassName} row`}>
       <Table.Cell>
         <b>{label}</b>
-        {hintText && <HintText className={classes.hintText}>{hintText}</HintText>}
+        {hintText && <StyledHintText className={"hint-text"}>{hintText}</StyledHintText>}
       </Table.Cell>
       <Table.Cell>{value}</Table.Cell>
-    </Table.Row>
+    </StyledTableRow>
   )
 }

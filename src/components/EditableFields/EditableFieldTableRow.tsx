@@ -1,5 +1,5 @@
 import { Table } from "govuk-react"
-import { createUseStyles } from "react-jss"
+import { LabelCell } from "./EditableFieldTableRow.styles"
 import InitialValueAndCorrectionField from "./InitialValueAndCorrectionField"
 import InputField from "./InputField"
 import LabelField from "./LabelField"
@@ -15,15 +15,6 @@ type Props = {
   hintText: string
 }
 
-const useStyles = createUseStyles({
-  "editable-field__label": {
-    verticalAlign: "top",
-    "& .error-icon": {
-      paddingTop: ".62rem"
-    }
-  }
-})
-
 const EditableFieldTableRow = ({
   value,
   updatedValue,
@@ -34,7 +25,6 @@ const EditableFieldTableRow = ({
   hintText,
   children
 }: Props) => {
-  const classes = useStyles()
   const isRendered = !!(value || updatedValue || hasExceptions)
   const hasCorrection = updatedValue && value !== updatedValue
 
@@ -58,9 +48,9 @@ const EditableFieldTableRow = ({
 
   return (
     <Table.Row>
-      <Table.Cell className={classes["editable-field__label"]}>
+      <LabelCell>
         <LabelField label={label} isEditable={isEditable} />
-      </Table.Cell>
+      </LabelCell>
       <Table.Cell>{fieldToRender()}</Table.Cell>
     </Table.Row>
   )

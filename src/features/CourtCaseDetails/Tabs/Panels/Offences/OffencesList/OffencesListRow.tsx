@@ -3,40 +3,32 @@ import WarningIcon from "components/WarningIcon"
 import { useCourtCase } from "context/CourtCaseContext"
 import { Table } from "govuk-react"
 import Image from "next/image"
-import { createUseStyles } from "react-jss"
 import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceAlertsDetails from "utils/getOffenceAlertsDetails"
 import getOffenceCode from "utils/getOffenceCode"
 import { CHECKMARK_ICON_URL } from "utils/icons"
+import { IconContainer } from "./OffencesListRow.styles"
 
 interface OffencesListRowProps {
   offence: Offence
   onClick: (offence: Offence) => void
 }
 
-const useStyles = createUseStyles({
-  icon: {
-    lineHeight: "11px"
-  }
-})
-
 export const OffencesListRow = ({ offence, onClick }: OffencesListRowProps) => {
-  const classes = useStyles()
-
   const { courtCase, amendments } = useCourtCase()
   const exceptions = courtCase.aho.Exceptions
 
   const offenceAlerts = getOffenceAlertsDetails(exceptions, amendments)
 
   const checkmarkIcon = (
-    <div className={`${classes.icon} checkmark-icon`} key={offence.CourtOffenceSequenceNumber}>
+    <IconContainer className={`icon checkmark-icon`} key={offence.CourtOffenceSequenceNumber}>
       <Image src={CHECKMARK_ICON_URL} width={30} height={30} alt="Checkmark icon" />
-    </div>
+    </IconContainer>
   )
   const warningIcon = (
-    <div className={`${classes.icon} warning-icon`} key={offence.CourtOffenceSequenceNumber}>
+    <IconContainer className={`icon warning-icon`} key={offence.CourtOffenceSequenceNumber}>
       <WarningIcon />
-    </div>
+    </IconContainer>
   )
 
   const offenceAlertIcon = offenceAlerts.map((offenceAlert) => {

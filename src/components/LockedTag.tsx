@@ -1,22 +1,7 @@
 import Image from "next/image"
-import styled, { StyledComponentPropsWithRef } from "styled-components"
+import { StyledComponentPropsWithRef } from "styled-components"
 import { LOCKED_ICON_URL } from "../utils/icons"
-
-const Lockee = styled.span`
-  display: flex;
-  align-items: center;
-  margin-left: 15px;
-
-  & > img {
-    margin-right: 5px;
-    margin-bottom: 20px;
-  }
-`
-
-const LockedTagContainer = styled.div`
-  display: flex;
-  justify-content: end;
-`
+import { LockedTagContainer, Lockee } from "./LockedTag.styles"
 
 interface LockedTagProps extends StyledComponentPropsWithRef<typeof LockedTagContainer> {
   lockName: string
@@ -29,7 +14,7 @@ const LockedTag = ({ lockName, lockedBy, ...rest }: LockedTagProps) => (
       <b>{lockName}</b>
     </span>
     <Lockee id={`${lockName.toLowerCase()}-locked-tag-lockee`}>
-      <Image src={LOCKED_ICON_URL} priority width={18} height={18} alt="Lock icon" />
+      <Image src={LOCKED_ICON_URL} width={18} height={18} alt="Lock icon" />
       <span className="govuk-body">{lockedBy}</span>
     </Lockee>
   </LockedTagContainer>

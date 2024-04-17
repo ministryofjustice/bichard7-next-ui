@@ -1,8 +1,7 @@
-import Image from "next/image"
-import { createUseStyles } from "react-jss"
 import CaseDetailsTab from "types/CaseDetailsTab"
 import { TabDetails } from "utils/getTabDetails"
 import { CHECKMARK_ICON_URL } from "utils/icons"
+import { CheckmarkIcon } from "./CourtCaseDetailsSingleTab.styles"
 
 interface CourtCaseDetailsSingleTabProps {
   tab: TabDetails
@@ -10,17 +9,7 @@ interface CourtCaseDetailsSingleTabProps {
   onClick: (tab: CaseDetailsTab) => void
 }
 
-const useStyles = createUseStyles({
-  checkmark: {
-    display: "inline-block",
-    verticalAlign: "bottom",
-    marginBottom: "-2px"
-  }
-})
-
 export const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick }: CourtCaseDetailsSingleTabProps) => {
-  const classes = useStyles()
-
   return (
     <li className="moj-sub-navigation__item">
       <a
@@ -34,8 +23,8 @@ export const CourtCaseDetailsSingleTab = ({ tab, isActive, onClick }: CourtCaseD
       >
         {tab.name} <span />
         {tab.exceptionsResolved ? (
-          <Image
-            className={`checkmark-icon ${classes.checkmark}`}
+          <CheckmarkIcon
+            className={`checkmark-icon checkmark`}
             key={tab.name}
             src={CHECKMARK_ICON_URL}
             width={30}

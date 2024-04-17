@@ -49,7 +49,7 @@ describe("Sorting cases", () => {
     loginAndVisit()
 
     cy.get("#court-name-sort").find(".unorderedArrow").click()
-    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".upArrow").should("exist")
+    cy.get("#court-name-sort").get(".upArrow").should("exist")
 
     cy.get("tr")
       .not(":first")
@@ -59,7 +59,7 @@ describe("Sorting cases", () => {
       })
 
     cy.get("#court-name-sort").click()
-    cy.get("#court-name-sort").parent().siblings().get('*[class^="icon"]').get(".downArrow").should("exist")
+    cy.get("#court-name-sort").get(".downArrow").should("exist")
 
     cy.get("tr")
       .not(":first")
