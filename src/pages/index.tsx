@@ -59,7 +59,7 @@ interface Props {
   courtCases: DisplayPartialCourtCase[]
   order: QueryOrder
   reason: Reason | null
-  keywords: string[]
+  defendantName: string[]
   ptiurn: string | null
   courtName: string | null
   reasonCodes: string[]
@@ -91,7 +91,7 @@ export const getServerSideProps = withMultipleServerSideProps(
     const queryStringCookieName = getQueryStringCookieName(currentUser.username)
     // prettier-ignore
     const {
-      orderBy, page, reason, keywords, courtName, reasonCodes, ptiurn, maxPageItems, order,
+      orderBy, page, reason, defendantName, courtName, reasonCodes, ptiurn, maxPageItems, order,
       urgency, caseAge, from, to, lockedState, state, unlockException, unlockTrigger
     } = query
 
@@ -111,7 +111,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       from,
       to
     })
-    const validatedDefendantName = validateQueryParams(keywords) ? keywords : undefined
+    const validatedDefendantName = validateQueryParams(defendantName) ? defendantName : undefined
     const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
     const validatedreasonCodes = validateQueryParams(reasonCodes)
       ? reasonCodes.split(" ").filter((reasonCode) => reasonCode != "")
@@ -217,7 +217,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         page: parseInt(validatedPageNum, 10) || 1,
         casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,
         reason: validatedReason,
-        keywords: validatedDefendantName ? [validatedDefendantName] : [],
+        defendantName: validatedDefendantName ? [validatedDefendantName] : [],
         courtName: validatedCourtName ? validatedCourtName : null,
         reasonCodes: validatedreasonCodes,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
@@ -251,7 +251,7 @@ const Home: NextPage<Props> = (props) => {
     casesPerPage,
     totalCases,
     reason,
-    keywords,
+    defendantName,
     courtName,
     reasonCodes,
     ptiurn,
@@ -305,7 +305,7 @@ const Home: NextPage<Props> = (props) => {
               filter={
                 <CourtCaseFilter
                   reason={reason}
-                  defendantName={keywords[0]}
+                  defendantName={defendantName[0]}
                   courtName={courtName}
                   reasonCodes={reasonCodes}
                   ptiurn={ptiurn}
@@ -323,7 +323,7 @@ const Home: NextPage<Props> = (props) => {
                 <AppliedFilters
                   filters={{
                     reason,
-                    keywords,
+                    defendantName,
                     courtName,
                     reasonCodes,
                     ptiurn,

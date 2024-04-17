@@ -10,7 +10,7 @@ import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
 interface Props {
   filters: {
     reason?: Reason | null
-    keywords?: string[]
+    defendantName?: string[]
     courtName?: string | null
     reasonCodes?: string[]
     ptiurn?: string | null
@@ -27,7 +27,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
 
   const hasAnyAppliedFilters = (): boolean =>
     (!!filters.reason && filters.reason !== Reason.All) ||
-    (filters.keywords && filters.keywords.length > 0) ||
+    (filters.defendantName && filters.defendantName.length > 0) ||
     (filters.caseAge && filters.caseAge.length > 0) ||
     !!filters.courtName ||
     !!filters.reasonCodes?.length ||
@@ -78,11 +78,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               <FilterTag tag={filters.reason ?? ""} href={removeFilterFromPath({ type: filters.reason ?? "" })} />
             </li>
           </ConditionalRender>
-          {filters.keywords &&
-            filters.keywords.map((keyword) => {
+          {filters.defendantName &&
+            filters.defendantName.map((defendantName) => {
               return (
-                <li key={`${keyword}`}>
-                  <FilterTag tag={keyword} href={removeFilterFromPath({ keywords: keyword })} />
+                <li key={`${defendantName}`}>
+                  <FilterTag tag={defendantName} href={removeFilterFromPath({ defendantName })} />
                 </li>
               )
             })}
@@ -124,11 +124,11 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </ConditionalRender>
-          <ConditionalRender isRendered={!!filters.lockedState}>
+          <ConditionalRender isRendered={!!filters.lockedState && filters.lockedState !== LockedState.All}>
             <li>
               <FilterTag
                 tag={filters.lockedState ?? ""}
-                href={removeFilterFromPath({ locked: filters.lockedState ?? "" })}
+                href={removeFilterFromPath({ lockedState: filters.lockedState ?? LockedState.All })}
               />
             </li>
           </ConditionalRender>
