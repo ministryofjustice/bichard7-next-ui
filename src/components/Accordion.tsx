@@ -1,4 +1,11 @@
 import { useState } from "react"
+import {
+  AccordionButton,
+  AccordionContent,
+  AccordionHeader,
+  AccordionHeading,
+  AccordionToggle
+} from "./Accordion.styles"
 
 type Props = {
   id: string
@@ -12,29 +19,29 @@ const Accordion = ({ id, heading, children }: Props) => {
   const toggleContentVisibility = () => setIsContentVisible((previousValue) => !previousValue)
 
   return (
-    <div className="b7-accordion">
-      <div className="b7-accordion__header">
-        <h2 className="b7-accordion__heading">
-          <button
+    <div id={id} className="govuk-accordion__section b7-accordion">
+      <AccordionHeader className="govuk-accordion__section-header">
+        <AccordionHeading className="govuk-accordion__section-heading">
+          <AccordionButton
             type="button"
             aria-controls={`${id}-content`}
-            className="b7-accordion__button"
+            className="govuk-accordion__section-button b7-accordion__button"
             aria-expanded="false"
             aria-label={heading}
             onClick={toggleContentVisibility}
           >
-            <span className="b7-accordion__toggle">
-              <span className="b7-accordion__toggle-focus">
+            <AccordionToggle className="govuk-accordion__section-toggle">
+              <span className="govuk-accordion__section-toggle-focus">
                 <span
-                  className={`b7-accordion-nav__chevron ${!isContentVisible ? "b7-accordion-nav__chevron--down" : ""}`}
+                  className={`govuk-accordion-nav__chevron ${!isContentVisible ? "govuk-accordion-nav__chevron--down" : ""}`}
                 ></span>
-                <span className="b7-accordion__toggle-text">{heading}</span>
+                <span className="govuk-accordion__section-toggle-text">{heading}</span>
               </span>
-            </span>
-          </button>
-        </h2>
-      </div>
-      {isContentVisible && <div className="b7-accordion__content">{children}</div>}
+            </AccordionToggle>
+          </AccordionButton>
+        </AccordionHeading>
+      </AccordionHeader>
+      {isContentVisible && <AccordionContent className="accordion__content">{children}</AccordionContent>}
     </div>
   )
 }

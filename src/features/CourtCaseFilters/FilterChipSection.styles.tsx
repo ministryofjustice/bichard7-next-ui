@@ -2,11 +2,11 @@ import styled from "styled-components"
 
 const HeaderRow = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
   align-items: center;
-  gap: 12px;
-  magin: 10px;
-  padding: 10px;
+  & div:nth-child(1) {
+    flex: 1;
+  }
 `
 
-export default HeaderRow
+export { HeaderRow }

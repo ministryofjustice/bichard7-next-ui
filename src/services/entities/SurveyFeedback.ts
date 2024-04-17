@@ -1,6 +1,8 @@
-import { Column, Entity, PrimaryColumn } from "typeorm"
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, type Relation } from "typeorm"
 import type { SurveyFeedbackResponse, SwitchingFeedbackResponse } from "types/SurveyFeedback"
 import { SurveyFeedbackType } from "../../types/SurveyFeedback"
+// eslint-disable-next-line import/no-cycle
+import User from "./User"
 import dateTransformer from "./transformers/dateTransformer"
 import jsonTransformer from "./transformers/jsonTransformer"
 
@@ -20,4 +22,8 @@ export default class SurveyFeedback {
 
   @Column({ name: "created_at", type: "timestamp", transformer: dateTransformer })
   createdAt!: Date
+
+  @ManyToOne(() => User, (user) => user.surveyFeedback)
+  @JoinColumn({ name: "user_id", referencedColumnName: "id" })
+  user!: Relation<User>
 }

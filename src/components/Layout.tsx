@@ -3,25 +3,14 @@ import { Footer } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
 import { ReactNode } from "react"
-import styled from "styled-components"
 import Permission from "types/Permission"
 import ConditionalRender from "./ConditionalRender"
 import Header from "./Header"
+import { Banner } from "./Layout.styles"
 import LinkButton from "./LinkButton"
 import NavBar from "./NavBar"
 import PageTemplate from "./PageTemplate"
 import PhaseBanner from "./PhaseBanner"
-
-const Banner = styled.div`
-  display: flex;
-  justify-content: space-between;
-
-  border-bottom: 1px solid #b1b4b6;
-
-  > .govuk-phase-banner {
-    border: none;
-  }
-`
 
 interface BichardSwitchProps {
   href: string

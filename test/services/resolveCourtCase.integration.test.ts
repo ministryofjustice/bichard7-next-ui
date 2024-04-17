@@ -40,7 +40,7 @@ const expectToBeUnresolved = (courtCase: CourtCase) => {
 describe("resolveCourtCase", () => {
   let dataSource: DataSource
   const visibleForce = "36"
-  const resolverUsername = "Resolver User"
+  const resolverUsername = "GeneralHandler"
   const user = {
     visibleCourts: [],
     visibleForces: [visibleForce],
@@ -272,7 +272,7 @@ describe("resolveCourtCase", () => {
     })
 
     it("Should not resolve a case when the case is locked by another user", async () => {
-      const anotherUser = "Another User"
+      const anotherUser = "BichardForce02"
       const [courtCase] = await insertCourtCasesWithFields([
         {
           errorLockedByUsername: anotherUser,

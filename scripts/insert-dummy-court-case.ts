@@ -2,8 +2,8 @@ import { insertCourtCasesWithFields } from "../test/utils/insertCourtCases"
 
 insertCourtCasesWithFields([
   {
-    errorLockedByUsername: "Bichard01",
-    triggerLockedByUsername: "Bichard01",
+    errorLockedByUsername: "BichardForce01",
+    triggerLockedByUsername: "BichardForce01",
     orgForPoliceFilter: "02"
   }
 ])

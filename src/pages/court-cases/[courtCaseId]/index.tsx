@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
-import ConditionalDisplay from "components/ConditionalDisplay"
+import ConditionalRender from "components/ConditionalRender"
 import Layout from "components/Layout"
 import { CourtCaseContext, useCourtCaseContextState } from "context/CourtCaseContext"
 import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
@@ -13,7 +13,6 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } fr
 import Head from "next/head"
 import { ParsedUrlQuery } from "querystring"
 import { useState } from "react"
-import { createUseStyles } from "react-jss"
 import addNote from "services/addNote"
 import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
@@ -36,6 +35,7 @@ import withCsrf from "../../../middleware/withCsrf/withCsrf"
 import CourtCase from "../../../services/entities/CourtCase"
 import User from "../../../services/entities/User"
 import getLastSwitchingFormSubmission from "../../../services/getLastSwitchingFormSubmission"
+import { AttentionBanner, AttentionContainer } from "../../../styles/index.styles"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
 import Permission from "../../../types/Permission"
 import shouldShowSwitchingFeedbackForm from "../../../utils/shouldShowSwitchingFeedbackForm"
@@ -193,23 +193,6 @@ interface Props {
   previousPath: string
 }
 
-const useStyles = createUseStyles({
-  attentionContainer: {
-    marginTop: "0.3rem",
-    maxWidth: "calc(100% - 8px)",
-    paddingRight: 0,
-    "&> .govuk-tag": {
-      paddingLeft: 0,
-      paddingRight: "8px"
-    }
-  },
-  attentionBanner: {
-    textTransform: "none",
-    fontWeight: 300,
-    maxWidth: "100%"
-  }
-})
-
 const CourtCaseDetailsPage: NextPage<Props> = ({
   courtCase,
   user,
@@ -220,8 +203,6 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
   csrfToken,
   previousPath
 }: Props) => {
-  const classes = useStyles()
-
   const [csrfTokenContext] = useState<CsrfTokenContextType>({ csrfToken })
   const [currentUserContext] = useState<CurrentUserContextType>({ currentUser: user })
   const courtCaseContext = useCourtCaseContextState(courtCase)
@@ -244,16 +225,16 @@ const CourtCaseDetailsPage: NextPage<Props> = ({
                   displaySwitchingSurveyFeedback
                 }}
               >
-                <ConditionalDisplay isDisplayed={courtCase.phase !== 1}>
-                  <div className={`${classes.attentionContainer} govuk-tag govuk-!-width-full`}>
+                <ConditionalRender isRendered={courtCase.phase !== 1}>
+                  <AttentionContainer className={`attention-container govuk-tag govuk-!-width-full`}>
                     <div className="govuk-tag">{"Attention:"}</div>
-                    <div className={`${classes.attentionBanner} govuk-tag`}>
+                    <AttentionBanner className={`attention-banner govuk-tag`}>
                       {
                         "This case can not be reallocated within new bichard; Switch to the old bichard to reallocate this case."
                       }
-                    </div>
-                  </div>
-                </ConditionalDisplay>
+                    </AttentionBanner>
+                  </AttentionContainer>
+                </ConditionalRender>
                 <Header canReallocate={canReallocate} />
                 <CourtCaseDetailsSummaryBox />
                 <CourtCaseDetails

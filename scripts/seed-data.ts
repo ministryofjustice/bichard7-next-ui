@@ -45,7 +45,7 @@ getDataSource().then(async (dataSource) => {
     .map((courtCase) => courtCase.notes)
     .flat()
 
-  await Promise.all(courtCases.map((courtCase) => insertLockUsers(courtCase)))
+  await Promise.all(courtCases.map((courtCase) => insertLockUsers(courtCase, true)))
   await Promise.all(courtCaseNotes.map((courtCaseNote) => insertNoteUser(courtCaseNote)))
 
   await insertManyIntoDynamoTable(auditLogs)

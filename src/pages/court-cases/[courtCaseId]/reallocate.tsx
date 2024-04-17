@@ -1,8 +1,16 @@
+import ActionLink from "components/ActionLink"
 import ConditionalRender from "components/ConditionalRender"
-import HeaderContainer from "components/Header/HeaderContainer"
-import HeaderRow from "components/Header/HeaderRow"
+import { HeaderContainer, HeaderRow } from "components/Header/Header.styles"
 import Layout from "components/Layout"
+import { NotesTable } from "components/NotesTable"
+import ReallocationNotesForm from "components/ReallocationNotesForm"
+import { CourtCaseContext, useCourtCaseContextState } from "context/CourtCaseContext"
+import { CsrfTokenContext } from "context/CsrfTokenContext"
 import { CurrentUserContext } from "context/CurrentUserContext"
+import { PreviousPathContext } from "context/PreviousPathContext"
+import type { Property } from "csstype"
+import CourtCaseDetailsSummaryBox from "features/CourtCaseDetails/CourtCaseDetailsSummaryBox"
+import Header from "features/CourtCaseDetails/Header"
 import { GridCol, GridRow, Heading } from "govuk-react"
 import { withAuthentication, withMultipleServerSideProps } from "middleware"
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next"
@@ -18,23 +26,14 @@ import reallocateCourtCase from "services/reallocateCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
 import { isError } from "types/Result"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
+import { DisplayNote } from "types/display/Notes"
 import { DisplayFullUser } from "types/display/Users"
 import forbidden from "utils/forbidden"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
+import { NotesTableContainer, ShowMoreContainer } from "../../../styles/reallocate.styles"
 import CsrfServerSidePropsContext from "../../../types/CsrfServerSidePropsContext"
-import { CourtCaseContext, useCourtCaseContextState } from "context/CourtCaseContext"
-import { CsrfTokenContext } from "context/CsrfTokenContext"
-import { NotesTable } from "components/NotesTable"
-import ReallocationNotesForm from "components/ReallocationNotesForm"
-import { DisplayNote } from "types/display/Notes"
-import ActionLink from "components/ActionLink"
-import { createUseStyles } from "react-jss"
-import CourtCaseDetailsSummaryBox from "features/CourtCaseDetails/CourtCaseDetailsSummaryBox"
-import Header from "features/CourtCaseDetails/Header"
-import { PreviousPathContext } from "context/PreviousPathContext"
-import type { Property } from "csstype"
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -93,18 +92,6 @@ export const getServerSideProps = withMultipleServerSideProps(
   }
 )
 
-const useStyles = createUseStyles({
-  notesTableContainer: {
-    maxHeight: "368px",
-    overflow: "auto"
-  },
-  showMoreContainer: {
-    justifyContent: "flex-end",
-    paddingRight: "15px",
-    marginTop: "15px"
-  }
-})
-
 interface Props {
   user: DisplayFullUser
   courtCase: DisplayFullCourtCase
@@ -124,7 +111,6 @@ const ReallocateCasePage: NextPage<Props> = ({
   canReallocate
 }: Props) => {
   const { basePath } = useRouter()
-  const classes = useStyles()
 
   const [showMore, setShowMore] = useState<boolean>(false)
   const [reallocateFormWidth, setReallocateFormWidth] = useState<string>("two-thirds")
@@ -203,17 +189,17 @@ const ReallocateCasePage: NextPage<Props> = ({
                       <Heading as="h2" size="SMALL">
                         {"Previous User Notes"}
                       </Heading>
-                      <div className={classes.notesTableContainer}>
+                      <NotesTableContainer className={"notes-table-container"}>
                         <NotesTable displayForce notes={showMore ? userNotes : userNotes.slice(0, 1)} />
-                      </div>
-                      <GridRow className={classes.showMoreContainer}>
+                      </NotesTableContainer>
+                      <ShowMoreContainer className={"show-more-container"}>
                         <ActionLink
                           onClick={() => setShowMore(!showMore)}
                           id={showMore ? "show-more-action" : "show-less-action"}
                         >
                           {showMore ? "show less" : "show more"}
                         </ActionLink>
-                      </GridRow>
+                      </ShowMoreContainer>
                     </GridCol>
                   </GridRow>
                 </ConditionalRender>

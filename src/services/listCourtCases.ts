@@ -1,5 +1,5 @@
 import { Brackets, DataSource, ILike, IsNull, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not } from "typeorm"
-import { CaseListQueryParams } from "types/CaseListQueryParams"
+import { CaseListQueryParams, LockedState } from "types/CaseListQueryParams"
 import { ListCourtCaseResult } from "types/ListCourtCasesResult"
 import Permission from "types/Permission"
 import PromiseResult from "types/PromiseResult"
@@ -23,7 +23,7 @@ const listCourtCases = async (
     reason,
     urgent,
     courtDateRange,
-    locked,
+    lockedState,
     caseState,
     allocatedToUserName,
     reasonCodes,
@@ -155,14 +155,14 @@ const listCourtCases = async (
     )
   }
 
-  if (locked !== undefined) {
-    if (locked) {
+  if (lockedState !== undefined) {
+    if (lockedState === LockedState.Locked) {
       query.andWhere(
         new Brackets((qb) => {
           qb.where({ errorLockedByUsername: Not(IsNull()) }).orWhere({ triggerLockedByUsername: Not(IsNull()) })
         })
       )
-    } else {
+    } else if (lockedState === LockedState.Unlocked) {
       query.andWhere(
         new Brackets((qb) => {
           qb.where({ errorLockedByUsername: IsNull() }).andWhere({ triggerLockedByUsername: IsNull() })

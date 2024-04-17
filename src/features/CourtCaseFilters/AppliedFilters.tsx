@@ -2,7 +2,7 @@ import ConditionalRender from "components/ConditionalRender"
 import FilterTag from "components/FilterTag/FilterTag"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
-import { Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { LockedState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
 import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
@@ -17,9 +17,8 @@ interface Props {
     caseAge?: string[]
     dateRange?: SerializedCourtDateRange | null
     urgency?: string | null
-    locked?: string | null
+    lockedState?: string | null
     caseState?: string | null
-    myCases?: boolean
   }
 }
 
@@ -36,9 +35,8 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.urgency ||
     !!filters.dateRange?.from ||
     !!filters.dateRange?.to ||
-    !!filters.locked ||
-    !!filters.caseState ||
-    !!filters.myCases
+    (!!filters.lockedState && filters.lockedState !== LockedState.All) ||
+    !!filters.caseState
 
   const removeFilterFromPath = (paramToRemove: { [key: string]: string }): string => {
     let searchParams = deleteQueryParam(paramToRemove, query)
@@ -126,17 +124,12 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
               />
             </li>
           </ConditionalRender>
-          <ConditionalRender isRendered={!!filters.myCases}>
+          <ConditionalRender isRendered={!!filters.lockedState}>
             <li>
               <FilterTag
-                tag={"Cases locked to me" ?? ""}
-                href={removeFilterFromPath({ myCases: String(filters.myCases) })}
+                tag={filters.lockedState ?? ""}
+                href={removeFilterFromPath({ locked: filters.lockedState ?? "" })}
               />
-            </li>
-          </ConditionalRender>
-          <ConditionalRender isRendered={!!filters.locked}>
-            <li>
-              <FilterTag tag={filters.locked ?? ""} href={removeFilterFromPath({ locked: filters.locked ?? "" })} />
             </li>
           </ConditionalRender>
           <ConditionalRender isRendered={!!filters.caseState}>

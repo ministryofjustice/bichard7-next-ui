@@ -1,9 +1,6 @@
 import { addHours, addMinutes } from "date-fns"
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import { Page, SwitchingReason, type SwitchingFeedbackResponse } from "../../src/types/SurveyFeedback"
-import hashedPassword from "../fixtures/hashedPassword"
-
-const expectedUserId = 0
 
 const getDate = ({ minutes, hours }: { minutes: number; hours: number }) => {
   let date = new Date()
@@ -49,12 +46,12 @@ const clickSkipFeedbackButton = () => {
   cy.get("button").contains("Skip feedback").click()
 }
 
-const verifyFeedback = (data: SwitchingFeedbackResponse) => {
+const verifyFeedback = (data: SwitchingFeedbackResponse, expectedUserName = "Supervisor") => {
   cy.task("getAllFeedbacksFromDatabase").then((result) => {
     const feedbackResults = result as SurveyFeedback[]
     const feedback = feedbackResults[0]
     expect(feedback.feedbackType).equal(1)
-    expect(feedback.userId).equal(expectedUserId)
+    expect(feedback.user.username).equal(expectedUserName)
     expect(feedback.response).deep.equal(data)
   })
 }
@@ -66,12 +63,12 @@ const verifyNoFeedbackExists = () => {
   })
 }
 
-const insertFeedback = (date: Date) => {
+const insertFeedback = (createdAt: Date, username = "Supervisor") => {
   cy.task("insertFeedback", {
-    userId: expectedUserId,
+    username,
     response: { skipped: true },
     feedbackType: 1,
-    createdAt: date
+    createdAt
   })
 }
 
@@ -88,31 +85,10 @@ describe("Switching Bichard Version Feedback Form", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
   })
 
-  after(() => {
-    cy.task("clearAllFeedbacksFromDatabase")
-  })
-
   beforeEach(() => {
     cy.viewport(1280, 720)
     cy.task("clearAllFeedbacksFromDatabase")
-    cy.task("clearUsers")
-
-    cy.task("insertUsers", {
-      users: [
-        {
-          id: expectedUserId,
-          username: "Bichard01",
-          visibleForces: ["01"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp", "B7Supervisor_grp"]
-    })
-
-    cy.login("bichard01@example.com", "password")
+    cy.loginAs("Supervisor")
   })
 
   it("will go back to the case list page when I press the back button", () => {

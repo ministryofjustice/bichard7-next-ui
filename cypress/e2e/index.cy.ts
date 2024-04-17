@@ -1,32 +1,28 @@
 import { TestTrigger } from "../../test/utils/manageTriggers"
 import a11yConfig from "../support/a11yConfig"
-import { defaultSetup, loginAndGoToUrl } from "../support/helpers"
+import { loginAndVisit } from "../support/helpers"
 import logAccessibilityViolations from "../support/logAccessibilityViolations"
 
 describe("Case list", () => {
-  before(() => {
-    defaultSetup()
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
 
   it("will not find a password in the NEXT_DATA", () => {
-    loginAndGoToUrl()
+    loginAndVisit()
 
     cy.window().its("__NEXT_DATA__.props.pageProps.user.password").should("not.exist")
   })
 
   context("when there are 0 cases", () => {
     it("Should display 0 cases and the user's username when no cases are added", () => {
-      loginAndGoToUrl()
+      loginAndVisit()
 
       cy.findByText("There are no court cases to show").should("exist")
     })
 
     it("Should not show pagination buttons when there are 0 cases", () => {
-      loginAndGoToUrl()
+      loginAndVisit()
 
       cy.findByText("Previous page").should("not.exist")
       cy.findByText("Next page").should("not.exist")
@@ -35,7 +31,7 @@ describe("Case list", () => {
     })
 
     it("Should display 0 cases when there are no cases 'locked to me' and hide the bottom pagination bar ", () => {
-      const lockUsernames = ["Bichard02", "Bichard03", null, "A really really really long.name"]
+      const lockUsernames = ["BichardForce02", "BichardForce03", null, "A really really really long.name"]
       cy.task(
         "insertCourtCasesWithFields",
         lockUsernames.map((username) => ({
@@ -45,9 +41,9 @@ describe("Case list", () => {
         }))
       )
 
-      loginAndGoToUrl()
+      loginAndVisit()
 
-      cy.get(".govuk-checkboxes__item").contains("View cases locked to me").click()
+      cy.get(".govuk-radios__item").contains("Cases locked to me").click()
       cy.contains("Apply filters").click()
 
       cy.findByText("Previous page").should("not.exist")
@@ -57,7 +53,7 @@ describe("Case list", () => {
     })
 
     it("Should be accessible", () => {
-      loginAndGoToUrl()
+      loginAndVisit()
       cy.injectAxe()
 
       // Wait for the page to fully load
@@ -70,7 +66,7 @@ describe("Case list", () => {
   context("when there are multiple cases", () => {
     it("Should be accessible", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
-      loginAndGoToUrl()
+      loginAndVisit()
       cy.injectAxe()
 
       // Wait for the page to fully load
@@ -81,7 +77,7 @@ describe("Case list", () => {
 
     it("Should display all the headings with sorting or not", () => {
       cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
-      loginAndGoToUrl()
+      loginAndVisit()
       cy.get("#defendant-name-sort").contains("Defendant name").should("have.attr", "href")
       cy.get("#court-date-sort").contains("Court date").should("have.attr", "href")
       cy.get("#court-name-sort").contains("Court name").should("have.attr", "href")
@@ -93,7 +89,7 @@ describe("Case list", () => {
 
     it("Should display multiple cases", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 50, force: "01" })
-      loginAndGoToUrl()
+      loginAndVisit()
 
       cy.findByText(`Case00000`).should("exist")
       cy.findByText(`Case00001`).should("exist")
@@ -102,20 +98,19 @@ describe("Case list", () => {
       cy.findByText(`Case00004`).should("exist")
 
       it("Should not show pagination buttons when there are 0 cases", () => {
-        loginAndGoToUrl()
+        loginAndVisit()
 
         cy.get(".moj-pagination__item").should("not.exist")
       })
 
       it("Should display appropriate pagination results when there are 0 cases", () => {
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard")
+        loginAndVisit()
 
         cy.get("p.moj-pagination__results").should("contain.text", "Showing 0 cases")
       })
 
       it("Should be accessible", () => {
-        loginAndGoToUrl()
+        loginAndVisit()
         cy.injectAxe()
 
         // Wait for the page to fully load
@@ -130,7 +125,7 @@ describe("Case list", () => {
         {
           errorStatus: "Resolved",
           resolutionTimestamp: new Date(),
-          errorResolvedBy: "Bichard01",
+          errorResolvedBy: "GeneralHandler",
           errorResolvedTimestamp: new Date(),
           orgForPoliceFilter: "01"
         },
@@ -138,7 +133,7 @@ describe("Case list", () => {
         { resolutionTimestamp: null, orgForPoliceFilter: "01" }
       ])
 
-      loginAndGoToUrl()
+      loginAndVisit()
 
       cy.get(`label[for="resolved"]`).click()
       cy.get("#search").contains("Apply filters").click()
@@ -156,7 +151,7 @@ describe("Case list", () => {
         { errorStatus: "Submitted", orgForPoliceFilter: "01" }
       ])
 
-      loginAndGoToUrl()
+      loginAndVisit()
 
       cy.get("#search").contains("Apply filters").click()
 
@@ -182,7 +177,7 @@ describe("Case list", () => {
             text: "System note 2"
           },
           {
-            user: "bichard01",
+            user: "BichardForce01",
             text: "Test note 1"
           },
           {
@@ -192,22 +187,22 @@ describe("Case list", () => {
         ],
         [
           {
-            user: "bichard01",
+            user: "BichardForce01",
             text: "Test note 2"
           },
           {
-            user: "bichard02",
+            user: "BichardForce02",
             text: "Test note 3"
           },
           {
-            user: "bichard01",
+            user: "BichardForce01",
             text: "Test note 4"
           }
         ]
       ]
       cy.task("insertCourtCasesWithNotes", { caseNotes: caseNotes, force: "01" })
 
-      loginAndGoToUrl()
+      loginAndVisit()
 
       cy.get("tr").not(":first").eq(0).get("td:nth-child(5)").contains(`Case00000`)
       cy.get("tr").not(":first").eq(0).get("td:nth-child(6)").should("be.empty")
@@ -218,7 +213,7 @@ describe("Case list", () => {
     it("Should be able to navigate to the case details page and back", () => {
       cy.task("insertMultipleDummyCourtCases", { numToInsert: 3, force: "01" })
 
-      loginAndGoToUrl()
+      loginAndVisit()
 
       cy.findByText("Defendant Name 0")
         .should("have.attr", "href")
@@ -248,7 +243,7 @@ describe("Case list", () => {
             text: "System note 2"
           },
           {
-            user: "bichard01",
+            user: "BichardForce01",
             text: "Test note 1"
           },
           {
@@ -258,22 +253,22 @@ describe("Case list", () => {
         ],
         [
           {
-            user: "bichard01",
+            user: "BichardForce01",
             text: "Test note 2"
           },
           {
-            user: "bichard02",
+            user: "BichardForce02",
             text: "Test note 3"
           },
           {
-            user: "bichard01",
+            user: "BichardForce01",
             text: "Test note 4"
           }
         ]
       ]
       cy.task("insertCourtCasesWithNotes", { caseNotes: caseNotes, force: "01" })
 
-      loginAndGoToUrl()
+      loginAndVisit()
 
       cy.get("tr").not(":first").eq(1).get("td:nth-child(6)").contains(`1 note`).should("exist").trigger("click")
       cy.contains(`Test note 1`).should("exist")
@@ -314,7 +309,7 @@ describe("Case list", () => {
       ]
       cy.task("insertTriggers", { caseId: 0, triggers })
 
-      loginAndGoToUrl()
+      loginAndVisit()
 
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100310 (2)")
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100322")

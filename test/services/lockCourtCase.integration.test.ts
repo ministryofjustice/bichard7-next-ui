@@ -21,7 +21,7 @@ jest.mock("services/queries/courtCasesByOrganisationUnitQuery")
 
 describe("lock court case", () => {
   let dataSource: DataSource
-  const lockedByName = "some user"
+  const lockedByName = "BichardForce04"
   const user = {
     username: lockedByName,
     visibleForces: ["36FPA1"],

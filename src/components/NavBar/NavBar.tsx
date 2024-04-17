@@ -1,5 +1,5 @@
 import { useRouter } from "next/router"
-import { useCustomStyles } from "../../../styles/customStyles"
+import { MojNavContainer } from "./NavBar.styles"
 
 interface NavItemProps {
   name: string
@@ -31,10 +31,9 @@ const NavItem: React.FC<NavItemProps> = ({ name, link, newTab }: NavItemProps) =
 }
 
 const NavBar: React.FC<NavBarProps> = ({ hasAccessToUserManagement, hasAccessToReports }) => {
-  const classes = useCustomStyles()
   return (
     <div className="moj-primary-navigation" role="navigation">
-      <div className={`${classes["max-width"]} moj-primary-navigation__container`}>
+      <MojNavContainer className={`moj-primary-navigation__container`}>
         <div className="moj-primary-navigation__nav">
           <nav className="moj-primary-navigation" aria-label="Primary navigation">
             <ul className="moj-primary-navigation__list">
@@ -45,7 +44,7 @@ const NavBar: React.FC<NavBarProps> = ({ hasAccessToUserManagement, hasAccessToR
             </ul>
           </nav>
         </div>
-      </div>
+      </MojNavContainer>
     </div>
   )
 }

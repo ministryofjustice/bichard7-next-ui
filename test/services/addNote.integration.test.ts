@@ -16,7 +16,7 @@ const existingCourtCasesDbObject = {
   orgForPoliceFilter: "36FPA1".padEnd(6, " "),
   errorId: 0
 }
-const currentUsername = "username"
+const currentUsername = "GeneralHandler"
 
 describe("addNote", () => {
   let dataSource: DataSource
@@ -64,7 +64,7 @@ describe("addNote", () => {
     await insertCourtCasesWithFields([
       {
         messageId: uuid(),
-        errorLockedByUsername: "DisplayPartialUser",
+        errorLockedByUsername: "BichardForce01",
         triggerLockedByUsername: currentUsername,
         ...existingCourtCasesDbObject
       }
@@ -86,8 +86,8 @@ describe("addNote", () => {
       {
         ...existingCourtCasesDbObject,
         messageId: uuid(),
-        errorLockedByUsername: "DisplayPartialUser",
-        triggerLockedByUsername: "another user"
+        errorLockedByUsername: "BichardForce01",
+        triggerLockedByUsername: "BichardForce02"
       }
     ])
 
