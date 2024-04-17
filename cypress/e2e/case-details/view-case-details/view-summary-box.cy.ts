@@ -1,7 +1,7 @@
 import CourtCase from "services/entities/CourtCase"
 import dummyAho from "../../../../test/test-data/error_list_aho.json"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
-import { defaultSetup } from "../../../support/helpers"
+import { loginAndVisit } from "../../../support/helpers"
 
 describe("View Court Case Details Summary Box", () => {
   const trigger: TestTrigger = {
@@ -32,15 +32,13 @@ describe("View Court Case Details Summary Box", () => {
   }
 
   before(() => {
-    defaultSetup()
     cy.task("clearCourtCases")
     cy.clearCookies()
   })
 
   it("displays the required fields", () => {
     insertCaseWithTriggerAndException()
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.contains("ASN")
     cy.contains("asn-value")

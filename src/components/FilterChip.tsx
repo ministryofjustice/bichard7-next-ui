@@ -1,6 +1,7 @@
-import type { Dispatch } from "react"
-import type { FilterAction, FilterState } from "types/CourtCaseFilter"
-import { useCustomStyles } from "../../styles/customStyles"
+import { Button } from "govuk-react"
+import { Dispatch } from "react"
+import { FilterAction, FilterState } from "types/CourtCaseFilter"
+import { ButtonAlt } from "./FilterChip.styles"
 
 interface Props {
   chipLabel: string
@@ -10,19 +11,33 @@ interface Props {
 }
 
 const FilterChip: React.FC<Props> = ({ chipLabel, dispatch, removeAction, state }: Props) => {
-  const classes = useCustomStyles()
-  const buttonClass = "moj-filter__tag " + (state === "Applied" ? classes["dark-grey-filter-tag"] : "")
+  if (state === "Applied") {
+    return (
+      <li>
+        <ButtonAlt
+          type="button"
+          className={"moj-filter__tag"}
+          onClick={() => dispatch(removeAction())}
+          style={{ cursor: "pointer" }}
+        >
+          <span className="govuk-visually-hidden">{"Remove this filter"}</span>
+          {chipLabel}
+        </ButtonAlt>
+      </li>
+    )
+  }
+
   return (
     <li>
-      <button
+      <Button
         type="button"
-        className={buttonClass}
+        className={"moj-filter__tag"}
         onClick={() => dispatch(removeAction())}
         style={{ cursor: "pointer" }}
       >
         <span className="govuk-visually-hidden">{"Remove this filter"}</span>
         {chipLabel}
-      </button>
+      </Button>
     </li>
   )
 }

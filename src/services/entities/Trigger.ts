@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import type { Relation } from "typeorm"
 import { AfterLoad, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
 import type { ResolutionStatus } from "types/ResolutionStatus"
@@ -13,8 +14,8 @@ export default class Trigger {
   @PrimaryColumn({ name: "trigger_id" })
   triggerId!: number
 
-  @Column({ name: "trigger_code" })
-  triggerCode!: string
+  @Column({ name: "trigger_code", type: "enum", enum: TriggerCode })
+  triggerCode!: TriggerCode
 
   @Column({ name: "error_id" })
   errorId!: number

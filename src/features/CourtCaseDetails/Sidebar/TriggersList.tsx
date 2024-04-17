@@ -8,46 +8,22 @@ import { sortBy } from "lodash"
 import { useRouter } from "next/router"
 import { encode } from "querystring"
 import { ChangeEvent, SyntheticEvent, useState } from "react"
-import { createUseStyles } from "react-jss"
+
 import type NavigationHandler from "types/NavigationHandler"
 import { triggersAreLockedByAnotherUser } from "utils/caseLocks"
 import Form from "../../../components/Form"
 import LockStatusTag from "../LockStatusTag"
 import Trigger from "./Trigger"
+import { LockStatus, MarkCompleteGridCol, SelectAllTriggersGridRow } from "./TriggersList.styles"
 
 interface Props {
   onNavigate: NavigationHandler
 }
 
-const useStyles = createUseStyles({
-  selectAllContainer: {
-    textAlign: "right",
-    paddingBottom: "20px",
-    "#select-all-action": {
-      cursor: "pointer",
-      fontSize: "1em"
-    }
-  },
-  markCompleteContainer: {
-    display: "flex",
-    justifyContent: "end",
-    "& #mark-triggers-complete-button": {
-      marginBottom: 0
-    }
-  },
-  lockStatusContainer: {
-    paddingTop: "20px",
-    display: "flex",
-    justifyContent: "flex-end",
-    marginBottom: "0"
-  }
-})
-
 const TriggersList = ({ onNavigate }: Props) => {
   const currentUser = useCurrentUser()
   const { courtCase } = useCourtCase()
 
-  const classes = useStyles()
   const [selectedTriggerIds, setSelectedTriggerIds] = useState<number[]>([])
   const { basePath, query } = useRouter()
 
@@ -84,20 +60,26 @@ const TriggersList = ({ onNavigate }: Props) => {
     // Delete the `courtCaseId` param, which comes from the URL dynamic router, not the query string
     const filteredQuery = Object.fromEntries(Object.entries(resolveQuery).filter(([key]) => key !== "courtCaseId"))
 
-    return `${basePath}/court-cases/${courtCase.errorId}?${encode(filteredQuery)}`
+    const url = `${basePath}/court-cases/${courtCase.errorId}?${encode(filteredQuery)}`
+
+    if (url.slice(-1) === "&") {
+      return url.slice(0, -1)
+    } else {
+      return url
+    }
   }
 
   return (
     <Form method="post" action={resolveTriggerUrl(selectedTriggerIds)} csrfToken={csrfToken}>
       {triggers.length === 0 && "There are no triggers for this case."}
       <ConditionalRender isRendered={hasUnresolvedTriggers && !triggersLockedByAnotherUser}>
-        <GridRow id={"select-all-triggers"} className={classes.selectAllContainer}>
+        <SelectAllTriggersGridRow id={"select-all-triggers"}>
           <GridCol>
             <ActionLink onClick={selectAll} id="select-all-action">
               {"Select all"}
             </ActionLink>
           </GridCol>
-        </GridRow>
+        </SelectAllTriggersGridRow>
       </ConditionalRender>
       {triggers.map((trigger, index) => (
         <Trigger
@@ -112,20 +94,20 @@ const TriggersList = ({ onNavigate }: Props) => {
 
       <ConditionalRender isRendered={hasTriggers && !triggersLockedByAnotherUser}>
         <GridRow>
-          <GridCol className={classes.markCompleteContainer}>
+          <MarkCompleteGridCol>
             <Button type="submit" disabled={selectedTriggerIds.length === 0} id="mark-triggers-complete-button">
               {"Mark trigger(s) as complete"}
             </Button>
-          </GridCol>
+          </MarkCompleteGridCol>
         </GridRow>
       </ConditionalRender>
-      <div className={classes.lockStatusContainer}>
+      <LockStatus>
         <LockStatusTag
           isRendered={triggers.length > 0}
           resolutionStatus={courtCase.triggerStatus}
           lockName="Triggers"
         />
-      </div>
+      </LockStatus>
     </Form>
   )
 }

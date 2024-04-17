@@ -1,35 +1,27 @@
 import SurveyFeedback from "services/entities/SurveyFeedback"
+import User from "services/entities/User"
+import getDataSource from "services/getDataSource"
 import insertSurveyFeedback from "services/insertSurveyFeedback"
 import { DataSource, Repository } from "typeorm"
 import { isError } from "types/Result"
 import { SurveyFeedbackType, SwitchingFeedbackResponse } from "types/SurveyFeedback"
-import getDataSource from "../../src/services/getDataSource"
 import getLastSwitchingFormSubmission from "../../src/services/getLastSwitchingFormSubmission"
 import deleteFromEntity from "../utils/deleteFromEntity"
-import { deleteUsers, insertUsersWithOverrides } from "../utils/manageUsers"
+import { createUser } from "../utils/manageUsers"
 
 describe("getLastSwitchingFormSubmission", () => {
   let dataSource: DataSource
-  const bichardUserId = 0
-  const supervisorUserId = 1
+  let bichardUser: User | null
+  let supervisorUser: User | null
 
   beforeAll(async () => {
     dataSource = await getDataSource()
-    await deleteUsers()
-
-    await insertUsersWithOverrides([
-      { id: bichardUserId, username: `bichard01`, email: `bichard01@example.com` },
-      { id: supervisorUserId, username: `supervisor1`, email: `supervisor1@example.com` }
-    ])
+    bichardUser = await createUser("BichardForce01")
+    supervisorUser = await createUser("Supervisor")
   })
 
   beforeEach(async () => {
     await deleteFromEntity(SurveyFeedback)
-  })
-
-  afterAll(async () => {
-    await deleteUsers()
-    await dataSource.destroy()
   })
 
   it("Should return null when there is no record submitted", async () => {
@@ -38,14 +30,18 @@ describe("getLastSwitchingFormSubmission", () => {
     expect(result).toBeNull()
   })
 
+  afterAll(async () => {
+    await dataSource.destroy()
+  })
+
   it("Should return last submission date when there's a record for user", async () => {
     await insertSurveyFeedback(dataSource, {
       feedbackType: SurveyFeedbackType.Switching,
       response: { skipped: true } as SwitchingFeedbackResponse,
-      userId: bichardUserId
+      userId: bichardUser?.id
     } as SurveyFeedback)
 
-    const result = await getLastSwitchingFormSubmission(dataSource, bichardUserId)
+    const result = await getLastSwitchingFormSubmission(dataSource, bichardUser!.id)
 
     expect(isError(result)).toBe(false)
     expect(result).not.toBeNull()
@@ -60,13 +56,13 @@ describe("getLastSwitchingFormSubmission", () => {
         insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.Switching,
           response: { skipped: true } as SwitchingFeedbackResponse,
-          userId: bichardUserId,
+          userId: bichardUser?.id,
           createdAt: new Date(dateString)
         } as SurveyFeedback)
       )
     )
 
-    const result = await getLastSwitchingFormSubmission(dataSource, bichardUserId)
+    const result = await getLastSwitchingFormSubmission(dataSource, bichardUser!.id)
 
     expect(isError(result)).toBe(false)
     expect(result).not.toBeNull()
@@ -81,7 +77,7 @@ describe("getLastSwitchingFormSubmission", () => {
         insertSurveyFeedback(dataSource, {
           feedbackType: SurveyFeedbackType.Switching,
           response: { skipped: true } as SwitchingFeedbackResponse,
-          userId: bichardUserId,
+          userId: bichardUser?.id,
           createdAt: new Date(dateString)
         } as SurveyFeedback)
       )
@@ -90,11 +86,11 @@ describe("getLastSwitchingFormSubmission", () => {
     await insertSurveyFeedback(dataSource, {
       feedbackType: SurveyFeedbackType.Switching,
       response: { skipped: true } as SwitchingFeedbackResponse,
-      userId: supervisorUserId,
+      userId: supervisorUser?.id,
       createdAt: new Date("2023-09-20T23:23:23")
     } as SurveyFeedback)
 
-    const result = await getLastSwitchingFormSubmission(dataSource, bichardUserId)
+    const result = await getLastSwitchingFormSubmission(dataSource, bichardUser!.id)
 
     expect(isError(result)).toBe(false)
     expect(result).not.toBeNull()
@@ -104,7 +100,7 @@ describe("getLastSwitchingFormSubmission", () => {
   it("Should return error if database operation fails", async () => {
     jest.spyOn(Repository.prototype, "findOne").mockRejectedValue(new Error("dummy error"))
 
-    const result = await getLastSwitchingFormSubmission(dataSource, bichardUserId)
+    const result = await getLastSwitchingFormSubmission(dataSource, bichardUser!.id)
 
     expect(isError(result)).toBe(true)
     expect((result as Error).message).toBe("dummy error")

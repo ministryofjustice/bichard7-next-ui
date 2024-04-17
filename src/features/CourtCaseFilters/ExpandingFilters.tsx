@@ -1,38 +1,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import ConditionalDisplay from "components/ConditionalDisplay"
+import ConditionalRender from "components/ConditionalRender"
 import { ReactNode, useState } from "react"
-import { createUseStyles } from "react-jss"
-import { blue } from "../../utils/colours"
-
-const useStyles = createUseStyles({
-  legendColour: {
-    color: blue
-  },
-  legendContainer: {
-    marginTop: "8px"
-  },
-  iconButton: {
-    border: "3px solid transparent",
-    backgroundColor: "transparent",
-    "&:active": {
-      backgroundColor: "#b0b4b6"
-    }
-  },
-  container: {
-    marginLeft: "-10px",
-    width: "fit-content",
-    paddingRight: "10px",
-    display: "flex",
-    backgroundColor: "transparent",
-    "&:hover": {
-      backgroundColor: "#b0b4b6"
-    },
-    "&:active": {
-      backgroundColor: "#b0b4b6"
-    }
-  }
-})
+import { Container, IconButton, Legend, LegendContainer } from "./ExpandingFilters.styles"
 
 const UpArrow: React.FC = () => (
   <svg width={18} height={10} viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,30 +23,26 @@ interface Props {
 }
 
 const ExpandingFilters: React.FC<Props> = ({ filterName, classNames, children }: Props) => {
-  const [caseTypeIsVisible, setCaseTypeVisible] = useState(true)
-  const classes = useStyles()
+  const [isVisible, setVisible] = useState(true)
+
   return (
     <fieldset className="govuk-fieldset">
-      <div
-        className={classes.container}
+      <Container
+        className={"container"}
         onClick={() => {
-          setCaseTypeVisible(!caseTypeIsVisible)
+          setVisible(!isVisible)
         }}
       >
-        <button
-          type="button"
-          className={`${classes.iconButton} ${classNames}`}
-          aria-label={`${filterName} filter options`}
-        >
-          {caseTypeIsVisible ? <UpArrow /> : <DownArrow />}
-        </button>
-        <div className={classes.legendContainer}>
+        <IconButton type="button" className={`icon-button ${classNames}`} aria-label={`${filterName} filter options`}>
+          {isVisible ? <UpArrow /> : <DownArrow />}
+        </IconButton>
+        <LegendContainer className={"legend-container"}>
           <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
-            <div className={classes.legendColour}>{filterName}</div>
+            <Legend>{filterName}</Legend>
           </legend>
-        </div>
-      </div>
-      <ConditionalDisplay isDisplayed={caseTypeIsVisible}>{children}</ConditionalDisplay>
+        </LegendContainer>
+      </Container>
+      <ConditionalRender isRendered={isVisible}>{children}</ConditionalRender>
     </fieldset>
   )
 }

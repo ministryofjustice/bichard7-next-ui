@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import FilterChip from "components/FilterChip"
 import ConditionalRender from "components/ConditionalRender"
+import FilterChip from "components/FilterChip"
+import { Link } from "govuk-react"
 import { Dispatch } from "react"
+import { LockedState, Reason } from "types/CaseListQueryParams"
 import { Filter, FilterAction, FilterState } from "types/CourtCaseFilter"
 import { anyFilterChips } from "utils/filterChips"
-import FilterChipRow from "./FilterChipRow"
 import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
-import { Link } from "govuk-react"
-import { createUseStyles } from "react-jss"
 import FilterChipContainer from "./FilterChipContainer"
+import FilterChipRow from "./FilterChipRow"
+import { HeaderRow } from "./FilterChipSection.styles"
 
 interface Props {
   state: Filter
@@ -18,17 +19,6 @@ interface Props {
   placeholderMessage?: string
 }
 
-const useStyles = createUseStyles({
-  headerRow: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    "& div:nth-child(1)": {
-      flex: 1
-    }
-  }
-})
-
 const FilterChipSection: React.FC<Props> = ({
   state,
   dispatch,
@@ -36,14 +26,14 @@ const FilterChipSection: React.FC<Props> = ({
   marginTop,
   placeholderMessage
 }: Props) => {
-  const classes = useStyles()
   const dateRangeLabel = `${formatStringDateAsDisplayedDate(state.dateFrom.value)} - ${formatStringDateAsDisplayedDate(
     state.dateTo.value
   )}`
+
   return (
     <>
       <ConditionalRender isRendered={anyFilterChips(state, sectionState)}>
-        <div className={classes.headerRow}>
+        <HeaderRow className={`header-row`}>
           <div>
             <h2
               className={"govuk-heading-m govuk-!-margin-bottom-0" + (marginTop ? " govuk-!-margin-top-2" : "")}
@@ -54,7 +44,7 @@ const FilterChipSection: React.FC<Props> = ({
               {"Clear filters"}
             </Link>
           </div>
-        </div>
+        </HeaderRow>
 
         <FilterChipRow
           chipLabel={state.defendantNameSearch.label!}
@@ -113,23 +103,23 @@ const FilterChipSection: React.FC<Props> = ({
         </FilterChipContainer>
 
         <ConditionalRender
-          isRendered={state.reasonFilter.filter((reasonFilter) => reasonFilter.state === sectionState).length > 0}
+          isRendered={
+            !!state.reasonFilter &&
+            state.reasonFilter?.value !== Reason.All &&
+            state.reasonFilter?.state === sectionState
+          }
         >
           <h3 className="govuk-heading-s govuk-!-margin-bottom-0">{"Reason"}</h3>
           <ul className="moj-filter-tags govuk-!-margin-bottom-0">
-            {state.reasonFilter
-              .filter((reasonFilter) => reasonFilter.state === sectionState)
-              .map((reasonFilter) => (
-                <FilterChip
-                  key={reasonFilter.value}
-                  chipLabel={reasonFilter.value}
-                  dispatch={dispatch}
-                  removeAction={() => {
-                    return { method: "remove", type: "reason", value: reasonFilter.value }
-                  }}
-                  state={reasonFilter.state}
-                />
-              ))}
+            <FilterChip
+              key={state.reasonFilter.value}
+              chipLabel={state.reasonFilter.value ?? ""}
+              dispatch={dispatch}
+              removeAction={() => {
+                return { method: "remove", type: "reason", value: state.reasonFilter.value } as FilterAction
+              }}
+              state={state.reasonFilter.state ?? "Applied"}
+            />
           </ul>
         </ConditionalRender>
 
@@ -198,31 +188,18 @@ const FilterChipSection: React.FC<Props> = ({
         />
 
         <FilterChipRow
-          chipLabel={state.lockedFilter.label!}
+          chipLabel={state.lockedStateFilter.label!}
           condition={
-            state.lockedFilter.value !== undefined &&
-            state.lockedFilter.label !== undefined &&
-            state.lockedFilter.state === sectionState
+            state.lockedStateFilter.value !== undefined &&
+            state.lockedStateFilter.label !== undefined &&
+            state.lockedStateFilter.state === sectionState &&
+            state.lockedStateFilter?.value !== LockedState.All
           }
           dispatch={dispatch}
-          type="locked"
+          type="lockedState"
           label="Locked state"
-          state={state.lockedFilter.state || sectionState}
-          value={state.lockedFilter.value!}
-        />
-
-        <FilterChipRow
-          chipLabel={state.myCasesFilter.label!}
-          condition={
-            state.myCasesFilter.value !== undefined &&
-            state.myCasesFilter.label !== undefined &&
-            state.myCasesFilter.state === sectionState
-          }
-          dispatch={dispatch}
-          type="myCases"
-          label="My cases"
-          state={state.myCasesFilter.state || sectionState}
-          value={state.myCasesFilter.value!}
+          state={state.lockedStateFilter.state || sectionState}
+          value={state.lockedStateFilter.value!}
         />
       </ConditionalRender>
       <ConditionalRender isRendered={!anyFilterChips(state, sectionState) && placeholderMessage !== undefined}>

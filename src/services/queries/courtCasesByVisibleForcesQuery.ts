@@ -1,13 +1,11 @@
+import { DatabaseQuery } from "types/DatabaseQuery"
 import CourtCase from "../entities/CourtCase"
-import { Brackets, In, Like, SelectQueryBuilder, UpdateQueryBuilder, WhereExpressionBuilder } from "typeorm"
+import { Brackets, In, Like } from "typeorm"
 
 const removeLeadingZeroes = (code: string): string =>
   code.length > 2 && code.startsWith("0") ? code.substring(1) : code
 
-const courtCasesByVisibleForcesQuery = (
-  query: SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> | WhereExpressionBuilder,
-  forces: string[]
-): SelectQueryBuilder<CourtCase> | UpdateQueryBuilder<CourtCase> | WhereExpressionBuilder => {
+const courtCasesByVisibleForcesQuery = <T extends DatabaseQuery<CourtCase>>(query: T, forces: string[]): T => {
   query.orWhere(
     new Brackets((qb) => {
       if (forces.length < 1) {

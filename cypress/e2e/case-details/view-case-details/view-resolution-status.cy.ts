@@ -1,29 +1,7 @@
-import User from "../../../../src/services/entities/User"
-import hashedPassword from "../../../fixtures/hashedPassword"
-
 describe("View resolution status", () => {
-  before(() => {
-    cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "Bichard01",
-          visibleForces: ["01"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ] as Partial<User>[],
-      userGroups: ["B7NewUI_grp"]
-    })
-    cy.task("insertIntoUserGroup", { emailAddress: "bichard01@example.com", groupName: "B7TriggerHandler_grp" })
-    cy.clearCookies()
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
+    cy.loginAs("TriggerHandler")
   })
 
   describe("Resolution status badge", () => {
@@ -40,7 +18,6 @@ describe("View resolution status", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
 
       cy.get(".moj-badge-submitted").contains("Submitted").should("exist").should("be.visible")
@@ -60,7 +37,6 @@ describe("View resolution status", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
 
       cy.get(".moj-badge-resolved").contains("Resolved").should("exist").should("be.visible")
@@ -89,8 +65,6 @@ describe("View resolution status", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
-
       cy.visit("/bichard/court-cases/0")
       cy.get(".moj-badge-resolved").should("not.exist")
 
@@ -111,7 +85,6 @@ describe("View resolution status", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
 
       cy.get(".moj-badge-resolved").contains("Resolved").should("exist").should("be.visible")
@@ -131,7 +104,6 @@ describe("View resolution status", () => {
         }
       ])
 
-      cy.login("bichard01@example.com", "password")
       cy.visit("/bichard/court-cases/0")
 
       cy.get(".moj-badge-resolved").contains("Resolved").should("exist").should("be.visible")

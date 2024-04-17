@@ -1,38 +1,22 @@
 import ExceptionHO100304 from "../../../../test/test-data/HO100304.json"
 import NextHearingDateExceptions from "../../../../test/test-data/NextHearingDateExceptions.json"
-import hashedPassword from "../../../fixtures/hashedPassword"
 
 describe("View offence matching exception prompts", () => {
   before(() => {
     cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "Bichard01",
-          visibleForces: ["001"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
-    })
+    cy.loginAs("GeneralHandler")
   })
 
   it("Should not display an error prompt when HO100304 is not raised", () => {
-    cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
         hearingOutcome: NextHearingDateExceptions.hearingOutcomeXml,
         errorCount: 1,
-        errorLockedByUsername: "Bichard01"
+        errorLockedByUsername: "GeneralHandler"
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
     cy.visit(`/bichard/court-cases/0`)
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
@@ -43,17 +27,15 @@ describe("View offence matching exception prompts", () => {
 
   // TODO: re-enable this for offence matching
   it.skip("Should display an error prompt when HO100304 is raised", () => {
-    cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
         hearingOutcome: ExceptionHO100304.hearingOutcomeXml,
         errorCount: 1,
-        errorLockedByUsername: "Bichard01"
+        errorLockedByUsername: "GeneralHandler"
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
     cy.visit(`/bichard/court-cases/0`)
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()

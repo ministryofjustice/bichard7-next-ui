@@ -1,20 +1,11 @@
-import { createUseStyles } from "react-jss"
-import { textSecondary } from "../utils/colours"
+import { ErrorPrompt } from "./ErrorPromptMessage.styles"
 
 type Props = {
   message?: string
 }
 
-const useStyles = createUseStyles({
-  errorPromptMessage: {
-    color: textSecondary
-  }
-})
-
 const ErrorPromptMessage = ({ message }: Props) => {
-  const classes = useStyles()
-
-  return <div className={`error-prompt ${classes.errorPromptMessage}`}>{message}</div>
+  return <ErrorPrompt className={`error-prompt`}>{message}</ErrorPrompt>
 }
 
 export default ErrorPromptMessage

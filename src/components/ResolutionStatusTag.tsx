@@ -1,18 +1,8 @@
-import styled, { StyledComponentPropsWithRef } from "styled-components"
-import { TICK_ICON_URL } from "../utils/icons"
 import Image from "next/image"
+import { StyledComponentPropsWithRef } from "styled-components"
 import { ResolutionStatus } from "../types/ResolutionStatus"
-
-const ResolutionStatusTagContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: 15px;
-
-  & > img {
-    margin-right: 5px;
-    margin-left: 15px;
-  }
-`
+import { TICK_ICON_URL } from "../utils/icons"
+import { ResolutionStatusTagContainer } from "./ResolutionStatusTag.styles"
 
 interface StatusTagProps extends StyledComponentPropsWithRef<typeof ResolutionStatusTagContainer> {
   itemName: string

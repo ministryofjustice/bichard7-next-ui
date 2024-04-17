@@ -3,8 +3,7 @@ import {
   confirmCaseNotDisplayed,
   confirmReasonDisplayed,
   confirmReasonNotDisplayed,
-  defaultSetup,
-  loginAndGoToUrl
+  loginAndVisit
 } from "../../support/helpers"
 
 describe("Shows relevant information to a user's role", () => {
@@ -12,12 +11,6 @@ describe("Shows relevant information to a user's role", () => {
     {
       orgForPoliceFilter: "011111",
       errorId: 0,
-      exceptions: [],
-      triggers: []
-    },
-    {
-      orgForPoliceFilter: "011111",
-      errorId: 1,
       exceptions: [
         {
           code: "HO100310",
@@ -32,7 +25,9 @@ describe("Shows relevant information to a user's role", () => {
     },
     {
       orgForPoliceFilter: "011111",
-      errorId: 2,
+      errorId: 1,
+      errorCount: 0,
+      errorReason: "",
       exceptions: [],
       triggers: [
         {
@@ -51,7 +46,7 @@ describe("Shows relevant information to a user's role", () => {
     },
     {
       orgForPoliceFilter: "011111",
-      errorId: 3,
+      errorId: 2,
       exceptions: [
         {
           code: "HO100310",
@@ -79,17 +74,15 @@ describe("Shows relevant information to a user's role", () => {
     }
   ]
 
-  before(() => {
-    defaultSetup()
-  })
-
   beforeEach(() => {
     cy.task(
       "insertCourtCasesWithFields",
       mixedReasonCases.map((courtCase) => {
         return {
           errorId: courtCase.errorId,
-          orgForPoliceFilter: courtCase.orgForPoliceFilter
+          orgForPoliceFilter: courtCase.orgForPoliceFilter,
+          errorCount: courtCase.errorCount,
+          errorReason: courtCase.errorReason
         }
       })
     )
@@ -108,51 +101,47 @@ describe("Shows relevant information to a user's role", () => {
   })
 
   it("Shouldn't show cases to a user with no groups", () => {
-    loginAndGoToUrl("nogroups@example.com")
+    loginAndVisit("NoGroups")
 
     cy.findByText("There are no court cases to show").should("exist")
   })
 
   it("Should only show cases with triggers to a trigger handler", () => {
-    loginAndGoToUrl("triggerhandler@example.com")
+    loginAndVisit("TriggerHandler")
 
+    confirmCaseDisplayed("Case00001")
     confirmCaseDisplayed("Case00002")
-    confirmCaseDisplayed("Case00003")
 
     confirmCaseNotDisplayed("Case00000")
-    confirmCaseNotDisplayed("Case00001")
   })
 
   it("Should only show cases with exceptions to an exception handler", () => {
-    loginAndGoToUrl("exceptionhandler@example.com")
+    loginAndVisit("ExceptionHandler")
 
-    confirmCaseDisplayed("Case00001")
-    confirmCaseDisplayed("Case00003")
+    confirmCaseDisplayed("Case00000")
+    confirmCaseDisplayed("Case00002")
 
-    confirmCaseNotDisplayed("Case00000")
-    confirmCaseNotDisplayed("Case00002")
+    confirmCaseNotDisplayed("Case00001")
   })
 
   it("Should show all cases to a general handler", () => {
-    loginAndGoToUrl("generalhandler@example.com")
+    loginAndVisit("GeneralHandler")
 
     confirmCaseDisplayed("Case00000")
     confirmCaseDisplayed("Case00001")
     confirmCaseDisplayed("Case00002")
-    confirmCaseDisplayed("Case00003")
   })
 
   it("Should show all cases to a supervisor", () => {
-    loginAndGoToUrl("supervisor@example.com")
+    loginAndVisit("Supervisor")
 
     confirmCaseDisplayed("Case00000")
     confirmCaseDisplayed("Case00001")
     confirmCaseDisplayed("Case00002")
-    confirmCaseDisplayed("Case00003")
   })
 
   it("Should only show triggers in the reason column to a trigger handler", () => {
-    loginAndGoToUrl("triggerhandler@example.com")
+    loginAndVisit("TriggerHandler")
 
     confirmReasonDisplayed("TRPR0010")
     confirmReasonDisplayed("TRPR0011")
@@ -162,7 +151,7 @@ describe("Shows relevant information to a user's role", () => {
   })
 
   it("Should only show exceptions in the reason column to an exception handler", () => {
-    loginAndGoToUrl("exceptionhandler@example.com")
+    loginAndVisit("ExceptionHandler")
 
     confirmReasonNotDisplayed("TRPR0010")
     confirmReasonNotDisplayed("TRPR0011")
@@ -172,7 +161,7 @@ describe("Shows relevant information to a user's role", () => {
   })
 
   it("Should show both triggers and exceptions in the reason column to a general handler", () => {
-    loginAndGoToUrl("generalhandler@example.com")
+    loginAndVisit("GeneralHandler")
 
     confirmReasonDisplayed("TRPR0010")
     confirmReasonDisplayed("TRPR0011")

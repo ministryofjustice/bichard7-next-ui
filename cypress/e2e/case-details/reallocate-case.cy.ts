@@ -1,26 +1,8 @@
-import User from "services/entities/User"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import canReallocateTestData from "../../fixtures/canReallocateTestData.json"
-import hashedPassword from "../../fixtures/hashedPassword"
-import { clickTab } from "../../support/helpers"
+import { clickTab, loginAndVisit } from "../../support/helpers"
 
 describe("Case details", () => {
-  const defaultUsers: Partial<User>[] = Array.from(Array(4)).map((_value, idx) => {
-    return {
-      username: `Bichard0${idx}`,
-      visibleForces: [`0${idx}`],
-      forenames: "Bichard Test User",
-      surname: `0${idx}`,
-      email: `bichard0${idx}@example.com`,
-      password: hashedPassword
-    }
-  })
-
-  before(() => {
-    cy.task("clearUsers")
-    cy.task("insertUsers", { users: defaultUsers, userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"] })
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
   })
@@ -37,9 +19,7 @@ describe("Case details", () => {
     ]
     cy.task("insertTriggers", { caseId: 0, triggers })
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard")
+    loginAndVisit()
 
     cy.findByText("NAME Defendant").click()
 
@@ -56,8 +36,7 @@ describe("Case details", () => {
     cy.get("H1").should("have.text", "Case list")
     cy.contains("NAME Defendant").should("not.exist")
 
-    cy.login("bichard03@example.com", "password")
-    cy.visit("/bichard")
+    loginAndVisit("BichardForce03")
     cy.findByText("NAME Defendant").click()
 
     clickTab("Notes")
@@ -65,9 +44,9 @@ describe("Case details", () => {
     cy.get("table tbody tr:visible").should("have.length", 3)
     cy.get("table tbody tr:visible").should(
       "contain",
-      "Bichard01: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
+      "GeneralHandler: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
     )
-    cy.get("table tbody tr:visible").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
+    cy.get("table tbody tr:visible").should("contain", "GeneralHandler: Case reallocated to new force owner: 03YZ00")
     cy.get("table tbody tr:visible").should("contain", "This is a dummy note")
   })
 
@@ -83,9 +62,7 @@ describe("Case details", () => {
     ]
     cy.task("insertTriggers", { caseId: 0, triggers })
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard")
+    loginAndVisit()
 
     cy.findByText("NAME Defendant").click()
 
@@ -100,8 +77,7 @@ describe("Case details", () => {
     cy.get("H1").should("have.text", "Case list")
     cy.contains("NAME Defendant").should("not.exist")
 
-    cy.login("bichard03@example.com", "password")
-    cy.visit("/bichard")
+    loginAndVisit("BichardForce03")
     cy.findByText("NAME Defendant").click()
 
     clickTab("Notes")
@@ -109,9 +85,9 @@ describe("Case details", () => {
     cy.get("table tbody tr:visible").should("have.length", 2)
     cy.get("table tbody tr:visible").should(
       "contain",
-      "Bichard01: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
+      "GeneralHandler: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
     )
-    cy.get("table tbody tr:visible").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
+    cy.get("table tbody tr:visible").should("contain", "GeneralHandler: Case reallocated to new force owner: 03YZ00")
   })
 
   it("Should not accept more than 2000 characters in note text field", () => {
@@ -126,9 +102,7 @@ describe("Case details", () => {
     ]
     cy.task("insertTriggers", { caseId: 0, triggers })
 
-    cy.login("bichard01@example.com", "password")
-
-    cy.visit("/bichard")
+    loginAndVisit()
 
     cy.findByText("NAME Defendant").click()
 
@@ -148,8 +122,7 @@ describe("Case details", () => {
     cy.get("H1").should("have.text", "Case list")
     cy.contains("NAME Defendant").should("not.exist")
 
-    cy.login("bichard03@example.com", "password")
-    cy.visit("/bichard")
+    loginAndVisit("BichardForce03")
     cy.findByText("NAME Defendant").click()
 
     clickTab("Notes")
@@ -157,16 +130,16 @@ describe("Case details", () => {
     cy.get("table tbody tr:visible").should("have.length", 3)
     cy.get("table tbody tr:visible").should(
       "contain",
-      "Bichard01: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
+      "GeneralHandler: Portal Action: Update Applied. Element: forceOwner. New Value: 03"
     )
-    cy.get("table tbody tr:visible").should("contain", "Bichard01: Case reallocated to new force owner: 03YZ00")
+    cy.get("table tbody tr:visible").should("contain", "GeneralHandler: Case reallocated to new force owner: 03YZ00")
     cy.get("table tbody tr:visible").should("not.contain", "a".repeat(2001))
     cy.get("table tbody tr:visible").should("contain", "a".repeat(1010))
   })
 
   it("Should return 404 for a case that this user can not see", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "02" }])
-    cy.login("bichard01@example.com", "password")
+    cy.loginAs("GeneralHandler")
 
     cy.request({
       failOnStatusCode: false,
@@ -177,7 +150,7 @@ describe("Case details", () => {
   })
 
   it("Should return 404 for a case that does not exist", () => {
-    cy.login("bichard01@example.com", "password")
+    cy.loginAs("GeneralHandler")
 
     cy.request({
       failOnStatusCode: false,
@@ -199,13 +172,12 @@ describe("Case details", () => {
             orgForPoliceFilter: "01",
             triggerStatus: triggers,
             errorStatus: exceptions,
-            triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "Bichard03" : null,
-            errorLockedByUsername: exceptionLockedByAnotherUser ? "Bichard03" : null
+            triggersLockedByAnotherUser: triggersLockedByAnotherUser ? "BichardForce03" : null,
+            errorLockedByUsername: exceptionLockedByAnotherUser ? "BichardForce03" : null
           }
         ])
 
-        cy.login("bichard01@example.com", "password")
-        cy.visit("/bichard/court-cases/0")
+        loginAndVisit("/bichard/court-cases/0")
 
         cy.get("button.b7-reallocate-button").should(canReallocate ? "exist" : "not.exist")
 
@@ -233,9 +205,8 @@ describe("Case details", () => {
       }
     ]
     cy.task("insertTriggers", { caseId: 0, triggers })
-    cy.login("bichard01@example.com", "password")
 
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get(".govuk-tag:visible")
       .contains(
@@ -272,8 +243,7 @@ describe("Case details", () => {
       force: "01"
     })
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
     cy.get("button").contains("Reallocate Case").click()
 
     cy.contains("Another User2")
@@ -296,8 +266,7 @@ describe("Case details", () => {
       force: "01"
     })
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
     cy.get("button").contains("Reallocate Case").click()
 
     cy.contains("Another User")
@@ -322,8 +291,7 @@ describe("Case details", () => {
       force: "01"
     })
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
     cy.get("button").contains("Reallocate Case").click()
 
     cy.contains("Another User2")
@@ -350,8 +318,7 @@ describe("Case details", () => {
       force: "01"
     })
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
     cy.get("button").contains("Reallocate Case").click()
     cy.get("button").contains("show more").click()
 

@@ -7,10 +7,9 @@ import axios from "axios"
 import { BadgeColours } from "components/Badge"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
-import { ReactiveLinkButton } from "components/LinkButton"
-import { HintText, Input, Label, Table } from "govuk-react"
+import { SaveLinkButton } from "components/LinkButton"
+import { Table } from "govuk-react"
 import React, { useCallback, useEffect, useState } from "react"
-import { createUseStyles } from "react-jss"
 import Asn from "services/Asn"
 import { findExceptions } from "types/ErrorMessages"
 import { formatDisplayedDate } from "utils/formattedDate"
@@ -20,31 +19,14 @@ import EditableFieldTableRow from "../../../../components/EditableFields/Editabl
 import { useCourtCase } from "../../../../context/CourtCaseContext"
 import { AddressCell } from "./AddressCell"
 import { BailConditions } from "./BailConditions"
+import { AnsInput, DefendantDetailTable } from "./DefendantDetails.styles"
 import { TableRow } from "./TableRow"
 
 interface DefendantDetailsProps {
   stopLeavingFn: (newValue: boolean) => void
 }
 
-const useStyles = createUseStyles({
-  wrapper: {
-    "& td": {
-      width: "50%"
-    }
-  },
-
-  asnInput: {
-    width: "15rem"
-  },
-
-  "save-button": {
-    marginTop: "0.94rem",
-    marginBottom: 0
-  }
-})
-
 export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
-  const classes = useStyles()
   const { courtCase, amendments, amend } = useCourtCase()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
   const asnSystemErrorExceptionPrompt = findExceptions(
@@ -124,7 +106,7 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
   const isAsnEditable = courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
 
   return (
-    <div className={`Defendant-details-table ${classes.wrapper}`}>
+    <DefendantDetailTable className={`Defendant-details-table`}>
       <Table>
         {asnSystemErrorExceptionPrompt ? (
           <ExceptionFieldTableRow
@@ -143,23 +125,19 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
             label="ASN"
             hasExceptions={isAsnEditable}
             isEditable={isAsnEditable}
+            inputLabel={"Enter the ASN"}
+            // hintText={`Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 \
+            // digits / 1 check letter\nExample: 22 49AB 49 1234 C`}
+            hintText="Long form ASN"
           >
-            <Label>{"Enter the ASN"}</Label>
-            <HintText>{"Long form ASN"}</HintText>
-            {/* <HintText>
-              {
-                "Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 digits / 1 check letter "
-              }
-            </HintText>
-            <HintText>{"Example: 22 49AB 49 1234 C"}</HintText> */}
             <div className={showError() ? `${asnFormGroupError}` : ""}>
               {showError() && (
                 <p id="event-name-error" className="govuk-error-message">
                   <span className="govuk-visually-hidden">{"Error:"}</span> {"Invalid ASN format"}
                 </p>
               )}
-              <Input
-                className={`${classes.asnInput}`}
+              <AnsInput
+                className={`asn-input`}
                 id={"asn"}
                 name={"asn"}
                 onChange={handleAsnChange}
@@ -167,14 +145,7 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
                 error={!isValidAsn}
               />
             </div>
-            <ReactiveLinkButton
-              id={"save-asn"}
-              className={classes["save-button"]}
-              onClick={handleAsnSave}
-              disabled={isSaveAsnBtnDisabled()}
-            >
-              {"Save correction"}
-            </ReactiveLinkButton>
+            <SaveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()} />
           </EditableFieldTableRow>
         )}
 
@@ -201,6 +172,6 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
         bailReason={defendant.ReasonForBailConditions}
         offences={defendant.Offence}
       />
-    </div>
+    </DefendantDetailTable>
   )
 }

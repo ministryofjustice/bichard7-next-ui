@@ -1,3 +1,4 @@
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
 import fs from "fs"
 import amendCourtCase from "services/amendCourtCase"
 import CourtCase from "services/entities/CourtCase"
@@ -10,7 +11,6 @@ import createForceOwner from "utils/createForceOwner"
 import getCourtCase from "../../src/services/getCourtCase"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { getDummyCourtCase, insertCourtCases, insertCourtCasesWithFields } from "../utils/insertCourtCases"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
 
 jest.mock("services/getCourtCase")
 jest.mock("services/updateCourtCaseAho")
@@ -20,7 +20,7 @@ jest.mock("utils/createForceOwner")
 jest.setTimeout(60 * 60 * 1000)
 
 describe("amend court case", () => {
-  const userName = "Bichard01"
+  const userName = "BichardForce01"
   const orgCode = "36FPA1"
   const user = {
     username: userName,
@@ -80,7 +80,7 @@ describe("amend court case", () => {
 
   it("Should amend the court case when the lock is held by the current user", async () => {
     const inputCourtCase = await getDummyCourtCase({
-      errorLockedByUsername: "Bichard01",
+      errorLockedByUsername: "BichardForce01",
       triggerLockedByUsername: null,
       errorCount: 1,
       errorStatus: "Unresolved",
@@ -185,7 +185,7 @@ describe("amend court case", () => {
   it("Should not update the db if the error is locked by somebody else", async () => {
     const [errorLockedBySomeoneElse, triggerLockedBySomeoneElse] = await insertCourtCasesWithFields([
       {
-        errorLockedByUsername: "Bichard02",
+        errorLockedByUsername: "BichardForce02",
         triggerLockedByUsername: user.username,
         errorCount: 1,
         triggerCount: 1,
@@ -197,7 +197,7 @@ describe("amend court case", () => {
       },
       {
         errorLockedByUsername: user.username,
-        triggerLockedByUsername: "Bichard02",
+        triggerLockedByUsername: "BichardForce02",
         errorCount: 1,
         triggerCount: 1,
         phase: 1,

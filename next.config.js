@@ -20,6 +20,9 @@ const nextConfig = {
         destination: "/users/users/"
       }
     ]
+  },
+  compiler: {
+    styledComponents: true
   }
 }
 

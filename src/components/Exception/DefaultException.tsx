@@ -1,10 +1,10 @@
-import { GridCol, GridRow, Link } from "govuk-react"
-import ActionLink from "../ActionLink"
-import getExceptionPathDetails from "../../utils/getExceptionPathDetails"
-import getExceptionDefinition from "../../utils/getExceptionDefinition"
-import { createUseStyles } from "react-jss"
-import NavigationHandler from "../../types/NavigationHandler"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import { GridCol, GridRow, Link } from "govuk-react"
+import NavigationHandler from "../../types/NavigationHandler"
+import getExceptionDefinition from "../../utils/getExceptionDefinition"
+import getExceptionPathDetails from "../../utils/getExceptionPathDetails"
+import ActionLink from "../ActionLink"
+import { ExceptionRow, ExceptionRowHelp } from "./Exception.styles"
 
 type Props = {
   onNavigate: NavigationHandler
@@ -12,20 +12,7 @@ type Props = {
   code: ExceptionCode
 }
 
-const useStyles = createUseStyles({
-  exceptionRow: {
-    "&:not(:last-child)": {
-      marginBottom: "1.25rem"
-    }
-  },
-
-  exceptionHelp: {
-    marginTop: ".62rem"
-  }
-})
-
 const DefaultException = ({ path, code, onNavigate }: Props) => {
-  const classes = useStyles()
   const { tab, offenceOrderIndex, formattedFieldName, location } = getExceptionPathDetails(path)
   const exceptionDefinition = getExceptionDefinition(code)
 
@@ -41,7 +28,7 @@ const DefaultException = ({ path, code, onNavigate }: Props) => {
   }
 
   return (
-    <div className={`${classes.exceptionRow} moj-exception-row`}>
+    <ExceptionRow className={`moj-exception-row`}>
       <GridRow className="exception-header">
         <GridCol>
           <b>
@@ -61,14 +48,14 @@ const DefaultException = ({ path, code, onNavigate }: Props) => {
         </GridCol>
       </GridRow>
 
-      <GridRow className={`${classes.exceptionHelp} exception-help`}>
+      <ExceptionRowHelp className={`exception-help`}>
         <GridCol>
           <Link href={`/help/bichard-functionality/exceptions/resolution.html#${code}`} target="_blank">
             {"More information"}
           </Link>
         </GridCol>
-      </GridRow>
-    </div>
+      </ExceptionRowHelp>
+    </ExceptionRow>
   )
 }
 

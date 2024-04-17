@@ -1,9 +1,7 @@
-import { ResolutionStatus } from "types/ResolutionStatus"
-import { UserGroup } from "types/UserGroup"
-import type { TestTrigger } from "../../../../test/utils/manageTriggers"
-import hashedPassword from "../../../fixtures/hashedPassword"
-import { newUserLogin } from "../../../support/helpers"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import { ResolutionStatus } from "types/ResolutionStatus"
+import type { TestTrigger } from "../../../../test/utils/manageTriggers"
+import { loginAndVisit } from "../../../support/helpers"
 
 const caseURL = "/bichard/court-cases/0"
 
@@ -31,24 +29,10 @@ const mixedTriggers = [...resolvedTriggers, ...unresolvedTriggers]
 describe("Triggers and exceptions", () => {
   before(() => {
     cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "Bichard01",
-          visibleForces: ["01"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
-    })
   })
 
   beforeEach(() => {
-    cy.login("bichard01@example.com", "password")
+    cy.loginAs("GeneralHandler")
     cy.task("clearTriggers")
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
@@ -84,7 +68,7 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "another.user",
+          triggerLockedByUsername: "BichardForce04",
           orgForPoliceFilter: "01"
         }
       ])
@@ -104,7 +88,7 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "another.user",
+          triggerLockedByUsername: "BichardForce04",
           orgForPoliceFilter: "01"
         }
       ])
@@ -167,7 +151,7 @@ describe("Triggers and exceptions", () => {
       cy.task("insertCourtCasesWithFields", [
         {
           errorLockedByUsername: null,
-          triggerLockedByUsername: "another.user",
+          triggerLockedByUsername: "BichardForce04",
           orgForPoliceFilter: "01"
         }
       ])
@@ -182,8 +166,8 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "some.user",
-          errorLockedByUsername: "some.user",
+          triggerLockedByUsername: "BichardForce04",
+          errorLockedByUsername: "BichardForce04",
           orgForPoliceFilter: "01"
         }
       ])
@@ -224,7 +208,7 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "another.user",
+          triggerLockedByUsername: "BichardForce04",
           orgForPoliceFilter: "01"
         }
       ])
@@ -237,16 +221,16 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "another.user",
+          triggerLockedByUsername: "BichardForce04",
           orgForPoliceFilter: "01"
         }
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
       cy.visit(caseURL)
-      cy.get("#header-container").should("contain.text", "Another User")
-      cy.get("#header-container").should("not.contain.text", "Bichard01")
-      cy.get("#triggers").should("contain.text", "Another User")
-      cy.get("#triggers").should("not.contain.text", "Bichard01")
+      cy.get("#header-container").should("contain.text", "Bichard Test User Force 04")
+      cy.get("#header-container").should("not.contain.text", "GeneralHandler")
+      cy.get("#triggers").should("contain.text", "Bichard Test User Force 04")
+      cy.get("#triggers").should("not.contain.text", "GeneralHandler")
     })
   })
 
@@ -300,7 +284,7 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "another.user",
+          triggerLockedByUsername: "BichardForce04",
           orgForPoliceFilter: "01"
         }
       ])
@@ -328,14 +312,13 @@ describe("Triggers and exceptions", () => {
       cy.task("clearCourtCases")
       cy.task("insertCourtCasesWithFields", [
         {
-          triggerLockedByUsername: "Bichard01",
+          triggerLockedByUsername: "GeneralHandler",
           orgForPoliceFilter: "01",
           errorStatus: "Resolved"
         }
       ])
       cy.task("insertTriggers", { caseId: 0, triggers: caseTriggers })
-      cy.login("bichard01@example.com", "password")
-      cy.visit(caseURL)
+      loginAndVisit(caseURL)
 
       cy.get(".trigger-header input[type='checkbox']").first().check()
       cy.get("#mark-triggers-complete-button").click()
@@ -378,10 +361,9 @@ describe("Triggers and exceptions", () => {
       cy.task("insertDummyCourtCasesWithTriggers", {
         caseTriggers,
         orgCode: "01",
-        triggersLockedByUsername: "Bichard01"
+        triggersLockedByUsername: "GeneralHandler"
       })
-      cy.login("bichard01@example.com", "password")
-      cy.visit(caseURL)
+      loginAndVisit(caseURL)
 
       cy.get("#select-all-triggers button").click()
       cy.get("#mark-triggers-complete-button").click()
@@ -406,13 +388,8 @@ describe("Triggers and exceptions tabs", () => {
     ])
   })
 
-  beforeEach(() => {
-    cy.task("clearUsers")
-  })
-
   it("should show neither triggers nor exceptions to a user with no groups", () => {
-    newUserLogin({})
-    cy.visit(caseURL)
+    loginAndVisit("NoGroups", caseURL)
 
     cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("not.exist")
     cy.get(".triggers-and-exceptions-sidebar #triggers").should("not.exist")
@@ -422,8 +399,7 @@ describe("Triggers and exceptions tabs", () => {
   })
 
   it("should only show triggers to Trigger Handlers", () => {
-    newUserLogin({ groups: [UserGroup.TriggerHandler] })
-    cy.visit(caseURL)
+    loginAndVisit("TriggerHandler", caseURL)
 
     cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
@@ -434,8 +410,7 @@ describe("Triggers and exceptions tabs", () => {
   })
 
   it("should only show exceptions to Exception Handlers", () => {
-    newUserLogin({ groups: [UserGroup.ExceptionHandler] })
-    cy.visit(caseURL)
+    loginAndVisit("ExceptionHandler", caseURL)
 
     cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("not.exist")
     cy.get(".triggers-and-exceptions-sidebar #triggers").should("not.exist")
@@ -447,8 +422,7 @@ describe("Triggers and exceptions tabs", () => {
 
   it("should show both trigger and exceptions to General Handlers with triggers tab selected", () => {
     cy.task("insertTriggers", { caseId: 0, triggers: mixedTriggers })
-    newUserLogin({ groups: [UserGroup.GeneralHandler] })
-    cy.visit(caseURL)
+    loginAndVisit("GeneralHandler", caseURL)
 
     cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
@@ -470,8 +444,7 @@ describe("Triggers and exceptions tabs", () => {
       }
     ])
 
-    newUserLogin({ groups: [UserGroup.GeneralHandler] })
-    cy.visit(caseURL)
+    loginAndVisit("GeneralHandler", caseURL)
 
     cy.get(".triggers-and-exceptions-sidebar #triggers-tab").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #triggers").should("exist")
@@ -489,10 +462,6 @@ describe("PNC Exceptions", () => {
     cy.task("clearCourtCases")
   })
 
-  beforeEach(() => {
-    cy.task("clearUsers")
-  })
-
   it("should render PNC exception and correctly display the PNC error message", () => {
     cy.task("insertCourtCaseWithPncException", {
       exceptions: {
@@ -506,15 +475,14 @@ describe("PNC Exceptions", () => {
       }
     })
 
-    newUserLogin({ groups: [UserGroup.GeneralHandler] })
-    cy.visit(caseURL)
+    loginAndVisit("GeneralHandler", caseURL)
 
     cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #exceptions").should("be.visible")
     cy.get(".triggers-and-exceptions-sidebar #exceptions .moj-badge").should("have.text", "PNC Error")
     cy.get(".b7-accordion__button").should("have.text", "PNC error message").click()
-    cy.get(".b7-accordion__content .b7-inset-text__content").should(
+    cy.get(".accordion__content .b7-inset-text__content").should(
       "have.text",
       "Create DH page on PNC, then Submit the case on Bichard 7"
     )
@@ -532,8 +500,7 @@ describe("PNC Exceptions", () => {
       }
     })
 
-    newUserLogin({ groups: [UserGroup.GeneralHandler] })
-    cy.visit(caseURL)
+    loginAndVisit("GeneralHandler", caseURL)
 
     cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")
@@ -556,8 +523,7 @@ describe("PNC Exceptions", () => {
       }
     })
 
-    newUserLogin({ groups: [UserGroup.GeneralHandler] })
-    cy.visit(caseURL)
+    loginAndVisit("GeneralHandler", caseURL)
 
     cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").should("exist")
     cy.get(".triggers-and-exceptions-sidebar #exceptions").should("exist")

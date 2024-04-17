@@ -1,6 +1,5 @@
-import { SelectInput } from "@govuk-react/select"
 import { useRouter } from "next/router"
-import { createUseStyles } from "react-jss"
+import { CasesPerPagePicker } from "./CasesPerPage.styles"
 
 interface Props {
   options: number[]
@@ -9,20 +8,13 @@ interface Props {
   casesPerPage: number
 }
 
-const useStyles = createUseStyles({
-  "cases-per-page-picker": {
-    width: "auto"
-  }
-})
-
 const CasesPerPage: React.FC<Props> = ({ options, selected, pageNum, casesPerPage }: Props) => {
   const router = useRouter()
-  const classes = useStyles()
 
   return (
     <div className="moj-pagination__results">
       {"View "}
-      <SelectInput
+      <CasesPerPagePicker
         onChange={(event) => {
           const newCasesPerPage = event.target.value
 
@@ -33,7 +25,7 @@ const CasesPerPage: React.FC<Props> = ({ options, selected, pageNum, casesPerPag
           router.push({ query: { ...router.query, maxPageItems: newCasesPerPage, page: newPageNum } })
         }}
         value={selected}
-        className={`cases-per-page ${classes["cases-per-page-picker"]}`}
+        className={`cases-per-page cases-per-page-picker`}
         aria-label="Cases per page"
       >
         {options.map((option) => (
@@ -41,7 +33,7 @@ const CasesPerPage: React.FC<Props> = ({ options, selected, pageNum, casesPerPag
             {option}
           </option>
         ))}
-      </SelectInput>
+      </CasesPerPagePicker>
       {" cases per page"}
     </div>
   )

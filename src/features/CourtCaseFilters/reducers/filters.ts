@@ -1,3 +1,5 @@
+import { lockedStateShortLabels } from "components/SearchFilters/LockedFilter"
+import { Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
 
@@ -11,7 +13,7 @@ const handleAddingFilters = (newState: Filter, action: FilterAction) => {
     }
     case "caseAge": {
       if (newState.caseAgeFilter.filter((caseAgeFilter) => caseAgeFilter.value === action.value).length < 1) {
-        newState.caseAgeFilter.push({ value: action.value as string, state: "Selected" })
+        newState.caseAgeFilter.push({ value: action.value, state: "Selected" })
       }
       break
     }
@@ -31,24 +33,15 @@ const handleAddingFilters = (newState: Filter, action: FilterAction) => {
       newState.caseStateFilter.state = "Selected"
       break
     }
-    case "locked": {
-      newState.lockedFilter.value = action.value
-      newState.lockedFilter.label = action.value ? "Locked" : "Unlocked"
-      newState.lockedFilter.state = "Selected"
-      break
-    }
-    case "myCases": {
-      newState.myCasesFilter.value = action.value
-      newState.myCasesFilter.label = action.value ? "Cases locked to me" : undefined
-      newState.myCasesFilter.state = "Selected"
+    case "lockedState": {
+      newState.lockedStateFilter.value = action.value
+      newState.lockedStateFilter.label = lockedStateShortLabels[action.value]
+      newState.lockedStateFilter.state = "Selected"
       break
     }
     case "reason": {
-      // React might invoke our reducer more than once for a single event,
-      // so avoid duplicating reason filters
-      if (newState.reasonFilter.filter((reasonFilter) => reasonFilter.value === action.value).length < 1) {
-        newState.reasonFilter.push({ value: action.value, state: "Selected" })
-      }
+      newState.reasonFilter.value = action.value
+      newState.reasonFilter.state = "Selected"
       break
     }
     case "defendantName": {
@@ -106,18 +99,14 @@ const handleRemovingFilters = (newState: Filter, action: FilterAction) => {
       newState.caseStateFilter.label = undefined
       break
     }
-    case "locked": {
-      newState.lockedFilter.value = undefined
-      newState.lockedFilter.label = undefined
-      break
-    }
-    case "myCases": {
-      newState.myCasesFilter.value = undefined
-      newState.myCasesFilter.label = undefined
+    case "lockedState": {
+      newState.lockedStateFilter.value = undefined
+      newState.lockedStateFilter.label = undefined
       break
     }
     case "reason": {
-      newState.reasonFilter = newState.reasonFilter.filter((reasonFilter) => reasonFilter.value !== action.value)
+      newState.reasonFilter.value = Reason.All
+      newState.reasonFilter.state = "Selected"
       break
     }
     case "defendantName": {

@@ -1,33 +1,28 @@
-import { createUseStyles } from "react-jss"
+import { HintText, Label } from "govuk-react"
 import { EditableFieldBadge, InitialInputValueBadge } from "./Badges"
+import { StyledInputField } from "./InputField.styles"
 
 interface EditableInputFieldProps {
   value?: string | React.ReactNode
   children?: React.ReactNode
+  inputLabel: string
+  hintText: string
 }
 
-const useStyles = createUseStyles({
-  "editable-field__content": {
-    "& .badge-wrapper": {
-      padding: ".94rem 0 .62rem 0",
-      display: "flex",
-      gap: ".62rem",
-      alignItems: "center"
-    }
-  }
-})
-
-const InputField: React.FC<EditableInputFieldProps> = ({ value, children }) => {
-  const classes = useStyles()
-
+const InputField: React.FC<EditableInputFieldProps> = ({ value, inputLabel, hintText, children }) => {
   return (
-    <div className={classes["editable-field__content"]}>
+    <StyledInputField>
       {value}
       <InitialInputValueBadge />
       <br />
+      <Label>{inputLabel}</Label>
+      {hintText &&
+        hintText.split("\n").map((hint, key) => {
+          return <HintText key={key}>{hint}</HintText>
+        })}
       {children}
       <EditableFieldBadge />
-    </div>
+    </StyledInputField>
   )
 }
 

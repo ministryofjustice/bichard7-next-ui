@@ -1,27 +1,8 @@
 import dummyAho from "../../../../../test/test-data/HO100102_1.json"
 import nextHearingLocationExceptions from "../../../../../test/test-data/NextHearingLocationExceptions.json"
-import hashedPassword from "../../../../fixtures/hashedPassword"
-import { submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
+import { loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
 
 describe("NextHearingLocation", () => {
-  before(() => {
-    cy.task("clearCourtCases")
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "Bichard01",
-          visibleForces: ["001"],
-          forenames: "Bichard Test User",
-          surname: "01",
-          email: "bichard01@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp", "B7GeneralHandler_grp"]
-    })
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
@@ -30,14 +11,13 @@ describe("NextHearingLocation", () => {
         hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
         updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
         errorCount: 1,
-        errorLockedByUsername: "Bichard01"
+        errorLockedByUsername: "GeneralHandler"
       }
     ])
   })
 
   it("Should not be able to edit next hearing location field if there is no exception", () => {
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with no exception").click()
@@ -54,8 +34,7 @@ describe("NextHearingLocation", () => {
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Use a motor vehicle on a road / public place without third party insurance").click()
@@ -71,12 +50,11 @@ describe("NextHearingLocation", () => {
         hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
         updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
         errorCount: 1,
-        errorLockedByUsername: "Bichard01"
+        errorLockedByUsername: "GeneralHandler"
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
@@ -96,8 +74,8 @@ describe("NextHearingLocation", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
-    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF01")
+    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
@@ -121,12 +99,11 @@ describe("NextHearingLocation", () => {
         hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100300,
         updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100300,
         errorCount: 1,
-        errorLockedByUsername: "Bichard01"
+        errorLockedByUsername: "GeneralHandler"
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
@@ -144,8 +121,8 @@ describe("NextHearingLocation", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B46DB00")
-    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B46DB00")
+    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
@@ -169,12 +146,11 @@ describe("NextHearingLocation", () => {
         hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100322,
         updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100322,
         errorCount: 1,
-        errorLockedByUsername: "Bichard01"
+        errorLockedByUsername: "GeneralHandler"
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link")
@@ -194,8 +170,8 @@ describe("NextHearingLocation", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF00")
-    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF00")
+    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
@@ -214,8 +190,7 @@ describe("NextHearingLocation", () => {
   })
 
   it("Should be able to edit multiple next hearing locations", () => {
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
@@ -241,9 +216,9 @@ describe("NextHearingLocation", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF00")
-    cy.contains("Bichard01: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B46DB00")
-    cy.contains("Bichard01: Portal Action: Resubmitted Message.")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF00")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B46DB00")
+    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
@@ -294,7 +269,7 @@ describe("NextHearingLocation", () => {
         hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
         updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
         errorCount: 1,
-        errorLockedByUsername: "Bichard01"
+        errorLockedByUsername: "GeneralHandler"
       },
       {
         errorStatus: "Resolved",
@@ -303,12 +278,11 @@ describe("NextHearingLocation", () => {
         hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
         updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
         errorCount: 1,
-        errorLockedByUsername: "Bichard01"
+        errorLockedByUsername: "GeneralHandler"
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit(`/bichard/court-cases/${submittedCaseId}`)
+    loginAndVisit(`/bichard/court-cases/${submittedCaseId}`)
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
@@ -329,12 +303,11 @@ describe("NextHearingLocation", () => {
         hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXml,
         updatedHearingOutcome: nextHearingLocationExceptions.updatedHearingOutcomeXml,
         errorCount: 1,
-        errorLockedByUsername: "bichard02"
+        errorLockedByUsername: "BichardForce02"
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
@@ -354,8 +327,7 @@ describe("NextHearingLocation", () => {
       }
     ])
 
-    cy.login("bichard01@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
@@ -364,23 +336,7 @@ describe("NextHearingLocation", () => {
   })
 
   it("Should not be able to edit next hearing location field when user is not exception-handler", () => {
-    cy.task("clearUsers")
-    cy.task("insertUsers", {
-      users: [
-        {
-          username: "triggerHandler",
-          visibleForces: ["001"],
-          forenames: "triggerHandler Test User",
-          surname: "01",
-          email: "triggerhandler@example.com",
-          password: hashedPassword
-        }
-      ],
-      userGroups: ["B7NewUI_grp", "B7TriggerHandler_grp"]
-    })
-
-    cy.login("triggerhandler@example.com", "password")
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("TriggerHandler", "/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()

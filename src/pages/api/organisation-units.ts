@@ -17,7 +17,7 @@ export default async (request: NextApiRequest, response: NextApiResponse<Organis
 
   const { req, res } = auth
 
-  const searchQueryString = ((req.query.search as string) || "").toLowerCase()
+  const searchQueryString = ((typeof req.query.search === "string" && req.query.search) || "").toLowerCase()
 
   const filteredItems = searchCourtOrganisationUnits(searchQueryString).map((ou) => ({
     fullOrganisationCode: getFullOrganisationCode(ou),

@@ -1,16 +1,7 @@
 import { useCsrfToken } from "context/CsrfTokenContext"
-import Image from "next/image"
-import { createUseStyles } from "react-jss"
-import { LOCKED_ICON_URL } from "utils/icons"
-import { useCustomStyles } from "../../../../../styles/customStyles"
 import Form from "../../../../components/Form"
-
-const useStyles = createUseStyles({
-  LockedIcon: {
-    // Change colour from black to GDS text-blue (#144e81) with CSS filters
-    filter: "invert(12%) sepia(70%) saturate(4629%) hue-rotate(197deg) brightness(97%) contrast(84%)"
-  }
-})
+import { StyledLockedByButton } from "./LockedByButton.styles"
+import LockedImage from "./LockedImage"
 
 interface UnlockConfirmationProps {
   onCancel: () => void
@@ -57,27 +48,17 @@ const LockedByButton = ({
   showUnlockConfirmation,
   setShowUnlockConfirmation
 }: LockedByButtonProps) => {
-  const classes = useStyles()
-  const lockedByButtonClasses = useCustomStyles()
-
   return (
     <>
-      <button
-        className={`locked-by-tag ${lockedByButtonClasses["button--tag"]}`}
+      <StyledLockedByButton
+        className={`locked-by-tag button--tag`}
         onClick={() => {
           setShowUnlockConfirmation(true)
         }}
       >
-        <Image
-          src={LOCKED_ICON_URL}
-          priority
-          width={18}
-          height={18}
-          className={unlockPath ? classes.LockedIcon : undefined}
-          alt="Lock icon"
-        />
+        <LockedImage unlockPath={unlockPath} />
         {lockedBy}
-      </button>
+      </StyledLockedByButton>
       {showUnlockConfirmation && (
         <UnlockConfirmation
           onCancel={() => {

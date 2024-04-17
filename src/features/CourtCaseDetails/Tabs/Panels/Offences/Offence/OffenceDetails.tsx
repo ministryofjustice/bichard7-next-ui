@@ -9,9 +9,8 @@ import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType as ExceptionBadge } from "components/ExceptionFieldTableRow"
 import { OffenceMatcher } from "components/OffenceMatcher"
 import { useCourtCase } from "context/CourtCaseContext"
-import { Heading, Input, Table } from "govuk-react"
+import { Heading, Table } from "govuk-react"
 import { isEqual } from "lodash"
-import { createUseStyles } from "react-jss"
 import ErrorMessages, { findExceptions } from "types/ErrorMessages"
 import { Exception } from "types/exceptions"
 import { formatDisplayedDate } from "utils/formattedDate"
@@ -19,11 +18,11 @@ import getOffenceCode from "utils/getOffenceCode"
 import { capitaliseExpression, getPleaStatus, getVerdict, getYesOrNo } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
 import { HearingResult } from "./HearingResult"
+import { OffenceDetailsContainer, PncInput } from "./OffenceDetails.styles"
 import { OffenceNavigation } from "./OffenceNavigation"
 import { StartDate } from "./StartDate"
 
 interface OffenceDetailsProps {
-  className: string
   offence: Offence
   offencesCount: number
   onBackToAllOffences: () => void
@@ -32,26 +31,6 @@ interface OffenceDetailsProps {
   selectedOffenceIndex: number
   exceptions: Exception[]
 }
-
-const useStyles = createUseStyles({
-  button: {
-    textAlign: "right"
-  },
-
-  nextButton: {
-    marginLeft: "30px"
-  },
-
-  wrapper: {
-    "& td": {
-      width: "50%"
-    }
-  },
-
-  pncSequenceNumber: {
-    width: "4.125rem"
-  }
-})
 
 const offenceMatchingExceptions = {
   noOffencesMatched: [ExceptionCode.HO100304, ExceptionCode.HO100328, ExceptionCode.HO100507],
@@ -105,7 +84,6 @@ const getOffenceMatchingException = (
 }
 
 export const OffenceDetails = ({
-  className,
   offence,
   offencesCount,
   onBackToAllOffences,
@@ -115,7 +93,6 @@ export const OffenceDetails = ({
   exceptions
 }: OffenceDetailsProps) => {
   const { courtCase } = useCourtCase()
-  const classes = useStyles()
   const offenceCode = getOffenceCode(offence)
   const qualifierCode =
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
@@ -162,7 +139,7 @@ export const OffenceDetails = ({
     !!offenceMatchingException && exceptions.some((e) => [ExceptionCode.HO100310].includes(e.code))
 
   return (
-    <div className={`${className} ${classes.wrapper}`}>
+    <OffenceDetailsContainer>
       <OffenceNavigation
         onBackToAllOffences={() => onBackToAllOffences()}
         selectedOffenceIndex={selectedOffenceIndex}
@@ -230,9 +207,7 @@ export const OffenceDetails = ({
             <ExceptionFieldTableRow
               badgeText={offenceMatchingException.badge}
               label={"PNC sequence number"}
-              value={
-                !displayOffenceMatcher && <Input type="text" maxLength={3} className={classes.pncSequenceNumber} />
-              }
+              value={!displayOffenceMatcher && <PncInput type="text" maxLength={3} className={"pnc-sequence-number"} />}
             >
               {" "}
               <>
@@ -247,7 +222,7 @@ export const OffenceDetails = ({
               value={
                 <>
                   <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
-                  <Badge isRendered={true} colour={BadgeColours.Purple} label="Matched" />
+                  <Badge isRendered={true} colour={BadgeColours.Purple} label="Matched" className="moj-badge--large" />
                 </>
               }
             />
@@ -307,6 +282,6 @@ export const OffenceDetails = ({
         onNextClick={() => onNextClick()}
         offencesCount={offencesCount}
       />
-    </div>
+    </OffenceDetailsContainer>
   )
 }

@@ -1,6 +1,5 @@
-import { Checkbox as GovUkCheckbox } from "govuk-react"
 import { ChangeEventHandler } from "react"
-import { createUseStyles } from "react-jss"
+import { StyledCheckbox } from "./Checkbox.styles"
 
 type ValueType = string | number | readonly string[] | undefined
 
@@ -14,22 +13,6 @@ interface Props<TValue> {
   onChange?: ChangeEventHandler | undefined
 }
 
-const useStyles = createUseStyles({
-  Checkbox: {
-    "& span:before": {
-      width: "30px",
-      height: "30px"
-    },
-    "& span:after": {
-      top: "7px",
-      left: "6px",
-      width: "14px",
-      height: "6px"
-    },
-    padding: 0
-  }
-})
-
 export default function Checkbox<TValue extends ValueType>({
   id,
   children,
@@ -39,18 +22,16 @@ export default function Checkbox<TValue extends ValueType>({
   disabled,
   onChange
 }: Props<TValue>) {
-  const classes = useStyles()
-
   return (
-    <GovUkCheckbox
+    <StyledCheckbox
       id={id}
       value={value}
       checked={checked}
       onChange={onChange}
       disabled={disabled}
-      className={`${classes.Checkbox} ${className} moj-checkbox govuk-!-display-inline-block`}
+      className={`${className} moj-checkbox govuk-!-display-inline-block`}
     >
       {children}
-    </GovUkCheckbox>
+    </StyledCheckbox>
   )
 }

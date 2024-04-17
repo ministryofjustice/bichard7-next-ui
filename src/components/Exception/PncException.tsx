@@ -1,24 +1,14 @@
-import { GridCol, GridRow, Link } from "govuk-react"
-import { createUseStyles } from "react-jss"
-import Badge, { BadgeColours } from "../Badge"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import { GridCol, GridRow, Link } from "govuk-react"
 import Accordion from "../Accordion"
+import Badge, { BadgeColours } from "../Badge"
+import { ExceptionRow } from "./Exception.styles"
+import { InsetText, InsetTextHeading } from "./PncException.styles"
 
 type Props = {
   code: ExceptionCode
   message?: string
 }
-
-const useStyles = createUseStyles({
-  exceptionRow: {
-    "& .exception-row": {
-      marginBottom: ".5rem"
-    },
-    "&:not(:last-child)": {
-      marginBottom: "1.25rem"
-    }
-  }
-})
 
 const pncExceptionDescriptions: Record<string, Record<string, string>> = {
   [ExceptionCode.HO100402]: {
@@ -47,15 +37,14 @@ const getPncExceptionDescription = (code: ExceptionCode, message?: string) => {
 }
 
 const PncException = ({ code, message }: Props) => {
-  const classes = useStyles()
   const isPncQueryExceptionCode = [ExceptionCode.HO100302, ExceptionCode.HO100314].includes(code)
   const description = getPncExceptionDescription(code, message)
 
   return (
-    <div className={`${classes.exceptionRow} moj-exception-row`}>
+    <ExceptionRow className={`moj-exception-row`}>
       <GridRow className="exception-row exception-row__header">
         <GridCol>
-          <Badge isRendered={true} colour={BadgeColours.Red} label={"PNC Error"} />
+          <Badge isRendered={true} colour={BadgeColours.Red} label={"PNC Error"} className="moj-badge--large" />
         </GridCol>
       </GridRow>
 
@@ -70,10 +59,10 @@ const PncException = ({ code, message }: Props) => {
         <GridCol>
           {description && (
             <Accordion id={`exception-${code.toLocaleLowerCase()}`} heading="PNC error message">
-              <div className="b7-inset-text">
-                <span className="b7-inset-text__heading">{"PNC error message"}</span>
+              <InsetText className="b7-inset-text">
+                <InsetTextHeading className="b7-inset-text__heading">{"PNC error message"}</InsetTextHeading>
                 <span className="b7-inset-text__content">{description}</span>
-              </div>
+              </InsetText>
             </Accordion>
           )}
           <Link href={`/help/bichard-functionality/exceptions/resolution.html#${code}`} target="_blank">
@@ -81,7 +70,7 @@ const PncException = ({ code, message }: Props) => {
           </Link>
         </GridCol>
       </GridRow>
-    </div>
+    </ExceptionRow>
   )
 }
 
