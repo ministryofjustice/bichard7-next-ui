@@ -1,7 +1,6 @@
 import styled from "styled-components"
 import { darkGrey } from "utils/colours"
 
-const Button = styled.button``
 const ButtonAlt = styled.button`
   background: ${darkGrey};
   color: white;
@@ -16,4 +15,4 @@ const ButtonAlt = styled.button`
   }
 `
 
-export { Button, ButtonAlt }
+export { ButtonAlt }
