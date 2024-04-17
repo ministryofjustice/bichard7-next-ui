@@ -68,7 +68,7 @@ describe("Filtering cases", () => {
 
   it("Should be accessible", () => {
     visitBasePath()
-    cy.get("input[id=keywords]").type("Dummy")
+    cy.get("input[id=defendantName]").type("Dummy")
     cy.get(`label[for="triggers-reason"]`).click()
     cy.get(`label[for="exceptions-reason"]`).click()
 
@@ -777,7 +777,7 @@ describe("Filtering cases", () => {
 
   it("Should clear filters when clicked on the link outside of the filter panel", () => {
     visitBasePath()
-    cy.get("input[id=keywords]").type("Dummy")
+    cy.get("input[id=defendantName]").type("Dummy")
     cy.get('label[for="exceptions-reason"]').click()
     cy.get("button[id=search]").click()
 
@@ -794,7 +794,7 @@ describe("Filtering cases", () => {
 
   it("Should clear filters when clicked on the link inside the filter panel", () => {
     visitBasePath()
-    cy.get("input[id=keywords]").type("Dummy")
+    cy.get("input[id=defendantName]").type("Dummy")
     cy.get('label[for="triggers-reason"]').click()
     cy.get("button[id=search]").click()
 
@@ -894,8 +894,8 @@ describe("Filtering cases", () => {
 
     it("Should remove filters when they are clicked", () => {
       visitBasePath()
-      cy.get("input[id=reason-codes]").type("Reason1 Reason2")
-      cy.get("input[id=keywords]").type("Dummy")
+      cy.get("input[id=reasonCodes]").type("Reason1 Reason2")
+      cy.get("input[id=defendantName]").type("Dummy")
       cy.get('label[for="triggers-reason"]').click()
       cy.get("button[id=search]").click()
       cy.get("#filter-button").contains("Hide search panel").click()
