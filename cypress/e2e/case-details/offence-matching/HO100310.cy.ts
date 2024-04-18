@@ -55,7 +55,7 @@ describe("Offence matching HO100310", () => {
     cy.get("select").contains("option", "TH68006").should("be.disabled").and("not.be.selected")
   })
 
-  it("all offences should have a matching option selected before case can be submitted", () => {
+  it("prevents submission if any offences are unmatched", () => {
     cy.get("button#submit").should("be.disabled")
 
     cy.get("#offences").contains("Theft of pedal cycle").click()
