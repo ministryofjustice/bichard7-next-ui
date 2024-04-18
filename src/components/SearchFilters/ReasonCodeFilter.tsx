@@ -1,4 +1,4 @@
-import { useState, type Dispatch } from "react"
+import { useEffect, useState, type Dispatch } from "react"
 import type { FilterAction, FilterState } from "types/CourtCaseFilter"
 import TextFilter from "./TextFilter"
 
@@ -15,13 +15,11 @@ const tokenise = (input: string): string[] => input.split(" ").filter((x) => x)
 
 const ReasonCodeFilter: React.FC<Props> = ({ value, dispatch }: Props) => {
   const [rawValue, setRawValue] = useState<string>("")
+  const inputValue = value.map((reasonCode) => reasonCode.value).join(" ")
 
   const hasChanged = (newValue: string): boolean => tokenise(rawValue).join(" ") !== newValue
 
-  const inputValue = value.map((reasonCode) => reasonCode.value).join(" ")
-  if (hasChanged(inputValue)) {
-    setRawValue(inputValue)
-  }
+  useEffect(() => setRawValue(inputValue), [inputValue])
 
   const handleChange: Dispatch<FilterAction> = (newValue) => {
     if (newValue.type !== "reasonCodes") {
