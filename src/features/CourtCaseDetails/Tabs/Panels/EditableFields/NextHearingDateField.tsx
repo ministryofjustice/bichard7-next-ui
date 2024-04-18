@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react"
 import axios from "axios"
 import { useCourtCase } from "context/CourtCaseContext"
-import { Amendments } from "types/Amendments"
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { Exception } from "types/exceptions"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
@@ -33,14 +32,13 @@ export const NextHearingDateField = ({
   const [isNhdSaved, setIsNhdSaved] = useState<boolean>(false)
   const [nextHearingDateChanged, setNextHearingDateChanged] = useState<boolean>(false)
 
-  const saveNhd = useCallback(
-    async (nhd: Amendments) => {
-      await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { nextHearingDate: nhd.nextHearingDate })
-      setIsNhdSaved(true)
-      setNextHearingDateChanged(false)
-    },
-    [courtCase.errorId]
-  )
+  const saveNhd = useCallback(async () => {
+    await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, {
+      nextHearingDate: amendments.nextHearingDate
+    })
+    setIsNhdSaved(true)
+    setNextHearingDateChanged(false)
+  }, [amendments.nextHearingDate, courtCase.errorId])
 
   const isSaveNhdBtnDisabled = (): boolean => {
     return (
@@ -50,7 +48,7 @@ export const NextHearingDateField = ({
 
   const handleNhdSave = () => {
     if (isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)) {
-      saveNhd(amendments)
+      saveNhd()
     }
   }
 
