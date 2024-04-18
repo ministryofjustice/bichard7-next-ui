@@ -124,20 +124,6 @@ const FilterChipSection: React.FC<Props> = ({
         </ConditionalRender>
 
         <FilterChipRow
-          chipLabel={state.urgentFilter.label!}
-          condition={
-            state.urgentFilter.value !== undefined &&
-            state.urgentFilter.label !== undefined &&
-            state.urgentFilter.state === sectionState
-          }
-          dispatch={dispatch}
-          type="urgency"
-          label="Urgency"
-          state={state.urgentFilter.state || sectionState}
-          value={state.urgentFilter.value!}
-        />
-
-        <FilterChipRow
           chipLabel={dateRangeLabel}
           condition={
             state.dateFrom.value !== undefined &&
