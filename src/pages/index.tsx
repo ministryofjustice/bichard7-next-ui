@@ -52,7 +52,7 @@ interface Props {
   courtCases: DisplayPartialCourtCase[]
   order: QueryOrder
   reason: Reason | null
-  defendantName: string[]
+  defendantName: string | null
   ptiurn: string | null
   courtName: string | null
   reasonCodes: string[]
@@ -103,7 +103,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       from,
       to
     })
-    const validatedDefendantName = validateQueryParams(defendantName) ? defendantName : undefined
+    const validatedDefendantName = validateQueryParams(defendantName) ? defendantName : null
     const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
     const validatedreasonCodes = validateQueryParams(reasonCodes)
       ? reasonCodes.split(" ").filter((reasonCode) => reasonCode != "")
@@ -207,7 +207,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         page: parseInt(validatedPageNum, 10) || 1,
         casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,
         reason: validatedReason,
-        defendantName: validatedDefendantName ? [validatedDefendantName] : [],
+        defendantName: validatedDefendantName ? validatedDefendantName : null,
         courtName: validatedCourtName ? validatedCourtName : null,
         reasonCodes: validatedreasonCodes,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
@@ -293,7 +293,7 @@ const Home: NextPage<Props> = (props) => {
               filter={
                 <CourtCaseFilter
                   reason={reason}
-                  defendantName={defendantName[0]}
+                  defendantName={defendantName}
                   courtName={courtName}
                   reasonCodes={reasonCodes}
                   ptiurn={ptiurn}
