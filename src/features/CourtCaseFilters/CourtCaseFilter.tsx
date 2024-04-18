@@ -5,9 +5,10 @@ import TextFilter from "components/SearchFilters/TextFilter"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { FormGroup } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
-import { CaseState, LockedState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { LockedState } from "types/CaseListQueryParams"
 import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
+import SearchParams from "types/SearchParams"
 import { anyFilterChips } from "utils/filterChips"
 import { reasonOptions } from "utils/reasonOptions"
 import CourtDateFilter from "../../components/SearchFilters/CourtDateFilter"
@@ -15,60 +16,44 @@ import { SelectedFiltersContainer } from "./CourtCaseFilter.styles"
 import FilterChipSection from "./FilterChipSection"
 import { filtersReducer } from "./reducers/filters"
 
-interface Props {
-  defendantName: string | null
-  courtName: string | null
-  reasonCodes: string[]
-  ptiurn: string | null
-  reason: Reason | null
-  caseAge: string[]
-  caseAgeCounts: Record<string, number>
-  dateRange: SerializedCourtDateRange | null
-  urgency: string | null
-  lockedState: string | null
-  caseState: CaseState | null
-  order: string | null
-  orderBy: string | null
-}
-
-const Divider = () => (
-  <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
-)
-
-const CourtCaseFilter: React.FC<Props> = ({
+const convertSearchParamsToFilterState = ({
   reason,
   defendantName,
   ptiurn,
   courtName,
   reasonCodes,
   caseAge,
-  caseAgeCounts,
   dateRange,
   urgency,
-  lockedState,
   caseState,
-  order,
-  orderBy
-}: Props) => {
-  const lockedStateValue = lockedState ?? LockedState.All
-  const initialFilterState: Filter = {
-    urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
-    caseAgeFilter: caseAge.map((slaDate) => {
-      return { value: slaDate, state: "Applied" }
-    }),
-    dateFrom: dateRange !== null ? { value: dateRange.from, state: "Applied" } : {},
-    dateTo: dateRange !== null ? { value: dateRange.to, state: "Applied" } : {},
-    lockedStateFilter:
-      lockedState !== null
-        ? { value: lockedStateValue, state: "Applied", label: lockedStateShortLabels[lockedStateValue] }
-        : {},
-    caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
-    defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
-    courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
-    reasonCodes: reasonCodes.map((reasonCode) => ({ value: reasonCode, state: "Applied", label: reasonCode })),
-    ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
-    reasonFilter: reason !== null ? { value: reason, state: "Applied" } : {}
-  }
+  lockedState
+}: SearchParams): Filter => ({
+  urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
+  caseAgeFilter: caseAge.map((slaDate) => ({ value: slaDate, state: "Applied" })),
+  dateFrom: dateRange !== null ? { value: dateRange.from, state: "Applied" } : {},
+  dateTo: dateRange !== null ? { value: dateRange.to, state: "Applied" } : {},
+  lockedStateFilter:
+    lockedState !== null
+      ? {
+          value: lockedState ?? LockedState.All,
+          state: "Applied",
+          label: lockedStateShortLabels[lockedState ?? LockedState.All]
+        }
+      : {},
+  caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
+  defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
+  courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
+  reasonCodes: reasonCodes.map((reasonCode) => ({ value: reasonCode, state: "Applied", label: reasonCode })),
+  ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
+  reasonFilter: reason !== null ? { value: reason, state: "Applied" } : {}
+})
+
+const Divider = () => (
+  <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
+)
+
+const CourtCaseFilter: React.FC<SearchParams> = (props) => {
+  const initialFilterState: Filter = convertSearchParamsToFilterState(props)
   const [state, dispatch] = useReducer(filtersReducer, initialFilterState)
   const currentUser = useCurrentUser()
 
@@ -100,8 +85,8 @@ const CourtCaseFilter: React.FC<Props> = ({
             {"Apply filters"}
           </button>
 
-          <input type="hidden" id="order" name="order" value={order || ""} />
-          <input type="hidden" id="orderBy" name="orderBy" value={orderBy || ""} />
+          <input type="hidden" id="order" name="order" value={props.order || ""} />
+          <input type="hidden" id="orderBy" name="orderBy" value={props.orderBy || ""} />
 
           <FormGroup className={"govuk-form-group"}>
             <h2 className="govuk-heading-m">{"Search"}</h2>

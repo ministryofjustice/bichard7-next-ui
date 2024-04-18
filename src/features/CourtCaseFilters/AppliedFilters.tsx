@@ -10,7 +10,7 @@ import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
 interface Props {
   filters: {
     reason?: Reason | null
-    defendantName?: string[]
+    defendantName?: string | null
     courtName?: string | null
     reasonCodes?: string[]
     ptiurn?: string | null
@@ -27,7 +27,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
 
   const hasAnyAppliedFilters = (): boolean =>
     (!!filters.reason && filters.reason !== Reason.All) ||
-    (filters.defendantName && filters.defendantName.length > 0) ||
+    !!filters.defendantName ||
     (filters.caseAge && filters.caseAge.length > 0) ||
     !!filters.courtName ||
     !!filters.reasonCodes?.length ||

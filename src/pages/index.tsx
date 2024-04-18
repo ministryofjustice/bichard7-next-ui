@@ -23,16 +23,10 @@ import getLastSwitchingFormSubmission from "services/getLastSwitchingFormSubmiss
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import {
-  CaseState,
-  LockedState,
-  QueryOrder,
-  Reason,
-  SerializedCourtDateRange,
-  Urgency
-} from "types/CaseListQueryParams"
+import { CaseState, LockedState, QueryOrder, Reason, Urgency } from "types/CaseListQueryParams"
 import Permission from "types/Permission"
 import { isError } from "types/Result"
+import SearchParams from "types/SearchParams"
 import UnlockReason from "types/UnlockReason"
 import { DisplayPartialCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
@@ -53,32 +47,19 @@ import withCsrf from "../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import shouldShowSwitchingFeedbackForm from "../utils/shouldShowSwitchingFeedbackForm"
 
-interface Props {
-  csrfToken: string
-  user: DisplayFullUser
-  courtCases: DisplayPartialCourtCase[]
-  order: QueryOrder
-  reason: Reason | null
-  defendantName: string[]
-  ptiurn: string | null
-  courtName: string | null
-  reasonCodes: string[]
-  urgent: string | null
-  caseAge: string[]
-  caseAgeCounts: Record<string, number>
-  dateRange: SerializedCourtDateRange | null
-  page: number
-  casesPerPage: number
-  totalCases: number
-  lockedState: string | null
-  caseState: CaseState | null
-  queryStringCookieName: string
-  displaySwitchingSurveyFeedback: boolean
-  searchOrder: string | null
-  orderBy: string | null
-  environment: string | null
+type Props = {
   build: string | null
-}
+  casesPerPage: number
+  courtCases: DisplayPartialCourtCase[]
+  csrfToken: string
+  displaySwitchingSurveyFeedback: boolean
+  environment: string | null
+  page: number
+  queryStringCookieName: string
+  searchOrder: string | null
+  totalCases: number
+  user: DisplayFullUser
+} & SearchParams
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
 
@@ -111,7 +92,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       from,
       to
     })
-    const validatedDefendantName = validateQueryParams(defendantName) ? defendantName : undefined
+    const validatedDefendantName = validateQueryParams(defendantName) ? defendantName : null
     const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
     const validatedreasonCodes = validateQueryParams(reasonCodes)
       ? reasonCodes.split(" ").filter((reasonCode) => reasonCode != "")
@@ -217,7 +198,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         page: parseInt(validatedPageNum, 10) || 1,
         casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,
         reason: validatedReason,
-        defendantName: validatedDefendantName ? [validatedDefendantName] : [],
+        defendantName: validatedDefendantName,
         courtName: validatedCourtName ? validatedCourtName : null,
         reasonCodes: validatedreasonCodes,
         ptiurn: validatedPtiurn ? validatedPtiurn : null,
