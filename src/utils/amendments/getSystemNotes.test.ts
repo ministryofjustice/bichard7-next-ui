@@ -37,7 +37,7 @@ describe("getSystemNotes", () => {
           offenceReasonSequence: [
             {
               offenceIndex: 0,
-              value: "newOffenceReasonSequenceValue"
+              value: 1
             }
           ],
           courtOffenceSequenceNumber: [

@@ -1,6 +1,8 @@
 export type Amendments = {
   asn?: string
-  offenceReasonSequence?: OffenceField<string>[]
+  offenceReasonSequence?: OffenceField<number>[]
+  offenceCourtCaseReferenceNumber?: OffenceField<string>[]
+  offenceManualSequenceNumber?: OffenceField<boolean>[]
   courtCaseReference?: OffenceField<string>[]
   resultQualifierCode?: ResultQualifierCode[]
   nextSourceOrganisation?: ResultField<string>[]

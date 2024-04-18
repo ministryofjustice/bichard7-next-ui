@@ -30,7 +30,7 @@ describe("amend offence reason sequence", () => {
       [
         {
           offenceIndex,
-          value: "newOffenceReasonSequenceValue"
+          value: 1
         }
       ],
       aho
@@ -55,15 +55,15 @@ describe("amend offence reason sequence", () => {
     const amendments = [
       {
         offenceIndex: 0,
-        value: "firstOffenceReasonSequenceValue"
+        value: 1
       },
       {
         offenceIndex: 1,
-        value: "secondOffenceReasonSequenceValue"
+        value: 2
       },
       {
         offenceIndex: 2,
-        value: "thirdOffenceReasonSequenceValue"
+        value: 3
       }
     ]
 

@@ -83,7 +83,7 @@ export const getServerSideProps = withMultipleServerSideProps(
       const { amendments } = formData as { amendments: string }
 
       const updatedAmendments = hasAmendments(amendments) ? JSON.parse(amendments) : { noUpdatesResubmit: true }
-
+      console.log(updatedAmendments)
       const amendedCase = await resubmitCourtCase(dataSource, updatedAmendments, +courtCaseId, currentUser)
 
       if (isError(amendedCase)) {

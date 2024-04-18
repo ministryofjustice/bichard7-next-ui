@@ -203,30 +203,36 @@ export const OffenceDetails = ({
           )}
 
           {/* PNC sequence number */}
-          {offenceMatchingException ? (
-            <ExceptionFieldTableRow
-              badgeText={offenceMatchingException.badge}
-              label={"PNC sequence number"}
-              value={!displayOffenceMatcher && <PncInput type="text" maxLength={3} className={"pnc-sequence-number"} />}
-            >
-              {" "}
-              <>
-                {"Court Case Reference:"}
-                <br />
-                {courtCase.courtReference}
-              </>
-            </ExceptionFieldTableRow>
-          ) : (
-            <TableRow
-              label="PNC sequence number"
-              value={
+          {!displayOffenceMatcher &&
+            (offenceMatchingException ? (
+              <ExceptionFieldTableRow
+                badgeText={offenceMatchingException.badge}
+                label={"PNC sequence number"}
+                value={<PncInput type="text" maxLength={3} className={"pnc-sequence-number"} />}
+              >
+                {" "}
                 <>
-                  <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
-                  <Badge isRendered={true} colour={BadgeColours.Purple} label="Matched" className="moj-badge--large" />
+                  {"Court Case Reference:"}
+                  <br />
+                  {courtCase.courtReference}
                 </>
-              }
-            />
-          )}
+              </ExceptionFieldTableRow>
+            ) : (
+              <TableRow
+                label="PNC sequence number"
+                value={
+                  <>
+                    <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
+                    <Badge
+                      isRendered={true}
+                      colour={BadgeColours.Purple}
+                      label="Matched"
+                      className="moj-badge--large"
+                    />
+                  </>
+                }
+              />
+            ))}
 
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
           <TableRow label="Committed on bail" value={getCommittedOnBail(offence.CommittedOnBail)} />

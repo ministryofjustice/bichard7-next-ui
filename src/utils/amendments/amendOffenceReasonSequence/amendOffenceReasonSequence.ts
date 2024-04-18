@@ -8,7 +8,7 @@ const amendOffenceReasonSequence = (
   newOffenceReasonSequence?.forEach(({ value, offenceIndex }) => {
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
       offenceIndex
-    ].CriminalProsecutionReference.OffenceReasonSequence = value
+    ].CriminalProsecutionReference.OffenceReasonSequence = String(value)
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualSequenceNumber = true
   })
