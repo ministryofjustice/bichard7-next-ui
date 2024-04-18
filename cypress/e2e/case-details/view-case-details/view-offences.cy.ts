@@ -1,6 +1,5 @@
-import hashedPassword from "../../../fixtures/hashedPassword"
 import dummyMultipleHearingResultsAho from "../../../../test/test-data/multipleHearingResultsOnOffence.json"
-import { clickTab, loginAndGoToUrl } from "../../../support/helpers"
+import { clickTab, loginAndVisit } from "../../../support/helpers"
 
 describe("“next offence” and “previous offence” buttons", () => {
   beforeEach(() => {
@@ -60,7 +59,7 @@ it("Should show line breaks in hearing result text", () => {
     }
   ])
 
-  loginAndGoToUrl("bichard01@example.com", "/bichard/court-cases/0")
+  loginAndVisit("/bichard/court-cases/0")
   clickTab("Offences")
 
   cy.get("tbody tr:first-child a.govuk-link").click()
