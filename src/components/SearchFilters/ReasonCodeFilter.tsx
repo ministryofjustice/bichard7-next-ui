@@ -15,23 +15,22 @@ const tokenise = (input: string): string[] => input.split(" ").filter((x) => x)
 
 const ReasonCodeFilter: React.FC<Props> = ({ value, dispatch }: Props) => {
   const [rawValue, setRawValue] = useState<string>("")
-  const inputValue = value.map((reasonCode) => reasonCode.value).join(" ")
+  const valueString = value.map((reasonCode) => reasonCode.value).join(" ")
 
   const hasChanged = (newValue: string): boolean => tokenise(rawValue).join(" ") !== newValue
 
-  useEffect(() => setRawValue(inputValue), [inputValue])
+  useEffect(() => setRawValue(valueString), [valueString])
 
-  const handleChange: Dispatch<FilterAction> = (newValue) => {
-    if (newValue.type !== "reasonCodes") {
+  const handleChange: Dispatch<FilterAction> = (updated) => {
+    // The type can be string or string[] but in practice we convert from string to string[]
+    if (updated.type !== "reasonCodes" || Array.isArray(updated.value)) {
       return
     }
 
-    const unsplitValue = Array.isArray(newValue.value) ? newValue.value.join(" ") : newValue.value
-    setRawValue(unsplitValue)
+    setRawValue(updated.value)
 
-    if (hasChanged(unsplitValue)) {
-      const splitValue = Array.isArray(newValue.value) ? newValue.value : tokenise(newValue.value)
-      dispatch({ ...newValue, type: "reasonCodes", value: splitValue })
+    if (hasChanged(updated.value)) {
+      dispatch({ ...updated, type: "reasonCodes", value: tokenise(updated.value) })
     }
   }
 
