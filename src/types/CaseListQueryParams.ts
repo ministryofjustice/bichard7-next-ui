@@ -25,8 +25,6 @@ export type SerializedCourtDateRange = {
 
 export type CaseState = "Resolved" | "Unresolved" | undefined
 
-export type Urgency = "Urgent" | "Non-urgent" | undefined
-
 export type CaseListQueryParams = {
   orderBy?: string
   order?: QueryOrder
@@ -34,7 +32,6 @@ export type CaseListQueryParams = {
   defendantName?: string
   courtName?: string
   ptiurn?: string
-  urgent?: Urgency
   pageNum?: string
   maxPageItems: string
   courtDateRange?: CourtDateRange | CourtDateRange[]

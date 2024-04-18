@@ -23,14 +23,7 @@ import getLastSwitchingFormSubmission from "services/getLastSwitchingFormSubmiss
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import {
-  CaseState,
-  LockedState,
-  QueryOrder,
-  Reason,
-  SerializedCourtDateRange,
-  Urgency
-} from "types/CaseListQueryParams"
+import { CaseState, LockedState, QueryOrder, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import Permission from "types/Permission"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
@@ -60,10 +53,10 @@ interface Props {
   order: QueryOrder
   reason: Reason | null
   defendantName: string[]
+  defendantName: string[]
   ptiurn: string | null
   courtName: string | null
   reasonCodes: string[]
-  urgent: string | null
   caseAge: string[]
   caseAgeCounts: Record<string, number>
   dateRange: SerializedCourtDateRange | null
@@ -91,8 +84,8 @@ export const getServerSideProps = withMultipleServerSideProps(
     const queryStringCookieName = getQueryStringCookieName(currentUser.username)
     // prettier-ignore
     const {
-      orderBy, page, reason, defendantName, courtName, reasonCodes, ptiurn, maxPageItems, order,
-      urgency, caseAge, from, to, lockedState, state, unlockException, unlockTrigger
+      orderBy, page, reason, defendantName, courtName, reasonCodes, ptiurn, maxPageItems,
+      order, caseAge, from, to, lockedState, state, unlockException, unlockTrigger
     } = query
 
     const validatedReason =
@@ -117,7 +110,6 @@ export const getServerSideProps = withMultipleServerSideProps(
       ? reasonCodes.split(" ").filter((reasonCode) => reasonCode != "")
       : []
     const validatedPtiurn = validateQueryParams(ptiurn) ? ptiurn : undefined
-    const validatedUrgent = validateQueryParams(urgency) ? (urgency as Urgency) : undefined
     const validatedLockedState: LockedState = validateQueryParams(lockedState)
       ? (lockedState as LockedState)
       : LockedState.All
@@ -168,7 +160,6 @@ export const getServerSideProps = withMultipleServerSideProps(
         ...(validatedreasonCodes && { reasonCodes: validatedreasonCodes }),
         ...(validatedPtiurn && { ptiurn: validatedPtiurn }),
         reason: validatedReason,
-        urgent: validatedUrgent,
         maxPageItems: validatedMaxPageItems,
         pageNum: validatedPageNum,
         orderBy: validatedOrderBy,
@@ -229,7 +220,6 @@ export const getServerSideProps = withMultipleServerSideProps(
             }
           : null,
         caseAgeCounts: caseAgeCounts,
-        urgent: validatedUrgent ? validatedUrgent : null,
         lockedState: validatedLockedState ? validatedLockedState : null,
         caseState: validatedCaseState ? validatedCaseState : null,
         queryStringCookieName,
@@ -258,7 +248,6 @@ const Home: NextPage<Props> = (props) => {
     caseAge,
     caseAgeCounts,
     dateRange,
-    urgent,
     lockedState,
     caseState,
     queryStringCookieName,
@@ -312,7 +301,6 @@ const Home: NextPage<Props> = (props) => {
                   caseAge={caseAge}
                   caseAgeCounts={caseAgeCounts}
                   dateRange={dateRange}
-                  urgency={urgent}
                   lockedState={lockedState}
                   caseState={caseState}
                   order={searchOrder}
@@ -329,7 +317,6 @@ const Home: NextPage<Props> = (props) => {
                     ptiurn,
                     caseAge,
                     dateRange,
-                    urgency: urgent,
                     lockedState,
                     caseState
                   }}

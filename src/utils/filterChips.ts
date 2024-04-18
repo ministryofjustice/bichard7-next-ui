@@ -6,7 +6,6 @@ const anyFilterChips = (state: Filter, countOfState?: FilterState): boolean => {
     [
       state.dateFrom,
       state.dateTo,
-      state.urgentFilter,
       state.caseStateFilter,
       state.defendantNameSearch,
       state.courtNameSearch,
