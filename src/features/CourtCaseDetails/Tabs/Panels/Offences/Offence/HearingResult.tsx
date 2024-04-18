@@ -29,7 +29,7 @@ import {
   getYesOrNo
 } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
-import { createUseStyles } from "react-jss"
+import { StyledTableRow } from "./HearingResult.styles"
 
 interface HearingResultProps {
   result: Result
@@ -39,14 +39,6 @@ interface HearingResultProps {
   errorStatus?: ResolutionStatus | null
 }
 
-const useStyles = createUseStyles({
-  resultText: {
-    "& .row-value": {
-      whiteSpace: "pre-line"
-    }
-  }
-})
-
 export const HearingResult = ({
   result,
   errorStatus,
@@ -54,7 +46,6 @@ export const HearingResult = ({
   resultIndex,
   selectedOffenceIndex
 }: HearingResultProps) => {
-  const classes = useStyles()
   const { courtCase, amendments, amend } = useCourtCase()
   const cjsErrorMessage = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
 
@@ -177,7 +168,7 @@ export const HearingResult = ({
         <SaveLinkButton id={"save-next-hearing-date"} onClick={handleNhdSave} disabled={isSaveNhdBtnDisabled()} />
       </EditableFieldTableRow>
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
-      <TableRow label="Hearing result text" value={formattedResult} className={`result-text ${classes.resultText}`} />
+      <StyledTableRow label="Hearing result text" value={formattedResult} className={`result-text`} />{" "}
       <TableRow label="PNC disposal type" value={result.PNCDisposalType} />
       <TableRow label="Result class" value={result.ResultClass} />
       <TableRow label="PNC adjudication exists" value={getYesOrNo(result.PNCAdjudicationExists)} />
