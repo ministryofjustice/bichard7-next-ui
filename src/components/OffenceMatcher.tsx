@@ -19,18 +19,13 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
 
   const onSelectionChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
     amend("offenceReasonSequence")({
-      offenceIndex,
+      offenceIndex: offenceIndex - 1,
       value: Number(e.target.value)
     })
 
     amend("offenceCourtCaseReferenceNumber")({
-      offenceIndex,
+      offenceIndex: offenceIndex - 1,
       value: e.target.options[e.target.selectedIndex].dataset.ccr
-    })
-
-    amend("offenceManualSequenceNumber")({
-      offenceIndex,
-      value: true
     })
   }
 
@@ -38,11 +33,10 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
     !!amendments.offenceReasonSequence?.find((x) => x.value === sequenceNumber && x.offenceIndex !== offenceIndex)
 
   // TODO: load manually selected value if exists (just load updated aho always?)
-  // TODO: prevent matching twice (isAlreadySelected)
   // TODO: match dates
   return (
     <>
-      <select className="govuk-select" onChange={onSelectionChanged}>
+      <select className="govuk-select offence-matcher" onChange={onSelectionChanged}>
         <option disabled selected hidden value="">
           {"Select an offence"}
         </option>

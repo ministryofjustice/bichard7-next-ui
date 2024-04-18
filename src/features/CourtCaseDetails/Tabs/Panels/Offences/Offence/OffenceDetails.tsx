@@ -139,7 +139,7 @@ export const OffenceDetails = ({
     !!offenceMatchingException && exceptions.some((e) => [ExceptionCode.HO100310].includes(e.code))
 
   return (
-    <OffenceDetailsContainer>
+    <OffenceDetailsContainer className={"offence-details"}>
       <OffenceNavigation
         onBackToAllOffences={() => onBackToAllOffences()}
         selectedOffenceIndex={selectedOffenceIndex}

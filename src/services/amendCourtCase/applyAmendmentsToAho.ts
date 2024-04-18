@@ -4,11 +4,12 @@ import amendAsn from "utils/amendments/amendAsn/amendAsn"
 import amendCourtCaseReference from "utils/amendments/amendCourtCaseReference/amendCourtCaseReference"
 import amendCourtOffenceSequenceNumber from "utils/amendments/amendCourtOffenceSequenceNumber"
 import amendCourtReference from "utils/amendments/amendCourtReference/amendCourtReference"
-import amendResultQualifierCode from "utils/amendments/amendResultQualifierCode"
 import amendForceOwner from "utils/amendments/amendForceOwner"
 import amendNextHearingDate from "utils/amendments/amendNextHearingDate"
 import amendNextResultSourceOrganisation from "utils/amendments/amendNextResultSourceOrganisation"
+import amendOffenceCourtCaseReferenceNumber from "utils/amendments/amendOffenceCourtCaseReferenceNumber"
 import amendOffenceReasonSequence from "utils/amendments/amendOffenceReasonSequence"
+import amendResultQualifierCode from "utils/amendments/amendResultQualifierCode"
 import amendResultVariableText from "utils/amendments/amendResultVariableText"
 import removeEmptyResultQualifierVariable from "utils/removeEmptyResultQualifierVariable"
 
@@ -21,6 +22,9 @@ const selectKey =
         break
       case "offenceReasonSequence":
         amendOffenceReasonSequence(value as Amendments["offenceReasonSequence"], aho)
+        break
+      case "offenceCourtCaseReferenceNumber":
+        amendOffenceCourtCaseReferenceNumber(value as Amendments["offenceCourtCaseReferenceNumber"], aho)
         break
       case "courtCaseReference":
         amendCourtCaseReference(value as Amendments["courtCaseReference"], aho)

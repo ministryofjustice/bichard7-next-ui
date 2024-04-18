@@ -6,11 +6,17 @@ const amendOffenceReasonSequence = (
   aho: AnnotatedHearingOutcome
 ) => {
   newOffenceReasonSequence?.forEach(({ value, offenceIndex }) => {
-    aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[
-      offenceIndex
-    ].CriminalProsecutionReference.OffenceReasonSequence = String(value)
+    if (value === undefined) {
+      return
+    }
 
-    aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualSequenceNumber = true
+    const offence = aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
+    if (value > 0) {
+      offence.CriminalProsecutionReference.OffenceReasonSequence = String(value)
+      offence.ManualSequenceNumber = true
+      return
+    }
+    offence.AddedByTheCourt = true
   })
 }
 

@@ -15,7 +15,7 @@ import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
 import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
 
-const phase1ResubmissionQueue = process.env.PHASE_1_RESUBMIT_QUEUE_NAME ?? "HEARING_OUTCOME_INPUT_QUEUE"
+const phase1ResubmissionQueue = process.env.PHASE_1_RESUBMIT_QUEUE_NAME ?? "PHASE_1_RESUBMIT_QUEUE"
 
 const resubmitCourtCase = async (
   dataSource: DataSource,
@@ -88,6 +88,7 @@ const resubmitCourtCase = async (
       throw resultAho
     }
 
+    // TODO: this doesn't look right - should it be in transaction??
     const generatedXml = convertAhoToXml(resultAho, false)
     const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: phase1ResubmissionQueue })
 
