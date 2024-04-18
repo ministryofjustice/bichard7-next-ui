@@ -53,7 +53,6 @@ interface Props {
   order: QueryOrder
   reason: Reason | null
   defendantName: string[]
-  defendantName: string[]
   ptiurn: string | null
   courtName: string | null
   reasonCodes: string[]
