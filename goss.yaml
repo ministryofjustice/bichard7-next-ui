@@ -64,11 +64,7 @@ port:
     listening: true
     ip:
       - 0.0.0.0
-  tcp:3000:
-    listening: true
-    ip:
-      - 127.0.0.1
-user:
+  user:
   dbus:
     exists: true
     uid: 81
