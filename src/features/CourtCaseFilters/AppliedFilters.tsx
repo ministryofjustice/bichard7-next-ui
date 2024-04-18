@@ -16,7 +16,6 @@ interface Props {
     ptiurn?: string | null
     caseAge?: string[]
     dateRange?: SerializedCourtDateRange | null
-    urgency?: string | null
     lockedState?: string | null
     caseState?: string | null
   }
@@ -32,7 +31,6 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
     !!filters.courtName ||
     !!filters.reasonCodes?.length ||
     !!filters.ptiurn ||
-    !!filters.urgency ||
     !!filters.dateRange?.from ||
     !!filters.dateRange?.to ||
     (!!filters.lockedState && filters.lockedState !== LockedState.All) ||

@@ -24,7 +24,6 @@ interface Props {
   caseAge: string[]
   caseAgeCounts: Record<string, number>
   dateRange: SerializedCourtDateRange | null
-  urgency: string | null
   lockedState: string | null
   caseState: CaseState | null
   order: string | null
@@ -44,7 +43,6 @@ const CourtCaseFilter: React.FC<Props> = ({
   caseAge,
   caseAgeCounts,
   dateRange,
-  urgency,
   lockedState,
   caseState,
   order,
@@ -52,7 +50,6 @@ const CourtCaseFilter: React.FC<Props> = ({
 }: Props) => {
   const lockedStateValue = lockedState ?? LockedState.All
   const initialFilterState: Filter = {
-    urgentFilter: urgency !== null ? { value: urgency === "Urgent", state: "Applied", label: urgency } : {},
     caseAgeFilter: caseAge.map((slaDate) => {
       return { value: slaDate, state: "Applied" }
     }),

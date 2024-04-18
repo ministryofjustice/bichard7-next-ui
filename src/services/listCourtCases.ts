@@ -21,7 +21,6 @@ const listCourtCases = async (
     courtName,
     ptiurn,
     reason,
-    urgent,
     courtDateRange,
     lockedState,
     caseState,
@@ -113,12 +112,6 @@ const listCourtCases = async (
           })
       })
     )
-  }
-
-  if (urgent === "Urgent") {
-    query.andWhere({ isUrgent: MoreThan(0) })
-  } else if (urgent === "Non-urgent") {
-    query.andWhere({ isUrgent: 0 })
   }
 
   if (courtDateRange) {
