@@ -2,17 +2,13 @@ import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/A
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import ConditionalRender from "components/ConditionalRender"
-import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
-import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { useCourtCase } from "context/CourtCaseContext"
 import { Table } from "govuk-react"
 import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
-import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
-import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
 import { formatDisplayedDate } from "utils/formattedDate"
 import {
   capitaliseExpression,
@@ -24,6 +20,7 @@ import {
 import { TableRow } from "../../TableRow"
 import { StyledTableRow } from "./HearingResult.styles"
 import { NextHearingDateField } from "../../EditableFields/NextHearingDateField"
+import { NextHearingLocationField } from "../../EditableFields/NextHearingLocationField"
 
 interface HearingResultProps {
   result: Result
@@ -40,12 +37,10 @@ export const HearingResult = ({
   resultIndex,
   selectedOffenceIndex
 }: HearingResultProps) => {
-  const { courtCase, amendments } = useCourtCase()
+  const { courtCase } = useCourtCase()
   const cjsErrorMessage = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
 
   const offenceIndex = selectedOffenceIndex - 1
-  const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
-  const updatedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
 
   const isCaseEditable =
     courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME && errorStatus === "Unresolved"
@@ -87,25 +82,13 @@ export const HearingResult = ({
           }
         />
       </ConditionalRender>
-      <EditableFieldTableRow
-        label="Next hearing location"
-        hasExceptions={hasNextHearingLocationException(exceptions)}
-        value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
-        updatedValue={updatedNextHearingLocation}
-        isEditable={isCaseEditable && hasNextHearingLocationException(exceptions)}
-        inputLabel="Enter next hearing location"
-        hintText="OU code, 6-7 characters"
-      >
-        <OrganisationUnitTypeahead
-          value={
-            amendedNextHearingLocation ??
-            updatedNextHearingLocation ??
-            result.NextResultSourceOrganisation?.OrganisationUnitCode
-          }
-          resultIndex={resultIndex}
-          offenceIndex={offenceIndex}
-        />
-      </EditableFieldTableRow>
+      <NextHearingLocationField
+        result={result}
+        exceptions={exceptions}
+        offenceIndex={offenceIndex}
+        resultIndex={resultIndex}
+        isCaseEditable={isCaseEditable}
+      />
       <NextHearingDateField
         result={result}
         exceptions={exceptions}
