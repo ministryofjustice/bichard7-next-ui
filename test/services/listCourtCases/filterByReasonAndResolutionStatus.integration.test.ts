@@ -751,14 +751,7 @@ describe("Filter cases by resolution status", () => {
     ]
 
     it.each(testCases)("$description", async ({ filters, user, expectedCases }) => {
-      const result = await listCourtCases(
-        dataSource,
-        {
-          maxPageItems: "100",
-          ...filters
-        },
-        user
-      )
+      const result = await listCourtCases(dataSource, { maxPageItems: 100, ...filters }, user)
 
       expect(isError(result)).toBeFalsy()
       const { result: cases } = result as ListCourtCaseResult

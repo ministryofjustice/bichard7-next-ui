@@ -6,7 +6,7 @@ import TextFilter from "components/SearchFilters/TextFilter"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { FormGroup } from "govuk-react"
 import { ChangeEvent, useReducer } from "react"
-import { CaseState, LockedState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import { CaseListQueryParams, LockedState, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
 import { anyFilterChips } from "utils/filterChips"
@@ -16,24 +16,15 @@ import { SelectedFiltersContainer } from "./CourtCaseFilter.styles"
 import FilterChipSection from "./FilterChipSection"
 import { filtersReducer } from "./reducers/filters"
 
-interface Props {
-  defendantName: string | null
-  courtName: string | null
-  reasonCodes: string[]
-  ptiurn: string | null
-  reason: Reason | null
-  caseAge: string[]
-  caseAgeCounts: Record<string, number>
-  dateRange: SerializedCourtDateRange | null
-  lockedState: string | null
-  caseState: CaseState | null
-  order: string | null
-  orderBy: string | null
-}
-
 const Divider = () => (
   <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />
 )
+
+type Props = CaseListQueryParams & {
+  caseAge: string[]
+  caseAgeCounts: Record<string, number>
+  dateRange: SerializedCourtDateRange | null
+}
 
 const CourtCaseFilter: React.FC<Props> = ({
   reason,
@@ -48,7 +39,7 @@ const CourtCaseFilter: React.FC<Props> = ({
   caseState,
   order,
   orderBy
-}: Props) => {
+}) => {
   const lockedStateValue = lockedState ?? LockedState.All
   const initialFilterState: Filter = {
     caseAgeFilter: caseAge.map((slaDate) => {
@@ -63,7 +54,7 @@ const CourtCaseFilter: React.FC<Props> = ({
     caseStateFilter: caseState !== null ? { value: caseState, state: "Applied", label: caseState } : {},
     defendantNameSearch: defendantName !== null ? { value: defendantName, state: "Applied", label: defendantName } : {},
     courtNameSearch: courtName !== null ? { value: courtName, state: "Applied", label: courtName } : {},
-    reasonCodes: reasonCodes.map((reasonCode) => ({ value: reasonCode, state: "Applied", label: reasonCode })),
+    reasonCodes: reasonCodes?.map((reasonCode) => ({ value: reasonCode, state: "Applied", label: reasonCode })) ?? [],
     ptiurnSearch: ptiurn !== null ? { value: ptiurn, state: "Applied", label: ptiurn } : {},
     reasonFilter: reason !== null ? { value: reason, state: "Applied" } : {}
   }
