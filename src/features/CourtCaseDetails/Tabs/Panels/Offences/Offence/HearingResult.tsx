@@ -17,10 +17,10 @@ import {
   getUrgentYesOrNo,
   getYesOrNo
 } from "utils/valueTransformers"
-import { TableRow } from "../../TableRow"
-import { StyledTableRow } from "./HearingResult.styles"
 import { NextHearingDateField } from "../../EditableFields/NextHearingDateField"
 import { NextHearingLocationField } from "../../EditableFields/NextHearingLocationField"
+import { TableRow } from "../../TableRow"
+import { StyledTableRow } from "./HearingResult.styles"
 
 interface HearingResultProps {
   result: Result
@@ -97,7 +97,7 @@ export const HearingResult = ({
         isCaseEditable={isCaseEditable}
       />
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
-      <StyledTableRow label="Hearing result text" value={formattedResult} className={`result-text`} />{" "}
+      <StyledTableRow label="Hearing result text" value={formattedResult} className={`result-text`} />
       <TableRow label="PNC disposal type" value={result.PNCDisposalType} />
       <TableRow label="Result class" value={result.ResultClass} />
       <TableRow label="PNC adjudication exists" value={getYesOrNo(result.PNCAdjudicationExists)} />
