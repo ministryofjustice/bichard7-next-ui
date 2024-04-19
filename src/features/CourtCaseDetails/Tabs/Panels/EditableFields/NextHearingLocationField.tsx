@@ -1,14 +1,14 @@
-import { useCallback, useState } from "react"
+import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import axios from "axios"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
-import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { Exception } from "types/exceptions"
-import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
-import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
-import { useCourtCase } from "context/CourtCaseContext"
-import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { SaveLinkButton } from "components/LinkButton"
+import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
+import { useCourtCase } from "context/CourtCaseContext"
+import { useCallback, useState } from "react"
 import OrganisationUnitApiResponse from "types/OrganisationUnitApiResponse"
+import { Exception } from "types/exceptions"
+import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
+import hasNextHearingLocationException from "utils/exceptions/hasNextHearingLocationException"
 import isValidNextHearingLocation from "utils/validators/isValidNextHearingLocation"
 
 interface NextHearingLocationFieldProps {
@@ -47,11 +47,12 @@ export const NextHearingLocationField = ({
   }, [amendments.nextSourceOrganisation, courtCase.errorId])
 
   const isSaveNhlBtnDisabled = (): boolean => {
+    // Order of conditionals is important
     return (
       !isValidNextHearingLocation(amendedNextHearingLocation, organisations) ||
       isNhlSaved ||
-      !isNhlChanged ||
-      amendedNextHearingLocation === savedNextHearingLocation
+      amendedNextHearingLocation === savedNextHearingLocation ||
+      !isNhlChanged
     )
   }
 
@@ -81,6 +82,7 @@ export const NextHearingLocationField = ({
         setIsNhlChanged={setIsNhlChanged}
         setIsNhlSaved={setIsNhlSaved}
       />
+
       <SaveLinkButton id={"save-next-hearing-location"} onClick={handleNhlSave} disabled={isSaveNhlBtnDisabled()} />
     </EditableFieldTableRow>
   )
