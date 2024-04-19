@@ -4,7 +4,7 @@ import EditableFieldTableRow from "components/EditableFields/EditableFieldTableR
 import { SaveLinkButton } from "components/LinkButton"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { useCourtCase } from "context/CourtCaseContext"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import OrganisationUnitApiResponse from "types/OrganisationUnitApiResponse"
 import { Exception } from "types/exceptions"
 import getNextHearingLocationValue from "utils/amendments/getAmendmentValues/getNextHearingLocationValue"
@@ -28,7 +28,6 @@ export const NextHearingLocationField = ({
 }: NextHearingLocationFieldProps) => {
   const { courtCase, amendments } = useCourtCase()
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
-  const updatedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
 
   const nextHearingLocation =
     courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
@@ -43,47 +42,48 @@ export const NextHearingLocationField = ({
     await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, {
       nextSourceOrganisation: amendments.nextSourceOrganisation
     })
+
     setIsNhlSaved(true)
     setIsNhlChanged(false)
+
     const nextSourceOrganisationAmendments = amendments.nextSourceOrganisation
     setSavedNextHearingLocation(nextSourceOrganisationAmendments ? nextSourceOrganisationAmendments[0].value ?? "" : "")
   }, [amendments.nextSourceOrganisation, courtCase.errorId])
 
   const isSaveNhlBtnDisabled = (): boolean => {
-    // Order of conditionals is important
-    return (
-      !isValidNextHearingLocation(amendedNextHearingLocation, organisations) ||
-      isNhlSaved ||
-      amendedNextHearingLocation === savedNextHearingLocation ||
-      !isNhlChanged
-    )
+    return !isValidNextHearingLocation(amendedNextHearingLocation, organisations) || isNhlSaved || !isNhlChanged
   }
 
   const handleNhlSave = () => {
-    saveNhl()
+    if (isValidNextHearingLocation(amendedNextHearingLocation, organisations)) {
+      saveNhl()
+    }
   }
+
+  useEffect(() => {
+    if (amendedNextHearingLocation !== savedNextHearingLocation) {
+      setIsNhlChanged(true)
+      setIsNhlSaved(false)
+    } else {
+      setIsNhlChanged(false)
+    }
+  }, [amendedNextHearingLocation, savedNextHearingLocation])
 
   return (
     <EditableFieldTableRow
       label="Next hearing location"
       hasExceptions={hasNextHearingLocationException(exceptions)}
       value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
-      updatedValue={updatedNextHearingLocation}
+      updatedValue={amendedNextHearingLocation}
       isEditable={isCaseEditable && hasNextHearingLocationException(exceptions)}
       inputLabel="Enter next hearing location"
       hintText="OU code, 6-7 characters"
     >
       <OrganisationUnitTypeahead
-        value={
-          amendedNextHearingLocation ??
-          updatedNextHearingLocation ??
-          result.NextResultSourceOrganisation?.OrganisationUnitCode
-        }
+        value={amendedNextHearingLocation ?? result.NextResultSourceOrganisation?.OrganisationUnitCode}
         resultIndex={resultIndex}
         offenceIndex={offenceIndex}
         setOrganisations={setOrganisations}
-        setIsNhlChanged={setIsNhlChanged}
-        setIsNhlSaved={setIsNhlSaved}
       />
 
       <SaveLinkButton id={"save-next-hearing-location"} onClick={handleNhlSave} disabled={isSaveNhlBtnDisabled()} />
