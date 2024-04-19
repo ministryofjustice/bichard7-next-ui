@@ -430,5 +430,55 @@ describe("NextHearingLocation", () => {
 
       cy.get("#save-next-hearing-location").should("be.disabled")
     })
+
+    it("Should be enabled when a value different from the previous one is entered", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B21XA00")
+
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B63AD00")
+
+      cy.get("#save-next-hearing-location").should("be.enabled")
+    })
+
+    it("Should be disabled when same value as the previous one is entered", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B21XA00")
+
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B21XA00")
+
+      cy.get("#save-next-hearing-location").should("be.disabled")
+    })
   })
 })
