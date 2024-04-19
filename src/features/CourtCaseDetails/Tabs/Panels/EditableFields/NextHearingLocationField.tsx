@@ -30,10 +30,11 @@ export const NextHearingLocationField = ({
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
 
-  const savedNextHearingLocation =
+  const nextHearingLocation =
     courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
       .Result[resultIndex].NextResultSourceOrganisation?.OrganisationUnitCode
 
+  const [savedNextHearingLocation, setSavedNextHearingLocation] = useState<string>(nextHearingLocation ?? "")
   const [isNhlSaved, setIsNhlSaved] = useState<boolean>(false)
   const [organisations, setOrganisations] = useState<OrganisationUnitApiResponse>([])
   const [isNhlChanged, setIsNhlChanged] = useState<boolean>(false)
@@ -44,6 +45,8 @@ export const NextHearingLocationField = ({
     })
     setIsNhlSaved(true)
     setIsNhlChanged(false)
+    const nextSourceOrganisationAmendments = amendments.nextSourceOrganisation
+    setSavedNextHearingLocation(nextSourceOrganisationAmendments ? nextSourceOrganisationAmendments[0].value ?? "" : "")
   }, [amendments.nextSourceOrganisation, courtCase.errorId])
 
   const isSaveNhlBtnDisabled = (): boolean => {
