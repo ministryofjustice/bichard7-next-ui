@@ -343,4 +343,92 @@ describe("NextHearingLocation", () => {
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
     cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
   })
+
+  context("Save correction button", () => {
+    it("Should be enabled when valid value is entered", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B43UY00")
+
+      cy.get("#save-next-hearing-location").should("be.enabled")
+    })
+
+    it("Should be disabled when no value is entered", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#save-next-hearing-location").should("be.disabled")
+    })
+
+    it("Should be disabled when invalid value is entered", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B01")
+
+      cy.get("#save-next-hearing-location").should("be.disabled")
+    })
+
+    it("Should be disabled when whitespace is entered", () => {
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("      ")
+
+      cy.get("#save-next-hearing-location").should("be.disabled")
+    })
+  })
 })

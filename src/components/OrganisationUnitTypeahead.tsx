@@ -11,11 +11,25 @@ interface Props {
   resultIndex: number
   offenceIndex: number
   value?: string
+  setOrganisations?: (OrganisationUnitApiResponse: OrganisationUnitApiResponse) => void
+  setIsNhlChanged?: (bool: boolean) => void
+  setIsNhlSaved?: (bool: boolean) => void
 }
 
-const OrganisationUnitTypeahead: React.FC<Props> = ({ value, resultIndex, offenceIndex }: Props) => {
+const OrganisationUnitTypeahead: React.FC<Props> = ({
+  value,
+  resultIndex,
+  offenceIndex,
+  setOrganisations,
+  setIsNhlChanged,
+  setIsNhlSaved
+}: Props) => {
   const { amend } = useCourtCase()
   const [inputItems, setInputItems] = useState<OrganisationUnitApiResponse>([])
+
+  if (setOrganisations) {
+    setOrganisations(inputItems)
+  }
 
   const fetchItems = useCallback(async (searchStringParam?: string) => {
     const organisationUnitsResponse = await axios
@@ -38,6 +52,12 @@ const OrganisationUnitTypeahead: React.FC<Props> = ({ value, resultIndex, offenc
     items: inputItems,
     // eslint-disable-next-line @typescript-eslint/no-shadow
     onInputValueChange: ({ inputValue }) => {
+      if (setIsNhlChanged) {
+        setIsNhlChanged(true)
+      }
+      if (setIsNhlSaved) {
+        setIsNhlSaved(false)
+      }
       amend("nextSourceOrganisation")({
         resultIndex: resultIndex,
         offenceIndex: offenceIndex,
