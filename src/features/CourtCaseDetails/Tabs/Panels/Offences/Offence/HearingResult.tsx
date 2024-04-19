@@ -29,6 +29,7 @@ import {
   getYesOrNo
 } from "utils/valueTransformers"
 import { TableRow } from "../../TableRow"
+import { StyledTableRow } from "./HearingResult.styles"
 
 interface HearingResultProps {
   result: Result
@@ -56,6 +57,8 @@ export const HearingResult = ({
 
   const isCaseEditable =
     courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME && errorStatus === "Unresolved"
+  const text = result.ResultVariableText
+  const formattedResult = text?.replace(/([^\d])\.([^\d\n])/g, "$1.\n\n$2")
 
   const [isNhdSaved, setIsNhdSaved] = useState<boolean>(false)
   const [nextHearingDateChanged, setNextHearingDateChanged] = useState<boolean>(false)
@@ -165,11 +168,10 @@ export const HearingResult = ({
         <SaveLinkButton id={"save-next-hearing-date"} onClick={handleNhdSave} disabled={isSaveNhdBtnDisabled()} />
       </EditableFieldTableRow>
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
-      <TableRow label="Hearing result text" value={result.ResultVariableText} />
+      <StyledTableRow label="Hearing result text" value={formattedResult} className={`result-text`} />{" "}
       <TableRow label="PNC disposal type" value={result.PNCDisposalType} />
       <TableRow label="Result class" value={result.ResultClass} />
       <TableRow label="PNC adjudication exists" value={getYesOrNo(result.PNCAdjudicationExists)} />
-
       <ConditionalRender isRendered={typeof result.Urgent !== "undefined"}>
         <TableRow label="Urgent" value={getUrgentYesOrNo(result.Urgent?.urgent)} />
         <TableRow label="Urgency" value={getNumberOfHours(result.Urgent?.urgency)} />

@@ -8,15 +8,15 @@ interface TableRowProps {
   className?: string
 }
 
-export const TableRow = ({ label, value, hintText }: TableRowProps) => {
+export const TableRow = ({ label, value, hintText, className }: TableRowProps) => {
   const rowClassName = `table-row__${label.replaceAll(/ /g, "-").toLowerCase()}`
   return (
-    <StyledTableRow className={`table-row ${rowClassName} row`}>
-      <Table.Cell>
+    <StyledTableRow className={`table-row ${rowClassName} row ${className}`}>
+      <Table.Cell className="row-label">
         <b>{label}</b>
         {hintText && <StyledHintText className={"hint-text"}>{hintText}</StyledHintText>}
       </Table.Cell>
-      <Table.Cell>{value}</Table.Cell>
+      <Table.Cell className="row-value">{value}</Table.Cell>
     </StyledTableRow>
   )
 }
