@@ -475,6 +475,8 @@ describe("NextHearingLocation", () => {
       cy.get("#next-hearing-location").clear()
       cy.get("#next-hearing-location").type("B21XA00")
 
+      cy.get("#save-next-hearing-location").click()
+
       cy.get("#next-hearing-location").clear()
       cy.get("#next-hearing-location").type("B21XA00")
 
