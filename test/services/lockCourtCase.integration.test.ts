@@ -24,7 +24,7 @@ describe("lock court case", () => {
   const lockedByName = "BichardForce04"
   const user = {
     username: lockedByName,
-    visibleForces: ["36FPA1"],
+    visibleForces: ["36"],
     visibleCourts: [],
     hasAccessTo: hasAccessToAll
   } as Partial<User> as User
@@ -48,7 +48,7 @@ describe("lock court case", () => {
         triggerLockedByUsername: null,
         errorCount: 1,
         triggerCount: 1,
-        orgForPoliceFilter: "36FPA ",
+        orgForPoliceFilter: "36FPA",
         errorId: 0
       }
     ])

@@ -10,11 +10,11 @@ const reasonFilterOnlyIncludesExceptions = (reason?: Reason): boolean => reason 
 
 const shouldFilterForExceptions = (user: User, reason?: Reason): boolean =>
   (user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]) ||
-  reasonFilterOnlyIncludesExceptions(reason)
+  (user.hasAccessTo[Permission.Exceptions] && reasonFilterOnlyIncludesExceptions(reason))
 
 const shouldFilterForTriggers = (user: User, reason?: Reason): boolean =>
   (user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]) ||
-  reasonFilterOnlyIncludesTriggers(reason)
+  (user.hasAccessTo[Permission.Triggers] && reasonFilterOnlyIncludesTriggers(reason))
 
 const canSeeTriggersAndException = (user: User, reason?: Reason): boolean =>
   user.hasAccessTo[Permission.Exceptions] &&
@@ -27,11 +27,20 @@ const filterIfUnresolved = (
   user: User,
   reason?: Reason
 ): SelectQueryBuilder<CourtCase> => {
-  return query.andWhere({
-    ...(shouldFilterForTriggers(user, reason) ? { triggerResolvedTimestamp: IsNull() } : {}),
-    ...(shouldFilterForExceptions(user, reason) ? { errorResolvedTimestamp: IsNull() } : {}),
-    ...(canSeeTriggersAndException(user, reason) ? { resolutionTimestamp: IsNull() } : {})
-  })
+  if (shouldFilterForTriggers(user, reason)) {
+    query.andWhere({ triggerStatus: "Unresolved" })
+  } else if (shouldFilterForExceptions(user, reason)) {
+    query.andWhere({ errorStatus: "Unresolved" })
+  } else if (canSeeTriggersAndException(user, reason)) {
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where({ triggerStatus: "Unresolved" }).orWhere({
+          errorStatus: "Unresolved"
+        })
+      })
+    )
+  }
+  return query
 }
 
 const filterIfResolved = (
@@ -43,7 +52,7 @@ const filterIfResolved = (
   if (shouldFilterForTriggers(user, reason)) {
     query.andWhere({ triggerResolvedTimestamp: Not(IsNull()) })
   } else if (shouldFilterForExceptions(user, reason)) {
-    query.andWhere({ errorResolvedTimestamp: Not(IsNull()) })
+    query.andWhere({ errorStatus: "Resolved" })
   } else if (canSeeTriggersAndException(user, reason)) {
     query.andWhere(
       new Brackets((qb) =>

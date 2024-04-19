@@ -1,35 +1,18 @@
+import { Brackets } from "typeorm"
 import { DatabaseQuery } from "types/DatabaseQuery"
 import CourtCase from "../entities/CourtCase"
-import { Brackets, In, Like } from "typeorm"
-
-const removeLeadingZeroes = (code: string): string =>
-  code.length > 2 && code.startsWith("0") ? code.substring(1) : code
 
 const courtCasesByVisibleForcesQuery = <T extends DatabaseQuery<CourtCase>>(query: T, forces: string[]): T => {
+  const forceNumbers = forces.filter((f) => /^\d+$/.test(f)).map((f) => Number(f))
+
   query.orWhere(
     new Brackets((qb) => {
-      if (forces.length < 1) {
+      if (forceNumbers.length < 1) {
         qb.where("FALSE") // prevent returning cases when there are no visible forces
-        return query
+        return
       }
 
-      forces.forEach((force) => {
-        force = removeLeadingZeroes(force)
-        if (force.length === 1) {
-          const condition = { orgForPoliceFilter: Like(`${force}__%`) }
-          qb.where(condition)
-        } else {
-          const condition = { orgForPoliceFilter: Like(`${force}%`) }
-          qb.orWhere(condition)
-        }
-
-        if (force.length > 3) {
-          const subCodes = Array.from([...force].keys())
-            .splice(4)
-            .map((index) => force.substring(0, index))
-          qb.orWhere({ orgForPoliceFilter: In(subCodes) })
-        }
-      })
+      qb.where("br7own.force_code(org_for_police_filter) IN (:...forceNumbers)", { forceNumbers })
     })
   )
 

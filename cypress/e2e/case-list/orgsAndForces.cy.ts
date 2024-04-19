@@ -74,22 +74,4 @@ describe("How orgs and forces are presented", () => {
     cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00002")
     cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00003")
   })
-
-  it("Should display cases for parent forces up to the second-level force", () => {
-    cy.task("insertCourtCasesWithFields", [
-      { orgForPoliceFilter: "01" },
-      { orgForPoliceFilter: "011" },
-      { orgForPoliceFilter: "0111" },
-      { orgForPoliceFilter: "01111" },
-      { orgForPoliceFilter: "011111" }
-    ])
-
-    loginAndVisit("Bichard011111")
-
-    cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00000").should("not.exist")
-    cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00001").should("not.exist")
-    cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00002")
-    cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00003")
-    cy.get("tr").not(":first").get("td:nth-child(5)").contains("Case00004")
-  })
 })

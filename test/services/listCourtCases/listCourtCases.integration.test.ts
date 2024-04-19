@@ -31,8 +31,9 @@ jest.setTimeout(100000)
 describe("listCourtCases", () => {
   let dataSource: DataSource
   const orgCode = "36FPA1"
+  const forceCode = "036"
   const testUser = {
-    visibleForces: [orgCode],
+    visibleForces: [forceCode],
     visibleCourts: [],
     hasAccessTo: hasAccessToAll
   } as Partial<User> as User
@@ -230,7 +231,7 @@ describe("listCourtCases", () => {
       await insertCourtCasesWithFields(Array.from(Array(100)).map(() => ({ orgForPoliceFilter: "36FPA1" })))
 
       const result = await listCourtCases(dataSource, { maxPageItems: 10, page: 2 }, {
-        visibleForces: ["36FPA1"],
+        visibleForces: ["036"],
         visibleCourts: [],
         hasAccessTo: hasAccessToAll
       } as Partial<User> as User)
