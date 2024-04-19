@@ -3,6 +3,7 @@ import Pagination from "components/Pagination"
 import { CsrfTokenContext, CsrfTokenContextType } from "context/CsrfTokenContext"
 import { CurrentUserContext, CurrentUserContextType } from "context/CurrentUserContext"
 import { getCookie, setCookie } from "cookies-next"
+import defaults from "defaults"
 import AppliedFilters from "features/CourtCaseFilters/AppliedFilters"
 import CourtCaseFilter from "features/CourtCaseFilters/CourtCaseFilter"
 import CourtCaseWrapper from "features/CourtCaseFilters/CourtCaseFilterWrapper"
@@ -17,13 +18,21 @@ import { ParsedUrlQuery } from "querystring"
 import { useEffect, useState } from "react"
 import { courtCaseToDisplayPartialCourtCaseDto } from "services/dto/courtCaseDto"
 import { userToDisplayFullUserDto } from "services/dto/userDto"
+import User from "services/entities/User"
 import getCountOfCasesByCaseAge from "services/getCountOfCasesByCaseAge"
 import getDataSource from "services/getDataSource"
 import getLastSwitchingFormSubmission from "services/getLastSwitchingFormSubmission"
 import listCourtCases from "services/listCourtCases"
 import unlockCourtCase from "services/unlockCourtCase"
 import AuthenticationServerSidePropsContext from "types/AuthenticationServerSidePropsContext"
-import { CaseState, LockedState, QueryOrder, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
+import {
+  CaseListQueryParams,
+  CaseState,
+  LockedState,
+  QueryOrder,
+  Reason,
+  SerializedCourtDateRange
+} from "types/CaseListQueryParams"
 import Permission from "types/Permission"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
@@ -46,33 +55,66 @@ import withCsrf from "../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import shouldShowSwitchingFeedbackForm from "../utils/shouldShowSwitchingFeedbackForm"
 
-interface Props {
-  csrfToken: string
-  user: DisplayFullUser
-  courtCases: DisplayPartialCourtCase[]
-  order: QueryOrder
-  reason: Reason | null
-  defendantName: string | null
-  ptiurn: string | null
-  courtName: string | null
-  reasonCodes: string[]
+type Props = {
+  build: string | null
   caseAge: string[]
   caseAgeCounts: Record<string, number>
+  courtCases: DisplayPartialCourtCase[]
+  csrfToken: string
   dateRange: SerializedCourtDateRange | null
-  page: number
-  casesPerPage: number
-  totalCases: number
-  lockedState: string | null
-  caseState: CaseState | null
-  queryStringCookieName: string
   displaySwitchingSurveyFeedback: boolean
-  searchOrder: string | null
-  orderBy: string | null
   environment: string | null
-  build: string | null
-}
+  oppositeOrder: QueryOrder
+  queryStringCookieName: string
+  totalCases: number
+  user: DisplayFullUser
+} & Omit<CaseListQueryParams, "allocatedToUserName" | "resolvedByUsername" | "courtDateRange">
 
 const validateOrder = (param: unknown): param is QueryOrder => param === "asc" || param === "desc"
+
+const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User): CaseListQueryParams => {
+  // TODO: Actual validation of content with zod
+  const reason =
+    query.reason && validateQueryParams(query.reason) && reasonOptions.includes(query.reason as Reason)
+      ? (query.reason as Reason)
+      : Reason.All
+  const caseAges = mapCaseAges(query.caseAge)
+  const dateRange = validateDateRange({
+    from: query.from,
+    to: query.to
+  })
+  const defendantName = validateQueryParams(query.defendantName) ? query.defendantName : null
+  const courtName = validateQueryParams(query.courtName) ? query.courtName : undefined
+  const reasonCodes = validateQueryParams(query.reasonCodes)
+    ? query.reasonCodes.split(" ").filter((reasonCode) => reasonCode != "")
+    : []
+  const ptiurn = validateQueryParams(query.ptiurn) ? query.ptiurn : undefined
+  const lockedState: LockedState = validateQueryParams(query.lockedState)
+    ? (query.lockedState as LockedState)
+    : LockedState.All
+  const allocatedToUserName = lockedState === LockedState.LockedToMe ? currentUser.username : null
+  const caseState = caseStateFilters.includes(String(query.state)) ? (query.state as CaseState) : null
+  const resolvedByUsername =
+    caseState === "Resolved" && !currentUser.hasAccessTo[Permission.ListAllCases] ? currentUser.username : null
+  const courtDateRange = caseAges || dateRange
+
+  return {
+    ...(defendantName && { defendantName: defendantName }),
+    ...(courtName && { courtName: courtName }),
+    ...(reasonCodes && { reasonCodes: reasonCodes }),
+    ...(ptiurn && { ptiurn }),
+    reason,
+    maxPageItems: validateQueryParams(query.maxPageItems) ? +Number(query.maxPageItems) : defaults.maxPageItems,
+    page: validateQueryParams(query.page) ? +Number(query.page) : 1,
+    orderBy: validateQueryParams(query.orderBy) ? query.orderBy : "courtDate",
+    order: validateOrder(query.order) && query.order == "asc" ? "asc" : "desc",
+    ...(courtDateRange && { courtDateRange }),
+    lockedState,
+    ...(caseState && { caseState }),
+    ...(resolvedByUsername && { resolvedByUsername }),
+    ...(allocatedToUserName && { allocatedToUserName })
+  }
+}
 
 export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
@@ -81,39 +123,15 @@ export const getServerSideProps = withMultipleServerSideProps(
     const { req, currentUser, query, csrfToken } = context as CsrfServerSidePropsContext &
       AuthenticationServerSidePropsContext
     const queryStringCookieName = getQueryStringCookieName(currentUser.username)
-    // prettier-ignore
-    const {
-      orderBy, page, reason, defendantName, courtName, reasonCodes, ptiurn, maxPageItems,
-      order, caseAge, from, to, lockedState, state, unlockException, unlockTrigger
-    } = query
 
-    const validatedReason =
-      reason && validateQueryParams(reason) && reasonOptions.includes(reason as Reason)
-        ? (reason as Reason)
-        : Reason.All
-    const caseAges = [caseAge]
+    const { unlockException, unlockTrigger, ...searchQueryParams } = query
+
+    const caseListQueryParams = extractSearchParamsFromQuery(searchQueryParams, currentUser)
+
+    const caseAges = [searchQueryParams.caseAge]
       .flat()
       .filter((t) => Object.keys(CaseAgeOptions).includes(String(t) as string)) as string[]
-    const validatedMaxPageItems = validateQueryParams(maxPageItems) ? maxPageItems : "50"
-    const validatedPageNum = validateQueryParams(page) ? page : "1"
-    const validatedOrderBy = validateQueryParams(orderBy) ? orderBy : "courtDate"
-    const validatedOrder: QueryOrder = validateOrder(order) ? order : "desc"
-    const validatedCaseAges = mapCaseAges(caseAge)
-    const validatedDateRange = validateDateRange({
-      from,
-      to
-    })
-    const validatedDefendantName = validateQueryParams(defendantName) ? defendantName : null
-    const validatedCourtName = validateQueryParams(courtName) ? courtName : undefined
-    const validatedreasonCodes = validateQueryParams(reasonCodes)
-      ? reasonCodes.split(" ").filter((reasonCode) => reasonCode != "")
-      : []
-    const validatedPtiurn = validateQueryParams(ptiurn) ? ptiurn : undefined
-    const validatedLockedState: LockedState = validateQueryParams(lockedState)
-      ? (lockedState as LockedState)
-      : LockedState.All
-    const allocatedToUserName = validatedLockedState === LockedState.LockedToMe ? currentUser.username : undefined
-    const validatedCaseState = caseStateFilters.includes(String(state)) ? (state as CaseState) : undefined
+
     const dataSource = await getDataSource()
 
     if (isPost(req) && typeof unlockException === "string") {
@@ -140,46 +158,25 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const resolvedByUsername =
-      validatedCaseState === "Resolved" && !currentUser.hasAccessTo[Permission.ListAllCases]
-        ? currentUser.username
-        : undefined
-
     const caseAgeCounts = await getCountOfCasesByCaseAge(dataSource, currentUser)
 
     if (isError(caseAgeCounts)) {
       throw caseAgeCounts
     }
 
-    const courtCases = await listCourtCases(
-      dataSource,
-      {
-        ...(validatedDefendantName && { defendantName: validatedDefendantName }),
-        ...(validatedCourtName && { courtName: validatedCourtName }),
-        ...(validatedreasonCodes && { reasonCodes: validatedreasonCodes }),
-        ...(validatedPtiurn && { ptiurn: validatedPtiurn }),
-        reason: validatedReason,
-        maxPageItems: validatedMaxPageItems,
-        pageNum: validatedPageNum,
-        orderBy: validatedOrderBy,
-        order: validatedOrder,
-        courtDateRange: validatedCaseAges || validatedDateRange,
-        lockedState: validatedLockedState,
-        caseState: validatedCaseState,
-        resolvedByUsername,
-        allocatedToUserName
-      },
-      currentUser
-    )
+    const courtCases = await listCourtCases(dataSource, caseListQueryParams, currentUser)
 
-    const oppositeOrder: QueryOrder = validatedOrder === "asc" ? "desc" : "asc"
+    const oppositeOrder: QueryOrder = caseListQueryParams.order === "asc" ? "desc" : "asc"
 
     if (isError(courtCases)) {
       throw courtCases
     }
 
-    const lastPossiblePageNumber = calculateLastPossiblePageNumber(courtCases.totalCases, +validatedMaxPageItems)
-    if (+validatedPageNum > lastPossiblePageNumber) {
+    const lastPossiblePageNumber = calculateLastPossiblePageNumber(
+      courtCases.totalCases,
+      caseListQueryParams.maxPageItems
+    )
+    if ((caseListQueryParams.page ?? 1) > lastPossiblePageNumber) {
       if (req.url) {
         const [urlPath, urlQuery] = req.url.split("?")
         const parsedUrlQuery = new URLSearchParams(urlQuery)
@@ -194,36 +191,29 @@ export const getServerSideProps = withMultipleServerSideProps(
       throw lastSwitchingFormSubmission
     }
 
+    // Remove courtDateRange from the props because the dates don't serialise
+    const { courtDateRange: _, ...caseListQueryProps } = caseListQueryParams
     return {
       props: {
-        csrfToken: csrfToken,
-        user: userToDisplayFullUserDto(currentUser),
-        courtCases: courtCases.result.map((courtCase) => courtCaseToDisplayPartialCourtCaseDto(courtCase, currentUser)),
-        displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0)),
-        order: oppositeOrder,
-        searchOrder: validatedOrder === "asc" ? "asc" : "desc",
-        orderBy: validatedOrderBy,
-        totalCases: courtCases.totalCases,
-        page: parseInt(validatedPageNum, 10) || 1,
-        casesPerPage: parseInt(validatedMaxPageItems, 10) || 5,
-        reason: validatedReason,
-        defendantName: validatedDefendantName ? validatedDefendantName : null,
-        courtName: validatedCourtName ? validatedCourtName : null,
-        reasonCodes: validatedreasonCodes,
-        ptiurn: validatedPtiurn ? validatedPtiurn : null,
+        build: process.env.NEXT_PUBLIC_BUILD || null,
         caseAge: caseAges,
-        dateRange: validatedDateRange
-          ? {
-              from: formatFormInputDateString(validatedDateRange.from),
-              to: formatFormInputDateString(validatedDateRange.to)
-            }
-          : null,
         caseAgeCounts: caseAgeCounts,
-        lockedState: validatedLockedState ? validatedLockedState : null,
-        caseState: validatedCaseState ? validatedCaseState : null,
-        queryStringCookieName,
+        courtCases: courtCases.result.map((courtCase) => courtCaseToDisplayPartialCourtCaseDto(courtCase, currentUser)),
+        csrfToken: csrfToken,
+        dateRange:
+          !!caseListQueryParams.courtDateRange && !Array.isArray(caseListQueryParams.courtDateRange)
+            ? {
+                from: formatFormInputDateString(caseListQueryParams.courtDateRange.from),
+                to: formatFormInputDateString(caseListQueryParams.courtDateRange.to)
+              }
+            : null,
+        displaySwitchingSurveyFeedback: shouldShowSwitchingFeedbackForm(lastSwitchingFormSubmission ?? new Date(0)),
         environment: process.env.NEXT_PUBLIC_WORKSPACE || null,
-        build: process.env.NEXT_PUBLIC_BUILD || null
+        oppositeOrder,
+        queryStringCookieName,
+        totalCases: courtCases.totalCases,
+        user: userToDisplayFullUserDto(currentUser),
+        ...caseListQueryProps
       }
     }
   }
@@ -235,26 +225,13 @@ const Home: NextPage<Props> = (props) => {
     csrfToken,
     user,
     courtCases,
-    order,
-    page,
-    casesPerPage,
     totalCases,
-    reason,
-    defendantName,
-    courtName,
-    reasonCodes,
-    ptiurn,
-    caseAge,
-    caseAgeCounts,
-    dateRange,
-    lockedState,
-    caseState,
     queryStringCookieName,
     displaySwitchingSurveyFeedback,
-    searchOrder,
-    orderBy,
     environment,
-    build
+    build,
+    oppositeOrder,
+    ...searchParams
   } = props
 
   useEffect(() => {
@@ -290,43 +267,24 @@ const Home: NextPage<Props> = (props) => {
           <Layout bichardSwitch={{ display: true, displaySwitchingSurveyFeedback }}>
             <Main />
             <CourtCaseWrapper
-              filter={
-                <CourtCaseFilter
-                  reason={reason}
-                  defendantName={defendantName}
-                  courtName={courtName}
-                  reasonCodes={reasonCodes}
-                  ptiurn={ptiurn}
-                  caseAge={caseAge}
-                  caseAgeCounts={caseAgeCounts}
-                  dateRange={dateRange}
-                  lockedState={lockedState}
-                  caseState={caseState}
-                  order={searchOrder}
-                  orderBy={orderBy}
-                />
-              }
-              appliedFilters={
-                <AppliedFilters
-                  filters={{
-                    reason,
-                    defendantName,
-                    courtName,
-                    reasonCodes,
-                    ptiurn,
-                    caseAge,
-                    dateRange,
-                    lockedState,
-                    caseState
-                  }}
-                />
-              }
-              courtCaseList={<CourtCaseList courtCases={courtCases} order={order} />}
+              filter={<CourtCaseFilter {...searchParams} />}
+              appliedFilters={<AppliedFilters filters={{ ...searchParams }} />}
+              courtCaseList={<CourtCaseList courtCases={courtCases} order={oppositeOrder} />}
               paginationTop={
-                <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="top" />
+                <Pagination
+                  pageNum={searchParams.page}
+                  casesPerPage={searchParams.maxPageItems}
+                  totalCases={totalCases}
+                  name="top"
+                />
               }
               paginationBottom={
-                <Pagination pageNum={page} casesPerPage={casesPerPage} totalCases={totalCases} name="bottom" />
+                <Pagination
+                  pageNum={searchParams.page}
+                  casesPerPage={searchParams.maxPageItems}
+                  totalCases={totalCases}
+                  name="bottom"
+                />
               }
             />
           </Layout>
