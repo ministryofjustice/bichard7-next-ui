@@ -346,17 +346,6 @@ describe("NextHearingLocation", () => {
 
   context("Save correction button", () => {
     it("Should be enabled when valid value is entered", () => {
-      cy.task("clearCourtCases")
-      cy.task("insertCourtCasesWithFields", [
-        {
-          orgForPoliceFilter: "01",
-          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          errorCount: 1,
-          errorLockedByUsername: "GeneralHandler"
-        }
-      ])
-
       loginAndVisit("/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
@@ -368,17 +357,6 @@ describe("NextHearingLocation", () => {
     })
 
     it("Should be disabled when no value is entered", () => {
-      cy.task("clearCourtCases")
-      cy.task("insertCourtCasesWithFields", [
-        {
-          orgForPoliceFilter: "01",
-          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          errorCount: 1,
-          errorLockedByUsername: "GeneralHandler"
-        }
-      ])
-
       loginAndVisit("/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
@@ -388,17 +366,6 @@ describe("NextHearingLocation", () => {
     })
 
     it("Should be disabled when invalid value is entered", () => {
-      cy.task("clearCourtCases")
-      cy.task("insertCourtCasesWithFields", [
-        {
-          orgForPoliceFilter: "01",
-          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          errorCount: 1,
-          errorLockedByUsername: "GeneralHandler"
-        }
-      ])
-
       loginAndVisit("/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
@@ -410,17 +377,6 @@ describe("NextHearingLocation", () => {
     })
 
     it("Should be disabled when whitespace is entered", () => {
-      cy.task("clearCourtCases")
-      cy.task("insertCourtCasesWithFields", [
-        {
-          orgForPoliceFilter: "01",
-          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          errorCount: 1,
-          errorLockedByUsername: "GeneralHandler"
-        }
-      ])
-
       loginAndVisit("/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
@@ -432,17 +388,6 @@ describe("NextHearingLocation", () => {
     })
 
     it("Should be enabled when a value different from the previous one is entered", () => {
-      cy.task("clearCourtCases")
-      cy.task("insertCourtCasesWithFields", [
-        {
-          orgForPoliceFilter: "01",
-          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          errorCount: 1,
-          errorLockedByUsername: "GeneralHandler"
-        }
-      ])
-
       loginAndVisit("/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
@@ -457,17 +402,6 @@ describe("NextHearingLocation", () => {
     })
 
     it("Should be disabled when same value as the previous one is entered", () => {
-      cy.task("clearCourtCases")
-      cy.task("insertCourtCasesWithFields", [
-        {
-          orgForPoliceFilter: "01",
-          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
-          errorCount: 1,
-          errorLockedByUsername: "GeneralHandler"
-        }
-      ])
-
       loginAndVisit("/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
