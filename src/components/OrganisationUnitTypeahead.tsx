@@ -11,28 +11,36 @@ interface Props {
   resultIndex: number
   offenceIndex: number
   value?: string
+  setOrganisations?: (OrganisationUnitApiResponse: OrganisationUnitApiResponse) => void
 }
 
-const OrganisationUnitTypeahead: React.FC<Props> = ({ value, resultIndex, offenceIndex }: Props) => {
+const OrganisationUnitTypeahead: React.FC<Props> = ({ value, resultIndex, offenceIndex, setOrganisations }: Props) => {
   const { amend } = useCourtCase()
   const [inputItems, setInputItems] = useState<OrganisationUnitApiResponse>([])
 
-  const fetchItems = useCallback(async (searchStringParam?: string) => {
-    const organisationUnitsResponse = await axios
-      .get<OrganisationUnitApiResponse>("/bichard/api/organisation-units", {
-        params: {
-          search: searchStringParam
-        }
-      })
-      .then((response) => response.data)
-      .catch((error) => error as Error)
+  const fetchItems = useCallback(
+    async (searchStringParam?: string) => {
+      const organisationUnitsResponse = await axios
+        .get<OrganisationUnitApiResponse>("/bichard/api/organisation-units", {
+          params: {
+            search: searchStringParam
+          }
+        })
+        .then((response) => response.data)
+        .catch((error) => error as Error)
 
-    if (isError(organisationUnitsResponse)) {
-      return
-    }
+      if (isError(organisationUnitsResponse)) {
+        return
+      }
 
-    setInputItems(organisationUnitsResponse)
-  }, [])
+      setInputItems(organisationUnitsResponse)
+
+      if (setOrganisations) {
+        setOrganisations(organisationUnitsResponse)
+      }
+    },
+    [setOrganisations]
+  )
 
   const { isOpen, getMenuProps, getInputProps, highlightedIndex, getItemProps, inputValue } = useCombobox({
     items: inputItems,

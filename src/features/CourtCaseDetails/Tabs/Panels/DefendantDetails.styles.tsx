@@ -7,8 +7,8 @@ const DefendantDetailTable = styled.div`
   }
 `
 
-const AnsInput = styled(Input)`
+const AsnInput = styled(Input)`
   width: 15rem;
 `
 
-export { AnsInput, DefendantDetailTable }
+export { AsnInput, DefendantDetailTable }

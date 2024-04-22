@@ -125,6 +125,7 @@ describe("ASN", () => {
     // Save correction button should be disabled
     cy.get("button").contains("Save Correction").should("be.disabled")
     cy.get("#asn").clear()
+
     cy.get("#asn").type("1101ZD0100000410836V")
     // Submit exception(s) button should be enabled
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
@@ -132,6 +133,11 @@ describe("ASN", () => {
     cy.get("#event-name-error").should("not.exist")
 
     cy.get("button").contains("Save Correction").click()
+    // Save correction button should be disabled to prevent double clicking
+    cy.get("button").contains("Save Correction").should("be.disabled")
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
