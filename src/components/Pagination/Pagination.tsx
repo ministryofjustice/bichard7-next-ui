@@ -1,3 +1,4 @@
+import defaults from "defaults"
 import ConditionalRender from "../ConditionalRender"
 import CasesPerPage from "./CasesPerPage"
 import { PaginationBar } from "./Pagination.styles"
@@ -5,13 +6,18 @@ import PaginationNavigation from "./PaginationNavigation"
 import PaginationResults from "./PaginationResults"
 
 interface Props {
-  pageNum: number
-  casesPerPage: number
+  pageNum?: number
+  casesPerPage?: number
   totalCases: number
   name?: string
 }
 
-const Pagination: React.FC<Props> = ({ pageNum, casesPerPage, totalCases, name }: Props) => {
+const Pagination: React.FC<Props> = ({
+  pageNum = 1,
+  casesPerPage = defaults.maxPageItems,
+  totalCases,
+  name
+}: Props) => {
   return (
     <ConditionalRender isRendered={totalCases > 0}>
       <PaginationBar id={`${name}-pagination-bar`} className={"pagination-bar"}>
