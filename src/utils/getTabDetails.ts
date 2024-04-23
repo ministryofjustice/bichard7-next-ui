@@ -5,7 +5,6 @@ import getNextHearingLocationExceptions from "./exceptions/getNextHearingLocatio
 import hasNextHearingDateExceptions from "./exceptions/hasNextHearingDateExceptions"
 import hasNextHearingLocationException from "./exceptions/hasNextHearingLocationException"
 import isAsnException from "./exceptions/isException/isAsnException"
-import isAsnFormatValid from "./isAsnFormatValid"
 
 export type TabDetails = {
   name: "Defendant" | "Hearing" | "Case" | "Offences" | "Notes"
@@ -18,22 +17,9 @@ type ExceptionDetails = {
   ExceptionsResolved: boolean
 }
 
-const getAsnExceptionDetails = (
-  exceptions: Exception[],
-  updatedFields: Amendments,
-  savedAmendments: Amendments
-): ExceptionDetails => {
+const getAsnExceptionDetails = (exceptions: Exception[], updatedFields: Amendments): ExceptionDetails => {
   const asnExceptionCount = +isAsnException(exceptions)
-
-  let saved: boolean = false
-
-  if (savedAmendments?.asn) {
-    saved = true
-  }
-
-  const asnExceptionCountFromUpdatedFields =
-    saved && isAsnFormatValid(updatedFields?.asn ?? "") && savedAmendments.asn === updatedFields.asn ? 1 : 0
-
+  const asnExceptionCountFromUpdatedFields = updatedFields?.asn ? 1 : 0
   return {
     ExceptionsCount: asnExceptionCount - asnExceptionCountFromUpdatedFields,
     ExceptionsResolved: asnExceptionCount > 0 && asnExceptionCount === asnExceptionCountFromUpdatedFields
@@ -66,14 +52,10 @@ const getNextHearingLocationExceptionsDetails = (
   }
 }
 
-const getTabDetails = (
-  exceptions: Exception[],
-  updatedFields: Amendments,
-  savedAmendments: Amendments
-): TabDetails[] => {
+const getTabDetails = (exceptions: Exception[], updatedFields: Amendments): TabDetails[] => {
   const nextHearingDateExceptionsDetails = getNextHearingDateExceptionsDetails(exceptions, updatedFields)
   const nextHearingLocationExceptionsDetails = getNextHearingLocationExceptionsDetails(exceptions, updatedFields)
-  const asnExceptionDetails = getAsnExceptionDetails(exceptions, updatedFields, savedAmendments)
+  const asnExceptionDetails = getAsnExceptionDetails(exceptions, updatedFields)
 
   let offencesExceptionsResolved = false
 

@@ -1,19 +1,19 @@
-import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import axios from "axios"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
 import { SaveLinkButton } from "components/LinkButton"
 import { useCourtCase } from "context/CourtCaseContext"
-import { useCallback, useEffect, useState } from "react"
+import { useState, useCallback, useEffect } from "react"
 import Asn from "services/Asn"
 import isAsnFormatValid from "utils/isAsnFormatValid"
 import { AsnInput } from "../DefendantDetails.styles"
+import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 
 interface AsnFieldProps {
   stopLeavingFn: (newValue: boolean) => void
 }
 
 export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
-  const { courtCase, amendments, amend, savedAmend } = useCourtCase()
+  const { courtCase, amendments, amend } = useCourtCase()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
 
   const [updatedAhoAsn, setUpdatedAhoAsn] = useState<string>(
@@ -37,7 +37,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   const handleAsnSave = (): void => {
     if (isValidAsn) {
       setSavedAsn(true)
-      savedAmend("asn")(asnString)
+
       saveAsn(new Asn(asnString))
     }
   }
