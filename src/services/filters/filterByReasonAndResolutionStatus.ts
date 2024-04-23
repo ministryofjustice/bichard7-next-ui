@@ -1,6 +1,6 @@
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
-import { Brackets, FindOperator, IsNull, MoreThan, Not, SelectQueryBuilder } from "typeorm"
+import { Brackets, IsNull, Not, SelectQueryBuilder } from "typeorm"
 import { CaseState, Reason } from "types/CaseListQueryParams"
 import Permission from "types/Permission"
 
@@ -92,27 +92,23 @@ const filterIfResolved = (
 const filterByReason = (
   query: SelectQueryBuilder<CourtCase>,
   reason?: Reason,
-  resolvedOrUnresolved?: FindOperator<null>
+  caseState?: CaseState
 ): SelectQueryBuilder<CourtCase> => {
   query.andWhere(
     new Brackets((qb) => {
       if (reason === Reason.Triggers) {
         qb.where({
-          triggerCount: MoreThan(0),
-          triggerResolvedTimestamp: resolvedOrUnresolved
+          triggerStatus: caseState
         })
       } else if (reason === Reason.Exceptions) {
         qb.where({
-          errorCount: MoreThan(0),
-          errorResolvedTimestamp: resolvedOrUnresolved
+          errorStatus: caseState
         })
       } else {
         qb.where({
-          errorCount: MoreThan(0),
-          errorResolvedTimestamp: resolvedOrUnresolved
+          errorStatus: caseState
         }).orWhere({
-          triggerCount: MoreThan(0),
-          triggerResolvedTimestamp: resolvedOrUnresolved
+          triggerStatus: caseState
         })
       }
     })
@@ -130,7 +126,7 @@ const filterByReasonAndResolutionStatus = (
   caseState = caseState ?? "Unresolved"
 
   if (reason) {
-    query = filterByReason(query, reason, caseState === "Unresolved" ? IsNull() : Not(IsNull()))
+    query = filterByReason(query, reason, caseState)
   }
 
   if (caseState === "Unresolved") {
