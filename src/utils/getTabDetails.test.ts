@@ -23,8 +23,9 @@ describe("getAsnExceptionDetails", () => {
     HO100206(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
     const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
-    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields)
+    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(asnException.ExceptionsCount).toBe(1)
     expect(asnException.ExceptionsResolved).toBe(false)
@@ -37,8 +38,11 @@ describe("getAsnExceptionDetails", () => {
     const updatedFields = {
       asn: "1101ZD0100000448754K"
     } as Amendments
+    const savedAmendments = {
+      asn: "1101ZD0100000448754K"
+    } as Amendments
 
-    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields)
+    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(asnException.ExceptionsCount).toBe(0)
     expect(asnException.ExceptionsResolved).toBe(true)
@@ -49,8 +53,9 @@ describe("getAsnExceptionDetails", () => {
     HO100102(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
     const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
-    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields)
+    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(asnException.ExceptionsCount).toBe(0)
     expect(asnException.ExceptionsResolved).toBe(false)
@@ -279,8 +284,9 @@ describe("getTabDetails", () => {
       exceptions.map((exception) => exception(dummyAho))
       const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
       const updatedFields = {} as Amendments
+      const savedAmendments = {} as Amendments
 
-      const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
+      const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
       expect(tabDetails[index].name).toBe(tabName)
       expect(tabDetails[index].exceptionsCount).toBe(exceptionsCount)
@@ -292,7 +298,7 @@ describe("getTabDetails", () => {
     dummyAho.Exceptions.length = 0
     HO100102(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const amendments = {
       nextHearingDate: [
         {
           resultIndex: 0,
@@ -301,8 +307,10 @@ describe("getTabDetails", () => {
         }
       ]
     } as Amendments
+    const updatedFields = amendments
+    const savedAmendments = amendments
 
-    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(tabDetails[3].name).toBe("Offences")
     expect(tabDetails[3].exceptionsCount).toBe(0)
@@ -314,7 +322,7 @@ describe("getTabDetails", () => {
     HO100102(dummyAho)
     HO100200(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const amendments = {
       nextHearingDate: [
         {
           resultIndex: 0,
@@ -323,8 +331,10 @@ describe("getTabDetails", () => {
         }
       ]
     } as Amendments
+    const updatedFields = amendments
+    const savedAmendments = amendments
 
-    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(tabDetails[3].name).toBe("Offences")
     expect(tabDetails[3].exceptionsCount).toBe(1)
@@ -336,7 +346,7 @@ describe("getTabDetails", () => {
     HO100102(dummyAho)
     HO100200(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const amendments = {
       nextHearingDate: [
         {
           resultIndex: 0,
@@ -352,8 +362,10 @@ describe("getTabDetails", () => {
         }
       ]
     } as Amendments
+    const updatedFields = amendments
+    const savedAmendments = amendments
 
-    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(tabDetails[3].name).toBe("Offences")
     expect(tabDetails[3].exceptionsCount).toBe(0)
