@@ -45,6 +45,7 @@ import { formatFormInputDateString } from "utils/formattedDate"
 import getQueryStringCookieName from "utils/getQueryStringCookieName"
 import { isPost } from "utils/http"
 import { logUiDetails } from "utils/logUiDetails"
+import { logCaseListRenderTime } from "utils/logging"
 import { calculateLastPossiblePageNumber } from "utils/pagination/calculateLastPossiblePageNumber"
 import { reasonOptions } from "utils/reasonOptions"
 import redirectTo from "utils/redirectTo"
@@ -120,6 +121,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
+    const startTime = new Date().getTime()
     const { req, currentUser, query, csrfToken } = context as CsrfServerSidePropsContext &
       AuthenticationServerSidePropsContext
     const queryStringCookieName = getQueryStringCookieName(currentUser.username)
@@ -190,6 +192,8 @@ export const getServerSideProps = withMultipleServerSideProps(
     if (isError(lastSwitchingFormSubmission)) {
       throw lastSwitchingFormSubmission
     }
+
+    logCaseListRenderTime(startTime, currentUser, caseListQueryParams)
 
     // Remove courtDateRange from the props because the dates don't serialise
     const { courtDateRange: _, ...caseListQueryProps } = caseListQueryParams
