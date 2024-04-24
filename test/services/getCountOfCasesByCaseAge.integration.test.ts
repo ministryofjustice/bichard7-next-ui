@@ -84,7 +84,7 @@ describe("listCourtCases", () => {
     await insertCourtCasesWithFields([
       { courtDate: dateToday, orgForPoliceFilter: orgCode },
       { courtDate: dateToday, orgForPoliceFilter: orgCode },
-      { courtDate: dateToday, orgForPoliceFilter: orgCode, resolutionTimestamp: new Date() }
+      { courtDate: dateToday, orgForPoliceFilter: orgCode, errorStatus: "Resolved", triggerStatus: "Resolved" }
     ])
 
     const result = (await getCountOfCasesByCaseAge(dataSource, {

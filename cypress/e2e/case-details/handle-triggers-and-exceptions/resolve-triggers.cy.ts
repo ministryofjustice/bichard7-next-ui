@@ -1,4 +1,5 @@
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import { loginAndVisit } from "../../../support/helpers"
@@ -8,7 +9,7 @@ const caseURL = "/bichard/court-cases/0"
 const unresolvedTriggers: TestTrigger[] = Array.from(Array(5)).map((_, idx) => {
   return {
     triggerId: idx,
-    triggerCode: `TRPR000${idx + 1}`,
+    triggerCode: `TRPR000${idx + 1}` as TriggerCode,
     status: "Unresolved",
     createdAt: new Date("2022-07-09T10:22:34.000Z")
   }
@@ -18,7 +19,7 @@ const resolvedTriggers: TestTrigger[] = Array.from(Array(5)).map((_, idx) => {
   const triggerId = unresolvedTriggers.length + idx
   return {
     triggerId,
-    triggerCode: `TRPR000${idx + 1}`,
+    triggerCode: `TRPR000${idx + 1}` as TriggerCode,
     status: "Resolved",
     createdAt: new Date("2022-07-09T10:22:34.000Z")
   }
@@ -298,12 +299,12 @@ describe("Triggers and exceptions", () => {
     it("Should be able to resolve a trigger and redirect to case list when all triggers resolved and exceptions resolved", () => {
       const caseTriggers: Partial<TestTrigger>[] = [
         {
-          triggerCode: "TRPR0001",
+          triggerCode: TriggerCode.TRPR0001,
           status: "Unresolved",
           createdAt: new Date("2022-07-09T10:22:34.000Z")
         },
         {
-          triggerCode: "TRPR0002",
+          triggerCode: TriggerCode.TRPR0002,
           status: "Unresolved",
           createdAt: new Date("2022-07-09T10:22:34.000Z")
         }

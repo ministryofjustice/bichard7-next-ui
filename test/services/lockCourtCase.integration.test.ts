@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import axios from "axios"
 import User from "services/entities/User"
 import getCourtCase from "services/getCourtCase"
@@ -14,6 +15,7 @@ import { hasAccessToAll } from "../helpers/hasAccessTo"
 import deleteFromDynamoTable from "../utils/deleteFromDynamoTable"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
+import { TestTrigger, insertTriggers } from "../utils/manageTriggers"
 
 jest.mock("services/updateLockStatusToLocked")
 jest.mock("services/storeAuditLogEvents")
@@ -52,6 +54,14 @@ describe("lock court case", () => {
         errorId: 0
       }
     ])
+
+    const trigger: TestTrigger = {
+      triggerId: 0,
+      triggerCode: TriggerCode.TRPR0001,
+      status: "Unresolved",
+      createdAt: new Date("2022-07-12T10:22:34.000Z")
+    }
+    await insertTriggers(0, [trigger])
     ;(courtCasesByOrganisationUnitQuery as jest.Mock).mockImplementation(
       jest.requireActual("services/queries/courtCasesByOrganisationUnitQuery").default
     )

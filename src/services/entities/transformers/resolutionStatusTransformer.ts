@@ -15,7 +15,7 @@ const getResolutionStatusCodeByText = (text: string) =>
 
 const resolutionStatusTransformer: ValueTransformer = {
   from: (value: number) => {
-    return resolutionStatusByCode[value]
+    return resolutionStatusByCode[value] ?? null
   },
   to: (value: ResolutionStatus | FindOperator<ResolutionStatus>) => {
     return resolveFindOperator(value, (input) => getResolutionStatusCodeByText(input))

@@ -15,6 +15,17 @@ describe("Lock court cases", () => {
         triggerCount: 1
       }
     ])
+    cy.task("insertTriggers", {
+      caseId: 0,
+      triggers: [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+    })
 
     loginAndVisit()
 
@@ -57,6 +68,17 @@ describe("Lock court cases", () => {
         triggerCount: 1
       }
     ])
+    cy.task("insertTriggers", {
+      caseId: 0,
+      triggers: [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+    })
 
     loginAndVisit("TriggerHandler")
     cy.visit("/bichard")
@@ -144,6 +166,18 @@ describe("Lock court cases", () => {
       }
     ])
 
+    cy.task("insertTriggers", {
+      caseId: 0,
+      triggers: [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: "Resolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+    })
+
     loginAndVisit()
     cy.findByText("NAME Defendant").click()
 
@@ -166,8 +200,19 @@ describe("Lock court cases", () => {
       }
     ])
 
-    loginAndVisit()
-    cy.findByText("NAME Defendant").click()
+    cy.task("insertTriggers", {
+      caseId: 0,
+      triggers: [
+        {
+          triggerId: 0,
+          triggerCode: "TRPR0001",
+          status: "Resolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+    })
+
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("#exceptions-resolved-tag").should("exist").should("contain.text", "Resolved")
     cy.get("#exceptions-locked-tag").should("not.exist")

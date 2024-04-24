@@ -21,7 +21,6 @@ import { insertCourtCasesWithFields } from "../../utils/insertCourtCases"
 import insertException from "../../utils/manageExceptions"
 import { TestTrigger, insertTriggers } from "../../utils/manageTriggers"
 
-jest.setTimeout(100000)
 describe("Filter cases by resolution status", () => {
   let dataSource: DataSource
   const courtCode = "36FPA1"
@@ -115,8 +114,8 @@ describe("Filter cases by resolution status", () => {
           orgForPoliceFilter: courtCode,
           triggerResolvedBy: args.trigger?.triggerResolvedBy,
           triggerResolvedTimestamp: args.trigger?.triggerResolvedBy ? new Date() : null,
-          triggerStatus: args.trigger?.triggerResolvedBy ? "Resolved" : "Unresolved",
-          errorStatus: args.exception?.exceptionResolvedBy ? "Resolved" : "Unresolved",
+          triggerStatus: args.trigger ? (args.trigger.triggerResolvedBy ? "Resolved" : "Unresolved") : null,
+          errorStatus: args.exception ? (args.exception?.exceptionResolvedBy ? "Resolved" : "Unresolved") : null,
           errorResolvedTimestamp: args.exception?.exceptionResolvedBy ? new Date() : null,
           triggerCount: args.trigger ? 1 : 0,
           resolutionTimestamp:
