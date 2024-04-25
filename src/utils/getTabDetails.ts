@@ -40,9 +40,12 @@ const getAsnExceptionDetails = (
   }
 }
 
-const getNextHearingDateExceptionsDetails = (exceptions: Exception[], updatedFields: Amendments): ExceptionDetails => {
+const getNextHearingDateExceptionsDetails = (
+  exceptions: Exception[],
+  savedAmendments: Amendments
+): ExceptionDetails => {
   const nextHearingDateExceptionsCount = getNextHearingDateExceptions(exceptions).length
-  const nextHearingDateExceptionsCountFromUpdatedFields = updatedFields?.nextHearingDate?.length || 0
+  const nextHearingDateExceptionsCountFromUpdatedFields = savedAmendments?.nextHearingDate?.length || 0
 
   return {
     ExceptionsCount: nextHearingDateExceptionsCount - nextHearingDateExceptionsCountFromUpdatedFields,
@@ -71,7 +74,7 @@ const getTabDetails = (
   updatedFields: Amendments,
   savedAmendments: Amendments
 ): TabDetails[] => {
-  const nextHearingDateExceptionsDetails = getNextHearingDateExceptionsDetails(exceptions, updatedFields)
+  const nextHearingDateExceptionsDetails = getNextHearingDateExceptionsDetails(exceptions, savedAmendments)
   const nextHearingLocationExceptionsDetails = getNextHearingLocationExceptionsDetails(exceptions, updatedFields)
   const asnExceptionDetails = getAsnExceptionDetails(exceptions, updatedFields, savedAmendments)
 

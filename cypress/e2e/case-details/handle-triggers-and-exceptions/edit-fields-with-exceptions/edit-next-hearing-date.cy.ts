@@ -149,7 +149,6 @@ describe("NextHearingDate", () => {
     cy.location().should((loc) => {
       expect(loc.href).to.contain("?resubmitCase=true")
     })
-
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
