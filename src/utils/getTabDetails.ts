@@ -54,10 +54,10 @@ const getNextHearingDateExceptionsDetails = (exceptions: Exception[], updatedFie
 
 const getNextHearingLocationExceptionsDetails = (
   exceptions: Exception[],
-  updatedFields: Amendments
+  savedAmendments: Amendments
 ): ExceptionDetails => {
   const nextHearingLocationExceptionsCount = getNextHearingLocationExceptions(exceptions).length
-  const nextHearingLocationExceptionsCountFromUpdatedFields = updatedFields?.nextSourceOrganisation?.length || 0
+  const nextHearingLocationExceptionsCountFromUpdatedFields = savedAmendments?.nextSourceOrganisation?.length || 0
   return {
     ExceptionsCount: nextHearingLocationExceptionsCount - nextHearingLocationExceptionsCountFromUpdatedFields,
     ExceptionsResolved:
@@ -72,7 +72,7 @@ const getTabDetails = (
   savedAmendments: Amendments
 ): TabDetails[] => {
   const nextHearingDateExceptionsDetails = getNextHearingDateExceptionsDetails(exceptions, updatedFields)
-  const nextHearingLocationExceptionsDetails = getNextHearingLocationExceptionsDetails(exceptions, updatedFields)
+  const nextHearingLocationExceptionsDetails = getNextHearingLocationExceptionsDetails(exceptions, savedAmendments)
   const asnExceptionDetails = getAsnExceptionDetails(exceptions, updatedFields, savedAmendments)
 
   let offencesExceptionsResolved = false
