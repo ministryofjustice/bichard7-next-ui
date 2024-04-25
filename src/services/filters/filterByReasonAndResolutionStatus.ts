@@ -30,13 +30,19 @@ const filterIfUnresolved = (
   if (shouldFilterForTriggers(user, reason)) {
     query.andWhere({ triggerStatus: "Unresolved" })
   } else if (shouldFilterForExceptions(user, reason)) {
-    query.andWhere({ errorStatus: "Unresolved" })
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where({ errorStatus: "Unresolved" }).orWhere({ errorStatus: "Submitted" })
+      })
+    )
   } else if (canSeeTriggersAndException(user, reason)) {
     query.andWhere(
       new Brackets((qb) => {
-        qb.where({ triggerStatus: "Unresolved" }).orWhere({
-          errorStatus: "Unresolved"
-        })
+        qb.where({ triggerStatus: "Unresolved" }).orWhere(
+          new Brackets((qb2) => {
+            qb2.where({ errorStatus: "Unresolved" }).orWhere({ errorStatus: "Submitted" })
+          })
+        )
       })
     )
   }
@@ -89,33 +95,6 @@ const filterIfResolved = (
   return query
 }
 
-const filterByReason = (
-  query: SelectQueryBuilder<CourtCase>,
-  reason?: Reason,
-  caseState?: CaseState
-): SelectQueryBuilder<CourtCase> => {
-  query.andWhere(
-    new Brackets((qb) => {
-      if (reason === Reason.Triggers) {
-        qb.where({
-          triggerStatus: caseState
-        })
-      } else if (reason === Reason.Exceptions) {
-        qb.where({
-          errorStatus: caseState
-        })
-      } else {
-        qb.where({
-          errorStatus: caseState
-        }).orWhere({
-          triggerStatus: caseState
-        })
-      }
-    })
-  )
-  return query
-}
-
 const filterByReasonAndResolutionStatus = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
@@ -124,10 +103,6 @@ const filterByReasonAndResolutionStatus = (
   resolvedByUsername?: string
 ): SelectQueryBuilder<CourtCase> => {
   caseState = caseState ?? "Unresolved"
-
-  if (reason) {
-    query = filterByReason(query, reason, caseState)
-  }
 
   if (caseState === "Unresolved") {
     query = filterIfUnresolved(query, user, reason)

@@ -498,7 +498,12 @@ describe("Filter cases by resolution status", () => {
           reason: Reason.Exceptions
         },
         user: triggerHandler,
-        expectedCases: ["Exceptions Unresolved/Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
+        expectedCases: [
+          "Exceptions Resolved by exceptionHandler/Trigger Unresolved",
+          "Exceptions Unresolved/Trigger Unresolved",
+          "Exceptions Unresolved/Bails Trigger Unresolved",
+          "No exceptions/Bails Trigger Unresolved"
+        ]
       },
       {
         description: "Should see no cases when filtering for resolved triggers as a exception handler",
@@ -517,7 +522,12 @@ describe("Filter cases by resolution status", () => {
           reason: Reason.Triggers
         },
         user: exceptionHandler,
-        expectedCases: ["Exceptions Unresolved/Trigger Unresolved", "Exceptions Unresolved/Bails Trigger Unresolved"]
+        expectedCases: [
+          "Exceptions Unresolved/Trigger Unresolved",
+          "Exceptions Unresolved/No triggers",
+          "Exceptions Unresolved/Trigger Resolved by someoneElse",
+          "Exceptions Unresolved/Bails Trigger Unresolved"
+        ]
       },
       {
         description:

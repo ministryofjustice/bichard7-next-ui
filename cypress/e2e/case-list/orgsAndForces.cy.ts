@@ -37,7 +37,7 @@ describe("How orgs and forces are presented", () => {
       { orgForPoliceFilter: caseNotVisible, ptiurn: "NotExpected" }
     ])
 
-    loginAndVisit("Bichard02")
+    loginAndVisit("BichardForce02")
 
     confirmMultipleFieldsDisplayed(["expected"])
     confirmMultipleFieldsNotDisplayed(["NotExpected"])

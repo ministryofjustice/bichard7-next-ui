@@ -1,5 +1,19 @@
 import { loginAndVisit } from "../../support/helpers"
 
+const insertTrigger = (status = "Unresolved") => {
+  cy.task("insertTriggers", {
+    caseId: 0,
+    triggers: [
+      {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status,
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+  })
+}
+
 describe("Lock court cases", () => {
   beforeEach(() => {
     cy.task("clearCourtCases")
@@ -15,17 +29,7 @@ describe("Lock court cases", () => {
         triggerCount: 1
       }
     ])
-    cy.task("insertTriggers", {
-      caseId: 0,
-      triggers: [
-        {
-          triggerId: 0,
-          triggerCode: "TRPR0001",
-          status: "Unresolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z")
-        }
-      ]
-    })
+    insertTrigger()
 
     loginAndVisit()
 
@@ -68,17 +72,7 @@ describe("Lock court cases", () => {
         triggerCount: 1
       }
     ])
-    cy.task("insertTriggers", {
-      caseId: 0,
-      triggers: [
-        {
-          triggerId: 0,
-          triggerCode: "TRPR0001",
-          status: "Unresolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z")
-        }
-      ]
-    })
+    insertTrigger()
 
     loginAndVisit("TriggerHandler")
     cy.visit("/bichard")
@@ -165,18 +159,7 @@ describe("Lock court cases", () => {
         triggerStatus: "Resolved"
       }
     ])
-
-    cy.task("insertTriggers", {
-      caseId: 0,
-      triggers: [
-        {
-          triggerId: 0,
-          triggerCode: "TRPR0001",
-          status: "Resolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z")
-        }
-      ]
-    })
+    insertTrigger("Resolved")
 
     loginAndVisit()
     cy.findByText("NAME Defendant").click()
@@ -199,18 +182,7 @@ describe("Lock court cases", () => {
         triggerStatus: "Resolved"
       }
     ])
-
-    cy.task("insertTriggers", {
-      caseId: 0,
-      triggers: [
-        {
-          triggerId: 0,
-          triggerCode: "TRPR0001",
-          status: "Resolved",
-          createdAt: new Date("2022-07-09T10:22:34.000Z")
-        }
-      ]
-    })
+    insertTrigger("Resolved")
 
     loginAndVisit("/bichard/court-cases/0")
 

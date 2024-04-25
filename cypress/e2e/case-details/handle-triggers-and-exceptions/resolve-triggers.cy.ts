@@ -187,7 +187,7 @@ describe("Triggers and exceptions", () => {
           orgForPoliceFilter: "01"
         }
       ])
-      cy.task("insertTriggers", { caseId: 0, triggers: unresolvedTriggers })
+      cy.task("insertTriggers", { caseId: 0, triggers: resolvedTriggers })
       cy.visit(caseURL)
       cy.get("section#triggers").find("#triggers-resolved-tag").should("exist")
       cy.get("section#exceptions").find("#exceptions-resolved-tag").should("exist")
