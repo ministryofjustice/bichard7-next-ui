@@ -25,7 +25,7 @@ export const NextHearingDateField = ({
   resultIndex,
   isCaseEditable
 }: NextHearingDateFieldProps) => {
-  const { courtCase, amendments, amend } = useCourtCase()
+  const { courtCase, amendments, amend, savedAmend } = useCourtCase()
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
 
@@ -49,6 +49,11 @@ export const NextHearingDateField = ({
   const handleNhdSave = () => {
     if (isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)) {
       saveNhd()
+      savedAmend("nextHearingDate")({
+        resultIndex: resultIndex,
+        offenceIndex: offenceIndex,
+        value: amendedNextHearingDate
+      })
     }
   }
 
