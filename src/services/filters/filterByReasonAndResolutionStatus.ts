@@ -1,6 +1,6 @@
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
-import { Brackets, FindOperator, IsNull, MoreThan, Not, SelectQueryBuilder } from "typeorm"
+import { Brackets, IsNull, Not, SelectQueryBuilder } from "typeorm"
 import { CaseState, Reason } from "types/CaseListQueryParams"
 import Permission from "types/Permission"
 
@@ -10,11 +10,11 @@ const reasonFilterOnlyIncludesExceptions = (reason?: Reason): boolean => reason 
 
 const shouldFilterForExceptions = (user: User, reason?: Reason): boolean =>
   (user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]) ||
-  reasonFilterOnlyIncludesExceptions(reason)
+  (user.hasAccessTo[Permission.Exceptions] && reasonFilterOnlyIncludesExceptions(reason))
 
 const shouldFilterForTriggers = (user: User, reason?: Reason): boolean =>
   (user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]) ||
-  reasonFilterOnlyIncludesTriggers(reason)
+  (user.hasAccessTo[Permission.Triggers] && reasonFilterOnlyIncludesTriggers(reason))
 
 const canSeeTriggersAndException = (user: User, reason?: Reason): boolean =>
   user.hasAccessTo[Permission.Exceptions] &&
@@ -27,11 +27,26 @@ const filterIfUnresolved = (
   user: User,
   reason?: Reason
 ): SelectQueryBuilder<CourtCase> => {
-  return query.andWhere({
-    ...(shouldFilterForTriggers(user, reason) ? { triggerResolvedTimestamp: IsNull() } : {}),
-    ...(shouldFilterForExceptions(user, reason) ? { errorResolvedTimestamp: IsNull() } : {}),
-    ...(canSeeTriggersAndException(user, reason) ? { resolutionTimestamp: IsNull() } : {})
-  })
+  if (shouldFilterForTriggers(user, reason)) {
+    query.andWhere({ triggerStatus: "Unresolved" })
+  } else if (shouldFilterForExceptions(user, reason)) {
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where({ errorStatus: "Unresolved" }).orWhere({ errorStatus: "Submitted" })
+      })
+    )
+  } else if (canSeeTriggersAndException(user, reason)) {
+    query.andWhere(
+      new Brackets((qb) => {
+        qb.where({ triggerStatus: "Unresolved" }).orWhere(
+          new Brackets((qb2) => {
+            qb2.where({ errorStatus: "Unresolved" }).orWhere({ errorStatus: "Submitted" })
+          })
+        )
+      })
+    )
+  }
+  return query
 }
 
 const filterIfResolved = (
@@ -43,7 +58,7 @@ const filterIfResolved = (
   if (shouldFilterForTriggers(user, reason)) {
     query.andWhere({ triggerResolvedTimestamp: Not(IsNull()) })
   } else if (shouldFilterForExceptions(user, reason)) {
-    query.andWhere({ errorResolvedTimestamp: Not(IsNull()) })
+    query.andWhere({ errorStatus: "Resolved" })
   } else if (canSeeTriggersAndException(user, reason)) {
     query.andWhere(
       new Brackets((qb) =>
@@ -80,37 +95,6 @@ const filterIfResolved = (
   return query
 }
 
-const filterByReason = (
-  query: SelectQueryBuilder<CourtCase>,
-  reason?: Reason,
-  resolvedOrUnresolved?: FindOperator<null>
-): SelectQueryBuilder<CourtCase> => {
-  query.andWhere(
-    new Brackets((qb) => {
-      if (reason === Reason.Triggers) {
-        qb.where({
-          triggerCount: MoreThan(0),
-          triggerResolvedTimestamp: resolvedOrUnresolved
-        })
-      } else if (reason === Reason.Exceptions) {
-        qb.where({
-          errorCount: MoreThan(0),
-          errorResolvedTimestamp: resolvedOrUnresolved
-        })
-      } else {
-        qb.where({
-          errorCount: MoreThan(0),
-          errorResolvedTimestamp: resolvedOrUnresolved
-        }).orWhere({
-          triggerCount: MoreThan(0),
-          triggerResolvedTimestamp: resolvedOrUnresolved
-        })
-      }
-    })
-  )
-  return query
-}
-
 const filterByReasonAndResolutionStatus = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
@@ -119,10 +103,6 @@ const filterByReasonAndResolutionStatus = (
   resolvedByUsername?: string
 ): SelectQueryBuilder<CourtCase> => {
   caseState = caseState ?? "Unresolved"
-
-  if (reason) {
-    query = filterByReason(query, reason, caseState === "Unresolved" ? IsNull() : Not(IsNull()))
-  }
 
   if (caseState === "Unresolved") {
     query = filterIfUnresolved(query, user, reason)

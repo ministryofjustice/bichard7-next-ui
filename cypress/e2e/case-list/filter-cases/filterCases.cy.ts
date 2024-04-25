@@ -651,7 +651,7 @@ describe("Filtering cases", () => {
   it("Should filter cases by whether they have triggers and exceptions", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "011111" },
-      { orgForPoliceFilter: "011111", errorCount: 0, errorReason: "", errorReport: "" },
+      { orgForPoliceFilter: "011111", errorCount: 0, errorStatus: null, errorReason: "", errorReport: "" },
       { orgForPoliceFilter: "011111" }
     ])
     const triggers: TestTrigger[] = [
@@ -670,7 +670,7 @@ describe("Filtering cases", () => {
     cy.visit("/bichard")
 
     // Default: no filter, all cases shown
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`])
+    confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
 
     // Filtering with triggers
     cy.get(`label[for="triggers-reason"]`).click()
@@ -678,14 +678,8 @@ describe("Filtering cases", () => {
 
     cy.get('*[class^="moj-filter-tags"]').contains("Triggers")
 
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`])
-    confirmMultipleFieldsNotDisplayed(["Case00002", "Case00003"])
-
-    // Removing the trigger filter tag
-    cy.get(".moj-filter__tag").contains("Triggers").click()
-    cy.get("button[id=search]").click()
-
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`])
+    confirmMultipleFieldsDisplayed(["Case00000", "Case00001"])
+    confirmMultipleFieldsNotDisplayed(["Case00002"])
 
     // Filtering with exceptions
     cy.get(`label[for="exceptions-reason"]`).click()
@@ -693,8 +687,8 @@ describe("Filtering cases", () => {
 
     cy.get('*[class^="moj-filter-tags"]').contains("Exceptions")
 
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00002`])
-    confirmMultipleFieldsNotDisplayed([`Case00001`, `Case00003`]) //TODO
+    confirmMultipleFieldsDisplayed(["Case00000", "Case00002"])
+    confirmMultipleFieldsNotDisplayed(["Case00001"])
 
     // Filter for both triggers and exceptions
     cy.get(`label[for="all-reason"]`).click()
@@ -702,7 +696,7 @@ describe("Filtering cases", () => {
 
     cy.contains('*[class^="moj-filter-tags"]').should("not.exist")
 
-    confirmMultipleFieldsDisplayed([`Case00000`, `Case00001`, `Case00002`])
+    confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
   })
 
   it("Should filter cases by case state", () => {

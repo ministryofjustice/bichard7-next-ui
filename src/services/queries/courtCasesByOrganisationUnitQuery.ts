@@ -7,11 +7,10 @@ import courtCasesByVisibleForcesQuery from "./courtCasesByVisibleForcesQuery"
 
 const courtCasesByOrganisationUnitQuery = <T extends DatabaseQuery<CourtCase>>(query: T, user: User): T => {
   const { visibleForces, visibleCourts } = user
-  const inclusionList = visibleCourts.concat(visibleForces)
   query.where(
     new Brackets((qb) => {
-      courtCasesByVisibleCourtsQuery(qb, inclusionList)
-      courtCasesByVisibleForcesQuery(qb, inclusionList)
+      courtCasesByVisibleCourtsQuery(qb, visibleCourts)
+      courtCasesByVisibleForcesQuery(qb, visibleForces)
     })
   )
 

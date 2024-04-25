@@ -82,6 +82,8 @@ describe("View Exception Handler Prompts", () => {
       cy.get("#exceptions-tab").contains("Exceptions").click()
       cy.get("button").contains("Mark as manually resolved").click()
       cy.get("button").contains("Resolve").click()
+
+      cy.visit(`/bichard/court-cases/${caseWithOffenceQualifierError}`)
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Aid and abet theft").click()
 
@@ -142,6 +144,8 @@ describe("View Exception Handler Prompts", () => {
       cy.get("#exceptions-tab").contains("Exceptions").click()
       cy.get("button").contains("Mark as manually resolved").click()
       cy.get("button").contains("Resolve").click()
+
+      cy.visit(`/bichard/court-cases/${caseWithOffenceCodeErrors}`)
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
 
       cy.get(".govuk-link").contains("National Offence with Offence Code not found exception").click()

@@ -449,7 +449,7 @@ describe("resolveCourtCase", () => {
       expect(afterCourtCaseResult).not.toBeNull()
       const afterCourtCase = afterCourtCaseResult as CourtCase
 
-      expect(afterCourtCase.errorStatus).toBeUndefined()
+      expect(afterCourtCase.errorStatus).toBeNull()
       expect(afterCourtCase.errorLockedByUsername).toEqual(resolverUsername)
       expect(afterCourtCase.triggerLockedByUsername).toEqual(resolverUsername)
       expect(afterCourtCase.errorResolvedBy).toBeNull()
