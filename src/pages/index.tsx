@@ -160,19 +160,20 @@ export const getServerSideProps = withMultipleServerSideProps(
       }
     }
 
-    const caseAgeCounts = await getCountOfCasesByCaseAge(dataSource, currentUser)
+    const [caseAgeCounts, courtCases] = await Promise.all([
+      getCountOfCasesByCaseAge(dataSource, currentUser),
+      listCourtCases(dataSource, caseListQueryParams, currentUser)
+    ])
 
     if (isError(caseAgeCounts)) {
       throw caseAgeCounts
     }
 
-    const courtCases = await listCourtCases(dataSource, caseListQueryParams, currentUser)
-
-    const oppositeOrder: QueryOrder = caseListQueryParams.order === "asc" ? "desc" : "asc"
-
     if (isError(courtCases)) {
       throw courtCases
     }
+
+    const oppositeOrder: QueryOrder = caseListQueryParams.order === "asc" ? "desc" : "asc"
 
     const lastPossiblePageNumber = calculateLastPossiblePageNumber(
       courtCases.totalCases,

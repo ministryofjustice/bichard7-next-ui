@@ -8,7 +8,7 @@ const numberedUsers = () => {
     const user = {
       username: `BichardForce0${i}`,
       visibleForces: [`00${i}`],
-      visibleCourts: [`${i}C`],
+      visibleCourts: [`B0${i}C`],
       forenames: "Bichard Test User",
       surname: `Force 0${i}`,
       email: `bichard.force.0${i}@example.com`,
@@ -110,6 +110,16 @@ const users: Record<string, Partial<User> & { groups: UserGroup[] }> = {
     email: "noexceptionsfeatureflag@example.com",
     password: hashedPassword,
     featureFlags: { exceptionsEnabled: false },
+    groups: [UserGroup.NewUI, UserGroup.GeneralHandler]
+  },
+  Court02User: {
+    username: "Court02User",
+    visibleForces: [],
+    visibleCourts: ["B02"],
+    forenames: "Court 02",
+    surname: "User",
+    email: "court02user@example.com",
+    password: hashedPassword,
     groups: [UserGroup.NewUI, UserGroup.GeneralHandler]
   },
   ...numberedUsers()

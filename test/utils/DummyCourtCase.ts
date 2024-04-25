@@ -11,7 +11,7 @@ const DummyCourtCase: Partial<CourtCase> = {
   messageId: "cf60600b-52a0-4bc7-b117-3acfb851a7f5",
   phase: 1,
   errorStatus: "Unresolved",
-  triggerStatus: "Unresolved",
+  triggerStatus: null,
   errorQualityChecked: 1,
   triggerQualityChecked: 1,
   triggerCount: 0,

@@ -46,7 +46,7 @@ describe("resubmit court case", () => {
       phase: 1,
       hearingOutcome: offenceSequenceException.hearingOutcomeXml,
       updatedHearingOutcome: offenceSequenceException.updatedHearingOutcomeXml,
-      orgForPoliceFilter: "1"
+      orgForPoliceFilter: "01"
     })
 
     // insert the record to the db
@@ -57,7 +57,7 @@ describe("resubmit court case", () => {
 
     const result = await resubmitCourtCase(dataSource, { noUpdatesResubmit: true }, inputCourtCase.errorId, {
       username: userName,
-      visibleForces: ["1"],
+      visibleForces: ["01"],
       visibleCourts: [],
       hasAccessTo: hasAccessToAll
     } as Partial<User> as User)
@@ -122,7 +122,7 @@ describe("resubmit court case", () => {
       inputCourtCase.errorId,
       {
         username: userName,
-        visibleForces: ["1111"],
+        visibleForces: ["11"],
         visibleCourts: [],
         hasAccessTo: hasAccessToAll
       } as Partial<User> as User
@@ -208,7 +208,7 @@ describe("resubmit court case", () => {
       inputCourtCase.errorId,
       {
         username: userName,
-        visibleForces: ["1111"],
+        visibleForces: ["11"],
         visibleCourts: [],
         hasAccessTo: hasAccessToAll
       } as Partial<User> as User

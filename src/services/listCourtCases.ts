@@ -136,7 +136,7 @@ const listCourtCases = async (
     }
   }
 
-  query = filterByReasonAndResolutionStatus(query, user, reason, caseState, resolvedByUsername)
+  filterByReasonAndResolutionStatus(query, user, reason, caseState, resolvedByUsername)
 
   if (allocatedToUserName) {
     query.andWhere(
