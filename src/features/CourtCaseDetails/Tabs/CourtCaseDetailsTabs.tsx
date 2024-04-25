@@ -11,8 +11,8 @@ interface CourtCaseDetailsTabsProps {
 }
 
 export const CourtCaseDetailsTabs = ({ activeTab, onTabClick, width }: CourtCaseDetailsTabsProps) => {
-  const { courtCase, amendments } = useCourtCase()
-  const tabDetails = getTabDetails(courtCase.aho.Exceptions, amendments)
+  const { courtCase, amendments, savedAmendments } = useCourtCase()
+  const tabDetails = getTabDetails(courtCase.aho.Exceptions, amendments, savedAmendments)
 
   return (
     <StyledNav width={width} className={`moj-sub-navigation nav`} aria-label="Sub navigation">
