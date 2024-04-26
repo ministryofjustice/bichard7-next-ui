@@ -78,7 +78,7 @@ describe("NextHearingDate", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with no exceptions").click()
     cy.contains("td", "Next hearing date").should("not.exist")
-    cy.get(".moj-badge").contains("Editable Field").should("not.be.visible")
+    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
   })
 
   it("Should be able to edit field if HO100102 is raised", () => {
