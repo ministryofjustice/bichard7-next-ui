@@ -26,7 +26,7 @@ export const NextHearingLocationField = ({
   resultIndex,
   isCaseEditable
 }: NextHearingLocationFieldProps) => {
-  const { courtCase, amendments } = useCourtCase()
+  const { courtCase, amendments, savedAmend } = useCourtCase()
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
 
   const nextHearingLocation =
@@ -57,6 +57,11 @@ export const NextHearingLocationField = ({
   const handleNhlSave = () => {
     if (isValidNextHearingLocation(amendedNextHearingLocation, organisations)) {
       saveNhl()
+      savedAmend("nextSourceOrganisation")({
+        resultIndex: resultIndex,
+        offenceIndex: offenceIndex,
+        value: amendedNextHearingLocation
+      })
     }
   }
 

@@ -154,11 +154,11 @@ describe("getNextHearingLocationExceptionsDetails", () => {
       dummyAho.Exceptions.length = 0
       nextHearingLocationException(dummyAho)
       const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-      const updatedFields = {} as Amendments
+      const savedAmendments = {} as Amendments
 
       const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
         courtCase.aho.Exceptions,
-        updatedFields
+        savedAmendments
       )
 
       expect(nextHearingLocationExceptions.ExceptionsCount).toBe(1)
@@ -171,11 +171,11 @@ describe("getNextHearingLocationExceptionsDetails", () => {
     HO100200(dummyAho)
     HO100300(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
     const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
       courtCase.aho.Exceptions,
-      updatedFields
+      savedAmendments
     )
 
     expect(nextHearingLocationExceptions.ExceptionsCount).toBe(2)
@@ -188,11 +188,11 @@ describe("getNextHearingLocationExceptionsDetails", () => {
     HO100300(dummyAho)
     HO100322(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
     const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
       courtCase.aho.Exceptions,
-      updatedFields
+      savedAmendments
     )
 
     expect(nextHearingLocationExceptions.ExceptionsCount).toBe(3)
@@ -203,7 +203,7 @@ describe("getNextHearingLocationExceptionsDetails", () => {
     dummyAho.Exceptions.length = 0
     HO100200(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const savedAmendments = {
       nextSourceOrganisation: [
         {
           resultIndex: 0,
@@ -215,7 +215,7 @@ describe("getNextHearingLocationExceptionsDetails", () => {
 
     const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
       courtCase.aho.Exceptions,
-      updatedFields
+      savedAmendments
     )
 
     expect(nextHearingLocationExceptions.ExceptionsCount).toBe(0)
@@ -227,7 +227,7 @@ describe("getNextHearingLocationExceptionsDetails", () => {
     HO100200(dummyAho)
     HO100300(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const savedAmendments = {
       nextSourceOrganisation: [
         {
           resultIndex: 0,
@@ -244,7 +244,7 @@ describe("getNextHearingLocationExceptionsDetails", () => {
 
     const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
       courtCase.aho.Exceptions,
-      updatedFields
+      savedAmendments
     )
 
     expect(nextHearingLocationExceptions.ExceptionsCount).toBe(0)
@@ -255,11 +255,11 @@ describe("getNextHearingLocationExceptionsDetails", () => {
     dummyAho.Exceptions.length = 0
     HO100206(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
     const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
       courtCase.aho.Exceptions,
-      updatedFields
+      savedAmendments
     )
 
     expect(nextHearingLocationExceptions.ExceptionsCount).toBe(0)
