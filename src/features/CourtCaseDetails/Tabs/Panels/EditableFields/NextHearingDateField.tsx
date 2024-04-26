@@ -56,7 +56,6 @@ export const NextHearingDateField = ({
       })
     }
   }
-
   return (
     <EditableFieldTableRow
       label="Next hearing date"

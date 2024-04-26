@@ -39,7 +39,7 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Use a motor vehicle on a road / public place without third party insurance").click()
     cy.contains("td", "Next hearing location").should("not.exist")
-    cy.get(".moj-badge").contains("Editable Field").should("not.be.visible")
+    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
   })
 
   it("Should be able to edit field if HO100200 is raised", () => {

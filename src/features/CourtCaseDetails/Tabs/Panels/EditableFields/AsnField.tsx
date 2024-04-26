@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react"
 import Asn from "services/Asn"
 import isAsnFormatValid from "utils/isAsnFormatValid"
 import { AsnInput } from "../DefendantDetails.styles"
+import isAsnException from "utils/exceptions/isException/isAsnException"
 
 interface AsnFieldProps {
   stopLeavingFn: (newValue: boolean) => void
@@ -83,7 +84,10 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     return false
   }
 
-  const isAsnEditable = courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME
+  const isAsnEditable =
+    courtCase.canUserEditExceptions &&
+    courtCase.phase === Phase.HEARING_OUTCOME &&
+    isAsnException(courtCase.aho.Exceptions)
 
   return (
     <EditableFieldTableRow
