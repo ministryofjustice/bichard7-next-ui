@@ -29,6 +29,7 @@ import UnlockReason from "types/UnlockReason"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { isPost } from "utils/http"
+import { logRenderTime } from "utils/logging"
 import notSuccessful from "utils/notSuccessful"
 import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
@@ -53,6 +54,7 @@ export const getServerSideProps = withMultipleServerSideProps(
   withAuthentication,
   withCsrf,
   async (context: GetServerSidePropsContext<ParsedUrlQuery>): Promise<GetServerSidePropsResult<Props>> => {
+    const startTime = new Date().getTime()
     const { req, currentUser, query, csrfToken, formData } = context as AuthenticationServerSidePropsContext &
       CsrfServerSidePropsContext
     const { courtCaseId, lock, resolveTrigger, resubmitCase, previousPath } = query as {
@@ -166,6 +168,8 @@ export const getServerSideProps = withMultipleServerSideProps(
     if (isError(lastSwitchingFormSubmission)) {
       throw lastSwitchingFormSubmission
     }
+
+    logRenderTime(startTime, "caseView")
 
     return {
       props: {

@@ -3,9 +3,8 @@ import { CaseState, Reason } from "./CaseListQueryParams"
 export type FilterAction =
   | { method: FilterMethod; type: "defendantName"; value: string }
   | { method: FilterMethod; type: "courtName"; value: string }
-  | { method: FilterMethod; type: "reasonCodes"; value: string }
+  | { method: FilterMethod; type: "reasonCodes"; value: string | string[] }
   | { method: FilterMethod; type: "ptiurn"; value: string }
-  | { method: FilterMethod; type: "urgency"; value: boolean }
   | { method: FilterMethod; type: "caseAge"; value: string }
   | { method: "add"; type: "dateFrom"; value: string }
   | { method: "add"; type: "dateTo"; value: string }
@@ -19,7 +18,6 @@ export type FilterType =
   | "courtName"
   | "reasonCodes"
   | "ptiurn"
-  | "urgency"
   | "caseAge"
   | "dateFrom"
   | "dateTo"
@@ -32,11 +30,6 @@ export type FilterMethod = "add" | "remove"
 export type FilterValue = boolean | string | Reason
 export type FilterState = "Selected" | "Applied"
 export type Filter = {
-  urgentFilter: {
-    value?: boolean
-    state?: FilterState
-    label?: string
-  }
   caseAgeFilter: {
     value: string
     state: FilterState

@@ -5,12 +5,6 @@ import { caseStateLabels } from "utils/caseStateFilters"
 
 const handleAddingFilters = (newState: Filter, action: FilterAction) => {
   switch (action.type) {
-    case "urgency": {
-      newState.urgentFilter.value = action.value
-      newState.urgentFilter.label = action.value ? "Urgent" : "Non-urgent"
-      newState.urgentFilter.state = "Selected"
-      break
-    }
     case "caseAge": {
       if (newState.caseAgeFilter.filter((caseAgeFilter) => caseAgeFilter.value === action.value).length < 1) {
         newState.caseAgeFilter.push({ value: action.value, state: "Selected" })
@@ -57,7 +51,8 @@ const handleAddingFilters = (newState: Filter, action: FilterAction) => {
       break
     }
     case "reasonCodes": {
-      newState.reasonCodes = action.value.split(" ").map((reason: string) => ({
+      const values = Array.isArray(action.value) ? action.value : [action.value]
+      newState.reasonCodes = values.map((reason: string) => ({
         value: reason,
         label: reason,
         state: "Selected"
@@ -76,11 +71,6 @@ const handleAddingFilters = (newState: Filter, action: FilterAction) => {
 
 const handleRemovingFilters = (newState: Filter, action: FilterAction) => {
   switch (action.type) {
-    case "urgency": {
-      newState.urgentFilter.value = undefined
-      newState.urgentFilter.label = undefined
-      break
-    }
     case "caseAge": {
       if (action.value) {
         newState.caseAgeFilter = newState.caseAgeFilter.filter((caseAgeFilter) => caseAgeFilter.value !== action.value)

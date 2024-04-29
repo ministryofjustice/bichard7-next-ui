@@ -23,8 +23,9 @@ describe("getAsnExceptionDetails", () => {
     HO100206(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
     const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
-    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields)
+    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(asnException.ExceptionsCount).toBe(1)
     expect(asnException.ExceptionsResolved).toBe(false)
@@ -37,8 +38,11 @@ describe("getAsnExceptionDetails", () => {
     const updatedFields = {
       asn: "1101ZD0100000448754K"
     } as Amendments
+    const savedAmendments = {
+      asn: "1101ZD0100000448754K"
+    } as Amendments
 
-    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields)
+    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(asnException.ExceptionsCount).toBe(0)
     expect(asnException.ExceptionsResolved).toBe(true)
@@ -49,8 +53,9 @@ describe("getAsnExceptionDetails", () => {
     HO100102(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
     const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
-    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields)
+    const asnException = getAsnExceptionDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(asnException.ExceptionsCount).toBe(0)
     expect(asnException.ExceptionsResolved).toBe(false)
@@ -62,9 +67,9 @@ describe("getNextHearingDateExceptionsDetails", () => {
     dummyAho.Exceptions.length = 0
     HO100102(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
-    const nextHearingDateExceptions = getNextHearingDateExceptionsDetails(courtCase.aho.Exceptions, updatedFields)
+    const nextHearingDateExceptions = getNextHearingDateExceptionsDetails(courtCase.aho.Exceptions, savedAmendments)
 
     expect(nextHearingDateExceptions.ExceptionsCount).toBe(1)
     expect(nextHearingDateExceptions.ExceptionsResolved).toBe(false)
@@ -75,9 +80,9 @@ describe("getNextHearingDateExceptionsDetails", () => {
     HO100102(dummyAho)
     HO100323(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
-    const nextHearingDateExceptions = getNextHearingDateExceptionsDetails(courtCase.aho.Exceptions, updatedFields)
+    const nextHearingDateExceptions = getNextHearingDateExceptionsDetails(courtCase.aho.Exceptions, savedAmendments)
 
     expect(nextHearingDateExceptions.ExceptionsCount).toBe(2)
     expect(nextHearingDateExceptions.ExceptionsResolved).toBe(false)
@@ -87,7 +92,7 @@ describe("getNextHearingDateExceptionsDetails", () => {
     dummyAho.Exceptions.length = 0
     HO100102(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const savedAmendments = {
       nextHearingDate: [
         {
           resultIndex: 0,
@@ -97,7 +102,7 @@ describe("getNextHearingDateExceptionsDetails", () => {
       ]
     } as Amendments
 
-    const nextHearingDateExceptions = getNextHearingDateExceptionsDetails(courtCase.aho.Exceptions, updatedFields)
+    const nextHearingDateExceptions = getNextHearingDateExceptionsDetails(courtCase.aho.Exceptions, savedAmendments)
 
     expect(nextHearingDateExceptions.ExceptionsCount).toBe(0)
     expect(nextHearingDateExceptions.ExceptionsResolved).toBe(true)
@@ -108,7 +113,7 @@ describe("getNextHearingDateExceptionsDetails", () => {
     HO100102(dummyAho)
     HO100323(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const savedAmendments = {
       nextHearingDate: [
         {
           resultIndex: 0,
@@ -123,7 +128,7 @@ describe("getNextHearingDateExceptionsDetails", () => {
       ]
     } as Amendments
 
-    const nextHearingDateExceptions = getNextHearingDateExceptionsDetails(courtCase.aho.Exceptions, updatedFields)
+    const nextHearingDateExceptions = getNextHearingDateExceptionsDetails(courtCase.aho.Exceptions, savedAmendments)
 
     expect(nextHearingDateExceptions.ExceptionsCount).toBe(0)
     expect(nextHearingDateExceptions.ExceptionsResolved).toBe(true)
@@ -133,9 +138,9 @@ describe("getNextHearingDateExceptionsDetails", () => {
     dummyAho.Exceptions.length = 0
     HO100206(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
-    const nextHearingDateExceptions = getNextHearingDateExceptionsDetails(courtCase.aho.Exceptions, updatedFields)
+    const nextHearingDateExceptions = getNextHearingDateExceptionsDetails(courtCase.aho.Exceptions, savedAmendments)
 
     expect(nextHearingDateExceptions.ExceptionsCount).toBe(0)
     expect(nextHearingDateExceptions.ExceptionsResolved).toBe(false)
@@ -149,11 +154,11 @@ describe("getNextHearingLocationExceptionsDetails", () => {
       dummyAho.Exceptions.length = 0
       nextHearingLocationException(dummyAho)
       const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-      const updatedFields = {} as Amendments
+      const savedAmendments = {} as Amendments
 
       const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
         courtCase.aho.Exceptions,
-        updatedFields
+        savedAmendments
       )
 
       expect(nextHearingLocationExceptions.ExceptionsCount).toBe(1)
@@ -166,11 +171,11 @@ describe("getNextHearingLocationExceptionsDetails", () => {
     HO100200(dummyAho)
     HO100300(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
     const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
       courtCase.aho.Exceptions,
-      updatedFields
+      savedAmendments
     )
 
     expect(nextHearingLocationExceptions.ExceptionsCount).toBe(2)
@@ -183,11 +188,11 @@ describe("getNextHearingLocationExceptionsDetails", () => {
     HO100300(dummyAho)
     HO100322(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
     const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
       courtCase.aho.Exceptions,
-      updatedFields
+      savedAmendments
     )
 
     expect(nextHearingLocationExceptions.ExceptionsCount).toBe(3)
@@ -198,7 +203,7 @@ describe("getNextHearingLocationExceptionsDetails", () => {
     dummyAho.Exceptions.length = 0
     HO100200(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const savedAmendments = {
       nextSourceOrganisation: [
         {
           resultIndex: 0,
@@ -210,7 +215,7 @@ describe("getNextHearingLocationExceptionsDetails", () => {
 
     const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
       courtCase.aho.Exceptions,
-      updatedFields
+      savedAmendments
     )
 
     expect(nextHearingLocationExceptions.ExceptionsCount).toBe(0)
@@ -222,7 +227,7 @@ describe("getNextHearingLocationExceptionsDetails", () => {
     HO100200(dummyAho)
     HO100300(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const savedAmendments = {
       nextSourceOrganisation: [
         {
           resultIndex: 0,
@@ -239,7 +244,7 @@ describe("getNextHearingLocationExceptionsDetails", () => {
 
     const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
       courtCase.aho.Exceptions,
-      updatedFields
+      savedAmendments
     )
 
     expect(nextHearingLocationExceptions.ExceptionsCount).toBe(0)
@@ -250,11 +255,11 @@ describe("getNextHearingLocationExceptionsDetails", () => {
     dummyAho.Exceptions.length = 0
     HO100206(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {} as Amendments
+    const savedAmendments = {} as Amendments
 
     const nextHearingLocationExceptions = getNextHearingLocationExceptionsDetails(
       courtCase.aho.Exceptions,
-      updatedFields
+      savedAmendments
     )
 
     expect(nextHearingLocationExceptions.ExceptionsCount).toBe(0)
@@ -279,8 +284,9 @@ describe("getTabDetails", () => {
       exceptions.map((exception) => exception(dummyAho))
       const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
       const updatedFields = {} as Amendments
+      const savedAmendments = {} as Amendments
 
-      const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
+      const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
       expect(tabDetails[index].name).toBe(tabName)
       expect(tabDetails[index].exceptionsCount).toBe(exceptionsCount)
@@ -292,7 +298,7 @@ describe("getTabDetails", () => {
     dummyAho.Exceptions.length = 0
     HO100102(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const amendments = {
       nextHearingDate: [
         {
           resultIndex: 0,
@@ -301,8 +307,10 @@ describe("getTabDetails", () => {
         }
       ]
     } as Amendments
+    const updatedFields = amendments
+    const savedAmendments = amendments
 
-    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(tabDetails[3].name).toBe("Offences")
     expect(tabDetails[3].exceptionsCount).toBe(0)
@@ -314,7 +322,7 @@ describe("getTabDetails", () => {
     HO100102(dummyAho)
     HO100200(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const amendments = {
       nextHearingDate: [
         {
           resultIndex: 0,
@@ -323,8 +331,10 @@ describe("getTabDetails", () => {
         }
       ]
     } as Amendments
+    const updatedFields = amendments
+    const savedAmendments = amendments
 
-    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(tabDetails[3].name).toBe("Offences")
     expect(tabDetails[3].exceptionsCount).toBe(1)
@@ -336,7 +346,7 @@ describe("getTabDetails", () => {
     HO100102(dummyAho)
     HO100200(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
-    const updatedFields = {
+    const amendments = {
       nextHearingDate: [
         {
           resultIndex: 0,
@@ -352,8 +362,10 @@ describe("getTabDetails", () => {
         }
       ]
     } as Amendments
+    const updatedFields = amendments
+    const savedAmendments = amendments
 
-    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
 
     expect(tabDetails[3].name).toBe("Offences")
     expect(tabDetails[3].exceptionsCount).toBe(0)

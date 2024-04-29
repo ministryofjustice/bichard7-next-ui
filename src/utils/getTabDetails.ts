@@ -1,10 +1,11 @@
 import { Amendments } from "types/Amendments"
-import getNextHearingDateExceptions from "./exceptions/getNextHearingDateExceptions"
 import { Exception } from "types/exceptions"
+import getNextHearingDateExceptions from "./exceptions/getNextHearingDateExceptions"
 import getNextHearingLocationExceptions from "./exceptions/getNextHearingLocationExceptions"
-import isAsnException from "./exceptions/isException/isAsnException"
 import hasNextHearingDateExceptions from "./exceptions/hasNextHearingDateExceptions"
 import hasNextHearingLocationException from "./exceptions/hasNextHearingLocationException"
+import isAsnException from "./exceptions/isException/isAsnException"
+import isAsnFormatValid from "./isAsnFormatValid"
 
 export type TabDetails = {
   name: "Defendant" | "Hearing" | "Case" | "Offences" | "Notes"
@@ -17,18 +18,34 @@ type ExceptionDetails = {
   ExceptionsResolved: boolean
 }
 
-const getAsnExceptionDetails = (exceptions: Exception[], updatedFields: Amendments): ExceptionDetails => {
+const getAsnExceptionDetails = (
+  exceptions: Exception[],
+  updatedFields: Amendments,
+  savedAmendments: Amendments
+): ExceptionDetails => {
   const asnExceptionCount = +isAsnException(exceptions)
-  const asnExceptionCountFromUpdatedFields = updatedFields?.asn ? 1 : 0
+
+  let saved: boolean = false
+
+  if (savedAmendments?.asn) {
+    saved = true
+  }
+
+  const asnExceptionCountFromUpdatedFields =
+    saved && isAsnFormatValid(updatedFields?.asn ?? "") && savedAmendments.asn === updatedFields.asn ? 1 : 0
+
   return {
     ExceptionsCount: asnExceptionCount - asnExceptionCountFromUpdatedFields,
     ExceptionsResolved: asnExceptionCount > 0 && asnExceptionCount === asnExceptionCountFromUpdatedFields
   }
 }
 
-const getNextHearingDateExceptionsDetails = (exceptions: Exception[], updatedFields: Amendments): ExceptionDetails => {
+const getNextHearingDateExceptionsDetails = (
+  exceptions: Exception[],
+  savedAmendments: Amendments
+): ExceptionDetails => {
   const nextHearingDateExceptionsCount = getNextHearingDateExceptions(exceptions).length
-  const nextHearingDateExceptionsCountFromUpdatedFields = updatedFields?.nextHearingDate?.length || 0
+  const nextHearingDateExceptionsCountFromUpdatedFields = savedAmendments?.nextHearingDate?.length || 0
 
   return {
     ExceptionsCount: nextHearingDateExceptionsCount - nextHearingDateExceptionsCountFromUpdatedFields,
@@ -40,10 +57,10 @@ const getNextHearingDateExceptionsDetails = (exceptions: Exception[], updatedFie
 
 const getNextHearingLocationExceptionsDetails = (
   exceptions: Exception[],
-  updatedFields: Amendments
+  savedAmendments: Amendments
 ): ExceptionDetails => {
   const nextHearingLocationExceptionsCount = getNextHearingLocationExceptions(exceptions).length
-  const nextHearingLocationExceptionsCountFromUpdatedFields = updatedFields?.nextSourceOrganisation?.length || 0
+  const nextHearingLocationExceptionsCountFromUpdatedFields = savedAmendments?.nextSourceOrganisation?.length || 0
   return {
     ExceptionsCount: nextHearingLocationExceptionsCount - nextHearingLocationExceptionsCountFromUpdatedFields,
     ExceptionsResolved:
@@ -52,10 +69,15 @@ const getNextHearingLocationExceptionsDetails = (
   }
 }
 
-const getTabDetails = (exceptions: Exception[], updatedFields: Amendments): TabDetails[] => {
-  const nextHearingDateExceptionsDetails = getNextHearingDateExceptionsDetails(exceptions, updatedFields)
-  const nextHearingLocationExceptionsDetails = getNextHearingLocationExceptionsDetails(exceptions, updatedFields)
-  const asnExceptionDetails = getAsnExceptionDetails(exceptions, updatedFields)
+const getTabDetails = (
+  exceptions: Exception[],
+  updatedFields: Amendments,
+  savedAmendments: Amendments
+): TabDetails[] => {
+  const nextHearingDateExceptionsDetails = getNextHearingDateExceptionsDetails(exceptions, savedAmendments)
+  const nextHearingLocationExceptionsDetails = getNextHearingLocationExceptionsDetails(exceptions, savedAmendments)
+
+  const asnExceptionDetails = getAsnExceptionDetails(exceptions, updatedFields, savedAmendments)
 
   let offencesExceptionsResolved = false
 
@@ -99,8 +121,8 @@ const getTabDetails = (exceptions: Exception[], updatedFields: Amendments): TabD
 }
 
 export {
-  getTabDetails,
   getAsnExceptionDetails,
+  getNextHearingDateExceptionsDetails,
   getNextHearingLocationExceptionsDetails,
-  getNextHearingDateExceptionsDetails
+  getTabDetails
 }

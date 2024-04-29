@@ -42,26 +42,27 @@ describe("courtCasesByOrganisationUnitQuery", () => {
   })
 
   it("Should call both visible courts and visible forces queries", async () => {
-    const dummyCode = "dummyForceCode"
+    const dummyForceCode = "001"
+    const dummyCourtCode = "01XY01"
     const user: Partial<User> = {
-      visibleForces: [dummyCode],
-      visibleCourts: [dummyCode]
+      visibleForces: [dummyForceCode],
+      visibleCourts: [dummyCourtCode]
     }
 
     courtCasesByOrganisationUnitQuery(query, user as User)
 
     expect(courtCasesByVisibleCourtsQuery).toHaveBeenCalledTimes(1)
-    expect(courtCasesByVisibleCourtsQuery).toHaveBeenCalledWith(expect.any(Object), [dummyCode, dummyCode])
+    expect(courtCasesByVisibleCourtsQuery).toHaveBeenCalledWith(expect.any(Object), [dummyCourtCode])
 
     expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledTimes(1)
-    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [dummyCode, dummyCode])
+    expect(courtCasesByVisibleForcesQuery).toHaveBeenCalledWith(expect.any(Object), [dummyForceCode])
   })
 
   it("Should select all visible cases when its a select query", async () => {
     const expectedOrgCodes = ["12GHA ", "12GHAB", "13BR  ", "14AT  "]
     const otherOrgCodes = ["15AA", "16AA"]
     const user: Partial<User> = {
-      visibleForces: ["12GHA"],
+      visibleForces: ["012"],
       visibleCourts: ["13BR", "14AT"]
     }
     await insertCourtCasesWithFields(
@@ -83,7 +84,7 @@ describe("courtCasesByOrganisationUnitQuery", () => {
     const expectedOrgCodes = ["12GHA ", "12GHAB", "13BR  "]
     const otherOrgCodes = ["14AT  ", "15AA", "16AA"]
     const user: Partial<User> = {
-      visibleForces: ["12GHA"],
+      visibleForces: ["012"],
       visibleCourts: ["13BR"]
     }
     await insertCourtCasesWithFields(

@@ -1,5 +1,19 @@
 import { loginAndVisit } from "../../support/helpers"
 
+const insertTrigger = (status = "Unresolved") => {
+  cy.task("insertTriggers", {
+    caseId: 0,
+    triggers: [
+      {
+        triggerId: 0,
+        triggerCode: "TRPR0001",
+        status,
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+  })
+}
+
 describe("Lock court cases", () => {
   beforeEach(() => {
     cy.task("clearCourtCases")
@@ -15,6 +29,7 @@ describe("Lock court cases", () => {
         triggerCount: 1
       }
     ])
+    insertTrigger()
 
     loginAndVisit()
 
@@ -57,6 +72,7 @@ describe("Lock court cases", () => {
         triggerCount: 1
       }
     ])
+    insertTrigger()
 
     loginAndVisit("TriggerHandler")
     cy.visit("/bichard")
@@ -143,6 +159,7 @@ describe("Lock court cases", () => {
         triggerStatus: "Resolved"
       }
     ])
+    insertTrigger("Resolved")
 
     loginAndVisit()
     cy.findByText("NAME Defendant").click()
@@ -165,9 +182,9 @@ describe("Lock court cases", () => {
         triggerStatus: "Resolved"
       }
     ])
+    insertTrigger("Resolved")
 
-    loginAndVisit()
-    cy.findByText("NAME Defendant").click()
+    loginAndVisit("/bichard/court-cases/0")
 
     cy.get("#exceptions-resolved-tag").should("exist").should("contain.text", "Resolved")
     cy.get("#exceptions-locked-tag").should("not.exist")

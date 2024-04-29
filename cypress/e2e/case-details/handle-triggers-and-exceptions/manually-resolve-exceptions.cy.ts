@@ -28,6 +28,8 @@ describe("Manually resolve exceptions", () => {
     cy.get('select[name="reason"]').select("PNCRecordIsAccurate")
     cy.get("button").contains("Resolve").click()
 
+    cy.visit("/bichard/court-cases/0")
+
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
@@ -61,6 +63,8 @@ describe("Manually resolve exceptions", () => {
 
     cy.get("textarea").type("Some reason text")
     cy.get("button").contains("Resolve").click()
+
+    cy.visit("/bichard/court-cases/0")
 
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/

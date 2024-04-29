@@ -64,6 +64,10 @@ port:
     listening: true
     ip:
       - 0.0.0.0
+  tcp:3000:
+    listening: true
+    ip:
+      - 127.0.0.1
 user:
   dbus:
     exists: true
@@ -106,8 +110,6 @@ user:
     home: /
     shell: /usr/sbin/nologin
 process:
-  next-server:
-    running: true
   nginx:
     running: true
   supervisord:

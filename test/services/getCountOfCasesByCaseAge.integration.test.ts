@@ -11,10 +11,10 @@ import { isError } from "../../src/types/Result"
 import deleteFromEntity from "../utils/deleteFromEntity"
 import { insertCourtCasesWithFields } from "../utils/insertCourtCases"
 
-jest.setTimeout(100000)
 describe("listCourtCases", () => {
   let dataSource: DataSource
   const orgCode = "36FPA1"
+  const forceCode = "36"
 
   beforeAll(async () => {
     dataSource = await getDataSource()
@@ -64,7 +64,7 @@ describe("listCourtCases", () => {
 
     const result = (await getCountOfCasesByCaseAge(dataSource, {
       visibleCourts: [],
-      visibleForces: [orgCode]
+      visibleForces: [forceCode]
     } as Partial<User> as User)) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
@@ -84,12 +84,12 @@ describe("listCourtCases", () => {
     await insertCourtCasesWithFields([
       { courtDate: dateToday, orgForPoliceFilter: orgCode },
       { courtDate: dateToday, orgForPoliceFilter: orgCode },
-      { courtDate: dateToday, orgForPoliceFilter: orgCode, resolutionTimestamp: new Date() }
+      { courtDate: dateToday, orgForPoliceFilter: orgCode, errorStatus: "Resolved", triggerStatus: "Resolved" }
     ])
 
     const result = (await getCountOfCasesByCaseAge(dataSource, {
       visibleCourts: [],
-      visibleForces: [orgCode]
+      visibleForces: [forceCode]
     } as Partial<User> as User)) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
@@ -109,7 +109,7 @@ describe("listCourtCases", () => {
 
     const result = (await getCountOfCasesByCaseAge(dataSource, {
       visibleCourts: [],
-      visibleForces: [orgCode]
+      visibleForces: [forceCode]
     } as Partial<User> as User)) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
@@ -121,7 +121,7 @@ describe("listCourtCases", () => {
     it("Should return 0 for each key", async () => {
       const result = (await getCountOfCasesByCaseAge(dataSource, {
         visibleCourts: [],
-        visibleForces: [orgCode]
+        visibleForces: [forceCode]
       } as Partial<User> as User)) as Record<string, number>
 
       expect(isError(result)).toBeFalsy()
@@ -141,7 +141,7 @@ describe("listCourtCases", () => {
 
       const result = await getCountOfCasesByCaseAge(dataSource, {
         visibleCourts: [],
-        visibleForces: [orgCode]
+        visibleForces: [forceCode]
       } as Partial<User> as User)
       expect(isError(result)).toBe(true)
 

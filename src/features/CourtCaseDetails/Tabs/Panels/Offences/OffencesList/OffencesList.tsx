@@ -29,7 +29,7 @@ export const OffencesList = ({ offences, setDetailedOffenceIndex }: OffencesList
         {offences.length > 0 &&
           offences.map((offence, index) => (
             <OffencesListRow
-              key={getOffenceCode(offence)}
+              key={`${getOffenceCode(offence)}-${index}`}
               offence={offence}
               onClick={() => setDetailedOffenceIndex(index + 1)}
             />

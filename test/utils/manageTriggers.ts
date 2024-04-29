@@ -43,6 +43,7 @@ const insertTriggers = async (caseId: number, triggers: TestTrigger[], username?
     .set({
       triggerResolvedBy,
       triggerCount: () => `trigger_count + ${triggers.length}`,
+      triggerStatus: triggerResolvedBy ? "Resolved" : "Unresolved",
       triggerReason: triggers[triggers.length - 1].triggerCode
     })
     .where("errorId = :id", { id: caseId })

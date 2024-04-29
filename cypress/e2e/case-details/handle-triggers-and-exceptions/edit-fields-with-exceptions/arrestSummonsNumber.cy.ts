@@ -67,7 +67,7 @@ describe("ASN", () => {
     cy.get("#asn").should("not.exist")
   })
 
-  it("Should be able to edit ASN field if any exceptions are raised", () => {
+  it("Should be not be able to edit ASN field if ASN exception is not raised", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
@@ -81,25 +81,7 @@ describe("ASN", () => {
 
     loginAndVisit("/bichard/court-cases/0")
 
-    cy.get(".moj-badge").contains("Editable Field").should("exist")
-    cy.get("#asn").clear()
-    cy.get("#asn").type("1101ZD0100000448754K")
-
-    cy.get("button").contains("Submit exception(s)").click()
-
-    cy.contains(
-      "Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"
-    ).should("exist")
-    cy.get("button").contains("Submit exception(s)").click()
-
-    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: 1101ZD0100000448754K")
-    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
-
-    verifyUpdatedMessage({
-      expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
-      updatedMessageNotHaveContent: ["<br7:ArrestSummonsNumber>AAAAAAAAAAAAAAAAAAAA</br7:ArrestSummonsNumber>"],
-      updatedMessageHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber>"]
-    })
+    cy.get(".moj-badge").should("not.exist")
   })
 
   it("Should validate ASN correction and save to updated message in the database", () => {
@@ -107,8 +89,8 @@ describe("ASN", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
-        hearingOutcome: ExceptionHO100239.hearingOutcomeXml,
-        updatedHearingOutcome: ExceptionHO100239.hearingOutcomeXml,
+        hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
         errorCount: 1,
         errorLockedByUsername: "GeneralHandler"
       }
@@ -125,6 +107,7 @@ describe("ASN", () => {
     // Save correction button should be disabled
     cy.get("button").contains("Save Correction").should("be.disabled")
     cy.get("#asn").clear()
+
     cy.get("#asn").type("1101ZD0100000410836V")
     // Submit exception(s) button should be enabled
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
@@ -132,6 +115,11 @@ describe("ASN", () => {
     cy.get("#event-name-error").should("not.exist")
 
     cy.get("button").contains("Save Correction").click()
+    // Save correction button should be disabled to prevent double clicking
+    cy.get("button").contains("Save Correction").should("be.disabled")
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },

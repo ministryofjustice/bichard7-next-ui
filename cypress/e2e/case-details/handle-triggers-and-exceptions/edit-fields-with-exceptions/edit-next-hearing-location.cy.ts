@@ -39,7 +39,7 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Use a motor vehicle on a road / public place without third party insurance").click()
     cy.contains("td", "Next hearing location").should("not.exist")
-    cy.get(".moj-badge").contains("Editable Field").should("not.be.visible")
+    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
   })
 
   it("Should be able to edit field if HO100200 is raised", () => {
@@ -342,5 +342,79 @@ describe("NextHearingLocation", () => {
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
     cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
+  })
+
+  context("Save correction button", () => {
+    it("Should be enabled when valid value is entered", () => {
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B43UY00")
+
+      cy.get("#save-next-hearing-location").should("be.enabled")
+    })
+
+    it("Should be disabled when no value is entered", () => {
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#save-next-hearing-location").should("be.disabled")
+    })
+
+    it("Should be disabled when invalid value is entered", () => {
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B01")
+
+      cy.get("#save-next-hearing-location").should("be.disabled")
+    })
+
+    it("Should be disabled when whitespace is entered", () => {
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("      ")
+
+      cy.get("#save-next-hearing-location").should("be.disabled")
+    })
+
+    it("Should be enabled when a value different from the previous one is entered", () => {
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B21XA00")
+
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B63AD00")
+
+      cy.get("#save-next-hearing-location").should("be.enabled")
+    })
+
+    it("Should be disabled when same value as the previous one is entered", () => {
+      loginAndVisit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B21XA00")
+
+      cy.get("#save-next-hearing-location").click()
+
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type("B21XA00")
+
+      cy.get("#save-next-hearing-location").should("be.disabled")
+    })
   })
 })

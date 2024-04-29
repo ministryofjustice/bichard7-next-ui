@@ -1,4 +1,4 @@
-import { DataSource, IsNull } from "typeorm"
+import { Brackets, DataSource } from "typeorm"
 import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
@@ -30,9 +30,13 @@ const getCountOfCasesByCaseAge = async (connection: DataSource, user: User): Pro
     }
   })
 
-  query.andWhere({
-    resolutionTimestamp: IsNull()
-  })
+  query.andWhere(
+    new Brackets((qb) => {
+      qb.where({
+        errorStatus: "Unresolved"
+      }).orWhere({ triggerStatus: "Unresolved" })
+    })
+  )
 
   const response = await query.getRawOne().catch((error: Error) => error)
 

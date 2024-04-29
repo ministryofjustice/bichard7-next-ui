@@ -13,7 +13,7 @@ import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQ
 const listCourtCases = async (
   connection: DataSource,
   {
-    pageNum,
+    page,
     maxPageItems,
     orderBy,
     order,
@@ -21,7 +21,6 @@ const listCourtCases = async (
     courtName,
     ptiurn,
     reason,
-    urgent,
     courtDateRange,
     lockedState,
     caseState,
@@ -31,8 +30,8 @@ const listCourtCases = async (
   }: CaseListQueryParams,
   user: User
 ): PromiseResult<ListCourtCaseResult> => {
-  const pageNumValidated = (pageNum ? parseInt(pageNum, 10) : 1) - 1 // -1 because the db index starts at 0
-  const maxPageItemsValidated = maxPageItems ? parseInt(maxPageItems, 10) : 25
+  const pageNumValidated = (page ? page : 1) - 1 // -1 because the db index starts at 0
+  const maxPageItemsValidated = maxPageItems ? maxPageItems : 25
   const repository = connection.getRepository(CourtCase)
   let query = repository
     .createQueryBuilder("courtCase")
@@ -115,12 +114,6 @@ const listCourtCases = async (
     )
   }
 
-  if (urgent === "Urgent") {
-    query.andWhere({ isUrgent: MoreThan(0) })
-  } else if (urgent === "Non-urgent") {
-    query.andWhere({ isUrgent: 0 })
-  }
-
   if (courtDateRange) {
     if (Array.isArray(courtDateRange)) {
       query.andWhere(
@@ -143,7 +136,7 @@ const listCourtCases = async (
     }
   }
 
-  query = filterByReasonAndResolutionStatus(query, user, reason, caseState, resolvedByUsername)
+  filterByReasonAndResolutionStatus(query, user, reason, caseState, resolvedByUsername)
 
   if (allocatedToUserName) {
     query.andWhere(
