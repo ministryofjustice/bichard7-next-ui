@@ -16,6 +16,7 @@ interface NextHearingDateFieldProps {
   offenceIndex: number
   resultIndex: number
   isCaseEditable: boolean
+  stopLeavingFn: (newValue: boolean) => void
 }
 
 export const NextHearingDateField = ({
@@ -23,7 +24,8 @@ export const NextHearingDateField = ({
   exceptions,
   offenceIndex,
   resultIndex,
-  isCaseEditable
+  isCaseEditable,
+  stopLeavingFn
 }: NextHearingDateFieldProps) => {
   const { courtCase, amendments, amend, savedAmend } = useCourtCase()
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
@@ -45,6 +47,8 @@ export const NextHearingDateField = ({
       !isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate) || isNhdSaved || !nextHearingDateChanged
     )
   }
+
+  stopLeavingFn(!isNhdSaved && nextHearingDateChanged)
 
   const handleNhdSave = () => {
     if (isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)) {
