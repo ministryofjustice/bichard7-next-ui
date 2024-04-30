@@ -68,7 +68,8 @@ export const NextHearingLocationField = ({
   }
 
   useEffect(() => {
-    if (amendedNextHearingLocation !== savedNextHearingLocation) {
+    if (amendedNextHearingLocation && amendedNextHearingLocation !== savedNextHearingLocation) {
+      console.log("CALLING")
       setIsNhlChanged(true)
       setIsNhlSaved(false)
     } else {
