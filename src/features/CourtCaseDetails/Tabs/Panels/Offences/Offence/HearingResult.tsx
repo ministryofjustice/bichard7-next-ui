@@ -90,6 +90,7 @@ export const HearingResult = ({
         offenceIndex={offenceIndex}
         resultIndex={resultIndex}
         isCaseEditable={isCaseEditable}
+        stopLeavingFn={stopLeavingFn}
       />
       <NextHearingDateField
         result={result}

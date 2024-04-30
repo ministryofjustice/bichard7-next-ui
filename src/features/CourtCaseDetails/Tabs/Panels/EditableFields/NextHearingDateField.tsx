@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import axios from "axios"
 import { useCourtCase } from "context/CourtCaseContext"
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
@@ -48,7 +48,9 @@ export const NextHearingDateField = ({
     )
   }
 
-  stopLeavingFn(!isNhdSaved && nextHearingDateChanged)
+  useEffect(() => {
+    stopLeavingFn(!isNhdSaved && nextHearingDateChanged)
+  }, [isNhdSaved, nextHearingDateChanged, stopLeavingFn])
 
   const handleNhdSave = () => {
     if (isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)) {

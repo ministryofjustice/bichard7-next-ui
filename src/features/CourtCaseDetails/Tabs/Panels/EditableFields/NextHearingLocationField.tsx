@@ -17,6 +17,7 @@ interface NextHearingLocationFieldProps {
   offenceIndex: number
   resultIndex: number
   isCaseEditable: boolean
+  stopLeavingFn: (newValue: boolean) => void
 }
 
 export const NextHearingLocationField = ({
@@ -24,7 +25,8 @@ export const NextHearingLocationField = ({
   exceptions,
   offenceIndex,
   resultIndex,
-  isCaseEditable
+  isCaseEditable,
+  stopLeavingFn
 }: NextHearingLocationFieldProps) => {
   const { courtCase, amendments, savedAmend } = useCourtCase()
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
@@ -72,7 +74,9 @@ export const NextHearingLocationField = ({
     } else {
       setIsNhlChanged(false)
     }
-  }, [amendedNextHearingLocation, savedNextHearingLocation])
+
+    stopLeavingFn(!isNhlSaved && isNhlChanged)
+  }, [amendedNextHearingLocation, isNhlChanged, isNhlSaved, savedNextHearingLocation, stopLeavingFn])
 
   return (
     <EditableFieldTableRow
