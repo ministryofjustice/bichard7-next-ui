@@ -1,12 +1,24 @@
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import areEditableFieldsValid from "./areEditableFieldsValid"
 import createDummyAho from "../../test/helpers/createDummyAho"
+import { HO100310 } from "../../test/helpers/exceptions"
 import HO100102 from "../../test/helpers/exceptions/HO100102"
-import HO100300 from "../../test/helpers/exceptions/HO100300"
 import HO100206 from "../../test/helpers/exceptions/HO100206"
+import HO100300 from "../../test/helpers/exceptions/HO100300"
+import areAmendmentsValid from "./areAmendmentsValid"
+import isOffenceMatchingValid from "./isOffenceMatchingValid"
 
-describe("areEditableFieldsValid", () => {
+jest.mock("./isOffenceMatchingValid", () => jest.fn())
+
+describe("areAmendmentsValid", () => {
   const dummyAho = createDummyAho()
+
+  beforeEach(() => {
+    ;(isOffenceMatchingValid as jest.Mock).mockReturnValue(true)
+  })
+
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
 
   it.each([
     ["1101ZD0100000448754K", "B21XA00", "2025-02-10", true],
@@ -45,7 +57,7 @@ describe("areEditableFieldsValid", () => {
         ]
       }
 
-      const result = areEditableFieldsValid(courtCase, amendments)
+      const result = areAmendmentsValid(courtCase, amendments)
 
       expect(result).toBe(isValid)
     }
@@ -70,7 +82,7 @@ describe("areEditableFieldsValid", () => {
       ]
     }
 
-    const result = areEditableFieldsValid(courtCase, amendments)
+    const result = areAmendmentsValid(courtCase, amendments)
 
     expect(result).toBe(false)
   })
@@ -93,7 +105,7 @@ describe("areEditableFieldsValid", () => {
       ]
     }
 
-    const result = areEditableFieldsValid(courtCase, amendments)
+    const result = areAmendmentsValid(courtCase, amendments)
 
     expect(result).toBe(true)
   })
@@ -116,8 +128,40 @@ describe("areEditableFieldsValid", () => {
       ]
     }
 
-    const result = areEditableFieldsValid(courtCase, amendments)
+    const result = areAmendmentsValid(courtCase, amendments)
 
+    expect(result).toBe(true)
+  })
+
+  it("calls offence matching validator", () => {
+    dummyAho.Exceptions.length = 0
+    const courtCase = {
+      aho: HO100310(dummyAho)
+    } as unknown as DisplayFullCourtCase
+
+    areAmendmentsValid(courtCase, {})
+    expect(isOffenceMatchingValid as jest.Mock).toHaveBeenCalledTimes(1)
+  })
+
+  it("returns false if offence matching is invalid", () => {
+    ;(isOffenceMatchingValid as jest.Mock).mockReturnValue(false)
+
+    const courtCase = {
+      aho: HO100310(dummyAho)
+    } as unknown as DisplayFullCourtCase
+
+    const result = areAmendmentsValid(courtCase, {})
+    expect(result).toBe(false)
+  })
+
+  it("returns true if offence matching is valid", () => {
+    ;(isOffenceMatchingValid as jest.Mock).mockReturnValue(true)
+
+    const courtCase = {
+      aho: HO100310(dummyAho)
+    } as unknown as DisplayFullCourtCase
+
+    const result = areAmendmentsValid(courtCase, {})
     expect(result).toBe(true)
   })
 })

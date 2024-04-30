@@ -21,7 +21,7 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
-import areEditableFieldsValid from "utils/areEditableFieldsValid"
+import areAmendmentsValid from "utils/areAmendmentsValid"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
@@ -119,7 +119,7 @@ const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath, a
     backLink += `?previousPath=${encodeURIComponent(previousPath)}`
   }
   const resubmitCasePath = `${basePath}/court-cases/${courtCase.errorId}?resubmitCase=true`
-  const validAmendments = areEditableFieldsValid(courtCase, JSON.parse(amendments ?? "{}"))
+  const validAmendments = areAmendmentsValid(courtCase, JSON.parse(amendments ?? "{}"))
 
   return (
     <>
