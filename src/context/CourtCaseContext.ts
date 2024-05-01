@@ -90,4 +90,6 @@ const useCourtCaseContextState = (courtCase: DisplayFullCourtCase) =>
     savedAmendments: getAmendmentsByComparison(courtCase.aho, courtCase.updatedHearingOutcome)
   })
 
+CourtCaseContext.displayName = "CourtCaseContext"
+
 export { CourtCaseContext, useCourtCase, useCourtCaseContextState }

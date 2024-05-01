@@ -17,5 +17,7 @@ const useCurrentUser = (): DisplayFullUser => {
   return currentUserContext.currentUser
 }
 
+CurrentUserContext.displayName = "CurrentUserContext"
+
 export { CurrentUserContext, useCurrentUser }
 export type { CurrentUserContextType }
