@@ -285,8 +285,9 @@ describe("getTabDetails", () => {
       const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
       const updatedFields = {} as Amendments
       const savedAmendments = {} as Amendments
+      const exceptionsEnabled = true
 
-      const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
+      const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments, exceptionsEnabled)
 
       expect(tabDetails[index].name).toBe(tabName)
       expect(tabDetails[index].exceptionsCount).toBe(exceptionsCount)
@@ -309,8 +310,9 @@ describe("getTabDetails", () => {
     } as Amendments
     const updatedFields = amendments
     const savedAmendments = amendments
+    const exceptionsEnabled = true
 
-    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments, exceptionsEnabled)
 
     expect(tabDetails[3].name).toBe("Offences")
     expect(tabDetails[3].exceptionsCount).toBe(0)
@@ -333,8 +335,9 @@ describe("getTabDetails", () => {
     } as Amendments
     const updatedFields = amendments
     const savedAmendments = amendments
+    const exceptionsEnabled = true
 
-    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments, exceptionsEnabled)
 
     expect(tabDetails[3].name).toBe("Offences")
     expect(tabDetails[3].exceptionsCount).toBe(1)
@@ -364,8 +367,9 @@ describe("getTabDetails", () => {
     } as Amendments
     const updatedFields = amendments
     const savedAmendments = amendments
+    const exceptionsEnabled = true
 
-    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments)
+    const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments, exceptionsEnabled)
 
     expect(tabDetails[3].name).toBe("Offences")
     expect(tabDetails[3].exceptionsCount).toBe(0)
