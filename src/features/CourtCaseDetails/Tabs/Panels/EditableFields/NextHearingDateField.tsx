@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import axios from "axios"
 import { useCourtCase } from "context/CourtCaseContext"
+import { useCurrentUser } from "context/CurrentUserContext"
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { Exception } from "types/exceptions"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
@@ -28,6 +29,7 @@ export const NextHearingDateField = ({
   stopLeavingFn
 }: NextHearingDateFieldProps) => {
   const { courtCase, amendments, amend, savedAmend } = useCourtCase()
+  const currentUser = useCurrentUser()
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
 
@@ -62,13 +64,17 @@ export const NextHearingDateField = ({
       })
     }
   }
+
+  const isEditable =
+    isCaseEditable && hasNextHearingDateExceptions(exceptions) && currentUser.featureFlags?.exceptionsEnabled
+
   return (
     <EditableFieldTableRow
       label="Next hearing date"
       hasExceptions={hasNextHearingDateExceptions(exceptions)}
       value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
       updatedValue={updatedNextHearingDate && formatDisplayedDate(updatedNextHearingDate)}
-      isEditable={isCaseEditable && hasNextHearingDateExceptions(exceptions)}
+      isEditable={isEditable}
       inputLabel="Enter next hearing date"
       hintText="Enter date"
     >

@@ -4,6 +4,7 @@ import EditableFieldTableRow from "components/EditableFields/EditableFieldTableR
 import { SaveLinkButton } from "components/LinkButton"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { useCourtCase } from "context/CourtCaseContext"
+import { useCurrentUser } from "context/CurrentUserContext"
 import { useCallback, useEffect, useState } from "react"
 import OrganisationUnitApiResponse from "types/OrganisationUnitApiResponse"
 import { Exception } from "types/exceptions"
@@ -29,6 +30,7 @@ export const NextHearingLocationField = ({
   stopLeavingFn
 }: NextHearingLocationFieldProps) => {
   const { courtCase, amendments, savedAmend } = useCourtCase()
+  const currentUser = useCurrentUser()
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
 
   const nextHearingLocation =
@@ -79,13 +81,16 @@ export const NextHearingLocationField = ({
     stopLeavingFn(!isNhlSaved && isNhlChanged)
   }, [amendedNextHearingLocation, isNhlChanged, isNhlSaved, savedNextHearingLocation, stopLeavingFn])
 
+  const isEditable =
+    isCaseEditable && hasNextHearingLocationException(exceptions) && currentUser.featureFlags?.exceptionsEnabled
+
   return (
     <EditableFieldTableRow
       label="Next hearing location"
       hasExceptions={hasNextHearingLocationException(exceptions)}
       value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
       updatedValue={amendedNextHearingLocation}
-      isEditable={isCaseEditable && hasNextHearingLocationException(exceptions)}
+      isEditable={isEditable}
       inputLabel="Enter next hearing location"
       hintText="OU code, 6-7 characters"
     >
