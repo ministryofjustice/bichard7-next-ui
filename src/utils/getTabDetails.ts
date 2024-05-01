@@ -72,7 +72,8 @@ const getNextHearingLocationExceptionsDetails = (
 const getTabDetails = (
   exceptions: Exception[],
   updatedFields: Amendments,
-  savedAmendments: Amendments
+  savedAmendments: Amendments,
+  exceptionsEnabled: boolean
 ): TabDetails[] => {
   const nextHearingDateExceptionsDetails = getNextHearingDateExceptionsDetails(exceptions, savedAmendments)
   const nextHearingLocationExceptionsDetails = getNextHearingLocationExceptionsDetails(exceptions, savedAmendments)
@@ -90,10 +91,15 @@ const getTabDetails = (
     offencesExceptionsResolved = nextHearingLocationExceptionsDetails.ExceptionsResolved
   }
 
+  const defendantExceptionsCount = exceptionsEnabled ? asnExceptionDetails.ExceptionsCount : 0
+  const offencesExceptionsCount = exceptionsEnabled
+    ? nextHearingDateExceptionsDetails.ExceptionsCount + nextHearingLocationExceptionsDetails.ExceptionsCount
+    : 0
+
   return [
     {
       name: "Defendant",
-      exceptionsCount: asnExceptionDetails.ExceptionsCount,
+      exceptionsCount: defendantExceptionsCount,
       exceptionsResolved: asnExceptionDetails.ExceptionsResolved
     },
     {
@@ -108,8 +114,7 @@ const getTabDetails = (
     },
     {
       name: "Offences",
-      exceptionsCount:
-        nextHearingDateExceptionsDetails.ExceptionsCount + nextHearingLocationExceptionsDetails.ExceptionsCount,
+      exceptionsCount: offencesExceptionsCount,
       exceptionsResolved: offencesExceptionsResolved
     },
     {
