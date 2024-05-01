@@ -16,5 +16,7 @@ const useCsrfToken = (): string => {
   return csrfTokenContext.csrfToken
 }
 
+CsrfTokenContext.displayName = "CsrfTokenContext"
+
 export { CsrfTokenContext, useCsrfToken }
 export type { CsrfTokenContextType }

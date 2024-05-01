@@ -16,5 +16,7 @@ const usePreviousPath = (): string => {
   return previousPathContext.previousPath
 }
 
+PreviousPathContext.displayName = "PreviousPathContext"
+
 export { PreviousPathContext, usePreviousPath }
 export type { PreviousPathContextType }

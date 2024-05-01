@@ -32,7 +32,7 @@ export const NextHearingLocationField = ({
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
 
   const nextHearingLocation =
-    courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
+    courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
       .Result[resultIndex].NextResultSourceOrganisation?.OrganisationUnitCode
 
   const [savedNextHearingLocation, setSavedNextHearingLocation] = useState<string>(nextHearingLocation ?? "")
