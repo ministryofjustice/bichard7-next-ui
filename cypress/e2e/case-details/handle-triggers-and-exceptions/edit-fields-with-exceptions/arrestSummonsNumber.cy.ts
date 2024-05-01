@@ -252,4 +252,10 @@ describe("ASN", () => {
 
     cy.get(".moj-badge").should("not.exist")
   })
+
+  it("Should not display an editable field for ASN when exceptionsEnabled is false for user", () => {
+    loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
+
+    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
+  })
 })
