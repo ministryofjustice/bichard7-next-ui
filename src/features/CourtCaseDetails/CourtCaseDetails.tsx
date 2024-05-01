@@ -79,6 +79,7 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
               setSelectedOffenceIndex(offenceIndex)
             }}
             selectedOffenceIndex={selectedOffenceIndex}
+            stopLeavingFn={stopLeavingFn}
           />
 
           <Notes visible={activeTab === "Notes"} isLockedByCurrentUser={isLockedByCurrentUser} />
