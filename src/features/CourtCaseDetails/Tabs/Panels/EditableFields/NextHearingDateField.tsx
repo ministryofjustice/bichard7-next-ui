@@ -67,7 +67,7 @@ export const NextHearingDateField = ({
 
   const isEditable =
     isCaseEditable && hasNextHearingDateExceptions(exceptions) && currentUser.featureFlags?.exceptionsEnabled
-
+  console.log(JSON.stringify(amendments, null, 2))
   return (
     <EditableFieldTableRow
       label="Next hearing date"
@@ -95,7 +95,6 @@ export const NextHearingDateField = ({
           })
         }}
       />
-
       <SaveLinkButton id={"save-next-hearing-date"} onClick={handleNhdSave} disabled={isSaveNhdBtnDisabled()} />
     </EditableFieldTableRow>
   )

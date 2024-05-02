@@ -1,8 +1,8 @@
 import { Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "../types/display/CourtCases"
 import isAmendedNextHearingLocationValid from "./isAmendedNextHearingLocationValid"
-import isAsnValid from "./isAsnValid"
-import isNextHearingDateValid from "./isNextHearingDateValid"
+import isAsnUpdated from "./isAsnUpdated"
+import isNextHearingUpdated from "./isNextHearingDateUpdated"
 
 const areEditableFieldsValid = (courtCase: DisplayFullCourtCase, amendments: Amendments): boolean => {
   const exceptions = courtCase.aho.Exceptions
@@ -11,9 +11,9 @@ const areEditableFieldsValid = (courtCase: DisplayFullCourtCase, amendments: Ame
   }
 
   return (
-    isNextHearingDateValid(exceptions, amendments.nextHearingDate) &&
-    isAmendedNextHearingLocationValid(exceptions, amendments.nextSourceOrganisation) &&
-    isAsnValid(exceptions, amendments.asn)
+    isNextHearingUpdated(exceptions, amendments.nextHearingDate) ||
+    isAmendedNextHearingLocationValid(exceptions, amendments.nextSourceOrganisation) ||
+    isAsnUpdated(exceptions, amendments.asn)
   )
 }
 
