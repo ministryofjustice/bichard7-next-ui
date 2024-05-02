@@ -9,15 +9,15 @@ describe("Offence matcher with single court case", () => {
 
   beforeEach(() => {
     cy.mount(
-      <CourtCaseContext.Provider value={[{ courtCase, amendments: {} }, () => {}]}>
+      <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
         <OffenceMatcher offenceIndex={0} offence={offence} />
       </CourtCaseContext.Provider>
     )
   })
 
-  it("has no initial text or selected value", () => {
+  it("has a default placeholder", () => {
     cy.get("select").should("have.value", null)
-    cy.get("select").find(":selected").should("be.empty")
+    cy.get("select").find(":selected").should("have.text", "Select an offence")
   })
 
   it("displays CCR as an <optgroup>", () => {
@@ -41,6 +41,6 @@ describe("Offence matcher with single court case", () => {
   })
 
   it("displays an <option> for 'Added in court' as the last option", () => {
-    cy.get("select").last().contains("option", "Added in court").should("have.value", "added-in-court")
+    cy.get("select").last().contains("option", "Added in court").should("have.value", "0")
   })
 })
