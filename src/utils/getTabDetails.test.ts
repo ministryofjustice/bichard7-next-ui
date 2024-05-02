@@ -295,6 +295,33 @@ describe("getTabDetails", () => {
     }
   )
 
+  it.each([
+    ["Defendant", 0, "asn", [HO100206], 0],
+    ["Offences", 0, "next-hearing-date", [HO100102], 3],
+    ["Offences", 0, "next-hearing-date", [HO100102, HO100323], 3],
+    ["Offences", 0, "next-hearing-location", [HO100200], 3],
+    ["Offences", 0, "next-hearing-location", [HO100200, HO100300], 3],
+    ["Offences", 0, "next-hearing-location", [HO100200, HO100300, HO100322], 3],
+    ["Offences", 0, "next-hearing-date and next-hearing-location", [HO100200, HO100300, HO100322, HO100102], 3]
+  ])(
+    "Should return %s as a tab and 0 as exceptionCount when %s exception(s) are raised but exception access is disabled with feature flag",
+    (tabName: string, exceptionsCount: number, typeOfException: string, exceptions, index: number) => {
+      const exceptionType = typeOfException
+      dummyAho.Exceptions.length = 0
+      exceptions.map((exception) => exception(dummyAho))
+      const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
+      const updatedFields = {} as Amendments
+      const savedAmendments = {} as Amendments
+      const exceptionsEnabled = false
+
+      const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments, exceptionsEnabled)
+
+      expect(tabDetails[index].name).toBe(tabName)
+      expect(tabDetails[index].exceptionsCount).toBe(exceptionsCount)
+      expect(exceptionType).toBe(typeOfException)
+    }
+  )
+
   it("Should return isResolved:true for offences tab when next-hearing-date exception is resolved", () => {
     dummyAho.Exceptions.length = 0
     HO100102(dummyAho)
