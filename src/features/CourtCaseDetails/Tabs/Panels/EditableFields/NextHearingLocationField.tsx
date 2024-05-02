@@ -17,6 +17,7 @@ interface NextHearingLocationFieldProps {
   offenceIndex: number
   resultIndex: number
   isCaseEditable: boolean
+  stopLeavingFn: (newValue: boolean) => void
 }
 
 export const NextHearingLocationField = ({
@@ -24,13 +25,14 @@ export const NextHearingLocationField = ({
   exceptions,
   offenceIndex,
   resultIndex,
-  isCaseEditable
+  isCaseEditable,
+  stopLeavingFn
 }: NextHearingLocationFieldProps) => {
   const { courtCase, amendments, savedAmend } = useCourtCase()
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
 
   const nextHearingLocation =
-    courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
+    courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
       .Result[resultIndex].NextResultSourceOrganisation?.OrganisationUnitCode
 
   const [savedNextHearingLocation, setSavedNextHearingLocation] = useState<string>(nextHearingLocation ?? "")
@@ -66,13 +68,16 @@ export const NextHearingLocationField = ({
   }
 
   useEffect(() => {
-    if (amendedNextHearingLocation !== savedNextHearingLocation) {
+    if (amendedNextHearingLocation && amendedNextHearingLocation !== savedNextHearingLocation) {
+      console.log("CALLING")
       setIsNhlChanged(true)
       setIsNhlSaved(false)
     } else {
       setIsNhlChanged(false)
     }
-  }, [amendedNextHearingLocation, savedNextHearingLocation])
+
+    stopLeavingFn(!isNhlSaved && isNhlChanged)
+  }, [amendedNextHearingLocation, isNhlChanged, isNhlSaved, savedNextHearingLocation, stopLeavingFn])
 
   return (
     <EditableFieldTableRow

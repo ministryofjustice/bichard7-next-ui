@@ -9,9 +9,17 @@ interface OffencesProps {
   onOffenceSelected: (offenceIndex?: number) => void
   selectedOffenceIndex?: number
   exceptions: Exception[]
+  stopLeavingFn: (newValue: boolean) => void
 }
 
-export const Offences = ({ visible, offences, onOffenceSelected, selectedOffenceIndex, exceptions }: OffencesProps) => {
+export const Offences = ({
+  visible,
+  offences,
+  onOffenceSelected,
+  selectedOffenceIndex,
+  exceptions,
+  stopLeavingFn
+}: OffencesProps) => {
   return (
     <div hidden={!visible}>
       {selectedOffenceIndex !== undefined && offences[selectedOffenceIndex - 1] !== undefined ? (
@@ -23,6 +31,7 @@ export const Offences = ({ visible, offences, onOffenceSelected, selectedOffence
           onPreviousClick={() => onOffenceSelected(selectedOffenceIndex - 1)}
           selectedOffenceIndex={selectedOffenceIndex}
           exceptions={exceptions}
+          stopLeavingFn={stopLeavingFn}
         />
       ) : (
         <OffencesList offences={offences} setDetailedOffenceIndex={onOffenceSelected} />

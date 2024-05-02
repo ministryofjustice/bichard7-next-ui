@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import axios from "axios"
 import { useCourtCase } from "context/CourtCaseContext"
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
@@ -16,6 +16,7 @@ interface NextHearingDateFieldProps {
   offenceIndex: number
   resultIndex: number
   isCaseEditable: boolean
+  stopLeavingFn: (newValue: boolean) => void
 }
 
 export const NextHearingDateField = ({
@@ -23,7 +24,8 @@ export const NextHearingDateField = ({
   exceptions,
   offenceIndex,
   resultIndex,
-  isCaseEditable
+  isCaseEditable,
+  stopLeavingFn
 }: NextHearingDateFieldProps) => {
   const { courtCase, amendments, amend, savedAmend } = useCourtCase()
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
@@ -45,6 +47,10 @@ export const NextHearingDateField = ({
       !isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate) || isNhdSaved || !nextHearingDateChanged
     )
   }
+
+  useEffect(() => {
+    stopLeavingFn(!isNhdSaved && nextHearingDateChanged)
+  }, [isNhdSaved, nextHearingDateChanged, stopLeavingFn])
 
   const handleNhdSave = () => {
     if (isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)) {
