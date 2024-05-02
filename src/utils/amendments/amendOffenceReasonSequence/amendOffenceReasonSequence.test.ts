@@ -38,7 +38,7 @@ describe("amend offence reason sequence", () => {
     expect(
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
         .CriminalProsecutionReference.OffenceReasonSequence
-    ).toEqual("newOffenceReasonSequenceValue")
+    ).toEqual("1")
     expect(
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualSequenceNumber
     ).toBe(true)
@@ -73,7 +73,7 @@ describe("amend offence reason sequence", () => {
       expect(
         aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
           .CriminalProsecutionReference.OffenceReasonSequence
-      ).toEqual(value)
+      ).toEqual(String(value))
       expect(
         aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualSequenceNumber
       ).toBe(true)

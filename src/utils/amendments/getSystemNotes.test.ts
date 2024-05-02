@@ -61,7 +61,7 @@ describe("getSystemNotes", () => {
     ).toStrictEqual([
       {
         errorId: dummyErrorId,
-        noteText: `${user.username}: Portal Action: Update Applied. Element: offenceReasonSequence. New Value: newOffenceReasonSequenceValue`,
+        noteText: `${user.username}: Portal Action: Update Applied. Element: offenceReasonSequence. New Value: 1`,
         userId: "System"
       },
       {
