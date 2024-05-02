@@ -2,10 +2,32 @@ import { HearingDefendant } from "@moj-bichard7-developers/bichard7-next-core/co
 import { GenderCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/GenderCode"
 import { format } from "date-fns"
 import { CourtCaseContext } from "../../src/context/CourtCaseContext"
+import { CurrentUserContext } from "context/CurrentUserContext"
 import { DefendantDetails } from "../../src/features/CourtCaseDetails/Tabs/Panels/DefendantDetails"
 import { DisplayFullCourtCase } from "../../src/types/display/CourtCases"
+import Permission from "types/Permission"
+import { DisplayFullUser } from "types/display/Users"
 
 describe("Defendant Details", () => {
+  const currentUser = {
+    username: "",
+    email: "",
+    visibleForces: [],
+    visibleCourts: [],
+    excludedTriggers: [],
+    featureFlags: {},
+    groups: [],
+    hasAccessTo: {
+      [Permission.CaseDetailsSidebar]: false,
+      [Permission.Exceptions]: false,
+      [Permission.Triggers]: false,
+      [Permission.UnlockOtherUsersCases]: false,
+      [Permission.ListAllCases]: false,
+      [Permission.ViewReports]: false,
+      [Permission.ViewUserManagement]: false
+    }
+  } as DisplayFullUser
+
   it("displays all defendant details", () => {
     const dob = new Date()
     const data: Partial<HearingDefendant> = {
@@ -46,7 +68,9 @@ describe("Defendant Details", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
-        <DefendantDetails stopLeavingFn={() => {}} />
+        <CurrentUserContext.Provider value={{ currentUser }}>
+          <DefendantDetails stopLeavingFn={() => {}} />
+        </CurrentUserContext.Provider>
       </CourtCaseContext.Provider>
     )
 
@@ -102,7 +126,9 @@ describe("Defendant Details", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
-        <DefendantDetails stopLeavingFn={() => {}} />
+        <CurrentUserContext.Provider value={{ currentUser }}>
+          <DefendantDetails stopLeavingFn={() => {}} />
+        </CurrentUserContext.Provider>
       </CourtCaseContext.Provider>
     )
 

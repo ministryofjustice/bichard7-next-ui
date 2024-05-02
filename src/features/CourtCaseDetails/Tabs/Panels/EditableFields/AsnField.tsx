@@ -8,6 +8,7 @@ import Asn from "services/Asn"
 import isAsnFormatValid from "utils/isAsnFormatValid"
 import { AsnInput } from "../DefendantDetails.styles"
 import isAsnException from "utils/exceptions/isException/isAsnException"
+import { useCurrentUser } from "context/CurrentUserContext"
 
 interface AsnFieldProps {
   stopLeavingFn: (newValue: boolean) => void
@@ -15,6 +16,7 @@ interface AsnFieldProps {
 
 export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   const { courtCase, amendments, amend, savedAmend } = useCourtCase()
+  const currentUser = useCurrentUser()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
 
   const [updatedAhoAsn, setUpdatedAhoAsn] = useState<string>(
@@ -87,7 +89,8 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   const isAsnEditable =
     courtCase.canUserEditExceptions &&
     courtCase.phase === Phase.HEARING_OUTCOME &&
-    isAsnException(courtCase.aho.Exceptions)
+    isAsnException(courtCase.aho.Exceptions) &&
+    currentUser.featureFlags?.exceptionsEnabled
 
   return (
     <EditableFieldTableRow

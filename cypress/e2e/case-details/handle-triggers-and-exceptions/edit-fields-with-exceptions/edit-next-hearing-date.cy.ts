@@ -272,4 +272,12 @@ describe("NextHearingDate", () => {
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
     cy.get(".moj-badge").contains("Editable Field").should("not.exist")
   })
+
+  it("Should not display editable field for hearing date when exceptionsEnabled is false for user", () => {
+    loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
+  })
 })
