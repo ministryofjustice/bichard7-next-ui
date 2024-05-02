@@ -35,33 +35,31 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
   // TODO: load manually selected value if exists (just load updated aho always?)
   // TODO: match dates
   return (
-    <>
-      <select className="govuk-select offence-matcher" onChange={onSelectionChanged}>
-        <option disabled selected hidden value="">
-          {"Select an offence"}
-        </option>
-        {pncQuery?.courtCases?.map((c) => {
-          return (
-            <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
-              {c.offences
-                .filter((pnc) => pnc.offence.cjsOffenceCode === offenceCode)
-                .map((pnc) => {
-                  return (
-                    <option
-                      key={pnc.offence.cjsOffenceCode}
-                      value={pnc.offence.sequenceNumber}
-                      disabled={isAlreadySelected(pnc.offence.sequenceNumber)}
-                      data-ccr={c.courtCaseReference}
-                    >
-                      {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
-                    </option>
-                  )
-                })}
-            </optgroup>
-          )
-        })}
-        <option value="0">{"Added in court"}</option>
-      </select>
-    </>
+    <select className="govuk-select offence-matcher" onChange={onSelectionChanged}>
+      <option disabled selected hidden value="">
+        {"Select an offence"}
+      </option>
+      {pncQuery?.courtCases?.map((c) => {
+        return (
+          <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
+            {c.offences
+              .filter((pnc) => pnc.offence.cjsOffenceCode === offenceCode)
+              .map((pnc) => {
+                return (
+                  <option
+                    key={pnc.offence.cjsOffenceCode}
+                    value={pnc.offence.sequenceNumber}
+                    disabled={isAlreadySelected(pnc.offence.sequenceNumber)}
+                    data-ccr={c.courtCaseReference}
+                  >
+                    {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
+                  </option>
+                )
+              })}
+          </optgroup>
+        )
+      })}
+      <option value="0">{"Added in court"}</option>
+    </select>
   )
 }
