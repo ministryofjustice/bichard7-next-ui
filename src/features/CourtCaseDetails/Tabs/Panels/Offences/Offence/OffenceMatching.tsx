@@ -20,13 +20,14 @@ type Props = {
 }
 
 export const OffenceMatching = ({ selectedOffenceIndex, offence, isCaseUnresolved, exceptions }: Props) => {
-  const { courtCase } = useCourtCase()
+  const { courtCase, savedAmendments } = useCourtCase()
 
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex - 1)
   const offenceMatchingExceptionMessage = findExceptions(courtCase, courtCase.aho.Exceptions, ExceptionCode.HO100304)
 
   const displayOffenceMatcher = exceptions.some((e) => [ExceptionCode.HO100310].includes(e.code))
 
+  const updatedOffence = savedAmendments.offenceReasonSequence?.find((o) => o.offenceIndex === selectedOffenceIndex - 1)
   return (
     <>
       {/* If we don't display the exception matcher, 
@@ -45,12 +46,18 @@ export const OffenceMatching = ({ selectedOffenceIndex, offence, isCaseUnresolve
             value={
               <>
                 <div>{offence.CriminalProsecutionReference.OffenceReasonSequence}</div>
-                <Badge isRendered={true} colour={BadgeColours.Purple} label="Matched" className="moj-badge--large" />
+                <Badge
+                  isRendered={true}
+                  colour={BadgeColours.Purple}
+                  label={updatedOffence?.value === 0 ? "ADDED IN COURT" : "MATCHED"}
+                  className="moj-badge--large"
+                />
               </>
             }
           />
         )}
       </ConditionalRender>
+
       {/* PNC sequence number */}
       <ConditionalRender isRendered={!displayOffenceMatcher}>
         {offenceMatchingException ? (

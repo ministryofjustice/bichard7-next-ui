@@ -22,6 +22,12 @@ const getAmendmentsByComparison = (aho: AnnotatedHearingOutcome, updatedAho?: An
 
   hearingDefendant.Offence.forEach((offence, offenceIndex) => {
     offence.Result.forEach((result, resultIndex) => {
+      console.log(
+        `========= Offence Index ${offenceIndex} =========\n`,
+        updatedHearingDefendant?.Offence[offenceIndex],
+        "\n\n\n"
+      )
+
       const updatedOffence = updatedHearingDefendant?.Offence && updatedHearingDefendant?.Offence[offenceIndex]
       const updatedOffenceResults = updatedOffence && updatedOffence?.Result
       const updatedOffenceResult = updatedOffenceResults && updatedOffenceResults[resultIndex]
@@ -46,6 +52,20 @@ const getAmendmentsByComparison = (aho: AnnotatedHearingOutcome, updatedAho?: An
           resultIndex,
           offenceIndex,
           value: formatFormInputDateString(new Date(updatedNextHearingDate))
+        })
+      }
+
+      amendments.offenceReasonSequence = amendments.offenceReasonSequence || []
+      const updatedReasonSequence = Number(updatedOffence.CriminalProsecutionReference.OffenceReasonSequence)
+      if (updatedReasonSequence) {
+        amendments.offenceReasonSequence.push({
+          offenceIndex,
+          value: updatedReasonSequence
+        })
+      } else if (updatedOffence.AddedByTheCourt) {
+        amendments.offenceReasonSequence.push({
+          offenceIndex,
+          value: 0
         })
       }
     })

@@ -16,10 +16,11 @@ describe("Offence matching HO100310", () => {
     loginAndVisit()
     cy.get("a[class*='Link']").contains(fields.defendantName).click()
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+
+    cy.get("#offences").contains("Theft of pedal cycle").click()
   })
 
   it("displays the offence matcher for offences with a HO100310 exception", () => {
-    cy.get("#offences").contains("Theft of pedal cycle").click()
     cy.get("select.offence-matcher").should("exist")
 
     cy.get("button").contains("Next offence").click()
@@ -40,14 +41,11 @@ describe("Offence matching HO100310", () => {
   })
 
   it("loads offence matching information from the AHO PNC query", () => {
-    cy.get("#offences").contains("Theft of pedal cycle").click()
-
     cy.get("select.offence-matcher").children("optgroup").eq(0).should("have.attr", "label", "97/1626/008395Q")
     cy.get("select.offence-matcher").children("optgroup").eq(0).contains("option", "TH68006")
   })
 
   it("disables options that have already been selected", () => {
-    cy.get("#offences").contains("Theft of pedal cycle").click()
     cy.get("select.offence-matcher").select("001 - TH68006")
 
     cy.get("a").contains("Back to all offences").click()
@@ -58,16 +56,64 @@ describe("Offence matching HO100310", () => {
   it("prevents submission if any offences are unmatched", () => {
     cy.get("button#submit").should("be.disabled")
 
-    cy.get("#offences").contains("Theft of pedal cycle").click()
+    cy.get("select.offence-matcher").select("001 - TH68006")
+    cy.get("button#submit").should("be.disabled")
+
+    cy.get("a").contains("Back to all offences").click()
+    cy.get("a:contains('Theft of pedal cycle')").eq(1).click()
+    cy.get("select.offence-matcher").select("Added in court")
+    cy.get("button#submit").should("be.enabled")
+  })
+
+  it("sends correct offence matching amendments on submission", () => {
     cy.get("select.offence-matcher").select("001 - TH68006")
 
     cy.get("a").contains("Back to all offences").click()
     cy.get("a:contains('Theft of pedal cycle')").eq(1).click()
     cy.get("select.offence-matcher").select("Added in court")
 
-    cy.get("button#submit").should("be.enabled")
+    cy.intercept("POST", "/bichard/court-cases/0/submit").as("submit")
+    cy.get("button#submit").click()
+    cy.wait("@submit")
+    cy.get("@submit")
+      .its("request.body")
+      .then((body) => {
+        const json = Object.fromEntries(new URLSearchParams(body))
+        const { offenceReasonSequence, offenceCourtCaseReferenceNumber } = JSON.parse(json.amendments)
+        return { offenceReasonSequence, offenceCourtCaseReferenceNumber }
+      })
+      .should("deep.equal", {
+        asn: "",
+        offenceReasonSequence: [
+          { offenceIndex: 0, value: 1 },
+          { offenceIndex: 3, value: 0 }
+        ], // TODO: determine whether CCRN for AIC should include a value
+        offenceCourtCaseReferenceNumber: [{ offenceIndex: 0, value: "97/1626/008395Q" }, { offenceIndex: 3 }]
+      })
   })
 
-  it.skip("sends correct offence matching amendments on submission")
-  it.skip("displays correct badges for offences on submitted cases")
+  describe("displays correct badges for offences", () => {
+    it("on submitted cases", () => {
+      cy.get("select.offence-matcher").select("001 - TH68006")
+
+      cy.get("a").contains("Back to all offences").click()
+      cy.get("a:contains('Theft of pedal cycle')").eq(1).click()
+      cy.get("select.offence-matcher").select("Added in court")
+
+      cy.get("button#submit").click()
+      cy.get("button#confirm-submit").click()
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get("#offences").contains("Theft of pedal cycle").click()
+      cy.contains("Matched PNC offence")
+      cy.get("span.moj-badge").contains("MATCHED")
+
+      cy.get("a").contains("Back to all offences").click()
+      cy.get("a:contains('Theft of pedal cycle')").eq(1).click()
+      cy.contains("Matched PNC offence")
+      cy.get("span.moj-badge").contains("ADDED IN COURT")
+    })
+
+    it.skip("on cases locked to someone else", () => {})
+  })
 })
