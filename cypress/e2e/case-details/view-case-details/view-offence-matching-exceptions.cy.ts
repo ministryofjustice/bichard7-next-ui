@@ -1,6 +1,7 @@
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import { clickTab, loginAndVisit } from "../../../support/helpers"
 
+// exceptions here can be removed as suites are added for offence matching
 describe("View offence matching exceptions", () => {
   ;[
     { asn: ExceptionCode.HO100304, firstOffenceBadge: "Unmatched" },
@@ -8,7 +9,6 @@ describe("View offence matching exceptions", () => {
     { asn: ExceptionCode.HO100507, firstOffenceBadge: "Added by Court", secondOffenceBadge: "Added by Court" },
     { offenceReasonSequence: ExceptionCode.HO100203 },
     { offenceReasonSequence: ExceptionCode.HO100228 },
-    { offenceReasonSequence: ExceptionCode.HO100310 },
     { offenceReasonSequence: ExceptionCode.HO100311 },
     { offenceReasonSequence: ExceptionCode.HO100312 },
     { offenceReasonSequence: ExceptionCode.HO100320 },
@@ -47,5 +47,3 @@ describe("View offence matching exceptions", () => {
     })
   })
 })
-
-export {}
