@@ -2,7 +2,7 @@ import { Amendments } from "types/Amendments"
 import createDummyAho from "../../test/helpers/createDummyAho"
 import HO100300 from "../../test/helpers/exceptions/HO100300"
 import HO100322 from "../../test/helpers/exceptions/HO100322"
-import isAmendedNextHearingLocationValid from "./isAmendedNextHearingLocationValid"
+import isAmendedNextHearingLocationValid from "./isNextHearingLocationAmended"
 
 describe("nextHearingLocationValidationError", () => {
   const dummyAho = createDummyAho()

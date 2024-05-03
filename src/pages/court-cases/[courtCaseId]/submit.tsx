@@ -21,7 +21,7 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
-import areEditableFieldsValid from "utils/areEditableFieldsValid"
+import areEditableFieldsValid from "utils/areEditableFieldsAmended"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"

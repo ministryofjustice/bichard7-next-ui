@@ -1,5 +1,5 @@
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import areEditableFieldsValid from "./areEditableFieldsValid"
+import areEditableFieldsValid from "./areEditableFieldsAmended"
 import createDummyAho from "../../test/helpers/createDummyAho"
 import HO100102 from "../../test/helpers/exceptions/HO100102"
 import HO100300 from "../../test/helpers/exceptions/HO100300"
