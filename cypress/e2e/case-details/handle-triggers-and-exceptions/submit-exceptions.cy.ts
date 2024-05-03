@@ -120,18 +120,14 @@ describe("Court cases - Submit exceptions", () => {
         }
       ])
     }
-    it("Should be disabled when multiple exceptions are raised and not all the editable fields are updated", () => {
+    it("Should be enabled when multiple exceptions are raised and only some editable fields are updated", () => {
       insertCourtCase(multipleExceptions.hearingOutcomeXml)
 
       cy.visit("/bichard/court-cases/0")
 
-      insertNextHearingDate("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION")
-      cy.get("a.govuk-back-link").contains("Back to all offences").click()
-      cy.get("button").contains("Submit exception(s)").should("be.disabled")
-
       insertNextHearingLocation("Offence with HO100200 - Unrecognised Force or Station Code")
       cy.get("a.govuk-back-link").contains("Back to all offences").click()
-      cy.get("button").contains("Submit exception(s)").should("be.disabled")
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
@@ -139,7 +135,7 @@ describe("Court cases - Submit exceptions", () => {
 
       cy.get("ul.moj-sub-navigation__list").contains("Defendant").click()
       cy.get("#asn").type("1101ZD0100000448754K")
-      cy.get("button").contains("Submit exception(s)").should("be.disabled")
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
     })
 
     it("Should be enabled when multiple exceptions are raised and all the editable fields are updated", () => {
@@ -158,24 +154,6 @@ describe("Court cases - Submit exceptions", () => {
       cy.get("button").contains("Submit exception(s)").should("be.enabled")
     })
 
-    it("Should be enabled when only next-hearing-date exception is raised and ASN editable field is not updated", () => {
-      insertCourtCase(nextHearingDateExceptions.hearingOutcomeXmlHO100102)
-
-      cy.visit("/bichard/court-cases/0")
-
-      insertNextHearingDate("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION")
-      cy.get("button").contains("Submit exception(s)").should("be.enabled")
-    })
-
-    it("Should be enabled when only next-hearing-location exception is raised and ASN editable field is not updated", () => {
-      insertCourtCase(nextHearingLocationExceptions.hearingOutcomeXmlHO100200)
-
-      cy.visit("/bichard/court-cases/0")
-
-      insertNextHearingLocation("Offence with HO100200 - Unrecognised Force or Station Code")
-      cy.get("button").contains("Submit exception(s)").should("be.enabled")
-    })
-
     it("Should be disabled when ASN exception is raised and ASN editable field is not updated", () => {
       insertCourtCase(AsnExceptionHO100206.hearingOutcomeXml)
 
@@ -184,12 +162,46 @@ describe("Court cases - Submit exceptions", () => {
       cy.get("button").contains("Submit exception(s)").should("be.disabled")
     })
 
-    it("Should be disabled when ASN exception is not raised and ASN editable field is updated with invalid value", () => {
+    it("Should be enabled when ASN exception is raised and ASN editable field is updated", () => {
       insertCourtCase(AsnExceptionHO100206.hearingOutcomeXml)
 
       cy.visit("/bichard/court-cases/0")
 
-      insertAsn("1101ZD010000044875")
+      insertAsn("1101ZD0100000448754K")
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
+    })
+
+    it("Should be enabled when Next Hearing Date exception is raised and Next Hearing Date editable field is updated", () => {
+      insertCourtCase(nextHearingDateExceptions.hearingOutcomeXml)
+
+      cy.visit("/bichard/court-cases/0")
+
+      insertNextHearingDate("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION")
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
+    })
+
+    it("Should be disabled when Next Hearing Date exception is raised and Next Hearing Date editable field is not updated", () => {
+      insertCourtCase(nextHearingDateExceptions.hearingOutcomeXml)
+
+      cy.visit("/bichard/court-cases/0")
+
+      cy.get("button").contains("Submit exception(s)").should("be.disabled")
+    })
+
+    it("Should be enabled when Next Hearing Location exception is raised and Next Hearing Location editable field is updated", () => {
+      insertCourtCase(nextHearingLocationExceptions.hearingOutcomeXml)
+
+      cy.visit("/bichard/court-cases/0")
+
+      insertNextHearingLocation("Offence with HO100200 - Unrecognised Force or Station Code")
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
+    })
+
+    it("Should be disabled when Next Hearing Location exception is raised and Next Hearing Location editable field is not updated", () => {
+      insertCourtCase(nextHearingLocationExceptions.hearingOutcomeXml)
+
+      cy.visit("/bichard/court-cases/0")
+
       cy.get("button").contains("Submit exception(s)").should("be.disabled")
     })
   })
