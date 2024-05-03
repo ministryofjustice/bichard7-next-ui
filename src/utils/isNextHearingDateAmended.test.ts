@@ -1,10 +1,11 @@
 import { Amendments } from "../types/Amendments"
-import isNextHearingDateValid from "./isNextHearingDateAmended"
+import isNextHearingDateAmended from "./isNextHearingDateAmended"
 import createDummyAho from "../../test/helpers/createDummyAho"
 import HO100102 from "../../test/helpers/exceptions/HO100102"
 import HO100323 from "../../test/helpers/exceptions/HO100323"
+import { HO100322 } from "../../test/helpers/exceptions"
 
-describe("nextHearingDateValidationError", () => {
+describe("isNextHearingDateAmended", () => {
   const dummyAho = createDummyAho()
 
   it("should return false if next hearing date editable field is empty", () => {
@@ -21,7 +22,7 @@ describe("nextHearingDateValidationError", () => {
         }
       ]
     }
-    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments.nextHearingDate)
+    const result = isNextHearingDateAmended(dummyAho.Exceptions, amendments.nextHearingDate)
 
     expect(result).toBe(false)
   })
@@ -41,12 +42,12 @@ describe("nextHearingDateValidationError", () => {
       ]
     }
 
-    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments.nextHearingDate)
+    const result = isNextHearingDateAmended(dummyAho.Exceptions, amendments.nextHearingDate)
 
     expect(result).toBe(true)
   })
 
-  it("should return false if one of the next hearing location editable fields remained empty", () => {
+  it("should return true if one of the next hearing location editable fields remained empty", () => {
     dummyAho.Exceptions.length = 0
     HO100102(dummyAho)
     HO100323(dummyAho)
@@ -67,9 +68,9 @@ describe("nextHearingDateValidationError", () => {
       ]
     }
 
-    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments.nextHearingDate)
+    const result = isNextHearingDateAmended(dummyAho.Exceptions, amendments.nextHearingDate)
 
-    expect(result).toBe(false)
+    expect(result).toBe(true)
   })
 
   it("should return true if multiple hearing date editable fields have values", () => {
@@ -93,8 +94,18 @@ describe("nextHearingDateValidationError", () => {
       ]
     }
 
-    const result = isNextHearingDateValid(dummyAho.Exceptions, amendments.nextHearingDate)
+    const result = isNextHearingDateAmended(dummyAho.Exceptions, amendments.nextHearingDate)
 
     expect(result).toBe(true)
+  })
+
+  it("should return false if next hearing date exceptions are not raised", () => {
+    dummyAho.Exceptions.length = 0
+    HO100322(dummyAho)
+
+    const amendments: Amendments = {}
+    const result = isNextHearingDateAmended(dummyAho.Exceptions, amendments.nextHearingDate)
+
+    expect(result).toBe(false)
   })
 })
