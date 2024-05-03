@@ -83,7 +83,6 @@ describe("Offence matching HO100310", () => {
         return { offenceReasonSequence, offenceCourtCaseReferenceNumber }
       })
       .should("deep.equal", {
-        asn: "",
         offenceReasonSequence: [
           { offenceIndex: 0, value: 1 },
           { offenceIndex: 3, value: 0 }
