@@ -5,9 +5,10 @@ import getOffenceCode from "utils/getOffenceCode"
 interface Props {
   offenceIndex: number
   offence: Offence
+  state: boolean
 }
 
-export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
+export const OffenceMatcher = ({ offenceIndex, offence, state }: Props) => {
   const {
     courtCase: {
       aho: { PncQuery: pncQuery }
@@ -34,7 +35,7 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
 
   // TODO: load manually selected value if exists (just load updated aho always?)
   // TODO: match dates
-  return (
+  return state ? (
     <select className="govuk-select offence-matcher" onChange={onSelectionChanged}>
       <option disabled selected hidden value="">
         {"Select an offence"}
@@ -60,6 +61,12 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
         )
       })}
       <option value="0">{"Added in court"}</option>
+    </select>
+  ) : (
+    <select className="govuk-select offence-matcher" onChange={onSelectionChanged} disabled>
+      <option disabled selected hidden value="">
+        {"Select an offence"}
+      </option>
     </select>
   )
 }

@@ -17,9 +17,10 @@ type Props = {
   offence: Offence
   isCaseUnresolved: boolean
   exceptions: Exception[]
+  state: boolean
 }
 
-export const OffenceMatching = ({ selectedOffenceIndex, offence, isCaseUnresolved, exceptions }: Props) => {
+export const OffenceMatching = ({ selectedOffenceIndex, offence, isCaseUnresolved, exceptions, state }: Props) => {
   const { courtCase, savedAmendments } = useCourtCase()
 
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex - 1)
@@ -36,7 +37,7 @@ export const OffenceMatching = ({ selectedOffenceIndex, offence, isCaseUnresolve
         {offenceMatchingException ? (
           <ExceptionFieldTableRow
             label={"Matched PNC offence"}
-            value={<OffenceMatcher offenceIndex={selectedOffenceIndex} offence={offence} />}
+            value={<OffenceMatcher offenceIndex={selectedOffenceIndex} offence={offence} state={state} />}
           >
             <ErrorPromptMessage message={offenceMatchingExceptionMessage} />
           </ExceptionFieldTableRow>

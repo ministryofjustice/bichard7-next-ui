@@ -6,6 +6,7 @@ import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
 import ExceptionFieldTableRow, { ExceptionBadgeType as ExceptionBadge } from "components/ExceptionFieldTableRow"
 import { useCourtCase } from "context/CourtCaseContext"
+import { useCurrentUser } from "context/CurrentUserContext"
 import { Heading, Table } from "govuk-react"
 import ErrorMessages from "types/ErrorMessages"
 import { Exception } from "types/exceptions"
@@ -41,12 +42,17 @@ export const OffenceDetails = ({
   stopLeavingFn
 }: OffenceDetailsProps) => {
   const { courtCase } = useCourtCase()
+  const currentUser = useCurrentUser()
 
   const offenceCode = getOffenceCode(offence)
   const qualifierCode =
     offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason" &&
     offence.CriminalProsecutionReference.OffenceReason.OffenceCode.Qualifier
+
   const isCaseUnresolved = courtCase.errorStatus === "Unresolved"
+
+  const isCaseLockedToCurrentUser = currentUser.username === courtCase.errorLockedByUsername
+
   const thisOffencePath = `AnnotatedHearingOutcome>HearingOutcome>Case>HearingDefendant>Offence>${
     selectedOffenceIndex - 1
   }`
@@ -137,6 +143,7 @@ export const OffenceDetails = ({
             offence={offence}
             isCaseUnresolved={isCaseUnresolved}
             exceptions={exceptions}
+            state={isCaseLockedToCurrentUser}
           ></OffenceMatching>
 
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
