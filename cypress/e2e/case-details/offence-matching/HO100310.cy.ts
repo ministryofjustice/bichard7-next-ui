@@ -113,6 +113,27 @@ describe("Offence matching HO100310", () => {
       cy.get("span.moj-badge").contains("ADDED IN COURT")
     })
 
-    it.skip("on cases locked to someone else", () => {})
+    it("on cases locked to someone else", () => {
+      cy.loginAs("ExceptionHandler")
+
+      cy.task("insertCourtCasesWithFields", {
+        defendantName: "Offence Matching HO100310",
+        orgForPoliceFilter: "01",
+        hearingOutcome: HO100310,
+        errorCount: 2,
+        errorLockedByUsername: "GeneralHandler"
+      })
+
+      cy.visit("/bichard/court-cases/0")
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+
+      cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
+      cy.get("select.offence-matcher").should("be.disabled")
+
+      cy.get("a").contains("Back to all offences").click()
+      cy.get("a:contains('Theft of pedal cycle')").eq(1).click()
+
+      cy.get("select.offence-matcher").should("be.disabled")
+    })
   })
 })
