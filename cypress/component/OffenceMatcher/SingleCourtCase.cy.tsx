@@ -10,7 +10,7 @@ describe("Offence matcher with single court case", () => {
   beforeEach(() => {
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
-        <OffenceMatcher offenceIndex={0} offence={offence} />
+        <OffenceMatcher offenceIndex={0} offence={offence} state={true} />
       </CourtCaseContext.Provider>
     )
   })
