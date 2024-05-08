@@ -9,6 +9,10 @@ describe("Offence matching HO100310", () => {
     errorCount: 2
   }
 
+  before(() => {
+    cy.loginAs("ExceptionHandler")
+  })
+
   beforeEach(() => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [fields])
@@ -128,12 +132,12 @@ describe("Offence matching HO100310", () => {
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
 
       cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
-      cy.get("select.offence-matcher").should("be.disabled")
+      cy.get("span.moj-badge").contains("Unmatched")
 
       cy.get("a").contains("Back to all offences").click()
       cy.get("a:contains('Theft of pedal cycle')").eq(1).click()
 
-      cy.get("select.offence-matcher").should("be.disabled")
+      cy.get("span.moj-badge").contains("Unmatched")
     })
   })
 })
