@@ -1,6 +1,7 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { useCourtCase } from "context/CourtCaseContext"
 import getOffenceCode from "utils/getOffenceCode"
+import Badge, { BadgeColours } from "./Badge"
 
 interface Props {
   offenceIndex: number
@@ -63,10 +64,6 @@ export const OffenceMatcher = ({ offenceIndex, offence, state }: Props) => {
       <option value="0">{"Added in court"}</option>
     </select>
   ) : (
-    <select className="govuk-select offence-matcher" onChange={onSelectionChanged} disabled>
-      <option disabled selected hidden value="">
-        {"Select an offence"}
-      </option>
-    </select>
+    <Badge isRendered={true} colour={BadgeColours.Purple} label={"Unmatched"} className="moj-badge--large" />
   )
 }
