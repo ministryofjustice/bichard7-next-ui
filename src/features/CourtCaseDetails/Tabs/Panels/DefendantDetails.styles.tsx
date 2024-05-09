@@ -8,7 +8,7 @@ const DefendantDetailTable = styled.div`
 `
 
 const AsnInput = styled(Input)`
-  width: 15rem;
+  width: 18rem;
 `
 
 export { AsnInput, DefendantDetailTable }
