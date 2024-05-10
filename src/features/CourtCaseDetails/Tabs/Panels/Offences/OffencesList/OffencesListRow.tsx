@@ -47,7 +47,8 @@ export const OffencesListRow = ({ offence, onClick }: OffencesListRowProps) => {
       <Table.Cell>{getOffenceCode(offence)}</Table.Cell>
       <Table.Cell>
         <a
-          className="govuk-link"
+          id={`offence-${offence.CourtOffenceSequenceNumber}`}
+          className={`govuk-link`}
           href="/"
           onClick={(e) => {
             e.preventDefault()
