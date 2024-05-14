@@ -24,7 +24,7 @@ const contentWidth = "67%"
 const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAndSubmit }) => {
   const { courtCase } = useCourtCase()
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
-  const [selectedOffenceIndex, setSelectedOffenceIndex] = useState<number | undefined>(undefined)
+  const [selectedOffenceSequenceNumber, setSelectedOffenceSequenceNumber] = useState<number | undefined>(undefined)
   const [useBeforeUnload, setUseBeforeUnload] = useState<boolean>(false)
 
   const stopLeavingFn = useCallback((newValue: boolean) => {
@@ -40,7 +40,7 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
         break
       case "Case Details > Offences":
         if (typeof args?.offenceOrderIndex === "number") {
-          setSelectedOffenceIndex(+args.offenceOrderIndex)
+          setSelectedOffenceSequenceNumber(+args.offenceOrderIndex)
         }
         setActiveTab("Offences")
         break
@@ -76,9 +76,9 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
             exceptions={courtCase.aho.Exceptions}
             offences={courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case?.HearingDefendant?.Offence}
             onOffenceSelected={(offenceIndex) => {
-              setSelectedOffenceIndex(offenceIndex)
+              setSelectedOffenceSequenceNumber(offenceIndex)
             }}
-            selectedOffenceIndex={selectedOffenceIndex}
+            selectedOffenceSequenceNumber={selectedOffenceSequenceNumber}
             stopLeavingFn={stopLeavingFn}
           />
 

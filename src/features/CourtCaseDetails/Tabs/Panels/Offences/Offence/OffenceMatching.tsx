@@ -27,18 +27,18 @@ const enabled = (user: DisplayFullUser) => {
 }
 
 type Props = {
-  selectedOffenceIndex: number
+  offenceIndex: number
   offence: Offence
   isCaseUnresolved: boolean
   exceptions: Exception[]
   state: boolean
 }
 
-export const OffenceMatching = ({ selectedOffenceIndex, offence, isCaseUnresolved, exceptions, state }: Props) => {
+export const OffenceMatching = ({ offenceIndex, offence, isCaseUnresolved, exceptions, state }: Props) => {
   const { courtCase, savedAmendments } = useCourtCase()
   const currentUser = useCurrentUser()
 
-  const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex - 1)
+  const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, offenceIndex)
   const offenceMatchingExceptionMessage = findExceptions(courtCase, courtCase.aho.Exceptions, ExceptionCode.HO100304)
 
   const displayOffenceMatcher =
@@ -46,8 +46,7 @@ export const OffenceMatching = ({ selectedOffenceIndex, offence, isCaseUnresolve
   const userCanMatchOffence =
     courtCase.errorLockedByUsername === currentUser?.username && courtCase.errorStatus === "Unresolved"
 
-  const updatedOffence = savedAmendments.offenceReasonSequence?.find((o) => o.offenceIndex === selectedOffenceIndex - 1)
-
+  const updatedOffence = savedAmendments.offenceReasonSequence?.find((o) => o.offenceIndex === offenceIndex)
   return (
     <>
       {/* If we don't display the exception matcher, 
@@ -56,7 +55,7 @@ export const OffenceMatching = ({ selectedOffenceIndex, offence, isCaseUnresolve
         {offenceMatchingException && userCanMatchOffence ? (
           <ExceptionFieldTableRow
             label={"Matched PNC offence"}
-            value={<OffenceMatcher offenceIndex={selectedOffenceIndex} offence={offence} state={state} />}
+            value={<OffenceMatcher offenceIndex={offenceIndex} offence={offence} state={state} />}
           >
             <ErrorPromptMessage message={offenceMatchingExceptionMessage} />
           </ExceptionFieldTableRow>

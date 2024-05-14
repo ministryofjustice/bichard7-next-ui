@@ -26,7 +26,7 @@ interface OffenceDetailsProps {
   onBackToAllOffences: () => void
   onNextClick: () => void
   onPreviousClick: () => void
-  selectedOffenceIndex: number
+  selectedOffenceSequenceNumber: number
   exceptions: Exception[]
   stopLeavingFn: (newValue: boolean) => void
 }
@@ -37,7 +37,7 @@ export const OffenceDetails = ({
   onBackToAllOffences,
   onNextClick,
   onPreviousClick,
-  selectedOffenceIndex,
+  selectedOffenceSequenceNumber,
   exceptions,
   stopLeavingFn
 }: OffenceDetailsProps) => {
@@ -54,7 +54,7 @@ export const OffenceDetails = ({
   const isCaseLockedToCurrentUser = currentUser.username === courtCase.errorLockedByUsername
 
   const thisOffencePath = `AnnotatedHearingOutcome>HearingOutcome>Case>HearingDefendant>Offence>${
-    selectedOffenceIndex - 1
+    selectedOffenceSequenceNumber - 1
   }`
   const thisResultPath = (resultIndex: number) => `${thisOffencePath}>Result>${resultIndex}`
 
@@ -92,13 +92,13 @@ export const OffenceDetails = ({
     <OffenceDetailsContainer className={"offence-details"}>
       <OffenceNavigation
         onBackToAllOffences={() => onBackToAllOffences()}
-        selectedOffenceIndex={selectedOffenceIndex}
+        selectedOffenceSequenceNumber={selectedOffenceSequenceNumber}
         onPreviousClick={() => onPreviousClick()}
         onNextClick={() => onNextClick()}
         offencesCount={offencesCount}
       />
       <Heading as="h3" size="MEDIUM">
-        {`Offence ${selectedOffenceIndex} of ${offencesCount}`}
+        {`Offence ${selectedOffenceSequenceNumber} of ${offencesCount}`}
       </Heading>
       <div className="offences-table">
         <Table>
@@ -139,7 +139,7 @@ export const OffenceDetails = ({
           />
 
           <OffenceMatching
-            selectedOffenceIndex={selectedOffenceIndex}
+            offenceIndex={selectedOffenceSequenceNumber - 1}
             offence={offence}
             isCaseUnresolved={isCaseUnresolved}
             exceptions={exceptions}
@@ -169,7 +169,7 @@ export const OffenceDetails = ({
                 exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>
                   resultException.path.join(">").startsWith(thisResultPath(index))
                 )}
-                selectedOffenceIndex={selectedOffenceIndex}
+                selectedOffenceSequenceNumber={selectedOffenceSequenceNumber}
                 resultIndex={index}
                 errorStatus={courtCase.errorStatus}
                 stopLeavingFn={stopLeavingFn}
@@ -196,7 +196,7 @@ export const OffenceDetails = ({
       )}
       <OffenceNavigation
         onBackToAllOffences={() => onBackToAllOffences()}
-        selectedOffenceIndex={selectedOffenceIndex}
+        selectedOffenceSequenceNumber={selectedOffenceSequenceNumber}
         onPreviousClick={() => onPreviousClick()}
         onNextClick={() => onNextClick()}
         offencesCount={offencesCount}

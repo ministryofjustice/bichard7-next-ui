@@ -26,7 +26,7 @@ interface HearingResultProps {
   result: Result
   exceptions: Exception[]
   resultIndex: number
-  selectedOffenceIndex: number
+  selectedOffenceSequenceNumber: number
   errorStatus?: ResolutionStatus | null
   stopLeavingFn: (newValue: boolean) => void
 }
@@ -36,13 +36,13 @@ export const HearingResult = ({
   errorStatus,
   exceptions,
   resultIndex,
-  selectedOffenceIndex,
+  selectedOffenceSequenceNumber,
   stopLeavingFn
 }: HearingResultProps) => {
   const { courtCase } = useCourtCase()
   const cjsErrorMessage = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
 
-  const offenceIndex = selectedOffenceIndex - 1
+  const offenceIndex = selectedOffenceSequenceNumber - 1
 
   const isCaseEditable =
     courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME && errorStatus === "Unresolved"
