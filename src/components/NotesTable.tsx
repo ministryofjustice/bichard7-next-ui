@@ -1,16 +1,19 @@
+import { Table, TableProps, TableType } from "@govuk-react/table"
 import DateTime from "components/DateTime"
-import { Table } from "govuk-react"
 import { DisplayNote } from "types/display/Notes"
 
 interface Props {
-  className?: string
   notes: DisplayNote[]
   displayForce?: boolean
 }
 
+const NotesTableFc = Table as TableType & React.FC<TableProps & React.TableHTMLAttributes<HTMLTableElement>>
+
 export const NotesTable = ({ notes, displayForce }: Props) => {
   return (
-    <Table
+    // TODO: needed until govuk-react Table component has className
+    <NotesTableFc
+      className={"notes-table"}
       head={
         <Table.Row>
           <Table.CellHeader>{"User"}</Table.CellHeader>
@@ -41,6 +44,6 @@ export const NotesTable = ({ notes, displayForce }: Props) => {
           </Table.Row>
         )
       })}
-    </Table>
+    </NotesTableFc>
   )
 }
