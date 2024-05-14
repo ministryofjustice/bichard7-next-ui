@@ -1,6 +1,8 @@
 const intOrString = (input: string): string => (input.match(/^\d*$/) ? input : "")
 
 class Asn {
+  public asn: string
+
   public year: string | undefined
 
   public force: string | undefined
@@ -12,6 +14,7 @@ class Asn {
   public sequence: number | undefined
 
   constructor(asn: string) {
+    this.asn = asn
     const asnString = asn.replace(/\//g, "")
     if (asnString) {
       this.year = asnString.slice(0, 2)
@@ -37,6 +40,20 @@ class Asn {
     return `${this.year}${this.force}${this.unit}${this.system}${
       this.sequence ?? "".toString().padStart(11, "0")
     }${this.checkCharacter()}`
+  }
+
+  splitAsn() {
+    return this.asn
+      .replace(/\//g, "")
+      .split("")
+      .map((el, i) => {
+        if (i === 1 || i === 5 || i === 7) {
+          return `${el}/`
+        } else {
+          return el
+        }
+      })
+      .join("")
   }
 }
 

@@ -19,21 +19,35 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   const currentUser = useCurrentUser()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
 
+  const [key, setKey] = useState<string>("")
+
   const splitAsn = (asn: string | undefined): string => {
-    if (asn) {
-      return asn
-        .replace(/\//g, "")
-        .split("")
-        .map((el, i) => {
-          if (i === 1 || i === 5 || i === 7) {
-            return `${el}/`
-          } else {
-            return el
-          }
-        })
-        .join("")
+    if (!asn) {
+      return ""
     }
-    return ""
+
+    if (asn?.length < 2) {
+      if (key === "Backspace") {
+        switch (asn.length) {
+          case 10:
+            asn = asn.substring(0, 9)
+            break
+          case 7:
+            asn = asn.substring(0, 6)
+            break
+          case 2:
+            asn = asn.substring(0, 1)
+            break
+          default:
+            break
+        }
+      } else if (asn.length === 2 || asn.length === 7 || asn.length === 10) {
+        asn = asn + "/"
+      }
+      return asn
+    } else {
+      return new Asn(asn).splitAsn()
+    }
   }
 
   const splitUpdatedAhoAsn = splitAsn(
@@ -48,10 +62,11 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   const [savedAsn, setSavedAsn] = useState<boolean>(false)
   const [asnString, setAsnString] = useState<string>(updatedAhoAsn ?? "")
   const [pageLoad, setPageLoad] = useState<boolean>(false)
-  const [key, setKey] = useState<string>("")
 
   const saveAsn = useCallback(
     async (asn: Asn) => {
+      console.log(asn.toString())
+
       await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
       setSavedAsn(false)
     },
@@ -79,27 +94,8 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     stopLeavingFn(!savedAsn && isAsnChanged && updatedAhoAsn !== asnString)
   }, [savedAsn, asnString, pageLoad, amendments, updatedAhoAsn, stopLeavingFn, isAsnChanged, amend])
 
-  let asn = ""
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    asn = e.target.value.toUpperCase()
-
-    if (key === "Backspace") {
-      switch (asn.length) {
-        case 10:
-          asn = asn.substring(0, 9)
-          break
-        case 7:
-          asn = asn.substring(0, 6)
-          break
-        case 2:
-          asn = asn.substring(0, 1)
-          break
-        default:
-          break
-      }
-    } else if (asn.length === 2 || asn.length === 7 || asn.length === 10) {
-      asn = asn + "/"
-    }
+    const asn = splitAsn(e.target.value.toUpperCase())
 
     setIsValidAsn(isAsnFormatValid(asn))
     setIsAsnChanged(true)
@@ -116,7 +112,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     const asnFromClipboard = e.clipboardData.getData("text")
     setIsValidAsn(isAsnFormatValid(asnFromClipboard))
     setIsAsnChanged(true)
-    setAsnString(asnFromClipboard)
+    setAsnString(splitAsn(asnFromClipboard))
     amend("asn")(splitAsn(asnFromClipboard))
   }
 
