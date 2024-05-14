@@ -44,7 +44,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   const [updatedAhoAsn, setUpdatedAhoAsn] = useState<string>(splitUpdatedAhoAsn)
 
   const [isAsnChanged, setIsAsnChanged] = useState<boolean>(false)
-  const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(updatedAhoAsn.replace(/\//g, "")))
+  const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(updatedAhoAsn))
   const [savedAsn, setSavedAsn] = useState<boolean>(false)
   const [asnString, setAsnString] = useState<string>(updatedAhoAsn ?? "")
   const [pageLoad, setPageLoad] = useState<boolean>(false)
@@ -101,10 +101,9 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
       asn = asn + "/"
     }
 
-    const unsplitAsn = asn.replace(/\//g, "")
-    setIsValidAsn(isAsnFormatValid(unsplitAsn))
+    setIsValidAsn(isAsnFormatValid(asn))
     setIsAsnChanged(true)
-    setAsnString(unsplitAsn)
+    setAsnString(asn)
     amend("asn")(asn)
   }
 
@@ -115,8 +114,10 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   const handleOnPaste = (e: ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault()
     const asnFromClipboard = e.clipboardData.getData("text")
-    amend("asn")(splitAsn(asnFromClipboard))
     setIsValidAsn(isAsnFormatValid(asnFromClipboard))
+    setIsAsnChanged(true)
+    setAsnString(asn)
+    amend("asn")(splitAsn(asnFromClipboard))
   }
 
   const isSaveAsnBtnDisabled = (): boolean => {
@@ -144,8 +145,6 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
       hasExceptions={isAsnEditable}
       isEditable={isAsnEditable}
       inputLabel={"Enter the ASN"}
-      // hintText={`Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 \
-      // digits / 1 check letter\nExample: 22 49AB 49 1234 C`}
       hintText="Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 digits / 1 check letter\nExample: 22 49AB 49 1234 C"
     >
       <div className={isValidAsn ? "" : "govuk-form-group--error"}>

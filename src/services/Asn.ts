@@ -12,12 +12,13 @@ class Asn {
   public sequence: number | undefined
 
   constructor(asn: string) {
-    if (asn) {
-      this.year = asn.slice(0, 2)
-      this.force = asn.slice(2, 4)
-      this.unit = asn.slice(4, 6)
-      this.system = asn.slice(6, 8)
-      this.sequence = parseInt(asn.slice(8), 10)
+    const asnString = asn.replace(/\//g, "")
+    if (asnString) {
+      this.year = asnString.slice(0, 2)
+      this.force = asnString.slice(2, 4)
+      this.unit = asnString.slice(4, 6)
+      this.system = asnString.slice(6, 8)
+      this.sequence = parseInt(asnString.slice(8), 10)
     }
   }
 
