@@ -116,7 +116,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     const asnFromClipboard = e.clipboardData.getData("text")
     setIsValidAsn(isAsnFormatValid(asnFromClipboard))
     setIsAsnChanged(true)
-    setAsnString(asn)
+    setAsnString(asnFromClipboard)
     amend("asn")(splitAsn(asnFromClipboard))
   }
 
