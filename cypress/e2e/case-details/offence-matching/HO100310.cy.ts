@@ -57,6 +57,22 @@ describe("Offence matching HO100310", () => {
     cy.get("select").contains("option", "TH68006").should("be.disabled").and("not.be.selected")
   })
 
+  it("loads options that were previously selected", () => {
+    cy.get("select.offence-matcher").select("001 - TH68006")
+
+    cy.get("a").contains("Back to all offences").click()
+    cy.get("a:contains('Theft of pedal cycle')").eq(1).click()
+    cy.get("select.offence-matcher").select("Added in court")
+
+    cy.get("a").contains("Back to all offences").click()
+    cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
+    cy.get("select").contains("option", "TH68006").should("be.selected")
+
+    cy.get("a").contains("Back to all offences").click()
+    cy.get("a:contains('Theft of pedal cycle')").eq(1).click()
+    cy.get("select").contains("option", "Added in court").should("be.selected")
+  })
+
   it("prevents submission if any offences are unmatched", () => {
     cy.get("button#submit").should("be.disabled")
 

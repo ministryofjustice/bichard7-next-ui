@@ -1,5 +1,6 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { useCourtCase } from "context/CourtCaseContext"
+import { useState } from "react"
 import getOffenceCode from "utils/getOffenceCode"
 import Badge, { BadgeColours } from "./Badge"
 
@@ -18,28 +19,32 @@ export const OffenceMatcher = ({ offenceIndex, offence, state }: Props) => {
     amendments
   } = useCourtCase()
   const offenceCode = getOffenceCode(offence)
+  const [selectedValue, setSelectedValue] = useState(
+    amendments.offenceReasonSequence?.find((a) => a.offenceIndex === offenceIndex)?.value ?? ""
+  )
 
   const onSelectionChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
     amend("offenceReasonSequence")({
-      offenceIndex: offenceIndex - 1,
+      offenceIndex,
       value: Number(e.target.value)
     })
 
     amend("offenceCourtCaseReferenceNumber")({
-      offenceIndex: offenceIndex - 1,
+      offenceIndex,
       value: e.target.options[e.target.selectedIndex].dataset.ccr
     })
+
+    setSelectedValue(e.target.value)
   }
 
-  const isAlreadySelected = (sequenceNumber: number) =>
-    !!amendments.offenceReasonSequence?.find((x) => x.value === sequenceNumber && x.offenceIndex !== offenceIndex)
+  const offenceAlreadySelected = (sequenceNumber: number) =>
+    !!amendments.offenceReasonSequence?.find((a) => a.value === sequenceNumber && a.offenceIndex !== offenceIndex)
 
-  // TODO: load manually selected value if exists (just load updated aho always?)
   // TODO: match dates
   return state ? (
-    <select className="govuk-select offence-matcher" onChange={onSelectionChanged}>
-      <option disabled selected hidden value="">
-        {"Choose from the options below"}
+    <select className="govuk-select offence-matcher" onChange={onSelectionChanged} value={selectedValue}>
+      <option disabled hidden value="">
+        {"Select an offence"}
       </option>
       {pncQuery?.courtCases?.map((c) => {
         return (
@@ -51,7 +56,7 @@ export const OffenceMatcher = ({ offenceIndex, offence, state }: Props) => {
                   <option
                     key={pnc.offence.cjsOffenceCode}
                     value={pnc.offence.sequenceNumber}
-                    disabled={isAlreadySelected(pnc.offence.sequenceNumber)}
+                    disabled={offenceAlreadySelected(pnc.offence.sequenceNumber)}
                     data-ccr={c.courtCaseReference}
                   >
                     {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
