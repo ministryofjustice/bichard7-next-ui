@@ -116,6 +116,11 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     amend("asn")(splitAsn(asnFromClipboard))
   }
 
+  const handleOnCopy = () => {
+    const copiedAsn = document.getSelection()?.toString().replace(/\//g, "")
+    navigator.clipboard.writeText(copiedAsn ?? "")
+  }
+
   const isSaveAsnBtnDisabled = (): boolean => {
     const formattedAsn = asnString.includes("/") ? asnString : splitAsn(asnString)
     if (updatedAhoAsn === formattedAsn) {
@@ -158,6 +163,8 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
           error={!isValidAsn}
           onKeyDown={handleOnKeyDown}
           onPaste={handleOnPaste}
+          onCopy={handleOnCopy}
+          onCut={handleOnCopy}
         />
       </div>
       <SaveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()} />
