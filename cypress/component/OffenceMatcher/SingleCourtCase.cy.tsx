@@ -52,7 +52,7 @@ describe("With existing amendments", () => {
   const courtCase = HO100310 as unknown as DisplayFullCourtCase
   const [offence] = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence
 
-  beforeEach(() => {
+  it("loads amended value", () => {
     const amendments: Amendments = {
       offenceReasonSequence: [
         {
@@ -67,9 +67,27 @@ describe("With existing amendments", () => {
         <OffenceMatcher offenceIndex={0} offence={offence} state={true} />
       </CourtCaseContext.Provider>
     )
+
+    cy.get("select").should("have.value", 1)
   })
 
-  it("loads amended value", () => {
-    cy.get("select").should("have.value", 1)
+  it("disables options that already exist in amendments", () => {
+    const amendments: Amendments = {
+      offenceReasonSequence: [
+        {
+          offenceIndex: 1,
+          value: 1
+        }
+      ]
+    }
+
+    cy.mount(
+      <CourtCaseContext.Provider value={[{ courtCase, amendments, savedAmendments: {} }, () => {}]}>
+        <OffenceMatcher offenceIndex={0} offence={offence} state={true} />
+      </CourtCaseContext.Provider>
+    )
+
+    cy.get("select").should("have.value", null)
+    cy.get("select").contains("option", "TH68006").should("be.disabled")
   })
 })
