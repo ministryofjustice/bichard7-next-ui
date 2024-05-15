@@ -11,6 +11,7 @@ import { useCurrentUser } from "context/CurrentUserContext"
 import { CheckmarkIcon } from "../../CourtCaseDetailsSingleTab.styles"
 import { CHECKMARK_ICON_URL } from "utils/icons"
 import { AsnInputContainer, AsnInput } from "./AsnField.styles"
+import { isEmpty } from "lodash"
 
 interface AsnFieldProps {
   stopLeavingFn: (newValue: boolean) => void
@@ -24,57 +25,51 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
       ?.ArrestSummonsNumber
   )
+  const amendedAsn = amendments.asn ?? ""
 
   const [updatedAhoAsn, setUpdatedAhoAsn] = useState<string>(splitUpdatedAhoAsn)
-  const [isAsnChanged, setIsAsnChanged] = useState<boolean>(false)
   const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(updatedAhoAsn))
-  const [savedAsn, setSavedAsn] = useState<boolean>(false)
-  const [asnString, setAsnString] = useState<string>(updatedAhoAsn ?? "")
-  const [pageLoad, setPageLoad] = useState<boolean>(false)
+  const [isSavedAsn, setIsSavedAsn] = useState<boolean>(false)
+  const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false)
   const [key, setKey] = useState<string>("")
+
+  useEffect(() => {
+    if (!isPageLoaded) {
+      amend("asn")(updatedAhoAsn ?? "")
+      setIsPageLoaded(true)
+    }
+
+    if (isSavedAsn) {
+      setUpdatedAhoAsn(amendedAsn)
+    }
+
+    stopLeavingFn(!isSavedAsn && !isEmpty(amendedAsn) && updatedAhoAsn !== amendedAsn)
+  }, [isSavedAsn, isPageLoaded, amendments, updatedAhoAsn, stopLeavingFn, amend, amendedAsn])
 
   const saveAsn = useCallback(
     async (asn: Asn) => {
-      console.log(asn.toString())
-
       await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
-      setSavedAsn(false)
+      setIsSavedAsn(false)
     },
     [courtCase.errorId]
   )
 
   const handleAsnSave = (): void => {
     if (isValidAsn) {
-      setSavedAsn(true)
-      savedAmend("asn")(asnString)
-      saveAsn(new Asn(asnString))
+      setIsSavedAsn(true)
+      savedAmend("asn")(amendedAsn)
+      saveAsn(new Asn(amendedAsn))
     }
   }
 
-  useEffect(() => {
-    if (!pageLoad) {
-      amend("asn")(updatedAhoAsn ?? "")
-      setPageLoad(true)
-    }
-
-    if (savedAsn) {
-      setUpdatedAhoAsn(asnString)
-    }
-
-    stopLeavingFn(!savedAsn && isAsnChanged && updatedAhoAsn !== asnString)
-  }, [savedAsn, asnString, pageLoad, amendments, updatedAhoAsn, stopLeavingFn, isAsnChanged, amend])
-
-  let asn = ""
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    asn = Asn.divideAsn(e.target.value.toUpperCase())
+    let asn = Asn.divideAsn(e.target.value.toUpperCase())
 
     if (key === "Backspace") {
       asn = Asn.deleteAsn(asn)
     }
 
     setIsValidAsn(isAsnFormatValid(asn))
-    setIsAsnChanged(true)
-    setAsnString(asn)
     amend("asn")(asn)
   }
 
@@ -86,8 +81,6 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     e.preventDefault()
     const asnFromClipboard = e.clipboardData.getData("text")
     setIsValidAsn(isAsnFormatValid(asnFromClipboard))
-    setIsAsnChanged(true)
-    setAsnString(Asn.divideAsn(asnFromClipboard))
     amend("asn")(Asn.divideAsn(asnFromClipboard))
   }
 
@@ -97,7 +90,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   }
 
   const isSaveAsnBtnDisabled = (): boolean => {
-    const formattedAsn = asnString.includes("/") ? asnString : Asn.divideAsn(asnString)
+    const formattedAsn = amendedAsn.includes("/") ? amendedAsn : Asn.divideAsn(amendedAsn)
     if (updatedAhoAsn === formattedAsn) {
       return true
     } else if (!isValidAsn) {
@@ -121,7 +114,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
       hasExceptions={isAsnEditable}
       isEditable={isAsnEditable}
       inputLabel={"Enter the ASN"}
-      hintText="Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 4 digits / 1 check letter\nExample: 22 49AB 49 1234 C"
+      hintText="Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 1 to 11 digits and 1 check letter \n Example: 22 49AB 49 1234 C"
     >
       <div className={isValidAsn ? "" : "govuk-form-group--error"}>
         {!isValidAsn && (
@@ -135,7 +128,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
             id={"asn"}
             name={"asn"}
             onChange={handleAsnChange}
-            value={amendments.asn ?? ""}
+            value={amendedAsn}
             error={!isValidAsn}
             onKeyDown={handleOnKeyDown}
             onPaste={handleOnPaste}

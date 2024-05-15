@@ -26,7 +26,7 @@ describe("isAsnFormatValid", () => {
     expect(result).toBe(true)
   })
 
-  it("Should return true when shortform ASN is invalid", () => {
+  it("Should return false when shortform ASN is invalid", () => {
     const result = isAsnFormatValid("1101ZD01410811A")
     expect(result).toBe(false)
   })
