@@ -42,8 +42,8 @@ class Asn {
     }${this.checkCharacter()}`
   }
 
-  splitAsn() {
-    return this.asn
+  static divideAsn = (asn: string) => {
+    return asn
       .replace(/\//g, "")
       .split("")
       .map((el, i) => {
@@ -54,6 +54,23 @@ class Asn {
         }
       })
       .join("")
+  }
+
+  static deleteAsn = (asn: string): string => {
+    switch (asn.length) {
+      case 11:
+        asn = asn.substring(0, 10)
+        break
+      case 8:
+        asn = asn.substring(0, 7)
+        break
+      case 3:
+        asn = asn.substring(0, 2)
+        break
+      default:
+        break
+    }
+    return asn
   }
 }
 

@@ -18,50 +18,18 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   const { courtCase, amendments, amend, savedAmend } = useCourtCase()
   const currentUser = useCurrentUser()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
-
-  const [key, setKey] = useState<string>("")
-
-  const splitAsn = (asn: string | undefined): string => {
-    if (!asn) {
-      return ""
-    }
-
-    if (asn?.length < 2) {
-      if (key === "Backspace") {
-        switch (asn.length) {
-          case 10:
-            asn = asn.substring(0, 9)
-            break
-          case 7:
-            asn = asn.substring(0, 6)
-            break
-          case 2:
-            asn = asn.substring(0, 1)
-            break
-          default:
-            break
-        }
-      } else if (asn.length === 2 || asn.length === 7 || asn.length === 10) {
-        asn = asn + "/"
-      }
-      return asn
-    } else {
-      return new Asn(asn).splitAsn()
-    }
-  }
-
-  const splitUpdatedAhoAsn = splitAsn(
+  const splitUpdatedAhoAsn = Asn.divideAsn(
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
       ?.ArrestSummonsNumber
   )
 
   const [updatedAhoAsn, setUpdatedAhoAsn] = useState<string>(splitUpdatedAhoAsn)
-
   const [isAsnChanged, setIsAsnChanged] = useState<boolean>(false)
   const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(updatedAhoAsn))
   const [savedAsn, setSavedAsn] = useState<boolean>(false)
   const [asnString, setAsnString] = useState<string>(updatedAhoAsn ?? "")
   const [pageLoad, setPageLoad] = useState<boolean>(false)
+  const [key, setKey] = useState<string>("")
 
   const saveAsn = useCallback(
     async (asn: Asn) => {
@@ -94,8 +62,13 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     stopLeavingFn(!savedAsn && isAsnChanged && updatedAhoAsn !== asnString)
   }, [savedAsn, asnString, pageLoad, amendments, updatedAhoAsn, stopLeavingFn, isAsnChanged, amend])
 
+  let asn = ""
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const asn = splitAsn(e.target.value.toUpperCase())
+    asn = Asn.divideAsn(e.target.value.toUpperCase())
+
+    if (key === "Backspace") {
+      asn = Asn.deleteAsn(asn)
+    }
 
     setIsValidAsn(isAsnFormatValid(asn))
     setIsAsnChanged(true)
@@ -112,8 +85,8 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     const asnFromClipboard = e.clipboardData.getData("text")
     setIsValidAsn(isAsnFormatValid(asnFromClipboard))
     setIsAsnChanged(true)
-    setAsnString(splitAsn(asnFromClipboard))
-    amend("asn")(splitAsn(asnFromClipboard))
+    setAsnString(Asn.divideAsn(asnFromClipboard))
+    amend("asn")(Asn.divideAsn(asnFromClipboard))
   }
 
   const handleOnCopy = () => {
@@ -122,7 +95,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   }
 
   const isSaveAsnBtnDisabled = (): boolean => {
-    const formattedAsn = asnString.includes("/") ? asnString : splitAsn(asnString)
+    const formattedAsn = asnString.includes("/") ? asnString : Asn.divideAsn(asnString)
     if (updatedAhoAsn === formattedAsn) {
       return true
     } else if (!isValidAsn) {
