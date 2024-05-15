@@ -6,9 +6,11 @@ import { useCourtCase } from "context/CourtCaseContext"
 import { useCallback, useEffect, useState, KeyboardEvent, ClipboardEvent } from "react"
 import Asn from "services/Asn"
 import isAsnFormatValid from "utils/isAsnFormatValid"
-import { AsnInput } from "../DefendantDetails.styles"
 import isAsnException from "utils/exceptions/isException/isAsnException"
 import { useCurrentUser } from "context/CurrentUserContext"
+import { CheckmarkIcon } from "../../CourtCaseDetailsSingleTab.styles"
+import { CHECKMARK_ICON_URL } from "utils/icons"
+import { AsnInputContainer, AsnInput } from "./AsnField.styles"
 
 interface AsnFieldProps {
   stopLeavingFn: (newValue: boolean) => void
@@ -127,18 +129,29 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
             <span className="govuk-visually-hidden">{"Error:"}</span> {"Invalid ASN format"}
           </p>
         )}
-        <AsnInput
-          className={`asn-input`}
-          id={"asn"}
-          name={"asn"}
-          onChange={handleAsnChange}
-          value={amendments.asn ?? ""}
-          error={!isValidAsn}
-          onKeyDown={handleOnKeyDown}
-          onPaste={handleOnPaste}
-          onCopy={handleOnCopy}
-          onCut={handleOnCopy}
-        />
+        <AsnInputContainer>
+          <AsnInput
+            className={`asn-input`}
+            id={"asn"}
+            name={"asn"}
+            onChange={handleAsnChange}
+            value={amendments.asn ?? ""}
+            error={!isValidAsn}
+            onKeyDown={handleOnKeyDown}
+            onPaste={handleOnPaste}
+            onCopy={handleOnCopy}
+            onCut={handleOnCopy}
+          />
+          {isValidAsn && (
+            <CheckmarkIcon
+              className={`checkmark-icon checkmark`}
+              src={CHECKMARK_ICON_URL}
+              width={30}
+              height={30}
+              alt="Checkmark icon"
+            />
+          )}
+        </AsnInputContainer>
       </div>
       <SaveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()} />
     </EditableFieldTableRow>
