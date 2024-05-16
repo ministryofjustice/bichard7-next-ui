@@ -174,11 +174,9 @@ describe("NextHearingDate", () => {
 
   it("Should be able to edit and submit multiple next hearing dates", () => {
     loginAndVisit("/bichard/court-cases/0")
-
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
     cy.get("#next-hearing-date").type("2024-01-01")
-
     cy.get("a.govuk-back-link").contains("Back to all offences").click()
     cy.get(".govuk-link")
       .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
@@ -186,20 +184,16 @@ describe("NextHearingDate", () => {
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B01EF01")
     cy.get("#next-hearing-date").type("2023-12-24")
-
     submitAndConfirmExceptions()
-
     cy.location().should((loc) => {
       expect(loc.href).to.contain("?resubmitCase=true")
     })
-
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
     cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-01-01")
     cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24")
     cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
-
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
       updatedMessageNotHaveContent: ["<ds:NextHearingDate>false</ds:NextHearingDate>", "<ds:NextHearingDate />"],
@@ -208,19 +202,16 @@ describe("NextHearingDate", () => {
         "<ds:NextHearingDate>2023-12-24</ds:NextHearingDate>"
       ]
     })
-
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
     cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
     cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Initial Value")
     cy.contains("td", "Next hearing date").siblings().should("include.text", "1/01/2024")
     cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Correction")
-
     cy.get("a.govuk-back-link").contains("Back to all offences").click()
     cy.get(".govuk-link")
       .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
       .click()
-
     cy.contains("td", "Next hearing date").siblings().should("include.text", "")
     cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Initial Value")
     cy.contains("td", "Next hearing date").siblings().should("include.text", "24/12/2023")
