@@ -58,13 +58,20 @@ class GovUkDocument extends Document<DocumentProps> {
     // include styles from both styled-components
     try {
       ctx.renderPage = () => {
-        return originalRenderPage({})
+        return originalRenderPage({
+          enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />)
+        })
       }
 
       const initialProps = await Document.getInitialProps(ctx)
       const additionalProps = {
         nonce,
-        styles: [initialProps.styles, sheet.getStyleElement()]
+        styles: (
+          <>
+            {initialProps.styles}
+            {sheet.getStyleElement()}
+          </>
+        )
       }
 
       return {
