@@ -17,7 +17,7 @@ const InputField: React.FC<EditableInputFieldProps> = ({ value, inputLabel, hint
       <br />
       <Label>{inputLabel}</Label>
       {hintText &&
-        hintText.split("\n").map((hint, key) => {
+        hintText.split("\\n").map((hint, key) => {
           return <HintText key={key}>{hint}</HintText>
         })}
       {children}
