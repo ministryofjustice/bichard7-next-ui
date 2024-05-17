@@ -140,4 +140,28 @@ describe("Offence matching HO100310", () => {
       cy.get("span.moj-badge").contains("Unmatched")
     })
   })
+
+  describe("Display or hide offence matching depending on feature flag", () => {
+    it("Hide the offence matching when a user does not have the feature flag enabled", () => {
+      cy.loginAs("NoExceptionsFeatureFlag")
+
+      cy.visit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+
+      cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
+      cy.get("select.offence-matcher").should("not.exist")
+    })
+
+    it("Show the offence matching when a user has the feature flag enabled", () => {
+      cy.loginAs("GeneralHandler")
+
+      cy.visit("/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+
+      cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
+      cy.get("select.offence-matcher").should("be.enabled")
+    })
+  })
 })

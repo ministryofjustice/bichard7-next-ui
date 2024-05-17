@@ -30,6 +30,21 @@ const hasAccessToExceptions = (user: User): boolean => {
   )
 }
 
+const hasAccessToOffenceMatching = (user: User): boolean => {
+  const getFeatureFlag = user.featureFlags!.exceptionsEnabled
+  return (
+    user.groups !== undefined &&
+    getFeatureFlag &&
+    user.groups.some(
+      (group) =>
+        group === UserGroup.ExceptionHandler ||
+        group === UserGroup.GeneralHandler ||
+        group === UserGroup.Allocator ||
+        group === UserGroup.Supervisor
+    )
+  )
+}
+
 const isSupervisor = (user: User): boolean => {
   return user.groups !== undefined && user.groups.some((group) => group === UserGroup.Supervisor)
 }
@@ -49,8 +64,9 @@ const userAccess = (user: User): { [key in Permission]: boolean } => {
     [Permission.UnlockOtherUsersCases]: isSupervisor(user),
     [Permission.ListAllCases]: isSupervisor(user),
     [Permission.ViewReports]: isSupervisor(user),
-    [Permission.ViewUserManagement]: isUserManager(user)
+    [Permission.ViewUserManagement]: isUserManager(user),
+    [Permission.OffenceMatching]: hasAccessToOffenceMatching(user)
   }
 }
 
-export { hasAccessToExceptions, hasAccessToTriggers, isSupervisor, userAccess }
+export { hasAccessToExceptions, hasAccessToOffenceMatching, hasAccessToTriggers, isSupervisor, userAccess }

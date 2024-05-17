@@ -39,7 +39,7 @@ export const OffenceMatcher = ({ offenceIndex, offence, state }: Props) => {
   return state ? (
     <select className="govuk-select offence-matcher" onChange={onSelectionChanged}>
       <option disabled selected hidden value="">
-        {"Select an offence"}
+        {"Choose from the options below"}
       </option>
       {pncQuery?.courtCases?.map((c) => {
         return (

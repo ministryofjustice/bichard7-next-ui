@@ -12,6 +12,11 @@ import { getOffenceMatchingException } from "utils/exceptions/getOffenceMatching
 import { TableRow } from "../../TableRow"
 import { PncInput } from "./OffenceDetails.styles"
 
+const isProduction = process.env.NODE_ENV === "production"
+
+const enabledInProduction = true // change this if we need to disable in production for everyone
+const currentlyEnabled = isProduction ? enabledInProduction : true
+
 type Props = {
   selectedOffenceIndex: number
   offence: Offence
@@ -26,7 +31,7 @@ export const OffenceMatching = ({ selectedOffenceIndex, offence, isCaseUnresolve
   const offenceMatchingException = isCaseUnresolved && getOffenceMatchingException(exceptions, selectedOffenceIndex - 1)
   const offenceMatchingExceptionMessage = findExceptions(courtCase, courtCase.aho.Exceptions, ExceptionCode.HO100304)
 
-  const displayOffenceMatcher = exceptions.some((e) => [ExceptionCode.HO100310].includes(e.code))
+  const displayOffenceMatcher = currentlyEnabled && exceptions.some((e) => [ExceptionCode.HO100310].includes(e.code))
 
   const updatedOffence = savedAmendments.offenceReasonSequence?.find((o) => o.offenceIndex === selectedOffenceIndex - 1)
   return (

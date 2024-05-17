@@ -21,6 +21,7 @@ export type DisplayPartialCourtCase = Pick<CourtCase, FieldsForDisplayPartialCou
   courtDate?: string
   errorLockedByUserFullName?: string
   canUserEditExceptions: boolean
+  canUserSeeOffenceMatching: boolean
   triggerLockedByUserFullName?: string
   notes: DisplayNote[]
   triggers: DisplayTrigger[]
