@@ -42,7 +42,11 @@ class Asn {
     }${this.checkCharacter()}`
   }
 
-  static divideAsn = (asn: string) => {
+  static divideAsn = (asn: string): string => {
+    if (!asn) {
+      return ""
+    }
+
     return asn
       .replace(/\//g, "")
       .split("")

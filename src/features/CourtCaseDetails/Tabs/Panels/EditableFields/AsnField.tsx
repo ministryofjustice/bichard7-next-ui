@@ -114,12 +114,12 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
       hasExceptions={isAsnEditable}
       isEditable={isAsnEditable}
       inputLabel={"Enter the ASN"}
-      hintText="Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 1 to 11 digits and 1 check letter \n Example: 22 49AB 49 1234 C"
+      hintText="ASN format: Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 1 to 11 digits and 1 check letter \n Example: 22/49AB/49/1234C"
     >
       <div className={isValidAsn ? "" : "govuk-form-group--error"}>
         {!isValidAsn && (
           <p id="event-name-error" className="govuk-error-message">
-            <span className="govuk-visually-hidden">{"Error:"}</span> {"Invalid ASN format"}
+            <span className="govuk-visually-hidden">{"Error:"}</span> {"Enter ASN in the correct format"}
           </p>
         )}
         <AsnInputContainer>
