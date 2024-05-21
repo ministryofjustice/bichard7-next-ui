@@ -21,13 +21,12 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   const { courtCase, amendments, amend, savedAmend } = useCourtCase()
   const currentUser = useCurrentUser()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
-  const splitUpdatedAhoAsn = Asn.divideAsn(
+  const amendedAsn = amendments.asn ?? ""
+
+  const [updatedAhoAsn, setUpdatedAhoAsn] = useState<string>(
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
       ?.ArrestSummonsNumber
   )
-  const amendedAsn = amendments.asn ?? ""
-
-  const [updatedAhoAsn, setUpdatedAhoAsn] = useState<string>(splitUpdatedAhoAsn)
   const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(updatedAhoAsn))
   const [isSavedAsn, setIsSavedAsn] = useState<boolean>(false)
   const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false)
@@ -63,14 +62,17 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   }
 
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    let asn = Asn.divideAsn(e.target.value.toUpperCase())
+    const InputAsnValue = e.target.value.toUpperCase()
 
     if (key === "Backspace") {
-      asn = Asn.deleteAsn(asn)
+      const asnWithSlashes = Asn.divideAsn(InputAsnValue)
+      amend("asn")(Asn.deleteAsn(asnWithSlashes))
+    } else {
+      const asnWithoutSlashes = InputAsnValue.replace(/\//g, "")
+      amend("asn")(asnWithoutSlashes)
     }
 
-    setIsValidAsn(isAsnFormatValid(asn))
-    amend("asn")(asn)
+    setIsValidAsn(isAsnFormatValid(InputAsnValue))
   }
 
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -81,7 +83,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     e.preventDefault()
     const asnFromClipboard = e.clipboardData.getData("text")
     setIsValidAsn(isAsnFormatValid(asnFromClipboard))
-    amend("asn")(Asn.divideAsn(asnFromClipboard))
+    amend("asn")(asnFromClipboard)
   }
 
   const handleOnCopy = () => {
@@ -90,13 +92,11 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   }
 
   const isSaveAsnBtnDisabled = (): boolean => {
-    const formattedAsn = amendedAsn.includes("/") ? amendedAsn : Asn.divideAsn(amendedAsn)
-    if (updatedAhoAsn === formattedAsn) {
+    if (updatedAhoAsn === amendedAsn) {
       return true
     } else if (!isValidAsn) {
       return true
     }
-
     return false
   }
 
@@ -105,6 +105,9 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     courtCase.phase === Phase.HEARING_OUTCOME &&
     isAsnException(courtCase.aho.Exceptions) &&
     currentUser.featureFlags?.exceptionsEnabled
+
+  const asn =
+    amendedAsn.includes("/") || (amendedAsn.length <= 2 && key === "Backspace") ? amendedAsn : Asn.divideAsn(amendedAsn)
 
   return (
     <EditableFieldTableRow
@@ -128,7 +131,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
             id={"asn"}
             name={"asn"}
             onChange={handleAsnChange}
-            value={amendedAsn}
+            value={asn}
             error={!isValidAsn}
             onKeyDown={handleOnKeyDown}
             onPaste={handleOnPaste}
