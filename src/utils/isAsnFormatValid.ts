@@ -1,7 +1,7 @@
 import Asn from "services/Asn"
 
 const isAsnFormatValid = (asn: string): boolean => {
-  const asnString = asn.replace(/\//g, "")
+  const asnString = asn?.replace(/\//g, "")
   const year = `\\d{2}`
   const forceAndUnit = `[A-Z0-9]{6,7}`
   const sequence = `\\d{1,11}`

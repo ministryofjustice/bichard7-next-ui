@@ -15,7 +15,7 @@ class Asn {
 
   constructor(asn: string) {
     this.asn = asn
-    const asnString = asn.replace(/\//g, "")
+    const asnString = asn?.replace(/\//g, "")
     if (asnString) {
       this.year = asnString.slice(0, 2)
       this.force = asnString.slice(2, 4)
