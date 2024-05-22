@@ -42,18 +42,18 @@ export const OffenceMatching = ({ selectedOffenceIndex, offence, isCaseUnresolve
   const offenceMatchingExceptionMessage = findExceptions(courtCase, courtCase.aho.Exceptions, ExceptionCode.HO100304)
 
   const displayOffenceMatcher =
-    exceptions.some((e) => [ExceptionCode.HO100310].includes(e.code)) &&
-    courtCase.errorLockedByUsername === currentUser?.username &&
-    courtCase.errorStatus === "Unresolved" &&
-    enabled(currentUser)
+    enabled(currentUser) && exceptions.some((e) => [ExceptionCode.HO100310].includes(e.code))
+  const userCanMatchOffence =
+    courtCase.errorLockedByUsername === currentUser?.username && courtCase.errorStatus === "Unresolved"
 
   const updatedOffence = savedAmendments.offenceReasonSequence?.find((o) => o.offenceIndex === selectedOffenceIndex - 1)
+
   return (
     <>
       {/* If we don't display the exception matcher, 
       we should display the PNC sequence number input box below. */}
       <ConditionalRender isRendered={displayOffenceMatcher}>
-        {offenceMatchingException ? (
+        {offenceMatchingException && userCanMatchOffence ? (
           <ExceptionFieldTableRow
             label={"Matched PNC offence"}
             value={<OffenceMatcher offenceIndex={selectedOffenceIndex} offence={offence} state={state} />}
@@ -69,7 +69,7 @@ export const OffenceMatching = ({ selectedOffenceIndex, offence, isCaseUnresolve
                 <Badge
                   isRendered={true}
                   colour={BadgeColours.Purple}
-                  label={updatedOffence?.value === 0 ? "ADDED IN COURT" : "MATCHED"}
+                  label={!updatedOffence ? "UNMATCHED" : updatedOffence.value === 0 ? "ADDED IN COURT" : "MATCHED"}
                   className="moj-badge--large"
                 />
               </>

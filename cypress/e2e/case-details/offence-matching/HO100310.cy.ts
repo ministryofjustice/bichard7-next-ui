@@ -10,7 +10,7 @@ describe("Offence matching HO100310", () => {
   }
 
   before(() => {
-    cy.loginAs("ExceptionHandler")
+    cy.loginAs("GeneralHandler")
   })
 
   beforeEach(() => {
@@ -132,20 +132,23 @@ describe("Offence matching HO100310", () => {
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
 
       cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
-      cy.get("span.moj-badge").contains("Unmatched")
+      cy.get("span.moj-badge").contains("UNMATCHED")
 
       cy.get("a").contains("Back to all offences").click()
       cy.get("a:contains('Theft of pedal cycle')").eq(1).click()
 
-      cy.get("span.moj-badge").contains("Unmatched")
+      cy.get("span.moj-badge").contains("UNMATCHED")
     })
   })
 
-  describe("Display or hide offence matching depending on feature flag", () => {
-    it("Hide the offence matching when a user does not have the feature flag enabled", () => {
+  describe.only("renders based on feature flag value for user", () => {
+    before(() => {
       cy.loginAs("NoExceptionsFeatureFlag")
+      cy.loginAs("OffenceMatchingDisabled")
+    })
 
-      cy.visit("/bichard/court-cases/0")
+    it("is disabled if the feature flag is non-existent", () => {
+      loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
 
@@ -153,9 +156,16 @@ describe("Offence matching HO100310", () => {
       cy.get("select.offence-matcher").should("not.exist")
     })
 
-    it("Show the offence matching when a user has the feature flag enabled", () => {
-      cy.loginAs("GeneralHandler")
+    it("is disabled if the feature flag is disabled", () => {
+      loginAndVisit("OffenceMatchingDisabled", "/bichard/court-cases/0")
 
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+
+      cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
+      cy.get("select.offence-matcher").should("not.exist")
+    })
+
+    it("is enabled if the feature flag is enabled", () => {
       cy.visit("/bichard/court-cases/0")
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
