@@ -11,6 +11,8 @@ describe("Offence matching HO100310", () => {
 
   before(() => {
     cy.loginAs("GeneralHandler")
+    cy.loginAs("NoExceptionsFeatureFlag")
+    cy.loginAs("OffenceMatchingDisabled")
   })
 
   beforeEach(() => {
@@ -106,7 +108,7 @@ describe("Offence matching HO100310", () => {
         offenceReasonSequence: [
           { offenceIndex: 0, value: 1 },
           { offenceIndex: 3, value: 0 }
-        ], // TODO: determine whether CCRN for AIC should include a value
+        ], // TODO: determine whether CCRN for Added In Court offences should include a value
         offenceCourtCaseReferenceNumber: [{ offenceIndex: 0, value: "97/1626/008395Q" }, { offenceIndex: 3 }]
       })
   })
@@ -134,15 +136,13 @@ describe("Offence matching HO100310", () => {
     })
 
     it("on cases locked to someone else", () => {
-      cy.loginAs("ExceptionHandler")
-
-      cy.task("insertCourtCasesWithFields", {
-        defendantName: "Offence Matching HO100310",
-        orgForPoliceFilter: "01",
-        hearingOutcome: HO100310,
-        errorCount: 2,
-        errorLockedByUsername: "GeneralHandler"
-      })
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          ...fields,
+          errorLockedByUsername: "ExceptionHandler"
+        }
+      ])
 
       cy.visit("/bichard/court-cases/0")
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
@@ -157,12 +157,7 @@ describe("Offence matching HO100310", () => {
     })
   })
 
-  describe.only("renders based on feature flag value for user", () => {
-    before(() => {
-      cy.loginAs("NoExceptionsFeatureFlag")
-      cy.loginAs("OffenceMatchingDisabled")
-    })
-
+  describe("renders based on feature flag value for user", () => {
     it("is disabled if the feature flag is non-existent", () => {
       loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
 
