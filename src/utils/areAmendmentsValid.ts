@@ -1,8 +1,8 @@
 import { Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "../types/display/CourtCases"
-import isAmendedNextHearingLocationValid from "./isAmendedNextHearingLocationValid"
-import isAsnValid from "./isAsnValid"
-import isNextHearingDateValid from "./isNextHearingDateValid"
+import isAsnAmended from "./isAsnAmended"
+import isNextHearingDateAmended from "./isNextHearingDateAmended"
+import isNextHearingLocationAmended from "./isNextHearingLocationAmended"
 import isOffenceMatchingValid from "./isOffenceMatchingValid"
 
 const areAmendmentsValid = (courtCase: DisplayFullCourtCase, amendments: Amendments): boolean => {
@@ -12,9 +12,9 @@ const areAmendmentsValid = (courtCase: DisplayFullCourtCase, amendments: Amendme
   }
 
   return (
-    isNextHearingDateValid(exceptions, amendments.nextHearingDate) &&
-    isAmendedNextHearingLocationValid(exceptions, amendments.nextSourceOrganisation) &&
-    isAsnValid(exceptions, amendments.asn) &&
+    isNextHearingDateAmended(exceptions, amendments.nextHearingDate) ||
+    isNextHearingLocationAmended(exceptions, amendments.nextSourceOrganisation) ||
+    isAsnAmended(exceptions, amendments.asn) ||
     isOffenceMatchingValid(exceptions, amendments.offenceReasonSequence)
   )
 }

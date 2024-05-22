@@ -23,11 +23,11 @@ describe("areAmendmentsValid", () => {
   it.each([
     ["1101ZD0100000448754K", "B21XA00", "2025-02-10", true],
     ["", "B21XA00", "2025-02-10", true],
-    ["1101ZD0100000448754K", "", "2025-02-10", false],
-    ["1101ZD0100000448754K", "B21XA00", "", false],
-    ["", "", "2025-02-10", false],
-    ["", "B21XA00", "", false],
-    ["1101ZD0100000448754K", "", "", false],
+    ["1101ZD0100000448754K", "", "2025-02-10", true],
+    ["1101ZD0100000448754K", "B21XA00", "", true],
+    ["", "", "2025-02-10", true],
+    ["", "B21XA00", "", true],
+    ["1101ZD0100000448754K", "", "", true],
     ["", "", "", false]
   ])(
     "should return validation error according to value entered into editable fields",

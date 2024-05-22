@@ -8,6 +8,7 @@ import getOffenceAlertsDetails from "utils/getOffenceAlertsDetails"
 import getOffenceCode from "utils/getOffenceCode"
 import { CHECKMARK_ICON_URL } from "utils/icons"
 import { IconContainer } from "./OffencesListRow.styles"
+import { useCurrentUser } from "context/CurrentUserContext"
 
 interface OffencesListRowProps {
   offence: Offence
@@ -16,6 +17,7 @@ interface OffencesListRowProps {
 
 export const OffencesListRow = ({ offence, onClick }: OffencesListRowProps) => {
   const { courtCase, amendments } = useCourtCase()
+  const currentUser = useCurrentUser()
   const exceptions = courtCase.aho.Exceptions
 
   const offenceAlerts = getOffenceAlertsDetails(exceptions, amendments)
@@ -41,7 +43,7 @@ export const OffencesListRow = ({ offence, onClick }: OffencesListRowProps) => {
 
   return (
     <Table.Row>
-      <Table.Cell>{offenceAlertIcon}</Table.Cell>
+      <Table.Cell>{currentUser.featureFlags?.exceptionsEnabled && offenceAlertIcon}</Table.Cell>
       <Table.Cell>{offence.CourtOffenceSequenceNumber}</Table.Cell>
       <Table.Cell>{formatDisplayedDate(new Date(offence.ActualOffenceStartDate.StartDate)).toString()}</Table.Cell>
       <Table.Cell>{getOffenceCode(offence)}</Table.Cell>

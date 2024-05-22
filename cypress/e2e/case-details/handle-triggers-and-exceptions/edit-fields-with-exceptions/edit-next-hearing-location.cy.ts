@@ -416,5 +416,13 @@ describe("NextHearingLocation", () => {
 
       cy.get("#save-next-hearing-location").should("be.disabled")
     })
+
+    it("Should not display editable field for hearing location when exceptionsEnabled is false for user", () => {
+      loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get(".moj-badge").contains("Editable Field").should("not.exist")
+    })
   })
 })
