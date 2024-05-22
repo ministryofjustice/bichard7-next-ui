@@ -1,7 +1,7 @@
 import CourtCase from "services/entities/CourtCase"
 import { DisplayFullCourtCase, DisplayPartialCourtCase } from "types/display/CourtCases"
 import parseHearingOutcome from "utils/parseHearingOutcome"
-import { hasAccessToExceptions, hasAccessToOffenceMatching } from "../../utils/userPermissions"
+import { hasAccessToExceptions } from "../../utils/userPermissions"
 import User from "../entities/User"
 import { noteToDisplayNoteDto } from "./noteDto"
 import { triggerToDisplayTriggerDto } from "./triggerDto"
@@ -21,10 +21,6 @@ export const courtCaseToDisplayPartialCourtCaseDto = (
     canUserEditExceptions:
       courtCase.errorLockedByUsername === currentUser?.username &&
       hasAccessToExceptions(currentUser) &&
-      courtCase.errorStatus === "Unresolved",
-    canUserSeeOffenceMatching:
-      courtCase.errorLockedByUsername === currentUser?.username &&
-      hasAccessToOffenceMatching(currentUser) &&
       courtCase.errorStatus === "Unresolved",
     isUrgent: courtCase.isUrgent,
     notes: courtCase.notes.map(noteToDisplayNoteDto),
