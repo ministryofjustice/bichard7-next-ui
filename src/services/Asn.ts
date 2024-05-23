@@ -42,6 +42,12 @@ class Asn {
     }${this.checkCharacter()}`
   }
 
+  static yearChars = 2
+
+  static forceAndUnitChars = 4
+
+  static systemChars = 2
+
   static divideAsn = (asn: string): string => {
     if (!asn) {
       return ""
@@ -51,7 +57,11 @@ class Asn {
       .replace(/\//g, "")
       .split("")
       .map((el, i) => {
-        if (i === 1 || i === 5 || i === 7) {
+        if (
+          i === this.yearChars - 1 ||
+          i === this.yearChars + this.forceAndUnitChars - 1 ||
+          i === this.yearChars + this.forceAndUnitChars + this.systemChars - 1
+        ) {
           return `${el}/`
         } else {
           return el

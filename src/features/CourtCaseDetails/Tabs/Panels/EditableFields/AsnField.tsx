@@ -61,22 +61,24 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     }
   }
 
+  const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.code === "Backspace") {
+      setKey(e.code)
+    }
+  }
+
   const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const InputAsnValue = e.target.value.toUpperCase()
+    const inputAsnValue = e.target.value.toUpperCase()
 
     if (key === "Backspace") {
-      const asnWithSlashes = Asn.divideAsn(InputAsnValue)
+      const asnWithSlashes = Asn.divideAsn(inputAsnValue)
       amend("asn")(Asn.deleteAsn(asnWithSlashes))
     } else {
-      const asnWithoutSlashes = InputAsnValue.replace(/\//g, "")
+      const asnWithoutSlashes = inputAsnValue.replace(/\//g, "")
       amend("asn")(asnWithoutSlashes)
     }
 
-    setIsValidAsn(isAsnFormatValid(InputAsnValue))
-  }
-
-  const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    setKey(e.code)
+    setIsValidAsn(isAsnFormatValid(inputAsnValue))
   }
 
   const handleOnPaste = (e: ClipboardEvent<HTMLInputElement>) => {
