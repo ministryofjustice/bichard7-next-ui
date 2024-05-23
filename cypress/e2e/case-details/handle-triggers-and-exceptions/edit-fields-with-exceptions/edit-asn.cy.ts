@@ -67,7 +67,7 @@ describe("ASN", () => {
     cy.get("#asn").should("not.exist")
   })
 
-  it("Should be not be able to edit ASN field if ASN exception is not raised", () => {
+  it("Should not be able to edit ASN field if ASN exception is not raised", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
@@ -198,6 +198,26 @@ describe("ASN", () => {
     })
   })
 
+  it("Should divide ASN into sections when user types or pastes asn into the input field ", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("#asn").clear()
+    cy.get("#asn").type("1101ZD0100000448754K")
+
+    cy.get("#asn").should("have.value", "11/01ZD/01/00000448754K")
+  })
+
   it("should display the updated ASN after submission along with CORRECTION badge", () => {
     loginAndVisit("/bichard/court-cases/0")
 
@@ -218,7 +238,7 @@ describe("ASN", () => {
 
     cy.get("#asn").type("asdf")
 
-    cy.get(".Defendant-details-table").contains("Invalid ASN format")
+    cy.get(".Defendant-details-table").contains("Enter ASN in the correct format")
   })
 
   it("Should not be able to edit ASN field if case is not locked by the current user", () => {
