@@ -1,6 +1,12 @@
 const intOrString = (input: string): string => (input.match(/^\d*$/) ? input : "")
 
 class Asn {
+  static yearChars = 2
+
+  static forceAndUnitChars = 4
+
+  static systemChars = 2
+
   public asn: string
 
   public year: string | undefined
@@ -41,12 +47,6 @@ class Asn {
       this.sequence ?? "".toString().padStart(11, "0")
     }${this.checkCharacter()}`
   }
-
-  static yearChars = 2
-
-  static forceAndUnitChars = 4
-
-  static systemChars = 2
 
   static divideAsn = (asn: string): string => {
     if (!asn) {
