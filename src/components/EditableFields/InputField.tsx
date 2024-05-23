@@ -15,9 +15,9 @@ const InputField: React.FC<EditableInputFieldProps> = ({ value, inputLabel, hint
       {value}
       <InitialInputValueBadge />
       <br />
-      <Label>{inputLabel}</Label>
+      <Label className="govuk-label">{inputLabel}</Label>
       {hintText &&
-        hintText.split("\n").map((hint, key) => {
+        hintText.split("\\n").map((hint, key) => {
           return <HintText key={key}>{hint}</HintText>
         })}
       {children}
