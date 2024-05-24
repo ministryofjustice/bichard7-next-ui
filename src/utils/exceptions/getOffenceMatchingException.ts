@@ -27,6 +27,10 @@ export type GetOffenceMatchingExceptionResult =
     }
   | undefined
 
+export const getOffenceMatchingExceptions = (exceptions: Exception[]): Exception[] => {
+  return exceptions.filter((exception) => offenceMatchingExceptions.offenceNotMatched.includes(exception.code))
+}
+
 export const getOffenceMatchingException = (
   exceptions: Exception[],
   offenceIndex: number
