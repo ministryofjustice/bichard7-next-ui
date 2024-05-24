@@ -71,12 +71,9 @@ const getNextHearingLocationExceptionsDetails = (
   }
 }
 
-const getOffencesMatchedExceptionsDetails = (
-  exceptions: Exception[],
-  savedAmendments: Amendments
-): ExceptionDetails => {
+const getOffencesMatchedExceptionsDetails = (exceptions: Exception[]): ExceptionDetails => {
   const offencesMatchedExceptionsCount = getOffenceMatchingExceptions(exceptions).length
-  const offencesMatchedExceptionsCountFromUpdatedFields = savedAmendments?.nextSourceOrganisation?.length || 0
+  const offencesMatchedExceptionsCountFromUpdatedFields = 0
   return {
     ExceptionsCount: offencesMatchedExceptionsCount - offencesMatchedExceptionsCountFromUpdatedFields,
     ExceptionsResolved:
@@ -96,7 +93,7 @@ const getTabDetails = (
 
   const asnExceptionDetails = getAsnExceptionDetails(exceptions, updatedFields, savedAmendments)
 
-  const offencesMatchedExceptionsDetails = getOffencesMatchedExceptionsDetails(exceptions, savedAmendments)
+  const offencesMatchedExceptionsDetails = getOffencesMatchedExceptionsDetails(exceptions)
 
   let offencesExceptionsResolved = false
 
