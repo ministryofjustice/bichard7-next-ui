@@ -47,9 +47,10 @@ export const OffenceMatching = ({ offenceIndex, offence, isCaseUnresolved, excep
     courtCase.errorLockedByUsername === currentUser?.username && courtCase.errorStatus === "Unresolved"
 
   const updatedOffence = savedAmendments.offenceReasonSequence?.find((o) => o.offenceIndex === offenceIndex)
+
   return (
     <>
-      {/* If we don't display the exception matcher, 
+      {/* If we don't display the exception matcher,
       we should display the PNC sequence number input box below. */}
       <ConditionalRender isRendered={displayOffenceMatcher}>
         {offenceMatchingException && userCanMatchOffence ? (
