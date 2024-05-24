@@ -11,7 +11,7 @@ import type NavigationHandler from "types/NavigationHandler"
 import DefaultException from "../../../components/Exception/DefaultException"
 import PncException from "../../../components/Exception/PncException"
 import Form from "../../../components/Form"
-import areAmendmentsValid from "../../../utils/areAmendmentsValid"
+import amendmentsHaveChanged from "../../../utils/amendmentsHaveChanged"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
 import LockStatusTag from "../LockStatusTag"
 import { ButtonContainer, SeparatorLine } from "./Exceptions.styles"
@@ -32,7 +32,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) =
   const csrfToken = useCsrfToken()
   const previousPath = usePreviousPath()
   const router = useRouter()
-  const enableSubmitExceptions = areAmendmentsValid(courtCase, amendments)
+  const enableSubmitExceptions = amendmentsHaveChanged(courtCase, amendments)
 
   let resolveLink = `${router.basePath}${usePathname()}/resolve`
 
