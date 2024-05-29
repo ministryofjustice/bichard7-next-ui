@@ -4,18 +4,18 @@ import { RemandStatuses } from "@moj-bichard7-developers/bichard7-next-data/dist
 import { GenderCode, RemandStatusCode } from "@moj-bichard7-developers/bichard7-next-data/dist/types/types"
 import { BadgeColours } from "components/Badge"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
-import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
+import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { Table } from "govuk-react"
-import React from "react"
 import { findExceptions } from "types/ErrorMessages"
+import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
 import { formatDisplayedDate } from "utils/formattedDate"
 import { capitalizeString } from "utils/valueTransformers"
 import { useCourtCase } from "../../../../context/CourtCaseContext"
 import { AddressCell } from "./AddressCell"
 import { BailConditions } from "./BailConditions"
 import { DefendantDetailTable } from "./DefendantDetails.styles"
-import { TableRow } from "./TableRow"
 import { AsnField as AsnEditableField } from "./EditableFields/AsnField"
+import { TableRow } from "./TableRow"
 
 interface DefendantDetailsProps {
   stopLeavingFn: (newValue: boolean) => void

@@ -4,12 +4,13 @@ import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/da
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
 import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
-import ExceptionFieldTableRow, { ExceptionBadgeType as ExceptionBadge } from "components/ExceptionFieldTableRow"
+import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { Heading, Table } from "govuk-react"
 import ErrorMessages from "types/ErrorMessages"
 import { Exception } from "types/exceptions"
+import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
 import { formatDisplayedDate } from "utils/formattedDate"
 import getOffenceCode from "utils/getOffenceCode"
 import { capitaliseExpression, getPleaStatus, getVerdict, getYesOrNo } from "utils/valueTransformers"
@@ -106,7 +107,7 @@ export const OffenceDetails = ({
             <>
               {offenceCodeErrorPrompt ? (
                 <ExceptionFieldTableRow
-                  badgeText={ExceptionBadge.SystemError}
+                  badgeText={ExceptionBadgeType.SystemError}
                   value={offenceCode}
                   label={"Offence code"}
                 >
@@ -185,7 +186,7 @@ export const OffenceDetails = ({
           </Heading>
           <Table>
             {qualifierErrorPrompt ? (
-              <ExceptionFieldTableRow badgeText={ExceptionBadge.SystemError} value={qualifierCode} label={"Code"}>
+              <ExceptionFieldTableRow badgeText={ExceptionBadgeType.SystemError} value={qualifierCode} label={"Code"}>
                 <ErrorPromptMessage message={qualifierErrorPrompt} />
               </ExceptionFieldTableRow>
             ) : (

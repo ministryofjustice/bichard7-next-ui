@@ -3,12 +3,13 @@ import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
-import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
+import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { useCourtCase } from "context/CourtCaseContext"
 import { Table } from "govuk-react"
 import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
+import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
 import { formatDisplayedDate } from "utils/formattedDate"
 import {
   capitaliseExpression,
