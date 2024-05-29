@@ -1,19 +1,20 @@
-import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { Amendments } from "types/Amendments"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import createDummyAho from "../../test/helpers/createDummyAho"
+import { HO100310 } from "../../test/helpers/exceptions"
+import HO100102 from "../../test/helpers/exceptions/HO100102"
+import HO100200 from "../../test/helpers/exceptions/HO100200"
+import HO100206 from "../../test/helpers/exceptions/HO100206"
+import HO100300 from "../../test/helpers/exceptions/HO100300"
+import HO100321 from "../../test/helpers/exceptions/HO100321"
+import HO100322 from "../../test/helpers/exceptions/HO100322"
+import HO100323 from "../../test/helpers/exceptions/HO100323"
 import {
   getAsnExceptionDetails,
   getNextHearingDateExceptionsDetails,
   getNextHearingLocationExceptionsDetails,
   getTabDetails
 } from "./getTabDetails"
-import createDummyAho from "../../test/helpers/createDummyAho"
-import HO100206 from "../../test/helpers/exceptions/HO100206"
-import HO100321 from "../../test/helpers/exceptions/HO100321"
-import HO100102 from "../../test/helpers/exceptions/HO100102"
-import HO100323 from "../../test/helpers/exceptions/HO100323"
-import HO100200 from "../../test/helpers/exceptions/HO100200"
-import HO100300 from "../../test/helpers/exceptions/HO100300"
-import HO100322 from "../../test/helpers/exceptions/HO100322"
 
 const dummyAho = createDummyAho()
 
@@ -350,6 +351,7 @@ describe("getTabDetails", () => {
     dummyAho.Exceptions.length = 0
     HO100102(dummyAho)
     HO100200(dummyAho)
+    HO100310(dummyAho)
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
     const amendments = {
       nextHearingDate: [
@@ -367,7 +369,7 @@ describe("getTabDetails", () => {
     const tabDetails = getTabDetails(courtCase.aho.Exceptions, updatedFields, savedAmendments, exceptionsEnabled)
 
     expect(tabDetails[3].name).toBe("Offences")
-    expect(tabDetails[3].exceptionsCount).toBe(1)
+    expect(tabDetails[3].exceptionsCount).toBe(2)
     expect(tabDetails[3].exceptionsResolved).toBe(false)
   })
 

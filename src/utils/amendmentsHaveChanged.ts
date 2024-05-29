@@ -1,3 +1,4 @@
+import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import { isEmpty } from "lodash"
 import { Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "../types/display/CourtCases"
@@ -11,11 +12,18 @@ const amendmentsHaveChanged = (courtCase: DisplayFullCourtCase, amendments: Amen
   }
 
   const exceptions = courtCase.aho.Exceptions
+  let sameNumberOfMatching = false
+
+  if (exceptions.find((exception) => exception.code === ExceptionCode.HO100310)) {
+    sameNumberOfMatching =
+      amendments.offenceCourtCaseReferenceNumber?.length === amendments.offenceReasonSequence?.length
+  }
 
   return (
-    (isEmpty(amendments.asn) || isAsnAmended(exceptions, amendments.asn)) &&
-    (isNextHearingDateAmended(exceptions, amendments.nextHearingDate) ||
-      isNextHearingLocationAmended(exceptions, amendments.nextSourceOrganisation))
+    sameNumberOfMatching ||
+    ((isEmpty(amendments.asn) || isAsnAmended(exceptions, amendments.asn)) &&
+      (isNextHearingDateAmended(exceptions, amendments.nextHearingDate) ||
+        isNextHearingLocationAmended(exceptions, amendments.nextSourceOrganisation)))
   )
 }
 
