@@ -3,7 +3,7 @@ import { Exception } from "types/exceptions"
 
 const offenceMatchingExceptions = [ExceptionCode.HO100310]
 
-const filterOffenceMatchingException = (exceptions: Exception[]) =>
+const filterOffenceMatchingException = (exceptions: Exception[]): Exception[] =>
   exceptions.filter((exception) => offenceMatchingExceptions.includes(exception.code))
 
 const hasOffenceMatchingExceptions = (exceptions: Exception[]) => filterOffenceMatchingException(exceptions).length > 0

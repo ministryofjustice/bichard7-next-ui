@@ -1,7 +1,7 @@
 import convertAsnToLongFormat from "@moj-bichard7-developers/bichard7-next-core/core/phase1/enrichAho/enrichFunctions/enrichDefendant/convertAsnToLongFormat"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { Amendments } from "types/Amendments"
-import isAsnFormatValid from "utils/isAsnFormatValid"
+import isAsnFormatValid from "utils/exceptions/isAsnFormatValid"
 
 const amendAsn = (newAsn: Amendments["asn"], aho: AnnotatedHearingOutcome): boolean => {
   if (!newAsn) {

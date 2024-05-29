@@ -6,8 +6,8 @@ import { getOffenceMatchingExceptions } from "./exceptions/getOffenceMatchingExc
 import hasNextHearingDateExceptions from "./exceptions/hasNextHearingDateExceptions"
 import hasNextHearingLocationException from "./exceptions/hasNextHearingLocationException"
 import hasOffenceMatchingExceptions from "./exceptions/hasOffenceMatchingExceptions"
+import isAsnFormatValid from "./exceptions/isAsnFormatValid"
 import isAsnException from "./exceptions/isException/isAsnException"
-import isAsnFormatValid from "./isAsnFormatValid"
 
 export type TabDetails = {
   name: "Defendant" | "Hearing" | "Case" | "Offences" | "Notes"

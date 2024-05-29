@@ -1,7 +1,7 @@
 import { Amendments } from "types/Amendments"
-import createDummyAho from "../../test/helpers/createDummyAho"
-import HO100102 from "../../test/helpers/exceptions/HO100102"
-import HO100206 from "../../test/helpers/exceptions/HO100206"
+import createDummyAho from "../../../test/helpers/createDummyAho"
+import HO100102 from "../../../test/helpers/exceptions/HO100102"
+import HO100206 from "../../../test/helpers/exceptions/HO100206"
 import isAsnAmended from "./isAsnAmended"
 
 describe("isAsnAmended", () => {
