@@ -113,7 +113,7 @@ describe("amendmentsHaveChanged", () => {
     expect(result).toBe(true)
   })
 
-  it("will return false if an amendment is invalid", () => {
+  it("will return true if an amendment is invalid", () => {
     HO100206(dummyAho)
     const courtCase = {
       aho: dummyAho
@@ -125,6 +125,6 @@ describe("amendmentsHaveChanged", () => {
 
     const result = amendmentsHaveChanged(courtCase, amendments)
 
-    expect(result).toBe(false)
+    expect(result).toBe(true)
   })
 })

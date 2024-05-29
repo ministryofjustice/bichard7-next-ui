@@ -75,11 +75,11 @@ describe("Offence matching HO100310", () => {
     cy.get("select").contains("option", "Added in court").should("be.selected")
   })
 
-  it("prevents submission if any offences are unmatched", () => {
-    cy.get("button#submit").should("be.disabled")
+  it("allows submission if any offences are unmatched", () => {
+    cy.get("button#submit").should("be.enabled")
 
     cy.get("select.offence-matcher").select("001 - TH68006")
-    cy.get("button#submit").should("be.disabled")
+    cy.get("button#submit").should("be.enabled")
 
     cy.get("a").contains("Back to all offences").click()
     cy.get("a:contains('Theft of pedal cycle')").eq(1).click()

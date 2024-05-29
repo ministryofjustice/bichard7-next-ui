@@ -45,7 +45,7 @@ describe("Court cases - Submit exceptions", () => {
     cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
   })
 
-  it("Should not resubmit a case when no updates made on editable field", () => {
+  it("Should be able to resubmit a case when no updates made on editable field", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         errorLockedByUsername: null,
@@ -57,7 +57,7 @@ describe("Court cases - Submit exceptions", () => {
 
     cy.visit("/bichard/court-cases/0")
 
-    cy.get("button").contains("Submit exception(s)").should("be.disabled")
+    cy.get("button").contains("Submit exception(s)").should("be.enabled")
   })
 
   it("Should not resubmit a case when cancel button is clicked", () => {
@@ -154,12 +154,13 @@ describe("Court cases - Submit exceptions", () => {
       cy.get("button").contains("Submit exception(s)").should("be.enabled")
     })
 
-    it("Should be disabled when ASN exception is raised and ASN editable field is not updated", () => {
+    // ASN could be updated on the PNC
+    it("Should be enabled when ASN exception is raised and ASN editable field is not updated", () => {
       insertCourtCase(AsnExceptionHO100206.hearingOutcomeXml)
 
       cy.visit("/bichard/court-cases/0")
 
-      cy.get("button").contains("Submit exception(s)").should("be.disabled")
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
     })
 
     it("Should be enabled when ASN exception is raised and ASN editable field is updated", () => {
@@ -180,12 +181,12 @@ describe("Court cases - Submit exceptions", () => {
       cy.get("button").contains("Submit exception(s)").should("be.enabled")
     })
 
-    it("Should be disabled when Next Hearing Date exception is raised and Next Hearing Date editable field is not updated", () => {
+    it("Should be enabled when Next Hearing Date exception is raised and Next Hearing Date editable field is not updated", () => {
       insertCourtCase(nextHearingDateExceptions.hearingOutcomeXml)
 
       cy.visit("/bichard/court-cases/0")
 
-      cy.get("button").contains("Submit exception(s)").should("be.disabled")
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
     })
 
     it("Should be enabled when Next Hearing Location exception is raised and Next Hearing Location editable field is updated", () => {
@@ -197,12 +198,12 @@ describe("Court cases - Submit exceptions", () => {
       cy.get("button").contains("Submit exception(s)").should("be.enabled")
     })
 
-    it("Should be disabled when Next Hearing Location exception is raised and Next Hearing Location editable field is not updated", () => {
+    it("Should be enabled when Next Hearing Location exception is raised and Next Hearing Location editable field is not updated", () => {
       insertCourtCase(nextHearingLocationExceptions.hearingOutcomeXml)
 
       cy.visit("/bichard/court-cases/0")
 
-      cy.get("button").contains("Submit exception(s)").should("be.disabled")
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
     })
   })
 })

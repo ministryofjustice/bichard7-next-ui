@@ -71,7 +71,7 @@ const getNextHearingLocationExceptionsDetails = (
   }
 }
 
-export const getOffencesMatchedExceptionsDetails = (exceptions: Exception[]): ExceptionDetails => {
+const getOffencesMatchedExceptionsDetails = (exceptions: Exception[]): ExceptionDetails => {
   const offencesMatchedExceptionsCount = getOffenceMatchingExceptions(exceptions).length
   const offencesMatchedExceptionsCountFromUpdatedFields = 0
   return {
