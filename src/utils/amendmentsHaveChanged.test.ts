@@ -1,9 +1,9 @@
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import createDummyAho from "../../test/helpers/createDummyAho"
 import { HO100102, HO100206, HO100300 } from "../../test/helpers/exceptions"
-import areAmendmentsValid from "./amendmentsHaveChanged"
+import amendmentsHaveChanged from "./amendmentsHaveChanged"
 
-describe("areAmendmentsValid", () => {
+describe("amendmentsHaveChanged", () => {
   const dummyAho = createDummyAho()
 
   afterEach(() => {
@@ -17,7 +17,7 @@ describe("areAmendmentsValid", () => {
     } as unknown as DisplayFullCourtCase
 
     const amendments = {}
-    const result = areAmendmentsValid(courtCase, amendments)
+    const result = amendmentsHaveChanged(courtCase, amendments)
 
     expect(result).toBe(true)
   })
@@ -46,7 +46,7 @@ describe("areAmendmentsValid", () => {
       ]
     }
 
-    const result = areAmendmentsValid(courtCase, amendments)
+    const result = amendmentsHaveChanged(courtCase, amendments)
 
     expect(result).toBe(true)
   })
@@ -77,12 +77,12 @@ describe("areAmendmentsValid", () => {
       ]
     }
 
-    const result = areAmendmentsValid(courtCase, amendments)
+    const result = amendmentsHaveChanged(courtCase, amendments)
 
     expect(result).toBe(true)
   })
 
-  it("will return false if all amendments are valid and ASN is invalid", () => {
+  it("will return true if all amendments are valid and ASN is invalid", () => {
     HO100102(dummyAho)
     HO100206(dummyAho)
 
@@ -108,13 +108,13 @@ describe("areAmendmentsValid", () => {
       ]
     }
 
-    const result = areAmendmentsValid(courtCase, amendments)
+    const result = amendmentsHaveChanged(courtCase, amendments)
 
-    expect(result).toBe(false)
+    expect(result).toBe(true)
   })
 
   it("will return false if an amendment is invalid", () => {
-    HO100102(dummyAho)
+    HO100206(dummyAho)
     const courtCase = {
       aho: dummyAho
     } as unknown as DisplayFullCourtCase
@@ -123,7 +123,7 @@ describe("areAmendmentsValid", () => {
       asn: "1101ZD0100000410836A"
     }
 
-    const result = areAmendmentsValid(courtCase, amendments)
+    const result = amendmentsHaveChanged(courtCase, amendments)
 
     expect(result).toBe(false)
   })
