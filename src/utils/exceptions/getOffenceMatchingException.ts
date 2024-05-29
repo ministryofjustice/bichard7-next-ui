@@ -1,8 +1,8 @@
 import errorPaths from "@moj-bichard7-developers/bichard7-next-core/core/phase1/lib/errorPaths"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
 import { isEqual } from "lodash"
 import { Exception } from "types/exceptions"
+import { ExceptionBadgeType } from "./exceptionBadgeType"
 
 const getOffenceReasonSequencePath = (offenceIndex: number) => errorPaths.offence(offenceIndex).reasonSequence
 const offenceMatchingExceptions = {
