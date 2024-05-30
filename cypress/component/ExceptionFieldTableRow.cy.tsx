@@ -1,7 +1,8 @@
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import { BadgeColours } from "components/Badge"
+import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
 import ErrorPromptMessage from "../../src/components/ErrorPromptMessage"
-import ExceptionFieldTableRow, { ExceptionBadgeType } from "../../src/components/ExceptionFieldTableRow"
+import ExceptionFieldTableRow from "../../src/components/ExceptionFieldTableRow"
 import ErrorMessage from "../../src/types/ErrorMessages"
 
 describe("Uneditable Fields", () => {
