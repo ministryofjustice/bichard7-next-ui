@@ -102,8 +102,8 @@ describe("ASN", () => {
     // error message should be displayed when ASN is not entered
     cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
     cy.get("#event-name-error").should("exist")
-    // Submit exception(s) button should be disabled
-    cy.get("button").contains("Submit exception(s)").should("be.disabled")
+    // Submit exception(s) button should be enabled (could have changed on PNC)
+    cy.get("button").contains("Submit exception(s)").should("be.enabled")
     // Save correction button should be disabled
     cy.get("button").contains("Save Correction").should("be.disabled")
     cy.get("#asn").clear()
