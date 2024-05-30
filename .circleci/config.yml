@@ -59,7 +59,7 @@ commands:
           command: |
             CHUNK=$(circleci tests glob "features/**/*.feature" | circleci tests split --split-by=timings) \
             <<parameters.ARGS>> \
-            npm run test:chunk
+            npm run test:chunk:nextUI
 
   node_install:
     steps:
