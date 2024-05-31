@@ -22,12 +22,12 @@ describe("Offence matcher with single court case", () => {
       cy.get("select").find(":selected").should("have.text", "Select an offence")
     })
 
-    it("displays CCR as an <optgroup>", () => {
+    it("groups dropdown options by CCR", () => {
       cy.get("select").children("optgroup").eq(0).should("have.attr", "label", "97/1626/008395Q")
       cy.get("select").children("optgroup").eq(0).contains("option", "TH68006")
     })
 
-    it("displays matchable offences with an <option>", () => {
+    it("displays matchable offences as dropdown options", () => {
       cy.get("select").contains("option", "TH68006")
       cy.get("select").contains("option", "TH68151").should("not.exist")
       cy.get("select").contains("option", "RT88191").should("not.exist")
@@ -42,7 +42,7 @@ describe("Offence matcher with single court case", () => {
         })
     })
 
-    it("displays an <option> for 'Added in court' as the last option", () => {
+    it("displays 'Added in court' as the last option", () => {
       cy.get("select").last().contains("option", "Added in court").should("have.value", "0")
     })
   })
