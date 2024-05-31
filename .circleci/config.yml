@@ -288,7 +288,7 @@ jobs:
       - setup
       - run:
           name: Clone bichard7-next-tests
-          command: CIRCLE_BRANCH="offence-matching" bash .circleci/scripts/clone-tests-repo.sh
+          command: bash .circleci/scripts/clone-tests-repo.sh
       - node/install-packages:
           app-dir: ~/bichard7-next-tests
           cache-path: ~/bichard7-next-tests/node_modules
