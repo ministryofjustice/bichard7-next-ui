@@ -113,6 +113,38 @@ describe("Offence matching HO100310", () => {
       })
   })
 
+  describe("when using the exception panel to navigate between exceptions", () => {
+    it("whilst checking the select dropdowns have the correct values", () => {
+      cy.get("select.offence-matcher").should("have.value", null)
+      cy.get("select.offence-matcher").select("001 - TH68006")
+      cy.get("select.offence-matcher").should("have.value", "1")
+      cy.get("select.offence-matcher").find(":selected").contains("001 - TH68006")
+
+      cy.get(".exception-location").contains("Offence 4").click()
+
+      cy.get("select.offence-matcher").should("have.value", null)
+      cy.get("select.offence-matcher").find(":selected").should("not.have.text", "001 - TH68006")
+      cy.get("select.offence-matcher").find(":selected").should("have.text", "Select an offence")
+
+      cy.get(".exception-location").contains("Offence 1").click()
+
+      cy.get("select.offence-matcher").should("have.value", "1")
+
+      cy.get(".exception-location").contains("Offence 4").click()
+
+      cy.get("select.offence-matcher").select("Added in court")
+      cy.get("select.offence-matcher").should("have.value", "0")
+
+      cy.get(".exception-location").contains("Offence 1").click()
+
+      cy.get("select.offence-matcher").should("have.value", "1")
+
+      cy.get(".exception-location").contains("Offence 4").click()
+
+      cy.get("select.offence-matcher").should("have.value", "0")
+    })
+  })
+
   describe("displays correct badges for offences", () => {
     it("on submitted cases", () => {
       cy.get("select.offence-matcher").select("001 - TH68006")

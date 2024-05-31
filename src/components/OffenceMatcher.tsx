@@ -1,6 +1,6 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { useCourtCase } from "context/CourtCaseContext"
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import getOffenceCode from "utils/getOffenceCode"
 import Badge, { BadgeColours } from "./Badge"
 
@@ -19,9 +19,17 @@ export const OffenceMatcher = ({ offenceIndex, offence, isCaseLockedToCurrentUse
     amendments
   } = useCourtCase()
   const offenceCode = getOffenceCode(offence)
-  const [selectedValue, setSelectedValue] = useState(
-    amendments.offenceReasonSequence?.find((a) => a.offenceIndex === offenceIndex)?.value ?? ""
+
+  const findOffenceReasonSequenceFromOffenceIndex = useCallback(
+    () => amendments.offenceReasonSequence?.find((a) => a.offenceIndex === offenceIndex)?.value ?? "",
+    [amendments.offenceReasonSequence, offenceIndex]
   )
+
+  const [selectedValue, setSelectedValue] = useState(findOffenceReasonSequenceFromOffenceIndex())
+
+  useEffect(() => {
+    setSelectedValue(findOffenceReasonSequenceFromOffenceIndex())
+  }, [findOffenceReasonSequenceFromOffenceIndex])
 
   const onSelectionChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
     amend("offenceReasonSequence")({
