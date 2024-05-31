@@ -7,10 +7,10 @@ import Badge, { BadgeColours } from "./Badge"
 interface Props {
   offenceIndex: number
   offence: Offence
-  state: boolean
+  isCaseLockedToCurrentUser: boolean
 }
 
-export const OffenceMatcher = ({ offenceIndex, offence, state }: Props) => {
+export const OffenceMatcher = ({ offenceIndex, offence, isCaseLockedToCurrentUser }: Props) => {
   const {
     courtCase: {
       aho: { PncQuery: pncQuery }
@@ -41,7 +41,7 @@ export const OffenceMatcher = ({ offenceIndex, offence, state }: Props) => {
     !!amendments.offenceReasonSequence?.find((a) => a.value === sequenceNumber && a.offenceIndex !== offenceIndex)
 
   // TODO: match dates
-  return state ? (
+  return isCaseLockedToCurrentUser ? (
     <select className="govuk-select offence-matcher" onChange={onSelectionChanged} value={selectedValue}>
       <option disabled hidden value="">
         {"Select an offence"}

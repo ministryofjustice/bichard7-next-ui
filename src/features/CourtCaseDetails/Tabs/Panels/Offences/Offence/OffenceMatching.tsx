@@ -31,10 +31,16 @@ type Props = {
   offence: Offence
   isCaseUnresolved: boolean
   exceptions: Exception[]
-  state: boolean
+  isCaseLockedToCurrentUser: boolean
 }
 
-export const OffenceMatching = ({ offenceIndex, offence, isCaseUnresolved, exceptions, state }: Props) => {
+export const OffenceMatching = ({
+  offenceIndex,
+  offence,
+  isCaseUnresolved,
+  exceptions,
+  isCaseLockedToCurrentUser
+}: Props) => {
   const { courtCase, savedAmendments } = useCourtCase()
   const currentUser = useCurrentUser()
 
@@ -56,7 +62,13 @@ export const OffenceMatching = ({ offenceIndex, offence, isCaseUnresolved, excep
         {offenceMatchingException && userCanMatchOffence ? (
           <ExceptionFieldTableRow
             label={"Matched PNC offence"}
-            value={<OffenceMatcher offenceIndex={offenceIndex} offence={offence} state={state} />}
+            value={
+              <OffenceMatcher
+                offenceIndex={offenceIndex}
+                offence={offence}
+                isCaseLockedToCurrentUser={isCaseLockedToCurrentUser}
+              />
+            }
           >
             <ErrorPromptMessage message={offenceMatchingExceptionMessage} />
           </ExceptionFieldTableRow>

@@ -144,7 +144,7 @@ export const OffenceDetails = ({
             offence={offence}
             isCaseUnresolved={isCaseUnresolved}
             exceptions={exceptions}
-            state={isCaseLockedToCurrentUser}
+            isCaseLockedToCurrentUser={isCaseLockedToCurrentUser}
           ></OffenceMatching>
 
           <TableRow label="Court offence sequence number" value={offence.CourtOffenceSequenceNumber} />
