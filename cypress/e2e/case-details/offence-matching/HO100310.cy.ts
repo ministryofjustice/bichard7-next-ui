@@ -114,7 +114,7 @@ describe("Offence matching HO100310", () => {
   })
 
   describe("when using the exception panel to navigate between exceptions", () => {
-    it("whilst checking the select dropdowns have the correct values", () => {
+    it("has the correct values for the select dropdowns", () => {
       cy.get("select.offence-matcher").should("have.value", null)
       cy.get("select.offence-matcher").select("001 - TH68006")
       cy.get("select.offence-matcher").should("have.value", "1")
