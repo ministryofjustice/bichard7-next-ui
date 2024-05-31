@@ -12,7 +12,7 @@ describe("Offence matcher with single court case", () => {
     beforeEach(() => {
       cy.mount(
         <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
-          <OffenceMatcher offenceIndex={0} offence={offence} state={true} />
+          <OffenceMatcher offenceIndex={0} offence={offence} isCaseLockedToCurrentUser={true} />
         </CourtCaseContext.Provider>
       )
     })
@@ -64,7 +64,7 @@ describe("With existing amendments", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments, savedAmendments: {} }, () => {}]}>
-        <OffenceMatcher offenceIndex={0} offence={offence} state={true} />
+        <OffenceMatcher offenceIndex={0} offence={offence} isCaseLockedToCurrentUser={true} />
       </CourtCaseContext.Provider>
     )
 
@@ -83,7 +83,7 @@ describe("With existing amendments", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments, savedAmendments: {} }, () => {}]}>
-        <OffenceMatcher offenceIndex={0} offence={offence} state={true} />
+        <OffenceMatcher offenceIndex={0} offence={offence} isCaseLockedToCurrentUser={true} />
       </CourtCaseContext.Provider>
     )
 
