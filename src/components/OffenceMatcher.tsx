@@ -1,13 +1,16 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { useCourtCase } from "context/CourtCaseContext"
+import { useCallback, useEffect, useState } from "react"
 import getOffenceCode from "utils/getOffenceCode"
+import Badge, { BadgeColours } from "./Badge"
 
 interface Props {
   offenceIndex: number
   offence: Offence
+  isCaseLockedToCurrentUser: boolean
 }
 
-export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
+export const OffenceMatcher = ({ offenceIndex, offence, isCaseLockedToCurrentUser }: Props) => {
   const {
     courtCase: {
       aho: { PncQuery: pncQuery }
@@ -15,25 +18,42 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
     amend,
     amendments
   } = useCourtCase()
-
   const offenceCode = getOffenceCode(offence)
 
-  const onOffenceChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const findOffenceReasonSequenceFromOffenceIndex = useCallback(
+    () => amendments.offenceReasonSequence?.find((a) => a.offenceIndex === offenceIndex)?.value ?? "",
+    [amendments.offenceReasonSequence, offenceIndex]
+  )
+
+  const [selectedValue, setSelectedValue] = useState(findOffenceReasonSequenceFromOffenceIndex())
+
+  useEffect(() => {
+    setSelectedValue(findOffenceReasonSequenceFromOffenceIndex())
+  }, [findOffenceReasonSequenceFromOffenceIndex])
+
+  const onSelectionChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
     amend("offenceReasonSequence")({
       offenceIndex,
-      value: e.target.value
+      value: Number(e.target.value)
     })
+
+    amend("offenceCourtCaseReferenceNumber")({
+      offenceIndex,
+      value: e.target.options[e.target.selectedIndex].dataset.ccr
+    })
+
+    setSelectedValue(e.target.value)
   }
 
-  const isAlreadySelected = (sequenceNumber: string) =>
-    !!amendments.offenceReasonSequence?.find((x) => x.value === sequenceNumber && x.offenceIndex !== offenceIndex)
+  const offenceAlreadySelected = (sequenceNumber: number) =>
+    !!amendments.offenceReasonSequence?.find((a) => a.value === sequenceNumber && a.offenceIndex !== offenceIndex)
 
-  // TODO: load manually selected value if exists (just load updated aho always?)
-  // TODO: prevent matching twice
   // TODO: match dates
-  return (
-    <select className="govuk-select" onChange={onOffenceChanged}>
-      <option disabled selected hidden></option>
+  return isCaseLockedToCurrentUser ? (
+    <select className="govuk-select offence-matcher" onChange={onSelectionChanged} value={selectedValue}>
+      <option disabled hidden value="">
+        {"Select an offence"}
+      </option>
       {pncQuery?.courtCases?.map((c) => {
         return (
           <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
@@ -44,7 +64,8 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
                   <option
                     key={pnc.offence.cjsOffenceCode}
                     value={pnc.offence.sequenceNumber}
-                    disabled={isAlreadySelected(String(pnc.offence.sequenceNumber))}
+                    disabled={offenceAlreadySelected(pnc.offence.sequenceNumber)}
+                    data-ccr={c.courtCaseReference}
                   >
                     {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
                   </option>
@@ -53,7 +74,9 @@ export const OffenceMatcher = ({ offenceIndex, offence }: Props) => {
           </optgroup>
         )
       })}
-      <option value="added-in-court">{"Added in court"}</option>
+      <option value="0">{"Added in court"}</option>
     </select>
+  ) : (
+    <Badge isRendered={true} colour={BadgeColours.Purple} label={"Unmatched"} className="moj-badge--large" />
   )
 }

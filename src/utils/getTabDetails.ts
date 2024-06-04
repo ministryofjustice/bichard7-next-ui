@@ -2,10 +2,12 @@ import { Amendments } from "types/Amendments"
 import { Exception } from "types/exceptions"
 import getNextHearingDateExceptions from "./exceptions/getNextHearingDateExceptions"
 import getNextHearingLocationExceptions from "./exceptions/getNextHearingLocationExceptions"
+import { getOffenceMatchingExceptions } from "./exceptions/getOffenceMatchingException"
 import hasNextHearingDateExceptions from "./exceptions/hasNextHearingDateExceptions"
 import hasNextHearingLocationException from "./exceptions/hasNextHearingLocationException"
+import hasOffenceMatchingExceptions from "./exceptions/hasOffenceMatchingExceptions"
+import isAsnFormatValid from "./exceptions/isAsnFormatValid"
 import isAsnException from "./exceptions/isException/isAsnException"
-import isAsnFormatValid from "./isAsnFormatValid"
 
 export type TabDetails = {
   name: "Defendant" | "Hearing" | "Case" | "Offences" | "Notes"
@@ -69,6 +71,17 @@ const getNextHearingLocationExceptionsDetails = (
   }
 }
 
+const getOffencesMatchedExceptionsDetails = (exceptions: Exception[]): ExceptionDetails => {
+  const offencesMatchedExceptionsCount = getOffenceMatchingExceptions(exceptions).length
+  const offencesMatchedExceptionsCountFromUpdatedFields = 0
+  return {
+    ExceptionsCount: offencesMatchedExceptionsCount - offencesMatchedExceptionsCountFromUpdatedFields,
+    ExceptionsResolved:
+      offencesMatchedExceptionsCount > 0 &&
+      offencesMatchedExceptionsCount === offencesMatchedExceptionsCountFromUpdatedFields
+  }
+}
+
 const getTabDetails = (
   exceptions: Exception[],
   updatedFields: Amendments,
@@ -80,20 +93,32 @@ const getTabDetails = (
 
   const asnExceptionDetails = getAsnExceptionDetails(exceptions, updatedFields, savedAmendments)
 
+  const offencesMatchedExceptionsDetails = getOffencesMatchedExceptionsDetails(exceptions)
+
   let offencesExceptionsResolved = false
 
-  if (hasNextHearingDateExceptions(exceptions) && hasNextHearingLocationException(exceptions)) {
+  if (
+    hasNextHearingDateExceptions(exceptions) &&
+    hasNextHearingLocationException(exceptions) &&
+    hasOffenceMatchingExceptions(exceptions)
+  ) {
     offencesExceptionsResolved =
-      nextHearingDateExceptionsDetails.ExceptionsResolved && nextHearingLocationExceptionsDetails.ExceptionsResolved
+      nextHearingDateExceptionsDetails.ExceptionsResolved &&
+      nextHearingLocationExceptionsDetails.ExceptionsResolved &&
+      offencesMatchedExceptionsDetails.ExceptionsResolved
   } else if (hasNextHearingDateExceptions(exceptions)) {
     offencesExceptionsResolved = nextHearingDateExceptionsDetails.ExceptionsResolved
   } else if (hasNextHearingLocationException(exceptions)) {
     offencesExceptionsResolved = nextHearingLocationExceptionsDetails.ExceptionsResolved
+  } else if (hasOffenceMatchingExceptions(exceptions)) {
+    offencesExceptionsResolved = offencesMatchedExceptionsDetails.ExceptionsResolved
   }
 
   const defendantExceptionsCount = exceptionsEnabled ? asnExceptionDetails.ExceptionsCount : 0
   const offencesExceptionsCount = exceptionsEnabled
-    ? nextHearingDateExceptionsDetails.ExceptionsCount + nextHearingLocationExceptionsDetails.ExceptionsCount
+    ? nextHearingDateExceptionsDetails.ExceptionsCount +
+      nextHearingLocationExceptionsDetails.ExceptionsCount +
+      offencesMatchedExceptionsDetails.ExceptionsCount
     : 0
 
   return [

@@ -7,7 +7,7 @@ interface OffencesProps {
   visible: boolean
   offences: Offence[]
   onOffenceSelected: (offenceIndex?: number) => void
-  selectedOffenceIndex?: number
+  selectedOffenceSequenceNumber?: number
   exceptions: Exception[]
   stopLeavingFn: (newValue: boolean) => void
 }
@@ -16,20 +16,20 @@ export const Offences = ({
   visible,
   offences,
   onOffenceSelected,
-  selectedOffenceIndex,
+  selectedOffenceSequenceNumber,
   exceptions,
   stopLeavingFn
 }: OffencesProps) => {
   return (
     <div hidden={!visible}>
-      {selectedOffenceIndex !== undefined && offences[selectedOffenceIndex - 1] !== undefined ? (
+      {selectedOffenceSequenceNumber !== undefined && offences[selectedOffenceSequenceNumber - 1] !== undefined ? (
         <OffenceDetails
-          offence={offences[selectedOffenceIndex - 1]}
+          offence={offences[selectedOffenceSequenceNumber - 1]}
           offencesCount={offences.length}
           onBackToAllOffences={() => onOffenceSelected(undefined)}
-          onNextClick={() => onOffenceSelected(selectedOffenceIndex + 1)}
-          onPreviousClick={() => onOffenceSelected(selectedOffenceIndex - 1)}
-          selectedOffenceIndex={selectedOffenceIndex}
+          onNextClick={() => onOffenceSelected(selectedOffenceSequenceNumber + 1)}
+          onPreviousClick={() => onOffenceSelected(selectedOffenceSequenceNumber - 1)}
+          selectedOffenceSequenceNumber={selectedOffenceSequenceNumber}
           exceptions={exceptions}
           stopLeavingFn={stopLeavingFn}
         />

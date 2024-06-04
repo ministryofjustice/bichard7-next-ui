@@ -2,8 +2,7 @@ import Permission from "../types/Permission"
 import { UserGroup } from "../types/UserGroup"
 
 // This type is used instead of the User entity to avoid dependency cycles
-type User = { groups: UserGroup[]; featureFlags?: Record<string, boolean> }
-
+type User = { groups: UserGroup[] }
 const hasAccessToTriggers = (user: User): boolean => {
   return (
     user.groups !== undefined &&

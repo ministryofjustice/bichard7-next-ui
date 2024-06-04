@@ -5,9 +5,12 @@ import {
 import cloneDeep from "lodash.clonedeep"
 import createDummyAho from "../../../../test/helpers/createDummyAho"
 import createDummyOffence from "../../../../test/helpers/createDummyOffence"
-import amendOffenceReasonSequence from "./amendOffenceReasonSequence"
+import {
+  default as amendOffenceCourtCaseReferenceNumber,
+  default as amendOffenceReasonSequence
+} from "./amendOffenceCourtCaseReferenceNumber"
 
-describe("amend offence reason sequence", () => {
+describe("amend offence court case reference", () => {
   let aho: AnnotatedHearingOutcome
   let dummyOffence: Offence
 
@@ -16,7 +19,7 @@ describe("amend offence reason sequence", () => {
     dummyOffence = createDummyOffence() as Offence
   })
 
-  it("amends offence reason sequence to aho", () => {
+  it("amends offence ccr to aho", () => {
     const offenceIndex = 3
 
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
@@ -30,21 +33,21 @@ describe("amend offence reason sequence", () => {
       [
         {
           offenceIndex,
-          value: 1
+          value: "TEST/CCR"
         }
       ],
       aho
     )
+
     expect(
-      aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
-        .CriminalProsecutionReference.OffenceReasonSequence
-    ).toEqual("1")
+      aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].CourtCaseReferenceNumber
+    ).toEqual("TEST/CCR")
     expect(
-      aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualSequenceNumber
+      aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualCourtCaseReference
     ).toBe(true)
   })
 
-  it("Should amend offence reason on multiple offences", () => {
+  it("amends ccr on multiple offences", () => {
     aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence = [
       cloneDeep(dummyOffence),
       cloneDeep(dummyOffence),
@@ -55,27 +58,26 @@ describe("amend offence reason sequence", () => {
     const amendments = [
       {
         offenceIndex: 0,
-        value: 1
+        value: "TEST/CCR/1"
       },
       {
         offenceIndex: 1,
-        value: 2
+        value: "TEST/CCR/2"
       },
       {
         offenceIndex: 2,
-        value: 3
+        value: "TEST/CCR/3"
       }
     ]
 
-    amendOffenceReasonSequence(amendments, aho)
+    amendOffenceCourtCaseReferenceNumber(amendments, aho)
 
     amendments.forEach(({ value, offenceIndex }) => {
       expect(
-        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
-          .CriminalProsecutionReference.OffenceReasonSequence
-      ).toEqual(String(value))
+        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].CourtCaseReferenceNumber
+      ).toEqual(value)
       expect(
-        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualSequenceNumber
+        aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex].ManualCourtCaseReference
       ).toBe(true)
     })
   })

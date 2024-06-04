@@ -3,7 +3,6 @@ import { Table } from "govuk-react"
 import { DisplayNote } from "types/display/Notes"
 
 interface Props {
-  className?: string
   notes: DisplayNote[]
   displayForce?: boolean
 }
@@ -11,6 +10,7 @@ interface Props {
 export const NotesTable = ({ notes, displayForce }: Props) => {
   return (
     <Table
+      className={"notes-table"}
       head={
         <Table.Row>
           <Table.CellHeader>{"User"}</Table.CellHeader>

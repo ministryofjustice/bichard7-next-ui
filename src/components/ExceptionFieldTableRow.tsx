@@ -1,13 +1,8 @@
 import { Table } from "govuk-react"
+import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
 import Badge, { BadgeColours } from "./Badge"
 import ErrorIcon from "./ErrorIcon"
 import { Content, Label } from "./ExceptionFieldTableRow.styles"
-
-export enum ExceptionBadgeType {
-  SystemError = "System Error",
-  AddedByCourt = "Added by Court",
-  Unmatched = "Unmatched"
-}
 
 type Props = {
   badgeText?: ExceptionBadgeType

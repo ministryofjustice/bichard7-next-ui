@@ -1,10 +1,10 @@
 import CourtCase from "services/entities/CourtCase"
 import { DisplayFullCourtCase, DisplayPartialCourtCase } from "types/display/CourtCases"
 import parseHearingOutcome from "utils/parseHearingOutcome"
+import { hasAccessToExceptions } from "../../utils/userPermissions"
+import User from "../entities/User"
 import { noteToDisplayNoteDto } from "./noteDto"
 import { triggerToDisplayTriggerDto } from "./triggerDto"
-import User from "../entities/User"
-import { hasAccessToExceptions } from "../../utils/userPermissions"
 
 export const courtCaseToDisplayPartialCourtCaseDto = (
   courtCase: CourtCase,

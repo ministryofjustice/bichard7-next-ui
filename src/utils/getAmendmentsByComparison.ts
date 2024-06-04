@@ -21,14 +21,25 @@ const getAmendmentsByComparison = (aho: AnnotatedHearingOutcome, updatedAho?: An
   }
 
   hearingDefendant.Offence.forEach((offence, offenceIndex) => {
-    offence.Result.forEach((result, resultIndex) => {
-      const updatedOffence = updatedHearingDefendant?.Offence && updatedHearingDefendant?.Offence[offenceIndex]
-      const updatedOffenceResults = updatedOffence && updatedOffence?.Result
-      const updatedOffenceResult = updatedOffenceResults && updatedOffenceResults[resultIndex]
+    const updatedOffence = updatedHearingDefendant?.Offence[offenceIndex]
+    const updatedOffenceResults = updatedOffence?.Result
 
+    const updatedReasonSequence = Number(updatedOffence?.CriminalProsecutionReference?.OffenceReasonSequence)
+
+    if (updatedReasonSequence || updatedOffence?.AddedByTheCourt) {
+      amendments.offenceReasonSequence = amendments.offenceReasonSequence || []
+      amendments.offenceReasonSequence.push({
+        offenceIndex,
+        value: updatedOffence?.AddedByTheCourt ? 0 : updatedReasonSequence
+      })
+    }
+
+    offence.Result.forEach((result, resultIndex) => {
+      const updatedOffenceResult = updatedOffenceResults?.[resultIndex]
       const nextResultSourceOrganisation = result.NextResultSourceOrganisation?.OrganisationUnitCode
       const updatedNextResultSourceOrganisation =
         updatedOffenceResult?.NextResultSourceOrganisation?.OrganisationUnitCode
+
       if (updatedNextResultSourceOrganisation && nextResultSourceOrganisation !== updatedNextResultSourceOrganisation) {
         amendments.nextSourceOrganisation = amendments.nextSourceOrganisation || []
         amendments.nextSourceOrganisation.push({

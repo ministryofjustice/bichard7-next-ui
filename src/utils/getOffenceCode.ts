@@ -1,13 +1,22 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 
 const getOffenceCode = (offence: Offence): string => {
-  if (offence.CriminalProsecutionReference.OffenceReason?.__type === "LocalOffenceReason") {
-    return offence.CriminalProsecutionReference.OffenceReason.LocalOffenceCode.OffenceCode
+  if (!offence || !offence.CriminalProsecutionReference) {
+    return ""
   }
-  if (offence.CriminalProsecutionReference.OffenceReason?.__type === "NationalOffenceReason") {
-    return offence.CriminalProsecutionReference.OffenceReason?.OffenceCode.FullCode
+
+  const {
+    CriminalProsecutionReference: { OffenceReason }
+  } = offence
+
+  switch (OffenceReason?.__type) {
+    case "LocalOffenceReason":
+      return OffenceReason.LocalOffenceCode.OffenceCode
+    case "NationalOffenceReason":
+      return OffenceReason?.OffenceCode.FullCode
+    default:
+      return ""
   }
-  return ""
 }
 
 export default getOffenceCode

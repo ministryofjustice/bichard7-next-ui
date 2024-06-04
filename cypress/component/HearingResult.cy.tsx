@@ -77,7 +77,7 @@ describe("Hearing Result", () => {
           <HearingResult
             result={result}
             resultIndex={dummyIndex}
-            selectedOffenceIndex={dummyIndex}
+            selectedOffenceSequenceNumber={dummyIndex}
             exceptions={[]}
             stopLeavingFn={() => {}}
           />
@@ -112,7 +112,7 @@ describe("Hearing Result", () => {
             <HearingResult
               result={result}
               resultIndex={dummyIndex}
-              selectedOffenceIndex={dummyIndex}
+              selectedOffenceSequenceNumber={dummyIndex}
               exceptions={[]}
               stopLeavingFn={() => {}}
             />
@@ -132,7 +132,7 @@ describe("Hearing Result", () => {
             <HearingResult
               result={result}
               resultIndex={dummyIndex}
-              selectedOffenceIndex={dummyIndex}
+              selectedOffenceSequenceNumber={dummyIndex}
               exceptions={[]}
               stopLeavingFn={() => {}}
             />
@@ -162,7 +162,7 @@ describe("Hearing Result", () => {
             <HearingResult
               result={result}
               resultIndex={dummyIndex}
-              selectedOffenceIndex={dummyIndex}
+              selectedOffenceSequenceNumber={dummyIndex}
               exceptions={[]}
               stopLeavingFn={() => {}}
             />
@@ -184,7 +184,7 @@ describe("Hearing Result", () => {
             <HearingResult
               result={result}
               resultIndex={dummyIndex}
-              selectedOffenceIndex={dummyIndex}
+              selectedOffenceSequenceNumber={dummyIndex}
               exceptions={[]}
               stopLeavingFn={() => {}}
             />
@@ -204,7 +204,7 @@ describe("Hearing Result", () => {
             <HearingResult
               result={result}
               resultIndex={dummyIndex}
-              selectedOffenceIndex={dummyIndex}
+              selectedOffenceSequenceNumber={dummyIndex}
               exceptions={[]}
               stopLeavingFn={() => {}}
             />
@@ -224,7 +224,7 @@ describe("Hearing Result", () => {
             <HearingResult
               result={result}
               resultIndex={0}
-              selectedOffenceIndex={0}
+              selectedOffenceSequenceNumber={0}
               exceptions={[{ path: ["dummyPath", "NextHearingDate"], code: ExceptionCode.HO100323 }]}
               stopLeavingFn={() => {}}
             />
@@ -244,7 +244,7 @@ describe("Hearing Result", () => {
             <HearingResult
               result={result}
               resultIndex={0}
-              selectedOffenceIndex={0}
+              selectedOffenceSequenceNumber={0}
               exceptions={[
                 {
                   path: ["dummyPath", "NextResultSourceOrganisation", "OrganisationUnitCode"],
@@ -269,7 +269,7 @@ describe("Hearing Result", () => {
             <HearingResult
               result={result}
               resultIndex={0}
-              selectedOffenceIndex={0}
+              selectedOffenceSequenceNumber={0}
               exceptions={[{ path: ["dummyPath", "CJSresultCode"], code: ExceptionCode.HO100307 }]}
               stopLeavingFn={() => {}}
             />

@@ -39,9 +39,17 @@ interface SaveLinkButtonProps extends React.ComponentProps<"button"> {
   onClick: (event: React.MouseEvent<HTMLElement>) => void
   id: string
   disabled?: boolean
+  buttonText?: string
+  className?: string
 }
 
-const SaveLinkButton: React.FC<SaveLinkButtonProps> = ({ id, disabled, onClick }: SaveLinkButtonProps) => {
+const SaveLinkButton: React.FC<SaveLinkButtonProps> = ({
+  id,
+  disabled,
+  onClick,
+  className,
+  buttonText = "Save Correction"
+}: SaveLinkButtonProps) => {
   const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault()
     onClick(event)
@@ -50,10 +58,11 @@ const SaveLinkButton: React.FC<SaveLinkButtonProps> = ({ id, disabled, onClick }
   const saveButtonProps = {
     id,
     disabled,
+    className,
     onClick: handleOnClick
   }
 
-  return <StyledSaveLinkButton {...saveButtonProps}>{"Save Correction"}</StyledSaveLinkButton>
+  return <StyledSaveLinkButton {...saveButtonProps}>{buttonText}</StyledSaveLinkButton>
 }
 
 export { LinkButton, SaveLinkButton }

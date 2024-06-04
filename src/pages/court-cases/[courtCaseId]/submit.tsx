@@ -21,7 +21,7 @@ import AuthenticationServerSidePropsContext from "types/AuthenticationServerSide
 import { isError } from "types/Result"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
-import areEditableFieldsValid from "utils/areEditableFieldsAmended"
+import amendmentsHaveChanged from "utils/amendmentsHaveChanged"
 import { isPost } from "utils/http"
 import redirectTo from "utils/redirectTo"
 import withCsrf from "../../../middleware/withCsrf/withCsrf"
@@ -119,51 +119,49 @@ const SubmitCourtCasePage: NextPage<Props> = ({ courtCase, user, previousPath, a
     backLink += `?previousPath=${encodeURIComponent(previousPath)}`
   }
   const resubmitCasePath = `${basePath}/court-cases/${courtCase.errorId}?resubmitCase=true`
-  const validAmendments = areEditableFieldsValid(courtCase, JSON.parse(amendments ?? "{}"))
+  const validAmendments = amendmentsHaveChanged(courtCase, JSON.parse(amendments ?? "{}"))
 
   return (
-    <>
-      <CurrentUserContext.Provider value={currentUserContext}>
-        <Layout>
-          <Head>
-            <title>{"Bichard7 | Submit Case Exception(s)"}</title>
-            <meta name="description" content="Bichard7 | Submit Case Exception(s)" />
-          </Head>
-          <BackLink href={backLink} onClick={function noRefCheck() {}}>
-            {"Case Details"}
-          </BackLink>
-          <HeaderContainer id="header-container">
-            <HeaderRow>
-              <Heading as="h1" size="LARGE" aria-label="Submit Exception(s)">
-                {"Submit Exception(s)"}
-              </Heading>
-            </HeaderRow>
-          </HeaderContainer>
+    <CurrentUserContext.Provider value={currentUserContext}>
+      <Layout>
+        <Head>
+          <title>{"Bichard7 | Submit Case Exception(s)"}</title>
+          <meta name="description" content="Bichard7 | Submit Case Exception(s)" />
+        </Head>
+        <BackLink href={backLink} onClick={function noRefCheck() {}}>
+          {"Case Details"}
+        </BackLink>
+        <HeaderContainer id="header-container">
+          <HeaderRow>
+            <Heading as="h1" size="LARGE" aria-label="Submit Exception(s)">
+              {"Submit Exception(s)"}
+            </Heading>
+          </HeaderRow>
+        </HeaderContainer>
 
-          <ConditionalRender isRendered={hasAmendments(amendments) || validAmendments}>
-            <Paragraph>
-              {"Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"}
-            </Paragraph>
-          </ConditionalRender>
+        <ConditionalRender isRendered={hasAmendments(amendments) || validAmendments}>
+          <Paragraph>
+            {"Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"}
+          </Paragraph>
+        </ConditionalRender>
 
-          <ConditionalRender isRendered={!hasAmendments(amendments) && !validAmendments}>
-            <Banner message="The case exception(s) have not been updated within Bichard." />
-            <Paragraph data-testid="example-test-id">
-              {"Do you want to submit case details to the PNC and mark the exception(s) as resolved?"}
-            </Paragraph>
-          </ConditionalRender>
-          <Form action={resubmitCasePath} method="post" csrfToken={csrfToken}>
-            <input type="hidden" name="amendments" value={amendments} />
-            <ButtonsGroup>
-              <Button id="Submit" type="submit">
-                {"Submit exception(s)"}
-              </Button>
-              <Link href={backLink}>{"Cancel"}</Link>
-            </ButtonsGroup>
-          </Form>
-        </Layout>
-      </CurrentUserContext.Provider>
-    </>
+        <ConditionalRender isRendered={!hasAmendments(amendments) && !validAmendments}>
+          <Banner message="The case exception(s) have not been updated within Bichard." />
+          <Paragraph data-testid="example-test-id">
+            {"Do you want to submit case details to the PNC and mark the exception(s) as resolved?"}
+          </Paragraph>
+        </ConditionalRender>
+        <Form action={resubmitCasePath} method="post" csrfToken={csrfToken}>
+          <input type="hidden" name="amendments" value={amendments} />
+          <ButtonsGroup>
+            <Button id="confirm-submit" type="submit">
+              {"Submit exception(s)"}
+            </Button>
+            <Link href={backLink}>{"Cancel"}</Link>
+          </ButtonsGroup>
+        </Form>
+      </Layout>
+    </CurrentUserContext.Provider>
   )
 }
 export default SubmitCourtCasePage

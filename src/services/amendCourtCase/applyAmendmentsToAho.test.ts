@@ -9,11 +9,11 @@ import amendAsn from "utils/amendments/amendAsn"
 import amendCourtCaseReference from "utils/amendments/amendCourtCaseReference"
 import amendCourtOffenceSequenceNumber from "utils/amendments/amendCourtOffenceSequenceNumber"
 import amendCourtReference from "utils/amendments/amendCourtReference"
-import amendResultQualifierCode from "utils/amendments/amendResultQualifierCode"
 import amendForceOwner from "utils/amendments/amendForceOwner"
 import amendNextHearingDate from "utils/amendments/amendNextHearingDate"
 import amendNextResultSourceOrganisation from "utils/amendments/amendNextResultSourceOrganisation"
 import amendOffenceReasonSequence from "utils/amendments/amendOffenceReasonSequence"
+import amendResultQualifierCode from "utils/amendments/amendResultQualifierCode"
 import amendResultVariableText from "utils/amendments/amendResultVariableText"
 import removeEmptyResultQualifierVariable from "utils/removeEmptyResultQualifierVariable"
 import applyAmendmentsToAho from "./applyAmendmentsToAho"
@@ -93,7 +93,7 @@ describe("applyAmendmentsToAho", () => {
       offenceReasonSequence: [
         {
           offenceIndex,
-          value: "newOffenceReasonSequenceValue"
+          value: 1
         }
       ]
     } as Amendments

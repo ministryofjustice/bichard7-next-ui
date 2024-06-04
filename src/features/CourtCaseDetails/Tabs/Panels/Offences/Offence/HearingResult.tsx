@@ -3,12 +3,13 @@ import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import ConditionalRender from "components/ConditionalRender"
 import ErrorPromptMessage from "components/ErrorPromptMessage"
-import ExceptionFieldTableRow, { ExceptionBadgeType } from "components/ExceptionFieldTableRow"
+import ExceptionFieldTableRow from "components/ExceptionFieldTableRow"
 import { useCourtCase } from "context/CourtCaseContext"
 import { Table } from "govuk-react"
 import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
+import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
 import { formatDisplayedDate } from "utils/formattedDate"
 import {
   capitaliseExpression,
@@ -26,7 +27,7 @@ interface HearingResultProps {
   result: Result
   exceptions: Exception[]
   resultIndex: number
-  selectedOffenceIndex: number
+  selectedOffenceSequenceNumber: number
   errorStatus?: ResolutionStatus | null
   stopLeavingFn: (newValue: boolean) => void
 }
@@ -36,13 +37,13 @@ export const HearingResult = ({
   errorStatus,
   exceptions,
   resultIndex,
-  selectedOffenceIndex,
+  selectedOffenceSequenceNumber,
   stopLeavingFn
 }: HearingResultProps) => {
   const { courtCase } = useCourtCase()
   const cjsErrorMessage = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
 
-  const offenceIndex = selectedOffenceIndex - 1
+  const offenceIndex = selectedOffenceSequenceNumber - 1
 
   const isCaseEditable =
     courtCase.canUserEditExceptions && courtCase.phase === Phase.HEARING_OUTCOME && errorStatus === "Unresolved"
