@@ -73,7 +73,8 @@ const getNextHearingLocationExceptionsDetails = (
 
 const getOffencesMatchedExceptionsDetails = (exceptions: Exception[], amendments: Amendments): ExceptionDetails => {
   const offencesMatchedExceptionsCount = getOffenceMatchingExceptions(exceptions).length
-  const offencesMatchedExceptionsCountFromUpdatedFields = amendments?.offenceReasonSequence?.length || 0
+  const offencesMatchedExceptionsCountFromUpdatedFields =
+    (offencesMatchedExceptionsCount > 0 && amendments?.offenceReasonSequence?.length) || 0
   return {
     ExceptionsCount: offencesMatchedExceptionsCount - offencesMatchedExceptionsCountFromUpdatedFields,
     ExceptionsResolved:
