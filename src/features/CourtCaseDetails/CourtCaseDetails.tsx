@@ -22,10 +22,11 @@ const sideBarWidth = "33%"
 const contentWidth = "67%"
 
 const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAndSubmit }) => {
-  const { courtCase } = useCourtCase()
+  const { courtCase, amendments } = useCourtCase()
   const [activeTab, setActiveTab] = useState<CaseDetailsTab>("Defendant")
   const [selectedOffenceSequenceNumber, setSelectedOffenceSequenceNumber] = useState<number | undefined>(undefined)
   const [useBeforeUnload, setUseBeforeUnload] = useState<boolean>(false)
+  console.log(amendments)
 
   const stopLeavingFn = useCallback((newValue: boolean) => {
     setUseBeforeUnload(newValue)
