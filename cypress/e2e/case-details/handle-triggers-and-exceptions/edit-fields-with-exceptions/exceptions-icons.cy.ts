@@ -3,6 +3,7 @@ import AsnExceptionHO100321 from "../../../../../test/test-data/AsnExceptionHo10
 import nextHearingDateAndLocationExceptions from "../../../../../test/test-data/NextHearingDateAndLocationExceptions.json"
 import nextHearingDateExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import nextHearingLocationExceptions from "../../../../../test/test-data/NextHearingLocationExceptions.json"
+import offenceMatchingException from "../../offence-matching/fixtures/HO100310.json"
 import { clickTab, loginAndVisit, submitAndConfirmExceptions } from "../../../../support/helpers"
 import multipleHearingResultsOnOffence from "../../../../../test/test-data/multipleHearingResultsOnOffence.json"
 
@@ -616,5 +617,27 @@ describe("Offences exceptions icons", () => {
 
     clickTab("Offences")
     cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("not.exist")
+  })
+
+  it("Should display warning icons when offence matching exceptions are raised", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: offenceMatchingException,
+        updatedHearingOutcome: offenceMatchingException,
+        errorCount: 2,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+    cy.get("#notifications").should("have.text", "2")
+
+    clickTab("Offences")
+    cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("exist")
+    cy.get("#offences tbody tr:nth-child(2)").find(".warning-icon").should("not.exist")
+    cy.get("#offences tbody tr:nth-child(3)").find(".warning-icon").should("not.exist")
+    cy.get("#offences tbody tr:nth-child(4)").find(".warning-icon").should("exist")
+    cy.get("#offences tbody tr:nth-child(5)").find(".warning-icon").should("not.exist")
   })
 })

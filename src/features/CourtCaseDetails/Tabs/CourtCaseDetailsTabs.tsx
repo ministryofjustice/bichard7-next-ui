@@ -15,8 +15,6 @@ export const CourtCaseDetailsTabs = ({ activeTab, onTabClick, width }: CourtCase
   const { courtCase, amendments, savedAmendments } = useCourtCase()
   const currentUser = useCurrentUser()
   const exceptionsEnabled = currentUser.featureFlags?.exceptionsEnabled
-  console.log("amendments: ", JSON.stringify(amendments, null, 2))
-  console.log("savedAmendments: ", JSON.stringify(savedAmendments, null, 2))
 
   const tabDetails = getTabDetails(courtCase.aho.Exceptions, amendments, savedAmendments, exceptionsEnabled)
 
