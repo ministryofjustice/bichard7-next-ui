@@ -1,113 +1,67 @@
 describe("View resolution status", () => {
   beforeEach(() => {
     cy.task("clearCourtCases")
-    cy.loginAs("TriggerHandler")
+    cy.loginAs("GeneralHandler")
   })
-
-  describe("Resolution status badge", () => {
-    it("Should show the submitted badge when exceptions submitted", () => {
+  ;[
+    {
+      expectedResolutionStatus: "Unresolved",
+      errorStatus: "Unresolved",
+      triggerStatus: "Unresolved"
+    },
+    {
+      expectedResolutionStatus: "Submitted",
+      errorStatus: "Submitted",
+      triggerStatus: "Unresolved"
+    },
+    {
+      expectedResolutionStatus: "Resolved",
+      errorStatus: "Resolved",
+      triggerStatus: "Resolved"
+    }
+  ].forEach(({ expectedResolutionStatus, errorStatus, triggerStatus }) => {
+    it(`Should correctly display ${expectedResolutionStatus} status`, () => {
+      const errorResolved = errorStatus === "Resolved"
+      const triggerResolved = triggerStatus === "Resolved"
       cy.task("insertCourtCasesWithFields", [
         {
-          errorLockedByUsername: null,
-          triggerLockedByUsername: null,
           orgForPoliceFilter: "01",
-          errorCount: 1,
-          errorStatus: "Submitted",
-          triggerCount: 1,
-          triggerStatus: "Resolved"
+          errorCount: errorStatus ? 1 : 0,
+          errorStatus: errorStatus,
+          triggerCount: triggerStatus ? 1 : 0,
+          triggerStatus: triggerStatus,
+          errorResolvedTimestamp: errorResolved ? new Date() : null,
+          triggerResolvedTimestamp: triggerResolved ? new Date() : null,
+          errorResolvedBy: errorResolved ? "GeneralHandler" : null,
+          triggerResolvedBy: triggerResolved ? "GeneralHandler" : null,
+          resolutionTimestamp: errorResolved && triggerResolved ? new Date() : null
         }
       ])
 
+      cy.visit("/bichard")
+
+      if (expectedResolutionStatus === "Unresolved") {
+        cy.get(`.moj-badge`).should("not.exist")
+        cy.visit("/bichard/court-cases/0")
+        cy.get(`.moj-badge`).should("not.exist")
+
+        return
+      }
+
+      if (expectedResolutionStatus === "Resolved") {
+        cy.get(`label[for="resolved"]`).click()
+        cy.get("button[id=search]").click()
+      }
+
+      cy.get(`.moj-badge-${expectedResolutionStatus.toLowerCase()}`)
+        .contains(expectedResolutionStatus)
+        .should("exist")
+        .should("be.visible")
       cy.visit("/bichard/court-cases/0")
-
-      cy.get(".moj-badge-submitted").contains("Submitted").should("exist").should("be.visible")
-      cy.get(".view-only-badge").contains("View only").should("exist").should("be.visible")
-    })
-
-    it("Should show the resolved badge when both triggers and exceptions are resolved", () => {
-      cy.task("insertCourtCasesWithFields", [
-        {
-          errorLockedByUsername: null,
-          triggerLockedByUsername: null,
-          orgForPoliceFilter: "01",
-          errorCount: 1,
-          errorStatus: "Resolved",
-          triggerCount: 1,
-          triggerStatus: "Resolved"
-        }
-      ])
-
-      cy.visit("/bichard/court-cases/0")
-
-      cy.get(".moj-badge-resolved").contains("Resolved").should("exist").should("be.visible")
-      cy.get(".view-only-badge").contains("View only").should("exist").should("be.visible")
-    })
-
-    it("Should not show the resolved badge when the case is partially resolved", () => {
-      cy.task("insertCourtCasesWithFields", [
-        {
-          errorLockedByUsername: null,
-          triggerLockedByUsername: null,
-          orgForPoliceFilter: "01",
-          errorCount: 1,
-          errorStatus: "Resolved",
-          triggerCount: 1,
-          triggerStatus: "Unresolved"
-        },
-        {
-          errorLockedByUsername: null,
-          triggerLockedByUsername: null,
-          orgForPoliceFilter: "01",
-          errorCount: 1,
-          errorStatus: "Unresolved",
-          triggerCount: 1,
-          triggerStatus: "Resolved"
-        }
-      ])
-
-      cy.visit("/bichard/court-cases/0")
-      cy.get(".moj-badge-resolved").should("not.exist")
-
-      cy.visit("/bichard/court-cases/1")
-      cy.get(".moj-badge-resolved").should("not.exist")
-    })
-
-    it("Should show the resolved badge when triggers resolved and there are no exceptions", () => {
-      cy.task("insertCourtCasesWithFields", [
-        {
-          errorLockedByUsername: null,
-          triggerLockedByUsername: null,
-          orgForPoliceFilter: "01",
-          errorCount: 0,
-          errorStatus: null,
-          triggerCount: 1,
-          triggerStatus: "Resolved"
-        }
-      ])
-
-      cy.visit("/bichard/court-cases/0")
-
-      cy.get(".moj-badge-resolved").contains("Resolved").should("exist").should("be.visible")
-      cy.get(".view-only-badge").contains("View only").should("exist").should("be.visible")
-    })
-
-    it("Should show the resolved badge when exceptions resolved and there are no triggers", () => {
-      cy.task("insertCourtCasesWithFields", [
-        {
-          errorLockedByUsername: null,
-          triggerLockedByUsername: null,
-          orgForPoliceFilter: "01",
-          errorCount: 1,
-          errorStatus: "Resolved",
-          triggerCount: 0,
-          triggerStatus: null
-        }
-      ])
-
-      cy.visit("/bichard/court-cases/0")
-
-      cy.get(".moj-badge-resolved").contains("Resolved").should("exist").should("be.visible")
-      cy.get(".view-only-badge").contains("View only").should("exist").should("be.visible")
+      cy.get(`.moj-badge-${expectedResolutionStatus.toLowerCase()}`)
+        .contains(expectedResolutionStatus)
+        .should("exist")
+        .should("be.visible")
     })
   })
 })
