@@ -9,6 +9,7 @@ import { CaseDetailsRow } from "./CaseDetailsRow/CaseDetailsRow"
 import { ExceptionsLockTag, ExceptionsReasonCell } from "./ExceptionsColumns"
 import { ExtraReasonRow } from "./ExtraReasonRow"
 import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
+import getResolutionStatus from "../../../utils/getResolutionStatus"
 
 interface Props {
   courtCase: DisplayPartialCourtCase
@@ -30,8 +31,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
     errorReport,
     triggerLockedByUsername,
     triggerLockedByUserFullName,
-    triggers,
-    errorStatus
+    triggers
   } = courtCase
 
   const { basePath, query } = useRouter()
@@ -96,7 +96,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
         courtCase={courtCase}
         reasonCell={exceptionsReasonCell || triggersReasonCell}
         lockTag={exceptionsLockTag || triggersLockTag}
-        resolutionStatus={errorStatus ?? "Unresolved"}
+        resolutionStatus={getResolutionStatus(courtCase)}
         previousPath={previousPath}
       />
       {exceptionsLockTag && triggersLockTag && triggersReasonCell && (
