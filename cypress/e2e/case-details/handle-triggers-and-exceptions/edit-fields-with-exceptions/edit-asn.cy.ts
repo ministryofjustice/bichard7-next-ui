@@ -99,27 +99,20 @@ describe("ASN", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get(".moj-badge").contains("Editable Field").should("exist")
-    // error message should be displayed when ASN is not entered
+
     cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
     cy.get("#event-name-error").should("exist")
-    // Submit exception(s) button should be enabled (could have changed on PNC)
+
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
-    // Save correction button should be disabled
-    cy.get("button").contains("Save Correction").should("be.disabled")
     cy.get("#asn").clear()
 
     cy.get("#asn").type("1101ZD0100000410836V")
-    // Submit exception(s) button should be enabled
-    cy.get("button").contains("Submit exception(s)").should("be.enabled")
-    // Save correction button should be enabled
     cy.get("#event-name-error").should("not.exist")
-
-    cy.get("button").contains("Save Correction").click()
-    // Save correction button should be disabled to prevent double clicking
-    cy.get("button").contains("Save Correction").should("be.disabled")
+    cy.get("#success-message").contains("Input saved").should("exist")
+    cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500)
+    cy.wait(500) // FIXME
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
