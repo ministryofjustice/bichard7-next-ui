@@ -1,11 +1,10 @@
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import axios from "axios"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
-import { SaveLinkButton } from "components/LinkButton"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { isEmpty } from "lodash"
 import { ClipboardEvent, KeyboardEvent, useCallback, useEffect, useState } from "react"
+import { useAutosave } from "react-autosave"
 import Asn from "services/Asn"
 import isAsnFormatValid from "utils/exceptions/isAsnFormatValid"
 import isAsnException from "utils/exceptions/isException/isAsnException"
@@ -13,11 +12,11 @@ import { CHECKMARK_ICON_URL } from "utils/icons"
 import { CheckmarkIcon } from "../../CourtCaseDetailsSingleTab.styles"
 import { AsnInput, AsnInputContainer } from "./AsnField.styles"
 
-interface AsnFieldProps {
-  stopLeavingFn: (newValue: boolean) => void
-}
+// interface AsnFieldProps {
+//   stopLeavingFn: (newValue: boolean) => void
+// }
 
-export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
+export const AsnField = (/*{ stopLeavingFn }: AsnFieldProps*/) => {
   const { courtCase, amendments, amend, savedAmend } = useCourtCase()
   const currentUser = useCurrentUser()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
@@ -41,9 +40,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     if (isSavedAsn) {
       setUpdatedAhoAsn(amendedAsn)
     }
-
-    stopLeavingFn(!isSavedAsn && !isEmpty(amendedAsn) && updatedAhoAsn !== amendedAsn)
-  }, [isSavedAsn, isPageLoaded, amendments, updatedAhoAsn, stopLeavingFn, amend, amendedAsn])
+  }, [isSavedAsn, isPageLoaded, amendments, updatedAhoAsn, amend, amendedAsn])
 
   const saveAsn = useCallback(
     async (asn: Asn) => {
@@ -53,13 +50,18 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     [courtCase.errorId]
   )
 
-  const handleAsnSave = (): void => {
-    if (isValidAsn) {
+  useAutosave({
+    data: amendedAsn,
+    onSave: (): void => {
+      if (!isValidAsn) {
+        return
+      }
+
       setIsSavedAsn(true)
       savedAmend("asn")(amendedAsn)
       saveAsn(new Asn(amendedAsn))
     }
-  }
+  })
 
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Backspace") {
@@ -91,15 +93,6 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   const handleOnCopy = () => {
     const copiedAsn = document.getSelection()?.toString().replace(/\//g, "")
     navigator.clipboard.writeText(copiedAsn ?? "")
-  }
-
-  const isSaveAsnBtnDisabled = (): boolean => {
-    if (updatedAhoAsn === amendedAsn) {
-      return true
-    } else if (!isValidAsn) {
-      return true
-    }
-    return false
   }
 
   const isAsnEditable =
@@ -151,7 +144,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
           )}
         </AsnInputContainer>
       </div>
-      <SaveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()} />
+      {/* <SaveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()} /> */}
     </EditableFieldTableRow>
   )
 }
