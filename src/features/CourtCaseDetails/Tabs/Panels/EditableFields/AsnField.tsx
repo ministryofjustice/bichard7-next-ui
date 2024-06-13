@@ -53,13 +53,13 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     [courtCase.errorId]
   )
 
-  const handleAsnSave = (): void => {
+  const handleAsnSave = useCallback((): void => {
     if (isValidAsn) {
       setIsSavedAsn(true)
       savedAmend("asn")(amendedAsn)
       saveAsn(new Asn(amendedAsn))
     }
-  }
+  }, [amendedAsn, isValidAsn, saveAsn, savedAmend])
 
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Backspace") {
@@ -77,9 +77,12 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
       const asnWithoutSlashes = inputAsnValue.replace(/\//g, "")
       amend("asn")(asnWithoutSlashes)
     }
-
     setIsValidAsn(isAsnFormatValid(inputAsnValue))
   }
+
+  useEffect(() => {
+    handleAsnSave()
+  }, [handleAsnSave, isValidAsn])
 
   const handleOnPaste = (e: ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault()
