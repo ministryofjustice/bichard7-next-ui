@@ -619,7 +619,7 @@ describe("Offences exceptions icons", () => {
     cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("not.exist")
   })
 
-  it("Should display warning icons when offence matching exceptions are raised", () => {
+  it("Should display 2 next to the Offences tab text when HO100310 is raised", () => {
     cy.task("insertCourtCasesWithFields", [
       {
         orgForPoliceFilter: "01",
@@ -637,5 +637,33 @@ describe("Offences exceptions icons", () => {
     cy.get("ul.moj-sub-navigation__list>li").eq(1).contains("Hearing").contains("2").should("not.exist")
     cy.get("ul.moj-sub-navigation__list>li").eq(2).contains("Case").contains("2").should("not.exist")
     cy.get("ul.moj-sub-navigation__list>li").eq(4).contains("Notes").contains("2").should("not.exist")
+  })
+
+  it("Should display checkmark next to Offences tab text when offence matching exception is resolved", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: offenceMatchingException,
+        updatedHearingOutcome: offenceMatchingException,
+        errorCount: 2
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("2").should("exist")
+    clickTab("Offences")
+
+    cy.get("button").contains("Offence 1").click()
+    cy.get("select.offence-matcher").select("001 - TH68006")
+
+    cy.get("button").contains("Next offence").click()
+    cy.get("button").contains("Offence 4").click()
+    cy.get("select.offence-matcher").select("Added in court")
+
+    submitAndConfirmExceptions()
+
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("2").should("not.exist")
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).find(".checkmark-icon").should("exist")
   })
 })
