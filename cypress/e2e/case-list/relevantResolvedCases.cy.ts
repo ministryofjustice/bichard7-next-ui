@@ -1,6 +1,7 @@
 import { subHours } from "date-fns"
 import CourtCase from "services/entities/CourtCase"
 import { confirmMultipleFieldsDisplayed, confirmMultipleFieldsNotDisplayed, loginAndVisit } from "../../support/helpers"
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 
 describe("Only shows relevant resolved cases to the user", () => {
   beforeEach(() => {
@@ -105,7 +106,7 @@ describe("Only shows relevant resolved cases to the user", () => {
           caseId: caseConfig.errorId,
           triggers: [
             {
-              triggerCode: "TRPR0010",
+              triggerCode: TriggerCode.TRPR0010,
               status: "Resolved",
               createdAt: new Date("2023-03-07T10:22:34.000Z"),
               resolvedBy: caseConfig.triggerResolvedBy,

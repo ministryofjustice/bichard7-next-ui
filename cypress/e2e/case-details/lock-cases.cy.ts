@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import { loginAndVisit } from "../../support/helpers"
 
 const insertTrigger = (status = "Unresolved") => {
@@ -6,7 +7,7 @@ const insertTrigger = (status = "Unresolved") => {
     triggers: [
       {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status,
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }

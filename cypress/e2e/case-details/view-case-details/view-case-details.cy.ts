@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import DummyMultipleOffencesNoErrorAho from "../../../../test/test-data/AnnotatedHO1.json"
 import DummyHO100200Aho from "../../../../test/test-data/HO100200_1.json"
 import DummyHO100302Aho from "../../../../test/test-data/HO100302_1.json"
@@ -18,7 +19,7 @@ describe("View case details", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -81,7 +82,7 @@ describe("View case details", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -392,14 +393,14 @@ describe("View case details", () => {
       {
         triggerId: 0,
         triggerItemIdentity: 1,
-        triggerCode: "TRPR0010",
+        triggerCode: TriggerCode.TRPR0010,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       },
       {
         triggerId: 1,
         triggerItemIdentity: 1,
-        triggerCode: "TRPR0015",
+        triggerCode: TriggerCode.TRPR0015,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T11:22:34.000Z")
       }
@@ -441,7 +442,7 @@ describe("View case details", () => {
       {
         triggerId: 0,
         triggerItemIdentity: 1,
-        triggerCode: "TRPR0010",
+        triggerCode: TriggerCode.TRPR0010,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -483,14 +484,14 @@ describe("View case details", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0010",
+        triggerCode: TriggerCode.TRPR0010,
         triggerItemIdentity: 1,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       },
       {
         triggerId: 1,
-        triggerCode: "TRPR0015",
+        triggerCode: TriggerCode.TRPR0015,
         triggerItemIdentity: 2,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
@@ -552,7 +553,7 @@ describe("View case details", () => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01" }])
     const trigger: TestTrigger = {
       triggerId: 0,
-      triggerCode: "TRPR0001",
+      triggerCode: TriggerCode.TRPR0001,
       status: "Unresolved",
       createdAt: new Date()
     }
@@ -623,7 +624,7 @@ describe("View case details", () => {
     ])
     const trigger: TestTrigger = {
       triggerId: 0,
-      triggerCode: "TRPR0001",
+      triggerCode: TriggerCode.TRPR0001,
       status: "Resolved",
       createdAt: new Date(),
       resolvedAt: new Date(),
