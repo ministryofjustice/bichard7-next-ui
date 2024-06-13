@@ -5,7 +5,7 @@ import { SaveLinkButton } from "components/LinkButton"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { isEmpty } from "lodash"
-import { ClipboardEvent, KeyboardEvent, useCallback, useEffect, useState } from "react"
+import { KeyboardEvent, useCallback, useEffect, useState } from "react"
 import Asn from "services/Asn"
 import isAsnFormatValid from "utils/exceptions/isAsnFormatValid"
 import isAsnException from "utils/exceptions/isException/isAsnException"
@@ -84,13 +84,6 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
     handleAsnSave()
   }, [handleAsnSave, isValidAsn])
 
-  const handleOnPaste = (e: ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault()
-    const asnFromClipboard = e.clipboardData.getData("text")
-    setIsValidAsn(isAsnFormatValid(asnFromClipboard))
-    amend("asn")(asnFromClipboard)
-  }
-
   const handleOnCopy = () => {
     const copiedAsn = document.getSelection()?.toString().replace(/\//g, "")
     navigator.clipboard.writeText(copiedAsn ?? "")
@@ -139,7 +132,6 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
             value={asn}
             error={!isValidAsn}
             onKeyDown={handleOnKeyDown}
-            onPaste={handleOnPaste}
             onCopy={handleOnCopy}
             onCut={handleOnCopy}
           />
