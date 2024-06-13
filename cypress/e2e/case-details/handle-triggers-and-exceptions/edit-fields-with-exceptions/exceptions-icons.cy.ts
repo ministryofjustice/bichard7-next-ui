@@ -631,13 +631,11 @@ describe("Offences exceptions icons", () => {
     ])
 
     loginAndVisit("/bichard/court-cases/0")
-    cy.get("#notifications").should("have.text", "2")
 
-    clickTab("Offences")
-    cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("exist")
-    cy.get("#offences tbody tr:nth-child(2)").find(".warning-icon").should("not.exist")
-    cy.get("#offences tbody tr:nth-child(3)").find(".warning-icon").should("not.exist")
-    cy.get("#offences tbody tr:nth-child(4)").find(".warning-icon").should("exist")
-    cy.get("#offences tbody tr:nth-child(5)").find(".warning-icon").should("not.exist")
+    cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("2")
+    cy.get("ul.moj-sub-navigation__list>li").eq(0).contains("Defendant").contains("2").should("not.exist")
+    cy.get("ul.moj-sub-navigation__list>li").eq(1).contains("Hearing").contains("2").should("not.exist")
+    cy.get("ul.moj-sub-navigation__list>li").eq(2).contains("Case").contains("2").should("not.exist")
+    cy.get("ul.moj-sub-navigation__list>li").eq(4).contains("Notes").contains("2").should("not.exist")
   })
 })
