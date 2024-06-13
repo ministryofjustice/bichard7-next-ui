@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
 import redirectWhenResolveTriggersAndExceptions from "../../../fixtures/redirectWhenResolveTriggersAndExceptions.json"
 import { loginAndVisit } from "../../../support/helpers"
@@ -27,7 +28,7 @@ describe("Redirect when resolve triggers and exceptions", () => {
         if (hasTriggers) {
           const caseTriggers: Partial<TestTrigger>[] = [
             {
-              triggerCode: "TRPR0001",
+              triggerCode: TriggerCode.TRPR0001,
               status: "Unresolved",
               createdAt: new Date("2022-07-09T10:22:34.000Z")
             }

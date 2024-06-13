@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import { loginAndVisit } from "../../../support/helpers"
 
 describe("View court case details header", () => {
@@ -17,7 +18,7 @@ describe("View court case details header", () => {
       triggers: [
         {
           triggerId: 0,
-          triggerCode: "TRPR0010",
+          triggerCode: TriggerCode.TRPR0010,
           status: "Unresolved",
           createdAt: new Date("2022-07-09T10:22:34.000Z")
         }
@@ -67,7 +68,7 @@ describe("View court case details header", () => {
       triggers: [
         {
           triggerId: 0,
-          triggerCode: "TRPR0010",
+          triggerCode: TriggerCode.TRPR0010,
           status: "Unresolved",
           createdAt: new Date("2022-07-09T10:22:34.000Z")
         }
@@ -104,7 +105,7 @@ describe("View court case details header", () => {
       triggers: [
         {
           triggerId: 0,
-          triggerCode: "TRPR0010",
+          triggerCode: TriggerCode.TRPR0010,
           status: "Unresolved",
           createdAt: new Date("2022-07-09T10:22:34.000Z")
         }

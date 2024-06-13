@@ -96,7 +96,7 @@ export default defineConfig({
         async getAllFeedbacksFromDatabase() {
           return getAllFeedbacksFromDatabase()
         },
-        async insertFeedback(feedback: Partial<SurveyFeedback>) {
+        async insertFeedback(feedback: Partial<SurveyFeedback> & { username?: string }) {
           return insertFeedback(feedback)
         },
         async clearAllFeedbacksFromDatabase() {
