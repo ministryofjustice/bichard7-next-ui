@@ -111,7 +111,10 @@ describe("Offence matching HO100310", () => {
           { offenceIndex: 0, value: 1 },
           { offenceIndex: 3, value: 0 }
         ], // TODO: determine whether CCRN for Added In Court offences should include a value
-        offenceCourtCaseReferenceNumber: [{ offenceIndex: 0, value: "97/1626/008395Q" }, { offenceIndex: 3 }]
+        offenceCourtCaseReferenceNumber: [
+          { offenceIndex: 0, value: "97/1626/008395Q" },
+          { offenceIndex: 3, value: "" }
+        ]
       })
   })
 
@@ -119,7 +122,7 @@ describe("Offence matching HO100310", () => {
     it("has the correct values for the select dropdowns", () => {
       cy.get("select.offence-matcher").should("have.value", null)
       cy.get("select.offence-matcher").select("001 - TH68006")
-      cy.get("select.offence-matcher").should("have.value", "1")
+      cy.get("select.offence-matcher").should("have.value", "1-97/1626/008395Q")
       cy.get("select.offence-matcher").find(":selected").contains("001 - TH68006")
 
       cy.get(".exception-location").contains("Offence 4").click()
@@ -130,7 +133,7 @@ describe("Offence matching HO100310", () => {
 
       cy.get(".exception-location").contains("Offence 1").click()
 
-      cy.get("select.offence-matcher").should("have.value", "1")
+      cy.get("select.offence-matcher").should("have.value", "1-97/1626/008395Q")
 
       cy.get(".exception-location").contains("Offence 4").click()
 
@@ -139,7 +142,7 @@ describe("Offence matching HO100310", () => {
 
       cy.get(".exception-location").contains("Offence 1").click()
 
-      cy.get("select.offence-matcher").should("have.value", "1")
+      cy.get("select.offence-matcher").should("have.value", "1-97/1626/008395Q")
 
       cy.get(".exception-location").contains("Offence 4").click()
 

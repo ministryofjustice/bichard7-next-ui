@@ -59,6 +59,12 @@ describe("With existing amendments", () => {
           offenceIndex: 0,
           value: 1
         }
+      ],
+      offenceCourtCaseReferenceNumber: [
+        {
+          offenceIndex: 0,
+          value: "97/1626/008395Q"
+        }
       ]
     }
 
@@ -68,7 +74,7 @@ describe("With existing amendments", () => {
       </CourtCaseContext.Provider>
     )
 
-    cy.get("select").should("have.value", 1)
+    cy.get("select").should("have.value", "1-97/1626/008395Q")
   })
 
   it("disables options that already exist in amendments", () => {
@@ -77,6 +83,12 @@ describe("With existing amendments", () => {
         {
           offenceIndex: 1,
           value: 1
+        }
+      ],
+      offenceCourtCaseReferenceNumber: [
+        {
+          offenceIndex: 1,
+          value: "97/1626/008395Q"
         }
       ]
     }

@@ -10,6 +10,17 @@ interface Props {
   isCaseLockedToCurrentUser: boolean
 }
 
+const formatOffenceString = (
+  offenceReasonSequence: number | string,
+  offenceCourtCaseReferenceNumber: string | undefined
+): string => {
+  if (offenceCourtCaseReferenceNumber === undefined || offenceCourtCaseReferenceNumber === "") {
+    return `${offenceReasonSequence}`
+  }
+
+  return `${offenceReasonSequence}-${offenceCourtCaseReferenceNumber}`
+}
+
 export const OffenceMatcher = ({ offenceIndex, offence, isCaseLockedToCurrentUser }: Props) => {
   const {
     courtCase: {
@@ -20,33 +31,53 @@ export const OffenceMatcher = ({ offenceIndex, offence, isCaseLockedToCurrentUse
   } = useCourtCase()
   const offenceCode = getOffenceCode(offence)
 
-  const findOffenceReasonSequenceFromOffenceIndex = useCallback(
-    () => amendments.offenceReasonSequence?.find((a) => a.offenceIndex === offenceIndex)?.value ?? "",
-    [amendments.offenceReasonSequence, offenceIndex]
-  )
+  const findPncOffence = useCallback(() => {
+    const offenceReasonSequenceValue =
+      amendments.offenceReasonSequence?.find((a) => a.offenceIndex === offenceIndex)?.value ?? ""
+    const offenceCourtCaseReferenceNumberValue =
+      amendments.offenceCourtCaseReferenceNumber?.find((a) => a.offenceIndex === offenceIndex)?.value ?? ""
 
-  const [selectedValue, setSelectedValue] = useState(findOffenceReasonSequenceFromOffenceIndex())
+    return formatOffenceString(offenceReasonSequenceValue, offenceCourtCaseReferenceNumberValue)
+  }, [amendments.offenceCourtCaseReferenceNumber, amendments.offenceReasonSequence, offenceIndex])
+
+  const [selectedValue, setSelectedValue] = useState(findPncOffence())
 
   useEffect(() => {
-    setSelectedValue(findOffenceReasonSequenceFromOffenceIndex())
-  }, [findOffenceReasonSequenceFromOffenceIndex])
+    setSelectedValue(findPncOffence())
+  }, [findPncOffence])
 
   const onSelectionChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const ccr = e.target.options[e.target.selectedIndex].dataset.ccr ?? ""
+    const offenceReasonSequence = e.target.value?.replace(/-.*/, "") ?? ""
+
     amend("offenceReasonSequence")({
       offenceIndex,
-      value: Number(e.target.value)
+      value: Number(offenceReasonSequence)
     })
 
     amend("offenceCourtCaseReferenceNumber")({
       offenceIndex,
-      value: e.target.options[e.target.selectedIndex].dataset.ccr
+      value: ccr
     })
 
-    setSelectedValue(e.target.value)
+    setSelectedValue(formatOffenceString(offenceReasonSequence, ccr))
   }
 
-  const offenceAlreadySelected = (sequenceNumber: number) =>
-    !!amendments.offenceReasonSequence?.find((a) => a.value === sequenceNumber && a.offenceIndex !== offenceIndex)
+  const offenceAlreadySelected = (sequenceNumber: number, courtCaseReference: string): boolean => {
+    const knownMatches: string[] = []
+
+    amendments.offenceCourtCaseReferenceNumber?.forEach((offenceCcr) => {
+      const offenceReasonSequence = amendments.offenceReasonSequence?.find(
+        (a) => a.offenceIndex === offenceCcr.offenceIndex && a.offenceIndex !== offenceIndex
+      )
+
+      if (offenceReasonSequence?.value) {
+        knownMatches.push(formatOffenceString(offenceReasonSequence.value, offenceCcr.value))
+      }
+    })
+
+    return knownMatches.includes(formatOffenceString(sequenceNumber, courtCaseReference))
+  }
 
   // TODO: match dates
   return isCaseLockedToCurrentUser ? (
@@ -59,12 +90,12 @@ export const OffenceMatcher = ({ offenceIndex, offence, isCaseLockedToCurrentUse
           <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
             {c.offences
               .filter((pnc) => pnc.offence.cjsOffenceCode === offenceCode)
-              .map((pnc) => {
+              .map((pnc, index) => {
                 return (
                   <option
-                    key={pnc.offence.cjsOffenceCode}
-                    value={pnc.offence.sequenceNumber}
-                    disabled={offenceAlreadySelected(pnc.offence.sequenceNumber)}
+                    key={`${index}-${pnc.offence.cjsOffenceCode}`}
+                    value={formatOffenceString(pnc.offence.sequenceNumber, c.courtCaseReference)}
+                    disabled={offenceAlreadySelected(pnc.offence.sequenceNumber, c.courtCaseReference)}
                     data-ccr={c.courtCaseReference}
                   >
                     {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
