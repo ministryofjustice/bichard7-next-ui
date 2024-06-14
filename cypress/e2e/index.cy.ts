@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import { TestTrigger } from "../../test/utils/manageTriggers"
 import a11yConfig from "../support/a11yConfig"
 import { loginAndVisit } from "../support/helpers"
@@ -296,13 +297,13 @@ describe("Case list", () => {
       const triggers: TestTrigger[] = [
         {
           triggerId: 0,
-          triggerCode: "TRPR0010",
+          triggerCode: TriggerCode.TRPR0010,
           status: "Unresolved",
           createdAt: new Date("2022-07-09T10:22:34.000Z")
         },
         {
           triggerId: 1,
-          triggerCode: "TRPR0015",
+          triggerCode: TriggerCode.TRPR0015,
           status: "Unresolved",
           createdAt: new Date("2022-07-09T10:22:34.000Z")
         }

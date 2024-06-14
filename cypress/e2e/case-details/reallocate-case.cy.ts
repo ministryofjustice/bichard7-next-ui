@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import { TestTrigger } from "../../../test/utils/manageTriggers"
 import canReallocateTestData from "../../fixtures/canReallocateTestData.json"
 import { clickTab, loginAndVisit } from "../../support/helpers"
@@ -12,7 +13,7 @@ describe("Case details", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -55,7 +56,7 @@ describe("Case details", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -95,7 +96,7 @@ describe("Case details", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }
@@ -199,7 +200,7 @@ describe("Case details", () => {
     const triggers: TestTrigger[] = [
       {
         triggerId: 0,
-        triggerCode: "TRPR0001",
+        triggerCode: TriggerCode.TRPR0001,
         status: "Unresolved",
         createdAt: new Date("2022-07-09T10:22:34.000Z")
       }

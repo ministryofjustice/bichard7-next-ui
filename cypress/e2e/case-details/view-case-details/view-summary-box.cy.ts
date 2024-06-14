@@ -2,11 +2,12 @@ import CourtCase from "services/entities/CourtCase"
 import dummyAho from "../../../../test/test-data/error_list_aho.json"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
 import { loginAndVisit } from "../../../support/helpers"
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 
 describe("View Court Case Details Summary Box", () => {
   const trigger: TestTrigger = {
     triggerId: 0,
-    triggerCode: "TRPR0001",
+    triggerCode: TriggerCode.TRPR0001,
     status: "Unresolved",
     createdAt: new Date("2022-07-09T10:22:34.000Z")
   }

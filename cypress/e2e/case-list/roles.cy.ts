@@ -1,3 +1,4 @@
+import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
 import {
   confirmCaseDisplayed,
   confirmCaseNotDisplayed,
@@ -32,7 +33,7 @@ describe("Shows relevant information to a user's role", () => {
       triggers: [
         {
           triggerId: 0,
-          triggerCode: "TRPR0010",
+          triggerCode: TriggerCode.TRPR0010,
           status: "Unresolved",
           createdAt: new Date()
         },
@@ -60,7 +61,7 @@ describe("Shows relevant information to a user's role", () => {
       triggers: [
         {
           triggerId: 2,
-          triggerCode: "TRPR0010",
+          triggerCode: TriggerCode.TRPR0010,
           status: "Unresolved",
           createdAt: new Date()
         },
