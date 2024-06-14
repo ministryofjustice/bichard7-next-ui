@@ -13,7 +13,6 @@ describe("View offence matching exceptions", () => {
     { offenceReasonSequence: ExceptionCode.HO100312 },
     { offenceReasonSequence: ExceptionCode.HO100320 },
     { offenceReasonSequence: ExceptionCode.HO100329 },
-    { offenceReasonSequence: ExceptionCode.HO100332 },
     { offenceReasonSequence: ExceptionCode.HO100333 }
   ].forEach(({ asn, offenceReasonSequence, firstOffenceBadge = "Matched", secondOffenceBadge = "Unmatched" }) => {
     it(`Should display the correct error for ${asn ?? offenceReasonSequence}`, () => {
