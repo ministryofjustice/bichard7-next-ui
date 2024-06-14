@@ -17,11 +17,7 @@ import { DefendantDetailTable } from "./DefendantDetails.styles"
 import { AsnField as AsnEditableField } from "./EditableFields/AsnField"
 import { TableRow } from "./TableRow"
 
-interface DefendantDetailsProps {
-  stopLeavingFn: (newValue: boolean) => void
-}
-
-export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
+export const DefendantDetails = () => {
   const { courtCase } = useCourtCase()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
   const asnSystemErrorExceptionPrompt = findExceptions(
@@ -45,7 +41,7 @@ export const DefendantDetails = ({ stopLeavingFn }: DefendantDetailsProps) => {
             <ErrorPromptMessage message={asnSystemErrorExceptionPrompt} />
           </ExceptionFieldTableRow>
         ) : (
-          <AsnEditableField stopLeavingFn={stopLeavingFn} />
+          <AsnEditableField />
         )}
 
         <TableRow label="PNC Check name" value={defendant.PNCCheckname} />

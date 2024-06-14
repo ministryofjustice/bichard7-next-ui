@@ -1,23 +1,16 @@
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import axios from "axios"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
-import { SaveLinkButton } from "components/LinkButton"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { isEmpty } from "lodash"
 import { KeyboardEvent, useCallback, useEffect, useState } from "react"
 import Asn from "services/Asn"
 import isAsnFormatValid from "utils/exceptions/isAsnFormatValid"
 import isAsnException from "utils/exceptions/isException/isAsnException"
-import { CHECKMARK_ICON_URL } from "utils/icons"
-import { CheckmarkIcon } from "../../CourtCaseDetailsSingleTab.styles"
-import { AsnInput, AsnInputContainer } from "./AsnField.styles"
+import { AsnInput } from "./AsnField.styles"
+import SuccessMessage from "../../../../../components/EditableFields/SuccessMessage"
 
-interface AsnFieldProps {
-  stopLeavingFn: (newValue: boolean) => void
-}
-
-export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
+export const AsnField = () => {
   const { courtCase, amendments, amend, savedAmend } = useCourtCase()
   const currentUser = useCurrentUser()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
@@ -32,23 +25,9 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
   const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false)
   const [key, setKey] = useState<string>("")
 
-  useEffect(() => {
-    if (!isPageLoaded) {
-      amend("asn")(updatedAhoAsn ?? "")
-      setIsPageLoaded(true)
-    }
-
-    if (isSavedAsn) {
-      setUpdatedAhoAsn(amendedAsn)
-    }
-
-    stopLeavingFn(!isSavedAsn && !isEmpty(amendedAsn) && updatedAhoAsn !== amendedAsn)
-  }, [isSavedAsn, isPageLoaded, amendments, updatedAhoAsn, stopLeavingFn, amend, amendedAsn])
-
   const saveAsn = useCallback(
     async (asn: Asn) => {
       await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
-      setIsSavedAsn(false)
     },
     [courtCase.errorId]
   )
@@ -60,6 +39,19 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
       saveAsn(new Asn(amendedAsn))
     }
   }, [amendedAsn, isValidAsn, saveAsn, savedAmend])
+
+  useEffect(() => {
+    if (!isPageLoaded) {
+      amend("asn")(updatedAhoAsn ?? "")
+      setIsPageLoaded(true)
+    }
+
+    if (isSavedAsn) {
+      setUpdatedAhoAsn(amendedAsn)
+    } else {
+      handleAsnSave()
+    }
+  }, [isSavedAsn, isPageLoaded, amendments, updatedAhoAsn, amend, amendedAsn, handleAsnSave, isValidAsn])
 
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Backspace") {
@@ -77,25 +69,13 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
       const asnWithoutSlashes = inputAsnValue.replace(/\//g, "")
       amend("asn")(asnWithoutSlashes)
     }
+    setIsSavedAsn(false)
     setIsValidAsn(isAsnFormatValid(inputAsnValue))
   }
-
-  useEffect(() => {
-    handleAsnSave()
-  }, [handleAsnSave, isValidAsn])
 
   const handleOnCopy = () => {
     const copiedAsn = document.getSelection()?.toString().replace(/\//g, "")
     navigator.clipboard.writeText(copiedAsn ?? "")
-  }
-
-  const isSaveAsnBtnDisabled = (): boolean => {
-    if (updatedAhoAsn === amendedAsn) {
-      return true
-    } else if (!isValidAsn) {
-      return true
-    }
-    return false
   }
 
   const isAsnEditable =
@@ -123,7 +103,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
             <span className="govuk-visually-hidden">{"Error:"}</span> {"Enter ASN in the correct format"}
           </p>
         )}
-        <AsnInputContainer>
+        <div>
           <AsnInput
             className={`asn-input`}
             id={"asn"}
@@ -135,18 +115,9 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
             onCopy={handleOnCopy}
             onCut={handleOnCopy}
           />
-          {isValidAsn && (
-            <CheckmarkIcon
-              className={`checkmark-icon checkmark`}
-              src={CHECKMARK_ICON_URL}
-              width={30}
-              height={30}
-              alt="Checkmark icon"
-            />
-          )}
-        </AsnInputContainer>
+        </div>
+        {isSavedAsn && <SuccessMessage message="Input saved" />}
       </div>
-      <SaveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()} />
     </EditableFieldTableRow>
   )
 }
