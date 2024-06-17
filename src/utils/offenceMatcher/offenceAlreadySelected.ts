@@ -1,5 +1,5 @@
 import { Amendments } from "types/Amendments"
-import offenceMatcherValue from "./offenceMatcherSelectValue"
+import offenceMatcherSelectValue from "./offenceMatcherSelectValue"
 
 const offenceAlreadySelected = (
   amendments: Amendments,
@@ -15,11 +15,11 @@ const offenceAlreadySelected = (
     )
 
     if (offenceReasonSequence?.value) {
-      knownMatches.push(offenceMatcherValue(offenceReasonSequence.value, offenceCcr.value))
+      knownMatches.push(offenceMatcherSelectValue(offenceReasonSequence.value, offenceCcr.value))
     }
   })
 
-  return knownMatches.includes(offenceMatcherValue(sequenceNumber, courtCaseReference))
+  return knownMatches.includes(offenceMatcherSelectValue(sequenceNumber, courtCaseReference))
 }
 
 export default offenceAlreadySelected
