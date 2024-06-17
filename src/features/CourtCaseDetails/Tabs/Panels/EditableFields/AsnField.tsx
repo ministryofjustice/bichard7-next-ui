@@ -26,14 +26,19 @@ export const AsnField = () => {
   const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false)
   const [key, setKey] = useState<string>("")
   const [httpResponseStatus, setHttpResponseStatus] = useState<number>(0)
+  const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
 
   const saveAsn = useCallback(
     async (asn: Asn) => {
-      await axios
-        .put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
-        .then((response) => {
-          setHttpResponseStatus(response.status)
-        })
+      try {
+        await axios
+          .put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
+          .then((response) => {
+            setHttpResponseStatus(response.status)
+          })
+      } catch (error) {
+        setHttpResponseError(error as Error)
+      }
     },
     [courtCase.errorId]
   )
@@ -120,6 +125,7 @@ export const AsnField = () => {
         </div>
         {httpResponseStatus === 202 && <SuccessMessage message="Input saved" />}
         {!isValidAsn && <ErrorMessage message="Enter ASN in the correct format" />}
+        {httpResponseError && <ErrorMessage message="Autosave has failed, please refresh" />}
       </div>
     </EditableFieldTableRow>
   )
