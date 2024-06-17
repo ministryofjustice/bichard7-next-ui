@@ -229,8 +229,10 @@ describe("ASN", () => {
   it("should display error when invalid ASN is entered", () => {
     loginAndVisit("/bichard/court-cases/0")
 
-    cy.get("#asn").type("asdf")
+    cy.get("#asn").clear()
+    cy.get("#asn").type("1101ZD01448754")
 
+    cy.get(".Defendant-details-table").find(".warning-icon").should("exist")
     cy.get(".Defendant-details-table").contains("Enter ASN in the correct format")
   })
 
