@@ -13,8 +13,6 @@ describe("Offence matching HO100310", () => {
 
   before(() => {
     cy.loginAs("GeneralHandler")
-    cy.loginAs("NoExceptionsFeatureFlag")
-    cy.loginAs("OffenceMatchingDisabled")
   })
 
   beforeEach(() => {
@@ -191,35 +189,6 @@ describe("Offence matching HO100310", () => {
       cy.get("a:contains('Theft of pedal cycle')").eq(1).click()
 
       cy.get("span.moj-badge").contains("UNMATCHED")
-    })
-  })
-
-  describe("renders based on feature flag value for user", () => {
-    it("is disabled if the feature flag is non-existent", () => {
-      loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
-
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-
-      cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
-      cy.get("select.offence-matcher").should("not.exist")
-    })
-
-    it("is disabled if the feature flag is disabled", () => {
-      loginAndVisit("OffenceMatchingDisabled", "/bichard/court-cases/0")
-
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-
-      cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
-      cy.get("select.offence-matcher").should("not.exist")
-    })
-
-    it("is enabled if the feature flag is enabled", () => {
-      cy.visit("/bichard/court-cases/0")
-
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-
-      cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
-      cy.get("select.offence-matcher").should("be.enabled")
     })
   })
 })
