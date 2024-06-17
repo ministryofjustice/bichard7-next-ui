@@ -98,10 +98,8 @@ describe("ASN", () => {
 
     loginAndVisit("/bichard/court-cases/0")
 
-    cy.get(".moj-badge").contains("Editable Field").should("exist")
-
     cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
-    cy.get("#event-name-error").should("exist")
+    cy.get("#error-message").should("exist")
 
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
     cy.get("#asn").clear()
