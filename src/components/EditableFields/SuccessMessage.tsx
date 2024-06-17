@@ -1,6 +1,6 @@
 import { CheckmarkIcon } from "../../features/CourtCaseDetails/Tabs/CourtCaseDetailsSingleTab.styles"
-import { CHECKMARK_ICON_URL } from "../../utils/icons"
-import { StyledSuccessMessage } from "./SuccessMessage.style"
+import { SUCCESS_CHECKMARK_ICON_URL } from "../../utils/icons"
+import { SuccessMessageContainer, Message } from "./SuccessMessage.styles"
 
 interface SuccessMessageProps {
   message: string
@@ -8,16 +8,18 @@ interface SuccessMessageProps {
 
 const SuccessMessage: React.FC<SuccessMessageProps> = ({ message }) => {
   return (
-    <StyledSuccessMessage id="success-message">
+    <SuccessMessageContainer id="success-message">
       <CheckmarkIcon
         className={`checkmark-icon checkmark`}
-        src={CHECKMARK_ICON_URL}
+        src={SUCCESS_CHECKMARK_ICON_URL}
         width={30}
         height={30}
         alt="Checkmark icon"
       />
-      {message}
-    </StyledSuccessMessage>
+      <Message>
+        <b>{message}</b>
+      </Message>
+    </SuccessMessageContainer>
   )
 }
 
