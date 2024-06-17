@@ -1,6 +1,6 @@
 const offenceMatcherSelectValue = (
   offenceReasonSequence: number | string,
-  offenceCourtCaseReferenceNumber: string | undefined
+  offenceCourtCaseReferenceNumber?: string
 ): string => {
   if (offenceCourtCaseReferenceNumber === undefined || offenceCourtCaseReferenceNumber === "") {
     return `${offenceReasonSequence}`
