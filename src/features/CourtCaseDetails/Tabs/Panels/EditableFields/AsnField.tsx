@@ -25,7 +25,7 @@ export const AsnField = () => {
   const [isSavedAsn, setIsSavedAsn] = useState<boolean>(false)
   const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false)
   const [key, setKey] = useState<string>("")
-  const [httpResponseStatus, setHttpResponseStatus] = useState<number>(0)
+  const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
   const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
 
   const saveAsn = useCallback(
@@ -44,11 +44,13 @@ export const AsnField = () => {
   )
 
   const handleAsnSave = useCallback((): void => {
-    if (isValidAsn) {
-      setIsSavedAsn(true)
-      savedAmend("asn")(amendedAsn)
-      saveAsn(new Asn(amendedAsn))
+    if (!isValidAsn) {
+      return
     }
+
+    setIsSavedAsn(true)
+    savedAmend("asn")(amendedAsn)
+    saveAsn(new Asn(amendedAsn))
   }, [amendedAsn, isValidAsn, saveAsn, savedAmend])
 
   useEffect(() => {
@@ -61,6 +63,7 @@ export const AsnField = () => {
       setUpdatedAhoAsn(amendedAsn)
     } else {
       handleAsnSave()
+      setHttpResponseError(undefined)
     }
   }, [isSavedAsn, isPageLoaded, amendments, updatedAhoAsn, amend, amendedAsn, handleAsnSave, isValidAsn])
 
@@ -81,7 +84,7 @@ export const AsnField = () => {
       amend("asn")(asnWithoutSlashes)
     }
     setIsSavedAsn(false)
-    setHttpResponseStatus(0)
+    setHttpResponseStatus(undefined)
     setIsValidAsn(isAsnFormatValid(inputAsnValue))
   }
 
