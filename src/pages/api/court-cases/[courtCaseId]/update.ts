@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next"
 import amendCourtCase from "services/amendCourtCase/amendCourtCase"
 import CourtCase from "services/entities/CourtCase"
 import getDataSource from "services/getDataSource"
+import { isError } from "types/Result"
 
 export default async (request: NextApiRequest, response: NextApiResponse) => {
   const allowedMethods = ["PATCH", "PUT", "POST"]
@@ -34,7 +35,12 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     return
   }
 
-  await amendCourtCase(dataSource, amendments, courtCase, currentUser)
+  const amendCourtcaseResponse = await amendCourtCase(dataSource, amendments, courtCase, currentUser)
+
+  if (isError(amendCourtcaseResponse)) {
+    res.status(500)
+    res.end()
+  }
 
   res.status(202)
   res.end()

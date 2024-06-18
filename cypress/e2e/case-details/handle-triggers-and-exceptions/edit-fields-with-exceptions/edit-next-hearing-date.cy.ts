@@ -218,6 +218,60 @@ describe("NextHearingDate", () => {
     cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Correction")
   })
 
+  it("Should display error message when auto-save fails", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        errorCount: 1
+      }
+    ])
+
+    cy.intercept("PUT", "/bichard/api/court-cases/0/update", {
+      statusCode: 500
+    })
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link")
+      .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
+      .click()
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "")
+    cy.get("#next-hearing-date").type("2023-12-24")
+    cy.get("#error-message").contains("Autosave has failed, please refresh").should("exist")
+    cy.get("#success-message").should("not.exist")
+  })
+
+  it("Should auto-save next hearing date", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        errorCount: 1
+      }
+    ])
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link")
+      .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
+      .click()
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "")
+    cy.get("#next-hearing-date").type("2023-12-24")
+    cy.get("#success-message").contains("Input saved").should("exist")
+
+    verifyUpdatedMessage({
+      expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
+      updatedMessageNotHaveContent: ["<ds:NextHearingDate />"],
+      updatedMessageHaveContent: ["<ds:NextHearingDate>2023-12-24</ds:NextHearingDate>"]
+    })
+  })
+
   it("Should not be able to edit next hearing date field when exception is not locked by current user", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [

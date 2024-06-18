@@ -5,11 +5,12 @@ import { useCurrentUser } from "context/CurrentUserContext"
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { Exception } from "types/exceptions"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
-import { SaveLinkButton } from "components/LinkButton"
 import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
 import isValidNextHearingDate from "utils/validators/isValidNextHearingDate"
 import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExceptions"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
+import SuccessMessage from "components/EditableFields/SuccessMessage"
+import ErrorMessage from "components/EditableFields/ErrorMessage"
 
 interface NextHearingDateFieldProps {
   result: Result
@@ -33,33 +34,44 @@ export const NextHearingDateField = ({
 
   const [isNhdSaved, setIsNhdSaved] = useState<boolean>(false)
   const [nextHearingDateChanged, setNextHearingDateChanged] = useState<boolean>(false)
+  const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
+  const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
 
   const saveNhd = useCallback(async () => {
-    await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, {
-      nextHearingDate: amendments.nextHearingDate
-    })
+    try {
+      await axios
+        .put(`/bichard/api/court-cases/${courtCase.errorId}/update`, {
+          nextHearingDate: amendments.nextHearingDate
+        })
+        .then((response) => {
+          setHttpResponseStatus(response.status)
+        })
+    } catch (error) {
+      setHttpResponseError(error as Error)
+    }
+
     setIsNhdSaved(true)
     setNextHearingDateChanged(false)
   }, [amendments.nextHearingDate, courtCase.errorId])
 
-  const isSaveNhdBtnDisabled = (): boolean => {
-    return (
-      !isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate) || isNhdSaved || !nextHearingDateChanged
-    )
-  }
-
-  useEffect(() => {}, [isNhdSaved, nextHearingDateChanged])
-
-  const handleNhdSave = () => {
-    if (isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)) {
-      saveNhd()
-      savedAmend("nextHearingDate")({
-        resultIndex: resultIndex,
-        offenceIndex: offenceIndex,
-        value: amendedNextHearingDate
-      })
+  const handleNhdSave = useCallback(() => {
+    if (!isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)) {
+      return
     }
-  }
+
+    saveNhd()
+    savedAmend("nextHearingDate")({
+      resultIndex: resultIndex,
+      offenceIndex: offenceIndex,
+      value: amendedNextHearingDate
+    })
+  }, [amendedNextHearingDate, offenceIndex, result.ResultHearingDate, resultIndex, saveNhd, savedAmend])
+
+  useEffect(() => {
+    if (!isNhdSaved && nextHearingDateChanged) {
+      handleNhdSave()
+    }
+  }, [handleNhdSave, isNhdSaved, nextHearingDateChanged])
 
   const isEditable =
     isCaseEditable && hasNextHearingDateExceptions(exceptions) && currentUser.featureFlags?.exceptionsEnabled
@@ -92,7 +104,8 @@ export const NextHearingDateField = ({
         }}
       />
 
-      <SaveLinkButton id={"save-next-hearing-date"} onClick={handleNhdSave} disabled={isSaveNhdBtnDisabled()} />
+      {httpResponseStatus === 202 && <SuccessMessage message="Input saved" />}
+      {httpResponseError && <ErrorMessage message="Autosave has failed, please refresh" />}
     </EditableFieldTableRow>
   )
 }
