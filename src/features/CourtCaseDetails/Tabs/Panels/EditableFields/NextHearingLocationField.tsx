@@ -1,7 +1,8 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import axios from "axios"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
-import { SaveLinkButton } from "components/LinkButton"
+import ErrorMessage from "components/EditableFields/ErrorMessage"
+import SuccessMessage from "components/EditableFields/SuccessMessage"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
@@ -18,7 +19,6 @@ interface NextHearingLocationFieldProps {
   offenceIndex: number
   resultIndex: number
   isCaseEditable: boolean
-  stopLeavingFn: (newValue: boolean) => void
 }
 
 export const NextHearingLocationField = ({
@@ -26,13 +26,11 @@ export const NextHearingLocationField = ({
   exceptions,
   offenceIndex,
   resultIndex,
-  isCaseEditable,
-  stopLeavingFn
+  isCaseEditable
 }: NextHearingLocationFieldProps) => {
   const { courtCase, amendments, savedAmend } = useCourtCase()
   const currentUser = useCurrentUser()
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
-
   const nextHearingLocation =
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
       .Result[resultIndex].NextResultSourceOrganisation?.OrganisationUnitCode
@@ -41,11 +39,23 @@ export const NextHearingLocationField = ({
   const [isNhlSaved, setIsNhlSaved] = useState<boolean>(false)
   const [organisations, setOrganisations] = useState<OrganisationUnitApiResponse>([])
   const [isNhlChanged, setIsNhlChanged] = useState<boolean>(false)
+  const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
+  const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
+
+  const isValidNhl = isValidNextHearingLocation(amendedNextHearingLocation, organisations)
 
   const saveNhl = useCallback(async () => {
-    await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, {
-      nextSourceOrganisation: amendments.nextSourceOrganisation
-    })
+    try {
+      await axios
+        .put(`/bichard/api/court-cases/${courtCase.errorId}/update`, {
+          nextSourceOrganisation: amendments.nextSourceOrganisation
+        })
+        .then((response) => {
+          setHttpResponseStatus(response.status)
+        })
+    } catch (error) {
+      setHttpResponseError(error as Error)
+    }
 
     setIsNhlSaved(true)
     setIsNhlChanged(false)
@@ -54,32 +64,36 @@ export const NextHearingLocationField = ({
     setSavedNextHearingLocation(nextSourceOrganisationAmendments ? nextSourceOrganisationAmendments[0].value ?? "" : "")
   }, [amendments.nextSourceOrganisation, courtCase.errorId])
 
-  const isSaveNhlBtnDisabled = (): boolean => {
-    return !isValidNextHearingLocation(amendedNextHearingLocation, organisations) || isNhlSaved || !isNhlChanged
-  }
-
-  const handleNhlSave = () => {
-    if (isValidNextHearingLocation(amendedNextHearingLocation, organisations)) {
-      saveNhl()
-      savedAmend("nextSourceOrganisation")({
-        resultIndex: resultIndex,
-        offenceIndex: offenceIndex,
-        value: amendedNextHearingLocation
-      })
+  const handleNhlSave = useCallback(() => {
+    if (!isValidNhl) {
+      return
     }
-  }
+
+    saveNhl()
+    savedAmend("nextSourceOrganisation")({
+      resultIndex: resultIndex,
+      offenceIndex: offenceIndex,
+      value: amendedNextHearingLocation
+    })
+  }, [amendedNextHearingLocation, isValidNhl, offenceIndex, resultIndex, saveNhl, savedAmend])
 
   useEffect(() => {
     if (amendedNextHearingLocation && amendedNextHearingLocation !== savedNextHearingLocation) {
-      console.log("CALLING")
       setIsNhlChanged(true)
       setIsNhlSaved(false)
     } else {
       setIsNhlChanged(false)
     }
 
-    stopLeavingFn(!isNhlSaved && isNhlChanged)
-  }, [amendedNextHearingLocation, isNhlChanged, isNhlSaved, savedNextHearingLocation, stopLeavingFn])
+    if (!isNhlSaved && isNhlChanged) {
+      handleNhlSave()
+      setHttpResponseError(undefined)
+    }
+
+    if (!isValidNhl) {
+      setHttpResponseStatus(undefined)
+    }
+  }, [amendedNextHearingLocation, handleNhlSave, isNhlChanged, isNhlSaved, isValidNhl, savedNextHearingLocation])
 
   const isEditable =
     isCaseEditable && hasNextHearingLocationException(exceptions) && currentUser.featureFlags?.exceptionsEnabled
@@ -100,8 +114,9 @@ export const NextHearingLocationField = ({
         offenceIndex={offenceIndex}
         setOrganisations={setOrganisations}
       />
-
-      <SaveLinkButton id={"save-next-hearing-location"} onClick={handleNhlSave} disabled={isSaveNhlBtnDisabled()} />
+      {!isValidNhl && <ErrorMessage message="Select valid Next hearing location" />}
+      {httpResponseStatus === 202 && <SuccessMessage message="Input saved" />}
+      {httpResponseError && <ErrorMessage message="Autosave has failed, please refresh" />}
     </EditableFieldTableRow>
   )
 }

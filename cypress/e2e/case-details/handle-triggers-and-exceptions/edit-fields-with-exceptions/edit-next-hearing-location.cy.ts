@@ -22,7 +22,6 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with no exception").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B46AM03")
-    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
   })
 
   it("Shouldn't see next hearing location field when it has no value", () => {
@@ -39,7 +38,6 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Use a motor vehicle on a road / public place without third party insurance").click()
     cy.contains("td", "Next hearing location").should("not.exist")
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
   })
 
   it("Should be able to edit field if HO100200 is raised", () => {
@@ -61,7 +59,6 @@ describe("NextHearingLocation", () => {
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
     cy.get("#next-hearing-location").should("have.value", "B@1EF$1")
-    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B01EF01")
 
@@ -108,7 +105,6 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B46AM03")
-    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B46DB00")
 
@@ -157,7 +153,6 @@ describe("NextHearingLocation", () => {
       .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
       .click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "")
-    cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Editable Field")
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B01EF00")
 
@@ -286,13 +281,11 @@ describe("NextHearingLocation", () => {
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
-    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
 
     cy.visit(`/bichard/court-cases/${resolvedCaseId}`)
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
-    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
   })
 
   it("Should not be able to edit next hearing location field when exception is not locked by current user", () => {
@@ -312,7 +305,6 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
-    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
   })
 
   it("Should not be able to edit next hearing location field when phase is not hearing outcome", () => {
@@ -332,7 +324,6 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
-    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
   })
 
   it("Should not be able to edit next hearing location field when user is not exception-handler", () => {
@@ -341,88 +332,65 @@ describe("NextHearingLocation", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
-    cy.contains("td", "Next hearing location").siblings().contains("Editable Field").should("not.exist")
   })
 
-  context("Save correction button", () => {
-    it("Should be enabled when valid value is entered", () => {
-      loginAndVisit("/bichard/court-cases/0")
-
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
-      cy.get("#next-hearing-location").clear()
-      cy.get("#next-hearing-location").type("B43UY00")
-
-      cy.get("#save-next-hearing-location").should("be.enabled")
+  it("Should display error message when Next Hearing Location is failed to auto-save", () => {
+    cy.intercept("PUT", "/bichard/api/court-cases/0/update", {
+      statusCode: 500
     })
 
-    it("Should be disabled when no value is entered", () => {
-      loginAndVisit("/bichard/court-cases/0")
+    loginAndVisit("/bichard/court-cases/0")
 
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
-      cy.get("#next-hearing-location").clear()
-      cy.get("#save-next-hearing-location").should("be.disabled")
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("B43UY00")
+
+    cy.get("#success-message").should("not.exist")
+    cy.get(".warning-icon").should("exist")
+    cy.get("#error-message").contains("Autosave has failed, please refresh").should("exist")
+  })
+
+  it("Should validate Next Hearing Location and auto-save", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+        updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("B43UY00")
+    cy.get("#success-message").contains("Input saved").should("exist")
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500) // FIXME
+
+    verifyUpdatedMessage({
+      expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
+      updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100200">B@1EF$1</ds:OrganisationUnitCode>'],
+      updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B43UY00</ds:OrganisationUnitCode>"]
     })
+  })
 
-    it("Should be disabled when invalid value is entered", () => {
-      loginAndVisit("/bichard/court-cases/0")
+  it("should display error when invalid Next Hearing Location is entered", () => {
+    loginAndVisit("/bichard/court-cases/0")
 
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
-      cy.get("#next-hearing-location").clear()
-      cy.get("#next-hearing-location").type("B01")
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("B43UYXX")
 
-      cy.get("#save-next-hearing-location").should("be.disabled")
-    })
-
-    it("Should be disabled when whitespace is entered", () => {
-      loginAndVisit("/bichard/court-cases/0")
-
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
-      cy.get("#next-hearing-location").clear()
-      cy.get("#next-hearing-location").type("      ")
-
-      cy.get("#save-next-hearing-location").should("be.disabled")
-    })
-
-    it("Should be enabled when a value different from the previous one is entered", () => {
-      loginAndVisit("/bichard/court-cases/0")
-
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
-      cy.get("#next-hearing-location").clear()
-      cy.get("#next-hearing-location").type("B21XA00")
-
-      cy.get("#next-hearing-location").clear()
-      cy.get("#next-hearing-location").type("B63AD00")
-
-      cy.get("#save-next-hearing-location").should("be.enabled")
-    })
-
-    it("Should be disabled when same value as the previous one is entered", () => {
-      loginAndVisit("/bichard/court-cases/0")
-
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
-      cy.get("#next-hearing-location").clear()
-      cy.get("#next-hearing-location").type("B21XA00")
-
-      cy.get("#save-next-hearing-location").click()
-
-      cy.get("#next-hearing-location").clear()
-      cy.get("#next-hearing-location").type("B21XA00")
-
-      cy.get("#save-next-hearing-location").should("be.disabled")
-    })
-
-    it("Should not display editable field for hearing location when exceptionsEnabled is false for user", () => {
-      loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
-
-      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
-      cy.get(".moj-badge").contains("Editable Field").should("not.exist")
-    })
+    cy.get("#success-message").should("not.exist")
+    cy.get(".warning-icon").should("exist")
+    cy.contains("Select valid Next hearing location").should("exist")
   })
 })
