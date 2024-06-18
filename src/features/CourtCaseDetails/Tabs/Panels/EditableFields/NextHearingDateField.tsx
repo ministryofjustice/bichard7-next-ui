@@ -1,14 +1,14 @@
+import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { useState } from "react"
 import { Exception } from "types/exceptions"
-import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
 import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
-import isValidNextHearingDate from "utils/validators/isValidNextHearingDate"
 import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExceptions"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
+import isValidNextHearingDate from "utils/validators/isValidNextHearingDate"
 import { AutoSave } from "../../../../../components/EditableFields/AutoSave"
-import { useState } from "react"
 
 interface NextHearingDateFieldProps {
   result: Result
@@ -97,7 +97,7 @@ export const NextHearingDateField = ({
         setChanged={setNextHearingDateChanged}
         setSaved={setIsNhdSaved}
         isValid={isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)}
-        amendmentField={"nextHearingDate"}
+        amendmentFields={["nextHearingDate"]}
         isChanged={nextHearingDateChanged}
         isSaved={isNhdSaved}
       />
