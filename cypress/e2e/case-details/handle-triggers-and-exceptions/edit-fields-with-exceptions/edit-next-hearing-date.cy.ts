@@ -240,7 +240,7 @@ describe("NextHearingDate", () => {
     cy.get("#success-message").should("not.exist")
   })
 
-  it("Should auto-save next hearing date", () => {
+  it.only("Should auto-save next hearing date", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {

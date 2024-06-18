@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useState } from "react"
-import axios from "axios"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
@@ -9,8 +7,8 @@ import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNext
 import isValidNextHearingDate from "utils/validators/isValidNextHearingDate"
 import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExceptions"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
-import SuccessMessage from "components/EditableFields/SuccessMessage"
-import ErrorMessage from "components/EditableFields/ErrorMessage"
+import { AutoSave } from "../../../../../components/EditableFields/AutoSave"
+import { useState } from "react"
 
 interface NextHearingDateFieldProps {
   result: Result
@@ -27,51 +25,43 @@ export const NextHearingDateField = ({
   resultIndex,
   isCaseEditable
 }: NextHearingDateFieldProps) => {
-  const { courtCase, amendments, amend, savedAmend } = useCourtCase()
+  const { amendments, amend } = useCourtCase()
   const currentUser = useCurrentUser()
   const amendedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
   const updatedNextHearingDate = getNextHearingDateValue(amendments, offenceIndex, resultIndex)
 
   const [isNhdSaved, setIsNhdSaved] = useState<boolean>(false)
   const [nextHearingDateChanged, setNextHearingDateChanged] = useState<boolean>(false)
-  const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
-  const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
+  // const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
+  // const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
 
-  const saveNhd = useCallback(async () => {
-    try {
-      await axios
-        .put(`/bichard/api/court-cases/${courtCase.errorId}/update`, {
-          nextHearingDate: amendments.nextHearingDate
-        })
-        .then((response) => {
-          setHttpResponseStatus(response.status)
-        })
-    } catch (error) {
-      setHttpResponseError(error as Error)
-    }
+  // // const saveNhd = useCallback(async (amendments: Amendments, courtCase: DisplayFullCourtCase) => {
+  //   try {
+  //     await axios
+  //       .put(`/bichard/api/court-cases/${courtCase.errorId}/update`, amendments)
+  //       .then((response) => {
+  //         setHttpResponseStatus(response.status)
+  //       })
+  //   } catch (error) {
+  //     setHttpResponseError(error as Error)
+  //   }
 
-    setIsNhdSaved(true)
-    setNextHearingDateChanged(false)
-  }, [amendments.nextHearingDate, courtCase.errorId])
+  //   setIsNhdSaved(true)
+  //   setNextHearingDateChanged(false)
+  // }, [amendments.nextHearingDate, courtCase.errorId])
 
-  const handleNhdSave = useCallback(() => {
-    if (!isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)) {
-      return
-    }
+  // const handleNhdSave = useCallback(() => {
+  //   if (!isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)) {
+  //     return
+  //   }
 
-    saveNhd()
-    savedAmend("nextHearingDate")({
-      resultIndex: resultIndex,
-      offenceIndex: offenceIndex,
-      value: amendedNextHearingDate
-    })
-  }, [amendedNextHearingDate, offenceIndex, result.ResultHearingDate, resultIndex, saveNhd, savedAmend])
-
-  useEffect(() => {
-    if (!isNhdSaved && nextHearingDateChanged) {
-      handleNhdSave()
-    }
-  }, [handleNhdSave, isNhdSaved, nextHearingDateChanged])
+  //   saveNhd({nextHearingDate: amendments.nextHearingDate}, courtCase)
+  //   savedAmend("nextHearingDate")({
+  //     resultIndex: resultIndex,
+  //     offenceIndex: offenceIndex,
+  //     value: amendedNextHearingDate
+  //   })
+  // }, [amendedNextHearingDate, offenceIndex, result.ResultHearingDate, resultIndex, saveNhd, savedAmend])
 
   const isEditable =
     isCaseEditable && hasNextHearingDateExceptions(exceptions) && currentUser.featureFlags?.exceptionsEnabled
@@ -103,9 +93,17 @@ export const NextHearingDateField = ({
           })
         }}
       />
+      <AutoSave
+        setChanged={setNextHearingDateChanged}
+        setSaved={setIsNhdSaved}
+        isValid={isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate)}
+        amendmentField={"nextHearingDate"}
+        isChanged={nextHearingDateChanged}
+        isSaved={isNhdSaved}
+      />
 
-      {httpResponseStatus === 202 && <SuccessMessage message="Input saved" />}
-      {httpResponseError && <ErrorMessage message="Autosave has failed, please refresh" />}
+      {/* {httpResponseStatus === 202 && <SuccessMessage message="Input saved" />}
+      {httpResponseError && <ErrorMessage message="Autosave has failed, please refresh" />} */}
     </EditableFieldTableRow>
   )
 }
