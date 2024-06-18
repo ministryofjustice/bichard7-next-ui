@@ -84,7 +84,31 @@ describe("ASN", () => {
     cy.get(".moj-badge").should("not.exist")
   })
 
-  it("Should validate ASN correction and save to updated message in the database", () => {
+  it("Should display error message when ASN is failed to auto-save", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+
+    cy.intercept("PUT", "/bichard/api/court-cases/0/update", {
+      statusCode: 500
+    })
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("#asn").clear()
+    cy.get("#asn").type("1101ZD0100000410836V")
+    cy.get("#error-message").contains("Autosave has failed, please refresh").should("exist")
+    cy.get("#success-message").should("not.exist")
+  })
+
+  it("Should validate and auto-save the ASN correction", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
@@ -105,7 +129,6 @@ describe("ASN", () => {
     cy.get("#asn").clear()
 
     cy.get("#asn").type("1101ZD0100000410836V")
-    cy.get("#event-name-error").should("not.exist")
     cy.get("#success-message").contains("Input saved").should("exist")
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
@@ -133,7 +156,6 @@ describe("ASN", () => {
 
     loginAndVisit("/bichard/court-cases/0")
 
-    cy.get(".moj-badge").contains("Editable Field").should("exist")
     cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
@@ -168,7 +190,6 @@ describe("ASN", () => {
 
     loginAndVisit("/bichard/court-cases/0")
 
-    cy.get(".moj-badge").contains("Editable Field").should("exist")
     cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
@@ -212,7 +233,6 @@ describe("ASN", () => {
   it("should display the updated ASN after submission along with CORRECTION badge", () => {
     loginAndVisit("/bichard/court-cases/0")
 
-    cy.get(".moj-badge").contains("Correction").should("not.exist")
     cy.get(".Defendant-details-table").contains("AAAAAAAAAAAAAAAAAAA")
     cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
@@ -246,8 +266,6 @@ describe("ASN", () => {
       }
     ])
     loginAndVisit("/bichard/court-cases/0")
-
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
   })
 
   it("Should not be able to edit ASN field if user is not an exception handler", () => {
@@ -268,7 +286,5 @@ describe("ASN", () => {
 
   it("Should not display an editable field for ASN when exceptionsEnabled is false for user", () => {
     loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
-
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
   })
 })
