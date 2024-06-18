@@ -1,5 +1,5 @@
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
+import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
 import MockDate from "mockdate"
 import { DataSource, UpdateQueryBuilder, UpdateResult } from "typeorm"
 import { v4 as uuid } from "uuid"
