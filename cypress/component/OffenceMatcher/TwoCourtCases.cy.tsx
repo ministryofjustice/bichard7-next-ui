@@ -2,17 +2,17 @@ import { OffenceMatcher } from "components/OffenceMatcher"
 import { CourtCaseContext } from "context/CourtCaseContext"
 import { Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import HO100310 from "./fixtures/HO100310.json"
+import HO100332 from "./fixtures/HO100332.json"
 
 describe("Offence matcher with single court case", () => {
   describe("Without existing amendments", () => {
-    const courtCase = HO100310 as unknown as DisplayFullCourtCase
-    const [offence] = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence
+    const courtCase = HO100332 as unknown as DisplayFullCourtCase
+    const [offence1] = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence
 
     beforeEach(() => {
       cy.mount(
         <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
-          <OffenceMatcher offenceIndex={0} offence={offence} isCaseLockedToCurrentUser={true} />
+          <OffenceMatcher offenceIndex={0} offence={offence1} isCaseLockedToCurrentUser={true} />
         </CourtCaseContext.Provider>
       )
     })
@@ -23,22 +23,24 @@ describe("Offence matcher with single court case", () => {
     })
 
     it("groups dropdown options by CCR", () => {
-      cy.get("select").children("optgroup").eq(0).should("have.attr", "label", "97/1626/008395Q")
-      cy.get("select").children("optgroup").eq(0).contains("option", "TH68006")
+      cy.get("select").children("optgroup").eq(0).should("have.attr", "label", "12/2732/000015R")
+      cy.get("select").children("optgroup").eq(0).contains("option", "001 - OF61016")
+      cy.get("select").children("optgroup").eq(1).should("have.attr", "label", "12/2732/000016T")
+      cy.get("select").children("optgroup").eq(1).contains("option", "002 - OF61016")
     })
 
     it("displays matchable offences as dropdown options", () => {
-      cy.get("select").contains("option", "TH68006")
+      cy.get("select").contains("option", "OF61016")
       cy.get("select").contains("option", "TH68151").should("not.exist")
       cy.get("select").contains("option", "RT88191").should("not.exist")
     })
 
     it("displays offences in the correct format", () => {
       cy.get("option")
-        .contains("TH68006")
+        .contains("OF61016")
         .invoke("text")
         .then((text) => {
-          expect(text).equals("001 - TH68006")
+          expect(text).equals("001 - OF61016")
         })
     })
 
@@ -49,8 +51,8 @@ describe("Offence matcher with single court case", () => {
 })
 
 describe("With existing amendments", () => {
-  const courtCase = HO100310 as unknown as DisplayFullCourtCase
-  const [offence] = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence
+  const courtCase = HO100332 as unknown as DisplayFullCourtCase
+  const [offence1, offence2] = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence
 
   it("loads amended value", () => {
     const amendments: Amendments = {
@@ -63,18 +65,18 @@ describe("With existing amendments", () => {
       offenceCourtCaseReferenceNumber: [
         {
           offenceIndex: 0,
-          value: "97/1626/008395Q"
+          value: "12/2732/000015R"
         }
       ]
     }
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments, savedAmendments: {} }, () => {}]}>
-        <OffenceMatcher offenceIndex={0} offence={offence} isCaseLockedToCurrentUser={true} />
+        <OffenceMatcher offenceIndex={0} offence={offence1} isCaseLockedToCurrentUser={true} />
       </CourtCaseContext.Provider>
     )
 
-    cy.get("select").should("have.value", "1-97/1626/008395Q")
+    cy.get("select").should("have.value", "1-12/2732/000015R")
   })
 
   it("disables options that already exist in amendments", () => {
@@ -88,18 +90,19 @@ describe("With existing amendments", () => {
       offenceCourtCaseReferenceNumber: [
         {
           offenceIndex: 1,
-          value: "97/1626/008395Q"
+          value: "12/2732/000015R"
         }
       ]
     }
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments, savedAmendments: {} }, () => {}]}>
-        <OffenceMatcher offenceIndex={0} offence={offence} isCaseLockedToCurrentUser={true} />
+        <OffenceMatcher offenceIndex={0} offence={offence2} isCaseLockedToCurrentUser={true} />
       </CourtCaseContext.Provider>
     )
 
     cy.get("select").should("have.value", null)
-    cy.get("select").contains("option", "TH68006").should("be.disabled")
+    cy.get("select").contains("option", "001 - OF61016").should("be.disabled")
+    cy.get("select").contains("option", "002 - OF61016").should("be.enabled")
   })
 })

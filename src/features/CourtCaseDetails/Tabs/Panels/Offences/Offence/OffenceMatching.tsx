@@ -48,7 +48,7 @@ export const OffenceMatching = ({
   const offenceMatchingExceptionMessage = findExceptions(courtCase, courtCase.aho.Exceptions, ExceptionCode.HO100304)
 
   const displayOffenceMatcher =
-    enabled(currentUser) && exceptions.some((e) => [ExceptionCode.HO100310].includes(e.code))
+    enabled(currentUser) && exceptions.some((e) => [ExceptionCode.HO100310, ExceptionCode.HO100332].includes(e.code))
   const userCanMatchOffence =
     courtCase.errorLockedByUsername === currentUser?.username && courtCase.errorStatus === "Unresolved"
 
