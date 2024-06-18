@@ -85,8 +85,8 @@ describe("updateCourtCase", () => {
       { code: TriggerCode.TRPR0002 }
     ])
 
-    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 }]
-    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 }]
+    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 } as Trigger]
+    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 } as Trigger]
     const events: AuditLogEvent[] = []
 
     const updateResult = await updateTriggers(
@@ -184,8 +184,8 @@ describe("updateCourtCase", () => {
       { code: TriggerCode.TRPR0008, offenceSequenceNumber: 3 }
     ])
 
-    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 }]
-    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 }]
+    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 } as Trigger]
+    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 } as Trigger]
     const events: AuditLogEvent[] = []
 
     const updateResult = await updateTriggers(
@@ -214,8 +214,8 @@ describe("updateCourtCase", () => {
       { code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 },
       { code: TriggerCode.TRPR0002 }
     ])
-    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 }]
-    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 }]
+    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 } as Trigger]
+    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 } as Trigger]
     const events: AuditLogEvent[] = []
 
     jest
@@ -244,8 +244,8 @@ describe("updateCourtCase", () => {
       { code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 },
       { code: TriggerCode.TRPR0002 }
     ])
-    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 }]
-    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 }]
+    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 } as Trigger]
+    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 } as Trigger]
     const events: AuditLogEvent[] = []
 
     jest
