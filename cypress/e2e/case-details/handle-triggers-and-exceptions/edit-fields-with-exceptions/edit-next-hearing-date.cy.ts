@@ -104,8 +104,8 @@ describe("NextHearingDate", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-01-01")
-    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
+    cy.contains("generalhandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-01-01")
+    cy.contains("generalhandler: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
@@ -147,8 +147,8 @@ describe("NextHearingDate", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24")
-    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
+    cy.contains("generalhandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24")
+    cy.contains("generalhandler: Portal Action: Resubmitted Message.")
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
@@ -186,9 +186,9 @@ describe("NextHearingDate", () => {
     cy.contains("Notes").click()
     const dateTimeRegex = /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
     cy.contains(dateTimeRegex)
-    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-01-01")
-    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24")
-    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
+    cy.contains("generalhandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2024-01-01")
+    cy.contains("generalhandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24")
+    cy.contains("generalhandler: Portal Action: Resubmitted Message.")
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
       updatedMessageNotHaveContent: ["<ds:NextHearingDate>false</ds:NextHearingDate>", "<ds:NextHearingDate />"],
@@ -240,7 +240,7 @@ describe("NextHearingDate", () => {
     cy.get("#success-message").should("not.exist")
   })
 
-  it.only("Should auto-save next hearing date", () => {
+  it("Should auto-save next hearing date", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
