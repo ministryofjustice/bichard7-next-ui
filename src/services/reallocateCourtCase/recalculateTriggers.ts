@@ -7,8 +7,8 @@ import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
 
 type PartialTriggerEntity = Pick<TriggerEntity, "triggerCode" | "triggerItemIdentity" | "status">
 
-const reallocateCaseTrigger = { code: REALLOCATE_CASE_TRIGGER_CODE }
-const outOfAreaCaseTrigger = { code: OUT_OF_AREA_TRIGGER_CODE }
+const reallocateCaseTrigger = { code: REALLOCATE_CASE_TRIGGER_CODE } as Trigger
+const outOfAreaCaseTrigger = { code: OUT_OF_AREA_TRIGGER_CODE } as Trigger
 
 const containsTrigger = (triggers: Trigger[], trigger?: Trigger): boolean => {
   if (!trigger) {
@@ -21,7 +21,7 @@ const asTrigger = (triggerEntity: PartialTriggerEntity): Trigger => {
   return {
     code: triggerEntity.triggerCode,
     offenceSequenceNumber: triggerEntity.triggerItemIdentity
-  }
+  } as Trigger
 }
 
 const asTriggerEntity = (trigger: Trigger): PartialTriggerEntity => {
@@ -145,7 +145,7 @@ const recalculateTriggers = (existingTriggers: TriggerEntity[], triggers: Trigge
     .map((triggerEntity) => ({
       code: triggerEntity.triggerCode,
       offenceSequenceNumber: triggerEntity.triggerItemIdentity
-    }))
+    })) as Trigger[]
 
   const triggersOutcome: TriggersOutcome = {
     triggersToAdd: newTriggersThatAreNotOnTheCase.concat(newOutOfAreaTriggers),

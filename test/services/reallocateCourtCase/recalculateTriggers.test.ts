@@ -21,7 +21,7 @@ describe("recalculateTriggers", () => {
     return {
       offenceSequenceNumber,
       code: code
-    }
+    } as Trigger
   }
 
   const testCases: {
