@@ -9,6 +9,7 @@ import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExc
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
 import isValidNextHearingDate from "utils/validators/isValidNextHearingDate"
 import { AutoSave } from "../../../../../components/EditableFields/AutoSave"
+import ErrorMessage from "components/EditableFields/ErrorMessage"
 
 interface NextHearingDateFieldProps {
   result: Result
@@ -70,7 +71,11 @@ export const NextHearingDateField = ({
         amendmentFields={["nextHearingDate"]}
         isChanged={nextHearingDateChanged}
         isSaved={isNhdSaved}
-      />
+      >
+        {!isValidNextHearingDate(amendedNextHearingDate, result.ResultHearingDate) && (
+          <ErrorMessage message="Select valid Next hearing date" />
+        )}
+      </AutoSave>
     </EditableFieldTableRow>
   )
 }

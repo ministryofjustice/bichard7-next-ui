@@ -12,9 +12,18 @@ interface AutoSaveProps {
   isSaved: boolean
   isChanged: boolean
   amendmentFields: AmendmentKeys[]
+  children?: React.ReactNode
 }
 
-export const AutoSave = ({ setSaved, setChanged, isValid, isSaved, isChanged, amendmentFields }: AutoSaveProps) => {
+export const AutoSave = ({
+  setSaved,
+  setChanged,
+  isValid,
+  isSaved,
+  isChanged,
+  amendmentFields,
+  children
+}: AutoSaveProps) => {
   const { courtCase, amendments, savedAmend } = useCourtCase()
   const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
   const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
@@ -50,6 +59,10 @@ export const AutoSave = ({ setSaved, setChanged, isValid, isSaved, isChanged, am
   }, [amendmentFields, amendments, courtCase.errorId, savedAmend, setChanged, setSaved])
 
   useEffect(() => {
+    if (!isValid) {
+      setHttpResponseStatus(undefined)
+    }
+
     if (!isValid || isSaved || !isChanged) {
       return
     }
@@ -59,6 +72,7 @@ export const AutoSave = ({ setSaved, setChanged, isValid, isSaved, isChanged, am
 
   return (
     <>
+      {children}
       {httpResponseStatus === 202 && <SuccessMessage message="Input saved" />}
       {httpResponseError && <ErrorMessage message="Autosave has failed, please refresh" />}
     </>
