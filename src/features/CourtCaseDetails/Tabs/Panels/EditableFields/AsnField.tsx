@@ -19,56 +19,10 @@ export const AsnField = () => {
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
       ?.ArrestSummonsNumber
 
-  // const [updatedAhoAsn, setUpdatedAhoAsn] = useState<string>(
-  //   courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
-  //     ?.ArrestSummonsNumber
-  // )
   const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(amendedAsn))
   const [isSavedAsn, setIsSavedAsn] = useState<boolean>(false)
   const [asnChanged, setAsnChanged] = useState<boolean>(false)
-  // const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false)
   const [key, setKey] = useState<string>("")
-  // const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
-  // const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
-
-  // const saveAsn = useCallback(
-  //   async (asn: Asn) => {
-  //     try {
-  //       await axios
-  //         .put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
-  //         .then((response) => {
-  //           setHttpResponseStatus(response.status)
-  //         })
-  //     } catch (error) {
-  //       setHttpResponseError(error as Error)
-  //     }
-  //   },
-  //   [courtCase.errorId]
-  // )
-
-  // const handleAsnSave = useCallback((): void => {
-  //   if (!isValidAsn) {
-  //     return
-  //   }
-
-  //   setIsSavedAsn(true)
-  //   savedAmend("asn")(amendedAsn)
-  //   saveAsn(new Asn(amendedAsn))
-  // }, [amendedAsn, isValidAsn, saveAsn, savedAmend])
-
-  // useEffect(() => {
-  //   if (!isPageLoaded) {
-  //     amend("asn")(updatedAhoAsn ?? "")
-  //     setIsPageLoaded(true)
-  //   }
-
-  //   if (isSavedAsn) {
-  //     setUpdatedAhoAsn(amendedAsn)
-  //   } else {
-  //     handleAsnSave()
-  //     setHttpResponseError(undefined)
-  //   }
-  // }, [isSavedAsn, isPageLoaded, amendments, updatedAhoAsn, amend, amendedAsn, handleAsnSave, isValidAsn])
 
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Backspace") {
