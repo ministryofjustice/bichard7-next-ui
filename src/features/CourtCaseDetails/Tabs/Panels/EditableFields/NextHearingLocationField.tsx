@@ -31,12 +31,6 @@ export const NextHearingLocationField = ({
   const currentUser = useCurrentUser()
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
 
-  // Following code is not deleted because it will be required for a functionality that only auto-saves the new value.
-  // const savedNextHearingLocation =
-  //   courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
-  //     .Result[resultIndex].NextResultSourceOrganisation?.OrganisationUnitCode
-
-  // const [savedNextHearingLocation, setSavedNextHearingLocation] = useState<string>(nextHearingLocation ?? "")
   const [isNhlSaved, setIsNhlSaved] = useState<boolean>(false)
   const [organisations, setOrganisations] = useState<OrganisationUnitApiResponse>([])
   const [isNhlChanged, setIsNhlChanged] = useState<boolean>(false)
