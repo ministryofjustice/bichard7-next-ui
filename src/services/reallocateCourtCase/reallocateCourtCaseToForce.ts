@@ -62,7 +62,7 @@ const reallocateCourtCaseToForce = async (
       const triggers = preUpdateTrigger.concat(postUpdateTriggers)
 
       if (!courtCase.errorStatus || courtCase.errorStatus === "Resolved") {
-        triggers.push({ code: REALLOCATE_CASE_TRIGGER_CODE })
+        triggers.push({ code: REALLOCATE_CASE_TRIGGER_CODE } as Trigger)
       }
 
       const { triggersToAdd, triggersToDelete } = recalculateTriggers(courtCase.triggers, triggers)

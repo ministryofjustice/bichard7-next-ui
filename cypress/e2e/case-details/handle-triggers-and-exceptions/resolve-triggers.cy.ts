@@ -1,5 +1,5 @@
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
+import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import type { TestTrigger } from "../../../../test/utils/manageTriggers"
 import { loginAndVisit } from "../../../support/helpers"
