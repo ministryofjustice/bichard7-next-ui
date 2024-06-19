@@ -1,5 +1,7 @@
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
+import { AutoSave } from "components/EditableFields/AutoSave"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
+import ErrorMessage from "components/EditableFields/ErrorMessage"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { KeyboardEvent, useState } from "react"
@@ -7,8 +9,6 @@ import Asn from "services/Asn"
 import isAsnFormatValid from "utils/exceptions/isAsnFormatValid"
 import isAsnException from "utils/exceptions/isException/isAsnException"
 import { AsnInput } from "./AsnField.styles"
-import ErrorMessage from "components/EditableFields/ErrorMessage"
-import { AutoSave } from "components/EditableFields/AutoSave"
 
 export const AsnField = () => {
   const { courtCase, amendments, amend } = useCourtCase()
@@ -137,7 +137,7 @@ export const AsnField = () => {
           isChanged={asnChanged}
           isSaved={isSavedAsn}
         >
-          {!isValidAsn && <ErrorMessage message="Select valid Next hearing date" />}
+          {!isValidAsn && <ErrorMessage message="Enter ASN in the correct format" />}
         </AutoSave>
       </div>
     </EditableFieldTableRow>
