@@ -362,7 +362,7 @@ describe("NextHearingLocation", () => {
         errorLockedByUsername: "GeneralHandler"
       }
     ])
-
+    cy.intercept("PUT", "/bichard/api/court-cases/0/update").as("save")
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
@@ -371,9 +371,7 @@ describe("NextHearingLocation", () => {
     cy.get("#next-hearing-location").type("B43UY00")
     cy.get("#success-message").contains("Input saved").should("exist")
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500) // FIXME
-
+    cy.wait("@save")
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
       updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100200">B@1EF$1</ds:OrganisationUnitCode>'],

@@ -119,6 +119,7 @@ describe("ASN", () => {
         errorLockedByUsername: "GeneralHandler"
       }
     ])
+    cy.intercept("PUT", "/bichard/api/court-cases/0/update").as("save")
 
     loginAndVisit("/bichard/court-cases/0")
 
@@ -132,9 +133,7 @@ describe("ASN", () => {
     cy.get("#success-message").contains("Input saved").should("exist")
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500) // FIXME
-
+    cy.wait("@save")
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
       updatedMessageNotHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber>"],
