@@ -61,9 +61,10 @@ export const AutoSave = ({
   useEffect(() => {
     if (!isValid) {
       setHttpResponseStatus(undefined)
+      return
     }
 
-    if (!isValid || isSaved || !isChanged) {
+    if (isSaved || !isChanged) {
       return
     }
 

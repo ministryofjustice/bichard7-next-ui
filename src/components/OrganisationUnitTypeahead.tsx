@@ -12,9 +12,18 @@ interface Props {
   offenceIndex: number
   value?: string
   setOrganisations?: (OrganisationUnitApiResponse: OrganisationUnitApiResponse) => void
+  setChanged?: (changed: boolean) => void
+  setSaved?: (changed: boolean) => void
 }
 
-const OrganisationUnitTypeahead: React.FC<Props> = ({ value, resultIndex, offenceIndex, setOrganisations }: Props) => {
+const OrganisationUnitTypeahead: React.FC<Props> = ({
+  value,
+  resultIndex,
+  offenceIndex,
+  setOrganisations,
+  setChanged,
+  setSaved
+}: Props) => {
   const { amend } = useCourtCase()
   const [inputItems, setInputItems] = useState<OrganisationUnitApiResponse>([])
 
@@ -51,6 +60,12 @@ const OrganisationUnitTypeahead: React.FC<Props> = ({ value, resultIndex, offenc
         offenceIndex: offenceIndex,
         value: inputValue
       })
+      if (setChanged) {
+        setChanged(true)
+      }
+      if (setSaved) {
+        setSaved(false)
+      }
     },
     initialInputValue: value,
     itemToString: (item) => item?.fullOrganisationCode ?? ""
