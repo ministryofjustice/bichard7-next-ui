@@ -30,6 +30,8 @@ export const NextHearingLocationField = ({
   const { amendments } = useCourtCase()
   const currentUser = useCurrentUser()
   const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
+
+  // Following code is not deleted because it will be required for a functionality that only auto-saves the new value.
   // const savedNextHearingLocation =
   //   courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
   //     .Result[resultIndex].NextResultSourceOrganisation?.OrganisationUnitCode
