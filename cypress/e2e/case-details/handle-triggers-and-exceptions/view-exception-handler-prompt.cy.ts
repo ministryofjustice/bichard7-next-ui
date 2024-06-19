@@ -182,7 +182,7 @@ describe("View Exception Handler Prompts", () => {
 
       loginAndVisit("/bichard/court-cases/0")
 
-      cy.get(".Defendant-details-table").contains("1101ZD0100000448754K")
+      cy.get(".defendant-details-table").contains("1101ZD0100000448754K")
       cy.get(".error-prompt-message").should("not.exist")
     })
 
@@ -213,7 +213,7 @@ describe("View Exception Handler Prompts", () => {
 
       loginAndVisit("/bichard/court-cases/0")
 
-      cy.get(".Defendant-details-table").contains("1101ZD0100000448754K")
+      cy.get(".defendant-details-table").contains("1101ZD0100000448754K")
       cy.get(".error-prompt-message").should("not.exist")
     })
 

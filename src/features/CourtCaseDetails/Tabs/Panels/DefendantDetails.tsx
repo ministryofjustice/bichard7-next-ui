@@ -28,7 +28,7 @@ export const DefendantDetails = () => {
   )
 
   return (
-    <DefendantDetailTable className={`Defendant-details-table`}>
+    <DefendantDetailTable className={`defendant-details-table`}>
       <Table>
         {asnSystemErrorExceptionPrompt ? (
           <ExceptionFieldTableRow
