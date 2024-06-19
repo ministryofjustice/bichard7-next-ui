@@ -25,10 +25,16 @@ export const AutoSave = ({
   children
 }: AutoSaveProps) => {
   const { courtCase, amendments, savedAmend } = useCourtCase()
+  const [saving, setSaving] = useState<boolean>(false)
   const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
   const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
 
   const saveAmendments = useCallback(async () => {
+    if (saving) {
+      return
+    }
+    setSaving(true)
+
     const map = new Map()
 
     amendmentFields?.forEach((amendmentField) => map.set(amendmentField, amendments[amendmentField]))
@@ -52,11 +58,13 @@ export const AutoSave = ({
       })
     } catch (error) {
       setHttpResponseError(error as Error)
+    } finally {
+      setSaving(false)
     }
 
     setSaved(true)
     setChanged(false)
-  }, [amendmentFields, amendments, courtCase.errorId, savedAmend, setChanged, setSaved])
+  }, [amendmentFields, amendments, courtCase.errorId, savedAmend, saving, setChanged, setSaved])
 
   useEffect(() => {
     if (!isValid) {
