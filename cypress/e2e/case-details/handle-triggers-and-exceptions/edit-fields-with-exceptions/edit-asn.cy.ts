@@ -84,7 +84,7 @@ describe("ASN", () => {
     cy.get(".moj-badge").should("not.exist")
   })
 
-  it("Should display error message when ASN is failed to auto-save", () => {
+  it("Should display an error message when auto-save fails", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
