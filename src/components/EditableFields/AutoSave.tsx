@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useCallback, useEffect, useState } from "react"
 import { useCourtCase } from "../../context/CourtCaseContext"
-import { AmendmentKeys } from "../../types/Amendments"
+import { AmendmentKeys, OffenceField, ResultQualifierCode } from "../../types/Amendments"
 import ErrorMessage from "./ErrorMessage"
 import SuccessMessage from "./SuccessMessage"
 
@@ -15,7 +15,7 @@ interface AutoSaveProps {
 }
 
 export const AutoSave = ({ setSaved, setChanged, isValid, isSaved, isChanged, amendmentFields }: AutoSaveProps) => {
-  const { courtCase, amendments } = useCourtCase()
+  const { courtCase, amendments, savedAmend } = useCourtCase()
   const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
   const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
 
@@ -29,6 +29,17 @@ export const AutoSave = ({ setSaved, setChanged, isValid, isSaved, isChanged, am
     try {
       await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, update).then((response) => {
         setHttpResponseStatus(response.status)
+
+        Object.keys(update).forEach((updateKey) => {
+          if (Array.isArray(update[updateKey])) {
+            update[updateKey].forEach(
+              (updatedAmendment: OffenceField<number> | OffenceField<string> | ResultQualifierCode) =>
+                savedAmend(updateKey as AmendmentKeys)(updatedAmendment)
+            )
+          } else {
+            savedAmend(updateKey as AmendmentKeys)(update[updateKey])
+          }
+        })
       })
     } catch (error) {
       setHttpResponseError(error as Error)
@@ -36,7 +47,7 @@ export const AutoSave = ({ setSaved, setChanged, isValid, isSaved, isChanged, am
 
     setSaved(true)
     setChanged(false)
-  }, [amendmentFields, amendments, courtCase.errorId, setChanged, setSaved])
+  }, [amendmentFields, amendments, courtCase.errorId, savedAmend, setChanged, setSaved])
 
   useEffect(() => {
     if (!isValid || isSaved || !isChanged) {

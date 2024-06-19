@@ -20,16 +20,16 @@ type Unpacked<T> = T extends (infer U)[] ? U : T
 
 export type Amender = <T extends AmendmentKeys>(amendmentKey: T) => (newValue: Unpacked<Amendments[T]>) => void
 
-type OffenceField<T> = {
+export type OffenceField<T> = {
   offenceIndex: number
   value?: T
 }
 
-type ResultField<T> = OffenceField<T> & {
+export type ResultField<T> = OffenceField<T> & {
   resultIndex: number
 }
 
-type ResultQualifierCode = OffenceField<string> & {
+export type ResultQualifierCode = OffenceField<string> & {
   resultIndex?: number
   resultQualifierIndex: number
 }
