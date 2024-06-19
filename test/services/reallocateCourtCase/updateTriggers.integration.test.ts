@@ -1,6 +1,6 @@
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
 import { Trigger } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/Trigger"
-import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
+import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
 import MockDate from "mockdate"
 import { DataSource, Repository } from "typeorm"
 import { v4 as uuid } from "uuid"
@@ -85,8 +85,8 @@ describe("updateCourtCase", () => {
       { code: TriggerCode.TRPR0002 }
     ])
 
-    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 }]
-    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 }]
+    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 } as Trigger]
+    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 } as Trigger]
     const events: AuditLogEvent[] = []
 
     const updateResult = await updateTriggers(
@@ -184,8 +184,8 @@ describe("updateCourtCase", () => {
       { code: TriggerCode.TRPR0008, offenceSequenceNumber: 3 }
     ])
 
-    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 }]
-    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 }]
+    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 } as Trigger]
+    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 } as Trigger]
     const events: AuditLogEvent[] = []
 
     const updateResult = await updateTriggers(
@@ -214,8 +214,8 @@ describe("updateCourtCase", () => {
       { code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 },
       { code: TriggerCode.TRPR0002 }
     ])
-    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 }]
-    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 }]
+    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 } as Trigger]
+    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 } as Trigger]
     const events: AuditLogEvent[] = []
 
     jest
@@ -244,8 +244,8 @@ describe("updateCourtCase", () => {
       { code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 },
       { code: TriggerCode.TRPR0002 }
     ])
-    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 }]
-    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 }]
+    const triggersToDelete: Trigger[] = [{ code: TriggerCode.TRPR0001, offenceSequenceNumber: 2 } as Trigger]
+    const triggersToAdd: Trigger[] = [{ code: TriggerCode.TRPR0005, offenceSequenceNumber: 3 } as Trigger]
     const events: AuditLogEvent[] = []
 
     jest

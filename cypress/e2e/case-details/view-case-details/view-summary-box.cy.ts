@@ -2,7 +2,7 @@ import CourtCase from "services/entities/CourtCase"
 import dummyAho from "../../../../test/test-data/error_list_aho.json"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
 import { loginAndVisit } from "../../../support/helpers"
-import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
+import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
 
 describe("View Court Case Details Summary Box", () => {
   const trigger: TestTrigger = {

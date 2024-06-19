@@ -1,4 +1,4 @@
-import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
+import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
 import redirectWhenResolveTriggersAndExceptions from "../../../fixtures/redirectWhenResolveTriggersAndExceptions.json"
 import { loginAndVisit } from "../../../support/helpers"

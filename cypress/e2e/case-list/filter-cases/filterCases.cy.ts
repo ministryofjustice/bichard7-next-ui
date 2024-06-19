@@ -1,4 +1,4 @@
-import { TriggerCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/TriggerCode"
+import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
 import { addDays, format, subDays } from "date-fns"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
 import a11yConfig from "../../../support/a11yConfig"
