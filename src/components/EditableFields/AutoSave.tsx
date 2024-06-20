@@ -1,4 +1,5 @@
 import axios from "axios"
+import { isEmpty, isEqual } from "lodash"
 import { useCallback, useEffect, useState } from "react"
 import { useCourtCase } from "../../context/CourtCaseContext"
 import { AmendmentKeys, OffenceField, ResultQualifierCode } from "../../types/Amendments"
@@ -24,7 +25,7 @@ export const AutoSave = ({
   amendmentFields,
   children
 }: AutoSaveProps) => {
-  const { courtCase, amendments, savedAmend } = useCourtCase()
+  const { courtCase, amendments, savedAmend, savedAmendments } = useCourtCase()
   const [saving, setSaving] = useState<boolean>(false)
   const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
   const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
@@ -37,11 +38,21 @@ export const AutoSave = ({
 
     const map = new Map()
 
-    amendmentFields?.forEach((amendmentField) => map.set(amendmentField, amendments[amendmentField]))
+    amendmentFields?.forEach((amendmentField) => {
+      if (!isEqual(amendments[amendmentField], savedAmendments[amendmentField])) {
+        map.set(amendmentField, amendments[amendmentField])
+      }
+    })
 
     const update = Object.fromEntries(map)
 
     try {
+      if (isEmpty(update)) {
+        setSaving(false)
+        setSaved(true)
+        setChanged(false)
+        return
+      }
       await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, update).then((response) => {
         setHttpResponseStatus(response.status)
 
@@ -64,7 +75,7 @@ export const AutoSave = ({
 
     setSaved(true)
     setChanged(false)
-  }, [amendmentFields, amendments, courtCase.errorId, savedAmend, saving, setChanged, setSaved])
+  }, [amendmentFields, amendments, courtCase.errorId, savedAmend, savedAmendments, saving, setChanged, setSaved])
 
   useEffect(() => {
     if (!isValid) {
