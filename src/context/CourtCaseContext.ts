@@ -2,6 +2,7 @@ import { createContext, Dispatch, SetStateAction, useCallback, useContext, useSt
 import { Amender, Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import getAmendmentsByComparison from "utils/getAmendmentsByComparison"
+import { DisplayNote } from "../types/display/Notes"
 
 export interface CourtCaseContextType {
   courtCase: DisplayFullCourtCase
@@ -9,9 +10,12 @@ export interface CourtCaseContextType {
   savedAmendments: Amendments
 }
 
+type NoteUpdater = (newNotes: DisplayNote[]) => void
+
 export interface CourtCaseContextResult {
   courtCase: DisplayFullCourtCase
   amendments: Amendments
+  updateNotes: NoteUpdater
   savedAmendments: Amendments
   amend: Amender
   savedAmend: Amender
@@ -74,11 +78,26 @@ const useCourtCase = (): CourtCaseContextResult => {
     [setContext]
   )
 
+  const updateNotes = useCallback(
+    (newNotes: DisplayNote[]) => {
+      setContext((previousContext) => {
+        const { courtCase } = previousContext
+        const courtCaseNotes = courtCase.notes
+        newNotes.forEach((note) => courtCaseNotes.push(note))
+        courtCase.notes = courtCaseNotes
+
+        return { ...previousContext, courtCase: courtCase }
+      })
+    },
+    [setContext]
+  )
+
   return {
     courtCase: context.courtCase,
     amendments: context.amendments,
     savedAmendments: context.savedAmendments,
     amend,
+    updateNotes,
     savedAmend
   }
 }

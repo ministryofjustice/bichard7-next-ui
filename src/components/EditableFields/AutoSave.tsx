@@ -5,6 +5,7 @@ import { useCourtCase } from "../../context/CourtCaseContext"
 import { AmendmentKeys, OffenceField, ResultQualifierCode } from "../../types/Amendments"
 import ErrorMessage from "./ErrorMessage"
 import SuccessMessage from "./SuccessMessage"
+import { DisplayNote } from "../../types/display/Notes"
 
 interface AutoSaveProps {
   setSaved: (onSave: boolean) => void
@@ -25,7 +26,7 @@ export const AutoSave = ({
   amendmentFields,
   children
 }: AutoSaveProps) => {
-  const { courtCase, amendments, savedAmend, savedAmendments } = useCourtCase()
+  const { courtCase, amendments, savedAmend, savedAmendments, updateNotes } = useCourtCase()
   const [saving, setSaving] = useState<boolean>(false)
   const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
   const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
@@ -62,6 +63,7 @@ export const AutoSave = ({
               (updatedAmendment: OffenceField<number> | OffenceField<string> | ResultQualifierCode) =>
                 savedAmend(updateKey as AmendmentKeys)(updatedAmendment)
             )
+            updateNotes([{ noteText: `Save called at ${new Date()}` } as DisplayNote])
           } else {
             savedAmend(updateKey as AmendmentKeys)(update[updateKey])
           }
@@ -75,7 +77,17 @@ export const AutoSave = ({
 
     setSaved(true)
     setChanged(false)
-  }, [amendmentFields, amendments, courtCase.errorId, savedAmend, savedAmendments, saving, setChanged, setSaved])
+  }, [
+    amendmentFields,
+    amendments,
+    courtCase.errorId,
+    savedAmend,
+    savedAmendments,
+    saving,
+    setChanged,
+    setSaved,
+    updateNotes
+  ])
 
   useEffect(() => {
     if (!isValid) {
