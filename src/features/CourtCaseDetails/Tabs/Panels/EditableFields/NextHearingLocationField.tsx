@@ -42,6 +42,7 @@ export const NextHearingLocationField = ({
 
   return (
     <EditableFieldTableRow
+      id={"next-hearing-location-row"}
       label="Next hearing location"
       hasExceptions={hasNextHearingLocationException(exceptions)}
       value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
