@@ -1,6 +1,7 @@
 import axios from "axios"
 import { isEmpty, isEqual } from "lodash"
 import { useCallback, useEffect, useState } from "react"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { useCourtCase } from "../../context/CourtCaseContext"
 import { AmendmentKeys, OffenceField, ResultQualifierCode } from "../../types/Amendments"
 import ErrorMessage from "./ErrorMessage"
@@ -25,7 +26,7 @@ export const AutoSave = ({
   amendmentFields,
   children
 }: AutoSaveProps) => {
-  const { courtCase, amendments, savedAmend, savedAmendments } = useCourtCase()
+  const { courtCase, amendments, savedAmend, savedAmendments, updateCourtCase } = useCourtCase()
   const [saving, setSaving] = useState<boolean>(false)
   const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
   const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
@@ -66,6 +67,8 @@ export const AutoSave = ({
             savedAmend(updateKey as AmendmentKeys)(update[updateKey])
           }
         })
+
+        updateCourtCase(response.data.courtCase as DisplayFullCourtCase)
       })
     } catch (error) {
       setHttpResponseError(error as Error)
@@ -75,7 +78,17 @@ export const AutoSave = ({
 
     setSaved(true)
     setChanged(false)
-  }, [amendmentFields, amendments, courtCase.errorId, savedAmend, savedAmendments, saving, setChanged, setSaved])
+  }, [
+    amendmentFields,
+    amendments,
+    courtCase.errorId,
+    savedAmend,
+    savedAmendments,
+    saving,
+    setChanged,
+    setSaved,
+    updateCourtCase
+  ])
 
   useEffect(() => {
     if (!isValid) {
