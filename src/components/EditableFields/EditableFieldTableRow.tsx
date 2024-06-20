@@ -5,6 +5,7 @@ import InputField from "./InputField"
 import LabelField from "./LabelField"
 
 type Props = {
+  id?: string
   label: string
   hasExceptions: boolean
   value?: string | React.ReactNode
@@ -16,6 +17,7 @@ type Props = {
 }
 
 const EditableFieldTableRow = ({
+  id,
   value,
   updatedValue,
   label,
@@ -47,7 +49,7 @@ const EditableFieldTableRow = ({
   }
 
   return (
-    <Table.Row>
+    <Table.Row id={id}>
       <LabelCell>
         <LabelField label={label} isEditable={isEditable} />
       </LabelCell>

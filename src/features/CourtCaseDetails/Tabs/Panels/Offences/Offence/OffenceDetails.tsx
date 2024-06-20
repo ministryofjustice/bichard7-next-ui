@@ -29,7 +29,6 @@ interface OffenceDetailsProps {
   onPreviousClick: () => void
   selectedOffenceSequenceNumber: number
   exceptions: Exception[]
-  stopLeavingFn: (newValue: boolean) => void
 }
 
 export const OffenceDetails = ({
@@ -39,8 +38,7 @@ export const OffenceDetails = ({
   onNextClick,
   onPreviousClick,
   selectedOffenceSequenceNumber,
-  exceptions,
-  stopLeavingFn
+  exceptions
 }: OffenceDetailsProps) => {
   const { courtCase } = useCourtCase()
   const currentUser = useCurrentUser()
@@ -173,7 +171,6 @@ export const OffenceDetails = ({
                 selectedOffenceSequenceNumber={selectedOffenceSequenceNumber}
                 resultIndex={index}
                 errorStatus={courtCase.errorStatus}
-                stopLeavingFn={stopLeavingFn}
               />
             </div>
           )

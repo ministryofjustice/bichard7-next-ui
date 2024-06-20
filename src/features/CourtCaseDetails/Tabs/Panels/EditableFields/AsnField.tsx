@@ -1,65 +1,28 @@
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
-import axios from "axios"
+import { AutoSave } from "components/EditableFields/AutoSave"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
-import { SaveLinkButton } from "components/LinkButton"
+import ErrorMessage from "components/EditableFields/ErrorMessage"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { isEmpty } from "lodash"
-import { ClipboardEvent, KeyboardEvent, useCallback, useEffect, useState } from "react"
+import { KeyboardEvent, useState } from "react"
 import Asn from "services/Asn"
 import isAsnFormatValid from "utils/exceptions/isAsnFormatValid"
 import isAsnException from "utils/exceptions/isException/isAsnException"
-import { CHECKMARK_ICON_URL } from "utils/icons"
-import { CheckmarkIcon } from "../../CourtCaseDetailsSingleTab.styles"
-import { AsnInput, AsnInputContainer } from "./AsnField.styles"
+import { AsnInput } from "./AsnField.styles"
 
-interface AsnFieldProps {
-  stopLeavingFn: (newValue: boolean) => void
-}
-
-export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
-  const { courtCase, amendments, amend, savedAmend } = useCourtCase()
+export const AsnField = () => {
+  const { courtCase, amendments, amend } = useCourtCase()
   const currentUser = useCurrentUser()
   const defendant = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant
   const amendedAsn = amendments.asn ?? ""
-
-  const [updatedAhoAsn, setUpdatedAhoAsn] = useState<string>(
+  const updatedAhoAsn =
     courtCase.updatedHearingOutcome?.AnnotatedHearingOutcome?.HearingOutcome?.Case?.HearingDefendant
       ?.ArrestSummonsNumber
-  )
-  const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(updatedAhoAsn))
+
+  const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(amendedAsn))
   const [isSavedAsn, setIsSavedAsn] = useState<boolean>(false)
-  const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false)
+  const [asnChanged, setAsnChanged] = useState<boolean>(false)
   const [key, setKey] = useState<string>("")
-
-  useEffect(() => {
-    if (!isPageLoaded) {
-      amend("asn")(updatedAhoAsn ?? "")
-      setIsPageLoaded(true)
-    }
-
-    if (isSavedAsn) {
-      setUpdatedAhoAsn(amendedAsn)
-    }
-
-    stopLeavingFn(!isSavedAsn && !isEmpty(amendedAsn) && updatedAhoAsn !== amendedAsn)
-  }, [isSavedAsn, isPageLoaded, amendments, updatedAhoAsn, stopLeavingFn, amend, amendedAsn])
-
-  const saveAsn = useCallback(
-    async (asn: Asn) => {
-      await axios.put(`/bichard/api/court-cases/${courtCase.errorId}/update`, { asn: asn.toString() })
-      setIsSavedAsn(false)
-    },
-    [courtCase.errorId]
-  )
-
-  const handleAsnSave = (): void => {
-    if (isValidAsn) {
-      setIsSavedAsn(true)
-      savedAmend("asn")(amendedAsn)
-      saveAsn(new Asn(amendedAsn))
-    }
-  }
 
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Backspace") {
@@ -77,29 +40,14 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
       const asnWithoutSlashes = inputAsnValue.replace(/\//g, "")
       amend("asn")(asnWithoutSlashes)
     }
-
+    setAsnChanged(true)
+    setIsSavedAsn(false)
     setIsValidAsn(isAsnFormatValid(inputAsnValue))
-  }
-
-  const handleOnPaste = (e: ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault()
-    const asnFromClipboard = e.clipboardData.getData("text")
-    setIsValidAsn(isAsnFormatValid(asnFromClipboard))
-    amend("asn")(asnFromClipboard)
   }
 
   const handleOnCopy = () => {
     const copiedAsn = document.getSelection()?.toString().replace(/\//g, "")
     navigator.clipboard.writeText(copiedAsn ?? "")
-  }
-
-  const isSaveAsnBtnDisabled = (): boolean => {
-    if (updatedAhoAsn === amendedAsn) {
-      return true
-    } else if (!isValidAsn) {
-      return true
-    }
-    return false
   }
 
   const isAsnEditable =
@@ -113,6 +61,7 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
 
   return (
     <EditableFieldTableRow
+      id={"asn-row"}
       value={defendant.ArrestSummonsNumber}
       updatedValue={updatedAhoAsn}
       label="ASN"
@@ -121,13 +70,8 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
       inputLabel={"Enter the ASN"}
       hintText="ASN format: Last 2 digits of year / 4 divisional ID location characters / 2 digits from owning force / 1 to 11 digits and 1 check letter \n Example: 22/49AB/49/1234C"
     >
-      <div className={isValidAsn ? "" : "govuk-form-group--error"}>
-        {!isValidAsn && (
-          <p id="event-name-error" className="govuk-error-message">
-            <span className="govuk-visually-hidden">{"Error:"}</span> {"Enter ASN in the correct format"}
-          </p>
-        )}
-        <AsnInputContainer>
+      <div>
+        <div>
           <AsnInput
             className={`asn-input`}
             id={"asn"}
@@ -136,22 +80,21 @@ export const AsnField = ({ stopLeavingFn }: AsnFieldProps) => {
             value={asn}
             error={!isValidAsn}
             onKeyDown={handleOnKeyDown}
-            onPaste={handleOnPaste}
             onCopy={handleOnCopy}
             onCut={handleOnCopy}
           />
-          {isValidAsn && (
-            <CheckmarkIcon
-              className={`checkmark-icon checkmark`}
-              src={CHECKMARK_ICON_URL}
-              width={30}
-              height={30}
-              alt="Checkmark icon"
-            />
-          )}
-        </AsnInputContainer>
+        </div>
+        <AutoSave
+          setChanged={setAsnChanged}
+          setSaved={setIsSavedAsn}
+          isValid={isValidAsn}
+          amendmentFields={["asn"]}
+          isChanged={asnChanged}
+          isSaved={isSavedAsn}
+        >
+          {!isValidAsn && <ErrorMessage message="Enter ASN in the correct format" />}
+        </AutoSave>
       </div>
-      <SaveLinkButton id={"save-asn"} onClick={handleAsnSave} disabled={isSaveAsnBtnDisabled()} />
     </EditableFieldTableRow>
   )
 }

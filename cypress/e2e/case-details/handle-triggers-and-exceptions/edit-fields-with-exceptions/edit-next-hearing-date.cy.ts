@@ -29,7 +29,6 @@ describe("NextHearingDate", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Burglary other than dwelling with intent to steal").click()
     cy.contains("td", "Next hearing date").siblings().should("include.text", "01/02/2008")
-    cy.contains("td", "Next hearing date").siblings().contains("Editable Field").should("not.exist")
     cy.get("#next-hearing-date").should("not.exist")
   })
 
@@ -60,7 +59,6 @@ describe("NextHearingDate", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
     cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
     cy.get("#next-hearing-date").should("not.exist")
 
     cy.visit(`/bichard/court-cases/${resolvedCaseId}`)
@@ -68,7 +66,6 @@ describe("NextHearingDate", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
     cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
     cy.get("#next-hearing-date").should("not.exist")
   })
 
@@ -78,7 +75,6 @@ describe("NextHearingDate", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with no exceptions").click()
     cy.contains("td", "Next hearing date").should("not.exist")
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
   })
 
   it("Should be able to edit field if HO100102 is raised", () => {
@@ -97,7 +93,6 @@ describe("NextHearingDate", () => {
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
     cy.contains("td", "Next hearing date").siblings().should("include.text", "false")
-    cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Editable Field")
     cy.get("#next-hearing-date").type("2024-01-01")
 
     submitAndConfirmExceptions()
@@ -218,6 +213,60 @@ describe("NextHearingDate", () => {
     cy.contains("td", "Next hearing date").siblings().get(".moj-badge").contains("Correction")
   })
 
+  it("Should display error message when auto-save fails", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXml,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXml,
+        errorCount: 1
+      }
+    ])
+
+    cy.intercept("PUT", "/bichard/api/court-cases/0/update", {
+      statusCode: 500
+    })
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link")
+      .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
+      .click()
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "")
+    cy.get("#next-hearing-date-row #next-hearing-date").type("2023-12-24")
+    cy.get("#next-hearing-date-row .error-message").contains("Autosave has failed, please refresh").should("exist")
+    cy.get("#next-hearing-date-row .success-message").should("not.exist")
+  })
+
+  it("Should auto-save next hearing date", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        errorCount: 1
+      }
+    ])
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link")
+      .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
+      .click()
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "")
+    cy.get("#next-hearing-date").type("2023-12-24")
+    cy.get("#next-hearing-date-row .success-message").contains("Input saved").should("exist")
+
+    verifyUpdatedMessage({
+      expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
+      updatedMessageNotHaveContent: ["<ds:NextHearingDate />"],
+      updatedMessageHaveContent: ["<ds:NextHearingDate>2023-12-24</ds:NextHearingDate>"]
+    })
+  })
+
   it("Should not be able to edit next hearing date field when exception is not locked by current user", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
@@ -234,7 +283,6 @@ describe("NextHearingDate", () => {
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
   })
 
   it("Should not be able to edit next hearing date field when phase is not hearing outcome", () => {
@@ -253,7 +301,6 @@ describe("NextHearingDate", () => {
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
   })
 
   it("Should not be able to edit next hearing date field when user is not exception-handler", () => {
@@ -261,14 +308,5 @@ describe("NextHearingDate", () => {
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
-  })
-
-  it("Should not display editable field for hearing date when exceptionsEnabled is false for user", () => {
-    loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
-
-    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
-    cy.get(".moj-badge").contains("Editable Field").should("not.exist")
   })
 })

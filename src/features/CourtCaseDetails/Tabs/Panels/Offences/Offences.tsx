@@ -9,7 +9,6 @@ interface OffencesProps {
   onOffenceSelected: (offenceIndex?: number) => void
   selectedOffenceSequenceNumber?: number
   exceptions: Exception[]
-  stopLeavingFn: (newValue: boolean) => void
 }
 
 export const Offences = ({
@@ -17,8 +16,7 @@ export const Offences = ({
   offences,
   onOffenceSelected,
   selectedOffenceSequenceNumber,
-  exceptions,
-  stopLeavingFn
+  exceptions
 }: OffencesProps) => {
   return (
     <div hidden={!visible}>
@@ -31,7 +29,6 @@ export const Offences = ({
           onPreviousClick={() => onOffenceSelected(selectedOffenceSequenceNumber - 1)}
           selectedOffenceSequenceNumber={selectedOffenceSequenceNumber}
           exceptions={exceptions}
-          stopLeavingFn={stopLeavingFn}
         />
       ) : (
         <OffencesList offences={offences} setDetailedOffenceIndex={onOffenceSelected} />

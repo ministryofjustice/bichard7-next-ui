@@ -60,7 +60,7 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
       <PanelsGridRow>
         <PanelsGridCol setWidth={contentWidth}>
           <CourtCaseDetailsPanel visible={activeTab === "Defendant"} heading={"Defendant details"}>
-            <DefendantDetails stopLeavingFn={stopLeavingFn} />
+            <DefendantDetails />
           </CourtCaseDetailsPanel>
 
           <CourtCaseDetailsPanel visible={activeTab === "Hearing"} heading={"Hearing details"}>
@@ -79,7 +79,6 @@ const CourtCaseDetails: React.FC<Props> = ({ isLockedByCurrentUser, canResolveAn
               setSelectedOffenceSequenceNumber(offenceIndex)
             }}
             selectedOffenceSequenceNumber={selectedOffenceSequenceNumber}
-            stopLeavingFn={stopLeavingFn}
           />
 
           <Notes visible={activeTab === "Notes"} isLockedByCurrentUser={isLockedByCurrentUser} />

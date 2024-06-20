@@ -29,7 +29,6 @@ interface HearingResultProps {
   resultIndex: number
   selectedOffenceSequenceNumber: number
   errorStatus?: ResolutionStatus | null
-  stopLeavingFn: (newValue: boolean) => void
 }
 
 export const HearingResult = ({
@@ -37,8 +36,7 @@ export const HearingResult = ({
   errorStatus,
   exceptions,
   resultIndex,
-  selectedOffenceSequenceNumber,
-  stopLeavingFn
+  selectedOffenceSequenceNumber
 }: HearingResultProps) => {
   const { courtCase } = useCourtCase()
   const cjsErrorMessage = findExceptions(courtCase, exceptions, ExceptionCode.HO100307)
@@ -91,7 +89,6 @@ export const HearingResult = ({
         offenceIndex={offenceIndex}
         resultIndex={resultIndex}
         isCaseEditable={isCaseEditable}
-        stopLeavingFn={stopLeavingFn}
       />
       <NextHearingDateField
         result={result}
@@ -99,7 +96,6 @@ export const HearingResult = ({
         offenceIndex={offenceIndex}
         resultIndex={resultIndex}
         isCaseEditable={isCaseEditable}
-        stopLeavingFn={stopLeavingFn}
       />
       <TableRow label="Mode of trial reason" value={result.ModeOfTrialReason} />
       <StyledTableRow label="Hearing result text" value={formattedResult} className={`result-text`} />
