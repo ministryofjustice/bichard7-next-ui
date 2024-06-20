@@ -61,6 +61,7 @@ export const AsnField = () => {
 
   return (
     <EditableFieldTableRow
+      id={"asn-row"}
       value={defendant.ArrestSummonsNumber}
       updatedValue={updatedAhoAsn}
       label="ASN"

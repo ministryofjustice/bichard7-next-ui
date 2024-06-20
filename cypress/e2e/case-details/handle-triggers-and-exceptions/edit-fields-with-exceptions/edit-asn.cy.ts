@@ -104,8 +104,8 @@ describe("ASN", () => {
 
     cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000410836V")
-    cy.get("#error-message").contains("Autosave has failed, please refresh").should("exist")
-    cy.get("#success-message").should("not.exist")
+    cy.get("#asn-row .error-message").contains("Autosave has failed, please refresh").should("exist")
+    cy.get("#asn-row .success-message").should("not.exist")
   })
 
   it("Should validate and auto-save the ASN correction", () => {
@@ -124,13 +124,13 @@ describe("ASN", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
-    cy.get("#error-message").should("exist")
+    cy.get("#asn-row .error-message").should("exist")
 
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
     cy.get("#asn").clear()
 
     cy.get("#asn").type("1101ZD0100000410836V")
-    cy.get("#success-message").contains("Input saved").should("exist")
+    cy.get("#asn-row .success-message").contains("Input saved").should("exist")
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
     cy.wait("@save")
