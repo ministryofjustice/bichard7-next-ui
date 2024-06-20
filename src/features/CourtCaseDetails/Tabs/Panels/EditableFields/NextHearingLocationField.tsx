@@ -29,8 +29,7 @@ export const NextHearingLocationField = ({
 }: NextHearingLocationFieldProps) => {
   const { amendments } = useCourtCase()
   const currentUser = useCurrentUser()
-  const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex)
-
+  const amendedNextHearingLocation = getNextHearingLocationValue(amendments, offenceIndex, resultIndex) ?? ""
   const [isNhlSaved, setIsNhlSaved] = useState<boolean>(false)
   const [organisations, setOrganisations] = useState<OrganisationUnitApiResponse>([])
   const [isNhlChanged, setIsNhlChanged] = useState<boolean>(false)

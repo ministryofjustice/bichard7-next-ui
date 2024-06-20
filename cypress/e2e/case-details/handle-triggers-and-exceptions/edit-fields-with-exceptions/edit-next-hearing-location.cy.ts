@@ -59,7 +59,7 @@ describe("NextHearingLocation", () => {
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Initial Value")
-    cy.get("#next-hearing-location").should("have.value", "B@1EF$1")
+    cy.get("#next-hearing-location").should("not.have.value", "B@1EF$1")
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B01EF01")
 
