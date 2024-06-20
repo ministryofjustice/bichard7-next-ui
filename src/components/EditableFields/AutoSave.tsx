@@ -51,7 +51,7 @@ const excludeSavedAmendments = (
     }
   })
 
-  return map
+  return Object.fromEntries(map)
 }
 
 export const AutoSave = ({
@@ -74,8 +74,7 @@ export const AutoSave = ({
     }
     setSaving(true)
 
-    const map = excludeSavedAmendments(amendmentFields, amendments, savedAmendments)
-    const update = Object.fromEntries(map)
+    const update = excludeSavedAmendments(amendmentFields, amendments, savedAmendments)
 
     try {
       if (isEmpty(update)) {
