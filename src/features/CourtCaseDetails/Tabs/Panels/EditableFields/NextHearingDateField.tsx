@@ -39,6 +39,7 @@ export const NextHearingDateField = ({
 
   return (
     <EditableFieldTableRow
+      id={"next-hearing-date-row"}
       label="Next hearing date"
       hasExceptions={hasNextHearingDateExceptions(exceptions)}
       value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
