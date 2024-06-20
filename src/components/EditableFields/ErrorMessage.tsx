@@ -7,7 +7,7 @@ interface ErrorMessageProps {
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
   return (
-    <ErrorMessageContainer id="error-message">
+    <ErrorMessageContainer className="error-message">
       <WarningIcon className={"warning-icon"} src={WARNING_ICON_URL} width={25} height={25} alt="Warning icon" />
       <Message>
         <b>{message}</b>

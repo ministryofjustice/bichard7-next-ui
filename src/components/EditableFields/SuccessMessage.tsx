@@ -8,7 +8,7 @@ interface SuccessMessageProps {
 
 const SuccessMessage: React.FC<SuccessMessageProps> = ({ message }) => {
   return (
-    <SuccessMessageContainer id="success-message">
+    <SuccessMessageContainer className="success-message">
       <CheckmarkIcon
         className={`checkmark-icon checkmark`}
         src={SUCCESS_CHECKMARK_ICON_URL}

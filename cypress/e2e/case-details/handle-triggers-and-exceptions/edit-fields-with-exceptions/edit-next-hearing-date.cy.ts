@@ -236,8 +236,8 @@ describe("NextHearingDate", () => {
       .click()
     cy.contains("td", "Next hearing date").siblings().should("include.text", "")
     cy.get("#next-hearing-date-row #next-hearing-date").type("2023-12-24")
-    cy.get("#next-hearing-date-row #error-message").contains("Autosave has failed, please refresh").should("exist")
-    cy.get("#next-hearing-date-row #success-message").should("not.exist")
+    cy.get("#next-hearing-date-row .error-message").contains("Autosave has failed, please refresh").should("exist")
+    cy.get("#next-hearing-date-row .success-message").should("not.exist")
   })
 
   it("Should auto-save next hearing date", () => {
@@ -258,7 +258,7 @@ describe("NextHearingDate", () => {
       .click()
     cy.contains("td", "Next hearing date").siblings().should("include.text", "")
     cy.get("#next-hearing-date").type("2023-12-24")
-    cy.get("#next-hearing-date-row #success-message").contains("Input saved").should("exist")
+    cy.get("#next-hearing-date-row .success-message").contains("Input saved").should("exist")
 
     verifyUpdatedMessage({
       expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
