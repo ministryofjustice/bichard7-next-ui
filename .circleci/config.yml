@@ -78,21 +78,24 @@ commands:
   save_artifacts:
     steps:
       - run:
+          working_directory: ~/bichard7-next-tests
           name: Compress the artifacts for easier downloading
           when: always
           command: for file in ./screenshots/*; do tar -czf ${file}.tar.gz $file; done
       - run:
+          working_directory: ~/bichard7-next-tests
           name: Create the saved_artifacts directory
           when: always
           command: mkdir ./saved_artifacts;
       - run:
+          working_directory: ~/bichard7-next-tests
           name: Move the gzipped files across
           when: always
           command: mv ./screenshots/*.tar.gz ./saved_artifacts/
       - store_artifacts:
-          path: /home/circleci/project/saved_artifacts
+          path: /home/circleci/bichard7-next-tests/saved_artifacts
       - store_test_results:
-          path: /home/circleci/project/test-results.xml
+          path: /home/circleci/bichard7-next-tests/test-results.xml
 
   ################### Services
   start_bichard7_legacy:
@@ -320,6 +323,7 @@ jobs:
             MESSAGE_ENTRY_POINT="mq"
       - save_artifacts
       - store_test_results:
+          working_directory: ~/bichard7-next-tests
           path: ./cucumber/results
 
   zap_scanner:
