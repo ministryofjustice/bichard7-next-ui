@@ -135,7 +135,7 @@ export const AutoSave = ({
   return (
     <>
       {children}
-      {httpResponseStatus === 202 && <SuccessMessage message="Input saved" />}
+      {httpResponseStatus === 200 && <SuccessMessage message="Input saved" />}
       {httpResponseError && <ErrorMessage message="Autosave has failed, please refresh" />}
     </>
   )
