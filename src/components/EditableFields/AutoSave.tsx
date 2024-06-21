@@ -44,7 +44,7 @@ const excludeSavedAmendments = (
       })
 
       map.set(amendmentField, newValues)
-    } else {
+    } else if (!isEqual(amendments[amendmentField], savedAmendments[amendmentField])) {
       if (!isEqual(amendments[amendmentField], savedAmendments[amendmentField])) {
         map.set(amendmentField, amendments[amendmentField])
       }
