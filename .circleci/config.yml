@@ -75,6 +75,25 @@ commands:
           paths:
             - /opt/circleci/.nvm/.cache
 
+  save_artifacts:
+    steps:
+      - run:
+          name: Compress the artifacts for easier downloading
+          when: always
+          command: for file in ./screenshots/*; do tar -czf ${file}.tar.gz $file; done
+      - run:
+          name: Create the saved_artifacts directory
+          when: always
+          command: mkdir ./saved_artifacts;
+      - run:
+          name: Move the gzipped files across
+          when: always
+          command: mv ./screenshots/*.tar.gz ./saved_artifacts/
+      - store_artifacts:
+          path: /home/circleci/project/saved_artifacts
+      - store_test_results:
+          path: /home/circleci/project/test-results.xml
+
   ################### Services
   start_bichard7_legacy:
     steps:
@@ -274,6 +293,7 @@ jobs:
     resource_class: xlarge
     parallelism: 10
     environment:
+      RECORD: "true"
       STACK_TYPE: next
       WORKSPACE: local-next
       AUTH_TYPE: user-service
@@ -298,6 +318,7 @@ jobs:
           ARGS: >-
             NEXTUI="true"
             MESSAGE_ENTRY_POINT="mq"
+      - save_artifacts
       - store_test_results:
           path: ./cucumber/results
 
