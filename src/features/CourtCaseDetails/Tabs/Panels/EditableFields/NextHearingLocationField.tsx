@@ -66,7 +66,7 @@ export const NextHearingLocationField = ({
         isChanged={isNhlChanged}
         isSaved={isNhlSaved}
       >
-        {!isValidNhl && <ErrorMessage message="Select valid Next hearing location" />}
+        {isNhlChanged && !isValidNhl && <ErrorMessage message="Select valid Next hearing location" />}
       </AutoSave>
     </EditableFieldTableRow>
   )
