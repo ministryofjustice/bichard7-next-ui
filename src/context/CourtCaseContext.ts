@@ -15,6 +15,7 @@ export interface CourtCaseContextResult {
   savedAmendments: Amendments
   amend: Amender
   savedAmend: Amender
+  updateCourtCase: (courtCase: DisplayFullCourtCase) => void
 }
 
 type CourtCaseContextInput = [CourtCaseContextType, Dispatch<SetStateAction<CourtCaseContextType>>]
@@ -41,6 +42,15 @@ const useCourtCase = (): CourtCaseContextResult => {
   }
 
   const [context, setContext] = courtCaseContextState
+
+  const updateCourtCase = useCallback(
+    (newCourtCase: DisplayFullCourtCase) => {
+      setContext((previousContext) => {
+        return { ...previousContext, courtCase: newCourtCase }
+      })
+    },
+    [setContext]
+  )
 
   const amend: Amender = useCallback(
     (key) => (newValue) => {
@@ -79,7 +89,8 @@ const useCourtCase = (): CourtCaseContextResult => {
     amendments: context.amendments,
     savedAmendments: context.savedAmendments,
     amend,
-    savedAmend
+    savedAmend,
+    updateCourtCase
   }
 }
 

@@ -1,6 +1,7 @@
 import withApiAuthentication from "middleware/withApiAuthentication/withApiAuthentication"
 import type { NextApiRequest, NextApiResponse } from "next"
 import amendCourtCase from "services/amendCourtCase/amendCourtCase"
+import { courtCaseToDisplayFullCourtCaseDto } from "services/dto/courtCaseDto"
 import CourtCase from "services/entities/CourtCase"
 import getDataSource from "services/getDataSource"
 import { isError } from "types/Result"
@@ -27,7 +28,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     return
   }
 
-  const courtCase = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: +courtCaseId } })
+  let courtCase = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: +courtCaseId } })
 
   if (!courtCase) {
     res.status(404)
@@ -35,13 +36,24 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     return
   }
 
-  const amendCourtcaseResponse = await amendCourtCase(dataSource, amendments, courtCase, currentUser)
+  const amendCourtCaseResponse = await amendCourtCase(dataSource, amendments, courtCase, currentUser)
 
-  if (isError(amendCourtcaseResponse)) {
+  if (isError(amendCourtCaseResponse)) {
     res.status(500)
     res.end()
   }
 
-  res.status(202)
+  courtCase = await dataSource.getRepository(CourtCase).findOne({ where: { errorId: +courtCaseId } })
+
+  if (!courtCase) {
+    res.status(404)
+    res.end()
+    return
+  }
+
+  const updatedCourtCase = courtCaseToDisplayFullCourtCaseDto(courtCase, currentUser)
+
+  res.status(200)
+  res.json({ courtCase: updatedCourtCase })
   res.end()
 }

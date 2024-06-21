@@ -1,3 +1,4 @@
+import { sortBy } from "lodash"
 import CourtCase from "services/entities/CourtCase"
 import { DisplayFullCourtCase, DisplayPartialCourtCase } from "types/display/CourtCases"
 import parseHearingOutcome from "utils/parseHearingOutcome"
@@ -23,7 +24,7 @@ export const courtCaseToDisplayPartialCourtCaseDto = (
       hasAccessToExceptions(currentUser) &&
       courtCase.errorStatus === "Unresolved",
     isUrgent: courtCase.isUrgent,
-    notes: courtCase.notes.map(noteToDisplayNoteDto),
+    notes: sortBy(courtCase.notes.map(noteToDisplayNoteDto), "createdAt"),
     ptiurn: courtCase.ptiurn,
     resolutionTimestamp: courtCase.resolutionTimestamp ? courtCase.resolutionTimestamp.toISOString() : null,
     triggerLockedByUsername: courtCase.triggerLockedByUsername,
