@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import { gdsGreen } from "utils/colours"
+import { gdsTransport, arial, sansSerif } from "utils/typography"
 
 const SuccessMessageContainer = styled.div`
   display: flex;
@@ -7,7 +8,7 @@ const SuccessMessageContainer = styled.div`
   margin-top: 1rem;
 `
 const Message = styled.span`
-  font-family: "GDS Transport", arial, sans-serif;
+  font-family: ${gdsTransport}, ${arial}, ${sansSerif};
   font-size: 20px;
   color: ${gdsGreen};
 `
