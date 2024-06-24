@@ -1,9 +1,10 @@
 import axios from "axios"
-import { isEmpty, isEqual } from "lodash"
+import { isEmpty } from "lodash"
 import { useCallback, useEffect, useState } from "react"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
+import excludeSavedAmendments from "utils/autoSave/excludeSavedAmendments"
 import { useCourtCase } from "../../context/CourtCaseContext"
-import { AmendmentKeys, Amendments, OffenceField, ResultQualifierCode } from "../../types/Amendments"
+import { AmendmentKeys, OffenceField, ResultQualifierCode } from "../../types/Amendments"
 import ErrorMessage from "./ErrorMessage"
 import SuccessMessage from "./SuccessMessage"
 
@@ -15,41 +16,6 @@ interface AutoSaveProps {
   isChanged: boolean
   amendmentFields: AmendmentKeys[]
   children?: React.ReactNode
-}
-
-const excludeSavedAmendments = (
-  amendmentFields: AmendmentKeys[],
-  amendments: Amendments,
-  savedAmendments: Amendments
-) => {
-  const map = new Map()
-
-  amendmentFields?.forEach((amendmentField) => {
-    if (Array.isArray(amendments[amendmentField])) {
-      const newValues: (OffenceField<number> | OffenceField<string> | ResultQualifierCode)[] = []
-      const amendmentsArray =
-        (amendments[amendmentField] as OffenceField<number>[] | OffenceField<string>[] | ResultQualifierCode[]) ?? []
-      const savedAmendmentsArray =
-        (savedAmendments[amendmentField] as OffenceField<number>[] | OffenceField<string>[] | ResultQualifierCode[]) ??
-        []
-
-      amendmentsArray.forEach((amendment) => {
-        const matchedSaved = savedAmendmentsArray.find(
-          (saveAmendment) => amendment.offenceIndex === saveAmendment.offenceIndex
-        )
-
-        if (!isEqual(amendment, matchedSaved)) {
-          newValues.push(amendment)
-        }
-      })
-
-      map.set(amendmentField, newValues)
-    } else if (!isEqual(amendments[amendmentField], savedAmendments[amendmentField])) {
-      map.set(amendmentField, amendments[amendmentField])
-    }
-  })
-
-  return Object.fromEntries(map)
 }
 
 export const AutoSave = ({
