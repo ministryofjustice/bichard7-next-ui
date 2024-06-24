@@ -10,7 +10,7 @@ import SuccessMessage from "./SuccessMessage"
 
 interface AutoSaveProps {
   setSaved: (onSave: boolean) => void
-  setChanged: (onSave: boolean) => void
+  setChanged: (onChanged: boolean) => void
   isValid: boolean
   isSaved: boolean
   isChanged: boolean
@@ -18,15 +18,7 @@ interface AutoSaveProps {
   children?: React.ReactNode
 }
 
-export const AutoSave = ({
-  setSaved,
-  setChanged,
-  isValid,
-  isSaved,
-  isChanged,
-  amendmentFields,
-  children
-}: AutoSaveProps) => {
+const AutoSave = ({ setSaved, setChanged, isValid, isSaved, isChanged, amendmentFields, children }: AutoSaveProps) => {
   const { courtCase, amendments, savedAmend, savedAmendments, updateCourtCase } = useCourtCase()
   const [saving, setSaving] = useState<boolean>(false)
   const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
@@ -104,3 +96,5 @@ export const AutoSave = ({
     </>
   )
 }
+
+export default AutoSave

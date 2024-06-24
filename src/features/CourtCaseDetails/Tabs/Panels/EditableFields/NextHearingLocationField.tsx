@@ -1,5 +1,5 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { AutoSave } from "components/EditableFields/AutoSave"
+import AutoSave from "components/EditableFields/AutoSave"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
 import ErrorMessage from "components/EditableFields/ErrorMessage"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
