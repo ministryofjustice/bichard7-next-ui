@@ -74,7 +74,7 @@ const AppliedFilters: React.FC<Props> = ({ filters }: Props) => {
 
           <ConditionalRender isRendered={!!filters.reason && filters.reason !== Reason.All}>
             <li key={`${filters.reason}`}>
-              <FilterTag tag={filters.reason ?? ""} href={removeFilterFromPath({ type: filters.reason ?? "" })} />
+              <FilterTag tag={filters.reason ?? ""} href={removeFilterFromPath({ reason: filters.reason ?? "" })} />
             </li>
           </ConditionalRender>
 
