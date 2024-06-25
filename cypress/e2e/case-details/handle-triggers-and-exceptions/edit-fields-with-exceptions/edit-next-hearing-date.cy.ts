@@ -267,6 +267,37 @@ describe("NextHearingDate", () => {
     })
   })
 
+  it("Should validate and auto-save the next hearing date correction and update notes", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+    cy.intercept("PUT", "/bichard/api/court-cases/0/update").as("save")
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link")
+      .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
+      .click()
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "")
+    cy.get("#next-hearing-date").type("2023-12-24")
+    cy.get("#next-hearing-date-row .success-message").contains("Input saved").should("exist")
+
+    cy.wait("@save")
+
+    cy.get("a").contains("Notes").click()
+    cy.get("td").contains(
+      "GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: 2023-12-24"
+    )
+  })
+
   it("Should not be able to edit next hearing date field when exception is not locked by current user", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [

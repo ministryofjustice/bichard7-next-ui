@@ -392,6 +392,35 @@ describe("NextHearingLocation", () => {
     })
   })
 
+  it("Should validate and auto-save the next hearing location correction and update notes", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+        updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+    cy.intercept("PUT", "/bichard/api/court-cases/0/update").as("save")
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("B43UY00")
+    cy.get("#next-hearing-location-row .success-message").contains("Input saved").should("exist")
+
+    cy.wait("@save")
+
+    cy.get("a").contains("Notes").click()
+    cy.get("td").contains(
+      "GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B43UY00"
+    )
+  })
+
   it("should display error when invalid Next Hearing Location is entered", () => {
     loginAndVisit("/bichard/court-cases/0")
 

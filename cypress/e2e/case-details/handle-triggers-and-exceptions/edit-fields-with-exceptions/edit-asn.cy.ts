@@ -141,6 +141,39 @@ describe("ASN", () => {
     })
   })
 
+  it("Should validate and auto-save the ASN correction and update notes", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+    cy.intercept("PUT", "/bichard/api/court-cases/0/update").as("save")
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
+    cy.get("#asn-row .error-message").should("exist")
+
+    cy.get("button").contains("Submit exception(s)").should("be.enabled")
+    cy.get("#asn").clear()
+
+    cy.get("#asn").type("1101ZD0100000410836V")
+    cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+    cy.get("button").contains("Submit exception(s)").should("be.enabled")
+
+    cy.wait("@save")
+
+    cy.get("a").contains("Notes").click()
+    cy.get("td").contains(
+      "GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: 1101ZD0100000410836V"
+    )
+  })
+
   it("Should be able to edit ASN field if HO100206 is raised", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
