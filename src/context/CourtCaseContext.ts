@@ -1,5 +1,5 @@
 import { createContext, Dispatch, SetStateAction, useCallback, useContext, useState } from "react"
-import { Amender, Amendments } from "types/Amendments"
+import { Amender, AmendmentKeys, Amendments, OffenceField, ResultField, ResultQualifierCode } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import getAmendmentsByComparison from "utils/getAmendmentsByComparison"
 
@@ -20,7 +20,7 @@ export interface CourtCaseContextResult {
 
 type CourtCaseContextInput = [CourtCaseContextType, Dispatch<SetStateAction<CourtCaseContextType>>]
 
-const upsertFunction = <T extends Record<string, unknown>>(previousValues: T[], value: T): T[] => {
+const upsertAmendments = <T extends Record<string, unknown>>(previousValues: T[], value: T): T[] => {
   const keys = Object.keys(value).filter((key) => key !== "value")
   const hasValue = (previousValue: T, newValue: T) =>
     keys.filter((key) => previousValue?.[key] === newValue[key]).length === keys.length
@@ -29,8 +29,26 @@ const upsertFunction = <T extends Record<string, unknown>>(previousValues: T[], 
   return [...amendmentsWithoutOldValue, value]
 }
 
-const upsertAmendments = upsertFunction
-const upsertSavedAmendments = upsertFunction
+const updateAmendments = (
+  key: AmendmentKeys,
+  newValue:
+    | string
+    | boolean
+    | OffenceField<number>
+    | OffenceField<string>
+    | ResultQualifierCode
+    | ResultField<string>
+    | undefined,
+  previousAmendments: Amendments
+): Amendments => {
+  const value =
+    typeof newValue === "object"
+      ? upsertAmendments(previousAmendments[key] as Record<string, unknown>[], newValue)
+      : newValue
+  const newAmendments = { ...previousAmendments, [key]: value }
+
+  return newAmendments
+}
 
 const CourtCaseContext = createContext<CourtCaseContextInput | null>(null)
 
@@ -55,14 +73,7 @@ const useCourtCase = (): CourtCaseContextResult => {
   const amend: Amender = useCallback(
     (key) => (newValue) => {
       setContext((previousContext) => {
-        const { amendments } = previousContext
-        const value =
-          typeof newValue === "object"
-            ? upsertAmendments(amendments[key] as Record<string, unknown>[], newValue)
-            : newValue
-        const newAmendments = { ...amendments, [key]: value }
-
-        return { ...previousContext, amendments: newAmendments }
+        return { ...previousContext, amendments: updateAmendments(key, newValue, previousContext.amendments) }
       })
     },
     [setContext]
@@ -71,14 +82,7 @@ const useCourtCase = (): CourtCaseContextResult => {
   const savedAmend: Amender = useCallback(
     (key) => (newValue) => {
       setContext((previousContext) => {
-        const { amendments } = previousContext
-        const value =
-          typeof newValue === "object"
-            ? upsertSavedAmendments(amendments[key] as Record<string, unknown>[], newValue)
-            : newValue
-        const newSavedAmendments = { ...amendments, [key]: value }
-
-        return { ...previousContext, savedAmendments: newSavedAmendments }
+        return { ...previousContext, savedAmendments: updateAmendments(key, newValue, previousContext.amendments) }
       })
     },
     [setContext]
