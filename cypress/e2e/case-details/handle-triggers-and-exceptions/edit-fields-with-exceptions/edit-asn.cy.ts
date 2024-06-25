@@ -329,4 +329,48 @@ describe("ASN", () => {
   it("Should not display an editable field for ASN when exceptionsEnabled is false for user", () => {
     loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
   })
+
+  describe("when I submit resolved exceptions I should not the same value in the notes", () => {
+    it("Should validate and auto-save the ASN correction and only update notes once", () => {
+      const errorId = 0
+      const updatedAsn = "1101ZD0100000410836V"
+
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+          updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+      cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
+
+      loginAndVisit(`/bichard/court-cases/${errorId}`)
+
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
+      cy.get("#asn").clear()
+
+      cy.get("#asn").type(updatedAsn)
+
+      cy.wait("@save")
+
+      cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
+
+      cy.get("a").contains("Notes").click()
+      cy.get(".notes-table")
+        .find(`td:contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${updatedAsn}")`)
+        .should("have.length", 1)
+
+      cy.get("button").contains("Submit exception(s)").click()
+      cy.get("#confirm-submit").contains("Submit exception(s)").click()
+
+      cy.get("a").contains("Notes").click()
+      cy.get(".notes-table")
+        .find(`td:contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${updatedAsn}")`)
+        .should("have.length", 1)
+    })
+  })
 })

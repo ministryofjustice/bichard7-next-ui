@@ -444,4 +444,52 @@ describe("NextHearingLocation", () => {
     cy.get("#next-hearing-location-row .warning-icon").should("exist")
     cy.contains("Select valid Next hearing location").should("exist")
   })
+
+  describe("when I submit resolved exceptions I should not the same value in the notes", () => {
+    it("Should validate and auto-save the next hearing location correction and only update notes once", () => {
+      const errorId = 0
+      const nextHearingLocation = "B43UY00"
+
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+      cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
+
+      loginAndVisit(`/bichard/court-cases/${errorId}`)
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type(nextHearingLocation)
+
+      cy.wait("@save")
+
+      cy.get("#next-hearing-location-row .success-message").contains("Input saved").should("exist")
+
+      cy.get("a").contains("Notes").click()
+
+      cy.get(".notes-table")
+        .find(
+          `td:contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: ${nextHearingLocation}")`
+        )
+        .should("have.length", 1)
+
+      cy.get("button").contains("Submit exception(s)").click()
+      cy.get("#confirm-submit").contains("Submit exception(s)").click()
+
+      cy.get("a").contains("Notes").click()
+      cy.get(".notes-table")
+        .find(
+          `td:contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: ${nextHearingLocation}")`
+        )
+        .should("have.length", 1)
+    })
+  })
 })
