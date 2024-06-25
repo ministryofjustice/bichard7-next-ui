@@ -142,6 +142,9 @@ describe("ASN", () => {
   })
 
   it("Should validate and auto-save the ASN correction and update notes", () => {
+    const errorId = 0
+    const updatedAsn = "1101ZD0100000410836V"
+
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
@@ -152,26 +155,33 @@ describe("ASN", () => {
         errorLockedByUsername: "GeneralHandler"
       }
     ])
-    cy.intercept("PUT", "/bichard/api/court-cases/0/update").as("save")
+    cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
 
-    loginAndVisit("/bichard/court-cases/0")
+    loginAndVisit(`/bichard/court-cases/${errorId}`)
 
     cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
     cy.get("#asn-row .error-message").should("exist")
+    cy.get("#asn-row .error-message").contains("Enter ASN in the correct format")
 
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
     cy.get("#asn").clear()
 
-    cy.get("#asn").type("1101ZD0100000410836V")
-    cy.get("#asn-row .success-message").contains("Input saved").should("exist")
-    cy.get("button").contains("Submit exception(s)").should("be.enabled")
+    cy.get("#asn").type(updatedAsn)
 
     cy.wait("@save")
 
+    cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+    cy.get("button").contains("Submit exception(s)").should("be.enabled")
+
+    cy.get("@save").its("response.body.courtCase.errorId").should("eq", errorId)
+    cy.get("@save")
+      .its(
+        "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber"
+      )
+      .should("eq", updatedAsn)
+
     cy.get("a").contains("Notes").click()
-    cy.get("td").contains(
-      "GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: 1101ZD0100000410836V"
-    )
+    cy.get("td").contains(`GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${updatedAsn}`)
   })
 
   it("Should be able to edit ASN field if HO100206 is raised", () => {

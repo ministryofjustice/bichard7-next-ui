@@ -393,6 +393,9 @@ describe("NextHearingLocation", () => {
   })
 
   it("Should validate and auto-save the next hearing location correction and update notes", () => {
+    const errorId = 0
+    const nextHearingLocation = "B43UY00"
+
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
       {
@@ -403,21 +406,29 @@ describe("NextHearingLocation", () => {
         errorLockedByUsername: "GeneralHandler"
       }
     ])
-    cy.intercept("PUT", "/bichard/api/court-cases/0/update").as("save")
+    cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
 
-    loginAndVisit("/bichard/court-cases/0")
+    loginAndVisit(`/bichard/court-cases/${errorId}`)
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.get("#next-hearing-location").clear()
-    cy.get("#next-hearing-location").type("B43UY00")
-    cy.get("#next-hearing-location-row .success-message").contains("Input saved").should("exist")
+    cy.get("#next-hearing-location").type(nextHearingLocation)
 
     cy.wait("@save")
 
+    cy.get("#next-hearing-location-row .success-message").contains("Input saved").should("exist")
+
+    cy.get("@save").its("response.body.courtCase.errorId").should("eq", errorId)
+    cy.get("@save")
+      .its(
+        "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[0].Result[0].NextResultSourceOrganisation.OrganisationUnitCode"
+      )
+      .should("eq", nextHearingLocation)
+
     cy.get("a").contains("Notes").click()
     cy.get("td").contains(
-      "GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B43UY00"
+      `GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: ${nextHearingLocation}`
     )
   })
 
