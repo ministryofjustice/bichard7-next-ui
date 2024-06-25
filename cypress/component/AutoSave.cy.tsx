@@ -3,7 +3,7 @@ import { CourtCaseContext } from "context/CourtCaseContext"
 import React, { useState } from "react"
 import { AmendmentKeys } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import HO100200 from "./fixtures/HO100200.json"
+import HO100200 from "../fixtures/HO100200.json"
 
 describe("AutoSave", () => {
   const courtCase = HO100200 as unknown as DisplayFullCourtCase
