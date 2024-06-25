@@ -2,7 +2,7 @@ import AnnotatedHO from "../../../../../test/test-data/AnnotatedHO1.json"
 import AsnExceptionHO100206 from "../../../../../test/test-data/AsnExceptionHo100206.json"
 import AsnExceptionHO100321 from "../../../../../test/test-data/AsnExceptionHo100321.json"
 import ExceptionHO100239 from "../../../../../test/test-data/HO100239_1.json"
-import { loginAndVisit, verifyUpdatedMessage } from "../../../../support/helpers"
+import { clickTab, loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
 
 describe("ASN", () => {
   beforeEach(() => {
@@ -180,7 +180,7 @@ describe("ASN", () => {
       )
       .should("eq", updatedAsn)
 
-    cy.get("a").contains("Notes").click()
+    clickTab("Notes")
     cy.get("td").contains(`GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${updatedAsn}`)
   })
 
@@ -359,15 +359,14 @@ describe("ASN", () => {
       cy.get("#asn-row .success-message").contains("Input saved").should("exist")
       cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
-      cy.get("a").contains("Notes").click()
+      clickTab("Notes")
       cy.get(".notes-table")
         .find(`td:contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${updatedAsn}")`)
         .should("have.length", 1)
 
-      cy.get("button").contains("Submit exception(s)").click()
-      cy.get("#confirm-submit").contains("Submit exception(s)").click()
+      submitAndConfirmExceptions()
 
-      cy.get("a").contains("Notes").click()
+      clickTab("Notes")
       cy.get(".notes-table")
         .find(`td:contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${updatedAsn}")`)
         .should("have.length", 1)

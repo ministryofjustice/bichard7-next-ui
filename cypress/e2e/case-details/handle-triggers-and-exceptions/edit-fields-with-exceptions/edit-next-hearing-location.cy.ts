@@ -1,7 +1,7 @@
 import dummyAho from "../../../../../test/test-data/HO100102_1.json"
 import multipleExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import nextHearingLocationExceptions from "../../../../../test/test-data/NextHearingLocationExceptions.json"
-import { loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
+import { clickTab, loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
 
 describe("NextHearingLocation", () => {
   beforeEach(() => {
@@ -426,7 +426,7 @@ describe("NextHearingLocation", () => {
       )
       .should("eq", nextHearingLocation)
 
-    cy.get("a").contains("Notes").click()
+    clickTab("Notes")
     cy.get("td").contains(
       `GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: ${nextHearingLocation}`
     )
@@ -473,18 +473,16 @@ describe("NextHearingLocation", () => {
 
       cy.get("#next-hearing-location-row .success-message").contains("Input saved").should("exist")
 
-      cy.get("a").contains("Notes").click()
-
+      clickTab("Notes")
       cy.get(".notes-table")
         .find(
           `td:contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: ${nextHearingLocation}")`
         )
         .should("have.length", 1)
 
-      cy.get("button").contains("Submit exception(s)").click()
-      cy.get("#confirm-submit").contains("Submit exception(s)").click()
+      submitAndConfirmExceptions()
 
-      cy.get("a").contains("Notes").click()
+      clickTab("Notes")
       cy.get(".notes-table")
         .find(
           `td:contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: ${nextHearingLocation}")`

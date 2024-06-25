@@ -1,6 +1,6 @@
 import nextHearingDateExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import dummyAho from "../../../../../test/test-data/error_list_aho.json"
-import { loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
+import { clickTab, loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
 
 describe("NextHearingDate", () => {
   beforeEach(() => {
@@ -303,7 +303,7 @@ describe("NextHearingDate", () => {
       )
       .should("include", newDate)
 
-    cy.get("a").contains("Notes").click()
+    clickTab("Notes")
     cy.get("td").contains(
       `GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: ${newDate}`
     )
@@ -382,17 +382,16 @@ describe("NextHearingDate", () => {
 
       cy.get("#next-hearing-date-row .success-message").contains("Input saved").should("exist")
 
-      cy.get("a").contains("Notes").click()
+      clickTab("Notes")
       cy.get(".notes-table")
         .find(
           `td:contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: ${newDate}")`
         )
         .should("have.length", 1)
 
-      cy.get("button").contains("Submit exception(s)").click()
-      cy.get("#confirm-submit").contains("Submit exception(s)").click()
+      submitAndConfirmExceptions()
 
-      cy.get("a").contains("Notes").click()
+      clickTab("Notes")
       cy.get(".notes-table")
         .find(
           `td:contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: ${newDate}")`
