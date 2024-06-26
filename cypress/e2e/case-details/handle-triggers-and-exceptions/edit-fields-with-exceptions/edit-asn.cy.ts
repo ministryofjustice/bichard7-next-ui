@@ -2,7 +2,7 @@ import AnnotatedHO from "../../../../../test/test-data/AnnotatedHO1.json"
 import AsnExceptionHO100206 from "../../../../../test/test-data/AsnExceptionHo100206.json"
 import AsnExceptionHO100321 from "../../../../../test/test-data/AsnExceptionHo100321.json"
 import ExceptionHO100239 from "../../../../../test/test-data/HO100239_1.json"
-import { loginAndVisit, verifyUpdatedMessage } from "../../../../support/helpers"
+import { clickTab, loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
 
 describe("ASN", () => {
   beforeEach(() => {
@@ -139,6 +139,49 @@ describe("ASN", () => {
       updatedMessageNotHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber>"],
       updatedMessageHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000410836V</br7:ArrestSummonsNumber>"]
     })
+  })
+
+  it("Should validate and auto-save the ASN correction and update notes", () => {
+    const errorId = 0
+    const updatedAsn = "1101ZD0100000410836V"
+
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+    cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
+
+    loginAndVisit(`/bichard/court-cases/${errorId}`)
+
+    cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
+    cy.get("#asn-row .error-message").should("exist")
+    cy.get("#asn-row .error-message").contains("Enter ASN in the correct format")
+
+    cy.get("button").contains("Submit exception(s)").should("be.enabled")
+    cy.get("#asn").clear()
+
+    cy.get("#asn").type(updatedAsn)
+
+    cy.wait("@save")
+
+    cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+    cy.get("button").contains("Submit exception(s)").should("be.enabled")
+
+    cy.get("@save").its("response.body.courtCase.errorId").should("eq", errorId)
+    cy.get("@save")
+      .its(
+        "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber"
+      )
+      .should("eq", updatedAsn)
+
+    clickTab("Notes")
+    cy.get("td").contains(`GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${updatedAsn}`)
   })
 
   it("Should be able to edit ASN field if HO100206 is raised", () => {
@@ -285,5 +328,48 @@ describe("ASN", () => {
 
   it("Should not display an editable field for ASN when exceptionsEnabled is false for user", () => {
     loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
+  })
+
+  describe("when I submit resolved exceptions I should not see the same value in the notes", () => {
+    it("Should validate and auto-save the ASN correction and only update notes once", () => {
+      const errorId = 0
+      const updatedAsn = "1101ZD0100000410836V"
+
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+          updatedHearingOutcome: AsnExceptionHO100206.hearingOutcomeXml,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+      cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
+
+      loginAndVisit(`/bichard/court-cases/${errorId}`)
+
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
+      cy.get("#asn").clear()
+
+      cy.get("#asn").type(updatedAsn)
+
+      cy.wait("@save")
+
+      cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+      cy.get("button").contains("Submit exception(s)").should("be.enabled")
+
+      clickTab("Notes")
+      cy.get(".notes-table")
+        .find(`td:contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${updatedAsn}")`)
+        .should("have.length", 1)
+
+      submitAndConfirmExceptions()
+
+      clickTab("Notes")
+      cy.get(".notes-table")
+        .find(`td:contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${updatedAsn}")`)
+        .should("have.length", 1)
+    })
   })
 })

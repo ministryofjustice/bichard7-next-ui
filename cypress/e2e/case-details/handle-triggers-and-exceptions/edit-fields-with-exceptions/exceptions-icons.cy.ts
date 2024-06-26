@@ -268,7 +268,7 @@ describe("Tabs exceptions icons", () => {
 
       cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
       cy.get("#next-hearing-location").clear()
-      cy.get("#next-hearing-location").type("B01EF01")
+      cy.get("#next-hearing-location").type("B01EF00")
 
       submitAndConfirmExceptions()
 
@@ -294,7 +294,7 @@ describe("Tabs exceptions icons", () => {
 
       cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
       cy.get("#next-hearing-location").clear()
-      cy.get("#next-hearing-location").type("B01EF01")
+      cy.get("#next-hearing-location").type("B01EF00")
 
       cy.get("button").contains("Next offence").click()
       cy.get("#next-hearing-location").clear()
@@ -384,7 +384,7 @@ describe("Offences exceptions icons", () => {
     cy.get("button").contains("Next offence").click()
 
     cy.get("#next-hearing-location").clear()
-    cy.get("#next-hearing-location").type("B01EF01")
+    cy.get("#next-hearing-location").type("B01EF00")
     cy.get("#next-hearing-date").type("2027-01-01")
 
     submitAndConfirmExceptions()
@@ -443,7 +443,7 @@ describe("Offences exceptions icons", () => {
       .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
       .click()
     cy.get("#next-hearing-location").clear()
-    cy.get("#next-hearing-location").type("B01EF01")
+    cy.get("#next-hearing-location").type("B01EF00")
     cy.get("#next-hearing-date").type("2027-01-01")
 
     submitAndConfirmExceptions()

@@ -1,6 +1,6 @@
 import nextHearingDateExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import dummyAho from "../../../../../test/test-data/error_list_aho.json"
-import { loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
+import { clickTab, loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
 
 describe("NextHearingDate", () => {
   beforeEach(() => {
@@ -267,6 +267,48 @@ describe("NextHearingDate", () => {
     })
   })
 
+  it("Should validate and auto-save the next hearing date correction and update notes", () => {
+    const errorId = 0
+    const newDate = "2023-12-24"
+
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+    cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
+
+    loginAndVisit(`/bichard/court-cases/${errorId}`)
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link")
+      .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
+      .click()
+    cy.contains("td", "Next hearing date").siblings().should("include.text", "")
+    cy.get("#next-hearing-date").type(newDate)
+
+    cy.wait("@save")
+
+    cy.get("#next-hearing-date-row .success-message").contains("Input saved").should("exist")
+
+    cy.get("@save").its("response.body.courtCase.errorId").should("eq", errorId)
+    cy.get("@save")
+      .its(
+        "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[0].Result[0].NextHearingDate"
+      )
+      .should("include", newDate)
+
+    clickTab("Notes")
+    cy.get("td").contains(
+      `GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: ${newDate}`
+    )
+  })
+
   it("Should not be able to edit next hearing date field when exception is not locked by current user", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
@@ -308,5 +350,53 @@ describe("NextHearingDate", () => {
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+  })
+
+  describe("when I submit resolved exceptions I should not the same value in the notes", () => {
+    it("Should validate and auto-save the next hearing date correction and only update notes once", () => {
+      const errorId = 0
+      const newDate = "2023-12-24"
+
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+          updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXmlHO100323,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+      cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
+
+      loginAndVisit(`/bichard/court-cases/${errorId}`)
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link")
+        .contains("Offence with HO100323 - COURT HAS PROVIDED AN ADJOURNMENT WITH NO NEXT HEARING DATE EXCEPTION")
+        .click()
+      cy.contains("td", "Next hearing date").siblings().should("include.text", "")
+      cy.get("#next-hearing-date").type(newDate)
+
+      cy.wait("@save")
+
+      cy.get("#next-hearing-date-row .success-message").contains("Input saved").should("exist")
+
+      clickTab("Notes")
+      cy.get(".notes-table")
+        .find(
+          `td:contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: ${newDate}")`
+        )
+        .should("have.length", 1)
+
+      submitAndConfirmExceptions()
+
+      clickTab("Notes")
+      cy.get(".notes-table")
+        .find(
+          `td:contains("GeneralHandler: Portal Action: Update Applied. Element: nextHearingDate. New Value: ${newDate}")`
+        )
+        .should("have.length", 1)
+    })
   })
 })

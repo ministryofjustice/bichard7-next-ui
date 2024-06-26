@@ -1,5 +1,7 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import AutoSave from "components/EditableFields/AutoSave"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
+import ErrorMessage from "components/EditableFields/ErrorMessage"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { useState } from "react"
@@ -8,8 +10,6 @@ import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNext
 import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExceptions"
 import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
 import isValidNextHearingDate from "utils/validators/isValidNextHearingDate"
-import { AutoSave } from "../../../../../components/EditableFields/AutoSave"
-import ErrorMessage from "components/EditableFields/ErrorMessage"
 
 interface NextHearingDateFieldProps {
   result: Result
