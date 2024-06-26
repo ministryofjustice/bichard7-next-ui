@@ -445,7 +445,7 @@ describe("NextHearingLocation", () => {
     cy.contains("Select valid Next hearing location").should("exist")
   })
 
-  describe("when I submit resolved exceptions I should not the same value in the notes", () => {
+  describe("when I submit resolved exceptions I should not see the same value in the notes", () => {
     it("Should validate and auto-save the next hearing location correction and only update notes once", () => {
       const errorId = 0
       const nextHearingLocation = "B43UY00"

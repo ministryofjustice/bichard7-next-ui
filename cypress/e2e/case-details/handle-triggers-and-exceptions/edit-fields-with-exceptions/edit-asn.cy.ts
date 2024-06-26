@@ -330,7 +330,7 @@ describe("ASN", () => {
     loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
   })
 
-  describe("when I submit resolved exceptions I should not the same value in the notes", () => {
+  describe("when I submit resolved exceptions I should not see the same value in the notes", () => {
     it("Should validate and auto-save the ASN correction and only update notes once", () => {
       const errorId = 0
       const updatedAsn = "1101ZD0100000410836V"
