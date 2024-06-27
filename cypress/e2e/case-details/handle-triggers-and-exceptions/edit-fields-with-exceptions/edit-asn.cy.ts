@@ -279,8 +279,7 @@ describe("ASN", () => {
     cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
-    cy.get("button").contains("Submit exception(s)").click()
-    cy.get("button").contains("Submit exception(s)").click()
+    submitAndConfirmExceptions()
 
     cy.get(".defendant-details-table").contains("1101ZD0100000448754K")
     cy.get(".moj-badge").contains("Correction").should("exist")
