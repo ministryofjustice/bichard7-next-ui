@@ -27,6 +27,8 @@ export const AsnField = () => {
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Backspace") {
       setKey(e.code)
+    } else {
+      setKey("")
     }
   }
 
@@ -35,7 +37,7 @@ export const AsnField = () => {
 
     if (key === "Backspace") {
       const asnWithSlashes = Asn.divideAsn(inputAsnValue)
-      amend("asn")(Asn.deleteAsn(asnWithSlashes))
+      amend("asn")(Asn.deleteAsn(asnWithSlashes).replace(/\//g, ""))
     } else {
       const asnWithoutSlashes = inputAsnValue.replace(/\//g, "")
       amend("asn")(asnWithoutSlashes)
