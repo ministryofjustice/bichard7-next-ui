@@ -359,9 +359,9 @@ describe("NextHearingLocation", () => {
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B01EF00")
 
-    cy.get("#next-hearing-location-row .success-message").should("not.exist")
-    cy.get("#next-hearing-location-row .warning-icon").should("exist")
-    cy.get("#next-hearing-location-row .error-message").contains("Autosave has failed, please refresh").should("exist")
+    cy.get(".next-hearing-location-row .success-message").should("not.exist")
+    cy.get(".next-hearing-location-row .warning-icon").should("exist")
+    cy.get(".next-hearing-location-row .error-message").contains("Autosave has failed, please refresh").should("exist")
   })
 
   it("Should validate Next Hearing Location and auto-save", () => {
@@ -382,7 +382,7 @@ describe("NextHearingLocation", () => {
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B43UY00")
-    cy.get("#next-hearing-location-row .success-message").contains("Input saved").should("exist")
+    cy.get(".next-hearing-location-row .success-message").contains("Input saved").should("exist")
 
     cy.wait("@save")
     verifyUpdatedMessage({
@@ -417,7 +417,7 @@ describe("NextHearingLocation", () => {
 
     cy.wait("@save")
 
-    cy.get("#next-hearing-location-row .success-message").contains("Input saved").should("exist")
+    cy.get(".next-hearing-location-row .success-message").contains("Input saved").should("exist")
 
     cy.get("@save").its("response.body.courtCase.errorId").should("eq", errorId)
     cy.get("@save")
@@ -440,8 +440,8 @@ describe("NextHearingLocation", () => {
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B43UYXX")
 
-    cy.get("#next-hearing-location-row .success-message").should("not.exist")
-    cy.get("#next-hearing-location-row .warning-icon").should("exist")
+    cy.get(".next-hearing-location-row .success-message").should("not.exist")
+    cy.get(".next-hearing-location-row .warning-icon").should("exist")
     cy.contains("Select valid Next hearing location").should("exist")
   })
 
@@ -471,7 +471,7 @@ describe("NextHearingLocation", () => {
 
       cy.wait("@save")
 
-      cy.get("#next-hearing-location-row .success-message").contains("Input saved").should("exist")
+      cy.get(".next-hearing-location-row .success-message").contains("Input saved").should("exist")
 
       clickTab("Notes")
       cy.get(".notes-table")

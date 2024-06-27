@@ -104,8 +104,8 @@ describe("ASN", () => {
 
     cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000410836V")
-    cy.get("#asn-row .error-message").contains("Autosave has failed, please refresh").should("exist")
-    cy.get("#asn-row .success-message").should("not.exist")
+    cy.get(".asn-row .error-message").contains("Autosave has failed, please refresh").should("exist")
+    cy.get(".asn-row .success-message").should("not.exist")
   })
 
   it("Should validate and auto-save the ASN correction", () => {
@@ -124,13 +124,13 @@ describe("ASN", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
-    cy.get("#asn-row .error-message").should("exist")
+    cy.get(".asn-row .error-message").should("exist")
 
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
     cy.get("#asn").clear()
 
     cy.get("#asn").type("1101ZD0100000410836V")
-    cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+    cy.get(".asn-row .success-message").contains("Input saved").should("exist")
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
     cy.wait("@save")
@@ -160,8 +160,8 @@ describe("ASN", () => {
     loginAndVisit(`/bichard/court-cases/${errorId}`)
 
     cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
-    cy.get("#asn-row .error-message").should("exist")
-    cy.get("#asn-row .error-message").contains("Enter ASN in the correct format")
+    cy.get(".asn-row .error-message").should("exist")
+    cy.get(".asn-row .error-message").contains("Enter ASN in the correct format")
 
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
     cy.get("#asn").clear()
@@ -170,7 +170,7 @@ describe("ASN", () => {
 
     cy.wait("@save")
 
-    cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+    cy.get(".asn-row .success-message").contains("Input saved").should("exist")
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
     cy.get("@save").its("response.body.courtCase.errorId").should("eq", errorId)
@@ -296,7 +296,7 @@ describe("ASN", () => {
     cy.get("input#asn").should("have.value", asnWithSlashes)
 
     cy.wait("@update")
-    cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+    cy.get(".asn-row .success-message").contains("Input saved").should("exist")
 
     clickTab("Notes")
     cy.get(".notes-table")
@@ -406,7 +406,7 @@ describe("ASN", () => {
 
       cy.wait("@save")
 
-      cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+      cy.get(".asn-row .success-message").contains("Input saved").should("exist")
       cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
       clickTab("Notes")
