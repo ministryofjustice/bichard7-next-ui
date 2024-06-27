@@ -272,6 +272,52 @@ describe("ASN", () => {
     cy.get("#asn").should("have.value", "11/01ZD/01/00000448754K")
   })
 
+  it("Should divide ASN into sections when user types or pastes asn into the input field ", () => {
+    const asnWithoutSlashes = "1101ZD0100000448754K"
+    const asnWithSlashes = "11/01ZD/01/00000448754K"
+
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.intercept("PUT", `/bichard/api/court-cases/0/update`).as("update")
+
+    cy.get("input#asn").clear()
+    cy.get("input#asn").type(asnWithoutSlashes)
+    cy.get("input#asn").should("have.value", asnWithSlashes)
+
+    cy.wait("@update")
+    cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+
+    clickTab("Notes")
+    cy.get(".notes-table")
+      .find(
+        `td:contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${asnWithoutSlashes}")`
+      )
+      .should("have.length", 1)
+
+    clickTab("Defendant")
+
+    cy.get("input#asn").type("{backspace}")
+    cy.get("input#asn").type("K")
+
+    cy.get("@update.all").then((interceptions) => expect(interceptions).to.have.length(1))
+
+    clickTab("Notes")
+    cy.get(".notes-table")
+      .find(`td:contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${asnWithSlashes}")`)
+      .should("have.length", 0)
+  })
+
   it("should display the updated ASN after submission along with CORRECTION badge", () => {
     loginAndVisit("/bichard/court-cases/0")
 
