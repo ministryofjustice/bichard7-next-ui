@@ -307,6 +307,8 @@ describe("ASN", () => {
       }
     ])
     loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("input#asn").should("not.exist")
   })
 
   it("Should not be able to edit ASN field if user is not an exception handler", () => {
@@ -323,10 +325,13 @@ describe("ASN", () => {
     loginAndVisit("TriggerHandler", "/bichard/court-cases/0")
 
     cy.get(".moj-badge").should("not.exist")
+    cy.get("input#asn").should("not.exist")
   })
 
   it("Should not display an editable field for ASN when exceptionsEnabled is false for user", () => {
     loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
+
+    cy.get("input#asn").should("not.exist")
   })
 
   describe("when I submit resolved exceptions I should not see the same value in the notes", () => {
