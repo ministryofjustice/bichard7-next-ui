@@ -12,11 +12,15 @@ export type OffenceAlert = {
 const nextHearingDateExceptionResolvedFn = (
   updatedFields: Amendments,
   exception: Exception,
-  offenceIndex: number
+  offenceIndex: number,
+  resultIndex: number
 ): boolean => {
   if (hasNextHearingDateExceptions([exception])) {
     return Boolean(
-      updatedFields?.nextHearingDate?.some((nextHearingDate) => nextHearingDate.offenceIndex === offenceIndex)
+      updatedFields?.nextHearingDate?.some(
+        (nextHearingDate) =>
+          nextHearingDate.offenceIndex === offenceIndex && nextHearingDate.resultIndex === resultIndex
+      )
     )
   } else {
     return false
@@ -44,7 +48,16 @@ const getOffenceAlertsDetails = (exceptions: Exception[], updatedFields: Amendme
 
   exceptions.forEach((exception) => {
     const offenceIndex = exception.path[EXCEPTION_OFFENCE_INDEX]
-    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(updatedFields, exception, +offenceIndex)
+    const resultIndex = exception.path[7]
+
+    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
+      updatedFields,
+      exception,
+      +offenceIndex,
+      +resultIndex
+    )
+
+    console.log(nextHearingDateExceptionResolved)
     const nextHearingLocationExceptionResolved = nextHearingLocationExceptionResolvedFn(
       updatedFields,
       exception,

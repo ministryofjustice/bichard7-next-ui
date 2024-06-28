@@ -39,7 +39,7 @@ export const NextHearingDateField = ({
 
   return (
     <EditableFieldTableRow
-      id={"next-hearing-date-row"}
+      className={"next-hearing-date-row"}
       label="Next hearing date"
       hasExceptions={hasNextHearingDateExceptions(exceptions)}
       value={result.NextHearingDate && formatDisplayedDate(String(result.NextHearingDate))}
@@ -50,9 +50,9 @@ export const NextHearingDateField = ({
     >
       <input
         className="govuk-input"
+        id="next-hearing-date"
         type="date"
         min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
-        id={"next-hearing-date"}
         name={"next-hearing-date"}
         value={amendedNextHearingDate}
         onChange={(event) => {

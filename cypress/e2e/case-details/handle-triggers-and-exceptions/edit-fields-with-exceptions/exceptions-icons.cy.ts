@@ -151,7 +151,7 @@ describe("Tabs exceptions icons", () => {
       cy.get("ul.moj-sub-navigation__list>li").eq(3).contains("Offences").contains("1").should("exist")
       clickTab("Offences")
       cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
-      cy.get("#next-hearing-date").type("2026-01-01")
+      cy.get(".hearing-result-1 #next-hearing-date").type("2026-01-01")
 
       submitAndConfirmExceptions()
 
@@ -175,10 +175,10 @@ describe("Tabs exceptions icons", () => {
       clickTab("Offences")
 
       cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
-      cy.get("#next-hearing-date").type("2026-01-01")
+      cy.get(".hearing-result-1 #next-hearing-date").type("2026-01-01")
 
       cy.get("button").contains("Next offence").click()
-      cy.get("#next-hearing-date").type("2027-01-01")
+      cy.get(".hearing-result-1 #next-hearing-date").type("2027-01-01")
 
       submitAndConfirmExceptions()
 
@@ -348,7 +348,7 @@ describe("Offences exceptions icons", () => {
     cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("exist")
     cy.get("#offences tbody tr:nth-child(1)").find(".checkmark-icon").should("not.exist")
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
-    cy.get("#next-hearing-date").type("2028-01-01")
+    cy.get(".hearing-result-1 #next-hearing-date").type("2028-01-01")
 
     submitAndConfirmExceptions()
 
@@ -379,13 +379,14 @@ describe("Offences exceptions icons", () => {
     cy.get("#offences tbody tr:nth-child(3)").find(".warning-icon").should("not.exist")
 
     cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
-    cy.get("#next-hearing-date").type("2026-01-01")
+    cy.get(".hearing-result-1 #next-hearing-date").type("2026-01-01")
+    cy.get(".hearing-result-2 #next-hearing-date").type("2026-01-01")
 
     cy.get("button").contains("Next offence").click()
 
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B01EF00")
-    cy.get("#next-hearing-date").type("2027-01-01")
+    cy.get(".hearing-result-1 #next-hearing-date").type("2026-01-01")
 
     submitAndConfirmExceptions()
 
@@ -444,14 +445,42 @@ describe("Offences exceptions icons", () => {
       .click()
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B01EF00")
-    cy.get("#next-hearing-date").type("2027-01-01")
-
+    cy.get(".hearing-result-1 #next-hearing-date").type("2027-01-01")
     submitAndConfirmExceptions()
 
     clickTab("Offences")
     cy.get("#offences tbody tr:nth-child(2) td:nth-child(1) .warning-icon").should("not.exist")
     cy.get("#offences tbody tr:nth-child(2) td:nth-child(1) .checkmark-icon").should("exist")
     cy.get("#offences tbody tr:nth-child(2) td:nth-child(1) .checkmark-icon").should("have.length", 1)
+  })
+
+  it("Should display warning icon until all of the exceptions are resolved on a case with multiple hearing results", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXml,
+        updatedHearingOutcome: nextHearingDateExceptions.hearingOutcomeXml,
+        errorCount: 1
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    clickTab("Offences")
+    cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("exist")
+
+    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+    cy.get(".hearing-result-1 #next-hearing-date").type("2027-01-01")
+
+    cy.get("a.govuk-back-link").contains("Back to all offences").click()
+    cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("exist")
+
+    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+    cy.get(".hearing-result-2 #next-hearing-date").type("2028-02-02")
+
+    cy.get("a.govuk-back-link").contains("Back to all offences").click()
+    cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("not.exist")
+    cy.get("#offences tbody tr:nth-child(1)").find(".checkmark-icon").should("exist")
   })
 
   it("Should not display exceptions warning icons when exeptionsEnabled is false for a user", () => {

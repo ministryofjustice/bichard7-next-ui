@@ -104,8 +104,8 @@ describe("ASN", () => {
 
     cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000410836V")
-    cy.get("#asn-row .error-message").contains("Autosave has failed, please refresh").should("exist")
-    cy.get("#asn-row .success-message").should("not.exist")
+    cy.get(".asn-row .error-message").contains("Autosave has failed, please refresh").should("exist")
+    cy.get(".asn-row .success-message").should("not.exist")
   })
 
   it("Should validate and auto-save the ASN correction", () => {
@@ -124,13 +124,13 @@ describe("ASN", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
-    cy.get("#asn-row .error-message").should("exist")
+    cy.get(".asn-row .error-message").should("exist")
 
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
     cy.get("#asn").clear()
 
     cy.get("#asn").type("1101ZD0100000410836V")
-    cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+    cy.get(".asn-row .success-message").contains("Input saved").should("exist")
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
     cy.wait("@save")
@@ -160,8 +160,8 @@ describe("ASN", () => {
     loginAndVisit(`/bichard/court-cases/${errorId}`)
 
     cy.get("#asn").type("AAAAAAAAAAAAAAAAAAAA")
-    cy.get("#asn-row .error-message").should("exist")
-    cy.get("#asn-row .error-message").contains("Enter ASN in the correct format")
+    cy.get(".asn-row .error-message").should("exist")
+    cy.get(".asn-row .error-message").contains("Enter ASN in the correct format")
 
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
     cy.get("#asn").clear()
@@ -170,7 +170,7 @@ describe("ASN", () => {
 
     cy.wait("@save")
 
-    cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+    cy.get(".asn-row .success-message").contains("Input saved").should("exist")
     cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
     cy.get("@save").its("response.body.courtCase.errorId").should("eq", errorId)
@@ -272,6 +272,52 @@ describe("ASN", () => {
     cy.get("#asn").should("have.value", "11/01ZD/01/00000448754K")
   })
 
+  it("Should divide ASN into sections when user types or pastes asn into the input field ", () => {
+    const asnWithoutSlashes = "1101ZD0100000448754K"
+    const asnWithSlashes = "11/01ZD/01/00000448754K"
+
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.intercept("PUT", `/bichard/api/court-cases/0/update`).as("update")
+
+    cy.get("input#asn").clear()
+    cy.get("input#asn").type(asnWithoutSlashes)
+    cy.get("input#asn").should("have.value", asnWithSlashes)
+
+    cy.wait("@update")
+    cy.get(".asn-row .success-message").contains("Input saved").should("exist")
+
+    clickTab("Notes")
+    cy.get(".notes-table")
+      .find(
+        `td:contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${asnWithoutSlashes}")`
+      )
+      .should("have.length", 1)
+
+    clickTab("Defendant")
+
+    cy.get("input#asn").type("{backspace}")
+    cy.get("input#asn").type("K")
+
+    cy.get("@update.all").then((interceptions) => expect(interceptions).to.have.length(1))
+
+    clickTab("Notes")
+    cy.get(".notes-table")
+      .find(`td:contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: ${asnWithSlashes}")`)
+      .should("have.length", 0)
+  })
+
   it("should display the updated ASN after submission along with CORRECTION badge", () => {
     loginAndVisit("/bichard/court-cases/0")
 
@@ -279,8 +325,7 @@ describe("ASN", () => {
     cy.get("#asn").clear()
     cy.get("#asn").type("1101ZD0100000448754K")
 
-    cy.get("button").contains("Submit exception(s)").click()
-    cy.get("button").contains("Submit exception(s)").click()
+    submitAndConfirmExceptions()
 
     cy.get(".defendant-details-table").contains("1101ZD0100000448754K")
     cy.get(".moj-badge").contains("Correction").should("exist")
@@ -308,6 +353,8 @@ describe("ASN", () => {
       }
     ])
     loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("input#asn").should("not.exist")
   })
 
   it("Should not be able to edit ASN field if user is not an exception handler", () => {
@@ -324,10 +371,13 @@ describe("ASN", () => {
     loginAndVisit("TriggerHandler", "/bichard/court-cases/0")
 
     cy.get(".moj-badge").should("not.exist")
+    cy.get("input#asn").should("not.exist")
   })
 
   it("Should not display an editable field for ASN when exceptionsEnabled is false for user", () => {
     loginAndVisit("NoExceptionsFeatureFlag", "/bichard/court-cases/0")
+
+    cy.get("input#asn").should("not.exist")
   })
 
   describe("when I submit resolved exceptions I should not see the same value in the notes", () => {
@@ -356,7 +406,7 @@ describe("ASN", () => {
 
       cy.wait("@save")
 
-      cy.get("#asn-row .success-message").contains("Input saved").should("exist")
+      cy.get(".asn-row .success-message").contains("Input saved").should("exist")
       cy.get("button").contains("Submit exception(s)").should("be.enabled")
 
       clickTab("Notes")
