@@ -54,7 +54,8 @@ describe("nextHearingDateExceptionResolvedFn", () => {
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
       nextHearingDateException,
-      0
+      updatedFields.nextHearingDate![0].offenceIndex,
+      updatedFields.nextHearingDate![0].resultIndex
     )
 
     expect(nextHearingDateExceptionResolved).toBe(true)
@@ -66,6 +67,7 @@ describe("nextHearingDateExceptionResolvedFn", () => {
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
       nextHearingDateException,
+      0,
       0
     )
 
@@ -86,6 +88,7 @@ describe("nextHearingDateExceptionResolvedFn", () => {
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
       nextHearingDateException,
+      0,
       0
     )
 
@@ -105,14 +108,36 @@ describe("nextHearingDateExceptionResolvedFn", () => {
 
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
-      nextHearingLocationException,
+      nextHearingDateException,
+      0,
       0
     )
 
     expect(nextHearingDateExceptionResolved).toBe(false)
   })
 
-  it("Should return false when currepted data is found in updatedFields", () => {
+  it("Should return false when exception is resolved in different hearing result but in same offence", () => {
+    const updatedFields = {
+      nextHearingDate: [
+        {
+          resultIndex: 1,
+          offenceIndex: 0,
+          value: "2024-03-30"
+        }
+      ]
+    } as Amendments
+
+    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
+      updatedFields,
+      nextHearingDateException,
+      0,
+      0
+    )
+
+    expect(nextHearingDateExceptionResolved).toBe(false)
+  })
+
+  it("Should return false when corrupted data is found in updatedFields", () => {
     const updatedFields = {
       nextHearingDate: undefined
     } as unknown as Amendments
@@ -120,13 +145,14 @@ describe("nextHearingDateExceptionResolvedFn", () => {
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
       nextHearingDateException,
+      0,
       0
     )
 
     expect(nextHearingDateExceptionResolved).toBe(false)
   })
 
-  it("Should return false when currepted offenceIndex is found in updatedFields", () => {
+  it("Should return false when corrupted offenceIndex is found in updatedFields", () => {
     const updatedFields = {
       nextHearingDate: [
         {
@@ -140,6 +166,7 @@ describe("nextHearingDateExceptionResolvedFn", () => {
     const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
       updatedFields,
       nextHearingDateException,
+      0,
       0
     )
 
@@ -212,12 +239,12 @@ describe("nextHearingLocationExceptionResolvedFn", () => {
       ]
     } as Amendments
 
-    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(updatedFields, exception, 0)
+    const nextHearingDateExceptionResolved = nextHearingLocationExceptionResolvedFn(updatedFields, exception, 0)
 
     expect(nextHearingDateExceptionResolved).toBe(false)
   })
 
-  it("Should return false when currepted data is found in updatedFields", () => {
+  it("Should return false when corrupted data is found in updatedFields", () => {
     const updatedFields = {
       nextSourceOrganisation: undefined
     } as unknown as Amendments
@@ -231,20 +258,20 @@ describe("nextHearingLocationExceptionResolvedFn", () => {
     expect(nextHearingLocationResolved).toBe(false)
   })
 
-  it("Should return false when currepted offenceIndex is found in updatedFields", () => {
+  it("Should return false when corrupted offenceIndex is found in updatedFields", () => {
     const updatedFields = {
       nextSourceOrganisation: [
         {
           resultIndex: 0,
-          offenceIndex: 1,
+          offenceIndex: "not a number" as unknown as number,
           value: "B21XA00"
         }
       ]
     } as Amendments
 
-    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
+    const nextHearingDateExceptionResolved = nextHearingLocationExceptionResolvedFn(
       updatedFields,
-      nextHearingDateException,
+      nextHearingLocationException,
       0
     )
 
@@ -352,5 +379,27 @@ describe("getOffenceAlertDetails", () => {
     expect(offenceAlertDetails.length).toBe(1)
     expect(offenceAlertDetails[0].offenceIndex).toBe(0)
     expect(offenceAlertDetails[0].isResolved).toBe(true)
+  })
+
+  it("Should return isResolved:false when one of the exceptions in unresolved in same offence but in different hearing result", () => {
+    dummyAho.Exceptions.length = 0
+    HO100102(dummyAho, 0, 0)
+    HO100102(dummyAho, 0, 1)
+    const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
+    const updatedFields = {
+      nextHearingDate: [
+        {
+          resultIndex: 0,
+          offenceIndex: 0,
+          value: "2002-10-10"
+        }
+      ]
+    } as Amendments
+
+    const offenceAlertDetails = getOffenceAlertsDetails(courtCase.aho.Exceptions, updatedFields)
+
+    expect(offenceAlertDetails.length).toBe(1)
+    expect(offenceAlertDetails[0].offenceIndex).toBe(0)
+    expect(offenceAlertDetails[0].isResolved).toBe(false)
   })
 })
