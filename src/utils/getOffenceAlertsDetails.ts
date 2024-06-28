@@ -2,41 +2,34 @@ import { Amendments } from "types/Amendments"
 import { Exception } from "types/exceptions"
 import hasNextHearingDateExceptions from "./exceptions/hasNextHearingDateExceptions"
 import hasNextHearingLocationException from "./exceptions/hasNextHearingLocationException"
-import { EXCEPTION_OFFENCE_INDEX } from "config"
+import { EXCEPTION_PATH_PROPERTY_INDEXES } from "config"
 
 export type OffenceAlert = {
   offenceIndex: string | number
   isResolved: boolean
 }
 
-const nextHearingDateExceptionResolvedFn = (
+const hasException = (field: "nextHearingDate" | "nextSourceOrganisation", exception: Exception): boolean => {
+  switch (field) {
+    case "nextHearingDate":
+      return hasNextHearingDateExceptions([exception])
+    case "nextSourceOrganisation":
+      return hasNextHearingLocationException([exception])
+    default:
+      return false
+  }
+}
+
+const exceptionsResolvedFn = (
+  field: "nextHearingDate" | "nextSourceOrganisation",
   updatedFields: Amendments,
   exception: Exception,
   offenceIndex: number,
   resultIndex: number
 ): boolean => {
-  if (hasNextHearingDateExceptions([exception])) {
+  if (hasException(field, exception)) {
     return Boolean(
-      updatedFields?.nextHearingDate?.some(
-        (nextHearingDate) =>
-          nextHearingDate.offenceIndex === offenceIndex && nextHearingDate.resultIndex === resultIndex
-      )
-    )
-  } else {
-    return false
-  }
-}
-
-const nextHearingLocationExceptionResolvedFn = (
-  updatedFields: Amendments,
-  exception: Exception,
-  offenceIndex: number
-): boolean => {
-  if (hasNextHearingLocationException([exception])) {
-    return Boolean(
-      updatedFields?.nextSourceOrganisation?.some(
-        (nextSourceOrganisation) => nextSourceOrganisation.offenceIndex === offenceIndex
-      )
+      updatedFields?.[field]?.some((f) => f.offenceIndex === offenceIndex && f.resultIndex === resultIndex)
     )
   } else {
     return false
@@ -47,38 +40,25 @@ const getOffenceAlertsDetails = (exceptions: Exception[], updatedFields: Amendme
   const offenceAlerts: OffenceAlert[] = []
 
   exceptions.forEach((exception) => {
-    const offenceIndex = exception.path[EXCEPTION_OFFENCE_INDEX]
-    const resultIndex = exception.path[7]
+    const offenceIndex = exception.path[EXCEPTION_PATH_PROPERTY_INDEXES.offenceIndex]
+    const resultIndex = exception.path[EXCEPTION_PATH_PROPERTY_INDEXES.resultIndex]
 
-    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
-      updatedFields,
-      exception,
-      +offenceIndex,
-      +resultIndex
-    )
+    const isResolved =
+      exceptionsResolvedFn("nextHearingDate", updatedFields, exception, +offenceIndex, +resultIndex) ||
+      exceptionsResolvedFn("nextSourceOrganisation", updatedFields, exception, +offenceIndex, +resultIndex)
 
-    console.log(nextHearingDateExceptionResolved)
-    const nextHearingLocationExceptionResolved = nextHearingLocationExceptionResolvedFn(
-      updatedFields,
-      exception,
-      +offenceIndex
-    )
-    const isResolved = nextHearingDateExceptionResolved || nextHearingLocationExceptionResolved
+    const existingAlert = offenceAlerts.find((alert) => alert.offenceIndex === offenceIndex)
 
-    if (offenceAlerts.length > 0) {
-      const existingAlert = offenceAlerts.find((alert) => alert.offenceIndex === offenceIndex)
-      if (existingAlert) {
-        existingAlert.isResolved = existingAlert.isResolved && isResolved
-      } else {
-        offenceAlerts.push({ offenceIndex, isResolved })
-      }
-    } else {
-      offenceAlerts.push({ offenceIndex, isResolved })
+    if (existingAlert) {
+      existingAlert.isResolved = existingAlert.isResolved && isResolved
+      return
     }
+
+    offenceAlerts.push({ offenceIndex, isResolved })
   })
 
   return offenceAlerts
 }
 
-export { nextHearingDateExceptionResolvedFn, nextHearingLocationExceptionResolvedFn }
+export { exceptionsResolvedFn }
 export default getOffenceAlertsDetails

@@ -254,6 +254,51 @@ describe("NextHearingLocation", () => {
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 
+  it("Should be able to edit multiple hearing results with incorrect next hearing location exceptions", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.nextHearingLocationExceptionOnMultipleResults,
+        updatedHearingOutcome: nextHearingLocationExceptions.nextHearingLocationExceptionOnMultipleResults,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.get(".hearing-result-1").contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
+
+    cy.get(".hearing-result-1 #next-hearing-location").clear()
+    cy.get(".hearing-result-1 #next-hearing-location").type("B01EF00")
+    cy.get(".hearing-result-1 .next-hearing-location-row .success-message").contains("Input saved").should("exist")
+
+    cy.get(".hearing-result-2")
+      .contains("td", "Next hearing location")
+      .siblings()
+      .should("include.text", "NOTANEXTHEARINGLOCATION")
+    cy.get(".hearing-result-2 #next-hearing-location").clear()
+    cy.get(".hearing-result-2 #next-hearing-location").type("C04BF00")
+    cy.get(".hearing-result-2 .next-hearing-location-row .success-message").contains("Input saved").should("exist")
+
+    verifyUpdatedMessage({
+      expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
+      updatedMessageNotHaveContent: [
+        '<ds:OrganisationUnitCode Error="HO100200">B@1EF$1</ds:OrganisationUnitCode>',
+        '<ds:OrganisationUnitCode Error="HO100200">NOTANEXTHEARINGLOCATION</ds:OrganisationUnitCode>'
+      ],
+      updatedMessageHaveContent: [
+        "<ds:OrganisationUnitCode>B01EF00</ds:OrganisationUnitCode>",
+        "<ds:OrganisationUnitCode>C04BF00</ds:OrganisationUnitCode>"
+      ]
+    })
+
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF00")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: C04BF00")
+  })
+
   it("Should not be able to edit next hearing location field when the case isn't in 'unresolved' state", () => {
     const submittedCaseId = 0
     const resolvedCaseId = 1
