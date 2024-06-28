@@ -1,11 +1,8 @@
 import { Amendments } from "types/Amendments"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
-import getOffenceAlertsDetails, {
-  nextHearingDateExceptionResolvedFn,
-  nextHearingLocationExceptionResolvedFn
-} from "./getOffenceAlertsDetails"
+import getOffenceAlertsDetails, { exceptionsResolvedFn } from "./getOffenceAlertsDetails"
 import createDummyAho from "../../test/helpers/createDummyAho"
-import { HO100102, HO100322 } from "../../test/helpers/exceptions"
+import { HO100102, HO100200, HO100322 } from "../../test/helpers/exceptions"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 
 const nextHearingDateException = {
@@ -39,9 +36,16 @@ const nextHearingLocationException = {
   ]
 }
 
-describe("nextHearingDateExceptionResolvedFn", () => {
+describe("exceptionsResolvedFn", () => {
   it("Should return true when relevant exception is resolved", () => {
     const updatedFields = {
+      nextSourceOrganisation: [
+        {
+          resultIndex: 1,
+          offenceIndex: 1,
+          value: "B21XA00"
+        }
+      ],
       nextHearingDate: [
         {
           resultIndex: 0,
@@ -51,20 +55,31 @@ describe("nextHearingDateExceptionResolvedFn", () => {
       ]
     } as Amendments
 
-    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
+    const nextHearingDateExceptionResolved = exceptionsResolvedFn(
+      "nextHearingDate",
       updatedFields,
       nextHearingDateException,
       updatedFields.nextHearingDate![0].offenceIndex,
       updatedFields.nextHearingDate![0].resultIndex
     )
 
+    const nextSourceOrganisationResolved = exceptionsResolvedFn(
+      "nextSourceOrganisation",
+      updatedFields,
+      nextHearingLocationException,
+      updatedFields.nextSourceOrganisation![0].offenceIndex,
+      updatedFields.nextSourceOrganisation![0].resultIndex
+    )
+
     expect(nextHearingDateExceptionResolved).toBe(true)
+    expect(nextSourceOrganisationResolved).toBe(true)
   })
 
   it("Should return false when exception is not resolved", () => {
     const updatedFields = {} as Amendments
 
-    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
+    const nextHearingDateExceptionResolved = exceptionsResolvedFn(
+      "nextHearingDate",
       updatedFields,
       nextHearingDateException,
       0,
@@ -85,7 +100,8 @@ describe("nextHearingDateExceptionResolvedFn", () => {
       ]
     } as Amendments
 
-    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
+    const nextHearingDateExceptionResolved = exceptionsResolvedFn(
+      "nextHearingDate",
       updatedFields,
       nextHearingDateException,
       0,
@@ -106,7 +122,8 @@ describe("nextHearingDateExceptionResolvedFn", () => {
       ]
     } as Amendments
 
-    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
+    const nextHearingDateExceptionResolved = exceptionsResolvedFn(
+      "nextHearingDate",
       updatedFields,
       nextHearingDateException,
       0,
@@ -116,7 +133,7 @@ describe("nextHearingDateExceptionResolvedFn", () => {
     expect(nextHearingDateExceptionResolved).toBe(false)
   })
 
-  it("Should return false when exception is resolved in different hearing result but in same offence", () => {
+  it("Should return false when nextHearingDate exception is resolved in different hearing result but in same offence", () => {
     const updatedFields = {
       nextHearingDate: [
         {
@@ -127,7 +144,30 @@ describe("nextHearingDateExceptionResolvedFn", () => {
       ]
     } as Amendments
 
-    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
+    const nextHearingDateExceptionResolved = exceptionsResolvedFn(
+      "nextHearingDate",
+      updatedFields,
+      nextHearingDateException,
+      0,
+      0
+    )
+
+    expect(nextHearingDateExceptionResolved).toBe(false)
+  })
+
+  it("Should return false when nextSourceOrganisation exception is resolved in different hearing result but in same offence", () => {
+    const updatedFields = {
+      nextSourceOrganisation: [
+        {
+          resultIndex: 1,
+          offenceIndex: 0,
+          value: "B21XA00"
+        }
+      ]
+    } as Amendments
+
+    const nextHearingDateExceptionResolved = exceptionsResolvedFn(
+      "nextSourceOrganisation",
       updatedFields,
       nextHearingDateException,
       0,
@@ -142,7 +182,8 @@ describe("nextHearingDateExceptionResolvedFn", () => {
       nextHearingDate: undefined
     } as unknown as Amendments
 
-    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
+    const nextHearingDateExceptionResolved = exceptionsResolvedFn(
+      "nextHearingDate",
       updatedFields,
       nextHearingDateException,
       0,
@@ -163,115 +204,11 @@ describe("nextHearingDateExceptionResolvedFn", () => {
       ]
     } as unknown as Amendments
 
-    const nextHearingDateExceptionResolved = nextHearingDateExceptionResolvedFn(
+    const nextHearingDateExceptionResolved = exceptionsResolvedFn(
+      "nextHearingDate",
       updatedFields,
       nextHearingDateException,
       0,
-      0
-    )
-
-    expect(nextHearingDateExceptionResolved).toBe(false)
-  })
-})
-
-describe("nextHearingLocationExceptionResolvedFn", () => {
-  it("Should return true when relevant exception is resolved", () => {
-    const updatedFields = {
-      nextSourceOrganisation: [
-        {
-          resultIndex: 0,
-          offenceIndex: 0,
-          value: "B21XA00"
-        }
-      ]
-    } as Amendments
-
-    const nextHearingLocationResolved = nextHearingLocationExceptionResolvedFn(
-      updatedFields,
-      nextHearingLocationException,
-      0
-    )
-
-    expect(nextHearingLocationResolved).toBe(true)
-  })
-
-  it("Should return false when exception is not resolved", () => {
-    const updatedFields = {} as Amendments
-
-    const nextHearingLocationResolved = nextHearingLocationExceptionResolvedFn(
-      updatedFields,
-      nextHearingLocationException,
-      0
-    )
-
-    expect(nextHearingLocationResolved).toBe(false)
-  })
-
-  it("Should return false when irrelevant exception is resolved", () => {
-    const updatedFields = {
-      nextHearingDate: [
-        {
-          resultIndex: 0,
-          offenceIndex: 0,
-          value: "2024-03-30"
-        }
-      ]
-    } as Amendments
-
-    const nextHearingLocationResolved = nextHearingLocationExceptionResolvedFn(
-      updatedFields,
-      nextHearingDateException,
-      0
-    )
-
-    expect(nextHearingLocationResolved).toBe(false)
-  })
-
-  it("Should return false when exception is resolved in different offence", () => {
-    const exception = nextHearingLocationException
-    const updatedFields = {
-      nextSourceOrganisation: [
-        {
-          resultIndex: 0,
-          offenceIndex: 1,
-          value: "B21XA00"
-        }
-      ]
-    } as Amendments
-
-    const nextHearingDateExceptionResolved = nextHearingLocationExceptionResolvedFn(updatedFields, exception, 0)
-
-    expect(nextHearingDateExceptionResolved).toBe(false)
-  })
-
-  it("Should return false when corrupted data is found in updatedFields", () => {
-    const updatedFields = {
-      nextSourceOrganisation: undefined
-    } as unknown as Amendments
-
-    const nextHearingLocationResolved = nextHearingLocationExceptionResolvedFn(
-      updatedFields,
-      nextHearingLocationException,
-      0
-    )
-
-    expect(nextHearingLocationResolved).toBe(false)
-  })
-
-  it("Should return false when corrupted offenceIndex is found in updatedFields", () => {
-    const updatedFields = {
-      nextSourceOrganisation: [
-        {
-          resultIndex: 0,
-          offenceIndex: "not a number" as unknown as number,
-          value: "B21XA00"
-        }
-      ]
-    } as Amendments
-
-    const nextHearingDateExceptionResolved = nextHearingLocationExceptionResolvedFn(
-      updatedFields,
-      nextHearingLocationException,
       0
     )
 
@@ -381,15 +318,118 @@ describe("getOffenceAlertDetails", () => {
     expect(offenceAlertDetails[0].isResolved).toBe(true)
   })
 
-  it("Should return isResolved:false when one of the exceptions in unresolved in same offence but in different hearing result", () => {
+  describe("When one of the exceptions in unresolved in same offence but in different hearing result", () => {
+    it("Should return isResolved:false if one of nextHearingDate exception is not updated", () => {
+      dummyAho.Exceptions.length = 0
+      HO100102(dummyAho, 0, 0)
+      HO100102(dummyAho, 0, 1)
+      const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
+      const updatedFields = {
+        nextHearingDate: [
+          {
+            resultIndex: 0,
+            offenceIndex: 0,
+            value: "2002-10-10"
+          }
+        ]
+      } as Amendments
+
+      const offenceAlertDetails = getOffenceAlertsDetails(courtCase.aho.Exceptions, updatedFields)
+
+      expect(offenceAlertDetails.length).toBe(1)
+      expect(offenceAlertDetails[0].offenceIndex).toBe(0)
+      expect(offenceAlertDetails[0].isResolved).toBe(false)
+    })
+
+    it("Should return isResolved:false if one of nextSourceOrganisation exception is not updated", () => {
+      dummyAho.Exceptions.length = 0
+      HO100200(dummyAho, 0, 0)
+      HO100200(dummyAho, 0, 1)
+      const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
+      const updatedFields = {
+        nextSourceOrganisation: [
+          {
+            resultIndex: 0,
+            offenceIndex: 0,
+            value: "B21XA00"
+          }
+        ]
+      } as Amendments
+
+      const offenceAlertDetails = getOffenceAlertsDetails(courtCase.aho.Exceptions, updatedFields)
+
+      expect(offenceAlertDetails.length).toBe(1)
+      expect(offenceAlertDetails[0].offenceIndex).toBe(0)
+      expect(offenceAlertDetails[0].isResolved).toBe(false)
+    })
+
+    it("Should return isResolved:false if when there are multiple exceptions and some of them are not updated", () => {
+      dummyAho.Exceptions.length = 0
+      HO100200(dummyAho, 0, 0)
+      HO100200(dummyAho, 0, 1)
+      HO100102(dummyAho, 0, 0)
+      HO100102(dummyAho, 0, 1)
+
+      const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
+      const updatedFields = {
+        nextSourceOrganisation: [
+          {
+            resultIndex: 0,
+            offenceIndex: 0,
+            value: "B21XA00"
+          }
+        ],
+        nextHearingDate: [
+          {
+            resultIndex: 0,
+            offenceIndex: 0,
+            value: "2002-10-10"
+          },
+          {
+            resultIndex: 1,
+            offenceIndex: 0,
+            value: "2002-10-10"
+          }
+        ]
+      } as Amendments
+
+      const offenceAlertDetails = getOffenceAlertsDetails(courtCase.aho.Exceptions, updatedFields)
+
+      expect(offenceAlertDetails.length).toBe(1)
+      expect(offenceAlertDetails[0].offenceIndex).toBe(0)
+      expect(offenceAlertDetails[0].isResolved).toBe(false)
+    })
+  })
+
+  it("Should return isResolved:true if when there are multiple exceptions and all of them updated", () => {
     dummyAho.Exceptions.length = 0
+    HO100200(dummyAho, 0, 0)
+    HO100200(dummyAho, 0, 1)
     HO100102(dummyAho, 0, 0)
     HO100102(dummyAho, 0, 1)
+
     const courtCase = { aho: dummyAho } as unknown as DisplayFullCourtCase
     const updatedFields = {
+      nextSourceOrganisation: [
+        {
+          resultIndex: 0,
+          offenceIndex: 0,
+          value: "B21XA00"
+        },
+        {
+          resultIndex: 1,
+          offenceIndex: 0,
+          value: "B21XA00"
+        }
+      ],
       nextHearingDate: [
         {
           resultIndex: 0,
+          offenceIndex: 0,
+          value: "2002-10-10"
+        },
+        {
+          resultIndex: 1,
           offenceIndex: 0,
           value: "2002-10-10"
         }
@@ -400,6 +440,6 @@ describe("getOffenceAlertDetails", () => {
 
     expect(offenceAlertDetails.length).toBe(1)
     expect(offenceAlertDetails[0].offenceIndex).toBe(0)
-    expect(offenceAlertDetails[0].isResolved).toBe(false)
+    expect(offenceAlertDetails[0].isResolved).toBe(true)
   })
 })
