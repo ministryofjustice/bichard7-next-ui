@@ -4,11 +4,16 @@ import EditableFieldTableRow from "components/EditableFields/EditableFieldTableR
 import ErrorMessage from "components/EditableFields/ErrorMessage"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { KeyboardEvent, useState } from "react"
+import { ChangeEvent, KeyboardEvent, useLayoutEffect, useMemo, useRef, useState } from "react"
 import Asn from "services/Asn"
 import isAsnFormatValid from "utils/exceptions/isAsnFormatValid"
 import isAsnException from "utils/exceptions/isException/isAsnException"
 import { AsnInput } from "./AsnField.styles"
+
+type Selection = {
+  start: number | null
+  end: number | null
+}
 
 export const AsnField = () => {
   const { courtCase, amendments, amend } = useCourtCase()
@@ -22,26 +27,97 @@ export const AsnField = () => {
   const [isValidAsn, setIsValidAsn] = useState<boolean>(isAsnFormatValid(amendedAsn))
   const [isSavedAsn, setIsSavedAsn] = useState<boolean>(false)
   const [asnChanged, setAsnChanged] = useState<boolean>(false)
+  const [selection, setSelection] = useState<Selection>()
   const [key, setKey] = useState<string>("")
 
+  const asnInputRef = useRef<HTMLInputElement>(null)
+
+  const disabledKeys = useMemo(
+    () => [
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowUp",
+      "ArrowDown",
+      "MetaLeft",
+      "MetaRight",
+      "ControlLeft",
+      "ControlRight",
+      "AltLeft",
+      "AltRight",
+      "ShiftLeft",
+      "ShiftRight",
+      "Delete"
+    ],
+    []
+  )
+
+  useLayoutEffect(() => {
+    if (!selection) {
+      return
+    }
+
+    // Handles if we delete the first character. Stops the cursor from going to the end of the input.
+    if (selection.start === 0 && selection.end === 0 && key === "Backspace") {
+      asnInputRef?.current?.setSelectionRange(0, 0)
+      return
+    }
+
+    // Handles selecting all and press Backspace.
+    if (selection.start === null || selection.end === null) {
+      return
+    }
+
+    // Handles jumping the `/` as the user types.
+    if (
+      Asn.divideAsn(amendedAsn).split("")[selection.start] === "/" &&
+      key !== "Backspace" &&
+      !disabledKeys.includes(key)
+    ) {
+      asnInputRef?.current?.setSelectionRange(selection.start + 1, selection.end + 1)
+      return
+    }
+
+    // Handles jumping the `/` if we're using Backspace (deleting) input.
+    if (
+      Asn.divideAsn(amendedAsn).split("")[selection.start - 1] === "/" &&
+      key === "Backspace" &&
+      !disabledKeys.includes(key)
+    ) {
+      asnInputRef?.current?.setSelectionRange(selection.start - 1, selection.end - 1)
+      return
+    }
+
+    // Tracks the position on Backspace
+    if (key === "Backspace" && asnInputRef?.current?.selectionStart !== 1) {
+      asnInputRef?.current?.setSelectionRange(selection.start, selection.end)
+      return
+    }
+
+    // Tracks the movement of the cursor on change.
+    asnInputRef?.current?.setSelectionRange(selection.start, selection.end)
+  }, [selection, amendedAsn, key, disabledKeys])
+
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.code === "Backspace") {
+    if (e.code === "Backspace" || disabledKeys.includes(e.code)) {
       setKey(e.code)
     } else {
       setKey("")
     }
+
+    if (disabledKeys.includes("Space")) {
+      e.preventDefault()
+    }
+
+    const { selectionStart, selectionEnd } = e.currentTarget
+    setSelection({ start: selectionStart, end: selectionEnd })
   }
 
-  const handleAsnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const inputAsnValue = e.target.value.toUpperCase()
+  const handleAsnChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const { value: inputAsnValue, selectionStart, selectionEnd } = e.target
 
-    if (key === "Backspace") {
-      const asnWithSlashes = Asn.divideAsn(inputAsnValue)
-      amend("asn")(Asn.deleteAsn(asnWithSlashes).replace(/\//g, ""))
-    } else {
-      const asnWithoutSlashes = inputAsnValue.replace(/\//g, "")
-      amend("asn")(asnWithoutSlashes)
-    }
+    amend("asn")(inputAsnValue.toUpperCase().replace(/\//g, ""))
+
+    setSelection({ start: selectionStart, end: selectionEnd })
     setAsnChanged(true)
     setIsSavedAsn(false)
     setIsValidAsn(isAsnFormatValid(inputAsnValue))
@@ -58,9 +134,6 @@ export const AsnField = () => {
     isAsnException(courtCase.aho.Exceptions) &&
     currentUser.featureFlags?.exceptionsEnabled
 
-  const asn =
-    amendedAsn.includes("/") || (amendedAsn.length <= 2 && key === "Backspace") ? amendedAsn : Asn.divideAsn(amendedAsn)
-
   return (
     <EditableFieldTableRow
       className={"asn-row"}
@@ -75,11 +148,12 @@ export const AsnField = () => {
       <div>
         <div>
           <AsnInput
+            ref={asnInputRef}
             className={`asn-input`}
             id={"asn"}
             name={"asn"}
             onChange={handleAsnChange}
-            value={asn}
+            value={Asn.divideAsn(amendedAsn.toUpperCase())}
             error={!isValidAsn}
             onKeyDown={handleOnKeyDown}
             onCopy={handleOnCopy}
