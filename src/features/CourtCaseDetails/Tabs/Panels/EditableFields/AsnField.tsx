@@ -105,7 +105,7 @@ export const AsnField = () => {
       setKey("")
     }
 
-    if (disabledKeys.includes("Space")) {
+    if (e.code === "Space") {
       e.preventDefault()
     }
 
