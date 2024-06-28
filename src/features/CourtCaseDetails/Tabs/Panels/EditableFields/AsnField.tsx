@@ -32,6 +32,7 @@ export const AsnField = () => {
 
   const asnInputRef = useRef<HTMLInputElement>(null)
 
+  // Do **not** add Tab to this list. It will break accessibility!
   const disabledKeys = useMemo(
     () => [
       "ArrowLeft",
