@@ -12,10 +12,11 @@ import { useCurrentUser } from "context/CurrentUserContext"
 
 interface OffencesListRowProps {
   offence: Offence
+  offenceIndex: number
   onClick: (offence: Offence) => void
 }
 
-export const OffencesListRow = ({ offence, onClick }: OffencesListRowProps) => {
+export const OffencesListRow = ({ offence, offenceIndex, onClick }: OffencesListRowProps) => {
   const { courtCase, amendments } = useCourtCase()
   const currentUser = useCurrentUser()
   const exceptions = courtCase.aho.Exceptions
@@ -34,7 +35,7 @@ export const OffencesListRow = ({ offence, onClick }: OffencesListRowProps) => {
   )
 
   const offenceAlertIcon = offenceAlerts.map((offenceAlert) => {
-    const isMatchingOffenceException = offenceAlert.offenceIndex === offence.CourtOffenceSequenceNumber - 1
+    const isMatchingOffenceException = offenceAlert.offenceIndex === offenceIndex
     if (!isMatchingOffenceException) {
       return undefined
     }
