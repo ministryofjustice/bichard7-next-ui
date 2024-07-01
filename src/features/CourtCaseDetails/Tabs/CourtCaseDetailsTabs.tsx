@@ -15,6 +15,7 @@ export const CourtCaseDetailsTabs = ({ activeTab, onTabClick, width }: CourtCase
   const { courtCase, amendments, savedAmendments } = useCourtCase()
   const currentUser = useCurrentUser()
   const exceptionsEnabled = currentUser.featureFlags?.exceptionsEnabled
+
   const tabDetails = getTabDetails(courtCase.aho.Exceptions, amendments, savedAmendments, exceptionsEnabled)
 
   return (
