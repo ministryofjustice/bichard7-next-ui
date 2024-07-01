@@ -7,7 +7,9 @@ import { usePreviousPath } from "context/PreviousPathContext"
 import { Button } from "govuk-react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/router"
+import { AmendmentKeys } from "types/Amendments"
 import type NavigationHandler from "types/NavigationHandler"
+import excludeSavedAmendments from "utils/autoSave/excludeSavedAmendments"
 import DefaultException from "../../../components/Exception/DefaultException"
 import PncException from "../../../components/Exception/PncException"
 import Form from "../../../components/Form"
@@ -26,7 +28,7 @@ interface Props {
 }
 
 const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
-  const { courtCase, amendments } = useCourtCase()
+  const { courtCase, amendments, savedAmendments } = useCourtCase()
   const pncExceptions = courtCase.aho.Exceptions.filter(({ code }) => isPncException(code))
   const otherExceptions = courtCase.aho.Exceptions.filter(({ code }) => !isPncException(code))
   const csrfToken = useCsrfToken()
@@ -46,6 +48,12 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) =
     stopLeavingFn(false)
   }
 
+  const amendmentsToUpdate = excludeSavedAmendments(
+    Object.keys(amendments) as AmendmentKeys[],
+    amendments,
+    savedAmendments
+  )
+
   return (
     <>
       {courtCase.aho.Exceptions.length === 0 && "There are no exceptions for this case."}
@@ -63,7 +71,7 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) =
       <ConditionalRender isRendered={canResolveAndSubmit && courtCase.aho.Exceptions.length > 0}>
         <ButtonContainer className={"buttonContainer"}>
           <Form method="post" action={submitCasePath} csrfToken={csrfToken}>
-            <input type="hidden" name="amendments" value={JSON.stringify(amendments)} />
+            <input type="hidden" name="amendments" value={JSON.stringify(amendmentsToUpdate)} />
             <Button id="submit" type="submit" disabled={!enableSubmitExceptions} onClick={handleClick}>
               {"Submit exception(s)"}
             </Button>

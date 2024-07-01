@@ -1,6 +1,8 @@
 import axios from "axios"
-import { isEmpty, isEqual } from "lodash"
+import { isEmpty } from "lodash"
 import { useCallback, useEffect, useState } from "react"
+import { DisplayFullCourtCase } from "types/display/CourtCases"
+import excludeSavedAmendments from "utils/autoSave/excludeSavedAmendments"
 import { useCourtCase } from "../../context/CourtCaseContext"
 import { AmendmentKeys, OffenceField, ResultQualifierCode } from "../../types/Amendments"
 import ErrorMessage from "./ErrorMessage"
@@ -8,7 +10,7 @@ import SuccessMessage from "./SuccessMessage"
 
 interface AutoSaveProps {
   setSaved: (onSave: boolean) => void
-  setChanged: (onSave: boolean) => void
+  setChanged: (onChanged: boolean) => void
   isValid: boolean
   isSaved: boolean
   isChanged: boolean
@@ -16,16 +18,8 @@ interface AutoSaveProps {
   children?: React.ReactNode
 }
 
-export const AutoSave = ({
-  setSaved,
-  setChanged,
-  isValid,
-  isSaved,
-  isChanged,
-  amendmentFields,
-  children
-}: AutoSaveProps) => {
-  const { courtCase, amendments, savedAmend, savedAmendments } = useCourtCase()
+const AutoSave = ({ setSaved, setChanged, isValid, isSaved, isChanged, amendmentFields, children }: AutoSaveProps) => {
+  const { courtCase, amendments, savedAmend, savedAmendments, updateCourtCase } = useCourtCase()
   const [saving, setSaving] = useState<boolean>(false)
   const [httpResponseStatus, setHttpResponseStatus] = useState<number | undefined>(undefined)
   const [httpResponseError, setHttpResponseError] = useState<Error | undefined>(undefined)
@@ -36,15 +30,7 @@ export const AutoSave = ({
     }
     setSaving(true)
 
-    const map = new Map()
-
-    amendmentFields?.forEach((amendmentField) => {
-      if (!isEqual(amendments[amendmentField], savedAmendments[amendmentField])) {
-        map.set(amendmentField, amendments[amendmentField])
-      }
-    })
-
-    const update = Object.fromEntries(map)
+    const update = excludeSavedAmendments(amendmentFields, amendments, savedAmendments)
 
     try {
       if (isEmpty(update)) {
@@ -66,6 +52,8 @@ export const AutoSave = ({
             savedAmend(updateKey as AmendmentKeys)(update[updateKey])
           }
         })
+
+        updateCourtCase(response.data.courtCase as DisplayFullCourtCase)
       })
     } catch (error) {
       setHttpResponseError(error as Error)
@@ -75,7 +63,17 @@ export const AutoSave = ({
 
     setSaved(true)
     setChanged(false)
-  }, [amendmentFields, amendments, courtCase.errorId, savedAmend, savedAmendments, saving, setChanged, setSaved])
+  }, [
+    amendmentFields,
+    amendments,
+    courtCase.errorId,
+    savedAmend,
+    savedAmendments,
+    saving,
+    setChanged,
+    setSaved,
+    updateCourtCase
+  ])
 
   useEffect(() => {
     if (!isValid) {
@@ -93,8 +91,10 @@ export const AutoSave = ({
   return (
     <>
       {children}
-      {httpResponseStatus === 202 && <SuccessMessage message="Input saved" />}
+      {httpResponseStatus === 200 && <SuccessMessage message="Input saved" />}
       {httpResponseError && <ErrorMessage message="Autosave has failed, please refresh" />}
     </>
   )
 }
+
+export default AutoSave

@@ -2,7 +2,7 @@ import { OffenceMatcher } from "components/OffenceMatcher"
 import { CourtCaseContext } from "context/CourtCaseContext"
 import { Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import HO100332 from "./fixtures/HO100332.json"
+import HO100332 from "../../fixtures/HO100332.json"
 
 describe("Offence matcher with single court case", () => {
   describe("Without existing amendments", () => {

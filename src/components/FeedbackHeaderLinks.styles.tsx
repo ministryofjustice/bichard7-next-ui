@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import { gdsBlack } from "utils/colours"
+import { nta, arial, sansSerif } from "utils/typography"
 
 const LinksRow = styled.div`
   display: flex;
@@ -15,7 +16,7 @@ const SkipLink = styled.button`
   cursor: pointer;
   background: transparent;
   border: none;
-  font-family: "nta", Arial, sans-serif;
+  font-family: ${nta}, ${arial}, ${sansSerif};
   font-size: 1em;
   position: relative;
   line-height: 1.25;

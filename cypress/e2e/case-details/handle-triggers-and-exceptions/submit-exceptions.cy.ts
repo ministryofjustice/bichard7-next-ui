@@ -74,7 +74,7 @@ describe("Court cases - Submit exceptions", () => {
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link").contains("Attempt to rape a girl aged 13 / 14 / 15 years of age - SOA 2003").click()
-    cy.get("#next-hearing-date").type("2024-01-01")
+    cy.get(".hearing-result-1 #next-hearing-date").type("2024-01-01")
 
     cy.get("button").contains("Submit exception(s)").click()
     cy.url().should("match", /\/bichard\/court-cases\/0\/submit/)
@@ -94,7 +94,7 @@ describe("Court cases - Submit exceptions", () => {
     const insertNextHearingDate = (offenceTitle: string): void => {
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains(offenceTitle).click()
-      cy.get("#next-hearing-date").type("2024-01-01")
+      cy.get(".hearing-result-1 #next-hearing-date").type("2024-01-01")
     }
 
     const insertNextHearingLocation = (offenceTitle: string): void => {
@@ -131,7 +131,7 @@ describe("Court cases - Submit exceptions", () => {
 
       cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
       cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
-      cy.get("#next-hearing-date").clear()
+      cy.get(".hearing-result-1 #next-hearing-date").clear()
 
       cy.get("ul.moj-sub-navigation__list").contains("Defendant").click()
       cy.get("#asn").type("1101ZD0100000448754K")

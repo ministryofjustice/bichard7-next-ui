@@ -15,7 +15,11 @@ export const CSRF = {
   formSecret: process.env.CSRF_FORM_SECRET ?? "OliverTwist2",
   maximumTokenAgeInSeconds: parseInt(process.env.CSRF_TOKEN_MAX_AGE ?? "600", 10)
 }
-export const EXCEPTION_OFFENCE_INDEX = 5
+export const EXCEPTION_PATH_PROPERTY_INDEXES = {
+  offenceIndex: 5,
+  resultIndex: 7
+}
+
 export const DATE_FNS = {
   dateInFuture: 1,
   currentDate: 0,

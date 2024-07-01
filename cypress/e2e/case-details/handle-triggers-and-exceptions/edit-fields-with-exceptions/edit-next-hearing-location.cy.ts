@@ -1,7 +1,7 @@
 import dummyAho from "../../../../../test/test-data/HO100102_1.json"
 import multipleExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import nextHearingLocationExceptions from "../../../../../test/test-data/NextHearingLocationExceptions.json"
-import { loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
+import { clickTab, loginAndVisit, submitAndConfirmExceptions, verifyUpdatedMessage } from "../../../../support/helpers"
 
 describe("NextHearingLocation", () => {
   beforeEach(() => {
@@ -254,6 +254,51 @@ describe("NextHearingLocation", () => {
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 
+  it("Should be able to edit multiple hearing results with incorrect next hearing location exceptions", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.nextHearingLocationExceptionOnMultipleResults,
+        updatedHearingOutcome: nextHearingLocationExceptions.nextHearingLocationExceptionOnMultipleResults,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.get(".hearing-result-1").contains("td", "Next hearing location").siblings().should("include.text", "B@1EF$1")
+
+    cy.get(".hearing-result-1 #next-hearing-location").clear()
+    cy.get(".hearing-result-1 #next-hearing-location").type("B01EF00")
+    cy.get(".hearing-result-1 .next-hearing-location-row .success-message").contains("Input saved").should("exist")
+
+    cy.get(".hearing-result-2")
+      .contains("td", "Next hearing location")
+      .siblings()
+      .should("include.text", "NOTANEXTHEARINGLOCATION")
+    cy.get(".hearing-result-2 #next-hearing-location").clear()
+    cy.get(".hearing-result-2 #next-hearing-location").type("C04BF00")
+    cy.get(".hearing-result-2 .next-hearing-location-row .success-message").contains("Input saved").should("exist")
+
+    verifyUpdatedMessage({
+      expectedCourtCase: { errorId: 0, errorStatus: "Unresolved" },
+      updatedMessageNotHaveContent: [
+        '<ds:OrganisationUnitCode Error="HO100200">B@1EF$1</ds:OrganisationUnitCode>',
+        '<ds:OrganisationUnitCode Error="HO100200">NOTANEXTHEARINGLOCATION</ds:OrganisationUnitCode>'
+      ],
+      updatedMessageHaveContent: [
+        "<ds:OrganisationUnitCode>B01EF00</ds:OrganisationUnitCode>",
+        "<ds:OrganisationUnitCode>C04BF00</ds:OrganisationUnitCode>"
+      ]
+    })
+
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: B01EF00")
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: C04BF00")
+  })
+
   it("Should not be able to edit next hearing location field when the case isn't in 'unresolved' state", () => {
     const submittedCaseId = 0
     const resolvedCaseId = 1
@@ -359,9 +404,9 @@ describe("NextHearingLocation", () => {
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B01EF00")
 
-    cy.get("#next-hearing-location-row .success-message").should("not.exist")
-    cy.get("#next-hearing-location-row .warning-icon").should("exist")
-    cy.get("#next-hearing-location-row .error-message").contains("Autosave has failed, please refresh").should("exist")
+    cy.get(".next-hearing-location-row .success-message").should("not.exist")
+    cy.get(".next-hearing-location-row .warning-icon").should("exist")
+    cy.get(".next-hearing-location-row .error-message").contains("Autosave has failed, please refresh").should("exist")
   })
 
   it("Should validate Next Hearing Location and auto-save", () => {
@@ -382,7 +427,7 @@ describe("NextHearingLocation", () => {
     cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B43UY00")
-    cy.get("#next-hearing-location-row .success-message").contains("Input saved").should("exist")
+    cy.get(".next-hearing-location-row .success-message").contains("Input saved").should("exist")
 
     cy.wait("@save")
     verifyUpdatedMessage({
@@ -390,6 +435,46 @@ describe("NextHearingLocation", () => {
       updatedMessageNotHaveContent: ['<ds:OrganisationUnitCode Error="HO100200">B@1EF$1</ds:OrganisationUnitCode>'],
       updatedMessageHaveContent: ["<ds:OrganisationUnitCode>B43UY00</ds:OrganisationUnitCode>"]
     })
+  })
+
+  it("Should validate and auto-save the next hearing location correction and update notes", () => {
+    const errorId = 0
+    const nextHearingLocation = "B43UY00"
+
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+        updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+    cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
+
+    loginAndVisit(`/bichard/court-cases/${errorId}`)
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type(nextHearingLocation)
+
+    cy.wait("@save")
+
+    cy.get(".next-hearing-location-row .success-message").contains("Input saved").should("exist")
+
+    cy.get("@save").its("response.body.courtCase.errorId").should("eq", errorId)
+    cy.get("@save")
+      .its(
+        "response.body.courtCase.updatedHearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[0].Result[0].NextResultSourceOrganisation.OrganisationUnitCode"
+      )
+      .should("eq", nextHearingLocation)
+
+    clickTab("Notes")
+    cy.get("td").contains(
+      `GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: ${nextHearingLocation}`
+    )
   })
 
   it("should display error when invalid Next Hearing Location is entered", () => {
@@ -400,8 +485,54 @@ describe("NextHearingLocation", () => {
     cy.get("#next-hearing-location").clear()
     cy.get("#next-hearing-location").type("B43UYXX")
 
-    cy.get("#next-hearing-location-row .success-message").should("not.exist")
-    cy.get("#next-hearing-location-row .warning-icon").should("exist")
+    cy.get(".next-hearing-location-row .success-message").should("not.exist")
+    cy.get(".next-hearing-location-row .warning-icon").should("exist")
     cy.contains("Select valid Next hearing location").should("exist")
+  })
+
+  describe("when I submit resolved exceptions I should not see the same value in the notes", () => {
+    it("Should validate and auto-save the next hearing location correction and only update notes once", () => {
+      const errorId = 0
+      const nextHearingLocation = "B43UY00"
+
+      cy.task("clearCourtCases")
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "01",
+          hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100200,
+          errorCount: 1,
+          errorLockedByUsername: "GeneralHandler"
+        }
+      ])
+      cy.intercept("PUT", `/bichard/api/court-cases/${errorId}/update`).as("save")
+
+      loginAndVisit(`/bichard/court-cases/${errorId}`)
+
+      cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+      cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+      cy.get("#next-hearing-location").clear()
+      cy.get("#next-hearing-location").type(nextHearingLocation)
+
+      cy.wait("@save")
+
+      cy.get(".next-hearing-location-row .success-message").contains("Input saved").should("exist")
+
+      clickTab("Notes")
+      cy.get(".notes-table")
+        .find(
+          `td:contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: ${nextHearingLocation}")`
+        )
+        .should("have.length", 1)
+
+      submitAndConfirmExceptions()
+
+      clickTab("Notes")
+      cy.get(".notes-table")
+        .find(
+          `td:contains("GeneralHandler: Portal Action: Update Applied. Element: nextSourceOrganisation. New Value: ${nextHearingLocation}")`
+        )
+        .should("have.length", 1)
+    })
   })
 })

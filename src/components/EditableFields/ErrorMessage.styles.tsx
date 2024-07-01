@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import { gdsRed } from "utils/colours"
 import Image from "next/image"
+import { gdsTransport, arial, sansSerif } from "utils/typography"
 
 const ErrorMessageContainer = styled.div`
   display: flex;
@@ -8,7 +9,7 @@ const ErrorMessageContainer = styled.div`
   margin-top: 1rem;
 `
 const Message = styled.span`
-  font-family: "GDS Transport", arial, sans-serif;
+  font-family: ${gdsTransport}, ${arial}, ${sansSerif};
   font-size: 20px;
   color: ${gdsRed};
 `

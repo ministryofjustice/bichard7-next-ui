@@ -1,5 +1,5 @@
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { AutoSave } from "components/EditableFields/AutoSave"
+import AutoSave from "components/EditableFields/AutoSave"
 import EditableFieldTableRow from "components/EditableFields/EditableFieldTableRow"
 import ErrorMessage from "components/EditableFields/ErrorMessage"
 import OrganisationUnitTypeahead from "components/OrganisationUnitTypeahead"
@@ -41,7 +41,7 @@ export const NextHearingLocationField = ({
 
   return (
     <EditableFieldTableRow
-      id={"next-hearing-location-row"}
+      className={"next-hearing-location-row"}
       label="Next hearing location"
       hasExceptions={hasNextHearingLocationException(exceptions)}
       value={result.NextResultSourceOrganisation?.OrganisationUnitCode}
@@ -66,7 +66,7 @@ export const NextHearingLocationField = ({
         isChanged={isNhlChanged}
         isSaved={isNhlSaved}
       >
-        {!isValidNhl && <ErrorMessage message="Select valid Next hearing location" />}
+        {isNhlChanged && !isValidNhl && <ErrorMessage message="Select valid Next hearing location" />}
       </AutoSave>
     </EditableFieldTableRow>
   )

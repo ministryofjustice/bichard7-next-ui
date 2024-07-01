@@ -158,11 +158,9 @@ export const OffenceDetails = ({
 
       <div className="offence-results-table">
         {offence.Result.map((result, index) => {
+          const resultKey = `hearing-result-${index + 1}`
           return (
-            <div key={result.CJSresultCode}>
-              <Heading as="h4" size="MEDIUM">
-                {"Hearing result"}
-              </Heading>
+            <div className={resultKey} key={resultKey}>
               <HearingResult
                 result={result}
                 exceptions={unresolvedExceptionsOnThisOffence.filter((resultException) =>

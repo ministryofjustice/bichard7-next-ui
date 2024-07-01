@@ -1,5 +1,37 @@
 import dummyMultipleHearingResultsAho from "../../../../test/test-data/multipleHearingResultsOnOffence.json"
 import { clickTab, loginAndVisit } from "../../../support/helpers"
+import nextHearingDateExceptions from "../../../../test/test-data/NextHearingDateExceptions.json"
+import a11yConfig from "../../../support/a11yConfig"
+import logAccessibilityViolations from "../../../support/logAccessibilityViolations"
+
+describe("when scanning page for accessibility", () => {
+  it("Should display an offence with multiple results with no accessibility violations", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingDateExceptions.hearingOutcomeXml,
+        updatedHearingOutcome: nextHearingDateExceptions.updatedHearingOutcomeXml,
+        errorCount: 1
+      }
+    ])
+    loginAndVisit("/bichard/court-cases/0")
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link").contains("Offence with HO100102 - INCORRECTLY FORMATTED DATE EXCEPTION").click()
+
+    cy.injectAxe()
+    cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
+  })
+
+  it.skip("Should display the list of offences with no accessibility violations", () => {
+    //   0    │ 'empty-table-header' │ 'minor' │ 'Ensures table headers have discernible text' │   1
+    // TODO: confirm and update missing table header / or disable the rule if we don't care about this
+    cy.task("insertMultipleDummyCourtCases", { numToInsert: 1, force: "01" })
+    loginAndVisit("/bichard/court-cases/0")
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.injectAxe()
+    cy.checkA11y(undefined, a11yConfig, logAccessibilityViolations)
+  })
+})
 
 describe("“next offence” and “previous offence” buttons", () => {
   beforeEach(() => {
@@ -40,7 +72,7 @@ describe("“next offence” and “previous offence” buttons", () => {
     cy.get("button").should("not.contain.text", "Previous offence")
   })
 
-  it("Should show not show any buttons when there is only one offence", () => {
+  it("Should not show any buttons when there is only one offence", () => {
     cy.task("insertCourtCaseWithMultipleOffences", { case: { orgForPoliceFilter: "01" }, offenceCount: 1 })
     cy.visit("/bichard/court-cases/0")
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
