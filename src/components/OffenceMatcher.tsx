@@ -1,10 +1,10 @@
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCallback, useEffect, useState } from "react"
-import getOffenceCode from "utils/getOffenceCode"
 import offenceAlreadySelected from "utils/offenceMatcher/offenceAlreadySelected"
 import offenceMatcherSelectValue from "utils/offenceMatcher/offenceMatcherSelectValue"
 import Badge, { BadgeColours } from "./Badge"
+import getCandidate from "utils/offenceMatcher/getCandidate"
 
 interface Props {
   offenceIndex: number
@@ -15,12 +15,11 @@ interface Props {
 export const OffenceMatcher = ({ offenceIndex, offence, isCaseLockedToCurrentUser }: Props) => {
   const {
     courtCase: {
-      aho: { PncQuery: pncQuery }
+      aho: { PncQuery: pncQuery, AnnotatedHearingOutcome: aho }
     },
     amend,
     amendments
   } = useCourtCase()
-  const offenceCode = getOffenceCode(offence)
 
   const findPncOffence = useCallback(() => {
     const offenceReasonSequenceValue =
@@ -64,7 +63,7 @@ export const OffenceMatcher = ({ offenceIndex, offence, isCaseLockedToCurrentUse
         return (
           <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
             {c.offences
-              .filter((pnc) => pnc.offence.cjsOffenceCode === offenceCode)
+              .filter((pnc) => getCandidate(aho.HearingOutcome, pnc, offence))
               .map((pnc, index) => {
                 return (
                   <option
