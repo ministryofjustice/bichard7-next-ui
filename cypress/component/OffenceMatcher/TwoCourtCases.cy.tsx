@@ -3,6 +3,14 @@ import { CourtCaseContext } from "context/CourtCaseContext"
 import { Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import HO100332 from "../../fixtures/HO100332.json"
+import { HearingOutcome, Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
+import getOffenceCode from "utils/getOffenceCode"
+
+const mockGetCandidate = (_aho: HearingOutcome, pncOffence: PncOffence, offence: Offence) => {
+  const offenceCode = getOffenceCode(offence)
+  return pncOffence.offence.cjsOffenceCode === offenceCode
+}
 
 describe("Offence matcher with single court case", () => {
   describe("Without existing amendments", () => {
@@ -12,7 +20,12 @@ describe("Offence matcher with single court case", () => {
     beforeEach(() => {
       cy.mount(
         <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
-          <OffenceMatcher offenceIndex={0} offence={offence1} isCaseLockedToCurrentUser={true} />
+          <OffenceMatcher
+            offenceIndex={0}
+            offence={offence1}
+            isCaseLockedToCurrentUser={true}
+            getCandidate={mockGetCandidate}
+          />
         </CourtCaseContext.Provider>
       )
     })
@@ -72,7 +85,12 @@ describe("With existing amendments", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments, savedAmendments: {} }, () => {}]}>
-        <OffenceMatcher offenceIndex={0} offence={offence1} isCaseLockedToCurrentUser={true} />
+        <OffenceMatcher
+          offenceIndex={0}
+          offence={offence1}
+          isCaseLockedToCurrentUser={true}
+          getCandidate={mockGetCandidate}
+        />
       </CourtCaseContext.Provider>
     )
 
@@ -97,7 +115,12 @@ describe("With existing amendments", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments, savedAmendments: {} }, () => {}]}>
-        <OffenceMatcher offenceIndex={0} offence={offence2} isCaseLockedToCurrentUser={true} />
+        <OffenceMatcher
+          offenceIndex={0}
+          offence={offence2}
+          isCaseLockedToCurrentUser={true}
+          getCandidate={mockGetCandidate}
+        />
       </CourtCaseContext.Provider>
     )
 

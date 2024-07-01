@@ -1,18 +1,25 @@
-import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { HearingOutcome, Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCallback, useEffect, useState } from "react"
 import offenceAlreadySelected from "utils/offenceMatcher/offenceAlreadySelected"
 import offenceMatcherSelectValue from "utils/offenceMatcher/offenceMatcherSelectValue"
 import Badge, { BadgeColours } from "./Badge"
-import getCandidate from "utils/offenceMatcher/getCandidate"
+import _getCandidate from "utils/offenceMatcher/getCandidate"
+import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
 
 interface Props {
   offenceIndex: number
   offence: Offence
   isCaseLockedToCurrentUser: boolean
+  getCandidate?: (aho: HearingOutcome, pncOffence: PncOffence, offence: Offence) => boolean
 }
 
-export const OffenceMatcher = ({ offenceIndex, offence, isCaseLockedToCurrentUser }: Props) => {
+export const OffenceMatcher = ({
+  offenceIndex,
+  offence,
+  isCaseLockedToCurrentUser,
+  getCandidate = _getCandidate
+}: Props) => {
   const {
     courtCase: {
       aho: { PncQuery: pncQuery, AnnotatedHearingOutcome: aho }
