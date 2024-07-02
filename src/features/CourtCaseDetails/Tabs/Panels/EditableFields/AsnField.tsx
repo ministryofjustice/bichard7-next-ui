@@ -4,7 +4,7 @@ import EditableFieldTableRow from "components/EditableFields/EditableFieldTableR
 import ErrorMessage from "components/EditableFields/ErrorMessage"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { ChangeEvent, KeyboardEvent, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { ChangeEvent, ClipboardEvent, KeyboardEvent, useLayoutEffect, useMemo, useRef, useState } from "react"
 import Asn from "services/Asn"
 import isAsnFormatValid from "utils/exceptions/isAsnFormatValid"
 import isAsnException from "utils/exceptions/isException/isAsnException"
@@ -113,15 +113,25 @@ export const AsnField = () => {
     setSelection({ start: selectionStart, end: selectionEnd })
   }
 
-  const handleAsnChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { value: inputAsnValue, selectionStart, selectionEnd } = e.target
-
-    amend("asn")(inputAsnValue.toUpperCase().replace(/\//g, ""))
+  const amendAsn = (asn: string, selectionStart: number | null, selectionEnd: number | null) => {
+    amend("asn")(asn.toUpperCase().replace(/\//g, ""))
 
     setSelection({ start: selectionStart, end: selectionEnd })
     setAsnChanged(true)
     setIsSavedAsn(false)
-    setIsValidAsn(isAsnFormatValid(inputAsnValue))
+    setIsValidAsn(isAsnFormatValid(asn.toUpperCase()))
+  }
+
+  const handleAsnChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const { value: inputAsnValue, selectionStart, selectionEnd } = e.target
+    amendAsn(inputAsnValue, selectionStart, selectionEnd)
+  }
+
+  const handleOnPaste = (e: ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const asnFromClipboard = e.clipboardData.getData("text")
+    const asnFromClipboardWithSlashes = Asn.divideAsn(asnFromClipboard)
+    amendAsn(asnFromClipboard, asnFromClipboardWithSlashes.length, asnFromClipboardWithSlashes.length)
   }
 
   const handleOnCopy = () => {
@@ -157,6 +167,7 @@ export const AsnField = () => {
             value={Asn.divideAsn(amendedAsn.toUpperCase())}
             error={!isValidAsn}
             onKeyDown={handleOnKeyDown}
+            onPaste={handleOnPaste}
             onCopy={handleOnCopy}
             onCut={handleOnCopy}
           />
