@@ -218,6 +218,40 @@ describe("ASN", () => {
     })
   })
 
+  it("Should be able to edit ASN field if HO100321 is raised", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
+        updatedHearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.get("#asn").clear()
+    cy.get("#asn").type("1101ZD0100000448754K")
+
+    cy.get("button").contains("Submit exception(s)").click()
+
+    cy.contains(
+      "Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"
+    ).should("exist")
+    cy.get("button").contains("Submit exception(s)").click()
+
+    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: 1101ZD0100000448754K")
+    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
+
+    verifyUpdatedMessage({
+      expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
+      updatedMessageNotHaveContent: ["<br7:ArrestSummonsNumber>AAAAAAAAAAAAAAAAAAAA</br7:ArrestSummonsNumber>"],
+      updatedMessageHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber>"]
+    })
+  })
+
   it("Should keep the cursor in right place in the input field when the character from the middle is deleted", () => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [
@@ -260,40 +294,6 @@ describe("ASN", () => {
     cy.get("input#asn").then(($el) => ($el[0] as unknown as HTMLInputElement).setSelectionRange(5, 5))
     cy.get("input#asn").type("D")
     cy.get("input#asn").should("have.prop", "selectionStart", 6)
-  })
-
-  it("Should be able to edit ASN field if HO100321 is raised", () => {
-    cy.task("clearCourtCases")
-    cy.task("insertCourtCasesWithFields", [
-      {
-        orgForPoliceFilter: "01",
-        hearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
-        updatedHearingOutcome: AsnExceptionHO100321.hearingOutcomeXml,
-        errorCount: 1,
-        errorLockedByUsername: "GeneralHandler"
-      }
-    ])
-
-    loginAndVisit("/bichard/court-cases/0")
-
-    cy.get("#asn").clear()
-    cy.get("#asn").type("1101ZD0100000448754K")
-
-    cy.get("button").contains("Submit exception(s)").click()
-
-    cy.contains(
-      "Are you sure you want to submit the amended details to the PNC and mark the exception(s) as resolved?"
-    ).should("exist")
-    cy.get("button").contains("Submit exception(s)").click()
-
-    cy.contains("GeneralHandler: Portal Action: Update Applied. Element: asn. New Value: 1101ZD0100000448754K")
-    cy.contains("GeneralHandler: Portal Action: Resubmitted Message.")
-
-    verifyUpdatedMessage({
-      expectedCourtCase: { errorId: 0, errorStatus: "Submitted" },
-      updatedMessageNotHaveContent: ["<br7:ArrestSummonsNumber>AAAAAAAAAAAAAAAAAAAA</br7:ArrestSummonsNumber>"],
-      updatedMessageHaveContent: ["<br7:ArrestSummonsNumber>1101ZD0100000448754K</br7:ArrestSummonsNumber>"]
-    })
   })
 
   it("Should divide ASN into sections when user types or pastes asn into the input field ", () => {
