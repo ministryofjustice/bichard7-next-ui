@@ -235,7 +235,6 @@ describe("ASN", () => {
     cy.get("input#asn").clear()
     cy.get("input#asn").type("1101ZD01448754K")
     cy.get("input#asn").should("have.value", "11/01ZD/01/448754K")
-
     cy.get("input#asn").then(($el) => ($el[0] as unknown as HTMLInputElement).setSelectionRange(5, 5))
     cy.get("input#asn").type("{backspace}")
     cy.get("input#asn").should("have.prop", "selectionStart", 4)
@@ -258,9 +257,6 @@ describe("ASN", () => {
     cy.get("input#asn").clear()
     cy.get("input#asn").type("1101Z01448754K")
     cy.get("input#asn").should("have.value", "11/01Z0/14/48754K")
-
-    // 11/01Z60/14/48754K
-
     cy.get("input#asn").then(($el) => ($el[0] as unknown as HTMLInputElement).setSelectionRange(5, 5))
     cy.get("input#asn").type("D")
     cy.get("input#asn").should("have.prop", "selectionStart", 6)
