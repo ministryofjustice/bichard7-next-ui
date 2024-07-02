@@ -98,6 +98,15 @@ export const AsnField = () => {
     asnInputRef?.current?.setSelectionRange(selection.start, selection.end)
   }, [selection, amendedAsn, key, disabledKeys])
 
+  const amendAsn = (asn: string, selectionStart: number | null, selectionEnd: number | null) => {
+    amend("asn")(asn.toUpperCase().replace(/\//g, ""))
+
+    setSelection({ start: selectionStart, end: selectionEnd })
+    setAsnChanged(true)
+    setIsSavedAsn(false)
+    setIsValidAsn(isAsnFormatValid(asn.toUpperCase()))
+  }
+
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Backspace" || disabledKeys.includes(e.code)) {
       setKey(e.code)
@@ -111,15 +120,6 @@ export const AsnField = () => {
 
     const { selectionStart, selectionEnd } = e.currentTarget
     setSelection({ start: selectionStart, end: selectionEnd })
-  }
-
-  const amendAsn = (asn: string, selectionStart: number | null, selectionEnd: number | null) => {
-    amend("asn")(asn.toUpperCase().replace(/\//g, ""))
-
-    setSelection({ start: selectionStart, end: selectionEnd })
-    setAsnChanged(true)
-    setIsSavedAsn(false)
-    setIsValidAsn(isAsnFormatValid(asn.toUpperCase()))
   }
 
   const handleAsnChange = (e: ChangeEvent<HTMLInputElement>): void => {
