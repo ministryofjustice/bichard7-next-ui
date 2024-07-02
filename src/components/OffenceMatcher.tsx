@@ -11,7 +11,7 @@ interface Props {
   offenceIndex: number
   offence: Offence
   isCaseLockedToCurrentUser: boolean
-  getCandidate?: (aho: HearingOutcome, pncOffence: PncOffence, offence: Offence) => boolean
+  getCandidate?: (aho: HearingOutcome, pncOffence: PncOffence, offence: Offence, caseReference: string) => boolean
 }
 
 export const OffenceMatcher = ({
@@ -70,7 +70,7 @@ export const OffenceMatcher = ({
         return (
           <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
             {c.offences
-              .filter((pnc) => getCandidate(aho.HearingOutcome, pnc, offence))
+              .filter((pnc) => getCandidate(aho.HearingOutcome, pnc, offence, c.courtCaseReference))
               .map((pnc, index) => {
                 return (
                   <option

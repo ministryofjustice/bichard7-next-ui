@@ -7,7 +7,7 @@ import { HearingOutcome, Offence } from "@moj-bichard7-developers/bichard7-next-
 import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
 import getOffenceCode from "utils/getOffenceCode"
 
-const mockGetCandidate = (_aho: HearingOutcome, pncOffence: PncOffence, offence: Offence) => {
+const mockGetCandidate = (_aho: HearingOutcome, pncOffence: PncOffence, offence: Offence, _: string) => {
   const offenceCode = getOffenceCode(offence)
   return pncOffence.offence.cjsOffenceCode === offenceCode
 }
