@@ -1,26 +1,32 @@
-import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { HearingOutcome, Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCallback, useEffect, useState } from "react"
-import getOffenceCode from "utils/getOffenceCode"
 import offenceAlreadySelected from "utils/offenceMatcher/offenceAlreadySelected"
 import offenceMatcherSelectValue from "utils/offenceMatcher/offenceMatcherSelectValue"
 import Badge, { BadgeColours } from "./Badge"
+import _getCandidate from "utils/offenceMatcher/getCandidate"
+import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
 
 interface Props {
   offenceIndex: number
   offence: Offence
   isCaseLockedToCurrentUser: boolean
+  getCandidate?: (aho: HearingOutcome, pncOffence: PncOffence, offence: Offence, caseReference: string) => boolean
 }
 
-export const OffenceMatcher = ({ offenceIndex, offence, isCaseLockedToCurrentUser }: Props) => {
+export const OffenceMatcher = ({
+  offenceIndex,
+  offence,
+  isCaseLockedToCurrentUser,
+  getCandidate = _getCandidate
+}: Props) => {
   const {
     courtCase: {
-      aho: { PncQuery: pncQuery }
+      aho: { PncQuery: pncQuery, AnnotatedHearingOutcome: aho }
     },
     amend,
     amendments
   } = useCourtCase()
-  const offenceCode = getOffenceCode(offence)
 
   const findPncOffence = useCallback(() => {
     const offenceReasonSequenceValue =
@@ -64,7 +70,7 @@ export const OffenceMatcher = ({ offenceIndex, offence, isCaseLockedToCurrentUse
         return (
           <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
             {c.offences
-              .filter((pnc) => pnc.offence.cjsOffenceCode === offenceCode)
+              .filter((pnc) => getCandidate(aho.HearingOutcome, pnc, offence, c.courtCaseReference))
               .map((pnc, index) => {
                 return (
                   <option
