@@ -69,23 +69,6 @@ class Asn {
       })
       .join("")
   }
-
-  static deleteAsn = (asn: string): string => {
-    switch (asn.length) {
-      case 11:
-        asn = asn.substring(0, 10)
-        break
-      case 8:
-        asn = asn.substring(0, 7)
-        break
-      case 3:
-        asn = asn.substring(0, 2)
-        break
-      default:
-        break
-    }
-    return asn
-  }
 }
 
 export default Asn
