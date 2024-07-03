@@ -7,7 +7,7 @@ import { HearingOutcome, Offence } from "@moj-bichard7-developers/bichard7-next-
 import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
 import getOffenceCode from "utils/getOffenceCode"
 
-const mockGetCandidate = (_aho: HearingOutcome, pncOffence: PncOffence, offence: Offence, _: string) => {
+const mockIsCaseMatch = (_aho: HearingOutcome, pncOffence: PncOffence, offence: Offence, _: string) => {
   const offenceCode = getOffenceCode(offence)
   return pncOffence.offence.cjsOffenceCode === offenceCode
 }
@@ -24,7 +24,7 @@ describe("Offence matcher with single court case", () => {
             offenceIndex={0}
             offence={offence1}
             isCaseLockedToCurrentUser={true}
-            getCandidate={mockGetCandidate}
+            isCaseMatch={mockIsCaseMatch}
           />
         </CourtCaseContext.Provider>
       )
@@ -89,7 +89,7 @@ describe("With existing amendments", () => {
           offenceIndex={0}
           offence={offence1}
           isCaseLockedToCurrentUser={true}
-          getCandidate={mockGetCandidate}
+          isCaseMatch={mockIsCaseMatch}
         />
       </CourtCaseContext.Provider>
     )
@@ -119,7 +119,7 @@ describe("With existing amendments", () => {
           offenceIndex={0}
           offence={offence2}
           isCaseLockedToCurrentUser={true}
-          getCandidate={mockGetCandidate}
+          isCaseMatch={mockIsCaseMatch}
         />
       </CourtCaseContext.Provider>
     )
