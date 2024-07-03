@@ -60,7 +60,6 @@ export const OffenceMatcher = ({
     setSelectedValue(offenceMatcherSelectValue(offenceReasonSequence, ccr))
   }
 
-  // TODO: match dates
   return isCaseLockedToCurrentUser ? (
     <select className="govuk-select offence-matcher" onChange={onSelectionChanged} value={selectedValue}>
       <option disabled hidden value="">

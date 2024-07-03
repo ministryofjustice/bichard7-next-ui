@@ -19,4 +19,38 @@ describe("isCaseMatch", () => {
 
     expect(result).toBe(false)
   })
+
+  it("should return false if offence codes match but dates do not", () => {
+    const hearingOutcome = createDummyAho().AnnotatedHearingOutcome.HearingOutcome
+    const pncOffence = { offence: { cjsOffenceCode: "offenceCode", startDate: new Date("1990-01-01") } } as PncOffence
+    const offence = {
+      ActualOffenceStartDate: { StartDate: new Date("1990-02-01") },
+      CriminalProsecutionReference: {
+        OffenceReason: { __type: "NationalOffenceReason", OffenceCode: { FullCode: "offenceCode" } }
+      }
+    } as Offence
+
+    const caseReference = "case-reference"
+
+    const result = isCaseMatch(hearingOutcome, pncOffence, offence, caseReference)
+
+    expect(result).toBe(false)
+  })
+
+  it("should return true if offence codes and dates match", () => {
+    const hearingOutcome = createDummyAho().AnnotatedHearingOutcome.HearingOutcome
+    const pncOffence = { offence: { cjsOffenceCode: "offenceCode", startDate: new Date("1990-01-01") } } as PncOffence
+    const offence = {
+      ActualOffenceStartDate: { StartDate: new Date("1990-01-01") },
+      CriminalProsecutionReference: {
+        OffenceReason: { __type: "NationalOffenceReason", OffenceCode: { FullCode: "offenceCode" } }
+      }
+    } as Offence
+
+    const caseReference = "case-reference"
+
+    const result = isCaseMatch(hearingOutcome, pncOffence, offence, caseReference)
+
+    expect(result).toBe(true)
+  })
 })
