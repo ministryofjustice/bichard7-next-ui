@@ -4,6 +4,7 @@ import nextHearingDateAndLocationExceptions from "../../../../../test/test-data/
 import nextHearingDateExceptions from "../../../../../test/test-data/NextHearingDateExceptions.json"
 import nextHearingLocationExceptions from "../../../../../test/test-data/NextHearingLocationExceptions.json"
 import { clickTab, loginAndVisit, submitAndConfirmExceptions } from "../../../../support/helpers"
+import multipleHearingResultsOnOffence from "../../../../../test/test-data/multipleHearingResultsOnOffence.json"
 
 describe("Tabs exceptions icons", () => {
   beforeEach(() => {
@@ -481,6 +482,49 @@ describe("Offences exceptions icons", () => {
     cy.get("a.govuk-back-link").contains("Back to all offences").click()
     cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("not.exist")
     cy.get("#offences tbody tr:nth-child(1)").find(".checkmark-icon").should("exist")
+  })
+
+  it("Should display warning and checkmark icons correctly when court offence sequence number is out of order", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: multipleHearingResultsOnOffence.hearingOutcomeWithCourtOffenceSequenceOutOfOrder,
+        updatedHearingOutcome: multipleHearingResultsOnOffence.hearingOutcomeWithCourtOffenceSequenceOutOfOrder,
+        errorCount: 1
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    clickTab("Offences")
+    cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("exist")
+    cy.get("#offences tbody tr:nth-child(2)").find(".warning-icon").should("exist")
+    cy.get("#offences tbody tr:nth-child(3)").find(".warning-icon").should("exist")
+    cy.get("#offences tbody tr:nth-child(4)").find(".warning-icon").should("not.exist")
+
+    cy.get(".govuk-link").contains("Offence with HO100200 - Unrecognised Force or Station Code").click()
+    cy.get(".hearing-result-1 #next-hearing-location").type("B01EF00")
+    cy.get(".hearing-result-2 #next-hearing-location").type("C04BF00")
+
+    cy.get("a.govuk-back-link").contains("Back to all offences").click()
+    cy.get("#offences tbody tr:nth-child(1)").find(".warning-icon").should("not.exist")
+    cy.get("#offences tbody tr:nth-child(1)").find(".checkmark-icon").should("exist")
+
+    cy.get(".govuk-link").contains("Offence with HO100300 - Organisation not recognised").click()
+    cy.get(".hearing-result-1 #next-hearing-location").type("B01EF00")
+
+    cy.get("a.govuk-back-link").contains("Back to all offences").click()
+    cy.get("#offences tbody tr:nth-child(2)").find(".warning-icon").should("not.exist")
+    cy.get("#offences tbody tr:nth-child(2)").find(".checkmark-icon").should("exist")
+
+    cy.get(".govuk-link")
+      .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
+      .click()
+    cy.get(".hearing-result-1 #next-hearing-location").type("B01EF00")
+
+    cy.get("a.govuk-back-link").contains("Back to all offences").click()
+    cy.get("#offences tbody tr:nth-child(3)").find(".warning-icon").should("not.exist")
+    cy.get("#offences tbody tr:nth-child(3)").find(".checkmark-icon").should("exist")
   })
 
   it("Should display warning icon until all of the exceptions are resolved on a case with multiple hearing date exceptions", () => {
