@@ -1,9 +1,9 @@
 import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
 import createDummyAho from "../../../test/helpers/createDummyAho"
-import isCaseMatch from "./isCaseMatch"
+import isOffencePossibleMatch from "./isOffencePossibleMatch"
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 
-describe("isCaseMatch", () => {
+describe("isOffencePossibleMatch", () => {
   it("should return false if offence codes do not match", () => {
     const hearingOutcome = createDummyAho().AnnotatedHearingOutcome.HearingOutcome
     const pncOffence = { offence: { cjsOffenceCode: "nonMatchingOffenceCode" } } as PncOffence
@@ -15,7 +15,7 @@ describe("isCaseMatch", () => {
 
     const caseReference = "case-reference"
 
-    const result = isCaseMatch(hearingOutcome, pncOffence, offence, caseReference)
+    const result = isOffencePossibleMatch(hearingOutcome, pncOffence, offence, caseReference)
 
     expect(result).toBe(false)
   })
@@ -32,7 +32,7 @@ describe("isCaseMatch", () => {
 
     const caseReference = "case-reference"
 
-    const result = isCaseMatch(hearingOutcome, pncOffence, offence, caseReference)
+    const result = isOffencePossibleMatch(hearingOutcome, pncOffence, offence, caseReference)
 
     expect(result).toBe(false)
   })
@@ -49,7 +49,7 @@ describe("isCaseMatch", () => {
 
     const caseReference = "case-reference"
 
-    const result = isCaseMatch(hearingOutcome, pncOffence, offence, caseReference)
+    const result = isOffencePossibleMatch(hearingOutcome, pncOffence, offence, caseReference)
 
     expect(result).toBe(true)
   })

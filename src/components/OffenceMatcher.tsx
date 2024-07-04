@@ -4,21 +4,26 @@ import { useCallback, useEffect, useState } from "react"
 import offenceAlreadySelected from "utils/offenceMatcher/offenceAlreadySelected"
 import offenceMatcherSelectValue from "utils/offenceMatcher/offenceMatcherSelectValue"
 import Badge, { BadgeColours } from "./Badge"
-import _isCaseMatch from "utils/offenceMatcher/isCaseMatch"
+import _isOffencePossibleMatch from "utils/offenceMatcher/isOffencePossibleMatch"
 import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
 
 interface Props {
   offenceIndex: number
   offence: Offence
   isCaseLockedToCurrentUser: boolean
-  isCaseMatch?: (aho: HearingOutcome, pncOffence: PncOffence, offence: Offence, caseReference: string) => boolean
+  isOffencePossibleMatch?: (
+    aho: HearingOutcome,
+    pncOffence: PncOffence,
+    offence: Offence,
+    caseReference: string
+  ) => boolean
 }
 
 export const OffenceMatcher = ({
   offenceIndex,
   offence,
   isCaseLockedToCurrentUser,
-  isCaseMatch = _isCaseMatch
+  isOffencePossibleMatch = _isOffencePossibleMatch
 }: Props) => {
   const {
     courtCase: {
@@ -69,7 +74,7 @@ export const OffenceMatcher = ({
         return (
           <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
             {c.offences
-              .filter((pnc) => isCaseMatch(aho.HearingOutcome, pnc, offence, c.courtCaseReference))
+              .filter((pnc) => isOffencePossibleMatch(aho.HearingOutcome, pnc, offence, c.courtCaseReference))
               .map((pnc, index) => {
                 return (
                   <option
