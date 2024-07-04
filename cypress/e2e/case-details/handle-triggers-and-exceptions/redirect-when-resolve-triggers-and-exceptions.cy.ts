@@ -40,7 +40,7 @@ describe("Redirect when resolve triggers and exceptions", () => {
 
         if (resolveExceptions) {
           if (loggedInAs === "GeneralHandler") {
-            cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
+            cy.get(".case-details-sidebar #exceptions-tab").click()
           }
           cy.get("button").contains("Mark as manually resolved").click()
           cy.get("button").contains("Resolve").click()

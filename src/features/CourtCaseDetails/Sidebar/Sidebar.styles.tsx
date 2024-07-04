@@ -19,7 +19,7 @@ const TabList = styled(Tabs.List)`
   }
 `
 
-const SideBar = styled.div`
+const SidebarContainer = styled.div`
   margin-top: -41px;
 `
 
@@ -32,4 +32,4 @@ const TablePanel = styled(Tabs.Panel)`
   padding-top: 10px;
 `
 
-export { SideBar, TabContent, TabList, TablePanel }
+export { SidebarContainer, TabContent, TabList, TablePanel }
