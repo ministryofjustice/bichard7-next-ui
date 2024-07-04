@@ -38,7 +38,7 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
         return Number(tabId)
       }
     })
-    .filter((tab) => tab)
+    .filter(Object) // map can return undefined here, filter those out
 
   let defaultTab = SidebarTab.PncDetails
   if (accessibleTabs.includes(SidebarTab.Triggers) && courtCase.triggerCount > 0) {
@@ -46,13 +46,6 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
   } else if (accessibleTabs.includes(SidebarTab.Exceptions)) {
     defaultTab = SidebarTab.Exceptions
   }
-
-  // const defaultTab =
-  //   accessibleTabs.length > 0
-  //     ? accessibleTabs.length == 2 && courtCase.triggerCount === 0
-  //       ? accessibleTabs[1]
-  //       : accessibleTabs[0]
-  //     : undefined
 
   const [selectedTab, setSelectedTab] = useState(defaultTab)
 
