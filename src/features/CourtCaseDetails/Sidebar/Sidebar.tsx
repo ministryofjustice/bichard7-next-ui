@@ -10,9 +10,9 @@ import { SidebarContainer, TabContent, TabList, TablePanel } from "./Sidebar.sty
 import TriggersList from "./TriggersList"
 
 enum SidebarTab {
-  Exceptions,
-  Triggers,
-  PncDetails
+  Exceptions = 1, // makes .filter(Number) work
+  Triggers = 2,
+  PncDetails = 3
 }
 
 interface Props {
@@ -25,20 +25,15 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
   const currentUser = useCurrentUser()
   const { courtCase } = useCourtCase()
 
-  const permissions: { [tab: number]: boolean } = {
+  const permissions: { [tabId: number]: boolean } = {
     [SidebarTab.Exceptions]: currentUser.hasAccessTo[Permission.Exceptions],
     [SidebarTab.Triggers]: currentUser.hasAccessTo[Permission.Triggers],
-    [SidebarTab.PncDetails]: !!currentUser.featureFlags.pncDetailsTab // to be removed for go-live
+    [SidebarTab.PncDetails]: true // set true for development - to be removed for go-live
   }
 
   const accessibleTabs = Object.entries(permissions)
-    .map((tab) => {
-      const [tabId, accessible] = tab
-      if (accessible) {
-        return Number(tabId)
-      }
-    })
-    .filter(Object) // map can return undefined here, filter those out
+    .map(([tabId, tabIsAccessible]) => tabIsAccessible && Number(tabId))
+    .filter(Number)
 
   let defaultTab = SidebarTab.PncDetails
   if (accessibleTabs.includes(SidebarTab.Triggers) && courtCase.triggerCount > 0) {
@@ -109,6 +104,17 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
                 canResolveAndSubmit={canResolveAndSubmit}
                 stopLeavingFn={stopLeavingFn}
               />
+            </Tabs.Panel>
+          </ConditionalRender>
+
+          {/* remove conditional render for go-live */}
+          <ConditionalRender isRendered={accessibleTabs.includes(SidebarTab.PncDetails)}>
+            <Tabs.Panel
+              id="pnc-details"
+              selected={selectedTab === SidebarTab.PncDetails}
+              className="moj-tab-panel-pnc-details"
+            >
+              <span>{"PNC details panel"}</span>
             </Tabs.Panel>
           </ConditionalRender>
         </Tabs>
