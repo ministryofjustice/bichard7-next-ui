@@ -118,14 +118,8 @@ export const OffenceDetails = ({
           }
           <TableRow label="Title" value={offence.OffenceTitle} />
           <TableRow label="Category" value={offenceCategoryWithDescription} />
-          <TableRow
-            label="Arrest date"
-            value={offence.ArrestDate && formatDisplayedDate(new Date(offence.ArrestDate))}
-          />
-          <TableRow
-            label="Charge date"
-            value={offence.ChargeDate && formatDisplayedDate(new Date(offence.ChargeDate))}
-          />
+          <TableRow label="Arrest date" value={offence.ArrestDate && formatDisplayedDate(offence.ArrestDate)} />
+          <TableRow label="Charge date" value={offence.ChargeDate && formatDisplayedDate(offence.ChargeDate)} />
           <TableRow label="Start date" value={<StartDate offence={offence} />} />
           <TableRow label="Location" value={offence.LocationOfOffence} />
           <TableRow label="Wording" value={offence.ActualOffenceWording} />
@@ -134,7 +128,7 @@ export const OffenceDetails = ({
           <TableRow label="Home Office classification" value={offence.HomeOfficeClassification} />
           <TableRow
             label="Conviction date"
-            value={offence.ConvictionDate && formatDisplayedDate(new Date(offence.ConvictionDate))}
+            value={offence.ConvictionDate && formatDisplayedDate(offence.ConvictionDate)}
           />
 
           <OffenceMatching
