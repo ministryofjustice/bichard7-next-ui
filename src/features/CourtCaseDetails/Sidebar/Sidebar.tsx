@@ -6,7 +6,7 @@ import { useState } from "react"
 import type NavigationHandler from "types/NavigationHandler"
 import Permission from "types/Permission"
 import ExceptionsList from "./ExceptionsList"
-import { SidebarContainer, TabContent, TabList, TablePanel } from "./Sidebar.styles"
+import { SidebarContainer } from "./Sidebar.styles"
 import TriggersList from "./TriggersList"
 
 enum SidebarTab {
@@ -48,7 +48,7 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
     <SidebarContainer className={`side-bar case-details-sidebar`}>
       <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.CaseDetailsSidebar]}>
         <Tabs>
-          <TabList>
+          <Tabs.List>
             <ConditionalRender isRendered={accessibleTabs.includes(SidebarTab.Triggers)}>
               <Tabs.Tab
                 id="triggers-tab"
@@ -56,7 +56,7 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
                 onClick={() => setSelectedTab(SidebarTab.Triggers)}
                 selected={selectedTab === SidebarTab.Triggers}
               >
-                <TabContent>{`Triggers`}</TabContent>
+                {`Triggers`}
               </Tabs.Tab>
             </ConditionalRender>
 
@@ -67,7 +67,7 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
                 onClick={() => setSelectedTab(SidebarTab.Exceptions)}
                 selected={selectedTab === SidebarTab.Exceptions}
               >
-                <TabContent>{`Exceptions`}</TabContent>
+                {`Exceptions`}
               </Tabs.Tab>
             </ConditionalRender>
 
@@ -78,19 +78,19 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
                 onClick={() => setSelectedTab(SidebarTab.PncDetails)}
                 selected={selectedTab === SidebarTab.PncDetails}
               >
-                <TabContent>{`PNC Details`}</TabContent>
+                {`PNC Details`}
               </Tabs.Tab>
             </ConditionalRender>
-          </TabList>
+          </Tabs.List>
 
           <ConditionalRender isRendered={accessibleTabs.includes(SidebarTab.Triggers)}>
-            <TablePanel
+            <Tabs.Panel
               id="triggers"
               selected={selectedTab === SidebarTab.Triggers}
               className={`moj-tab-panel-triggers tab-panel-triggers`}
             >
               <TriggersList onNavigate={onNavigate} />
-            </TablePanel>
+            </Tabs.Panel>
           </ConditionalRender>
 
           <ConditionalRender isRendered={accessibleTabs.includes(SidebarTab.Exceptions)}>
