@@ -52,10 +52,10 @@ const CourtCaseListEntry: React.FC<Props> = ({
 
   const hasTriggers = triggers.length > 0
   const hasExceptions = !!errorReport
-  const displayExceptions = (query.state === "Resolved" && errorStatus === "Resolved") || errorStatus === "Unresolved"
 
   let exceptionsReasonCell, exceptionsLockTag, triggersReasonCell, triggersLockTag
   if (hasExceptions && currentUser.hasAccessTo[Permission.Exceptions]) {
+    const displayExceptions = (query.state === "Resolved" && errorStatus === "Resolved") || errorStatus === "Unresolved"
     const exceptions = groupErrorsFromReport(errorReport)
     const filteredExceptions = Object.fromEntries(
       Object.entries(exceptions).filter(([error]) => query.reasonCodes?.includes(error))
@@ -63,7 +63,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
     exceptionsReasonCell = displayExceptions && (
       <ExceptionsReasonCell exceptionCounts={query.reasonCodes ? filteredExceptions : exceptions} />
     )
-    exceptionsLockTag = (
+    exceptionsLockTag = displayExceptions && (
       <ExceptionsLockTag
         errorLockedByUsername={errorLockedByUsername}
         errorLockedByFullName={errorLockedByUserFullName}

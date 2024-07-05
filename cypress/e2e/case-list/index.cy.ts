@@ -496,4 +496,44 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0002")
     })
   })
+
+  it("Should display triggers only once when resolved exceptions are not displayed", () => {
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "011111",
+        errorStatus: "Resolved",
+        triggerStatus: "Unresolved",
+        errorReason: "",
+        errorReport: "",
+        errorResolvedBy: "GeneralHandler",
+        triggerResolvedBy: "GeneralHandler"
+      }
+    ])
+    cy.task("insertTriggers", {
+      caseId: 0,
+      triggers: [
+        {
+          triggerId: 0,
+          triggerCode: TriggerCode.TRPR0001,
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+    })
+    cy.task("insertTriggers", {
+      caseId: 0,
+      triggers: [
+        {
+          triggerId: 1,
+          triggerCode: TriggerCode.TRPR0002,
+          status: "Unresolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+    })
+
+    loginAndVisit()
+
+    cy.get("tr").not(":first").get("td:nth-child(7)").find(".trigger-description").should("have.length", 2)
+  })
 })
