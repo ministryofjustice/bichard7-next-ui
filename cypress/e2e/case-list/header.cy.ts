@@ -1,4 +1,4 @@
-import { loginAndVisit } from "../support/helpers"
+import { loginAndVisit } from "../../support/helpers"
 
 describe("Home", () => {
   context("720p resolution", () => {

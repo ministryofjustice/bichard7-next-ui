@@ -1,8 +1,8 @@
 import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
-import { TestTrigger } from "../../test/utils/manageTriggers"
-import a11yConfig from "../support/a11yConfig"
-import { loginAndVisit } from "../support/helpers"
-import logAccessibilityViolations from "../support/logAccessibilityViolations"
+import { TestTrigger } from "../../../test/utils/manageTriggers"
+import a11yConfig from "../../support/a11yConfig"
+import { loginAndVisit } from "../../support/helpers"
+import logAccessibilityViolations from "../../support/logAccessibilityViolations"
 
 describe("Case list", () => {
   beforeEach(() => {
