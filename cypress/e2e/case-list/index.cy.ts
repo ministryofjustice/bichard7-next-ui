@@ -360,5 +360,66 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100310 (2)")
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100322").should("not.exist")
     })
+
+    it("Should only display trigger reason when the triggers are not resolved", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "011111",
+          errorStatus: "Unresolved",
+          exceptionStatus: "Unresolved",
+          errorReason: "",
+          errorReport: ""
+        },
+        {
+          orgForPoliceFilter: "011111",
+          errorStatus: "Resolved",
+          exceptionStatus: "Unresolved",
+          errorReason: "",
+          errorReport: ""
+        }
+      ])
+
+      cy.task("insertTriggers", {
+        caseId: 0,
+        triggers: [
+          {
+            triggerId: 0,
+            triggerCode: TriggerCode.TRPR0001,
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          },
+          {
+            triggerId: 1,
+            triggerCode: TriggerCode.TRPR0002,
+            status: "Resolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+      })
+      cy.task("insertTriggers", {
+        caseId: 1,
+        triggers: [
+          {
+            triggerId: 2,
+            triggerCode: TriggerCode.TRPR0003,
+            status: "Unresolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          },
+          {
+            triggerId: 3,
+            triggerCode: TriggerCode.TRPR0004,
+            status: "Resolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+      })
+
+      loginAndVisit()
+
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0001")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0002").should("not.exist")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0003")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0004").should("not.exist")
+    })
   })
 })
