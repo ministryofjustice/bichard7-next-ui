@@ -317,5 +317,48 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0010 - Conditional bail")
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0015 - Personal details changed")
     })
+
+    it("Should only display error reason when the exceptions are not resolved", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "011111",
+          errorStatus: "Unresolved",
+          triggerStatus: "Unresolved",
+          errorReason: "",
+          errorReport: ""
+        },
+        {
+          orgForPoliceFilter: "011111",
+          errorStatus: "Resolved",
+          triggerStatus: "Unresolved",
+          errorReason: "",
+          errorReport: ""
+        }
+      ])
+
+      cy.task("insertException", {
+        caseId: 0,
+        exceptionCode: "HO100310",
+        errorReport: "HO100310||ds:OffenceReasonSequence",
+        errorStatus: "Unresolved"
+      })
+      cy.task("insertException", {
+        caseId: 0,
+        exceptionCode: "HO100310",
+        errorReport: "HO100310||ds:OffenceReasonSequence",
+        errorStatus: "Unresolved"
+      })
+      cy.task("insertException", {
+        caseId: 1,
+        exceptionCode: "HO100322",
+        errorReport: "HO100322||ds:OrganisationUnitCode",
+        errorStatus: "Resolved"
+      })
+
+      loginAndVisit()
+
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100310 (2)")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100322").should("not.exist")
+    })
   })
 })

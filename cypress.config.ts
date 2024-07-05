@@ -142,8 +142,13 @@ export default defineConfig({
           return true
         },
 
-        insertException(params: { caseId: number; exceptionCode: string; errorReport?: string }) {
-          return insertException(params.caseId, params.exceptionCode, params.errorReport)
+        insertException(params: {
+          caseId: number
+          exceptionCode: string
+          errorReport?: string
+          errorStatus?: ResolutionStatus
+        }) {
+          return insertException(params.caseId, params.exceptionCode, params.errorReport, params.errorStatus)
         },
 
         async getCourtCaseById(params: { caseId: number }) {
