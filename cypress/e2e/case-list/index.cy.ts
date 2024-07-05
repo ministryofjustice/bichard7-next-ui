@@ -318,7 +318,7 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0015 - Personal details changed")
     })
 
-    it("Should only display error reason when the exceptions are not resolved", () => {
+    it("Should only display error reason when the exceptions are not resolved (showing unresolved cases by default)", () => {
       cy.task("insertCourtCasesWithFields", [
         {
           orgForPoliceFilter: "011111",
@@ -420,6 +420,80 @@ describe("Case list", () => {
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0002").should("not.exist")
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0003")
       cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0004").should("not.exist")
+    })
+
+    it("Should display resolved reason when the exceptions are resolved and filtering resolved cases", () => {
+      cy.task("insertCourtCasesWithFields", [
+        {
+          orgForPoliceFilter: "011111",
+          errorStatus: "Resolved",
+          triggerStatus: "Resolved",
+          errorReason: "",
+          errorReport: "",
+          errorResolvedBy: "GeneralHandler",
+          triggerResolvedBy: "GeneralHandler"
+        },
+        {
+          orgForPoliceFilter: "011111",
+          errorStatus: "Resolved",
+          triggerStatus: "Resolved",
+          errorReason: "",
+          errorReport: "",
+          errorResolvedBy: "GeneralHandler",
+          triggerResolvedBy: "GeneralHandler"
+        }
+      ])
+
+      cy.task("insertException", {
+        caseId: 0,
+        exceptionCode: "HO100310",
+        errorReport: "HO100310||ds:OffenceReasonSequence",
+        errorStatus: "Resolved"
+      })
+      cy.task("insertException", {
+        caseId: 0,
+        exceptionCode: "HO100310",
+        errorReport: "HO100310||ds:OffenceReasonSequence",
+        errorStatus: "Resolved"
+      })
+      cy.task("insertException", {
+        caseId: 1,
+        exceptionCode: "HO100322",
+        errorReport: "HO100322||ds:OrganisationUnitCode",
+        errorStatus: "Resolved"
+      })
+
+      cy.task("insertTriggers", {
+        caseId: 0,
+        triggers: [
+          {
+            triggerId: 0,
+            triggerCode: TriggerCode.TRPR0001,
+            status: "Resolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+      })
+      cy.task("insertTriggers", {
+        caseId: 1,
+        triggers: [
+          {
+            triggerId: 1,
+            triggerCode: TriggerCode.TRPR0002,
+            status: "Resolved",
+            createdAt: new Date("2022-07-09T10:22:34.000Z")
+          }
+        ]
+      })
+
+      loginAndVisit()
+      cy.get(`label[for="resolved"]`).click()
+      cy.get("button[id=search]").click()
+
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100310 (2)")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("HO100322")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0001")
+      cy.get("tr").not(":first").get("td:nth-child(7)").contains("TRPR0002")
     })
   })
 })
