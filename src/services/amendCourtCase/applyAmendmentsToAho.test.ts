@@ -52,7 +52,8 @@ describe("applyAmendmentsToAho", () => {
         DefendantOrOffender: {
           DefendantOrOffenderSequenceNumber: "0000"
         },
-        OffenceReasonSequence: "0000"
+        OffenceReasonSequence: "0000",
+        OffenceReason: { __type: "NationalOffenceReason" }
       },
 
       Result: [dummyResult]
