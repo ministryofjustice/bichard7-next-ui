@@ -28,7 +28,7 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
   const permissions: { [tabId: number]: boolean } = {
     [SidebarTab.Exceptions]: currentUser.hasAccessTo[Permission.Exceptions],
     [SidebarTab.Triggers]: currentUser.hasAccessTo[Permission.Triggers],
-    [SidebarTab.PncDetails]: true // set true for development - to be removed for go-live
+    [SidebarTab.PncDetails]: currentUser.featureFlags?.pncDetailsTabEnabled
   }
 
   const accessibleTabs = Object.entries(permissions)
