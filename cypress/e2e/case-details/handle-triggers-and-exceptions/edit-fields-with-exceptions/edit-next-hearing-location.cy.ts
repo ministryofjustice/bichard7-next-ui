@@ -199,7 +199,10 @@ describe("NextHearingLocation", () => {
 
     loginAndVisit("/bichard/court-cases/0")
 
-    cy.intercept("http://localhost:4080/bichard/api/organisation-units?search=*", cy.spy().as("fetchOrganisation"))
+    cy.intercept(
+      `${Cypress.config("baseUrl")}/bichard/api/organisation-units?search=*`,
+      cy.spy().as("fetchOrganisation")
+    )
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
     cy.get(".govuk-link")
