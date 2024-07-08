@@ -400,6 +400,17 @@ describe("Triggers and exceptions tabs", () => {
   })
 
   it("should only show triggers to Trigger Handlers", () => {
+    cy.task("insertTriggers", {
+      caseId: 0,
+      triggers: [
+        {
+          triggerId: 0,
+          triggerCode: TriggerCode.TRPR0001,
+          status: "Resolved",
+          createdAt: new Date("2022-07-09T10:22:34.000Z")
+        }
+      ]
+    })
     loginAndVisit("TriggerHandler", caseURL)
 
     cy.get(".case-details-sidebar #triggers-tab").should("exist")
