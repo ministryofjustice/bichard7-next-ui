@@ -185,6 +185,34 @@ describe("NextHearingLocation", () => {
     cy.contains("td", "Next hearing location").siblings().get(".moj-badge").contains("Correction")
   })
 
+  it("Should fetch organisation units once the user has finished typing", () => {
+    cy.task("clearCourtCases")
+    cy.task("insertCourtCasesWithFields", [
+      {
+        orgForPoliceFilter: "01",
+        hearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100322,
+        updatedHearingOutcome: nextHearingLocationExceptions.hearingOutcomeXmlHO100322,
+        errorCount: 1,
+        errorLockedByUsername: "GeneralHandler"
+      }
+    ])
+
+    loginAndVisit("/bichard/court-cases/0")
+
+    cy.intercept("http://localhost:4080/bichard/api/organisation-units?search=*", cy.spy().as("fetchOrganisation"))
+
+    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
+    cy.get(".govuk-link")
+      .contains("Offence with HO100322 - Court has provided an adjournment with no location for the next hearing")
+      .click()
+    cy.contains("td", "Next hearing location").siblings().should("include.text", "")
+    cy.get("#next-hearing-location").clear()
+    cy.get("#next-hearing-location").type("B")
+    cy.get("#next-hearing-location").type("0")
+    cy.get("#next-hearing-location").type("1")
+    cy.get("@fetchOrganisation").should("have.been.calledOnce")
+  })
+
   it("Should be able to edit multiple next hearing locations", () => {
     loginAndVisit("/bichard/court-cases/0")
 
