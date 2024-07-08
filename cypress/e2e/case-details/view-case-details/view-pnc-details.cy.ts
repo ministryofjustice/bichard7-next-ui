@@ -1,6 +1,6 @@
 import { loginAndVisit } from "../../../support/helpers"
 
-describe("when doing something", () => {
+describe("when viewing case-details sidebar", () => {
   beforeEach(() => {
     cy.task("insertCourtCasesWithFields", [{ orgForPoliceFilter: "01", errorCount: 0 }])
   })
@@ -9,13 +9,13 @@ describe("when doing something", () => {
     cy.task("clearCourtCases")
   })
 
-  it("is exists", () => {
+  it("is displays the pnc-details tab", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get(".case-details-sidebar #pnc-details").should("exist")
   })
 
-  it("can be clicked on to display", () => {
+  it("displays pnc-details panel when tab clicked", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get("#pnc-details-tab").click()
