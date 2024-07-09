@@ -51,21 +51,21 @@ export const OffenceMatcher = ({ offenceIndex, possibleMatches, isCaseLockedToCu
       <option disabled hidden value="">
         {"Select an offence"}
       </option>
-      {possibleMatches?.map((c) => {
+      {possibleMatches?.map((m) => {
         return (
-          <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
-            {c.offences.map((pnc, index) => {
+          <optgroup key={m.courtCaseReference} label={m.courtCaseReference}>
+            {m.offences.map((pnc, index) => {
               return (
                 <option
                   key={`${index}-${pnc.offence.cjsOffenceCode}`}
-                  value={offenceMatcherSelectValue(pnc.offence.sequenceNumber, c.courtCaseReference)}
+                  value={offenceMatcherSelectValue(pnc.offence.sequenceNumber, m.courtCaseReference)}
                   disabled={offenceAlreadySelected(
                     amendments,
                     offenceIndex,
                     pnc.offence.sequenceNumber,
-                    c.courtCaseReference
+                    m.courtCaseReference
                   )}
-                  data-ccr={c.courtCaseReference}
+                  data-ccr={m.courtCaseReference}
                 >
                   {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
                 </option>
