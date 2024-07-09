@@ -1,37 +1,18 @@
-import { HearingOutcome, Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCallback, useEffect, useState } from "react"
 import offenceAlreadySelected from "utils/offenceMatcher/offenceAlreadySelected"
 import offenceMatcherSelectValue from "utils/offenceMatcher/offenceMatcherSelectValue"
 import Badge, { BadgeColours } from "./Badge"
-import _isOffencePossibleMatch from "utils/offenceMatcher/isOffencePossibleMatch"
-import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
+import type { PossibleMatchingOffence } from "../types/OffenceMatching"
 
 interface Props {
   offenceIndex: number
-  offence: Offence
+  possibleMatches?: PossibleMatchingOffence[]
   isCaseLockedToCurrentUser: boolean
-  isOffencePossibleMatch?: (
-    aho: HearingOutcome,
-    pncOffence: PncOffence,
-    offence: Offence,
-    caseReference: string
-  ) => boolean
 }
 
-export const OffenceMatcher = ({
-  offenceIndex,
-  offence,
-  isCaseLockedToCurrentUser,
-  isOffencePossibleMatch = _isOffencePossibleMatch
-}: Props) => {
-  const {
-    courtCase: {
-      aho: { PncQuery: pncQuery, AnnotatedHearingOutcome: aho }
-    },
-    amend,
-    amendments
-  } = useCourtCase()
+export const OffenceMatcher = ({ offenceIndex, possibleMatches, isCaseLockedToCurrentUser }: Props) => {
+  const { amend, amendments } = useCourtCase()
 
   const findPncOffence = useCallback(() => {
     const offenceReasonSequenceValue =
@@ -70,28 +51,26 @@ export const OffenceMatcher = ({
       <option disabled hidden value="">
         {"Select an offence"}
       </option>
-      {pncQuery?.courtCases?.map((c) => {
+      {possibleMatches?.map((c) => {
         return (
           <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
-            {c.offences
-              .filter((pnc) => isOffencePossibleMatch(aho.HearingOutcome, pnc, offence, c.courtCaseReference))
-              .map((pnc, index) => {
-                return (
-                  <option
-                    key={`${index}-${pnc.offence.cjsOffenceCode}`}
-                    value={offenceMatcherSelectValue(pnc.offence.sequenceNumber, c.courtCaseReference)}
-                    disabled={offenceAlreadySelected(
-                      amendments,
-                      offenceIndex,
-                      pnc.offence.sequenceNumber,
-                      c.courtCaseReference
-                    )}
-                    data-ccr={c.courtCaseReference}
-                  >
-                    {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
-                  </option>
-                )
-              })}
+            {c.offences.map((pnc, index) => {
+              return (
+                <option
+                  key={`${index}-${pnc.offence.cjsOffenceCode}`}
+                  value={offenceMatcherSelectValue(pnc.offence.sequenceNumber, c.courtCaseReference)}
+                  disabled={offenceAlreadySelected(
+                    amendments,
+                    offenceIndex,
+                    pnc.offence.sequenceNumber,
+                    c.courtCaseReference
+                  )}
+                  data-ccr={c.courtCaseReference}
+                >
+                  {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
+                </option>
+              )
+            })}
           </optgroup>
         )
       })}

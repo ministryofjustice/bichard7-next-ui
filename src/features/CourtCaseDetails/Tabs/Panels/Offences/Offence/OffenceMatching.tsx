@@ -13,6 +13,8 @@ import { Exception } from "types/exceptions"
 import { getOffenceMatchingException } from "utils/exceptions/getOffenceMatchingException"
 import { TableRow } from "../../TableRow"
 import { PncInput } from "./OffenceDetails.styles"
+import isOffencePossibleMatch from "../../../../../../utils/offenceMatcher/isOffencePossibleMatch"
+import type { PossibleMatchingOffence } from "../../../../../../types/OffenceMatching"
 
 const enabled = (user: DisplayFullUser) => {
   const enabledInProduction = true // change this if we need to disable in production for everyone
@@ -53,6 +55,19 @@ export const OffenceMatching = ({
     courtCase.errorLockedByUsername === currentUser?.username && courtCase.errorStatus === "Unresolved"
 
   const updatedOffence = savedAmendments.offenceReasonSequence?.find((o) => o.offenceIndex === offenceIndex)
+  const possibleMatches: PossibleMatchingOffence[] | undefined = courtCase.aho.PncQuery?.courtCases?.map((c) => {
+    return {
+      courtCaseReference: c.courtCaseReference,
+      offences: c.offences.filter((pncOffence) =>
+        isOffencePossibleMatch(
+          courtCase.aho.AnnotatedHearingOutcome.HearingOutcome,
+          pncOffence,
+          offence,
+          c.courtCaseReference
+        )
+      )
+    }
+  })
 
   return (
     <>
@@ -65,7 +80,7 @@ export const OffenceMatching = ({
             value={
               <OffenceMatcher
                 offenceIndex={offenceIndex}
-                offence={offence}
+                possibleMatches={possibleMatches}
                 isCaseLockedToCurrentUser={isCaseLockedToCurrentUser}
               />
             }
