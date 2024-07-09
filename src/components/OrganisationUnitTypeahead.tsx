@@ -72,7 +72,11 @@ const OrganisationUnitTypeahead: React.FC<Props> = ({
   })
 
   useEffect(() => {
-    fetchItems(inputValue)
+    const delayDebounceFn = setTimeout(() => {
+      fetchItems(inputValue)
+    }, 250)
+
+    return () => clearTimeout(delayDebounceFn)
   }, [fetchItems, inputValue])
 
   return (
