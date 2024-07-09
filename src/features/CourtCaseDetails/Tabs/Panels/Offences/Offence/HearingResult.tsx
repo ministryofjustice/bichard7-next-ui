@@ -71,7 +71,7 @@ export const HearingResult = ({
         />
         <TableRow
           label="Result hearing date"
-          value={result.ResultHearingDate && formatDisplayedDate(new Date(result.ResultHearingDate))}
+          value={result.ResultHearingDate && formatDisplayedDate(result.ResultHearingDate)}
         />
         <ConditionalRender isRendered={typeof result.Duration !== "undefined" && result.Duration?.length > 0}>
           <TableRow
