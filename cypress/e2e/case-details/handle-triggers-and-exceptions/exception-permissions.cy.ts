@@ -31,7 +31,7 @@ describe("Exception permissions", () => {
         loginAndVisit(loggedInAs, "/bichard/court-cases/0")
 
         if (loggedInAs === "GeneralHandler") {
-          cy.get(".triggers-and-exceptions-sidebar #exceptions-tab").click()
+          cy.get(".case-details-sidebar #exceptions-tab").click()
         }
 
         if (canManuallyResolveAndSubmit) {

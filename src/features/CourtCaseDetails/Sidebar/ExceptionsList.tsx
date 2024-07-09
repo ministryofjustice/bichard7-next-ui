@@ -16,7 +16,7 @@ import Form from "../../../components/Form"
 import amendmentsHaveChanged from "../../../utils/amendmentsHaveChanged"
 import { gdsLightGrey, gdsMidGrey, textPrimary } from "../../../utils/colours"
 import LockStatusTag from "../LockStatusTag"
-import { ButtonContainer, SeparatorLine } from "./Exceptions.styles"
+import { ButtonContainer, SeparatorLine } from "./ExceptionsList.styles"
 
 const isPncException = (code: ExceptionCode) =>
   [ExceptionCode.HO100302, ExceptionCode.HO100314, ExceptionCode.HO100402, ExceptionCode.HO100404].includes(code)
@@ -27,7 +27,7 @@ interface Props {
   stopLeavingFn: (newValue: boolean) => void
 }
 
-const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
+const ExceptionsList = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
   const { courtCase, amendments, savedAmendments } = useCourtCase()
   const pncExceptions = courtCase.aho.Exceptions.filter(({ code }) => isPncException(code))
   const otherExceptions = courtCase.aho.Exceptions.filter(({ code }) => !isPncException(code))
@@ -100,4 +100,4 @@ const Exceptions = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) =
   )
 }
 
-export default Exceptions
+export default ExceptionsList

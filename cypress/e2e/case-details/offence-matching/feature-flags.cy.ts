@@ -11,21 +11,9 @@ describe("renders based on feature flag value for user", () => {
     errorReport: "HO100310||ds:OffenceReasonSequence, HO100310||ds:OffenceReasonSequence"
   }
 
-  before(() => {
-    cy.loginAs("GeneralHandler")
-    cy.loginAs("NoExceptionsFeatureFlag")
-    cy.loginAs("OffenceMatchingDisabled")
-  })
-
   beforeEach(() => {
     cy.task("clearCourtCases")
     cy.task("insertCourtCasesWithFields", [fields])
-
-    loginAndVisit()
-    cy.get("a[class*='Link']").contains(fields.defendantName).click()
-    cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
-
-    cy.get("#offences").contains("Theft of pedal cycle").click()
   })
 
   it("is disabled if the feature flag is non-existent", () => {
@@ -47,11 +35,25 @@ describe("renders based on feature flag value for user", () => {
   })
 
   it("is enabled if the feature flag is enabled", () => {
-    cy.visit("/bichard/court-cases/0")
+    loginAndVisit("GeneralHandler", "/bichard/court-cases/0")
 
     cy.get("ul.moj-sub-navigation__list").contains("Offences").click()
 
     cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
     cy.get("select.offence-matcher").should("be.enabled")
+  })
+
+  describe("pnc-details", () => {
+    it("Should display pnc-details when pnc details feature flag is turned on", () => {
+      loginAndVisit("GeneralHandler", "/bichard/court-cases/0")
+
+      cy.get(".case-details-sidebar #pnc-details").should("exist")
+    })
+
+    it("Should not display pnc-details when pnc details feature flag is turned off", () => {
+      loginAndVisit("PncDetailsTabDisabled", "/bichard/court-cases/0")
+
+      cy.get(".case-details-sidebar #pnc-details").should("not.exist")
+    })
   })
 })

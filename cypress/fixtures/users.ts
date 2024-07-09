@@ -132,6 +132,16 @@ const users: Record<string, Partial<User> & { groups: UserGroup[] }> = {
     password: hashedPassword,
     groups: [UserGroup.NewUI, UserGroup.GeneralHandler]
   },
+  PncDetailsTabDisabled: {
+    username: "PncDetailsTabDisabled",
+    visibleForces: ["01"],
+    forenames: "Pnc Details Tab Disabled",
+    surname: "User",
+    email: "pncdetailstabdisabled@example.com",
+    password: hashedPassword,
+    featureFlags: { pncDetailsTabEnabled: false },
+    groups: [UserGroup.NewUI, UserGroup.GeneralHandler]
+  },
   ...numberedUsers()
 }
 
