@@ -52,7 +52,7 @@ export const NextHearingDateField = ({
         className="govuk-input"
         id="next-hearing-date"
         type="date"
-        min={result.ResultHearingDate && formatFormInputDateString(new Date(result.ResultHearingDate))}
+        min={result.ResultHearingDate && formatFormInputDateString(result.ResultHearingDate)}
         name={"next-hearing-date"}
         value={amendedNextHearingDate}
         onChange={(event) => {
