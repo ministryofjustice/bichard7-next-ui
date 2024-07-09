@@ -44,7 +44,7 @@ describe("renders based on feature flag value for user", () => {
   })
 
   describe("pnc-details", () => {
-    it("Should not display pnc-details when pnc details feature flag is turned off", () => {
+    it("Should display pnc-details when pnc details feature flag is turned on", () => {
       loginAndVisit("GeneralHandler", "/bichard/court-cases/0")
 
       cy.get(".case-details-sidebar #pnc-details").should("exist")

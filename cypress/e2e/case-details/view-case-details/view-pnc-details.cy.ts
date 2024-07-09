@@ -9,7 +9,7 @@ describe("when viewing case-details sidebar", () => {
     cy.task("clearCourtCases")
   })
 
-  it("is displays the pnc-details tab", () => {
+  it("displays the pnc-details tab", () => {
     loginAndVisit("/bichard/court-cases/0")
 
     cy.get(".case-details-sidebar #pnc-details").should("exist")
