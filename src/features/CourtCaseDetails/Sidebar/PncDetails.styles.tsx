@@ -1,26 +1,96 @@
 import styled from "styled-components"
+import { gdsLightGrey, gdsMidGrey, textSecondary } from "utils/colours"
 
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 0;
+const UpdatedDate = styled.div`
+  padding: 15px 20px;
+  font-size: 16px;
+  color: ${textSecondary};
+  border-bottom: solid 1px ${gdsMidGrey};
 `
 
-const SeparatorLine = styled.div`
-  position: relative;
-  display: block;
-  margin-bottom: 1.25rem;
-  width: 100%;
-  height: 2px;
+const CourtCase = styled.div`
+  font-family: var(--default-font-family);
+  font-size: var(--default-font-size);
+`
 
-  &:after {
-    content: " ";
-    position: absolute;
-    height: 2px;
-    width: calc(100% + (1.2625rem * 2));
-    background: #b1b4b6;
-    left: -1.2625rem;
+const CourtCaseHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  padding: 15px 20px;
+  background-color: ${gdsLightGrey};
+  border-bottom: solid 1px ${gdsMidGrey};
+`
+
+const CCR = styled.h1`
+  margin: 0;
+  padding-bottom: 10px;
+`
+
+const CrimeOffenceReference = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  .heading {
+    font-weight: bold;
+  }
+
+  & > * {
+    flex: 1;
   }
 `
 
-export { ButtonContainer, SeparatorLine }
+const Offence = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px;
+  row-gap: 15px;
+
+  .heading {
+    display: flex;
+    flex-direction: row;
+
+    & > span {
+      margin-bottom: 0;
+    }
+
+    .acpo-code {
+      font-weight: normal;
+    }
+
+    & > * {
+      flex: 1;
+    }
+  }
+
+  .details {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 15px;
+
+    & > * {
+      flex-basis: 50%;
+    }
+  }
+`
+
+const DisposalHeader = styled.div`
+  background-color: ${gdsLightGrey};
+  border-bottom: solid 1px ${gdsMidGrey};
+`
+
+const DisposalDetails = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  & > * {
+    flex-basis: 31%;
+
+    :not(:last-child) {
+      margin-right: 2%;
+    }
+  }
+`
+
+export { UpdatedDate, CourtCase, CourtCaseHeader, CrimeOffenceReference, CCR, Offence, DisposalHeader, DisposalDetails }
