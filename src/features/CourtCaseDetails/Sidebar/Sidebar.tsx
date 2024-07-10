@@ -6,13 +6,14 @@ import { useState } from "react"
 import type NavigationHandler from "types/NavigationHandler"
 import Permission from "types/Permission"
 import ExceptionsList from "./ExceptionsList"
-import { SidebarContainer } from "./Sidebar.styles"
+import { SidebarContainer, UnpaddedPanel } from "./Sidebar.styles"
 import TriggersList from "./TriggersList"
+import PncDetails from "./PncDetails"
 
 enum SidebarTab {
   Exceptions = 1, // makes .filter(Number) work
   Triggers = 2,
-  PncDetails = 3
+  Pnc = 3
 }
 
 interface Props {
@@ -28,14 +29,14 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
   const permissions: { [tabId: number]: boolean } = {
     [SidebarTab.Exceptions]: currentUser.hasAccessTo[Permission.Exceptions],
     [SidebarTab.Triggers]: currentUser.hasAccessTo[Permission.Triggers],
-    [SidebarTab.PncDetails]: currentUser.featureFlags?.pncDetailsTabEnabled
+    [SidebarTab.Pnc]: currentUser.featureFlags?.pncDetailsTabEnabled
   }
 
   const accessibleTabs = Object.entries(permissions)
     .map(([tabId, tabIsAccessible]) => tabIsAccessible && Number(tabId))
     .filter(Number)
 
-  let defaultTab = SidebarTab.PncDetails
+  let defaultTab = SidebarTab.Pnc
   if (accessibleTabs.includes(SidebarTab.Triggers) && courtCase.triggerCount > 0) {
     defaultTab = SidebarTab.Triggers
   } else if (accessibleTabs.includes(SidebarTab.Exceptions)) {
@@ -71,12 +72,12 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
               </Tabs.Tab>
             </ConditionalRender>
 
-            <ConditionalRender isRendered={accessibleTabs.includes(SidebarTab.PncDetails)}>
+            <ConditionalRender isRendered={accessibleTabs.includes(SidebarTab.Pnc)}>
               <Tabs.Tab
                 id="pnc-details-tab"
                 className={"tab"}
-                onClick={() => setSelectedTab(SidebarTab.PncDetails)}
-                selected={selectedTab === SidebarTab.PncDetails}
+                onClick={() => setSelectedTab(SidebarTab.Pnc)}
+                selected={selectedTab === SidebarTab.Pnc}
               >
                 {`PNC Details`}
               </Tabs.Tab>
@@ -108,14 +109,14 @@ const Sidebar = ({ onNavigate, canResolveAndSubmit, stopLeavingFn }: Props) => {
           </ConditionalRender>
 
           {/* remove conditional render for go-live */}
-          <ConditionalRender isRendered={accessibleTabs.includes(SidebarTab.PncDetails)}>
-            <Tabs.Panel
+          <ConditionalRender isRendered={accessibleTabs.includes(SidebarTab.Pnc)}>
+            <UnpaddedPanel
               id="pnc-details"
-              selected={selectedTab === SidebarTab.PncDetails}
+              selected={selectedTab === SidebarTab.Pnc}
               className="moj-tab-panel-pnc-details"
             >
-              <span>{"PNC details panel"}</span>
-            </Tabs.Panel>
+              <PncDetails />
+            </UnpaddedPanel>
           </ConditionalRender>
         </Tabs>
       </ConditionalRender>

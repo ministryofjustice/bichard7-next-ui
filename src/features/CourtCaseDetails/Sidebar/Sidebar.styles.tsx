@@ -1,3 +1,4 @@
+import { Tabs } from "govuk-react"
 import styled from "styled-components"
 
 const SidebarContainer = styled.div`
@@ -9,4 +10,8 @@ const SidebarContainer = styled.div`
   }
 `
 
-export { SidebarContainer }
+const UnpaddedPanel = styled(Tabs.Panel)`
+  padding: 0;
+`
+
+export { SidebarContainer, UnpaddedPanel }
