@@ -1,16 +1,7 @@
 import { useCourtCase } from "context/CourtCaseContext"
-import {
-  UpdatedDate,
-  CourtCase,
-  CourtCaseHeader,
-  CrimeOffenceReference,
-  CCR,
-  Offence,
-  DisposalHeader,
-  DisposalDetails
-} from "./PncDetails.styles"
+import { UpdatedDate, CourtCase, CourtCaseHeader, CrimeOffenceReference, CCR, Offence } from "./PncDetails.styles"
 import { formatDisplayedDate } from "utils/formattedDate"
-import ConditionalRender from "components/ConditionalRender"
+import Disposal from "./Disposal"
 
 const PncDetails = () => {
   const {
@@ -31,7 +22,7 @@ const PncDetails = () => {
               <CCR className="govuk-heading-m">{c.courtCaseReference}</CCR>
               <CrimeOffenceReference>
                 <div className={"heading"}>{"Crime Offence Reference"}</div>
-                <div>{c.crimeOffenceReference ?? "1212343423"}</div>
+                <div>{c.crimeOffenceReference ?? "-"}</div>
               </CrimeOffenceReference>
             </CourtCaseHeader>
 
@@ -78,7 +69,7 @@ const PncDetails = () => {
                       </div>
                       <div>
                         <b>{"Date of Sentence"}</b>
-                        <div>{formatDisplayedDate(adjudication?.sentenceDate ?? "")}</div>
+                        <div>{formatDisplayedDate(adjudication?.sentenceDate ?? "-")}</div>
                       </div>
                       <div>
                         <b>{"TIC Number"}</b>
@@ -86,39 +77,7 @@ const PncDetails = () => {
                       </div>
                     </div>
 
-                    {disposals?.map((d, i) => (
-                      <div key={`${i}${d.type}`}>
-                        <DisposalHeader className="govuk-heading-m">{`Disposal - ${d.type}`}</DisposalHeader>
-                        <DisposalDetails>
-                          <div>
-                            <b>{"Date"}</b>
-                            <div>{formatDisplayedDate(d.qtyDate || "-")}</div>
-                          </div>
-                          <div>
-                            <b>{"Qualifiers"}</b>
-                            <div>{d.qualifiers || "-"}</div>
-                          </div>
-                          <ConditionalRender isRendered={!!d.qtyDuration}>
-                            <div>
-                              <b>{"Duration"}</b>
-                              <div>{d.qtyDuration}</div>
-                            </div>
-                          </ConditionalRender>
-                          <ConditionalRender isRendered={!!d.qtyMonetaryValue}>
-                            <div>
-                              <b>{"Monetary value"}</b>
-                              <div>{d.qtyMonetaryValue}</div>
-                            </div>
-                          </ConditionalRender>
-                          <ConditionalRender isRendered={!!d.qtyUnitsFined}>
-                            <div>
-                              <b>{"Units fined"}</b>
-                              <div>{d.qtyUnitsFined}</div>
-                            </div>
-                          </ConditionalRender>
-                        </DisposalDetails>
-                      </div>
-                    ))}
+                    {disposals?.map((d, i) => <Disposal key={`${i}-${d.type}`} {...d} />)}
                   </Offence>
                 </>
               )

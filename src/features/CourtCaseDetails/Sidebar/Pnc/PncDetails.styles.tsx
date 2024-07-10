@@ -43,8 +43,10 @@ const CrimeOffenceReference = styled.div`
 const Offence = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 20px 20px;
+  margin: 20px 20px;
+  padding-bottom: 12px;
   row-gap: 15px;
+  border-bottom: solid 1px ${gdsMidGrey};
 
   .heading {
     display: flex;
@@ -74,23 +76,4 @@ const Offence = styled.div`
   }
 `
 
-const DisposalHeader = styled.div`
-  background-color: ${gdsLightGrey};
-  border-bottom: solid 1px ${gdsMidGrey};
-`
-
-const DisposalDetails = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-
-  & > * {
-    flex-basis: 31%;
-
-    :not(:last-child) {
-      margin-right: 2%;
-    }
-  }
-`
-
-export { UpdatedDate, CourtCase, CourtCaseHeader, CrimeOffenceReference, CCR, Offence, DisposalHeader, DisposalDetails }
+export { UpdatedDate, CourtCase, CourtCaseHeader, CrimeOffenceReference, CCR, Offence }
