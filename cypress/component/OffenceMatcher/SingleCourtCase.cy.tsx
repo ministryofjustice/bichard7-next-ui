@@ -2,11 +2,10 @@ import { OffenceMatcher } from "components/OffenceMatcher"
 import { CourtCaseContext } from "context/CourtCaseContext"
 import { Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
-import HO100310 from "../../fixtures/HO100310.json"
 import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
 import type { PossibleMatchingOffence } from "../../../src/types/OffenceMatching"
 
-const courtCase = HO100310 as unknown as DisplayFullCourtCase
+const courtCase = {} as unknown as DisplayFullCourtCase
 const possibleMatches: PossibleMatchingOffence[] = [
   {
     courtCaseReference: "97/1626/008395Q",
