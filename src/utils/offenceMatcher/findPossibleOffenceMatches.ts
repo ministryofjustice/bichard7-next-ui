@@ -12,22 +12,26 @@ const findPossibleOffenceMatches = (
   }
 
   const offence = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
-  const possibleMatches = courtCase.aho.PncQuery.courtCases.map((c) => {
-    const matchForThisCase = c.offences.filter(
-      (pncOffence) =>
-        !!generateCandidate(
-          offence,
-          { pncOffence, caseType: CaseType.court, caseReference: c.courtCaseReference },
-          courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing
-        )
-    )
-    return {
-      courtCaseReference: c.courtCaseReference,
-      offences: matchForThisCase
-    }
-  })
+  const possibleMatches = courtCase.aho.PncQuery.courtCases
+    .map((c) => {
+      const matchForThisCase = c.offences.filter(
+        (pncOffence) =>
+          !!generateCandidate(
+            offence,
+            { pncOffence, caseType: CaseType.court, caseReference: c.courtCaseReference },
+            courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Hearing.DateOfHearing
+          )
+      )
+      if (matchForThisCase.length > 0) {
+        return {
+          courtCaseReference: c.courtCaseReference,
+          offences: matchForThisCase
+        }
+      }
+    })
+    .filter((e) => !!e)
 
-  return possibleMatches
+  return possibleMatches as PossibleMatchingOffence[]
 }
 
 export default findPossibleOffenceMatches

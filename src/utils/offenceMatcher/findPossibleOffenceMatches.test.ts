@@ -24,7 +24,11 @@ describe("findPossibleOffenceMatches", () => {
           PncQuery: {
             courtCases: [
               {
-                courtCaseReference: caseReference,
+                courtCaseReference: "caseReference-1",
+                offences: [pncOffence]
+              },
+              {
+                courtCaseReference: "caseReference-2",
                 offences: [pncOffence]
               }
             ]
@@ -40,9 +44,7 @@ describe("findPossibleOffenceMatches", () => {
         }
       } as DisplayFullCourtCase
 
-      const result = findPossibleOffenceMatches(courtCase, offenceIndex)
-      expect(result[0].courtCaseReference).toEqual(caseReference)
-      expect(result[0].offences).toEqual([])
+      expect(findPossibleOffenceMatches(courtCase, offenceIndex)).toHaveLength(0)
     })
 
     it("should return an empty offences array if offence codes match but dates do not match", () => {
@@ -74,9 +76,7 @@ describe("findPossibleOffenceMatches", () => {
         }
       } as DisplayFullCourtCase
 
-      const result = findPossibleOffenceMatches(courtCase, offenceIndex)
-      expect(result[0].courtCaseReference).toEqual(caseReference)
-      expect(result[0].offences).toEqual([])
+      expect(findPossibleOffenceMatches(courtCase, offenceIndex)).toHaveLength(0)
     })
   })
 
