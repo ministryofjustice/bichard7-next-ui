@@ -13,6 +13,7 @@ import { Exception } from "types/exceptions"
 import { getOffenceMatchingException } from "utils/exceptions/getOffenceMatchingException"
 import { TableRow } from "../../TableRow"
 import { PncInput } from "./OffenceDetails.styles"
+import findCandidates from "../../../../../../utils/offenceMatcher/findCandidates"
 
 const enabled = (user: DisplayFullUser) => {
   const enabledInProduction = true // change this if we need to disable in production for everyone
@@ -65,7 +66,7 @@ export const OffenceMatching = ({
             value={
               <OffenceMatcher
                 offenceIndex={offenceIndex}
-                offence={offence}
+                candidates={findCandidates(courtCase, offenceIndex)}
                 isCaseLockedToCurrentUser={isCaseLockedToCurrentUser}
               />
             }

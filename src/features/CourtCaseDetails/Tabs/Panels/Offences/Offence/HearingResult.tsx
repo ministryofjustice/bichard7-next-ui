@@ -10,7 +10,7 @@ import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
 import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
-import { formatDisplayedDate } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
 import {
   capitaliseExpression,
   formatDuration,

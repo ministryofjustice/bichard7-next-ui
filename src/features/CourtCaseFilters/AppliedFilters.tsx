@@ -5,7 +5,7 @@ import { encode } from "querystring"
 import { LockedState, Reason, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import { caseStateLabels } from "utils/caseStateFilters"
 import { deleteQueryParam, deleteQueryParamsByName } from "utils/deleteQueryParam"
-import { formatStringDateAsDisplayedDate } from "utils/formattedDate"
+import { formatStringDateAsDisplayedDate } from "utils/date/formattedDate"
 
 interface Props {
   filters: {

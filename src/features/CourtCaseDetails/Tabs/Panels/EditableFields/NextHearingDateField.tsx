@@ -8,7 +8,7 @@ import { useState } from "react"
 import { Exception } from "types/exceptions"
 import getNextHearingDateValue from "utils/amendments/getAmendmentValues/getNextHearingDateValue"
 import hasNextHearingDateExceptions from "utils/exceptions/hasNextHearingDateExceptions"
-import { formatDisplayedDate, formatFormInputDateString } from "utils/formattedDate"
+import { formatDisplayedDate, formatFormInputDateString } from "utils/date/formattedDate"
 import isValidNextHearingDate from "utils/validators/isValidNextHearingDate"
 
 interface NextHearingDateFieldProps {
