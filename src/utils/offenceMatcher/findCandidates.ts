@@ -1,18 +1,15 @@
 import { DisplayFullCourtCase } from "../../types/display/CourtCases"
-import { PossibleMatchingOffence } from "../../types/OffenceMatching"
+import { Candidates } from "../../types/OffenceMatching"
 import generateCandidate from "@moj-bichard7-developers/bichard7-next-core/core/phase1/enrichAho/enrichFunctions/matchOffencesToPnc/generateCandidate"
 import { CaseType } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/enrichAho/enrichFunctions/matchOffencesToPnc/annotatePncMatch"
 
-const findPossibleOffenceMatches = (
-  courtCase: DisplayFullCourtCase,
-  offenceIndex: number
-): PossibleMatchingOffence[] => {
+const findCandidates = (courtCase: DisplayFullCourtCase, offenceIndex: number): Candidates[] => {
   if (!courtCase.aho.PncQuery || !courtCase.aho.PncQuery.courtCases) {
     return []
   }
 
   const offence = courtCase.aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[offenceIndex]
-  const possibleMatches = courtCase.aho.PncQuery.courtCases
+  const candiates = courtCase.aho.PncQuery.courtCases
     .map((c) => {
       const matchForThisCase = c.offences.filter(
         (pncOffence) =>
@@ -31,7 +28,7 @@ const findPossibleOffenceMatches = (
     })
     .filter((e) => !!e)
 
-  return possibleMatches as PossibleMatchingOffence[]
+  return candiates as Candidates[]
 }
 
-export default findPossibleOffenceMatches
+export default findCandidates

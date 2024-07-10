@@ -1,13 +1,13 @@
 import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
 import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import findPossibleOffenceMatches from "./findPossibleOffenceMatches"
+import findCandidates from "./findCandidates"
 import { DisplayFullCourtCase } from "../../types/display/CourtCases"
-import { PossibleMatchingOffence } from "../../types/OffenceMatching"
-import HO100310 from "../../../cypress/fixtures/../fixtures/HO100310.json"
-import HO100332 from "../../../cypress/fixtures/../fixtures/HO100332.json"
+import { Candidates } from "../../types/OffenceMatching"
+import HO100310 from "../../../cypress/fixtures/HO100310.json"
+import HO100332 from "../../../cypress/fixtures/HO100332.json"
 import parseCourtCaseWithDateObjects from "../date/parseCourtCaseWithDateObjects"
 
-describe("findPossibleOffenceMatches", () => {
+describe("findCandidates", () => {
   const caseReference = "case-reference"
   const offenceIndex = 0
 
@@ -44,7 +44,7 @@ describe("findPossibleOffenceMatches", () => {
         }
       } as DisplayFullCourtCase
 
-      expect(findPossibleOffenceMatches(courtCase, offenceIndex)).toHaveLength(0)
+      expect(findCandidates(courtCase, offenceIndex)).toHaveLength(0)
     })
 
     it("should return an empty offences array if offence codes match but dates do not match", () => {
@@ -76,7 +76,7 @@ describe("findPossibleOffenceMatches", () => {
         }
       } as DisplayFullCourtCase
 
-      expect(findPossibleOffenceMatches(courtCase, offenceIndex)).toHaveLength(0)
+      expect(findCandidates(courtCase, offenceIndex)).toHaveLength(0)
     })
   })
 
@@ -111,19 +111,19 @@ describe("findPossibleOffenceMatches", () => {
         }
       } as DisplayFullCourtCase
 
-      const result = findPossibleOffenceMatches(courtCase, offenceIndex)
+      const result = findCandidates(courtCase, offenceIndex)
 
       expect(result).toHaveLength(1)
-      expect((result as PossibleMatchingOffence[])[0].courtCaseReference).toEqual(caseReference)
-      expect((result as PossibleMatchingOffence[])[0].offences[0].offence.cjsOffenceCode).toEqual("offenceCode")
+      expect((result as Candidates[])[0].courtCaseReference).toEqual(caseReference)
+      expect((result as Candidates[])[0].offences[0].offence.cjsOffenceCode).toEqual("offenceCode")
     })
 
     it("should return the matching offence grouped by court case reference", () => {
       const courtCase = parseCourtCaseWithDateObjects(HO100310 as unknown as DisplayFullCourtCase)
-      const result = findPossibleOffenceMatches(courtCase, offenceIndex)
+      const result = findCandidates(courtCase, offenceIndex)
 
       expect(result).toHaveLength(1)
-      expect(result as PossibleMatchingOffence[]).toStrictEqual([
+      expect(result as Candidates[]).toStrictEqual([
         {
           courtCaseReference: "97/1626/008395Q",
           offences: [
@@ -178,10 +178,10 @@ describe("findPossibleOffenceMatches", () => {
         }
       } as DisplayFullCourtCase
 
-      const result = findPossibleOffenceMatches(courtCase, offenceIndex)
+      const result = findCandidates(courtCase, offenceIndex)
 
       expect(result).toHaveLength(1)
-      expect(result as PossibleMatchingOffence[]).toStrictEqual([
+      expect(result as Candidates[]).toStrictEqual([
         {
           courtCaseReference: "court case ref with two matching offences",
           offences: [pncOffence, pncOffence]
@@ -191,10 +191,10 @@ describe("findPossibleOffenceMatches", () => {
 
     it("should return both matching offences when the matches are on two different court cases", () => {
       const courtCase = parseCourtCaseWithDateObjects(HO100332 as unknown as DisplayFullCourtCase)
-      const result = findPossibleOffenceMatches(courtCase, offenceIndex)
+      const result = findCandidates(courtCase, offenceIndex)
 
       expect(result).toHaveLength(2)
-      expect(result as PossibleMatchingOffence[]).toStrictEqual([
+      expect(result as Candidates[]).toStrictEqual([
         {
           courtCaseReference: "12/2732/000015R",
           offences: [

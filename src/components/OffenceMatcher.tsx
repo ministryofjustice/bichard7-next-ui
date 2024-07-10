@@ -3,15 +3,15 @@ import { useCallback, useEffect, useState } from "react"
 import offenceAlreadySelected from "utils/offenceMatcher/offenceAlreadySelected"
 import offenceMatcherSelectValue from "utils/offenceMatcher/offenceMatcherSelectValue"
 import Badge, { BadgeColours } from "./Badge"
-import type { PossibleMatchingOffence } from "../types/OffenceMatching"
+import type { Candidates } from "../types/OffenceMatching"
 
 interface Props {
   offenceIndex: number
-  possibleMatches?: PossibleMatchingOffence[]
+  candidates?: Candidates[]
   isCaseLockedToCurrentUser: boolean
 }
 
-export const OffenceMatcher = ({ offenceIndex, possibleMatches, isCaseLockedToCurrentUser }: Props) => {
+export const OffenceMatcher = ({ offenceIndex, candidates, isCaseLockedToCurrentUser }: Props) => {
   const { amend, amendments } = useCourtCase()
 
   const findPncOffence = useCallback(() => {
@@ -51,21 +51,21 @@ export const OffenceMatcher = ({ offenceIndex, possibleMatches, isCaseLockedToCu
       <option disabled hidden value="">
         {"Select an offence"}
       </option>
-      {possibleMatches?.map((m) => {
+      {candidates?.map((c) => {
         return (
-          <optgroup key={m.courtCaseReference} label={m.courtCaseReference}>
-            {m.offences.map((pnc, index) => {
+          <optgroup key={c.courtCaseReference} label={c.courtCaseReference}>
+            {c.offences.map((pnc, index) => {
               return (
                 <option
                   key={`${index}-${pnc.offence.cjsOffenceCode}`}
-                  value={offenceMatcherSelectValue(pnc.offence.sequenceNumber, m.courtCaseReference)}
+                  value={offenceMatcherSelectValue(pnc.offence.sequenceNumber, c.courtCaseReference)}
                   disabled={offenceAlreadySelected(
                     amendments,
                     offenceIndex,
                     pnc.offence.sequenceNumber,
-                    m.courtCaseReference
+                    c.courtCaseReference
                   )}
-                  data-ccr={m.courtCaseReference}
+                  data-ccr={c.courtCaseReference}
                 >
                   {`${String(pnc.offence.sequenceNumber).padStart(3, "0")} - ${pnc.offence.cjsOffenceCode}`}
                 </option>

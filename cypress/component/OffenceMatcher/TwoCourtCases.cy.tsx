@@ -3,10 +3,10 @@ import { CourtCaseContext } from "context/CourtCaseContext"
 import { Amendments } from "types/Amendments"
 import { DisplayFullCourtCase } from "types/display/CourtCases"
 import { PncOffence } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
-import type { PossibleMatchingOffence } from "../../../src/types/OffenceMatching"
+import type { Candidates } from "../../../src/types/OffenceMatching"
 
 const courtCase = {} as unknown as DisplayFullCourtCase
-const possibleMatches: PossibleMatchingOffence[] = [
+const candidates: Candidates[] = [
   {
     courtCaseReference: "12/2732/000015R",
     offences: [
@@ -36,7 +36,7 @@ describe("Offence matcher with single court case", () => {
     beforeEach(() => {
       cy.mount(
         <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
-          <OffenceMatcher offenceIndex={0} possibleMatches={possibleMatches} isCaseLockedToCurrentUser={true} />
+          <OffenceMatcher offenceIndex={0} candidates={candidates} isCaseLockedToCurrentUser={true} />
         </CourtCaseContext.Provider>
       )
     })
@@ -93,7 +93,7 @@ describe("With existing amendments", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments, savedAmendments: {} }, () => {}]}>
-        <OffenceMatcher offenceIndex={0} possibleMatches={possibleMatches} isCaseLockedToCurrentUser={true} />
+        <OffenceMatcher offenceIndex={0} candidates={candidates} isCaseLockedToCurrentUser={true} />
       </CourtCaseContext.Provider>
     )
 
@@ -118,7 +118,7 @@ describe("With existing amendments", () => {
 
     cy.mount(
       <CourtCaseContext.Provider value={[{ courtCase, amendments, savedAmendments: {} }, () => {}]}>
-        <OffenceMatcher offenceIndex={0} possibleMatches={possibleMatches} isCaseLockedToCurrentUser={true} />
+        <OffenceMatcher offenceIndex={0} candidates={candidates} isCaseLockedToCurrentUser={true} />
       </CourtCaseContext.Provider>
     )
 
