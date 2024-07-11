@@ -107,4 +107,66 @@ describe("PNC details", () => {
     cy.contains("Show details").click()
     cy.get(".disposal-text").contains("This is a dummy text").should("exist")
   })
+
+  it("displays missing pnc data as dash", () => {
+    const pncQueryData = {
+      forceStationCode: "01ZD",
+      checkName: "LEBOWSKI",
+      pncId: "2021/0000006A",
+      courtCases: [
+        {
+          courtCaseReference: "21/2732/000006N",
+          offences: [
+            {
+              offence: {
+                acpoOffenceCode: "5:5:5:1",
+                cjsOffenceCode: "TH68001",
+                title: "Theft from the person of another",
+                sequenceNumber: 1
+              },
+              disposals: [
+                {
+                  type: 2007
+                }
+              ]
+            }
+          ],
+          crimeOffenceReference: ""
+        }
+      ]
+    }
+
+    const courtCase = {
+      aho: {
+        PncQuery: pncQueryData,
+        PncQueryDate: "2024-07-10T00:00:00.000Z"
+      }
+    } as unknown as DisplayFullCourtCase
+
+    cy.mount(
+      <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
+        <CurrentUserContext.Provider value={{ currentUser }}>
+          <PncDetails />
+        </CurrentUserContext.Provider>
+      </CourtCaseContext.Provider>
+    )
+
+    cy.get("#crime-offence-reference").contains("-").should("exist")
+    cy.get("#start-date").contains("-").should("exist")
+    cy.get("#end-date").contains("-").should("exist")
+    cy.get("#qualifier-1").contains("-").should("exist")
+    cy.get("#qualifier-2").contains("-").should("exist")
+    cy.get("#adjudication").contains("-").should("exist")
+    cy.get("#plea").contains("-").should("exist")
+    cy.get("#date-of-sentence").contains("-").should("exist")
+    cy.get("#tic-number").contains("-").should("exist")
+    cy.get(".disposal").children().first().contains("Disposal - 2007").should("exist")
+    cy.get("#disposal-date").contains("-").should("exist")
+    cy.get("#disposal-qualifiers").contains("-").should("exist")
+    cy.get("#disposal-duration").should("not.exist")
+    cy.get("#disposal-monetary-value").should("not.exist")
+    cy.get("#disposal-units-fined").should("not.exist")
+    cy.contains("Show details").should("not.exist")
+    cy.get(".disposal-text-absent").contains("No disposal text").should("exist")
+  })
 })

@@ -22,7 +22,7 @@ const PncDetails = () => {
               <CCR className="govuk-heading-m">{c.courtCaseReference}</CCR>
               <CrimeOffenceReference>
                 <div className={"heading"}>{"Crime Offence Reference"}</div>
-                <div id={"crime-offence-reference"}>{c.crimeOffenceReference ?? "-"}</div>
+                <div id={"crime-offence-reference"}>{c.crimeOffenceReference || "-"}</div>
               </CrimeOffenceReference>
             </CourtCaseHeader>
 
@@ -42,11 +42,11 @@ const PncDetails = () => {
                     <div className="details">
                       <div id={"start-date"}>
                         <b>{"Start Date"}</b>
-                        <div>{formatDisplayedDate(details.startDate, "dd/MM/yyyy HH:mm")}</div>
+                        <div>{formatDisplayedDate(details.startDate || "-", "dd/MM/yyyy HH:mm")}</div>
                       </div>
                       <div id={"end-date"}>
                         <b>{"End Date"}</b>
-                        <div>{formatDisplayedDate(details.endDate ?? "-", "dd/MM/yyyy HH:mm")}</div>
+                        <div>{formatDisplayedDate(details.endDate || "-", "dd/MM/yyyy HH:mm")}</div>
                       </div>
                       <div id={"qualifier-1"}>
                         <b>{"Qualifier 1"}</b>
