@@ -17,7 +17,7 @@ interface Props {
 const Disposal = ({ qtyDate, qtyDuration, type, qtyUnitsFined, qtyMonetaryValue, qualifiers, text }: Props) => {
   return (
     <div className="disposal">
-      <DisposalHeader className="govuk-heading-m">{`Disposal - ${type}`}</DisposalHeader>
+      <DisposalHeader className="govuk-heading-s">{`Disposal - ${type}`}</DisposalHeader>
       <DisposalDetails>
         <div id={"disposal-date"}>
           <b>{"Date"}</b>

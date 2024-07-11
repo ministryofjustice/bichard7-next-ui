@@ -8,6 +8,11 @@ const UpdatedDate = styled.div`
   border-bottom: solid 1px ${gdsMidGrey};
 `
 
+const CourtCaseContainer = styled.div`
+  max-height: 80vh;
+  overflow-y: scroll;
+`
+
 const CourtCase = styled.div`
   font-family: var(--default-font-family);
   font-size: var(--default-font-size);
@@ -76,4 +81,4 @@ const Offence = styled.div`
   }
 `
 
-export { UpdatedDate, CourtCase, CourtCaseHeader, CrimeOffenceReference, CCR, Offence }
+export { UpdatedDate, CourtCase, CourtCaseHeader, CrimeOffenceReference, CCR, Offence, CourtCaseContainer }

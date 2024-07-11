@@ -12,6 +12,8 @@ const SidebarContainer = styled.div`
 
 const UnpaddedPanel = styled(Tabs.Panel)`
   padding: 0;
+  height: 80vh;
+  overflow: scroll;
 `
 
 export { SidebarContainer, UnpaddedPanel }
