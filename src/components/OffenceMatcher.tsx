@@ -2,8 +2,8 @@ import { useCourtCase } from "context/CourtCaseContext"
 import { useCallback, useEffect, useState } from "react"
 import offenceAlreadySelected from "utils/offenceMatcher/offenceAlreadySelected"
 import offenceMatcherSelectValue from "utils/offenceMatcher/offenceMatcherSelectValue"
-import Badge, { BadgeColours } from "./Badge"
 import type { Candidates } from "../types/OffenceMatching"
+import Badge, { BadgeColours } from "./Badge"
 
 interface Props {
   offenceIndex: number
