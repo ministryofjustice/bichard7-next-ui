@@ -19,28 +19,28 @@ const Disposal = ({ qtyDate, qtyDuration, type, qtyUnitsFined, qtyMonetaryValue,
     <div className="disposal">
       <DisposalHeader className="govuk-heading-m">{`Disposal - ${type}`}</DisposalHeader>
       <DisposalDetails>
-        <div>
+        <div id={"disposal-date"}>
           <b>{"Date"}</b>
           <div>{formatDisplayedDate(qtyDate || "-")}</div>
         </div>
-        <div>
+        <div id={"disposal-qualifiers"}>
           <b>{"Qualifiers"}</b>
           <div>{qualifiers || "-"}</div>
         </div>
         <ConditionalRender isRendered={!!qtyDuration}>
-          <div>
+          <div id={"disposal-duration"}>
             <b>{"Duration"}</b>
             <div>{qtyDuration}</div>
           </div>
         </ConditionalRender>
         <ConditionalRender isRendered={!!qtyMonetaryValue}>
-          <div>
+          <div id={"disposal-monetary-value"}>
             <b>{"Monetary value"}</b>
             <div>{qtyMonetaryValue}</div>
           </div>
         </ConditionalRender>
         <ConditionalRender isRendered={!!qtyUnitsFined}>
-          <div>
+          <div id={"disposal-units-fined"}>
             <b>{"Units fined"}</b>
             <div>{qtyUnitsFined}</div>
           </div>
