@@ -8,7 +8,7 @@ import {
   Offence,
   CourtCaseContainer
 } from "./PncDetails.styles"
-import { formatDisplayedDate } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
 import Disposal from "./Disposal"
 
 const PncDetails = () => {

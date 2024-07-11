@@ -1,6 +1,6 @@
 import ConditionalRender from "components/ConditionalRender"
 import { DisposalDetails, DisposalHeader, DisposalText } from "./Disposal.styles"
-import { formatDisplayedDate } from "utils/formattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
 import { Details } from "govuk-react"
 import { isEmpty } from "lodash"
 
