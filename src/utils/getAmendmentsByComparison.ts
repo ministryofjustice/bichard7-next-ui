@@ -1,4 +1,8 @@
-import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import {
+  AnnotatedHearingOutcome,
+  Offence,
+  Result
+} from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { Amendments } from "types/Amendments"
 import { formatFormInputDateString } from "utils/date/formattedDate"
 
@@ -20,7 +24,7 @@ const getAmendmentsByComparison = (aho: AnnotatedHearingOutcome, updatedAho?: An
     amendments.asn = updatedHearingDefendant?.ArrestSummonsNumber
   }
 
-  hearingDefendant.Offence.forEach((offence, offenceIndex) => {
+  hearingDefendant.Offence.forEach((offence: Offence, offenceIndex: number) => {
     const updatedOffence = updatedHearingDefendant?.Offence[offenceIndex]
     const updatedOffenceResults = updatedOffence?.Result
 
@@ -34,7 +38,7 @@ const getAmendmentsByComparison = (aho: AnnotatedHearingOutcome, updatedAho?: An
       })
     }
 
-    offence.Result.forEach((result, resultIndex) => {
+    offence.Result.forEach((result: Result, resultIndex: number) => {
       const updatedOffenceResult = updatedOffenceResults?.[resultIndex]
       const nextResultSourceOrganisation = result.NextResultSourceOrganisation?.OrganisationUnitCode
       const updatedNextResultSourceOrganisation =

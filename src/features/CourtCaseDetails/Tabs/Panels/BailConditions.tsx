@@ -1,7 +1,7 @@
-import { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { Offence, Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { H3, Table } from "govuk-react"
-import { TableRow } from "./TableRow"
 import ConditionalRender from "../../../../components/ConditionalRender"
+import { TableRow } from "./TableRow"
 
 interface BailConditionsProps {
   bailConditions?: string[]
@@ -19,7 +19,7 @@ export const BailConditions = ({ bailConditions, bailReason, offences }: BailCon
           offenceIndex: offences.find(
             (offence) =>
               offence.CourtOffenceSequenceNumber &&
-              offence.Result.some((res) => res.ResultVariableText?.includes(bailCondition))
+              offence.Result.some((res: Result) => res.ResultVariableText?.includes(bailCondition))
           )?.CourtOffenceSequenceNumber
         }
       })

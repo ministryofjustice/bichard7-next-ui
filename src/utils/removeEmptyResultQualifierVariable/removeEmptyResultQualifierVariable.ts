@@ -1,5 +1,7 @@
 import {
   AnnotatedHearingOutcome,
+  Offence,
+  Result,
   ResultQualifierVariable
 } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 
@@ -16,9 +18,9 @@ const removeEmptyResultQualifierVariable = (aho: AnnotatedHearingOutcome) => {
   }
 
   // remove empty result qualifier variables from offence results
-  defendant.Offence.forEach((offence, offenceIdx) =>
+  defendant.Offence.forEach((offence: Offence, offenceIdx: number) =>
     offence.Result.forEach(
-      (result, resultIdx) =>
+      (result: Result, resultIdx: number) =>
         (defendant.Offence[offenceIdx].Result[resultIdx].ResultQualifierVariable = removeEmptyResultQualifierVariableFn(
           result.ResultQualifierVariable
         ))

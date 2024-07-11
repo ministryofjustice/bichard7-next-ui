@@ -1,4 +1,4 @@
-import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import { Duration, Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
 import ConditionalRender from "components/ConditionalRender"
@@ -9,8 +9,8 @@ import { Heading, Table } from "govuk-react"
 import { findExceptions } from "types/ErrorMessages"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import { Exception } from "types/exceptions"
-import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
 import { formatDisplayedDate } from "utils/date/formattedDate"
+import { ExceptionBadgeType } from "utils/exceptions/exceptionBadgeType"
 import {
   capitaliseExpression,
   formatDuration,
@@ -78,7 +78,7 @@ export const HearingResult = ({
             label="Duration"
             value={
               <>
-                {result.Duration?.map((duration) => (
+                {result.Duration?.map((duration: Duration) => (
                   <div key={`duration-${duration.DurationLength}-${duration.DurationUnit}`}>
                     {formatDuration(duration.DurationLength, duration.DurationUnit)}
                   </div>

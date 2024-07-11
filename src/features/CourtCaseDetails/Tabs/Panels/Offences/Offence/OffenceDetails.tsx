@@ -1,4 +1,4 @@
-import type { Offence } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import type { Offence, Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
 import offenceCategory from "@moj-bichard7-developers/bichard7-next-data/dist/data/offence-category.json"
 import yesNo from "@moj-bichard7-developers/bichard7-next-data/dist/data/yes-no.json"
@@ -151,7 +151,7 @@ export const OffenceDetails = ({
       </div>
 
       <div className="offence-results-table">
-        {offence.Result.map((result, index) => {
+        {offence.Result.map((result: Result, index: number) => {
           const resultKey = `hearing-result-${index + 1}`
           return (
             <div className={resultKey} key={resultKey}>
