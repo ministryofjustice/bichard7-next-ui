@@ -1,17 +1,17 @@
+import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
+import serialiseToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/serialiseToXml"
+import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
+import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
+import insertNotes from "services/insertNotes"
 import updateCourtCaseAho from "services/updateCourtCaseAho"
 import { DataSource, EntityManager } from "typeorm"
 import { Amendments } from "types/Amendments"
 import { isError } from "types/Result"
-import createForceOwner from "utils/createForceOwner"
-import applyAmendmentsToAho from "./applyAmendmentsToAho"
-import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import type User from "../entities/User"
-import insertNotes from "services/insertNotes"
 import getSystemNotes from "utils/amendments/getSystemNotes"
+import createForceOwner from "utils/createForceOwner"
 import CourtCase from "../entities/CourtCase"
-import parseAhoXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/parse/parseAhoXml/parseAhoXml"
-import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/generate"
-import Phase from "@moj-bichard7-developers/bichard7-next-core/core/types/Phase"
+import type User from "../entities/User"
+import applyAmendmentsToAho from "./applyAmendmentsToAho"
 
 const amendCourtCase = async (
   dataSource: DataSource | EntityManager,
@@ -45,7 +45,7 @@ const amendCourtCase = async (
     return updatedAho
   }
 
-  const generatedXml = convertAhoToXml(updatedAho, false)
+  const generatedXml = serialiseToXml(updatedAho, false)
 
   // Depending on the phase, treat the update as either hoUpdate or pncUpdate
   if (courtCase.phase === Phase.HEARING_OUTCOME) {

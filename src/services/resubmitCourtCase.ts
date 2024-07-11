@@ -1,5 +1,4 @@
 import { AuditLogEvent } from "@moj-bichard7-developers/bichard7-next-core/common/types/AuditLogEvent"
-import convertAhoToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/generate"
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 import amendCourtCase from "services/amendCourtCase"
 import User from "services/entities/User"
@@ -14,6 +13,7 @@ import PromiseResult from "types/PromiseResult"
 import { isError } from "types/Result"
 import UnlockReason from "types/UnlockReason"
 import getCourtCaseByOrganisationUnit from "./getCourtCaseByOrganisationUnit"
+import serialiseToXml from "@moj-bichard7-developers/bichard7-next-core/core/phase1/serialise/ahoXml/serialiseToXml"
 
 const phase1ResubmissionQueue = process.env.PHASE_1_RESUBMIT_QUEUE_NAME ?? "PHASE_1_RESUBMIT_QUEUE"
 
@@ -89,7 +89,7 @@ const resubmitCourtCase = async (
     }
 
     // TODO: this doesn't look right - should it be in transaction??
-    const generatedXml = convertAhoToXml(resultAho, false)
+    const generatedXml = serialiseToXml(resultAho, false)
     const queueResult = await sendToQueue({ messageXml: generatedXml, queueName: phase1ResubmissionQueue })
 
     if (isError(queueResult)) {
