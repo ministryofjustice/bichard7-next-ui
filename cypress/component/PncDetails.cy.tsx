@@ -84,7 +84,7 @@ describe("PNC details", () => {
       </CourtCaseContext.Provider>
     )
 
-    cy.contains("Updated 10/07/2024 01:00:00").should("exist")
+    cy.get("#pnc-details-update-date").contains("Updated 10/07/2024 01:00:00").should("exist")
     cy.get("h1").contains("21/2732/000006N").should("exist")
     cy.get("#crime-offence-reference").contains("XOXO").should("exist")
     cy.get(".heading").children().first().contains("001 - TH68001").should("exist")
@@ -104,7 +104,7 @@ describe("PNC details", () => {
     cy.get("#disposal-duration").contains("Y999").should("exist")
     cy.get("#disposal-monetary-value").contains("1000").should("exist")
     cy.get("#disposal-units-fined").should("not.exist")
-    cy.contains("Show details").click()
+    cy.get(".disposal-text").click()
     cy.get(".disposal-text").contains("This is a dummy text").should("exist")
   })
 
@@ -166,7 +166,7 @@ describe("PNC details", () => {
     cy.get("#disposal-duration").should("not.exist")
     cy.get("#disposal-monetary-value").should("not.exist")
     cy.get("#disposal-units-fined").should("not.exist")
-    cy.contains("Show details").should("not.exist")
+    cy.get(".disposal-text").should("not.exist")
     cy.get(".disposal-text-absent").contains("No disposal text").should("exist")
   })
 })

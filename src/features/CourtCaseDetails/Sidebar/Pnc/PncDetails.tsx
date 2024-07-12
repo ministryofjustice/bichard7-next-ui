@@ -20,7 +20,7 @@ const PncDetails = () => {
 
   return (
     <>
-      <UpdatedDate>{`Updated ${pncQueryDate?.toLocaleString().replace(",", "")}`}</UpdatedDate>
+      <UpdatedDate id="pnc-details-update-date">{`Updated ${pncQueryDate?.toLocaleString().replace(",", "")}`}</UpdatedDate>
       <CourtCaseContainer>
         {pncQuery?.courtCases?.map((c) => {
           return (
