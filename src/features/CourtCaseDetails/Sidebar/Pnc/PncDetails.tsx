@@ -18,8 +18,6 @@ const PncDetails = () => {
     }
   } = useCourtCase()
 
-  console.log(JSON.stringify(pncQuery, null, 2))
-
   return (
     <>
       <UpdatedDate>{`Updated ${pncQueryDate?.toLocaleString().replace(",", "")}`}</UpdatedDate>
