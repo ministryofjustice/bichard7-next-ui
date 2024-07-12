@@ -1,4 +1,4 @@
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import { GridCol, GridRow, Link } from "govuk-react"
 import NavigationHandler from "../../types/NavigationHandler"
 import getExceptionDefinition from "../../utils/getExceptionDefinition"

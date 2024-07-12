@@ -1,4 +1,3 @@
-import TriggerCode from "bichard7-next-data-latest/dist/types/TriggerCode"
 import type { Relation } from "typeorm"
 import { AfterLoad, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
 import type { ResolutionStatus } from "types/ResolutionStatus"
@@ -8,6 +7,7 @@ import CourtCase from "./CourtCase"
 import dateTransformer from "./transformers/dateTransformer"
 import getShortTriggerCode from "./transformers/getShortTriggerCode"
 import resolutionStatusTransformer from "./transformers/resolutionStatusTransformer"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 
 @Entity({ name: "error_list_triggers" })
 export default class Trigger {

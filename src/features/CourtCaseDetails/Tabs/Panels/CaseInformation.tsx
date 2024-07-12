@@ -9,7 +9,7 @@ interface caseInformationProps {
 
 type Row = {
   label: string
-  value: string
+  value: string | null
 }
 
 export const CaseInformation = ({ caseInformation }: caseInformationProps) => {
