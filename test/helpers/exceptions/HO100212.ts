@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker"
 import { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 
 export default function (aho: AnnotatedHearingOutcome): AnnotatedHearingOutcome {
   aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.DefendantDetail!.PersonName.Title =

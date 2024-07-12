@@ -15,11 +15,12 @@ const amendAsn = (newAsn: Amendments["asn"], aho: AnnotatedHearingOutcome): bool
   }
 
   aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber = fullAsn
-  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence.forEach(
-    (offence) =>
-      (offence.CriminalProsecutionReference.DefendantOrOffender.DefendantOrOffenderSequenceNumber =
-        fullAsn.length === 21 ? fullAsn.substring(9, 20) : fullAsn.substring(8, 19))
-  )
+  aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence.forEach((offence) => {
+    if (offence.CriminalProsecutionReference.DefendantOrOffender) {
+      offence.CriminalProsecutionReference.DefendantOrOffender.DefendantOrOffenderSequenceNumber =
+        fullAsn.length === 21 ? fullAsn.substring(9, 20) : fullAsn.substring(8, 19)
+    }
+  })
 
   return true
 }

@@ -1,4 +1,4 @@
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import ConditionalRender from "components/ConditionalRender"
 import LinkButton from "components/LinkButton"
 import { useCourtCase } from "context/CourtCaseContext"
