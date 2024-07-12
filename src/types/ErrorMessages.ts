@@ -1,4 +1,4 @@
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import { DisplayFullCourtCase } from "./display/CourtCases"
 import { Exception } from "./exceptions"
 

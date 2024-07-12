@@ -1,7 +1,7 @@
 import { CjsPlea } from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/Plea"
 import ResultClass from "@moj-bichard7-developers/bichard7-next-core/core/phase1/types/ResultClass"
 import { Result } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import verdicts from "@moj-bichard7-developers/bichard7-next-data/dist/data/verdict.json"
 import { CourtCaseContext } from "context/CourtCaseContext"
 import { DisplayFullCourtCase } from "types/display/CourtCases"

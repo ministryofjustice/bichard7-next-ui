@@ -12,7 +12,7 @@ import HO100209_1 from "../../../../test/test-data/HO100209_1.json"
 import HO100200_2 from "../../../../test/test-data/HO100200_2.json"
 import HO100247_1 from "../../../../test/test-data/HO100247_1.json"
 import HO100247_2 from "../../../../test/test-data/HO100247_2.json"
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 
 import type { AnnotatedHearingOutcome } from "@moj-bichard7-developers/bichard7-next-core/core/types/AnnotatedHearingOutcome"
 

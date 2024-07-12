@@ -19,7 +19,7 @@ describe("asn amendments", () => {
     amendAsn("1146AA0100000448754E", aho)
     expect(
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[0].CriminalProsecutionReference
-        .DefendantOrOffender.DefendantOrOffenderSequenceNumber
+        .DefendantOrOffender?.DefendantOrOffenderSequenceNumber
     ).toEqual("00000448754")
     expect(aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.ArrestSummonsNumber).toEqual(
       "1146AA0100000448754E"
@@ -41,11 +41,11 @@ describe("asn amendments", () => {
     )
     expect(
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[0].CriminalProsecutionReference
-        .DefendantOrOffender.DefendantOrOffenderSequenceNumber
+        .DefendantOrOffender?.DefendantOrOffenderSequenceNumber
     ).toEqual("00000448754")
     expect(
       aho.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Offence[1].CriminalProsecutionReference
-        .DefendantOrOffender.DefendantOrOffenderSequenceNumber
+        .DefendantOrOffender?.DefendantOrOffenderSequenceNumber
     ).toEqual("00000448754")
   })
 })

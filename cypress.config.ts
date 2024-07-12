@@ -14,8 +14,7 @@ import {
   insertMultipleDummyCourtCases
 } from "./test/utils/insertCourtCases"
 import { deleteFeedback, getAllFeedbacksFromDatabase, insertFeedback } from "./test/utils/manageFeedbackSurveys"
-
-import { ExceptionCode } from "@moj-bichard7-developers/bichard7-next-core/core/types/ExceptionCode"
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
 import SurveyFeedback from "services/entities/SurveyFeedback"
 import { ResolutionStatus } from "types/ResolutionStatus"
 import generateAhoWithPncException, {
