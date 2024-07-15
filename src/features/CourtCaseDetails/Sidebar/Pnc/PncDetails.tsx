@@ -8,8 +8,9 @@ import {
   Offence,
   CourtCaseContainer
 } from "./PncDetails.styles"
-// import { formatDisplayedDate } from "utils/date/formattedDate"
 import Disposal from "./Disposal"
+import useFormattedDate from "hooks/useFormattedDate"
+import PncOffence from "./PncOffence"
 
 const PncDetails = () => {
   const {
@@ -18,13 +19,9 @@ const PncDetails = () => {
     }
   } = useCourtCase()
 
-  console.log(pncQueryDate)
-
   return (
     <>
-      {/* <UpdatedDate id="pnc-details-update-date">{`Updated ${formatDisplayedDate(pncQueryDate || "-", "dd/MM/yyyy HH:mm:ss")}`}</UpdatedDate> */}
-      <UpdatedDate id="pnc-details-update-date">{"14/07/2024"}</UpdatedDate>
-
+      <UpdatedDate id="pnc-details-update-date">{`Updated ${useFormattedDate(pncQueryDate, "dd/MM/yy HH:mm:ss")}`}</UpdatedDate>
       <CourtCaseContainer>
         {pncQuery?.courtCases?.map((c) => {
           return (
@@ -41,58 +38,7 @@ const PncDetails = () => {
                 return (
                   <>
                     <Offence>
-                      <div>
-                        <div className="heading">
-                          <span className="govuk-heading-m">{`${String(details.sequenceNumber).padStart(3, "0")} - ${details.cjsOffenceCode}`}</span>
-                          <span className="govuk-heading-m">
-                            {"ACPO"}
-                            <span className="acpo-code"> {details.acpoOffenceCode}</span>
-                          </span>
-                        </div>
-                        <div id={"offence-title"}>{details.title}</div>
-                      </div>
-
-                      <div className="details">
-                        <div id={"start-date"}>
-                          <b>{"Start Date"}</b>
-                          {/* <div>{formatDisplayedDate(details.startDate || "-", "dd/MM/yyyy HH:mm")}</div> */}
-                          <div>{"14/07/2024"}</div>
-                        </div>
-                        <div id={"end-date"}>
-                          <b>{"End Date"}</b>
-                          {/* <div>{formatDisplayedDate(details.endDate || "-", "dd/MM/yyyy HH:mm")}</div> */}
-                          <div>{"14/07/2024"}</div>
-                        </div>
-                        <div id={"qualifier-1"}>
-                          <b>{"Qualifier 1"}</b>
-                          <div>{details.qualifier1 || "-"}</div>
-                        </div>
-                        <div id={"qualifier-2"}>
-                          <b>{"Qualifier 2"}</b>
-                          <div>{details.qualifier2 || "-"}</div>
-                        </div>
-                      </div>
-
-                      <div className="adjudication details">
-                        <div id={"adjudication"}>
-                          <b>{"Adjudication"}</b>
-                          <div>{adjudication?.verdict || "-"}</div>
-                        </div>
-                        <div id={"plea"}>
-                          <b>{"Plea"}</b>
-                          <div>{adjudication?.plea || "-"}</div>
-                        </div>
-                        <div id={"date-of-sentence"}>
-                          <b>{"Date of Sentence"}</b>
-                          {/* <div>{formatDisplayedDate(adjudication?.sentenceDate ?? "-")}</div> */}
-                          <div>{"14/07/2024"}</div>
-                        </div>
-                        <div id={"tic-number"}>
-                          <b>{"TIC Number"}</b>
-                          <div>{adjudication?.offenceTICNumber || "-"}</div>
-                        </div>
-                      </div>
-
+                      <PncOffence details={details} adjudication={adjudication} />
                       {disposals?.map((d, i) => <Disposal key={`${i}-${d.type}`} {...d} />)}
                     </Offence>
                   </>
