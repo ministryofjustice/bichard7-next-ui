@@ -4,7 +4,7 @@ import EditableFieldTableRow from "components/EditableFields/EditableFieldTableR
 import ErrorMessage from "components/EditableFields/ErrorMessage"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { ChangeEvent, ClipboardEvent, KeyboardEvent, useLayoutEffect, useRef, useState } from "react"
+import { ChangeEvent, ClipboardEvent, KeyboardEvent, useEffect, useRef, useState } from "react"
 import Asn from "services/Asn"
 import { disabledKeys, handleAsnForwardSlashes, type Selection } from "utils/exceptions/handleAsnForwardSlashes"
 import isAsnFormatValid from "utils/exceptions/isAsnFormatValid"
@@ -28,7 +28,7 @@ export const AsnField = () => {
 
   const asnInputRef = useRef<HTMLInputElement>(null)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     handleAsnForwardSlashes(selection, amendedAsn, key, asnInputRef)
   }, [selection, amendedAsn, key])
 
