@@ -21,7 +21,7 @@ const PncDetails = () => {
 
   return (
     <>
-      <UpdatedDate id="pnc-details-update-date">{`Updated ${useFormattedDate(pncQueryDate, "dd/MM/yy HH:mm:ss")}`}</UpdatedDate>
+      <UpdatedDate id="pnc-details-update-date">{`Updated ${useFormattedDate(pncQueryDate, "dd/MM/yyyy HH:mm:ss")}`}</UpdatedDate>
       <CourtCaseContainer>
         {pncQuery?.courtCases?.map((c) => {
           return (

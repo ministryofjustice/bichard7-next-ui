@@ -75,7 +75,7 @@ const PncOffence = ({
         </div>
         <div id={"tic-number"}>
           <b>{"TIC Number"}</b>
-          <div>{offenceTICNumber}</div>
+          <div>{offenceTICNumber || "-"}</div>
         </div>
       </div>
     </>
