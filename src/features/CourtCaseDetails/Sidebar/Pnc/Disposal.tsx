@@ -1,6 +1,6 @@
 import ConditionalRender from "components/ConditionalRender"
 import { DisposalDetails, DisposalHeader, DisposalText } from "./Disposal.styles"
-import { formatDisplayedDate } from "utils/date/formattedDate"
+// import { formatDisplayedDate } from "utils/date/formattedDate"
 import { Details } from "govuk-react"
 import { isEmpty } from "lodash"
 
@@ -15,13 +15,16 @@ interface Props {
 }
 
 const Disposal = ({ qtyDate, qtyDuration, type, qtyUnitsFined, qtyMonetaryValue, qualifiers, text }: Props) => {
+  console.log(qtyDate)
+
   return (
     <div className="disposal">
       <DisposalHeader className="govuk-heading-s">{`Disposal - ${type}`}</DisposalHeader>
       <DisposalDetails>
         <div id={"disposal-date"}>
           <b>{"Date"}</b>
-          <div>{formatDisplayedDate(qtyDate || "-")}</div>
+          {/* <div>{formatDisplayedDate(qtyDate || "-")}</div> */}
+          <div>{"14/07/2024"}</div>
         </div>
         <div id={"disposal-qualifiers"}>
           <b>{"Qualifiers"}</b>

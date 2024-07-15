@@ -8,7 +8,7 @@ import {
   Offence,
   CourtCaseContainer
 } from "./PncDetails.styles"
-import { formatDisplayedDate } from "utils/date/formattedDate"
+// import { formatDisplayedDate } from "utils/date/formattedDate"
 import Disposal from "./Disposal"
 
 const PncDetails = () => {
@@ -18,9 +18,13 @@ const PncDetails = () => {
     }
   } = useCourtCase()
 
+  console.log(pncQueryDate)
+
   return (
     <>
-      <UpdatedDate id="pnc-details-update-date">{`Updated ${formatDisplayedDate(pncQueryDate || "-", "dd/MM/yyyy HH:mm:ss")}`}</UpdatedDate>
+      {/* <UpdatedDate id="pnc-details-update-date">{`Updated ${formatDisplayedDate(pncQueryDate || "-", "dd/MM/yyyy HH:mm:ss")}`}</UpdatedDate> */}
+      <UpdatedDate id="pnc-details-update-date">{"14/07/2024"}</UpdatedDate>
+
       <CourtCaseContainer>
         {pncQuery?.courtCases?.map((c) => {
           return (
@@ -51,11 +55,13 @@ const PncDetails = () => {
                       <div className="details">
                         <div id={"start-date"}>
                           <b>{"Start Date"}</b>
-                          <div>{formatDisplayedDate(details.startDate || "-", "dd/MM/yyyy HH:mm")}</div>
+                          {/* <div>{formatDisplayedDate(details.startDate || "-", "dd/MM/yyyy HH:mm")}</div> */}
+                          <div>{"14/07/2024"}</div>
                         </div>
                         <div id={"end-date"}>
                           <b>{"End Date"}</b>
-                          <div>{formatDisplayedDate(details.endDate || "-", "dd/MM/yyyy HH:mm")}</div>
+                          {/* <div>{formatDisplayedDate(details.endDate || "-", "dd/MM/yyyy HH:mm")}</div> */}
+                          <div>{"14/07/2024"}</div>
                         </div>
                         <div id={"qualifier-1"}>
                           <b>{"Qualifier 1"}</b>
@@ -78,7 +84,8 @@ const PncDetails = () => {
                         </div>
                         <div id={"date-of-sentence"}>
                           <b>{"Date of Sentence"}</b>
-                          <div>{formatDisplayedDate(adjudication?.sentenceDate ?? "-")}</div>
+                          {/* <div>{formatDisplayedDate(adjudication?.sentenceDate ?? "-")}</div> */}
+                          <div>{"14/07/2024"}</div>
                         </div>
                         <div id={"tic-number"}>
                           <b>{"TIC Number"}</b>
