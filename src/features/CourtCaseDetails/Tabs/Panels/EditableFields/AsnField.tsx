@@ -4,16 +4,12 @@ import EditableFieldTableRow from "components/EditableFields/EditableFieldTableR
 import ErrorMessage from "components/EditableFields/ErrorMessage"
 import { useCourtCase } from "context/CourtCaseContext"
 import { useCurrentUser } from "context/CurrentUserContext"
-import { ChangeEvent, ClipboardEvent, KeyboardEvent, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { ChangeEvent, ClipboardEvent, KeyboardEvent, useLayoutEffect, useRef, useState } from "react"
 import Asn from "services/Asn"
+import { disabledKeys, handleAsnForwardSlashes, type Selection } from "utils/exceptions/handleAsnForwardSlashes"
 import isAsnFormatValid from "utils/exceptions/isAsnFormatValid"
 import isAsnException from "utils/exceptions/isException/isAsnException"
 import { AsnInput } from "./AsnField.styles"
-
-type Selection = {
-  start: number | null
-  end: number | null
-}
 
 export const AsnField = () => {
   const { courtCase, amendments, amend } = useCourtCase()
@@ -32,71 +28,9 @@ export const AsnField = () => {
 
   const asnInputRef = useRef<HTMLInputElement>(null)
 
-  // Do **not** add Tab to this list. It will break accessibility!
-  const disabledKeys = useMemo(
-    () => [
-      "ArrowLeft",
-      "ArrowRight",
-      "ArrowUp",
-      "ArrowDown",
-      "MetaLeft",
-      "MetaRight",
-      "ControlLeft",
-      "ControlRight",
-      "AltLeft",
-      "AltRight",
-      "ShiftLeft",
-      "ShiftRight",
-      "Delete"
-    ],
-    []
-  )
-
   useLayoutEffect(() => {
-    if (!selection) {
-      return
-    }
-
-    // Handles if we delete the first character. Stops the cursor from going to the end of the input.
-    if (selection.start === 0 && selection.end === 0 && key === "Backspace") {
-      asnInputRef?.current?.setSelectionRange(0, 0)
-      return
-    }
-
-    // Handles selecting all and press Backspace.
-    if (selection.start === null || selection.end === null) {
-      return
-    }
-
-    // Handles jumping the `/` as the user types.
-    if (
-      Asn.divideAsn(amendedAsn).split("")[selection.start] === "/" &&
-      key !== "Backspace" &&
-      !disabledKeys.includes(key)
-    ) {
-      asnInputRef?.current?.setSelectionRange(selection.start + 1, selection.end + 1)
-      return
-    }
-
-    // Handles jumping the `/` if we're using Backspace (deleting) input.
-    if (
-      Asn.divideAsn(amendedAsn).split("")[selection.start - 1] === "/" &&
-      key === "Backspace" &&
-      !disabledKeys.includes(key)
-    ) {
-      asnInputRef?.current?.setSelectionRange(selection.start - 1, selection.end - 1)
-      return
-    }
-
-    // Tracks the position on Backspace
-    if (key === "Backspace" && asnInputRef?.current?.selectionStart !== 1) {
-      asnInputRef?.current?.setSelectionRange(selection.start, selection.end)
-      return
-    }
-
-    // Tracks the movement of the cursor on change.
-    asnInputRef?.current?.setSelectionRange(selection.start, selection.end)
-  }, [selection, amendedAsn, key, disabledKeys])
+    handleAsnForwardSlashes(selection, amendedAsn, key, asnInputRef)
+  }, [selection, amendedAsn, key])
 
   const amendAsn = (asn: string, selectionStart: number | null, selectionEnd: number | null) => {
     amend("asn")(asn.toUpperCase().replace(/\//g, ""))
