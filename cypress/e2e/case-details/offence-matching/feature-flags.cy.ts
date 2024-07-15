@@ -42,18 +42,4 @@ describe("renders based on feature flag value for user", () => {
     cy.get("a:contains('Theft of pedal cycle')").eq(0).click()
     cy.get("select.offence-matcher").should("be.enabled")
   })
-
-  describe("pnc-details", () => {
-    it("Should display pnc-details when pnc details feature flag is turned on", () => {
-      loginAndVisit("GeneralHandler", "/bichard/court-cases/0")
-
-      cy.get(".case-details-sidebar #pnc-details").should("exist")
-    })
-
-    it("Should not display pnc-details when pnc details feature flag is turned off", () => {
-      loginAndVisit("PncDetailsTabDisabled", "/bichard/court-cases/0")
-
-      cy.get(".case-details-sidebar #pnc-details").should("not.exist")
-    })
-  })
 })
