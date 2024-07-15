@@ -8,7 +8,7 @@ import Permission from "types/Permission"
 import ExceptionsList from "./ExceptionsList"
 import { SidebarContainer, UnpaddedPanel } from "./Sidebar.styles"
 import TriggersList from "./TriggersList"
-import PncDetails from "./Pnc/PncDetails"
+import PncDetails from "./PncDetails/PncDetails"
 
 enum SidebarTab {
   Exceptions = 1, // makes .filter(Number) work
