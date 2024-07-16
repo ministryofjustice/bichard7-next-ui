@@ -77,11 +77,11 @@ describe("PNC details", () => {
     } as unknown as DisplayFullCourtCase
 
     cy.mount(
-      <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
-        <CurrentUserContext.Provider value={{ currentUser }}>
+      <CurrentUserContext.Provider value={{ currentUser }}>
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
           <PncDetails />
-        </CurrentUserContext.Provider>
-      </CourtCaseContext.Provider>
+        </CourtCaseContext.Provider>
+      </CurrentUserContext.Provider>
     )
 
     cy.get("#pnc-details-update-date").contains("Updated 10/07/2024 01:00:00").should("exist")
@@ -144,11 +144,11 @@ describe("PNC details", () => {
     } as unknown as DisplayFullCourtCase
 
     cy.mount(
-      <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
-        <CurrentUserContext.Provider value={{ currentUser }}>
+      <CurrentUserContext.Provider value={{ currentUser }}>
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
           <PncDetails />
-        </CurrentUserContext.Provider>
-      </CourtCaseContext.Provider>
+        </CourtCaseContext.Provider>
+      </CurrentUserContext.Provider>
     )
 
     cy.get("#crime-offence-reference").contains("-").should("exist")
