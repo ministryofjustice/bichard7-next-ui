@@ -1,6 +1,6 @@
 import useFormattedDate from "hooks/useFormattedDate"
 
-interface Props {
+interface PncOffenceDetailsProps {
   details: {
     sequenceNumber?: number
     cjsOffenceCode?: string
@@ -29,7 +29,7 @@ const PncOffenceDetails = ({
     sentenceDate: undefined,
     offenceTICNumber: 0
   }
-}: Props) => {
+}: PncOffenceDetailsProps) => {
   return (
     <>
       <div>

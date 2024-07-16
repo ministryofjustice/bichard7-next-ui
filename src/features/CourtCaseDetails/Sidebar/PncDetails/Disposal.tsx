@@ -5,7 +5,7 @@ import { Details } from "govuk-react"
 import { isEmpty } from "lodash"
 import useFormattedDate from "hooks/useFormattedDate"
 
-interface Props {
+interface DisposalProps {
   qtyDate?: string
   qtyDuration?: string
   type?: number
@@ -15,7 +15,7 @@ interface Props {
   text?: string
 }
 
-const Disposal = ({ qtyDate, qtyDuration, type, qtyUnitsFined, qtyMonetaryValue, qualifiers, text }: Props) => {
+const Disposal = ({ qtyDate, qtyDuration, type, qtyUnitsFined, qtyMonetaryValue, qualifiers, text }: DisposalProps) => {
   return (
     <div className="disposal">
       <DisposalHeader className="govuk-heading-s">{`Disposal - ${type}`}</DisposalHeader>
