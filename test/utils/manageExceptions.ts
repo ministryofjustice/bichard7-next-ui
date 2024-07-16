@@ -21,7 +21,7 @@ export default async (
         errorReport: () =>
           `(CASE WHEN (error_report = '') THEN '${errorReport}' ELSE error_report || ', ' || '${errorReport}' END)`
       }),
-      errorResolvedBy: isExceptionResolved ? username ?? "BichardForce03" : null,
+      errorResolvedBy: isExceptionResolved ? (username ?? "BichardForce03") : null,
       errorResolvedTimestamp: isExceptionResolved ? new Date() : null,
       errorStatus: errorStatus ?? "Unresolved"
     })
