@@ -169,4 +169,24 @@ describe("PNC details", () => {
     cy.get(".disposal-text").should("not.exist")
     cy.get(".disposal-text-absent").contains("No disposal text").should("exist")
   })
+
+  it("Displays PNC data erorr when query fails", () => {
+    const courtCase = {
+      aho: {
+        PncQuery: undefined,
+        PncQueryDate: "2024-07-10T00:00:00.000Z"
+      }
+    } as unknown as DisplayFullCourtCase
+
+    cy.mount(
+      <CurrentUserContext.Provider value={{ currentUser }}>
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
+          <PncDetails />
+        </CourtCaseContext.Provider>
+      </CurrentUserContext.Provider>
+    )
+
+    cy.get(".pnc-error-message").should("exist")
+    cy.get(".pnc-error-message").contains("PNC details unavailable")
+  })
 })

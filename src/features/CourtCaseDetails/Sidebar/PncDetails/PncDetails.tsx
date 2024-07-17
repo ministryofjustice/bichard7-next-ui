@@ -6,11 +6,13 @@ import {
   CrimeOffenceReference,
   CCR,
   Offence,
-  CourtCases
+  CourtCases,
+  PncQueryError
 } from "./PncDetails.styles"
 import Disposal from "./Disposal"
 import useFormattedDate from "hooks/useFormattedDate"
 import PncOffenceDetails from "./PncOffenceDetails"
+import ConditionalRender from "components/ConditionalRender"
 
 const PncDetails = () => {
   const {
@@ -21,27 +23,33 @@ const PncDetails = () => {
 
   return (
     <>
-      <UpdatedDate id="pnc-details-update-date">{`Updated ${useFormattedDate(pncQueryDate, "dd/MM/yyyy HH:mm:ss")}`}</UpdatedDate>
-      <CourtCases>
-        {pncQuery?.courtCases?.map((c) => (
-          <CourtCase key={c.courtCaseReference}>
-            <CourtCaseHeader>
-              <CCR className="govuk-heading-m">{c.courtCaseReference}</CCR>
-              <CrimeOffenceReference>
-                <div className={"heading"}>{"Crime Offence Reference"}</div>
-                <div id={"crime-offence-reference"}>{c.crimeOffenceReference || "-"}</div>
-              </CrimeOffenceReference>
-            </CourtCaseHeader>
+      <ConditionalRender isRendered={!pncQuery}>
+        <PncQueryError className="pnc-error-message">{"PNC details unavailable"}</PncQueryError>
+      </ConditionalRender>
 
-            {c.offences.map(({ offence: details, adjudication, disposals }, i) => (
-              <Offence key={`${i}-${details.sequenceNumber}`}>
-                <PncOffenceDetails details={details} adjudication={adjudication} />
-                {disposals?.map((d, j) => <Disposal key={`${j}-${d.type}`} {...d} />)}
-              </Offence>
-            ))}
-          </CourtCase>
-        ))}
-      </CourtCases>
+      <ConditionalRender isRendered={Boolean(pncQuery)}>
+        <UpdatedDate id="pnc-details-update-date">{`Updated ${useFormattedDate(pncQueryDate, "dd/MM/yyyy HH:mm:ss")}`}</UpdatedDate>
+        <CourtCases>
+          {pncQuery?.courtCases?.map((c) => (
+            <CourtCase key={c.courtCaseReference}>
+              <CourtCaseHeader>
+                <CCR className="govuk-heading-m">{c.courtCaseReference}</CCR>
+                <CrimeOffenceReference>
+                  <div className={"heading"}>{"Crime Offence Reference"}</div>
+                  <div id={"crime-offence-reference"}>{c.crimeOffenceReference || "-"}</div>
+                </CrimeOffenceReference>
+              </CourtCaseHeader>
+
+              {c.offences.map(({ offence: details, adjudication, disposals }, i) => (
+                <Offence key={`${i}-${details.sequenceNumber}`}>
+                  <PncOffenceDetails details={details} adjudication={adjudication} />
+                  {disposals?.map((d, j) => <Disposal key={`${j}-${d.type}`} {...d} />)}
+                </Offence>
+              ))}
+            </CourtCase>
+          ))}
+        </CourtCases>
+      </ConditionalRender>
     </>
   )
 }

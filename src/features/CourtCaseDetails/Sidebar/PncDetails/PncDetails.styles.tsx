@@ -8,6 +8,10 @@ const UpdatedDate = styled.div`
   border-bottom: solid 1px ${gdsMidGrey};
 `
 
+const PncQueryError = styled.div`
+  padding: 15px 20px;
+`
+
 const CourtCases = styled.div`
   max-height: 80vh;
   overflow-y: scroll;
@@ -86,4 +90,4 @@ const Offence = styled.div`
   }
 `
 
-export { UpdatedDate, CourtCase, CourtCaseHeader, CrimeOffenceReference, CCR, Offence, CourtCases }
+export { UpdatedDate, CourtCase, CourtCaseHeader, CrimeOffenceReference, CCR, Offence, CourtCases, PncQueryError }
