@@ -4,6 +4,7 @@ import { gdsLightGrey, textSecondary } from "utils/colours"
 const DisposalHeader = styled.div`
   background-color: ${gdsLightGrey};
   padding: 5px 0;
+  margin-bottom: 10px;
 `
 
 const DisposalDetails = styled.div`
