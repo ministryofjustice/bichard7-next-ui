@@ -45,11 +45,11 @@ const PncOffenceDetails = ({
       <div className="details">
         <div id={"start-date"}>
           <b>{"Start Date"}</b>
-          <div>{formatDisplayedDate(startDate ?? "", "dd/MM/yyyy HH:mm") || "-"}</div>
+          <div>{startDate ? formatDisplayedDate(startDate, "dd/MM/yyyy HH:mm") : "-"}</div>
         </div>
         <div id={"end-date"}>
           <b>{"End Date"}</b>
-          <div>{formatDisplayedDate(endDate ?? "", "dd/MM/yyyy HH:mm") || "-"}</div>
+          <div>{endDate ? formatDisplayedDate(endDate, "dd/MM/yyyy HH:mm") : "-"}</div>
         </div>
         <div id={"qualifier-1"}>
           <b>{"Qualifier 1"}</b>
@@ -71,7 +71,7 @@ const PncOffenceDetails = ({
         </div>
         <div id={"date-of-sentence"}>
           <b>{"Date of Sentence"}</b>
-          <div>{formatDisplayedDate(sentenceDate ?? "", "dd/MM/yyyy HH:mm")}</div>
+          <div>{sentenceDate ? formatDisplayedDate(sentenceDate) : "-"}</div>
         </div>
         <div id={"tic-number"}>
           <b>{"TIC Number"}</b>
