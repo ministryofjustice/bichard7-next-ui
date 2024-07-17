@@ -1,4 +1,4 @@
-import useFormattedDate from "hooks/useFormattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
 
 interface PncOffenceDetailsProps {
   details: {
@@ -45,11 +45,11 @@ const PncOffenceDetails = ({
       <div className="details">
         <div id={"start-date"}>
           <b>{"Start Date"}</b>
-          <div>{useFormattedDate(startDate, "dd/MM/yyyy HH:mm") || "-"}</div>
+          <div>{formatDisplayedDate(startDate ?? "", "dd/MM/yyyy HH:mm") || "-"}</div>
         </div>
         <div id={"end-date"}>
           <b>{"End Date"}</b>
-          <div>{useFormattedDate(endDate, "dd/MM/yyyy HH:mm") || "-"}</div>
+          <div>{formatDisplayedDate(endDate ?? "", "dd/MM/yyyy HH:mm") || "-"}</div>
         </div>
         <div id={"qualifier-1"}>
           <b>{"Qualifier 1"}</b>
@@ -71,7 +71,7 @@ const PncOffenceDetails = ({
         </div>
         <div id={"date-of-sentence"}>
           <b>{"Date of Sentence"}</b>
-          <div>{useFormattedDate(sentenceDate, "dd/MM/yyyy HH:mm")}</div>
+          <div>{formatDisplayedDate(sentenceDate ?? "", "dd/MM/yyyy HH:mm")}</div>
         </div>
         <div id={"tic-number"}>
           <b>{"TIC Number"}</b>

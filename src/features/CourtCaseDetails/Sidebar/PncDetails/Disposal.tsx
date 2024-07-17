@@ -1,9 +1,8 @@
-import ConditionalRender from "components/ConditionalRender"
 import { DisposalDetails, DisposalHeader, DisposalText } from "./Disposal.styles"
-// import { formatDisplayedDate } from "utils/date/formattedDate"
 import { Details } from "govuk-react"
 import { isEmpty } from "lodash"
-import useFormattedDate from "hooks/useFormattedDate"
+import { formatDisplayedDate } from "utils/date/formattedDate"
+import ConditionalRender from "components/ConditionalRender"
 
 interface DisposalProps {
   qtyDate?: string
@@ -22,7 +21,7 @@ const Disposal = ({ qtyDate, qtyDuration, type, qtyUnitsFined, qtyMonetaryValue,
       <DisposalDetails>
         <div id={"disposal-date"}>
           <b>{"Date"}</b>
-          <div>{useFormattedDate(qtyDate, "dd/MM/yyyy HH:mm") || "-"}</div>
+          <div>{formatDisplayedDate(qtyDate ?? "", "dd/MM/yyyy HH:mm") || "-"}</div>
         </div>
         <div id={"disposal-qualifiers"}>
           <b>{"Qualifiers"}</b>
