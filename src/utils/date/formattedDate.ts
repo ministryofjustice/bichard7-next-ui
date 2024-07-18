@@ -4,14 +4,14 @@ export const displayedDateFormat = "dd/MM/yyyy"
 
 export const formInputDateFormat = "yyyy-MM-dd"
 
-export const formatDisplayedDate = (date: Date | string): string => {
+export const formatDisplayedDate = (date: Date | string, formatString = displayedDateFormat): string => {
   if (date instanceof Date) {
-    return isValid(date) ? format(date, displayedDateFormat) : ""
+    return isValid(date) ? format(date, formatString) : ""
   }
 
   if (typeof date === "string") {
     const dateInstance = new Date(date)
-    return isValid(dateInstance) ? format(dateInstance, displayedDateFormat) : date
+    return isValid(dateInstance) ? format(dateInstance, formatString) : date
   }
 
   return ""
