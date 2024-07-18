@@ -1,4 +1,5 @@
 import { useCourtCase } from "context/CourtCaseContext"
+import { formatDisplayedDate } from "../../../../utils/date/formattedDate"
 import {
   UpdatedDate,
   CourtCase,
@@ -10,7 +11,6 @@ import {
   PncQueryError
 } from "./PncDetails.styles"
 import Disposal from "./Disposal"
-import useFormattedDate from "hooks/useFormattedDate"
 import PncOffenceDetails from "./PncOffenceDetails"
 import ConditionalRender from "components/ConditionalRender"
 
@@ -28,7 +28,7 @@ const PncDetails = () => {
       </ConditionalRender>
 
       <ConditionalRender isRendered={Boolean(pncQuery)}>
-        <UpdatedDate id="pnc-details-update-date">{`Updated ${useFormattedDate(pncQueryDate, "dd/MM/yyyy HH:mm:ss")}`}</UpdatedDate>
+        <UpdatedDate id="pnc-details-update-date">{`Updated ${pncQueryDate ? formatDisplayedDate(pncQueryDate, "dd/MM/yyyy HH:mm:ss") : "-"}`}</UpdatedDate>
         <CourtCases>
           {pncQuery?.courtCases?.map((c) => (
             <CourtCase key={c.courtCaseReference}>
