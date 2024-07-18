@@ -24,11 +24,26 @@ const CourtCase = styled.div`
 
 const CourtCaseHeader = styled.div`
   display: flex;
-  flex-direction: column;
 
   padding: 15px 20px;
   background-color: ${gdsLightGrey};
   border-bottom: solid 1px ${gdsMidGrey};
+
+  &:hover {
+    background-color: #dfdfe0;
+
+    .chevron {
+      color: white;
+      background: black;
+    }
+  }
+
+  .chevron-container {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: inherit;
+    align-items: center;
+  }
 `
 
 const CCR = styled.h1`

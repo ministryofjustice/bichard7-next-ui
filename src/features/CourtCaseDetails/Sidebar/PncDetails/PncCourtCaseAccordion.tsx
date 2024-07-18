@@ -18,14 +18,22 @@ const PncCourtCaseAccordion = ({
     setOpen(!open)
   }
 
+  const chevronPosition = open ? "govuk-accordion-nav__chevron--up" : "govuk-accordion-nav__chevron--down"
+
   return (
     <CourtCase key={courtCaseReference}>
-      <CourtCaseHeader className="courtcase-toggle" onClick={toggle}>
-        <CCR className="govuk-heading-m">{courtCaseReference}</CCR>
-        <CrimeOffenceReference>
-          <div className={"heading"}>{"Crime Offence Reference"}</div>
-          <div id={"crime-offence-reference"}>{crimeOffenceReference || "-"}</div>
-        </CrimeOffenceReference>
+      <CourtCaseHeader className="courtcase-toggle govuk-grid-row" onClick={toggle}>
+        <div className="govuk-grid-column-three-quarters">
+          <CCR className="govuk-heading-m">{courtCaseReference}</CCR>
+          <CrimeOffenceReference>
+            <div className={"heading"}>{"Crime Offence Reference"}</div>
+            <div id={"crime-offence-reference"}>{crimeOffenceReference || "-"}</div>
+          </CrimeOffenceReference>
+        </div>
+
+        <div className="govuk-grid-column-one-quarter chevron-container">
+          <span className={`govuk-accordion-nav__chevron ${chevronPosition} chevron`}></span>
+        </div>
       </CourtCaseHeader>
 
       {open &&
