@@ -22,7 +22,7 @@ const PncCourtCaseAccordion = ({
   pncCourtCase: { courtCaseReference, crimeOffenceReference, offences }
 }: PncCourtCaseAccordionProps) => {
   const [open, setOpen] = useState<boolean>(index === 0 ? true : false)
-  const toggle = () => {
+  const handleClick = () => {
     setOpen(!open)
   }
 
@@ -30,7 +30,7 @@ const PncCourtCaseAccordion = ({
 
   return (
     <CourtCase key={courtCaseReference}>
-      <CourtCaseHeaderContainer className="courtcase-toggle" onClick={toggle}>
+      <CourtCaseHeaderContainer className="courtcase-toggle" onClick={handleClick}>
         <CourtCaseHeader>
           <CCR className="govuk-heading-m">{courtCaseReference}</CCR>
           <CrimeOffenceReference>
