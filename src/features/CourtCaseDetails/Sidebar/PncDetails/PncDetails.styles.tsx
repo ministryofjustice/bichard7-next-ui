@@ -22,10 +22,10 @@ const CourtCase = styled.div`
   font-size: var(--default-font-size);
 `
 
-const CourtCaseHeader = styled.div`
+const CourtCaseHeaderContainer = styled.div`
   display: flex;
+  justify-content: space-between;
 
-  padding: 15px 20px;
   background-color: ${gdsLightGrey};
   border-bottom: solid 1px ${gdsMidGrey};
 
@@ -37,23 +37,33 @@ const CourtCaseHeader = styled.div`
       background: black;
     }
   }
+`
 
-  .chevron-container {
-    display: flex;
-    justify-content: flex-end;
-    flex-grow: inherit;
-    align-items: center;
-  }
+const ChevronContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  flex-grow: inherit;
+  align-items: center;
+  margin-right: 15px;
+`
+
+const CourtCaseHeader = styled.div`
+  width: 100%;
+
+  margin: 15px 20px;
 `
 
 const CCR = styled.h1`
   margin: 0;
+  width: 100%;
   padding-bottom: 10px;
 `
 
 const CrimeOffenceReference = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: row;
+  align-items: center;
 
   .heading {
     font-weight: bold;
@@ -105,4 +115,15 @@ const Offence = styled.div`
   }
 `
 
-export { UpdatedDate, CourtCase, CourtCaseHeader, CrimeOffenceReference, CCR, Offence, CourtCases, PncQueryError }
+export {
+  UpdatedDate,
+  CourtCase,
+  CourtCaseHeaderContainer,
+  CourtCaseHeader,
+  CrimeOffenceReference,
+  ChevronContainer,
+  CCR,
+  Offence,
+  CourtCases,
+  PncQueryError
+}

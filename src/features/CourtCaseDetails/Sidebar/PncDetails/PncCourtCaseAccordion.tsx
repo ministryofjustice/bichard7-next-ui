@@ -1,6 +1,14 @@
 import { useState } from "react"
 import type { PncCourtCase } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
-import { CCR, CourtCaseHeader, CrimeOffenceReference, CourtCase, Offence } from "./PncDetails.styles"
+import {
+  CCR,
+  CourtCaseHeaderContainer,
+  CrimeOffenceReference,
+  CourtCase,
+  Offence,
+  CourtCaseHeader,
+  ChevronContainer
+} from "./PncDetails.styles"
 import PncOffenceDetails from "./PncOffenceDetails"
 import Disposal from "./Disposal"
 
@@ -22,19 +30,19 @@ const PncCourtCaseAccordion = ({
 
   return (
     <CourtCase key={courtCaseReference}>
-      <CourtCaseHeader className="courtcase-toggle govuk-grid-row" onClick={toggle}>
-        <div className="govuk-grid-column-three-quarters">
+      <CourtCaseHeaderContainer className="courtcase-toggle" onClick={toggle}>
+        <CourtCaseHeader>
           <CCR className="govuk-heading-m">{courtCaseReference}</CCR>
           <CrimeOffenceReference>
             <div className={"heading"}>{"Crime Offence Reference"}</div>
             <div id={"crime-offence-reference"}>{crimeOffenceReference || "-"}</div>
           </CrimeOffenceReference>
-        </div>
+        </CourtCaseHeader>
 
-        <div className="govuk-grid-column-one-quarter chevron-container">
+        <ChevronContainer>
           <span className={`govuk-accordion-nav__chevron ${chevronPosition} chevron`}></span>
-        </div>
-      </CourtCaseHeader>
+        </ChevronContainer>
+      </CourtCaseHeaderContainer>
 
       {open &&
         offences?.map(({ offence: details, adjudication, disposals }, i) => (
