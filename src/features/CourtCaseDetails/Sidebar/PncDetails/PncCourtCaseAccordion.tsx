@@ -21,14 +21,20 @@ const PncCourtCaseAccordion = ({
   index,
   pncCourtCase: { courtCaseReference, crimeOffenceReference, offences }
 }: PncCourtCaseAccordionProps) => {
-  const [open, setOpen] = useState<boolean>(index === 0 ? true : false)
-  const handleClick = () => setOpen((previousState) => !previousState)
+  const [isContentVisible, setIsContentVisible] = useState<boolean>(index === 0 ? true : false)
+  const toggleContentVisibility = () => setIsContentVisible((previousState) => !previousState)
 
-  const chevronPosition = open ? "govuk-accordion-nav__chevron--up" : "govuk-accordion-nav__chevron--down"
+  const chevronPosition = isContentVisible ? "govuk-accordion-nav__chevron--up" : "govuk-accordion-nav__chevron--down"
 
   return (
     <CourtCase key={courtCaseReference}>
-      <CourtCaseHeaderContainer className="courtcase-toggle" onClick={handleClick}>
+      <CourtCaseHeaderContainer
+        className="courtcase-toggle"
+        onClick={toggleContentVisibility}
+        aria-expanded={isContentVisible}
+        aria-controls={`CCR-${courtCaseReference}-content`}
+        aria-label={`CCR-${courtCaseReference}`}
+      >
         <CourtCaseHeader>
           <CCR className="govuk-heading-m">{courtCaseReference}</CCR>
           <CrimeOffenceReference>
@@ -42,7 +48,7 @@ const PncCourtCaseAccordion = ({
         </ChevronContainer>
       </CourtCaseHeaderContainer>
 
-      {open &&
+      {isContentVisible &&
         offences?.map(({ offence: details, adjudication, disposals }, i) => (
           <Offence className="pnc-offence" key={`${i}-${details.sequenceNumber}`}>
             <PncOffenceDetails details={details} adjudication={adjudication} />
