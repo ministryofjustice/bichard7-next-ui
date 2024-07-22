@@ -305,7 +305,7 @@ describe("PNC details", () => {
       </CurrentUserContext.Provider>
     )
 
-    cy.get(".pnc-offence").first().should("exist")
+    cy.get(".pnc-offence").eq(0).should("exist")
     cy.get(".pnc-offence").eq(1).should("not.exist")
   })
 })
