@@ -48,13 +48,16 @@ const PncCourtCaseAccordion = ({
         </ChevronContainer>
       </CourtCaseHeaderContainer>
 
-      {isContentVisible &&
-        offences?.map(({ offence: details, adjudication, disposals }, i) => (
-          <Offence className="pnc-offence" key={`${i}-${details.sequenceNumber}`}>
-            <PncOffenceDetails details={details} adjudication={adjudication} />
-            {disposals?.map((d, j) => <Disposal key={`${j}-${d.type}`} {...d} />)}
-          </Offence>
-        ))}
+      {isContentVisible && (
+        <div id={`CCR-${courtCaseReference}-content`}>
+          {offences?.map(({ offence: details, adjudication, disposals }, i) => (
+            <Offence className="pnc-offence" key={`${i}-${details.sequenceNumber}`}>
+              <PncOffenceDetails details={details} adjudication={adjudication} />
+              {disposals?.map((d, j) => <Disposal key={`${j}-${d.type}`} {...d} />)}
+            </Offence>
+          ))}
+        </div>
+      )}
     </CourtCase>
   )
 }
