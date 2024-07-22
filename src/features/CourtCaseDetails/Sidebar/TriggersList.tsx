@@ -101,13 +101,16 @@ const TriggersList = ({ onNavigate }: Props) => {
           </MarkCompleteGridCol>
         </GridRow>
       </ConditionalRender>
-      <LockStatus>
-        <LockStatusTag
-          isRendered={triggers.length > 0}
-          resolutionStatus={courtCase.triggerStatus}
-          lockName="Triggers"
-        />
-      </LockStatus>
+
+      <ConditionalRender isRendered={hasTriggers}>
+        <LockStatus>
+          <LockStatusTag
+            isRendered={triggers.length > 0}
+            resolutionStatus={courtCase.triggerStatus}
+            lockName="Triggers"
+          />
+        </LockStatus>
+      </ConditionalRender>
     </Form>
   )
 }
