@@ -189,4 +189,123 @@ describe("PNC details", () => {
     cy.get(".pnc-error-message").should("exist")
     cy.get(".pnc-error-message").contains("PNC details unavailable")
   })
+
+  it("collapses only when the header is clicked", () => {
+    const pncQueryData = {
+      forceStationCode: "01ZD",
+      checkName: "LEBOWSKI",
+      pncId: "2021/0000006A",
+      courtCases: [
+        {
+          courtCaseReference: "21/2732/000006N",
+          offences: [
+            {
+              offence: {
+                acpoOffenceCode: "5:5:5:1",
+                cjsOffenceCode: "TH68001",
+                title: "Theft from the person of another",
+                sequenceNumber: 1
+              },
+              disposals: [
+                {
+                  type: 2007
+                }
+              ]
+            }
+          ],
+          crimeOffenceReference: ""
+        }
+      ]
+    }
+
+    const courtCase = {
+      aho: {
+        PncQuery: pncQueryData,
+        PncQueryDate: "2024-07-10T00:00:00.000Z"
+      }
+    } as unknown as DisplayFullCourtCase
+
+    cy.mount(
+      <CurrentUserContext.Provider value={{ currentUser }}>
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
+          <PncDetails />
+        </CourtCaseContext.Provider>
+      </CurrentUserContext.Provider>
+    )
+
+    cy.get(".pnc-offence").should("exist")
+    cy.get(".courtcase-toggle").click()
+    cy.get(".pnc-offence").should("not.exist")
+
+    cy.get(".courtcase-toggle").click()
+    cy.get(".pnc-offence").should("exist")
+    cy.get(".pnc-offence").click()
+    cy.get(".pnc-offence").should("exist")
+  })
+
+  it("Displays only first courtCase opened when there are multiple courtCases", () => {
+    const pncQueryData = {
+      forceStationCode: "01ZD",
+      checkName: "LEBOWSKI",
+      pncId: "2021/0000006A",
+      courtCases: [
+        {
+          courtCaseReference: "21/2732/000006N",
+          offences: [
+            {
+              offence: {
+                acpoOffenceCode: "5:5:5:1",
+                cjsOffenceCode: "TH68001",
+                title: "Theft from the person of another",
+                sequenceNumber: 1
+              },
+              disposals: [
+                {
+                  type: 2007
+                }
+              ]
+            }
+          ],
+          crimeOffenceReference: ""
+        },
+        {
+          courtCaseReference: "11/2222/000001Z",
+          offences: [
+            {
+              offence: {
+                acpoOffenceCode: "5:5:5:1",
+                cjsOffenceCode: "TH68001",
+                title: "Theft from the person of another",
+                sequenceNumber: 1
+              },
+              disposals: [
+                {
+                  type: 2010
+                }
+              ]
+            }
+          ],
+          crimeOffenceReference: ""
+        }
+      ]
+    }
+
+    const courtCase = {
+      aho: {
+        PncQuery: pncQueryData,
+        PncQueryDate: "2024-07-10T00:00:00.000Z"
+      }
+    } as unknown as DisplayFullCourtCase
+
+    cy.mount(
+      <CurrentUserContext.Provider value={{ currentUser }}>
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
+          <PncDetails />
+        </CourtCaseContext.Provider>
+      </CurrentUserContext.Provider>
+    )
+
+    cy.get(".pnc-offence").eq(0).should("exist")
+    cy.get(".pnc-offence").eq(1).should("not.exist")
+  })
 })
