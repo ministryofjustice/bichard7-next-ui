@@ -8,7 +8,7 @@ import {
   Offence,
   CourtCaseHeader,
   ChevronContainer
-} from "./PncCourtCaseAccordian.styles"
+} from "./PncCourtCaseAccordion.styles"
 import PncOffenceDetails from "./PncOffenceDetails"
 import Disposal from "./Disposal"
 
