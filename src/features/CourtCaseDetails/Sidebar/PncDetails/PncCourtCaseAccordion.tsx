@@ -22,9 +22,8 @@ const PncCourtCaseAccordion = ({
   pncCourtCase: { courtCaseReference, crimeOffenceReference, offences }
 }: PncCourtCaseAccordionProps) => {
   const [open, setOpen] = useState<boolean>(index === 0 ? true : false)
-  const handleClick = () => {
-    setOpen(!open)
-  }
+  const handleClick = () => setOpen((previousState) => !previousState)
+
 
   const chevronPosition = open ? "govuk-accordion-nav__chevron--up" : "govuk-accordion-nav__chevron--down"
 
