@@ -12,6 +12,7 @@ const CourtCaseHeaderContainer = styled.div`
   background-color: ${gdsLightGrey};
   border-bottom: solid 1px ${gdsMidGrey};
 
+  &.expanded,
   &:hover {
     background-color: #dfdfe0;
 
@@ -23,7 +24,6 @@ const CourtCaseHeaderContainer = styled.div`
 `
 const CourtCaseHeader = styled.div`
   width: 100%;
-
   margin: 15px 20px;
 `
 
@@ -97,4 +97,4 @@ const Offence = styled.div`
   }
 `
 
-export { CourtCase, CourtCaseHeaderContainer, CourtCaseHeader, CCR, CrimeOffenceReference, ChevronContainer, Offence }
+export { CCR, ChevronContainer, CourtCase, CourtCaseHeader, CourtCaseHeaderContainer, CrimeOffenceReference, Offence }

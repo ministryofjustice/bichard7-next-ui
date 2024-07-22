@@ -1,16 +1,16 @@
-import { useState } from "react"
 import type { PncCourtCase } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
+import { useState } from "react"
+import Disposal from "./Disposal"
 import {
   CCR,
+  ChevronContainer,
+  CourtCase,
+  CourtCaseHeader,
   CourtCaseHeaderContainer,
   CrimeOffenceReference,
-  CourtCase,
-  Offence,
-  CourtCaseHeader,
-  ChevronContainer
+  Offence
 } from "./PncCourtCaseAccordion.styles"
 import PncOffenceDetails from "./PncOffenceDetails"
-import Disposal from "./Disposal"
 
 interface PncCourtCaseAccordionProps {
   index: number
@@ -29,7 +29,7 @@ const PncCourtCaseAccordion = ({
   return (
     <CourtCase key={courtCaseReference}>
       <CourtCaseHeaderContainer
-        className="courtcase-toggle"
+        className={`courtcase-toggle ${isContentVisible ? "expanded" : ""}`}
         onClick={toggleContentVisibility}
         aria-expanded={isContentVisible}
         aria-controls={`CCR-${courtCaseReference}-content`}
