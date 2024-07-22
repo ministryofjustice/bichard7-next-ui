@@ -22,6 +22,8 @@ const DisposalDetails = styled.div`
 `
 
 const DisposalText = styled.div`
+  margin-top: 15px;
+
   .disposal-text {
     font-size: 16px;
   }
