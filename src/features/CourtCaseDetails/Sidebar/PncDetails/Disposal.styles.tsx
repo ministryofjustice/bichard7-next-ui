@@ -1,10 +1,9 @@
+import { Details } from "govuk-react"
 import styled from "styled-components"
-import { gdsLightGrey, textSecondary } from "utils/colours"
+import { textSecondary } from "utils/colours"
 
-const DisposalHeader = styled.div`
-  background-color: ${gdsLightGrey};
-  padding: 5px 0;
-  margin-bottom: 10px;
+const StyledDetails = styled(Details)`
+  margin-bottom: 20px;
 `
 
 const DisposalDetails = styled.div`
@@ -33,4 +32,4 @@ const DisposalText = styled.div`
   }
 `
 
-export { DisposalHeader, DisposalDetails, DisposalText }
+export { DisposalDetails, DisposalText, StyledDetails }

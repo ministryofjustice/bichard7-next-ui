@@ -4,6 +4,10 @@ import { gdsLightGrey, gdsMidGrey } from "utils/colours"
 const CourtCase = styled.div`
   font-family: var(--default-font-family);
   font-size: var(--default-font-size);
+
+  &:not(:first-of-type) {
+    border-top: solid 1px ${gdsMidGrey};
+  }
 `
 const CourtCaseHeaderContainer = styled.div`
   display: flex;
@@ -60,9 +64,20 @@ const Offence = styled.div`
   display: flex;
   flex-direction: column;
   margin: 20px 20px;
-  padding-bottom: 12px;
   row-gap: 15px;
-  border-bottom: solid 1px ${gdsMidGrey};
+
+  hr {
+    border-top: solid 1px ${gdsMidGrey};
+    border-bottom: 0;
+    margin-left: -20px;
+    margin-right: -20px;
+    margin-top: -15px;
+    margin-bottom: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   .heading {
     display: flex;
@@ -97,4 +112,21 @@ const Offence = styled.div`
   }
 `
 
-export { CCR, ChevronContainer, CourtCase, CourtCaseHeader, CourtCaseHeaderContainer, CrimeOffenceReference, Offence }
+const DisposalHeader = styled.h2`
+  background-color: ${gdsLightGrey};
+  margin: 0 -20px;
+  padding-left: 20px;
+  font-size: 24px;
+  line-height: 32px;
+`
+
+export {
+  CCR,
+  ChevronContainer,
+  CourtCase,
+  CourtCaseHeader,
+  CourtCaseHeaderContainer,
+  CrimeOffenceReference,
+  DisposalHeader,
+  Offence
+}

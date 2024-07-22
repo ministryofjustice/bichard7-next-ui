@@ -1,4 +1,5 @@
 import type { PncCourtCase } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
+import ConditionalRender from "components/ConditionalRender"
 import { useState } from "react"
 import Disposal from "./Disposal"
 import {
@@ -8,6 +9,7 @@ import {
   CourtCaseHeader,
   CourtCaseHeaderContainer,
   CrimeOffenceReference,
+  DisposalHeader,
   Offence
 } from "./PncCourtCaseAccordion.styles"
 import PncOffenceDetails from "./PncOffenceDetails"
@@ -53,7 +55,13 @@ const PncCourtCaseAccordion = ({
           {offences?.map(({ offence: details, adjudication, disposals }, i) => (
             <Offence className="pnc-offence" key={`${i}-${details.sequenceNumber}`}>
               <PncOffenceDetails details={details} adjudication={adjudication} />
-              {disposals?.map((d, j) => <Disposal key={`${j}-${d.type}`} {...d} />)}
+              <DisposalHeader>{"Disposals"}</DisposalHeader>
+              <ConditionalRender isRendered={disposals?.length !== undefined && disposals.length > 0}>
+                {disposals?.map((d, j) => <Disposal key={`${j}-${d.type}`} {...d} />)}
+              </ConditionalRender>
+              <ConditionalRender isRendered={offences.length !== i + 1}>
+                <hr />
+              </ConditionalRender>
             </Offence>
           ))}
         </div>

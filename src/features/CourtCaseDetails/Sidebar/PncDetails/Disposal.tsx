@@ -1,8 +1,7 @@
-import { DisposalDetails, DisposalText } from "./Disposal.styles"
-import { Details } from "govuk-react"
+import ConditionalRender from "components/ConditionalRender"
 import { isEmpty } from "lodash"
 import { formatDisplayedDate } from "utils/date/formattedDate"
-import ConditionalRender from "components/ConditionalRender"
+import { DisposalDetails, DisposalText, StyledDetails } from "./Disposal.styles"
 
 interface DisposalProps {
   qtyDate?: string
@@ -17,7 +16,7 @@ interface DisposalProps {
 const Disposal = ({ qtyDate, qtyDuration, type, qtyUnitsFined, qtyMonetaryValue, qualifiers, text }: DisposalProps) => {
   return (
     <div className="disposal">
-      <Details summary={`Disposal - ${type}`}>
+      <StyledDetails summary={`Disposal - ${type}`}>
         {/* <DisposalHeader className="govuk-heading-s">{`Disposal - ${type}`}</DisposalHeader> */}
         <DisposalDetails>
           <div id={"disposal-date"}>
@@ -56,7 +55,7 @@ const Disposal = ({ qtyDate, qtyDuration, type, qtyUnitsFined, qtyMonetaryValue,
             // </Details>
           )}
         </DisposalText>
-      </Details>
+      </StyledDetails>
     </div>
   )
 }
