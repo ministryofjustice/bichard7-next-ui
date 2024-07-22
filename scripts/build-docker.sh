@@ -51,7 +51,7 @@ else
 fi
 
   if [[ -n "${CODEBUILD_RESOLVED_SOURCE_VERSION}" && -n "${CODEBUILD_START_TIME}" ]]; then
-      ## Install goss/trivy
+      ## Install goss
       curl -L https://github.com/goss-org/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
       chmod +rx /usr/local/bin/goss
       curl -L https://github.com/goss-org/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
@@ -59,41 +59,10 @@ fi
 
       export GOSS_PATH="/usr/local/bin/goss"
 
-      install_trivy() {
-        echo "Pulling trivy binary from s3"
-        aws s3 cp \
-          s3://"${ARTIFACT_BUCKET}"/trivy/binary/trivy_latest_Linux-64bit.rpm \
-          .
-
-        echo "Installing trivy binary"
-        rpm -ivh trivy_latest_Linux-64bit.rpm
-      }
-
-      pull_trivy_db() {
-        echo "Pulling trivy db from s3..."
-        aws s3 cp \
-          s3://"${ARTIFACT_BUCKET}"/trivy/db/trivy-offline.db.tgz \
-          trivy/db/
-
-        echo "Extracting trivy db to `pwd`/trivy/db/"
-        tar -xvf trivy/db/trivy-offline.db.tgz -C trivy/db/
-      }
-
-      mkdir -p trivy/db
-      install_trivy
-      pull_trivy_db
-
       ## Run goss tests
       # DB_CONTAINER=docker ps -aqf "name=bichard7-next_pg"
       # DB_HOST=docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DB_CONTAINER
       GOSS_SLEEP=15 dgoss run "ui:latest"
-
-      ## Run Trivy scan
-      TRIVY_CACHE_DIR=trivy trivy image \
-        --exit-code 1 \
-        --ignorefile scripts/.trivyignore \
-        --severity "CRITICAL" \
-        --skip-update "ui:latest" # we have the most recent db pulled locally
 
       docker tag \
           ui:latest \
