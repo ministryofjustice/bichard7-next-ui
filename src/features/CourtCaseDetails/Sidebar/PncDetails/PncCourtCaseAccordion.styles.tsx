@@ -8,7 +8,7 @@ const CourtCase = styled.div`
 const CourtCaseHeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
-
+  cursor: pointer;
   background-color: ${gdsLightGrey};
   border-bottom: solid 1px ${gdsMidGrey};
 
