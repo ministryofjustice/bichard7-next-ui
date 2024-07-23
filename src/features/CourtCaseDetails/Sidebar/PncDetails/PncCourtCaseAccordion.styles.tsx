@@ -107,6 +107,10 @@ const Offence = styled.div`
     }
   }
 
+  .no-disposals-message {
+    margin-top: 0;
+  }
+
   .adjudication {
     margin-bottom: 10px;
   }

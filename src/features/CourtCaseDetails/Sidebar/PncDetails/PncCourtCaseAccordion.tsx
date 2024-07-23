@@ -52,18 +52,25 @@ const PncCourtCaseAccordion = ({
 
       {isContentVisible && (
         <div id={`CCR-${courtCaseReference}-content`}>
-          {offences?.map(({ offence: details, adjudication, disposals }, i) => (
-            <Offence className="pnc-offence" key={`${i}-${details.sequenceNumber}`}>
-              <PncOffenceDetails details={details} adjudication={adjudication} />
-              <DisposalHeader>{"Disposals"}</DisposalHeader>
-              <ConditionalRender isRendered={disposals?.length !== undefined && disposals.length > 0}>
-                {disposals?.map((d, j) => <Disposal key={`${j}-${d.type}`} {...d} />)}
-              </ConditionalRender>
-              <ConditionalRender isRendered={offences.length !== i + 1}>
-                <hr />
-              </ConditionalRender>
-            </Offence>
-          ))}
+          {offences?.map(({ offence: details, adjudication, disposals }, i) => {
+            const hasDisposals = disposals?.length !== undefined && disposals.length > 0
+
+            return (
+              <Offence className="pnc-offence" key={`${i}-${details.sequenceNumber}`}>
+                <PncOffenceDetails details={details} adjudication={adjudication} />
+                <DisposalHeader>{"Disposals"}</DisposalHeader>
+                <ConditionalRender isRendered={!hasDisposals}>
+                  <p className={"no-disposals-message"}>{"No disposals"}</p>
+                </ConditionalRender>
+                <ConditionalRender isRendered={hasDisposals}>
+                  {disposals?.map((d, j) => <Disposal key={`${j}-${d.type}`} {...d} />)}
+                </ConditionalRender>
+                <ConditionalRender isRendered={offences.length !== i + 1}>
+                  <hr />
+                </ConditionalRender>
+              </Offence>
+            )
+          })}
         </div>
       )}
     </CourtCase>

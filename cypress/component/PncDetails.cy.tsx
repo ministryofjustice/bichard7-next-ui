@@ -308,4 +308,89 @@ describe("PNC details", () => {
     cy.get(".pnc-offence").eq(0).should("exist")
     cy.get(".pnc-offence").eq(1).should("not.exist")
   })
+
+  it("Displays message 'No disposals' where disposals have empty array", () => {
+    const pncQueryData = {
+      forceStationCode: "01ZD",
+      checkName: "LEBOWSKI",
+      pncId: "2021/0000006A",
+      courtCases: [
+        {
+          courtCaseReference: "21/2732/000006N",
+          offences: [
+            {
+              offence: {
+                acpoOffenceCode: "5:5:5:1",
+                cjsOffenceCode: "TH68001",
+                title: "Theft from the person of another",
+                sequenceNumber: 1
+              },
+              disposals: []
+            }
+          ],
+          crimeOffenceReference: ""
+        }
+      ]
+    }
+
+    const courtCase = {
+      aho: {
+        PncQuery: pncQueryData,
+        PncQueryDate: "2024-07-10T00:00:00.000Z"
+      }
+    } as unknown as DisplayFullCourtCase
+
+    cy.mount(
+      <CurrentUserContext.Provider value={{ currentUser }}>
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
+          <PncDetails />
+        </CourtCaseContext.Provider>
+      </CurrentUserContext.Provider>
+    )
+
+    cy.get(".no-disposals-message").should("exist")
+    cy.get(".no-disposals-message").contains("No disposals")
+  })
+
+  it("Displays message 'No disposals' where disposals are undefined", () => {
+    const pncQueryData = {
+      forceStationCode: "01ZD",
+      checkName: "LEBOWSKI",
+      pncId: "2021/0000006A",
+      courtCases: [
+        {
+          courtCaseReference: "21/2732/000006N",
+          offences: [
+            {
+              offence: {
+                acpoOffenceCode: "5:5:5:1",
+                cjsOffenceCode: "TH68001",
+                title: "Theft from the person of another",
+                sequenceNumber: 1
+              }
+            }
+          ],
+          crimeOffenceReference: ""
+        }
+      ]
+    }
+
+    const courtCase = {
+      aho: {
+        PncQuery: pncQueryData,
+        PncQueryDate: "2024-07-10T00:00:00.000Z"
+      }
+    } as unknown as DisplayFullCourtCase
+
+    cy.mount(
+      <CurrentUserContext.Provider value={{ currentUser }}>
+        <CourtCaseContext.Provider value={[{ courtCase, amendments: {}, savedAmendments: {} }, () => {}]}>
+          <PncDetails />
+        </CourtCaseContext.Provider>
+      </CurrentUserContext.Provider>
+    )
+
+    cy.get(".no-disposals-message").should("exist")
+    cy.get(".no-disposals-message").contains("No disposals")
+  })
 })
