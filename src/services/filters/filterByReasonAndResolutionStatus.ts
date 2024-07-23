@@ -1,3 +1,6 @@
+import ExceptionCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/ExceptionCode"
+import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
+import { every } from "lodash"
 import CourtCase from "services/entities/CourtCase"
 import User from "services/entities/User"
 import { Brackets, IsNull, Not, SelectQueryBuilder } from "typeorm"
@@ -8,13 +11,31 @@ const reasonFilterOnlyIncludesTriggers = (reason?: Reason): boolean => reason ==
 
 const reasonFilterOnlyIncludesExceptions = (reason?: Reason): boolean => reason === Reason.Exceptions
 
-const shouldFilterForExceptions = (user: User, reason?: Reason): boolean =>
-  (user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]) ||
-  (user.hasAccessTo[Permission.Exceptions] && reasonFilterOnlyIncludesExceptions(reason))
+const reasonCodesAreExceptionsOnly = (reasonCodes: string[] | undefined): boolean => {
+  if (reasonCodes?.length === 0) {
+    return false
+  }
 
-const shouldFilterForTriggers = (user: User, reason?: Reason): boolean =>
+  return every(reasonCodes, (rc: string) => ExceptionCode[rc as keyof typeof ExceptionCode])
+}
+
+const reasonCodesAreTriggersOnly = (reasonCodes: string[] | undefined): boolean => {
+  if (reasonCodes?.length === 0) {
+    return false
+  }
+
+  return every(reasonCodes, (rc: string) => TriggerCode[rc as keyof typeof TriggerCode])
+}
+
+const shouldFilterForExceptions = (user: User, reason?: Reason, reasonCodes?: string[]): boolean =>
+  (user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]) ||
+  (user.hasAccessTo[Permission.Exceptions] && reasonFilterOnlyIncludesExceptions(reason)) ||
+  (user.hasAccessTo[Permission.Exceptions] && reasonCodesAreExceptionsOnly(reasonCodes))
+
+const shouldFilterForTriggers = (user: User, reason?: Reason, reasonCodes?: string[]): boolean =>
   (user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]) ||
-  (user.hasAccessTo[Permission.Triggers] && reasonFilterOnlyIncludesTriggers(reason))
+  (user.hasAccessTo[Permission.Triggers] && reasonFilterOnlyIncludesTriggers(reason)) ||
+  (user.hasAccessTo[Permission.Triggers] && reasonCodesAreTriggersOnly(reasonCodes))
 
 const canSeeTriggersAndException = (user: User, reason?: Reason): boolean =>
   user.hasAccessTo[Permission.Exceptions] &&
@@ -25,11 +46,12 @@ const canSeeTriggersAndException = (user: User, reason?: Reason): boolean =>
 const filterIfUnresolved = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
-  reason?: Reason
+  reason?: Reason,
+  reasonCodes?: string[]
 ): SelectQueryBuilder<CourtCase> => {
-  if (shouldFilterForTriggers(user, reason)) {
+  if (shouldFilterForTriggers(user, reason, reasonCodes)) {
     query.andWhere({ triggerStatus: "Unresolved" })
-  } else if (shouldFilterForExceptions(user, reason)) {
+  } else if (shouldFilterForExceptions(user, reason, reasonCodes)) {
     query.andWhere(
       new Brackets((qb) => {
         qb.where({ errorStatus: "Unresolved" }).orWhere({ errorStatus: "Submitted" })
@@ -53,11 +75,12 @@ const filterIfResolved = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
   reason?: Reason,
+  reasonCodes?: string[],
   resolvedByUsername?: string
 ) => {
-  if (shouldFilterForTriggers(user, reason)) {
+  if (shouldFilterForTriggers(user, reason, reasonCodes)) {
     query.andWhere({ triggerResolvedTimestamp: Not(IsNull()) })
-  } else if (shouldFilterForExceptions(user, reason)) {
+  } else if (shouldFilterForExceptions(user, reason, reasonCodes)) {
     query.andWhere({ errorStatus: "Resolved" })
   } else if (canSeeTriggersAndException(user, reason)) {
     query.andWhere(
@@ -99,15 +122,16 @@ const filterByReasonAndResolutionStatus = (
   query: SelectQueryBuilder<CourtCase>,
   user: User,
   reason?: Reason,
+  reasonCodes?: string[],
   caseState?: CaseState,
   resolvedByUsername?: string
 ): SelectQueryBuilder<CourtCase> => {
   caseState = caseState ?? "Unresolved"
 
   if (caseState === "Unresolved") {
-    query = filterIfUnresolved(query, user, reason)
+    query = filterIfUnresolved(query, user, reason, reasonCodes)
   } else if (caseState === "Resolved") {
-    query = filterIfResolved(query, user, reason, resolvedByUsername)
+    query = filterIfResolved(query, user, reason, reasonCodes, resolvedByUsername)
   }
 
   return query
