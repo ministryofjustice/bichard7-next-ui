@@ -51,7 +51,7 @@ const Disposal = ({ qtyDate, qtyDuration, type, qtyUnitsFined, qtyMonetaryValue,
             <span className="disposal-text-absent">{"No disposal text"}</span>
           ) : (
             // <Details className="disposal-text" summary={"Show details"}>
-            <p>{text}</p>
+            <p className="disposal-text">{text}</p>
             // </Details>
           )}
         </DisposalText>

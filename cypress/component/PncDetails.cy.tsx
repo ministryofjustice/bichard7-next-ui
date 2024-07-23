@@ -104,7 +104,7 @@ describe("PNC details", () => {
     cy.get("#disposal-duration").contains("Y999").should("exist")
     cy.get("#disposal-monetary-value").contains("1000").should("exist")
     cy.get("#disposal-units-fined").should("not.exist")
-    cy.get(".disposal-text").click()
+    cy.get("summary").first().click()
     cy.get(".disposal-text").contains("This is a dummy text").should("exist")
   })
 
