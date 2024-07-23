@@ -1,16 +1,18 @@
-import { useState } from "react"
 import type { PncCourtCase } from "@moj-bichard7-developers/bichard7-next-core/core/types/PncQueryResult"
+import ConditionalRender from "components/ConditionalRender"
+import { useState } from "react"
+import Disposal from "./Disposal"
 import {
   CCR,
+  ChevronContainer,
+  CourtCase,
+  CourtCaseHeader,
   CourtCaseHeaderContainer,
   CrimeOffenceReference,
-  CourtCase,
-  Offence,
-  CourtCaseHeader,
-  ChevronContainer
+  DisposalHeader,
+  Offence
 } from "./PncCourtCaseAccordion.styles"
 import PncOffenceDetails from "./PncOffenceDetails"
-import Disposal from "./Disposal"
 
 interface PncCourtCaseAccordionProps {
   index: number
@@ -29,7 +31,7 @@ const PncCourtCaseAccordion = ({
   return (
     <CourtCase key={courtCaseReference}>
       <CourtCaseHeaderContainer
-        className="courtcase-toggle"
+        className={`courtcase-toggle ${isContentVisible ? "expanded" : ""}`}
         onClick={toggleContentVisibility}
         aria-expanded={isContentVisible}
         aria-controls={`CCR-${courtCaseReference}-content`}
@@ -50,12 +52,25 @@ const PncCourtCaseAccordion = ({
 
       {isContentVisible && (
         <div id={`CCR-${courtCaseReference}-content`}>
-          {offences?.map(({ offence: details, adjudication, disposals }, i) => (
-            <Offence className="pnc-offence" key={`${i}-${details.sequenceNumber}`}>
-              <PncOffenceDetails details={details} adjudication={adjudication} />
-              {disposals?.map((d, j) => <Disposal key={`${j}-${d.type}`} {...d} />)}
-            </Offence>
-          ))}
+          {offences?.map(({ offence: details, adjudication, disposals }, i) => {
+            const hasDisposals = disposals?.length !== undefined && disposals.length > 0
+
+            return (
+              <Offence className="pnc-offence" key={`${i}-${details.sequenceNumber}`}>
+                <PncOffenceDetails details={details} adjudication={adjudication} />
+                <DisposalHeader>{"Disposals"}</DisposalHeader>
+                <ConditionalRender isRendered={!hasDisposals}>
+                  <p className={"no-disposals-message"}>{"No disposals"}</p>
+                </ConditionalRender>
+                <ConditionalRender isRendered={hasDisposals}>
+                  {disposals?.map((d, j) => <Disposal key={`${j}-${d.type}`} {...d} />)}
+                </ConditionalRender>
+                <ConditionalRender isRendered={offences.length !== i + 1}>
+                  <hr />
+                </ConditionalRender>
+              </Offence>
+            )
+          })}
         </div>
       )}
     </CourtCase>

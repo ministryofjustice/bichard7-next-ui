@@ -9,7 +9,7 @@ const UpdatedDate = styled.div`
 `
 
 const PncQueryError = styled.div`
-  padding: 15px 20px;
+  padding: 30px 20px;
 `
 
 const CourtCases = styled.div`
@@ -17,4 +17,4 @@ const CourtCases = styled.div`
   overflow-y: scroll;
 `
 
-export { UpdatedDate, CourtCases, PncQueryError }
+export { CourtCases, PncQueryError, UpdatedDate }
