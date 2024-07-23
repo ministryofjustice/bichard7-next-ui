@@ -17,7 +17,6 @@ const Disposal = ({ qtyDate, qtyDuration, type, qtyUnitsFined, qtyMonetaryValue,
   return (
     <div className="disposal">
       <StyledDetails summary={`Disposal - ${type}`}>
-        {/* <DisposalHeader className="govuk-heading-s">{`Disposal - ${type}`}</DisposalHeader> */}
         <DisposalDetails>
           <div id={"disposal-date"}>
             <b>{"Date"}</b>
@@ -50,9 +49,7 @@ const Disposal = ({ qtyDate, qtyDuration, type, qtyUnitsFined, qtyMonetaryValue,
           {isEmpty(text) ? (
             <span className="disposal-text-absent">{"No disposal text"}</span>
           ) : (
-            // <Details className="disposal-text" summary={"Show details"}>
             <p className="disposal-text">{text}</p>
-            // </Details>
           )}
         </DisposalText>
       </StyledDetails>
