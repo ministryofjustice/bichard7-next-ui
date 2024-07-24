@@ -27,15 +27,13 @@ const reasonCodesAreTriggersOnly = (reasonCodes: string[] | undefined): boolean 
   return every(reasonCodes, (rc: string) => TriggerCode[rc as keyof typeof TriggerCode])
 }
 
-const shouldFilterForExceptions = (user: User, reason?: Reason, reasonCodes?: string[]): boolean =>
+const shouldFilterForExceptions = (user: User, reason?: Reason): boolean =>
   (user.hasAccessTo[Permission.Exceptions] && !user.hasAccessTo[Permission.Triggers]) ||
-  (user.hasAccessTo[Permission.Exceptions] && reasonFilterOnlyIncludesExceptions(reason)) ||
-  (user.hasAccessTo[Permission.Exceptions] && reasonCodesAreExceptionsOnly(reasonCodes))
+  (user.hasAccessTo[Permission.Exceptions] && reasonFilterOnlyIncludesExceptions(reason))
 
-const shouldFilterForTriggers = (user: User, reason?: Reason, reasonCodes?: string[]): boolean =>
+const shouldFilterForTriggers = (user: User, reason?: Reason): boolean =>
   (user.hasAccessTo[Permission.Triggers] && !user.hasAccessTo[Permission.Exceptions]) ||
-  (user.hasAccessTo[Permission.Triggers] && reasonFilterOnlyIncludesTriggers(reason)) ||
-  (user.hasAccessTo[Permission.Triggers] && reasonCodesAreTriggersOnly(reasonCodes))
+  (user.hasAccessTo[Permission.Triggers] && reasonFilterOnlyIncludesTriggers(reason))
 
 const canSeeTriggersAndException = (user: User, reason?: Reason): boolean =>
   user.hasAccessTo[Permission.Exceptions] &&
@@ -49,24 +47,30 @@ const filterIfUnresolved = (
   reason?: Reason,
   reasonCodes?: string[]
 ): SelectQueryBuilder<CourtCase> => {
-  if (shouldFilterForTriggers(user, reason, reasonCodes)) {
+  if (shouldFilterForTriggers(user, reason)) {
     query.andWhere({ triggerStatus: "Unresolved" })
-  } else if (shouldFilterForExceptions(user, reason, reasonCodes)) {
+  } else if (shouldFilterForExceptions(user, reason)) {
     query.andWhere(
       new Brackets((qb) => {
         qb.where({ errorStatus: "Unresolved" }).orWhere({ errorStatus: "Submitted" })
       })
     )
   } else if (canSeeTriggersAndException(user, reason)) {
-    query.andWhere(
-      new Brackets((qb) => {
-        qb.where({ triggerStatus: "Unresolved" }).orWhere(
-          new Brackets((qb2) => {
-            qb2.where({ errorStatus: "Unresolved" }).orWhere({ errorStatus: "Submitted" })
-          })
-        )
-      })
-    )
+    if (reasonCodes && reasonCodesAreExceptionsOnly(reasonCodes)) {
+      query.andWhere({ errorStatus: "Unresolved" }).orWhere({ errorStatus: "Submitted" })
+    } else if (reasonCodes && reasonCodesAreTriggersOnly(reasonCodes)) {
+      query.andWhere({ triggerStatus: "Unresolved" })
+    } else {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where({ triggerStatus: "Unresolved" }).orWhere(
+            new Brackets((qb2) => {
+              qb2.where({ errorStatus: "Unresolved" }).orWhere({ errorStatus: "Submitted" })
+            })
+          )
+        })
+      )
+    }
   }
   return query
 }
@@ -78,16 +82,25 @@ const filterIfResolved = (
   reasonCodes?: string[],
   resolvedByUsername?: string
 ) => {
-  if (shouldFilterForTriggers(user, reason, reasonCodes)) {
+  if (shouldFilterForTriggers(user, reason)) {
     query.andWhere({ triggerResolvedTimestamp: Not(IsNull()) })
-  } else if (shouldFilterForExceptions(user, reason, reasonCodes)) {
+  } else if (shouldFilterForExceptions(user, reason)) {
     query.andWhere({ errorStatus: "Resolved" })
   } else if (canSeeTriggersAndException(user, reason)) {
-    query.andWhere(
-      new Brackets((qb) =>
-        qb.where({ errorResolvedTimestamp: Not(IsNull()) }).orWhere({ triggerResolvedTimestamp: Not(IsNull()) })
+    if (reasonCodes && reasonCodesAreExceptionsOnly(reasonCodes)) {
+      query.andWhere({ errorStatus: "Resolved" })
+    } else if (reasonCodes && reasonCodesAreTriggersOnly(reasonCodes)) {
+      query.andWhere({ triggerResolvedTimestamp: Not(IsNull()) })
+    } else {
+      query.andWhere(
+        new Brackets((qb) =>
+          qb
+            .where({ errorResolvedTimestamp: Not(IsNull()) })
+            .orWhere({ errorStatus: "Resolved" })
+            .orWhere({ triggerResolvedTimestamp: Not(IsNull()) })
+        )
       )
-    )
+    }
   }
 
   if (resolvedByUsername || !user.hasAccessTo[Permission.ListAllCases]) {
