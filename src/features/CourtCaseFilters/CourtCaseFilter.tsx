@@ -131,7 +131,7 @@ const CourtCaseFilter: React.FC<Props> = ({
                   name="state"
                   type="checkbox"
                   value={state.caseStateFilter.value}
-                  checked={state.caseStateFilter.value == "Resolved"}
+                  checked={state.caseStateFilter.value === "Resolved"}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
                     dispatch({
                       method: event.currentTarget.checked ? "add" : "remove",
