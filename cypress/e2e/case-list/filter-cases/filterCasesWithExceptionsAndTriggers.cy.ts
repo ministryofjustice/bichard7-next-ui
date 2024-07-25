@@ -1,7 +1,7 @@
 import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import { TestTrigger } from "../../../../test/utils/manageTriggers"
 import resolvedAsnAho from "../../../fixtures/resolvedAsnAho.json"
-import unresolvedAsnAho from "../../../fixtures/unresolvedAsnAho.json"
+import unresolvedAsnAho from "../../../fixtures/unResolvedAsnAho.json"
 import { confirmFiltersAppliedContains } from "../../../support/helpers"
 
 // This test relies on unresolved triggers for filtering by exceptions/triggers
