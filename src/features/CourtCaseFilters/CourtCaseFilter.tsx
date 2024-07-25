@@ -1,11 +1,12 @@
 import ConditionalRender from "components/ConditionalRender"
+import CaseStateFilter from "components/SearchFilters/CaseStateFilter"
 import LockedFilter, { lockedStateShortLabels } from "components/SearchFilters/LockedFilter"
 import ReasonCodeFilter from "components/SearchFilters/ReasonCodeFilter"
 import ReasonFilter from "components/SearchFilters/ReasonFilterOptions/ReasonFilter"
 import TextFilter from "components/SearchFilters/TextFilter"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { FormGroup } from "govuk-react"
-import { ChangeEvent, useReducer } from "react"
+import { useReducer } from "react"
 import { CaseListQueryParams, LockedState, SerializedCourtDateRange } from "types/CaseListQueryParams"
 import type { Filter } from "types/CourtCaseFilter"
 import Permission from "types/Permission"
@@ -107,47 +108,22 @@ const CourtCaseFilter: React.FC<Props> = ({
             </div>
           </FormGroup>
 
+          <CaseStateFilter dispatch={dispatch} value={state.caseStateFilter.value} />
+
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
             <Divider />
             <ReasonFilter reason={state.reasonFilter.value} reasonOptions={reasonOptions} dispatch={dispatch} />
           </ConditionalRender>
-
           <Divider />
+
           <CourtDateFilter
             caseAges={state.caseAgeFilter.map((slaDate) => slaDate.value as string)}
             caseAgeCounts={caseAgeCounts}
             dispatch={dispatch}
             dateRange={{ from: state.dateFrom.value, to: state.dateTo.value }}
           />
-
           <Divider />
-          <fieldset className="govuk-fieldset">
-            <legend className="govuk-fieldset__legend govuk-body">{"Case state"}</legend>
-            <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-              <div className="govuk-checkboxes__item">
-                <input
-                  className="govuk-checkboxes__input"
-                  id="resolved"
-                  name="state"
-                  type="checkbox"
-                  value={state.caseStateFilter.value}
-                  checked={state.caseStateFilter.value === "Resolved"}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                    dispatch({
-                      method: event.currentTarget.checked ? "add" : "remove",
-                      type: "caseState",
-                      value: "Resolved"
-                    })
-                  }}
-                ></input>
-                <label className="govuk-label govuk-checkboxes__label" htmlFor="resolved">
-                  {"View resolved cases"}
-                </label>
-              </div>
-            </div>
-          </fieldset>
 
-          <Divider />
           <LockedFilter lockedState={state.lockedStateFilter.value} dispatch={dispatch} />
         </div>
       </div>
