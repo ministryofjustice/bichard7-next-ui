@@ -1,3 +1,4 @@
+import { Legend } from "features/CourtCaseFilters/ExpandingFilters.styles"
 import { ChangeEvent, Dispatch } from "react"
 import { FilterAction } from "types/CourtCaseFilter"
 
@@ -8,7 +9,9 @@ interface CaseStateFilterProps {
 
 const CaseStateFilter = ({ dispatch, value }: CaseStateFilterProps) => (
   <fieldset className="govuk-fieldset">
-    <legend className="govuk-fieldset__legend govuk-body">{"Case state"}</legend>
+    <legend className="govuk-fieldset__legend govuk-fieldset__legend--s">
+      <Legend>{"Case state"}</Legend>
+    </legend>
     <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
       <div className="govuk-checkboxes__item">
         <input
