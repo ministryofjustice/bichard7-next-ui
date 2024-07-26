@@ -39,9 +39,13 @@ const CourtCaseListEntry: React.FC<Props> = ({
   const { basePath, query } = useRouter()
   const searchParams = new URLSearchParams(encode(query))
   const currentUser = useCurrentUser()
-  const reasonCodes = Array.isArray(query.reasonCodes)
-    ? query.reasonCodes?.map((reasonCode) => getLongTriggerCode(reasonCode))
-    : getLongTriggerCode(query.reasonCodes)
+  const reasonCodes =
+    typeof query.reasonCodes === "string"
+      ? query.reasonCodes
+          .split(" ")
+          .map((reasonCode) => getLongTriggerCode(reasonCode))
+          .join(" ")
+      : query.reasonCodes?.map((reasonCode) => getLongTriggerCode(reasonCode))
 
   const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
     deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
