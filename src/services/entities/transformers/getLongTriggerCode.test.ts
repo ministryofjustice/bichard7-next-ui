@@ -13,6 +13,12 @@ describe("getLongTriggerCode", () => {
     expect(result).toBe("TRPS0008")
   })
 
+  it("handles double-digit trigger codes", () => {
+    const result = getLongTriggerCode("PR11")
+
+    expect(result).toBe("TRPR0011")
+  })
+
   it("returns passed value when it is not a short trigger code", () => {
     const result = getLongTriggerCode("H0100302")
 
