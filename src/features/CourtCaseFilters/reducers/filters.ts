@@ -1,4 +1,5 @@
 import { lockedStateShortLabels } from "components/SearchFilters/LockedFilter"
+import { uniqBy } from "lodash"
 import { Reason } from "types/CaseListQueryParams"
 import type { Filter, FilterAction } from "types/CourtCaseFilter"
 import { caseStateLabels } from "utils/caseStateFilters"
@@ -51,6 +52,10 @@ const handleAddingFilters = (newState: Filter, action: FilterAction) => {
       break
     }
     case "reasonCodes": {
+      if (newState.reasonCodes.find((reason) => reason.value === action.value)) {
+        break
+      }
+
       const values = Array.isArray(action.value) ? action.value : [action.value]
       newState.reasonCodes = values.map((reason: string) => ({
         value: reason,
@@ -64,6 +69,31 @@ const handleAddingFilters = (newState: Filter, action: FilterAction) => {
       newState.ptiurnSearch.value = action.value
       newState.ptiurnSearch.label = action.value
       newState.ptiurnSearch.state = "Selected"
+      break
+    }
+    case "reasonCodesCheckbox": {
+      if (newState.reasonCodes.find((reason) => reason.value === action.value)) {
+        break
+      }
+
+      newState.reasonCodes.push({
+        value: action.value,
+        label: action.value,
+        state: "Selected"
+      })
+      break
+    }
+    case "triggerIndeterminate": {
+      const values = Array.isArray(action.value) ? action.value : [action.value]
+      values.map((reason: string) => {
+        newState.reasonCodes.push({
+          value: reason,
+          label: reason,
+          state: "Selected"
+        })
+      })
+
+      newState.reasonCodes = uniqBy(newState.reasonCodes, (reasonCode) => reasonCode.value)
       break
     }
   }
@@ -116,6 +146,17 @@ const handleRemovingFilters = (newState: Filter, action: FilterAction) => {
     case "ptiurn": {
       newState.ptiurnSearch.value = ""
       newState.ptiurnSearch.label = undefined
+      break
+    }
+    case "reasonCodesCheckbox": {
+      newState.reasonCodes = newState.reasonCodes.filter((reasonCode) => reasonCode.value !== action.value)
+      break
+    }
+    case "triggerIndeterminate": {
+      const values = Array.isArray(action.value) ? action.value : [action.value]
+      values.forEach((reason) => {
+        newState.reasonCodes = newState.reasonCodes.filter((reasonCode) => reasonCode.value !== reason)
+      })
       break
     }
   }

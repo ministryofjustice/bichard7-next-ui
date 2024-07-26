@@ -1,43 +1,69 @@
 import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
+import ConditionalRender from "components/ConditionalRender"
+import IndeterminateCheckbox from "components/IndeterminateCheckbox"
+import { Dispatch } from "react"
+import getLongTriggerCode from "services/entities/transformers/getLongTriggerCode"
+import getShortTriggerCode from "services/entities/transformers/getShortTriggerCode"
+import { FilterAction, ReasonCode } from "types/CourtCaseFilter"
 import TriggerCheckbox from "./TriggerCheckbox"
 import { TriggerGroupList } from "./TriggerGroup.styles"
 
 interface TriggerGroupProps {
   name: string
-  triggers: TriggerCode[]
+  allGroupTriggers: TriggerCode[]
+  filteredReasonCodes: ReasonCode[]
+  dispatch: Dispatch<FilterAction>
 }
 
-const TriggerGroup = ({ name, triggers }: TriggerGroupProps): JSX.Element => {
+const selectedTrigger = (triggerCode: string, filteredReasonCodes: ReasonCode[]): boolean | undefined =>
+  !!filteredReasonCodes.find((reasonCode) => getLongTriggerCode(reasonCode.value) === triggerCode)
+
+const someSelected = (allGroupTriggers: TriggerCode[], filteredReasonCodes: ReasonCode[]): boolean => {
+  const some = allGroupTriggers.filter((triggerCode) => selectedTrigger(triggerCode, filteredReasonCodes))
+
+  return some.length > 0 && some.length !== allGroupTriggers.length
+}
+
+const noneSelected = (allGroupTriggers: TriggerCode[], filteredReasonCodes: ReasonCode[]): boolean =>
+  allGroupTriggers.filter((triggerCode) => selectedTrigger(triggerCode, filteredReasonCodes)).length === 0
+
+const allSelected = (allGroupTriggers: TriggerCode[], filteredReasonCodes: ReasonCode[]): boolean => {
+  const selected = filteredReasonCodes.map((reasonCode) => getLongTriggerCode(reasonCode.value))
+
+  if (allGroupTriggers.length === selected.length) {
+    return true
+  }
+  return false
+}
+
+const TriggerGroup = ({ name, allGroupTriggers, filteredReasonCodes, dispatch }: TriggerGroupProps): JSX.Element => {
   return (
     <fieldset className="govuk-fieldset">
-      <div className="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-        <div className="govuk-checkboxes__item">
-          <input
-            className="govuk-checkboxes__input"
-            id={name.toLowerCase()}
-            name={name.toLowerCase()}
-            type="checkbox"
-            // value={value}
-            // checked={value == "Resolved"}
-            // onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            //   dispatch({
-            //     method: event.currentTarget.checked ? "add" : "remove",
-            //     type: "caseState",
-            //     value: "Resolved"
-            //   })
-            // }}
-          ></input>
-          <label className="govuk-label govuk-checkboxes__label" htmlFor={name.toLowerCase()}>
-            {name}
-          </label>
-        </div>
-      </div>
+      <IndeterminateCheckbox
+        id={name}
+        checkedValue={allSelected(allGroupTriggers, filteredReasonCodes)}
+        labelText={name}
+        indeterminate={someSelected(allGroupTriggers, filteredReasonCodes)}
+        value={allGroupTriggers.map((trigger) => getShortTriggerCode(trigger) ?? "")}
+        dispatch={dispatch}
+      />
 
-      <TriggerGroupList>
-        {triggers.map((triggerCode) => (
-          <TriggerCheckbox key={triggerCode} triggerCode={triggerCode} />
-        ))}
-      </TriggerGroupList>
+      <ConditionalRender
+        isRendered={
+          !noneSelected(allGroupTriggers, filteredReasonCodes) || someSelected(allGroupTriggers, filteredReasonCodes)
+        }
+      >
+        <TriggerGroupList>
+          {allGroupTriggers.map((triggerCode) => (
+            <TriggerCheckbox
+              key={triggerCode}
+              triggerCode={triggerCode}
+              selectedTrigger={selectedTrigger(triggerCode, filteredReasonCodes)}
+              dispatch={dispatch}
+            />
+          ))}
+        </TriggerGroupList>
+      </ConditionalRender>
     </fieldset>
   )
 }
