@@ -13,14 +13,20 @@ describe("getLongTriggerCode", () => {
     expect(result).toBe("H0100302")
   })
 
-  it("Should return the passed value code when trigger code is not a number", () => {
+  it("Should return the passed value when trigger code is not a number", () => {
     const result = getLongTriggerCode("INVALID")
 
     expect(result).toBe("INVALID")
   })
 
-  it("Should return null when value code is null", () => {
+  it("Should return null when value is null", () => {
     const result = getLongTriggerCode(null)
+
+    expect(result).toBe(null)
+  })
+
+  it("Should return null when value is undefined", () => {
+    const result = getLongTriggerCode()
 
     expect(result).toBe(null)
   })

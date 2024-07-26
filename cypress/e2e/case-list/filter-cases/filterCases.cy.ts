@@ -273,6 +273,37 @@ describe("Filtering cases", () => {
     confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
   })
 
+  it("Should display cases filtered by short reason code", () => {
+    cy.task("insertCourtCasesWithFields", [
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" },
+      { orgForPoliceFilter: "011111" }
+    ])
+
+    const triggers: TestTrigger[] = [
+      {
+        triggerId: 0,
+        triggerCode: TriggerCode.TRPR0017,
+        status: "Unresolved",
+        createdAt: new Date("2022-07-09T10:22:34.000Z")
+      }
+    ]
+    cy.task("insertTriggers", { caseId: 0, triggers })
+    cy.task("insertException", { caseId: 1, exceptionCode: "HO200212", errorReport: "HO200212||ds:Reason" })
+
+    visitBasePath()
+
+    confirmMultipleFieldsDisplayed(["Case00000", "Case00001", "Case00002"])
+    inputAndSearch("reasonCodes", "PR17")
+    cy.contains("Hide search panel").click()
+
+    cy.contains("Case00000")
+    confirmMultipleFieldsNotDisplayed(["Case00001", "Case00002"])
+    cy.get("tbody tr.caseDetailsRow").should("have.length", 1)
+    tableRowShouldContain(0, "TRPR0017")
+    confirmFiltersAppliedContains("PR17")
+  })
+
   it("Should display only filtered reason in the reason column", () => {
     cy.task("insertCourtCasesWithFields", [
       { orgForPoliceFilter: "011111" },

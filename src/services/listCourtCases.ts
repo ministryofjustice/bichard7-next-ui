@@ -9,6 +9,7 @@ import User from "./entities/User"
 import filterByReasonAndResolutionStatus from "./filters/filterByReasonAndResolutionStatus"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
+import getLongTriggerCode from "./entities/transformers/getLongTriggerCode"
 
 const listCourtCases = async (
   connection: DataSource,
@@ -100,7 +101,7 @@ const listCourtCases = async (
     query.andWhere(
       new Brackets((qb) => {
         qb.where("trigger.trigger_code ilike any(array[:...triggers])", {
-          triggers: reasonCodes
+          triggers: reasonCodes.map((reasonCode) => getLongTriggerCode(reasonCode))
         })
           // match exceptions at the start of the error_report
           .orWhere("courtCase.error_report ilike any(array[:...firstExceptions])", {
