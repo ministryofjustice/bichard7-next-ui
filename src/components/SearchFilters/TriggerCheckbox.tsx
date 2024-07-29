@@ -21,7 +21,6 @@ const TriggerCheckbox = ({ triggerCode, selectedTrigger, dispatch }: TriggerChec
           <input
             className="govuk-checkboxes__input"
             id={triggerCode.toLowerCase()}
-            name={triggerCode.toLowerCase()}
             type="checkbox"
             value={triggerCode}
             checked={selectedTrigger}

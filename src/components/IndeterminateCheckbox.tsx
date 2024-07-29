@@ -35,7 +35,6 @@ const IndeterminateCheckbox = ({
             ref={checkboxRef}
             className="govuk-checkboxes__input"
             id={id}
-            name={id}
             type="checkbox"
             value={id}
             checked={checkedValue}
