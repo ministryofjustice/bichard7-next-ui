@@ -12,6 +12,7 @@ export type FilterAction =
   | { method: FilterMethod; type: "lockedState"; value: string }
   | { method: FilterMethod; type: "reason"; value: Reason }
   | { method: FilterMethod; type: "caseState"; value: CaseState }
+  | { method: FilterMethodCheckbox; type: "triggerIndeterminate"; value: string }
 
 export type FilterType =
   | "defendantName"
@@ -27,6 +28,7 @@ export type FilterType =
   | "caseState"
 
 export type FilterMethod = "add" | "remove"
+export type FilterMethodCheckbox = "add" | "remove" | "indeterminate"
 export type FilterValue = boolean | string | Reason
 export type FilterState = "Selected" | "Applied"
 export type Filter = {

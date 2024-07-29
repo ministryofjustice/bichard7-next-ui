@@ -1,4 +1,5 @@
 import ConditionalRender from "components/ConditionalRender"
+import CaseStateFilter from "components/SearchFilters/CaseStateFilter"
 import LockedFilter, { lockedStateShortLabels } from "components/SearchFilters/LockedFilter"
 import ReasonCodeFilter from "components/SearchFilters/ReasonCodeFilter"
 import ReasonFilter from "components/SearchFilters/ReasonFilterOptions/ReasonFilter"
@@ -15,7 +16,6 @@ import CourtDateFilter from "../../components/SearchFilters/CourtDateFilter"
 import { SelectedFiltersContainer } from "./CourtCaseFilter.styles"
 import FilterChipSection from "./FilterChipSection"
 import { filtersReducer } from "./reducers/filters"
-import CaseStateFilter from "components/SearchFilters/CaseStateFilter"
 
 const Divider = () => (
   <hr className="govuk-section-break govuk-section-break--m govuk-section-break govuk-section-break--visible" />

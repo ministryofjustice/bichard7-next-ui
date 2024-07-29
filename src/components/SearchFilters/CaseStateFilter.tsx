@@ -20,7 +20,7 @@ const CaseStateFilter = ({ dispatch, value }: CaseStateFilterProps) => (
           name="state"
           type="checkbox"
           value={value}
-          checked={value == "Resolved"}
+          checked={value === "Resolved"}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             dispatch({
               method: event.currentTarget.checked ? "add" : "remove",

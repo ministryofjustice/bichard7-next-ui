@@ -10,6 +10,7 @@ import { ExceptionsLockTag, ExceptionsReasonCell } from "./ExceptionsColumns"
 import { ExtraReasonRow } from "./ExtraReasonRow"
 import { TriggersLockTag, TriggersReasonCell } from "./TriggersColumns"
 import getResolutionStatus from "../../../utils/getResolutionStatus"
+import getLongTriggerCode from "services/entities/transformers/getLongTriggerCode"
 
 interface Props {
   courtCase: DisplayPartialCourtCase
@@ -38,6 +39,13 @@ const CourtCaseListEntry: React.FC<Props> = ({
   const { basePath, query } = useRouter()
   const searchParams = new URLSearchParams(encode(query))
   const currentUser = useCurrentUser()
+  const reasonCodes =
+    typeof query.reasonCodes === "string"
+      ? query.reasonCodes
+          .split(" ")
+          .map((reasonCode) => getLongTriggerCode(reasonCode))
+          .join(" ")
+      : query.reasonCodes?.map((reasonCode) => getLongTriggerCode(reasonCode))
 
   const unlockCaseWithReasonPath = (reason: "Trigger" | "Exception", caseId: string) => {
     deleteQueryParamsByName(["unlockException", "unlockTrigger"], searchParams)
@@ -58,10 +66,10 @@ const CourtCaseListEntry: React.FC<Props> = ({
     const displayExceptions = (query.state === "Resolved" && errorStatus === "Resolved") || errorStatus === "Unresolved"
     const exceptions = groupErrorsFromReport(errorReport)
     const filteredExceptions = Object.fromEntries(
-      Object.entries(exceptions).filter(([error]) => query.reasonCodes?.includes(error))
+      Object.entries(exceptions).filter(([error]) => reasonCodes?.includes(error))
     )
     exceptionsReasonCell = displayExceptions && (
-      <ExceptionsReasonCell exceptionCounts={query.reasonCodes ? filteredExceptions : exceptions} />
+      <ExceptionsReasonCell exceptionCounts={reasonCodes ? filteredExceptions : exceptions} />
     )
     exceptionsLockTag = displayExceptions && (
       <ExceptionsLockTag
@@ -76,9 +84,7 @@ const CourtCaseListEntry: React.FC<Props> = ({
   if (hasTriggers && currentUser.hasAccessTo[Permission.Triggers]) {
     triggersReasonCell = (
       <TriggersReasonCell
-        triggers={
-          query.reasonCodes ? triggers.filter((trigger) => query.reasonCodes?.includes(trigger.triggerCode)) : triggers
-        }
+        triggers={reasonCodes ? triggers.filter((trigger) => reasonCodes?.includes(trigger.triggerCode)) : triggers}
       />
     )
     triggersLockTag = (
