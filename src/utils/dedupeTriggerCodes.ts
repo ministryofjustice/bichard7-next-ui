@@ -24,8 +24,8 @@ const dedupeTriggerCodes = (reasonCodes: string[]): string[] => {
   }, [])
 
   const sortedCodes = dedupedCodes.sort((current, previous) => {
-    const a = current.slice(0, 2) === "PR" ? parseInt(current.slice(-2)) : parseInt(current.slice(-4))
-    const b = previous.slice(0, 2) === "PR" ? parseInt(previous.slice(-2)) : parseInt(previous.slice(-4))
+    const a = current.slice(0, 1) === "P" ? parseInt(current.slice(-2)) : parseInt(current.slice(-4))
+    const b = previous.slice(0, 1) === "P" ? parseInt(previous.slice(-2)) : parseInt(previous.slice(-4))
 
     return a - b
   })

@@ -26,8 +26,8 @@ describe("dedupeTriggerCodes", () => {
   })
 
   it("sorts codes by numerical value", () => {
-    const result = dedupeTriggerCode(["TRPR0003", "HO100302", "TRPR0001", "PR05", "TRPR0002"])
+    const result = dedupeTriggerCode(["TRPR0003", "HO100302", "TRPR0001", "PR05", "PS02", "TRPR0002"])
 
-    expect(result).toEqual(["TRPR0001", "TRPR0002", "TRPR0003", "PR05", "HO100302"])
+    expect(result).toEqual(["TRPR0001", "PS02", "TRPR0002", "TRPR0003", "PR05", "HO100302"])
   })
 })
