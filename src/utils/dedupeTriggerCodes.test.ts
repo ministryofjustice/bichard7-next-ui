@@ -13,9 +13,21 @@ describe("dedupeTriggerCodes", () => {
     expect(result).toBe("PR01 TRPR0002")
   })
 
-  it("retains the code order", () => {
-    const result = dedupeTriggerCode("TRPR0001 TRPR0002 PR01 TRPR0003 PR03")
+  it("removes duplicate long codes", () => {
+    const result = dedupeTriggerCode("TRPR0001 TRPR0003 TRPR0001 PR03")
 
-    expect(result).toBe("TRPR0002 PR01 PR03")
+    expect(result).toBe("TRPR0001 PR03")
+  })
+
+  it("removes duplicate short codes", () => {
+    const result = dedupeTriggerCode("PR03 TRPR0001 PR03")
+
+    expect(result).toBe("TRPR0001 PR03")
+  })
+
+  it("sorts codes by numerical value", () => {
+    const result = dedupeTriggerCode("TRPR0003 HO100302 TRPR0001 PR05 TRPR0002")
+
+    expect(result).toBe("TRPR0001 TRPR0002 TRPR0003 PR05 HO100302")
   })
 })
