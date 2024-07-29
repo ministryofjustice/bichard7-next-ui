@@ -1,24 +1,13 @@
 import GroupedTriggerCodes from "@moj-bichard7-developers/bichard7-next-data/dist/types/GroupedTriggerCodes"
-import TriggerCode, { TriggerCodeGroups } from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import { Legend } from "features/CourtCaseFilters/ExpandingFilters.styles"
 import { Dispatch } from "react"
-import getLongTriggerCode from "services/entities/transformers/getLongTriggerCode"
 import { FilterAction, ReasonCode } from "types/CourtCaseFilter"
+import { allGroupedTriggers, filteredReasonCodes } from "utils/triggerGroups/handleTriggerToDisplay"
 import TriggerGroup from "./TriggerGroup"
 
 interface TriggerGroupProps {
   dispatch: Dispatch<FilterAction>
   reasonCodes: ReasonCode[]
-}
-
-const allGroupedTriggers = (key: string): TriggerCode[] => GroupedTriggerCodes[key as keyof typeof TriggerCodeGroups]
-
-const filteredReasonCodes = (allGrpTriggerCodes: TriggerCode[], reasonCodes: ReasonCode[]) => {
-  return reasonCodes.filter((reasonCode) => {
-    const validTriggerCode = TriggerCode[getLongTriggerCode(reasonCode.value) as keyof typeof TriggerCode]
-
-    return allGrpTriggerCodes.includes(validTriggerCode)
-  })
 }
 
 const TriggerGroups = ({ dispatch, reasonCodes }: TriggerGroupProps): JSX.Element => {
