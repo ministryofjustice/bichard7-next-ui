@@ -11,13 +11,13 @@ interface TriggerGroupProps {
   reasonCodes: ReasonCode[]
 }
 
-const groupedTriggerCodes = (key: string): TriggerCode[] => GroupedTriggerCodes[key as keyof typeof TriggerCodeGroups]
+const allGroupedTriggers = (key: string): TriggerCode[] => GroupedTriggerCodes[key as keyof typeof TriggerCodeGroups]
 
-const filteredReasonCodes = (grpTriggerCodes: TriggerCode[], reasonCodes: ReasonCode[]) => {
+const filteredReasonCodes = (allGrpTriggerCodes: TriggerCode[], reasonCodes: ReasonCode[]) => {
   return reasonCodes.filter((reasonCode) => {
     const validTriggerCode = TriggerCode[getLongTriggerCode(reasonCode.value) as keyof typeof TriggerCode]
 
-    return grpTriggerCodes.includes(validTriggerCode)
+    return allGrpTriggerCodes.includes(validTriggerCode)
   })
 }
 
@@ -31,8 +31,8 @@ const TriggerGroups = ({ dispatch, reasonCodes }: TriggerGroupProps): JSX.Elemen
         <TriggerGroup
           key={`trigger-group-${i}`}
           name={key}
-          allGroupTriggers={groupedTriggerCodes(key)}
-          filteredReasonCodes={filteredReasonCodes(groupedTriggerCodes(key), reasonCodes)}
+          allGroupTriggers={allGroupedTriggers(key)}
+          filteredReasonCodes={filteredReasonCodes(allGroupedTriggers(key), reasonCodes)}
           dispatch={dispatch}
         />
       ))}
