@@ -40,7 +40,7 @@ const TriggerGroup = ({ name, allGroupTriggers, filteredReasonCodes, dispatch }:
   return (
     <fieldset className="govuk-fieldset">
       <IndeterminateCheckbox
-        id={name}
+        id={name.toLowerCase()}
         checkedValue={allSelected(allGroupTriggers, filteredReasonCodes)}
         labelText={name}
         indeterminate={someSelected(allGroupTriggers, filteredReasonCodes)}
