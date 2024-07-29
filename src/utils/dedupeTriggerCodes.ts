@@ -7,8 +7,8 @@ const isDupe = (code: string, codes: string[]): boolean => {
   return duplicates.includes(code)
 }
 
-const dedupeTriggerCodes = (reasonCodes: string): string => {
-  const codes = Array.from(new Set(reasonCodes.split(" ")))
+const dedupeTriggerCodes = (reasonCodes: string[]): string[] => {
+  const codes = Array.from(new Set(reasonCodes))
   const longCodes = codes.map((code) => getLongTriggerCode(code) || code)
 
   const dedupedCodes = codes.reduce<string[]>((filteredCodes, code) => {
@@ -30,7 +30,7 @@ const dedupeTriggerCodes = (reasonCodes: string): string => {
     return a - b
   })
 
-  return sortedCodes.join(" ")
+  return sortedCodes
 }
 
 export default dedupeTriggerCodes
