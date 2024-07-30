@@ -33,8 +33,6 @@ const TriggerCheckbox = ({ triggerCode, selectedTrigger, dispatch }: TriggerChec
             }}
           ></input>
           <TriggerCheckboxLabel className="govuk-label govuk-checkboxes__label" htmlFor={triggerCode.toLowerCase()}>
-            {triggerShortCode}
-            {" - "}
             {getTriggerWithDescription(triggerCode, true)}
           </TriggerCheckboxLabel>
         </div>
