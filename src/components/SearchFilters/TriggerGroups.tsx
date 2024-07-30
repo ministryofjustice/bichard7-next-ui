@@ -2,7 +2,8 @@ import GroupedTriggerCodes from "@moj-bichard7-developers/bichard7-next-data/dis
 import { Legend } from "features/CourtCaseFilters/ExpandingFilters.styles"
 import { Dispatch } from "react"
 import { FilterAction, ReasonCode } from "types/CourtCaseFilter"
-import { allGroupedTriggers, filteredReasonCodes } from "utils/triggerGroups/handleTriggerToDisplay"
+import allGroupedTriggers from "utils/triggerGroups/allGroupedTriggers"
+import { filteredReasonCodes } from "utils/triggerGroups/handleTriggerToDisplay"
 import TriggerGroup from "./TriggerGroup"
 
 interface TriggerGroupProps {
