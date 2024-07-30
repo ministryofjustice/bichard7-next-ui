@@ -1,6 +1,6 @@
 import { Dispatch } from "react"
 import { FilterAction, FilterState } from "types/CourtCaseFilter"
-import { ButtonAlt } from "./FilterChip.styles"
+import { Button, ButtonAlt } from "./FilterChip.styles"
 
 interface Props {
   chipLabel: string
@@ -28,7 +28,7 @@ const FilterChip: React.FC<Props> = ({ chipLabel, dispatch, removeAction, state 
 
   return (
     <li>
-      <button
+      <Button
         type="button"
         className={"moj-filter__tag"}
         onClick={() => dispatch(removeAction())}
@@ -36,7 +36,7 @@ const FilterChip: React.FC<Props> = ({ chipLabel, dispatch, removeAction, state 
       >
         <span className="govuk-visually-hidden">{"Remove this filter"}</span>
         {chipLabel}
-      </button>
+      </Button>
     </li>
   )
 }
