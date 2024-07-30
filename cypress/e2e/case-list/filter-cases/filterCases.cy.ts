@@ -387,6 +387,12 @@ describe("Filtering cases", () => {
     visitBasePath()
     inputAndSearch("reasonCodes", "TRPR0017 PR11")
     tableRowShouldContain(0, "TRPR0017", "TRPR0011")
+
+    visitBasePath()
+    inputAndSearch("reasonCodes", "TRPR0017 PR17")
+    confirmFiltersAppliedContains("PR17")
+    cy.get(".moj-filter-tags").get("TRPR0017").should("not.exist")
+    tableRowShouldContain(0, "TRPR0017")
   })
 
   it("Should display cases filtered by multiple reason codes", () => {
@@ -416,6 +422,12 @@ describe("Filtering cases", () => {
     cy.get("tbody tr.caseDetailsRow").should("have.length", 2)
     confirmFiltersAppliedContains("TRPR0017")
     confirmFiltersAppliedContains("HO200212")
+
+    visitBasePath()
+    inputAndSearch("reasonCodes", "TRPR0017 TRPR0017")
+    confirmFiltersAppliedContains("TRPR0017")
+    cy.get(".moj-filter-tags").should("have.length", 1)
+    tableRowShouldContain(0, "TRPR0017")
   })
 
   it("Should let users use all search fields", () => {
