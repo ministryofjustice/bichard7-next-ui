@@ -5,6 +5,7 @@ import LockedFilter, { lockedStateShortLabels } from "components/SearchFilters/L
 import ReasonCodeFilter from "components/SearchFilters/ReasonCodeFilter"
 import ReasonFilter from "components/SearchFilters/ReasonFilterOptions/ReasonFilter"
 import TextFilter from "components/SearchFilters/TextFilter"
+import TriggerGroups from "components/SearchFilters/TriggerGroups"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { FormGroup } from "govuk-react"
 import { useReducer } from "react"
@@ -112,6 +113,8 @@ const CourtCaseFilter: React.FC<Props> = ({
           <CaseStateFilter dispatch={dispatch} value={state.caseStateFilter.value} />
 
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
+            <Divider />
+            <TriggerGroups dispatch={dispatch} reasonCodes={state.reasonCodes} />
             <Divider />
             <ReasonFilter reason={state.reasonFilter.value} reasonOptions={reasonOptions} dispatch={dispatch} />
           </ConditionalRender>
