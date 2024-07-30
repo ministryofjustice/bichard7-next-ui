@@ -28,4 +28,5 @@ const generateCsrfToken = (request: IncomingMessage): GenerateCsrfTokenResult =>
   return { formToken, cookieToken, cookieName }
 }
 
+export default generateCsrfToken
 export { generateCookieName, generateCsrfToken }
