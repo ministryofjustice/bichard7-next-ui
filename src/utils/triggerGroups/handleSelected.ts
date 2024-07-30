@@ -3,12 +3,6 @@ import getLongTriggerCode from "services/entities/transformers/getLongTriggerCod
 import { ReasonCode } from "types/CourtCaseFilter"
 import selectedTrigger from "./selectedTrigger"
 
-const someTriggersSelected = (allGroupTriggers: TriggerCode[], filteredReasonCodes: ReasonCode[]): boolean => {
-  const some = allGroupTriggers.filter((triggerCode) => selectedTrigger(triggerCode, filteredReasonCodes))
-
-  return some.length > 0 && some.length !== allGroupTriggers.length
-}
-
 const noneSelected = (allGroupTriggers: TriggerCode[], filteredReasonCodes: ReasonCode[]): boolean =>
   allGroupTriggers.filter((triggerCode) => selectedTrigger(triggerCode, filteredReasonCodes)).length === 0
 
@@ -21,4 +15,4 @@ const allSelected = (allGroupTriggers: TriggerCode[], filteredReasonCodes: Reaso
   return false
 }
 
-export { allSelected, noneSelected, someTriggersSelected }
+export { allSelected, noneSelected }
