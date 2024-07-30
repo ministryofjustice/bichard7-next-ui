@@ -24,7 +24,7 @@ export default <Props extends { [key: string]: any }>(
       return { props: {} } as unknown as GetServerSidePropsResult<Props>
     }
 
-    if (req.headers.referer) {
+    if (req.headers?.referer) {
       const queryString = req.headers.referer.replace(/.*\/bichard/, "")
 
       let cookieName: string
