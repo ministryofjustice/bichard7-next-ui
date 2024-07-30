@@ -106,7 +106,7 @@ describe("Filtering cases by trigger groups", () => {
     cy.get(".moj-filter__tag").contains("PR12")
   })
 
-  describe.only("when using the using the group checkboxes", () => {
+  describe("when using the using the group checkboxes", () => {
     beforeEach(() => {
       // Add 20 cases
       cy.task("insertCourtCasesWithFields", [
