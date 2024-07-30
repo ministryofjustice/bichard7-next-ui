@@ -1,11 +1,9 @@
 import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/TriggerCode"
 import getLongTriggerCode from "services/entities/transformers/getLongTriggerCode"
 import { ReasonCode } from "types/CourtCaseFilter"
+import selectedTrigger from "./selectedTrigger"
 
-const selectedTrigger = (triggerCode: string, filteredReasonCodes: ReasonCode[]): boolean | undefined =>
-  !!filteredReasonCodes.find((reasonCode) => getLongTriggerCode(reasonCode.value) === triggerCode)
-
-const someSelected = (allGroupTriggers: TriggerCode[], filteredReasonCodes: ReasonCode[]): boolean => {
+const someTriggersSelected = (allGroupTriggers: TriggerCode[], filteredReasonCodes: ReasonCode[]): boolean => {
   const some = allGroupTriggers.filter((triggerCode) => selectedTrigger(triggerCode, filteredReasonCodes))
 
   return some.length > 0 && some.length !== allGroupTriggers.length
@@ -23,4 +21,4 @@ const allSelected = (allGroupTriggers: TriggerCode[], filteredReasonCodes: Reaso
   return false
 }
 
-export { allSelected, noneSelected, selectedTrigger, someSelected }
+export { allSelected, noneSelected, someTriggersSelected }

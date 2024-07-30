@@ -4,7 +4,8 @@ import IndeterminateCheckbox from "components/IndeterminateCheckbox"
 import { Dispatch } from "react"
 import getShortTriggerCode from "services/entities/transformers/getShortTriggerCode"
 import { FilterAction, ReasonCode } from "types/CourtCaseFilter"
-import { allSelected, noneSelected, selectedTrigger, someSelected } from "utils/triggerGroups/handleSelected"
+import { allSelected, noneSelected, someTriggersSelected } from "utils/triggerGroups/handleSelected"
+import selectedTrigger from "utils/triggerGroups/selectedTrigger"
 import TriggerCheckbox from "./TriggerCheckbox"
 import { TriggerGroupList } from "./TriggerGroup.styles"
 
@@ -16,22 +17,20 @@ interface TriggerGroupProps {
 }
 
 const TriggerGroup = ({ name, allGroupTriggers, filteredReasonCodes, dispatch }: TriggerGroupProps): JSX.Element => {
+  const someSelected = someTriggersSelected(allGroupTriggers, filteredReasonCodes)
+
   return (
     <fieldset className="govuk-fieldset">
       <IndeterminateCheckbox
         id={name.toLowerCase()}
         checkedValue={allSelected(allGroupTriggers, filteredReasonCodes)}
         labelText={name}
-        indeterminate={someSelected(allGroupTriggers, filteredReasonCodes)}
+        indeterminate={someSelected}
         value={allGroupTriggers.map((trigger) => getShortTriggerCode(trigger) ?? "")}
         dispatch={dispatch}
       />
 
-      <ConditionalRender
-        isRendered={
-          !noneSelected(allGroupTriggers, filteredReasonCodes) || someSelected(allGroupTriggers, filteredReasonCodes)
-        }
-      >
+      <ConditionalRender isRendered={!noneSelected(allGroupTriggers, filteredReasonCodes) || someSelected}>
         <TriggerGroupList>
           {allGroupTriggers.map((triggerCode) => (
             <TriggerCheckbox
