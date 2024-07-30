@@ -10,4 +10,4 @@ const filteredReasonCodes = (allGrpTriggerCodes: TriggerCode[], reasonCodes: Rea
   })
 }
 
-export { filteredReasonCodes }
+export default filteredReasonCodes

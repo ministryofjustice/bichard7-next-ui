@@ -3,7 +3,7 @@ import { Legend } from "features/CourtCaseFilters/ExpandingFilters.styles"
 import { Dispatch } from "react"
 import { FilterAction, ReasonCode } from "types/CourtCaseFilter"
 import allGroupedTriggers from "utils/triggerGroups/allGroupedTriggers"
-import { filteredReasonCodes } from "utils/triggerGroups/handleTriggerToDisplay"
+import filteredReasonCodes from "utils/triggerGroups/filteredReasonCodes"
 import TriggerGroup from "./TriggerGroup"
 
 interface TriggerGroupProps {
