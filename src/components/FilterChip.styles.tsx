@@ -1,7 +1,16 @@
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import { darkGrey } from "utils/colours"
 
+const buttonCss = css`
+  margin-top: 8px;
+`
+
+const Button = styled.button`
+  ${buttonCss}
+`
+
 const ButtonAlt = styled.button`
+  ${buttonCss}
   background: ${darkGrey};
   color: white;
   &:visited {
@@ -15,4 +24,4 @@ const ButtonAlt = styled.button`
   }
 `
 
-export { ButtonAlt }
+export { Button, ButtonAlt }

@@ -16,11 +16,11 @@ const IndeterminateCheckboxWrapper = styled.div`
     width: 14px;
     background: currentColor;
     opacity: 1;
+    color: ${darkGrey};
   }
 
-  .govuk-checkboxes__input:indeterminate,
-  .govuk-checkboxes__input:indeterminate + .govuk-checkboxes__label {
-    color: ${darkGrey};
+  .govuk-checkboxes__input:indeterminate + .govuk-checkboxes__label::before {
+    border-color: ${darkGrey};
   }
 `
 
