@@ -55,6 +55,7 @@ import { validateQueryParams } from "utils/validators/validateQueryParams"
 import withCsrf from "../middleware/withCsrf/withCsrf"
 import CsrfServerSidePropsContext from "../types/CsrfServerSidePropsContext"
 import shouldShowSwitchingFeedbackForm from "../utils/shouldShowSwitchingFeedbackForm"
+import dedupeTriggerCodes from "utils/dedupeTriggerCodes"
 
 type Props = {
   build: string | null
@@ -87,7 +88,7 @@ const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User):
   const defendantName = validateQueryParams(query.defendantName) ? query.defendantName : null
   const courtName = validateQueryParams(query.courtName) ? query.courtName : undefined
   const reasonCodes = validateQueryParams(query.reasonCodes)
-    ? query.reasonCodes.split(" ").filter((reasonCode) => reasonCode != "")
+    ? dedupeTriggerCodes(query.reasonCodes.split(" ").filter((reasonCode) => reasonCode != ""))
     : []
   const ptiurn = validateQueryParams(query.ptiurn) ? query.ptiurn : undefined
   const lockedState: LockedState = validateQueryParams(query.lockedState)
