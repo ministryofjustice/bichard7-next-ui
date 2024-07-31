@@ -1,9 +1,11 @@
+import { PrimaryButton } from "components/Buttons"
 import ConditionalRender from "components/ConditionalRender"
 import CaseStateFilter from "components/SearchFilters/CaseStateFilter"
 import LockedFilter, { lockedStateShortLabels } from "components/SearchFilters/LockedFilter"
 import ReasonCodeFilter from "components/SearchFilters/ReasonCodeFilter"
 import ReasonFilter from "components/SearchFilters/ReasonFilterOptions/ReasonFilter"
 import TextFilter from "components/SearchFilters/TextFilter"
+import TriggerGroups from "components/SearchFilters/TriggerGroups"
 import { useCurrentUser } from "context/CurrentUserContext"
 import { FormGroup } from "govuk-react"
 import { useReducer } from "react"
@@ -13,7 +15,7 @@ import Permission from "types/Permission"
 import { anyFilterChips } from "utils/filterChips"
 import { reasonOptions } from "utils/reasonOptions"
 import CourtDateFilter from "../../components/SearchFilters/CourtDateFilter"
-import { SelectedFiltersContainer } from "./CourtCaseFilter.styles"
+import { FilterOptionsContainer, SelectedFiltersContainer } from "./CourtCaseFilter.styles"
 import FilterChipSection from "./FilterChipSection"
 import { filtersReducer } from "./reducers/filters"
 
@@ -85,10 +87,10 @@ const CourtCaseFilter: React.FC<Props> = ({
             </SelectedFiltersContainer>
           </div>
         </div>
-        <div className="moj-filter__options">
-          <button className="govuk-button" data-module="govuk-button" id="search">
+        <FilterOptionsContainer className="moj-filter__options">
+          <PrimaryButton className="govuk-button" dataModule="govuk-button" id={"search"}>
             {"Apply filters"}
-          </button>
+          </PrimaryButton>
 
           <input type="hidden" id="order" name="order" value={order || ""} />
           <input type="hidden" id="orderBy" name="orderBy" value={orderBy || ""} />
@@ -112,6 +114,8 @@ const CourtCaseFilter: React.FC<Props> = ({
 
           <ConditionalRender isRendered={currentUser.hasAccessTo[Permission.Triggers]}>
             <Divider />
+            <TriggerGroups dispatch={dispatch} reasonCodes={state.reasonCodes} />
+            <Divider />
             <ReasonFilter reason={state.reasonFilter.value} reasonOptions={reasonOptions} dispatch={dispatch} />
           </ConditionalRender>
           <Divider />
@@ -125,7 +129,12 @@ const CourtCaseFilter: React.FC<Props> = ({
           <Divider />
 
           <LockedFilter lockedState={state.lockedStateFilter.value} dispatch={dispatch} />
-        </div>
+          <Divider />
+
+          <PrimaryButton className="govuk-button" dataModule="govuk-button" id={"search-bottom"}>
+            {"Apply filters"}
+          </PrimaryButton>
+        </FilterOptionsContainer>
       </div>
     </form>
   )
