@@ -40,8 +40,9 @@ import { DisplayPartialCourtCase } from "types/display/CourtCases"
 import { DisplayFullUser } from "types/display/Users"
 import { CaseAgeOptions } from "utils/caseAgeOptions"
 import caseStateFilters from "utils/caseStateFilters"
-import removeBlankQueryParams from "utils/deleteQueryParam/removeBlankQueryParams"
 import { formatFormInputDateString } from "utils/date/formattedDate"
+import dedupeTriggerCodes from "utils/dedupeTriggerCodes"
+import removeBlankQueryParams from "utils/deleteQueryParam/removeBlankQueryParams"
 import getQueryStringCookieName from "utils/getQueryStringCookieName"
 import { isPost } from "utils/http"
 import { logUiDetails } from "utils/logUiDetails"
@@ -87,7 +88,7 @@ const extractSearchParamsFromQuery = (query: ParsedUrlQuery, currentUser: User):
   const defendantName = validateQueryParams(query.defendantName) ? query.defendantName : null
   const courtName = validateQueryParams(query.courtName) ? query.courtName : undefined
   const reasonCodes = validateQueryParams(query.reasonCodes)
-    ? query.reasonCodes.split(" ").filter((reasonCode) => reasonCode != "")
+    ? dedupeTriggerCodes(query.reasonCodes.split(" ").filter((reasonCode) => reasonCode != ""))
     : []
   const ptiurn = validateQueryParams(query.ptiurn) ? query.ptiurn : undefined
   const lockedState: LockedState = validateQueryParams(query.lockedState)
@@ -204,7 +205,7 @@ export const getServerSideProps = withMultipleServerSideProps(
         caseAge: caseAges,
         caseAgeCounts: caseAgeCounts,
         courtCases: courtCases.result.map((courtCase) => courtCaseToDisplayPartialCourtCaseDto(courtCase, currentUser)),
-        csrfToken: csrfToken,
+        csrfToken,
         dateRange:
           !!caseListQueryParams.courtDateRange && !Array.isArray(caseListQueryParams.courtDateRange)
             ? {

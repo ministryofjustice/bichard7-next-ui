@@ -4,19 +4,19 @@ import { IndeterminateCheckboxWrapper } from "./IndeterminateCheckbox.styles"
 
 interface IndeterminateCheckboxProps {
   id: string
-  value: string
-  checkedValue: string
+  checkedValue: boolean
   labelText: string
   indeterminate: boolean
+  value: string | string[]
   dispatch: Dispatch<FilterAction>
 }
 
 const IndeterminateCheckbox = ({
   id,
-  value,
   checkedValue,
   labelText,
   indeterminate,
+  value,
   dispatch
 }: IndeterminateCheckboxProps): JSX.Element => {
   const checkboxRef = useRef<HTMLInputElement>(null)
@@ -35,10 +35,9 @@ const IndeterminateCheckbox = ({
             ref={checkboxRef}
             className="govuk-checkboxes__input"
             id={id}
-            name={id}
             type="checkbox"
-            value={value}
-            checked={value === checkedValue}
+            value={id}
+            checked={checkedValue}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               dispatch({
                 method: event.currentTarget.checked

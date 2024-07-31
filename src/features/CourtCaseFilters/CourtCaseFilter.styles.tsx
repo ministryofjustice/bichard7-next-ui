@@ -8,4 +8,10 @@ const SelectedFiltersContainer = styled.div`
   display: block;
 `
 
-export { FormGroup, SelectedFiltersContainer }
+const FilterOptionsContainer = styled.div`
+  #search-bottom {
+    margin-bottom: 0;
+  }
+`
+
+export { FilterOptionsContainer, FormGroup, SelectedFiltersContainer }

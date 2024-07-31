@@ -8,10 +8,11 @@ type Props = {
   className?: string
   type?: "submit" | "reset" | "button"
   onClick?: () => void
+  dataModule?: string
 }
 
-const PrimaryButton = ({ id, children, className, type, onClick }: Props) => (
-  <Button onClick={onClick} id={id} className={className} type={type}>
+const PrimaryButton = ({ id, children, className, type, onClick, dataModule }: Props) => (
+  <Button onClick={onClick} id={id} className={className} type={type} data-module={dataModule}>
     {children}
   </Button>
 )
